@@ -35,7 +35,7 @@ Do not remove the finale's recovery floor or punish higher meters by taking away
 
 Every recorded narrative choice needs a later visible consequence; every potentially absent cast member needs an absence or replacement branch. The oath must use one shared content entry at both ends of the campaign. Major public history remains fixed through Aurelian's death in 275; the succession then deliberately diverges.
 
-All art remains code-drawn. Do not add external art, font or audio files without documented licensing. Keep the site static and free of accounts, payment, advertising or analytics integrations unless separately requested.
+The approved visual direction combines locally bundled original/AI-generated illustration with code-drawn tactical terrain, units and overlays. Record asset provenance, rights limitations and export settings in docs/asset-manifest.json and docs/art-generation.md. Do not add unlicensed third-party art, font or audio files. Keep the site static and free of accounts, payment, advertising or analytics integrations unless separately requested. Presentation must never mutate game state or consume gameplay randomness.
 
 The companion technical document specifies strict TypeScript, Vite, Vitest and Playwright. The current dependency-free JavaScript build is an explicit implementation deviation. Do not describe the project as satisfying that requirement or claim unperformed browser/device, accessibility, timing or deployment checks.
 

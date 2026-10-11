@@ -1,0 +1,817 @@
+{
+  "schemaVersion": 1,
+  "project": "SACRAMENTUM",
+  "artDirection": "Cinematic painted chronicle, restored fresco pigment, quiet olive plaster, warm left light",
+  "rightsNotice": "AI-generated for this project through the built-in image_gen tool. No third-party source imagery supplied. No exclusive copyright or third-party license ownership is asserted. Historical references inform design only; their images are not copied.",
+  "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
+  "assets": [
+    {
+      "id": "hero-recruit",
+      "path": "assets/portraits/hero-recruit.webp",
+      "subject": "Protagonist, recruit, age 20",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          1,
+          1,
+          361,
+          361
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 20776,
+        "sha256": "9a0bfc9f55480eab05e3b7e3276dd53824a4611197d266c07d0812b1c7a98c17"
+      }
+    },
+    {
+      "id": "hero-miles",
+      "path": "assets/portraits/hero-miles.webp",
+      "subject": "Protagonist, miles, age 25",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          363,
+          1,
+          723,
+          361
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 25274,
+        "sha256": "c99ededa0f3ee4138c7180fe73f60643a15a7bfd4cf7056f826b2a2d406e4578"
+      }
+    },
+    {
+      "id": "hero-centurion",
+      "path": "assets/portraits/hero-centurion.webp",
+      "subject": "Protagonist, centurion, age 30",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          725,
+          1,
+          1085,
+          361
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 23420,
+        "sha256": "2b60e03912b03fed0891adc1f87c459457c62f484306b3b61b0c425450c2c9e6"
+      }
+    },
+    {
+      "id": "hero-prefect",
+      "path": "assets/portraits/hero-prefect.webp",
+      "subject": "Protagonist, prefect, age 36",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1087,
+          1,
+          1447,
+          361
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 24180,
+        "sha256": "2962d4dbb00e6b3d8c38274782b2b59054be1940697a3c404ebfbef3505dc2f5"
+      }
+    },
+    {
+      "id": "hero-governor",
+      "path": "assets/portraits/hero-governor.webp",
+      "subject": "Protagonist, governor, age 43",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          1,
+          363,
+          361,
+          723
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 21662,
+        "sha256": "ebc683db8aa53eff7d5f34c03baa48ac8fc35eb23a66fa0c394990e6a0b7bcf1"
+      }
+    },
+    {
+      "id": "hero-senator",
+      "path": "assets/portraits/hero-senator.webp",
+      "subject": "Protagonist, senator, age 45",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          363,
+          363,
+          723,
+          723
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 21800,
+        "sha256": "4e60192817f7ba61c1fdcbd74757365317d6fe27970d60c4051af3f398ea0da3"
+      }
+    },
+    {
+      "id": "hero-emperor",
+      "path": "assets/portraits/hero-emperor.webp",
+      "subject": "Protagonist, emperor, age 45",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          725,
+          363,
+          1085,
+          723
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 20782,
+        "sha256": "90f300a8a70b2c8c2fc29f233d658984555be6bfffe088a82733c65f20ef1131"
+      }
+    },
+    {
+      "id": "varro",
+      "path": "assets/portraits/varro.webp",
+      "subject": "Varro, mentor and veteran, age 55",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          3,
+          1
+        ],
+        "cropBox": [
+          1087,
+          363,
+          1447,
+          723
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 24492,
+        "sha256": "4cf40ef3f51fc15f1fcb3eb1f429a022f08b75fe31bcef0b5a127494300db5a4"
+      }
+    },
+    {
+      "id": "lucan",
+      "path": "assets/portraits/lucan.webp",
+      "subject": "Lucan, comrade, age 30",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          2
+        ],
+        "cropBox": [
+          1,
+          725,
+          361,
+          1085
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 25424,
+        "sha256": "8981f6adb160af7d764d364f165f423aa5d0e1185744459efcd5745abb4f09b5"
+      }
+    },
+    {
+      "id": "crispus",
+      "path": "assets/portraits/crispus.webp",
+      "subject": "Crispus, rival, age 35",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          2
+        ],
+        "cropBox": [
+          363,
+          725,
+          723,
+          1085
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 23026,
+        "sha256": "bead0042bf24395a61cc07774eeec152a53f8e2ef241c3276a93acf810a205f4"
+      }
+    },
+    {
+      "id": "severianus",
+      "path": "assets/portraits/severianus.webp",
+      "subject": "Severianus, patron, age 55",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          2,
+          2
+        ],
+        "cropBox": [
+          725,
+          725,
+          1085,
+          1085
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 21068,
+        "sha256": "e95b1ddfb2d0b4a430b1eddc645a7137031e57b6ca5764becbbe31dabb7f8f63"
+      }
+    },
+    {
+      "id": "aelia",
+      "path": "assets/portraits/aelia.webp",
+      "subject": "Aelia, provincial ally, age 35",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-atlas-original.png",
+        "sourceSha256": "61f9484c1ee44c3490234a796dc7f674af9197993afdc8fbca7bcd3614b9f4b7",
+        "sourceSize": [
+          1448,
+          1086
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 3,
+        "cell": [
+          3,
+          2
+        ],
+        "cropBox": [
+          1087,
+          725,
+          1447,
+          1085
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 19860,
+        "sha256": "e06a93c09107ca5beab0ee8ad7ef0b9c6e7daab2cbd1800b58f64b9071ceb1ec"
+      }
+    },
+    {
+      "id": "paullus",
+      "path": "assets/portraits/paullus.webp",
+      "subject": "Lucius Cassius Paullus, elder senator, age 70",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-extra-original.png",
+        "sourceSha256": "545f5efbd2a972150fa1284bdaef31deba2ee71b4b54c3381840c37db0b91ea2",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 1,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          1,
+          1,
+          886,
+          886
+        ],
+        "instructions": "docs/art-generation.md",
+        "styleReference": "Original generated cast-atlas-original.png; no third-party reference image"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 26522,
+        "sha256": "1008a8e0ea7076a48141549523a7d84ef2390214381971d1ad8ec01878b24c54"
+      }
+    },
+    {
+      "id": "sabinus",
+      "path": "assets/portraits/sabinus.webp",
+      "subject": "Sabinus, replacement officer, age 40",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-extra-original.png",
+        "sourceSha256": "545f5efbd2a972150fa1284bdaef31deba2ee71b4b54c3381840c37db0b91ea2",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 1,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          888,
+          1,
+          1773,
+          886
+        ],
+        "instructions": "docs/art-generation.md",
+        "styleReference": "Original generated cast-atlas-original.png; no third-party reference image"
+      },
+      "usage": "Dialogue, character, promotions and finale",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 360,
+        "height": 360,
+        "quality": 86,
+        "method": 6,
+        "bytes": 29406,
+        "sha256": "876a931ae9b01b46c57c61e4909cc670a9b07ba328d2f8df79b6b89504c0fe04"
+      }
+    },
+    {
+      "id": "frontier-oath",
+      "path": "assets/scenes/frontier-oath.webp",
+      "subject": "Title composition",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-oath-original.png",
+        "sourceSha256": "05357b7beec72fc88b595e13f14569eb94608942ce1234be166e027533117ed5",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 1,
+        "atlasRows": 1,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          0,
+          0,
+          1536,
+          1024
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Title and New Game",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 1536,
+        "height": 1024,
+        "quality": 86,
+        "method": 6,
+        "bytes": 296498,
+        "sha256": "3454b659402c7f8cc8a8eb7bf3d3006aeb51b619c8494f902bc913466e542fe3"
+      }
+    },
+    {
+      "id": "danube",
+      "path": "assets/scenes/danube.webp",
+      "subject": "Danube frontier",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          1,
+          1,
+          767,
+          340
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 319,
+        "quality": 86,
+        "method": 6,
+        "bytes": 61416,
+        "sha256": "9bbf3a6d886fdd37b766a888b1c0d63631babebcfd8fede2d72631ef91855f70"
+      }
+    },
+    {
+      "id": "marsh",
+      "path": "assets/scenes/marsh.webp",
+      "subject": "Marshland retreat",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          769,
+          1,
+          1535,
+          340
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 319,
+        "quality": 86,
+        "method": 6,
+        "bytes": 61642,
+        "sha256": "be905237d960114cc86e2cea058b53cb48bed9a41addf8bc629714db4c329cd3"
+      }
+    },
+    {
+      "id": "eastern-fort",
+      "path": "assets/scenes/eastern-fort.webp",
+      "subject": "Eastern fortress",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          1,
+          342,
+          767,
+          682
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 320,
+        "quality": 86,
+        "method": 6,
+        "bytes": 67426,
+        "sha256": "8d6656beb7f9a77240e4bb7da50dc5087e1a50640765a248ac3fb03ec7835d42"
+      }
+    },
+    {
+      "id": "river-crossing",
+      "path": "assets/scenes/river-crossing.webp",
+      "subject": "River crossing",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          769,
+          342,
+          1535,
+          682
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 320,
+        "quality": 86,
+        "method": 6,
+        "bytes": 77492,
+        "sha256": "904b9f8c50e7c7098325b82b8324da08c2300d3e2d2179afbe8baea8ad064287"
+      }
+    },
+    {
+      "id": "province",
+      "path": "assets/scenes/province.webp",
+      "subject": "Provincial centre",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          0,
+          2
+        ],
+        "cropBox": [
+          1,
+          684,
+          767,
+          1023
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 319,
+        "quality": 86,
+        "method": 6,
+        "bytes": 73664,
+        "sha256": "0493f202a215af718706df6d4019c9bd69c91dffc24a9210bf94c3cbc15291ac"
+      }
+    },
+    {
+      "id": "rome",
+      "path": "assets/scenes/rome.webp",
+      "subject": "Rome and political chamber",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "scenes-atlas-original.png",
+        "sourceSha256": "f8d86f1dbd13573be74475d6b04ad49c53ee86bdcc516ea4353020711d7ff69d",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 3,
+        "cell": [
+          1,
+          2
+        ],
+        "cropBox": [
+          769,
+          684,
+          1535,
+          1023
+        ],
+        "instructions": "docs/art-generation.md"
+      },
+      "usage": "Chapter introductions and camp murals",
+      "loading": "deferred",
+      "export": {
+        "format": "WebP",
+        "width": 720,
+        "height": 319,
+        "quality": 86,
+        "method": 6,
+        "bytes": 49660,
+        "sha256": "79c1f904a06d06a6f96012a882718dd0117ca3605e50515288e1ad5b3cee3f1d"
+      }
+    }
+  ],
+  "updatedAt": "2026-10-11T18:33:21.636927+00:00",
+  "totalArtworkBytes": 1015490,
+  "budgets": {
+    "portraitsBytes": 400000,
+    "titleBytes": 350000,
+    "sixScenesBytes": 600000,
+    "compressedInitialAndCompleteBuildBytes": 2000000
+  }
+}

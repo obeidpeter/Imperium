@@ -1,4 +1,5 @@
-// A small, entirely procedural fresco and isometric renderer. No external assets.
+// Procedural fresco illustration and isometric battlefield presentation.
+import {paintBattle} from './battle-art.js';
 const P={red:'#782e28',gold:'#c0a260',cream:'#f0dfb6',ink:'#253c34',olive:'#707a57'};
 function setup(canvas){const r=canvas.getBoundingClientRect();const w=Math.max(1,r.width||640),h=Math.max(1,r.height||400);const d=Math.min(globalThis.devicePixelRatio||1,2);canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};}
 function noise(x,y,seed=1){const n=Math.sin(x*127.1+y*311.7+seed*23.23)*43758.5453;return n-Math.floor(n);}
@@ -17,11 +18,55 @@ function coord(g,x,y){return {x:g.ox+(x-y)*g.tw/2,y:g.oy+(x+y)*g.th/2};}
 export function pickTile(canvas,e,clientX,clientY){const g=geometry(canvas,e),r=canvas.getBoundingClientRect(),sx=clientX-r.left-g.ox,sy=clientY-r.top-g.oy;return {x:Math.round(sy/g.th+sx/g.tw),y:Math.round(sy/g.th-sx/g.tw)};}
 const terrains={grass:'#b6bb8b',earth:'#b8a078',marsh:'#839a79',water:'#779e99',river:'#789f99',deepwater:'#496f70',rock:'#727d71',ford:'#a7b69b',sand:'#c5b388',stone:'#b4afa0',wall:'#b1ae98',high:'#b6b497',hill:'#bab68f',chamber:'#c8b995',road:'#d0c19d',gate:'#ad9e7e',rubble:'#ada186',cover:'#a9ad8a'};
 function terrainAt(e,x,y){const t=e.terrain?.[y]?.[x];return typeof t==='string'?t:(t?.type||'grass');}
-export function drawBattle(canvas,e,selected='hero',targets=[],focus=null,chapter=1){if(!canvas||!e)return;const {c,w,h}=setup(canvas),g=geometry(canvas,e);c.fillStyle=e.kind==='contest'?'#c0b69b':'#cfceb1';c.fillRect(0,0,w,h);texture(c,w,h,14,.04);const targetSet=new Set(targets.map(t=>`${t.x},${t.y}`));const riverCrossing=e.terrain?.some(row=>row.some(t=>(typeof t==='string'?t:t?.type)==='ford'));const ordered=[];for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)ordered.push({x,y});ordered.sort((a,b)=>a.x+a.y-b.x-b.y);for(const {x,y} of ordered){const p=coord(g,x,y),t=terrainAt(e,x,y),deepRiver=t==='rock'&&riverCrossing;poly(c,[[p.x-g.tw/2,p.y],[p.x,p.y+g.th/2],[p.x+g.tw/2,p.y],[p.x+g.tw/2,p.y+7],[p.x,p.y+g.th/2+7],[p.x-g.tw/2,p.y+7]],'#969779');const corners=[[p.x,p.y-g.th/2],[p.x+g.tw/2,p.y],[p.x,p.y+g.th/2],[p.x-g.tw/2,p.y]];poly(c,corners,terrains[deepRiver?'deepwater':t]||terrains.grass,'#6d78553b');c.save();c.beginPath();corners.forEach((pt,i)=>i?c.lineTo(...pt):c.moveTo(...pt));c.closePath();c.clip();for(let j=0;j<5;j++){c.fillStyle=noise(x,j+y)>.5?'#e4dbac22':'#5c63371a';c.fillRect(p.x-g.tw/2+j*g.tw/5,p.y-g.th/2,g.tw/5-1,g.th);}c.restore();if(['wall','high','hill','cover','rubble'].includes(t)||(t==='rock'&&!riverCrossing)){poly(c,[[p.x-13,p.y],[p.x-13,p.y-10],[p.x+6,p.y-18],[p.x+17,p.y-12],[p.x+17,p.y],[p.x-3,p.y+7]],'#969b81','#b3b69a');poly(c,[[p.x-13,p.y-10],[p.x+6,p.y-18],[p.x+17,p.y-12],[p.x-3,p.y-3]],'#c4c0a3');}if(['river','water','marsh'].includes(t)||deepRiver){c.strokeStyle='#e4e6c166';c.lineWidth=1;c.beginPath();c.moveTo(p.x-9,p.y-1);c.lineTo(p.x+7,p.y-1);c.moveTo(p.x-5,p.y+3);c.lineTo(p.x+10,p.y+3);c.stroke();if(t==='marsh'){c.strokeStyle='#5f7650';c.beginPath();c.moveTo(p.x-10,p.y);c.lineTo(p.x-13,p.y-9);c.moveTo(p.x-10,p.y);c.lineTo(p.x-7,p.y-8);c.stroke();}}if(t==='ford'){for(let step=-1;step<=1;step++)ellipse(c,p.x+step*7,p.y+step*2,4,2,'#e4d7ad');}if(t==='rock'){c.strokeStyle='#f7ead0';c.lineWidth=1.5;c.beginPath();c.moveTo(p.x-3,p.y-3);c.lineTo(p.x+3,p.y+3);c.moveTo(p.x+3,p.y-3);c.lineTo(p.x-3,p.y+3);c.stroke();c.lineWidth=1;}if(targetSet.has(`${x},${y}`)){c.lineWidth=2;poly(c,corners,'#eed27329','#f4e3a7');c.lineWidth=1;ellipse(c,p.x,p.y,2.5,1.8,'#fff0b8');}if(e.goal?.x===x&&e.goal?.y===y){c.lineWidth=2;poly(c,corners,'#eee0a233','#9d7833');standard(c,p.x,p.y,.48,'#9a703e');}if(focus?.x===x&&focus?.y===y){c.lineWidth=3;poly(c,corners,null,'#24666d');c.lineWidth=1;}}
-const units=e.units.filter(u=>(u.hp??u.resolve??1)>0&&!u.hidden&&u.x>=0).sort((a,b)=>a.x+a.y-b.x-b.y);for(const u of units){const p=coord(g,u.x,u.y),s=Math.min(1.35,g.tw/47);const isHero=u.id==='hero',active=u.id===selected,col=u.side==='enemy'?'#934d37':u.side==='neutral'?'#8a7960':isHero?'#763c30':'#657666';if(active){ellipse(c,p.x,p.y+2,18*s,8*s,'#f3e0a2');c.strokeStyle='#615736';c.lineWidth=2;c.beginPath();c.ellipse(p.x,p.y+2,19*s,9*s,0,0,Math.PI*2);c.stroke();}if(e.kind==='contest'){c.save();c.translate(p.x,p.y);c.scale(s,s);poly(c,[[-12,0],[-9,-23],[6,-26],[12,0]],u.side==='neutral'?'#e0d5b4':col);poly(c,[[-6,-22],[6,-22],[9,-4],[-3,-5]],'#ede3c5');ellipse(c,0,-30,5,6,'#b39368');c.fillStyle='#695c47';c.fillRect(-5,-36,10,4);if(u.side==='neutral'){c.fillStyle='#8a7550';c.fillRect(-12,0,25,4);}c.restore();}else soldier(c,p.x,p.y,s,col,isHero,u.role,chapter);const max=u.maxResolve??u.maxHp??1,current=u.resolve??u.hp??0;const bw=Math.min(36,g.tw*.62);c.fillStyle='#2a352ce6';c.fillRect(p.x-bw/2,p.y-56*s,bw,5);c.fillStyle=u.side==='enemy'?'#e1a085':'#d6dfb0';c.fillRect(p.x-bw/2+1,p.y-56*s+1,Math.max(0,(bw-2)*current/max),3);if(u.side==='neutral'){const st=u.stance??0;c.fillStyle=st>=1?'#355c3d':st<=-3?'#792f29':'#715d32';ellipse(c,p.x+12*s,p.y-30*s,7*s,7*s,c.fillStyle);c.fillStyle='#fff5d9';c.font=`bold ${9*s}px system-ui`;c.textAlign='center';c.fillText(st>=1?'✓':st<=-3?'−':'·',p.x+12*s,p.y-27*s);}else if(!isHero){c.fillStyle=u.side==='enemy'?'#472b24':'#34462c';c.font=`bold ${12*s}px Georgia`;c.textAlign='center';c.fillText(u.side==='enemy'?'▼':'◆',p.x,p.y-62*s);}else if(isHero){c.fillStyle=P.gold;c.font=`${12*s}px Georgia`;c.textAlign='center';c.fillText('★',p.x,p.y-62*s);}if(u.moved&&u.acted){c.fillStyle='#f5e8c6';c.font=`${10*s}px system-ui`;c.textAlign='center';c.fillText('✓',p.x+15*s,p.y-48*s);}}
-c.fillStyle='#61694f';c.font='10px Georgia';c.textAlign='left';c.fillText(e.kind==='contest'?'CURIA · LOBBY, SPEAK, HOLD THE VOTE':'FIELD OF COMMAND · EVERY POSITION MATTERS',16,23);c.textAlign='right';c.fillText('N ↗',w-18,23);if(riverCrossing){c.textAlign='left';c.font='10px system-ui';c.fillText('× Deep river · pale stones mark the ford',16,h-12);}for(let i=0;i<e.width;i++){const p=coord(g,i,e.height);c.fillStyle='#697053';c.font='9px system-ui';c.textAlign='center';c.fillText(String(i+1),p.x,p.y+9);}for(let i=0;i<e.height;i++){const p=coord(g,e.width,i);c.fillText(String.fromCharCode(65+i),p.x,p.y+9);} }
-export function drawReignCard(canvas,{name,route,choices,url}){
-const c=canvas.getContext('2d');canvas.width=1080;canvas.height=1350;c.fillStyle=P.red;c.fillRect(0,0,1080,1350);texture(c,1080,1350,11,.1);c.strokeStyle=P.gold;c.lineWidth=3;c.strokeRect(30,30,1020,1290);c.strokeRect(43,43,994,1264);c.textAlign='center';c.fillStyle=P.gold;c.font='26px Georgia';c.fillText('S A C R A M E N T U M',540,155);standard(c,540,370,1.5);laurel(c,540,320,110,P.gold);c.fillStyle='#f3e5c6';c.font='61px Georgia';c.fillText('The purple is earned.',540,512);
-function fit(text,y,size,max=870){c.font=size+'px Georgia';while(c.measureText(text).width>max&&size>12)c.font=--size+'px Georgia';c.fillText(text,540,y);}
-fit(name.slice(0,40),620,49);c.fillStyle='#d8c79f';fit(route==='battle'||route==='backer'?'An emperor forged in battle':'Acclaimed without a final assault',698,32);c.strokeStyle=P.gold;c.beginPath();c.moveTo(380,761);c.lineTo(700,761);c.stroke();choices.slice(0,3).forEach((t,i)=>fit(t,842+i*70,31));c.fillStyle=P.gold;fit(url,1196,21,890);c.font='18px Georgia';c.fillText('FROM RECRUIT TO EMPEROR',540,1250);
+// Optional action is presentation-only; geometry and pickTile remain unchanged.
+export function drawBattle(canvas,e,selected='hero',targets=[],focus=null,chapter=1,options={}){
+  if(!canvas||!e)return;
+  const {c,w,h}=setup(canvas),g=geometry(canvas,e);
+  paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options);
 }
+// The optional image elements must already be loaded locally by the UI.
+export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=null,scene=null}){
+  canvas.width=1080;canvas.height=1350;const c=canvas.getContext('2d');
+  const charcoal='#222823',ivory='#f2e8d2',bronze='#b6a077';
+  c.fillStyle=charcoal;c.fillRect(0,0,1080,1350);
+  const backdrop=c.createLinearGradient(0,0,1080,1350);backdrop.addColorStop(0,'#394035');backdrop.addColorStop(.58,'#302d2e');backdrop.addColorStop(1,'#302630');c.fillStyle=backdrop;c.fillRect(0,0,1080,1350);
+  function cover(img,x,y,w,h,align=.5){if(!img||(img.complete===false))return false;const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;if(!iw||!ih)return false;const scale=Math.max(w/iw,h/ih),sw=w/scale,sh=h/scale;c.drawImage(img,(iw-sw)/2,(ih-sh)*align,sw,sh,x,y,w,h);return true;}
+  if(scene){c.save();c.globalAlpha=.18;cover(scene,0,0,1080,820,.45);c.restore();}
+  c.save();c.beginPath();c.rect(100,132,880,578);c.clip();
+  if(!cover(portrait,180,124,720,670,.12)){
+    const halo=c.createRadialGradient(540,355,40,540,380,390);halo.addColorStop(0,'#b5a77a50');halo.addColorStop(1,'#35433600');c.fillStyle=halo;c.fillRect(120,132,840,590);
+    c.save();c.translate(540,430);c.scale(2.75,2.75);
+    poly(c,[[-99,114],[-85,40],[-36,18],[36,18],[83,45],[103,114]],'#684352');
+    poly(c,[[-30,22],[-14,11],[20,16],[40,35],[24,115],[-35,115]],'#d7ccb0');
+    poly(c,[[14,23],[25,28],[16,115],[5,115]],'#79505e');
+    poly(c,[[-20,4],[-21,30],[0,44],[21,25],[18,0]],'#af8764');
+    poly(c,[[-33,-59],[-21,-83],[13,-84],[34,-62],[29,-11],[15,18],[-8,20],[-30,-9]],'#c5a07b');
+    poly(c,[[8,-80],[31,-61],[27,-12],[15,12],[6,-2],[12,-29]],'#a87f5d');
+    poly(c,[[-35,-45],[-34,-67],[-19,-88],[10,-93],[30,-76],[35,-58],[29,-41],[19,-65],[-4,-69],[-23,-58]],'#888573');
+    poly(c,[[-26,-11],[-16,7],[2,14],[21,-4],[21,6],[13,20],[-7,25],[-23,6]],'#777668');
+    lineCard(c,[[-24,-38],[-11,-39]],'#594f3f',2);lineCard(c,[[10,-39],[23,-38]],'#594f3f',2);
+    ellipse(c,-16,-32,2,1.8,'#313b32');ellipse(c,16,-32,2,1.8,'#313b32');poly(c,[[0,-36],[-5,-16],[6,-15]],'#967252');lineCard(c,[[-8,-1],[10,0]],'#74543e',1.4);
+    for(let i=-3;i<=3;i++){c.save();c.translate(i*8,-66-Math.abs(i)*2);c.rotate(i*.12);ellipse(c,0,0,6,2.7,'#bba169');c.restore();}
+    ellipse(c,-39,44,6,6,'#c8aa6d');lineCard(c,[[-33,47],[-18,63],[8,73]],'#a87975',1);c.restore();
+  }
+  const fade=c.createLinearGradient(0,460,0,735);fade.addColorStop(0,'#29292a00');fade.addColorStop(.7,'#2d2c2bd4');fade.addColorStop(1,'#2d2c2b');c.fillStyle=fade;c.fillRect(90,460,900,280);c.restore();
+  c.textAlign='center';c.fillStyle=bronze;c.font='26px Georgia';c.fillText('S A C R A M E N T U M',540,85);lineCard(c,[[502,111],[578,111]],'#b6a07788',1);
+  // A modest lead seal recalls the recruit without revealing any character fate.
+  lineCard(c,[[529,659],[522,678],[540,704],[558,677],[550,659]],'#958c715c',1.5);
+  ellipse(c,540,701,25,27,'#a7a798');ellipse(c,539,699,21,23,'#858b81');c.strokeStyle='#c9c5ab';c.lineWidth=1;c.beginPath();c.ellipse(539,699,18,20,-.08,0,Math.PI*2);c.stroke();c.fillStyle='#4b5b52';c.font='23px Georgia';c.fillText('A',539,707);lineCard(c,[[533,683],[529,708]],'#bcc1ab66',1);
+  c.fillStyle='#c8bda6';c.font='italic 33px Georgia';c.fillText('The purple is earned.',540,773);
+  function lines(text,width,size,font='Georgia'){
+    c.font=size+'px '+font;const words=String(text).trim().split(/\s+/),out=[];let current='';
+    for(const word of words){const candidate=current?current+' '+word:word;if(c.measureText(candidate).width<=width){current=candidate;continue;}if(current){out.push(current);current='';}if(c.measureText(word).width<=width){current=word;continue;}for(const ch of Array.from(word)){if(c.measureText(current+ch).width>width){out.push(current);current='';}current+=ch;}}
+    if(current)out.push(current);return out;
+  }
+  function fittedLines(text,width,size,maxLines,min=18,font='Georgia'){let list=lines(text,width,size,font);while(list.length>maxLines&&size>min){size--;list=lines(text,width,size,font);}return {list,size,font};}
+  const emperor=fittedLines(String(name).slice(0,40),900,58,2,38);c.fillStyle=ivory;c.font=emperor.size+'px Georgia';emperor.list.forEach((text,i)=>c.fillText(text,540,(emperor.list.length===1?863:832)+i*(emperor.size+8)));
+  const routeText=route==='battle'||route==='backer'?'An emperor forged in battle':'Acclaimed without a final assault';const manner=fittedLines(routeText,900,28,2,22);c.fillStyle='#d1c5b0';c.font=manner.size+'px Georgia';manner.list.forEach((text,i)=>c.fillText(text,540,948+i*34));
+  lineCard(c,[[430,995],[650,995]],'#b6a07766',1);
+  choices.slice(0,3).forEach((choice,i)=>{const content=fittedLines(choice,850,26,2,18);c.fillStyle=ivory;c.font=content.size+'px Georgia';content.list.forEach((text,j)=>c.fillText(text,540,1050+i*60+j*(content.size+4)));});
+  const destination=fittedLines(url,900,18,2,12,'system-ui');c.fillStyle='#b8aa91';c.font=destination.size+'px system-ui';destination.list.forEach((text,i)=>c.fillText(text,540,1254+i*(destination.size+5)));
+  c.fillStyle=bronze;c.font='17px Georgia';c.fillText('FROM RECRUIT TO EMPEROR',540,1320);
+  lineCard(c,[[42,50],[42,1300]],'#b6a0773b',1);lineCard(c,[[1038,50],[1038,1300]],'#b6a0773b',1);
+}
+function lineCard(c,points,color,width=1){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.strokeStyle=color;c.lineWidth=width;c.stroke();}

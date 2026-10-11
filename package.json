@@ -1,6 +1,6 @@
 {
   "name": "sacramentum",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "A complete twelve-chapter Roman tactical chronicle for the browser.",
@@ -10,7 +10,7 @@
     "preview": "node scripts/serve.mjs dist",
     "test": "node --test tests/*.test.mjs",
     "autoplay": "node scripts/autoplay.mjs",
-    "verify": "npm test && npm run autoplay && npm run build"
+    "verify": "npm test && npm run autoplay && npm run build && node scripts/verify-assets.mjs"
   },
   "engines": { "node": ">=20" }
 }

@@ -1,6 +1,6 @@
 # License and asset notices
 
-This project uses code-drawn artwork and browser-rendered text. No external photographs, illustrations, font files, music recordings or sound recordings are bundled. System fonts are rendered by the device; the project does not distribute those font files.
+This project combines code-drawn tactical artwork with original AI-generated portraits and historical scene illustrations created for this project using the built-in image generation tool. The optimized illustrations are bundled locally; gameplay has no runtime image-generation or external image-fetching dependency. See asset-manifest.json and art-generation.md for per-asset provenance, intended use, export settings and rights limitations. No third-party photographs, font files, music recordings or sound recordings are bundled. System fonts are rendered by the device; the project does not distribute those font files.
 
 The source and narrative were prepared for this Sacramentum build. A source-code distribution license and copyright-holder declaration have not been selected here. Making the game free to play does not by itself grant a license to redistribute its source. The repository owner should choose the appropriate license before any public source release; this notice does not assert ownership or invent a license grant.
 
