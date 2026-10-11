@@ -1,0 +1,356 @@
+{
+  "kind": "Automated tuning evidence; not a human engagement test",
+  "scenarios": "Explicitly injected repeatable test encounters; not the full-route harness",
+  "seedSet": [
+    17,
+    275,
+    913
+  ],
+  "greedy": {
+    "runs": 9,
+    "wins": 9,
+    "losses": 0,
+    "turns": 61,
+    "commanderHealth": 107
+  },
+  "tactical": {
+    "runs": 9,
+    "wins": 9,
+    "losses": 0,
+    "turns": 64,
+    "commanderHealth": 149
+  },
+  "runs": [
+    {
+      "label": "first field assignment",
+      "seed": 17,
+      "style": "greedy",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 3,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "first field assignment",
+      "seed": 17,
+      "style": "tactical",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 11,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "first field assignment",
+      "seed": 275,
+      "style": "greedy",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 3,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "first field assignment",
+      "seed": 275,
+      "style": "tactical",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 11,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "first field assignment",
+      "seed": 913,
+      "style": "greedy",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 3,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "first field assignment",
+      "seed": 913,
+      "style": "tactical",
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 9,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 17,
+      "style": "greedy",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 16,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 17,
+      "style": "tactical",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 18,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 275,
+      "style": "greedy",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 16,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 275,
+      "style": "tactical",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 18,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 913,
+      "style": "greedy",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 16,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "marsh rescue",
+      "seed": 913,
+      "style": "tactical",
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 18,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 17,
+      "style": "greedy",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 17,
+      "used": [
+        "move",
+        "brace",
+        "formation",
+        "strike",
+        "throw"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 17,
+      "style": "tactical",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 21,
+      "used": [
+        "formation",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 275,
+      "style": "greedy",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 17,
+      "used": [
+        "move",
+        "brace",
+        "formation",
+        "strike",
+        "throw"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 275,
+      "style": "tactical",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 23,
+      "used": [
+        "formation",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 913,
+      "style": "greedy",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 16,
+      "used": [
+        "move",
+        "brace",
+        "formation",
+        "strike",
+        "throw"
+      ]
+    },
+    {
+      "label": "formation command fixture",
+      "seed": 913,
+      "style": "tactical",
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 20,
+      "used": [
+        "formation",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    }
+  ],
+  "interpretation": "Both bots know the rally/defence objectives. The tactical policy searches passable paths around occupied roads, uses shields and Rally, and spends command orders to coordinate attacks; greedy pursues the closest immediate action and does not plan protective positions. Win rate, casualties, turns and surviving commander health are reported together."
+}

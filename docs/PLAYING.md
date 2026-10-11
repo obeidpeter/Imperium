@@ -1,6 +1,6 @@
 # Playing Sacramentum
 
-Start at the title screen with **Swear the oath**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
+Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
 ## The campaign loop
 
@@ -17,7 +17,7 @@ There is no mandatory grinding. The campaign map shows completed chapters and se
 
 Every battle and Contest action follows the same route:
 
-1. Select a unit on the board or its named unit button.
+1. Select a unit on the board or the named unit selector.
 2. Choose an available action.
 3. Select a highlighted tile or choose a target from the target list.
 4. Read the effect, target, and cost in the preview.
@@ -27,11 +27,11 @@ Every battle and Contest action follows the same route:
 
 ### Mouse and touch
 
-Click or tap units, actions, targets, and Confirm. The target selector supplies the same choices as the map. No essential action requires hover or a double tap. On a narrow screen, scroll between the board and the action panel when necessary.
+Click or tap units, actions, targets, and Confirm. The target selector supplies the same choices as the map. No essential action requires hover or a double tap. On a narrow screen, the board, unit selector, action selector, target preview, Confirm and End turn are grouped together. Supporting mission details and dispatches open below. Enlarged text uses normal scrolling.
 
 ### Keyboard
 
-Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit or target. **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit buttons and target selector provide a complete alternative to navigating the board spatially.
+Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit or target. **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
 
 Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional. Reduced motion is available, and game meaning never depends on audio alone.
 
@@ -54,7 +54,7 @@ The protagonist is marked with a star. His fall loses the battle. Each unit has 
 
 Marsh slows movement. Walls and high ground protect. River crossings funnel movement through fords. Flanking changes defence, and heavy cavalry tires in heat. Avoid letting a commander become surrounded while a more expendable formation chases an enemy.
 
-Command capacity is **1** in Chapter IV, **3** in V, **4** in VI, **5** in VII–VIII, and **6** thereafter. The protagonist’s own direct actions do not spend this budget. Unordered allies follow their visible intentions. Formation orders use the units’ existing action limits.
+Command capacity is **1** in Chapter IV, **3** in V, **4** in VI, **5** in VII–VIII, and **6** thereafter. The protagonist’s own direct actions do not spend this budget. Unordered allies follow their visible intentions. Formation orders use the units’ existing action limits and last only for the current round. Shield wall gives two protection but limits movement to one; line ignores the marsh surcharge and reduces morale loss by five; wedge adds one attack and one incoming damage. Facing shown on unit bases determines frontal defence; strikes preview the actual approach.
 
 Named companions’ permanent fates follow clearly signalled narrative choices. An allied unit’s ordinary tactical defeat does not silently kill a recurring character in the story. In a rescue, even a difficult personal decision does not remove the chance to Assist another casualty and complete the mission.
 
@@ -71,10 +71,10 @@ Members’ **Stance** runs from −6 to +6. At +1 a member votes for your motion
 | Threaten | Fast support at the cost of Public Confidence and resistance in the member’s bloc. |
 | Address the Chamber | An area stance shift; positioning matters, and the ability has a cooldown. |
 | Rebut | Restore a friendly speaker’s Resolve or weaken a rival’s next speech. |
-| Invoke Record | Use completed military achievements to strengthen an argument. |
+| Invoke Record | Appeal to a delegate once per Contest. Service-focused delegates respond most; grain and office interests respond weakly. |
 | Denounce | Reduce a rival speaker’s Resolve. Their withdrawal removes actions, not their vote. |
 
-Keep an eye on rival intentions. A coalition built only on bare +1 support can be overturned before the deadline. Use both player speakers, move into useful range, and defend enough votes while demonstrating that chapter’s required new abilities. The [Contest rules sheet](contest-rules.md) contains exact tuning values.
+Inspect each delegate’s interest. A grain or office promise can achieve more than a military appeal; law responds to persuasion and public address. Concrete promises carry their debt beyond the vote. Keep an eye on rival intentions. A coalition built only on bare +1 support can be overturned before the deadline. Use both player speakers, move into useful range, and defend enough votes while demonstrating that chapter’s required new abilities. The [Contest rules sheet](contest-rules.md) contains exact tuning values.
 
 ## What each chapter adds
 
@@ -121,3 +121,14 @@ To keep or transfer progress:
 A code includes your chosen name, decisions, progression, and encounter state. The game does not upload it. An incompatible or damaged code is rejected without replacing the campaign. If a second tab has saved more recent progress, reload rather than overwriting it.
 
 For offline play, open the **production build**, allow its files to download, and wait for the offline-ready banner. On iPhone, add the game to the Home Screen through Safari’s Share menu. Browser storage can still be cleared, so a separate save code is the durable backup under your control.
+
+
+## The company and recovery history
+
+The company roll names the small group whose service follows the campaign. Successful field commits record deployments and commend safe returns. Wounds reduce readiness temporarily; the recovery counter falls as encounters are completed. Previewing, retrying or reopening a result cannot grant duplicate service. Ordinary tactical defeat never permanently deletes a named veteran. Promotions describe the chapter’s leadership record.
+
+The Governor’s relief plan has field consequences: river convoys strengthen road-defence morale, farm convoys protect grain-store integrity, and a large town allocation improves Landholder support. Shared tenure and settler priority change the tribunal’s starting blocs. The provincial record in camp states the exact effects.
+
+**Pause → Recover an earlier checkpoint** lists the last three distinct checkpoints or replaced chronicles. Inspect one, then explicitly restore it. The displaced save remains recoverable within that bounded history. Keep an exported save separately: clearing browser data can erase both current and recovery records.
+
+If another tab saves, use **Continue in this tab** to review the takeover and load the latest chronicle. Export the current tab first if it has progress you want to preserve. See [save recovery](save-recovery.md) for storage limits and [the playtest kit](playtest-kit.md) for physical-device checks.

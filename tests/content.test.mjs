@@ -79,7 +79,8 @@ test('Content audit: absent companions never speak after their fate and replacem
 });
 
 test('Content audit: the original oath is identical at the bookends and all four early choices return',()=>{
-  assert.equal(CHAPTERS[0].intro.find(l=>l.speaker.startsWith('Oath')).text,OATH);
+  assert.ok(!CHAPTERS[0].intro.some(l=>l.text===OATH),'The oath must not precede completed training.');
+  assert.equal(CHAPTERS[0].oath[0].text,OATH);
   assert.equal(CHAPTERS[11].aftermath.find(l=>l.speaker.startsWith('The legions')).text,OATH);
   const state=newGame();
   state.decisions=Object.fromEntries(CHAPTERS.slice(0,4).map(ch=>[ch.decision.id,ch.decision.options[0].id]));
@@ -89,7 +90,7 @@ test('Content audit: the original oath is identical at the bookends and all four
 
 test('Content audit: the Contest rules sheet lists exactly the authored deadline turns',async()=>{
   const sheet=await readFile(new URL('../docs/contest-rules.md',import.meta.url),'utf8');
-  const rows=[...sheet.matchAll(/^\| (ch\d+-[a-z]+) \| (\d+) \|$/gm)].map(([,id,turns])=>[id,Number(turns)]);
+  const rows=[...sheet.matchAll(/^\| (ch\d+-[a-z]+) \| [^|]+ \| [^|]+ \| (\d+) \|$/gm)].map(([,id,turns])=>[id,Number(turns)]);
   const contests=CHAPTERS.flatMap(ch=>ch.encounters.filter(e=>e.kind==='contest').map(e=>[e.id,e.turnLimit]));
   assert.deepEqual(rows,contests,'The rules sheet must match every configured Contest deadline.');
 });

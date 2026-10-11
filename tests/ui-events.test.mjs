@@ -1,45 +1,71 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
+import {createRenderScheduler,prepareShareCard} from '../src/ui/render-controller.js';
+import {createTurnReplay,turnReplaySteps} from '../src/ui/turn-replay.js';
+import {encounterView,selectedCommand,selectedActor} from '../src/ui/encounter-view.js';
+import {createCampaignViews} from '../src/ui/campaign-views.js';
+import * as Game from '../src/core/game.js';
 
-// Execute the production event functions, with a small deterministic DOM/clock.
-// The checks exercise races; they do not assert source text or duplicate behavior.
-const source=readFileSync(new URL('../src/ui/app.js',import.meta.url),'utf8');
-function productionFunction(name){const start=source.search(new RegExp(`^(?:async )?function ${name}\\(`,'m'));assert.ok(start>=0,`Missing ${name}`);const rest=source.slice(start),next=rest.slice(1).search(/^(?:async )?function \w+\(/m);return next<0?rest:rest.slice(0,next+1);}
-
-test('Repeated renders before a frame bind only the current board and consume motion once',()=>{
-  const frames=[],boards=[],calls={paint:0,bind:0,motion:0},toast={hidden:false};let board;
-  const context=vm.createContext({
-    state:{phase:'encounter',chapter:1,encounter:{kind:'battle'}},screen:'game',renderTicket:0,settings:{reducedMotion:false,textScale:1},pendingMotion:{before:{},after:{}},
-    document:{activeElement:{id:'battle-board'},documentElement:{dataset:{},style:{setProperty(){}}},querySelector(selector){return selector==='#toast'?toast:board;},getElementById(){return board;}},
-    app:{set innerHTML(value){board={markup:value,bindings:0,focuses:0,focus(){this.focuses++;}};boards.push(board);}},
-    titleView:()=>'',battle:()=>'<canvas id="battle-board"></canvas>',promotion:()=>'',ending:()=>'',camp:()=>'',
-    requestAnimationFrame(fn){frames.push(fn);},paint(){calls.paint++;},bindBoard(){calls.bind++;board.bindings++;},playEncounterMotion(canvas){calls.motion++;assert.equal(canvas,board);}
-  });
-  vm.runInContext(productionFunction('render'),context);
-  context.render();context.render();
-  assert.equal(frames.length,2);frames.forEach(fn=>fn());
-  assert.deepEqual(calls,{paint:1,bind:1,motion:1});assert.equal(boards[0].bindings,0);assert.equal(boards[1].bindings,1);assert.equal(boards[1].focuses,1);assert.equal(context.pendingMotion,null);
+test('Only the latest DOM render binds controls; cancellation makes queued frames inert',()=>{
+  const frames=[],commits=[];
+  const scheduler=createRenderScheduler(fn=>frames.push(fn),payload=>commits.push(payload));
+  scheduler.schedule({board:1});scheduler.schedule({board:2});frames.splice(0).forEach(fn=>fn());
+  assert.deepEqual(commits,[{board:2}]);
+  scheduler.schedule({board:3});scheduler.cancel();frames.splice(0).forEach(fn=>fn());
+  assert.deepEqual(commits,[{board:2}]);
 });
 
-test('A delayed reign card cannot download blank art or overwrite a replacement card',async()=>{
-  const pending=[],draws=[],canvases=[];let current,buttons;
-  const campaign={name:'Aurelius',route:'settlement',decisions:{ch9:'mercy',ch4:'withdraw',ch11:'independent'}},before=JSON.stringify(campaign);
-  const context=vm.createContext({
-    state:campaign,shareFile:null,CONFIG:{siteUrl:'https://sacramentum.test/'},location:{href:'https://sacramentum.test/'},URL,File:class{constructor(parts,name,options){Object.assign(this,{parts,name,...options});}},
-    document:{querySelector(selector){return selector==='#reign-card'?current:buttons.share;}},
-    modal:{querySelector(){return buttons.download;}},
-    showModal(title,html){if(current)current.isConnected=false;current={isConnected:true,toBlob(callback){callback({type:'image/png',size:1234});}};canvases.push(current);buttons={};for(const key of ['download','share']){const markup=html.match(new RegExp(`<button[^>]*data-cmd="${key}-card"[^>]*>`))[0];buttons[key]={disabled:/\sdisabled(?:[\s>])/.test(markup),textContent:'Preparing card…'};}},
-    heroPortrait:()=>'/emperor.webp',chapterScene:()=>'/rome.webp',loadArt:()=>new Promise(resolve=>pending.push(resolve)),
-    drawReignCard(canvas,values){draws.push({canvas,values});}
-  });
-  vm.runInContext(productionFunction('showShare'),context);
-  const stale=context.showShare();const firstButtons=buttons;
-  assert.equal(firstButtons.download.disabled,true);assert.equal(firstButtons.share.disabled,true);assert.equal(draws.length,0);
-  const latest=context.showShare();const latestCanvas=current;
-  pending[0]({id:'old-portrait'});pending[1]({id:'old-scene'});await stale;
-  assert.equal(draws.length,0);assert.equal(buttons.download.disabled,true);assert.equal(context.shareFile,null);
-  pending[2]({id:'portrait'});pending[3](null);await latest;
-  assert.equal(draws.length,1);assert.equal(draws[0].canvas,latestCanvas);assert.equal(draws[0].values.portrait.id,'portrait');assert.equal(draws[0].values.scene,null);assert.equal(buttons.download.disabled,false);assert.equal(buttons.share.disabled,false);assert.equal(context.shareFile.name,'sacramentum-reign.png');assert.equal(JSON.stringify(campaign),before);
+test('A withdrawn selected speaker falls back to a living controllable speaker',()=>{
+  const hero={id:'hero',side:'player',resolve:8,hp:8},ally={id:'ally',side:'ally',resolve:0,hp:10},enemy={id:'rival',side:'enemy',resolve:9,hp:9};
+  const state={encounter:{units:[hero,ally,enemy]}};
+  assert.equal(selectedActor(state,'ally'),hero);
+  hero.resolve=0;ally.resolve=5;
+  assert.equal(selectedActor(state,'hero'),ally);
+  ally.resolve=0;
+  assert.equal(selectedActor(state,'hero'),hero,'A withdrawn chamber may still advance to its deadline vote.');
+});
+
+test('Delayed card assets and encoding cannot enable a stale or blank card',async()=>{
+  const pending=[],draws=[];
+  const card=()=>({canvas:{isConnected:true,toBlob(fn){fn({size:1234});}},downloadButton:{disabled:false},shareButton:{disabled:false}});
+  const first=card(),second=card(),summary={name:'Aurelius',choices:['Mercy']};
+  const prepare=target=>prepareShareCard({...target,summary,loadPortrait:()=>new Promise(resolve=>pending.push(resolve)),loadScene:()=>new Promise(resolve=>pending.push(resolve)),draw:(canvas,data)=>draws.push({canvas,data}),makeFile:blob=>({blob,name:'reign.png'})});
+  const stale=prepare(first);assert.ok(first.downloadButton.disabled);assert.ok(first.shareButton.disabled);
+  first.canvas.isConnected=false;const current=prepare(second);
+  pending[0]({id:'stale'});pending[1](null);assert.equal(await stale,null);assert.equal(draws.length,0);
+  pending[2]({id:'portrait'});pending[3](null);const file=await current;
+  assert.equal(file.name,'reign.png');assert.equal(draws.length,1);assert.equal(draws[0].canvas,second.canvas);assert.equal(draws[0].data.portrait.id,'portrait');assert.equal(second.downloadButton.disabled,false);assert.equal(second.shareButton.disabled,false);
+  const disconnected=card();disconnected.canvas.toBlob=fn=>{disconnected.canvas.isConnected=false;fn({size:1});};
+  assert.equal(await prepareShareCard({...disconnected,summary,loadPortrait:async()=>null,loadScene:async()=>null,draw(){},makeFile(){throw Error('must not encode disconnected card');}}),null);
+  assert.ok(disconnected.downloadButton.disabled);
+});
+
+test('Turn replay is cancellable, bounded, inert under reduced motion, and cannot consume rules state',()=>{
+  const timers=[],seen=[];let finishes=0;
+  const player=createTurnReplay({show:(text,i,n)=>seen.push([text,i,n]),finish:()=>finishes++,delay:fn=>(timers.push(fn),timers.length),cancelDelay(){}});
+  const before={id:'a',turn:1,status:'active',units:[{id:'hero',name:'Aurelius',hp:10,x:1,y:1}]};
+  const after={id:'a',turn:2,status:'active',units:[{id:'hero',name:'Aurelius',hp:8,x:2,y:1}]};
+  const state=JSON.stringify({before,after});
+  const steps=turnReplaySteps(before,after,Array.from({length:20},(_,i)=>`Event ${i}`));
+  assert.equal(steps.length,6);player.start(steps);assert.ok(player.active);assert.equal(seen.length,1);
+  player.stop();timers.splice(0).forEach(fn=>fn());assert.equal(seen.length,1);assert.equal(finishes,1);
+  player.start(steps,true);assert.equal(seen.length,1);assert.equal(player.active,false);
+  player.start(['One']);timers.shift()();assert.equal(player.active,false);assert.equal(finishes,2);
+  assert.match(turnReplaySteps(before,after)[0],/Aurelius moves to 3B and loses 2 health/);
+  assert.equal(JSON.stringify({before,after}),state);
+});
+
+test('Encounter and story views render actual legal actions without changing campaign state',()=>{
+  const state=Game.newGame('<Aurelius>');Game.choose(state,'friendship');
+  // Choose the authored option by ID when the data changes wording.
+  if(!state.decisions.ch1)Game.choose(state,Game.getChapter(state).decision.options[0].id);
+  assert.equal(Game.startEncounter(state).ok,true);
+  const original=Game.serialize(state),legal=Game.getTargets(state,'hero','move'),target=legal[0];
+  const html=encounterView({state,selected:'hero',action:'move',target,formation:'shield-wall',orderAction:'advance',header:()=>'',footer:()=>'',requirements:()=>''});
+  assert.match(html,/id="unit-select"/);assert.match(html,/id="action-select"/);assert.match(html,/id="target-select"/);assert.match(html,/id="confirm-action"/);assert.match(html,/id="end-turn"/);
+  assert.ok(!html.includes('<Aurelius>'));assert.ok(html.includes('&lt;Aurelius&gt;'));
+  assert.equal(Game.preview(state,selectedCommand({selected:'hero',action:'move',target})).ok,true);
+  assert.equal(Game.serialize(state),original);
+  const views=createCampaignViews(()=>({state,screen:'game',settings:{},saving:false,offline:false}));
+  views.story();assert.equal(Game.serialize(state),original);
 });

@@ -1,0 +1,686 @@
+{
+  "provenance": "Injected Chapter 2 scene generated using the frozen pre-improvement v0.2 core, not a legal full-route completion. Includes exact original start and saved mid-encounter state.",
+  "start": {
+    "version": 1,
+    "name": "Legacy checkpoint fixture — injected",
+    "seed": 275,
+    "rng": 953922237,
+    "chapter": 2,
+    "phase": "encounter",
+    "rank": "Miles",
+    "completed": [
+      1
+    ],
+    "milestones": [
+      "chapter:1"
+    ],
+    "decisions": {
+      "ch2": "carry"
+    },
+    "meters": {
+      "army": 23,
+      "political": 5,
+      "public": 14
+    },
+    "relationships": {
+      "mentor": 10,
+      "comrade": 22,
+      "rival": 0,
+      "patron": 0,
+      "settler": 0,
+      "senator": 0
+    },
+    "obligations": [],
+    "inventory": [
+      "Plain tunic",
+      "Oval training shield",
+      "Three javelins",
+      "Spatha"
+    ],
+    "supplies": 7,
+    "encounterIndex": 0,
+    "encounter": {
+      "id": "ch2-marsh",
+      "kind": "battle",
+      "title": "The broken causeway",
+      "objective": "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Hold through the end of turn 8; finish by turn 14.",
+      "type": "rescue",
+      "width": 8,
+      "height": 8,
+      "terrain": [
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "high",
+          "high",
+          "road",
+          "marsh",
+          "high",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "high",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ]
+      ],
+      "units": [
+        {
+          "id": "hero",
+          "name": "Legacy checkpoint fixture — injected",
+          "side": "player",
+          "x": 0,
+          "y": 3,
+          "hp": 22,
+          "maxHp": 22,
+          "role": "soldier",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Hold position",
+          "ammo": 3,
+          "damage": 4
+        },
+        {
+          "id": "ally0",
+          "name": "Lucan — tent-mate",
+          "side": "ally",
+          "x": 0,
+          "y": 1,
+          "hp": 13,
+          "maxHp": 13,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Advance toward the standard; strike adjacent threats.",
+          "damage": 3
+        },
+        {
+          "id": "enemy0",
+          "name": "Gothic warband",
+          "side": "enemy",
+          "x": 6,
+          "y": 1,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Charge toward the commander.",
+          "damage": 3,
+          "hidden": false
+        },
+        {
+          "id": "enemy1",
+          "name": "Gothic archers",
+          "side": "enemy",
+          "x": 5,
+          "y": 3,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "archer",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Loose arrows at exposed troops.",
+          "damage": 3,
+          "hidden": false
+        },
+        {
+          "id": "escort",
+          "name": "Wounded survivor",
+          "side": "neutral",
+          "x": 2,
+          "y": 4,
+          "hp": 14,
+          "maxHp": 14,
+          "role": "escort",
+          "moved": false,
+          "acted": false,
+          "move": 1,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Needs an escort to the rally standard.",
+          "escorted": false
+        }
+      ],
+      "turn": 1,
+      "turnLimit": 14,
+      "status": "active",
+      "commandCapacity": 0,
+      "commandsLeft": 0,
+      "log": [
+        "Turn 1. Use Assist on a wounded soldier, then lead the survivors to the rally marker. Hold through at least turn 8 while completing the objective."
+      ],
+      "usedAbilities": [],
+      "goal": {
+        "x": 7,
+        "y": 3
+      },
+      "requiredAbility": "assist",
+      "staged": {
+        "meters": {
+          "army": 0,
+          "political": 0,
+          "public": 0
+        },
+        "supplies": 0,
+        "obligations": []
+      },
+      "defence": 100,
+      "route": "battle",
+      "minimumTurns": 8,
+      "reinforcements": 0,
+      "requiredAbilities": []
+    },
+    "snapshot": {
+      "version": 1,
+      "name": "Legacy checkpoint fixture — injected",
+      "seed": 275,
+      "rng": 275,
+      "chapter": 2,
+      "phase": "camp",
+      "rank": "Miles",
+      "completed": [
+        1
+      ],
+      "milestones": [
+        "chapter:1"
+      ],
+      "decisions": {
+        "ch2": "carry"
+      },
+      "meters": {
+        "army": 23,
+        "political": 5,
+        "public": 14
+      },
+      "relationships": {
+        "mentor": 10,
+        "comrade": 22,
+        "rival": 0,
+        "patron": 0,
+        "settler": 0,
+        "senator": 0
+      },
+      "obligations": [],
+      "inventory": [
+        "Plain tunic",
+        "Oval training shield",
+        "Three javelins",
+        "Spatha"
+      ],
+      "supplies": 7,
+      "encounterIndex": 0,
+      "encounter": null,
+      "snapshot": null,
+      "log": [
+        "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+        "DEVELOPMENT SCENARIO: chapter/state injection; not a campaign completion.",
+        "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+      ],
+      "history": [],
+      "capabilityUse": {},
+      "chapterCapabilities": {},
+      "encounterOptions": {},
+      "settings": {
+        "audio": false,
+        "reducedMotion": false
+      },
+      "preparation": null,
+      "stratagem": null,
+      "route": null,
+      "allocation": null,
+      "judgment": null,
+      "negotiation": null,
+      "oath": false
+    },
+    "log": [
+      "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+      "DEVELOPMENT SCENARIO: chapter/state injection; not a campaign completion.",
+      "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+    ],
+    "history": [],
+    "capabilityUse": {},
+    "chapterCapabilities": {},
+    "encounterOptions": {},
+    "settings": {
+      "audio": false,
+      "reducedMotion": false
+    },
+    "preparation": null,
+    "stratagem": null,
+    "route": null,
+    "allocation": null,
+    "judgment": null,
+    "negotiation": null,
+    "oath": false
+  },
+  "active": {
+    "version": 1,
+    "name": "Legacy checkpoint fixture — injected",
+    "seed": 275,
+    "rng": 953922237,
+    "chapter": 2,
+    "phase": "encounter",
+    "rank": "Miles",
+    "completed": [
+      1
+    ],
+    "milestones": [
+      "chapter:1"
+    ],
+    "decisions": {
+      "ch2": "carry"
+    },
+    "meters": {
+      "army": 23,
+      "political": 5,
+      "public": 14
+    },
+    "relationships": {
+      "mentor": 10,
+      "comrade": 22,
+      "rival": 0,
+      "patron": 0,
+      "settler": 0,
+      "senator": 0
+    },
+    "obligations": [],
+    "inventory": [
+      "Plain tunic",
+      "Oval training shield",
+      "Three javelins",
+      "Spatha"
+    ],
+    "supplies": 7,
+    "encounterIndex": 0,
+    "encounter": {
+      "id": "ch2-marsh",
+      "kind": "battle",
+      "title": "The broken causeway",
+      "objective": "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Hold through the end of turn 8; finish by turn 14.",
+      "type": "rescue",
+      "width": 8,
+      "height": 8,
+      "terrain": [
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "high",
+          "high",
+          "road",
+          "marsh",
+          "high",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "high",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ]
+      ],
+      "units": [
+        {
+          "id": "hero",
+          "name": "Legacy checkpoint fixture — injected",
+          "side": "player",
+          "x": 1,
+          "y": 3,
+          "hp": 20,
+          "maxHp": 22,
+          "role": "soldier",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 72,
+          "intent": "Hold position",
+          "ammo": 3,
+          "damage": 4,
+          "ordered": false,
+          "braced": false
+        },
+        {
+          "id": "ally0",
+          "name": "Lucan — tent-mate",
+          "side": "ally",
+          "x": 1,
+          "y": 1,
+          "hp": 13,
+          "maxHp": 13,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Move toward the nearest threat; attack if in reach.",
+          "damage": 3,
+          "ordered": false,
+          "braced": false
+        },
+        {
+          "id": "enemy0",
+          "name": "Gothic warband",
+          "side": "enemy",
+          "x": 5,
+          "y": 1,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Charge toward the commander.",
+          "damage": 3,
+          "hidden": false,
+          "ordered": false,
+          "braced": false
+        },
+        {
+          "id": "enemy1",
+          "name": "Gothic archers",
+          "side": "enemy",
+          "x": 3,
+          "y": 3,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "archer",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Loose arrows at exposed troops.",
+          "damage": 3,
+          "hidden": false,
+          "ordered": false,
+          "braced": false
+        },
+        {
+          "id": "escort",
+          "name": "Wounded survivor",
+          "side": "neutral",
+          "x": 2,
+          "y": 4,
+          "hp": 14,
+          "maxHp": 14,
+          "role": "escort",
+          "moved": false,
+          "acted": false,
+          "move": 1,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Needs an escort to the rally standard.",
+          "escorted": false,
+          "ordered": false,
+          "braced": false
+        }
+      ],
+      "turn": 2,
+      "turnLimit": 14,
+      "status": "active",
+      "commandCapacity": 0,
+      "commandsLeft": 0,
+      "log": [
+        "Turn 1. Use Assist on a wounded soldier, then lead the survivors to the rally marker. Hold through at least turn 8 while completing the objective.",
+        "Move to 2, 4. Costs this unit’s movement.",
+        "Gothic archers hits Legacy checkpoint fixture — injected for 2.",
+        "Turn 2. 0 commands available."
+      ],
+      "usedAbilities": [
+        "move"
+      ],
+      "goal": {
+        "x": 7,
+        "y": 3
+      },
+      "requiredAbility": "assist",
+      "staged": {
+        "meters": {
+          "army": 0,
+          "political": 0,
+          "public": 0
+        },
+        "supplies": 0,
+        "obligations": []
+      },
+      "defence": 100,
+      "route": "battle",
+      "minimumTurns": 8,
+      "reinforcements": 0,
+      "requiredAbilities": []
+    },
+    "snapshot": {
+      "version": 1,
+      "name": "Legacy checkpoint fixture — injected",
+      "seed": 275,
+      "rng": 275,
+      "chapter": 2,
+      "phase": "camp",
+      "rank": "Miles",
+      "completed": [
+        1
+      ],
+      "milestones": [
+        "chapter:1"
+      ],
+      "decisions": {
+        "ch2": "carry"
+      },
+      "meters": {
+        "army": 23,
+        "political": 5,
+        "public": 14
+      },
+      "relationships": {
+        "mentor": 10,
+        "comrade": 22,
+        "rival": 0,
+        "patron": 0,
+        "settler": 0,
+        "senator": 0
+      },
+      "obligations": [],
+      "inventory": [
+        "Plain tunic",
+        "Oval training shield",
+        "Three javelins",
+        "Spatha"
+      ],
+      "supplies": 7,
+      "encounterIndex": 0,
+      "encounter": null,
+      "snapshot": null,
+      "log": [
+        "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+        "DEVELOPMENT SCENARIO: chapter/state injection; not a campaign completion.",
+        "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+      ],
+      "history": [],
+      "capabilityUse": {},
+      "chapterCapabilities": {},
+      "encounterOptions": {},
+      "settings": {
+        "audio": false,
+        "reducedMotion": false
+      },
+      "preparation": null,
+      "stratagem": null,
+      "route": null,
+      "allocation": null,
+      "judgment": null,
+      "negotiation": null,
+      "oath": false
+    },
+    "log": [
+      "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+      "DEVELOPMENT SCENARIO: chapter/state injection; not a campaign completion.",
+      "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+    ],
+    "history": [],
+    "capabilityUse": {
+      "move": true
+    },
+    "chapterCapabilities": {
+      "2": [
+        "move"
+      ]
+    },
+    "encounterOptions": {},
+    "settings": {
+      "audio": false,
+      "reducedMotion": false
+    },
+    "preparation": null,
+    "stratagem": null,
+    "route": null,
+    "allocation": null,
+    "judgment": null,
+    "negotiation": null,
+    "oath": false
+  }
+}

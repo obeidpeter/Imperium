@@ -1,0 +1,407 @@
+{
+  "source": "New Game; only legal gameplay commands; no debug injection",
+  "seed": 275,
+  "rank": "Augustus",
+  "completed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "totalTurns": 204,
+  "encounters": [
+    {
+      "id": "ch1-training",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 3,
+      "losses": 0,
+      "heroHealth": 20,
+      "used": [
+        "move",
+        "throw",
+        "strike",
+        "brace"
+      ]
+    },
+    {
+      "id": "ch1-road",
+      "chapter": 1,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 11,
+      "used": [
+        "move",
+        "brace",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch2-marsh",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 18,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch2-rearguard",
+      "chapter": 2,
+      "kind": "battle",
+      "status": "won",
+      "turns": 4,
+      "losses": 0,
+      "heroHealth": 16,
+      "used": [
+        "move",
+        "throw",
+        "strike",
+        "brace"
+      ]
+    },
+    {
+      "id": "ch3-station",
+      "chapter": 3,
+      "kind": "battle",
+      "status": "won",
+      "turns": 4,
+      "losses": 0,
+      "heroHealth": 18,
+      "used": [
+        "scout",
+        "move",
+        "throw"
+      ]
+    },
+    {
+      "id": "ch3-rolls",
+      "chapter": 3,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 22,
+      "used": [
+        "move",
+        "brace",
+        "throw",
+        "assist"
+      ]
+    },
+    {
+      "id": "ch4-gate",
+      "chapter": 4,
+      "kind": "battle",
+      "status": "won",
+      "turns": 13,
+      "losses": 3,
+      "heroHealth": 8,
+      "used": [
+        "order",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch4-wall",
+      "chapter": 4,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 23,
+      "used": [
+        "order",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch5-mine",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 20,
+      "used": [
+        "formation",
+        "move",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch5-wall",
+      "chapter": 5,
+      "kind": "battle",
+      "status": "won",
+      "turns": 12,
+      "losses": 1,
+      "heroHealth": 20,
+      "used": [
+        "formation",
+        "brace",
+        "throw",
+        "strike"
+      ]
+    },
+    {
+      "id": "ch6-wells",
+      "chapter": 6,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "rally",
+        "throw",
+        "assist",
+        "order"
+      ]
+    },
+    {
+      "id": "ch6-eagle",
+      "chapter": 6,
+      "kind": "battle",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 24,
+      "used": [
+        "formation",
+        "move",
+        "rally",
+        "throw",
+        "strike",
+        "order"
+      ]
+    },
+    {
+      "id": "ch7-council",
+      "chapter": 7,
+      "kind": "contest",
+      "status": "won",
+      "turns": 8,
+      "losses": 0,
+      "heroHealth": 9,
+      "used": [
+        "move",
+        "persuade"
+      ]
+    },
+    {
+      "id": "ch7-legion",
+      "chapter": 7,
+      "kind": "battle",
+      "status": "won",
+      "turns": 7,
+      "losses": 0,
+      "heroHealth": 7,
+      "used": [
+        "deploy",
+        "formation",
+        "rally",
+        "move",
+        "throw"
+      ]
+    },
+    {
+      "id": "ch8-parley",
+      "chapter": 8,
+      "kind": "contest",
+      "status": "won",
+      "turns": 10,
+      "losses": 1,
+      "heroHealth": 0,
+      "used": [
+        "move",
+        "persuade"
+      ]
+    },
+    {
+      "id": "ch8-ferry",
+      "chapter": 8,
+      "kind": "battle",
+      "status": "won",
+      "turns": 11,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "rally",
+        "throw",
+        "assist",
+        "order"
+      ]
+    },
+    {
+      "id": "ch8-crossing",
+      "chapter": 8,
+      "kind": "battle",
+      "status": "won",
+      "turns": 9,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "rally"
+      ]
+    },
+    {
+      "id": "ch9-wing",
+      "chapter": 9,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "rally"
+      ]
+    },
+    {
+      "id": "ch9-city",
+      "chapter": 9,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 8,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "rally"
+      ]
+    },
+    {
+      "id": "ch10-road",
+      "chapter": 10,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "rally",
+        "throw"
+      ]
+    },
+    {
+      "id": "ch10-tribunal",
+      "chapter": 10,
+      "kind": "contest",
+      "status": "won",
+      "turns": 12,
+      "losses": 0,
+      "heroHealth": 12,
+      "used": [
+        "move",
+        "address",
+        "rebut",
+        "persuade"
+      ]
+    },
+    {
+      "id": "ch11-accounts",
+      "chapter": 11,
+      "kind": "contest",
+      "status": "won",
+      "turns": 12,
+      "losses": 0,
+      "heroHealth": 12,
+      "used": [
+        "move",
+        "record",
+        "denounce",
+        "address",
+        "rebut",
+        "persuade"
+      ]
+    },
+    {
+      "id": "ch11-adlection",
+      "chapter": 11,
+      "kind": "contest",
+      "status": "won",
+      "turns": 14,
+      "losses": 0,
+      "heroHealth": 12,
+      "used": [
+        "move",
+        "address",
+        "denounce",
+        "record",
+        "rebut",
+        "persuade"
+      ]
+    },
+    {
+      "id": "ch12-legitimacy",
+      "chapter": 12,
+      "kind": "contest",
+      "status": "won",
+      "turns": 14,
+      "losses": 0,
+      "heroHealth": 12,
+      "used": [
+        "move",
+        "address",
+        "persuade",
+        "record",
+        "denounce",
+        "rebut"
+      ]
+    },
+    {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 22,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "rally"
+      ]
+    }
+  ]
+}

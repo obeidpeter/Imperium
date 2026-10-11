@@ -1,0 +1,551 @@
+{
+  "scenario": "Injected Chapter 8 crossing parley; identical seed275 and starting campaign meters; every in-encounter command validated by preview and act.",
+  "encounter": "ch8-parley",
+  "runs": [
+    {
+      "approach": "persuasion",
+      "status": "won",
+      "turns": 10,
+      "votes": {
+        "for": 7,
+        "against": 6,
+        "total": 13,
+        "majority": 7
+      },
+      "promises": 0,
+      "publicConfidenceCost": 0,
+      "actions": {
+        "move": 14,
+        "persuade": 18
+      },
+      "trace": [
+        {
+          "turn": 1,
+          "unitId": "hero",
+          "action": "move",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "turn": 1,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 4,
+          "y": 4,
+          "targetId": "member4"
+        },
+        {
+          "turn": 1,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 2,
+          "y": 5
+        },
+        {
+          "turn": 1,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 2,
+          "y": 6,
+          "targetId": "member6"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 2,
+          "unitId": "hero",
+          "action": "move",
+          "x": 5,
+          "y": 3
+        },
+        {
+          "turn": 2,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 5,
+          "y": 2,
+          "targetId": "member2"
+        },
+        {
+          "turn": 2,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "turn": 2,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 2,
+          "y": 3,
+          "targetId": "member3"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 3,
+          "unitId": "hero",
+          "action": "move",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "turn": 3,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 3,
+          "y": 1,
+          "targetId": "member1"
+        },
+        {
+          "turn": 3,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "turn": 3,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 4,
+          "y": 4,
+          "targetId": "member4"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 4,
+          "unitId": "hero",
+          "action": "move",
+          "x": 2,
+          "y": 2
+        },
+        {
+          "turn": 4,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 2,
+          "y": 1,
+          "targetId": "member0"
+        },
+        {
+          "turn": 4,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 2,
+          "y": 4
+        },
+        {
+          "turn": 4,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 2,
+          "y": 3,
+          "targetId": "member3"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 5,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 2,
+          "y": 1,
+          "targetId": "member0"
+        },
+        {
+          "turn": 5,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "turn": 5,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 3,
+          "y": 1,
+          "targetId": "member1"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 6,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 2,
+          "y": 1,
+          "targetId": "member0"
+        },
+        {
+          "turn": 6,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 4,
+          "y": 2
+        },
+        {
+          "turn": 6,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 5,
+          "y": 2,
+          "targetId": "member2"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 7,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 2,
+          "y": 3,
+          "targetId": "member3"
+        },
+        {
+          "turn": 7,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 3,
+          "y": 2
+        },
+        {
+          "turn": 7,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 3,
+          "y": 1,
+          "targetId": "member1"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 8,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 2,
+          "y": 1,
+          "targetId": "member0"
+        },
+        {
+          "turn": 8,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 4,
+          "y": 2
+        },
+        {
+          "turn": 8,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 5,
+          "y": 2,
+          "targetId": "member2"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 9,
+          "unitId": "hero",
+          "action": "move",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "turn": 9,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 4,
+          "y": 4,
+          "targetId": "member4"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 10,
+          "unitId": "hero",
+          "action": "move",
+          "x": 6,
+          "y": 3
+        },
+        {
+          "turn": 10,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 6,
+          "y": 4,
+          "targetId": "member5"
+        },
+        {
+          "action": "endTurn"
+        }
+      ]
+    },
+    {
+      "approach": "promises",
+      "status": "won",
+      "turns": 10,
+      "votes": {
+        "for": 9,
+        "against": 4,
+        "total": 13,
+        "majority": 7
+      },
+      "promises": 2,
+      "publicConfidenceCost": -9,
+      "actions": {
+        "promise": 2,
+        "move": 13,
+        "persuade": 9,
+        "threaten": 3
+      },
+      "trace": [
+        {
+          "turn": 1,
+          "unitId": "hero",
+          "action": "promise",
+          "x": 2,
+          "y": 3,
+          "targetId": "member3"
+        },
+        {
+          "turn": 1,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 3,
+          "y": 5
+        },
+        {
+          "turn": 1,
+          "unitId": "speaker-ally",
+          "action": "promise",
+          "x": 4,
+          "y": 6,
+          "targetId": "member7"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 2,
+          "unitId": "hero",
+          "action": "move",
+          "x": 3,
+          "y": 4
+        },
+        {
+          "turn": 2,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 4,
+          "y": 4,
+          "targetId": "member4"
+        },
+        {
+          "turn": 2,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 2,
+          "y": 5
+        },
+        {
+          "turn": 2,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 2,
+          "y": 6,
+          "targetId": "member6"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 3,
+          "unitId": "hero",
+          "action": "move",
+          "x": 5,
+          "y": 3
+        },
+        {
+          "turn": 3,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 5,
+          "y": 2,
+          "targetId": "member2"
+        },
+        {
+          "turn": 3,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 3,
+          "y": 3
+        },
+        {
+          "turn": 3,
+          "unitId": "speaker-ally",
+          "action": "threaten",
+          "x": 3,
+          "y": 1,
+          "targetId": "member1"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 4,
+          "unitId": "hero",
+          "action": "move",
+          "x": 6,
+          "y": 3
+        },
+        {
+          "turn": 4,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 6,
+          "y": 4,
+          "targetId": "member5"
+        },
+        {
+          "turn": 4,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 2,
+          "y": 2
+        },
+        {
+          "turn": 4,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 2,
+          "y": 1,
+          "targetId": "member0"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 5,
+          "unitId": "hero",
+          "action": "move",
+          "x": 7,
+          "y": 5
+        },
+        {
+          "turn": 5,
+          "unitId": "hero",
+          "action": "threaten",
+          "x": 6,
+          "y": 6,
+          "targetId": "member8"
+        },
+        {
+          "turn": 5,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 4,
+          "y": 2
+        },
+        {
+          "turn": 5,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 5,
+          "y": 2,
+          "targetId": "member2"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 6,
+          "unitId": "hero",
+          "action": "move",
+          "x": 4,
+          "y": 5
+        },
+        {
+          "turn": 6,
+          "unitId": "hero",
+          "action": "persuade",
+          "x": 4,
+          "y": 6,
+          "targetId": "member7"
+        },
+        {
+          "turn": 6,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 4,
+          "y": 3
+        },
+        {
+          "turn": 6,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 4,
+          "y": 4,
+          "targetId": "member4"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 7,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 6,
+          "y": 3
+        },
+        {
+          "turn": 7,
+          "unitId": "speaker-ally",
+          "action": "persuade",
+          "x": 6,
+          "y": 4,
+          "targetId": "member5"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "turn": 8,
+          "unitId": "speaker-ally",
+          "action": "move",
+          "x": 5,
+          "y": 5
+        },
+        {
+          "turn": 8,
+          "unitId": "speaker-ally",
+          "action": "threaten",
+          "x": 4,
+          "y": 6,
+          "targetId": "member7"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "action": "endTurn"
+        },
+        {
+          "action": "endTurn"
+        }
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ Use Node.js 20 or later. Open a terminal in the `Sacramentum` project directory.
 node scripts/serve.mjs
 ```
 
-Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Swear the oath** to start, or **Continue the chronicle** if a local save exists. The first chapter teaches the controls. [Playing instructions](docs/PLAYING.md) cover commands, voting, advancement, and saving.
+Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Play · Begin your story** to start, or **Continue the chronicle** if a local save exists. The first chapter teaches the controls. [Playing instructions](docs/PLAYING.md) cover commands, voting, advancement, and saving.
 
 Use the local server instead of opening `index.html` directly: native JavaScript modules require an HTTP origin. This source preview does not generate the production offline cache.
 
@@ -52,7 +52,8 @@ Keeping the same public origin when changing hosting preserves the browser addre
 
 ## Saving, offline play, and sharing
 
-- Actions autosave to local storage and a mirrored IndexedDB save when those browser facilities are available. The interface reports storage failures and detects a newer save from another tab.
+- Actions autosave through an IndexedDB transaction, with a localStorage mirror where available. Concurrent tabs use a checked sequence; a stale tab must explicitly load the latest chronicle to continue. If IndexedDB is unavailable, localStorage saving requires Web Locks. Unsafe writes fail closed while in-memory play and export remain available.
+- **Pause → Recover an earlier checkpoint** previews and restores one of the last three distinct checkpoints or replaced chronicles. The displaced current save joins that recovery history.
 - **Pause → Copy a save code** exports a checked portable save, including the active encounter checkpoint. Restore validates the code before asking to replace the current campaign.
 - Retry restores the entire encounter-start snapshot, including the random seed and staged promises. Rewards are committed when the result is recorded, once per encounter.
 - The first save requests persistent browser storage. A browser may decline that request, so keep a save code independently.
@@ -70,7 +71,11 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/core/shared.js` | Grid helpers, units, movement, deterministic random support |
 | `src/core/debug.js` | Explicitly enabled development-only scenario injection; excluded from production builds |
 | `src/data/campaign.js` | Twelve chapters, cast, decisions, dialogue, absence branches, oath, historical notes, epilogue |
-| `src/ui/app.js` | Accessible controls, camp, battle interface, menus, journal, ledger, save-code and share flows |
+| `src/ui/app.js` | Event routing and persistence; screen views are split into `campaign-views.js`, `encounter-view.js`, and `panels.js` |
+| `src/ui/render-controller.js` / `turn-replay.js` | Tested render scheduling, asynchronous share preparation and cancellable turn summaries |
+| `src/core/career.js` / `src/data/story-stages.js` | Persistent company service, recovery and state-aware story scenes |
+| `src/data/encounters.js` | Authored battlefield layouts, objectives, pressure and route variants |
+| `src/core/legacy-*.js` | Original suspended-encounter rules retained only for old saves and their exact retries |
 | `src/ui/renderer.js` / `battle-art.js` | Canvas battlefields, political chambers, units and reign card |
 | `src/ui/art.js` / `motion.js` | Local portrait/environment selection, schematic journey, bounded visual feedback |
 | `assets/` | Optimized WebP portraits and environments; provenance in docs/asset-manifest.json |
@@ -95,7 +100,7 @@ node scripts/verify-assets.mjs
 
 `npm run verify` runs the rule tests, autoplay, build and asset/offline checks. `node scripts/autoplay.mjs --fixtures` also regenerates the legal-route chapter checkpoints and trace used for browser checks. The full-route runner starts at New Game and uses the same legality-enforced commands as the browser; chapter injection belongs only to separately identified development scenarios.
 
-The aesthetic upgrade is documented in [the visual system](docs/visual-system.md), [art generation and optimization](docs/art-generation.md), and [the aesthetic verification report](docs/aesthetic-verification.md). No gameplay rules, campaign content or storage format changed in this upgrade.
+Version 0.3 changes gameplay, campaign scenes, the phone action loop and local save recovery. See [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), [the current verification report](docs/playability-verification.md), and [the physical-device and human playtest kit](docs/playtest-kit.md). The [aesthetic report](docs/aesthetic-verification.md) documents the earlier 0.2 release; its results are historical. The artwork and [visual system](docs/visual-system.md) are retained.
 
 Commands and implemented checks are not proof of a particular result. See the accompanying verification report for checks actually run, browser sizes used, finale profiles, and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 

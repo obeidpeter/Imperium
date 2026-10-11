@@ -1,6 +1,6 @@
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
 const INK='#292c27',IVORY='#f4ecd6';
-export const FIELD_COLORS={selection:'#175d67',movement:'#277c82',attack:'#9c4036',ally:'#4e6951',enemy:'#8c3930',neutral:'#886736',objective:'#bd9954'};
+export const FIELD_COLORS={selection:'#175d67',movement:'#277c82',attack:'#9c4036',ally:'#285e62',enemy:'#97382e',neutral:'#886736',objective:'#bd9954'};
 const PI=Math.PI;
 function polygon(c,points,fill,stroke,width=1){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}}
 function oval(c,x,y,rx,ry,fill,rotation=0,stroke=null,width=1){c.beginPath();c.ellipse(x,y,rx,ry,rotation,0,PI*2);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}}
@@ -87,7 +87,16 @@ function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUni
     polygon(c,diamond(g,p,1),null,color,1.6);
     if(attack){const s=Math.max(3,g.tw*.065);line(c,[[p.x-s,p.y-s*.5],[p.x+s,p.y+s*.5]],color,1.5);line(c,[[p.x+s,p.y-s*.5],[p.x-s,p.y+s*.5]],color,1.5);}else oval(c,p.x,p.y+g.th*.22,2.4,1.3,color);
   }
-  if(e.goal){const p=xy(g,e.goal.x,e.goal.y);polygon(c,diamond(g,p,2),'#bd995413','#725d3899',3.2);polygon(c,diamond(g,p,2),null,FIELD_COLORS.objective,1.8);const xx=p.x-g.tw*.26,yy=p.y+g.th*.13,ss=Math.min(1,g.tw/55);c.save();c.translate(xx,yy);c.scale(ss,ss);line(c,[[0,0],[0,-26]],'#6b573a',1.5);polygon(c,[[1,-25],[13,-22],[12,-12],[1,-15]],FIELD_COLORS.objective,IVORY,.7);line(c,[[4,-20],[10,-18]],'#f8ebcb',1);oval(c,0,-27,1.4,1.4,'#d9b975');c.restore();}
+  for(const objective of (e.mission?.points?.length?e.mission.points:e.goal?[e.goal]:[])){const p=xy(g,objective.x,objective.y);polygon(c,diamond(g,p,2),'#bd995413','#725d3899',3.2);polygon(c,diamond(g,p,2),null,FIELD_COLORS.objective,1.8);const xx=p.x-g.tw*.26,yy=p.y+g.th*.13,ss=Math.min(1,g.tw/55);c.save();c.translate(xx,yy);c.scale(ss,ss);line(c,[[0,0],[0,-26]],'#6b573a',1.5);polygon(c,[[1,-25],[13,-22],[12,-12],[1,-15]],FIELD_COLORS.objective,IVORY,.7);line(c,[[4,-20],[10,-18]],'#f8ebcb',1);oval(c,0,-27,1.4,1.4,'#d9b975');if(objective.secured){c.fillStyle='#174e44';c.font='bold 14px system-ui';c.fillText('✓',12,-27);}c.restore();}
+  if(options.target){
+    const p=xy(g,options.target.x,options.target.y);
+    polygon(c,diamond(g,p,3),'#f7e5aa44','#fff7d9',4);
+    polygon(c,diamond(g,p,3),null,'#7b3e13',2);
+    if(selectedUnit&&options.action==='move'){
+      const from=xy(g,selectedUnit.x,selectedUnit.y);c.save();c.setLineDash([4,3]);
+      line(c,[[from.x,from.y],[p.x,p.y]],FIELD_COLORS.selection,2);c.restore();
+    }
+  }
   if(selectedUnit&&((selectedUnit.resolve??selectedUnit.hp??1)>0)){const p=xy(g,selectedUnit.x,selectedUnit.y);polygon(c,diamond(g,p,1),'#175d6716',IVORY,3.5);polygon(c,diamond(g,p,1),null,FIELD_COLORS.selection,2);}
   if(focus){const p=xy(g,focus.x,focus.y);c.save();c.setLineDash([Math.max(3,g.tw*.075),2]);polygon(c,diamond(g,p,3),null,IVORY,3);polygon(c,diamond(g,p,3),null,FIELD_COLORS.selection,1.5);c.restore();}
 }
@@ -97,6 +106,7 @@ function baseMarker(c,p,s,u,active){const color=u.side==='enemy'?FIELD_COLORS.en
   else if(u.side==='enemy')polygon(c,[[p.x-11*s,p.y+3*s],[p.x+11*s,p.y+3*s],[p.x,p.y+8*s]],color,IVORY,.8);
   else if(u.side==='neutral')oval(c,p.x,p.y+3*s,10*s,3.8*s,color,0,'#f5e7c4',.65);
   else polygon(c,[[p.x-12*s,p.y+2*s],[p.x,p.y-3*s],[p.x+12*s,p.y+2*s],[p.x,p.y+7*s]],color,IVORY,.8);
+  if(u.formation){line(c,[[p.x-10*s,p.y+10*s],[p.x+10*s,p.y+10*s]],'#fff3c4',3);line(c,[[p.x-10*s,p.y+10*s],[p.x+10*s,p.y+10*s]],color,1.4);}
   const vectors={east:[1,.5],west:[-1,-.5],north:[1,-.5],south:[-1,.5]},[dx,dy]=vectors[u.facing]??vectors.east,xx=p.x+dx*15*s,yy=p.y+dy*10*s;
   polygon(c,[[xx+dx*3*s,yy+dy*3*s],[xx-dy*2.2*s,yy+dx*1.6*s],[xx+dy*2.2*s,yy-dx*1.6*s]],active?FIELD_COLORS.selection:color,IVORY,.6);
 }
@@ -151,6 +161,7 @@ function status(c,g,p,s,u,active,contest){if(u.role==='voter'){
   if(u.id==='hero'){polygon(c,[[p.x,markerY-4*s],[p.x+4*s,markerY],[p.x,markerY+3*s],[p.x-4*s,markerY]],markerColor,IVORY,.8);}
   else if(u.side==='enemy')polygon(c,[[p.x-3*s,markerY-2*s],[p.x+3*s,markerY-2*s],[p.x,markerY+3*s]],markerColor,IVORY,.65);
   else oval(c,p.x,markerY,2.5*s,2.5*s,markerColor,0,IVORY,.65);
+  if(!contest&&['archer','cavalry','heavy','escort'].includes(u.role)){c.fillStyle=markerColor;c.font=`bold ${Math.max(8,9*s)}px system-ui`;c.textAlign='center';c.fillText(({archer:'↗',cavalry:'»',heavy:'◆',escort:'○'})[u.role],p.x+bw/2+7*s,yy+4);}
   if(contest){c.fillStyle='#3f473c';c.font=`bold ${8*s}px system-ui`;c.textAlign='left';c.fillText('R',p.x-bw/2-8*s,yy+4);}
   if(u.moved&&u.acted){oval(c,p.x+bw/2+5*s,yy+1,4.8*s,4.8*s,IVORY);c.fillStyle='#426056';c.font=`bold ${8*s}px system-ui`;c.textAlign='center';c.fillText('✓',p.x+bw/2+5*s,yy+4*s);}
 }

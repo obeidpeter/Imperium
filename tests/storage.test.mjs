@@ -1,48 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import {newGame,choose,startEncounter,serialize} from '../src/core/game.js';
+import {newGame,choose,startEncounter,endTurn,serialize} from '../src/core/game.js';
 import {CONFIG} from '../src/config.js';
+import {createSaveStore,saveCode,restoreCode} from '../src/ui/storage.js';
 
-let instance=0;
-const importStorage=()=>import(`../src/ui/storage.js?storage-test=${++instance}`);
+let activeOptions;
+const importStorage=async()=>({...createSaveStore(activeOptions),saveCode,restoreCode});
 
-// These are platform-service tests, not real-browser IndexedDB or multi-tab tests.
-// Every test gets isolated globals and fresh module-local sequence/cache state.
+// Direct module tests with transactional doubles; real-browser harness is separate.
 async function withPlatform(run){
-  const names=['indexedDB','localStorage','navigator','CompressionStream','DecompressionStream'];
-  const previous=new Map(names.map(name=>[name,Object.getOwnPropertyDescriptor(globalThis,name)]));
-  const env={local:new Map(),idb:null,localFails:false,idbOpenFails:false,idbWriteFails:false,
-    delayCommit:false,pending:[],persistCalls:0,lockCalls:0};
-  let lockTail=Promise.resolve();
-  const db={transaction(){
-    const tx={objectStore(){return {
-      get(){const request={};queueMicrotask(()=>{request.result=structuredClone(env.idb);request.onsuccess?.();});return request;},
-      put(value){const copy=structuredClone(value);const finish=()=>{
-        if(env.idbWriteFails){tx.onabort?.();return;}
-        env.idb=copy;tx.oncomplete?.();
-      };if(env.delayCommit)env.pending.push(finish);else queueMicrotask(finish);}
+  const previous=new Map(['CompressionStream','DecompressionStream'].map(name=>[name,Object.getOwnPropertyDescriptor(globalThis,name)]));
+  const env={local:new Map(),idb:null,localFails:false,idbOpenFails:false,idbWriteFails:false,delayCommit:false,pending:[],persistCalls:0,lockCalls:0};
+  let transactionTail=Promise.resolve(),lockTail=Promise.resolve();
+  const db={close(){},transaction(name,mode='readonly'){
+    const operations=[],writes=[];let aborted=false;
+    const tx={abort(){aborted=true;},objectStore(){return {
+      get(key){const request={};operations.push(()=>{request.result=structuredClone(env.idb);request.onsuccess?.();});return request;},
+      put(value,key){writes.push(structuredClone(value));}
     };}};
-    return tx;
+    const execute=async()=>{
+      for(const operation of operations){if(aborted)break;operation();}
+      if(aborted){tx.onabort?.();return;}
+      if(writes.length){if(env.delayCommit)await new Promise(resolve=>env.pending.push(resolve));if(env.idbWriteFails){tx.onabort?.();return;}env.idb=writes.at(-1);}
+      tx.oncomplete?.();
+    };
+    transactionTail=transactionTail.then(execute);return tx;
   }};
-  Object.defineProperty(globalThis,'indexedDB',{configurable:true,value:{open(){
-    const request={};queueMicrotask(()=>{
-      if(env.idbOpenFails){request.onerror?.();return;}
-      request.result=db;request.onsuccess?.();
-    });return request;
-  }}});
-  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{
-    getItem(key){if(env.localFails)throw new Error('localStorage unavailable');return env.local.get(key)??null;},
-    setItem(key,value){if(env.localFails)throw new Error('localStorage unavailable');env.local.set(key,value);}
-  }});
-  Object.defineProperty(globalThis,'navigator',{configurable:true,value:{
-    locks:{request(name,fn){assert.equal(name,'sacramentum-save');env.lockCalls++;const result=lockTail.then(fn);lockTail=result.catch(()=>{});return result;}},
-    storage:{persist:async()=>{env.persistCalls++;return true;}}
-  }});
-  try{await run(env);}finally{
-    for(const [name,descriptor]of previous){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}
-  }
+  const indexedDB={open(){const request={};queueMicrotask(()=>{if(env.idbOpenFails){request.onerror?.();return;}request.result=db;request.onsuccess?.();});return request;}};
+  const localStorage={getItem(key){if(env.localFails)throw Error('localStorage unavailable');return env.local.get(key)??null;},setItem(key,value){if(env.localFails)throw Error('localStorage unavailable');env.local.set(key,value);}};
+  const navigator={locks:{request(name,fn){assert.equal(name,'sacramentum-save');env.lockCalls++;const result=lockTail.then(fn);lockTail=result.catch(()=>{});return result;}},storage:{persist:async()=>{env.persistCalls++;return true;}}};
+  const channels=new Set();
+  class Channel{constructor(name){this.name=name;channels.add(this);}postMessage(data){for(const channel of channels)if(channel!==this&&channel.name===this.name)queueMicrotask(()=>channel.onmessage?.({data}));}close(){channels.delete(this);}}
+  activeOptions={indexedDB,localStorage,navigator,BroadcastChannel:Channel};env.options=activeOptions;
+  try{await run(env);}finally{for(const channel of channels)channel.close();for(const[name,descriptor]of previous){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 }
+
 
 test('SAV-03 save resolves only after the IndexedDB transaction completes',async()=>withPlatform(async env=>{
   env.localFails=true;env.delayCommit=true;
@@ -153,3 +146,113 @@ test('SAV-05 malformed and incompatible imports are rejected before storage writ
   }
   assert.equal(env.idb,null);assert.equal(env.local.size,0);
 }));
+
+test('SAV-13 atomic IDB compare-and-write rejects one simultaneous writer without Web Locks or localStorage',async()=>withPlatform(async env=>{
+  env.options.useWebLocks=false;env.localFails=true;
+  const a=await importStorage(),b=await importStorage();await a.saveLocal(newGame('Initial'));
+  const sa=(await a.loadLocal()).state,sb=(await b.loadLocal()).state;sa.name='Tab A';sb.name='Tab B';
+  const outcomes=await Promise.allSettled([a.saveLocal(sa),b.saveLocal(sb)]);
+  assert.equal(outcomes.filter(r=>r.status==='fulfilled').length,1);
+  assert.equal(outcomes.find(r=>r.status==='rejected').reason.code,'SAVE_CONFLICT');
+  assert.equal(env.idb.sequence,2);assert.equal(JSON.parse(env.idb.payload).name,'Tab A');assert.equal(env.lockCalls,0);
+}));
+
+test('SAV-13 localStorage-only mode without atomic IDB or Web Locks fails closed',async()=>withPlatform(async env=>{
+  env.options.useWebLocks=false;env.idbOpenFails=true;
+  const store=await importStorage(),state=newGame('Memory remains usable');
+  await assert.rejects(store.saveLocal(state),e=>e.code==='SAVE_UNAVAILABLE');assert.equal(env.local.size,0);
+  assert.deepEqual(await restoreCode(await saveCode(state)),state);
+}));
+
+test('SAV-04 recovery keeps three distinct replaced campaigns',async()=>withPlatform(async env=>{
+  const store=await importStorage();for(const name of ['A','B','C','D'])await store.saveLocal(newGame(name),{replace:true});
+  const history=await store.listRecoverySaves();assert.deepEqual(history.map(e=>e.name),['C','B','A']);
+  assert.equal(env.idb.recovery.length,3);assert.ok(env.idb.recovery.every(e=>!('recovery'in e)&&!('state'in e)));
+  assert.equal((await store.loadLocal()).state.name,'D');
+}));
+
+test('SAV-13 a denied Web Locks request still uses atomic IDB and never unsafe local fallback',async()=>withPlatform(async env=>{
+  env.options.navigator.locks.request=async()=>{throw new DOMException('Denied','SecurityError');};
+  const store=await importStorage();await store.saveLocal(newGame('Atomic fallback'));
+  assert.equal(env.idb.sequence,1);assert.equal((await store.getSaveSession()).webLocks,false);
+  const priorLocal=env.local.get(CONFIG.saveKey);env.idbWriteFails=true;
+  await assert.rejects(store.saveLocal(newGame('Cannot safely fall back')),e=>e.code==='SAVE_UNAVAILABLE');
+  assert.equal(env.local.get(CONFIG.saveKey),priorLocal);
+}));
+
+test('SAV-04 turn autosaves do not crowd distinct encounter checkpoints out of recovery',async()=>withPlatform(async()=>{
+  const store=await importStorage(),state=newGame('Checkpoints');await store.saveLocal(state);
+  choose(state,'cover');await store.saveLocal(state);startEncounter(state);await store.saveLocal(state);
+  assert.equal((await store.listRecoverySaves()).length,2);
+  endTurn(state);await store.saveLocal(state);await store.saveLocal(state);
+  const history=await store.listRecoverySaves();assert.equal(history.length,2);assert.ok(history.every(e=>e.phase==='camp'));
+  assert.equal((await store.loadLocal()).state.encounter.turn,2);
+}));
+
+test('SAV-04 recovery preview is read-only and restore requires confirmation plus expected sequence',async()=>withPlatform(async env=>{
+  const store=await importStorage();await store.saveLocal(newGame('Old'),{replace:true});await store.saveLocal(newGame('Current'),{replace:true});
+  const [item]=await store.listRecoverySaves(),before=JSON.stringify(env.idb);
+  assert.equal((await store.readRecoverySave(item.id)).name,'Old');assert.equal(JSON.stringify(env.idb),before);
+  await assert.rejects(store.restoreRecovery(item.id),/Confirm replacement/);assert.equal(JSON.stringify(env.idb),before);
+  await assert.rejects(store.restoreRecovery(item.id,{confirmed:true,expectedSequence:item.currentSequence-1}),e=>e.code==='SAVE_CONFLICT');
+  assert.equal(JSON.stringify(env.idb),before);
+  const restored=await store.restoreRecovery(item.id,{confirmed:true,expectedSequence:item.currentSequence});assert.equal(restored.name,'Old');
+  assert.ok((await store.listRecoverySaves()).some(e=>e.name==='Current'));assert.equal((await store.loadLocal()).state.name,'Old');
+}));
+
+test('SAV-05 corrupt current payload exposes valid history without silently rolling back',async()=>withPlatform(async env=>{
+  const store=await importStorage();await store.saveLocal(newGame('Recoverable'),{replace:true});await store.saveLocal(newGame('Current'),{replace:true});
+  env.idb.checksum='invalid';env.local.set(CONFIG.saveKey,JSON.stringify(env.idb));
+  const reader=await importStorage(),loaded=await reader.loadLocal();assert.equal(loaded.state,null);assert.equal(loaded.recoveryAvailable,1);
+  const [item]=await reader.listRecoverySaves();assert.equal(item.name,'Recoverable');
+  await reader.restoreRecovery(item.id,{confirmed:true,expectedSequence:0});assert.equal((await reader.loadLocal()).state.name,'Recoverable');
+}));
+
+test('SAV-05 corrupt recovery entries are rejected without touching the current save',async()=>withPlatform(async env=>{
+  const store=await importStorage();await store.saveLocal(newGame('Old'),{replace:true});await store.saveLocal(newGame('Current'),{replace:true});
+  const [item]=await store.listRecoverySaves();env.idb.recovery[0].checksum='broken';env.local.set(CONFIG.saveKey,JSON.stringify(env.idb));const before=JSON.stringify(env.idb);
+  assert.equal((await store.listRecoverySaves()).length,0);await assert.rejects(store.restoreRecovery(item.id,{confirmed:true}),/unavailable or failed validation/);
+  assert.equal(JSON.stringify(env.idb),before);
+}));
+
+test('SAV-13 confirmed takeover reserves current state and notifies IDB-only peers',async()=>withPlatform(async env=>{
+  env.localFails=true;env.options.useWebLocks=false;
+  const a=await importStorage(),b=await importStorage();await a.saveLocal(newGame('Latest'));const old=(await a.loadLocal()).state;
+  const notices=[];const stop=a.subscribeSaveChanges(data=>notices.push(data));
+  await assert.rejects(b.takeOverSaveSession(),/Confirm takeover/);
+  const adopted=await b.takeOverSaveSession({confirmed:true});assert.equal(adopted.name,'Latest');
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(notices.at(-1).sequence,2);
+  assert.equal((await a.getSaveSession()).isCurrent,false);assert.equal((await b.getSaveSession()).isCurrent,true);
+  await assert.rejects(a.saveLocal(old),e=>e.code==='SAVE_CONFLICT');stop();
+}));
+
+test('SAV-05 legacy v1 envelopes without history or writer metadata remain loadable',async()=>withPlatform(async env=>{
+  const store=await importStorage();await store.saveLocal(newGame('Legacy'));
+  for(const key of ['recovery','writerId','campaignId','checkpoint','id'])delete env.idb[key];env.local.clear();
+  const reader=await importStorage();assert.equal((await reader.loadLocal()).state.name,'Legacy');assert.deepEqual(await reader.listRecoverySaves(),[]);
+  await reader.saveLocal((await reader.loadLocal()).state);assert.equal(env.idb.sequence,2);
+}));
+
+for(const useWebLocks of [false,true])test(`SAV-13 failed takeover retains stale-write protection (${useWebLocks?'with':'without'} Web Locks)`,async()=>withPlatform(async env=>{
+  env.options.useWebLocks=useWebLocks;env.localFails=true;
+  const latestTab=await importStorage(),staleTab=await importStorage();
+  await latestTab.saveLocal(newGame('Original campaign'));
+  const staleState=(await staleTab.loadLocal()).state;
+  await latestTab.saveLocal(newGame('Newer campaign'),{replace:true});
+  const before=structuredClone(env.idb);
+  assert.equal((await staleTab.getSaveSession()).isCurrent,false);
+  env.idbWriteFails=true;
+  await assert.rejects(staleTab.takeOverSaveSession({confirmed:true}),e=>e.code==='SAVE_UNAVAILABLE');
+  assert.deepEqual(env.idb,before);
+  assert.equal((await staleTab.getSaveSession()).isCurrent,false);
+  env.idbWriteFails=false;
+  await assert.rejects(staleTab.saveLocal(staleState),e=>e.code==='SAVE_CONFLICT');
+  assert.deepEqual(env.idb,before);
+  const adopted=await staleTab.takeOverSaveSession({confirmed:true});
+  assert.equal(adopted.name,'Newer campaign');
+  assert.equal(env.idb.campaignId,before.campaignId);
+  assert.equal((await staleTab.getSaveSession()).isCurrent,true);
+  adopted.name='Continued after explicit retry';await staleTab.saveLocal(adopted);
+  assert.equal(JSON.parse(env.idb.payload).name,adopted.name);
+}));
+
