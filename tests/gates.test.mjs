@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {writeFile} from 'node:fs/promises';
+import {mkdir,writeFile} from 'node:fs/promises';
 import {CHAPTERS} from '../src/data/campaign.js';
 import {newGame,choose,startEncounter,prepare,allocate,judge,negotiate,voteCount,getActions,getTargets,act,endTurn,preview} from '../src/core/game.js';
 import {alive,distance} from '../src/core/shared.js';
 import {shiftedStance,speechStrength} from '../src/core/contest.js';
 import {debugJump} from '../src/core/debug.js';
 import {playEncounter} from '../scripts/autoplay.mjs';
+
+await mkdir(new URL('./fixtures/',import.meta.url),{recursive:true});
 
 function fixture(chapter,index,seed=275){const s=debugJump(newGame('Labelled gate scenario',seed),chapter,true);choose(s,CHAPTERS[chapter-1].decision.options[0].id);s.encounterIndex=index;if(chapter===1){s.oath=true;s.chapterCapabilities[1]=['move','strike','brace','throw','oath'];}if(chapter===8)negotiate(s,'safe-passage');if(chapter===10){allocate(s,{river:2,farms:2,town:2});judge(s,'shared');}const response=startEncounter(s);assert.ok(response.ok,response.message);return s;}
 
