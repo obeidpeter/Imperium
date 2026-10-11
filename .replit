@@ -1,0 +1,7 @@
+[deployment]
+deploymentTarget = "static"
+build = ["node", "scripts/build.mjs"]
+publicDir = "dist"
+
+[env]
+PORT = "4173"
