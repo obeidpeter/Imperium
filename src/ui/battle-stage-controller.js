@@ -1,6 +1,6 @@
 // Own one renderer across UI updates. Only presentation is retained; game state
 // continues to belong to the campaign and its normal save transaction.
-export function chapterHas3D(state){return state?.chapter===1&&state.phase==='encounter'&&state.encounter?.kind==='battle';}
+export function chapterHas3D(state){return Number.isInteger(state?.chapter)&&state.chapter>=1&&state.chapter<=12&&state.phase==='encounter'&&['battle','contest'].includes(state.encounter?.kind);}
 
 export function createBattleStageController({load=()=>import('../showcase/stage.js'),onError=()=>{}}={}){
   let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null;
@@ -15,7 +15,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
   function release(){version++;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
-      const nextKey=options.encounter.id;
+      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}`;
       if(key!==nextKey){release();key=nextKey;}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
       if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
@@ -37,7 +37,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     quality(value){if(latest)latest.quality=value;stage?.applyQuality(value);},
     reduced(value){if(latest)latest.reducedMotion=value;stage?.setReducedMotion(value);},
     home(){stage?.home();},focus(){stage?.focusSelected();},
-    zoom(delta){if(stage)stage.orbit.distance=Math.max(5.5,Math.min(55,stage.orbit.distance+delta));},
+    zoom(delta){if(stage)stage.zoom(delta);},
     release,get stage(){return stage;}
   };
 }

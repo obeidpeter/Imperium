@@ -48,12 +48,20 @@ for(const path of build.showcaseAssets){
 }
 const standalone=path=>path.startsWith('./showcase/')||path==='./src/showcase/showcase.css';
 const shared3D=build.showcaseAssets.filter(path=>!standalone(path));
-for(const path of shared3D)assert.ok(build.chapterAssets[1].includes(path),'Chapter I omitted shared 3D resource: '+path);
+for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const path of build.showcaseAssets.filter(standalone))assert.ok(!Object.values(build.chapterAssets).flat().includes(path),'Standalone study page entered campaign cache: '+path);
-for(const chapter of Object.keys(build.chapterAssets).filter(chapter=>chapter!=='1'))for(const path of shared3D)assert.ok(!build.chapterAssets[chapter].includes(path),'3D resources added to another chapter: '+chapter+' '+path);
 await event('message',{data:'offline-status',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 console.log('PASS shell-only install and truthful partial status');
+
+failing=normalize('./src/showcase/stage.js');
+await event('message',{data:{type:'cache-chapter',chapter:11},source:client});
+assert.equal(messages.at(-1).ready,false,'A cold later chapter must not claim readiness with missing renderer code');
+failing=null;await event('message',{data:{type:'cache-chapter',chapter:11},source:client});
+assert.equal(messages.at(-1).ready,true);
+for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Cold Senate restore omitted: '+path);
+assert.ok(!stores.get(cacheName).has(normalize('./assets/scenes/danube.webp')),'Cold later restore must not require opening chapter art');
+console.log('PASS cold Chapter XI restore retries missing shared renderer and caches its own complete resource group');
 
 await event('message',{data:{type:'cache-chapter',chapter:1},source:client});
 assert.equal(messages.at(-1).type,'chapter-offline');assert.equal(messages.at(-1).ready,true);
@@ -68,14 +76,14 @@ for(const path of shared3D){const resource=await event('fetch',{request:{method:
 offline=false;
 const studyPage=await event('fetch',{request:{method:'GET',url:normalize('./showcase/index.html'),mode:'navigate'}});
 assert.equal(await studyPage.text(),'current:'+normalize('./showcase/index.html'));
-console.log('PASS Chapter I caches shared 3D dependencies for offline reads; standalone page stays deferred until requested');
+console.log('PASS chapter-cached shared 3D dependencies survive offline reads; standalone page stays deferred until requested');
 
 await cache('sacramentum-old').put('./assets/portraits/hero-emperor.webp',new Response('OLD ART'));
 const fresh=await event('fetch',{request:{method:'GET',url:normalize('./assets/portraits/hero-emperor.webp'),mode:'cors'}});
 assert.ok((await fresh.text()).startsWith('current:'));
 console.log('PASS version-scoped lookup ignores old artwork');
 
-failing=normalize(build.deferredAssets.find(p=>p.includes('aelia')));
+failing=normalize(build.deferredAssets.find(p=>p.startsWith('./assets/')&&!stores.get(cacheName).has(normalize(p))));
 await event('message',{data:'cache-campaign',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 assert.ok(messages.some(m=>m.type==='offline-error'));

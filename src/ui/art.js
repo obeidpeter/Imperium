@@ -40,7 +40,10 @@ export function chapterAssets(chapter=1) {
 // Offline resources include code and textures; chapterAssets above stays image-
 // only because its consumers decode every entry through the artwork Image loader.
 export function chapterOfflineAssets(chapter,availableFiles=[]) {
-  const shared3D=Number(chapter)===1?availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&['./src/showcase/','./assets/showcase/','./vendor/three/'].some(prefix=>path.startsWith(prefix))):[];
+  // A restored later chapter may be the first one visited on this device.
+  // Every chapter therefore owns the shared renderer dependencies; the worker
+  // deduplicates their URLs, so subsequent chapters reuse the same cached bytes.
+  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&['./src/showcase/','./assets/showcase/','./vendor/three/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter),...shared3D])];
 }
 let chapterRequest=0;

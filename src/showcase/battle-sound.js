@@ -10,6 +10,10 @@ export function battleSoundPlan(kind,{side='player',intensity=1}={}){
   const key=aliases[kind]??kind,amount=level(intensity),texture=side==='enemy'?31:side==='ally'?17:5;
   let layers=[];
   if(key==='footstep')layers=[noise(.105,.32,175),noise(.13,.07,1900,'bandpass',.008,.85),noise(.095,.032,2800,'highpass',.045)];
+  else if(key==='hoof')layers=[noise(.075,.27,240),ring(.09,.085,[[173,1],[379,.35]],.005),noise(.065,.10,900,'bandpass',.09)];
+  else if(key==='wade')layers=[{...noise(.25,.16,1700,'bandpass',0,.9),attack:.012,endFrequency:420},noise(.09,.18,180),noise(.22,.06,4200,'highpass',.035)];
+  else if(key==='speech')layers=[{...noise(.2,.075,1100,'bandpass'),attack:.045,endFrequency:2100},noise(.07,.08,340,'lowpass',.02)];
+  else if(key==='vote')layers=[noise(.025,.11,800),ring(.13,.025,[[291,1],[613,.2]],.003)];
   else if(key==='shield')layers=[noise(.11,.2,490),ring(.32,.16,[[731,1],[1319,.55],[2683,.2]]),noise(.055,.08,2800,'highpass')];
   else if(key==='clash')layers=[noise(.045,.1,1700,'highpass'),ring(.28,.12,[[1523,1],[2711,.55],[4327,.24]],.003),noise(.12,.06,550,'bandpass',.01)];
   else if(key==='javelin')layers=[{...noise(.18,.07,1600,'bandpass',0,.8),attack:.035,endFrequency:4100},noise(.075,.03,700,'bandpass',.025)];

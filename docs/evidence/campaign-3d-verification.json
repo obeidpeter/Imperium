@@ -1,0 +1,420 @@
+{
+  "format": "sacramentum-campaign-3d-verification-v1",
+  "version": "0.11.0",
+  "revision": "f73082fe872e",
+  "verifiedOn": "2026-10-12",
+  "scope": "Automated rules/geometry/protocol checks, legal-route WebGL harness, and desktop browser UI observations. No physical-device or independent human playtest claim.",
+  "tests": {
+    "passed": 339,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 48455.5899
+  },
+  "autoplay": {
+    "source": "New Game; legal gameplay API commands only",
+    "seed": 275,
+    "finalRank": "Augustus",
+    "completedChapters": 12,
+    "encounters": 25,
+    "wins": 25,
+    "turns": 213
+  },
+  "assetProtocolChecks": {
+    "passed": 11,
+    "failed": 0
+  },
+  "browserSweep": {
+    "status": "complete",
+    "scenes": 25,
+    "assertions": 268,
+    "failedAssertions": 0,
+    "fixtureCommands": 1041,
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "scenesPassed": [
+      "ch1-training",
+      "ch1-road",
+      "ch2-marsh",
+      "ch2-rearguard",
+      "ch3-station",
+      "ch3-rolls",
+      "ch4-gate",
+      "ch4-wall",
+      "ch5-mine",
+      "ch5-wall",
+      "ch6-wells",
+      "ch6-eagle",
+      "ch7-council",
+      "ch7-legion",
+      "ch8-parley",
+      "ch8-ferry",
+      "ch8-crossing",
+      "ch9-wing",
+      "ch9-city",
+      "ch10-road",
+      "ch10-tribunal",
+      "ch11-accounts",
+      "ch11-adlection",
+      "ch12-legitimacy",
+      "ch12-confrontation"
+    ]
+  },
+  "legalAnimationSamples": [
+    {
+      "scene": "ch9-wing",
+      "action": "move",
+      "traceStep": 710,
+      "completed": true,
+      "reducedMotion": false,
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch11-accounts",
+      "action": "persuade",
+      "traceStep": 852,
+      "completed": true,
+      "reducedMotion": false,
+      "saveUnchanged": true
+    }
+  ],
+  "measurements": [
+    {
+      "scene": "ch9-wing",
+      "kind": "battle",
+      "quality": "balanced",
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "elapsedMs": 3481,
+      "viewport": {
+        "width": 1440,
+        "height": 1100,
+        "devicePixelRatio": 1
+      },
+      "canvas": {
+        "width": 1368,
+        "height": 600
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 17.200000047683716,
+        "p95Ms": 34.199999928474426,
+        "maxMs": 64.80000007152557
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 27.399999976158142,
+        "p95Ms": 48.200000047683716,
+        "maxMs": 78.60000002384186
+      },
+      "rafIntervals": {
+        "count": 135,
+        "medianMs": 16.89999999999418,
+        "p95Ms": 50,
+        "maxMs": 66.70000000001164
+      },
+      "renderer": {
+        "cuesPlayed": 0,
+        "renderMs": 18.589999998609226,
+        "samples": 120,
+        "calls": 952,
+        "triangles": 467052,
+        "textures": 32,
+        "geometries": 479,
+        "quality": "balanced"
+      },
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch11-accounts",
+      "kind": "contest",
+      "quality": "balanced",
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "elapsedMs": 2843.5,
+      "viewport": {
+        "width": 1440,
+        "height": 1100,
+        "devicePixelRatio": 1
+      },
+      "canvas": {
+        "width": 1368,
+        "height": 600
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 13.800000071525574,
+        "p95Ms": 18,
+        "maxMs": 23
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 18.5,
+        "p95Ms": 44.90000009536743,
+        "maxMs": 58.799999952316284
+      },
+      "rafIntervals": {
+        "count": 158,
+        "medianMs": 16.70000000001164,
+        "p95Ms": 33.29999999998836,
+        "maxMs": 33.399999999965075
+      },
+      "renderer": {
+        "cuesPlayed": 0,
+        "renderMs": 14.23916666507721,
+        "samples": 120,
+        "calls": 714,
+        "triangles": 327770,
+        "textures": 20,
+        "geometries": 356,
+        "quality": "balanced"
+      },
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch2-marsh",
+      "kind": "battle",
+      "quality": "balanced",
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "elapsedMs": 2866.399999976158,
+      "viewport": {
+        "width": 1440,
+        "height": 1100,
+        "devicePixelRatio": 1
+      },
+      "canvas": {
+        "width": 1368,
+        "height": 600
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 9.799999952316284,
+        "p95Ms": 20.300000071525574,
+        "maxMs": 31
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 20.5,
+        "p95Ms": 37.5,
+        "maxMs": 57.39999997615814
+      },
+      "rafIntervals": {
+        "count": 155,
+        "medianMs": 16.70000000001164,
+        "p95Ms": 33.399999999965075,
+        "maxMs": 33.70000000001164
+      },
+      "renderer": {
+        "cuesPlayed": 0,
+        "renderMs": 11.085833336909612,
+        "samples": 120,
+        "calls": 407,
+        "triangles": 412990,
+        "textures": 28,
+        "geometries": 201,
+        "quality": "balanced"
+      },
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch9-wing",
+      "kind": "battle",
+      "quality": "performance",
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "elapsedMs": 4376.100000023842,
+      "viewport": {
+        "width": 1440,
+        "height": 1100,
+        "devicePixelRatio": 1
+      },
+      "canvas": {
+        "width": 1368,
+        "height": 600
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 22.399999976158142,
+        "p95Ms": 45.39999997615814,
+        "maxMs": 165.20000004768372
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 32.700000047683716,
+        "p95Ms": 71.20000004768372,
+        "maxMs": 170.29999995231628
+      },
+      "rafIntervals": {
+        "count": 192,
+        "medianMs": 16.70000000001164,
+        "p95Ms": 49.89999999999418,
+        "maxMs": 166.60000000000582
+      },
+      "renderer": {
+        "cuesPlayed": 0,
+        "renderMs": 25.153333324193955,
+        "samples": 120,
+        "calls": 950,
+        "triangles": 281964,
+        "textures": 29,
+        "geometries": 479,
+        "quality": "performance"
+      },
+      "saveUnchanged": true
+    }
+  ],
+  "measurementLimit": "CPU submission, rendered-stage intervals and browser RAF are distinct. Idle scenes only. Different host load; no quality speed ranking, GPU/FPS guarantee or phone benchmark.",
+  "uiObservations": {
+    "reportedBy": "Root agent operating the real browser; snapshot and screenshots retained in review evidence",
+    "chapterTwo": {
+      "entry": "Imported legally earned Chapter II checkpoint",
+      "marshWinTurn": 9,
+      "rearguardWinTurn": 9,
+      "alliedWithdrawals": 0,
+      "resultsRecorded": true,
+      "promotion": "Immunis",
+      "nextChapter": 3
+    },
+    "coldLaterChapterOffline": {
+      "origin": "fresh localhost:4369 production origin",
+      "entry": "Direct import of legally earned Chapter XI checkpoint; no Chapter I visit",
+      "currentChapterReady": true,
+      "serverStoppedReloadAndContinue3D": true,
+      "move": "2D to 4E",
+      "persuade": {
+        "target": "Veterans delegate 2",
+        "beforeStance": 2,
+        "afterStance": 5
+      },
+      "endTurn": 2,
+      "support": "6/13",
+      "saved": true,
+      "secondServerStoppedReload": {
+        "turn": 2,
+        "position": "4E"
+      },
+      "serverRestarted": true,
+      "scope": "Desktop localhost serving process stopped; no system-wide network toggle, storage eviction or physical PWA test"
+    },
+    "viewSwitch": {
+      "sequence": "3D → 2D → 3D",
+      "turn": 2,
+      "support": "6/13",
+      "position": "4E"
+    },
+    "viewports": [
+      {
+        "width": 360,
+        "height": 800,
+        "documentWidth": 345,
+        "canvasWidth": 345,
+        "canvasHeight": 384,
+        "horizontalOverflow": false
+      },
+      {
+        "width": 844,
+        "height": 390,
+        "documentWidth": 829,
+        "canvasWidth": 452,
+        "canvasHeight": 432,
+        "horizontalOverflow": false
+      }
+    ],
+    "capturedProductionConsoleErrors": [],
+    "capturedProductionConsoleWarnings": []
+  },
+  "build": {
+    "files": 132,
+    "initialFiles": 64,
+    "deferredFiles": 68,
+    "initialGzipBytes": 360126,
+    "chapterOneGzipBytes": 5409105,
+    "completeGzipBytes": 6561071,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace"
+  },
+  "limitations": [
+    "Stylized original procedural figures and scripted poses; shared base faces with minor variation, no scans or motion capture.",
+    "Horse hoof placement assumes one actor ground plane.",
+    "Alternative campaign branches are rule-tested, not all visually inspected.",
+    "Physical devices, screen readers, audible mixing, long sessions, independent enjoyment and target completion time remain unverified."
+  ],
+  "evidenceFiles": [
+    {
+      "path": "tests-final.txt",
+      "bytes": 37361,
+      "sha256": "f71c42e7a881a39fd7a2e02c71dab547ae3f9dc3dcef462dc237707e6e97cc1a"
+    },
+    {
+      "path": "autoplay-final.json",
+      "bytes": 7307,
+      "sha256": "4dd6e4cb2687b3b11c5ddab98df73c741199ee30fc496b6c75b21cd97950fadc"
+    },
+    {
+      "path": "build-final.json",
+      "bytes": 31862,
+      "sha256": "065f0012b2214635fd540a25eb4c6c9a907c367236e5f48ca17302c280c26fdd"
+    },
+    {
+      "path": "assets-final.txt",
+      "bytes": 782,
+      "sha256": "b323354608f7f2be24cbee1cd26351afa2005affc4fe958c7f3f42ac006349dc"
+    },
+    {
+      "path": "browser-scenes-final.json",
+      "bytes": 48622,
+      "sha256": "edfb0689c8b41e93b816506776f5697cd5154e8a0c2d055dbdddfbfe7d9ea89c"
+    },
+    {
+      "path": "browser-measurements.json",
+      "bytes": 4378,
+      "sha256": "bf5bf34461b846ba9c6c67da33aa542176f73251624a12682b2414fdb4e4c60b"
+    },
+    {
+      "path": "cavalry-performance.json",
+      "bytes": 1126,
+      "sha256": "619437214e02b8ba71f23712ff0e02371b01918a406eaec8517d95507500af77"
+    },
+    {
+      "path": "cavalry-action.json",
+      "bytes": 854,
+      "sha256": "d11fb2dc8f9684a6e764c41931dfe87781b930b425559a9d0fbd644436af2991"
+    },
+    {
+      "path": "senate-action.json",
+      "bytes": 2048,
+      "sha256": "a997758ef9abe9b84b8adf462f5be3a192a771d5f11bf9314e10e42af7b1ed31"
+    },
+    {
+      "path": "chapter-two-ui-trace.json",
+      "bytes": 5970,
+      "sha256": "40916cda42a40a62de177f6ebcef26d2a4d2108fd0795e2ca23ab18ce6dbd0c1"
+    },
+    {
+      "path": "offline-senate-ui.txt",
+      "bytes": 4184,
+      "sha256": "5992b16d75e82df8642e284979d42bacce84c74024797a70d3cd6593af28cbce"
+    },
+    {
+      "path": "senate-production.png",
+      "bytes": 87044,
+      "sha256": "10e98a5488e9a1aa945633e352d3f7dcf687dc231204b2e8a42a947ada88a641"
+    },
+    {
+      "path": "senate-phone.png",
+      "bytes": 40740,
+      "sha256": "fdaafeb9e8f0a7bf2b3d05c49cd9616852978673c5ebeb314466dd657f27ecf3"
+    },
+    {
+      "path": "senate-landscape.png",
+      "bytes": 40011,
+      "sha256": "9df5d9252058efbcd7857a952ca7d9ab61d37f3731142114139de6d2fcf2c699"
+    }
+  ]
+}

@@ -65,10 +65,10 @@ test('Native cloth, leather and mail surfaces are deterministic, bounded, mapped
     const material=first.get(name);assert.ok(material?.map&&material.bumpMap&&material.roughnessMap,name);
     for(const key of ['map','bumpMap','roughnessMap']){
       const t=material[key],data=t.image;assert.equal(data.width,96);assert.equal(data.height,96);assert.equal(data.data.length,96*96*4);
-      assert.deepEqual(data.data,second.get(name)[key].image.data);assert.ok(new Set(data.data).size>8,'Surface is substantive rather than a flat texture.');textures.add(t);
+      assert.deepEqual(data.data,second.get(name)[key].image.data);assert.equal(t,second.get(name)[key],'Immutable tiles are shared between actors.');assert.ok(new Set(data.data).size>8,'Surface is substantive rather than a flat texture.');textures.add(t);
     }
   }
-  let disposed=0;for(const t of textures)t.addEventListener('dispose',()=>disposed++);a.dispose();assert.equal(disposed,textures.size);b.dispose();
+  let disposed=0;for(const t of textures)t.addEventListener('dispose',()=>disposed++);a.dispose();assert.equal(disposed,0,'Another live actor still owns the shared surface.');b.dispose();assert.equal(disposed,textures.size);b.dispose();assert.equal(disposed,textures.size);
 });
 
 test('Attack, hit and rally recover to exact guard; shield impacts are smaller and movement has bounded local root travel',()=>{

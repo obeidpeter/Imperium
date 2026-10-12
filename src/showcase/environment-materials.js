@@ -1,7 +1,7 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {noise,hash,clamp} from './environment-layout.js';
 
-export function createEnvironmentMaterials({loadTextures=true}={}){
+export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   const textures=new Set(),materials=new Set();let disposed=false;
   const texture=(data,size,color=true)=>{const t=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.colorSpace=color?THREE.SRGBColorSpace:THREE.NoColorSpace;t.anisotropy=4;t.needsUpdate=true;textures.add(t);return t;};
   function surface(kind,size=128){
@@ -36,6 +36,13 @@ export function createEnvironmentMaterials({loadTextures=true}={}){
     water:make({color:0x4f7b7c,roughness:.2,metalness:.27,transparent:true,opacity:.83,depthWrite:false}),
     mud:make({...maps.earth,color:0x4d5344,roughness:.72}),charcoal:make({color:0x292822,roughness:1})
   };
+  m.sand=make({...maps.earth,color:0xd6c098,roughness:1,normalScale:new THREE.Vector2(.18,.18)});
+  m.marble=make({...maps.stone,color:0xe0d7bd,roughness:.70,normalScale:new THREE.Vector2(.12,.12)});
+  m.brick=make({...maps.stone,color:0x9d7457,roughness:1,normalScale:new THREE.Vector2(.26,.26)});
+  m.darkStone=make({...maps.stone,color:0x786f61,roughness:.94});
+  m.inlay=make({color:0x9c7861,roughness:.72});m.brass=make({color:0xb8a36f,roughness:.52,metalness:.55});
+  m.marshWater=make({color:0x3e5145,roughness:.34,metalness:.08,transparent:true,opacity:.70,depthWrite:false,vertexColors:true});
+  if(profile){m.ground.color.set(profile.vegetation==='reeds'?'#c9ceb9':'#eee5cf');if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);if(profile.setting==='wetland'){m.ground.roughness=.86;m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid'){m.ground.color.set('#ecdbc0');m.road.color.set('#cfb991');}}
   // One lit surface blends the generated soil image with the fine turf map.
   // Vertex weights describe worn ground; they never encode movement rules.
   const soilUniform={value:maps.earth.map};
@@ -55,7 +62,7 @@ export function createEnvironmentMaterials({loadTextures=true}={}){
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
-    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud']:[kind]){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
+    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
   },undefined,()=>{});
   return {materials:m,textures,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
 }

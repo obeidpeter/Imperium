@@ -16,9 +16,9 @@ function fakeClass({fail=false}={}){const instances=[];class FakeStage{
 const options=(id='ch1-road',extra={})=>({encounter:{id,kind:'battle',units:[],turn:1},selected:'hero',targets:[],target:null,grid:false,quality:'balanced',reducedMotion:false,audio:false,audioVolume:.4,paused:false,...extra});
 const plays=stage=>stage.calls.filter(c=>c[0]==='play');
 
-test('Only active first-chapter battles use the campaign 3D stage',()=>{
-  assert.equal(chapterHas3D({chapter:1,phase:'encounter',encounter:{kind:'battle'}}),true);
-  for(const state of [null,{chapter:2,phase:'encounter',encounter:{kind:'battle'}},{chapter:1,phase:'camp',encounter:{kind:'battle'}},{chapter:1,phase:'encounter',encounter:{kind:'contest'}}])assert.equal(chapterHas3D(state),false);
+test('Every authored chapter supports battle and Contest 3D; camp and invalid chapters do not',()=>{
+  for(let chapter=1;chapter<=12;chapter++)for(const kind of ['battle','contest'])assert.equal(chapterHas3D({chapter,phase:'encounter',encounter:{kind}}),true);
+  for(const state of [null,{chapter:13,phase:'encounter',encounter:{kind:'battle'}},{chapter:1,phase:'camp',encounter:{kind:'battle'}},{chapter:1,phase:'encounter',encounter:{kind:'unknown'}}])assert.equal(chapterHas3D(state),false);
 });
 
 test('Rerendering one encounter reuses its canvas and labels, updates options and marks the new host ready',async()=>{

@@ -2,13 +2,13 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.10’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.11’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
 
-## Chapter I's battlefield view
+## Battlefield and chamber views
 
-Training and the frontier battle open in 3D within the normal campaign. Your legal commands, autosaves, checkpoints and progress are shared with **Switch to 2D**; Pause's **Chapter I battlefield** setting remembers the view you prefer. If WebGL is unavailable, the tactical view takes over. Later chapters retain their existing 2D battlefields and political chambers.
+All campaign battles and political Contests support the 3D scene. Your legal commands, autosaves, checkpoints and progress are shared with **Switch to 2D**; Pause remembers the view you prefer. If WebGL is unavailable, the tactical view takes over. Switching views does not restart an encounter or change the rules.
 
-Drag to orbit and scroll or press **+ / −** to zoom. **Overview** restores a wide view and **Follow unit** frames the selected soldier. The campaign board keeps arrow-key tile navigation and Enter to select/confirm, plus named action/target selectors. **G / Grid** toggles tile boundaries. Camera movement never spends an action.
+Drag to orbit and scroll or press **+ / −** to zoom. **Overview** restores a wide view and **Follow unit** frames the selected soldier. The campaign board keeps arrow-key tile navigation and Enter to select/confirm, plus named action/target selectors. **G / Grid** toggles tile boundaries. Camera movement never spends an action. In a dense chamber, compact labels show delegate stance or speaker Resolve; hover or select a figure for its name and details. Withdrawal preserves a speaker’s vote.
 
 **Generated sound effects** in Pause are off by default, with an adjustable effects volume. Enabled 3D combat sounds are synthesized locally and stop while the page is hidden. Every action is understandable without sound; reduced motion and graphics quality remain presentation settings.
 
@@ -18,7 +18,7 @@ Drag to orbit and scroll or press **+ / −** to zoom. **Overview** restores a w
 
 Drag the scene to orbit and scroll to zoom. With the canvas focused, arrows rotate, **+ / −** zoom, **F** focuses the selected soldier and **Home** restores the field view. The **Focus soldier** and **Field view** buttons do the same. Use **Named action and target controls** for a complete alternative to pointing at the terrain. Reduce motion and the three graphics settings affect presentation, not outcomes. **Return to campaign** opens the normal game and its existing save.
 
-This study needs WebGL 2. Its shared renderer and textures also download with Chapter I; the standalone page and stylesheet are included in the explicit complete offline download from campaign Settings. A chapter's offline-ready message alone does not establish that this separate page is cached. See [study scope and limits](3d-study.md).
+This study needs WebGL 2. Its shared renderer and textures also download with each campaign chapter, reusing files already cached; the standalone page and stylesheet are included in the explicit complete offline download from campaign Settings. A chapter's offline-ready message alone does not establish that this separate page is cached. See [study scope and limits](3d-study.md).
 
 ## The campaign loop
 
@@ -152,7 +152,7 @@ To keep or transfer progress:
 
 A code includes your chosen name, decisions, progression, and encounter state. The game does not upload it. An incompatible or damaged code is rejected without replacing the campaign. If a second tab has saved more recent progress, reload rather than overwriting it.
 
-For offline play, open the **production build**. It initially keeps the application shell and opening artwork, then loads each chapter's artwork as you reach it. Suitable connections may also prefetch the next chapter. **This chapter is ready offline** does not mean that later chapters are available.
+For offline play, open the **production build**. It initially keeps the application shell and opening artwork, then loads each chapter's artwork and shared 3D dependencies as you reach it. A restored later chapter requests its complete resource group without requiring Chapter I first. Suitable connections may also prefetch the next chapter. **This chapter is ready offline** does not mean that later chapters are available.
 
 Before taking the whole campaign offline, choose **Pause → Download all twelve chapters for offline play**. This starts a complete download using your current connection. Wait for **All chapters available offline** before disconnecting. If chapter artwork is missing, use **Retry this chapter’s artwork**; an interrupted full download can be started again from Pause. The source preview does not provide the generated production offline cache.
 

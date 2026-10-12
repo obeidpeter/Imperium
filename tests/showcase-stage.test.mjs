@@ -6,6 +6,7 @@ import {BattleStage,stageActorPose,intersectGround} from '../src/showcase/stage.
 import * as T from '../vendor/three/three.module.js';
 import {createGroundHeight,gridToWorld} from '../src/showcase/environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../src/ui/animation-timeline.js';
+import {readFile} from 'node:fs/promises';
 
 test('Picking follows raised cells at close camera angles instead of the flat map plane',()=>{
   const e=createShowcaseSession().encounter,height=createGroundHeight(e,2.5);
@@ -79,4 +80,38 @@ test('Resize widens overview framing for portrait, preserves intentional focus, 
   stage.resize();assert.ok(stage.orbit.distance>wideDistance);assert.equal(stage.camera.aspect,360/384);assert.deepEqual(calls.at(-1),[360,384,false]);
   stage.focusMode=true;stage.orbit.distance=7.5;rect={width:640,height:280};stage.resize();assert.equal(stage.orbit.distance,7.5);
   const matrix=stage.camera.projectionMatrix.toArray(),count=calls.length;rect={width:0,height:0};stage.resize();assert.equal(calls.length,count);assert.deepEqual(stage.camera.projectionMatrix.toArray(),matrix);
+});
+
+test('All campaign scenes frame every visible figure including mounted troops at desktop and portrait sizes',async()=>{
+  const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
+  for(const scene of fixture.scenes)for(const [width,height] of [[1440,600],[360,384],[360,640],[844,420]]){
+    const e=scene.state.encounter,stage=cameraStage(e,width,height);stage.home();
+    const {yaw,pitch,distance}=stage.orbit,target=stage.baseTarget;
+    stage.camera.position.set(target.x+Math.sin(yaw)*Math.cos(pitch)*distance,target.y+Math.sin(pitch)*distance,target.z+Math.cos(yaw)*Math.cos(pitch)*distance);stage.camera.lookAt(target);stage.camera.updateMatrixWorld();
+    for(const unit of e.units.filter(u=>!u.hidden))for(const height of [0,['cavalry','heavy'].includes(unit.role)?3.1:2.55]){
+      const projected=stage.world(unit).add(new T.Vector3(0,height,0)).project(stage.camera);
+      assert.ok(Math.abs(projected.x)<.9&&Math.abs(projected.y)<.9&&Math.abs(projected.z)<1,`${scene.id} ${unit.id} at ${width} × ${stage.camera.aspect}: ${projected.toArray()}`);
+    }
+  }
+});
+
+test('Civic Resolve, gestures and withdrawal remain finite and never become combat death poses',()=>{
+  const speaker={id:'speaker',role:'speaker',side:'enemy',resolve:6,maxResolve:12,hp:6,maxHp:6,facing:'west'};
+  assert.equal(stageActorPose(speaker,null,null).health,.5);
+  const yieldPose=stageActorPose({...speaker,resolve:0,hp:0},null,null,{reducedMotion:true});
+  assert.equal(yieldPose.motion,'yield');assert.equal(yieldPose.phase,1);assert.equal(yieldPose.health,0);assert.equal(yieldPose.time,0);
+  assert.ok(Number.isFinite(stageActorPose({id:'member',role:'voter',hp:1},null,null).health));
+  const before={id:'civic-withdrawal',kind:'contest',width:3,height:3,terrain:Array.from({length:3},()=>Array(3).fill('chamber')),units:[{...speaker,x:1,y:1}],log:[]},after=structuredClone(before);after.units[0].hp=0;after.units[0].resolve=0;
+  const timeline=buildEncounterTimeline(before,after),track=timeline.tracks.find(t=>t.withdrawn),unit=after.units[0];
+  const standing=stageActorPose(unit,sampleEncounterTimeline(timeline,0),timeline);assert.equal(standing.motion,'idle');assert.equal(standing.health,.5);
+  const lowering=stageActorPose(unit,sampleEncounterTimeline(timeline,track.start+track.duration*.5),timeline);assert.equal(lowering.motion,'yield');assert.equal(lowering.phase,.5);
+  const finished=stageActorPose(unit,sampleEncounterTimeline(timeline,timeline.duration),timeline);assert.equal(finished.motion,'yield');assert.equal(finished.phase,1);
+});
+
+test('Zoom remains monotonic beyond desktop limits and withdrawn civic figures do not intercept live picks',()=>{
+  const stage=Object.create(BattleStage.prototype);Object.assign(stage,{orbit:{distance:96},overviewDistance:()=>100});
+  stage.zoom(2);assert.equal(stage.orbit.distance,98);stage.zoom(-2);assert.equal(stage.orbit.distance,96);stage.zoom(20);assert.equal(stage.orbit.distance,100);stage.zoom(2);assert.equal(stage.orbit.distance,100);
+  const live={id:'live',x:2,y:3,resolve:6,role:'speaker'},withdrawn={id:'withdrawn',x:1,y:3,resolve:0,role:'speaker'},liveMesh=new T.Group(),withdrawnMesh=new T.Group();liveMesh.userData.unitId='live';withdrawnMesh.userData.unitId='withdrawn';
+  Object.assign(stage,{canvas:{getBoundingClientRect:()=>({left:0,top:0,width:800,height:600})},ndc:new T.Vector2(),camera:{},encounter:{units:[withdrawn,live]},actors:new Map([['withdrawn',{group:withdrawnMesh}],['live',{group:liveMesh}]]),ray:{setFromCamera(){},intersectObjects(groups){assert.deepEqual(groups,[liveMesh]);return [{object:liveMesh}];}}});
+  assert.deepEqual(stage.pick({clientX:400,clientY:300}),{x:2,y:3,unitId:'live'});
 });

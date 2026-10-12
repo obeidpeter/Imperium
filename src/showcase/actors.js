@@ -1,13 +1,17 @@
 import * as T from '../../vendor/three/three.module.js';
-import {actorPose} from './actor-pose.js';
-export {actorPose} from './actor-pose.js';
+import {actorPose,horsePose} from './actor-pose.js';
+import {actorKit} from './actor-kit.js';
+import {acquireActorSurface,releaseActorSurface} from './actor-materials.js';
+import {createHorse} from './actor-horse.js';
+export {actorPose,horsePose} from './actor-pose.js';
+export {actorKit} from './actor-kit.js';
 
 const TAU=Math.PI*2;
 const DEFAULTS={skin:0xbe8966,cloth:0xc7bea0,leather:0x46352c,hair:0x30231e,shield:0x285f67,metal:0x727b7b,bronze:0xa78a50};
 
 // Elliptical profile mesh with small sewn folds. Used for clothing, anatomy,
 // footwear and armor, so silhouettes are shaped rather than primitive stacks.
-function profile(rings,{segments=20,folds=0,foldCount=9}={}){
+function profileGeometry(rings,{segments=20,folds=0,foldCount=9}={}){
   const positions=[],uv=[],indices=[];
   for(let j=0;j<rings.length;j++){
     const [y,rx,rz,zc=0]=rings[j];
@@ -21,45 +25,34 @@ function profile(rings,{segments=20,folds=0,foldCount=9}={}){
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 function shapeGeometry(points,depth=.008){const s=new T.Shape();points.forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));s.closePath();return new T.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.002,bevelThickness:.002});}
+function drape(rows){const p=[],uv=[],indices=[],n=16;for(let j=0;j<rows.length;j++){const[y,cx,w,z]=rows[j];for(let i=0;i<=n;i++){const u=i/n;p.push(cx+(u-.5)*w,y-.018*Math.sin(u*Math.PI),z+.009*Math.cos(u*Math.PI*12)+.018*Math.sin(u*Math.PI));uv.push(u,j/(rows.length-1));if(j&&i){const k=j*(n+1)+i;indices.push(k,k-1,k-n-1,k-1,k-n-2,k-n-1);}}}const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;}
 
 /** Procedural 3D rig, feet at local y=0 and anatomical forward +Z.
  * Direction is yaw radians. Caller owns group.position. Phase is normalized
  * action progress, or one walking cycle (about .72m); omitted gait uses time.
  */
 export function createActor(unit={},options={}){
-  const role=options.role??(unit.role==='trainer'||unit.id==='dummy'?'trainer':unit.side==='enemy'?'raider':unit.id==='hero'?'recruit':'veteran');
-  const veteran=role==='veteran',trainer=role==='trainer',raider=role==='raider',archer=unit.role==='archer',p={...DEFAULTS,...(raider?{cloth:0x82704f,hair:0x70513b,shield:0x85392e,skin:0xc79775}:trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...options.palette};
-  const geometries=new Set(),materials=new Set(),textures=new Set(),group=new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role:archer?'archer':role,height:1.83,forward:'+Z'};
+  const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed;
+  const detail=options.quality!=='performance',profile=(rings,spec={})=>profileGeometry(rings,{...spec,segments:detail?(spec.segments??20):Math.min(spec.segments??20,12)});
+  const factionColors={Gothic:{cloth:0x82704f,hair:0x70513b,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
+  const p={...DEFAULTS,...factionColors[kit.faction],...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...options.palette};
+  const geometries=new Set(),materials=new Set(),surfaces=new Map(),group=new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet};
   const material=(color,extra={})=>{const m=new T.MeshStandardMaterial({color,roughness:.84,metalness:0,...extra});materials.add(m);return m;};
-  // Small seamless, deterministic material tiles. These are native geometry
-  // surfaces (albedo/height/roughness), generated locally without a bitmap load.
-  function surface(kind){
-    const size=96,colour=new Uint8Array(size*size*4),height=new Uint8Array(size*size*4),rough=new Uint8Array(size*size*4);
-    for(let y=0;y<size;y++)for(let x=0;x<size;x++){
-      const hash=((Math.imul(x+1,374761393)^Math.imul(y+9,668265263))>>>0)%997/997;
-      let h=.5,c=.94,r=.88;
-      if(kind==='cloth'){const warp=Math.cos(x*Math.PI/2),weft=Math.cos(y*Math.PI/2);h=.5+.15*warp+.13*weft+.035*(hash-.5);c=.89+.055*warp+.03*weft;r=.86+.10*hash;}
-      else if(kind==='leather'){const grain=Math.sin(x*.8+Math.cos(y*.6))*Math.cos(y*.7);h=.5+.12*grain+.12*(hash-.5);c=.84+.07*grain+.05*hash;r=.72+.16*hash;}
-      else if(kind==='mail'){const row=Math.floor(y/12),xx=(x+(row%2)*6)%12-6,yy=y%12-6,d=Math.hypot(xx,yy*.83),ring=Math.max(0,1-Math.abs(d-3.65)/1.35);h=.16+.75*ring;c=.32+.58*ring;r=.38+.36*(1-ring);}
-      else {h=.48+.10*Math.sin(x*.33+Math.sin(y*.09))+.03*(hash-.5);c=.90+.045*Math.sin(x*.33+Math.sin(y*.09));r=.76+.10*hash;}
-      const i=(y*size+x)*4;colour.set([c*255,c*255,c*255,255],i);height.set([h*255,h*255,h*255,255],i);rough.set([r*255,r*255,r*255,255],i);
-    }
-    const texture=(data,color=false)=>{const t=new T.DataTexture(data,size,size,T.RGBAFormat);t.wrapS=t.wrapT=T.RepeatWrapping;t.magFilter=T.LinearFilter;t.minFilter=T.LinearMipmapLinearFilter;t.generateMipmaps=true;t.repeat.set(kind==='mail'?3:kind==='cloth'?5:2,kind==='mail'?3:kind==='cloth'?4:2);if(color)t.colorSpace=T.SRGBColorSpace;t.needsUpdate=true;textures.add(t);return t;};
-    return {map:texture(colour,true),bumpMap:texture(height),roughnessMap:texture(rough),bumpScale:kind==='mail'?.014:kind==='cloth'?.004:.005};
-  }
+  const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
-  const skin=material(p.skin,{roughness:.78}),cloth=material(p.cloth,clothSurface),clothDark=material(new T.Color(p.cloth).multiplyScalar(.67),clothSurface),leather=material(p.leather,leatherSurface),hair=material(p.hair),metal=material(p.metal,{metalness:.62,roughness:.38}),bronze=material(p.bronze,{metalness:.6,roughness:.42}),white=material(0xd7cbaa),black=material(0x241b17),eyeWhite=material(0xd0bca0),iris=material(0x31281c),shieldPaint=material(p.shield,paintSurface),lip=material(raider?0x925c47:0x85503f),practiceWood=trainer?material(0x9d8053,paintSurface):null;
+  const skin=material(new T.Color(p.skin).offsetHSL(0,-.01,((kit.identity%9)-4)*.008),{roughness:.78}),cloth=material(p.cloth,clothSurface),clothDark=material(new T.Color(p.cloth).multiplyScalar(.67),clothSurface),leather=material(p.leather,leatherSurface),hair=material(p.hair),metal=material(p.metal,{metalness:.62,roughness:.38}),bronze=material(p.bronze,{metalness:.6,roughness:.42}),white=material(0xd7cbaa),black=material(0x241b17),eyeWhite=material(0xd0bca0),iris=material(0x31281c),shieldPaint=material(p.shield,paintSurface),lip=material(raider?0x925c47:0x85503f),practiceWood=trainer?material(0x9d8053,paintSurface):null;
   cloth.name='woven tunic';leather.name='worked leather';shieldPaint.name='painted wooden shield';
   const mesh=(parent,geometry,mat,x=0,y=0,z=0)=>{geometries.add(geometry);const m=new T.Mesh(geometry,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;};
-  const ellipsoid=(parent,mat,x,y,z,rx,ry,rz)=>{const m=mesh(parent,new T.SphereGeometry(1,16,10),mat,x,y,z);m.scale.set(rx,ry,rz);return m;};
+  const ellipsoid=(parent,mat,x,y,z,rx,ry,rz)=>{const m=mesh(parent,new T.SphereGeometry(1,detail?16:10,detail?10:7),mat,x,y,z);m.scale.set(rx,ry,rz);return m;};
   const part=(parent,name,x=0,y=0,z=0)=>{const g=new T.Group();g.name=name;g.position.set(x,y,z);parent.add(g);return g;};
-  const strip=(parent,mat,points,radius=.008)=>mesh(parent,new T.TubeGeometry(new T.CatmullRomCurve3(points.map(v=>new T.Vector3(...v))),Math.max(4,points.length*2),radius,5,false),mat);
+  const strip=(parent,mat,points,radius=.008)=>mesh(parent,new T.TubeGeometry(new T.CatmullRomCurve3(points.map(v=>new T.Vector3(...v))),Math.max(4,Math.ceil(points.length*(detail?2:1.5))),radius,detail?5:4,false),mat);
   const hips=part(root,'hips',0,.91,0),torso=part(hips,'torso');
   mesh(torso,profile([[.03,.174,.115],[.13,.179,.129],[.30,.231,.141],[.43,.247,.129],[.48,.206,.108],[.5,.104,.079]],{folds:.023}),cloth);
-  const skirt=part(torso,'tunic-hem');mesh(skirt,profile([[-.28,.222,.147],[-.22,.217,.147],[-.10,.197,.135],[-.04,.183,.129],[.03,.18,.119],[.055,.176,.111]],{folds:.035}),cloth);
+  const hem=civic?-.68:escort?-.48:kit.eastern?-.36:-.28;
+  const skirt=part(torso,'tunic-hem');mesh(skirt,profile([[hem,.222,.147],[hem+.06,.217,.147],[-.10,.197,.135],[-.04,.183,.129],[.03,.18,.119],[.055,.176,.111]],{folds:.035}),cloth);
   // Hem tape and vertical seams are low relief, not disconnected armor plates.
-  mesh(skirt,profile([[-.282,.224,.149],[-.264,.223,.149]],{folds:.035}),clothDark);
+  mesh(skirt,profile([[hem-.002,.224,.149],[hem+.016,.223,.149]],{folds:.035}),clothDark);
   for(const x of [-.115,.115])strip(torso,clothDark,[[x,.075,.12],[x*1.18,.23,.142],[x*1.39,.42,.116]],.0035);
   for(const side of [-1,1]){strip(torso,cloth,[[side*.14,.08,.119],[side*.09,.18,.138],[side*.17,.34,.14]],.0045);strip(torso,clothDark,[[side*.082,.496,.069],[side*.064,.454,.096],[0,.423,.129]],.006);}
   mesh(torso,profile([[.02,.183,.127],[.069,.184,.127]],{segments:24}),leather);
@@ -72,6 +65,8 @@ export function createActor(unit={},options={}){
   mesh(head,shapeGeometry([[-.012,.015],[.012,.015],[.017,.044],[.009,.094],[-.008,.097],[-.014,.046]],.025),skin,0,0,.077);
   ellipsoid(head,skin,0,.035,.108,.019,.012,.015);
   for(const side of [-1,1]){
+    ellipsoid(head,skin,side*.062,.045,.067,.034,.022,.023);
+    ellipsoid(head,skin,side*.041,.115,.074,.038,.010,.015);
     ellipsoid(head,skin,side*.104,.071,-.002,.015,.033,.015);
     ellipsoid(head,lip,side*.112,.068,.001,.004,.019,.006);
     ellipsoid(head,eyeWhite,side*.044,.093,.077,.026,.010,.011);
@@ -81,11 +76,13 @@ export function createActor(unit={},options={}){
   }
   strip(head,lip,[[-.031,.007,.076],[0,.004,.084],[.032,.007,.076]],.0035);
   strip(head,skin,[[-.023,-.009,.073],[0,-.013,.082],[.024,-.009,.073]],.0035);
+  const facialWidth=.985+(kit.identity%7)*.005;head.scale.x=facialWidth;
   // Sculpted hair cap follows the skull with a swept, uneven hairline.
   const hairGeo=new T.SphereGeometry(1,24,12,0,TAU,0,Math.PI*.60),hp=hairGeo.getAttribute('position');
   for(let i=0;i<hp.count;i++){const x=hp.getX(i),y=hp.getY(i),z=hp.getZ(i),wave=1+.025*Math.sin(Math.atan2(x,z)*9+y*5);hp.setXYZ(i,x*.109*wave,y*.113+.105,z*.095*wave-.012);}hairGeo.computeVertexNormals();mesh(head,hairGeo,hair);
   for(let i=0;i<8;i++){const a=-1.25+i*.35;strip(head,hair,[[Math.sin(a)*.094,.145,Math.cos(a)*.079],[Math.sin(a+.10)*.104,.183,Math.cos(a+.10)*.065],[Math.sin(a+.2)*.080,.216,Math.cos(a+.2)*.033]],.012);}
-  if(raider){mesh(head,profile([[-.068,.027,.021,.067],[-.026,.067,.037,.054],[.018,.069,.032,.045]],{segments:16,folds:.1}),hair);}
+  if(raider||kit.officer||civic&&kit.identity%3===0){mesh(head,profile([[-.053,.027,.021,.067],[-.026,.067,.037,.054],[.018,.069,.032,.045]],{segments:16,folds:.08}),hair);}
+  if(kit.faction==='Gothic')for(const side of [-1,1])strip(head,hair,[[side*.089,.13,-.054],[side*.105,.03,-.065],[side*.085,-.034,-.055]],.025);
 
   const legs=[];
   for(const side of [-1,1]){
@@ -136,8 +133,11 @@ export function createActor(unit={},options={}){
     }
     strip(s,bronze,[[-.07,.03,-.045],[.07,.03,-.045]],.012);return s;
   }
-  const shield=archer?null:makeShield();
-  const weapon=part(right.hand,trainer?'practice-sword':raider?'spear':'sword',0,-.052,.018);weapon.rotation.x=Math.PI;
+  const shield=archer||!armed?null:makeShield();
+  if(shield&&mounted)shield.scale.setScalar(.82);
+  if(shield&&kit.eastern)shield.scale.set(.85,.84,1);
+  const weapon=armed?part(right.hand,trainer?'practice-sword':raider?'spear':'sword',0,-.052,.018):null;
+  if(weapon){weapon.rotation.x=Math.PI;
   mesh(weapon,new T.CylinderGeometry(.012,.012,.095,10),leather,0,-.006,0);
   if(raider&&!archer){
     mesh(weapon,new T.CylinderGeometry(.011,.015,1.65,10),leather,0,.42,0);
@@ -150,8 +150,8 @@ export function createActor(unit={},options={}){
     const blade=new T.BufferGeometry(),v=[-.027,.073,0, .027,.073,0, 0,.073,.009, 0,.073,-.009, -.022,.47,0, .022,.47,0, 0,.47,.006, 0,.47,-.006, 0,.59,0];
     blade.setAttribute('position',new T.Float32BufferAttribute(v,3));blade.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap((_,i)=>i%3===0?[(v[i]+.027)/.054,v[i+1]/.59]:[]),2));blade.setIndex([0,4,6,0,6,2,2,6,5,2,5,1,1,5,7,1,7,3,3,7,4,3,4,0,4,8,6,6,8,5,5,8,7,7,8,4]);blade.computeVertexNormals();mesh(weapon,blade,trainer?practiceWood:metal);
   }
-  weapon.visible=!archer;
-  const javelin=archer?null:part(right.hand,'held-javelin',0,-.052,.018);
+  weapon.visible=!archer;}
+  const javelin=archer||!armed?null:part(right.hand,'held-javelin',0,-.052,.018);
   if(javelin){javelin.rotation.x=Math.PI;mesh(javelin,new T.CylinderGeometry(.009,.013,1.25,8),leather,0,.30,0);mesh(javelin,new T.ConeGeometry(.024,.19,4),trainer?practiceWood:metal,0,1.02,0);javelin.visible=false;}
   let bow=null,bowString=null,nockedArrow=null;
   if(archer){
@@ -168,55 +168,89 @@ export function createActor(unit={},options={}){
     for(let i=0;i<4;i++){const x=(i%2-.5)*.034,z=(Math.floor(i/2)-.5)*.028;mesh(quiver,new T.CylinderGeometry(.004,.004,.49,6),clothDark,x,.24,z);const f=mesh(quiver,shapeGeometry([[-.018,0],[.018,.045],[.018,.10],[-.018,.06]],.001),white,x,.38,z);f.rotation.y=i*.8;}
   }
   // Scabbard and suspension belt remain attached to the body during action.
-  const sheath=part(torso,'scabbard',-.18,.065,-.015);sheath.rotation.z=-.16;
+  if(armed){const sheath=part(torso,'scabbard',-.18,.065,-.015);sheath.rotation.z=-.16;
   mesh(sheath,profile([[.03,.034,.018],[-.42,.029,.016],[-.49,.018,.014],[-.50,.005,.007]],{segments:10}),leather);
   mesh(sheath,profile([[.033,.036,.02],[.006,.036,.02]],{segments:10}),bronze);
   mesh(sheath,profile([[-.46,.027,.018],[-.49,.021,.017]],{segments:10}),bronze);
-  strip(torso,leather,[[-.21,.06,-.02],[-.08,.3,.149],[.14,.47,.116]],.022);
+  strip(torso,leather,[[-.21,.06,-.02],[-.08,.3,.149],[.14,.47,.116]],.022);}
   if(veteran){
-    const mail=material(0xb4b5a9,{metalness:.50,roughness:.8,...surface('mail')});mail.name='interlinked mail';
+    const mail=material(kit.eastern?0x9d9b83:0xb4b5a9,{metalness:.50,roughness:.8,...surface(kit.armor)});mail.name=kit.armor==='scale'?'overlapping scale armor':'interlinked mail';
     mesh(torso,profile([[.078,.19,.139],[.15,.193,.143],[.32,.245,.154],[.43,.26,.145],[.47,.214,.127]],{segments:28,folds:.014}),mail);
     for(const arm of arms)mesh(arm.shoulder,profile([[.033,.077,.086],[-.025,.097,.093],[-.135,.080,.077]],{segments:24,folds:.016}),mail);
     for(const side of [-1,1])strip(torso,leather,[[side*.10,.10,.142],[side*.13,.31,.155],[side*.15,.44,.14]],.019);
-    // Rounded ridge helmet, flared neck guard and hinged cheek pieces.
-    const helmet=mesh(head,new T.SphereGeometry(1,28,14,0,TAU,0,Math.PI*.56),metal,0,.109,-.012);helmet.scale.set(.119,.129,.106);
-    strip(head,bronze,[[-.113,.123,.046],[0,.13,.1],[.113,.123,.046]],.012);
-    strip(head,bronze,[[0,.126,.1],[0,.214,.071],[0,.247,-.01],[0,.203,-.098]],.009);
-    mesh(head,profile([[.073,.13,.117,-.013],[.094,.118,.103,-.012]],{segments:28}),metal);
-    for(const side of [-1,1]){const cheek=mesh(head,shapeGeometry([[-.024,.055],[.027,.05],[.032,-.045],[.008,-.07],[-.025,-.044]],.009),metal,side*.092,.07,.046);cheek.rotation.y=side*.8;}
-    // The soldier's cloak hangs as a shaped, folded panel behind the mail.
-    const cloak=mesh(torso,profile([[-.10,.24,.055,-.16],[.1,.24,.055,-.16],[.32,.22,.05,-.14],[.45,.16,.035,-.115]],{segments:16,folds:.055}),material(0x773d32,clothSurface));cloak.scale.z=.8;
+    const helmetRoot=part(head,`${kit.helmet}-helmet`);
+    if(kit.eastern){
+      mesh(helmetRoot,profile([[.087,.119,.103,-.013],[.15,.118,.106,-.013],[.26,.065,.067,-.018],[.325,.008,.01,-.024]],{segments:24}),metal);
+      for(const side of [-1,1])strip(helmetRoot,bronze,[[side*.11,.12,.02],[side*.083,.22,.017],[0,.325,-.024]],.005);
+      mesh(helmetRoot,profile([[-.045,.13,.12,-.016],[.092,.126,.112,-.018]],{segments:24}),mail).scale.z=.83;
+    }else{
+      const helmet=mesh(helmetRoot,new T.SphereGeometry(1,28,14,0,TAU,0,Math.PI*.56),metal,0,.109,-.012);helmet.scale.set(.119,.129,.106);
+      strip(helmetRoot,bronze,[[-.113,.123,.046],[0,.13,.1],[.113,.123,.046]],.012);
+      strip(helmetRoot,bronze,[[0,.126,.1],[0,.214,.071],[0,.247,-.01],[0,.203,-.098]],.009);
+      mesh(helmetRoot,profile([[.073,.13,.117,-.013],[.094,.118,.103,-.012]],{segments:28}),metal);
+      for(const side of [-1,1]){const cheek=mesh(helmetRoot,shapeGeometry([[-.024,.055],[.027,.05],[.032,-.045],[.008,-.07],[-.025,-.044]],.009),metal,side*.092,.07,.046);cheek.rotation.y=side*.8;}
+    }
+    if(kit.officer){
+      const crest=part(helmetRoot,'officer-horsehair-crest');
+      const crestMat=material(0x742e31,clothSurface);
+      strip(crest,bronze,[[-.10,.234,-.008],[0,.267,-.008],[.10,.234,-.008]],.014);
+      for(let i=0;i<11;i++){const x=(i-5)*.02;strip(crest,crestMat,[[x,.25-Math.abs(x)*.2,-.008],[x*1.12,.315-Math.abs(x)*.34,-.006],[x*1.3,.34-Math.abs(x)*.4,-.005]],.009);}
+    }
   }
-  const ring=mesh(group,new T.RingGeometry(.32,.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
+  if(kit.cloak){
+    const cloak=part(torso,'command-cloak'),red=material(kit.officer?0x78333b:0x665c47,{...clothSurface,side:T.DoubleSide});
+    mesh(cloak,drape([[.44,0,.35,-.15],[.25,.015,.45,-.19],[-.04,.02,.49,-.21],[-.35,.025,.46,-.24]]),red);
+    ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
+  }
+  if(civic){
+    const toga=part(torso,'draped-civic-robe'),ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(unit.bloc==='Army'?0x786844:unit.bloc==='People'?0x6a7969:0x764653,clothSurface);
+    mesh(toga,drape([[.49,.19,.13,.14],[.35,.055,.37,.17],[.06,-.02,.45,.18],[-.22,.03,.43,.19],[-.50,.08,.29,.18]]),ivory);
+    for(const x of [-.12,.12])mesh(torso,drape([[.42,x,.02,.155],[.20,x,.024,.17],[.02,x,.025,.14]]),stripe);
+    const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
+  }else if(escort){
+    const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
+    for(const x of [-.10,.10])strip(torso,leather,[[x,-.02,.13],[x,.43,.14],[x,.48,-.13],[x,.06,-.27]],.012);
+    if(kit.wounded){const wrap=part(torso,'wounded-arm-sling');mesh(wrap,drape([[.32,-.15,.045,.17],[.18,0,.21,.24],[.13,.05,.22,.21]]),white);}
+  }
+  const horse=mounted?createHorse(root,kit,{part,mesh,profile,ellipsoid,strip,material,surface,leather,metal,hair,cloth}):null;
+  const ring=mesh(group,new T.RingGeometry(mounted?.72:.32,mounted?.75:.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
   // Batch rigid details by material within each joint. Faces, folds, fingers
   // and equipment remain real geometry without hundreds of separate draws.
+  const tintedMaterials=new Map();
+  function batchKey(mat){return mat.isMeshStandardMaterial&&!mat.transparent?[mat.map?.uuid,mat.bumpMap?.uuid,mat.roughnessMap?.uuid,mat.map?mat.roughness:.82,mat.metalness,mat.bumpScale,mat.side].join('|'):mat;}
   function batch(parent){
     for(const child of [...parent.children])if(child.isGroup)batch(child);
-    const buckets=new Map();for(const child of parent.children)if(child.isMesh){const bucket=buckets.get(child.material)??[];bucket.push(child);buckets.set(child.material,bucket);}
-    for(const [mat,items]of buckets){if(items.length<2)continue;const positions=[],normals=[],uv=[];
-      for(const item of items){item.updateMatrix();const source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();source.applyMatrix4(item.matrix);positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);uv.push(...(source.attributes.uv?.array??new Float32Array(source.attributes.position.count*2)));source.dispose();parent.remove(item);geometries.delete(item.geometry);item.geometry.dispose();}
-      const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));mesh(parent,g,mat);
+    const buckets=new Map();for(const child of parent.children)if(child.isMesh){const key=batchKey(child.material),bucket=buckets.get(key)??[];bucket.push(child);buckets.set(key,bucket);}
+    for(const [key,items]of buckets){if(items.length<2)continue;const positions=[],normals=[],uv=[],colors=[],mixed=items.some(item=>item.material!==items[0].material);let mat=items[0].material;
+      if(mixed){if(!tintedMaterials.has(key)){const merged=mat.clone();merged.color.set(0xffffff);merged.vertexColors=true;if(!merged.map)merged.roughness=.82;materials.add(merged);tintedMaterials.set(key,merged);}mat=tintedMaterials.get(key);}
+      for(const item of items){item.updateMatrix();const source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();source.applyMatrix4(item.matrix);positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);uv.push(...(source.attributes.uv?.array??new Float32Array(source.attributes.position.count*2)));if(mixed)for(let i=0;i<source.attributes.position.count;i++)colors.push(item.material.color.r,item.material.color.g,item.material.color.b);source.dispose();parent.remove(item);geometries.delete(item.geometry);item.geometry.dispose();}
+      const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));if(mixed)g.setAttribute('color',new T.Float32BufferAttribute(colors,3));mesh(parent,g,mat);
     }
   }
   batch(group);
   let disposed=false;
   function update(input={}){
-    if(disposed)return;const pose=actorPose(input);
-    const throwing=!archer&&input.motion==='throw';weapon.visible=!archer&&!throwing;if(javelin)javelin.visible=throwing&&(input.phase??0)<.5;
+    if(disposed)return;
+    const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
+    const pose=actorPose(mapped),horseMotion=horse?.update(input);
+    if(civic){if(!['yield','speak','rally','order'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
+    if(kit.wounded){pose.leftArm[0]=-.60;pose.leftElbow=-1.3;pose.bodyZ-=.035;}
+    if(mounted){pose.hipY=1.56+horseMotion.riderBob-.38*horseMotion.fall;pose.hipZ=-.08+pose.hipZ*.4;pose.bodyX+=horseMotion.bodyPitch;pose.bodyZ+=horseMotion.tail*.12;}
+    const throwing=armed&&!archer&&input.motion==='throw';if(weapon)weapon.visible=!archer&&!throwing;if(javelin)javelin.visible=throwing&&(input.phase??0)<.5;
     if(archer){const firing=['throw','attack','strike'].includes(input.motion),p=Number.isFinite(input.phase)?Math.max(0,Math.min(1,input.phase)):0,draw=firing?(p<.5?Math.sin(p*Math.PI):Math.max(0,1-(p-.5)*8)):0;
       const smooth=t=>{const v=Math.max(0,Math.min(1,t));return v*v*(3-2*v);},raise=firing?smooth(p/.18)*(1-smooth((p-.78)/.22)):0;
       pose.leftArm=[-.35-1.05*raise,0,-.12];pose.leftElbow=-.35+.19*raise;pose.rightArm=[-.1-1.1*raise,0,.08];pose.rightElbow=-.35-1.55*draw;pose.bodyY=-.12*draw;
       bow.rotation.x=-pose.leftArm[0]-pose.leftElbow;bowString.geometry.attributes.position.setZ(1,-.09-.26*draw);bowString.geometry.attributes.position.needsUpdate=true;
       nockedArrow.visible=firing&&p<.52;nockedArrow.position.z=-.09-.26*draw;
     }
-    group.rotation.y=pose.yaw;hips.position.set(0,pose.hipY,pose.hipZ);torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
-    for(let i=0;i<2;i++){legs[i].thigh.rotation.x=pose.legs[i].thigh;legs[i].knee.rotation.x=pose.legs[i].knee;legs[i].ankle.rotation.x=pose.legs[i].ankle;}
+    group.rotation.y=pose.yaw;hips.position.set(0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
+    for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:0);legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;legs[i].ankle.rotation.x=mounted?-.60:pose.legs[i].ankle;}
     right.shoulder.rotation.set(...pose.rightArm);left.shoulder.rotation.set(...pose.leftArm);right.elbow.rotation.x=pose.rightElbow;left.elbow.rotation.x=pose.leftElbow;right.hand.rotation.x=pose.rightWrist;left.hand.rotation.x=pose.leftWrist;
     if(shield){shield.rotation.x=-(pose.leftArm[0]+pose.leftElbow+pose.leftWrist)+pose.shieldTilt;shield.rotation.z=-pose.leftArm[2];}
-    if(raider&&!archer)weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow+(['attack','strike'].includes(input.motion)?0:-.18);
+    if(weapon&&raider&&!archer)weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow+(['attack','strike'].includes(input.motion)?0:-.18);
     ring.visible=!!input.selected;
     group.updateMatrixWorld(true);
   }
-  function dispose(){if(disposed)return;disposed=true;for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const t of textures)t.dispose();group.removeFromParent();}
+  function dispose(){if(disposed)return;disposed=true;for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const kind of surfaces.keys())releaseActorSurface(kind);group.removeFromParent();}
   update();return {group,update,dispose};
 }

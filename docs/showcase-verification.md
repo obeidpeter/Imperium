@@ -1,5 +1,7 @@
 # Sacramentum 3D presentation verification
 
+This page preserves the completed **0.10 and 0.9** release evidence. The current all-chapter work is recorded separately in [campaign 3D verification](campaign-3d-verification.md).
+
 ## Version 0.10 — Chapter I integrated into the campaign
 
 Production revision **46b8d8667e77**, verified 12 October 2026. Chapter I's drill and road battle use the shared 3D renderer within the normal campaign. Original articulated models, code-generated material detail, distinct training scenery, blended terrain, animated standards, contact motion and optional synthesized foley extend the existing 3D study. Chapters II–XII keep the Canvas renderer. This remains an original procedural character system, not photorealistic scanned models or a motion-capture library.

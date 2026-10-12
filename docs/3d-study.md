@@ -1,6 +1,6 @@
 # The frontier road — optional 3D battle
 
-The separate playable WebGL battle at `showcase/index.html` was introduced in version 0.9. Version 0.10 also uses its shared renderer for Chapter I within the normal campaign, including training. Chapters II–XII keep their Canvas presentation. This page remains a separate in-memory study; it does not become the campaign save or grant progression.
+The separate playable WebGL battle at `showcase/index.html` was introduced in version 0.9. Version 0.11 uses its shared renderer throughout the normal campaign, including battles and political Contests, with an optional 2D tactical view. This page remains a separate in-memory study; it does not become the campaign save or grant progression.
 
 ## Play and return
 
@@ -14,12 +14,12 @@ The study does not load or write the campaign chronicle. Restart replaces its te
 
 Serve the project normally, or build it with `npm run build` and serve `dist/`. The static output includes `showcase/`, `src/showcase/`, `vendor/three/` and `assets/showcase/`. Three.js 0.186.1 is bundled under its MIT license, with the complete notice in `vendor/three/LICENSE`; there is no CDN or package-install step.
 
-The campaign's initial service-worker cache excludes the 3D modules and textures. Chapter I's resource group now includes the shared renderer, materials and vendor files, while all chapter groups exclude the standalone study page and its stylesheet. Visiting the study requests its dependencies. Campaign Settings' explicit **Download all chapters for offline play** includes the entire study. A chapter-ready message alone does not establish that the separate page/style are cached. The build report records the `showcaseAssets` list and its compressed total; initial, chapter I and complete budget checks still apply.
+The campaign's initial service-worker cache excludes the 3D modules and textures. Every chapter resource group includes the shared renderer, materials and vendor files, with shared URLs reused from the current cache. This also supports a restored later chapter on a fresh device. All chapter groups exclude the standalone study page and its stylesheet. Visiting the study requests its dependencies. Campaign Settings' explicit **Download all chapters for offline play** includes the entire study. A chapter-ready message alone does not establish that the separate page/style are cached. The build report records the `showcaseAssets` list and its compressed total; initial, chapter I and complete budget checks still apply.
 
 Known page navigation loads the study's own document before the campaign-shell fallback, including the `/showcase/` directory form. No worker update is forced during an active encounter. Source preview alone does not provide a production service worker.
 
 ## Scope and limits
 
-The study requires WebGL 2 for its scene. It renders geometric figures and environment meshes with articulated poses and local surface materials; it is not a set of photographed actors, a complete production animation library or a campaign-wide graphics replacement. Named commands remain available when scene initialization fails. Returning to the original campaign is always available.
+The study requires WebGL 2 for its scene. It renders geometric figures and environment meshes with articulated poses and local surface materials; it is not a set of photographed actors, a complete production animation library or a complete production asset library. Named commands remain available when scene initialization fails. Returning to the original campaign is always available.
 
 Passing rule, module or offline-protocol checks does not establish visual quality, first-time player understanding, mobile frame rate, physical-device accessibility or long-term stability. Browser observations and measured performance must be recorded separately, with the tested hardware and revision. Artwork and vendor details are in [3D art provenance](3d-art-provenance.md) and [license notices](LICENSE-NOTICES.md).

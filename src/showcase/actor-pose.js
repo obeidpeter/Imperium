@@ -50,6 +50,8 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     pose.leftArm[0]-=.28*hit;pose.leftElbow-=.36*hit;pose.shieldTilt+=.12*hit;
   }else if(['rally','speak','order'].includes(motion)){
     const raise=Math.sin(Math.PI*p);pose.rightArm=[-.1-2*raise,0,.08+.04*raise];pose.rightElbow=-.35;pose.headX=-.09*raise;pose.bodyY=.08*raise;
+  }else if(motion==='yield'){
+    const close=smooth(phase===undefined?1:p);pose.headX=.18*close;pose.bodyX=.035*close;pose.leftArm=[-.2-.34*close,0,-.1+.16*close];pose.rightArm=[-.1-.36*close,0,.08-.16*close];pose.leftElbow=-.55-.9*close;pose.rightElbow=-.35-1.05*close;
   }else if(['dead','withdrawn'].includes(motion)||health<=0){
     const fall=health<=0?1:smooth(p);pose.hipY-=.6*fall;pose.bodyX=.8*fall;pose.headX=.35*fall;pose.rightArm[0]=-.7*fall;pose.opacity=1;
   }
@@ -62,4 +64,17 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     return {thigh,knee,ankle:-thigh-knee+foot.roll};
   });
   return pose;
+}
+
+/** Horse gait converts the stage's human .72m distance phase to a1.35m stride.
+ * Four hoof targets and sagittal IK retain planted feet during each stance.
+ */
+export function horsePose({time=0,motion='idle',phase,locomotionWeight=1}={}){
+  time=finite(time);const moving=['walk','run','retreat','cavalry-move'].includes(motion),cycle=phase===undefined?time*1.2:finite(phase)*.72/1.35,weight=moving?clamp(finite(locomotionWeight,1),0,1):0;
+  const p=clamp(finite(phase),0,1),fall=['withdrawn','dead'].includes(motion)?smooth(p):0,attack=['attack','strike','cavalry-attack'].includes(motion)?Math.sin(Math.PI*p):0;
+  const bodyY=1.04+Math.cos(cycle*Math.PI*4)*.014*weight,bodyPitch=-.028*attack,neckPitch=.018*Math.sin(time*1.3)+.07*attack,tail=.07*Math.sin(time*1.7)+.08*Math.sin(cycle*Math.PI*2)*weight;
+  const offsets=motion==='run'?[0,.5,.5,0]:[0,.5,.75,.25];
+  const feet=offsets.map((offset,i)=>{const q=((cycle+offset)%1+1)%1,stance=q<.55,s=stance?q/.55:(q-.55)/.45,z=stance?mix(.37125,-.37125,s):mix(-.37125,.37125,smooth(s));return {y:.075+(stance?0:Math.sin(s*Math.PI)*.14)*weight,z:z*weight+(i<2?.54:-.54),roll:stance?0:-.16*Math.sin(s*Math.PI)*weight};});
+  const legs=feet.map((foot,i)=>{const y=foot.y-bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(y,z),.12,1.059),length=.53,bend=i<2?1:-1;const upper=Math.atan2(-z,-y)-bend*Math.acos(clamp(d/(2*length),-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*length*length-d*d)/(2*length*length),-1,1)));return {upper,knee,ankle:-upper-knee+foot.roll};});
+  return {bodyY,bodyPitch,neckPitch,tail,feet,legs,fall,riderBob:bodyY-1.04};
 }
