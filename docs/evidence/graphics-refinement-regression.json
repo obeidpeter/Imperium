@@ -1,0 +1,929 @@
+{
+  "format": "sacramentum-graphics-refinement-regression-v1",
+  "version": "0.6.0",
+  "recordedAt": "2026-10-12T08:19:53.583Z",
+  "scope": "Aggregation of supplied final test/build/autoplay records; this helper does not execute those commands.",
+  "tests": {
+    "command": "node --test tests/*.test.mjs",
+    "exitCode": 0,
+    "tests": 215,
+    "passed": 215,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 9040.8261,
+    "exitCodeBasis": "Complete passing Node test summary supplied by the root verification run; this aggregator does not execute tests.",
+    "logSha256": "029569a4c6a7eb3a4b28d018bfa110bc9047bc95e44039a56320d5b4a33313e2",
+    "evidence": {
+      "file": "work/graphics-06-tests.txt",
+      "bytes": 23214,
+      "sha256": "029569a4c6a7eb3a4b28d018bfa110bc9047bc95e44039a56320d5b4a33313e2",
+      "modifiedAt": "2026-10-12T08:17:50.239Z"
+    }
+  },
+  "autoplay": {
+    "command": "node scripts/autoplay.mjs",
+    "exitCode": 0,
+    "source": "New Game; legal gameplay API commands only",
+    "seed": 275,
+    "rank": "Augustus",
+    "completed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "encounters": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "won",
+        "turns": 3,
+        "losses": 0,
+        "heroHealth": 20,
+        "used": [
+          "move",
+          "throw",
+          "strike",
+          "brace"
+        ]
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 11,
+        "used": [
+          "move",
+          "brace",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch2-marsh",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 18,
+        "used": [
+          "move",
+          "brace",
+          "throw",
+          "assist",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "won",
+        "turns": 4,
+        "losses": 0,
+        "heroHealth": 16,
+        "used": [
+          "move",
+          "throw",
+          "strike",
+          "brace"
+        ]
+      },
+      {
+        "id": "ch3-station",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "won",
+        "turns": 4,
+        "losses": 0,
+        "heroHealth": 18,
+        "used": [
+          "scout",
+          "move",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch3-rolls",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 22,
+        "used": [
+          "move",
+          "brace",
+          "throw",
+          "assist"
+        ]
+      },
+      {
+        "id": "ch4-gate",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "won",
+        "turns": 13,
+        "losses": 3,
+        "heroHealth": 8,
+        "used": [
+          "order",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch4-wall",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 23,
+        "used": [
+          "order",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch5-mine",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 20,
+        "used": [
+          "formation",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch5-wall",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "won",
+        "turns": 12,
+        "losses": 1,
+        "heroHealth": 20,
+        "used": [
+          "formation",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch6-wells",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "assist",
+          "order"
+        ]
+      },
+      {
+        "id": "ch6-eagle",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 24,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "strike",
+          "order"
+        ]
+      },
+      {
+        "id": "ch7-council",
+        "chapter": 7,
+        "kind": "contest",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 9,
+        "used": [
+          "move",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch7-legion",
+        "chapter": 7,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 7,
+        "used": [
+          "deploy",
+          "formation",
+          "rally",
+          "move",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch8-parley",
+        "chapter": 8,
+        "kind": "contest",
+        "status": "won",
+        "turns": 10,
+        "losses": 1,
+        "heroHealth": 0,
+        "used": [
+          "move",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch8-ferry",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "won",
+        "turns": 11,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "assist",
+          "order"
+        ]
+      },
+      {
+        "id": "ch8-crossing",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "won",
+        "turns": 9,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch9-city",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 8,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch10-road",
+        "chapter": 10,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch10-tribunal",
+        "chapter": 10,
+        "kind": "contest",
+        "status": "won",
+        "turns": 12,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch11-accounts",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "won",
+        "turns": 12,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "record",
+          "denounce",
+          "address",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "won",
+        "turns": 14,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "denounce",
+          "record",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch12-legitimacy",
+        "chapter": 12,
+        "kind": "contest",
+        "status": "won",
+        "turns": 14,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "persuade",
+          "record",
+          "denounce",
+          "rebut"
+        ]
+      },
+      {
+        "id": "ch12-confrontation",
+        "chapter": 12,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 22,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      }
+    ],
+    "totalTurns": 204,
+    "evidence": {
+      "file": "work/graphics-06-autoplay.json",
+      "bytes": 6968,
+      "sha256": "da2466ff3c074642f87b369a05989add462b6993ce77f511065893d6d0cbb5f6",
+      "modifiedAt": "2026-10-12T08:09:06.563Z"
+    }
+  },
+  "assetsAndOffline": {
+    "command": "node scripts/verify-assets.mjs",
+    "exitCode": 0,
+    "checksPassed": 9,
+    "checks": [
+      "PASS asset manifest integrity and portrait/title budgets",
+      "PASS startup/chapter1/full 2 MB budgets, chapter groups and bundled asset provenance",
+      "PASS shell-only install and truthful partial status",
+      "PASS chapter 1 caches separately and never claims all chapters are offline",
+      "PASS version-scoped lookup ignores old artwork",
+      "PASS failed deferred fetch does not claim offline readiness",
+      "PASS retry completes all deferred assets and reports readiness",
+      "PASS server-unavailable navigation uses current shell cache",
+      "PASS activation cleanup; no forced skipWaiting"
+    ],
+    "evidence": {
+      "file": "work/graphics-06-assets.json",
+      "bytes": 683,
+      "sha256": "d7f7a36a171959eff09681db03c009e92bde8a66ea868bca5aff327649547f8e",
+      "modifiedAt": "2026-10-12T08:12:36.617Z"
+    }
+  },
+  "build": {
+    "command": "node scripts/build.mjs",
+    "exitCode": 0,
+    "version": "0.6.0",
+    "revision": "9968c5977d0c",
+    "files": 82,
+    "bytes": 2342046,
+    "gzipBytes": 1988904,
+    "initialFiles": 48,
+    "initialBytes": 686542,
+    "initialGzipBytes": 318580,
+    "chapterOneFiles": 63,
+    "chapterOneBytes": 1654028,
+    "chapterOneGzipBytes": 1286671,
+    "completeBytes": 2358172,
+    "completeGzipBytes": 1991422,
+    "deferredFiles": 34,
+    "firstLoadBudget": 2000000,
+    "completeBudget": 2000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace",
+    "initialAssets": [
+      "./assets/portraits/hero-recruit.webp",
+      "./assets/portraits/varro.webp",
+      "./assets/scenes/frontier-oath.webp",
+      "./icon.svg",
+      "./icons/icon-180.png",
+      "./icons/icon-192.png",
+      "./icons/icon-512.png",
+      "./index.html",
+      "./manifest.webmanifest",
+      "./src/config.js",
+      "./src/core/battle.js",
+      "./src/core/career.js",
+      "./src/core/contest.js",
+      "./src/core/game.js",
+      "./src/core/legacy-battle.js",
+      "./src/core/legacy-contest.js",
+      "./src/core/shared.js",
+      "./src/data/campaign.js",
+      "./src/data/encounters.js",
+      "./src/data/story-stages.js",
+      "./src/ui/ambient.js",
+      "./src/ui/animation-timeline.js",
+      "./src/ui/app.js",
+      "./src/ui/art.js",
+      "./src/ui/asset-loader.js",
+      "./src/ui/audio.js",
+      "./src/ui/battle-art.js",
+      "./src/ui/battle-effects.js",
+      "./src/ui/campaign-views.js",
+      "./src/ui/cinematic.css",
+      "./src/ui/encounter-view.js",
+      "./src/ui/graphics-quality.js",
+      "./src/ui/interface.css",
+      "./src/ui/motion.js",
+      "./src/ui/offline-updates.js",
+      "./src/ui/panels.js",
+      "./src/ui/render-controller.js",
+      "./src/ui/renderer.js",
+      "./src/ui/session-gate.js",
+      "./src/ui/site-media.js",
+      "./src/ui/sprite-poses.js",
+      "./src/ui/storage.js",
+      "./src/ui/styles.css",
+      "./src/ui/terrain-detail.js",
+      "./src/ui/turn-replay.js",
+      "./src/ui/unit-sprites.js",
+      "./src/ui/view-helpers.js",
+      "./src/ui/world-art.js"
+    ],
+    "chapterAssets": {
+      "1": [
+        "./assets/scenes/danube.webp",
+        "./assets/portraits/hero-recruit.webp",
+        "./assets/portraits/hero-miles.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "2": [
+        "./assets/scenes/marsh.webp",
+        "./assets/portraits/hero-miles.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/portraits/sabinus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "3": [
+        "./assets/scenes/danube.webp",
+        "./assets/portraits/hero-miles.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/crispus-intense.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/portraits/sabinus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "4": [
+        "./assets/scenes/danube.webp",
+        "./assets/portraits/hero-miles.webp",
+        "./assets/portraits/hero-centurion.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/crispus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "5": [
+        "./assets/scenes/eastern-fort.webp",
+        "./assets/portraits/hero-centurion.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "6": [
+        "./assets/scenes/eastern-fort.webp",
+        "./assets/portraits/hero-centurion.webp",
+        "./assets/portraits/hero-prefect.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "7": [
+        "./assets/scenes/danube.webp",
+        "./assets/portraits/hero-prefect.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/crispus-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "8": [
+        "./assets/scenes/river-crossing.webp",
+        "./assets/portraits/hero-prefect.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/aelia-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/portraits/sabinus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "9": [
+        "./assets/scenes/eastern-fort.webp",
+        "./assets/portraits/hero-prefect.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/portraits/sabinus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "10": [
+        "./assets/scenes/province.webp",
+        "./assets/portraits/hero-governor.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/aelia-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "11": [
+        "./assets/scenes/rome.webp",
+        "./assets/portraits/hero-governor.webp",
+        "./assets/portraits/hero-senator.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/crispus-intense.webp",
+        "./assets/portraits/paullus-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ],
+      "12": [
+        "./assets/scenes/rome.webp",
+        "./assets/portraits/hero-senator.webp",
+        "./assets/portraits/hero-emperor.webp",
+        "./assets/portraits/oath-seal.webp",
+        "./assets/portraits/varro.webp",
+        "./assets/portraits/lucan.webp",
+        "./assets/portraits/crispus.webp",
+        "./assets/portraits/severianus.webp",
+        "./assets/portraits/aelia.webp",
+        "./assets/portraits/paullus.webp",
+        "./assets/portraits/sabinus.webp",
+        "./assets/portraits/varro-intense.webp",
+        "./assets/portraits/lucan-intense.webp",
+        "./assets/portraits/sabinus-intense.webp",
+        "./assets/portraits/crispus-intense.webp",
+        "./assets/portraits/severianus-intense.webp",
+        "./assets/portraits/paullus-intense.webp",
+        "./assets/portraits/aelia-intense.webp",
+        "./assets/scenes/accession.webp",
+        "./assets/tactical/units-roman.webp",
+        "./assets/tactical/units-frontier.webp",
+        "./assets/tactical/units-specialists.webp",
+        "./assets/tactical/units-civic.webp",
+        "./assets/tactical/environment-props.webp"
+      ]
+    },
+    "chapterGzipBytes": {
+      "1": 1003506,
+      "2": 1169975,
+      "3": 1193215,
+      "4": 1174061,
+      "5": 982588,
+      "6": 1171627,
+      "7": 1169966,
+      "8": 1182544,
+      "9": 1000602,
+      "10": 1143845,
+      "11": 579634,
+      "12": 1278365
+    },
+    "deferredAssets": [
+      "./assets/portraits/aelia-intense.webp",
+      "./assets/portraits/aelia.webp",
+      "./assets/portraits/crispus-intense.webp",
+      "./assets/portraits/crispus.webp",
+      "./assets/portraits/hero-centurion.webp",
+      "./assets/portraits/hero-emperor.webp",
+      "./assets/portraits/hero-governor.webp",
+      "./assets/portraits/hero-miles.webp",
+      "./assets/portraits/hero-prefect.webp",
+      "./assets/portraits/hero-senator.webp",
+      "./assets/portraits/lucan-intense.webp",
+      "./assets/portraits/lucan.webp",
+      "./assets/portraits/oath-seal.webp",
+      "./assets/portraits/paullus-intense.webp",
+      "./assets/portraits/paullus.webp",
+      "./assets/portraits/sabinus-intense.webp",
+      "./assets/portraits/sabinus.webp",
+      "./assets/portraits/severianus-intense.webp",
+      "./assets/portraits/severianus.webp",
+      "./assets/portraits/varro-intense.webp",
+      "./assets/scenes/accession.webp",
+      "./assets/scenes/danube.webp",
+      "./assets/scenes/eastern-fort.webp",
+      "./assets/scenes/marsh.webp",
+      "./assets/scenes/province.webp",
+      "./assets/scenes/river-crossing.webp",
+      "./assets/scenes/rome.webp",
+      "./assets/site/battle.webp",
+      "./assets/site/contest.webp",
+      "./assets/tactical/environment-props.webp",
+      "./assets/tactical/units-civic.webp",
+      "./assets/tactical/units-frontier.webp",
+      "./assets/tactical/units-roman.webp",
+      "./assets/tactical/units-specialists.webp"
+    ],
+    "siteUrl": "relative to host",
+    "builtAt": "2026-10-12T08:09:06.122Z"
+  },
+  "protectedFiles": {
+    "format": "sacramentum-graphics-protected-v1",
+    "recordedAt": "2026-10-12T08:09:06.670Z",
+    "baseline": "../../work/graphics-baseline-05/Sacramentum",
+    "scope": "Every file in src/core and src/data plus browser storage and session-gate modules. Added/deleted files are failures. Renderer/presentation files are intentionally outside this invariant.",
+    "count": 13,
+    "unchangedCount": 13,
+    "allUnchanged": true,
+    "files": [
+      {
+        "path": "src/core/battle.js",
+        "baselineSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+        "currentSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/career.js",
+        "baselineSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "currentSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/contest.js",
+        "baselineSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+        "currentSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/debug.js",
+        "baselineSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "currentSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/game.js",
+        "baselineSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+        "currentSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-battle.js",
+        "baselineSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "currentSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-contest.js",
+        "baselineSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "currentSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/shared.js",
+        "baselineSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+        "currentSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/campaign.js",
+        "baselineSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "currentSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/encounters.js",
+        "baselineSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "currentSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/story-stages.js",
+        "baselineSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "currentSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/session-gate.js",
+        "baselineSha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+        "currentSha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/storage.js",
+        "baselineSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+        "currentSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+        "unchanged": true
+      }
+    ]
+  },
+  "limitations": [
+    "Actual desktop Chromium browser measurements; canvas sizes do not establish physical-phone performance or touch behavior.",
+    "Synchronous Canvas submission is separate from GPU completion. RAF and paint intervals are not a guaranteed FPS result.",
+    "One captured benchmark series per edition, warmed artwork and fixed legal fixtures. No population estimate, battery, thermal, VRAM or production-network benchmark.",
+    "Filmstrips are deterministic samples of the actual animation timeline, not recordings of real-time pacing or DOM overlay badge timing.",
+    "Sprite contact sheets, if inspected, use deliberately isolated pose/facing overrides over legally sourced unit identities; they are not actual gameplay actions.",
+    "Autoplay verifies one legal deterministic campaign route, not human playtime, enjoyment or every possible strategy.",
+    "Static 28-case timing run preceded only the final projectile-release and footfall-timing corrections; the static draw path was unchanged by those corrections.",
+    "Motion timings and captures are local desktop-browser observations; no GPU completion, physical iOS/Android, installed-PWA update, battery or human enjoyment claim.",
+    "Animation deforms existing painted four-facing sprites procedurally. It is not newly authored bitmap animation or a 3D character model."
+  ]
+}

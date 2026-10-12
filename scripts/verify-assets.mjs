@@ -1,0 +1,74 @@
+// Run after npm run build. Development-only asset and worker regression checks.
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import vm from 'node:vm';
+
+const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
+for(const asset of manifest.assets){
+  const data=await readFile(asset.path);
+  assert.equal(data.length,asset.export.bytes,asset.id+' byte count');
+  assert.equal(createHash('sha256').update(data).digest('hex'),asset.export.sha256,asset.id+' digest');
+}
+assert.ok(manifest.assets.filter(a=>a.path.startsWith('assets/portraits/')).reduce((s,a)=>s+a.export.bytes,0)<=400000);
+assert.ok(manifest.assets.find(a=>a.id==='frontier-oath').export.bytes<=350000);
+console.log('PASS asset manifest integrity and portrait/title budgets');
+
+const code=await readFile('dist/sw.js','utf8'),build=JSON.parse(await readFile('dist/build-report.json','utf8'));
+assert.ok(build.initialGzipBytes<=2000000&&build.chapterOneGzipBytes<=2000000&&build.completeGzipBytes<=2000000);
+assert.equal(Object.keys(build.chapterAssets).length,12);
+for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
+for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
+console.log('PASS startup/chapter1/full 2 MB budgets, chapter groups and bundled asset provenance');
+const base='https://sacramentum.test/',handlers={},stores=new Map(),messages=[];
+const normalize=p=>new URL(typeof p==='string'?p:p.url,base).href;
+const cacheName='sacramentum-'+build.revision;
+let failing=null,offline=false;
+const fetcher=async p=>{const url=normalize(p);if(offline||url===failing)throw Error('network unavailable');return new Response('current:'+url,{status:200});};
+function cache(name){
+  if(!stores.has(name))stores.set(name,new Map());const map=stores.get(name);
+  return {match:async p=>map.get(normalize(p))?.clone(),put:async(p,r)=>map.set(normalize(p),r.clone()),add:async p=>{const r=await fetcher(p);map.set(normalize(p),r)},addAll:async ps=>{for(const p of ps){const r=await fetcher(p);map.set(normalize(p),r)}},keys:async()=>[...map.keys()]};
+}
+const caches={open:async n=>cache(n),keys:async()=>[...stores.keys()],delete:async n=>stores.delete(n)};
+const client={postMessage:m=>messages.push(m)};
+const self={registration:{scope:base},location:{origin:new URL(base).origin},clients:{matchAll:async()=>[client],claim:async()=>{}},addEventListener:(n,f)=>handlers[n]=f};
+vm.runInNewContext(code,{self,caches,fetch:fetcher,URL,Request,Response,console});
+async function event(name,data={}){let promise;handlers[name]({...data,waitUntil:p=>{promise=p},respondWith:p=>{promise=p}});return promise;}
+await event('install');
+assert.equal(stores.get(cacheName).size,build.initialFiles);
+assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
+await event('message',{data:'offline-status',source:client});
+assert.equal(messages.at(-1).type,'offline-progress');
+console.log('PASS shell-only install and truthful partial status');
+
+await event('message',{data:{type:'cache-chapter',chapter:1},source:client});
+assert.equal(messages.at(-1).type,'chapter-offline');assert.equal(messages.at(-1).ready,true);
+assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
+assert.ok(!messages.some(m=>m.type==='offline-ready'));
+console.log('PASS chapter 1 caches separately and never claims all chapters are offline');
+
+await cache('sacramentum-old').put('./assets/portraits/hero-emperor.webp',new Response('OLD ART'));
+const fresh=await event('fetch',{request:{method:'GET',url:normalize('./assets/portraits/hero-emperor.webp'),mode:'cors'}});
+assert.ok((await fresh.text()).startsWith('current:'));
+console.log('PASS version-scoped lookup ignores old artwork');
+
+failing=normalize(build.deferredAssets.find(p=>p.includes('aelia')));
+await event('message',{data:'cache-campaign',source:client});
+assert.equal(messages.at(-1).type,'offline-progress');
+assert.ok(messages.some(m=>m.type==='offline-error'));
+assert.ok(!messages.some(m=>m.type==='offline-ready'));
+console.log('PASS failed deferred fetch does not claim offline readiness');
+
+failing=null;await event('message',{data:'cache-campaign',source:client});
+assert.equal(messages.at(-1).type,'offline-ready');
+assert.equal(messages.at(-1).completed,build.files);
+console.log('PASS retry completes all deferred assets and reports readiness');
+
+offline=true;
+const response=await event('fetch',{request:{method:'GET',url:base,mode:'navigate'}});
+assert.ok((await response.text()).includes('index.html'));
+console.log('PASS server-unavailable navigation uses current shell cache');
+
+assert.ok(!code.includes('skipWaiting('));await event('activate');
+assert.ok(!stores.has('sacramentum-old'));
+console.log('PASS activation cleanup; no forced skipWaiting');

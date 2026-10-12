@@ -1,0 +1,144 @@
+import * as Legacy from './legacy-contest.js';
+export const createLegacyContest=Legacy.createContest;
+import {CHAMBER_SCENARIOS} from '../data/encounters.js';
+import {INTEREST_EFFECTS,BLOC_AFFINITIES,POLITICAL_BALANCE as BALANCE,RIVAL_PRIORITIES} from '../data/contest-balance.js';
+export {INTEREST_EFFECTS} from '../data/contest-balance.js';
+import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt} from './shared.js';
+
+export const CONTEST_RULES={stanceMin:-6,stanceMax:6,commitment:3,addressCooldown:3,denounce:4,rebut:4,promiseLimit:2,recordPerRecipient:1};
+export function createContest(state,data,options={}) {
+  const c=state.chapter,scenario=CHAMBER_SCENARIOS[data.id]??CHAMBER_SCENARIOS['ch7-council'],e={issue:scenario.issue,rivalStyle:scenario.rival,recordUses:[],id:data.id,kind:'contest',title:data.title,objective:data.objective,type:data.type,width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('chamber')),units:[],turn:1,turnLimit:data.turnLimit??(c===7?8:10),status:'active',commandsLeft:0,commandCapacity:0,log:[],usedAbilities:[],goal:{x:4,y:3},requiredAbility:data.requiredAbility,promises:[],hardened:[],cooldowns:{},staged:{meters:{army:0,political:0,public:0},supplies:0,obligations:[]},fallback:options.fallback??false};
+  if(options.politicsVersion!==1)e.politicsVersion=2;
+  e.units.push(makeUnit('hero',state.name,'player',...scenario.hero,{hp:12,resolve:12,maxResolve:12,move:3,role:'speaker',vote:'for'}));
+  e.units.push(makeUnit('speaker-ally',c===7?'Veteran quartermaster':state.decisions.ch8==='families'?'Dacian delegate':'Provincial advocate','ally',...scenario.ally,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'for'}));
+  e.units.push(makeUnit('rival-speaker',c>=11?'Crispus’s advocate':'Court opposition speaker','enemy',7,3,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'against',intent:scenario.rival==='lobby'?'Lobby wavering members; attack speakers every third turn.':scenario.rival==='broker'?'Challenge promised votes; attack nearby speakers on even turns.':'Attack nearby speakers on even turns; otherwise lobby wavering members.'}));
+  e.units.push(makeUnit('elder-speaker','Old-order spokesman','enemy',5,7,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'against',intent:'Defend the old order and its wavering votes.'}));
+  const blocs=['Veterans','Landholders','Civic'];
+  for(let i=0;i<9;i++){const bloc=blocs[i%3];const value=bloc==='Veterans'?state.meters.army:bloc==='Landholders'?state.meters.political:state.meters.public;
+    const interest=scenario.interests[(i+Math.floor(i/3))%scenario.interests.length],position=scenario.layout[i];let stance=Math.min(2,Math.floor(value/30))-(i===4?1:0);if(c===10){if(bloc==='Landholders'&&(state.allocation?.town??0)>=3)stance++;if(state.judgment==='shared'&&bloc==='Civic')stance++;if(state.judgment==='settlers')stance+=bloc==='Veterans'?1:bloc==='Landholders'?-1:0;}
+    e.units.push(makeUnit(`member${i}`,`${bloc} delegate ${Math.floor(i/3)+1}`,'neutral',...position,{hp:1,role:'voter',bloc,interest,stance:clamp(stance,-6,6),vote:null}));
+  }
+  if(options.fallback) e.units.filter(u=>u.bloc==='Landholders').forEach(u=>u.stance=3);
+  e.electorate=e.units.length;e.majority=Math.floor(e.electorate/2)+1;
+  e.objective+=` Issue: ${e.issue}. Interests change the value of each argument; check the preview.`;note(e,`${e.majority} of ${e.electorate} votes required at the end of turn ${e.turnLimit}. An early majority does not end the debate; a tie fails.`);
+  if(e.politicsVersion===2)refreshIntents({...state,encounter:e});
+  return e;
+}
+export function votes(e){return {for:e.units.filter(u=>u.vote==='for'||(u.role==='voter'&&u.stance>=1)).length,against:e.units.filter(u=>u.vote==='against'||(u.role==='voter'&&u.stance<1)).length,total:e.electorate,majority:e.majority};}
+export function shiftedStance(member,delta){const opposed=member.stance<=-3&&delta>0,support=member.stance>=3&&delta<0;return clamp(member.stance+(opposed||support?Math.sign(delta)*Math.max(1,Math.ceil(Math.abs(delta)/2)):delta),-6,6);}
+export function contestActions(state,unit){if(!state.encounter.issue)return Legacy.contestActions(state,unit);const e=state.encounter,c=state.chapter;if(!unit||!alive(unit)||!['player','ally'].includes(unit.side)||e.status!=='active')return [];
+  const actions=[];if(!unit.moved)actions.push('move');if(!unit.acted){actions.push('persuade');if(c>=8)actions.push('promise','threaten');if(c>=10){if(!e.cooldowns[`${unit.id}:address`]||e.cooldowns[`${unit.id}:address`]<=e.turn)actions.push('address');actions.push('rebut');}if(c>=11)actions.push('record','denounce');}return actions;}
+export function contestTargets(state,unit,action){if(!state.encounter.issue)return Legacy.contestTargets(state,unit,action);const e=state.encounter;if(action==='move')return reachable(e,unit,3);if(action==='address')return [{x:unit.x,y:unit.y,unitId:unit.id}];
+  let targets=[];
+  if(['persuade','promise','threaten','record'].includes(action)){const range=action==='persuade'?1:action==='record'?3:2;targets=e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=range);if(action==='record')targets=targets.filter(u=>!(e.recordUses??[]).includes(u.id));if(action==='promise')targets=targets.filter(u=>!e.promises.includes(u.id)&&e.promises.length<2);}
+  if(action==='denounce')targets=e.units.filter(u=>u.role==='speaker'&&u.side==='enemy'&&alive(u)&&distance(u,unit)<=3);
+  if(action==='rebut')targets=e.units.filter(u=>u.role==='speaker'&&alive(u)&&distance(u,unit)<=3);
+  return targets.map(u=>({x:u.x,y:u.y,unitId:u.id,label:u.name}));}
+export function politicalPosition(state,unitId){
+  const e=state.encounter,unit=e?.units.find(u=>u.id===unitId),cooperating=unit&&alive(unit)&&['player','ally'].includes(unit.side)?e.units.filter(u=>u.id!==unit.id&&u.role==='speaker'&&alive(u)&&['player','ally'].includes(u.side)&&distance(u,unit)<=BALANCE.cooperationRange).map(u=>({id:u.id,name:u.name})):[];
+  const persuadeBonus=e?.politicsVersion===2&&cooperating.length?BALANCE.cooperationBonus:0;
+  return {cooperating,persuadeBonus,message:persuadeBonus?`Cooperating with ${cooperating.map(u=>u.name).join(', ')}: Persuade +${persuadeBonus}.`:'An allied speaker within two tiles adds +1 Persuade in revised chambers.'};
+}
+export function speechStrength(state,action,target,speaker=state.encounter.units.find(u=>u.id==='hero')){if(!state.encounter.issue)return Legacy.speechStrength(state,action,target);const e=state.encounter,interest=target?.interest??'security',effects=INTEREST_EFFECTS[interest];let strength=effects?.[action]??2;
+  if(e.politicsVersion===2){strength+=BLOC_AFFINITIES[target?.bloc]?.[action]??0;if(action==='persuade')strength+=politicalPosition(state,speaker?.id).persuadeBonus;}
+  else if(action==='promise'&&['grain','office'].includes(interest))strength=6;
+  if(action==='record'&&interest==='service'&&(state.company??[]).reduce((n,v)=>n+(v.commendations??0),0)>=12)strength++;if(action==='threaten'&&e.hardened.includes(target?.bloc))strength--;return Math.max(1,strength);}
+
+function promiseTerms(e,target){const material=['grain','office'].includes(target.interest),cost=e.politicsVersion===2&&material?BALANCE.materialPromiseCost:BALANCE.ordinaryPromiseCost;
+  return {id:`${e.id}:${target.id}`,to:target.bloc,promise:target.interest==='office'?'Endow a civic office for this delegation.':target.interest==='law'?'Fund a legal guarantee for this delegation.':'Provide two grain convoys for this bloc at accession.',due:12,cost,consequence:`Honour: −${cost} supplies. Break: −8 Public Confidence, −4 Political Backing.`,status:'open'};
+}
+export function argumentForecast(state,unit,action,target){
+  const e=state.encounter,forecast={action,sourceId:unit.id,stanceChanges:[],resolveChanges:[],bluntedIds:[],speechCost:1,publicCost:action==='threaten'?3:0,promise:action==='promise'?promiseTerms(e,target):null,votesBefore:votes(e).for};
+  const change=(member,delta)=>forecast.stanceChanges.push({id:member.id,name:member.name,bloc:member.bloc,interest:member.interest,from:member.stance,to:shiftedStance(member,delta),baseDelta:delta});
+  if(action==='address')for(const member of e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3))change(member,speechStrength(state,action,member,unit));
+  else if(['persuade','promise','threaten','record'].includes(action)){change(target,speechStrength(state,action,target,unit));if(action==='threaten')for(const member of e.units.filter(u=>u.role==='voter'&&u.bloc===target.bloc&&u.id!==target.id))change(member,-1);}
+  else if(action==='denounce')forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.max(0,target.resolve-CONTEST_RULES.denounce)});
+  else if(action==='rebut'){if(target.side==='enemy')forecast.bluntedIds.push(target.id);else forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.min(target.maxResolve,target.resolve+CONTEST_RULES.rebut)});}
+  forecast.votesAfter=forecast.votesBefore+forecast.stanceChanges.reduce((n,c)=>n+Number(c.to>=1)-Number(c.from>=1),0);
+  return forecast;
+}
+function forecastPreview(state,unit,action,target){
+  const e=state.encounter,f=argumentForecast(state,unit,action,target),changes=f.stanceChanges.map(c=>`${c.name}: ${c.from} → ${c.to}`).join('; '),resolve=f.resolveChanges.map(c=>`${c.name}: Resolve ${c.from} → ${c.to}`).join('; ');
+  let message=`${changes||resolve||`Blunt ${target.name}’s next speech to at most 1 stance or Resolve loss`}. One speech. Support ${f.votesBefore} → ${f.votesAfter}/${e.electorate}; ${e.majority} needed at turn ${e.turnLimit}.`;
+  if(action==='promise')message+=` ${f.promise.promise} Due at accession (chapter 12). Honour: ${f.promise.cost} supplies; each missing supply costs 1 Public. Break: −8 Public, −4 Backing. Promise ${e.promises.length+1}/2; once per recipient. Brokers prioritize pledged supporters.`;
+  if(action==='threaten')message+=' Costs 3 Public Confidence; shown bloc backlash applies now. Later threats against this bloc lose 1 strength.';
+  if(action==='address')message+=` Available again on turn ${e.turn+CONTEST_RULES.addressCooldown}.`;
+  if(action==='record')message+=' This member can hear your Record once per Contest.';
+  if(action==='denounce')message+=' Withdrawing a speaker stops future speeches but preserves their vote.';
+  if(target?.role==='voter')message+=` ${target.bloc}; interest: ${target.interest}.`;
+  if(action==='persuade'&&politicalPosition(state,unit.id).persuadeBonus)message+=' '+politicalPosition(state,unit.id).message;
+  return {...result(true,message),forecast:f};
+}
+export function previewContest(state,command){if(!state.encounter.issue)return Legacy.previewContest(state,command);const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),action=command.action;if(!contestActions(state,unit).includes(action))return result(false,'That speaker has spent this action, withdrawn, or has not learned that ability.');
+  const point=contestTargets(state,unit,action).find(p=>p.x===command.x&&p.y===command.y&&(!command.targetId||command.targetId===p.unitId));if(!point)return result(false,'Choose a highlighted legal target. Promises are limited to two, once per recipient.');
+  const target=e.units.find(u=>u.id===point.unitId),strength=speechStrength(state,action,target);
+  if(action==='move')return result(true,`Move speaker to ${command.x+1}${String.fromCharCode(65+command.y)}; one movement, up to three tiles.`);
+  if(e.politicsVersion===2)return forecastPreview(state,unit,action,target);
+  if(action==='address'){const members=e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3);return result(true,`Address ${members.length} nearby members: ${members.map(m=>`${m.interest} +${speechStrength(state,'address',m)}`).join(', ')} stance (commitment resists reversal). Speech spent; available again on turn ${e.turn+3}.`);}
+  if(action==='denounce')return result(true,`Denounce ${target.name}: −4 Resolve (${target.resolve} → ${Math.max(0,target.resolve-4)}). A withdrawn speaker keeps their vote.`);
+  if(action==='rebut')return result(true,target.side==='enemy'?`Blunt ${target.name}’s next speech to 1 point of stance or Resolve loss.`:`Restore 4 Resolve to ${target.name} (${target.resolve} → ${Math.min(target.maxResolve,target.resolve+4)}).`);
+  const next=shiftedStance(target,strength);if(action==='promise')return result(true,`${target.name}: stance ${target.stance} → ${next}. Promise ${target.interest==='office'?'a paid civic office':target.interest==='law'?'a funded legal guarantee':'2 grain convoys'} at accession. Honour: 2 supplies; break: −8 Public, −4 Backing. One speech; ${e.promises.length+1}/2 promises. Interest: ${target.interest}.`);
+  const extra=action==='threaten'?` Costs 3 Public Confidence; other ${target.bloc} members lose 1 stance and the bloc resists later threats.`:'';
+  return result(true,`${action==='record'?'Invoke your military record':action[0].toUpperCase()+action.slice(1)}: ${target.name} stance ${target.stance} → ${next}.${extra} Costs one speech.${action==='record'?' This member can hear your Record only once per Contest.':''} Interest: ${target.interest}.`);
+}
+export function applyContest(state,command){if(!state.encounter.issue)return Legacy.applyContest(state,command);const checked=previewContest(state,command);if(!checked.ok)return checked;const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y),action=command.action;
+  if(action==='move'){faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  else if(e.politicsVersion===2){faceToward(unit,target);unit.acted=true;const f=checked.forecast;
+    for(const change of f.stanceChanges)e.units.find(u=>u.id===change.id).stance=change.to;
+    for(const change of f.resolveChanges){const member=e.units.find(u=>u.id===change.id);member.resolve=change.to;member.hp=change.to;}
+    for(const id of f.bluntedIds)e.units.find(u=>u.id===id).blunted=true;
+    if(action==='address')e.cooldowns[`${unit.id}:address`]=e.turn+CONTEST_RULES.addressCooldown;
+    if(action==='record')e.recordUses.push(target.id);
+    if(f.promise){e.promises.push(target.id);e.staged.obligations.push({...f.promise});}
+    if(action==='threaten'){e.staged.meters.public-=f.publicCost;if(!e.hardened.includes(target.bloc))e.hardened.push(target.bloc);}
+  }
+  else {faceToward(unit,target);unit.acted=true;if(action==='address'){e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3).forEach(u=>u.stance=shiftedStance(u,speechStrength(state,'address',u)));e.cooldowns[`${unit.id}:address`]=e.turn+3;}
+    else if(action==='denounce'){target.resolve=Math.max(0,target.resolve-4);target.hp=target.resolve;}
+    else if(action==='rebut'){if(target.side==='enemy')target.blunted=true;else{target.resolve=Math.min(target.maxResolve,target.resolve+4);target.hp=target.resolve;}}
+    else {target.stance=shiftedStance(target,speechStrength(state,action,target));if(action==='record')e.recordUses.push(target.id);if(action==='promise'){e.promises.push(target.id);e.staged.obligations.push({id:`${e.id}:${target.id}`,to:target.bloc,promise:target.interest==='office'?'Endow a civic office for this delegation.':target.interest==='law'?'Fund a legal guarantee for this delegation.':'Provide two grain convoys for this bloc at accession.',due:12,cost:2,consequence:'Honour: −2 supplies. Break: −8 Public Confidence, −4 Political Backing.',status:'open'});}if(action==='threaten'){e.staged.meters.public-=3;e.units.filter(u=>u.role==='voter'&&u.bloc===target.bloc&&u.id!==target.id).forEach(u=>u.stance=shiftedStance(u,-1));if(!e.hardened.includes(target.bloc))e.hardened.push(target.bloc);}}}
+  if(!e.usedAbilities.includes(action))e.usedAbilities.push(action);state.capabilityUse[action]=true;note(e,checked.message);if(e.politicsVersion===2)refreshIntents(state);return checked;
+}
+function rivalPlan(state,enemy){
+  const e=state.encounter,style=RIVAL_PRIORITIES[e.rivalStyle]??RIVAL_PRIORITIES.lobby,positions=[{x:enemy.x,y:enemy.y,cost:0},...reachable(e,enemy,BALANCE.rivalMove)],candidates=[];
+  for(const target of e.units.filter(u=>u.role==='voter'||u.role==='speaker'&&['player','ally'].includes(u.side)&&alive(u))){
+    const lobbying=target.role==='voter',promised=e.promises.includes(target.id),range=lobbying?1:3;
+    const position=positions.filter(p=>distance(p,target)<=range).sort((a,b)=>a.cost-b.cost||distance(a,target)-distance(b,target)||a.y-b.y||a.x-b.x)[0];if(!position)continue;
+    const amount=enemy.blunted?1:lobbying?BALANCE.rivalLobby+(e.rivalStyle==='broker'&&promised?BALANCE.brokerPromisePressure:0):BALANCE.rivalResolve;
+    const from=lobbying?target.stance:target.resolve,to=lobbying?shiftedStance(target,-amount):Math.max(0,from-amount),loss=from-to;
+    const score=lobbying?Number(from>=1&&to<1)*style.vote+loss*.55+(from>=1?1.7:from>-3?.5:-3)+(promised&&from>=1?style.promise:0):loss*style.pressure+(to===0?style.withdraw:0);
+    candidates.push({unitId:enemy.id,action:lobbying?'lobby':'pressure',targetId:target.id,destination:{x:position.x,y:position.y},amount,score:score-position.cost*.04,...(lobbying?{stanceBefore:from,stanceAfter:to}:{resolveBefore:from,resolveAfter:to})});
+  }
+  candidates.sort((a,b)=>b.score-a.score||a.targetId.localeCompare(b.targetId)||a.destination.y-b.destination.y||a.destination.x-b.destination.x);
+  const plan=candidates[0];
+  if(!plan)return {unitId:enemy.id,action:'wait',targetId:null,destination:{x:enemy.x,y:enemy.y},message:`${enemy.name} has no reachable audience this round.`};
+  const target=e.units.find(u=>u.id===plan.targetId),moving=distance(enemy,plan.destination)>0?` moves to ${plan.destination.x+1}${String.fromCharCode(65+plan.destination.y)} and`:'';
+  plan.message=`${enemy.name}${moving} ${plan.action==='lobby'?`challenges ${target.name} (${target.bloc}, ${target.interest}), stance ${plan.stanceBefore} → ${plan.stanceAfter}`:`attacks ${target.name}’s Resolve, ${plan.resolveBefore} → ${plan.resolveAfter}`}${enemy.blunted?' (Rebut limits this speech)':''}.`;
+  delete plan.score;return plan;
+}
+function applyRivalPlan(e,plan){
+  const enemy=e.units.find(u=>u.id===plan.unitId);if(!enemy||!alive(enemy)||plan.action==='wait')return;
+  if(distance(enemy,plan.destination)>0){faceToward(enemy,plan.destination);enemy.x=plan.destination.x;enemy.y=plan.destination.y;enemy.moved=true;}
+  const target=e.units.find(u=>u.id===plan.targetId);faceToward(enemy,target);
+  if(plan.action==='lobby')target.stance=plan.stanceAfter;else{target.resolve=plan.resolveAfter;target.hp=target.resolve;}
+  enemy.acted=true;enemy.blunted=false;
+}
+export function contestIntents(state){
+  const e=state.encounter;if(!e||e.kind!=='contest'||e.status!=='active')return [];
+  if(e.politicsVersion!==2)return e.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u)).map(u=>({unitId:u.id,action:'legacy',targetId:null,destination:{x:u.x,y:u.y},message:u.intent??'Opposition will reply under the saved rules.'}));
+  // Plan the second rival against the first one's visible projected move and
+  // speech. This exact sequence is used on End Turn, with no hidden-state input.
+  const simulation={...state,encounter:{...e,units:e.units.map(u=>({...u}))}},plans=[];
+  for(const enemy of simulation.encounter.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const plan=rivalPlan(simulation,enemy);plans.push(plan);applyRivalPlan(simulation.encounter,plan);}
+  return plans;
+}
+function refreshIntents(state){for(const plan of contestIntents(state))state.encounter.units.find(u=>u.id===plan.unitId).intent=plan.message;}
+export function endContestTurn(state){if(!state.encounter.issue)return Legacy.endContestTurn(state);const e=state.encounter;e.turnEvents=[];
+  if(e.politicsVersion===2)for(const plan of contestIntents(state)){applyRivalPlan(e,plan);note(e,plan.message);e.turnEvents.push(plan.message);}
+  else for(const enemy of e.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'&&alive(u)).sort((a,b)=>distance(enemy,a)-distance(enemy,b)||a.resolve-b.resolve),members=e.units.filter(u=>u.role==='voter').sort((a,b)=>Math.abs(a.stance-1)-Math.abs(b.stance-1)||distance(enemy,a)-distance(enemy,b));
+    const attacking=(e.rivalStyle==='lobby'?e.turn%3===0:e.turn%2===0)&&speakers[0]&&distance(enemy,speakers[0])<=5,target=attacking?speakers[0]:(e.rivalStyle==='broker'?members.find(u=>e.promises.includes(u.id)&&u.stance>=1):null)??members.find(u=>u.stance>=0)??members[0];if(!target)continue;const range=attacking?3:1;if(distance(enemy,target)>range)stepToward(e,enemy,target,3);
+    if(distance(enemy,target)<=range){faceToward(enemy,target);const strength=enemy.blunted?1:attacking?3:2;if(attacking){target.resolve=Math.max(0,target.resolve-strength);target.hp=target.resolve;const event=`${enemy.name} attacks ${target.name}’s Resolve (−${strength}).`;note(e,event);e.turnEvents.push(event);}else{target.stance=shiftedStance(target,-strength);const event=`${enemy.name} challenges ${target.name} on ${target.interest}: stance −${strength}.`;note(e,event);e.turnEvents.push(event);}enemy.blunted=false;}
+  }
+  if(e.turn>=e.turnLimit){const tally=votes(e),required=e.requiredAbility,qualified=(!required||e.usedAbilities.includes(required)||(['negotiate','judge','allocate'].includes(required)&&state.chapterCapabilities[state.chapter]?.includes(required)))&&(e.requiredAbilities??[]).every(a=>e.usedAbilities.includes(a)||state.chapterCapabilities[state.chapter]?.includes(a));e.status=tally.for>=e.majority&&qualified?'won':'lost';note(e,`Deadline vote: ${tally.for} for, ${tally.against} against; ${e.majority} needed. ${!qualified?`A required chapter capability was not demonstrated: ${(e.requiredAbilities??[required]).join(', ')}.`:e.status==='won'?'The motion passes.':'The status quo prevails.'}`);}
+  else{e.turn++;e.units.forEach(u=>{u.moved=false;u.acted=false;});note(e,`Turn ${e.turn}. Vote in ${e.turnLimit-e.turn+1} turns. Current support: ${votes(e).for}/${e.electorate}.`);if(e.politicsVersion===2)refreshIntents(state);}
+  return result(true,e.status==='active'?'Rival speakers have replied.':e.status==='won'?'The vote is won. Commit the result.':'The motion failed. Retry, or accept a patron-backed re-run with a major Obligation.');
+}

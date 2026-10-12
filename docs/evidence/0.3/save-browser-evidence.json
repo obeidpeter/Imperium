@@ -1,0 +1,43 @@
+{
+  "run": "release-20261011",
+  "role": "controller",
+  "environment": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+  "results": [
+    {
+      "name": "Reload restoration",
+      "pass": true,
+      "details": "Restored Reload checkpoint from real IndexedDB.",
+      "at": "2026-10-11T20:04:52.409Z"
+    },
+    {
+      "name": "Initialize",
+      "pass": true,
+      "details": "Wrote only sacramentum-test.release-20261011",
+      "at": "2026-10-11T20:08:21.166Z"
+    },
+    {
+      "name": "Real two-tab IDB race",
+      "pass": true,
+      "details": "{\"local\":{\"ok\":true},\"peer\":{\"ok\":false,\"code\":\"SAVE_CONFLICT\",\"message\":\"A newer save exists in another tab. Reload or explicitly take over before continuing.\"},\"sequence\":14,\"winner\":\"Race controller\"}",
+      "at": "2026-10-11T20:08:21.474Z"
+    },
+    {
+      "name": "Explicit takeover / notification",
+      "pass": true,
+      "details": "Peer reserved sequence 15; stale controller rejected and BroadcastChannel notice received.",
+      "at": "2026-10-11T20:08:21.872Z"
+    },
+    {
+      "name": "Bounded history / corruption / explicit recovery",
+      "pass": true,
+      "details": "Three distinct history entries; unconfirmed restoration refused; corrupted current record detected; selected validated history restored.",
+      "at": "2026-10-11T20:08:22.077Z"
+    },
+    {
+      "name": "Native IndexedDB abort",
+      "pass": true,
+      "details": "Explicitly aborted a real readwrite transaction; previous committed campaign remained exact. This is fault injection, not quota/OS testing.",
+      "at": "2026-10-11T20:08:22.361Z"
+    }
+  ]
+}

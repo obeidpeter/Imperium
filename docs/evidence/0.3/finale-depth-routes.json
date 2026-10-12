@@ -1,0 +1,151 @@
+[
+  {
+    "route": "backer",
+    "choices": {},
+    "negotiation": "safe-passage",
+    "source": "New Game; only legal commands; full12chapters",
+    "rank": "Augustus",
+    "meters": {
+      "army": 100,
+      "political": 20,
+      "public": 69
+    },
+    "finale": {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 5,
+      "losses": 0,
+      "heroHealth": 22,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "rally"
+      ]
+    },
+    "totalTurns": 204
+  },
+  {
+    "route": "battle",
+    "choices": {},
+    "negotiation": "safe-passage",
+    "source": "New Game; only legal commands; full12chapters",
+    "rank": "Augustus",
+    "meters": {
+      "army": 100,
+      "political": 20,
+      "public": 69
+    },
+    "finale": {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 24,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "rally"
+      ]
+    },
+    "totalTurns": 205
+  },
+  {
+    "route": "defection",
+    "choices": {},
+    "negotiation": "safe-passage",
+    "source": "New Game; only legal commands; full12chapters",
+    "rank": "Augustus",
+    "meters": {
+      "army": 100,
+      "political": 20,
+      "public": 69
+    },
+    "finale": {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 6,
+      "losses": 0,
+      "heroHealth": 12,
+      "used": [
+        "order",
+        "move",
+        "rally"
+      ]
+    },
+    "totalTurns": 205
+  },
+  {
+    "route": "settlement",
+    "choices": {
+      "ch3": "share",
+      "ch6": "obey",
+      "ch7": "refuse",
+      "ch11": "patron"
+    },
+    "negotiation": "safe-passage",
+    "source": "New Game; only legal commands; full12chapters",
+    "rank": "Augustus",
+    "meters": {
+      "army": 87,
+      "political": 53,
+      "public": 40
+    },
+    "finale": {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 10,
+      "losses": 0,
+      "heroHealth": 26,
+      "used": [
+        "formation",
+        "move",
+        "rally",
+        "order"
+      ]
+    },
+    "totalTurns": 207
+  },
+  {
+    "route": "surrender",
+    "choices": {
+      "ch3": "share",
+      "ch4": "hold",
+      "ch6": "obey"
+    },
+    "negotiation": "grain",
+    "source": "New Game; only legal commands; full12chapters",
+    "rank": "Augustus",
+    "meters": {
+      "army": 75,
+      "political": 40,
+      "public": 61
+    },
+    "finale": {
+      "id": "ch12-confrontation",
+      "chapter": 12,
+      "kind": "battle",
+      "status": "won",
+      "turns": 4,
+      "losses": 0,
+      "heroHealth": 7,
+      "used": [
+        "formation",
+        "move",
+        "throw",
+        "strike",
+        "rally"
+      ]
+    },
+    "totalTurns": 200
+  }
+]

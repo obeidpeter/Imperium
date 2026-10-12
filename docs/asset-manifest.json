@@ -1,0 +1,3417 @@
+{
+  "schemaVersion": 1,
+  "project": "SACRAMENTUM",
+  "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
+  "rightsNotice": "This manifest covers 35 project AI-generated artwork files, two mechanical crops of actual browser gameplay using that artwork, and three original code-native installed-app icons. No third-party source imagery was supplied. Provenance does not guarantee exclusive copyright, non-infringement or third-party license ownership. Historical references inform design only; their images are not copied.",
+  "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
+  "assets": [
+    {
+      "id": "units-specialists",
+      "path": "assets/tactical/units-specialists.webp",
+      "subject": "Gothic archer, Roman archer, Persian infantry and Palmyrene infantry; four authored facings per row",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "specialists-corrected.png",
+        "sourceSha256": "b28c9e49ba9fb9762fb0127d0b772c354a14c7436562565e7e902ad703912183",
+        "sourceSize": [
+          1086,
+          1448
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 4,
+        "rowBoundaries": [
+          0,
+          361,
+          714,
+          1078,
+          1448
+        ],
+        "instructions": "docs/graphics-narrative-art.md",
+        "cells": [
+          {
+            "cell": [
+              0,
+              0
+            ],
+            "sourceCrop": [
+              0,
+              0,
+              272,
+              361
+            ],
+            "alphaBounds": [
+              40,
+              31,
+              261,
+              346
+            ],
+            "placement": [
+              14,
+              8
+            ],
+            "size": [
+              163,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              0
+            ],
+            "sourceCrop": [
+              272,
+              0,
+              543,
+              361
+            ],
+            "alphaBounds": [
+              46,
+              26,
+              243,
+              350
+            ],
+            "placement": [
+              217,
+              8
+            ],
+            "size": [
+              141,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              0
+            ],
+            "sourceCrop": [
+              543,
+              0,
+              814,
+              361
+            ],
+            "alphaBounds": [
+              49,
+              28,
+              262,
+              350
+            ],
+            "placement": [
+              403,
+              8
+            ],
+            "size": [
+              153,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              0
+            ],
+            "sourceCrop": [
+              814,
+              0,
+              1086,
+              361
+            ],
+            "alphaBounds": [
+              47,
+              28,
+              236,
+              349
+            ],
+            "placement": [
+              603,
+              8
+            ],
+            "size": [
+              137,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1
+            ],
+            "sourceCrop": [
+              0,
+              361,
+              272,
+              714
+            ],
+            "alphaBounds": [
+              42,
+              11,
+              270,
+              345
+            ],
+            "placement": [
+              17,
+              264
+            ],
+            "size": [
+              158,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              1
+            ],
+            "sourceCrop": [
+              272,
+              361,
+              543,
+              714
+            ],
+            "alphaBounds": [
+              38,
+              12,
+              243,
+              348
+            ],
+            "placement": [
+              217,
+              264
+            ],
+            "size": [
+              142,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              1
+            ],
+            "sourceCrop": [
+              543,
+              361,
+              814,
+              714
+            ],
+            "alphaBounds": [
+              56,
+              17,
+              262,
+              344
+            ],
+            "placement": [
+              407,
+              264
+            ],
+            "size": [
+              146,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              1
+            ],
+            "sourceCrop": [
+              814,
+              361,
+              1086,
+              714
+            ],
+            "alphaBounds": [
+              29,
+              17,
+              236,
+              343
+            ],
+            "placement": [
+              598,
+              264
+            ],
+            "size": [
+              147,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              2
+            ],
+            "sourceCrop": [
+              0,
+              714,
+              272,
+              1078
+            ],
+            "alphaBounds": [
+              46,
+              11,
+              244,
+              355
+            ],
+            "placement": [
+              29,
+              520
+            ],
+            "size": [
+              134,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              2
+            ],
+            "sourceCrop": [
+              272,
+              714,
+              543,
+              1078
+            ],
+            "alphaBounds": [
+              38,
+              7,
+              231,
+              361
+            ],
+            "placement": [
+              225,
+              520
+            ],
+            "size": [
+              126,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              2
+            ],
+            "sourceCrop": [
+              543,
+              714,
+              814,
+              1078
+            ],
+            "alphaBounds": [
+              51,
+              12,
+              234,
+              360
+            ],
+            "placement": [
+              419,
+              520
+            ],
+            "size": [
+              122,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              2
+            ],
+            "sourceCrop": [
+              814,
+              714,
+              1086,
+              1078
+            ],
+            "alphaBounds": [
+              56,
+              3,
+              230,
+              362
+            ],
+            "placement": [
+              616,
+              520
+            ],
+            "size": [
+              112,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              3
+            ],
+            "sourceCrop": [
+              0,
+              1078,
+              272,
+              1448
+            ],
+            "alphaBounds": [
+              42,
+              4,
+              244,
+              343
+            ],
+            "placement": [
+              27,
+              776
+            ],
+            "size": [
+              138,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              3
+            ],
+            "sourceCrop": [
+              272,
+              1078,
+              543,
+              1448
+            ],
+            "alphaBounds": [
+              44,
+              1,
+              236,
+              345
+            ],
+            "placement": [
+              223,
+              776
+            ],
+            "size": [
+              129,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              3
+            ],
+            "sourceCrop": [
+              543,
+              1078,
+              814,
+              1448
+            ],
+            "alphaBounds": [
+              56,
+              8,
+              234,
+              346
+            ],
+            "placement": [
+              419,
+              776
+            ],
+            "size": [
+              122,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              3
+            ],
+            "sourceCrop": [
+              814,
+              1078,
+              1086,
+              1448
+            ],
+            "alphaBounds": [
+              54,
+              7,
+              228,
+              346
+            ],
+            "placement": [
+              612,
+              776
+            ],
+            "size": [
+              119,
+              232
+            ]
+          }
+        ]
+      },
+      "usage": "Faction-specific tactical characters. Four direction images with runtime procedural poses; not authored walk cycles.",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 1024,
+        "cellWidth": 192,
+        "cellHeight": 256,
+        "feetY": 240,
+        "alpha": true,
+        "quality": 80,
+        "method": 6,
+        "bytes": 202694,
+        "sha256": "81e7681f3aa8703a85a235e8efc38c5f8a4fc388203b455533c6129f98d8baad"
+      }
+    },
+    {
+      "id": "units-roman",
+      "path": "assets/tactical/units-roman.webp",
+      "subject": "Four-direction tactical character atlas",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-27a90549-4cba-48f4-ac7b-2bdb4151b670.png",
+        "sourceSha256": "687729f4486d09d3d18b80e5f7151ba98c94b66399847ec38987989e773b5a87",
+        "sourceSize": [
+          1024,
+          1536
+        ],
+        "instructions": "docs/graphics-art-direction.md",
+        "instructionsKind": "Reconstructed reusable direction; not a verbatim tool prompt",
+        "atlasColumns": 4,
+        "atlasRows": 4,
+        "rolesByRow": [
+          "recruit",
+          "legionary",
+          "veteran centurion",
+          "commander"
+        ],
+        "normalizationScript": "scripts/optimize-tactical.py",
+        "cells": [
+          {
+            "cell": [
+              0,
+              0
+            ],
+            "sourceCrop": [
+              0,
+              0,
+              256,
+              340
+            ],
+            "alphaBounds": [
+              56,
+              32,
+              220,
+              317
+            ],
+            "placement": [
+              29,
+              8
+            ],
+            "size": [
+              134,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              0
+            ],
+            "sourceCrop": [
+              256,
+              0,
+              512,
+              340
+            ],
+            "alphaBounds": [
+              12,
+              33,
+              219,
+              326
+            ],
+            "placement": [
+              206,
+              8
+            ],
+            "size": [
+              164,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              0
+            ],
+            "sourceCrop": [
+              512,
+              0,
+              768,
+              340
+            ],
+            "alphaBounds": [
+              53,
+              32,
+              240,
+              322
+            ],
+            "placement": [
+              405,
+              8
+            ],
+            "size": [
+              150,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              0
+            ],
+            "sourceCrop": [
+              768,
+              0,
+              1024,
+              340
+            ],
+            "alphaBounds": [
+              40,
+              33,
+              202,
+              322
+            ],
+            "placement": [
+              607,
+              8
+            ],
+            "size": [
+              130,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1
+            ],
+            "sourceCrop": [
+              0,
+              340,
+              256,
+              685
+            ],
+            "alphaBounds": [
+              51,
+              18,
+              230,
+              328
+            ],
+            "placement": [
+              29,
+              264
+            ],
+            "size": [
+              134,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              1
+            ],
+            "sourceCrop": [
+              256,
+              340,
+              512,
+              685
+            ],
+            "alphaBounds": [
+              10,
+              18,
+              223,
+              341
+            ],
+            "placement": [
+              211,
+              264
+            ],
+            "size": [
+              153,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              1
+            ],
+            "sourceCrop": [
+              512,
+              340,
+              768,
+              685
+            ],
+            "alphaBounds": [
+              50,
+              18,
+              254,
+              331
+            ],
+            "placement": [
+              404,
+              264
+            ],
+            "size": [
+              151,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              1
+            ],
+            "sourceCrop": [
+              768,
+              340,
+              1024,
+              685
+            ],
+            "alphaBounds": [
+              36,
+              18,
+              202,
+              329
+            ],
+            "placement": [
+              610,
+              264
+            ],
+            "size": [
+              124,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              2
+            ],
+            "sourceCrop": [
+              0,
+              685,
+              256,
+              1044
+            ],
+            "alphaBounds": [
+              42,
+              7,
+              231,
+              344
+            ],
+            "placement": [
+              31,
+              520
+            ],
+            "size": [
+              130,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              2
+            ],
+            "sourceCrop": [
+              256,
+              685,
+              512,
+              1044
+            ],
+            "alphaBounds": [
+              12,
+              8,
+              229,
+              359
+            ],
+            "placement": [
+              216,
+              520
+            ],
+            "size": [
+              143,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              2
+            ],
+            "sourceCrop": [
+              512,
+              685,
+              768,
+              1044
+            ],
+            "alphaBounds": [
+              49,
+              8,
+              256,
+              354
+            ],
+            "placement": [
+              410,
+              520
+            ],
+            "size": [
+              139,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              2
+            ],
+            "sourceCrop": [
+              768,
+              685,
+              1024,
+              1044
+            ],
+            "alphaBounds": [
+              0,
+              8,
+              218,
+              345
+            ],
+            "placement": [
+              597,
+              520
+            ],
+            "size": [
+              150,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              3
+            ],
+            "sourceCrop": [
+              0,
+              1044,
+              256,
+              1536
+            ],
+            "alphaBounds": [
+              35,
+              13,
+              240,
+              413
+            ],
+            "placement": [
+              36,
+              776
+            ],
+            "size": [
+              119,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              3
+            ],
+            "sourceCrop": [
+              256,
+              1044,
+              512,
+              1536
+            ],
+            "alphaBounds": [
+              34,
+              42,
+              228,
+              433
+            ],
+            "placement": [
+              230,
+              776
+            ],
+            "size": [
+              115,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              3
+            ],
+            "sourceCrop": [
+              512,
+              1044,
+              768,
+              1536
+            ],
+            "alphaBounds": [
+              43,
+              5,
+              230,
+              428
+            ],
+            "placement": [
+              428,
+              776
+            ],
+            "size": [
+              103,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              3
+            ],
+            "sourceCrop": [
+              768,
+              1044,
+              1024,
+              1536
+            ],
+            "alphaBounds": [
+              36,
+              12,
+              222,
+              427
+            ],
+            "placement": [
+              620,
+              776
+            ],
+            "size": [
+              104,
+              232
+            ]
+          }
+        ]
+      },
+      "usage": "Tactical facings with procedural pose animation; not authored frame-by-frame movement",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 1024,
+        "cellWidth": 192,
+        "cellHeight": 256,
+        "feetY": 240,
+        "alpha": true,
+        "quality": 76,
+        "method": 6,
+        "exact": true,
+        "bytes": 178168,
+        "sha256": "61953062f307173d38452a83e5d7e83e5d92802122334e5a865726fb99383943"
+      }
+    },
+    {
+      "id": "units-frontier",
+      "path": "assets/tactical/units-frontier.webp",
+      "subject": "Four-direction tactical character atlas",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-a1f6c55c-b78b-4efb-bc17-e5651f3779a3.png",
+        "sourceSha256": "e4ee462d86095e575fb2c9fce685b124deb789ce047ddbe1e17e550c2cab494f",
+        "sourceSize": [
+          1024,
+          1536
+        ],
+        "instructions": "docs/graphics-art-direction.md",
+        "instructionsKind": "Reconstructed reusable direction; not a verbatim tool prompt",
+        "atlasColumns": 4,
+        "atlasRows": 4,
+        "rolesByRow": [
+          "frontier warrior",
+          "eastern archer",
+          "armoured eastern cavalry",
+          "Roman cavalry"
+        ],
+        "normalizationScript": "scripts/optimize-tactical.py",
+        "cells": [
+          {
+            "cell": [
+              0,
+              0
+            ],
+            "sourceCrop": [
+              0,
+              0,
+              256,
+              374
+            ],
+            "alphaBounds": [
+              63,
+              34,
+              242,
+              359
+            ],
+            "placement": [
+              32,
+              8
+            ],
+            "size": [
+              128,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              0
+            ],
+            "sourceCrop": [
+              256,
+              0,
+              512,
+              374
+            ],
+            "alphaBounds": [
+              56,
+              41,
+              232,
+              362
+            ],
+            "placement": [
+              224,
+              8
+            ],
+            "size": [
+              127,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              0
+            ],
+            "sourceCrop": [
+              512,
+              0,
+              768,
+              374
+            ],
+            "alphaBounds": [
+              50,
+              32,
+              223,
+              358
+            ],
+            "placement": [
+              418,
+              8
+            ],
+            "size": [
+              123,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              0
+            ],
+            "sourceCrop": [
+              768,
+              0,
+              1024,
+              374
+            ],
+            "alphaBounds": [
+              25,
+              34,
+              206,
+              358
+            ],
+            "placement": [
+              607,
+              8
+            ],
+            "size": [
+              130,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1
+            ],
+            "sourceCrop": [
+              0,
+              374,
+              256,
+              700
+            ],
+            "alphaBounds": [
+              52,
+              21,
+              234,
+              326
+            ],
+            "placement": [
+              27,
+              264
+            ],
+            "size": [
+              138,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              1
+            ],
+            "sourceCrop": [
+              256,
+              374,
+              512,
+              700
+            ],
+            "alphaBounds": [
+              29,
+              20,
+              214,
+              319
+            ],
+            "placement": [
+              216,
+              264
+            ],
+            "size": [
+              144,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              1
+            ],
+            "sourceCrop": [
+              512,
+              374,
+              768,
+              700
+            ],
+            "alphaBounds": [
+              43,
+              19,
+              211,
+              318
+            ],
+            "placement": [
+              415,
+              264
+            ],
+            "size": [
+              130,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              1
+            ],
+            "sourceCrop": [
+              768,
+              374,
+              1024,
+              700
+            ],
+            "alphaBounds": [
+              22,
+              19,
+              187,
+              326
+            ],
+            "placement": [
+              609,
+              264
+            ],
+            "size": [
+              125,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              2
+            ],
+            "sourceCrop": [
+              0,
+              697,
+              256,
+              1070
+            ],
+            "alphaBounds": [
+              19,
+              0,
+              256,
+              368
+            ],
+            "placement": [
+              21,
+              520
+            ],
+            "size": [
+              149,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              2
+            ],
+            "sourceCrop": [
+              256,
+              712,
+              512,
+              1070
+            ],
+            "alphaBounds": [
+              0,
+              0,
+              256,
+              358
+            ],
+            "placement": [
+              205,
+              520
+            ],
+            "size": [
+              166,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              2
+            ],
+            "sourceCrop": [
+              512,
+              705,
+              768,
+              1070
+            ],
+            "alphaBounds": [
+              0,
+              0,
+              239,
+              358
+            ],
+            "placement": [
+              402,
+              520
+            ],
+            "size": [
+              155,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              2
+            ],
+            "sourceCrop": [
+              768,
+              688,
+              1024,
+              1070
+            ],
+            "alphaBounds": [
+              15,
+              0,
+              238,
+              382
+            ],
+            "placement": [
+              604,
+              520
+            ],
+            "size": [
+              135,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              3
+            ],
+            "sourceCrop": [
+              0,
+              1070,
+              256,
+              1536
+            ],
+            "alphaBounds": [
+              17,
+              22,
+              256,
+              404
+            ],
+            "placement": [
+              23,
+              776
+            ],
+            "size": [
+              145,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              3
+            ],
+            "sourceCrop": [
+              256,
+              1070,
+              512,
+              1536
+            ],
+            "alphaBounds": [
+              0,
+              0,
+              256,
+              409
+            ],
+            "placement": [
+              215,
+              776
+            ],
+            "size": [
+              145,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              3
+            ],
+            "sourceCrop": [
+              512,
+              1070,
+              768,
+              1536
+            ],
+            "alphaBounds": [
+              0,
+              23,
+              233,
+              411
+            ],
+            "placement": [
+              410,
+              776
+            ],
+            "size": [
+              139,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              3
+            ],
+            "sourceCrop": [
+              768,
+              1070,
+              1024,
+              1536
+            ],
+            "alphaBounds": [
+              7,
+              23,
+              242,
+              407
+            ],
+            "placement": [
+              601,
+              776
+            ],
+            "size": [
+              142,
+              232
+            ]
+          }
+        ]
+      },
+      "usage": "Tactical facings with procedural pose animation; not authored frame-by-frame movement",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 1024,
+        "cellWidth": 192,
+        "cellHeight": 256,
+        "feetY": 240,
+        "alpha": true,
+        "quality": 76,
+        "method": 6,
+        "exact": true,
+        "bytes": 213694,
+        "sha256": "a35757d7f8fad9b57529d289de70b6db826830b89e41b51e6b4833af9f1f5126"
+      }
+    },
+    {
+      "id": "units-civic",
+      "path": "assets/tactical/units-civic.webp",
+      "subject": "Four-direction tactical character atlas",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-708d4793-2709-481b-8186-a8914427cf18.png",
+        "sourceSha256": "358314899572ea389b6fe464d37d8541f981cf8b5abaa1c442d0a7e6fa6ed376",
+        "sourceSize": [
+          1024,
+          1536
+        ],
+        "instructions": "docs/graphics-art-direction.md",
+        "instructionsKind": "Reconstructed reusable direction; not a verbatim tool prompt",
+        "atlasColumns": 4,
+        "atlasRows": 4,
+        "rolesByRow": [
+          "civic speaker",
+          "senator",
+          "opposing civic speaker",
+          "voter or civilian"
+        ],
+        "normalizationScript": "scripts/optimize-tactical.py",
+        "cells": [
+          {
+            "cell": [
+              0,
+              0
+            ],
+            "sourceCrop": [
+              0,
+              0,
+              256,
+              371
+            ],
+            "alphaBounds": [
+              60,
+              25,
+              225,
+              362
+            ],
+            "placement": [
+              39,
+              8
+            ],
+            "size": [
+              114,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              0
+            ],
+            "sourceCrop": [
+              256,
+              0,
+              512,
+              371
+            ],
+            "alphaBounds": [
+              19,
+              26,
+              215,
+              365
+            ],
+            "placement": [
+              221,
+              8
+            ],
+            "size": [
+              134,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              0
+            ],
+            "sourceCrop": [
+              512,
+              0,
+              768,
+              371
+            ],
+            "alphaBounds": [
+              54,
+              26,
+              242,
+              362
+            ],
+            "placement": [
+              415,
+              8
+            ],
+            "size": [
+              130,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              0
+            ],
+            "sourceCrop": [
+              768,
+              0,
+              1024,
+              371
+            ],
+            "alphaBounds": [
+              40,
+              26,
+              197,
+              360
+            ],
+            "placement": [
+              617,
+              8
+            ],
+            "size": [
+              109,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1
+            ],
+            "sourceCrop": [
+              0,
+              371,
+              256,
+              744
+            ],
+            "alphaBounds": [
+              61,
+              0,
+              229,
+              368
+            ],
+            "placement": [
+              43,
+              264
+            ],
+            "size": [
+              106,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              1
+            ],
+            "sourceCrop": [
+              256,
+              371,
+              512,
+              744
+            ],
+            "alphaBounds": [
+              16,
+              1,
+              213,
+              371
+            ],
+            "placement": [
+              226,
+              264
+            ],
+            "size": [
+              124,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              1
+            ],
+            "sourceCrop": [
+              512,
+              371,
+              768,
+              744
+            ],
+            "alphaBounds": [
+              54,
+              4,
+              256,
+              367
+            ],
+            "placement": [
+              415,
+              264
+            ],
+            "size": [
+              129,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              1
+            ],
+            "sourceCrop": [
+              768,
+              371,
+              1024,
+              744
+            ],
+            "alphaBounds": [
+              0,
+              5,
+              202,
+              368
+            ],
+            "placement": [
+              607,
+              264
+            ],
+            "size": [
+              129,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              2
+            ],
+            "sourceCrop": [
+              0,
+              744,
+              256,
+              1098
+            ],
+            "alphaBounds": [
+              42,
+              3,
+              226,
+              354
+            ],
+            "placement": [
+              35,
+              520
+            ],
+            "size": [
+              122,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              2
+            ],
+            "sourceCrop": [
+              256,
+              744,
+              512,
+              1098
+            ],
+            "alphaBounds": [
+              21,
+              6,
+              222,
+              354
+            ],
+            "placement": [
+              221,
+              520
+            ],
+            "size": [
+              134,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              2
+            ],
+            "sourceCrop": [
+              512,
+              744,
+              768,
+              1098
+            ],
+            "alphaBounds": [
+              54,
+              10,
+              256,
+              350
+            ],
+            "placement": [
+              411,
+              520
+            ],
+            "size": [
+              138,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              2
+            ],
+            "sourceCrop": [
+              768,
+              744,
+              1024,
+              1098
+            ],
+            "alphaBounds": [
+              0,
+              9,
+              209,
+              354
+            ],
+            "placement": [
+              601,
+              520
+            ],
+            "size": [
+              141,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              3
+            ],
+            "sourceCrop": [
+              0,
+              1098,
+              256,
+              1536
+            ],
+            "alphaBounds": [
+              49,
+              0,
+              212,
+              398
+            ],
+            "placement": [
+              48,
+              776
+            ],
+            "size": [
+              95,
+              232
+            ]
+          },
+          {
+            "cell": [
+              1,
+              3
+            ],
+            "sourceCrop": [
+              256,
+              1098,
+              512,
+              1536
+            ],
+            "alphaBounds": [
+              43,
+              0,
+              207,
+              403
+            ],
+            "placement": [
+              241,
+              776
+            ],
+            "size": [
+              94,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              3
+            ],
+            "sourceCrop": [
+              512,
+              1098,
+              768,
+              1536
+            ],
+            "alphaBounds": [
+              60,
+              7,
+              226,
+              390
+            ],
+            "placement": [
+              429,
+              776
+            ],
+            "size": [
+              101,
+              232
+            ]
+          },
+          {
+            "cell": [
+              3,
+              3
+            ],
+            "sourceCrop": [
+              768,
+              1098,
+              1024,
+              1536
+            ],
+            "alphaBounds": [
+              49,
+              6,
+              215,
+              392
+            ],
+            "placement": [
+              622,
+              776
+            ],
+            "size": [
+              100,
+              232
+            ]
+          }
+        ]
+      },
+      "usage": "Tactical facings with procedural pose animation; not authored frame-by-frame movement",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 1024,
+        "cellWidth": 192,
+        "cellHeight": 256,
+        "feetY": 240,
+        "alpha": true,
+        "quality": 76,
+        "method": 6,
+        "exact": true,
+        "bytes": 171746,
+        "sha256": "080d546a065ccb6ce405782ebd6d1d3787da79e338cda38e8ec3f2ce07879db2"
+      }
+    },
+    {
+      "id": "environment-props",
+      "path": "assets/tactical/environment-props.webp",
+      "subject": "Regional environmental prop atlas",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-8b6ef22e-7187-4b45-86ce-0afee5d34370.png",
+        "sourceSha256": "a253eda3cd2f90bace368f361f2ca3a2b70d492c657c6435ad29ff558f3ff8b4",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "instructions": "docs/graphics-art-direction.md",
+        "instructionsKind": "Reconstructed reusable direction; not a verbatim tool prompt",
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "rolesByRow": [
+          "regional camp, vegetation, logistics and civic scenery"
+        ],
+        "normalizationScript": "scripts/optimize-scenery.py",
+        "cells": [
+          {
+            "cell": [
+              0,
+              0
+            ],
+            "sourceCrop": [
+              0,
+              0,
+              437,
+              512
+            ],
+            "alphaBounds": [
+              11,
+              42,
+              434,
+              511
+            ],
+            "placement": [
+              4,
+              36
+            ],
+            "size": [
+              184,
+              204
+            ]
+          },
+          {
+            "cell": [
+              1,
+              0
+            ],
+            "sourceCrop": [
+              437,
+              0,
+              769,
+              510
+            ],
+            "alphaBounds": [
+              11,
+              15,
+              303,
+              502
+            ],
+            "placement": [
+              218,
+              8
+            ],
+            "size": [
+              139,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              0
+            ],
+            "sourceCrop": [
+              765,
+              150,
+              1178,
+              507
+            ],
+            "alphaBounds": [
+              4,
+              25,
+              407,
+              347
+            ],
+            "placement": [
+              388,
+              93
+            ],
+            "size": [
+              184,
+              147
+            ]
+          },
+          {
+            "cell": [
+              3,
+              0
+            ],
+            "sourceCrop": [
+              1180,
+              0,
+              1536,
+              511
+            ],
+            "alphaBounds": [
+              7,
+              57,
+              328,
+              509
+            ],
+            "placement": [
+              589,
+              8
+            ],
+            "size": [
+              165,
+              232
+            ]
+          },
+          {
+            "cell": [
+              0,
+              1
+            ],
+            "sourceCrop": [
+              0,
+              514,
+              427,
+              1024
+            ],
+            "alphaBounds": [
+              17,
+              17,
+              407,
+              465
+            ],
+            "placement": [
+              4,
+              285
+            ],
+            "size": [
+              184,
+              211
+            ]
+          },
+          {
+            "cell": [
+              1,
+              1
+            ],
+            "sourceCrop": [
+              438,
+              510,
+              707,
+              1024
+            ],
+            "alphaBounds": [
+              49,
+              0,
+              237,
+              477
+            ],
+            "placement": [
+              242,
+              264
+            ],
+            "size": [
+              91,
+              232
+            ]
+          },
+          {
+            "cell": [
+              2,
+              1
+            ],
+            "sourceCrop": [
+              750,
+              513,
+              1127,
+              1024
+            ],
+            "alphaBounds": [
+              0,
+              78,
+              377,
+              468
+            ],
+            "placement": [
+              388,
+              306
+            ],
+            "size": [
+              184,
+              190
+            ]
+          },
+          {
+            "cell": [
+              3,
+              1
+            ],
+            "sourceCrop": [
+              1125,
+              513,
+              1536,
+              1024
+            ],
+            "alphaBounds": [
+              0,
+              117,
+              394,
+              409
+            ],
+            "placement": [
+              580,
+              360
+            ],
+            "size": [
+              184,
+              136
+            ]
+          }
+        ]
+      },
+      "usage": "Decorative scenery; no effect on legal terrain, targeting, or movement",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 512,
+        "cellWidth": 192,
+        "cellHeight": 256,
+        "feetY": 240,
+        "alpha": true,
+        "quality": 80,
+        "method": 6,
+        "exact": true,
+        "bytes": 131118,
+        "sha256": "4bfeb27b2cc65bc359841991b3bdad065b68aa098afd25dc39179669c3bc7fec"
+      }
+    },
+    {
+      "id": "site-battle",
+      "path": "assets/site/battle.webp",
+      "subject": "Chapter I field battle, cropped from the first board of the browser-rendered legal campaign graphics gallery",
+      "source": {
+        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
+        "sourceFile": "after-all12.png",
+        "reviewCapturePath": "outputs/graphics-review/after-all12.png",
+        "sourceSha256": "f974e5f40063b2cf08b9c6bcb6810187bc65e6ca63b02fd016d9c6658de1c3fa",
+        "sourceSize": [
+          1216,
+          2688
+        ],
+        "cropBox": [
+          0,
+          32,
+          600,
+          432
+        ],
+        "instructions": "docs/interface-assets.md",
+        "bundledSource": false
+      },
+      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "loading": "lazy-below-fold",
+      "export": {
+        "format": "WebP",
+        "width": 320,
+        "height": 213,
+        "quality": 40,
+        "method": 6,
+        "resampling": "Lanczos",
+        "bytes": 4554,
+        "sha256": "216056d333ef6f94d15df2cc5edaee82381db3fbfb172a029aa9d16890b81d91"
+      }
+    },
+    {
+      "id": "site-contest",
+      "path": "assets/site/contest.webp",
+      "subject": "Political Contest canvas, cropped from a real browser-interface screenshot; surrounding chapter, names and objective text omitted",
+      "source": {
+        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
+        "sourceFile": "desktop-senate.png",
+        "reviewCapturePath": "outputs/graphics-review/desktop-senate.png",
+        "sourceSha256": "f702b7d1ef01b797e3c49af95d76f84eb41842f4ffff28a8bb54c4bc3bac071f",
+        "sourceSize": [
+          1280,
+          1081
+        ],
+        "cropBox": [
+          48,
+          276,
+          786,
+          766
+        ],
+        "instructions": "docs/interface-assets.md",
+        "bundledSource": false
+      },
+      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "loading": "lazy-below-fold",
+      "export": {
+        "format": "WebP",
+        "width": 320,
+        "height": 212,
+        "quality": 40,
+        "method": 6,
+        "resampling": "Lanczos",
+        "bytes": 5276,
+        "sha256": "7118f27665c2267bf9d5ea5bcb7d752859b6a324877c3148cdedf83fd11fa641"
+      }
+    },
+    {
+      "id": "app-icon-180",
+      "path": "icons/icon-180.png",
+      "subject": "Installed-app emblem, 180-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-180.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-180.png",
+        "sourceSha256": "3f58d569702ff92ee017ded8872f91ca95d8b5b74bf3d2e137c3e731a432f879",
+        "sourceSize": [
+          180,
+          180
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 180,
+        "height": 180,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 4329,
+        "sha256": "b1f02aebdcd8fd5a8eeaf9a3fdc8ed365854fe6958849ec82291ceab1974aff4",
+        "meanAbsoluteChannelError": 0.004948559670781893,
+        "maxChannelError": 8
+      }
+    },
+    {
+      "id": "app-icon-192",
+      "path": "icons/icon-192.png",
+      "subject": "Installed-app emblem, 192-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-192.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-192.png",
+        "sourceSha256": "78f8d02d13ef95c0b6e4959c6378d55bfb872f0336b87004fe0e5cc4e62230c6",
+        "sourceSize": [
+          192,
+          192
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 192,
+        "height": 192,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 5128,
+        "sha256": "be5ba8185458a0012578a37dd000e196fe72363026f48030d49aaffe2bffa57b",
+        "meanAbsoluteChannelError": 0.012595847800925925,
+        "maxChannelError": 6
+      }
+    },
+    {
+      "id": "app-icon-512",
+      "path": "icons/icon-512.png",
+      "subject": "Installed-app emblem, 512-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-512.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-512.png",
+        "sourceSha256": "bdcace4d469d6b4c1fbedf1f114b527f8e774f16f977a4372a73bfeac1103916",
+        "sourceSize": [
+          512,
+          512
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 512,
+        "height": 512,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 12739,
+        "sha256": "1c42c0a8aed7a9925435c07d93aa222c7fe54d10627d22c9228e4f612e2b9e70",
+        "meanAbsoluteChannelError": 0.005023956298828125,
+        "maxChannelError": 11
+      }
+    },
+    {
+      "id": "hero-recruit",
+      "path": "assets/portraits/hero-recruit.webp",
+      "subject": "hero recruit",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15384,
+        "sha256": "ee23527ca1d729612f1359b13714fc4e07b1abf74bdd38ef0285cddd65e9d2aa"
+      }
+    },
+    {
+      "id": "hero-miles",
+      "path": "assets/portraits/hero-miles.webp",
+      "subject": "hero miles",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17454,
+        "sha256": "dd7295fb2527f4d5c7e78d74dedeeb39c0d7fa3f19b250a88787d0bb11579fc8"
+      }
+    },
+    {
+      "id": "hero-centurion",
+      "path": "assets/portraits/hero-centurion.webp",
+      "subject": "hero centurion",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17298,
+        "sha256": "0e7c4aa62075b43affe862cbee0f81d0da728263ba0b0bb2d533a3888f7f342c"
+      }
+    },
+    {
+      "id": "hero-prefect",
+      "path": "assets/portraits/hero-prefect.webp",
+      "subject": "hero prefect",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17192,
+        "sha256": "ed3ec931bd35395ec67f5be03deca37ef2c8fba36298d89e33635b724b376dd0"
+      }
+    },
+    {
+      "id": "hero-governor",
+      "path": "assets/portraits/hero-governor.webp",
+      "subject": "hero governor",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15404,
+        "sha256": "bb4e64ffd72a8c7eb7961e49f9f1965ce6feb1268e895b2a4f2eb6e70cc69762"
+      }
+    },
+    {
+      "id": "hero-senator",
+      "path": "assets/portraits/hero-senator.webp",
+      "subject": "hero senator",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 13874,
+        "sha256": "bc80cc2333a7be0ad8bdcdb4658a025ca50b6db0d091c1e0bf324b8a4184fded"
+      }
+    },
+    {
+      "id": "hero-emperor",
+      "path": "assets/portraits/hero-emperor.webp",
+      "subject": "hero emperor",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 14532,
+        "sha256": "93b9f9eace91fa7427592bd6f847142a24dbdad1f386abbe6821e4898c36f0fa"
+      }
+    },
+    {
+      "id": "oath-seal",
+      "path": "assets/portraits/oath-seal.webp",
+      "subject": "oath seal",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          1
+        ],
+        "cropBox": [
+          1332,
+          446,
+          1772,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 256,
+        "height": 256,
+        "quality": 80,
+        "method": 6,
+        "bytes": 14894,
+        "sha256": "36ab5864c6ac8de66645b970e77c89d0971cd956bb08c8305f54bf20ef6f8f97"
+      }
+    },
+    {
+      "id": "varro",
+      "path": "assets/portraits/varro.webp",
+      "subject": "varro",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 19980,
+        "sha256": "84df88df9af31f1eaa20c703cb12e9d04f69a20905a6bed04e6b6e0eb1aaee82"
+      }
+    },
+    {
+      "id": "lucan",
+      "path": "assets/portraits/lucan.webp",
+      "subject": "lucan",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 20888,
+        "sha256": "d4c4af1573621d2b9ceabc6274e6a4895ec31c1d467daa9722846d48a91b2746"
+      }
+    },
+    {
+      "id": "crispus",
+      "path": "assets/portraits/crispus.webp",
+      "subject": "crispus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17484,
+        "sha256": "eac0f281a6d893340172265cdcab909d2439bd58a5eee5db70ffe52d6ab5ee26"
+      }
+    },
+    {
+      "id": "severianus",
+      "path": "assets/portraits/severianus.webp",
+      "subject": "severianus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15046,
+        "sha256": "7e98a6d6f2159a29b3ef7e3a6d50fdd331614675a359b201bedec27af11317b9"
+      }
+    },
+    {
+      "id": "aelia",
+      "path": "assets/portraits/aelia.webp",
+      "subject": "aelia",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15866,
+        "sha256": "82371d0b5f8e9c9f8f47e558f24b67ee1152caa652a8fd1cebb7b88011e45138"
+      }
+    },
+    {
+      "id": "paullus",
+      "path": "assets/portraits/paullus.webp",
+      "subject": "paullus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 13312,
+        "sha256": "f690bed97c6e9dff58d180fabf23d53db5cb1128034b82e3fa627024ae609e03"
+      }
+    },
+    {
+      "id": "sabinus",
+      "path": "assets/portraits/sabinus.webp",
+      "subject": "sabinus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 19072,
+        "sha256": "dfacf250d25ceefc0f0f45a63ac8e586b1f0d94656f28e32b6076b76bc94470d"
+      }
+    },
+    {
+      "id": "varro-intense",
+      "path": "assets/portraits/varro-intense.webp",
+      "subject": "varro intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 18332,
+        "sha256": "45540594ca847c63a7f5adb6e3788142b47a65068ff7c93db5fcc5a32e59e832"
+      }
+    },
+    {
+      "id": "lucan-intense",
+      "path": "assets/portraits/lucan-intense.webp",
+      "subject": "lucan intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 19236,
+        "sha256": "005258608c8590700e9e1137b0fd07f677e5fcfb42c5cada408ea7bb2d1302ab"
+      }
+    },
+    {
+      "id": "crispus-intense",
+      "path": "assets/portraits/crispus-intense.webp",
+      "subject": "crispus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 16058,
+        "sha256": "4271817139c72290db67744870407a15abc402e2b12f8b6ffeca6171e600b243"
+      }
+    },
+    {
+      "id": "severianus-intense",
+      "path": "assets/portraits/severianus-intense.webp",
+      "subject": "severianus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 13470,
+        "sha256": "a38bebcdcf9f9e684b9c3fecf62b9514d531b2e61035390aadba44641420a742"
+      }
+    },
+    {
+      "id": "aelia-intense",
+      "path": "assets/portraits/aelia-intense.webp",
+      "subject": "aelia intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 14032,
+        "sha256": "2855921b97e7b3e7881a5baee7b6119659ef4378f4b66b8212b40955f507d174"
+      }
+    },
+    {
+      "id": "paullus-intense",
+      "path": "assets/portraits/paullus-intense.webp",
+      "subject": "paullus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 11880,
+        "sha256": "4a2971e40cfaf2355d279e132c9f918f1cec7cd9e3c25e41c8668a9a3227a478"
+      }
+    },
+    {
+      "id": "sabinus-intense",
+      "path": "assets/portraits/sabinus-intense.webp",
+      "subject": "sabinus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 17188,
+        "sha256": "b1a9141d05e53a1c590e82d6254f72991af06526846ee97527a9c51b9b8e6a60"
+      }
+    },
+    {
+      "id": "danube",
+      "path": "assets/scenes/danube.webp",
+      "subject": "danube",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          834,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 66874,
+        "sha256": "3dd79409bd5d1507db0ff08bfd0ada94aec8f3cc914bbedab0422aa45f4a9a80"
+      }
+    },
+    {
+      "id": "marsh",
+      "path": "assets/scenes/marsh.webp",
+      "subject": "marsh",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          838,
+          2,
+          1670,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 59766,
+        "sha256": "209151e084f0273da0bb5f6e0ae664cafbc9adf91ad922d4f05e3711fb1b676b"
+      }
+    },
+    {
+      "id": "eastern-fort",
+      "path": "assets/scenes/eastern-fort.webp",
+      "subject": "eastern fort",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          472,
+          834,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 67042,
+        "sha256": "a88b0034c29718e89a845d49ef3e836b0629f889f1dd836e5d506afd194b8a5a"
+      }
+    },
+    {
+      "id": "river-crossing",
+      "path": "assets/scenes/river-crossing.webp",
+      "subject": "river crossing",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          838,
+          472,
+          1670,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 64380,
+        "sha256": "070761e082a9e3b05a52183900d50cf66a347f5ecd8acae1cf34dbca0b143b6e"
+      }
+    },
+    {
+      "id": "province",
+      "path": "assets/scenes/province.webp",
+      "subject": "province",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          834,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 63812,
+        "sha256": "47850209a0c577513332b828d2fea2dde2cb8f9158b4ebe2ac87ef819b066b5b"
+      }
+    },
+    {
+      "id": "rome",
+      "path": "assets/scenes/rome.webp",
+      "subject": "rome",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          838,
+          2,
+          1670,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 48288,
+        "sha256": "8c18af617b467bda1b7ef74b2d1643d0293502ca515475e6f842598c328b7e60"
+      }
+    },
+    {
+      "id": "frontier-oath",
+      "path": "assets/scenes/frontier-oath.webp",
+      "subject": "frontier oath",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          472,
+          834,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 832,
+        "height": 467,
+        "quality": 78,
+        "method": 6,
+        "bytes": 70074,
+        "sha256": "ad667b28fb6f9085083f438ab9bfab2b644bb265a3615836cf03371743f335ef"
+      }
+    },
+    {
+      "id": "accession",
+      "path": "assets/scenes/accession.webp",
+      "subject": "accession",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          838,
+          472,
+          1670,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 51758,
+        "sha256": "795d97da0b2ced70361b8f11fefddfde109a4b23c4bfa8f2045a43c12a52f259"
+      }
+    }
+  ],
+  "updatedAt": "2026-10-12T07:21:24.065993+00:00",
+  "totalArtworkBytes": 1805032,
+  "budgets": {
+    "portraitsBytes": 400000,
+    "titleBytes": 350000,
+    "compressedInitialAndCompleteBuildBytes": 2000000
+  },
+  "assetCounts": {
+    "portraits": 22,
+    "scenes": 8,
+    "tactical": 5,
+    "site": 2,
+    "icons": 3
+  }
+}

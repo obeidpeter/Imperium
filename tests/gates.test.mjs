@@ -1,0 +1,34 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {CHAPTERS} from '../src/data/campaign.js';
+import {newGame,choose,startEncounter,prepare,allocate,judge,negotiate,voteCount,getActions,getTargets,act,endTurn,preview} from '../src/core/game.js';
+import {alive,distance} from '../src/core/shared.js';
+import {shiftedStance,speechStrength} from '../src/core/contest.js';
+import {debugJump} from '../src/core/debug.js';
+import {playEncounter} from '../scripts/autoplay.mjs';
+
+await mkdir(new URL('./fixtures/',import.meta.url),{recursive:true});
+
+function fixture(chapter,index,seed=275){const s=debugJump(newGame('Labelled gate scenario',seed),chapter,true);choose(s,CHAPTERS[chapter-1].decision.options[0].id);s.encounterIndex=index;if(chapter===1){s.oath=true;s.chapterCapabilities[1]=['move','strike','brace','throw','oath'];}if(chapter===8)negotiate(s,'safe-passage');if(chapter===10){allocate(s,{river:2,farms:2,town:2});judge(s,'shared');}const response=startEncounter(s);assert.ok(response.ok,response.message);return s;}
+
+function playEarlyCouncil(state,approach){const trace=[],actions={};
+  const issue=payload=>{assert.ok(preview(state,payload).ok);assert.ok(act(state,payload).ok);actions[payload.action]=(actions[payload.action]??0)+1;trace.push({turn:state.encounter.turn,...payload});};
+  while(state.encounter.status==='active'){
+    for(const speaker of state.encounter.units.filter(u=>['player','ally'].includes(u.side)&&alive(u))){
+      const candidates=(atState=state)=>getActions(atState,speaker.id).filter(a=>approach==='persuasion'?a==='persuade':['persuade','promise','threaten'].includes(a)).flatMap(action=>getTargets(atState,speaker.id,action).map(target=>{const member=atState.encounter.units.find(u=>u.id===target.unitId),delta=speechStrength(atState,action,member),next=shiftedStance(member,delta);return {action,target,score:(member.stance<1&&next>=1?9:0)+(next-member.stance)*(member.stance<3?1:.4)+(action==='promise'?3:action==='threaten'?-5:0)};})).sort((a,b)=>b.score-a.score);
+      let best=candidates()[0],position=null,score=best?.score??-100;
+      if(getActions(state,speaker.id).includes('move'))for(const point of getTargets(state,speaker.id,'move')){const hypothetical={...state,encounter:{...state.encounter,units:state.encounter.units.map(u=>u.id===speaker.id?{...u,x:point.x,y:point.y}:u)}};const option=candidates(hypothetical)[0],candidate=(option?.score??-100)-distance(point,speaker)*.02;if(candidate>score+.25){score=candidate;position=point;}}
+      if(position)issue({unitId:speaker.id,action:'move',x:position.x,y:position.y});best=candidates()[0];if(best)issue({unitId:speaker.id,action:best.action,x:best.target.x,y:best.target.y,targetId:best.target.unitId});
+    }
+    assert.ok(endTurn(state).ok);trace.push({action:'endTurn'});
+  }
+  return {approach,status:state.encounter.status,turns:state.encounter.turn,votes:voteCount(state),promises:state.encounter.promises.length,publicConfidenceCost:state.encounter.staged.meters.public,actions,trace};
+}
+
+test('Early crossing council is won by persuasion alone and by concrete promises',async()=>{const runs=[];for(const approach of ['persuasion','promises']){const index=CHAPTERS[7].encounters.findIndex(e=>e.kind==='contest'),state=fixture(8,index);const result=playEarlyCouncil(state,approach);assert.equal(result.status,'won',JSON.stringify(result));runs.push(result);}assert.equal(runs[0].promises,0);assert.equal(runs[0].actions.threaten??0,0);assert.equal(runs[1].promises,2);await writeFile(new URL('./fixtures/early-contest-approaches.json',import.meta.url),JSON.stringify({scenario:'Injected Chapter 8 crossing parley; identical seed275 and starting campaign meters; every in-encounter command validated by preview and act.',encounter:CHAPTERS[7].encounters.find(e=>e.kind==='contest').id,runs},null,2));console.log('EARLY_CONTEST_APPROACHES',JSON.stringify(runs.map(({trace,...summary})=>summary)));});
+test('Vertical slice: objective-aware tactical policy outperforms immediate-action greedy policy',async()=>{const runs=[];for(const [chapter,index,label] of [[1,1,'first field assignment'],[2,0,'marsh rescue'],[5,0,'formation command fixture']])for(const seed of [17,275,913])for(const style of ['greedy','tactical']){const state=fixture(chapter,index,seed),outcome=playEncounter(state,{style});runs.push({label,seed,style,...outcome});}
+  const summary=style=>{const matches=runs.filter(r=>r.style===style);return {runs:matches.length,wins:matches.filter(r=>r.status==='won').length,losses:matches.reduce((n,r)=>n+r.losses,0),turns:matches.reduce((n,r)=>n+r.turns,0),commanderHealth:matches.reduce((n,r)=>n+r.heroHealth,0)};};const greedy=summary('greedy'),tactical=summary('tactical');
+  assert.ok(tactical.wins>=greedy.wins,'Positioning policy must not complete fewer objectives.');assert.ok(tactical.wins>greedy.wins||tactical.losses<greedy.losses||tactical.commanderHealth>greedy.commanderHealth,'A measurable positioning/ability advantage is required.');for(const run of runs.filter(r=>r.style==='tactical'&&r.status==='won'))assert.ok(run.turns>0&&run.turns<=15);
+  const report={kind:'Automated tuning evidence; not a human engagement test',scenarios:'Explicitly injected repeatable test encounters; not the full-route harness',seedSet:[17,275,913],greedy,tactical,runs,interpretation:'Both bots know the rally/defence objectives. The tactical policy searches passable paths around occupied roads, uses shields and Rally, and spends command orders to coordinate attacks; greedy pursues the closest immediate action and does not plan protective positions. Win rate, casualties, turns and surviving commander health are reported together.'};await writeFile(new URL('./fixtures/vertical-slice-gate.json',import.meta.url),JSON.stringify(report,null,2));console.log('SLICE_GATE',JSON.stringify({greedy,tactical}));});
+test('Substantial Contests support distinct coalition and public-record approaches',async()=>{const runs=[];for(const chapter of [10,11,12])for(const approach of ['record','coalition']){const index=CHAPTERS[chapter-1].encounters.findIndex(e=>e.kind==='contest'),state=fixture(chapter,index);const summary=playEncounter(state,{approach});assert.equal(summary.status,'won',`${chapter} ${approach}`);runs.push({approach,...summary,votes:voteCount(state),promises:state.encounter.promises.length});}assert.ok(runs.filter(r=>r.approach==='coalition').every(r=>r.promises>0));assert.ok(runs.filter(r=>r.approach==='record').every(r=>r.promises===0));await writeFile(new URL('./fixtures/contest-approaches.json',import.meta.url),JSON.stringify(runs,null,2));console.log('CONTEST_APPROACHES',JSON.stringify(runs.map(r=>({chapter:r.chapter,approach:r.approach,turns:r.turns,votes:r.votes.for,promises:r.promises}))));});

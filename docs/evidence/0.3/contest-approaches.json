@@ -1,0 +1,148 @@
+[
+  {
+    "approach": "record",
+    "id": "ch10-tribunal",
+    "chapter": 10,
+    "kind": "contest",
+    "status": "won",
+    "turns": 12,
+    "losses": 0,
+    "heroHealth": 12,
+    "used": [
+      "move",
+      "address",
+      "rebut",
+      "persuade"
+    ],
+    "votes": {
+      "for": 11,
+      "against": 2,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 0
+  },
+  {
+    "approach": "coalition",
+    "id": "ch10-tribunal",
+    "chapter": 10,
+    "kind": "contest",
+    "status": "won",
+    "turns": 12,
+    "losses": 0,
+    "heroHealth": 5,
+    "used": [
+      "move",
+      "address",
+      "rebut",
+      "promise",
+      "persuade"
+    ],
+    "votes": {
+      "for": 9,
+      "against": 4,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 2
+  },
+  {
+    "approach": "record",
+    "id": "ch11-accounts",
+    "chapter": 11,
+    "kind": "contest",
+    "status": "won",
+    "turns": 12,
+    "losses": 0,
+    "heroHealth": 12,
+    "used": [
+      "move",
+      "address",
+      "record",
+      "denounce",
+      "rebut"
+    ],
+    "votes": {
+      "for": 11,
+      "against": 2,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 0
+  },
+  {
+    "approach": "coalition",
+    "id": "ch11-accounts",
+    "chapter": 11,
+    "kind": "contest",
+    "status": "won",
+    "turns": 12,
+    "losses": 0,
+    "heroHealth": 12,
+    "used": [
+      "record",
+      "move",
+      "denounce",
+      "promise",
+      "persuade",
+      "threaten",
+      "rebut"
+    ],
+    "votes": {
+      "for": 10,
+      "against": 3,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 2
+  },
+  {
+    "approach": "record",
+    "id": "ch12-legitimacy",
+    "chapter": 12,
+    "kind": "contest",
+    "status": "won",
+    "turns": 14,
+    "losses": 0,
+    "heroHealth": 11,
+    "used": [
+      "move",
+      "address",
+      "record",
+      "rebut",
+      "persuade",
+      "denounce"
+    ],
+    "votes": {
+      "for": 11,
+      "against": 2,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 0
+  },
+  {
+    "approach": "coalition",
+    "id": "ch12-legitimacy",
+    "chapter": 12,
+    "kind": "contest",
+    "status": "won",
+    "turns": 14,
+    "losses": 0,
+    "heroHealth": 8,
+    "used": [
+      "move",
+      "promise",
+      "persuade",
+      "threaten",
+      "rebut"
+    ],
+    "votes": {
+      "for": 11,
+      "against": 2,
+      "total": 13,
+      "majority": 7
+    },
+    "promises": 2
+  }
+]

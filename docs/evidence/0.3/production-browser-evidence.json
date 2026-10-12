@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-10-11",
+  "method": "Observed UI interactions in the Codex in-app desktop Chromium browser; no hidden game-state injection",
+  "build": {"version": "0.3.0", "revision": "b2b95f85bd69"},
+  "migration": {
+    "fromVersion": "0.2.0",
+    "fromRevision": "6eae7f44ef28",
+    "origin": "http://127.0.0.1:4184/",
+    "campaign": "Update Probe",
+    "chapter": 1,
+    "phase": "encounter",
+    "turn": 1,
+    "legacyLayout": true,
+    "beforeAndAfterExportsDeepEqualAfterCurrentValidation": true,
+    "activation": "Old renderer remained active until its tab closed; newly opened tab used 0.3.0",
+    "oldUpdateNoticeObserved": false,
+    "noticeRepair": "Stable worker references and already-waiting detection; six direct watcher regression tests pass"
+  },
+  "offline": {
+    "completeCacheStatusObserved": true,
+    "serverStoppedBeforeReload": true,
+    "reloadAndContinueSucceeded": true,
+    "restored": "Chapter I, drill yard, turn 1, health 22/22, position 1D",
+    "validatedLateCampaignImportWhileServerStoppedSucceeded": true,
+    "scope": "Desktop localhost service-worker cache; not a physical-device or operating-system offline test"
+  },
+  "phoneSenate": {
+    "viewport": {"width": 360, "height": 640},
+    "textScale": 1,
+    "offlineBannerVisible": true,
+    "scrollY": 0.5,
+    "scrollWidth": 345,
+    "confirmTop": 585.46875,
+    "confirmBottom": 629.46875,
+    "confirmHeight": 44,
+    "boardHeight": 185.2578125,
+    "promise": "Landholders delegate 2, grain: stance -1 to 5; honour 2 supplies; break -8 Public, -4 Backing"
+  },
+  "finalFreshTabConsoleErrorsAndWarningsBeforeServerStop": [],
+  "notPerformed": ["First-time human campaign", "Physical phone testing", "Installed PWA reboot", "Quota or operating-system eviction", "Full network isolation", "Live deployment"]
+}
