@@ -1,9 +1,11 @@
-// A brief arrival beat, never a permanent idle loop. The caller owns rendering;
+// The default is a bounded arrival beat. The active command stage may opt into
+// continuous atmosphere; hiding, detaching or replacing the scene cancels it.
+// The caller owns rendering;
 // this module has no campaign/rules imports and never reads or modifies a save.
 export const AMBIENT_BUDGET=Object.freeze({durationMs:6000,balancedFps:12,highFps:20});
 const active=new WeakMap();
 
-export function playAmbientScene(canvas,{reducedMotion=false,quality='balanced',onFrame=()=>{}}={}){
+export function playAmbientScene(canvas,{reducedMotion=false,quality='balanced',continuous=false,onFrame=()=>{}}={}){
   active.get(canvas)?.();
   const doc=canvas?.ownerDocument,win=doc?.defaultView;
   const box=canvas?.getBoundingClientRect?.();
@@ -28,7 +30,7 @@ export function playAmbientScene(canvas,{reducedMotion=false,quality='balanced',
   function tick(timestamp){
     if(finished)return;
     const elapsed=Math.max(0,timestamp-started);
-    if(doc.hidden||!canvas.isConnected||elapsed>=AMBIENT_BUDGET.durationMs){cancel();return;}
+    if(doc.hidden||!canvas.isConnected||(!continuous&&elapsed>=AMBIENT_BUDGET.durationMs)){cancel();return;}
     if(elapsed-last>=1000/fps){
       last=elapsed;
       try{onFrame(elapsed);}catch(error){cancel();throw error;}
@@ -41,7 +43,7 @@ export function playAmbientScene(canvas,{reducedMotion=false,quality='balanced',
   try{onFrame(0);}catch(error){cancel();throw error;}
   if(!finished){
     const remaining=Math.max(0,AMBIENT_BUDGET.durationMs-(now()-started));
-    if(!remaining)cancel();else{timerId=setTimer(cancel,remaining);frameId=win.requestAnimationFrame(tick);}
+    if(!continuous&&!remaining)cancel();else{if(!continuous)timerId=setTimer(cancel,remaining);frameId=win.requestAnimationFrame(tick);}
   }
   return cancel;
 }

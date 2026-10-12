@@ -9,12 +9,14 @@ import {reachable} from '../src/core/shared.js';
 import {createBattle,createLegacyBattle} from '../src/core/battle.js';
 import {newGame} from '../src/core/game.js';
 import {CHAPTERS} from '../src/data/campaign.js';
+import {authoredFrame} from '../src/ui/sprite-frames.js';
+import {FRAME_ATLASES} from '../src/ui/animation-catalog.js';
 
 const originalImage=globalThis.Image;
 before(async()=>{
   globalThis.Image=class {
     naturalWidth=768;naturalHeight=1024;
-    set src(value){this.url=value;if(value)queueMicrotask(()=>this.onload?.());}
+    set src(value){this.url=value;const atlas=Object.values(FRAME_ATLASES).find(a=>a.file===value);if(atlas){this.naturalWidth=Math.max(...atlas.frames.map(f=>f.source[0]+f.source[2]));this.naturalHeight=Math.max(...atlas.frames.map(f=>f.source[1]+f.source[3]));}if(value)queueMicrotask(()=>this.onload?.());}
     get src(){return this.url;}
     async decode(){}
   };
@@ -50,7 +52,7 @@ function canvas(width=720,height=540,{cache=false}={}){
   if(cache)target.ownerDocument={createElement(tag){assert.equal(tag,'canvas');const surface=canvas(1,1);surfaces.push(surface);return surface;}};
   return target;
 }
-const sprites=board=>board.calls.filter(call=>call.method==='drawImage'&&call.args[0]?.src?.includes('/units-'));
+const sprites=board=>board.calls.filter(call=>call.method==='drawImage'&&(call.args[0]?.src?.includes('/units-')||call.args[0]?.src?.includes('/animation/')));
 
 test('Sprite atlas rows express career stage, military role and chamber role',()=>{
   const hero=unit('hero',1,1,{side:'player'});
@@ -71,7 +73,8 @@ test('Loaded sprites crop four authored facings within the real atlas bounds wit
     const override=freeze({facing,pose:'idle'});
     assert.equal(drawUnitSprite(c,g,{x:100,y:100},u,1,false,override),true);
     const call=sprites(board).at(-1),[sheet,sx,sy,sw,sh]=call.args;
-    assert.equal(sx,FACING_COLUMN[facing]*192);assert.equal(sy,0);assert.equal(sw,192);assert.equal(sh,256);
+    const frame=authoredFrame(spriteSpec(u,1),facing,override,u);assert.deepEqual([sx,sy,sw,sh],frame.source);assert.ok(sheet.src.endsWith('recruit-actions.webp'));
+    const fallback=canvas();drawUnitSprite(fallback.getContext('2d'),g,{x:100,y:100},u,5,false,override);const old=sprites(fallback).at(-1);assert.deepEqual(old.args.slice(1,5),[FACING_COLUMN[facing]*192,512,192,256]);
     assert.ok(sx>=0&&sx+sw<=sheet.naturalWidth&&sy+sh<=sheet.naturalHeight);
     assert.ok(call.matrix[0]*call.matrix[3]-call.matrix[1]*call.matrix[2]>0,'Facing must not mirror shield and weapon hands');
   }
@@ -116,7 +119,7 @@ test('Specialist loading leaves civic contests and military/civilian escorts dis
 
 test('A turn blends authored old and new facings rather than flipping its sprite',()=>{
   const board=canvas();drawUnitSprite(board.getContext('2d'),{tw:48},{x:100,y:100},unit('hero',1,1),1,false,{pose:'turn',previousFacing:'west',facing:'north',turnProgress:.25});
-  const draws=sprites(board);assert.equal(draws.length,2);assert.deepEqual(draws.map(c=>c.args[1]),[576,384]);assert.deepEqual(draws.map(c=>c.alpha),[.75,.25]);
+  const draws=sprites(board);assert.equal(draws.length,2);assert.deepEqual(draws.map(c=>c.args.slice(1,5)),['west','north'].map(f=>authoredFrame({atlas:'roman',row:0},f,{pose:'turn'}).source));assert.deepEqual(draws.map(c=>c.alpha),[.75,.25]);
 });
 
 test('Animated positions determine unit depth and keep retreating units visible until alpha reaches zero',()=>{
@@ -124,7 +127,7 @@ test('Animated positions determine unit depth and keep retreating units visible 
   const frame=freeze({time:100,unitOverrides:{hero:{x:1,y:1,alpha:1},gone:{x:4,y:4,alpha:.4}},effects:[]});
   freeze(e);drawBattle(board,e,'hero',[],null,1,{animation:frame,quality:'performance'});
   const draws=sprites(board);assert.equal(draws.length,3,'Hidden units stay hidden; retiring units remain visible');
-  assert.deepEqual(draws.map(c=>[c.args[0].src.split('/').at(-1),c.args[2]]),[['units-roman.webp',0],['units-specialists.webp',0],['units-roman.webp',256]]);
+  assert.deepEqual(draws.map(c=>c.args[0].src.split('/').at(-1)),['recruit-actions.webp','units-specialists.webp','roman-actions.webp']);assert.deepEqual(draws[1].args.slice(1,5),[0,0,192,256]);
   const g=geometry(board,e);assert.ok(Math.abs(draws[0].matrix[4]-g.ox)<1e-9);assert.ok(Math.abs(draws[0].matrix[5]-(g.oy+g.th))<1e-9);
   assert.equal(draws[2].alpha,.4);
   const final=canvas();drawBattle(final,e,'hero',[],null,1,{quality:'performance'});assert.equal(sprites(final).length,2);
@@ -134,8 +137,8 @@ test('Raised walls sort between rear and front units, fading only when covering 
   const e=encounter([unit('hero',1,1,{side:'player'}),unit('ally',3,3)]);e.terrain[2][2]='wall';freeze(e);
   for(const [selected,expectedAlpha] of [['hero',.38],['ally',1]]){
     const board=canvas();drawBattle(board,e,selected,[],null,1,{quality:'performance'});
-    const draws=sprites(board),wall=board.calls.find(c=>c.method==='fill'&&c.fill==='#aeaa8c');
-    assert.ok(wall,'Raised wall front face was drawn');assert.ok(board.calls.indexOf(draws[0])<board.calls.indexOf(wall));assert.ok(board.calls.indexOf(wall)<board.calls.indexOf(draws[1]));
+    const draws=sprites(board),wall=board.calls.find(c=>c.method==='drawImage'&&c.args[0]?.src?.endsWith('/natural-props.webp')&&c.args[1]===c.args[0].naturalWidth/2&&c.args[2]===c.args[0].naturalHeight/2);
+    assert.ok(wall,'Raised wall uses the actual rampart cell of the loaded world atlas');assert.ok(board.calls.indexOf(draws[0])<board.calls.indexOf(wall));assert.ok(board.calls.indexOf(wall)<board.calls.indexOf(draws[1]));
     assert.equal(wall.alpha,expectedAlpha,'Only an occluded selected silhouette should fade the terrain');
   }
 });

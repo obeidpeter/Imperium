@@ -1,0 +1,476 @@
+{
+  "type": "motion",
+  "environment": {
+    "label": "current",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "devicePixelRatio": 2,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "platform": "actual desktop browser surface; no physical-device result",
+    "quality": "balanced",
+    "fixtureSource": "New Game, seed275. Every state and motion pair is copied after a validated legal command; no debug injection or saved-state editing.",
+    "commandCount": 1041,
+    "fixturesSHA256": "91aa79603ee909b0f840e6bb10ce617dcb0e93025af5ed950999dea5008c8565",
+    "actionFixturesSHA256": "dbe0d6c6e91f770072c776b1cbdf820e7433f8476a2807db261708734c0d6336",
+    "assetsAPI": {
+      "loadArt": true,
+      "prefetchChapter": true
+    },
+    "measurement": "CPU submission/layout and RAF frame intervals are separate; no GPU flush; warmed artwork"
+  },
+  "measurement": "Actual Motion.playEncounterMotion callbacks. CPU records Canvas submission only; paint intervals and independent RAF intervals are separate. One warmup and six repeated legal transitions per supported scene. Unsupported old overlay players have null metrics, never zero-cost/FPS claims.",
+  "startedAt": "2026-10-12T11:28:44.205Z",
+  "rows": [
+    {
+      "scene": "action-move",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "move",
+        "x": 2,
+        "y": 3
+      },
+      "traceStep": 12,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 186,
+        "medianMs": 1.9000000953674316,
+        "p95Ms": 2.5,
+        "minMs": 1,
+        "maxMs": 2.6999999284744263
+      },
+      "raf": {
+        "samples": 174,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.79999999998836,
+        "minMs": 16.5,
+        "maxMs": 16.80000000000291
+      },
+      "paintIntervals": {
+        "samples": 180,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 19,
+        "minMs": 5.700000047683716,
+        "maxMs": 27.600000023841858
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 174,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 1.2000000476837158,
+        "p95Ms": 1.600000023841858,
+        "minMs": 0.8999999761581421,
+        "maxMs": 1.600000023841858
+      },
+      "stateBeforeSHA256": "2caa4e762bff2abe87a616718b6bc1367c9f6f7d653bdaeeb97c72211e4233aa",
+      "stateAfterSHA256": "2caa4e762bff2abe87a616718b6bc1367c9f6f7d653bdaeeb97c72211e4233aa",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "action-strike",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "strike",
+        "x": 2,
+        "y": 3,
+        "targetId": "dummy"
+      },
+      "traceStep": 6,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 246,
+        "medianMs": 1.5,
+        "p95Ms": 2.200000047683716,
+        "minMs": 0.6999999284744263,
+        "maxMs": 2.600000023841858
+      },
+      "raf": {
+        "samples": 234,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.5,
+        "maxMs": 33.5
+      },
+      "paintIntervals": {
+        "samples": 240,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 18.5,
+        "minMs": 5.399999976158142,
+        "maxMs": 27.700000047683716
+      },
+      "intervalsOver33ms": 1,
+      "intervalCount": 234,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 0.8000000715255737,
+        "p95Ms": 1,
+        "minMs": 0.6999999284744263,
+        "maxMs": 1
+      },
+      "stateBeforeSHA256": "3c3960307fe75f75df0304536bb85a2bccc15adfb12a3f7ba038d0872d0bb373",
+      "stateAfterSHA256": "3c3960307fe75f75df0304536bb85a2bccc15adfb12a3f7ba038d0872d0bb373",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "action-brace",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "brace",
+        "x": 1,
+        "y": 3,
+        "targetId": "hero"
+      },
+      "traceStep": 8,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 318,
+        "medianMs": 0.8999999761581421,
+        "p95Ms": 1.2999999523162842,
+        "minMs": 0.5,
+        "maxMs": 4.599999904632568
+      },
+      "raf": {
+        "samples": 306,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.5,
+        "maxMs": 16.89999999999418
+      },
+      "paintIntervals": {
+        "samples": 312,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.899999976158142,
+        "minMs": 14,
+        "maxMs": 17.200000047683716
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 306,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 0.5,
+        "p95Ms": 0.7000000476837158,
+        "minMs": 0.5,
+        "maxMs": 0.7000000476837158
+      },
+      "stateBeforeSHA256": "c63877a02d5a7eb0b4723fa9e6e26a937602492366b79be330ba0276883bbda0",
+      "stateAfterSHA256": "c63877a02d5a7eb0b4723fa9e6e26a937602492366b79be330ba0276883bbda0",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "action-projectile",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "throw",
+        "x": 2,
+        "y": 3,
+        "targetId": "dummy"
+      },
+      "traceStep": 4,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 348,
+        "medianMs": 1,
+        "p95Ms": 1.7000000476837158,
+        "minMs": 0.5,
+        "maxMs": 2.399999976158142
+      },
+      "raf": {
+        "samples": 336,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.39999999999418,
+        "maxMs": 16.89999999999418
+      },
+      "paintIntervals": {
+        "samples": 342,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.899999976158142,
+        "minMs": 13.100000023841858,
+        "maxMs": 17.799999952316284
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 336,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 0.6000000238418579,
+        "p95Ms": 0.7999999523162842,
+        "minMs": 0.5,
+        "maxMs": 0.7999999523162842
+      },
+      "stateBeforeSHA256": "a3a5d60bdfd9f375e17037bf689346a2b1127acc9d4ce4f44336fc6b8827b08d",
+      "stateAfterSHA256": "a3a5d60bdfd9f375e17037bf689346a2b1127acc9d4ce4f44336fc6b8827b08d",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "action-hit",
+      "chapter": 1,
+      "command": {
+        "action": "endTurn"
+      },
+      "traceStep": 5,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 246,
+        "medianMs": 1.399999976158142,
+        "p95Ms": 2,
+        "minMs": 0.7000000476837158,
+        "maxMs": 2.299999952316284
+      },
+      "raf": {
+        "samples": 234,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.5,
+        "maxMs": 16.90000000000873
+      },
+      "paintIntervals": {
+        "samples": 240,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.899999976158142,
+        "minMs": 12.5,
+        "maxMs": 17.399999976158142
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 234,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 0.6000000238418579,
+        "p95Ms": 1.100000023841858,
+        "minMs": 0.5,
+        "maxMs": 1.100000023841858
+      },
+      "stateBeforeSHA256": "4149b02686af159696ee20eea48aad1310c520569fbbd99dfec579dd97b55bf7",
+      "stateAfterSHA256": "4149b02686af159696ee20eea48aad1310c520569fbbd99dfec579dd97b55bf7",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "board-ch1-road",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "strike",
+        "x": 3,
+        "y": 2,
+        "targetId": "enemy0"
+      },
+      "traceStep": 16,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 246,
+        "medianMs": 2,
+        "p95Ms": 2.700000047683716,
+        "minMs": 1,
+        "maxMs": 3.100000023841858
+      },
+      "raf": {
+        "samples": 234,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.79999999998836,
+        "minMs": 16.39999999999418,
+        "maxMs": 50.09999999999127
+      },
+      "paintIntervals": {
+        "samples": 240,
+        "medianMs": 16.600000023841858,
+        "p95Ms": 19.5,
+        "minMs": 5.399999976158142,
+        "maxMs": 58.60000002384186
+      },
+      "intervalsOver33ms": 1,
+      "intervalCount": 234,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 1.100000023841858,
+        "p95Ms": 2.100000023841858,
+        "minMs": 0.7999999523162842,
+        "maxMs": 2.100000023841858
+      },
+      "stateBeforeSHA256": "128ffa99469feaaf6070e9345e21d68c6c8664ebd48196b290fb67d093cdd0d3",
+      "stateAfterSHA256": "128ffa99469feaaf6070e9345e21d68c6c8664ebd48196b290fb67d093cdd0d3",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "board-ch9-wing",
+      "chapter": 9,
+      "command": {
+        "unitId": "hero",
+        "action": "throw",
+        "x": 6,
+        "y": 3,
+        "targetId": "enemy1"
+      },
+      "traceStep": 711,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 348,
+        "medianMs": 2,
+        "p95Ms": 2.799999952316284,
+        "minMs": 1,
+        "maxMs": 3.5
+      },
+      "raf": {
+        "samples": 336,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.5,
+        "maxMs": 16.80000000000291
+      },
+      "paintIntervals": {
+        "samples": 342,
+        "medianMs": 16.600000023841858,
+        "p95Ms": 20.100000023841858,
+        "minMs": 5,
+        "maxMs": 26.699999928474426
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 336,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 0.7999999523162842,
+        "p95Ms": 1.2000000476837158,
+        "minMs": 0.5,
+        "maxMs": 1.2000000476837158
+      },
+      "stateBeforeSHA256": "ed93e24b8a54e2c05dbc74337ba638a62b15ff99154b5b365b804f48a10fdbe4",
+      "stateAfterSHA256": "ed93e24b8a54e2c05dbc74337ba638a62b15ff99154b5b365b804f48a10fdbe4",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    },
+    {
+      "scene": "board-ch11-adlection",
+      "chapter": 11,
+      "command": {
+        "unitId": "speaker-ally",
+        "action": "denounce",
+        "x": 5,
+        "y": 7,
+        "targetId": "elder-speaker"
+      },
+      "traceStep": 893,
+      "width": 600,
+      "height": 400,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 246,
+        "medianMs": 2.100000023841858,
+        "p95Ms": 3.299999952316284,
+        "minMs": 1.2999999523162842,
+        "maxMs": 3.899999976158142
+      },
+      "raf": {
+        "samples": 234,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "minMs": 16.39999999999418,
+        "maxMs": 16.90000000000873
+      },
+      "paintIntervals": {
+        "samples": 240,
+        "medianMs": 16.600000023841858,
+        "p95Ms": 16.899999976158142,
+        "minMs": 11.299999952316284,
+        "maxMs": 18.799999952316284
+      },
+      "intervalsOver33ms": 0,
+      "intervalCount": 234,
+      "cleanupCpu": {
+        "samples": 6,
+        "medianMs": 1.100000023841858,
+        "p95Ms": 1.6999999284744263,
+        "minMs": 1,
+        "maxMs": 1.6999999284744263
+      },
+      "stateBeforeSHA256": "d56c44acbd193045e23fa37e632971bc5e412eb45196e7064da93fb50828b78b",
+      "stateAfterSHA256": "d56c44acbd193045e23fa37e632971bc5e412eb45196e7064da93fb50828b78b",
+      "stateUnchanged": true,
+      "rendererCache": {
+        "surfaces": 1,
+        "estimatedBytes": 2160000
+      }
+    }
+  ],
+  "complete": true,
+  "finishedAt": "2026-10-12T11:29:26.470Z",
+  "assetCache": {
+    "entries": 33,
+    "estimatedBytes": 66778448,
+    "maxEntries": 40,
+    "maxBytes": 67108864,
+    "active": 0,
+    "pending": 0,
+    "peakActive": 2,
+    "hits": 336,
+    "decoded": 35,
+    "evictions": 2
+  }
+}

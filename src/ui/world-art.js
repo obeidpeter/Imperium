@@ -1,6 +1,7 @@
 // Regional architecture and vegetation. Hashes are presentation-only constants.
 import {peekArt} from './art.js';
 import {stoneOutcrop,palmTree} from './material-forms.js';
+import {paintMaterial,materialIndex,drawNaturalProp} from './ground-materials.js';
 export const hash=(x,y,n=0)=>{const v=Math.sin(x*127.13+y*318.71+n*17.53)*41371.23;return v-Math.floor(v);};
 export const iso=(g,x,y)=>({x:g.ox+(x-y)*g.tw/2,y:g.oy+(x+y)*g.th/2});
 const validGrid=e=>Number.isInteger(e?.width)&&Number.isInteger(e?.height)&&e.width>0&&e.height>0&&e.width<=16&&e.height<=16;
@@ -82,6 +83,9 @@ export function scenery(e,chapter,quality='balanced'){
 export function drawScenery(c,g,item,chapter){
   if(!validGeometry(g)||![item?.x,item?.y].every(Number.isFinite))return;
   const p=iso(g,item.x,item.y),s=Math.max(.001,Math.min(1.5,g.tw/66));c.save();c.translate(p.x,p.y);
+  const naturalType=item.type==='foundation'?'rubble':item.type;
+  const naturalSize={rock:80,rubble:68,palm:154,tree:146,shrub:58,ruin:112,palisade:108,supplies:68,amphorae:55}[naturalType];
+  if(naturalSize&&drawNaturalProp(c,naturalType,naturalSize*s,item.variant)){c.restore();return;}
   const sheet=peekArt('./assets/tactical/environment-props.webp');
   const artwork={tree:[Math.floor(item.variant)%3===0?1:0,128],shrub:[0,45],tent:[2,110],tower:[3,178],ruin:[4,72],column:[5,item.grand?162:120],reeds:[6,35],wagon:[7,82]}[item.type];
   if(sheet&&artwork){const [index,size]=artwork,h=size*s,w=h*.75;oval(c,5*s,3*s,w*.3,h*.055,'#26362930');c.drawImage(sheet,(index%4)*192,Math.floor(index/4)*256,192,256,-w/2,-h*240/256,w,h);c.restore();return;}
@@ -141,30 +145,32 @@ export function drawScenery(c,g,item,chapter){
 }
 export function worldGround(c,w,h,g,e,p,chapter,quality){
   if(!validGrid(e)||!validGeometry(g)||![w,h].every(Number.isFinite)||w<=0||h<=0)return;
-  const light=c.createLinearGradient(0,0,w,h);light.addColorStop(0,p.light);light.addColorStop(.48,p.ground);light.addColorStop(1,p.earth);c.fillStyle=light;c.fillRect(0,0,w,h);
-  // An unbroken landscape surrounds the marked play area.
-  for(let y=-5;y<e.height+6;y++)for(let x=-5;x<e.width+6;x++){
-    const q=iso(g,x,y),inside=x>=0&&y>=0&&x<e.width&&y<e.height;
-    if(q.x<-g.tw||q.y<-g.th||q.x>w+g.tw||q.y>h+g.th||inside)continue;
-    const pts=[[q.x,q.y-g.th/2],[q.x+g.tw/2,q.y],[q.x,q.y+g.th/2],[q.x-g.tw/2,q.y]];
-    if(p.chamber){poly(c,pts,(x+y)%2?p.earth:p.ground,'#81745c24');}
-    else{
-      // Continue authored edge materials beyond the grid; no invented in-board waterways.
-      const edge=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));
-      const wet=['water','river','deepwater','ford','marsh'].includes(edge),dry=[5,6,9].includes(chapter);
-      poly(c,pts,wet?(edge==='deepwater'?p.darkWater:p.water):hash(x,y)>.5?'#dace9d0b':'#3e523608');
-      if(quality!=='performance'){
-        const count=wet?2:quality==='high'?6:4;
-        for(let i=0;i<count;i++){
-          const xx=q.x+(hash(x+i,y)-.5)*g.tw*.7,yy=q.y+(hash(x,y+i)-.5)*g.th*.7,s=Math.min(1.5,g.tw/66);
-          if(wet)line(c,[[xx-5*s,yy],[xx+5*s,yy-1*s]],'#d0ddbc28',.65*s);
-          else if(dry)poly(c,[[xx-2*s,yy],[xx,yy-2*s],[xx+4*s,yy],[xx+1*s,yy+s]],i%2?'#c9b88e35':'#82725224');
-          else line(c,[[xx-2*s,yy],[xx,yy-3*s],[xx,yy],[xx+2*s,yy-2*s]],chapter===2?'#596f5140':'#6977452d',.65*s);
-        }
-      }
-    }
+  c.fillStyle=p.chamber?(p.stone??p.ground):p.ground;c.fillRect(0,0,w,h);
+  const textured=paintMaterial(c,g,{x:0,y:0,w,h},materialIndex(chapter===2?'marsh':'grass',chapter,p.chamber),p.chamber?.74:.86);
+  if(!textured){
+    // Deterministic broad mottling is an honest low-cost missing-art fallback.
+    const light=c.createLinearGradient(0,0,w,h);light.addColorStop(0,p.light);light.addColorStop(.4,p.ground);light.addColorStop(1,p.earth);c.fillStyle=light;c.fillRect(0,0,w,h);
+    for(let i=0;i<55;i++){const x=hash(i,chapter)*w,y=hash(i,chapter+1)*h;oval(c,x,y,4+hash(i,2)*26,2+hash(i,4)*12,i%2?'#283b3020':'#b9af7720');}
   }
-  const vignette=c.createRadialGradient(w*.43,h*.38,Math.max(1,w*.12),w*.5,h*.5,Math.max(w,h)*.73);vignette.addColorStop(0,'#f6e7c100');vignette.addColorStop(.7,'#293c2a06');vignette.addColorStop(1,'#24372869');c.fillStyle=vignette;c.fillRect(0,0,w,h);
+  // Water already present at the legal edge continues into the surrounding land.
+  for(let y=-3;y<e.height+3;y++)for(let x=-3;x<e.width+3;x++){
+    if(x>=0&&y>=0&&x<e.width&&y<e.height)continue;
+    const q=iso(g,x,y);if(q.x<-g.tw||q.y<-g.th||q.x>w+g.tw||q.y>h+g.th)continue;
+    const edge=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));
+    if(!['water','river','deepwater','ford','marsh'].includes(edge)||p.chamber)continue;
+    c.save();poly(c,[[q.x,q.y-g.th/2],[q.x+g.tw/2,q.y],[q.x,q.y+g.th/2],[q.x-g.tw/2,q.y]],p.water);c.clip();
+    paintMaterial(c,g,{x:q.x-g.tw/2,y:q.y-g.th/2,w:g.tw,h:g.th},materialIndex(edge,chapter),.78);c.restore();
+  }
+  if(p.chamber){
+    // A single opus-sectile composition spans the chamber, independent of cells.
+    const corners=[iso(g,-.8,-.8),iso(g,e.width-.2,-.8),iso(g,e.width-.2,e.height-.2),iso(g,-.8,e.height-.2)].map(q=>[q.x,q.y]);
+    line(c,[...corners,corners[0]],'#26362fa0',Math.max(3,g.tw*.13));line(c,[...corners,corners[0]],p.inlay??'#657264',Math.max(1,g.tw*.06));
+    const q=iso(g,(e.width-1)/2,(e.height-1)/2),r=g.tw*Math.min(e.width,e.height)*.2;
+    c.save();c.translate(q.x,q.y);c.scale(1,.48);
+    c.beginPath();c.ellipse(0,0,r,r,0,0,Math.PI*2);c.strokeStyle=p.inlay+'88';c.lineWidth=Math.max(1,g.tw*.025);c.stroke();
+    c.beginPath();c.ellipse(0,0,r*.94,r*.94,0,0,Math.PI*2);c.strokeStyle='#e1d5ad4d';c.lineWidth=Math.max(1,g.tw*.03);c.stroke();
+    for(let i=0;i<8;i++){const a=i*Math.PI/4;poly(c,[[0,0],[Math.cos(a-.08)*r*.75,Math.sin(a-.08)*r*.75],[Math.cos(a)*r*.86,Math.sin(a)*r*.86],[Math.cos(a+.08)*r*.75,Math.sin(a+.08)*r*.75]],i%2?p.inlay+'38':'#536b6330');}c.restore();
+  }
 }
 
 export function atmosphere(c,w,h,g,chapter,contest,frame,quality){

@@ -11,7 +11,7 @@ function pathPoint(path,t){
 }
 export function projectilePose(effect,g,progress=effect.progress){
   const t=clamp(progress),a=point(g,effect.from),b=point(g,effect.to),s=Math.max(.001,g.tw/60),arc=35*s;
-  return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t-Math.sin(t*Math.PI)*arc-24*s,angle:Math.atan2(b.y-a.y-Math.cos(t*Math.PI)*arc*Math.PI,b.x-a.x),scale:s};
+  return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t-Math.sin(t*Math.PI)*arc-42*s,angle:Math.atan2(b.y-a.y-Math.cos(t*Math.PI)*arc*Math.PI,b.x-a.x),scale:s};
 }
 // Trailing footfalls sit on the reconstructed passable path, never a direct
 // shortcut across a river or an occupied tile. A small fixed count bounds work.
@@ -47,7 +47,7 @@ export function drawBattleEffects(c,g,frame,quality='balanced'){
       }
     }else if(effect.type==='slash'){
       const from=point(g,effect.from),to=point(g,effect.to),angle=Math.atan2(to.y-from.y,to.x-from.x),radius=13*s;
-      c.translate(from.x,from.y-25*s);c.rotate(angle);c.beginPath();c.arc(8*s,0,radius,-.9+t*.65,.15+t*.8);c.strokeStyle='#f5e6c17a';c.lineWidth=Math.max(1,2.4*s);c.stroke();
+      c.translate(from.x,from.y-44*s);c.rotate(angle);c.beginPath();c.arc(8*s,0,radius,-.9+t*.65,.15+t*.8);c.strokeStyle='#f5e6c17a';c.lineWidth=Math.max(1,2.4*s);c.stroke();
     }else if((effect.type==='impact'||effect.type==='shield')&&effect.political){
       // Lost Resolve is an interrupted argument, never a wound or weapon strike.
       const y=q.y-28*s;
@@ -55,12 +55,12 @@ export function drawBattleEffects(c,g,frame,quality='balanced'){
     }else if(effect.type==='impact'||effect.type==='shield'){
       const defended=effect.type==='shield',base=effect.source?point(g,effect.source):{x:q.x-1,y:q.y},direction=Math.atan2(q.y-base.y,q.x-base.x),radius=(4+t*15)*s;
       // A flash at the point of contact, followed by a few directional sparks.
-      ellipse(c,q.x,q.y-26*s,(1-t)*5*s,(1-t)*3*s,defended?'#ecf1d9':'#f8e4b4');
+      ellipse(c,q.x,q.y-44*s,(1-t)*5*s,(1-t)*3*s,defended?'#ecf1d9':'#f8e4b4');
       const count=quality==='performance'?3:6;
       for(let i=0;i<count;i++){const a=direction+(i/(count-1)-.5)*2.7;
-        line(c,{x:q.x+Math.cos(a)*radius*.48,y:q.y-26*s+Math.sin(a)*radius*.48},{x:q.x+Math.cos(a)*radius,y:q.y-26*s+Math.sin(a)*radius+t*t*6*s},defended?'#d9e6d1':'#f1ca83',Math.max(.65,(1-t)*1.5*s));
+        line(c,{x:q.x+Math.cos(a)*radius*.48,y:q.y-44*s+Math.sin(a)*radius*.48},{x:q.x+Math.cos(a)*radius,y:q.y-44*s+Math.sin(a)*radius+t*t*6*s},defended?'#d9e6d1':'#f1ca83',Math.max(.65,(1-t)*1.5*s));
       }
-      if(defended){c.beginPath();c.ellipse(q.x-5*s,q.y-24*s,(8+t*3)*s,13*s,-.18,-1.9,1.3);c.strokeStyle='#f4f0d0';c.lineWidth=Math.max(.8,(1-t)*2*s);c.stroke();}
+      if(defended){c.beginPath();c.ellipse(q.x-5*s,q.y-42*s,(8+t*3)*s,13*s,-.18,-1.9,1.3);c.strokeStyle='#f4f0d0';c.lineWidth=Math.max(.8,(1-t)*2*s);c.stroke();}
     }else if(effect.type==='speech'){
       const dest=effect.to?point(g,effect.to):{x:q.x+30*s,y:q.y},color=['threaten','denounce'].includes(effect.action)?'#965153':'#456f68';
       // A low ink stroke connects the actual speaker and addressed recipient.

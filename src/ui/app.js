@@ -3,6 +3,8 @@ import {createCampaignViews} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
+import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint} from './direct-controls.js';
+import {terrainLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
@@ -10,7 +12,7 @@ import {GRAPHICS_MODES,createGraphicsQuality,defaultGraphicsMode} from './graphi
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
-import {drawBattle,pickTile,drawReignCard} from './renderer.js';
+import {drawBattle,pickBattlePoint,drawReignCard} from './renderer.js';
 import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges} from './storage.js';
@@ -25,9 +27,10 @@ let state=null,screen='title',selected='hero',action=null,target=null,focusTile=
 const sessionGate=createSessionGate();
 let memoryOnly=false;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,artRequest=0,cachedChapterRequest=0;
-let cancelAmbient=null,ambientTime=null,ambientViewKey='';
+let cancelAmbient=null,ambientTime=null;
 let renderedLocation='',pendingScroll=false;
 let cleanupSiteMedia=()=>{};
+let hoverTile=null,showGrid=false;
 let settings={textScale:1,audio:false,audioVolume:.5,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
 if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory});
@@ -47,7 +50,7 @@ function selectedUnit(){return selectedActor(state,selected);}
 function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction});}
 
-function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;}return encounterView({state,selected,action,target,formation,orderAction,feedback,header,footer,requirements});}
+function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;}return encounterView({state,selected,action,target,focusTile,showGrid,formation,orderAction,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span><small>TURN RESOLVED · ${index}/${total}</small>${esc(text)}</span><button class="ghost small" data-cmd="skip-replay">Skip</button>`;announce(text);},
   finish(){const panel=document.querySelector('#turn-replay');if(panel)panel.hidden=true;}
@@ -55,17 +58,13 @@ const replay=createTurnReplay({
 const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>{
   if(pendingScroll){window.scrollTo({top:0,behavior:'instant'});pendingScroll=false;}paint();bindBoard();
   const canvas=document.querySelector('#battle-board'),encounter=state?.encounter;
-  const arrival=Boolean(canvas&&encounter&&ambientViewKey!==renderedLocation),motionQueued=Boolean(pendingMotion);
-  ambientViewKey=canvas&&encounter?renderedLocation:'';
+  const motionQueued=Boolean(pendingMotion);
   if(canvas&&encounter)loadTacticalArt(encounter).then(()=>{
     if(!canvas.isConnected||document.querySelector('#battle-board')!==canvas||state?.encounter!==encounter)return;
     paint(currentAnimation);
-    if(arrival&&!motionQueued&&!currentAnimation&&!pendingMotion&&!sessionGate.busy&&!modal.open&&!document.hidden)cancelAmbient=playAmbientScene(canvas,{reducedMotion:settings.reducedMotion,quality:graphics.mode,onFrame:time=>{
-      ambientTime=time;
-      if(canvas.isConnected&&document.querySelector('#battle-board')===canvas&&state?.encounter===encounter)paint(currentAnimation);
-    }});
+    if(!motionQueued&&!currentAnimation&&!pendingMotion)startAtmosphere(canvas,encounter);
   });
-  if(pendingMotion){const motion=pendingMotion;pendingMotion=null;cancelMotion=playEncounterMotion(canvas,motion.before,motion.after,{command:motion.command,reducedMotion:settings.reducedMotion||modal.open,quality:graphics.mode,renderFrame:frame=>{if(canvas?.isConnected&&document.querySelector('#battle-board')===canvas){currentAnimation=frame;paint(frame);}}});}
+  if(pendingMotion){const motion=pendingMotion;pendingMotion=null;cancelMotion=playEncounterMotion(canvas,motion.before,motion.after,{command:motion.command,reducedMotion:settings.reducedMotion||modal.open,quality:graphics.mode,renderFrame:frame=>{if(canvas?.isConnected&&document.querySelector('#battle-board')===canvas){currentAnimation=frame;paint(frame);if(frame===null&&cancelMotion)startAtmosphere(canvas,encounter);}}});}
   if(pendingReplay){replay.start(pendingReplay,settings.reducedMotion||document.hidden);pendingReplay=null;}
   if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
 });
@@ -74,6 +73,7 @@ function render(){
   stopMotion();
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
+  const openPanels=viewKey===renderedLocation?[...app.querySelectorAll('.command-stage details[id][open]')].map(node=>node.id):[];
   if(viewKey!==renderedLocation){pendingScroll=true;renderedLocation=viewKey;}
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
@@ -83,16 +83,24 @@ function render(){
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
+  for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
   renderScheduler.schedule({activeId});
 }
 function stopMotion(){const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;if(stopAmbient)stopAmbient();ambientTime=null;}
+function startAtmosphere(canvas=document.querySelector('#battle-board'),encounter=state?.encounter){
+  if(!canvas?.isConnected||modal.open||document.hidden||state?.encounter!==encounter)return;
+  cancelAmbient?.();
+  cancelAmbient=playAmbientScene(canvas,{continuous:true,reducedMotion:settings.reducedMotion,quality:graphics.mode,onFrame:time=>{
+    ambientTime=time;if(canvas.isConnected&&document.querySelector('#battle-board')===canvas&&state?.encounter===encounter&&!currentAnimation)paint();
+  }});
+}
 function paint(animation=null){
   if(document.hidden||screen==='title'||!state?.encounter)return;
   const canvas=document.querySelector('#battle-board');if(!canvas?.isConnected)return;
   const started=performance.now();
-  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
+  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,hover:hoverTile,grid:showGrid,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
   graphics.recordFrame(performance.now()-started,{hidden:document.hidden,active:true});
 }
 function updateLoadingStatus(){
@@ -115,8 +123,47 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
   }
   requestCurrentChapter({allowTitle});updateLoadingStatus();
 }
-function bindBoard(){const board=document.querySelector('#battle-board');if(!board||!state.encounter)return;board.addEventListener('click',event=>{const p=pickTile(board,state.encounter,event.clientX,event.clientY);selectPoint(p);});board.addEventListener('keydown',event=>{const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};paint();announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${state.encounter.units.filter(u=>!u.hidden&&u.x===focusTile.x&&u.y===focusTile.y&&(u.resolve??u.hp)>0).map(u=>u.name).join(', ')}`);}if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}if(event.key==='Escape'){action=null;target=null;render();}});}
-function selectPoint(p){const e=state.encounter;if(p.x<0||p.y<0||p.x>=e.width||p.y>=e.height)return;focusTile={x:p.x,y:p.y};const t=targets().find(t=>t.x===p.x&&t.y===p.y);if(action&&t){target=t;render();announce(Game.preview(state,command()).message);return;}const u=e.units.find(u=>['player','ally'].includes(u.side)&&u.x===p.x&&u.y===p.y&&(u.resolve??u.hp)>0);if(u){selected=u.id;action=null;target=null;render();}else toast(action?'That tile is not a legal target. Choose a highlighted tile or use the target list.':`Tile ${p.x+1}${String.fromCharCode(65+p.y)}. Select a unit first.`);}
+function bindBoard(){
+  const board=document.querySelector('#battle-board');if(!board||!state.encounter)return;
+  board.addEventListener('click',event=>selectPoint(pickBattlePoint(board,state.encounter,event.clientX,event.clientY)));
+  board.addEventListener('contextmenu',event=>{event.preventDefault();cancelCommand();});
+  let queued=false;
+  board.addEventListener('pointermove',event=>{
+    if(event.pointerType==='touch')return;
+    const p=pickBattlePoint(board,state.encounter,event.clientX,event.clientY),e=state.encounter;
+    const next=p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height?p:null;
+    if(samePoint(hoverTile,next)||(!hoverTile&&!next))return;hoverTile=next;
+    if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;if(!board.isConnected)return;
+      const label=document.querySelector('#board-hover'),u=visibleUnitAt(e,hoverTile);
+      if(label)label.textContent=hoverTile?`${u?u.name+' · ':''}${terrainLabel(e,hoverTile)} · ${hoverTile.x+1}${String.fromCharCode(65+hoverTile.y)}`:'';
+      board.style.cursor=hoverTile?'pointer':'default';paint(currentAnimation);
+    });}
+  });
+  board.addEventListener('pointerleave',()=>{hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
+  board.addEventListener('keydown',event=>{
+    const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
+    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};paint();announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}`);}
+    if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}
+  });
+}
+async function confirmCommand(){const c=command();if(c&&Game.preview(state,c).ok)await change(()=>Game.act(state,c),{tone:action,command:c,clearSelection:true});}
+function chooseAction(next){
+  action=next;target=null;
+  const legal=targets(),atFocus=legal.find(t=>samePoint(t,focusTile));
+  if(atFocus)target=atFocus;else if(legal.length===1)target=legal[0];
+  render();if(target)announce(Game.preview(state,command()).message);
+}
+function cancelCommand(){action=null;target=null;feedback='';render();announce('Command cancelled. No action was spent.');}
+function selectPoint(point){
+  if(sessionGate.busy)return;
+  const intent=directIntent(state,{selected,action,target,point});if(intent.kind==='none')return;
+  focusTile={x:point.x,y:point.y};hoverTile=null;
+  if(intent.kind==='confirm'){confirmCommand();return;}
+  if(intent.kind==='select'){selected=intent.unitId;action=null;target=null;feedback='';render();return;}
+  if(intent.kind==='preview'){action=intent.action;target=intent.target;feedback='';render();announce(Game.preview(state,command()).message+' Activate the target again, or use Confirm.');return;}
+  action=null;target=null;render();
+  const u=visibleUnitAt(state.encounter,point);announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${terrainLabel(state.encounter,point)}. Outside this unit’s movement range.`);
+}
 async function persist(){
   if(memoryOnly)return {ok:true};
   saving=true;
@@ -178,6 +225,7 @@ modal.addEventListener('close',()=>{
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
+  startAtmosphere();
 });
 async function showExport(){showExportCode(await saveCode(state));}
 async function showShare(){
@@ -243,9 +291,11 @@ case 'judge':await change(()=>Game.judge(state,id));break;
 case 'allocate':await change(()=>Game.allocate(state,{river:Number(document.querySelector('#river').value),farms:Number(document.querySelector('#farms').value),town:Number(document.querySelector('#town').value)}));break;
 case 'route':await change(()=>{state.route=id;return {ok:true,message:'Confrontation approach selected. Enter the field when ready.'};});break;
 case 'start':await change(()=>Game.startEncounter(state,state.chapter===12?{route:state.route||'backer'}:{}),{reset:true});break;
-case 'unit':selected=id;action=null;target=null;render();break;
-case 'action':{action=id;target=null;const ts=targets();if(ts.length===1)target=ts[0];render();break;}
-case 'confirm':{const c=command();if(c)await change(()=>Game.act(state,c),{tone:action,command:c,clearSelection:true});break;}
+case 'unit':case 'select-unit':selected=id;action=null;target=null;focusTile=null;render();break;
+case 'action':chooseAction(id);break;
+case 'cancel-action':cancelCommand();break;
+case 'toggle-grid':showGrid=!showGrid;render();break;
+case 'confirm':await confirmCommand();break;
 case 'skip-replay':replay.stop();break;
 case 'end-turn':await change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});break;
 case 'retry':showRetry();break;
@@ -272,7 +322,7 @@ case 'share-card':{const file=shareFile;if(!file){toast('The card is still being
 document.addEventListener('change',async event=>{
   const control=event.target;
   if(control.id==='unit-select'){selected=control.value;action=null;target=null;render();}
-  if(control.id==='action-select'){action=control.value||null;target=null;const ts=targets();if(ts.length===1)target=ts[0];render();}
+  if(control.id==='action-select')chooseAction(control.value||null);
   if(control.id==='restore-file'&&control.files?.[0]){const file=control.files[0],field=document.querySelector('#restore-code');if(file.size>3000000){toast('Save file is too large.');return;}const text=await file.text();if(field?.isConnected)field.value=text;}
   if(control.id==='audio-volume'){settings.audioVolume=audioLevel(Number(control.value)/100);saveSettings();const label=document.querySelector('#audio-volume-value');if(label)label.textContent=Math.round(settings.audioVolume*100)+'%';sound('click',settings.audio,settings.audioVolume);}
   if(control.id==='text-size'){settings.textScale=Number(control.value);saveSettings();render();}
@@ -282,7 +332,17 @@ document.addEventListener('change',async event=>{
   if(control.id==='order-kind'){orderAction=control.value;render();}
   if(['audio-setting','motion-setting'].includes(control.id)){stopMotion();pendingMotion=null;replay.stop();settings[control.id==='audio-setting'?'audio':'reducedMotion']=control.checked;saveSettings();document.documentElement.dataset.reduced=settings.reducedMotion;if(settings.audio)sound('click',true,settings.audioVolume);else stopAudio();paint();}
 });
-window.addEventListener('resize',()=>{stopMotion();requestAnimationFrame(()=>paint());});
+document.addEventListener('keydown',event=>{
+  if(event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||state.encounter.status!=='active'||sessionGate.busy)return;
+  if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
+  const next=keyboardAction(event.key,Game.getActions(state,selected));
+  if(next){event.preventDefault();chooseAction(next);return;}
+  if(event.key==='Escape'){event.preventDefault();cancelCommand();}
+  else if(event.key.toLowerCase()==='n'){event.preventDefault();selected=nextReadyUnit(state,selected);action=null;target=null;focusTile=null;render();announce(`Selected ${selectedUnit().name}.`);}
+  else if(event.key.toLowerCase()==='e'){event.preventDefault();change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});}
+  else if(event.key.toLowerCase()==='g'){event.preventDefault();showGrid=!showGrid;render();}
+});
+window.addEventListener('resize',()=>{stopMotion();requestAnimationFrame(()=>{paint();startAtmosphere();});});
 document.addEventListener('visibilitychange',()=>{
   document.documentElement.dataset.hidden=document.hidden;
   if(document.hidden){

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import vm from 'node:vm';
+import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -15,11 +16,11 @@ assert.ok(manifest.assets.find(a=>a.id==='frontier-oath').export.bytes<=350000);
 console.log('PASS asset manifest integrity and portrait/title budgets');
 
 const code=await readFile('dist/sw.js','utf8'),build=JSON.parse(await readFile('dist/build-report.json','utf8'));
-assert.ok(build.initialGzipBytes<=2000000&&build.chapterOneGzipBytes<=2000000&&build.completeGzipBytes<=2000000);
+assert.ok(build.initialGzipBytes<=budget.initialGzipBytes&&build.chapterOneGzipBytes<=budget.chapterOneGzipBytes&&build.completeGzipBytes<=budget.completeGzipBytes);
 assert.equal(Object.keys(build.chapterAssets).length,12);
 for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
 for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
-console.log('PASS startup/chapter1/full 2 MB budgets, chapter groups and bundled asset provenance');
+console.log('PASS declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance');
 const base='https://sacramentum.test/',handlers={},stores=new Map(),messages=[];
 const normalize=p=>new URL(typeof p==='string'?p:p.url,base).href;
 const cacheName='sacramentum-'+build.revision;

@@ -1,6 +1,7 @@
 // Procedural fresco illustration and isometric battlefield presentation.
 import {paintBattle} from './battle-art.js';
 import {GRAPHICS_MODES} from './graphics-quality.js';
+import {spriteHeight} from './unit-sprites.js';
 function setup(canvas,r=canvas.getBoundingClientRect(),maxPixelRatio=2){const w=Math.max(1,r.width||640),h=Math.max(1,r.height||400);const d=Math.min(globalThis.devicePixelRatio||1,maxPixelRatio);if(canvas.width!==Math.round(w*d))canvas.width=Math.round(w*d);if(canvas.height!==Math.round(h*d))canvas.height=Math.round(h*d);const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h,d};}
 function poly(c,points,fill,stroke){c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.stroke();}}
 function ellipse(c,x,y,rx,ry,color){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
@@ -13,6 +14,17 @@ function geometryFromRect(r,e){const w=Number.isFinite(r.width)?Math.max(0,r.wid
 }
 export function geometry(canvas,e){return geometryFromRect(canvas.getBoundingClientRect(),e);} 
 export function pickTile(canvas,e,clientX,clientY){const r=canvas.getBoundingClientRect();if(!battleLaidOut(r))return {x:-1,y:-1};const g=geometryFromRect(r,e),sx=clientX-r.left-g.ox,sy=clientY-r.top-g.oy;return {x:Math.round(sy/g.th+sx/g.tw),y:Math.round(sy/g.th-sx/g.tw)};}
+// The player may point at a soldier's body, not only the small tile at its feet.
+// Front-most living visible figures win overlaps, matching the painter order.
+export function pickBattlePoint(canvas,e,clientX,clientY){
+  const r=canvas.getBoundingClientRect();if(!battleLaidOut(r))return {x:-1,y:-1};
+  const g=geometryFromRect(r,e),px=clientX-r.left,py=clientY-r.top;
+  const units=e.units.filter(u=>!u.hidden&&(u.resolve??u.hp??0)>0).sort((a,b)=>(b.x+b.y)-(a.x+a.y));
+  for(const u of units){const h=spriteHeight(g,u),x=g.ox+(u.x-u.y)*g.tw/2,y=g.oy+(u.x+u.y)*g.th/2;
+    if(px>=x-h*.27&&px<=x+h*.27&&py>=y-h*.87&&py<=y+h*.025)return {x:u.x,y:u.y,unitId:u.id};
+  }
+  return pickTile(canvas,e,clientX,clientY);
+}
 // Optional action is presentation-only; normal board geometry is unchanged.
 export function drawBattle(canvas,e,selected='hero',targets=[],focus=null,chapter=1,options={}){
   if(!canvas||!e)return;

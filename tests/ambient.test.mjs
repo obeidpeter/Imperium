@@ -63,3 +63,9 @@ test('Initial drawing time counts toward the same six-second deadline',()=>{
   const b=browser(),frames=[];playAmbientScene(b.canvas,{onFrame:t=>{frames.push(t);if(t===0)b.clock(3000);}});
   assert.equal([...b.timers.values()][0].at,6000);b.clock(6000);assert.deepEqual(frames,[0,null]);assert.equal(b.raf.size,0);
 });
+
+test('An active command stage can sustain atmosphere, but visibility cancellation releases every scheduled frame',()=>{
+  const b=browser(),frames=[];playAmbientScene(b.canvas,{continuous:true,onFrame:t=>frames.push(t)});
+  b.frame(7000);assert.equal(frames.at(-1),7000);assert.equal(b.timers.size,0);assert.equal(b.raf.size,1);
+  b.doc.hidden=true;b.event('visibilitychange');assert.equal(frames.at(-1),null);assert.equal(b.raf.size,0);assert.equal(b.documentListeners.size,0);
+});

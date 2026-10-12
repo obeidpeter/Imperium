@@ -17,7 +17,7 @@ const regions=[
 export function scenePalette(chapter=1,encounter={}){
   const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
   const p=Object.fromEntries(fields.map((key,i)=>[key,regions[n-1][i]]));
-  Object.assign(p,{edge:'#515f52',high:p.stone,sand:n===9?'#d7bd95':'#d8c296',darkWater:'#365e65',chamber:encounter.kind==='contest'});
+  Object.assign(p,{chapter:n,edge:'#515f52',high:p.stone,sand:n===9?'#d7bd95':'#d8c296',darkWater:'#365e65',chamber:encounter.kind==='contest'});
   if(p.chamber){
     const grand=n>=11,imperial=n===12;
     Object.assign(p,{title:imperial?'ACCLAMATION · THE IMPERIAL COALITION':grand?'ROME · THE SENATE':n===10?'THE GOVERNOR’S AUDIENCE':n===8?'DANUBE · THE ASSEMBLY':'THE PROVINCIAL COUNCIL',

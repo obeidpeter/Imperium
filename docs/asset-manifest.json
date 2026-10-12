@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "SACRAMENTUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 35 project AI-generated artwork files, two mechanical crops of actual browser gameplay using that artwork, and three original code-native installed-app icons. No third-party source imagery was supplied. Provenance does not guarantee exclusive copyright, non-infringement or third-party license ownership. Historical references inform design only; their images are not copied.",
+  "rightsNotice": "This manifest covers 43 project AI-generated artwork files, two mechanical crops of actual browser gameplay using that artwork, and three original code-native installed-app icons. No third-party source imagery was supplied. Provenance does not guarantee exclusive copyright, non-infringement or third-party license ownership. Historical references inform design only; their images are not copied.",
   "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
   "assets": [
     {
@@ -2090,71 +2090,99 @@
     {
       "id": "site-battle",
       "path": "assets/site/battle.webp",
-      "subject": "Chapter I field battle, cropped from the first board of the browser-rendered legal campaign graphics gallery",
+      "subject": "Chapter I tactical board from an actual v0.8 browser rendering of a legal Move transition",
       "source": {
-        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
-        "sourceFile": "after-all12.png",
-        "reviewCapturePath": "outputs/graphics-review/after-all12.png",
-        "sourceSha256": "f974e5f40063b2cf08b9c6bcb6810187bc65e6ca63b02fd016d9c6658de1c3fa",
+        "method": "Mechanical downscale of an actual local browser gameplay-board clip; no generated or composited replacement imagery",
+        "sourceFile": "site-battle-board.jpg",
+        "reviewCapturePath": "work/production-review/site-battle-board.jpg",
+        "sourceSha256": "8994ae94b6734d5593fb9b5d766bea4c3df624345b50388d14ccb628c688b05e",
         "sourceSize": [
-          1216,
-          2688
+          960,
+          640
         ],
         "cropBox": [
           0,
-          32,
-          600,
-          432
+          0,
+          960,
+          640
         ],
+        "browserCapture": {
+          "viewport": [
+            1280,
+            720
+          ],
+          "clip": [
+            160,
+            0,
+            960,
+            640
+          ],
+          "fixture": "action-move; legal trace step 12",
+          "version": "0.8.0"
+        },
         "instructions": "docs/interface-assets.md",
         "bundledSource": false
       },
-      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "usage": "Landing-page actual gameplay preview; no surrounding controls or narrative UI pictured.",
       "loading": "lazy-below-fold",
       "export": {
         "format": "WebP",
-        "width": 320,
-        "height": 213,
-        "quality": 40,
+        "width": 640,
+        "height": 427,
+        "quality": 78,
         "method": 6,
         "resampling": "Lanczos",
-        "bytes": 4554,
-        "sha256": "216056d333ef6f94d15df2cc5edaee82381db3fbfb172a029aa9d16890b81d91"
+        "bytes": 53230,
+        "sha256": "42d8523e4b85bcb0f9eacf780f0b3440edf42dbf10c837cfbfac13c0b2cef9d9"
       }
     },
     {
       "id": "site-contest",
       "path": "assets/site/contest.webp",
-      "subject": "Political Contest canvas, cropped from a real browser-interface screenshot; surrounding chapter, names and objective text omitted",
+      "subject": "Chapter XI Senate board from an actual v0.8 browser rendering of an earned legal campaign fixture",
       "source": {
-        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
-        "sourceFile": "desktop-senate.png",
-        "reviewCapturePath": "outputs/graphics-review/desktop-senate.png",
-        "sourceSha256": "f702b7d1ef01b797e3c49af95d76f84eb41842f4ffff28a8bb54c4bc3bac071f",
+        "method": "Mechanical downscale of an actual local browser gameplay-board clip; no generated or composited replacement imagery",
+        "sourceFile": "site-contest-board.jpg",
+        "reviewCapturePath": "work/production-review/site-contest-board.jpg",
+        "sourceSha256": "d4fffca436bf2e04729d15716af9688788d8a42e0ebfb6bf576ca94520fc104a",
         "sourceSize": [
-          1280,
-          1081
+          960,
+          640
         ],
         "cropBox": [
-          48,
-          276,
-          786,
-          766
+          0,
+          0,
+          960,
+          640
         ],
+        "browserCapture": {
+          "viewport": [
+            1280,
+            720
+          ],
+          "clip": [
+            160,
+            0,
+            960,
+            640
+          ],
+          "fixture": "board-ch11-adlection",
+          "version": "0.8.0"
+        },
         "instructions": "docs/interface-assets.md",
         "bundledSource": false
       },
-      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "usage": "Landing-page actual gameplay preview; no surrounding controls or narrative UI pictured.",
       "loading": "lazy-below-fold",
       "export": {
         "format": "WebP",
-        "width": 320,
-        "height": 212,
-        "quality": 40,
+        "width": 640,
+        "height": 427,
+        "quality": 78,
         "method": 6,
         "resampling": "Lanczos",
-        "bytes": 5276,
-        "sha256": "7118f27665c2267bf9d5ea5bcb7d752859b6a324877c3148cdedf83fd11fa641"
+        "bytes": 46470,
+        "sha256": "8ef032cd897bf47300678a654fb95088324d68dc83584e60bfae4bba8faa02b8"
       }
     },
     {
@@ -3397,6 +3425,340 @@
         "method": 6,
         "bytes": 51758,
         "sha256": "795d97da0b2ced70361b8f11fefddfde109a4b23c4bfa8f2045a43c12a52f259"
+      }
+    },
+    {
+      "id": "ground-materials",
+      "path": "assets/world/ground-materials.webp",
+      "subject": "Continuous meadow, dry earth, limestone, water, marsh and road materials",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-91e3c10a-38b6-4f9e-90a6-e0599e9f6832.png",
+        "sourceSha256": "036d1cd4dda3e3bd91f59bd846133978bbd216a173ddac1bc433849bd422fc59",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "retainedMaster": "work/production-world-art/ground-original.png",
+        "instructions": "docs/graphics-prompts/world-ground-v08.txt",
+        "exportLayout": {
+          "columns": 3,
+          "rows": 2,
+          "cells": [
+            "meadow",
+            "dry-earth",
+            "limestone",
+            "water",
+            "marsh",
+            "road"
+          ]
+        }
+      },
+      "usage": "Continuous environment presentation and depth-sorted props; legal terrain remains authoritative",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1152,
+        "height": 768,
+        "quality": 84,
+        "method": 6,
+        "bytes": 317696,
+        "sha256": "bf524bfcda1de6bebcfbc5e278cfca9f557fa1e0ea7e78e911d5c59bf4452138",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "natural-props",
+      "path": "assets/world/natural-props.webp",
+      "subject": "Transparent rock, palm, oak and ruined rampart silhouettes",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-a93074ff-9871-4068-8ce4-2398006c0968.png",
+        "sourceSha256": "669f05e1061834e31f147d6c77c42d53469cfa43dc4e8e775645475363c55f92",
+        "sourceSize": [
+          1254,
+          1254
+        ],
+        "retainedMaster": "work/production-world-art/props-original.png",
+        "instructions": "docs/graphics-prompts/world-props-v08.txt",
+        "exportLayout": {
+          "columns": 2,
+          "rows": 2,
+          "cells": [
+            "rock",
+            "palm",
+            "oak",
+            "rampart"
+          ],
+          "sourceCropBoxes": [
+            [
+              0,
+              0,
+              701,
+              616
+            ],
+            [
+              701,
+              0,
+              1254,
+              668
+            ],
+            [
+              0,
+              620,
+              627,
+              1254
+            ],
+            [
+              627,
+              681,
+              1254,
+              1254
+            ]
+          ],
+          "normalizedCell": [
+            512,
+            512
+          ],
+          "footBaseline": 480
+        }
+      },
+      "usage": "Continuous environment presentation and depth-sorted props; legal terrain remains authoritative",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1024,
+        "height": 1024,
+        "quality": 87,
+        "method": 6,
+        "bytes": 348570,
+        "sha256": "c36e03a38ea93a698adf2b2e96985ba8c1213771487e559871157ab59a6a68cf",
+        "alphaPreserved": true
+      }
+    },
+    {
+      "id": "camp-props",
+      "path": "assets/world/camp-props.webp",
+      "subject": "Transparent Roman stockade and amphora, wicker, sack and chest supplies",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-1b9de09d-7d47-40e2-b496-de53c327cc14.png",
+        "sourceSha256": "aafb60b644ac147104bc764c54cf243a2026bac8411526c7ba06b35fe04f18b1",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "retainedMaster": "work/production-world-art/camp-original.png",
+        "instructions": "docs/graphics-prompts/world-camp-v08.txt",
+        "exportLayout": {
+          "columns": 2,
+          "rows": 1,
+          "cells": [
+            "palisade",
+            "supplies"
+          ],
+          "sourceCropBoxes": [
+            [
+              0,
+              0,
+              768,
+              1024
+            ],
+            [
+              768,
+              0,
+              1536,
+              1024
+            ]
+          ],
+          "normalizedCell": [
+            512,
+            512
+          ],
+          "footBaseline": 480
+        }
+      },
+      "usage": "Continuous environment presentation and depth-sorted props; legal terrain remains authoritative",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1024,
+        "height": 512,
+        "quality": 87,
+        "method": 6,
+        "bytes": 89010,
+        "sha256": "4a9fe21add98d7e7b11897c043c31207003143a90fe6deb8f0a1bd7fdfc4c68a",
+        "alphaPreserved": true
+      }
+    },
+    {
+      "id": "recruit-actions",
+      "path": "assets/animation/recruit-actions.webp",
+      "subject": "Recruit walk in four facings, strike in two front facings; six frames per sequence",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-d422234d-263c-4990-89e3-7ca9d7fed951.png",
+        "sourceSha256": "2c9e9e4a91737399a5f2522b4bb2ccc747bc9980b053d11fb00ee8c6048762b8",
+        "sourceSize": [
+          1086,
+          1448
+        ],
+        "retainedMaster": "work/production-animation-art/recruit-actions.png",
+        "outputMaster": "production-art-masters/animation/recruit-actions.png",
+        "instructions": "docs/graphics-prompts/animation-v08.json",
+        "nominalAtlasColumns": 6,
+        "nominalAtlasRows": 8,
+        "runtimeSampling": "Measured connected-alpha figure rectangles with convex source clipping and sole anchors. Original pixels, dimensions and frame order preserved; no raster editing.",
+        "frameCatalog": "src/ui/animation-catalog.js"
+      },
+      "usage": "Authored frame sequences only for matching costume, action and facing; original four-facing sprites and mesh remain fallback",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1086,
+        "height": 1448,
+        "quality": 92,
+        "method": 6,
+        "bytes": 655546,
+        "sha256": "73edc36a2204fcbad286e9d0dd17e0f0e3ad3b0b461408839380e8cc73a8ad49",
+        "alphaPreserved": true,
+        "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
+      }
+    },
+    {
+      "id": "recruit-responses",
+      "path": "assets/animation/recruit-responses.webp",
+      "subject": "Recruit brace, recoil and javelin throw in two front facings; six frames per sequence",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-9a1a1381-040c-40f4-ba5c-f8a288d77654.png",
+        "sourceSha256": "8da5e0eee8e68ca73c5b8d10bbc4d43246071a82f5692d6cacd314327167b2b6",
+        "sourceSize": [
+          1254,
+          1254
+        ],
+        "retainedMaster": "work/production-animation-art/recruit-responses.png",
+        "outputMaster": "production-art-masters/animation/recruit-responses.png",
+        "instructions": "docs/graphics-prompts/animation-v08.json",
+        "nominalAtlasColumns": 6,
+        "nominalAtlasRows": 6,
+        "runtimeSampling": "Measured connected-alpha figure rectangles with convex source clipping and sole anchors. Original pixels, dimensions and frame order preserved; no raster editing.",
+        "frameCatalog": "src/ui/animation-catalog.js"
+      },
+      "usage": "Authored frame sequences only for matching costume, action and facing; original four-facing sprites and mesh remain fallback",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1254,
+        "height": 1254,
+        "quality": 92,
+        "method": 6,
+        "bytes": 607058,
+        "sha256": "5f73890933f5e90c1b806ae5d88f0ccf50d2133c8af3ab97b9b78318a7cda0d2",
+        "alphaPreserved": true,
+        "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
+      }
+    },
+    {
+      "id": "roman-actions",
+      "path": "assets/animation/roman-actions.webp",
+      "subject": "Roman infantry walk and strike in two front facings; six frames per sequence",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-61597ef8-bb62-4613-83eb-7d80c64a023e.png",
+        "sourceSha256": "68bfedceff09d631254d84104ec174964f6eadbd5021ed70f33f5bf19bc03720",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "retainedMaster": "work/production-animation-art/roman-actions.png",
+        "outputMaster": "production-art-masters/animation/roman-actions.png",
+        "instructions": "docs/graphics-prompts/animation-v08.json",
+        "nominalAtlasColumns": 6,
+        "nominalAtlasRows": 4,
+        "runtimeSampling": "Measured connected-alpha figure rectangles with convex source clipping and sole anchors. Original pixels, dimensions and frame order preserved; no raster editing.",
+        "frameCatalog": "src/ui/animation-catalog.js"
+      },
+      "usage": "Authored frame sequences only for matching costume, action and facing; original four-facing sprites and mesh remain fallback",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1536,
+        "height": 1024,
+        "quality": 92,
+        "method": 6,
+        "bytes": 480302,
+        "sha256": "23e6877e998f6706b503b5db32f4272e5b4ac3e128471d51b750a747fb135497",
+        "alphaPreserved": true,
+        "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
+      }
+    },
+    {
+      "id": "gothic-actions",
+      "path": "assets/animation/gothic-actions.webp",
+      "subject": "Gothic infantry walk and strike in two rear facings; six frames per sequence",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-da0337b8-17d3-4f23-8941-48539eb3ea8e.png",
+        "sourceSha256": "d38130de61398fafd2d60908476c9f498d8cb008de3fac74e0cd1246dd2edefc",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "retainedMaster": "work/production-animation-art/gothic-actions.png",
+        "outputMaster": "production-art-masters/animation/gothic-actions.png",
+        "instructions": "docs/graphics-prompts/animation-v08.json",
+        "nominalAtlasColumns": 6,
+        "nominalAtlasRows": 4,
+        "runtimeSampling": "Measured connected-alpha figure rectangles with convex source clipping and sole anchors. Original pixels, dimensions and frame order preserved; no raster editing.",
+        "frameCatalog": "src/ui/animation-catalog.js"
+      },
+      "usage": "Authored frame sequences only for matching costume, action and facing; original four-facing sprites and mesh remain fallback",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1536,
+        "height": 1024,
+        "quality": 92,
+        "method": 6,
+        "bytes": 376286,
+        "sha256": "7e3b20796b86d820f9db36c8025d690960fa4dd053634d8be0dc619d92999246",
+        "alphaPreserved": true,
+        "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
+      }
+    },
+    {
+      "id": "civic-actions",
+      "path": "assets/animation/civic-actions.webp",
+      "subject": "Senatorial speech in four facings; six frames per sequence",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-14f0f980-4a92-4ee2-ab48-d280c11d90a2.png",
+        "sourceSha256": "4d23ca726edca7f4b0754a3989bdcac9a1e7134ae413672509a34714e14e2e7c",
+        "sourceSize": [
+          1536,
+          1024
+        ],
+        "retainedMaster": "work/production-animation-art/civic-actions.png",
+        "outputMaster": "production-art-masters/animation/civic-actions.png",
+        "instructions": "docs/graphics-prompts/animation-v08.json",
+        "nominalAtlasColumns": 6,
+        "nominalAtlasRows": 4,
+        "runtimeSampling": "Measured connected-alpha figure rectangles with convex source clipping and sole anchors. Original pixels, dimensions and frame order preserved; no raster editing.",
+        "frameCatalog": "src/ui/animation-catalog.js"
+      },
+      "usage": "Authored frame sequences only for matching costume, action and facing; original four-facing sprites and mesh remain fallback",
+      "loading": "chapter; excluded from initial site shell",
+      "export": {
+        "format": "WebP",
+        "width": 1536,
+        "height": 1024,
+        "quality": 92,
+        "method": 6,
+        "bytes": 366450,
+        "sha256": "078c816a60f8919f5112f72ec0c5eed02ab1a540b0f4c9576aecf5f4c74191cc",
+        "alphaPreserved": true,
+        "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
       }
     }
   ],

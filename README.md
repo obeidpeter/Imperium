@@ -1,12 +1,22 @@
 # SACRAMENTUM: From Recruit to Emperor
 
-![Historical Senate screenshot from version 0.4](docs/images/graphics-gameplay.png)
+![Actual version 0.8 Chapter I battlefield rendered from a legally reached campaign state](docs/images/production-battle.jpg)
+
+*Actual v0.8 browser-rendered Chapter I board, sampled during a legal Move transition. The capture shows the battlefield; the command controls sit outside this crop.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service, paid assets, or runtime package dependencies. Core rules run in both a browser and Node.js.
 
-## Version 0.7 — tactical and political overhaul
+## Version 0.8 — battlefield presentation and direct controls
+
+The encounter now occupies its own command stage, with a compact mission bar, company roster and action dock around the battlefield. Point at figures to select them, at reachable ground to preview movement, and at opponents to preview legal attacks. Activate the same target again or press Confirm to commit. Optional named selectors, full forecasts and rules remain available. Keys 1–9 select actions; N cycles ready units, E ends the turn, G toggles the grid, and Escape cancels.
+
+New local ground materials and natural props support continuous terrain with a quiet default grid. Authored animation sheets add distinct movement, attack, defensive and speaking poses to covered figures; uncovered roles and facings retain the earlier directional artwork. Ambient motion runs only while the scene is visible and motion is enabled; Performance and reduced-motion settings disable it. Result labels remain readable through recovery instead of flashing past.
+
+The [production direction](docs/production-direction.md) records scope and the revised asset budgets. This presentation release preserves the version 0.7 tactical and political rules, milestones and saved encounter compatibility. [Version 0.8 verification](docs/production-verification.md) records actual tests and visual inspection, including remaining limits.
+
+## Version 0.7 — historical tactical and political overhaul
 
 Battles now reward screening, facing, terrain and coordinated formations. Guards defend approaches, archers seek useful firing positions, raiders pressure objectives, and allies consider the mission. Hits affect morale on both sides; shaken troops lose effectiveness, broken troops regroup, and the new Withdraw order helps preserve a line. Damage previews explain the actual modifiers, while mission briefs and visible intentions help the player plan the next turn.
 
@@ -53,7 +63,7 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects any of these gzip estimates above 2,000,000 bytes. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I above 8,000,000, or the complete campaign above 24,000,000. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
 
 ## Replit static deployment
 

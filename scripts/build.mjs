@@ -3,6 +3,7 @@ import {resolve,relative,join,dirname,basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {gzipSync} from 'node:zlib';
 import {chapterAssets} from '../src/ui/art.js';
+import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 
 const root=resolve('.'),dist=resolve(root,'dist');
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
@@ -39,8 +40,8 @@ const chapterOneFiles=[...new Set([...initial,...chapterGroups[1]])];
 const chapterOneRecords=records.filter(r=>chapterOneFiles.includes(r.url));
 const chapterOneBytes=sum(chapterOneRecords,'bytes')+workerBytes,chapterOneGzipBytes=sum(chapterOneRecords,'gzipBytes')+workerGzipBytes;
 const completeBytes=bytes+workerBytes,completeGzipBytes=gzipBytes+workerGzipBytes;
-// Preserve the previous stricter complete-package gate as well as the first-load cap.
-if(initialGzipBytes>2000000||chapterOneGzipBytes>2000000||completeGzipBytes>2000000)throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / complete '+completeGzipBytes+' exceed the unchanged 2 MB gate.');
-const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:2000000,completeBudget:2000000,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+// Keep the initial shell small; authored animation and environments arrive by chapter.
+if(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||completeGzipBytes>budget.completeGzipBytes)throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
+const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 

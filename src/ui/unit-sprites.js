@@ -1,5 +1,7 @@
 import {loadArt,peekArt} from './art.js';
 import {sampleSpritePose,spriteMesh} from './sprite-poses.js';
+import {animationAssets,authoredFrame} from './sprite-frames.js';
+import {WORLD_ASSETS} from './world-assets.js';
 
 // Four authored facings; no directional mirroring reverses shield/weapon hands.
 export const FACING_COLUMN=Object.freeze({east:0,south:1,north:2,west:3});
@@ -28,15 +30,27 @@ export function spriteSpec(unit,chapter=1,contest=false){
   if(faction==='gothic')return {atlas:'frontier',row:0};
   return {atlas:'roman',row:unit.id==='hero'?(chapter===1?0:chapter<5?1:chapter<7?2:3):/varro/i.test(unit.name)?2:unit.role==='escort'?0:1};
 }
-export function tacticalAssets(encounter){return [...new Set([...(encounter?.kind==='contest'?[atlases.civic]:[atlases.roman,atlases.frontier,atlases.specialists]),...(encounter?.units?.some(u=>u.role==='escort')?[atlases.civic]:[]),'./assets/tactical/environment-props.webp'])];}
+export function tacticalAssets(encounter){const chapter=Number(/^ch(\d+)/.exec(encounter?.id??'')?.[1])||1;return [...new Set([...(encounter?.kind==='contest'?[atlases.civic]:[atlases.roman,atlases.frontier,atlases.specialists]),...(encounter?.units?.some(u=>u.role==='escort')?[atlases.civic]:[]),'./assets/tactical/environment-props.webp',...WORLD_ASSETS,...animationAssets(chapter,encounter?.kind==='contest')])];}
 export async function loadTacticalArt(encounter){return Promise.all(tacticalAssets(encounter).map(src=>loadArt(src)));}
 
-export function spriteHeight(g,u){return Math.min(100,Math.max(.1,g.tw*(['cavalry','heavy'].includes(u.role)?1.62:1.36)));}
+export function spriteHeight(g,u){return Math.min(140,Math.max(.1,g.tw*(['cavalry','heavy'].includes(u.role)?1.62:1.36)));}
 
 export function drawUnitSprite(c,g,p,u,chapter,contest,override={}){
   const spec=spriteSpec(u,chapter,contest),sheet=peekArt(atlases[spec.atlas]);if(!sheet)return false;
   const height=spriteHeight(g,u),width=height*.75,scale=height/256;
   const draw=(facing,alpha)=>{
+    const frame=authoredFrame(spec,facing,override,u),actionSheet=frame&&peekArt(frame.asset);
+    if(actionSheet){
+      // Each frame is independently painted. A measured sole anchor prevents
+      // export-cell padding from making the character bob or slide at contact.
+      const s=height*.92/frame.bodyHeight,[sx,sy,sw,sh]=frame.source;
+      c.save();c.globalAlpha*=alpha;
+      // Source figures are alpha-separated but their rectangular bounds can
+      // overlap at a sword tip. A convex figure clip excludes neighboring cells
+      // without reshaping or repainting the authored silhouette.
+      c.beginPath();frame.clip.forEach(([x,y],i)=>{const px=(x-frame.anchor.x)*s,py=(y-frame.anchor.y)*s;i?c.lineTo(px,py):c.moveTo(px,py);});c.closePath();c.clip();
+      c.drawImage(actionSheet,sx,sy,sw,sh,-frame.anchor.x*s,-frame.anchor.y*s,sw*s,sh*s);c.restore();return;
+    }
     const column=FACING_COLUMN[facing]??0,mounted=['cavalry','heavy'].includes(u.role),spear=spec.atlas==='roman'&&spec.row===3||spec.atlas==='frontier'&&[0,2].includes(spec.row)||spec.atlas==='specialists'&&spec.row>=2;
     // Atlas inspection supplies the actual painted hand, never a mirrored body.
     const hand=spear?[[-1,1,1,1],[-1,1,-1,1]][spec.atlas==='roman'?1:0][column]:column<2?-1:1;

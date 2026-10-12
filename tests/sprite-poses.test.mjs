@@ -2,6 +2,8 @@ import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {sampleSpritePose,spriteMesh} from '../src/ui/sprite-poses.js';
 import {drawUnitSprite,loadTacticalArt,spriteHeight} from '../src/ui/unit-sprites.js';
+import {spriteSpec} from '../src/ui/unit-sprites.js';
+import {authoredFrame} from '../src/ui/sprite-frames.js';
 import {clearArtCache} from '../src/ui/art.js';
 
 const actions=['attack','cavalry-attack','throw','brace','hit','hurt','speak','rally','order','formation'];
@@ -61,17 +63,17 @@ test('Malformed optional motion fields remain finite and sampling never mutates 
 });
 
 const OriginalImage=globalThis.Image;
-before(async()=>{globalThis.Image=class{naturalWidth=768;naturalHeight=1024;set src(value){this.url=value;if(value)queueMicrotask(()=>this.onload?.());}get src(){return this.url;}async decode(){}};clearArtCache();await loadTacticalArt({kind:'battle'});await loadTacticalArt({kind:'contest'});});
+before(async()=>{globalThis.Image=class{naturalWidth=768;naturalHeight=1024;set src(value){this.url=value;if(value)queueMicrotask(()=>this.onload?.());}get src(){return this.url;}async decode(){}};clearArtCache();await loadTacticalArt({kind:'battle'});await loadTacticalArt({id:'ch11-adlection',kind:'contest'});});
 after(()=>{clearArtCache();if(OriginalImage===undefined)delete globalThis.Image;else globalThis.Image=OriginalImage;});
 function recorder(){const calls=[],stack=[];let alpha=1;const context=new Proxy({}, {get(_,key){if(key==='globalAlpha')return alpha;if(key==='save')return()=>stack.push(alpha);if(key==='restore')return()=>{alpha=stack.pop();};return(...args)=>{for(const arg of args)if(typeof arg==='number')assert.ok(Number.isFinite(arg),String(key));calls.push({method:key,args});};},set(_,key,value){if(key==='globalAlpha')alpha=value;return true;}});return {context,calls};}
 
-test('Active sprites move only existing pixels, keep atlas identity and use the original sprite height',()=>{
+test('Authored actions use one frame stamp and uncovered roles retain their original facing and equipment',()=>{
   for(const [u,chapter,contest] of [[{id:'hero',role:'infantry'},1,false],[{id:'enemy1',role:'archer',side:'enemy',name:'Persian archer'},5,false],[{id:'ally1',role:'cavalry'},9,false],[{id:'hero',role:'speaker'},11,true]])for(const facing of ['east','south','north','west']){
     const unit=freeze({...u,facing,hp:20,maxHp:20}),override=freeze({pose:contest?'speak':u.role==='archer'?'throw':u.role==='cavalry'?'cavalry-attack':'attack',progress:.46,facing}),g=freeze({tw:48}),board=recorder();
     const input=JSON.stringify({unit,override,g});assert.equal(drawUnitSprite(board.context,g,{x:90,y:100},unit,chapter,contest,override),true);
-    const stamps=board.calls.filter(c=>c.method==='drawImage');assert.equal(stamps.length,40);assert.equal(new Set(stamps.map(c=>JSON.stringify(c.args.slice(1,5)))).size,1,'all triangles sample the same authored facing/row');
+    const stamps=board.calls.filter(c=>c.method==='drawImage');const frame=authoredFrame(spriteSpec(unit,chapter,contest),facing,override,unit);assert.equal(stamps.length,frame?1:40);assert.equal(new Set(stamps.map(c=>JSON.stringify(c.args.slice(1,5)))).size,1,'one authored frame or one unchanged fallback facing/row');if(frame){assert.deepEqual(stamps[0].args.slice(1,5),frame.source);assert.equal(stamps[0].args[0].url,frame.asset);}
     assert.ok(!board.calls.some(c=>['stroke','fill','fillRect'].includes(c.method)),'no extra painted arm, sword or bow is overlaid');
-    assert.equal(spriteHeight(g,unit),Math.min(100,48*(u.role==='cavalry'?1.62:1.36)));assert.equal(JSON.stringify({unit,override,g}),input);
+    assert.equal(spriteHeight(g,unit),Math.min(140,48*(u.role==='cavalry'?1.62:1.36)));assert.equal(JSON.stringify({unit,override,g}),input);
   }
 });
 
@@ -80,5 +82,5 @@ test('Settled sprites use one image call; a missing atlas preserves the existing
   drawUnitSprite(board.context,{tw:48},{x:0,y:0},unit,1,false,{pose:'attack',progress:1});assert.equal(board.calls.filter(c=>c.method==='drawImage').length,1);
   for(const braced of [false,true]){const idle=recorder();drawUnitSprite(idle.context,{tw:48},{x:0,y:0},{...unit,braced},1,false,{pose:'idle',bob:.2,lean:.009});assert.equal(idle.calls.filter(c=>c.method==='drawImage').length,1,'ambient breathing and settled guards cannot add mesh cost');}
   clearArtCache();assert.equal(drawUnitSprite(recorder().context,{tw:48},{x:0,y:0},unit,1,false),false);
-  await loadTacticalArt({kind:'battle'});await loadTacticalArt({kind:'contest'});
+  await loadTacticalArt({kind:'battle'});await loadTacticalArt({id:'ch11-adlection',kind:'contest'});
 });

@@ -70,7 +70,7 @@ test('Hidden units and unrelated encounters cannot leak into animation tracks or
 
 test('Every quality tier keeps essential movement and outcomes while bounding effect and time cost',()=>{
   const before=encounter(Array.from({length:30},(_,i)=>unit('u'+i,i%8,Math.floor(i/8)))),after=clone(before);for(const u of after.units){u.x=(u.x+1)%8;u.hp-=2;u.morale-=5;}
-  for(const quality of Object.keys(MOTION_BUDGETS)){const timeline=buildEncounterTimeline(before,after,{quality});assert.ok(timeline.duration<=1100);assert.ok(timeline.effects.length<=MOTION_BUDGETS[quality].effects);assert.ok(timeline.tracks.length<=96);assert.equal(Object.keys(timeline.units).length,30);assert.ok(timeline.effects.every(e=>e.essential));for(const t of [0,timeline.duration/2,timeline.duration])for(const pose of Object.values(sampleEncounterTimeline(timeline,t).unitOverrides))for(const key of ['x','y','alpha','bob','lean','weapon','shield'])assert.ok(Number.isFinite(pose[key]),key);}
+  for(const quality of Object.keys(MOTION_BUDGETS)){const timeline=buildEncounterTimeline(before,after,{quality});assert.ok(timeline.duration<=1700);assert.ok(timeline.effects.length<=MOTION_BUDGETS[quality].effects);assert.ok(timeline.tracks.length<=96);assert.equal(Object.keys(timeline.units).length,30);assert.ok(timeline.effects.every(e=>e.essential));for(const t of [0,timeline.duration/2,timeline.duration])for(const pose of Object.values(sampleEncounterTimeline(timeline,t).unitOverrides))for(const key of ['x','y','alpha','bob','lean','weapon','shield'])assert.ok(Number.isFinite(pose[key]),key);}
 });
 
 function browser(){

@@ -2,7 +2,7 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.7’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.8’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
 
 ## The campaign loop
 
@@ -23,17 +23,17 @@ Every battle and Contest action follows the same route:
 2. Choose an available action.
 3. Select a highlighted tile or choose a target from the target list.
 4. Read the effect, target, and cost in the preview.
-5. Press **Confirm**. Nothing is spent merely by examining a target.
+5. Press **Confirm**, or activate that same target again. Nothing is spent merely by examining a new target.
 
 **End turn** lets uncommanded allies and the enemy act, then refreshes the next player-side turn. One turn means a whole player-side turn, not a single soldier’s action.
 
 ### Mouse and touch
 
-Click or tap units, actions, targets, and Confirm. The target selector supplies the same choices as the map. No essential action requires hover or a double tap. On a narrow screen, the board, unit selector, action selector, target preview, Confirm and End turn are grouped together. Supporting mission details and dispatches open below. Enlarged text uses normal scrolling.
+Click or tap a figure to select it. Reachable empty ground automatically previews Move; an opponent automatically previews an available attack. The action dock provides other actions. Activate the previewed target again, or use Confirm. The target selector supplies the same choices as the map. No essential action requires hover or a timing-sensitive double tap. On a narrow screen, the board, roster, actions, target preview, Confirm and End turn are grouped together. Supporting mission details and dispatches open below. Enlarged text uses normal scrolling.
 
 ### Keyboard
 
-Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit or target. **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
+Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit, previews a target, then confirms that same target. **1–9** choose available actions, **N** cycles ready units, **E** ends the turn, **G** toggles the grid, and **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
 
 Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional, with an **Effects volume** slider. Reduced motion is available, and game meaning never depends on audio alone.
 
