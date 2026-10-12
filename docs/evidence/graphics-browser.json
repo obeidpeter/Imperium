@@ -1,0 +1,1185 @@
+{
+  "schemaVersion": 1,
+  "kind": "graphics-browser-verification",
+  "edition": "0.4.0",
+  "generatedAt": "2026-10-12T06:53:04.132423+00:00",
+  "sourceReports": [
+    {
+      "path": "graphics-review/baseline-browser.json",
+      "sha256": "a4b324267346fe055abc955984117473f89e2a2be62e7bab3b14f94e4b430a36",
+      "complete": true
+    },
+    {
+      "path": "graphics-review/after-browser.json",
+      "sha256": "2d4d028870910add0e7b0a05e3971aa54df92a983f6586e8dd8f93e64a0a1b0b",
+      "complete": true
+    },
+    {
+      "path": "graphics-review/motion-phone.json",
+      "sha256": "5e097066c0fbe00be0467df195288c9ad6ff85e3173986470f7aeca03829cc1d",
+      "complete": true
+    },
+    {
+      "path": "graphics-review/motion-desktop.json",
+      "sha256": "0ebece35ef305f86410d69754d4b65d0e6dbfdb0865a5ae5479d5a53287c36c5",
+      "complete": true
+    },
+    {
+      "path": "graphics-review/motion-baseline.json",
+      "sha256": "14b813ed33f2d3ec6d621aa9b4314ea99dfabd8324249864282fa1975671ec63",
+      "complete": true
+    },
+    {
+      "path": "graphics-review/asset-cache.json",
+      "sha256": "43d4515698968f9ed8ee8e8d7764fbc7761245a21c671f665f5eb703b833fd77",
+      "complete": true
+    }
+  ],
+  "environment": {
+    "label": "0.4.0-final",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "platform": "actual desktop browser surface; no physical-device result",
+    "quality": "balanced",
+    "fixtureSource": "New Game, seed275. Every state and motion pair is copied after a validated legal command; no debug injection or saved-state editing.",
+    "commandCount": 991,
+    "assetsAPI": {
+      "loadArt": true,
+      "prefetchChapter": true
+    },
+    "measurement": "CPU submission/layout and RAF frame intervals are separate; no GPU flush; warmed artwork"
+  },
+  "method": {
+    "staticCasesPerEdition": 28,
+    "warmupDrawsPerCase": 5,
+    "measuredDrawsPerCase": 45,
+    "measuredDrawsPerEdition": 1260,
+    "fixtureCommands": 991,
+    "fixtureSource": "New Game, seed275. Every state and motion pair is copied after a validated legal command; no debug injection or saved-state editing.",
+    "staticGroupMeaning": "Ranges of per-case statistics, not percentiles pooled across all draws. Narrative width/height entries are harness labels; the narrative view uses actual browser width.",
+    "motion": "One warmup and six repeated legal transitions per supported scene; CPU submission, painted-frame cadence and independent RAF cadence are separate. Baseline rendered-unit callbacks unsupported; null metrics are not zero performance.",
+    "timingLimits": "No GPU flush, transfer trace, cold-network claim, sustained FPS guarantee or physical-device measurement. RAF cadence varied between runs."
+  },
+  "staticGroups": [
+    {
+      "source": "baseline-browser.json",
+      "kind": "board",
+      "caseWidth": 360,
+      "cases": 12,
+      "measuredDraws": 540,
+      "perCaseCpuMedianRangeMs": [
+        1.8,
+        2.7
+      ],
+      "perCaseCpuP95RangeMs": [
+        2.8,
+        3.8
+      ],
+      "perCaseRafMedianRangeMs": [
+        16.6,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 33.3,
+      "intervalsOver33_4Ms": 5,
+      "intervalCount": 528,
+      "allStatesUnchanged": true
+    },
+    {
+      "source": "baseline-browser.json",
+      "kind": "board",
+      "caseWidth": 720,
+      "cases": 12,
+      "measuredDraws": 540,
+      "perCaseCpuMedianRangeMs": [
+        1.9,
+        2.7
+      ],
+      "perCaseCpuP95RangeMs": [
+        2.5,
+        4.1
+      ],
+      "perCaseRafMedianRangeMs": [
+        16.6,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 33.4,
+      "intervalsOver33_4Ms": 2,
+      "intervalCount": 528,
+      "allStatesUnchanged": true
+    },
+    {
+      "source": "baseline-browser.json",
+      "kind": "narrative",
+      "caseWidth": 720,
+      "cases": 4,
+      "measuredDraws": 180,
+      "perCaseCpuMedianRangeMs": [
+        2.5,
+        6.5
+      ],
+      "perCaseCpuP95RangeMs": [
+        3.2,
+        8.6
+      ],
+      "perCaseRafMedianRangeMs": [
+        8.3,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 33.4,
+      "intervalsOver33_4Ms": 2,
+      "intervalCount": 176,
+      "allStatesUnchanged": true
+    },
+    {
+      "source": "after-browser.json",
+      "kind": "board",
+      "caseWidth": 360,
+      "cases": 12,
+      "measuredDraws": 540,
+      "perCaseCpuMedianRangeMs": [
+        0.9,
+        1.7
+      ],
+      "perCaseCpuP95RangeMs": [
+        1.4,
+        3.1
+      ],
+      "perCaseRafMedianRangeMs": [
+        8.3,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 33.4,
+      "intervalsOver33_4Ms": 3,
+      "intervalCount": 528,
+      "allStatesUnchanged": true
+    },
+    {
+      "source": "after-browser.json",
+      "kind": "board",
+      "caseWidth": 720,
+      "cases": 12,
+      "measuredDraws": 540,
+      "perCaseCpuMedianRangeMs": [
+        1,
+        1.6
+      ],
+      "perCaseCpuP95RangeMs": [
+        1.3,
+        2.4
+      ],
+      "perCaseRafMedianRangeMs": [
+        8.4,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 33.3,
+      "intervalsOver33_4Ms": 3,
+      "intervalCount": 528,
+      "allStatesUnchanged": true
+    },
+    {
+      "source": "after-browser.json",
+      "kind": "narrative",
+      "caseWidth": 720,
+      "cases": 4,
+      "measuredDraws": 180,
+      "perCaseCpuMedianRangeMs": [
+        3.7,
+        7.5
+      ],
+      "perCaseCpuP95RangeMs": [
+        5.3,
+        9.4
+      ],
+      "perCaseRafMedianRangeMs": [
+        16.7,
+        16.7
+      ],
+      "largestPerCaseRafP95Ms": 16.8,
+      "intervalsOver33_4Ms": 1,
+      "intervalCount": 176,
+      "allStatesUnchanged": true
+    }
+  ],
+  "staticComparisons": [
+    {
+      "scene": "board-ch1-road",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2,
+      "afterCpuMedianMs": 1.3,
+      "beforeCpuP95Ms": 3.2,
+      "afterCpuP95Ms": 1.5,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch1-road",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 1.9,
+      "afterCpuMedianMs": 1.2,
+      "beforeCpuP95Ms": 2.5,
+      "afterCpuP95Ms": 1.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch2-marsh",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.3,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 2.9,
+      "afterCpuP95Ms": 1.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch2-marsh",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 3,
+      "afterCpuP95Ms": 1.3,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch3-station",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 1.8,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 2.8,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch3-station",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.2,
+      "afterCpuMedianMs": 1.4,
+      "beforeCpuP95Ms": 3.2,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch4-gate",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.4,
+      "afterCpuMedianMs": 1.4,
+      "beforeCpuP95Ms": 3.4,
+      "afterCpuP95Ms": 1.8,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch4-gate",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 1.9,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 3,
+      "afterCpuP95Ms": 1.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch5-mine",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.2,
+      "afterCpuMedianMs": 1.4,
+      "beforeCpuP95Ms": 2.9,
+      "afterCpuP95Ms": 1.7,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch5-mine",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.5,
+      "afterCpuMedianMs": 1.2,
+      "beforeCpuP95Ms": 3.7,
+      "afterCpuP95Ms": 2,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch6-wells",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.7,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 3.5,
+      "afterCpuP95Ms": 1.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch6-wells",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.6,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 3.8,
+      "afterCpuP95Ms": 1.3,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch7-legion",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.5,
+      "afterCpuMedianMs": 1.2,
+      "beforeCpuP95Ms": 3.8,
+      "afterCpuP95Ms": 1.7,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch7-legion",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.4,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 3.7,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch8-ferry",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.4,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 3.1,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch8-ferry",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.3,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 4.1,
+      "afterCpuP95Ms": 1.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch9-wing",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.5,
+      "afterCpuMedianMs": 0.9,
+      "beforeCpuP95Ms": 3.4,
+      "afterCpuP95Ms": 1.5,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch9-wing",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.5,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 3.5,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch10-road",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.4,
+      "afterCpuMedianMs": 1.1,
+      "beforeCpuP95Ms": 3.4,
+      "afterCpuP95Ms": 1.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch10-road",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.4,
+      "afterCpuMedianMs": 1,
+      "beforeCpuP95Ms": 3.5,
+      "afterCpuP95Ms": 1.3,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch11-adlection",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 1.8,
+      "afterCpuMedianMs": 1.7,
+      "beforeCpuP95Ms": 2.8,
+      "afterCpuP95Ms": 3.1,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch11-adlection",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.1,
+      "afterCpuMedianMs": 1.6,
+      "beforeCpuP95Ms": 2.7,
+      "afterCpuP95Ms": 2.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch12-confrontation",
+      "kind": "board",
+      "width": 360,
+      "height": 196,
+      "beforeCpuMedianMs": 2.7,
+      "afterCpuMedianMs": 1.5,
+      "beforeCpuP95Ms": 3.8,
+      "afterCpuP95Ms": 2.6,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "board-ch12-confrontation",
+      "kind": "board",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.7,
+      "afterCpuMedianMs": 1.4,
+      "beforeCpuP95Ms": 3.8,
+      "afterCpuP95Ms": 2,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "camp-1",
+      "kind": "camp",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 6.5,
+      "afterCpuMedianMs": 7.5,
+      "beforeCpuP95Ms": 8.6,
+      "afterCpuP95Ms": 9,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "promotion-10",
+      "kind": "promotion",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.5,
+      "afterCpuMedianMs": 5.5,
+      "beforeCpuP95Ms": 3.2,
+      "afterCpuP95Ms": 9.4,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "promotion-11",
+      "kind": "promotion",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 2.6,
+      "afterCpuMedianMs": 3.7,
+      "beforeCpuP95Ms": 3.2,
+      "afterCpuP95Ms": 5.3,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    },
+    {
+      "scene": "ending",
+      "kind": "ending",
+      "width": 720,
+      "height": 540,
+      "beforeCpuMedianMs": 4.8,
+      "afterCpuMedianMs": 6.5,
+      "beforeCpuP95Ms": 5.9,
+      "afterCpuP95Ms": 7.8,
+      "beforeStateUnchanged": true,
+      "afterStateUnchanged": true
+    }
+  ],
+  "motionCases": [
+    {
+      "source": "motion-phone.json",
+      "scene": "board-ch1-road",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "strike",
+        "x": 3,
+        "y": 2,
+        "targetId": "enemy0"
+      },
+      "traceStep": 16,
+      "width": 360,
+      "height": 196,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 182,
+        "medianMs": 1,
+        "p95Ms": 1.4000000953674316,
+        "minMs": 0.6999999284744263,
+        "maxMs": 2.0999999046325684
+      },
+      "raf": {
+        "samples": 175,
+        "medianMs": 16.699999999999818,
+        "p95Ms": 16.799999999999955,
+        "minMs": 8.200000000000045,
+        "maxMs": 33.5
+      },
+      "paintIntervals": {
+        "samples": 176,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.90000009536743,
+        "minMs": 12.599999904632568,
+        "maxMs": 33.40000009536743
+      },
+      "stateBeforeSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateAfterSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-phone.json",
+      "scene": "board-ch9-wing",
+      "chapter": 9,
+      "command": {
+        "unitId": "hero",
+        "action": "throw",
+        "x": 6,
+        "y": 3,
+        "targetId": "enemy1"
+      },
+      "traceStep": 634,
+      "width": 360,
+      "height": 196,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 240,
+        "medianMs": 1.2000000476837158,
+        "p95Ms": 1.7999999523162842,
+        "minMs": 0.7000000476837158,
+        "maxMs": 5.399999976158142
+      },
+      "raf": {
+        "samples": 228,
+        "medianMs": 16.699999999999818,
+        "p95Ms": 16.800000000000182,
+        "minMs": 16.399999999999636,
+        "maxMs": 16.900000000000546
+      },
+      "paintIntervals": {
+        "samples": 234,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.899999976158142,
+        "minMs": 11.800000071525574,
+        "maxMs": 17.5
+      },
+      "stateBeforeSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateAfterSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-phone.json",
+      "scene": "board-ch11-adlection",
+      "chapter": 11,
+      "command": {
+        "unitId": "speaker-ally",
+        "action": "denounce",
+        "x": 5,
+        "y": 7,
+        "targetId": "elder-speaker"
+      },
+      "traceStep": 845,
+      "width": 360,
+      "height": 196,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 186,
+        "medianMs": 1.4000000953674316,
+        "p95Ms": 2.100000023841858,
+        "minMs": 0.7999999523162842,
+        "maxMs": 2.700000047683716
+      },
+      "raf": {
+        "samples": 174,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "minMs": 16.200000000000728,
+        "maxMs": 17.100000000000364
+      },
+      "paintIntervals": {
+        "samples": 180,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 16.899999976158142,
+        "minMs": 11.299999952316284,
+        "maxMs": 18.5
+      },
+      "stateBeforeSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateAfterSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-desktop.json",
+      "scene": "board-ch1-road",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "strike",
+        "x": 3,
+        "y": 2,
+        "targetId": "enemy0"
+      },
+      "traceStep": 16,
+      "width": 720,
+      "height": 540,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 186,
+        "medianMs": 1.2999999523162842,
+        "p95Ms": 1.7999999523162842,
+        "minMs": 0.6000000238418579,
+        "maxMs": 7.399999976158142
+      },
+      "raf": {
+        "samples": 174,
+        "medianMs": 16.699999999999818,
+        "p95Ms": 16.799999999999955,
+        "minMs": 16.299999999999727,
+        "maxMs": 17
+      },
+      "paintIntervals": {
+        "samples": 180,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 17.600000023841858,
+        "minMs": 3.299999952316284,
+        "maxMs": 28.899999976158142
+      },
+      "stateBeforeSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateAfterSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-desktop.json",
+      "scene": "board-ch9-wing",
+      "chapter": 9,
+      "command": {
+        "unitId": "hero",
+        "action": "throw",
+        "x": 6,
+        "y": 3,
+        "targetId": "enemy1"
+      },
+      "traceStep": 634,
+      "width": 720,
+      "height": 540,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 235,
+        "medianMs": 1.5,
+        "p95Ms": 2.1999999284744263,
+        "minMs": 0.7000000476837158,
+        "maxMs": 19
+      },
+      "raf": {
+        "samples": 228,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.80000000000109,
+        "minMs": 13.699999999999818,
+        "maxMs": 19.600000000000364
+      },
+      "paintIntervals": {
+        "samples": 229,
+        "medianMs": 16.699999928474426,
+        "p95Ms": 17.700000047683716,
+        "minMs": 11.5,
+        "maxMs": 32.699999928474426
+      },
+      "stateBeforeSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateAfterSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-desktop.json",
+      "scene": "board-ch11-adlection",
+      "chapter": 11,
+      "command": {
+        "unitId": "speaker-ally",
+        "action": "denounce",
+        "x": 5,
+        "y": 7,
+        "targetId": "elder-speaker"
+      },
+      "traceStep": 845,
+      "width": 720,
+      "height": 540,
+      "supported": true,
+      "status": "measured",
+      "warmups": 1,
+      "repetitions": 6,
+      "cpu": {
+        "samples": 184,
+        "medianMs": 1.5,
+        "p95Ms": 2.700000047683716,
+        "minMs": 0.5,
+        "maxMs": 3.5
+      },
+      "raf": {
+        "samples": 174,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.899999999999636,
+        "minMs": 8,
+        "maxMs": 33.30000000000109
+      },
+      "paintIntervals": {
+        "samples": 178,
+        "medianMs": 16.600000023841858,
+        "p95Ms": 17.300000071525574,
+        "minMs": 11.899999976158142,
+        "maxMs": 33.799999952316284
+      },
+      "stateBeforeSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateAfterSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-baseline.json",
+      "scene": "board-ch1-road",
+      "chapter": 1,
+      "command": {
+        "unitId": "hero",
+        "action": "strike",
+        "x": 3,
+        "y": 2,
+        "targetId": "enemy0"
+      },
+      "traceStep": 16,
+      "width": 360,
+      "height": 196,
+      "supported": false,
+      "status": "unsupported: old player supplies no rendered-unit frames",
+      "warmups": 1,
+      "repetitions": 0,
+      "cpu": null,
+      "raf": null,
+      "paintIntervals": null,
+      "stateBeforeSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateAfterSHA256": "0263965511d3179328a8244e7d0747e625315b1d3179527160819a7eee750570",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-baseline.json",
+      "scene": "board-ch9-wing",
+      "chapter": 9,
+      "command": {
+        "unitId": "hero",
+        "action": "throw",
+        "x": 6,
+        "y": 3,
+        "targetId": "enemy1"
+      },
+      "traceStep": 634,
+      "width": 360,
+      "height": 196,
+      "supported": false,
+      "status": "unsupported: old player supplies no rendered-unit frames",
+      "warmups": 1,
+      "repetitions": 0,
+      "cpu": null,
+      "raf": null,
+      "paintIntervals": null,
+      "stateBeforeSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateAfterSHA256": "2ed9dddf1bb5b9dde7fafc36a9bbef61e1f724d91a3192adf23ae90f980f82ac",
+      "stateUnchanged": true
+    },
+    {
+      "source": "motion-baseline.json",
+      "scene": "board-ch11-adlection",
+      "chapter": 11,
+      "command": {
+        "unitId": "speaker-ally",
+        "action": "denounce",
+        "x": 5,
+        "y": 7,
+        "targetId": "elder-speaker"
+      },
+      "traceStep": 845,
+      "width": 360,
+      "height": 196,
+      "supported": false,
+      "status": "unsupported: old player supplies no rendered-unit frames",
+      "warmups": 1,
+      "repetitions": 0,
+      "cpu": null,
+      "raf": null,
+      "paintIntervals": null,
+      "stateBeforeSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateAfterSHA256": "42576bc32299a32c65ac4b3c68296905d2ef5f25ffef3c5d68e36411c2a4e1c3",
+      "stateUnchanged": true
+    }
+  ],
+  "cache": {
+    "source": "graphics-review/asset-cache.json",
+    "passed": true,
+    "chapters": 12,
+    "failedLoads": 0,
+    "peakRetainedEntries": 24,
+    "peakEstimatedRetainedBytes": 25085952,
+    "configuredEntryCap": 24,
+    "configuredEstimatedByteCap": 25165824,
+    "peakDecodeConcurrency": 2,
+    "finalEvictions": 14,
+    "perChapterElapsedMs": [
+      {
+        "chapter": 1,
+        "ms": 160.4
+      },
+      {
+        "chapter": 2,
+        "ms": 36.4
+      },
+      {
+        "chapter": 3,
+        "ms": 9.5
+      },
+      {
+        "chapter": 4,
+        "ms": 8.9
+      },
+      {
+        "chapter": 5,
+        "ms": 20.2
+      },
+      {
+        "chapter": 6,
+        "ms": 10.8
+      },
+      {
+        "chapter": 7,
+        "ms": 0.4
+      },
+      {
+        "chapter": 8,
+        "ms": 17.8
+      },
+      {
+        "chapter": 9,
+        "ms": 1.2
+      },
+      {
+        "chapter": 10,
+        "ms": 22.5
+      },
+      {
+        "chapter": 11,
+        "ms": 27.5
+      },
+      {
+        "chapter": 12,
+        "ms": 20.3
+      }
+    ],
+    "limitation": "Retained application image references and RGBA estimates only; excludes DOM, HTTP cache, transient decodes, Canvas backing stores and browser/GPU allocations."
+  },
+  "rulesAndStorageHashAudit": {
+    "comparedAt": "2026-10-12T06:28:47.8353737Z",
+    "count": 12,
+    "unchanged": 12,
+    "files": [
+      {
+        "path": "src/core/battle.js",
+        "unchanged": true,
+        "baselineSHA256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+        "currentSHA256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b"
+      },
+      {
+        "path": "src/core/career.js",
+        "unchanged": true,
+        "baselineSHA256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "currentSHA256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180"
+      },
+      {
+        "path": "src/core/contest.js",
+        "unchanged": true,
+        "baselineSHA256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+        "currentSHA256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a"
+      },
+      {
+        "path": "src/core/debug.js",
+        "unchanged": true,
+        "baselineSHA256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "currentSHA256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947"
+      },
+      {
+        "path": "src/core/game.js",
+        "unchanged": true,
+        "baselineSHA256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+        "currentSHA256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a"
+      },
+      {
+        "path": "src/core/legacy-battle.js",
+        "unchanged": true,
+        "baselineSHA256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "currentSHA256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601"
+      },
+      {
+        "path": "src/core/legacy-contest.js",
+        "unchanged": true,
+        "baselineSHA256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "currentSHA256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd"
+      },
+      {
+        "path": "src/core/shared.js",
+        "unchanged": true,
+        "baselineSHA256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+        "currentSHA256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea"
+      },
+      {
+        "path": "src/data/campaign.js",
+        "unchanged": true,
+        "baselineSHA256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "currentSHA256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a"
+      },
+      {
+        "path": "src/data/encounters.js",
+        "unchanged": true,
+        "baselineSHA256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "currentSHA256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a"
+      },
+      {
+        "path": "src/data/story-stages.js",
+        "unchanged": true,
+        "baselineSHA256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "currentSHA256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021"
+      },
+      {
+        "path": "src/ui/storage.js",
+        "unchanged": true,
+        "baselineSHA256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+        "currentSHA256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308"
+      }
+    ],
+    "recheckedAt": "2026-10-12T06:53:04.131416+00:00"
+  },
+  "automatedChecks": {
+    "source": "docs/evidence/graphics-package.json",
+    "tests": {
+      "command": "node --test tests/*.test.mjs",
+      "passed": 174,
+      "failed": 0,
+      "skipped": 0,
+      "validatedRevision": "4258cee81946",
+      "scope": "Full source suite before the final CSS-only landscape layout adjustment."
+    },
+    "autoplay": {
+      "command": "node scripts/autoplay.mjs",
+      "source": "New Game; legal gameplay API commands only",
+      "seed": 275,
+      "rank": "Augustus",
+      "completed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "encounters": 25,
+      "totalTurns": 204
+    },
+    "assetsAndWorker": {
+      "command": "node scripts/verify-assets.mjs",
+      "checksPassed": 9
+    },
+    "revisionAndPackageBytes": "Use the current graphics-package.json; not duplicated here."
+  },
+  "uiObservations": [
+    {
+      "id": "fresh-game",
+      "status": "passed",
+      "type": "human-operated browser check",
+      "detail": "Production preview: created a fresh campaign, made the opening choice, moved during the drill to 2D and ended the turn through visible controls."
+    },
+    {
+      "id": "phone-portrait",
+      "status": "passed",
+      "type": "resized desktop browser, not a physical phone",
+      "viewport": {
+        "width": 360,
+        "height": 640
+      },
+      "detail": "Battle and Senate views inspected; no horizontal page overflow. In-game 200% text, reduced-motion, Performance and High controls exercised.",
+      "screenshots": [
+        "phone-battle.png",
+        "phone-senate.png",
+        "phone-200-percent.png"
+      ]
+    },
+    {
+      "id": "desktop-keyboard",
+      "status": "passed",
+      "type": "human-operated browser check",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "detail": "ArrowRight on the actual production board announced Grid 5E Landholders delegate 2. No horizontal overflow.",
+      "screenshots": [
+        "desktop-senate.png"
+      ]
+    },
+    {
+      "id": "large-desktop",
+      "status": "passed",
+      "type": "human-operated browser check",
+      "viewport": {
+        "width": 1600,
+        "height": 900
+      },
+      "detail": "Senate layout inspected; panel bounds stayed within viewport.",
+      "screenshots": [
+        "large-desktop-senate.png"
+      ]
+    },
+    {
+      "id": "landscape",
+      "status": "passed",
+      "type": "resized desktop browser, not a physical phone",
+      "viewport": {
+        "width": 640,
+        "height": 360
+      },
+      "detail": "Final production browser inspection after the stacking repair: a 317 x 181 board and 275-pixel control panel appeared side by side. Confirm and End Turn were 44 pixels high, with their bottom at 296.5 pixels inside the viewport. Page scroll width was 625 pixels against a 640-pixel viewport. Persuade succeeded, changing stance from 4 to 6. At in-game 200% text there was no horizontal overflow; select and Confirm were 56.8 and 93.2 pixels high, with natural vertical scrolling.",
+      "screenshots": [
+        "landscape-senate.png"
+      ],
+      "boardCssPixels": {
+        "width": 317,
+        "height": 181
+      },
+      "controlPanelWidthCssPixels": 275,
+      "actionButtonHeightCssPixels": 44,
+      "actionButtonBottomCssPixels": 296.5,
+      "pageScrollWidthCssPixels": 625,
+      "text200Percent": {
+        "horizontalOverflow": false,
+        "selectHeightCssPixels": 56.8,
+        "confirmHeightCssPixels": 93.2,
+        "verticalScrolling": true
+      }
+    },
+    {
+      "id": "legal-import",
+      "status": "passed",
+      "type": "human-operated browser check",
+      "detail": "Imported a chapter 11 checkpoint earned by legal full-route play through the actual validated Import UI; no live state injection."
+    },
+    {
+      "id": "chapter-offline",
+      "status": "passed",
+      "type": "human-operated production service-worker check",
+      "detail": "Chapter I readiness appeared before any request for the complete campaign. The complete-campaign download started only after the explicit settings button, showed 86% progress, then reported all chapters ready."
+    },
+    {
+      "id": "server-unavailable",
+      "status": "passed",
+      "type": "human-operated production service-worker check",
+      "detail": "Stopped the production server after full caching. Reloaded the cached title and used Continue to resume the Senate with its artwork. Persuade succeeded offline; feedback changed the targeted stance from 4 to 6. This tests server-unavailable behavior in one browser session, not real-device flight mode or long-term eviction."
+    },
+    {
+      "id": "final-build-offline-finale",
+      "status": "passed",
+      "type": "human-operated production service-worker check",
+      "detail": "Repeated explicit complete-campaign download until all chapters were ready on the final production build. Stopped the server, reloaded the cached title, and used Continue to restore the Emperor finale completely offline. Create Your Reign Card opened its rendered canvas with Download Card and Share controls. No share was sent; downloading or sharing the card was not tested."
+    },
+    {
+      "id": "phone-finale",
+      "status": "passed",
+      "type": "resized desktop browser, not a physical phone",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "detail": "All four finale images had nonzero natural widths and the view was visually inspected. No horizontal overflow: page scroll width 375 pixels against a 390-pixel viewport.",
+      "pageScrollWidthCssPixels": 375,
+      "loadedImages": 4,
+      "screenshots": [
+        "phone-finale.png"
+      ]
+    }
+  ],
+  "limitations": [
+    "Fixed isometric camera; no 3D scene graph, free orbit or zoom camera.",
+    "Four authored facings per archetype; gait, anticipation, gestures, impacts and retreat are procedural 2D presentation, not skeletal animation or complete frame-by-frame action sheets.",
+    "Faces and archetypes are reused; escort/civilian tokens represent groups rather than individually rendered crowds.",
+    "Painted architecture and scenery imply depth; the board remains the same 8 x 8 rule grid.",
+    "No physical Android or iPhone, Safari/VoiceOver, GPU memory, total-process RAM, battery, thermal or sustained low-end-device measurements.",
+    "Offline behavior was verified by stopping the local server after caching; durable storage eviction and real-device installation remain unverified.",
+    "Static screenshots cannot prove motion; baseline old overlay player has no comparable rendered-unit-frame metrics."
+  ]
+}

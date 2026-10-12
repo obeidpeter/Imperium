@@ -1,0 +1,65 @@
+/* Narrative staging only. No timers, random effects, or gameplay state. */
+.art-loading-status{margin:0;padding:.55rem max(1rem,calc((100vw - 1200px)/2));background:var(--plaster);color:var(--ink);font-size:var(--font-small);border-block-end:1px solid var(--line-soft)}
+.art-loading-status[hidden],#offline-status[hidden]{display:none}
+.cinematic-mural{block-size:clamp(17rem,28vw,25rem);isolation:isolate;box-shadow:0 15px 35px #172a271a}
+.cinematic-mural::after{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px #d8c6a233,inset 0 -6rem 5rem -4rem #10211fe0}
+.cinematic-mural>img{object-position:center 45%;animation:scene-arrival 4.5s ease-out both}
+.cinematic-mural .mural-overlay{z-index:1;background:linear-gradient(transparent,#172a27e8);padding:3rem 1.6rem 1.2rem}
+.cinematic-story{display:grid;grid-template-columns:minmax(8.5rem,12rem) minmax(0,1fr);gap:1.25rem 1.5rem;align-items:start;padding-block:1.8rem 1.25rem}
+.cinematic-story.narrated{grid-template-columns:minmax(0,1fr)}
+.cinematic-story .story-portrait{margin:0;position:relative;overflow:hidden;aspect-ratio:4/5;background:var(--dark);box-shadow:0 8px 24px #172a2723}
+.cinematic-story .story-portrait::after{content:'';position:absolute;inset:.45rem;border:1px solid #ead4aa60;pointer-events:none}
+.cinematic-story .story-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;animation:portrait-arrival .5s ease-out both}
+.cinematic-story .story-copy{min-inline-size:0}
+.cinematic-story .speaker{margin-block-end:.7rem;min-width:0}
+.cinematic-story .dialogue-text{font-size:calc(1.16rem * var(--text-scale,1));line-height:1.7;min-height:0}
+.cinematic-story .story-controls{grid-column:1/-1;margin-top:0}
+.cinematic-story.narrated .narrator-seal{width:3rem;height:3rem;flex-shrink:0}
+.cinematic-page{padding-block:1.5rem}
+.cinematic-promotion{--ceremony-base:#172a27;--ceremony-accent:#b99a64;max-inline-size:72rem;margin:1rem auto 3rem;padding:0;text-align:start;background:var(--ceremony-base);color:#f8efdc;overflow:hidden;isolation:isolate;box-shadow:0 20px 60px #172a2730}
+.cinematic-promotion::before{inset:.75rem;border-color:#d2b77b65;z-index:2}
+.cinematic-promotion.ceremony-field{max-inline-size:58rem;--ceremony-base:#3c3026;--ceremony-accent:#bb9870}
+.cinematic-promotion.ceremony-legion{--ceremony-base:#3d2926;--ceremony-accent:#d7b577}
+.cinematic-promotion.ceremony-command{--ceremony-base:#382d24;--ceremony-accent:#d7b577}
+.cinematic-promotion.ceremony-civil{--ceremony-base:#263a35;--ceremony-accent:#d1bc8c}
+.cinematic-promotion.ceremony-senate,.cinematic-promotion.ceremony-threshold{--ceremony-base:#302e28;--ceremony-accent:#dbc498}
+.cinematic-promotion.ceremony-imperial{--ceremony-base:#352539;--ceremony-accent:#e2c689;max-inline-size:78rem}
+.cinematic-promotion .ceremony-scene{height:clamp(15rem,29vw,24rem);position:relative;overflow:hidden;background:#172a27}
+.cinematic-promotion .ceremony-scene img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 46%;border:0;max-height:none;animation:scene-arrival 5s ease-out both}
+.cinematic-promotion .ceremony-scene::after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 52%,var(--ceremony-base));pointer-events:none}
+.ceremony-tableau{position:relative;display:grid;grid-template-columns:minmax(13rem,19rem) minmax(0,1fr);gap:2.5rem;align-items:center;margin:-5rem clamp(1.5rem,5vw,4rem) 0;z-index:1}
+.ceremony-portrait{position:relative;min-width:0}
+.cinematic-promotion .ceremony-portrait .promotion-art{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:center 25%;margin:0;border:1px solid #d6bd86;box-shadow:0 13px 35px #0007}
+.cinematic-promotion .ceremony-seal{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:50%;border:2px solid var(--ceremony-accent);box-shadow:0 5px 18px #0008}
+.ceremony-portrait .ceremony-seal{position:absolute;right:-.8rem;bottom:-.9rem}
+.ceremony-title{padding-top:3rem;min-width:0}
+.cinematic-promotion .ceremony-kicker{font:600 .75rem/1.5 var(--sans);letter-spacing:.17em;color:var(--ceremony-accent);margin:.6rem 0}
+.cinematic-promotion h1{font-size:calc(clamp(2.2rem,4.1vw,4.2rem) * var(--text-scale,1));line-height:1.05;color:#fff5dc;margin:.7rem 0;overflow-wrap:anywhere}
+.cinematic-promotion .caps{color:#e8d7b8;letter-spacing:.04em;font-size:calc(.94rem * var(--text-scale,1));line-height:1.6}
+.cinematic-promotion p{margin:.8rem 0;max-inline-size:none}
+.cinematic-promotion .eyebrow{color:#e5cf9f;font-size:calc(.7rem * var(--text-scale,1));line-height:1.6}
+.cinematic-promotion blockquote{font-size:calc(1.2rem * var(--text-scale,1));line-height:1.6;margin:1.1rem 0;max-inline-size:42ch;color:#f2e4c7}
+.ceremony-record{margin:2.5rem clamp(1.5rem,5vw,4rem) 0;padding-top:1.5rem;border-top:1px solid #c7ad7950;columns:2;column-gap:2.5rem}
+.cinematic-promotion .ceremony-record p{margin:0 0 1.35rem;break-inside:avoid;font-size:calc(1rem * var(--text-scale,1));line-height:1.75}
+.ceremony-voice{display:block;font:600 .72rem/1.6 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:#d3b67e;margin-bottom:.3rem}
+.ceremony-advance{padding:1.5rem clamp(1.5rem,5vw,4rem) 3rem;text-align:center;position:relative;z-index:3}
+.cinematic-promotion .ceremony-advance button{min-height:3.1rem;background:#f7ecd3;color:#4e2027;border:1px solid #d8be83;font-size:calc(1rem * var(--text-scale,1));padding:.85rem 1.8rem;box-shadow:0 4px 15px #0004}
+.cinematic-promotion .ceremony-advance button:hover{background:white;color:#4e2027}
+.cinematic-promotion .notice{background:#f4ead5;color:#292b26;text-align:start}
+.cinematic-promotion .accession-scene{height:clamp(21rem,43vw,38rem)}
+.cinematic-promotion .accession-scene img{object-position:center 48%}
+.accession-heading{position:relative;margin:-3rem 1.5rem 2rem;text-align:center}
+.accession-oath{display:grid;grid-template-columns:minmax(12rem,19rem) minmax(0,1fr);gap:3rem;margin:0 clamp(1.5rem,6vw,5rem);align-items:center}
+.cinematic-promotion .accession-oath .promotion-art{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;margin:0;border:1px solid #d5bc7e;box-shadow:0 12px 32px #0005}
+.accession-oath .ceremony-seal{display:block;margin:0 auto 1.2rem}
+.accession-oath blockquote{font-size:calc(1.35rem * var(--text-scale,1));text-align:center;max-inline-size:none}
+.accession-oath .mentor-lesson{color:#d9bd82}
+.cinematic-epilogue{max-inline-size:72rem;margin:auto}
+.legacy-actions{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-block:2rem}
+@keyframes scene-arrival{from{transform:scale(1.035)}to{transform:scale(1)}}
+@keyframes portrait-arrival{from{opacity:.55;transform:translateY(.4rem)}to{opacity:1;transform:none}}
+@media(max-width:800px){.cinematic-story{grid-template-columns:8.5rem minmax(0,1fr);gap:1rem}.ceremony-tableau{gap:1.6rem;grid-template-columns:12rem minmax(0,1fr)}.ceremony-record{columns:1}.accession-oath{grid-template-columns:12rem minmax(0,1fr);gap:1.5rem}.cinematic-promotion h1{font-size:calc(2.5rem * var(--text-scale,1))}}
+@media(max-width:560px){.cinematic-mural{height:17rem}.cinematic-story{display:block}.cinematic-story .story-portrait{float:left;width:6.7rem;height:8.2rem;aspect-ratio:auto;margin:0 1rem .65rem 0}.cinematic-story .story-copy{display:contents}.cinematic-story .speaker{display:block;min-height:3.9rem;padding-top:.15rem}.cinematic-story.narrated .speaker{display:flex;min-height:0}.cinematic-story .dialogue-text{font-size:calc(1.1rem * var(--text-scale,1));line-height:1.7}.cinematic-story .story-controls{clear:both;padding-top:1rem}.cinematic-page{padding-top:.5rem}.cinematic-promotion{margin:.5rem .6rem 2rem}.cinematic-promotion::before{inset:.45rem}.cinematic-promotion .ceremony-scene{height:15rem}.ceremony-tableau{display:block;margin:-5rem 1.4rem 0;text-align:center}.ceremony-portrait{width:10.5rem;margin:auto}.ceremony-title{padding-top:1.1rem}.cinematic-promotion h1{font-size:calc(2.15rem * var(--text-scale,1))}.cinematic-promotion .eyebrow{font-size:calc(.64rem * var(--text-scale,1))}.cinematic-promotion blockquote{font-size:calc(1.1rem * var(--text-scale,1))}.cinematic-promotion .ceremony-seal{width:3.8rem;height:3.8rem}.ceremony-record{margin:1.6rem 1.5rem 0;padding-top:1rem}.ceremony-advance{padding:1rem 1.4rem 2rem}.ceremony-advance button{width:100%}.cinematic-promotion .accession-scene{height:20rem}.accession-heading{margin-top:-1.8rem}.accession-oath{display:block;margin:0 1.5rem}.cinematic-promotion .accession-oath .promotion-art{width:11rem;margin:0 auto 1.5rem}.accession-oath .ceremony-seal{float:none}.accession-oath blockquote{font-size:calc(1.15rem * var(--text-scale,1))}}
+@media(prefers-reduced-motion:reduce){.cinematic-mural>img,.cinematic-story .story-portrait img,.cinematic-promotion .ceremony-scene img{animation:none}}
+html[data-reduced="true"] .cinematic-mural>img,html[data-reduced="true"] .cinematic-story .story-portrait img,html[data-reduced="true"] .cinematic-promotion .ceremony-scene img{animation:none}
+html[data-hidden="true"] .cinematic-mural>img,html[data-hidden="true"] .cinematic-story .story-portrait img,html[data-hidden="true"] .cinematic-promotion .ceremony-scene img{animation-play-state:paused}

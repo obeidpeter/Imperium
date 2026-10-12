@@ -547,4 +547,13 @@
 .company-panel { border-block:1px solid var(--line); margin-block:1rem; padding-block:.4rem; }
 .company-panel summary { cursor:pointer; padding:.7rem 0; min-block-size:44px; font-weight:600; font-size:var(--font-label); }
 @media(max-width:700px){.camp-side { display:flex; flex-direction:column; }.camp-side .orders-card { order:-1; }.company-panel { width:100%; }}
+  /* Compact landscape keeps the action loop beside the field. Text remains
+     free to wrap and grow vertically when the player enlarges it. */
+  @media (min-width:600px) and (max-width:900px) and (max-height:500px) {
+    .tactical-shell { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:.7rem; align-items:start; }
+    .tactical-shell .battle-topline, .tactical-shell .tactical-status { flex-wrap:wrap; }
+    .tactical-shell .turn-counter { white-space:normal; }
+    .tactical-shell .battle-actions button, .tactical-shell .battle-actions select { min-block-size:44px; }
+    .tactical-shell .battle-actions button { white-space:normal; overflow-wrap:anywhere; }
+  }
 }

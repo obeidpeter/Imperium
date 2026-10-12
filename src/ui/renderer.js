@@ -1,7 +1,8 @@
 // Procedural fresco illustration and isometric battlefield presentation.
 import {paintBattle} from './battle-art.js';
+import {GRAPHICS_MODES} from './graphics-quality.js';
 const P={red:'#782e28',gold:'#c0a260',cream:'#f0dfb6',ink:'#253c34',olive:'#707a57'};
-function setup(canvas,r=canvas.getBoundingClientRect()){const w=Math.max(1,r.width||640),h=Math.max(1,r.height||400);const d=Math.min(globalThis.devicePixelRatio||1,2);canvas.width=Math.round(w*d);canvas.height=Math.round(h*d);const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};}
+function setup(canvas,r=canvas.getBoundingClientRect(),maxPixelRatio=2){const w=Math.max(1,r.width||640),h=Math.max(1,r.height||400);const d=Math.min(globalThis.devicePixelRatio||1,maxPixelRatio);if(canvas.width!==Math.round(w*d))canvas.width=Math.round(w*d);if(canvas.height!==Math.round(h*d))canvas.height=Math.round(h*d);const c=canvas.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h,d};}
 function noise(x,y,seed=1){const n=Math.sin(x*127.1+y*311.7+seed*23.23)*43758.5453;return n-Math.floor(n);}
 function poly(c,points,fill,stroke){c.beginPath();points.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.stroke();}}
 function ellipse(c,x,y,rx,ry,color){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
@@ -29,8 +30,8 @@ function terrainAt(e,x,y){const t=e.terrain?.[y]?.[x];return typeof t==='string'
 export function drawBattle(canvas,e,selected='hero',targets=[],focus=null,chapter=1,options={}){
   if(!canvas||!e)return;
   const rect=canvas.getBoundingClientRect();if(!battleLaidOut(rect))return;
-  const {c,w,h}=setup(canvas,rect),g=geometryFromRect(rect,e);
-  paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options);
+  const {c,w,h,d}=setup(canvas,rect,GRAPHICS_MODES[options.quality??'balanced']?.maxPixelRatio??1.5),g=geometryFromRect(rect,e);
+  paintBattle(c,w,h,g,e,selected,targets,focus,chapter,{...options,pixelRatio:d});
 }
 // The optional image elements must already be loaded locally by the UI.
 export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=null,scene=null}){

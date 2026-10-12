@@ -1,4 +1,7 @@
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
+import {drawUnitSprite,spriteHeight} from './unit-sprites.js';
+import {worldGround,scenery,drawScenery,atmosphere} from './world-art.js';
+import {idlePose} from './animation-timeline.js';
 const INK='#292c27',IVORY='#f4ecd6';
 export const FIELD_COLORS={selection:'#175d67',movement:'#277c82',attack:'#9c4036',ally:'#285e62',enemy:'#97382e',neutral:'#886736',objective:'#bd9954'};
 const PI=Math.PI;
@@ -57,6 +60,10 @@ function tileSurface(c,g,e,p,x,y,river){const q=xy(g,x,y),type=terrain(e,x,y),de
     const tx=q.x+(grain(x,y)-.5)*g.tw*.58,ty=q.y+g.th*.16;oval(c,tx,ty,g.tw*.14,g.th*.1,'#5a6f3b0c');for(let i=0;i<3;i++)line(c,[[tx+i*3,ty],[tx+i*3-1,ty-2-grain(x,i+y)*3]],'#65764238',.8);
     if(grain(x,y,2)>.62)oval(c,q.x-g.tw*.21,q.y+g.th*.06,1.5,.65,'#e7d9aa55');
   }
+  if(!p.chamber&&!['water','river','deepwater','ford','marsh'].includes(type))for(let i=0;i<13;i++){
+    const xx=q.x+(grain(x*19+i,y,4)-.5)*g.tw,yy=q.y+(grain(x,y*13+i,3)-.5)*g.th;
+    c.fillStyle=i%3?'#45513812':'#e6d7a322';c.fillRect(xx,yy,1+grain(i,x+y)*3,.6);
+  }
   if(['river','water','marsh','deepwater'].includes(type)||deep||type==='ford'){
     for(let i=0;i<3;i++){const yy=q.y+(i-1)*g.th*.18,xx=q.x+(grain(x,y,i)-.5)*g.tw*.23;line(c,[[xx-g.tw*.16,yy],[xx+g.tw*.11,yy]],deep?'#c7ddd743':'#d6e2c65a',.9);}
     if(type==='marsh'){polygon(c,[[q.x-g.tw*.5,q.y],[q.x-g.tw*.13,q.y-g.th*.4],[q.x-g.tw*.06,q.y-g.th*.22],[q.x-g.tw*.26,q.y+g.th*.03]],'#879777');for(let i=0;i<3;i++){const xx=q.x-g.tw*.24+i*2;line(c,[[xx,q.y],[xx-1,q.y-5-i*1.5]],'#4f675b',.9);}oval(c,q.x+g.tw*.22,q.y+g.th*.12,g.tw*.07,g.th*.055,'#9eaf8470');}
@@ -66,7 +73,7 @@ function tileSurface(c,g,e,p,x,y,river){const q=xy(g,x,y),type=terrain(e,x,y),de
   // Put the readable grid edge above the ground wash, while leaving the interior quiet.
   polygon(c,corners,null,p.chamber?'#746c5837':'#4d5b4142',.8);
   line(c,[corners[3],corners[0],corners[1]],p.chamber?'#fff3d738':'#e6e4bb32',.65);
-  if(['wall','high','hill','rubble','cover'].includes(type)||(type==='rock'&&!river))landform(c,g,q,type,p);
+  // Raised scenery is merged with units later, in ground-depth order.
   if(type==='rock'){const yy=q.y+g.th*.24;line(c,[[q.x-2.4,yy-2.4],[q.x+2.4,yy+2.4]],'#eef1d6b0',1.2);line(c,[[q.x+2.4,yy-2.4],[q.x-2.4,yy+2.4]],'#eef1d6b0',1.2);}
 }
 function landform(c,g,q,type,p){const sx=g.tw/60;
@@ -93,8 +100,8 @@ function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUni
     polygon(c,diamond(g,p,3),'#f7e5aa44','#fff7d9',4);
     polygon(c,diamond(g,p,3),null,'#7b3e13',2);
     if(selectedUnit&&options.action==='move'){
-      const from=xy(g,selectedUnit.x,selectedUnit.y);c.save();c.setLineDash([4,3]);
-      line(c,[[from.x,from.y],[p.x,p.y]],FIELD_COLORS.selection,2);c.restore();
+      const path=previewPath(e,selectedUnit,options.target);c.save();c.setLineDash([4,3]);
+      line(c,path.map(cell=>{const q=xy(g,cell.x,cell.y);return[q.x,q.y];}),FIELD_COLORS.selection,2);c.restore();
     }
   }
   if(selectedUnit&&((selectedUnit.resolve??selectedUnit.hp??1)>0)){const p=xy(g,selectedUnit.x,selectedUnit.y);polygon(c,diamond(g,p,1),'#175d6716',IVORY,3.5);polygon(c,diamond(g,p,1),null,FIELD_COLORS.selection,2);}
@@ -154,7 +161,7 @@ function status(c,g,p,s,u,active,contest){if(u.role==='voter'){
     const dotY=p.y+9*s;for(let i=-3;i<=3;i++){const lit=stance>=0?i>=0&&i<=Math.ceil(stance/2):i<=0&&i>=Math.floor(stance/2);c.fillStyle=lit?col:'#f2ead0a0';c.fillRect(p.x+i*3*s-1*s,dotY,2*s,2.4*s);}
     const b=BLOCS[u.bloc];if(b){c.fillStyle='#4f5246';c.font=`bold ${7.5*s}px Georgia`;c.fillText(b.symbol,p.x-11*s,p.y+3*s);}return;
   }
-  const mounted=['cavalry','heavy'].includes(u.role),yy=p.y-(mounted?74:57)*s,bw=Math.min(36,g.tw*.64),max=u.maxResolve??u.maxHp??1,value=u.resolve??u.hp??0,ratio=Math.max(0,Math.min(1,value/max)),col=contest?'#d5b771':u.side==='enemy'?'#b76a52':'#b8c997';
+  const mounted=['cavalry','heavy'].includes(u.role),yy=p.y-spriteHeight(g,u)*.93-5,bw=Math.min(36,g.tw*.64),max=u.maxResolve??u.maxHp??1,value=u.resolve??u.hp??0,ratio=Math.max(0,Math.min(1,value/max)),col=contest?'#d5b771':u.side==='enemy'?'#b76a52':'#b8c997';
   c.fillStyle='#f4e8cb';c.fillRect(p.x-bw/2-1,yy-1,bw+2,6);c.fillStyle='#394638';c.fillRect(p.x-bw/2,yy,bw,4);c.fillStyle=col;c.fillRect(p.x-bw/2,yy,bw*ratio,4);
   for(let i=1;i<4;i++)line(c,[[p.x-bw/2+bw*i/4,yy],[p.x-bw/2+bw*i/4,yy+4]],'#233d2a33',.5);
   const markerY=yy-6*s,markerColor=active?FIELD_COLORS.selection:u.side==='enemy'?FIELD_COLORS.enemy:FIELD_COLORS.ally;
@@ -169,15 +176,66 @@ function labels(c,w,h,g,e,p,river){c.fillStyle='#424d40';c.font='10px Georgia';c
   c.fillStyle='#4d5747';c.font='9px system-ui';c.textAlign='center';for(let i=0;i<e.width;i++){const q=xy(g,i,e.height);c.fillText(String(i+1),q.x,q.y+10);}for(let i=0;i<e.height;i++){const q=xy(g,e.width,i);c.fillText(String.fromCharCode(65+i),q.x,q.y+10);}
   if(river){c.font='9px system-ui';c.textAlign='left';c.fillText('× Deep water   ·   Pale stones mark the ford',14,h-12);}
 }
+// A shortest legal preview respects the same impassable and occupied cells as
+// movement. This has no rule side effects and never invents a straight shortcut.
+export function previewPath(e,unit,target){
+  const key=p=>`${p.x},${p.y}`,start={x:unit.x,y:unit.y},queue=[{...start,cost:0}],costs=new Map([[key(start),0]]),parents=new Map();
+  while(queue.length){queue.sort((a,b)=>a.cost-b.cost);const cell=queue.shift();if(cell.x===target.x&&cell.y===target.y){const path=[{x:cell.x,y:cell.y}];let k=key(cell);while(parents.has(k)){const previous=parents.get(k);path.unshift(previous);k=key(previous);}return path;}
+    for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const next={x:cell.x+dx,y:cell.y+dy},k=key(next);if(next.x<0||next.y<0||next.x>=e.width||next.y>=e.height||['rock','river'].includes(terrain(e,next.x,next.y))||e.units.some(u=>u.id!==unit.id&&(u.resolve??u.hp??1)>0&&u.x===next.x&&u.y===next.y))continue;const cost=cell.cost+(terrain(e,next.x,next.y)==='marsh'&&unit.formation!=='line'?2:1);if(costs.has(k)&&costs.get(k)<=cost)continue;costs.set(k,cost);parents.set(k,{x:cell.x,y:cell.y});queue.push({...next,cost});}
+  }return [];
+}
+let groundCache=null;
+export function rendererCacheStats(){return {surfaces:groundCache?1:0,estimatedBytes:groundCache?groundCache.surface.width*groundCache.surface.height*4:0};}
+export function clearBattleCache(){if(groundCache){groundCache.surface.width=1;groundCache.surface.height=1;}groundCache=null;}
+function ground(c,w,h,g,e,p,chapter,river,quality,ratio){
+  const key=[w,h,g.tw,g.oy,chapter,e.kind,quality,ratio,JSON.stringify(e.terrain)].join('|');
+  const draw=ctx=>{worldGround(ctx,w,h,g,e,p,chapter,quality);for(let depth=0;depth<e.width+e.height;depth++)for(let x=0;x<e.width;x++){const y=depth-x;if(y>=0&&y<e.height)tileSurface(ctx,g,e,p,x,y,river);}};
+  if(!c.canvas?.ownerDocument&&!globalThis.OffscreenCanvas){draw(c);return;}
+  if(groundCache?.key!==key){
+    clearBattleCache();const surface=typeof OffscreenCanvas==='function'?new OffscreenCanvas(Math.ceil(w*ratio),Math.ceil(h*ratio)):c.canvas.ownerDocument.createElement('canvas');surface.width=Math.ceil(w*ratio);surface.height=Math.ceil(h*ratio);const ctx=surface.getContext('2d');ctx.setTransform(ratio,0,0,ratio,0,0);draw(ctx);groundCache={key,surface};
+  }
+  c.drawImage(groundCache.surface,0,0,w,h);
+}
+function terrainObject(c,g,q,type,p){
+  if(type!=='wall'){landform(c,g,q,type,p);return;}
+  const s=g.tw/60;c.save();c.translate(q.x,q.y);c.scale(s,s);
+  oval(c,10,4,28,7,'#25372938');
+  polygon(c,[[-23,-6],[2,7],[2,-21],[-23,-34]],'#aeaa8c');polygon(c,[[2,7],[23,-4],[23,-32],[2,-21]],'#757e69');polygon(c,[[-23,-34],[-2,-45],[23,-32],[2,-21]],'#d6ccb0');
+  for(let i=0;i<3;i++){line(c,[[-23,-12-i*9],[2,1-i*9],[23,-10-i*9]],'#535f5040',.7);line(c,[[-12+(i%2)*8,-27+i*8],[-12+(i%2)*8,-20+i*8]],'#6f72594d',.8);}
+  c.restore();
+}
+function contactShadow(c,g,q,u,quality){const scale=spriteHeight(g,u)/72,cavalry=['cavalry','heavy'].includes(u.role);c.save();c.translate(q.x,q.y);c.rotate(.32);oval(c,7*scale,2*scale,(cavalry?24:18)*scale,5*scale,'#24352d25');if(quality!=='performance'){oval(c,2*scale,1*scale,(cavalry?17:10)*scale,3.8*scale,'#1c2e293d');}c.restore();}
+function actionEffects(c,g,frame){for(const effect of frame?.effects??[]){const q=xy(g,effect.at?.x??effect.to?.x??0,effect.at?.y??effect.to?.y??0),s=g.tw/60,t=effect.progress??0;c.save();c.globalAlpha=effect.alpha??1;
+    if(effect.type==='projectile'&&effect.from&&effect.to){const a=xy(g,effect.from.x,effect.from.y),b=xy(g,effect.to.x,effect.to.y),x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t-Math.sin(t*Math.PI)*35*s-24*s;c.translate(x,y);c.rotate(Math.atan2(b.y-a.y-Math.cos(t*Math.PI)*35*s*Math.PI,b.x-a.x));line(c,[[-10*s,0],[8*s,0]],'#65533c',1.7*s);polygon(c,[[8*s,0],[4*s,-2*s],[4*s,2*s]],'#f6e6c3');}
+    else if(effect.type==='dust'){for(let i=0;i<4;i++)oval(c,q.x+(i-1.5)*8*s*t,q.y-i*3*s*t,(2+t*5)*s,(1+t*2)*s,'#d5c39665');}
+    else if(effect.type==='impact'){for(let i=0;i<6;i++){const a=i*Math.PI/3;line(c,[[q.x+Math.cos(a)*4*s,q.y-25*s+Math.sin(a)*4*s],[q.x+Math.cos(a)*(6+t*13)*s,q.y-25*s+Math.sin(a)*(6+t*13)*s]],'#fce0a6',1.5*s);}}
+    else if(effect.type==='speech'){oval(c,q.x,q.y-32*s,(10+t*6)*s,(7+t*3)*s,'#f4ecd6dd');c.fillStyle='#6f5a3e';c.font=`bold ${12*s}px Georgia`;c.textAlign='center';c.fillText('…',q.x,q.y-29*s);}
+    else{c.beginPath();c.ellipse(q.x,q.y,(14+t*13)*s,(6+t*7)*s,0,0,Math.PI*2);c.strokeStyle=['defeat','impact'].includes(effect.type)?'#a35643':effect.type==='shield'?'#e1e8cf':'#c1a466';c.lineWidth=2*s;c.stroke();}
+    c.restore();}}
+
 export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={}){
-  const p=palette(chapter,e),river=e.terrain?.some(row=>row.some(t=>(typeof t==='string'?t:t?.type)==='ford'));
-  backdrop(c,w,h,g,e,p,chapter);boardBase(c,g,e,p);
-  const cells=[];for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)cells.push({x,y});cells.sort((a,b)=>a.x+a.y-b.x-b.y);
-  for(const {x,y}of cells)tileSurface(c,g,e,p,x,y,river);
+  const p=palette(chapter,e),river=e.terrain?.some(row=>row.some(t=>(typeof t==='string'?t:t?.type)==='ford')),quality=options.quality??'balanced',frame=options.animation??(Number.isFinite(options.ambientTime)?{time:options.ambientTime,unitOverrides:Object.fromEntries(e.units.filter(u=>!u.hidden&&(u.resolve??u.hp??1)>0).map(u=>[u.id,idlePose(u,options.ambientTime)])),effects:[]}:null);
+  ground(c,w,h,g,e,p,chapter,river,quality,options.pixelRatio??1);
   tacticalOverlay(c,g,e,selected,targets,focus,options);
-  const units=e.units.filter(u=>(u.resolve??u.hp??1)>0&&!u.hidden&&u.x>=0).slice().sort((a,b)=>a.x+a.y-b.x-b.y||a.x-b.x);
-  const s=Math.min(1.3,g.tw/48);
-  if(e.kind==='contest')for(const u of units.filter(u=>u.role==='voter')){const q=xy(g,u.x,u.y);seat(c,q.x,q.y,s,u.bloc);}
-  for(const u of units){const q=xy(g,u.x,u.y),active=u.id===selected;baseMarker(c,q,s,u,active);if(e.kind==='contest')orator(c,q,s,u,chapter);else warrior(c,q,s,u,chapter);status(c,g,q,s,u,active,e.kind==='contest');}
+  const items=scenery(e,chapter).map(item=>({...item,kind:'scenery'}));
+  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++){const type=terrain(e,x,y);if(['wall','high','hill','rubble','cover'].includes(type)||type==='rock'&&!river)items.push({kind:'terrain',type,x,y});}
+  const units=e.units.filter(u=>!u.hidden&&u.x>=0&&((u.resolve??u.hp??1)>0||(frame?.unitOverrides?.[u.id]?.alpha??0)>0)).map(u=>({...u,...frame?.unitOverrides?.[u.id],kind:'unit',original:u}));
+  const s=Math.min(1.3,g.tw/48),watch=units.filter(u=>u.id===selected||u.id===options.target?.unitId).map(u=>xy(g,u.x,u.y));
+  items.push(...units);items.sort((a,b)=>a.x+a.y-b.x-b.y||a.x-b.x||(a.kind==='unit'?1:-1));
+  for(const item of items){const q=xy(g,item.x,item.y);c.save();
+    if(item.kind==='unit'){
+      const active=item.id===selected;c.globalAlpha=item.alpha??1;contactShadow(c,g,q,item,quality);baseMarker(c,q,s,item,active);
+      if(item.role==='voter')seat(c,q.x,q.y,s*.8,item.bloc);
+      if(!drawUnitSprite(c,g,q,item,chapter,e.kind==='contest',frame?.unitOverrides?.[item.id])){if(e.kind==='contest')orator(c,q,s,item,chapter);else warrior(c,q,s,item,chapter);}
+    }else{
+      // Fade an occluder only when its upper silhouette covers an important unit.
+      const overlap=watch.some(point=>Math.abs(point.x-q.x)<g.tw*.55&&q.y>point.y&&q.y-point.y<g.tw);
+      if(overlap)c.globalAlpha=.38;
+      if(item.kind==='terrain')terrainObject(c,g,q,item.type,p);else drawScenery(c,g,item,chapter);
+    }c.restore();
+  }
+  atmosphere(c,w,h,g,chapter,e.kind==='contest',frame,quality);actionEffects(c,g,frame);
+  // Information draws last, so props never hide selection or health/Resolve.
+  for(const u of units){const q=xy(g,u.x,u.y);c.save();c.globalAlpha=u.alpha??1;status(c,g,q,s,u,u.id===selected,e.kind==='contest');c.restore();}
   labels(c,w,h,g,e,p,river);
 }

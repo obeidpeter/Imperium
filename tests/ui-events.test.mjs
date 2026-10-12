@@ -4,6 +4,7 @@ import {createRenderScheduler,prepareShareCard} from '../src/ui/render-controlle
 import {createTurnReplay,turnReplaySteps} from '../src/ui/turn-replay.js';
 import {encounterView,selectedCommand,selectedActor} from '../src/ui/encounter-view.js';
 import {createCampaignViews} from '../src/ui/campaign-views.js';
+import {createPanels} from '../src/ui/panels.js';
 import * as Game from '../src/core/game.js';
 
 test('Only the latest DOM render binds controls; cancellation makes queued frames inert',()=>{
@@ -68,4 +69,18 @@ test('Encounter and story views render actual legal actions without changing cam
   assert.equal(Game.serialize(state),original);
   const views=createCampaignViews(()=>({state,screen:'game',settings:{},saving:false,offline:false}));
   views.story();assert.equal(Game.serialize(state),original);
+});
+
+test('Settings expose the effective graphics tier and distinguish current-chapter from full offline readiness',()=>{
+  const state=Game.newGame(),before=Game.serialize(state),shown=[];
+  let offline=false;
+  const panels=createPanels(()=>({state,settings:{quality:'high'},offline,currentChapterOffline:true,showModal:(title,html)=>shown.push(html),meters:()=>'',requirements:()=>''}));
+  panels.showSettings();
+  assert.match(shown.at(-1),/id="graphics-quality"/);
+  assert.match(shown.at(-1),/value="high" selected/);
+  assert.match(shown.at(-1),/Chapter I is available offline/);
+  assert.match(shown.at(-1),/complete offline download starts only when you choose it/);
+  offline=true;panels.showSettings();
+  assert.match(shown.at(-1),/All twelve chapters are available offline/);
+  assert.equal(Game.serialize(state),before);
 });

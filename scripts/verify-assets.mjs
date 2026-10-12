@@ -15,6 +15,11 @@ assert.ok(manifest.assets.find(a=>a.id==='frontier-oath').export.bytes<=350000);
 console.log('PASS asset manifest integrity and portrait/title budgets');
 
 const code=await readFile('dist/sw.js','utf8'),build=JSON.parse(await readFile('dist/build-report.json','utf8'));
+assert.ok(build.initialGzipBytes<=2000000&&build.chapterOneGzipBytes<=2000000&&build.completeGzipBytes<=2000000);
+assert.equal(Object.keys(build.chapterAssets).length,12);
+for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
+for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
+console.log('PASS startup/chapter1/full 2 MB budgets, chapter groups and bundled asset provenance');
 const base='https://sacramentum.test/',handlers={},stores=new Map(),messages=[];
 const normalize=p=>new URL(typeof p==='string'?p:p.url,base).href;
 const cacheName='sacramentum-'+build.revision;
@@ -27,7 +32,7 @@ function cache(name){
 const caches={open:async n=>cache(n),keys:async()=>[...stores.keys()],delete:async n=>stores.delete(n)};
 const client={postMessage:m=>messages.push(m)};
 const self={registration:{scope:base},location:{origin:new URL(base).origin},clients:{matchAll:async()=>[client],claim:async()=>{}},addEventListener:(n,f)=>handlers[n]=f};
-vm.runInNewContext(code,{self,caches,fetch:fetcher,URL,Response,console});
+vm.runInNewContext(code,{self,caches,fetch:fetcher,URL,Request,Response,console});
 async function event(name,data={}){let promise;handlers[name]({...data,waitUntil:p=>{promise=p},respondWith:p=>{promise=p}});return promise;}
 await event('install');
 assert.equal(stores.get(cacheName).size,build.initialFiles);
@@ -35,6 +40,12 @@ assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.
 await event('message',{data:'offline-status',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 console.log('PASS shell-only install and truthful partial status');
+
+await event('message',{data:{type:'cache-chapter',chapter:1},source:client});
+assert.equal(messages.at(-1).type,'chapter-offline');assert.equal(messages.at(-1).ready,true);
+assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
+assert.ok(!messages.some(m=>m.type==='offline-ready'));
+console.log('PASS chapter 1 caches separately and never claims all chapters are offline');
 
 await cache('sacramentum-old').put('./assets/portraits/hero-emperor.webp',new Response('OLD ART'));
 const fresh=await event('fetch',{request:{method:'GET',url:normalize('./assets/portraits/hero-emperor.webp'),mode:'cors'}});

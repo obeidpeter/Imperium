@@ -35,6 +35,12 @@ Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate t
 
 Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional. Reduced motion is available, and game meaning never depends on audio alone.
 
+### Graphics and readability
+
+In **Pause → Graphics quality**, choose **Performance**, **Balanced**, or **High quality**. These change optional atmosphere, particles, shadows and rendering resolution. Essential figures, legal targets, labels and rules stay the same. Repeated slow rendering can lower the setting automatically; the game announces that change, and you can choose another setting in Pause.
+
+**Reduced motion** disables transition animation, while **Text size** offers enlargement up to 200%. The named unit and target controls remain the alternative to selecting a figure on the battlefield. Unit artwork shows faction, role and facing; movement and gesture effects visualize the committed action and never spend an additional action themselves.
+
 ## Fighting and keeping people alive
 
 The protagonist is marked with a star. His fall loses the battle. Each unit has a movement allowance and one action; ordering a unit twice cannot create another move or attack. The early chapters control only the protagonist. Allies display their own intentions.
@@ -120,7 +126,11 @@ To keep or transfer progress:
 
 A code includes your chosen name, decisions, progression, and encounter state. The game does not upload it. An incompatible or damaged code is rejected without replacing the campaign. If a second tab has saved more recent progress, reload rather than overwriting it.
 
-For offline play, open the **production build**, allow its files to download, and wait for the offline-ready banner. On iPhone, add the game to the Home Screen through Safari’s Share menu. Browser storage can still be cleared, so a separate save code is the durable backup under your control.
+For offline play, open the **production build**. It initially keeps the application shell and opening artwork, then loads each chapter's artwork as you reach it. Suitable connections may also prefetch the next chapter. **This chapter is ready offline** does not mean that later chapters are available.
+
+Before taking the whole campaign offline, choose **Pause → Download all twelve chapters for offline play**. This starts a complete download using your current connection. Wait for **All chapters available offline** before disconnecting. If chapter artwork is missing, use **Retry this chapter’s artwork**; an interrupted full download can be started again from Pause. The source preview does not provide the generated production offline cache.
+
+On iPhone, add the game to the Home Screen through Safari’s Share menu. Browser storage can still be cleared, so keep a separate save code under your control. Installation and storage behavior should be checked on the device you intend to use.
 
 
 ## The company and recovery history

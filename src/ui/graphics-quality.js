@@ -1,0 +1,48 @@
+// Quality affects optional presentation only. Essential art, labels, targeting,
+// terrain rules and game state must remain identical in every profile.
+export const GRAPHICS_MODES=Object.freeze({
+  performance:Object.freeze({maxPixelRatio:1,particles:0,shadowLayers:1,atmosphere:false}),
+  balanced:Object.freeze({maxPixelRatio:1.5,particles:6,shadowLayers:2,atmosphere:true}),
+  high:Object.freeze({maxPixelRatio:2,particles:12,shadowLayers:3,atmosphere:true})
+});
+const ORDER=['performance','balanced','high'];
+const WINDOW=30,OVER_BUDGET_MS=22,OVER_BUDGET_COUNT=18;
+
+/** These are conservative initial hints, not measured device capability. */
+export function defaultGraphicsMode({saveData=false,deviceMemory}={}) {
+  return saveData||(Number.isFinite(deviceMemory)&&deviceMemory>0&&deviceMemory<=2)?'performance':'balanced';
+}
+
+/** Feed actual rendering costs, not elapsed time while idle or hidden.
+ * Thirty active samples and a majority over budget are needed for each step.
+ * A faster run never raises quality automatically; the player can choose it.
+ */
+export function createGraphicsQuality({mode,saveData=false,deviceMemory,onChange}={}) {
+  let current=mode??defaultGraphicsMode({saveData,deviceMemory});
+  if(!Object.hasOwn(GRAPHICS_MODES,current))throw new TypeError('Unknown graphics mode.');
+  let samples=[],totalSamples=0,downgrades=0,lastReason='initial';
+  function setMode(next) {
+    if(!Object.hasOwn(GRAPHICS_MODES,next))throw new TypeError('Unknown graphics mode.');
+    const changed=next!==current;current=next;samples=[];lastReason='player';
+    if(changed)onChange?.({mode:current,reason:'player'});
+    return GRAPHICS_MODES[current];
+  }
+  function recordFrame(costMs,{hidden=false,active=true}={}) {
+    if(hidden||!active||!Number.isFinite(costMs)||costMs<0)return {mode:current,changed:false,accepted:false};
+    totalSamples++;samples.push(costMs);if(samples.length>WINDOW)samples.shift();
+    if(current!=='performance'&&samples.length===WINDOW&&samples.filter(cost=>cost>OVER_BUDGET_MS).length>=OVER_BUDGET_COUNT){
+      current=ORDER[ORDER.indexOf(current)-1];samples=[];downgrades++;lastReason='measured-cost';
+      onChange?.({mode:current,reason:lastReason});
+      return {mode:current,changed:true,accepted:true};
+    }
+    return {mode:current,changed:false,accepted:true};
+  }
+  function stats() {
+    const sorted=[...samples].sort((a,b)=>a-b);
+    return {mode:current,samples:samples.length,maxSamples:WINDOW,totalSamples,downgrades,
+      overBudgetMs:OVER_BUDGET_MS,requiredOverBudget:OVER_BUDGET_COUNT,
+      meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
+      p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};
+  }
+  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stats};
+}

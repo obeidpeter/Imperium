@@ -1,20 +1,47 @@
+import {createAssetLoader,constrainedConnection,prefetchFiles} from './asset-loader.js';
 // Presentation assets never infer or award campaign milestones.
+const artLoader=createAssetLoader();
 export function heroPortrait(rank='Tiro') {
   const r=rank.toLowerCase();
   const stage=r==='augustus'?'emperor':r==='senator'?'senator':/praeses|governor|candidate/.test(r)?'governor':/praefectus|praepositus|acting commander|dux/.test(r)?'prefect':/centurio|primus/.test(r)?'centurion':r==='tiro'?'recruit':'miles';
   return `./assets/portraits/hero-${stage}.webp`;
 }
-export function speakerPortrait(speaker='') {
+export function speakerPortrait(speaker='',expression='neutral') {
   const names={mentor:'varro',comrade:'lucan',rival:'crispus',patron:'severianus',settler:'aelia',senator:'paullus'};
   const key=names[speaker]||['varro','lucan','crispus','severianus','aelia','paullus','sabinus'].find(n=>speaker.toLowerCase().includes(n));
-  return key?`./assets/portraits/${key}.webp`:null;
+  return key?`./assets/portraits/${key}${expression==='intense'?'-intense':''}.webp`:null;
 }
 export function chapterScene(chapter=1) {
   const scenes=['danube','marsh','danube','danube','eastern-fort','eastern-fort','danube','river-crossing','eastern-fort','province','rome','rome'];
   return `./assets/scenes/${scenes[chapter-1]||'danube'}.webp`;
 }
-export function loadArt(src) {
-  return new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=src;});
+export const loadArt=(src,options)=>artLoader.load(src,options);
+export const peekArt=src=>artLoader.peek(src);
+export const artCacheStats=()=>artLoader.stats();
+export const clearArtCache=()=>artLoader.clear();
+const ranks=['Tiro','Miles','Immunis','Optio','Centurio','Primus pilus','Praefectus legionis','Praepositus','Acting commander','Praeses','Candidate for the Senate','Senator'];
+const promotions=['Miles','Immunis','Optio','Centurio','Primus pilus','Praefectus legionis','Praepositus','Acting commander','Dux','Former governor','Senator','Augustus'];
+const sharedSpeakers=['varro','lucan','crispus','severianus','aelia','paullus','sabinus'];
+const speakers=[['varro','lucan'],['varro','lucan','sabinus'],['crispus','varro','lucan','sabinus'],['varro','crispus'],['severianus','varro'],['varro','severianus'],['crispus','severianus','varro'],['aelia','severianus','lucan','sabinus'],['severianus','lucan','sabinus'],['aelia','severianus'],['crispus','paullus','severianus','varro'],['varro','lucan','sabinus','crispus','severianus','paullus','aelia']];
+export function chapterAssets(chapter=1) {
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
+  // The ledger is available in every chapter and displays the complete recurring cast.
+  const files=[chapterScene(n),heroPortrait(ranks[n-1]),heroPortrait(promotions[n-1]),'./assets/portraits/oath-seal.webp',...sharedSpeakers.map(s=>speakerPortrait(s)),...speakers[n-1].map(s=>speakerPortrait(s,'intense'))];
+  if(n===12)files.push('./assets/scenes/accession.webp');
+  if(n!==11)files.push('./assets/tactical/units-roman.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
+  if([2,3,4,6,7,8,10,11,12].includes(n))files.push('./assets/tactical/units-civic.webp');
+  files.push('./assets/tactical/environment-props.webp');
+  return [...new Set(files.filter(Boolean))];
+}
+let chapterRequest=0;
+export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true}={}) {
+  const request=++chapterRequest;
+  const current=await artLoader.prefetch(chapterAssets(chapter),{onProgress,retry});
+  const nextAllowed=request===chapterRequest&&next&&chapter<12&&!constrainedConnection(connection)&&shouldPrefetchNext();
+  // Optional next-chapter requests warm compressed responses only: decoding them
+  // here would evict sprites still used by the current battlefield.
+  const nextResult=nextAllowed?await prefetchFiles(chapterAssets(chapter+1),{shouldContinue:()=>request===chapterRequest&&shouldPrefetchNext()}):null;
+  return {...current,nextPrefetched:Boolean(nextResult&&nextResult.completed===nextResult.total&&!nextResult.failed)};
 }
 export function journeyMap(current,completed=[]) {
   const sites=[['Danube',325,87,[1,3,4,7]],['Abritus',390,128,[2]],['Euphrates',606,204,[5,6]],['River crossing',374,67,[8]],['Palmyra',571,251,[9]],['Province',365,110,[10]],['Rome',167,164,[11,12]]];
