@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {actorPose,horsePose} from './actor-pose.js';
+import {actorPose,horsePose,groundHumanPose,groundHorsePose,blendActorPose,createFootPlanting} from './actor-pose.js';
 import {actorKit} from './actor-kit.js';
 import {acquireActorSurface,releaseActorSurface} from './actor-materials.js';
 import {createHorse} from './actor-horse.js';
@@ -25,7 +25,7 @@ function profileGeometry(rings,{segments=20,folds=0,foldCount=9}={}){
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 function shapeGeometry(points,depth=.008){const s=new T.Shape();points.forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));s.closePath();return new T.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.002,bevelThickness:.002});}
-function drape(rows){const p=[],uv=[],indices=[],n=16;for(let j=0;j<rows.length;j++){const[y,cx,w,z]=rows[j];for(let i=0;i<=n;i++){const u=i/n;p.push(cx+(u-.5)*w,y-.018*Math.sin(u*Math.PI),z+.009*Math.cos(u*Math.PI*12)+.018*Math.sin(u*Math.PI));uv.push(u,j/(rows.length-1));if(j&&i){const k=j*(n+1)+i;indices.push(k,k-1,k-n-1,k-1,k-n-2,k-n-1);}}}const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;}
+function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;for(let j=0;j<rows.length;j++){const[y,cx,w,z]=rows[j];for(let i=0;i<=n;i++){const u=from+(to-from)*i/n,q=u*n,k=Math.floor(q),t=q-k,fold=f=>f(k/n)*(1-t)+f(Math.min(1,(k+1)/n))*t;p.push(cx+(u-.5)*w,y+fold(v=>-.018*Math.sin(v*Math.PI)),z+fold(v=>.009*Math.cos(v*Math.PI*12)+.018*Math.sin(v*Math.PI))+offset);uv.push(u,j/(rows.length-1));if(j&&i){const k=j*(n+1)+i;indices.push(k,k-1,k-n-1,k-1,k-n-2,k-n-1);}}}const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;}
 
 /** Procedural 3D rig, feet at local y=0 and anatomical forward +Z.
  * Direction is yaw radians. Caller owns group.position. Phase is normalized
@@ -134,6 +134,7 @@ export function createActor(unit={},options={}){
     strip(s,bronze,[[-.07,.03,-.045],[.07,.03,-.045]],.012);return s;
   }
   const shield=archer||!armed?null:makeShield();
+  const shieldContact=shield?part(shield,'shield-contact',0,.03,.13):null;
   if(shield&&mounted)shield.scale.setScalar(.82);
   if(shield&&kit.eastern)shield.scale.set(.85,.84,1);
   const weapon=armed?part(right.hand,trainer?'practice-sword':raider?'spear':'sword',0,-.052,.018):null;
@@ -151,8 +152,10 @@ export function createActor(unit={},options={}){
     blade.setAttribute('position',new T.Float32BufferAttribute(v,3));blade.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap((_,i)=>i%3===0?[(v[i]+.027)/.054,v[i+1]/.59]:[]),2));blade.setIndex([0,4,6,0,6,2,2,6,5,2,5,1,1,5,7,1,7,3,3,7,4,3,4,0,4,8,6,6,8,5,5,8,7,7,8,4]);blade.computeVertexNormals();mesh(weapon,blade,trainer?practiceWood:metal);
   }
   weapon.visible=!archer;}
+  const weaponContact=weapon?part(weapon,'weapon-contact',0,raider&&!archer?1.43:.59,0):null;
   const javelin=archer||!armed?null:part(right.hand,'held-javelin',0,-.052,.018);
   if(javelin){javelin.rotation.x=Math.PI;mesh(javelin,new T.CylinderGeometry(.009,.013,1.25,8),leather,0,.30,0);mesh(javelin,new T.ConeGeometry(.024,.19,4),trainer?practiceWood:metal,0,1.02,0);javelin.visible=false;}
+  const javelinRelease=javelin?part(javelin,'javelin-release',0,1.115,0):null;
   let bow=null,bowString=null,nockedArrow=null;
   if(archer){
     bow=part(left.hand,'bow',0,-.025,.028);
@@ -197,15 +200,19 @@ export function createActor(unit={},options={}){
       for(let i=0;i<11;i++){const x=(i-5)*.02;strip(crest,crestMat,[[x,.25-Math.abs(x)*.2,-.008],[x*1.12,.315-Math.abs(x)*.34,-.006],[x*1.3,.34-Math.abs(x)*.4,-.005]],.009);}
     }
   }
+  let cloak=null;
   if(kit.cloak){
-    const cloak=part(torso,'command-cloak'),red=material(kit.officer?0x78333b:0x665c47,{...clothSurface,side:T.DoubleSide});
+    cloak=part(torso,'command-cloak');const red=material(kit.officer?0x78333b:0x665c47,{...clothSurface,side:T.DoubleSide});
     mesh(cloak,drape([[.44,0,.35,-.15],[.25,.015,.45,-.19],[-.04,.02,.49,-.21],[-.35,.025,.46,-.24]]),red);
     ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
   }
   if(civic){
-    const toga=part(torso,'draped-civic-robe'),ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(unit.bloc==='Army'?0x786844:unit.bloc==='People'?0x6a7969:0x764653,clothSurface);
-    mesh(toga,drape([[.49,.19,.13,.14],[.35,.055,.37,.17],[.06,-.02,.45,.18],[-.22,.03,.43,.19],[-.50,.08,.29,.18]]),ivory);
-    for(const x of [-.12,.12])mesh(torso,drape([[.42,x,.02,.155],[.20,x,.024,.17],[.02,x,.025,.14]]),stripe);
+    const toga=part(torso,'draped-civic-robe'),ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(unit.bloc==='Army'?0x786844:unit.bloc==='People'?0x6a7969:0x764653,{...clothSurface,side:T.DoubleSide});
+    const rows=[[.49,.19,.13,.14],[.35,.055,.37,.17],[.06,-.02,.45,.18],[-.22,.03,.43,.19],[-.50,.08,.29,.18]];
+    mesh(toga,drape(rows),ivory);
+    // The colored edging follows the same fold surface with a small outward
+    // offset. Independent flat chest stripes formerly cut through the drape.
+    for(const from of [.12,.84])mesh(toga,drape(rows,{from,to:from+.035,offset:.009}),stripe);
     const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
   }else if(escort){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
@@ -214,13 +221,29 @@ export function createActor(unit={},options={}){
   }
   const horse=mounted?createHorse(root,kit,{part,mesh,profile,ellipsoid,strip,material,surface,leather,metal,hair,cloth}):null;
   const ring=mesh(group,new T.RingGeometry(mounted?.72:.32,mounted?.75:.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
+  // Build overview geometry once, before near-detail batching. One colored
+  // draw per rigid joint keeps the real role silhouette while dropping tiny
+  // rivets, fingers and surface sampling that cannot be read at this distance.
+  const farMeshes=[],nearMeshes=[],overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});
+  overviewMaterial.name='overview role colors';
+  function overview(parent){
+    for(const child of [...parent.children])if(child.isGroup)overview(child);
+    const all=parent.children.filter(o=>o.isMesh&&o.material.isMeshStandardMaterial);if(!all.length)return;
+    const kept=all.filter(item=>{item.geometry.computeBoundingBox();const size=item.geometry.boundingBox.getSize(new T.Vector3()).multiply(item.scale);return Math.max(size.x,size.y,size.z)>=.075;});
+    if(!kept.length)kept.push(all.reduce((a,b)=>a.geometry.attributes.position.count>b.geometry.attributes.position.count?a:b));
+    const positions=[],normals=[],colors=[];
+    for(const item of kept){item.updateMatrix();const source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();source.applyMatrix4(item.matrix);positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);for(let i=0;i<source.attributes.position.count;i++)colors.push(item.material.color.r,item.material.color.g,item.material.color.b);source.dispose();}
+    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('color',new T.Float32BufferAttribute(colors,3));
+    const simple=mesh(parent,g,overviewMaterial);simple.name='overview-detail';simple.userData.overview=true;simple.visible=false;farMeshes.push(simple);
+  }
+  overview(group);
   // Batch rigid details by material within each joint. Faces, folds, fingers
   // and equipment remain real geometry without hundreds of separate draws.
   const tintedMaterials=new Map();
   function batchKey(mat){return mat.isMeshStandardMaterial&&!mat.transparent?[mat.map?.uuid,mat.bumpMap?.uuid,mat.roughnessMap?.uuid,mat.map?mat.roughness:.82,mat.metalness,mat.bumpScale,mat.side].join('|'):mat;}
   function batch(parent){
     for(const child of [...parent.children])if(child.isGroup)batch(child);
-    const buckets=new Map();for(const child of parent.children)if(child.isMesh){const key=batchKey(child.material),bucket=buckets.get(key)??[];bucket.push(child);buckets.set(key,bucket);}
+    const buckets=new Map();for(const child of parent.children)if(child.isMesh&&!child.userData.overview){const key=batchKey(child.material),bucket=buckets.get(key)??[];bucket.push(child);buckets.set(key,bucket);}
     for(const [key,items]of buckets){if(items.length<2)continue;const positions=[],normals=[],uv=[],colors=[],mixed=items.some(item=>item.material!==items[0].material);let mat=items[0].material;
       if(mixed){if(!tintedMaterials.has(key)){const merged=mat.clone();merged.color.set(0xffffff);merged.vertexColors=true;if(!merged.map)merged.roughness=.82;materials.add(merged);tintedMaterials.set(key,merged);}mat=tintedMaterials.get(key);}
       for(const item of items){item.updateMatrix();const source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();source.applyMatrix4(item.matrix);positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);uv.push(...(source.attributes.uv?.array??new Float32Array(source.attributes.position.count*2)));if(mixed)for(let i=0;i<source.attributes.position.count;i++)colors.push(item.material.color.r,item.material.color.g,item.material.color.b);source.dispose();parent.remove(item);geometries.delete(item.geometry);item.geometry.dispose();}
@@ -228,14 +251,26 @@ export function createActor(unit={},options={}){
     }
   }
   batch(group);
-  let disposed=false;
+  group.traverse(o=>{if(o.isMesh&&o.material.isMeshStandardMaterial&&!o.userData.overview)nearMeshes.push(o);});
+  const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
+  let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null;
+  const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
+  function detailLevel(input){const distance=Number.isFinite(input.detailDistance)?input.detailDistance:0,next=input.active||input.selected?false:far?distance>=14:distance>18;
+    if(next!==far){far=next;for(const m of nearMeshes)m.visible=!far;for(const m of farMeshes)m.visible=far;}
+    group.userData.actor.detail=far?'overview':'near';
+  }
   function update(input={}){
     if(disposed)return;
+    detailLevel(input);
+    if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;}
+    if(!(Number.isFinite(input.dt)&&input.dt>0))transition=null;
     const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
-    const pose=actorPose(mapped),horseMotion=horse?.update(input);
+    let pose=actorPose(mapped);const motion=mapped.motion??'idle';
+    if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0};
+    if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/.12);if(transition.elapsed>=.12)transition=null;}
+    lastMotion=motion;
     if(civic){if(!['yield','speak','rally','order'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
     if(kit.wounded){pose.leftArm[0]=-.60;pose.leftElbow=-1.3;pose.bodyZ-=.035;}
-    if(mounted){pose.hipY=1.56+horseMotion.riderBob-.38*horseMotion.fall;pose.hipZ=-.08+pose.hipZ*.4;pose.bodyX+=horseMotion.bodyPitch;pose.bodyZ+=horseMotion.tail*.12;}
     const throwing=armed&&!archer&&input.motion==='throw';if(weapon)weapon.visible=!archer&&!throwing;if(javelin)javelin.visible=throwing&&(input.phase??0)<.5;
     if(archer){const firing=['throw','attack','strike'].includes(input.motion),p=Number.isFinite(input.phase)?Math.max(0,Math.min(1,input.phase)):0,draw=firing?(p<.5?Math.sin(p*Math.PI):Math.max(0,1-(p-.5)*8)):0;
       const smooth=t=>{const v=Math.max(0,Math.min(1,t));return v*v*(3-2*v);},raise=firing?smooth(p/.18)*(1-smooth((p-.78)/.22)):0;
@@ -243,14 +278,40 @@ export function createActor(unit={},options={}){
       bow.rotation.x=-pose.leftArm[0]-pose.leftElbow;bowString.geometry.attributes.position.setZ(1,-.09-.26*draw);bowString.geometry.attributes.position.needsUpdate=true;
       nockedArrow.visible=firing&&p<.52;nockedArrow.position.z=-.09-.26*draw;
     }
+    lastPose=blendable(pose);
+    let horseMotion=null;
+    if(horse){const authored=horsePose(input),samples=planting.sample({pose:authored,mounted:true,position:group.position,direction:pose.yaw,motion,phase:input.phase,groundHeight:input.groundHeight,scaleY:group.scale.y,reset:input.resetPose});horseMotion=horse.update(input,groundHorsePose(authored,samples));
+      pose.hipY=1.56+horseMotion.riderBob-.38*horseMotion.fall;pose.hipZ=-.08+pose.hipZ*.4;pose.bodyX+=horseMotion.bodyPitch;pose.bodyZ+=horseMotion.tail*.12;
+    }else{const samples=planting.sample({pose,position:group.position,direction:pose.yaw,motion,phase:input.phase,groundHeight:input.groundHeight,scaleY:group.scale.y,reset:input.resetPose});
+      // Blending feet also needs a fresh IK solve when no terrain is supplied.
+      groundHumanPose(pose,samples??pose.feet.map((f,i)=>({height:0,x:(i?1:-1)*.104,z:f.z})));
+    }
     group.rotation.y=pose.yaw;hips.position.set(0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
-    for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:0);legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;legs[i].ankle.rotation.x=mounted?-.60:pose.legs[i].ankle;}
+    for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;
+      if(mounted)legs[i].ankle.rotation.set(-.60,0,0);else {ankleRotation.copy(legs[i].thigh.quaternion).multiply(legs[i].knee.quaternion).invert();footRotation.setFromEuler(footEuler.set(pose.feet[i].roll+(pose.feet[i].pitch??0),0,pose.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(footRotation));}
+    }
     right.shoulder.rotation.set(...pose.rightArm);left.shoulder.rotation.set(...pose.leftArm);right.elbow.rotation.x=pose.rightElbow;left.elbow.rotation.x=pose.leftElbow;right.hand.rotation.x=pose.rightWrist;left.hand.rotation.x=pose.leftWrist;
     if(shield){shield.rotation.x=-(pose.leftArm[0]+pose.leftElbow+pose.leftWrist)+pose.shieldTilt;shield.rotation.z=-pose.leftArm[2];}
-    if(weapon&&raider&&!archer)weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow+(['attack','strike'].includes(input.motion)?0:-.18);
+    if(weapon&&raider&&!archer){const p=Math.max(0,Math.min(1,input.phase??0)),smooth=n=>{const v=Math.max(0,Math.min(1,n));return v*v*(3-2*v);},ready=['attack','strike'].includes(input.motion)?smooth(p/.22)*(1-smooth((p-.54)/.46)):0;weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow-.18*(1-ready);}
+    if(cloak){cloak.rotation.x=pose.skirt*.55+Math.max(0,-pose.bodyX)*.12;cloak.rotation.z=pose.bodyY*-.08;}
     ring.visible=!!input.selected;
     group.updateMatrixWorld(true);
+    if(weaponContact&&!archer&&['attack','strike'].includes(input.motion)&&Number.isFinite(input.aimHeight)){
+      const smooth=n=>{const x=Math.max(0,Math.min(1,n));return x*x*(3-2*x);},phase=Math.max(0,Math.min(1,input.phase??0));
+      const contact=smooth((phase-.22)/.15)*(1-smooth((phase-.54)/.46));
+      weaponContact.getWorldPosition(tipPosition);right.shoulder.getWorldPosition(shoulderPosition);
+      const reach=Math.max(.4,Math.hypot(tipPosition.x-shoulderPosition.x,tipPosition.z-shoulderPosition.z));
+      // Aim from the real shoulder/weapon chain, with a bounded arm correction.
+      // No stretching, snapping to a hit point or change to the contact clock.
+      right.shoulder.rotation.x+=Math.max(-.4,Math.min(.55,Math.atan2(tipPosition.y-input.aimHeight,reach)))*contact;
+      group.updateMatrixWorld(true);
+    }
   }
   function dispose(){if(disposed)return;disposed=true;for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const kind of surfaces.keys())releaseActorSurface(kind);group.removeFromParent();}
-  update();return {group,update,dispose};
+  const contacts={weapon:weaponContact,shield:shieldContact,body:torso};
+  function getReleasePoint(target=new T.Vector3()){
+    if(archer&&nockedArrow){target.set(0,0,.694);return nockedArrow.localToWorld(target);}
+    return (javelinRelease??right.hand).getWorldPosition(target);
+  }
+  update();return {group,update,dispose,contacts,getReleasePoint};
 }

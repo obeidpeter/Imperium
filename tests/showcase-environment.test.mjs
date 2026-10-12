@@ -24,7 +24,7 @@ test('Real Three environment builds finite geometry and upward roads without cha
   assert.equal(scene.children.length,1);assert.equal(JSON.stringify(e),before);
   let count=0,disposed=0;const unique=new Set();
   world.group.traverse(o=>{if(!o.geometry)return;count++;unique.add(o.geometry);for(const n of o.geometry.attributes.position.array)assert.ok(Number.isFinite(n));if(o.isInstancedMesh)for(const n of o.instanceMatrix.array)assert.ok(Number.isFinite(n));});
-  assert.ok(count>60&&count<400);const road=world.group.getObjectByName('authored boundary road');assert.ok(road.geometry.attributes.normal.count>0);
+  assert.ok(count>0&&count<60,'Static batching keeps the complete environment below sixty draw objects');assert.ok(world.stats().batching.savedDrawObjects>50);const road=world.group.getObjectByName('authored boundary road');assert.ok(road.geometry.attributes.normal.count>0);
   // The feathered verge spans authored rises, so its normals need not be flat.
   // Every triangle still faces upward instead of culling the road from above.
   for(let i=0;i<road.geometry.attributes.normal.count;i++)assert.ok(road.geometry.attributes.normal.getY(i)>.85);

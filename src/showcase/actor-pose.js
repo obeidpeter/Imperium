@@ -30,8 +30,8 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     const throwing=motion==='throw',load=smooth(p/(throwing?.30:.22)),drive=smooth((p-(throwing?.30:.22))/(throwing?.20:.15)),recover=smooth((p-(throwing?.66:.54))/(throwing?.34:.46));
     const wind=load*(1-drive),contact=drive*(1-recover);
     pose.bodyY=-.32*wind+.2*contact;pose.bodyX=.06*wind-.12*contact;pose.hipZ=.12*contact;
-    pose.rightArm=[-.1-2.05*wind-1.6*contact,-.22*wind,.08+.18*wind];
-    pose.rightElbow=-.35-.85*wind+.28*contact;pose.rightWrist=-.12*contact;
+    pose.rightArm=[-.1-2.05*wind-(throwing?1.6:1.24)*contact,-.22*wind,.08+.18*wind];
+    pose.rightElbow=-.35-.85*wind+.28*contact;pose.rightWrist=(throwing?-.12:.03)*contact;
     const preparation=load*(1-recover);
     pose.leftArm[0]=-.2-.25*preparation;pose.leftElbow=-.55-.15*preparation;pose.shieldTilt=-.12*contact;
     pose.feet[1].z=-.05-.095*preparation;pose.feet[0].z=.05+.19*contact;
@@ -66,6 +66,34 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
   return pose;
 }
 
+/** Fit already-authored feet to terrain samples. Heights are actor-local and
+ * relative to its caller-owned root. This does not decide where to move. */
+export function groundHumanPose(pose,targets){
+  if(!targets?.length)return pose;
+  const heights=targets.map(t=>clamp(finite(t.height),-.32,.32));
+  pose.hipY+=(Math.min(...heights)+Math.max(...heights))*.5;
+  pose.feet=pose.feet.map((foot,i)=>({...foot,x:finite(targets[i]?.x,(i?1:-1)*.104),z:finite(targets[i]?.z,foot.z),y:foot.y+heights[i],pitch:clamp(finite(targets[i]?.pitch),-.32,.32),bank:clamp(finite(targets[i]?.bank),-.25,.25)}));
+  // Lower the pelvis only when necessary to keep both ankles reachable. A
+  // supported bent knee is preferable to a stretched limb or a floating sole.
+  for(const [i,foot] of pose.feet.entries())pose.hipY=Math.min(pose.hipY,foot.y+Math.sqrt(Math.max(.12,.854**2-(foot.z-pose.hipZ)**2-(foot.x-(i?1:-1)*.104)**2)));
+  pose.legs=pose.feet.map((foot,i)=>{
+    const x=foot.x-(i?1:-1)*.104,y=foot.y-pose.hipY,z=foot.z-pose.hipZ,d=clamp(Math.hypot(x,y,z),.12,.858),vertical=-Math.hypot(x,y);
+    const thigh=Math.atan2(-z,-vertical)-Math.acos(clamp(d/.86,-1,1)),knee=Math.PI-Math.acos(clamp((.43**2*2-d*d)/(.43**2*2),-1,1));
+    return {thigh,knee,splay:Math.atan2(x,-y),ankle:-thigh-knee+foot.roll+foot.pitch,bank:foot.bank};
+  });
+  return pose;
+}
+
+/** Authored joint blend for interrupted actions; yaw remains stage-authoritative.
+ * Feet are blended before grounding and IK, never by interpolating knee angles. */
+export function blendActorPose(from,to,weight){
+  const t=smooth(weight),result={...to};
+  for(const key of ['hipY','hipZ','bodyX','bodyY','bodyZ','headX','headY','leftElbow','rightElbow','leftWrist','rightWrist','shieldTilt','skirt'])result[key]=mix(from[key],to[key],t);
+  for(const key of ['leftArm','rightArm'])result[key]=to[key].map((n,i)=>mix(from[key][i],n,t));
+  result.feet=to.feet.map((foot,i)=>({...foot,y:mix(from.feet[i].y,foot.y,t),z:mix(from.feet[i].z,foot.z,t),roll:mix(from.feet[i].roll,foot.roll,t)}));
+  return result;
+}
+
 /** Horse gait converts the stage's human .72m distance phase to a1.35m stride.
  * Four hoof targets and sagittal IK retain planted feet during each stance.
  */
@@ -77,4 +105,51 @@ export function horsePose({time=0,motion='idle',phase,locomotionWeight=1}={}){
   const feet=offsets.map((offset,i)=>{const q=((cycle+offset)%1+1)%1,stance=q<.55,s=stance?q/.55:(q-.55)/.45,z=stance?mix(.37125,-.37125,s):mix(-.37125,.37125,smooth(s));return {y:.075+(stance?0:Math.sin(s*Math.PI)*.14)*weight,z:z*weight+(i<2?.54:-.54),roll:stance?0:-.16*Math.sin(s*Math.PI)*weight};});
   const legs=feet.map((foot,i)=>{const y=foot.y-bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(y,z),.12,1.059),length=.53,bend=i<2?1:-1;const upper=Math.atan2(-z,-y)-bend*Math.acos(clamp(d/(2*length),-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*length*length-d*d)/(2*length*length),-1,1)));return {upper,knee,ankle:-upper-knee+foot.roll};});
   return {bodyY,bodyPitch,neckPitch,tail,feet,legs,fall,riderBob:bodyY-1.04};
+}
+
+export function groundHorsePose(pose,targets){
+  if(!targets?.length)return pose;
+  const heights=targets.map(t=>clamp(finite(t.height),-.38,.38));
+  pose.bodyY+=(Math.min(...heights)+Math.max(...heights))*.5;
+  pose.feet=pose.feet.map((foot,i)=>({...foot,x:finite(targets[i]?.x,(i%2?-1:1)*.235),z:finite(targets[i]?.z,foot.z),y:foot.y+heights[i],pitch:clamp(finite(targets[i]?.pitch),-.32,.32),bank:clamp(finite(targets[i]?.bank),-.25,.25)}));
+  for(const [i,foot]of pose.feet.entries())pose.bodyY=Math.min(pose.bodyY,foot.y+Math.sqrt(Math.max(.2,1.052**2-(foot.z-(i<2?.54:-.54))**2-(foot.x-(i%2?-1:1)*.235)**2)));
+  pose.legs=pose.feet.map((foot,i)=>{const x=foot.x-(i%2?-1:1)*.235,y=foot.y-pose.bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(x,y,z),.12,1.059),bend=i<2?1:-1,upper=Math.atan2(-z,Math.hypot(x,y))-bend*Math.acos(clamp(d/1.06,-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*.53**2-d*d)/(2*.53**2),-1,1)));return {upper,knee,splay:Math.atan2(x,-y),ankle:-upper-knee+foot.roll+foot.pitch,bank:foot.bank};});
+  const front=(heights[0]+heights[1])*.5,rear=(heights[2]+heights[3])*.5;
+  pose.bodyPitch-=clamp(Math.atan2(front-rear,1.08),-.18,.18)*.55;
+  pose.riderBob=pose.bodyY-1.04;
+  return pose;
+}
+
+/** Per-rig visual stance memory. Keeps a planted ankle at its world location
+ * through a stride/gradual turn; a lift, teleport or excessive turn releases it.
+ * Sampling is read-only, and callers can reset after a seek/retry. */
+export function createFootPlanting(){
+  let plants=[],previous=null;
+  return {reset(){plants=[];previous=null;},sample({pose,mounted=false,position,direction=0,motion='idle',phase,groundHeight,scaleY=1,reset=false}){
+    if(typeof groundHeight!=='function'){plants=[];previous=null;return null;}
+    const x=finite(position?.x),y=finite(position?.y),z=finite(position?.z),yaw=finite(direction),sy=Math.max(.1,finite(scaleY,1)),c=Math.cos(yaw),s=Math.sin(yaw),base=mounted?.075:.07;
+    const walking=['walk','run','retreat','cavalry-move'].includes(motion),canPlant=walking||['idle','brace','formation','yield'].includes(motion);
+    const turn=previous?Math.atan2(Math.sin(yaw-previous.yaw),Math.cos(yaw-previous.yaw)):0;
+    if(reset||!previous||previous.motion!==motion||Math.hypot(x-previous.x,z-previous.z)>.8||Math.abs(turn)>.45||Number.isFinite(phase)&&phase<(previous.phase??phase)-.1)plants=[];
+    const sample=(wx,wz)=>{const h=groundHeight(wx,wz);return Number.isFinite(h)?h:y;};
+    const targets=pose.feet.map((foot,i)=>{
+      const localX=mounted?(i%2?-1:1)*.235:(i?1:-1)*.104;
+      let wx=x+c*localX+s*foot.z,wz=z-s*localX+c*foot.z;
+      const contact=foot.y<=base+.001,old=plants[i];
+      if(!canPlant||!contact)plants[i]=null;
+      else if(!old)plants[i]={x:wx,z:wz};
+      else {
+        const dx=old.x-x,dz=old.z-z,lx=c*dx-s*dz,lz=s*dx+c*dz;
+        // A small pivot can keep its planted foot. A larger direction change
+        // intentionally replants rather than twisting a knee through the body.
+        if(Math.abs(lx-localX)>.13||Math.abs(lz-foot.z)>(mounted?.24:.18))plants[i]={x:wx,z:wz};
+        else {wx=old.x;wz=old.z;}
+      }
+      const dx=wx-x,dz=wz-z,span=mounted?.09:.07;
+      return {x:c*dx-s*dz,z:s*dx+c*dz,height:(sample(wx,wz)-y)/sy,
+        pitch:-Math.atan2(sample(wx+s*span,wz+c*span)-sample(wx-s*span,wz-c*span),span*2*sy),
+        bank:Math.atan2(sample(wx+c*span,wz-s*span)-sample(wx-c*span,wz+s*span),span*2*sy)};
+    });
+    previous={x,z,yaw,motion,phase};return targets;
+  }};
 }

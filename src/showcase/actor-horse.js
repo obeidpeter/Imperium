@@ -38,8 +38,10 @@ export function createHorse(root,kit,b){
     legs.push({pivot,knee,ankle});
   }
   let lastPose=horsePose();
-  function update(input){const p=horsePose(input);lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
-    for(let i=0;i<4;i++){legs[i].pivot.position.y=p.bodyY;legs[i].pivot.rotation.x=p.legs[i].upper;legs[i].knee.rotation.x=p.legs[i].knee;legs[i].ankle.rotation.x=p.legs[i].ankle;}
+  const ankleRotation=new T.Quaternion(),surfaceRotation=new T.Quaternion(),surfaceEuler=new T.Euler(0,0,0,'ZXY');
+  function update(input,suppliedPose){const p=suppliedPose??horsePose(input);lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
+    for(let i=0;i<4;i++){legs[i].pivot.position.y=p.bodyY;legs[i].pivot.rotation.set(p.legs[i].upper,0,p.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=p.legs[i].knee;
+      ankleRotation.copy(legs[i].pivot.quaternion).multiply(legs[i].knee.quaternion).invert();surfaceRotation.setFromEuler(surfaceEuler.set(p.feet[i].roll+(p.feet[i].pitch??0),0,p.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(surfaceRotation));}
     return p;
   }
   update({});return {group:horse,update,get pose(){return lastPose;}};

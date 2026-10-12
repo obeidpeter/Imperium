@@ -4,6 +4,8 @@ import {createPropFactory} from './environment-props.js';
 import {getSceneProfile} from './campaign-scene-profile.js';
 import {addCampaignTerrain} from './environment-campaign-terrain.js';
 import {addCampaignScenery} from './environment-campaign-scenery.js';
+import {addEnvironmentDepth} from './environment-depth.js';
+import {batchStaticEnvironment} from './environment-batching.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -106,7 +108,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
   const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial};
-  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);
+  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);
 
   // Volumetric branches and thousands of individual bent leaves build tree
   // crowns. Leaves are small 3D surfaces, never a whole-tree billboard.
@@ -171,18 +173,14 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     if(!perf){const light=new THREE.PointLight(0xe99b53,1.6*scale,6,2);light.position.set(0,.9,0);g.add(light);animated.push(t=>light.intensity=scale*(1.4+Math.sin(t*7+x)*.17+Math.sin(t*11)*.12));}
   }
   if(!training&&profile.architecture==='fort'){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
-  // Consolidate repeated solid prop parts after their parent transforms have
-  // been composed. Animated flames/water and unique cloth remain independent.
-  root.updateMatrixWorld(true);const staticParts=new Map(),inverseRoot=root.matrixWorld.clone().invert();
-  root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||extraMaterials.has(o.material)||o===river||o.userData.windCloth)return;const key=o.geometry.uuid+':'+o.material.uuid;if(!staticParts.has(key))staticParts.set(key,[]);staticParts.get(key).push(o);});
-  for(const parts of staticParts.values())if(parts.length>2){
-    const source=parts[0],batch=new THREE.InstancedMesh(source.geometry,source.material,parts.length);batch.name='static prop parts';batch.castShadow=true;batch.receiveShadow=true;
-    parts.forEach((o,i)=>{batch.setMatrixAt(i,inverseRoot.clone().multiply(o.matrixWorld));o.parent.remove(o);});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();root.add(batch);
-  }
+  // Preserve animated surfaces and authoritative ground objects. Static
+  // scenery is instanced where repeated, otherwise merged by exact material
+  // and render flags, with all parent transforms baked into root space.
+  const batching=batchStaticEnvironment(root,{geometries,exclude:new Set([ground,road,river,root.getObjectByName('continuous civic stone floor'),...flames.map(f=>f.mesh)])});
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,profile,
     update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;for(const fn of animated)fn(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
     dispose(){if(disposed)return;disposed=true;scene.remove(root);for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
-    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,disposed};}
+    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,disposed};}
   };
 }

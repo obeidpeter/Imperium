@@ -91,8 +91,8 @@ export function addCampaignScenery(ctx){
       pier('negotiation landing',-hx-3,0,8);for(const side of [-1,1])p.tent(root,side*(hx+6),height(side*(hx+6),0),0,.8,side*Math.PI/2);boat('delegates river boat',3,-24);landmarks.push('opposed riverside delegations');
     }else{
       const imperial=title==='imperial-court',senate=title==='senate';
-      for(const side of [-1,1]){for(const z of [-8,-4,0,4,8])column(g,side*(hx+1.9),z,1.25);p.plank(g,side*(hx+1.9),5.9,0,1.25,.48,e.height*tileSize+2,m.marble);for(let tier=0;tier<3;tier++)p.plank(g,side*(hx+3.2+tier*.65),.35+tier*.32,0,.65,.28,e.height*tileSize-1,senate?m.marble:m.wood);}
-      p.plank(g,0,3.1,-hz-3,e.width*tileSize+6,6.2,.45,senate?m.brick:m.stone);for(const x of [-7,-3.5,0,3.5,7])arch(g,x,0,-hz-2.65,2.5,4.6,.3);
+      for(const side of [-1,1]){for(const z of [-8,-4,0,4,8])column(g,side*(hx+1.9),z,1.25);p.plank(g,side*(hx+1.9),5.9,0,1.25,.48,e.height*tileSize+2,m.marble);}
+      for(const x of [-7,-3.5,0,3.5,7])arch(g,x,0,-hz-2.65,2.5,4.6,.3);
       const daisZ=-hz-1.6;for(let k=0;k<3;k++)p.plank(g,0,.1+k*.13,daisZ-k*.4,7-k*.6,.2,1.0,m.marble);
       for(const side of [-1,1]){const banner=p.banner(root,side*7,0,-hz-2);banner.scale.setScalar(.85);}
       if(imperial){const chair=place('imperial curule seat',0,-hz-3.0);p.plank(chair,0,.7,0,1.15,.20,.85,m.brass);for(const s of [-1,1]){p.beam(chair,[s*.5,0,-.4],[-s*.5,.8,-.4],.045,m.brass);p.beam(chair,[s*.5,0,.4],[-s*.5,.8,.4],.045,m.brass);}landmarks.push('purple accession dais');}

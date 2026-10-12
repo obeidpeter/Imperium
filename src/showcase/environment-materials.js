@@ -36,6 +36,18 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     water:make({color:0x4f7b7c,roughness:.2,metalness:.27,transparent:true,opacity:.83,depthWrite:false}),
     mud:make({...maps.earth,color:0x4d5344,roughness:.72}),charcoal:make({color:0x292822,roughness:1})
   };
+  // Fine original vein/grain fields for architectural surfaces; these remain
+  // code-native and do not depend on additional image downloads.
+  const marbleBytes=new Uint8Array(128*128*4);
+  for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+    const wave=x*.13+y*.035+noise(x*.035,y*.035,67)*5,vein=Math.pow(Math.max(0,Math.cos(wave)),16),grain=hash(x,y,71)*6;
+    for(let c=0;c<3;c++)marbleBytes[(y*128+x)*4+c]=[217,211,197][c]-vein*32+grain;marbleBytes[(y*128+x)*4+3]=255;
+  }
+  const marbleMap=texture(marbleBytes,128);
+  m.floor=make({map:marbleMap,color:0xeee5d2,roughness:.64});
+  m.redMarble=make({map:marbleMap,color:0x765348,roughness:.66});
+  m.ivory=make({map:maps.cloth.map,color:0xeadfc8,roughness:.89});
+  m.plaster=make({map:maps.stone.map,color:0xc8b79a,roughness:.96,normalMap:maps.stone.normalMap,normalScale:new THREE.Vector2(.08,.08)});
   m.sand=make({...maps.earth,color:0xd6c098,roughness:1,normalScale:new THREE.Vector2(.18,.18)});
   m.marble=make({...maps.stone,color:0xe0d7bd,roughness:.70,normalScale:new THREE.Vector2(.12,.12)});
   m.brick=make({...maps.stone,color:0x9d7457,roughness:1,normalScale:new THREE.Vector2(.26,.26)});

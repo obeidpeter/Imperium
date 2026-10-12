@@ -39,7 +39,7 @@ test('Marshes use contiguous irregular water and asymmetric willows, while the l
 });
 
 test('Authored rivers, fords, wall cover and civic floors remain distinct and legal standing centres stay free of architecture',()=>{
-  for(const id of ['ch4-gate','ch5-mine','ch8-ferry','ch10-road','ch11-adlection','ch12-legitimacy']){
+  for(const {id} of fixture.scenes){
     const s=fixture.scenes.find(s=>s.id===id),e=s.state.encounter,world=createEnvironment(new THREE.Scene(),e,{chapter:s.chapter,quality:'performance',loadTextures:false});world.group.updateMatrixWorld(true);
     const features=world.group.userData.terrainFeatures,solid=[];
     world.group.traverse(o=>{if(!o.isMesh||o===world.ground||o.material.transparent||o.material.side===THREE.DoubleSide||['continuous civic stone floor','authored boundary road'].includes(o.name))return;solid.push(o);});
@@ -50,5 +50,24 @@ test('Authored rivers, fords, wall cover and civic floors remain distinct and le
       const ray=new THREE.Raycaster(new THREE.Vector3(p.x,h+2.2,p.z),new THREE.Vector3(0,-1,0),0,1.5),hits=ray.intersectObjects(solid,false);assert.equal(hits.length,0,`${id} ${x},${y}: no new solid architecture through a legal standing centre (${hits[0]?.object.name})`);
     }
     if(e.kind==='contest'){assert.ok(world.group.getObjectByName('continuous civic stone floor'));assert.equal(world.group.getObjectByName('meadow grass'),undefined);}world.dispose();
+  }
+});
+
+test('Roman audience rooms have a real enclosing perimeter with an open tactical roof and region-specific depth',()=>{
+  for(const id of ['ch10-tribunal','ch11-accounts','ch11-adlection','ch12-legitimacy']){
+    const s=fixture.scenes.find(s=>s.id===id),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:s.chapter,quality:'balanced',loadTextures:false});
+    const envelope=world.group.userData.interiorEnvelope;assert.ok(envelope);assert.ok(envelope.wallX>s.state.encounter.width*2.5/2+4);assert.ok(envelope.backZ<-(s.state.encounter.height*2.5/2+3));assert.ok(envelope.wallHeight>8);assert.equal(envelope.openRoof,true);
+    assert.ok(world.group.userData.environmentLandmarks.includes('enclosed Roman audience hall'));
+    assert.ok(world.stats().meshes<30,'Layered enclosure stays under thirty environment draw objects');
+    world.group.updateMatrixWorld(true);
+    for(const [x,z]of [[envelope.wallX,0],[-envelope.wallX,0],[0,envelope.backZ]]){
+      const ray=new THREE.Raycaster(new THREE.Vector3(x,2,z+1),new THREE.Vector3(0,0,-1),0,2); // back wall only; side-wall proof uses transverse ray below
+      if(x===0)assert.ok(ray.intersectObject(world.group,true).length,'Back wall is actual depth-bearing geometry');
+      else {ray.set(new THREE.Vector3(x-Math.sign(x),2,z),new THREE.Vector3(Math.sign(x),0,0));assert.ok(ray.intersectObject(world.group,true).length,'Both side walls are solid enclosure');}
+    }
+    world.dispose();
+  }
+  for(const [id,landmark]of [['ch2-marsh','continuous muddy wetland banks'],['ch9-wing','connected Palmyrene urban edge']]){
+    const s=fixture.scenes.find(s=>s.id===id),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:s.chapter,quality:'balanced',loadTextures:false});assert.ok(world.group.userData.environmentLandmarks.includes(landmark));assert.ok(world.stats().meshes<35);world.dispose();
   }
 });

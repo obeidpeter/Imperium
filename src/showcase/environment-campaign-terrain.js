@@ -6,7 +6,7 @@ import {gridToWorld,terrainAt,hash,noise,smooth} from './environment-layout.js';
 export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance}){
   const cells=[];
   if(profile.civic){
-    const floor=p.mesh(root,p.geo(new THREE.PlaneGeometry(e.width*tileSize+3,e.height*tileSize+3)),m.marble,0,.018,0);floor.rotation.x=-Math.PI/2;floor.name='continuous civic stone floor';floor.castShadow=false;
+    const floor=p.mesh(root,p.geo(new THREE.PlaneGeometry(e.width*tileSize+3,e.height*tileSize+3)),m.floor,0,.018,0);floor.rotation.x=-Math.PI/2;floor.name='continuous civic stone floor';floor.castShadow=false;
     floor.geometry.attributes.uv.array.forEach((_,i,a)=>a[i]*=5);
     for(const side of [-1,1]){p.plank(root,side*(e.width*tileSize/2+.4),.026,0,.12,.018,e.height*tileSize+1,m.inlay);p.plank(root,0,.026,side*(e.height*tileSize/2+.4),e.width*tileSize+1,.018,.12,m.inlay);}
     for(const radius of [2.7,2.85]){const ring=p.mesh(root,p.geo(new THREE.RingGeometry(radius,radius+.06,64)),m.inlay,0,.03,0);ring.rotation.x=-Math.PI/2;ring.castShadow=false;}

@@ -2,13 +2,15 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.11’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.12 with the unchanged **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
 
 ## Battlefield and chamber views
 
 All campaign battles and political Contests support the 3D scene. Your legal commands, autosaves, checkpoints and progress are shared with **Switch to 2D**; Pause remembers the view you prefer. If WebGL is unavailable, the tactical view takes over. Switching views does not restart an encounter or change the rules.
 
 Drag to orbit and scroll or press **+ / −** to zoom. **Overview** restores a wide view and **Follow unit** frames the selected soldier. The campaign board keeps arrow-key tile navigation and Enter to select/confirm, plus named action/target selectors. **G / Grid** toggles tile boundaries. Camera movement never spends an action. In a dense chamber, compact labels show delegate stance or speaker Resolve; hover or select a figure for its name and details. Withdrawal preserves a speaker’s vote.
+
+Follow can choose a different angle to keep walls or columns out of the subject's view. Selected figures receive label priority; badges that cannot fit without overlapping may be hidden until you select, inspect or reframe the scene. Named controls and the command inspector retain the same rule information. Figure detail changes with viewing distance; it does not change health, equipment, movement or legal targets.
 
 **Generated sound effects** in Pause are off by default, with an adjustable effects volume. Enabled 3D combat sounds are synthesized locally and stop while the page is hidden. Every action is understandable without sound; reduced motion and graphics quality remain presentation settings.
 

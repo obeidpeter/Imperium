@@ -8,6 +8,12 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.12 — clearer cameras, figures and labels
+
+Overview frames the playable ground and actual figures; Follow chooses a clear angle around structural scenery. Unit badges and objective markers share collision-aware placement, giving selected figures priority. Original procedural rigs add planted feet and hooves, bounded transitions, equipment-aligned projectiles and mounted aiming. Distance detail, batched scenery and cached rendering work preserve the same legal encounter state and 2D alternative.
+
+The [version 0.12 verification record](docs/campaign-3d-refinement-verification.md) reports **360 passing tests**, a **25-scene / 468-assertion browser sweep**, and **103 normal-interface commands** completing the marsh, cavalry and Senate encounters. The complete Senate route worked with the local server stopped and retained its victory after reload. Narrow/enlarged-text layouts, view switching and actual desktop rendering costs were checked separately. No physical-phone, independent human-playtest or guaranteed frame-rate claim is made. The completed version 0.11 evidence below is preserved as historical evidence.
+
 ## Version 0.11 — the campaign's battlefields and chambers in 3D
 
 The shared 3D view now covers all twelve chapters: nineteen battles and six political Contests. Chapter II's marsh and causeway lead into ruined stations, fortified gates, eastern campaigns, river crossings, provincial administration and the Senate. Original procedural figures distinguish military roles, cavalry, civilian escorts and civic speakers. Existing rules, choices, milestones, previews, saves and retries remain authoritative. **Switch to 2D** offers the same encounter in the tactical view, which also serves as the WebGL fallback.
@@ -191,7 +197,7 @@ node scripts/verify-assets.mjs
 
 The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of version 0.7. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
 
-Commands and implemented checks are not proof of a particular result. See the [current campaign 3D verification](docs/campaign-3d-verification.md) for this release and the [historical overhaul verification](docs/overhaul-verification.md) for the rules release's browser sizes, finale profiles and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
+Commands and implemented checks are not proof of a particular result. See the [current presentation refinement record](docs/campaign-3d-refinement-verification.md), the completed [version 0.11 campaign 3D verification](docs/campaign-3d-verification.md), and the [historical overhaul verification](docs/overhaul-verification.md) for their respective scopes. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 
 ## Scope and design choices
 

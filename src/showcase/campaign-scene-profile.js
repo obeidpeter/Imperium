@@ -19,7 +19,7 @@ export function getSceneProfile(encounter={},options={}){
   const [region,setting,architecture,sky,fog,sun,ambient,groundTint,fogDensity,exposure]=regions[chapter-1],civic=encounter.kind==='contest',training=encounter.id==='ch1-training'||encounter.id==='ch1-drill'||encounter.type==='training'||encounter.mission?.mode==='training';
   const court=civic&&chapter>=10;
   return Object.freeze({key:`ch${chapter}-${civic?'civic':training?'training':'battle'}`,chapter,title:encounter.title||`${region}${civic?' — council':''}`,region,setting,civic,training,architecture:civic?(civicArchitecture[chapter]??'provincial-tribunal'):architecture,
-    sky,fog,sun,ambient,groundTint,fogDensity:court?.011:fogDensity,exposure,sunIntensity:chapter===2?2.55:court?2.7:3.3,ambientIntensity:court?2.45:2.1,ambientGround:court?'#9c8871':'#60694f',sunPosition:Object.freeze(chapter===2?[-12,18,-8]:court?[-9,22,-9]:[-16,24,-12]),
+    sky:court?'#8a8174':sky,fog:court?'#928779':fog,sun,ambient:court?'#ded4be':ambient,groundTint,fogDensity:court?.006:fogDensity,exposure:court?1.12:exposure,sunIntensity:chapter===2?2.55:court?2.4:3.3,ambientIntensity:court?2.15:2.1,ambientGround:court?'#9c8871':'#60694f',sunPosition:Object.freeze(chapter===2?[-12,18,-8]:court?[-9,22,-9]:[-16,24,-12]),
     vegetation:['desert','siege','palmyra'].includes(setting)?'arid':setting==='wetland'?'reeds':civic?'court':'meadow',soilMix:['desert','siege','palmyra'].includes(setting)?.85:setting==='wetland'?.62:.18,
     distantWater:['frontier','wetland','fortress','crossing','province'].includes(setting)&&(!civic||chapter===8),stoneColor:chapter===5?'#c7b08a':chapter>=9?'#d5c8ab':'#bab9ad',waterColor:chapter===2?'#59766e':'#608f94'});
 }

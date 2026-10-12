@@ -1,0 +1,389 @@
+{
+  "format": "sacramentum-presentation-refinement-verification-v1",
+  "version": "0.12.0",
+  "revision": "e737d39d2c3b",
+  "verifiedOn": "2026-10-12",
+  "scope": "Completed automated tests, legally reached WebGL fixtures and production UI play in Chromium154 on Windows. No physical-device or independent human evidence.",
+  "tests": {
+    "passed": 360,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 33499.9881
+  },
+  "assetProtocolChecks": {
+    "passed": 11,
+    "failed": 0
+  },
+  "legalAutoplay": {
+    "chapters": 12,
+    "wins": 25,
+    "turns": 213,
+    "rank": "Augustus"
+  },
+  "browserSweep": {
+    "passedScenes": 25,
+    "assertions": 468,
+    "failures": 0,
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "devicePixelRatio": 2
+    },
+    "scope": "All25 sweep with strict overview/post-cancellation unit+objective label assertions. This sweep preceded final focus/projectile-only corrections; overview layout was unchanged. Refreshed affected-scene checks below use final module graph.",
+    "sceneIds": [
+      "ch1-training",
+      "ch1-road",
+      "ch2-marsh",
+      "ch2-rearguard",
+      "ch3-station",
+      "ch3-rolls",
+      "ch4-gate",
+      "ch4-wall",
+      "ch5-mine",
+      "ch5-wall",
+      "ch6-wells",
+      "ch6-eagle",
+      "ch7-council",
+      "ch7-legion",
+      "ch8-parley",
+      "ch8-ferry",
+      "ch8-crossing",
+      "ch9-wing",
+      "ch9-city",
+      "ch10-road",
+      "ch10-tribunal",
+      "ch11-accounts",
+      "ch11-adlection",
+      "ch12-legitimacy",
+      "ch12-confrontation"
+    ]
+  },
+  "refreshedBrowserChecks": [
+    {
+      "scene": "ch11-accounts",
+      "status": "passed",
+      "assertions": 21,
+      "failedAssertions": 0,
+      "quality": "balanced",
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "visibleLabels": 13
+    },
+    {
+      "scene": "ch11-accounts",
+      "status": "passed",
+      "assertions": 21,
+      "failedAssertions": 0,
+      "quality": "performance",
+      "canvas": {
+        "width": 360,
+        "height": 420
+      },
+      "visibleLabels": 13
+    },
+    {
+      "scene": "ch11-accounts",
+      "status": "passed",
+      "assertions": 21,
+      "failedAssertions": 0,
+      "quality": "high",
+      "canvas": {
+        "width": 844,
+        "height": 300
+      },
+      "visibleLabels": 13
+    }
+  ],
+  "legalMountedMotion": {
+    "scene": "ch9-wing",
+    "action": "endTurn",
+    "actorId": null,
+    "inspectedFigure": "enemy0",
+    "traceStep": 712,
+    "movements": [
+      {
+        "id": "enemy0",
+        "name": "Palmyrene cavalry",
+        "from": "7B",
+        "to": "5B"
+      },
+      {
+        "id": "enemy1",
+        "name": "Palmyrene archer",
+        "from": "7D",
+        "to": "6D"
+      },
+      {
+        "id": "enemy2",
+        "name": "Palmyrene cavalry",
+        "from": "7F",
+        "to": "5G"
+      },
+      {
+        "id": "enemy3",
+        "name": "Palmyrene infantry",
+        "from": "6H",
+        "to": "6F"
+      }
+    ],
+    "completed": true,
+    "reducedMotion": false,
+    "camera": {
+      "mode": "follow",
+      "selected": "enemy0",
+      "inspected": "enemy0",
+      "yaw": -0.19739555984988075,
+      "pitch": 0.36,
+      "distance": 10,
+      "target": [
+        1.25,
+        1.65,
+        -6.25
+      ],
+      "quality": "balanced"
+    },
+    "saveUnchanged": true
+  },
+  "measurements": [
+    {
+      "scene": "ch9-wing",
+      "kind": "battle",
+      "turn": 1,
+      "quality": "balanced",
+      "camera": {
+        "mode": "overview/orbit",
+        "selected": "hero",
+        "inspected": "hero",
+        "yaw": -0.55,
+        "pitch": 0.67,
+        "distance": 36.33512311704675,
+        "target": [
+          0,
+          0.7,
+          0
+        ],
+        "quality": "balanced"
+      },
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "elapsedMs": 2656.600000023842,
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 6.299999952316284,
+        "p95Ms": 8.100000023841858,
+        "maxMs": 11.899999976158142
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 17.100000023841858,
+        "p95Ms": 35.39999997615814,
+        "maxMs": 35.700000047683716
+      },
+      "rafIntervals": {
+        "count": 159,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 16.80000000000291
+      },
+      "drawCalls": {
+        "min": 277,
+        "mean": 327.7916666666667,
+        "max": 542,
+        "last": 277
+      },
+      "triangles": {
+        "min": 206728,
+        "mean": 230806.7,
+        "max": 332356,
+        "last": 206728
+      },
+      "renderer": {
+        "cuesPlayed": 0,
+        "renderMs": 6.5849999984105425,
+        "samples": 120,
+        "calls": 277,
+        "callsMean": 327.7916666666667,
+        "callsMax": 542,
+        "shadowUpdates": 30,
+        "labels": {
+          "visible": 10,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 206728,
+        "textures": 32,
+        "geometries": 687,
+        "quality": "balanced"
+      },
+      "startSaveSHA256": "0c97c4482382e41337b3d7d437dc78b644e4d59a29c7967277a3723870849d2f",
+      "saveUnchanged": true
+    }
+  ],
+  "measurementLimit": "Idle current overview; CPU, stage-render intervals and RAF are distinct. Different camera/canvas/device ratio from0.11: no matched speedup, GPU timing, guaranteed FPS or physical-phone claim.",
+  "normalUI": {
+    "origin": "http://127.0.0.1:4375/",
+    "scope": "Imported validated earned checkpoints through Restore UI; exact named actor/action/target/formation/order selectors, authoritative preview/Confirm and End turn. No debug progression or hidden-state writes.",
+    "commands": 103,
+    "stepRows": 102,
+    "extraRecordedCommand": "offline.initialMove,2D→4E",
+    "encounters": [
+      {
+        "id": "ch11-accounts",
+        "completeUiRoute": true,
+        "commands": 47,
+        "result": "won",
+        "clock": "TURN 12 / 1211/13 support · 7 neededSaved",
+        "serverStopped": true
+      },
+      {
+        "id": "ch2-marsh",
+        "completeUiRoute": true,
+        "commands": 26,
+        "result": "won",
+        "clock": "TURN 9 / 14One move · one actionSaved",
+        "serverStopped": false
+      },
+      {
+        "id": "ch9-wing",
+        "completeUiRoute": true,
+        "commands": 30,
+        "result": "won",
+        "clock": "TURN 5 / 153/6 ordersSaved",
+        "serverStopped": false
+      }
+    ],
+    "offline": {
+      "serverStopped": true,
+      "coldChapter": "XI",
+      "status": "CHAPTER XI AVAILABLE OFFLINE",
+      "initialMove": "2D→4E",
+      "reloadedResult": "won",
+      "reloadedClock": "TURN 12 / 1211/13 support · 7 needed"
+    },
+    "responsive": {
+      "phone": {
+        "clock": "TURN 5 / 153/6 ordersSaved",
+        "outcome": "won",
+        "page": 345,
+        "viewport": 360
+      },
+      "enlargedText": {
+        "clock": "TURN 5 / 153/6 ordersSaved",
+        "page": 345,
+        "selectedLabel": "visible",
+        "textScale": "2",
+        "viewport": 360
+      },
+      "landscape": {
+        "clock": "TURN 5 / 153/6 ordersSaved",
+        "page": 829,
+        "viewport": 844
+      },
+      "viewSwitch": {
+        "twoDClock": "TURN 5 / 153/6 ordersSaved",
+        "threeDClock": "TURN 5 / 153/6 ordersSaved"
+      }
+    },
+    "viewportHeights": {
+      "phone": 800,
+      "landscape": 390
+    },
+    "cavalryResultRecorded": true,
+    "capturedConsoleErrorsAndWarnings": [],
+    "finalPreview": "Restored validated ChapterIX turn1 after checks; normaltext/motion and desktop viewport restored"
+  },
+  "build": {
+    "files": 136,
+    "initialFiles": 64,
+    "deferredFiles": 72,
+    "initialGzipBytes": 360553,
+    "chapterOneGzipBytes": 5422625,
+    "completeGzipBytes": 6575015,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace"
+  },
+  "limitations": [
+    "Stylized original procedural figures and scripted poses, not scans or motion capture.",
+    "Geometric label passes are not proof of visual appeal or editorial clarity.",
+    "Physical devices, screen readers, audible mixing, independent enjoyment, long sessions and target campaign duration remain unverified.",
+    "Server-stoppedlocalhost check is not system-wide disconnection, eviction, OScrash or installed physical PWA testing."
+  ],
+  "evidenceFiles": [
+    {
+      "path": "pretest-final.txt",
+      "bytes": 239,
+      "sha256": "9a5370543751b6329c8a7ea072732cfc24a203fd288bb7568dd4b706054e50d6"
+    },
+    {
+      "path": "tests-final.txt",
+      "bytes": 39530,
+      "sha256": "7b380bfabd12c3ade56d2dd1ddd6fd3f066980cfed3d669ca962a76d06af6302"
+    },
+    {
+      "path": "autoplay-final.json",
+      "bytes": 7307,
+      "sha256": "4dd6e4cb2687b3b11c5ddab98df73c741199ee30fc496b6c75b21cd97950fadc"
+    },
+    {
+      "path": "build-final.json",
+      "bytes": 34492,
+      "sha256": "a51482d6c6df6da3811b6ae7c550a1ad2b635bb2ad49e4e9971c1b3850b3fdae"
+    },
+    {
+      "path": "assets-final.txt",
+      "bytes": 782,
+      "sha256": "b323354608f7f2be24cbee1cd26351afa2005affc4fe958c7f3f42ac006349dc"
+    },
+    {
+      "path": "harness-logic-result.json",
+      "bytes": 619,
+      "sha256": "44dc72830e2d25d4072ecc02992b3edc9490be5627c05717f1fb79797f7aea63"
+    },
+    {
+      "path": "all-scenes.json",
+      "bytes": 240426,
+      "sha256": "05728d545b821f13b1d68bd0205f6e03b34caafa513c37cfb65ae9a8c211262a"
+    },
+    {
+      "path": "final-targeted-browser.json",
+      "bytes": 38503,
+      "sha256": "fe7a59461217fe2e22af797f0dafc5fb5ead3b11c0dc0b509e0419f670b7d66e"
+    },
+    {
+      "path": "normal-ui.json",
+      "bytes": 32204,
+      "sha256": "db1de084be78d7c3ecf235a96ee4141f8b38eb7257d3ab337fab48bb6cbc1043"
+    },
+    {
+      "path": "cavalry-follow.png",
+      "bytes": 310977,
+      "sha256": "158ed4f3ec5b80f3a2d4b0b6f8d6b86f09c89d37f80d25ca1899c451f04b241f"
+    },
+    {
+      "path": "senate-follow.png",
+      "bytes": 130534,
+      "sha256": "081a19e9c3f87e1037481043ee76de584709ca2ba50fd0fd2f7bfc928a5328e9"
+    },
+    {
+      "path": "cavalry-gameplay-final.png",
+      "bytes": 244519,
+      "sha256": "a20605837323695ba9be9dd945b484a78b5aebdc0c6c182737f8ebec168cf663"
+    }
+  ]
+}

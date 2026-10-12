@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as Game from '../src/core/game.js';
 import {createShowcaseSession,ARRIVAL,facingYaw} from '../src/showcase/session.js';
-import {BattleStage,stageActorPose,intersectGround} from '../src/showcase/stage.js';
+import {BattleStage,stageActorPose,intersectGround,positionProjectileTip} from '../src/showcase/stage.js';
 import * as T from '../vendor/three/three.module.js';
 import {createGroundHeight,gridToWorld} from '../src/showcase/environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../src/ui/animation-timeline.js';
@@ -114,4 +114,24 @@ test('Zoom remains monotonic beyond desktop limits and withdrawn civic figures d
   const live={id:'live',x:2,y:3,resolve:6,role:'speaker'},withdrawn={id:'withdrawn',x:1,y:3,resolve:0,role:'speaker'},liveMesh=new T.Group(),withdrawnMesh=new T.Group();liveMesh.userData.unitId='live';withdrawnMesh.userData.unitId='withdrawn';
   Object.assign(stage,{canvas:{getBoundingClientRect:()=>({left:0,top:0,width:800,height:600})},ndc:new T.Vector2(),camera:{},encounter:{units:[withdrawn,live]},actors:new Map([['withdrawn',{group:withdrawnMesh}],['live',{group:liveMesh}]]),ray:{setFromCamera(){},intersectObjects(groups){assert.deepEqual(groups,[liveMesh]);return [{object:liveMesh}];}}});
   assert.deepEqual(stage.pick({clientX:400,clientY:300}),{x:2,y:3,unitId:'live'});
+});
+
+test('Directed actions face their exact recipient, including diagonal civic gestures',()=>{
+  const unit={id:'hero',x:1,y:1,hp:10,maxHp:10,facing:'north'};
+  for(const motion of ['attack','cavalry-attack','throw','speak','order','rally']){
+    const target={x:3,y:2},frame={unitOverrides:{hero:{x:1,y:1,pose:motion,progress:.4,facing:'north'}}},timeline={units:{},tracks:[{unitId:'hero',pose:motion,target}]};
+    const before=JSON.stringify({unit,frame,timeline}),pose=stageActorPose(unit,frame,timeline);
+    assert.equal(pose.direction,Math.atan2(2,1));
+    assert.equal(JSON.stringify({unit,frame,timeline}),before);
+  }
+});
+
+test('The visible javelin and arrow tip meet their actual release and target anchors without a mesh-origin jump',()=>{
+  const from=new T.Vector3(1,1.9,2),to=new T.Vector3(6,2.05,-4),saved=[from.toArray(),to.toArray()];
+  for(const scale of [1,.52])for(const phase of [0,.25,.5,.75,1]){
+    const missile=new T.Group();missile.scale.setScalar(scale);positionProjectileTip(missile,from,to,phase);missile.updateMatrixWorld(true);
+    const actual=missile.localToWorld(new T.Vector3(0,0,1.01)),expected=from.clone().lerp(to,phase);expected.y+=Math.sin(phase*Math.PI)*1.8;
+    assert.ok(actual.distanceTo(expected)<1e-10);
+  }
+  assert.deepEqual([from.toArray(),to.toArray()],saved);
 });
