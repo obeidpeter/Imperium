@@ -6,6 +6,7 @@ import {addCampaignTerrain} from './environment-campaign-terrain.js';
 import {addCampaignScenery} from './environment-campaign-scenery.js';
 import {addEnvironmentDepth} from './environment-depth.js';
 import {batchStaticEnvironment} from './environment-batching.js';
+import {createEnvironmentHorizon} from './environment-horizon.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -162,11 +163,6 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const riverBase=Float32Array.from(riverGeometry.attributes.position.array);
   animated.push(time=>{const a=riverGeometry.attributes.position;for(let i=0;i<a.count;i++){const xx=riverBase[i*3],zz=riverBase[i*3+2];a.setY(i,.023*Math.sin(xx*.64+time*.9)+.017*Math.sin(zz*1.7+xx*.17-time*.55));}a.needsUpdate=true;if(!perf)riverGeometry.computeVertexNormals();});
   }
-  for(let layer=0;layer<(profile.civic&&profile.chapter>=10?0:3);layer++){
-    const hillGeometry=p.geo(new THREE.PlaneGeometry(200,55,80,22));hillGeometry.rotateX(-Math.PI/2);const a=hillGeometry.attributes.position;
-    for(let i=0;i<a.count;i++){const xx=a.getX(i),zz=a.getZ(i),rise=Math.pow(Math.max(0,Math.sin((xx+layer*31)*.027)),2)*(10+layer*7)+noise(xx*.08,zz*.07,layer+22)*4;a.setY(i,(rise+3+layer*1.5)*(profile.setting==='wetland'?.27:profile.vegetation==='arid'?1.3:1));}
-    hillGeometry.computeVertexNormals();const material=ownMaterial(new THREE.MeshStandardMaterial({color:[0x63756b,0x75867f,0x94a19a][layer],roughness:1}));const mountain=p.mesh(root,hillGeometry,material,layer*13,0,-63-layer*25);mountain.castShadow=false;mountain.name='distant rolling ridge';
-  }
   const flames=[];
   function fire(x,z,scale=1){const y=height(x,z),g=p.group(root,x,y,z);for(let i=0;i<5;i++){const a=i*1.256;p.beam(g,[Math.cos(a)*.47,.09,Math.sin(a)*.47],[-Math.cos(a)*.25,.18,-Math.sin(a)*.25],.065,m.charcoal);}
     for(let k=0;k<3;k++){const mat=ownMaterial(new THREE.MeshBasicMaterial({color:[0xf3a143,0xf5c777,0xbc502c][k],transparent:true,opacity:[.67,.6,.3][k],depthWrite:false,blending:THREE.AdditiveBlending}));const flame=p.mesh(g,p.sphere,mat,(k-1)*.11,.38,0,.12,.5,.12);flame.castShadow=false;flame.receiveShadow=false;flames.push({mesh:flame,seed:k+x,base:.40,scale});}
@@ -177,10 +173,11 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // scenery is instanced where repeated, otherwise merged by exact material
   // and render flags, with all parent transforms baked into root space.
   const batching=batchStaticEnvironment(root,{geometries,exclude:new Set([ground,road,river,root.getObjectByName('continuous civic stone floor'),...flames.map(f=>f.mesh)])});
+  const horizon=createEnvironmentHorizon({ground,profile,height,quality});root.add(horizon.group);
   let lastTime=-1;
-  return {group:root,ground,groundHeight:height,profile,
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;for(const fn of animated)fn(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
-    dispose(){if(disposed)return;disposed=true;scene.remove(root);for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
-    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,disposed};}
+  return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,
+    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
+    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
+    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,disposed};}
   };
 }

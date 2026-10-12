@@ -36,7 +36,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     audio(enabled,volume){if(latest){latest.audio=enabled;latest.audioVolume=volume;}stage?.setAudio(enabled,volume);},
     quality(value){if(latest)latest.quality=value;stage?.applyQuality(value);},
     reduced(value){if(latest)latest.reducedMotion=value;stage?.setReducedMotion(value);},
-    home(){stage?.home();},focus(){stage?.focusSelected();},
+    home(){stage?.home();},focus(){stage?.focusSelected();},horizon(){stage?.horizon();},
     zoom(delta){if(stage)stage.zoom(delta);},
     release,get stage(){return stage;}
   };

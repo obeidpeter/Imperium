@@ -10,11 +10,20 @@ function fakeClass({fail=false}={}){const instances=[];class FakeStage{
   constructor(board,encounter,options){if(fail)throw new Error('WebGL unavailable');this.canvas=board;this.labelLayer={parentElement:null,isConnected:false};board.parentElement.append(this.labelLayer);this.quality=options.quality;this.orbit={distance:20};this.calls=[];this.disposals=0;this.sound={stop:()=>this.calls.push(['sound.stop']),unlock:()=>{this.calls.push(['sound.unlock']);return true;}};this.initial={encounter,options};instances.push(this);}
   sync(...a){this.calls.push(['sync',...a]);} setSelection(...a){this.calls.push(['selection',...a]);} setGrid(...a){this.calls.push(['grid',...a]);}
   applyQuality(q){this.quality=q;this.calls.push(['quality',q]);} setReducedMotion(...a){this.calls.push(['reduced',...a]);} setPaused(...a){this.calls.push(['paused',...a]);} setAudio(...a){this.calls.push(['audio',...a]);}
-  play(...a){this.calls.push(['play',...a]);return Promise.resolve();} finishMotion(){this.calls.push(['finish']);} resize(){this.calls.push(['resize']);} home(){this.calls.push(['home']);} focusSelected(){this.calls.push(['focus']);}
+  play(...a){this.calls.push(['play',...a]);return Promise.resolve();} finishMotion(){this.calls.push(['finish']);} resize(){this.calls.push(['resize']);} home(){this.calls.push(['home']);} focusSelected(){this.calls.push(['focus']);} horizon(){this.calls.push(['horizon']);}
   dispose(){this.disposals++;this.calls.push(['dispose']);}
 }return {FakeStage,instances};}
 const options=(id='ch1-road',extra={})=>({encounter:{id,kind:'battle',units:[],turn:1},selected:'hero',targets:[],target:null,grid:false,quality:'balanced',reducedMotion:false,audio:false,audioVolume:.4,paused:false,...extra});
 const plays=stage=>stage.calls.filter(c=>c[0]==='play');
+
+test('Horizon remains an explicit camera command and does not replace tactical startup or mutate the encounter',async()=>{
+  const {FakeStage}=fakeClass(),job=deferred(),c=createBattleStageController({load:()=>job.promise}),data=options(),before=structuredClone(data);
+  c.horizon();c.mount(canvas(),data);c.horizon();job.resolve({BattleStage:FakeStage});await settle();const stage=c.stage;
+  assert.equal(stage.calls.filter(call=>call[0]==='home').length,1,'Initial view stays the tactical overview.');
+  assert.equal(stage.calls.filter(call=>call[0]==='horizon').length,0,'An unavailable camera cannot queue a stale view.');
+  c.horizon();assert.equal(stage.calls.filter(call=>call[0]==='horizon').length,1);assert.deepEqual(data,before);assert.equal(plays(stage).length,0);
+  c.release();assert.doesNotThrow(()=>c.horizon());assert.equal(stage.calls.filter(call=>call[0]==='horizon').length,1);
+});
 
 test('Every authored chapter supports battle and Contest 3D; camp and invalid chapters do not',()=>{
   for(let chapter=1;chapter<=12;chapter++)for(const kind of ['battle','contest'])assert.equal(chapterHas3D({chapter,phase:'encounter',encounter:{kind}}),true);

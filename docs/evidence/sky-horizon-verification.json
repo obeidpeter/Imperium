@@ -1,0 +1,327 @@
+{
+  "format": "sacramentum-sky-horizon-verification-v1",
+  "version": "0.13.0",
+  "productionRevision": "757b8ea235d2",
+  "verifiedDate": "2026-10-12",
+  "scope": "Completed Node/protocol checks and desktop browser observations. The 25-scene browser report predates the last camera and water corrections; no final all-scene rerun, physical device or independent human playtest is claimed.",
+  "nodeTests": {
+    "passed": 375,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 85960.8624
+  },
+  "assetProtocolChecks": {
+    "passed": 11,
+    "failed": 0,
+    "scope": "Node asset integrity, budget and mocked service-worker protocol checks; not a new real-browser offline result."
+  },
+  "build": {
+    "files": 138,
+    "initialFiles": 64,
+    "deferredFiles": 74,
+    "chapterOneFiles": 116,
+    "initialGzipBytes": 360740,
+    "chapterOneGzipBytes": 5430250,
+    "completeGzipBytes": 6582755,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace"
+  },
+  "browserSweep": {
+    "status": "complete",
+    "scenes": 25,
+    "assertions": 468,
+    "allPassed": true,
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+    "revisionScope": "Before the final two camera/water corrections; tactical overview and post-cancellation checks."
+  },
+  "horizonViews": [
+    {
+      "scene": "ch9-wing",
+      "cameraView": "horizon",
+      "quality": "balanced",
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "cameraFar": 800,
+      "reducedMotion": false,
+      "cloudTime": 1.6158222222222833,
+      "labelsSettled": true,
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch2-marsh",
+      "cameraView": "horizon",
+      "quality": "balanced",
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "cameraFar": 800,
+      "reducedMotion": false,
+      "cloudTime": 1.231555555556872,
+      "labelsSettled": true,
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch2-marsh",
+      "cameraView": "horizon",
+      "quality": "performance",
+      "canvas": {
+        "width": 360,
+        "height": 420
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "cameraFar": 800,
+      "reducedMotion": true,
+      "cloudTime": 0.1488777777940271,
+      "labelsSettled": true,
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch2-marsh",
+      "cameraView": "horizon",
+      "quality": "performance",
+      "canvas": {
+        "width": 360,
+        "height": 420
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "cameraFar": 800,
+      "reducedMotion": true,
+      "cloudTime": 0.1488777777940271,
+      "labelsSettled": true,
+      "saveUnchanged": true
+    },
+    {
+      "scene": "ch11-accounts",
+      "cameraView": "horizon",
+      "quality": "high",
+      "canvas": {
+        "width": 844,
+        "height": 300
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "cameraFar": 800,
+      "reducedMotion": false,
+      "cloudTime": 1.5016333333415675,
+      "labelsSettled": true,
+      "saveUnchanged": true
+    }
+  ],
+  "reducedMotion": {
+    "identicalCloudClockInSuccessiveRecords": true,
+    "scope": "Two recorded Performance/reduced-motion wetland samples; no claim of duration beyond those samples."
+  },
+  "manualBrowserObservations": {
+    "source": "Parent agent desktop browser inspection; related local captures are hashed below. These are not additional automated harness assertions.",
+    "visualInspection": [
+      "Wetland horizon/cloud streak correction",
+      "Palmyrene roofline correction",
+      "Senate chamber horizon"
+    ],
+    "standalone": {
+      "reverseYawRadiansApprox": 3.12,
+      "skyVisible": true,
+      "homeAndHObserved": true,
+      "legalMove": {
+        "from": "1D",
+        "to": "2D",
+        "turn": 1,
+        "committed": true
+      }
+    },
+    "campaign": {
+      "productionOriginPort": 4381,
+      "importedFromPort": 4375,
+      "importMethod": "Normal portable-save export/restore UI",
+      "chapter": 9,
+      "turn": 1,
+      "ordersRemaining": 6,
+      "horizonSkyVisible": true,
+      "capturedErrors": [],
+      "originalOriginSaveOverwritten": false
+    }
+  },
+  "limits": [
+    "Harness 360×420 and 844×300 are scene-container sizes within a 1280×720 browser viewport, not full-device viewport tests.",
+    "Skyward projection is not pixel or structural-occlusion proof.",
+    "No new frame-rate, physical-device, accessibility-conformance or independent human-playtest claim.",
+    "No additional raster asset or third-party art download; sky and landscape are original code."
+  ],
+  "evidenceRefs": [
+    {
+      "path": "work/sky-horizon-final-tests.txt",
+      "bytes": 41438,
+      "sha256": "5214ee4fc157305c1f37affa92c4c06fcdc0df83d8a535c69cbf9137ed18a6f0"
+    },
+    {
+      "path": "work/sky-horizon-assets.txt",
+      "bytes": 782,
+      "sha256": "b323354608f7f2be24cbee1cd26351afa2005affc4fe958c7f3f42ac006349dc"
+    },
+    {
+      "path": "outputs/Sacramentum/dist/build-report.json",
+      "bytes": 34728,
+      "sha256": "66eca8e0f98a920eeabf1047099eeb7733bc10b8f6261bb60e030887a21fd477"
+    },
+    {
+      "path": "work/sky-horizon-review/browser-scenes-and-horizons.json",
+      "bytes": 268756,
+      "sha256": "019722742e223a360c4f9bc7b4759e29b8948bf14b48a427d14cbdc22a2f706c"
+    },
+    {
+      "path": "work/sky-horizon-review/palmyra-horizon.png",
+      "bytes": 106419,
+      "sha256": "0d24ad9293e64b05fa1ae75f71c9491eff129d996f3f7998d1c69edfe6428a15"
+    },
+    {
+      "path": "work/sky-horizon-review/wetland-horizon.png",
+      "bytes": 101092,
+      "sha256": "eeb9b286839d261a8c5815aa75e86cdbf28aa432d5eada5eea8bef84d5bb334c"
+    },
+    {
+      "path": "work/sky-horizon-review/wetland-portrait-performance.png",
+      "bytes": 65382,
+      "sha256": "0fc1dd1eb70058cd65069007dce72489251d8372664a4bf5a8f7414913c95ec1"
+    },
+    {
+      "path": "work/sky-horizon-review/senate-horizon-high.png",
+      "bytes": 110964,
+      "sha256": "2a53d4c9b7a5709efb32155f437cc0c2f234995cf3ab670acd1115f515af1f16"
+    },
+    {
+      "path": "work/sky-horizon-review/standalone-horizon.png",
+      "bytes": 121750,
+      "sha256": "c296cbd6a079fb1474d94b2966472217b7d69d58869d9623bc84876208bba60f"
+    },
+    {
+      "path": "work/sky-horizon-review/frontier-reverse-horizon.png",
+      "bytes": 124398,
+      "sha256": "eca2d8ec9d0f7581c05b1f0bec4c5a2ed1503fa8af70a49a2eaae4267891d974"
+    },
+    {
+      "path": "work/sky-horizon-autoplay.json",
+      "bytes": 7307,
+      "sha256": "4dd6e4cb2687b3b11c5ddab98df73c741199ee30fc496b6c75b21cd97950fadc"
+    },
+    {
+      "path": "work/sky-horizon-review/production-ui.json",
+      "bytes": 2120,
+      "sha256": "d2d8667043cbd9bc40c45e5aa567024d6a258d7a83bf9f98eb830a81ac353029"
+    },
+    {
+      "path": "outputs/Sacramentum-sky-horizon-v0.13.png",
+      "bytes": 84919,
+      "sha256": "a96123741a0f191410d4c0b073b6069f2f812e0cf5b4f7212394a26019cd66fc"
+    },
+    {
+      "path": "work/sky-horizon-review/post-fix-browser.json",
+      "bytes": 14983,
+      "sha256": "d0307570b583219c0504c92f4eb8dc11caba7f2b6cc8450bae8a8da16416977e"
+    }
+  ],
+  "legalAutoplay": {
+    "source": "New Game; legal gameplay API commands only",
+    "seed": 275,
+    "rank": "Augustus",
+    "chapters": 12,
+    "encounters": 25,
+    "victories": 25,
+    "totalTurns": 213
+  },
+  "productionUI": {
+    "sameExportedCampaignCode": true,
+    "console": [],
+    "portrait": {
+      "viewport": {
+        "height": 800,
+        "width": 360
+      },
+      "documentScrollWidth": 345,
+      "horizonButtonPresent": true,
+      "cameraView": "horizon"
+    },
+    "final": {
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "documentScrollWidth": 1265,
+      "cameraView": "horizon",
+      "chapter": 9,
+      "turn": 1,
+      "ordersRemaining": 6
+    },
+    "normalControlsObserved": [
+      "Horizon button",
+      "H shortcut",
+      "Overview",
+      "Follow",
+      "Switch to 2D",
+      "Switch to 3D"
+    ],
+    "stateEqualityMethod": "Exact portable save-code string comparison before/after camera/view controls through the normal UI; imported copy used a separate local origin."
+  },
+  "refreshedFinalBrowser": {
+    "scope": "Targeted final module graph after camera and water corrections; no repeated 25-scene sweep.",
+    "checkedScenes": [
+      "ch2-marsh"
+    ],
+    "assertions": 18,
+    "allPassed": true,
+    "horizonViews": [
+      {
+        "scene": "ch2-marsh",
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "quality": "balanced",
+        "cameraView": "horizon",
+        "cameraFar": 800,
+        "labelsSettled": true,
+        "saveUnchanged": true
+      },
+      {
+        "scene": "ch3-station",
+        "canvas": {
+          "width": 360,
+          "height": 420
+        },
+        "quality": "balanced",
+        "cameraView": "horizon",
+        "cameraFar": 800,
+        "labelsSettled": true,
+        "saveUnchanged": true
+      }
+    ],
+    "manualObservation": "Station scene at 360px canvas width showed clear sky and terrain; no captured browser errors."
+  }
+}

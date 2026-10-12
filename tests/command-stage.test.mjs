@@ -25,6 +25,16 @@ function render(state, extra = {}) {
 }
 const inspector = html => html.split('<div class="command-inspection"')[1].split('<div class="command-commit"')[0];
 
+test('Horizon is an explicit accessible 3D camera control and is absent from the 2D alternative',()=>{
+  const state=freshBattle(),threeD=render(state,{can3D:true,view3D:true});
+  assert.match(threeD,/<button data-cmd="camera-horizon"[^>]*aria-keyshortcuts="H"[^>]*>Horizon<\/button>/);
+  assert.ok(threeD.indexOf('data-cmd="camera-home"')<threeD.indexOf('data-cmd="camera-horizon"'));
+  assert.match(threeD,/H shows the horizon/);assert.match(threeD,/H for the horizon/);
+  assert.ok(!render(state,{can3D:true,view3D:false}).includes('data-cmd="camera-horizon"'));
+  state.encounter.status='won'; // Presentation case: camera remains available after a result.
+  assert.ok(render(state,{can3D:true,view3D:true}).includes('data-cmd="camera-horizon"'));
+});
+
 test('Command stage keeps a complete named-control alternative and the same legal action/keyboard order', () => {
   const state = freshBattle(), html = render(state), actions = Game.getActions(state, 'hero');
   assert.equal(state.encounter.combatVersion, 2);

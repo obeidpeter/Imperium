@@ -75,8 +75,11 @@ function updateGraphicsStats(){const output=$('graphics-stats');if(output){const
 $('help-toggle').onclick=()=>{const open=$('help-panel').hidden;$('help-panel').hidden=!open;$('help-toggle').setAttribute('aria-expanded',String(open));if(open)updateGraphicsStats();};
 $('quality').onchange=e=>{stage?.applyQuality(e.target.value);requestAnimationFrame(()=>updateGraphicsStats());};$('motion-setting').onchange=e=>stage?.setReducedMotion(e.target.checked);
 $('focus-camera')?.addEventListener('click',()=>stage?.focusSelected());$('home-camera')?.addEventListener('click',()=>stage?.home());
+function showHorizon(){if(!stage)return;stage.horizon();text('scene-status','Horizon view. Your battle orders are unchanged.');if(!$('help-panel').hidden)updateGraphicsStats();}
+$('horizon-camera')?.addEventListener('click',showHorizon);
 $('scene').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit();}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){stage?.finishMotion();target=null;updatePreview();}});
+document.addEventListener('keydown',e=>{if(e.defaultPrevented||e.repeat||e.altKey||e.ctrlKey||e.metaKey||e.key.toLowerCase()!=='h'||document.querySelector('dialog[open]')||e.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;e.preventDefault();showHorizon();});
 window.addEventListener('pagehide',()=>{stage?.dispose();stage=null;});
 window.addEventListener('pageshow',event=>{if(event.persisted){makeStage();render();text('scene-status',graphicsError||'The battlefield is ready.');}});
 render();

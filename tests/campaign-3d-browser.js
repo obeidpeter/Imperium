@@ -3,9 +3,9 @@ import {createBattleStageController} from '../src/ui/battle-stage-controller.js'
 import {CONFIG} from '../src/config.js';
 
 const $=id=>document.getElementById(id),host=$('stage-host'),status=$('status'),output=$('result');
-const report={format:'sacramentum-campaign-3d-browser-v2',version:CONFIG.version,scope:'Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.',status:'not-run',checks:[],measurements:[],labelLayouts:[]};
+const report={format:'sacramentum-campaign-3d-browser-v2',version:CONFIG.version,scope:'Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.',status:'not-run',checks:[],measurements:[],labelLayouts:[],horizonViews:[]};
 let fixtures,controller=null,token=0,busy=false,lastError=null,mountedState=null,mountedScene=null;
-const catalogs=new Map(),buttons=['inspect','play','check','all','measure','overview','follow','zoom-in','zoom-out','labels'];
+const catalogs=new Map(),buttons=['inspect','play','check','all','measure','overview','follow','horizon','sky-check','zoom-in','zoom-out','labels'];
 const ensure=(value,message)=>{if(!value)throw Error(message);};
 const write=()=>{output.textContent=JSON.stringify(report,null,2);status.dataset.state=report.status;status.setAttribute('aria-busy',String(report.status==='running'));};
 const viewport=()=>({width:innerWidth,height:innerHeight,devicePixelRatio});
@@ -48,7 +48,7 @@ function sample(scene,action,traceStep=null){const state=Game.deserialize(Game.s
     if(kind===action&&(traceStep===null||step.traceStep===traceStep))return {state,before,after:structuredClone(state.encounter),command:step.kind==='act'?structuredClone(step.payload):{action:'endTurn'},traceStep:step.traceStep};
   }throw Error(`No matching legal ${action} sample for ${scene.id}.`);
 }
-const cameraRecord=stage=>({mode:stage.focusMode?'follow':'overview/orbit',selected:stage.selected,inspected:$('figure-select').value,yaw:stage.orbit.yaw,pitch:stage.orbit.pitch,distance:stage.orbit.distance,target:stage.baseTarget.toArray(),quality:stage.quality});
+const cameraRecord=stage=>({mode:stage.stats().cameraView??(stage.focusMode?'follow':'overview/orbit'),selected:stage.selected,inspected:$('figure-select').value,yaw:stage.orbit.yaw,pitch:stage.orbit.pitch,distance:stage.orbit.distance,target:stage.baseTarget.toArray(),quality:stage.quality});
 function labelBoxes(stage){const canvas=stage.canvas.getBoundingClientRect(),boxes=[],hidden=[];
   const roots=[...stage.labels,...[...(stage.missionMarkers??new Map())].map(([id,marker])=>[`objective:${id}`,marker.label])];
   for(const [id,label] of roots){const css=getComputedStyle(label),r=label.getBoundingClientRect(),layout=label.dataset.layout;
@@ -66,6 +66,14 @@ async function settledLabels(stage,t){let previous=null,stable=0,frames=0,lastPa
   return {settled:stable>=2,settledRenderedFrames:frames,tolerancePx:1,canvas:{width:data.width,height:data.height},visible:data.boxes.length,hidden:data.hidden,outOfBounds:data.boxes.filter(b=>b.x< -1||b.y< -1||b.x+b.width>data.width+1||b.y+b.height>data.height+1).map(b=>b.id),overlaps,boxes:data.boxes,stageLayout:stage.labelStats?structuredClone(stage.labelStats):null};
 }
 async function currentStage(t){if(controller?.stage&&mountedScene===selected().id)return controller.stage;return mount(Game.deserialize(Game.serialize(selected().state)),t);}
+async function horizonDiagnostic(t,preset){const stage=await currentStage(t),saved=Game.serialize(mountedState);ensure(typeof stage.horizon==='function','This stage does not expose the Horizon camera yet.');if(preset)stage.horizon();const labels=await settledLabels(stage,t),info=stage.stats(),camera=stage.camera;
+  ensure(info.sky!==undefined&&info.horizon!==undefined&&info.cameraView!==undefined,'Sky/horizon diagnostics are unavailable in this stage.');
+  const forward=camera.getWorldDirection(camera.position.clone());forward.y=0;forward.normalize();
+  const skyProbes=[0,6,12].map(elevationDegrees=>{const distance=camera.far*.5,point=camera.position.clone().addScaledVector(forward,distance);point.y+=Math.tan(elevationDegrees*Math.PI/180)*distance;point.project(camera);return {elevationDegrees,ndc:point.toArray(),inFrustum:Math.abs(point.x)<=1&&Math.abs(point.y)<=1&&Math.abs(point.z)<=1,pixelY:(1-point.y)*stage.canvas.clientHeight/2};});
+  ensure(Game.serialize(mountedState)===saved,'Horizon inspection changed the campaign.');
+  report.horizonViews.push({scene:mountedScene,turn:mountedState.encounter.turn,presetApplied:preset,camera:cameraRecord(stage),cameraFar:camera.far,viewport:viewport(),canvas:{width:stage.canvas.clientWidth,height:stage.canvas.clientHeight},reducedMotion:stage.reducedMotion,sky:structuredClone(info.sky),horizon:structuredClone(info.horizon),cameraView:info.cameraView,skyProbes,projectionScope:'Projects horizontal/above-horizontal directions, not a pixel or structural-occlusion test. Inspect the actual rendered scene separately.',labelsSettled:labels.settled,renderer:info,startSaveSHA256:await digest(saved),saveUnchanged:true});
+  status.textContent=`Recorded ${info.cameraView}: sky/landscape metadata and skyward projection, far plane ${camera.far}. Save unchanged.`;
+}
 async function inspectLabels(t){const stage=await currentStage(t),saved=Game.serialize(mountedState),layout=await settledLabels(stage,t);ensure(Game.serialize(mountedState)===saved,'Label inspection changed state.');report.labelLayouts.push({scene:mountedScene,turn:mountedState.encounter.turn,camera:cameraRecord(stage),viewport:viewport(),...layout,saveUnchanged:true});status.textContent=`Labels ${layout.settled?'settled':'not settled'}: ${layout.visible} visible, ${layout.overlaps.length} overlaps, ${layout.outOfBounds.length} outside scene. Observations are not a playability verdict.`;}
 async function inspect(t){const scene=selected(),state=Game.deserialize(Game.serialize(scene.state)),saved=Game.serialize(state);await mount(state,t);ensure(Game.serialize(state)===saved,'Rendering altered the campaign.');status.textContent=`Rendered ${scene.id}. Select a figure and Follow for inspection; no commands are granted.`;}
 async function play(t){const scene=selected(),motion=sample(scene,$('motion-select').value,Number($('sample-step').value)),saved=Game.serialize(motion.state),wasFollow=controller?.stage?.focusMode,stage=await mount(motion.state,t);
@@ -119,6 +127,7 @@ $('figure-select').addEventListener('change',()=>{motionOptions();if(controller?
 $('quality').addEventListener('change',()=>controller?.quality($('quality').value));$('reduced-motion').addEventListener('change',()=>controller?.reduced($('reduced-motion').checked));
 for(const [id,apply] of [['overview',s=>s.home()],['follow',s=>s.focusSelected()],['zoom-in',s=>s.zoom(-2)],['zoom-out',s=>s.zoom(2)]])$(id).addEventListener('click',()=>run('camera',async t=>{const stage=await currentStage(t),saved=Game.serialize(mountedState);stage.setSelection(figureId(mountedState),[],null);apply(stage);await settledLabels(stage,t);ensure(Game.serialize(mountedState)===saved,'Camera changed state.');status.textContent=`${id}: ${stage.selected}. Camera inspection only.`;}));
 $('labels').addEventListener('click',()=>run('labels',inspectLabels));
+$('horizon').addEventListener('click',()=>run('horizon',t=>horizonDiagnostic(t,true)));$('sky-check').addEventListener('click',()=>run('sky record',t=>horizonDiagnostic(t,false)));
 $('inspect').addEventListener('click',()=>run('inspect',inspect));$('play').addEventListener('click',()=>run('sample',play));$('check').addEventListener('click',()=>run('check selected',t=>checkScene(selected(),t)));
 $('all').addEventListener('click',()=>run('check all encounters',async t=>{report.checks=[];for(const scene of fixtures.scenes){status.textContent=`Checking ${scene.id}…`;await checkScene(scene,t);}}));
 $('measure').addEventListener('click',()=>run('measure',measure));$('stop').addEventListener('click',()=>{token++;release();status.textContent='Stopped. Renderer released.';});

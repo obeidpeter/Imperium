@@ -20,7 +20,7 @@
   <main class="study-main">
     <section class="scene-shell" aria-label="The frontier road battlefield">
       <div class="world-stage">
-        <canvas id="scene" tabindex="0" aria-label="Three-dimensional battlefield. Select a soldier or target with a click or tap. Arrow keys orbit the camera; plus and minus zoom." aria-describedby="camera-help">
+        <canvas id="scene" tabindex="0" aria-label="Three-dimensional battlefield. Select a soldier or target with a click or tap. Arrow keys orbit the camera; plus and minus zoom; H shows the horizon." aria-describedby="camera-help">
           The battlefield requires WebGL. Battle commands and named target controls are available below.
         </canvas>
         <div class="world-vignette" aria-hidden="true"></div>
@@ -34,7 +34,7 @@
         </div>
         <div class="scene-caption">
           <p id="scene-status" class="scene-status" role="status" aria-live="polite">Preparing the battlefield…</p>
-          <p class="camera-help" id="camera-help">Drag to orbit <span aria-hidden="true">·</span> Scroll to zoom <span aria-hidden="true">·</span> Arrows rotate</p>
+          <p class="camera-help" id="camera-help">Drag to orbit <span aria-hidden="true">·</span> Scroll to zoom <span aria-hidden="true">·</span> Arrows rotate <span aria-hidden="true">·</span> H for horizon</p>
         </div>
       </div>
 
@@ -90,6 +90,7 @@
           <div class="utility-actions">
             <button id="focus-camera" class="text-button" type="button" title="Focus on the selected soldier (F)">Focus soldier</button>
             <button id="home-camera" class="text-button" type="button" title="Restore the field view (Home)">Field view</button>
+            <button id="horizon-camera" class="text-button" type="button" aria-keyshortcuts="H" title="See the sky and distant landscape (H)">Horizon</button>
             <button id="help-toggle" class="text-button" type="button" aria-expanded="false" aria-controls="help-panel">How to play</button>
             <button id="reset-battle" class="text-button" type="button">Restart battle</button>
           </div>
@@ -99,7 +100,7 @@
           <h2 id="help-title">The field is yours to command.</h2>
           <div class="help-columns">
             <div><h3>Choose. Review. Commit.</h3><p>Select your soldier, choose Move, Strike, Brace or Throw, then select a target. Read the preview before confirming. Your companions follow their own orders. End your turn when you are ready for the other soldiers to act.</p></div>
-            <div><h3>See the ground.</h3><p>Drag across the battlefield to orbit the camera. Scroll to zoom. With the battlefield focused, arrow keys rotate and <kbd>+</kbd> / <kbd>−</kbd> zoom. A click or tap selects a figure or position.</p></div>
+            <div><h3>See the ground and sky.</h3><p>Drag across the battlefield to orbit the camera. Scroll to zoom. With the battlefield focused, arrow keys rotate and <kbd>+</kbd> / <kbd>−</kbd> zoom. Choose Horizon or press <kbd>H</kbd> to see the distant landscape; Field view returns to the tactical overview. A click or tap selects a figure or position.</p></div>
             <div><h3>Use the keyboard.</h3><p>Tab reaches every command. Named action and target controls provide an alternative to pointing at the field. Open them above, choose your order, then use Confirm order.</p></div>
           </div>
           <p class="study-note">This study is separate from your chronicle. Returning to the campaign keeps its existing save.</p>

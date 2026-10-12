@@ -8,6 +8,12 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.13 — sky and distant landscape
+
+The 3D scene adds an original procedural sky and a regional landscape beyond the playable ground. Choose **Horizon** or press **H** to look toward them; **Overview** or **Home** returns to the tactical frame, and **Follow unit** remains available for inspection. The campaign and standalone skirmish expose the same explicit Horizon control. Camera changes spend no turn and leave the encounter state unchanged; the initial view remains the tactical overview.
+
+The [sky and horizon verification record](docs/sky-horizon-verification.md) records **375 passing tests**, legal completion of all **25 encounters**, an earlier **25-scene / 468-assertion** browser sweep and targeted checks after the final camera/water corrections. Normal camera/view controls preserved the exact exported save code; a 360 px browser viewport retained Horizon without horizontal overflow. Harness portrait/landscape captures are identified separately from full-game viewport checks. No physical-device or frame-rate guarantee is claimed. The version 0.12 results below describe that prior release.
+
 ## Version 0.12 — clearer cameras, figures and labels
 
 Overview frames the playable ground and actual figures; Follow chooses a clear angle around structural scenery. Unit badges and objective markers share collision-aware placement, giving selected figures priority. Original procedural rigs add planted feet and hooves, bounded transitions, equipment-aligned projectiles and mounted aiming. Distance detail, batched scenery and cached rendering work preserve the same legal encounter state and 2D alternative.

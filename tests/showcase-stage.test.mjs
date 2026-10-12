@@ -82,6 +82,25 @@ test('Resize widens overview framing for portrait, preserves intentional focus, 
   const matrix=stage.camera.projectionMatrix.toArray(),count=calls.length;rect={width:0,height:0};stage.resize();assert.equal(calls.length,count);assert.deepEqual(stage.camera.projectionMatrix.toArray(),matrix);
 });
 
+test('Horizon view exposes sky while framing campaign figures, and resizes without losing its low viewing angle',async()=>{
+  const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
+  for(const scene of fixture.scenes)for(const [width,height] of [[1233,468],[360,420],[844,300]]){
+    const e=scene.state.encounter,saved=JSON.stringify(e),stage=cameraStage(e,width,height);stage.horizon();
+    const {yaw,pitch,distance}=stage.orbit,target=stage.baseTarget;
+    assert.equal(stage.cameraView,'horizon');assert.equal(stage.focusMode,false);assert.ok(distance>=28);
+    stage.camera.position.set(target.x+Math.sin(yaw)*Math.cos(pitch)*distance,target.y+Math.sin(pitch)*distance,target.z+Math.cos(yaw)*Math.cos(pitch)*distance);stage.camera.lookAt(target);stage.camera.updateMatrixWorld();
+    const horizon=stage.camera.position.clone().add(new T.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)).multiplyScalar(500)).project(stage.camera);
+    assert.ok(horizon.y>.2&&horizon.y<.4,'Clear sky fills roughly the upper third.');
+    for(const unit of e.units.filter(u=>!u.hidden))for(const height of [0,['cavalry','heavy'].includes(unit.role)?3.1:2.55]){
+      const p=stage.world(unit).add(new T.Vector3(0,height,0)).project(stage.camera);
+      assert.ok(Math.abs(p.x)<.9&&Math.abs(p.y)<.9,`${scene.id}:${unit.id} remains in the ${width}px field of view.`);
+    }
+    stage.canvas={getBoundingClientRect:()=>({width:320,height:540})};stage.renderer={setSize(){}};stage.resize();
+    assert.equal(stage.orbit.pitch,pitch);assert.equal(stage.baseTarget.y,2.7);assert.ok(stage.orbit.distance>=28);
+    stage.home();assert.equal(stage.cameraView,'overview');assert.ok(stage.orbit.pitch>.5);assert.equal(JSON.stringify(e),saved);
+  }
+});
+
 test('All campaign scenes frame every visible figure including mounted troops at desktop and portrait sizes',async()=>{
   const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
   for(const scene of fixture.scenes)for(const [width,height] of [[1440,600],[360,384],[360,640],[844,420]]){

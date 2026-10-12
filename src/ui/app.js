@@ -307,6 +307,7 @@ case 'cancel-action':cancelCommand();break;
 case 'view-3d':settings.battleView=uses3D()?'2d':'3d';failed3D=false;saveSettings();render();break;
 case 'camera-home':battleStage.home();break;
 case 'camera-focus':battleStage.focus();break;
+case 'camera-horizon':if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}break;
 case 'camera-in':battleStage.zoom(-3);break;
 case 'camera-out':battleStage.zoom(3);break;
 case 'toggle-grid':showGrid=!showGrid;render();break;
@@ -349,8 +350,10 @@ document.addEventListener('change',async event=>{
   if(['audio-setting','motion-setting'].includes(control.id)){stopMotion();pendingMotion=null;replay.stop();settings[control.id==='audio-setting'?'audio':'reducedMotion']=control.checked;saveSettings();document.documentElement.dataset.reduced=settings.reducedMotion;battleStage.audio(settings.audio,settings.audioVolume);battleStage.reduced(settings.reducedMotion);if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();}
 });
 document.addEventListener('keydown',event=>{
-  if(event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||state.encounter.status!=='active'||sessionGate.busy)return;
+  if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
+  if(event.key.toLowerCase()==='h'&&uses3D()){event.preventDefault();if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}return;}
+  if(state.encounter.status!=='active')return;
   const next=keyboardAction(event.key,Game.getActions(state,selected));
   if(next){event.preventDefault();chooseAction(next);return;}
   if(event.key==='Escape'){event.preventDefault();cancelCommand();}
