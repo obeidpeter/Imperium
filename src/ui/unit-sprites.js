@@ -1,4 +1,5 @@
 import {loadArt,peekArt} from './art.js';
+import {sampleSpritePose,spriteMesh} from './sprite-poses.js';
 
 // Four authored facings; no directional mirroring reverses shield/weapon hands.
 export const FACING_COLUMN=Object.freeze({east:0,south:1,north:2,west:3});
@@ -35,31 +36,31 @@ export function spriteHeight(g,u){return Math.min(100,Math.max(.1,g.tw*(['cavalr
 export function drawUnitSprite(c,g,p,u,chapter,contest,override={}){
   const spec=spriteSpec(u,chapter,contest),sheet=peekArt(atlases[spec.atlas]);if(!sheet)return false;
   const height=spriteHeight(g,u),width=height*.75,scale=height/256;
-  const walking=['walk','run','cavalry-move','retreat'].includes(override.pose);
-  const stride=walking?Math.sin((override.progress??0)*Math.PI*8):0;
-  const bob=(override.bob??0)*height/72;
-  c.save();c.translate(p.x,p.y+bob);c.rotate(override.lean??0);
-  // The mild shear suggests weight transfer without stretching the head/torso.
-  if(walking)c.transform(1,stride*.012,0,1+Math.abs(stride)*.012,0,0);
-  const draw=(facing,alpha)=>{c.save();c.globalAlpha*=alpha;
-    const stamp=(dx=0,dy=0)=>c.drawImage(sheet,(FACING_COLUMN[facing]??0)*192,spec.row*256,192,256,-width/2+dx,-240*scale+dy,width,height);
-    if(walking&&!contest&&spec.atlas!=='civic'){
-      const seam=-height*.24;
-      c.save();c.beginPath();c.rect(-width,-height*1.2,width*2,height*1.2+seam);c.clip();stamp();c.restore();
-      for(const sign of[-1,1]){c.save();c.beginPath();c.rect(sign<0?-width:0,seam,width,height*.4);c.clip();stamp(stride*sign*height*.015,-Math.max(0,stride*sign)*height*.024);c.restore();}
-    }else stamp();c.restore();};
-  if(override.previousFacing&&override.turnProgress<1){draw(override.previousFacing,1-override.turnProgress);draw(override.facing,override.turnProgress);}else draw(override.facing??u.facing,1);
-  // Steel glints and short arcs follow the committed action's impact window.
-  if(['attack','cavalry-attack','throw'].includes(override.pose)&&override.weapon!==0){
-    const direction=['east','north'].includes(override.facing??u.facing)?1:-1;
-    c.save();c.translate(direction*width*.19,-height*.4);c.rotate(direction*(override.weapon-.5)*1.2);c.strokeStyle='#fcf0c9';c.lineWidth=Math.max(1,height*.022);c.beginPath();c.moveTo(0,0);c.lineTo(direction*height*.23,-height*.24);c.stroke();c.restore();
-  }
-  if(['speak','rally','order','formation'].includes(override.pose)){
-    const direction=['east','north'].includes(override.facing??u.facing)?1:-1,gesture=Math.max(0,override.weapon??Math.sin((override.progress??0)*Math.PI));
-    c.save();c.translate(direction*width*.13,-height*.57);c.rotate(-direction*gesture*.7);
-    c.strokeStyle=contest?'#e2d4b3':'#b2a78c';c.lineWidth=height*.047;c.lineCap='round';c.beginPath();c.moveTo(0,0);c.lineTo(direction*height*.09,-height*.1);c.stroke();c.strokeStyle='#c8a17a';c.lineWidth=height*.035;c.beginPath();c.moveTo(direction*height*.09,-height*.1);c.lineTo(direction*height*.12,-height*.19);c.stroke();c.restore();
-  }
-  if(u.braced||override.shield>.4){c.strokeStyle='#cddbd5';c.lineWidth=Math.max(1,height*.018);c.beginPath();c.ellipse(-width*.17,-height*.32,width*.15,height*.17,-.15,Math.PI*.55,Math.PI*1.7);c.stroke();}
+  const draw=(facing,alpha)=>{
+    const column=FACING_COLUMN[facing]??0,mounted=['cavalry','heavy'].includes(u.role),spear=spec.atlas==='roman'&&spec.row===3||spec.atlas==='frontier'&&[0,2].includes(spec.row)||spec.atlas==='specialists'&&spec.row>=2;
+    // Atlas inspection supplies the actual painted hand, never a mirrored body.
+    const hand=spear?[[-1,1,1,1],[-1,1,-1,1]][spec.atlas==='roman'?1:0][column]:column<2?-1:1;
+    const profile={mounted,civic:spec.atlas==='civic',archer:u.role==='archer',spear,hand,direction:[0,2].includes(column)?1:-1,braced:!!u.braced};
+    const pose=sampleSpritePose(override,profile),sx=column*192,sy=spec.row*256;
+    c.save();c.globalAlpha*=alpha;c.translate(0,pose.rootY*scale);
+    if(!pose.active){c.rotate(pose.lean*profile.direction);c.scale(1,1-pose.hip/256);c.drawImage(sheet,sx,sy,192,256,-width/2,-240*scale,width,height);}
+    else{
+      const {vertices,triangles}=spriteMesh(pose,profile);
+      c.translate(-width/2,-240*scale);c.scale(scale,scale);
+      for(const ids of triangles){
+        const [a,b,d]=ids.map(i=>vertices[i]),den=(b.x-a.x)*(d.y-a.y)-(d.x-a.x)*(b.y-a.y);
+        const ax=a.x+a.dx,ay=a.y+a.dy,bx=b.x+b.dx,by=b.y+b.dy,dx=d.x+d.dx,dy=d.y+d.dy;
+        const aa=((bx-ax)*(d.y-a.y)-(dx-ax)*(b.y-a.y))/den,bb=((by-ay)*(d.y-a.y)-(dy-ay)*(b.y-a.y))/den;
+        const cc=((dx-ax)*(b.x-a.x)-(bx-ax)*(d.x-a.x))/den,dd=((dy-ay)*(b.x-a.x)-(by-ay)*(d.x-a.x))/den;
+        c.save();c.beginPath();c.moveTo(ax,ay);c.lineTo(bx,by);c.lineTo(dx,dy);c.closePath();c.clip();
+        c.transform(aa,bb,cc,dd,ax-aa*a.x-cc*a.y,ay-bb*a.x-dd*a.y);
+        c.drawImage(sheet,sx,sy,192,256,0,0,192,256);c.restore();
+      }
+    }c.restore();
+  };
+  c.save();c.translate(p.x,p.y);
+  const turn=Number.isFinite(override.turnProgress)?Math.max(0,Math.min(1,override.turnProgress)):1;
+  if(override.previousFacing&&turn<1&&override.previousFacing!==(override.facing??u.facing)){draw(override.previousFacing,1-turn);draw(override.facing??u.facing,turn);}else draw(override.facing??u.facing,1);
   if((u.hp??u.resolve??1)/(u.maxHp??u.maxResolve??1)<.35){c.fillStyle='#9c443d';c.fillRect(width*.06,-height*.39,Math.max(1,height*.026),height*.075);}
   c.restore();return true;
 }

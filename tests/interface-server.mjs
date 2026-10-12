@@ -21,7 +21,7 @@ export function createInterfaceServer({root,label='current',now=()=>performance.
     const began=now()-started;let body,status=200,path=url.pathname;
     try{
       path=decodeURIComponent(path);if(path.endsWith('/'))path+='index.html';
-      const harness=/^\/tests\/interface-(?:load|lab|metrics)(?:\.html|\.js)$/.test(path)||path==='/tests/fixtures/graphics-scenes.json';
+      const harness=/^\/tests\/interface-(?:load|lab|metrics)(?:\.html|\.js)$/.test(path)||/^\/tests\/graphics-(?:(?:lab|sprites)\.(?:html|js)|metrics\.js|review-tools\.js)$/.test(path)||['/tests/fixtures/graphics-scenes.json','/tests/fixtures/graphics-actions.json'].includes(path);
       const directory=harness?harnessRoot:root,relative=harness?path.slice('/tests/'.length):'.'+path;
       const file=resolve(directory,relative);
       if(file!==directory&&!file.startsWith(directory+sep))throw new Error('Outside test root');

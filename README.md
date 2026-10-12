@@ -1,18 +1,26 @@
 # SACRAMENTUM: From Recruit to Emperor
 
-![The Senate rendering introduced in version 0.4, retained by the interface release](docs/images/graphics-gameplay.png)
+![Historical Senate screenshot from version 0.4](docs/images/graphics-gameplay.png)
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service, paid assets, or runtime package dependencies. Core rules run in both a browser and Node.js.
 
-## Version 0.5 — website and interface release
+## Version 0.6 — graphics refinement
 
-This release gives the title page an immediate Play or Continue action, a cinematic opening, and concise sections showing the career, world, an early decision, and actual gameplay captures. A shared ivory, charcoal, and Pompeian-red interface continues through the mobile menu, camp, chapter progression, character equipment, journal, obligations, settings, recovery, and reference panels. Chapters remain earned; navigation does not reset the campaign or bypass an unfinished encounter.
+Painted units now articulate their existing artwork during walking, attacks, throws, bracing, hits, mounted actions and political speeches. Footfall phase follows movement along the visual route; actions have preparation, contact and recovery poses. Directional contact shadows, projectile arcs and distinct impact effects give the figures a clearer relationship to the ground and their targets. These remain procedural animations of four authored facings, rather than a 3D character system or newly painted animation frames.
 
-Read the [interface design system](docs/interface-design-system.md), [initial interface audit](docs/interface-audit.md), [interface verification report](docs/interface-verification.md), and [automated regression evidence](docs/evidence/interface-regression.json). The report distinguishes desktop-browser checks from physical-device testing and records the measured loading journey.
+Connected banks, road wear and material edges follow the actual terrain map. Sparse regional groundcover and exterior camp supplies, moorings, masonry, gardens and chamber seating add context without introducing playable obstacles. Cached ground and bounded detail levels retain the Performance, Balanced, High and reduced-motion controls. The campaign, tactical rules, earned progression and save behavior are unchanged.
 
-The 0.4 graphics remain: faction-specific figures, layered battlefields and chambers, character aging, recurring-cast expressions, and rank-specific ceremonies. Performance, Balanced, High, reduced motion, and text scaling remain available. The twelve chapters, choices, rank gates, rules, and save format are preserved. [Graphics art direction](docs/graphics-art-direction.md), [rendering architecture](docs/graphics-architecture.md), and [narrative artwork](docs/graphics-narrative-art.md) document that system. The [asset manifest](docs/asset-manifest.json) records locally bundled art and provenance.
+Read the [graphics refinement verification report](docs/graphics-refinement-verification.md) for the current comparison, checks actually performed and remaining limits. It separates static rendering cost from animated rendering, legal action captures from isolated pose diagnostics, and browser observations from physical-device evidence. Earlier release measurements below are historical.
+
+## Version 0.5 — historical website and interface release
+
+The interface release introduced an immediate Play or Continue action, a cinematic opening, and concise sections showing the career, world, an early decision, and actual gameplay captures. Its shared ivory, charcoal, and Pompeian-red interface remains throughout the mobile menu, camp, chapter progression, character equipment, journal, obligations, settings, recovery, and reference panels. Chapters remain earned; navigation does not reset the campaign or bypass an unfinished encounter.
+
+Read the [interface design system](docs/interface-design-system.md), [initial interface audit](docs/interface-audit.md), [historical interface verification report](docs/interface-verification.md), and [0.5 automated regression evidence](docs/evidence/interface-regression.json). Those measurements describe the interface release, not the current graphics refinement.
+
+The underlying 0.4 artwork remains: faction-specific figures, layered battlefields and chambers, character aging, recurring-cast expressions, and rank-specific ceremonies. Text scaling also remains available. [Graphics art direction](docs/graphics-art-direction.md), [rendering architecture](docs/graphics-architecture.md), and [narrative artwork](docs/graphics-narrative-art.md) document that foundation. The [asset manifest](docs/asset-manifest.json) records locally bundled art and provenance.
 
 ## Play locally
 
@@ -86,8 +94,9 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/core/career.js` / `src/data/story-stages.js` | Persistent company service, recovery and state-aware story scenes |
 | `src/data/encounters.js` | Authored battlefield layouts, objectives, pressure and route variants |
 | `src/core/legacy-*.js` | Original suspended-encounter rules retained only for old saves and their exact retries |
-| `src/ui/renderer.js` / `battle-art.js` | Canvas battlefield/chamber rendering, depth order, cached ground and path previews |
-| `src/ui/unit-sprites.js` / `world-art.js` | Authored directional unit atlases, faction gear, scenery and environment props |
+| `src/ui/renderer.js` / `battle-art.js` | Canvas battlefield/chamber rendering, depth order, contact shadows, cached ground and path previews |
+| `src/ui/unit-sprites.js` / `sprite-poses.js` | Authored directional unit atlases, faction gear and procedural articulation of painted figures |
+| `src/ui/world-art.js` / `terrain-detail.js` / `battle-effects.js` | Regional scenery, connected terrain detail, projectiles and tactical effects |
 | `src/ui/animation-timeline.js` / `motion.js` / `ambient.js` | Bounded action choreography, visual feedback and scene atmosphere |
 | `src/ui/graphics-quality.js` | Player-selectable presentation tiers and adaptation to measured rendering cost |
 | `src/ui/art.js` / `asset-loader.js` | Portrait/environment selection, chapter asset groups, bounded image loading and cache |
@@ -118,7 +127,7 @@ node scripts/verify-assets.mjs
 
 `npm run verify` runs the rule tests, autoplay, build and asset/offline checks. `node scripts/autoplay.mjs --fixtures` also regenerates the legal-route chapter checkpoints and trace used for browser checks. The full-route runner starts at New Game and uses the same legality-enforced commands as the browser; chapter injection belongs only to separately identified development scenarios.
 
-The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of the current interface. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
+The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of the current graphics refinement. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
 
 Commands and implemented checks are not proof of a particular result. See the accompanying verification report for checks actually run, browser sizes used, finale profiles, and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 

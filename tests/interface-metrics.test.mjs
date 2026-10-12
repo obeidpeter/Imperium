@@ -37,6 +37,7 @@ test('Development server handler emits exact gzip bodies, resets only its ledger
     let report=JSON.parse((await request('/__interface/metrics')).text());assert.equal(report.label,'fixture');assert.equal(report.requests.length,1);assert.equal(report.requests[0].encodedBodyBytes,gzipSync(Buffer.from(source)).length);assert.equal(report.requests[0].uncompressedBodyBytes,Buffer.byteLength(source));
     assert.equal((await request('/__interface/start','POST',{origin:'https://unrelated.test'})).status,403);
     assert.equal((await request('/tests/interface-load.html')).status,200,'The lab is served separately from the selected application root');
+    for(const path of ['/tests/graphics-lab.html','/tests/graphics-lab.js','/tests/graphics-metrics.js','/tests/graphics-review-tools.js','/tests/graphics-sprites.html','/tests/graphics-sprites.js','/tests/fixtures/graphics-scenes.json','/tests/fixtures/graphics-actions.json'])assert.equal((await request(path)).status,200,`Common graphics helper is available even when the selected edition has no test files: ${path}`);
     await request('/__interface/start','POST');report=JSON.parse((await request('/__interface/metrics')).text());assert.equal(report.requests.length,0);
   }finally{assert.ok(resolve(directory).startsWith(resolve(tmpdir())+sep));await rm(directory,{recursive:true,force:true});}
 });

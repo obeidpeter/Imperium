@@ -2,6 +2,8 @@
 import {drawUnitSprite,spriteHeight} from './unit-sprites.js';
 import {worldGround,scenery,drawScenery,atmosphere} from './world-art.js';
 import {idlePose} from './animation-timeline.js';
+import {drawBattleEffects} from './battle-effects.js';
+import {drawTerrainDetail} from './terrain-detail.js';
 const INK='#292c27',IVORY='#f4ecd6';
 export const FIELD_COLORS={selection:'#175d67',movement:'#277c82',attack:'#9c4036',ally:'#285e62',enemy:'#97382e',neutral:'#886736',objective:'#bd9954'};
 const PI=Math.PI;
@@ -188,8 +190,8 @@ let groundCache=null;
 export function rendererCacheStats(){return {surfaces:groundCache?1:0,estimatedBytes:groundCache?groundCache.surface.width*groundCache.surface.height*4:0};}
 export function clearBattleCache(){if(groundCache){groundCache.surface.width=1;groundCache.surface.height=1;}groundCache=null;}
 function ground(c,w,h,g,e,p,chapter,river,quality,ratio){
-  const key=[w,h,g.tw,g.oy,chapter,e.kind,quality,ratio,JSON.stringify(e.terrain)].join('|');
-  const draw=ctx=>{worldGround(ctx,w,h,g,e,p,chapter,quality);for(let depth=0;depth<e.width+e.height;depth++)for(let x=0;x<e.width;x++){const y=depth-x;if(y>=0&&y<e.height)tileSurface(ctx,g,e,p,x,y,river);}};
+  const key=[w,h,g.tw,g.oy,e.width,e.height,chapter,e.kind,quality,ratio,JSON.stringify(e.terrain)].join('|');
+  const draw=ctx=>{worldGround(ctx,w,h,g,e,p,chapter,quality);for(let depth=0;depth<e.width+e.height;depth++)for(let x=0;x<e.width;x++){const y=depth-x;if(y>=0&&y<e.height)tileSurface(ctx,g,e,p,x,y,river);};drawTerrainDetail(ctx,g,e,p,chapter,quality);};
   if(!c.canvas?.ownerDocument&&!globalThis.OffscreenCanvas){draw(c);return;}
   if(groundCache?.key!==key){
     clearBattleCache();const surface=typeof OffscreenCanvas==='function'?new OffscreenCanvas(Math.ceil(w*ratio),Math.ceil(h*ratio)):c.canvas.ownerDocument.createElement('canvas');surface.width=Math.ceil(w*ratio);surface.height=Math.ceil(h*ratio);const ctx=surface.getContext('2d');ctx.setTransform(ratio,0,0,ratio,0,0);draw(ctx);groundCache={key,surface};
@@ -204,20 +206,23 @@ function terrainObject(c,g,q,type,p){
   for(let i=0;i<3;i++){line(c,[[-23,-12-i*9],[2,1-i*9],[23,-10-i*9]],'#535f5040',.7);line(c,[[-12+(i%2)*8,-27+i*8],[-12+(i%2)*8,-20+i*8]],'#6f72594d',.8);}
   c.restore();
 }
-function contactShadow(c,g,q,u,quality){const scale=spriteHeight(g,u)/72,cavalry=['cavalry','heavy'].includes(u.role);c.save();c.translate(q.x,q.y);c.rotate(.32);oval(c,7*scale,2*scale,(cavalry?24:18)*scale,5*scale,'#24352d25');if(quality!=='performance'){oval(c,2*scale,1*scale,(cavalry?17:10)*scale,3.8*scale,'#1c2e293d');}c.restore();}
-function actionEffects(c,g,frame){for(const effect of frame?.effects??[]){const q=xy(g,effect.at?.x??effect.to?.x??0,effect.at?.y??effect.to?.y??0),s=g.tw/60,t=effect.progress??0;c.save();c.globalAlpha=effect.alpha??1;
-    if(effect.type==='projectile'&&effect.from&&effect.to){const a=xy(g,effect.from.x,effect.from.y),b=xy(g,effect.to.x,effect.to.y),x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t-Math.sin(t*Math.PI)*35*s-24*s;c.translate(x,y);c.rotate(Math.atan2(b.y-a.y-Math.cos(t*Math.PI)*35*s*Math.PI,b.x-a.x));line(c,[[-10*s,0],[8*s,0]],'#65533c',1.7*s);polygon(c,[[8*s,0],[4*s,-2*s],[4*s,2*s]],'#f6e6c3');}
-    else if(effect.type==='dust'){for(let i=0;i<4;i++)oval(c,q.x+(i-1.5)*8*s*t,q.y-i*3*s*t,(2+t*5)*s,(1+t*2)*s,'#d5c39665');}
-    else if(effect.type==='impact'){for(let i=0;i<6;i++){const a=i*Math.PI/3;line(c,[[q.x+Math.cos(a)*4*s,q.y-25*s+Math.sin(a)*4*s],[q.x+Math.cos(a)*(6+t*13)*s,q.y-25*s+Math.sin(a)*(6+t*13)*s]],'#fce0a6',1.5*s);}}
-    else if(effect.type==='speech'){oval(c,q.x,q.y-32*s,(10+t*6)*s,(7+t*3)*s,'#f4ecd6dd');c.fillStyle='#6f5a3e';c.font=`bold ${12*s}px Georgia`;c.textAlign='center';c.fillText('…',q.x,q.y-29*s);}
-    else{c.beginPath();c.ellipse(q.x,q.y,(14+t*13)*s,(6+t*7)*s,0,0,Math.PI*2);c.strokeStyle=['defeat','impact'].includes(effect.type)?'#a35643':effect.type==='shield'?'#e1e8cf':'#c1a466';c.lineWidth=2*s;c.stroke();}
-    c.restore();}}
-
+function contactShadow(c,g,q,u,quality){
+  const scale=spriteHeight(g,u)/72,mounted=['cavalry','heavy'].includes(u.role),lift=Math.max(0,-(u.bob??0));
+  c.save();c.translate(q.x,q.y);c.globalAlpha*=Math.max(.55,1-lift*.08);
+  if(quality!=='performance'){
+    // The upper-left light casts a low, soft silhouette toward the foreground.
+    c.save();c.rotate(.38);oval(c,15*scale,0,(mounted?29:24)*scale,(mounted?6:4.8)*scale,'#26312d20');
+    oval(c,31*scale,0,(mounted?5:4.2)*scale,3*scale,'#26312d16');c.restore();
+  }
+  oval(c,1*scale,1.4*scale,(mounted?16:8.5)*scale,3.3*scale,'#1e302f45');
+  if(quality==='high')oval(c,0,1*scale,(mounted?10:5)*scale,1.8*scale,'#1e302f23');
+  c.restore();
+}
 export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={}){
   const p=palette(chapter,e),river=e.terrain?.some(row=>row.some(t=>(typeof t==='string'?t:t?.type)==='ford')),quality=options.quality??'balanced',frame=options.animation??(Number.isFinite(options.ambientTime)?{time:options.ambientTime,unitOverrides:Object.fromEntries(e.units.filter(u=>!u.hidden&&(u.resolve??u.hp??1)>0).map(u=>[u.id,idlePose(u,options.ambientTime)])),effects:[]}:null);
   ground(c,w,h,g,e,p,chapter,river,quality,options.pixelRatio??1);
   tacticalOverlay(c,g,e,selected,targets,focus,options);
-  const items=scenery(e,chapter).map(item=>({...item,kind:'scenery'}));
+  const items=scenery(e,chapter,quality).map(item=>({...item,kind:'scenery'}));
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++){const type=terrain(e,x,y);if(['wall','high','hill','rubble','cover'].includes(type)||type==='rock'&&!river)items.push({kind:'terrain',type,x,y});}
   const units=e.units.filter(u=>!u.hidden&&u.x>=0&&((u.resolve??u.hp??1)>0||(frame?.unitOverrides?.[u.id]?.alpha??0)>0)).map(u=>({...u,...frame?.unitOverrides?.[u.id],kind:'unit',original:u}));
   const s=Math.min(1.3,g.tw/48),watch=units.filter(u=>u.id===selected||u.id===options.target?.unitId).map(u=>xy(g,u.x,u.y));
@@ -234,7 +239,7 @@ export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={})
       if(item.kind==='terrain')terrainObject(c,g,q,item.type,p);else drawScenery(c,g,item,chapter);
     }c.restore();
   }
-  atmosphere(c,w,h,g,chapter,e.kind==='contest',frame,quality);actionEffects(c,g,frame);
+  atmosphere(c,w,h,g,chapter,e.kind==='contest',frame,quality);drawBattleEffects(c,g,frame,quality);
   // Information draws last, so props never hide selection or health/Resolve.
   for(const u of units){const q=xy(g,u.x,u.y);c.save();c.globalAlpha=u.alpha??1;status(c,g,q,s,u,u.id===selected,e.kind==='contest');c.restore();}
   labels(c,w,h,g,e,p,river);

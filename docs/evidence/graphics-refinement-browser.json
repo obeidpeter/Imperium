@@ -1,0 +1,2434 @@
+{
+  "format": "sacramentum-graphics-refinement-browser-v1",
+  "version": "0.6.0",
+  "recordedAt": "2026-10-12T08:19:53.582Z",
+  "finalPackageRevision": "9968c5977d0c",
+  "motionBenchmarkRevision": "9968c5977d0c",
+  "staticRevisionScope": "The static benchmark was captured before the final projectile and footfall timing fixes, which do not change the static draw path. Its original measurement timestamps are preserved.",
+  "motionRevisionScope": "The current motion run used the final rendering code in this build.",
+  "rawEvidence": [
+    {
+      "file": "outputs/graphics-refinement-review/baseline-browser.json",
+      "bytes": 23153,
+      "sha256": "06e21167c39f714dd796306fb984cebd7f450824b6977ce06e18c70959f67cc8",
+      "modifiedAt": "2026-10-12T08:05:12.777Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-browser.json",
+      "bytes": 23294,
+      "sha256": "0131d0665309c7e692b7f7fd33e64a6fffec3cd66b79e4b924819f3230a095b5",
+      "modifiedAt": "2026-10-12T08:06:31.138Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/baseline-motion.json",
+      "bytes": 13396,
+      "sha256": "0cbbfeaa1e632472fbf7a8077ad53e57955acba173f3120db7c2fcddc9ed968a",
+      "modifiedAt": "2026-10-12T08:16:29.395Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-motion.json",
+      "bytes": 13368,
+      "sha256": "b23e9d40c837f2e829474ddbaba8638c3b2b843b9b5b396278f06682d50c4e1d",
+      "modifiedAt": "2026-10-12T08:17:14.180Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/before-move.json",
+      "bytes": 1704,
+      "sha256": "4f7c000575ec7d032e79f2af425c0cd0cb5810da750ca86287791328e4cbfe9d",
+      "modifiedAt": "2026-10-12T08:18:54.725Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-move.json",
+      "bytes": 1703,
+      "sha256": "5b5fa8e6e2eed8236241a9bbeabcbd1e0b0858fe8028405927faa20d87c4ad45",
+      "modifiedAt": "2026-10-12T08:19:05.806Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/before-strike.json",
+      "bytes": 1732,
+      "sha256": "932ca87d1c51579f6233d3d4185aa9c66e8757ac5d2170dc75e6e72350b33fbf",
+      "modifiedAt": "2026-10-12T08:18:56.511Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-strike.json",
+      "bytes": 1731,
+      "sha256": "8e0a0002b3142de844ca7e20224d2c2aa29b53e60c76432bd1e82e254ef0cbd9",
+      "modifiedAt": "2026-10-12T08:19:07.582Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/before-brace.json",
+      "bytes": 1730,
+      "sha256": "5e7b23d6024b13f6eb5bab8b66c1678673cb3fb1b419a7fad6ca873bce9f4a0c",
+      "modifiedAt": "2026-10-12T08:18:58.290Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-brace.json",
+      "bytes": 1729,
+      "sha256": "bf6c077731035e147686dc5922e03e7e75aac8bf90b80b14b9dab497cdaccdfa",
+      "modifiedAt": "2026-10-12T08:19:09.320Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/before-projectile.json",
+      "bytes": 1736,
+      "sha256": "454f63015b0a8c62ac9ae70ec9c60a774ff0960b582199c8e83ef4cd729c2b25",
+      "modifiedAt": "2026-10-12T08:19:00.097Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-projectile.json",
+      "bytes": 1743,
+      "sha256": "2a5663319c3bab2de7a0558f4028eb4ef8a5d487fcc07496062ba1e7202cdd94",
+      "modifiedAt": "2026-10-12T08:19:11.298Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/before-hit.json",
+      "bytes": 1660,
+      "sha256": "4e5d993640353e63dfdb503305cb3f38ae784f760952996062f3631b106aa532",
+      "modifiedAt": "2026-10-12T08:19:01.876Z"
+    },
+    {
+      "file": "outputs/graphics-refinement-review/after-hit.json",
+      "bytes": 1659,
+      "sha256": "0721551f89011c505b2f168dbfa8f8ea9843066d5484bc5bf5004cb9ed2d9968",
+      "modifiedAt": "2026-10-12T08:19:13.256Z"
+    }
+  ],
+  "captures": [
+    {
+      "scene": "all12",
+      "edition": "before",
+      "name": "before-all12.jpg",
+      "width": 1265,
+      "height": 2672,
+      "file": "outputs/graphics-refinement-review/before-all12.jpg",
+      "bytes": 525188,
+      "sha256": "96af66d28eaba879a629268074ef29c081ae49795588e025febb9fcf08482512",
+      "modifiedAt": "2026-10-12T08:19:04.019Z"
+    },
+    {
+      "scene": "all12",
+      "edition": "after",
+      "name": "after-all12.jpg",
+      "width": 1265,
+      "height": 2672,
+      "file": "outputs/graphics-refinement-review/after-all12.jpg",
+      "bytes": 540126,
+      "sha256": "f87d6425db0228be8c70d26ca292b23ebe405687b38e1a9325038f7b51a3c5e6",
+      "modifiedAt": "2026-10-12T08:19:15.327Z"
+    },
+    {
+      "scene": "move",
+      "edition": "before",
+      "name": "before-move.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/before-move.jpg",
+      "bytes": 305924,
+      "sha256": "02462bcad0b9ec9dc2d6685dff40f9ed38c1566bf3f5fa0f0cd9c5165fe573e3",
+      "modifiedAt": "2026-10-12T08:18:54.684Z"
+    },
+    {
+      "scene": "move",
+      "edition": "after",
+      "name": "after-move.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/after-move.jpg",
+      "bytes": 320554,
+      "sha256": "7d74fd885d4e5e6691dc31a9809c5e971001b093d7279cbf0039020de2cd99a9",
+      "modifiedAt": "2026-10-12T08:19:05.770Z"
+    },
+    {
+      "scene": "strike",
+      "edition": "before",
+      "name": "before-strike.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/before-strike.jpg",
+      "bytes": 287196,
+      "sha256": "893d027b0688f24ba8f13099cbebf5d2ab674f6e690fcb0cf183f7ed89f6dc2a",
+      "modifiedAt": "2026-10-12T08:18:56.466Z"
+    },
+    {
+      "scene": "strike",
+      "edition": "after",
+      "name": "after-strike.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/after-strike.jpg",
+      "bytes": 304699,
+      "sha256": "c5063977c116e578b1b2193ec453d0d5fa2b4ed80374c54eff85ae7fdc7e0077",
+      "modifiedAt": "2026-10-12T08:19:07.545Z"
+    },
+    {
+      "scene": "brace",
+      "edition": "before",
+      "name": "before-brace.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/before-brace.jpg",
+      "bytes": 288053,
+      "sha256": "db83b862197438e4c7d1caffe55d7825f7616a6f8827b1ecd3c39a6ffe9d1785",
+      "modifiedAt": "2026-10-12T08:18:58.262Z"
+    },
+    {
+      "scene": "brace",
+      "edition": "after",
+      "name": "after-brace.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/after-brace.jpg",
+      "bytes": 303331,
+      "sha256": "2ba1677de83b4e2f9eefeebe7864bb33c7bf1ec3bd7d91b9ce5e0d1aba8bd98a",
+      "modifiedAt": "2026-10-12T08:19:09.285Z"
+    },
+    {
+      "scene": "projectile",
+      "edition": "before",
+      "name": "before-projectile.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/before-projectile.jpg",
+      "bytes": 287584,
+      "sha256": "782308bd871d8a364f2390f62b571bfc5bc9af3d7f80de24b3b81d243630cdd3",
+      "modifiedAt": "2026-10-12T08:19:00.047Z"
+    },
+    {
+      "scene": "projectile",
+      "edition": "after",
+      "name": "after-projectile.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/after-projectile.jpg",
+      "bytes": 304840,
+      "sha256": "f9f0a116c78f1f5321b1d245b3500896b9d6291befabea23101752a0bb1c0fe6",
+      "modifiedAt": "2026-10-12T08:19:11.224Z"
+    },
+    {
+      "scene": "hit",
+      "edition": "before",
+      "name": "before-hit.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/before-hit.jpg",
+      "bytes": 287709,
+      "sha256": "fe78c068c62192f31fb7bf24d4c9ad67be584fa8f9dddf3d24017c58f4060a30",
+      "modifiedAt": "2026-10-12T08:19:01.821Z"
+    },
+    {
+      "scene": "hit",
+      "edition": "after",
+      "name": "after-hit.jpg",
+      "width": 1265,
+      "height": 1776,
+      "file": "outputs/graphics-refinement-review/after-hit.jpg",
+      "bytes": 304562,
+      "sha256": "8cd67e5e6f7ca8f72369aebbe6095a8f7de440ee6a97266f62c6afaa44e39b12",
+      "modifiedAt": "2026-10-12T08:19:13.209Z"
+    }
+  ],
+  "environment": {
+    "static": {
+      "label": "baseline05",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "devicePixelRatio": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "platform": "actual desktop browser surface; no physical-device result",
+      "quality": "balanced",
+      "fixtureSource": "New Game, seed275. Every state and motion pair is copied after a validated legal command; no debug injection or saved-state editing.",
+      "commandCount": 991,
+      "fixturesSHA256": "94e7cf4fbbe0d98ae1b2d989452ba23aa061d6182a8ef9364574ef9622364c58",
+      "actionFixturesSHA256": "61acd73d073cc6490866152b519a2ee2f6a4fc8e71ab0593d8624879782aceab",
+      "assetsAPI": {
+        "loadArt": true,
+        "prefetchChapter": true
+      },
+      "measurement": "CPU submission/layout and RAF frame intervals are separate; no GPU flush; warmed artwork"
+    },
+    "motion": {
+      "label": "baseline05",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "devicePixelRatio": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "platform": "actual desktop browser surface; no physical-device result",
+      "quality": "balanced",
+      "fixtureSource": "New Game, seed275. Every state and motion pair is copied after a validated legal command; no debug injection or saved-state editing.",
+      "commandCount": 991,
+      "fixturesSHA256": "94e7cf4fbbe0d98ae1b2d989452ba23aa061d6182a8ef9364574ef9622364c58",
+      "actionFixturesSHA256": "61acd73d073cc6490866152b519a2ee2f6a4fc8e71ab0593d8624879782aceab",
+      "assetsAPI": {
+        "loadArt": true,
+        "prefetchChapter": true
+      },
+      "measurement": "CPU submission/layout and RAF frame intervals are separate; no GPU flush; warmed artwork"
+    }
+  },
+  "capturedAt": {
+    "baseline-browser.json": {
+      "startedAt": "2026-10-12T08:04:38.078Z",
+      "finishedAt": "2026-10-12T08:05:00.666Z"
+    },
+    "after-browser.json": {
+      "startedAt": "2026-10-12T08:05:12.803Z",
+      "finishedAt": "2026-10-12T08:05:36.657Z"
+    },
+    "baseline-motion.json": {
+      "startedAt": "2026-10-12T08:15:35.830Z",
+      "finishedAt": "2026-10-12T08:16:08.880Z"
+    },
+    "after-motion.json": {
+      "startedAt": "2026-10-12T08:16:33.123Z",
+      "finishedAt": "2026-10-12T08:17:07.130Z"
+    }
+  },
+  "static": {
+    "groups": {
+      "canvas": {
+        "before": {
+          "rowCount": 24,
+          "measuredDraws": 1080,
+          "medianOfRowMediansMs": 1.1,
+          "rowMedianRangeMs": [
+            0.8,
+            1.6
+          ],
+          "rowP95RangeMs": [
+            1.2,
+            2.8
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        },
+        "after": {
+          "rowCount": 24,
+          "measuredDraws": 1080,
+          "medianOfRowMediansMs": 1.4,
+          "rowMedianRangeMs": [
+            0.9,
+            2.4
+          ],
+          "rowP95RangeMs": [
+            1.6,
+            10.7
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        }
+      },
+      "canvas360": {
+        "before": {
+          "rowCount": 12,
+          "measuredDraws": 540,
+          "medianOfRowMediansMs": 1.15,
+          "rowMedianRangeMs": [
+            0.8,
+            1.5
+          ],
+          "rowP95RangeMs": [
+            1.3,
+            2.7
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        },
+        "after": {
+          "rowCount": 12,
+          "measuredDraws": 540,
+          "medianOfRowMediansMs": 1.45,
+          "rowMedianRangeMs": [
+            0.9,
+            1.9
+          ],
+          "rowP95RangeMs": [
+            1.8,
+            6.1
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        }
+      },
+      "canvas720": {
+        "before": {
+          "rowCount": 12,
+          "measuredDraws": 540,
+          "medianOfRowMediansMs": 1.1,
+          "rowMedianRangeMs": [
+            0.8,
+            1.6
+          ],
+          "rowP95RangeMs": [
+            1.2,
+            2.8
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        },
+        "after": {
+          "rowCount": 12,
+          "measuredDraws": 540,
+          "medianOfRowMediansMs": 1.35,
+          "rowMedianRangeMs": [
+            1.1,
+            2.4
+          ],
+          "rowP95RangeMs": [
+            1.6,
+            10.7
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        }
+      },
+      "narrative": {
+        "before": {
+          "rowCount": 4,
+          "measuredDraws": 180,
+          "medianOfRowMediansMs": 4.85,
+          "rowMedianRangeMs": [
+            4.5,
+            5.6
+          ],
+          "rowP95RangeMs": [
+            6.4,
+            7.2
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        },
+        "after": {
+          "rowCount": 4,
+          "measuredDraws": 180,
+          "medianOfRowMediansMs": 4.5,
+          "rowMedianRangeMs": [
+            3.6,
+            8.4
+          ],
+          "rowP95RangeMs": [
+            5.2,
+            11.5
+          ],
+          "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+        }
+      }
+    },
+    "rows": [
+      {
+        "scene": "board-ch1-road",
+        "kind": "board",
+        "chapter": 1,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1,
+            "p95Ms": 2.399999976158142,
+            "minMs": 0.5,
+            "maxMs": 3.100000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 18.10000000000582,
+            "minMs": 13.200000000011642,
+            "maxMs": 33.5
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 2.3000000715255737,
+            "minMs": 0.3999999761581421,
+            "maxMs": 3.100000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 24.29999999998836,
+            "minMs": 1.7999999999883585,
+            "maxMs": 32
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 10,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch1-road",
+        "kind": "board",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.8999999761581421,
+            "p95Ms": 2,
+            "minMs": 0.5999999046325684,
+            "maxMs": 4.699999928474426
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.39999999999418,
+            "maxMs": 16.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.5999999046325684,
+            "minMs": 0.7999999523162842,
+            "maxMs": 4.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 14.299999999988358,
+            "maxMs": 19
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.5,
+        "medianChangePercent": 55.556,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch2-marsh",
+        "kind": "board",
+        "chapter": 2,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.8999999761581421,
+            "p95Ms": 1.399999976158142,
+            "minMs": 0.5,
+            "maxMs": 1.7000000476837158
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 14.5,
+            "maxMs": 18.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 2.1999999284744263,
+            "minMs": 0.5,
+            "maxMs": 2.9000000953674316
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 18.60000000000582,
+            "minMs": 6,
+            "maxMs": 33.19999999998254
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 22.222,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch2-marsh",
+        "kind": "board",
+        "chapter": 2,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1,
+            "p95Ms": 1.5,
+            "minMs": 0.2999999523162842,
+            "maxMs": 2.1999999284744263
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.29999999998836,
+            "maxMs": 16.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.1999999284744263,
+            "p95Ms": 1.600000023841858,
+            "minMs": 0.6999999284744263,
+            "maxMs": 2.299999952316284
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 17,
+            "minMs": 16.39999999999418,
+            "maxMs": 33.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 20,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch3-station",
+        "kind": "board",
+        "chapter": 3,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.200000047683716,
+            "minMs": 0.7000000476837158,
+            "maxMs": 2.3000000715255737
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.29999999998836,
+            "maxMs": 17
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.6999999284744263,
+            "p95Ms": 2.200000047683716,
+            "minMs": 0.6999999284744263,
+            "maxMs": 3.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 33.29999999998836,
+            "minMs": 8.10000000000582,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 21.429,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch3-station",
+        "kind": "board",
+        "chapter": 3,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2999999523162842,
+            "p95Ms": 1.8000000715255737,
+            "minMs": 0.7000000476837158,
+            "maxMs": 2.399999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.39999999999418,
+            "maxMs": 16.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.200000047683716,
+            "minMs": 0.6000000238418579,
+            "maxMs": 2.700000047683716
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 33.39999999999418,
+            "minMs": 15.700000000011642,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 7.692,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch4-gate",
+        "kind": "board",
+        "chapter": 4,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 1.7000000476837158,
+            "minMs": 0.6999999284744263,
+            "maxMs": 1.9000000953674316
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16,
+            "maxMs": 17
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.5,
+            "p95Ms": 2.1999999284744263,
+            "minMs": 0.6000000238418579,
+            "maxMs": 2.4000000953674316
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.900000000023283,
+            "minMs": 8.199999999982538,
+            "maxMs": 33.40000000002328
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 7.143,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch4-gate",
+        "kind": "board",
+        "chapter": 4,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.5,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.299999952316284
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.29999999998836,
+            "maxMs": 17
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.5,
+            "minMs": 0.8999999761581421,
+            "maxMs": 4.899999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 17.10000000000582,
+            "minMs": 7.7000000000116415,
+            "maxMs": 34.20000000001164
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0,
+        "medianChangePercent": 0,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch5-mine",
+        "kind": "board",
+        "chapter": 5,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.3000000715255737,
+            "p95Ms": 2.700000047683716,
+            "minMs": 0.7999999523162842,
+            "maxMs": 3.8000000715255737
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.5,
+            "maxMs": 16.800000000017462
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.7000000476837158,
+            "p95Ms": 3.600000023841858,
+            "minMs": 1.0999999046325684,
+            "maxMs": 4.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.70000000001164,
+            "minMs": 16.5,
+            "maxMs": 16.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.4,
+        "medianChangePercent": 30.769,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch5-mine",
+        "kind": "board",
+        "chapter": 5,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.600000023841858,
+            "p95Ms": 2.799999952316284,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.399999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 14,
+            "maxMs": 19.400000000023283
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 2.399999976158142,
+            "p95Ms": 10.699999928474426,
+            "minMs": 1.0999999046325684,
+            "maxMs": 40.10000002384186
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 33,
+            "minMs": 15.39999999999418,
+            "maxMs": 50
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.8,
+        "medianChangePercent": 50,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch6-wells",
+        "kind": "board",
+        "chapter": 6,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.1999999284744263,
+            "p95Ms": 2.200000047683716,
+            "minMs": 0.5,
+            "maxMs": 2.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 14.099999999976717,
+            "maxMs": 18.5
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.7000000476837158,
+            "p95Ms": 4.700000047683716,
+            "minMs": 0.7999999523162842,
+            "maxMs": 38.60000002384186
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 33.10000000000582,
+            "minMs": 8.200000000011642,
+            "maxMs": 33.90000000002328
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.5,
+        "medianChangePercent": 41.667,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch6-wells",
+        "kind": "board",
+        "chapter": 6,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.299999952316284,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.100000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 17,
+            "minMs": 13.89999999999418,
+            "maxMs": 35.19999999998254
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.600000023841858,
+            "p95Ms": 3.100000023841858,
+            "minMs": 0.7999999523162842,
+            "maxMs": 3.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.70000000001164,
+            "p95Ms": 17,
+            "minMs": 15.699999999982538,
+            "maxMs": 33.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 14.286,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch7-legion",
+        "kind": "board",
+        "chapter": 7,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.5,
+            "p95Ms": 2.5,
+            "minMs": 0.5,
+            "maxMs": 3.299999952316284
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.29999999998836,
+            "maxMs": 16.900000000023283
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.7999999523162842,
+            "p95Ms": 6.100000023841858,
+            "minMs": 1,
+            "maxMs": 118.19999992847443
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.70000000001164,
+            "p95Ms": 39.10000000000582,
+            "minMs": 8.200000000011642,
+            "maxMs": 127.60000000000582
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 4,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 20,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch7-legion",
+        "kind": "board",
+        "chapter": 7,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1,
+            "p95Ms": 1.7000000476837158,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.100000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 8.299999999988358,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.899999976158142,
+            "p95Ms": 3.700000047683716,
+            "minMs": 0.8999999761581421,
+            "maxMs": 12.100000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 33.39999999999418,
+            "minMs": 8.299999999988358,
+            "maxMs": 35.5
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.9,
+        "medianChangePercent": 90,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch8-ferry",
+        "kind": "board",
+        "chapter": 8,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.8999999761581421,
+            "p95Ms": 1.3000000715255737,
+            "minMs": 0.6000000238418579,
+            "maxMs": 2
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 24.900000000023283,
+            "minMs": 8.299999999988358,
+            "maxMs": 34
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2000000476837158,
+            "p95Ms": 2.700000047683716,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.5,
+            "maxMs": 16.800000000017462
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 33.333,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch8-ferry",
+        "kind": "board",
+        "chapter": 8,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1,
+            "p95Ms": 1.5999999046325684,
+            "minMs": 0.5,
+            "maxMs": 5.199999928474426
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 19.70000000001164,
+            "minMs": 6.5,
+            "maxMs": 33.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2999999523162842,
+            "p95Ms": 2.600000023841858,
+            "minMs": 0.5,
+            "maxMs": 3
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 17,
+            "minMs": 14.299999999988358,
+            "maxMs": 19.300000000017462
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 30,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch9-wing",
+        "kind": "board",
+        "chapter": 9,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1,
+            "p95Ms": 1.4000000953674316,
+            "minMs": 0.8000000715255737,
+            "maxMs": 2.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 25,
+            "minMs": 8.299999999988358,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.9000000953674316,
+            "p95Ms": 3.799999952316284,
+            "minMs": 0.5,
+            "maxMs": 4.599999904632568
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.79999999998836,
+            "minMs": 16.10000000000582,
+            "maxMs": 17.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.9,
+        "medianChangePercent": 90,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch9-wing",
+        "kind": "board",
+        "chapter": 9,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2999999523162842,
+            "p95Ms": 2.5999999046325684,
+            "minMs": 0.5999999046325684,
+            "maxMs": 2.700000047683716
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 16.800000000017462,
+            "minMs": 8.199999999982538,
+            "maxMs": 17.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2999999523162842,
+            "p95Ms": 3.200000047683716,
+            "minMs": 0.8999999761581421,
+            "maxMs": 4.399999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 15.299999999988358,
+            "maxMs": 18.10000000000582
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0,
+        "medianChangePercent": 0,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch10-road",
+        "kind": "board",
+        "chapter": 10,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.7999999523162842,
+            "p95Ms": 1.399999976158142,
+            "minMs": 0.3999999761581421,
+            "maxMs": 1.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 25,
+            "minMs": 6.599999999976717,
+            "maxMs": 33.30000000001746
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.9000000953674316,
+            "p95Ms": 1.7999999523162842,
+            "minMs": 0.5,
+            "maxMs": 2.1999999284744263
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 15.700000000011642,
+            "maxMs": 17.60000000000582
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 12.5,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch10-road",
+        "kind": "board",
+        "chapter": 10,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 0.7999999523162842,
+            "p95Ms": 1.1999999284744263,
+            "minMs": 0.3999999761581421,
+            "maxMs": 1.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 19.10000000000582,
+            "minMs": 14.299999999988358,
+            "maxMs": 33.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 1.899999976158142,
+            "minMs": 0.5,
+            "maxMs": 2.399999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.39999999999418,
+            "maxMs": 17
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 37.5,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch11-adlection",
+        "kind": "board",
+        "chapter": 11,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 1.8000000715255737,
+            "minMs": 0.8999999761581421,
+            "maxMs": 2
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 16.900000000023283,
+            "minMs": 8.099999999976717,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.399999976158142,
+            "p95Ms": 2.299999952316284,
+            "minMs": 0.7000000476837158,
+            "maxMs": 2.5999999046325684
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 16.29999999998836,
+            "maxMs": 17
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0,
+        "medianChangePercent": 0,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch11-adlection",
+        "kind": "board",
+        "chapter": 11,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 2.100000023841858,
+            "minMs": 0.5,
+            "maxMs": 2.299999952316284
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 19.800000000017462,
+            "minMs": 8.200000000011642,
+            "maxMs": 33.29999999998836
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2999999523162842,
+            "p95Ms": 2.5999999046325684,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.600000023841858
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 15.60000000000582,
+            "maxMs": 17.5
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 18.182,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch12-confrontation",
+        "kind": "board",
+        "chapter": 12,
+        "width": 360,
+        "height": 196,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 1.600000023841858,
+            "minMs": 0.6000000238418579,
+            "maxMs": 3.399999976158142
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 25,
+            "minMs": 8.099999999976717,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 1.899999976158142,
+            "minMs": 0.5,
+            "maxMs": 2.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 17.20000000001164,
+            "minMs": 14.199999999982538,
+            "maxMs": 21
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0,
+        "medianChangePercent": 0,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch12-confrontation",
+        "kind": "board",
+        "chapter": 12,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.0999999046325684,
+            "p95Ms": 2.1999999284744263,
+            "minMs": 0.5999999046325684,
+            "maxMs": 3.1999999284744263
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 21.60000000000582,
+            "minMs": 8.10000000000582,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 1.2000000476837158,
+            "p95Ms": 1.8000000715255737,
+            "minMs": 0.6000000238418579,
+            "maxMs": 2.1999999284744263
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 18.199999999982538,
+            "minMs": 8.299999999988358,
+            "maxMs": 35
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 9.091,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "camp-1",
+        "kind": "camp",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 5.600000023841858,
+            "p95Ms": 7.199999928474426,
+            "minMs": 3.200000047683716,
+            "maxMs": 7.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 17,
+            "minMs": 8.39999999999418,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 8.399999976158142,
+            "p95Ms": 11.5,
+            "minMs": 3.5,
+            "maxMs": 14.5
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.39999999999418,
+            "maxMs": 33.30000000001746
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 2.8,
+        "medianChangePercent": 50,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "promotion-10",
+        "kind": "promotion",
+        "chapter": 10,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 5,
+            "p95Ms": 6.899999976158142,
+            "minMs": 1.399999976158142,
+            "maxMs": 7.700000047683716
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 25,
+            "minMs": 16.300000000017462,
+            "maxMs": 33.40000000002328
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 1,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 5.100000023841858,
+            "p95Ms": 6.699999928474426,
+            "minMs": 2.899999976158142,
+            "maxMs": 7.299999952316284
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.79999999998836,
+            "minMs": 16.39999999999418,
+            "maxMs": 16.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 2,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "promotion-11",
+        "kind": "promotion",
+        "chapter": 11,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 4.700000047683716,
+            "p95Ms": 6.399999976158142,
+            "minMs": 1.4000000953674316,
+            "maxMs": 6.800000071525574
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 33.20000000001164,
+            "minMs": 8,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 3.5999999046325684,
+            "p95Ms": 5.200000047683716,
+            "minMs": 2.399999976158142,
+            "maxMs": 6
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.89999999999418,
+            "minMs": 16.400000000023283,
+            "maxMs": 33.39999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": -1.1,
+        "medianChangePercent": -23.404,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "ending",
+        "kind": "ending",
+        "chapter": 12,
+        "width": 720,
+        "height": 540,
+        "command": null,
+        "before": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 4.5,
+            "p95Ms": 6.399999976158142,
+            "minMs": 2,
+            "maxMs": 7.099999904632568
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.699999999982538,
+            "p95Ms": 16.800000000017462,
+            "minMs": 8.299999999988358,
+            "maxMs": 21.89999999999418
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "after": {
+          "cpu": {
+            "samples": 45,
+            "medianMs": 3.899999976158142,
+            "p95Ms": 5.300000071525574,
+            "minMs": 2.200000047683716,
+            "maxMs": 6.700000047683716
+          },
+          "raf": {
+            "samples": 44,
+            "medianMs": 16.60000000000582,
+            "p95Ms": 16.900000000023283,
+            "minMs": 8.099999999976717,
+            "maxMs": 17.20000000001164
+          },
+          "paintIntervals": null,
+          "intervalsOver33ms": 0,
+          "intervalCount": 44
+        },
+        "medianDeltaMs": -0.6,
+        "medianChangePercent": -13.333,
+        "stateUnchanged": true
+      }
+    ]
+  },
+  "motion": {
+    "before": {
+      "rowCount": 8,
+      "measuredDraws": 1668,
+      "medianOfRowMediansMs": 1.05,
+      "rowMedianRangeMs": [
+        0.9,
+        1.5
+      ],
+      "rowP95RangeMs": [
+        1.3,
+        3
+      ],
+      "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+    },
+    "after": {
+      "rowCount": 8,
+      "measuredDraws": 1720,
+      "medianOfRowMediansMs": 1.35,
+      "rowMedianRangeMs": [
+        1.1,
+        1.9
+      ],
+      "rowP95RangeMs": [
+        1.9,
+        3.4
+      ],
+      "method": "Median and ranges of per-row summaries; not a pooled-frame median or pooled p95."
+    },
+    "rows": [
+      {
+        "scene": "action-move",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "move",
+          "x": 2,
+          "y": 3
+        },
+        "before": {
+          "cpu": {
+            "samples": 150,
+            "medianMs": 1.5,
+            "p95Ms": 2.3000000715255737,
+            "minMs": 0.6999999284744263,
+            "maxMs": 3.6999999284744263
+          },
+          "raf": {
+            "samples": 138,
+            "medianMs": 16.699999999999818,
+            "p95Ms": 16.90000000000009,
+            "minMs": 16.399999999999864,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 144,
+            "medianMs": 16.5,
+            "p95Ms": 29.200000047683716,
+            "minMs": 5.299999952316284,
+            "maxMs": 43.799999952316284
+          },
+          "intervalsOver33ms": 1,
+          "intervalCount": 138
+        },
+        "after": {
+          "cpu": {
+            "samples": 116,
+            "medianMs": 1.7000000476837158,
+            "p95Ms": 2.6999999284744263,
+            "minMs": 0.9000000953674316,
+            "maxMs": 3.600000023841858
+          },
+          "raf": {
+            "samples": 107,
+            "medianMs": 16.699999999999818,
+            "p95Ms": 17.09999999999991,
+            "minMs": 8.100000000000136,
+            "maxMs": 33.40000000000009
+          },
+          "paintIntervals": {
+            "samples": 110,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 25.200000047683716,
+            "minMs": 4.600000023841858,
+            "maxMs": 33.60000002384186
+          },
+          "intervalsOver33ms": 1,
+          "intervalCount": 107
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 13.333,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "action-strike",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "strike",
+          "x": 2,
+          "y": 3,
+          "targetId": "dummy"
+        },
+        "before": {
+          "cpu": {
+            "samples": 184,
+            "medianMs": 1,
+            "p95Ms": 1.5,
+            "minMs": 0.5999999046325684,
+            "maxMs": 2.1999999284744263
+          },
+          "raf": {
+            "samples": 173,
+            "medianMs": 16.699999999999818,
+            "p95Ms": 16.800000000000182,
+            "minMs": 16,
+            "maxMs": 33.400000000000546
+          },
+          "paintIntervals": {
+            "samples": 178,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 17.600000023841858,
+            "minMs": 11.399999976158142,
+            "maxMs": 32
+          },
+          "intervalsOver33ms": 1,
+          "intervalCount": 173
+        },
+        "after": {
+          "cpu": {
+            "samples": 174,
+            "medianMs": 1.4000000953674316,
+            "p95Ms": 2.5,
+            "minMs": 0.5,
+            "maxMs": 3
+          },
+          "raf": {
+            "samples": 172,
+            "medianMs": 16.600000000000364,
+            "p95Ms": 25.09999999999991,
+            "minMs": 8.300000000000182,
+            "maxMs": 33.400000000000546
+          },
+          "paintIntervals": {
+            "samples": 168,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 30.200000047683716,
+            "minMs": 6.699999928474426,
+            "maxMs": 36.300000071525574
+          },
+          "intervalsOver33ms": 1,
+          "intervalCount": 172
+        },
+        "medianDeltaMs": 0.4,
+        "medianChangePercent": 40,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "action-brace",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "brace",
+          "x": 1,
+          "y": 3,
+          "targetId": "hero"
+        },
+        "before": {
+          "cpu": {
+            "samples": 317,
+            "medianMs": 0.8999999761581421,
+            "p95Ms": 1.2999999523162842,
+            "minMs": 0.5,
+            "maxMs": 2.6999999284744263
+          },
+          "raf": {
+            "samples": 306,
+            "medianMs": 16.69999999999891,
+            "p95Ms": 16.80000000000109,
+            "minMs": 15.5,
+            "maxMs": 17.80000000000109
+          },
+          "paintIntervals": {
+            "samples": 311,
+            "medianMs": 16.600000023841858,
+            "p95Ms": 17.299999952316284,
+            "minMs": 13.699999928474426,
+            "maxMs": 32.199999928474426
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 306
+        },
+        "after": {
+          "cpu": {
+            "samples": 295,
+            "medianMs": 1.100000023841858,
+            "p95Ms": 2.600000023841858,
+            "minMs": 0.5,
+            "maxMs": 6.699999928474426
+          },
+          "raf": {
+            "samples": 296,
+            "medianMs": 16.69999999999891,
+            "p95Ms": 25,
+            "minMs": 8,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 289,
+            "medianMs": 16.700000047683716,
+            "p95Ms": 31.399999976158142,
+            "minMs": 6.700000047683716,
+            "maxMs": 36.39999997615814
+          },
+          "intervalsOver33ms": 3,
+          "intervalCount": 296
+        },
+        "medianDeltaMs": 0.2,
+        "medianChangePercent": 22.222,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "action-projectile",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "throw",
+          "x": 2,
+          "y": 3,
+          "targetId": "dummy"
+        },
+        "before": {
+          "cpu": {
+            "samples": 239,
+            "medianMs": 1,
+            "p95Ms": 1.899999976158142,
+            "minMs": 0.5,
+            "maxMs": 6.300000071525574
+          },
+          "raf": {
+            "samples": 228,
+            "medianMs": 16.69999999999891,
+            "p95Ms": 16.80000000000291,
+            "minMs": 13.400000000001455,
+            "maxMs": 19.899999999997817
+          },
+          "paintIntervals": {
+            "samples": 233,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 17.200000047683716,
+            "minMs": 11.299999952316284,
+            "maxMs": 30.200000047683716
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 228
+        },
+        "after": {
+          "cpu": {
+            "samples": 283,
+            "medianMs": 1.0999999046325684,
+            "p95Ms": 2.1999999284744263,
+            "minMs": 0.5,
+            "maxMs": 3.899999976158142
+          },
+          "raf": {
+            "samples": 277,
+            "medianMs": 16.69999999999891,
+            "p95Ms": 16.900000000001455,
+            "minMs": 8.100000000000364,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 277,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 18.299999952316284,
+            "minMs": 13.199999928474426,
+            "maxMs": 35
+          },
+          "intervalsOver33ms": 3,
+          "intervalCount": 277
+        },
+        "medianDeltaMs": 0.1,
+        "medianChangePercent": 10,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "action-hit",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "action": "endTurn"
+        },
+        "before": {
+          "cpu": {
+            "samples": 191,
+            "medianMs": 0.8999999761581421,
+            "p95Ms": 1.7000000476837158,
+            "minMs": 0.3999999761581421,
+            "maxMs": 5.700000047683716
+          },
+          "raf": {
+            "samples": 181,
+            "medianMs": 16.700000000000728,
+            "p95Ms": 17,
+            "minMs": 15.100000000002183,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 185,
+            "medianMs": 16.600000023841858,
+            "p95Ms": 18.799999952316284,
+            "minMs": 3.399999976158142,
+            "maxMs": 33.800000071525574
+          },
+          "intervalsOver33ms": 2,
+          "intervalCount": 181
+        },
+        "after": {
+          "cpu": {
+            "samples": 197,
+            "medianMs": 1.1999999284744263,
+            "p95Ms": 1.899999976158142,
+            "minMs": 0.5,
+            "maxMs": 2.5
+          },
+          "raf": {
+            "samples": 186,
+            "medianMs": 16.69999999999709,
+            "p95Ms": 16.900000000001455,
+            "minMs": 15.400000000001455,
+            "maxMs": 19.299999999999272
+          },
+          "paintIntervals": {
+            "samples": 191,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 17.299999952316284,
+            "minMs": 10.399999976158142,
+            "maxMs": 30.799999952316284
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 186
+        },
+        "medianDeltaMs": 0.3,
+        "medianChangePercent": 33.333,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch1-road",
+        "kind": "motion",
+        "chapter": 1,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "strike",
+          "x": 3,
+          "y": 2,
+          "targetId": "enemy0"
+        },
+        "before": {
+          "cpu": {
+            "samples": 175,
+            "medianMs": 1.0999999046325684,
+            "p95Ms": 2.399999976158142,
+            "minMs": 0.5,
+            "maxMs": 7.299999952316284
+          },
+          "raf": {
+            "samples": 181,
+            "medianMs": 16.69999999999709,
+            "p95Ms": 33.20000000000073,
+            "minMs": 6.799999999999272,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 169,
+            "medianMs": 16.600000023841858,
+            "p95Ms": 33.299999952316284,
+            "minMs": 10.100000023841858,
+            "maxMs": 48.699999928474426
+          },
+          "intervalsOver33ms": 2,
+          "intervalCount": 181
+        },
+        "after": {
+          "cpu": {
+            "samples": 185,
+            "medianMs": 1.7000000476837158,
+            "p95Ms": 2.8000000715255737,
+            "minMs": 0.5,
+            "maxMs": 4.299999952316284
+          },
+          "raf": {
+            "samples": 174,
+            "medianMs": 16.69999999999709,
+            "p95Ms": 16.80000000000291,
+            "minMs": 12.5,
+            "maxMs": 20.700000000000728
+          },
+          "paintIntervals": {
+            "samples": 179,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 20,
+            "minMs": 4.100000023841858,
+            "maxMs": 46.5
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 174
+        },
+        "medianDeltaMs": 0.6,
+        "medianChangePercent": 54.545,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch9-wing",
+        "kind": "motion",
+        "chapter": 9,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "hero",
+          "action": "throw",
+          "x": 6,
+          "y": 3,
+          "targetId": "enemy1"
+        },
+        "before": {
+          "cpu": {
+            "samples": 230,
+            "medianMs": 1.3000000715255737,
+            "p95Ms": 3,
+            "minMs": 0.7999999523162842,
+            "maxMs": 4.5
+          },
+          "raf": {
+            "samples": 235,
+            "medianMs": 16.600000000002183,
+            "p95Ms": 16.900000000001455,
+            "minMs": 6.799999999999272,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 224,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 24,
+            "minMs": 6.199999928474426,
+            "maxMs": 33.799999952316284
+          },
+          "intervalsOver33ms": 2,
+          "intervalCount": 235
+        },
+        "after": {
+          "cpu": {
+            "samples": 287,
+            "medianMs": 1.3000000715255737,
+            "p95Ms": 2,
+            "minMs": 0.7999999523162842,
+            "maxMs": 2.9000000953674316
+          },
+          "raf": {
+            "samples": 276,
+            "medianMs": 16.69999999999709,
+            "p95Ms": 16.900000000001455,
+            "minMs": 14.5,
+            "maxMs": 18.799999999999272
+          },
+          "paintIntervals": {
+            "samples": 281,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 17.199999928474426,
+            "minMs": 12.300000071525574,
+            "maxMs": 31.5
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 276
+        },
+        "medianDeltaMs": 0,
+        "medianChangePercent": 0,
+        "stateUnchanged": true
+      },
+      {
+        "scene": "board-ch11-adlection",
+        "kind": "motion",
+        "chapter": 11,
+        "width": 720,
+        "height": 540,
+        "command": {
+          "unitId": "speaker-ally",
+          "action": "denounce",
+          "x": 5,
+          "y": 7,
+          "targetId": "elder-speaker"
+        },
+        "before": {
+          "cpu": {
+            "samples": 182,
+            "medianMs": 1.5,
+            "p95Ms": 2.299999952316284,
+            "minMs": 1,
+            "maxMs": 3.799999952316284
+          },
+          "raf": {
+            "samples": 228,
+            "medianMs": 16.30000000000291,
+            "p95Ms": 16.900000000001455,
+            "minMs": 7.69999999999709,
+            "maxMs": 24.900000000001455
+          },
+          "paintIntervals": {
+            "samples": 176,
+            "medianMs": 16.600000023841858,
+            "p95Ms": 20,
+            "minMs": 7.799999952316284,
+            "maxMs": 34
+          },
+          "intervalsOver33ms": 0,
+          "intervalCount": 228
+        },
+        "after": {
+          "cpu": {
+            "samples": 183,
+            "medianMs": 1.899999976158142,
+            "p95Ms": 3.4000000953674316,
+            "minMs": 0.6000000238418579,
+            "maxMs": 4.599999904632568
+          },
+          "raf": {
+            "samples": 174,
+            "medianMs": 16.69999999999709,
+            "p95Ms": 16.899999999997817,
+            "minMs": 8.099999999998545,
+            "maxMs": 33.5
+          },
+          "paintIntervals": {
+            "samples": 177,
+            "medianMs": 16.699999928474426,
+            "p95Ms": 18,
+            "minMs": 11.799999952316284,
+            "maxMs": 33.799999952316284
+          },
+          "intervalsOver33ms": 2,
+          "intervalCount": 174
+        },
+        "medianDeltaMs": 0.4,
+        "medianChangePercent": 26.667,
+        "stateUnchanged": true
+      }
+    ]
+  },
+  "productionSmoke": {
+    "productionRevision": "9968c5977d0c",
+    "environment": {
+      "browser": "Codex in-app browser / Chromium 154 on Windows",
+      "origin": "http://127.0.0.1:4323/",
+      "desktopViewport": "1280x900",
+      "phoneViewport": "360x740",
+      "physicalDevice": false
+    },
+    "checks": [
+      {
+        "name": "Fresh production New Game",
+        "result": "pass",
+        "details": "Version 0.6.0 visible. Began recruit, chose Tell Varro the truth, entered training via real UI; no imported or edited state."
+      },
+      {
+        "name": "Four legal training actions",
+        "result": "pass",
+        "details": "Moved from 1D to 2D, threw javelin, ended turn, struck training partner, ended turn, braced. Real UI reached 4/4 demonstrations and Objective Achieved on turn 3 with 20/22 health."
+      },
+      {
+        "name": "Quality and motion controls",
+        "result": "pass",
+        "details": "Selected Performance and enabled reduced motion in Settings, closed panel, then reloaded and resumed. Settings retained both values. Switched to High and disabled reduced motion; static board remained readable."
+      },
+      {
+        "name": "Narrow production layout",
+        "result": "pass",
+        "details": "At 360x740, body and document scroll widths both 360; battlefield CSS width 339.203125 and height 193.828125. Turn 3, 20/22 health and 4/4 objective retained in Performance and High captures."
+      },
+      {
+        "name": "Reload and resume",
+        "result": "pass",
+        "details": "Reload opened returning-player landing page. Continue restored completed training encounter at turn 3, 20/22 health, 4/4 demonstrated actions and Record the result control."
+      },
+      {
+        "name": "Production console",
+        "result": "pass",
+        "details": "No error-level entries returned by the browser console inspection after the above actions."
+      },
+      {
+        "name": "Existing preview upgraded",
+        "result": "pass",
+        "details": "Existing 4193 tab was on the title screen with Play now. Revalidated worker, navigated away briefly for normal activation, returned to same origin, and observed Version 0.6.0. No saves were deleted or imported."
+      }
+    ],
+    "visualObservations": [
+      "Inspected actual 12-chapter browser gallery: regions retain distinct green frontier, marsh, eastern sand and Curia stone palettes; banks, verge details and exterior props add context without replacing tactical markers.",
+      "Inspected 40-cell four-facing dark-ground sprite diagnostic at 46% pose phase: no obvious detached limbs or mesh gaps at the captured display scale. This is an enlarged isolated pose inspection, not legal gameplay evidence.",
+      "Paired filmstrips cover legal move, strike, brace, throw and enemy hit. Throw release and trail distance were corrected after review; final captures use those corrections.",
+      "Inspected 360x196 Senate board: side/selection markers remain visible, but the dense chamber and small figures still rely on the named unit/target controls for precise selection.",
+      "Production phone capture retains battlefield,selected unit,objective and result control with normal vertical scrolling. A phone viewport in a desktop browser does not establish physical touch behavior."
+    ],
+    "limitations": [
+      "Static 28-case timing run preceded only the final projectile-release and footfall-timing corrections; the static draw path was unchanged by those corrections.",
+      "Motion timings and captures are local desktop-browser observations; no GPU completion, physical iOS/Android, installed-PWA update, battery or human enjoyment claim.",
+      "Animation deforms existing painted four-facing sprites procedurally. It is not newly authored bitmap animation or a 3D character model."
+    ],
+    "motionBenchmarkRevision": "9968c5977d0c",
+    "evidence": {
+      "file": "work/graphics-06-smoke.json",
+      "bytes": 3819,
+      "sha256": "d1c19c0112dfa9cb227fec4df7c16fa4e55ac482c6d6d015f6d03fd16e6b39c9",
+      "modifiedAt": "2026-10-12T08:17:51.139Z"
+    }
+  },
+  "visualObservations": [
+    "Inspected actual 12-chapter browser gallery: regions retain distinct green frontier, marsh, eastern sand and Curia stone palettes; banks, verge details and exterior props add context without replacing tactical markers.",
+    "Inspected 40-cell four-facing dark-ground sprite diagnostic at 46% pose phase: no obvious detached limbs or mesh gaps at the captured display scale. This is an enlarged isolated pose inspection, not legal gameplay evidence.",
+    "Paired filmstrips cover legal move, strike, brace, throw and enemy hit. Throw release and trail distance were corrected after review; final captures use those corrections.",
+    "Inspected 360x196 Senate board: side/selection markers remain visible, but the dense chamber and small figures still rely on the named unit/target controls for precise selection.",
+    "Production phone capture retains battlefield,selected unit,objective and result control with normal vertical scrolling. A phone viewport in a desktop browser does not establish physical touch behavior."
+  ],
+  "limitations": [
+    "Actual desktop Chromium browser measurements; canvas sizes do not establish physical-phone performance or touch behavior.",
+    "Synchronous Canvas submission is separate from GPU completion. RAF and paint intervals are not a guaranteed FPS result.",
+    "One captured benchmark series per edition, warmed artwork and fixed legal fixtures. No population estimate, battery, thermal, VRAM or production-network benchmark.",
+    "Filmstrips are deterministic samples of the actual animation timeline, not recordings of real-time pacing or DOM overlay badge timing.",
+    "Sprite contact sheets, if inspected, use deliberately isolated pose/facing overrides over legally sourced unit identities; they are not actual gameplay actions.",
+    "Autoplay verifies one legal deterministic campaign route, not human playtime, enjoyment or every possible strategy.",
+    "Static 28-case timing run preceded only the final projectile-release and footfall-timing corrections; the static draw path was unchanged by those corrections.",
+    "Motion timings and captures are local desktop-browser observations; no GPU completion, physical iOS/Android, installed-PWA update, battery or human enjoyment claim.",
+    "Animation deforms existing painted four-facing sprites procedurally. It is not newly authored bitmap animation or a 3D character model."
+  ]
+}

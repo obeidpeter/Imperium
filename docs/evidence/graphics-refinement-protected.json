@@ -1,0 +1,89 @@
+{
+  "format": "sacramentum-graphics-protected-v1",
+  "recordedAt": "2026-10-12T08:09:06.670Z",
+  "baseline": "../../work/graphics-baseline-05/Sacramentum",
+  "scope": "Every file in src/core and src/data plus browser storage and session-gate modules. Added/deleted files are failures. Renderer/presentation files are intentionally outside this invariant.",
+  "count": 13,
+  "unchangedCount": 13,
+  "allUnchanged": true,
+  "files": [
+    {
+      "path": "src/core/battle.js",
+      "baselineSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+      "currentSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/career.js",
+      "baselineSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+      "currentSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/contest.js",
+      "baselineSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+      "currentSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/debug.js",
+      "baselineSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+      "currentSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/game.js",
+      "baselineSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+      "currentSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/legacy-battle.js",
+      "baselineSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+      "currentSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/legacy-contest.js",
+      "baselineSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+      "currentSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/shared.js",
+      "baselineSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+      "currentSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+      "unchanged": true
+    },
+    {
+      "path": "src/data/campaign.js",
+      "baselineSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+      "currentSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+      "unchanged": true
+    },
+    {
+      "path": "src/data/encounters.js",
+      "baselineSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+      "currentSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+      "unchanged": true
+    },
+    {
+      "path": "src/data/story-stages.js",
+      "baselineSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+      "currentSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/session-gate.js",
+      "baselineSha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+      "currentSha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/storage.js",
+      "baselineSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+      "currentSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+      "unchanged": true
+    }
+  ]
+}

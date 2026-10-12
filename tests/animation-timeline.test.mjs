@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildEncounterTimeline,sampleEncounterTimeline,idlePose,MOTION_BUDGETS} from '../src/ui/animation-timeline.js';
 import {snapshotEncounter,playEncounterMotion} from '../src/ui/motion.js';
+import {sampleSpritePose} from '../src/ui/sprite-poses.js';
 
 const clone=value=>JSON.parse(JSON.stringify(value));
 const unit=(id,x,y,extra={})=>({id,name:id,side:id==='hero'?'player':'enemy',role:'infantry',x,y,hp:12,maxHp:12,morale:80,facing:'east',...extra});
@@ -27,6 +28,8 @@ test('Javelin leaves the thrower after wind-up and arrives before target recover
   const before=encounter([unit('hero',1,3),unit('enemy',4,3)]),after=clone(before);after.units[1].hp=9;
   const timeline=buildEncounterTimeline(before,after,{command:{unitId:'hero',action:'throw',targetId:'enemy',x:4,y:3}}),projectile=timeline.effects.find(e=>e.type==='projectile'),hit=timeline.tracks.find(t=>t.pose==='hit');
   assert.ok(projectile.start>timeline.tracks.find(t=>t.pose==='throw').start);assert.equal(projectile.start+projectile.duration,hit.start);const effect=sampleEncounterTimeline(timeline,projectile.start+projectile.duration/2).effects.find(e=>e.type==='projectile');assert.equal(effect.progress,.5);assert.ok(effect.height>0);assert.deepEqual(effect.from,{x:1,y:3});assert.deepEqual(effect.to,{x:4,y:3});
+  const release=sampleSpritePose(sampleEncounterTimeline(timeline,projectile.start).unitOverrides.hero);
+  assert.ok(release.arm>0&&release.reach>7,'projectile releases from the extended throwing pose, after wind-up');
 });
 
 test('Brace, shield impacts, rally and formation cues render from committed visual changes',()=>{
