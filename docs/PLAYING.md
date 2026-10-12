@@ -2,6 +2,8 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
+This guide describes version 0.7’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+
 ## The campaign loop
 
 1. Read the camp passages with **Read on**. The mission panel states the objective and new capabilities to demonstrate.
@@ -33,7 +35,7 @@ Click or tap units, actions, targets, and Confirm. The target selector supplies 
 
 Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit or target. **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
 
-Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional. Reduced motion is available, and game meaning never depends on audio alone.
+Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional, with an **Effects volume** slider. Reduced motion is available, and game meaning never depends on audio alone.
 
 ### Graphics and readability
 
@@ -53,14 +55,16 @@ The protagonist is marked with a star. His fall loses the battle. Each unit has 
 | Throw javelin | Attack a legal ranged target; ammunition is limited. |
 | Assist | Shield or recover a wounded casualty so the rescue can proceed. |
 | Scout | Reveal hidden enemies and concealed ground before advancing. |
-| Order | Replace an ally’s displayed intention, spending command capacity. |
+| Order | Replace an ally’s displayed intention, spending command capacity. Advance, attack, hold, restore morale, or withdraw toward the commander and brace. |
 | Formation | Give a shared order to up to three adjacent allies for one command. Choose line, shield wall, or wedge and an ordered intention. |
 | Rally | Restore nearby morale when the army risks breaking. |
 | Deploy | Reposition the command at the beginning of the legion battle; use it before spending the opening movement. |
 
-Marsh slows movement. Walls and high ground protect. River crossings funnel movement through fords. Flanking changes defence, and heavy cavalry tires in heat. Avoid letting a commander become surrounded while a more expendable formation chases an enemy.
+Marsh slows movement. Walls and high ground protect; height also improves ranged attacks. River crossings funnel movement through fords. Entering a tile beside a visible hostile melee unit ends movement, so a line can screen an approach. You can still leave an engaged starting tile; there are no automatic reaction attacks. Flanks bypass frontal shield defence, and cavalry needs an open approach to charge. Read the damage preview’s actual modifiers before committing.
 
-Command capacity is **1** in Chapter IV, **3** in V, **4** in VI, **5** in VII–VIII, and **6** thereafter. The protagonist’s own direct actions do not spend this budget. Unordered allies follow their visible intentions. Formation orders use the units’ existing action limits and last only for the current round. Shield wall gives two protection but limits movement to one; line ignores the marsh surcharge and reduces morale loss by five; wedge adds one attack and one incoming damage. Facing shown on unit bases determines frontal defence; strikes preview the actual approach.
+Command capacity is **1** in Chapter IV, **3** in V, **4** in VI, **5** in VII–VIII, and **6** thereafter. The protagonist’s own direct actions do not spend this budget. Unordered allies follow their visible intentions. Formation orders use the units’ existing action limits and last only for the current round. Shield wall gives two protection, limits movement to one and gains extra frontal protection beside another shield-wall member. Line ignores the marsh surcharge, reduces morale loss and screens ranged attacks when cohesive. Wedge adds melee damage on firm open ground but increases incoming damage; its attack benefit is lost in marsh, fords and fortifications.
+
+Hits reduce morale on both sides. Shaken units strike less effectively; broken autonomous units fall back and regroup. Rally can restore their initiative. Guards, archers, cavalry and raiders consider different positions and targets; allies also consider escorts and objectives. **Allied plans & visible threats** shows their current intentions. Plans can change as the position changes, and hidden enemies are not disclosed.
 
 Named companions’ permanent fates follow clearly signalled narrative choices. An allied unit’s ordinary tactical defeat does not silently kill a recurring character in the story. In a rescue, even a difficult personal decision does not remove the chance to Assist another casualty and complete the mission.
 
@@ -72,15 +76,19 @@ Members’ **Stance** runs from −6 to +6. At +1 a member votes for your motion
 
 | Speech | Effect and trade-off |
 | --- | --- |
-| Persuade | A modest shift in an adjacent member’s stance. |
-| Promise | A strong shift in exchange for a concrete obligation. One promise per recipient, at most two per Contest. |
+| Persuade | Shift an adjacent member’s stance. A living allied speaker within two tiles adds one point. |
+| Promise | Gain support for a concrete obligation. One promise per recipient, at most two per Contest; grain and office promises cost three supplies to honour, others two. |
 | Threaten | Fast support at the cost of Public Confidence and resistance in the member’s bloc. |
 | Address the Chamber | An area stance shift; positioning matters, and the ability has a cooldown. |
 | Rebut | Restore a friendly speaker’s Resolve or weaken a rival’s next speech. |
 | Invoke Record | Appeal to a delegate once per Contest. Service-focused delegates respond most; grain and office interests respond weakly. |
 | Denounce | Reduce a rival speaker’s Resolve. Their withdrawal removes actions, not their vote. |
 
-Inspect each delegate’s interest. A grain or office promise can achieve more than a military appeal; law responds to persuasion and public address. Concrete promises carry their debt beyond the vote. Keep an eye on rival intentions. A coalition built only on bare +1 support can be overturned before the deadline. Use both player speakers, move into useful range, and defend enough votes while demonstrating that chapter’s required new abilities. The [Contest rules sheet](contest-rules.md) contains exact tuning values.
+Inspect each delegate’s bloc and personal interest. Veterans favour Record and Threaten, Landholders favour Promise, and Civic delegates favour Persuade and Address while resisting Threaten. Grain or office interests respond better to promises than military appeals; law responds well to persuasion and public address. The preview includes commitment resistance, stance caps, every affected delegate, net votes and costs.
+
+Concrete promises carry their debt beyond the vote. Breaking one costs eight Public Confidence and four Political Backing; honouring with insufficient supplies costs one Public Confidence per missing supply. Brokers put additional pressure on promised supporters. The preview names the commitment and its due chapter before you confirm.
+
+The coalition panel distinguishes committed delegates from wavering support and shows remaining promises. Rivals’ next replies are forecasts if the position holds: lobbyists value swing votes, prosecutors exploit vulnerable speakers, and brokers contest pledged support. Your actions can change those plans. Use both player speakers, compare staying together with covering distant seats, and defend enough votes while demonstrating the chapter’s required abilities. The [Contest rules sheet](contest-rules.md) contains exact tuning values.
 
 ## What each chapter adds
 
@@ -114,6 +122,8 @@ After the accession, read the epilogue and create the reign card if desired. The
 ## Failure, retry, and saves
 
 **Retry checkpoint** restores the complete encounter-start campaign and random seed. Choices made in camp before that encounter remain. Actions, damage, provisional promises, and other staged effects inside it are rolled back. A defeated political Contest can also offer a patron-funded rerun with a new debt; it still requires winning the vote.
+
+Older active battles and Contests retain their original outcomes and Retry rules when imported. Internally, new encounters carry `combatVersion: 2` or `politicsVersion: 2`; this is automatic and does not require starting a new chronicle.
 
 Autosave follows game actions. Look for **Chronicle saved** and any storage warning. Only one local campaign occupies the save slot: **New chronicle** replaces it after the new-game flow. Export first if you want to preserve an older campaign.
 

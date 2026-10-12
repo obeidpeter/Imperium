@@ -15,7 +15,7 @@ export function turnReplaySteps(before, after, events = []) {
   }).slice(-6);
 }
 
-export function createTurnReplay({show, finish, delay = fn => setTimeout(fn, 620), cancelDelay = clearTimeout}) {
+export function createTurnReplay({show, finish, delay = fn => setTimeout(fn, 380), cancelDelay = clearTimeout}) {
   let timer, generation = 0, active = false;
   function stop() {
     generation++;

@@ -1,4 +1,5 @@
 // Short, deterministic cues from committed actions. Never a gameplay simulation.
+import {formationGlyph} from './scene-materials.js';
 const TAU=Math.PI*2;
 const clamp=n=>Math.max(0,Math.min(1,Number.isFinite(n)?n:0));
 const point=(g,p)=>({x:g.ox+(p.x-p.y)*g.tw/2,y:g.oy+(p.x+p.y)*g.th/2});
@@ -47,6 +48,10 @@ export function drawBattleEffects(c,g,frame,quality='balanced'){
     }else if(effect.type==='slash'){
       const from=point(g,effect.from),to=point(g,effect.to),angle=Math.atan2(to.y-from.y,to.x-from.x),radius=13*s;
       c.translate(from.x,from.y-25*s);c.rotate(angle);c.beginPath();c.arc(8*s,0,radius,-.9+t*.65,.15+t*.8);c.strokeStyle='#f5e6c17a';c.lineWidth=Math.max(1,2.4*s);c.stroke();
+    }else if((effect.type==='impact'||effect.type==='shield')&&effect.political){
+      // Lost Resolve is an interrupted argument, never a wound or weapon strike.
+      const y=q.y-28*s;
+      for(const sign of [-1,1])line(c,{x:q.x+sign*(3+t*7)*s,y:y-6*s},{x:q.x+sign*(8+t*10)*s,y:y+3*s},'#855363',1.8*s);
     }else if(effect.type==='impact'||effect.type==='shield'){
       const defended=effect.type==='shield',base=effect.source?point(g,effect.source):{x:q.x-1,y:q.y},direction=Math.atan2(q.y-base.y,q.x-base.x),radius=(4+t*15)*s;
       // A flash at the point of contact, followed by a few directional sparks.
@@ -57,10 +62,28 @@ export function drawBattleEffects(c,g,frame,quality='balanced'){
       }
       if(defended){c.beginPath();c.ellipse(q.x-5*s,q.y-24*s,(8+t*3)*s,13*s,-.18,-1.9,1.3);c.strokeStyle='#f4f0d0';c.lineWidth=Math.max(.8,(1-t)*2*s);c.stroke();}
     }else if(effect.type==='speech'){
-      // Two quiet projected arcs suggest an addressed room, without covering faces.
-      const dest=effect.to?point(g,effect.to):{x:q.x+30*s,y:q.y},angle=Math.atan2(dest.y-q.y,dest.x-q.x);
-      c.translate(q.x,q.y-28*s);c.rotate(angle);
-      for(let i=0;i<2;i++){c.beginPath();c.arc(0,0,(11+t*12+i*6)*s,-.4,.4);c.strokeStyle=i?'#e4d3a67a':'#f6e7c5';c.lineWidth=Math.max(.8,1.4*s);c.stroke();}
+      const dest=effect.to?point(g,effect.to):{x:q.x+30*s,y:q.y},color=['threaten','denounce'].includes(effect.action)?'#965153':'#456f68';
+      // A low ink stroke connects the actual speaker and addressed recipient.
+      // It stays below faces and never invents a political range/area rule.
+      c.beginPath();c.moveTo(q.x,q.y-7*s);c.quadraticCurveTo((q.x+dest.x)/2,(q.y+dest.y)/2-18*s,dest.x,dest.y-7*s);
+      c.strokeStyle='#f2e5cda6';c.lineWidth=3*s;c.stroke();c.strokeStyle=color;c.lineWidth=1.1*s;c.setLineDash([3*s,3*s]);c.stroke();c.setLineDash([]);
+      const x=dest.x,y=dest.y-(13+t*5)*s;
+      if(effect.action==='promise'||effect.action==='record'){
+        c.fillStyle='#eee0bb';c.fillRect(x-4*s,y-7*s,8*s,10*s);c.strokeStyle='#9a7952';c.lineWidth=.8*s;c.strokeRect(x-4*s,y-7*s,8*s,10*s);
+        line(c,{x:x-2*s,y:y-3*s},{x:x+2*s,y:y-3*s},color,s);ellipse(c,x,y+3*s,2.3*s,2.3*s,'#9a5147');
+      }else{ellipse(c,x,y,3*s,3*s,'#f3e6c8');ellipse(c,x,y,1.7*s,1.7*s,color);}
+    }else if(effect.type==='stance'||effect.type==='morale'||effect.type==='allegiance'){
+      const color=effect.delta<0?'#985345':'#39736a',x=q.x,y=q.y-(10+t*9)*s;
+      if(effect.type==='stance'){
+        ellipse(c,x,y,5*s,5*s,'#f2e7ce');c.strokeStyle=color;c.lineWidth=1.4*s;c.beginPath();c.arc(x,y,5*s,0,TAU);c.stroke();
+        line(c,{x:x-2*s,y},{x:x+2*s,y},color,1.3*s);if(effect.delta>0)line(c,{x,y:y-2*s},{x,y:y+2*s},color,1.3*s);
+      }else{
+        const sign=effect.delta<0?-1:1;
+        line(c,{x:x-6*s,y:y+sign*2*s},{x,y:y-sign*2*s},color,2*s);line(c,{x,y:y-sign*2*s},{x:x+6*s,y:y+sign*2*s},color,2*s);
+        if(effect.type==='allegiance')line(c,{x:x-6*s,y:y+6*s},{x:x+6*s,y:y+6*s},'#c1a466',2*s);
+      }
+    }else if(effect.type==='ring'&&effect.formation){
+      const points=formationGlyph(effect.formation);c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(q.x+x*s*(1+t*.3),q.y+y*s+9*s):c.moveTo(q.x+x*s*(1+t*.3),q.y+y*s+9*s));c.strokeStyle='#f5e6bf';c.lineWidth=3*s;c.stroke();c.strokeStyle='#3f756f';c.lineWidth=1.4*s;c.stroke();
     }else{
       c.beginPath();c.ellipse(q.x,q.y,(14+t*13)*s,(6+t*7)*s,0,0,TAU);c.strokeStyle=effect.type==='defeat'?'#a35643':effect.healing?'#9cc0a4':'#c1a466';c.lineWidth=Math.max(.8,2*s);c.stroke();
     }

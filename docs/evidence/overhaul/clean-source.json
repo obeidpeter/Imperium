@@ -1,0 +1,65 @@
+{
+  "version": "0.7.0",
+  "passed": true,
+  "tests": 247,
+  "pass": 247,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "command": "node <fresh-source>/scripts/prepare-tests.mjs (from parent work directory), then node --test <all tests/*.test.mjs> (from fresh source)",
+  "fixtureGeneration": {
+    "sequential": true,
+    "generatedBy": [
+      "scripts/autoplay.mjs --fixtures",
+      "scripts/graphics-fixtures.mjs",
+      "tests/graphics-action-fixtures.mjs"
+    ],
+    "allStepsPassed": true,
+    "initialGeneratedFixturesPresent": false,
+    "campaignRank": "Augustus",
+    "campaignEncounters": 25,
+    "campaignTurns": 213
+  },
+  "freshSource": "work/overhaul-clean-source-07",
+  "excludedBeforeCopy": [
+    "dist",
+    "tests/fixtures",
+    ".git",
+    "node_modules",
+    "__pycache__"
+  ],
+  "log": "work/overhaul-clean-source-tests.txt",
+  "notes": [
+    "No runtime or fixture semantics changed. npm test now invokes this preparation through pretest.",
+    "Verified via direct preparation and node test commands using bundled Node, rather than invoking npm.",
+    "Test subprocess completed with exit code 0. Outer Python wrapper then encountered a Windows cp1252 checkmark-printing error; complete UTF-8 log and all counts were independently verified without rerunning the tests."
+  ],
+  "testSummary": {
+    "tests": 247,
+    "passed": 247,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 31818.3616
+  },
+  "evidence": {
+    "path": "work/overhaul-clean-source.json",
+    "bytes": 1341,
+    "sha256": "aa343ac61f69bdcd10178687150378d4df5a7e17180b9d37808574be5d095471"
+  },
+  "logEvidence": {
+    "path": "work/overhaul-clean-source-tests.txt",
+    "bytes": 28631,
+    "sha256": "83ac3a38c7b91c05137f0d8f5be8122842ed62583637a44bc64b7783abdd3907"
+  },
+  "preparationEvidence": {
+    "path": "outputs/Sacramentum/scripts/prepare-tests.mjs",
+    "bytes": 1104,
+    "sha256": "081b7ddc5f380f5a6b36bf8c8f5776de06fcbac5918fe7c769bab6b90b091fc9"
+  },
+  "packageEvidence": {
+    "path": "outputs/Sacramentum/package.json",
+    "bytes": 605,
+    "sha256": "7ae76bbaca5252a63f81ba9505152b5ee36ba94bf6a5d7c2a559bb74dc89a0c2"
+  }
+}

@@ -6,1146 +6,6 @@
   "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
   "assets": [
     {
-      "id": "hero-recruit",
-      "path": "assets/portraits/hero-recruit.webp",
-      "subject": "hero recruit",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          0
-        ],
-        "cropBox": [
-          2,
-          2,
-          442,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "initial",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 15384,
-        "sha256": "ee23527ca1d729612f1359b13714fc4e07b1abf74bdd38ef0285cddd65e9d2aa"
-      }
-    },
-    {
-      "id": "hero-miles",
-      "path": "assets/portraits/hero-miles.webp",
-      "subject": "hero miles",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          0
-        ],
-        "cropBox": [
-          446,
-          2,
-          885,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 17454,
-        "sha256": "dd7295fb2527f4d5c7e78d74dedeeb39c0d7fa3f19b250a88787d0bb11579fc8"
-      }
-    },
-    {
-      "id": "hero-centurion",
-      "path": "assets/portraits/hero-centurion.webp",
-      "subject": "hero centurion",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          0
-        ],
-        "cropBox": [
-          889,
-          2,
-          1328,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 17298,
-        "sha256": "0e7c4aa62075b43affe862cbee0f81d0da728263ba0b0bb2d533a3888f7f342c"
-      }
-    },
-    {
-      "id": "hero-prefect",
-      "path": "assets/portraits/hero-prefect.webp",
-      "subject": "hero prefect",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          3,
-          0
-        ],
-        "cropBox": [
-          1332,
-          2,
-          1772,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 17192,
-        "sha256": "ed3ec931bd35395ec67f5be03deca37ef2c8fba36298d89e33635b724b376dd0"
-      }
-    },
-    {
-      "id": "hero-governor",
-      "path": "assets/portraits/hero-governor.webp",
-      "subject": "hero governor",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          1
-        ],
-        "cropBox": [
-          2,
-          446,
-          442,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 15404,
-        "sha256": "bb4e64ffd72a8c7eb7961e49f9f1965ce6feb1268e895b2a4f2eb6e70cc69762"
-      }
-    },
-    {
-      "id": "hero-senator",
-      "path": "assets/portraits/hero-senator.webp",
-      "subject": "hero senator",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          1
-        ],
-        "cropBox": [
-          446,
-          446,
-          885,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 13874,
-        "sha256": "bc80cc2333a7be0ad8bdcdb4658a025ca50b6db0d091c1e0bf324b8a4184fded"
-      }
-    },
-    {
-      "id": "hero-emperor",
-      "path": "assets/portraits/hero-emperor.webp",
-      "subject": "hero emperor",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          1
-        ],
-        "cropBox": [
-          889,
-          446,
-          1328,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 400,
-        "height": 400,
-        "quality": 74,
-        "method": 6,
-        "bytes": 14532,
-        "sha256": "93b9f9eace91fa7427592bd6f847142a24dbdad1f386abbe6821e4898c36f0fa"
-      }
-    },
-    {
-      "id": "oath-seal",
-      "path": "assets/portraits/oath-seal.webp",
-      "subject": "oath seal",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "hero-career-atlas.png",
-        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          3,
-          1
-        ],
-        "cropBox": [
-          1332,
-          446,
-          1772,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 256,
-        "height": 256,
-        "quality": 80,
-        "method": 6,
-        "bytes": 14894,
-        "sha256": "36ab5864c6ac8de66645b970e77c89d0971cd956bb08c8305f54bf20ef6f8f97"
-      }
-    },
-    {
-      "id": "varro",
-      "path": "assets/portraits/varro.webp",
-      "subject": "varro",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          0
-        ],
-        "cropBox": [
-          2,
-          2,
-          442,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "initial",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 19980,
-        "sha256": "84df88df9af31f1eaa20c703cb12e9d04f69a20905a6bed04e6b6e0eb1aaee82"
-      }
-    },
-    {
-      "id": "lucan",
-      "path": "assets/portraits/lucan.webp",
-      "subject": "lucan",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          0
-        ],
-        "cropBox": [
-          446,
-          2,
-          885,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 20888,
-        "sha256": "d4c4af1573621d2b9ceabc6274e6a4895ec31c1d467daa9722846d48a91b2746"
-      }
-    },
-    {
-      "id": "crispus",
-      "path": "assets/portraits/crispus.webp",
-      "subject": "crispus",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          0
-        ],
-        "cropBox": [
-          889,
-          2,
-          1328,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 17484,
-        "sha256": "eac0f281a6d893340172265cdcab909d2439bd58a5eee5db70ffe52d6ab5ee26"
-      }
-    },
-    {
-      "id": "severianus",
-      "path": "assets/portraits/severianus.webp",
-      "subject": "severianus",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          3,
-          0
-        ],
-        "cropBox": [
-          1332,
-          2,
-          1772,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 15046,
-        "sha256": "7e98a6d6f2159a29b3ef7e3a6d50fdd331614675a359b201bedec27af11317b9"
-      }
-    },
-    {
-      "id": "aelia",
-      "path": "assets/portraits/aelia.webp",
-      "subject": "aelia",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          1
-        ],
-        "cropBox": [
-          2,
-          446,
-          442,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 15866,
-        "sha256": "82371d0b5f8e9c9f8f47e558f24b67ee1152caa652a8fd1cebb7b88011e45138"
-      }
-    },
-    {
-      "id": "paullus",
-      "path": "assets/portraits/paullus.webp",
-      "subject": "paullus",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          1
-        ],
-        "cropBox": [
-          446,
-          446,
-          885,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 13312,
-        "sha256": "f690bed97c6e9dff58d180fabf23d53db5cb1128034b82e3fa627024ae609e03"
-      }
-    },
-    {
-      "id": "sabinus",
-      "path": "assets/portraits/sabinus.webp",
-      "subject": "sabinus",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-neutral-atlas.png",
-        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          1
-        ],
-        "cropBox": [
-          889,
-          446,
-          1328,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 74,
-        "method": 6,
-        "bytes": 19072,
-        "sha256": "dfacf250d25ceefc0f0f45a63ac8e586b1f0d94656f28e32b6076b76bc94470d"
-      }
-    },
-    {
-      "id": "varro-intense",
-      "path": "assets/portraits/varro-intense.webp",
-      "subject": "varro intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          0
-        ],
-        "cropBox": [
-          2,
-          2,
-          442,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 18332,
-        "sha256": "45540594ca847c63a7f5adb6e3788142b47a65068ff7c93db5fcc5a32e59e832"
-      }
-    },
-    {
-      "id": "lucan-intense",
-      "path": "assets/portraits/lucan-intense.webp",
-      "subject": "lucan intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          0
-        ],
-        "cropBox": [
-          446,
-          2,
-          885,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 19236,
-        "sha256": "005258608c8590700e9e1137b0fd07f677e5fcfb42c5cada408ea7bb2d1302ab"
-      }
-    },
-    {
-      "id": "crispus-intense",
-      "path": "assets/portraits/crispus-intense.webp",
-      "subject": "crispus intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          0
-        ],
-        "cropBox": [
-          889,
-          2,
-          1328,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 16058,
-        "sha256": "4271817139c72290db67744870407a15abc402e2b12f8b6ffeca6171e600b243"
-      }
-    },
-    {
-      "id": "severianus-intense",
-      "path": "assets/portraits/severianus-intense.webp",
-      "subject": "severianus intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          3,
-          0
-        ],
-        "cropBox": [
-          1332,
-          2,
-          1772,
-          442
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 13470,
-        "sha256": "a38bebcdcf9f9e684b9c3fecf62b9514d531b2e61035390aadba44641420a742"
-      }
-    },
-    {
-      "id": "aelia-intense",
-      "path": "assets/portraits/aelia-intense.webp",
-      "subject": "aelia intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          1
-        ],
-        "cropBox": [
-          2,
-          446,
-          442,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 14032,
-        "sha256": "2855921b97e7b3e7881a5baee7b6119659ef4378f4b66b8212b40955f507d174"
-      }
-    },
-    {
-      "id": "paullus-intense",
-      "path": "assets/portraits/paullus-intense.webp",
-      "subject": "paullus intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          1
-        ],
-        "cropBox": [
-          446,
-          446,
-          885,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 11880,
-        "sha256": "4a2971e40cfaf2355d279e132c9f918f1cec7cd9e3c25e41c8668a9a3227a478"
-      }
-    },
-    {
-      "id": "sabinus-intense",
-      "path": "assets/portraits/sabinus-intense.webp",
-      "subject": "sabinus intense",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "cast-intense-atlas.png",
-        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
-        "sourceSize": [
-          1774,
-          887
-        ],
-        "atlasColumns": 4,
-        "atlasRows": 2,
-        "cell": [
-          2,
-          1
-        ],
-        "cropBox": [
-          889,
-          446,
-          1328,
-          885
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Narrative, character and promotion presentation",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 336,
-        "height": 336,
-        "quality": 72,
-        "method": 6,
-        "bytes": 17188,
-        "sha256": "b1a9141d05e53a1c590e82d6254f72991af06526846ee97527a9c51b9b8e6a60"
-      }
-    },
-    {
-      "id": "danube",
-      "path": "assets/scenes/danube.webp",
-      "subject": "danube",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "frontier-scenes-atlas.png",
-        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          0
-        ],
-        "cropBox": [
-          2,
-          2,
-          834,
-          468
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 430,
-        "quality": 76,
-        "method": 6,
-        "bytes": 70228,
-        "sha256": "32de2ea471349d74ffeeb78c4f395fead67be92fe67f8bdb9c80fe4f0d0deeb3"
-      }
-    },
-    {
-      "id": "marsh",
-      "path": "assets/scenes/marsh.webp",
-      "subject": "marsh",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "frontier-scenes-atlas.png",
-        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          0
-        ],
-        "cropBox": [
-          838,
-          2,
-          1670,
-          468
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 430,
-        "quality": 76,
-        "method": 6,
-        "bytes": 63074,
-        "sha256": "e848dbc02870c36e600873740e0b1fac816231084041fa90961656854c128c89"
-      }
-    },
-    {
-      "id": "eastern-fort",
-      "path": "assets/scenes/eastern-fort.webp",
-      "subject": "eastern fort",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "frontier-scenes-atlas.png",
-        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          1
-        ],
-        "cropBox": [
-          2,
-          472,
-          834,
-          939
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 431,
-        "quality": 76,
-        "method": 6,
-        "bytes": 70644,
-        "sha256": "b5b1439d85f332f5cd706431299fb855939421d30c59110e82db1073b252fe59"
-      }
-    },
-    {
-      "id": "river-crossing",
-      "path": "assets/scenes/river-crossing.webp",
-      "subject": "river crossing",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "frontier-scenes-atlas.png",
-        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          1
-        ],
-        "cropBox": [
-          838,
-          472,
-          1670,
-          939
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 431,
-        "quality": 76,
-        "method": 6,
-        "bytes": 66712,
-        "sha256": "8ff52a2ef55aa047634374ead0bc742ea744c1f37be6679205385d75b2ac658f"
-      }
-    },
-    {
-      "id": "province",
-      "path": "assets/scenes/province.webp",
-      "subject": "province",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "civic-scenes-atlas.png",
-        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          0
-        ],
-        "cropBox": [
-          2,
-          2,
-          834,
-          468
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 430,
-        "quality": 76,
-        "method": 6,
-        "bytes": 66286,
-        "sha256": "b120b276b2ce926154c079a2d38f4b1e62e3f67b887367a9d500d478cd233de5"
-      }
-    },
-    {
-      "id": "rome",
-      "path": "assets/scenes/rome.webp",
-      "subject": "rome",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "civic-scenes-atlas.png",
-        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          0
-        ],
-        "cropBox": [
-          838,
-          2,
-          1670,
-          468
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 430,
-        "quality": 76,
-        "method": 6,
-        "bytes": 50694,
-        "sha256": "5b920590ac39bb9ec3b7fdf778c34d4de285d28c430a49ba857cf6afe3c69001"
-      }
-    },
-    {
-      "id": "frontier-oath",
-      "path": "assets/scenes/frontier-oath.webp",
-      "subject": "frontier oath",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "civic-scenes-atlas.png",
-        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          0,
-          1
-        ],
-        "cropBox": [
-          2,
-          472,
-          834,
-          939
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "initial",
-      "export": {
-        "format": "WebP",
-        "width": 832,
-        "height": 467,
-        "quality": 80,
-        "method": 6,
-        "bytes": 75842,
-        "sha256": "60bee632591629155fdca0a3577780dd98f18dcdd42a534076b6984cae021109"
-      }
-    },
-    {
-      "id": "accession",
-      "path": "assets/scenes/accession.webp",
-      "subject": "accession",
-      "source": {
-        "method": "OpenAI built-in image_gen",
-        "sourceFile": "civic-scenes-atlas.png",
-        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
-        "sourceSize": [
-          1672,
-          941
-        ],
-        "atlasColumns": 2,
-        "atlasRows": 2,
-        "cell": [
-          1,
-          1
-        ],
-        "cropBox": [
-          838,
-          472,
-          1670,
-          939
-        ],
-        "instructions": "docs/graphics-narrative-art.md"
-      },
-      "usage": "Cinematic chapter, title and accession staging; not a rules map",
-      "loading": "chapter",
-      "export": {
-        "format": "WebP",
-        "width": 768,
-        "height": 431,
-        "quality": 76,
-        "method": 6,
-        "bytes": 54230,
-        "sha256": "04e5133e25c04a1f10a22e07195443baa8154d6d51fda8aadbe8fec2db6e94ac"
-      }
-    },
-    {
       "id": "units-specialists",
       "path": "assets/tactical/units-specialists.webp",
       "subject": "Gothic archer, Roman archer, Persian infantry and Palmyrene infantry; four authored facings per row",
@@ -3397,6 +2257,1146 @@
         "sha256": "1c42c0a8aed7a9925435c07d93aa222c7fe54d10627d22c9228e4f612e2b9e70",
         "meanAbsoluteChannelError": 0.005023956298828125,
         "maxChannelError": 11
+      }
+    },
+    {
+      "id": "hero-recruit",
+      "path": "assets/portraits/hero-recruit.webp",
+      "subject": "hero recruit",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15384,
+        "sha256": "ee23527ca1d729612f1359b13714fc4e07b1abf74bdd38ef0285cddd65e9d2aa"
+      }
+    },
+    {
+      "id": "hero-miles",
+      "path": "assets/portraits/hero-miles.webp",
+      "subject": "hero miles",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17454,
+        "sha256": "dd7295fb2527f4d5c7e78d74dedeeb39c0d7fa3f19b250a88787d0bb11579fc8"
+      }
+    },
+    {
+      "id": "hero-centurion",
+      "path": "assets/portraits/hero-centurion.webp",
+      "subject": "hero centurion",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17298,
+        "sha256": "0e7c4aa62075b43affe862cbee0f81d0da728263ba0b0bb2d533a3888f7f342c"
+      }
+    },
+    {
+      "id": "hero-prefect",
+      "path": "assets/portraits/hero-prefect.webp",
+      "subject": "hero prefect",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17192,
+        "sha256": "ed3ec931bd35395ec67f5be03deca37ef2c8fba36298d89e33635b724b376dd0"
+      }
+    },
+    {
+      "id": "hero-governor",
+      "path": "assets/portraits/hero-governor.webp",
+      "subject": "hero governor",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15404,
+        "sha256": "bb4e64ffd72a8c7eb7961e49f9f1965ce6feb1268e895b2a4f2eb6e70cc69762"
+      }
+    },
+    {
+      "id": "hero-senator",
+      "path": "assets/portraits/hero-senator.webp",
+      "subject": "hero senator",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 13874,
+        "sha256": "bc80cc2333a7be0ad8bdcdb4658a025ca50b6db0d091c1e0bf324b8a4184fded"
+      }
+    },
+    {
+      "id": "hero-emperor",
+      "path": "assets/portraits/hero-emperor.webp",
+      "subject": "hero emperor",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 400,
+        "height": 400,
+        "quality": 74,
+        "method": 6,
+        "bytes": 14532,
+        "sha256": "93b9f9eace91fa7427592bd6f847142a24dbdad1f386abbe6821e4898c36f0fa"
+      }
+    },
+    {
+      "id": "oath-seal",
+      "path": "assets/portraits/oath-seal.webp",
+      "subject": "oath seal",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "hero-career-atlas.png",
+        "sourceSha256": "6978be01c15661272be381ba9a1f9d289e8a187ceb24944eccc80e98a3a641ec",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          1
+        ],
+        "cropBox": [
+          1332,
+          446,
+          1772,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 256,
+        "height": 256,
+        "quality": 80,
+        "method": 6,
+        "bytes": 14894,
+        "sha256": "36ab5864c6ac8de66645b970e77c89d0971cd956bb08c8305f54bf20ef6f8f97"
+      }
+    },
+    {
+      "id": "varro",
+      "path": "assets/portraits/varro.webp",
+      "subject": "varro",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 19980,
+        "sha256": "84df88df9af31f1eaa20c703cb12e9d04f69a20905a6bed04e6b6e0eb1aaee82"
+      }
+    },
+    {
+      "id": "lucan",
+      "path": "assets/portraits/lucan.webp",
+      "subject": "lucan",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 20888,
+        "sha256": "d4c4af1573621d2b9ceabc6274e6a4895ec31c1d467daa9722846d48a91b2746"
+      }
+    },
+    {
+      "id": "crispus",
+      "path": "assets/portraits/crispus.webp",
+      "subject": "crispus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 17484,
+        "sha256": "eac0f281a6d893340172265cdcab909d2439bd58a5eee5db70ffe52d6ab5ee26"
+      }
+    },
+    {
+      "id": "severianus",
+      "path": "assets/portraits/severianus.webp",
+      "subject": "severianus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15046,
+        "sha256": "7e98a6d6f2159a29b3ef7e3a6d50fdd331614675a359b201bedec27af11317b9"
+      }
+    },
+    {
+      "id": "aelia",
+      "path": "assets/portraits/aelia.webp",
+      "subject": "aelia",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 15866,
+        "sha256": "82371d0b5f8e9c9f8f47e558f24b67ee1152caa652a8fd1cebb7b88011e45138"
+      }
+    },
+    {
+      "id": "paullus",
+      "path": "assets/portraits/paullus.webp",
+      "subject": "paullus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 13312,
+        "sha256": "f690bed97c6e9dff58d180fabf23d53db5cb1128034b82e3fa627024ae609e03"
+      }
+    },
+    {
+      "id": "sabinus",
+      "path": "assets/portraits/sabinus.webp",
+      "subject": "sabinus",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-neutral-atlas.png",
+        "sourceSha256": "fba9910eabb31f4b992b66373ab503b432050416a7992a864530373d4c5ab9de",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 74,
+        "method": 6,
+        "bytes": 19072,
+        "sha256": "dfacf250d25ceefc0f0f45a63ac8e586b1f0d94656f28e32b6076b76bc94470d"
+      }
+    },
+    {
+      "id": "varro-intense",
+      "path": "assets/portraits/varro-intense.webp",
+      "subject": "varro intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          442,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 18332,
+        "sha256": "45540594ca847c63a7f5adb6e3788142b47a65068ff7c93db5fcc5a32e59e832"
+      }
+    },
+    {
+      "id": "lucan-intense",
+      "path": "assets/portraits/lucan-intense.webp",
+      "subject": "lucan intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          446,
+          2,
+          885,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 19236,
+        "sha256": "005258608c8590700e9e1137b0fd07f677e5fcfb42c5cada408ea7bb2d1302ab"
+      }
+    },
+    {
+      "id": "crispus-intense",
+      "path": "assets/portraits/crispus-intense.webp",
+      "subject": "crispus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          0
+        ],
+        "cropBox": [
+          889,
+          2,
+          1328,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 16058,
+        "sha256": "4271817139c72290db67744870407a15abc402e2b12f8b6ffeca6171e600b243"
+      }
+    },
+    {
+      "id": "severianus-intense",
+      "path": "assets/portraits/severianus-intense.webp",
+      "subject": "severianus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          3,
+          0
+        ],
+        "cropBox": [
+          1332,
+          2,
+          1772,
+          442
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 13470,
+        "sha256": "a38bebcdcf9f9e684b9c3fecf62b9514d531b2e61035390aadba44641420a742"
+      }
+    },
+    {
+      "id": "aelia-intense",
+      "path": "assets/portraits/aelia-intense.webp",
+      "subject": "aelia intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          446,
+          442,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 14032,
+        "sha256": "2855921b97e7b3e7881a5baee7b6119659ef4378f4b66b8212b40955f507d174"
+      }
+    },
+    {
+      "id": "paullus-intense",
+      "path": "assets/portraits/paullus-intense.webp",
+      "subject": "paullus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          446,
+          446,
+          885,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 11880,
+        "sha256": "4a2971e40cfaf2355d279e132c9f918f1cec7cd9e3c25e41c8668a9a3227a478"
+      }
+    },
+    {
+      "id": "sabinus-intense",
+      "path": "assets/portraits/sabinus-intense.webp",
+      "subject": "sabinus intense",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "cast-intense-atlas.png",
+        "sourceSha256": "66c2e140e4b0dacb76ec68880f4331fbcb9b107983da8be25acc7136ee5b59da",
+        "sourceSize": [
+          1774,
+          887
+        ],
+        "atlasColumns": 4,
+        "atlasRows": 2,
+        "cell": [
+          2,
+          1
+        ],
+        "cropBox": [
+          889,
+          446,
+          1328,
+          885
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Narrative, character and promotion presentation",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 336,
+        "height": 336,
+        "quality": 72,
+        "method": 6,
+        "bytes": 17188,
+        "sha256": "b1a9141d05e53a1c590e82d6254f72991af06526846ee97527a9c51b9b8e6a60"
+      }
+    },
+    {
+      "id": "danube",
+      "path": "assets/scenes/danube.webp",
+      "subject": "danube",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          834,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 66874,
+        "sha256": "3dd79409bd5d1507db0ff08bfd0ada94aec8f3cc914bbedab0422aa45f4a9a80"
+      }
+    },
+    {
+      "id": "marsh",
+      "path": "assets/scenes/marsh.webp",
+      "subject": "marsh",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          838,
+          2,
+          1670,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 59766,
+        "sha256": "209151e084f0273da0bb5f6e0ae664cafbc9adf91ad922d4f05e3711fb1b676b"
+      }
+    },
+    {
+      "id": "eastern-fort",
+      "path": "assets/scenes/eastern-fort.webp",
+      "subject": "eastern fort",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          472,
+          834,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 67042,
+        "sha256": "a88b0034c29718e89a845d49ef3e836b0629f889f1dd836e5d506afd194b8a5a"
+      }
+    },
+    {
+      "id": "river-crossing",
+      "path": "assets/scenes/river-crossing.webp",
+      "subject": "river crossing",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "frontier-scenes-atlas.png",
+        "sourceSha256": "1d9360b982559ece7c4c424c1b6a507135e3123e46f28ba069855fec2f3189ed",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          838,
+          472,
+          1670,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 64380,
+        "sha256": "070761e082a9e3b05a52183900d50cf66a347f5ecd8acae1cf34dbca0b143b6e"
+      }
+    },
+    {
+      "id": "province",
+      "path": "assets/scenes/province.webp",
+      "subject": "province",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          0
+        ],
+        "cropBox": [
+          2,
+          2,
+          834,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 63812,
+        "sha256": "47850209a0c577513332b828d2fea2dde2cb8f9158b4ebe2ac87ef819b066b5b"
+      }
+    },
+    {
+      "id": "rome",
+      "path": "assets/scenes/rome.webp",
+      "subject": "rome",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          0
+        ],
+        "cropBox": [
+          838,
+          2,
+          1670,
+          468
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 430,
+        "quality": 74,
+        "method": 6,
+        "bytes": 48288,
+        "sha256": "8c18af617b467bda1b7ef74b2d1643d0293502ca515475e6f842598c328b7e60"
+      }
+    },
+    {
+      "id": "frontier-oath",
+      "path": "assets/scenes/frontier-oath.webp",
+      "subject": "frontier oath",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          0,
+          1
+        ],
+        "cropBox": [
+          2,
+          472,
+          834,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "initial",
+      "export": {
+        "format": "WebP",
+        "width": 832,
+        "height": 467,
+        "quality": 78,
+        "method": 6,
+        "bytes": 70074,
+        "sha256": "ad667b28fb6f9085083f438ab9bfab2b644bb265a3615836cf03371743f335ef"
+      }
+    },
+    {
+      "id": "accession",
+      "path": "assets/scenes/accession.webp",
+      "subject": "accession",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "civic-scenes-atlas.png",
+        "sourceSha256": "f5ef35c8dbbe77ed371dc1b0213936be26f07364ddf9567b9e47f445be3ff09a",
+        "sourceSize": [
+          1672,
+          941
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "cell": [
+          1,
+          1
+        ],
+        "cropBox": [
+          838,
+          472,
+          1670,
+          939
+        ],
+        "instructions": "docs/graphics-narrative-art.md"
+      },
+      "usage": "Cinematic chapter, title and accession staging; not a rules map",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 768,
+        "height": 431,
+        "quality": 74,
+        "method": 6,
+        "bytes": 51758,
+        "sha256": "795d97da0b2ced70361b8f11fefddfde109a4b23c4bfa8f2045a43c12a52f259"
       }
     }
   ],

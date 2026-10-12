@@ -1,4 +1,5 @@
-// Presentation-only timelines. No rule imports, state mutation, RNG, DOM or clock.
+// Presentation-only timelines. Pure movement predicates; no mutation, RNG, DOM or clock.
+import {movementPinned} from '../core/shared.js';
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,n));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const smooth=t=>t*t*(3-2*t);
@@ -22,8 +23,9 @@ function movementPath(before,after,unit,next){
   while(queue.length){
     queue.sort((a,b)=>a.cost-b.cost||distance(a,end)-distance(b,end));const p=queue.shift();
     if(p.x===end.x&&p.y===end.y){const path=[end];let cursor=key(end);while(parents.has(cursor)){const old=parents.get(cursor);path.unshift(old);cursor=key(old);}return path;}
+    if(p.cost>0&&movementPinned(before,unit,p))continue;
     for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){
-      const cell={x:p.x+dx,y:p.y+dy},id=key(cell),ground=terrain?.[cell.y]?.[cell.x];
+      const cell={x:p.x+dx,y:p.y+dy},id=key(cell),raw=terrain?.[cell.y]?.[cell.x],ground=typeof raw==='string'?raw:raw?.type;
       if(cell.x<0||cell.y<0||cell.x>=width||cell.y>=height||['rock','river'].includes(ground)||occupied.has(id)&&id!==key(end))continue;
       const cost=p.cost+(ground==='marsh'&&unit.formation!=='line'?2:1);
       if(costs.has(id)&&costs.get(id)<=cost)continue;costs.set(id,cost);parents.set(id,position(p));queue.push({...cell,cost});
@@ -92,7 +94,7 @@ export function buildEncounterTimeline(before,after,{command=null,quality='balan
   }
   for(const unit of after.units.filter(visible).slice(0,40)){
     const old=previous.get(unit.id);if(!visible(old))continue;const delta=(unit.resolve??unit.hp??0)-(old.resolve??old.hp??0),start=impactTimes.get(unit.id)??Math.min(650,endOfMove(unit.id)+180);
-    if(delta<0){addTrack(unit,living(unit)?'hit':'retreat',start,living(unit)?280:410,{withdrawn:!living(unit)});addEffect({type:old.braced?'shield':'impact',at:position(unit),source:impactSources.get(unit.id),start,duration:230,essential:true,defended:!!old.braced,delta});}
+    if(delta<0){addTrack(unit,living(unit)?'hit':'retreat',start,living(unit)?280:410,{withdrawn:!living(unit),source:impactSources.get(unit.id)});addEffect({type:old.braced?'shield':'impact',at:position(unit),source:impactSources.get(unit.id),start,duration:230,essential:true,defended:!!old.braced,political:after.kind==='contest',delta});}
     else if(delta>0)addEffect({type:'ring',at:position(unit),start,duration:300,essential:true,healing:true});
     for(const stat of ['morale','stance'])if(Number.isFinite(old[stat])&&Number.isFinite(unit[stat])&&old[stat]!==unit[stat])addEffect({type:stat,at:position(unit),delta:unit[stat]-old[stat],start,duration:310,essential:true});
     if(unit.side!==old.side)addEffect({type:'allegiance',at:position(unit),start:180,duration:420,essential:true});
@@ -108,7 +110,7 @@ function samplePath(path,progress){
 }
 function actionPose(track,progress){
   const phase=progress<.24?'anticipation':progress<.52?'impact':'recovery',strike=progress<.24?-Math.sin(progress/.24*Math.PI/2)*.25:progress<.52?Math.sin((progress-.24)/.28*Math.PI)*1.1:Math.sin((1-progress)/.48*Math.PI/2)*.3;
-  const pose={...neutralPose(),pose:track.pose,phase,progress};
+  const pose={...neutralPose(),pose:track.pose,phase,progress,action:track.action};
   if(['attack','cavalry-attack','throw'].includes(track.pose)){pose.weapon=strike;pose.lean=strike*.17;pose.bob=track.pose==='cavalry-attack'?-Math.max(0,strike)*1.2:0;}
   if(['brace','formation'].includes(track.pose)){pose.shield=Math.sin(Math.PI*clamp(progress/.85));pose.lean=-pose.shield*.06;}
   if(track.pose==='hit'){pose.lean=-Math.sin(progress*Math.PI)*.19;pose.shield=.3;}
@@ -124,7 +126,9 @@ export function sampleEncounterTimeline(timeline,elapsed=0){
     let pose={...idlePose(after,time),x:after.x,y:after.y,facing:after.facing??before.facing??'east',previousFacing:before.facing??'east',turnProgress:clamp(time/220)};
     if(move){const p=clamp((time-move.start)/move.duration),sample=samplePath(move.path,smooth(p));pose.x=sample.x;pose.y=sample.y;if(time<move.start+move.duration){const next=move.path[Math.min(move.path.length-1,sample.segment+1)];pose={...pose,pose:move.pose,phase:p<.12?'anticipation':p>.88?'recovery':'impact',progress:p,stridePhase:smooth(p)*Math.max(1,move.path.length-1)*Math.PI*2,facing:facing(sample,next,pose.facing),bob:Math.sin(p*Math.PI*Math.max(2,move.path.length-1)*2)*(move.pose==='cavalry-move'?1.6:1.1),lean:move.pose==='run'?.06:0};}else{pose.x=after.x;pose.y=after.y;}}
     const actions=timeline.tracks.filter(t=>t.unitId===id&&!t.path&&time>=t.start&&time<t.start+t.duration);
-    for(const track of actions){const progress=clamp((time-track.start)/track.duration);pose={...pose,...actionPose(track,progress)};if(track.target)pose.facing=facing(pose,track.target,pose.facing);}
+    for(const track of actions){const progress=clamp((time-track.start)/track.duration);pose={...pose,...actionPose(track,progress)};if(track.target)pose.facing=facing(pose,track.target,pose.facing);
+      const anchor=track.pose==='hit'?track.source:['attack','cavalry-attack'].includes(track.pose)?track.target:null;
+      if(anchor){const dx=anchor.x-after.x,dy=anchor.y-after.y,d=Math.max(1,Math.abs(dx)+Math.abs(dy)),weight=Math.sin(Math.PI*progress)**2*(track.pose==='hit'?-.075:.09);pose.x+=dx/d*weight;pose.y+=dy/d*weight;}}
     if(!living(after)&&timeline.tracks.some(t=>t.unitId===id&&t.withdrawn&&time>=t.start+t.duration))pose.alpha=0;
     unitOverrides[id]=pose;
   }

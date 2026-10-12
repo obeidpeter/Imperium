@@ -2,7 +2,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {newGame,getChapter,choose,startEncounter,getActions,getTargets,act,endTurn,commitEncounter,advanceChapter,prepare,selectStratagem,negotiate,allocate,judge,swearOath,serialize,chapterRequirements,preview} from '../src/core/game.js';
 import {alive,distance,pathDistance,reachable} from '../src/core/shared.js';
-import {damagePreview} from '../src/core/battle.js';
+import {damagePreview,planBattleUnit} from '../src/core/battle.js';
 import {shiftedStance,speechStrength} from '../src/core/contest.js';
 
 let activeCommandTrace=null;
@@ -13,12 +13,17 @@ function closestTo(goal){return(a,b)=>distance(a,goal)-distance(b,goal);}
 function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.id==='hero'),m=e.mission??{},tactical=style!=='greedy',enemies=()=>e.units.filter(u=>u.side==='enemy'&&alive(u)&&!u.hidden),escorts=e.units.filter(u=>u.side==='neutral'&&u.role==='escort'&&alive(u));
  const move=(goal,limitEscort=false)=>issue(state,hero,'move',(a,b)=>{const danger=p=>enemies().filter(u=>distance(u,p)<=2).length,lag=p=>limitEscort&&escorts.some(u=>u.escorted&&distance(u,e.goal)>1&&distance(u,p)>4)?50:0;return pathDistance(e,a,goal,hero.id)-pathDistance(e,b,goal,hero.id)+lag(a)-lag(b)+(tactical?(danger(a)-danger(b))*.12:0);});
  if(capNeeded(state,'deploy'))issue(state,hero,'deploy',closestTo({x:2,y:3}));
- if(tactical&&state.chapter>=4){const objective=['capture','supply','surrender','hold'].includes(m.mode),order=objective?'advance':m.mode==='defection'?'hold':'attack';if(capNeeded(state,'formation'))issue(state,hero,'formation',null,{formation:'line',orderAction:order});if(capNeeded(state,'order'))issue(state,hero,'order',null,{orderAction:order});for(const ally of e.units.filter(u=>u.side==='ally'&&alive(u)&&!u.ordered)){const a=enemies().sort((a,b)=>distance(ally,a)-distance(ally,b))[0];if(ally.ordered)continue;if(!a&&['extract','settlement'].includes(m.mode)){const away=reachable(e,ally).filter(p=>distance(p,e.goal)>distance(ally,e.goal)).sort((a,b)=>distance(b,e.goal)-distance(a,e.goal))[0];if(away){issue(state,hero,'order',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{orderAction:'advance',destination:away});continue;}}const intent=ally.morale<=25?'rally':m.mode==='defection'?'hold':!a&&!objective?'hold':order;if(getActions(state,hero.id).includes('order')){const threatened=enemies().some(u=>distance(u,ally)<=3),form=threatened?(ally.hp>ally.maxHp*.7&&objective&&m.mode!=='hold'?'wedge':'shield-wall'):'line';if(state.chapter>=5&&m.mode!=='defection')issue(state,hero,'formation',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{formation:form,orderAction:m.mode==='hold'&&a?'attack':intent});else issue(state,hero,'order',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{orderAction:intent});}}}
+ if(tactical&&state.chapter>=4){const objective=['capture','supply','surrender','hold'].includes(m.mode),order=objective?'advance':m.mode==='defection'?'hold':'attack';if(capNeeded(state,'formation'))issue(state,hero,'formation',null,{formation:'line',orderAction:order});if(capNeeded(state,'order'))issue(state,hero,'order',null,{orderAction:order});for(const ally of e.units.filter(u=>u.side==='ally'&&alive(u)&&!u.ordered)){const a=enemies().sort((a,b)=>distance(ally,a)-distance(ally,b))[0];if(ally.ordered)continue;if(!a&&['extract','settlement'].includes(m.mode)){const away=reachable(e,ally).filter(p=>distance(p,e.goal)>distance(ally,e.goal)).sort((a,b)=>distance(b,e.goal)-distance(a,e.goal))[0];if(away){issue(state,hero,'order',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{orderAction:'advance',destination:away});continue;}}const intent=ally.morale<=25?'rally':m.mode==='defection'?(distance(ally,e.goal)>2?'advance':'hold'):!a&&!objective?'hold':order;if(getActions(state,hero.id).includes('order')){const threatened=enemies().some(u=>distance(u,ally)<=3),form=threatened?(ally.hp>ally.maxHp*.7&&objective&&m.mode!=='hold'?'wedge':'shield-wall'):'line';if(state.chapter>=5&&m.mode!=='defection')issue(state,hero,'formation',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{formation:form,orderAction:m.mode==='hold'&&a?'attack':intent});else issue(state,hero,'order',(a,b)=>(a.unitId===ally.id?-1:b.unitId===ally.id?1:0),{orderAction:intent});}}}
  if(capNeeded(state,'scout'))issue(state,hero,'scout');
+ if(e.combatVersion===2&&tactical&&m.mode==='clear'){
+  const plan=planBattleUnit(e,hero);
+  if(!hero.moved&&(plan.x!==hero.x||plan.y!==hero.y))issue(state,hero,'move',(a,b)=>distance(a,plan)-distance(b,plan));
+  if(plan.targetId){const target=e.units.find(u=>u.id===plan.targetId);issue(state,hero,plan.action,(a,b)=>(a.unitId===target.id?-1:b.unitId===target.id?1:0));}
+ }
  const unescorted=escorts.find(u=>!u.escorted);if(unescorted){if(distance(hero,unescorted)>1)move(unescorted);if(distance(hero,unescorted)<=1)issue(state,hero,'assist',(a,b)=>(a.unitId===unescorted.id?-1:b.unitId===unescorted.id?1:0));}
  const wounded=escorts.find(u=>u.hp<u.maxHp-3&&distance(hero,u)<=1);if(wounded&&tactical)issue(state,hero,'assist',(a,b)=>(a.unitId===wounded.id?-1:b.unitId===wounded.id?1:0));
  let goal=enemies().sort((a,b)=>pathDistance(e,hero,a,hero.id)-pathDistance(e,hero,b,hero.id))[0]??e.goal;
- if(['extract','settlement'].includes(m.mode)&&!unescorted){const lag=escorts.filter(u=>distance(u,e.goal)>1).sort((a,b)=>distance(hero,b)-distance(hero,a))[0];goal=lag&&distance(hero,lag)>3?lag:e.goal;}
+ if(['extract','settlement'].includes(m.mode)&&!unescorted){const lag=escorts.filter(u=>distance(u,e.goal)>1).sort((a,b)=>distance(hero,b)-distance(hero,a))[0],meeting=m.mode==='settlement'&&e.combatVersion===2?{x:e.goal.x-2,y:e.goal.y}:e.goal;goal=lag&&distance(hero,lag)>3?lag:meeting;}
  const threatenedEscort=escorts.find(u=>u.hp<u.maxHp*.7&&enemies().some(v=>distance(v,u)<=3));if(threatenedEscort&&tactical)goal=threatenedEscort;
  if(m.mode==='clear'&&state.chapter>=6&&tactical){const screen=e.units.filter(u=>u.side==='ally'&&alive(u)).sort((a,b)=>a.x-b.x)[0];if(screen&&enemies().some(u=>distance(u,hero)<=4))goal=screen;}
  if(m.mode==='recover')goal=e.goal;
@@ -32,7 +37,7 @@ function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.
    if(capNeeded(state,'strike')&&distance(hero,goal)>1)move(goal);
  }
  const travelling=['extract','recover','capture','supply','surrender','settlement','hold'].includes(m.mode);
- if(!unescorted&&getActions(state,hero.id).includes('move')&&distance(hero,goal)>1&&(travelling||!getTargets(state,hero.id,'strike').length||!tactical))move(goal,['extract','settlement'].includes(m.mode));
+ if(!unescorted&&m.mode!=='defection'&&getActions(state,hero.id).includes('move')&&distance(hero,goal)>(m.mode==='settlement'&&e.combatVersion===2?0:1)&&(travelling||!getTargets(state,hero.id,'strike').length||!tactical))move(goal,['extract','settlement'].includes(m.mode));
  if(threatenedEscort&&distance(hero,threatenedEscort)<=1)issue(state,hero,'assist',(a,b)=>(a.unitId===threatenedEscort.id?-1:b.unitId===threatenedEscort.id?1:0));
  if(capNeeded(state,'assist'))issue(state,hero,'assist');
  if(capNeeded(state,'rally')||m.mode==='settlement'||tactical&&(hero.hp<=hero.maxHp-5||e.units.some(u=>u.side==='ally'&&alive(u)&&u.morale<=40&&distance(hero,u)<=3)))issue(state,hero,'rally');

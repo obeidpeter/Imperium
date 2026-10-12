@@ -12,6 +12,7 @@ const keys={
   throw:[[0,0,0,0,0,0,0,0],[.3,1,-.065,-.5,-6,-8,.1,-.025],[.54,0,.075,.48,9,-8,0,.02],[.72,2,.04,.17,4,-2,0,0],[1,0,0,0,0,0,0,0]],
   brace:[[0,0,0,0,0,0,0,0],[.24,4,-.025,-.08,-1,-2,.65,-.04],[.55,5,-.055,-.12,-2,-1,1,-.03],[.76,3,-.03,-.04,0,0,.55,-.01],[1,0,0,0,0,0,0,0]],
   hit:[[0,0,0,0,0,0,0,0],[.2,3,-.095,-.13,-3,1,.55,-.07],[.48,5,-.06,-.07,-1,0,.4,-.025],[.76,1,.012,0,0,0,.15,.01],[1,0,0,0,0,0,0,0]],
+  command:[[0,0,0,0,0,0,0,0],[.22,0,-.025,-.2,-2,-5,0,-.02],[.44,-1,.02,.32,3,-11,0,.02],[.72,0,.015,.24,2,-6,0,.01],[1,0,0,0,0,0,0,0]],
   speak:[[0,0,0,0,0,0,0,0],[.23,0,-.015,-.18,-1,-4,0,-.03],[.49,0,.035,.28,5,-7,0,.035],[.7,0,.012,.15,3,-3,0,-.01],[1,0,0,0,0,0,0,0]]
 };
 function sampleKeys(table,p){
@@ -34,13 +35,15 @@ export function sampleSpritePose(override={},profile={}){
     pose.arm=-stride*weight*(civic?.025:.07);pose.guard=stride*weight*.06;
     pose.nod=-Math.sin(phase*2)*weight*.012;pose.active=weight>0;
   }else{
-    const key=name==='cavalry-attack'?'attack':['rally','order','formation'].includes(name)?'speak':name==='hurt'?'hit':name;
+    const key=name==='cavalry-attack'?'attack':['rally','order','formation'].includes(name)?'command':name==='hurt'?'hit':name;
     if(keys[key]){Object.assign(pose,sampleKeys(keys[key],p));pose.active=p>0&&p<1;
-      if(profile.archer&&name==='throw'){pose.arm*=.45;pose.reach*=.8;pose.lift*=.7;}
+      if(profile.archer&&name==='throw'){pose.arm*=.35;pose.reach*=.6;pose.lift*=.55;pose.guard=-pose.arm*.4;}
+      if(civic&&['threaten','denounce'].includes(override.action)){pose.arm*=.65;pose.reach*=1.3;pose.nod*=-.4;}
       if(mounted){pose.hip*=.35;pose.lean*=.6;}
     }else{pose.rootY=clamp(override.bob,-2,2)*256/72;pose.lean=clamp(override.lean,-.06,.06);}
   }
-  if(profile.braced&&name!=='hit'&&name!=='hurt'){pose.guard=Math.max(pose.guard,.3);pose.hip+=1;}
+  if(profile.braced&&name!=='hit'&&name!=='hurt'){pose.guard=Math.max(pose.guard,.35);pose.hip+=2;pose.lean-=.018;}
+  if(profile.shaken&&name==='idle'){pose.hip+=1.5;pose.lean+=.018;}
   return pose;
 }
 

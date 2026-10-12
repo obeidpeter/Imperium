@@ -9,9 +9,11 @@ export const result = (ok, message) => ({ok, message});
 export function rng(state) { state.rng = (Math.imul(state.rng, 1664525) + 1013904223) >>> 0; return state.rng / 4294967296; }
 export function note(encounter, message) { encounter.log.push(message); if(encounter.collectTurnEvents)encounter.turnEvents.push(message); if(encounter.log.length > 70) encounter.log.shift(); }
 export function unitAt(encounter, x, y, except) { return encounter.units.find(u => u.id !== except && alive(u) && u.x === x && u.y === y); }
+export function movementPinned(e,unit,point){return e.combatVersion===2&&e.units.some(u=>alive(u)&&!u.hidden&&u.role!=='archer'&&u.role!=='escort'&&(unit.side==='enemy'?['player','ally'].includes(u.side):u.side==='enemy')&&distance(u,point)===1);}
 export function reachable(encounter, unit, range = unit.move ?? 2) {
+  if(encounter.combatVersion===2&&unit.formation==='shield-wall')range=Math.min(range,1);
   const found = new Map([[`${unit.x},${unit.y}`, {x:unit.x,y:unit.y,cost:0}]]), queue = [{x:unit.x,y:unit.y,cost:0}];
-  while(queue.length) { const node=queue.shift(); for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+  while(queue.length) { const node=queue.shift();if(node.cost>0&&movementPinned(encounter,unit,node))continue; for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
     const x=node.x+dx,y=node.y+dy; if(x<0||y<0||x>=encounter.width||y>=encounter.height) continue;
     const terrain=encounter.terrain[y][x]; if(blocked(terrain)||unitAt(encounter,x,y,unit.id)) continue;
     const cost=node.cost+(terrain==='marsh'&&unit.formation!=='line'?2:1), key=`${x},${y}`;

@@ -4,8 +4,8 @@ import {buildEncounterTimeline,sampleEncounterTimeline,MOTION_BUDGETS} from './a
 // A presentation snapshot contains no references to mutable campaign objects.
 export function snapshotEncounter(encounter){
   if(!encounter)return null;
-  const fields=['id','name','side','role','x','y','hp','maxHp','resolve','maxResolve','morale','stance','facing','braced','formation','acted','ordered','ammo','hidden'];
-  return {id:encounter.id,kind:encounter.kind,width:encounter.width,height:encounter.height,turn:encounter.turn,status:encounter.status,
+  const fields=['id','name','side','role','x','y','hp','maxHp','resolve','maxResolve','morale','stance','facing','braced','formation','acted','ordered','ammo','hidden','lastMoveDistance'];
+  return {id:encounter.id,kind:encounter.kind,combatVersion:encounter.combatVersion,width:encounter.width,height:encounter.height,turn:encounter.turn,status:encounter.status,
     terrain:encounter.terrain?.map(row=>[...row]),turnEvents:[...(encounter.turnEvents??[])],log:[...(encounter.log??[])],
     units:encounter.units.map(unit=>Object.fromEntries(fields.filter(key=>unit[key]!==undefined).map(key=>[key,unit[key]])))};
 }

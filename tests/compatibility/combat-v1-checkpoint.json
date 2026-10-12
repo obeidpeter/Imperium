@@ -1,0 +1,1711 @@
+{
+  "provenance": "Frozen v0.6 legal New Game route, seed275; Chapter2 marsh beginning and next full turn.",
+  "start": {
+    "version": 1,
+    "name": "Aurelius Marcellus",
+    "seed": 275,
+    "rng": 2844549354,
+    "chapter": 2,
+    "phase": "encounter",
+    "rank": "Miles",
+    "completed": [
+      1
+    ],
+    "milestones": [
+      "encounter:ch1-training",
+      "encounter:ch1-road",
+      "chapter:1"
+    ],
+    "decisions": {
+      "ch1": "report",
+      "ch2": "carry"
+    },
+    "meters": {
+      "army": 27,
+      "political": 9,
+      "public": 15
+    },
+    "relationships": {
+      "mentor": 10,
+      "comrade": 17,
+      "rival": 0,
+      "patron": 0,
+      "settler": 0,
+      "senator": 0
+    },
+    "obligations": [],
+    "inventory": [
+      "Plain tunic",
+      "Oval training shield",
+      "Three javelins",
+      "Spatha",
+      "Lead identity seal",
+      "Military belt and mail"
+    ],
+    "supplies": 9,
+    "encounterIndex": 0,
+    "encounter": {
+      "id": "ch2-marsh",
+      "kind": "battle",
+      "title": "The broken causeway",
+      "objective": "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14.",
+      "type": "rescue",
+      "width": 8,
+      "height": 8,
+      "terrain": [
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ]
+      ],
+      "units": [
+        {
+          "id": "hero",
+          "name": "Aurelius Marcellus",
+          "side": "player",
+          "x": 0,
+          "y": 3,
+          "hp": 22,
+          "maxHp": 22,
+          "role": "soldier",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Hold position",
+          "ammo": 3,
+          "damage": 4
+        },
+        {
+          "id": "ally0",
+          "name": "Aulus Naso",
+          "side": "ally",
+          "x": 0,
+          "y": 1,
+          "hp": 13,
+          "maxHp": 13,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Advance on the objective; strike threats in reach.",
+          "damage": 3,
+          "veteranId": "naso",
+          "moraleResistance": 0
+        },
+        {
+          "id": "enemy0",
+          "name": "Gothic raider",
+          "side": "enemy",
+          "x": 6,
+          "y": 1,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "raider",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Seek the convoy or an unguarded objective.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 1
+          },
+          "hidden": false
+        },
+        {
+          "id": "enemy1",
+          "name": "Gothic infantry",
+          "side": "enemy",
+          "x": 6,
+          "y": 6,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Press the nearest opponent.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 6
+          },
+          "hidden": false
+        },
+        {
+          "id": "escort",
+          "name": "Wounded Lucan",
+          "side": "neutral",
+          "x": 4,
+          "y": 2,
+          "hp": 18,
+          "maxHp": 18,
+          "role": "escort",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Needs adjacent Assist before evacuation.",
+          "escorted": false,
+          "veteranId": "lucan"
+        }
+      ],
+      "turn": 1,
+      "turnLimit": 14,
+      "status": "active",
+      "commandCapacity": 0,
+      "commandsLeft": 0,
+      "log": [
+        "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14."
+      ],
+      "usedAbilities": [],
+      "goal": {
+        "x": 7,
+        "y": 5
+      },
+      "requiredAbility": "assist",
+      "staged": {
+        "meters": {
+          "army": 0,
+          "political": 0,
+          "public": 0
+        },
+        "supplies": 0,
+        "obligations": []
+      },
+      "defence": 100,
+      "route": "battle",
+      "minimumTurns": 0,
+      "reinforcements": 0,
+      "scenario": "ch2-marsh",
+      "mission": {
+        "mode": "extract",
+        "holdRequired": 0,
+        "holdProgress": 0,
+        "points": [],
+        "waves": [],
+        "escortIds": [
+          "escort"
+        ],
+        "rallyProgress": 0,
+        "envoyProgress": 0,
+        "variant": "Carry Lucan from the flooded road"
+      },
+      "objectiveProgress": "Columns at extraction 0/1",
+      "pressure": "Deadline turn 14",
+      "requiredAbilities": []
+    },
+    "snapshot": {
+      "version": 1,
+      "name": "Aurelius Marcellus",
+      "seed": 275,
+      "rng": 490951928,
+      "chapter": 2,
+      "phase": "camp",
+      "rank": "Miles",
+      "completed": [
+        1
+      ],
+      "milestones": [
+        "encounter:ch1-training",
+        "encounter:ch1-road",
+        "chapter:1"
+      ],
+      "decisions": {
+        "ch1": "report",
+        "ch2": "carry"
+      },
+      "meters": {
+        "army": 27,
+        "political": 9,
+        "public": 15
+      },
+      "relationships": {
+        "mentor": 10,
+        "comrade": 17,
+        "rival": 0,
+        "patron": 0,
+        "settler": 0,
+        "senator": 0
+      },
+      "obligations": [],
+      "inventory": [
+        "Plain tunic",
+        "Oval training shield",
+        "Three javelins",
+        "Spatha",
+        "Lead identity seal",
+        "Military belt and mail"
+      ],
+      "supplies": 9,
+      "encounterIndex": 0,
+      "encounter": null,
+      "snapshot": null,
+      "log": [
+        "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+        "Lucan remembers the public correction. Later officers trust your written record.",
+        "The drill yard completed in 3 turns. Rewards applied once.",
+        "You swear the original military oath and receive a lead identity seal.",
+        "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+        "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+        "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+      ],
+      "history": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 3,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": []
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 7,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": [
+            {
+              "id": "lucan",
+              "name": "Aurelius Lucan",
+              "withdrawn": false,
+              "wounded": false,
+              "commended": true
+            }
+          ]
+        }
+      ],
+      "capabilityUse": {
+        "move": true,
+        "throw": true,
+        "strike": true,
+        "brace": true,
+        "oath": true
+      },
+      "chapterCapabilities": {
+        "1": [
+          "move",
+          "throw",
+          "strike",
+          "brace",
+          "oath"
+        ]
+      },
+      "encounterOptions": {},
+      "settings": {
+        "audio": false,
+        "reducedMotion": false
+      },
+      "preparation": null,
+      "stratagem": null,
+      "route": null,
+      "allocation": null,
+      "judgment": null,
+      "negotiation": null,
+      "oath": true,
+      "company": [
+        {
+          "id": "lucan",
+          "name": "Aurelius Lucan",
+          "service": 1,
+          "commendations": 1,
+          "recovery": 0
+        },
+        {
+          "id": "naso",
+          "name": "Aulus Naso",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "felix",
+          "name": "Marcus Felix",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "firmus",
+          "name": "Titus Firmus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "rufus",
+          "name": "Gnaeus Rufus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        }
+      ],
+      "storyProgress": {}
+    },
+    "log": [
+      "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+      "Lucan remembers the public correction. Later officers trust your written record.",
+      "The drill yard completed in 3 turns. Rewards applied once.",
+      "You swear the original military oath and receive a lead identity seal.",
+      "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+      "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+      "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+    ],
+    "history": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 3,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": []
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 7,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": [
+          {
+            "id": "lucan",
+            "name": "Aurelius Lucan",
+            "withdrawn": false,
+            "wounded": false,
+            "commended": true
+          }
+        ]
+      }
+    ],
+    "capabilityUse": {
+      "move": true,
+      "throw": true,
+      "strike": true,
+      "brace": true,
+      "oath": true
+    },
+    "chapterCapabilities": {
+      "1": [
+        "move",
+        "throw",
+        "strike",
+        "brace",
+        "oath"
+      ]
+    },
+    "encounterOptions": {},
+    "settings": {
+      "audio": false,
+      "reducedMotion": false
+    },
+    "preparation": null,
+    "stratagem": null,
+    "route": null,
+    "allocation": null,
+    "judgment": null,
+    "negotiation": null,
+    "oath": true,
+    "company": [
+      {
+        "id": "lucan",
+        "name": "Aurelius Lucan",
+        "service": 1,
+        "commendations": 1,
+        "recovery": 0
+      },
+      {
+        "id": "naso",
+        "name": "Aulus Naso",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "felix",
+        "name": "Marcus Felix",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "firmus",
+        "name": "Titus Firmus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "rufus",
+        "name": "Gnaeus Rufus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      }
+    ],
+    "storyProgress": {}
+  },
+  "before": {
+    "version": 1,
+    "name": "Aurelius Marcellus",
+    "seed": 275,
+    "rng": 2844549354,
+    "chapter": 2,
+    "phase": "encounter",
+    "rank": "Miles",
+    "completed": [
+      1
+    ],
+    "milestones": [
+      "encounter:ch1-training",
+      "encounter:ch1-road",
+      "chapter:1"
+    ],
+    "decisions": {
+      "ch1": "report",
+      "ch2": "carry"
+    },
+    "meters": {
+      "army": 27,
+      "political": 9,
+      "public": 15
+    },
+    "relationships": {
+      "mentor": 10,
+      "comrade": 17,
+      "rival": 0,
+      "patron": 0,
+      "settler": 0,
+      "senator": 0
+    },
+    "obligations": [],
+    "inventory": [
+      "Plain tunic",
+      "Oval training shield",
+      "Three javelins",
+      "Spatha",
+      "Lead identity seal",
+      "Military belt and mail"
+    ],
+    "supplies": 9,
+    "encounterIndex": 0,
+    "encounter": {
+      "id": "ch2-marsh",
+      "kind": "battle",
+      "title": "The broken causeway",
+      "objective": "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14.",
+      "type": "rescue",
+      "width": 8,
+      "height": 8,
+      "terrain": [
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ]
+      ],
+      "units": [
+        {
+          "id": "hero",
+          "name": "Aurelius Marcellus",
+          "side": "player",
+          "x": 2,
+          "y": 3,
+          "hp": 22,
+          "maxHp": 22,
+          "role": "soldier",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Hold position",
+          "ammo": 3,
+          "damage": 4,
+          "braced": false,
+          "ordered": false,
+          "formation": null
+        },
+        {
+          "id": "ally0",
+          "name": "Aulus Naso",
+          "side": "ally",
+          "x": 1,
+          "y": 1,
+          "hp": 13,
+          "maxHp": 13,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Advance on the nearest threat; attack if in reach.",
+          "damage": 3,
+          "veteranId": "naso",
+          "moraleResistance": 0,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "enemy0",
+          "name": "Gothic raider",
+          "side": "enemy",
+          "x": 5,
+          "y": 2,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "raider",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Seek the convoy or an unguarded objective.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 1
+          },
+          "hidden": false,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "enemy1",
+          "name": "Gothic infantry",
+          "side": "enemy",
+          "x": 5,
+          "y": 5,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Press the nearest opponent.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 6
+          },
+          "hidden": false,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "escort",
+          "name": "Wounded Lucan",
+          "side": "neutral",
+          "x": 4,
+          "y": 2,
+          "hp": 16,
+          "maxHp": 18,
+          "role": "escort",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 72,
+          "intent": "Needs adjacent Assist before evacuation.",
+          "escorted": false,
+          "veteranId": "lucan",
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        }
+      ],
+      "turn": 2,
+      "turnLimit": 14,
+      "status": "active",
+      "commandCapacity": 0,
+      "commandsLeft": 0,
+      "log": [
+        "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14.",
+        "Move to 3D. Costs this unit’s movement.",
+        "Brace the shield: reduce incoming damage by 2 until your next turn. Costs one action.",
+        "Gothic raider hits Wounded Lucan for 2.",
+        "Turn 2. 0 commands available. Columns at extraction 0/1"
+      ],
+      "usedAbilities": [
+        "move",
+        "brace"
+      ],
+      "goal": {
+        "x": 7,
+        "y": 5
+      },
+      "requiredAbility": "assist",
+      "staged": {
+        "meters": {
+          "army": 0,
+          "political": 0,
+          "public": 0
+        },
+        "supplies": 0,
+        "obligations": []
+      },
+      "defence": 100,
+      "route": "battle",
+      "minimumTurns": 0,
+      "reinforcements": 0,
+      "scenario": "ch2-marsh",
+      "mission": {
+        "mode": "extract",
+        "holdRequired": 0,
+        "holdProgress": 0,
+        "points": [],
+        "waves": [],
+        "escortIds": [
+          "escort"
+        ],
+        "rallyProgress": 0,
+        "envoyProgress": 0,
+        "variant": "Carry Lucan from the flooded road"
+      },
+      "objectiveProgress": "Columns at extraction 0/1",
+      "pressure": "Deadline turn 14",
+      "requiredAbilities": [],
+      "turnEvents": [
+        "Gothic raider hits Wounded Lucan for 2."
+      ]
+    },
+    "snapshot": {
+      "version": 1,
+      "name": "Aurelius Marcellus",
+      "seed": 275,
+      "rng": 490951928,
+      "chapter": 2,
+      "phase": "camp",
+      "rank": "Miles",
+      "completed": [
+        1
+      ],
+      "milestones": [
+        "encounter:ch1-training",
+        "encounter:ch1-road",
+        "chapter:1"
+      ],
+      "decisions": {
+        "ch1": "report",
+        "ch2": "carry"
+      },
+      "meters": {
+        "army": 27,
+        "political": 9,
+        "public": 15
+      },
+      "relationships": {
+        "mentor": 10,
+        "comrade": 17,
+        "rival": 0,
+        "patron": 0,
+        "settler": 0,
+        "senator": 0
+      },
+      "obligations": [],
+      "inventory": [
+        "Plain tunic",
+        "Oval training shield",
+        "Three javelins",
+        "Spatha",
+        "Lead identity seal",
+        "Military belt and mail"
+      ],
+      "supplies": 9,
+      "encounterIndex": 0,
+      "encounter": null,
+      "snapshot": null,
+      "log": [
+        "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+        "Lucan remembers the public correction. Later officers trust your written record.",
+        "The drill yard completed in 3 turns. Rewards applied once.",
+        "You swear the original military oath and receive a lead identity seal.",
+        "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+        "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+        "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+      ],
+      "history": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 3,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": []
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 7,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": [
+            {
+              "id": "lucan",
+              "name": "Aurelius Lucan",
+              "withdrawn": false,
+              "wounded": false,
+              "commended": true
+            }
+          ]
+        }
+      ],
+      "capabilityUse": {
+        "move": true,
+        "throw": true,
+        "strike": true,
+        "brace": true,
+        "oath": true
+      },
+      "chapterCapabilities": {
+        "1": [
+          "move",
+          "throw",
+          "strike",
+          "brace",
+          "oath"
+        ]
+      },
+      "encounterOptions": {},
+      "settings": {
+        "audio": false,
+        "reducedMotion": false
+      },
+      "preparation": null,
+      "stratagem": null,
+      "route": null,
+      "allocation": null,
+      "judgment": null,
+      "negotiation": null,
+      "oath": true,
+      "company": [
+        {
+          "id": "lucan",
+          "name": "Aurelius Lucan",
+          "service": 1,
+          "commendations": 1,
+          "recovery": 0
+        },
+        {
+          "id": "naso",
+          "name": "Aulus Naso",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "felix",
+          "name": "Marcus Felix",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "firmus",
+          "name": "Titus Firmus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "rufus",
+          "name": "Gnaeus Rufus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        }
+      ],
+      "storyProgress": {}
+    },
+    "log": [
+      "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+      "Lucan remembers the public correction. Later officers trust your written record.",
+      "The drill yard completed in 3 turns. Rewards applied once.",
+      "You swear the original military oath and receive a lead identity seal.",
+      "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+      "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+      "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+    ],
+    "history": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 3,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": []
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 7,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": [
+          {
+            "id": "lucan",
+            "name": "Aurelius Lucan",
+            "withdrawn": false,
+            "wounded": false,
+            "commended": true
+          }
+        ]
+      }
+    ],
+    "capabilityUse": {
+      "move": true,
+      "throw": true,
+      "strike": true,
+      "brace": true,
+      "oath": true
+    },
+    "chapterCapabilities": {
+      "1": [
+        "move",
+        "throw",
+        "strike",
+        "brace",
+        "oath"
+      ],
+      "2": [
+        "move",
+        "brace"
+      ]
+    },
+    "encounterOptions": {},
+    "settings": {
+      "audio": false,
+      "reducedMotion": false
+    },
+    "preparation": null,
+    "stratagem": null,
+    "route": null,
+    "allocation": null,
+    "judgment": null,
+    "negotiation": null,
+    "oath": true,
+    "company": [
+      {
+        "id": "lucan",
+        "name": "Aurelius Lucan",
+        "service": 1,
+        "commendations": 1,
+        "recovery": 0
+      },
+      {
+        "id": "naso",
+        "name": "Aulus Naso",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "felix",
+        "name": "Marcus Felix",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "firmus",
+        "name": "Titus Firmus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "rufus",
+        "name": "Gnaeus Rufus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      }
+    ],
+    "storyProgress": {}
+  },
+  "commands": [
+    {
+      "kind": "act",
+      "args": [
+        {
+          "unitId": "hero",
+          "action": "move",
+          "x": 3,
+          "y": 3
+        }
+      ]
+    },
+    {
+      "kind": "act",
+      "args": [
+        {
+          "unitId": "hero",
+          "action": "throw",
+          "x": 5,
+          "y": 2,
+          "targetId": "enemy0"
+        }
+      ]
+    },
+    {
+      "kind": "endTurn",
+      "args": []
+    }
+  ],
+  "after": {
+    "version": 1,
+    "name": "Aurelius Marcellus",
+    "seed": 275,
+    "rng": 2844549354,
+    "chapter": 2,
+    "phase": "encounter",
+    "rank": "Miles",
+    "completed": [
+      1
+    ],
+    "milestones": [
+      "encounter:ch1-training",
+      "encounter:ch1-road",
+      "chapter:1"
+    ],
+    "decisions": {
+      "ch1": "report",
+      "ch2": "carry"
+    },
+    "meters": {
+      "army": 27,
+      "political": 9,
+      "public": 15
+    },
+    "relationships": {
+      "mentor": 10,
+      "comrade": 17,
+      "rival": 0,
+      "patron": 0,
+      "settler": 0,
+      "senator": 0
+    },
+    "obligations": [],
+    "inventory": [
+      "Plain tunic",
+      "Oval training shield",
+      "Three javelins",
+      "Spatha",
+      "Lead identity seal",
+      "Military belt and mail"
+    ],
+    "supplies": 9,
+    "encounterIndex": 0,
+    "encounter": {
+      "id": "ch2-marsh",
+      "kind": "battle",
+      "title": "The broken causeway",
+      "objective": "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14.",
+      "type": "rescue",
+      "width": 8,
+      "height": 8,
+      "terrain": [
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road",
+          "road",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "road",
+          "road",
+          "road"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ],
+        [
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh",
+          "marsh"
+        ]
+      ],
+      "units": [
+        {
+          "id": "hero",
+          "name": "Aurelius Marcellus",
+          "side": "player",
+          "x": 3,
+          "y": 3,
+          "hp": 22,
+          "maxHp": 22,
+          "role": "soldier",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Hold position",
+          "ammo": 2,
+          "damage": 4,
+          "braced": false,
+          "ordered": false,
+          "formation": null
+        },
+        {
+          "id": "ally0",
+          "name": "Aulus Naso",
+          "side": "ally",
+          "x": 3,
+          "y": 1,
+          "hp": 13,
+          "maxHp": 13,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 80,
+          "intent": "Advance on the nearest threat; attack if in reach.",
+          "damage": 3,
+          "veteranId": "naso",
+          "moraleResistance": 0,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "enemy0",
+          "name": "Gothic raider",
+          "side": "enemy",
+          "x": 5,
+          "y": 2,
+          "hp": 7,
+          "maxHp": 9,
+          "role": "raider",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Seek the convoy or an unguarded objective.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 1
+          },
+          "hidden": false,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "enemy1",
+          "name": "Gothic infantry",
+          "side": "enemy",
+          "x": 4,
+          "y": 4,
+          "hp": 9,
+          "maxHp": 9,
+          "role": "infantry",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "west",
+          "morale": 80,
+          "intent": "Press the nearest opponent.",
+          "damage": 3,
+          "anchor": {
+            "x": 6,
+            "y": 6
+          },
+          "hidden": false,
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        },
+        {
+          "id": "escort",
+          "name": "Wounded Lucan",
+          "side": "neutral",
+          "x": 4,
+          "y": 2,
+          "hp": 14,
+          "maxHp": 18,
+          "role": "escort",
+          "moved": false,
+          "acted": false,
+          "move": 2,
+          "facing": "east",
+          "morale": 64,
+          "intent": "Needs adjacent Assist before evacuation.",
+          "escorted": false,
+          "veteranId": "lucan",
+          "ordered": false,
+          "braced": false,
+          "formation": null
+        }
+      ],
+      "turn": 3,
+      "turnLimit": 14,
+      "status": "active",
+      "commandCapacity": 0,
+      "commandsLeft": 0,
+      "log": [
+        "Use Assist on a wounded soldier, then lead the survivors to the rally marker. Carry Lucan from the flooded road Escort every column to the marker, keeping the commander within four tiles; do not lose a column. Finish by turn 14.",
+        "Move to 3D. Costs this unit’s movement.",
+        "Brace the shield: reduce incoming damage by 2 until your next turn. Costs one action.",
+        "Gothic raider hits Wounded Lucan for 2.",
+        "Turn 2. 0 commands available. Columns at extraction 0/1",
+        "Move to 4D. Costs this unit’s movement.",
+        "Aurelius Marcellus hits Gothic raider for 2.",
+        "Throw one javelin at Gothic raider for 2 damage; 2 remain.",
+        "Gothic raider hits Wounded Lucan for 2.",
+        "Turn 3. 0 commands available. Columns at extraction 0/1"
+      ],
+      "usedAbilities": [
+        "move",
+        "brace",
+        "throw"
+      ],
+      "goal": {
+        "x": 7,
+        "y": 5
+      },
+      "requiredAbility": "assist",
+      "staged": {
+        "meters": {
+          "army": 0,
+          "political": 0,
+          "public": 0
+        },
+        "supplies": 0,
+        "obligations": []
+      },
+      "defence": 100,
+      "route": "battle",
+      "minimumTurns": 0,
+      "reinforcements": 0,
+      "scenario": "ch2-marsh",
+      "mission": {
+        "mode": "extract",
+        "holdRequired": 0,
+        "holdProgress": 0,
+        "points": [],
+        "waves": [],
+        "escortIds": [
+          "escort"
+        ],
+        "rallyProgress": 0,
+        "envoyProgress": 0,
+        "variant": "Carry Lucan from the flooded road"
+      },
+      "objectiveProgress": "Columns at extraction 0/1",
+      "pressure": "Deadline turn 14",
+      "requiredAbilities": [],
+      "turnEvents": [
+        "Gothic raider hits Wounded Lucan for 2."
+      ]
+    },
+    "snapshot": {
+      "version": 1,
+      "name": "Aurelius Marcellus",
+      "seed": 275,
+      "rng": 490951928,
+      "chapter": 2,
+      "phase": "camp",
+      "rank": "Miles",
+      "completed": [
+        1
+      ],
+      "milestones": [
+        "encounter:ch1-training",
+        "encounter:ch1-road",
+        "chapter:1"
+      ],
+      "decisions": {
+        "ch1": "report",
+        "ch2": "carry"
+      },
+      "meters": {
+        "army": 27,
+        "political": 9,
+        "public": 15
+      },
+      "relationships": {
+        "mentor": 10,
+        "comrade": 17,
+        "rival": 0,
+        "patron": 0,
+        "settler": 0,
+        "senator": 0
+      },
+      "obligations": [],
+      "inventory": [
+        "Plain tunic",
+        "Oval training shield",
+        "Three javelins",
+        "Spatha",
+        "Lead identity seal",
+        "Military belt and mail"
+      ],
+      "supplies": 9,
+      "encounterIndex": 0,
+      "encounter": null,
+      "snapshot": null,
+      "log": [
+        "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+        "Lucan remembers the public correction. Later officers trust your written record.",
+        "The drill yard completed in 3 turns. Rewards applied once.",
+        "You swear the original military oath and receive a lead identity seal.",
+        "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+        "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+        "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+      ],
+      "history": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 3,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": []
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "turns": 7,
+          "result": "won",
+          "route": "battle",
+          "losses": 0,
+          "veterans": [
+            {
+              "id": "lucan",
+              "name": "Aurelius Lucan",
+              "withdrawn": false,
+              "wounded": false,
+              "commended": true
+            }
+          ]
+        }
+      ],
+      "capabilityUse": {
+        "move": true,
+        "throw": true,
+        "strike": true,
+        "brace": true,
+        "oath": true
+      },
+      "chapterCapabilities": {
+        "1": [
+          "move",
+          "throw",
+          "strike",
+          "brace",
+          "oath"
+        ]
+      },
+      "encounterOptions": {},
+      "settings": {
+        "audio": false,
+        "reducedMotion": false
+      },
+      "preparation": null,
+      "stratagem": null,
+      "route": null,
+      "allocation": null,
+      "judgment": null,
+      "negotiation": null,
+      "oath": true,
+      "company": [
+        {
+          "id": "lucan",
+          "name": "Aurelius Lucan",
+          "service": 1,
+          "commendations": 1,
+          "recovery": 0
+        },
+        {
+          "id": "naso",
+          "name": "Aulus Naso",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "felix",
+          "name": "Marcus Felix",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "firmus",
+          "name": "Titus Firmus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        },
+        {
+          "id": "rufus",
+          "name": "Gnaeus Rufus",
+          "service": 0,
+          "commendations": 0,
+          "recovery": 0
+        }
+      ],
+      "storyProgress": {}
+    },
+    "log": [
+      "A village recruit arrives at the Danube camp, holding neither influence nor command.",
+      "Lucan remembers the public correction. Later officers trust your written record.",
+      "The drill yard completed in 3 turns. Rewards applied once.",
+      "You swear the original military oath and receive a lead identity seal.",
+      "Fire on the boundary road completed in 7 turns. Rewards applied once.",
+      "Miles: A military belt, a repaired mail shirt, and the title Miles. Your oath and lead seal enter the journal.",
+      "Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis."
+    ],
+    "history": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 3,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": []
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "turns": 7,
+        "result": "won",
+        "route": "battle",
+        "losses": 0,
+        "veterans": [
+          {
+            "id": "lucan",
+            "name": "Aurelius Lucan",
+            "withdrawn": false,
+            "wounded": false,
+            "commended": true
+          }
+        ]
+      }
+    ],
+    "capabilityUse": {
+      "move": true,
+      "throw": true,
+      "strike": true,
+      "brace": true,
+      "oath": true
+    },
+    "chapterCapabilities": {
+      "1": [
+        "move",
+        "throw",
+        "strike",
+        "brace",
+        "oath"
+      ],
+      "2": [
+        "move",
+        "brace",
+        "throw"
+      ]
+    },
+    "encounterOptions": {},
+    "settings": {
+      "audio": false,
+      "reducedMotion": false
+    },
+    "preparation": null,
+    "stratagem": null,
+    "route": null,
+    "allocation": null,
+    "judgment": null,
+    "negotiation": null,
+    "oath": true,
+    "company": [
+      {
+        "id": "lucan",
+        "name": "Aurelius Lucan",
+        "service": 1,
+        "commendations": 1,
+        "recovery": 0
+      },
+      {
+        "id": "naso",
+        "name": "Aulus Naso",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "felix",
+        "name": "Marcus Felix",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "firmus",
+        "name": "Titus Firmus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      },
+      {
+        "id": "rufus",
+        "name": "Gnaeus Rufus",
+        "service": 0,
+        "commendations": 0,
+        "recovery": 0
+      }
+    ],
+    "storyProgress": {}
+  }
+}

@@ -1,5 +1,6 @@
 // Regional architecture and vegetation. Hashes are presentation-only constants.
 import {peekArt} from './art.js';
+import {stoneOutcrop,palmTree} from './material-forms.js';
 export const hash=(x,y,n=0)=>{const v=Math.sin(x*127.13+y*318.71+n*17.53)*41371.23;return v-Math.floor(v);};
 export const iso=(g,x,y)=>({x:g.ox+(x-y)*g.tw/2,y:g.oy+(x+y)*g.th/2});
 const validGrid=e=>Number.isInteger(e?.width)&&Number.isInteger(e?.height)&&e.width>0&&e.height>0&&e.width<=16&&e.height<=16;
@@ -97,7 +98,7 @@ export function drawScenery(c,g,item,chapter){
     case 'tower':block(c,0,0,26*s,13*s,64*s);for(let i=-1;i<=1;i++)block(c,i*17*s,-65*s+Math.abs(i)*7*s,7*s,4*s,8*s);poly(c,[[-5*s,-30*s],[-5*s,-45*s],[3*s,-42*s],[3*s,-27*s]],'#555e50');for(let i=0;i<4;i++)line(c,[[-24*s,(-10-i*13)*s],[0,(2-i*13)*s],[25*s,(-10-i*13)*s]],'#806e5655',s);break;
     case 'ruin':for(let i=0;i<3;i++)block(c,(i-1)*14*s,(i%2)*5*s,13*s,7*s,(13+i*8)*s);break;
     case 'wagon':block(c,0,-3*s,26*s,12*s,12*s,['#a58858','#735d3e','#c4a474']);for(const x of[-18,18]){oval(c,x*s,8*s,8*s,9*s,'#4e4738');oval(c,x*s,8*s,5*s,6*s,'#ad8e58');line(c,[[x*s,2*s],[x*s,14*s]],'#604c33',s);}for(let i=-1;i<=1;i++)oval(c,i*12*s,-15*s,10*s,7*s,'#dac69c');break;
-    case 'rock':block(c,0,0,21*s,9*s,12*s,['#b0a68c','#847f6c','#d5c8a6']);break;
+    case 'rock':stoneOutcrop(c,s,item.x+item.y);break;
     case 'amphorae':
       oval(c,7*s,3*s,23*s,6*s,'#34402c26');
       for(let i=0;i<3;i++){const x=(i-1)*14*s,y=(i%2)*4*s;
@@ -135,11 +136,7 @@ export function drawScenery(c,g,item,chapter){
       for(let i=0;i<3;i++){const y=i*5*s;line(c,[[-22*s,y-10*s],[20*s,y+5*s]],'#826f4b66',3*s);
         for(let j=0;j<4;j++){const x=(-17+j*11)*s,yy=y+(j*4-7)*s;line(c,[[x,yy],[x-3*s,yy-4*s],[x,yy-2*s],[x+3*s,yy-5*s]],'#778253',1.3*s);}}
       break;
-    case 'palm':
-      oval(c,8*s,4*s,23*s,7*s,'#39402c24');line(c,[[0,2*s],[4*s,-42*s]],'#a48b60',5*s);
-      for(let i=0;i<6;i++){const a=i*Math.PI/3,x=Math.cos(a)*26*s,y=Math.sin(a)*12*s;
-        poly(c,[[4*s,-42*s],[x*.45+3*s,y*.45-49*s],[x+4*s,y-39*s],[x*.55+4*s,y*.55-43*s]],i%2?'#87915f':'#667f51');}
-      break;
+    case 'palm':palmTree(c,s);break;
   }c.restore();
 }
 export function worldGround(c,w,h,g,e,p,chapter,quality){
@@ -150,7 +147,7 @@ export function worldGround(c,w,h,g,e,p,chapter,quality){
     const q=iso(g,x,y),inside=x>=0&&y>=0&&x<e.width&&y<e.height;
     if(q.x<-g.tw||q.y<-g.th||q.x>w+g.tw||q.y>h+g.th||inside)continue;
     const pts=[[q.x,q.y-g.th/2],[q.x+g.tw/2,q.y],[q.x,q.y+g.th/2],[q.x-g.tw/2,q.y]];
-    if(p.chamber){poly(c,pts,(x+y)%2?'#b2a68a':'#c5b997','#81745c33');}
+    if(p.chamber){poly(c,pts,(x+y)%2?p.earth:p.ground,'#81745c24');}
     else{
       // Continue authored edge materials beyond the grid; no invented in-board waterways.
       const edge=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));

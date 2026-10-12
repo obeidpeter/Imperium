@@ -40,7 +40,7 @@ export function drawUnitSprite(c,g,p,u,chapter,contest,override={}){
     const column=FACING_COLUMN[facing]??0,mounted=['cavalry','heavy'].includes(u.role),spear=spec.atlas==='roman'&&spec.row===3||spec.atlas==='frontier'&&[0,2].includes(spec.row)||spec.atlas==='specialists'&&spec.row>=2;
     // Atlas inspection supplies the actual painted hand, never a mirrored body.
     const hand=spear?[[-1,1,1,1],[-1,1,-1,1]][spec.atlas==='roman'?1:0][column]:column<2?-1:1;
-    const profile={mounted,civic:spec.atlas==='civic',archer:u.role==='archer',spear,hand,direction:[0,2].includes(column)?1:-1,braced:!!u.braced};
+    const profile={mounted,civic:spec.atlas==='civic',archer:u.role==='archer',spear,hand,direction:[0,2].includes(column)?1:-1,braced:!!u.braced,shaken:Number.isFinite(u.morale)&&u.morale<35};
     const pose=sampleSpritePose(override,profile),sx=column*192,sy=spec.row*256;
     c.save();c.globalAlpha*=alpha;c.translate(0,pose.rootY*scale);
     if(!pose.active){c.rotate(pose.lean*profile.direction);c.scale(1,1-pose.hip/256);c.drawImage(sheet,sx,sy,192,256,-width/2,-240*scale,width,height);}
