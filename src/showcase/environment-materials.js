@@ -21,24 +21,41 @@ export function createEnvironmentMaterials({loadTextures=true}={}){
   const make=(props)=>{const m=new THREE.MeshStandardMaterial(props);materials.add(m);return m;};
   const maps=Object.fromEntries(['earth','grass','stone','wood','cloth'].map(k=>[k,surface(k)]));
   const m={
-    ground:make({...maps.grass,color:0xe3e0c5,roughness:1,vertexColors:true,normalScale:new THREE.Vector2(.19,.19)}),
+    ground:make({...maps.grass,color:0xeee5cf,roughness:1,vertexColors:true,normalScale:new THREE.Vector2(.24,.24)}),
     earth:make({...maps.earth,color:0xc5b997,roughness:.98,normalScale:new THREE.Vector2(.55,.55)}),
-    road:make({...maps.earth,color:0xd5c9aa,roughness:.98,normalScale:new THREE.Vector2(.28,.28),vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}),
+    road:make({...maps.earth,color:0xe3d6b9,roughness:.98,normalScale:new THREE.Vector2(.22,.22),vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}),
     stone:make({...maps.stone,color:0xeee8d6,roughness:.98,normalScale:new THREE.Vector2(.4,.4)}),
     wood:make({...maps.wood,color:0xc5b18d,roughness:.88}),
     darkWood:make({...maps.wood,color:0x65533c,roughness:1}),
     cloth:make({...maps.cloth,color:0xeee2c9,roughness:1,side:THREE.DoubleSide}),
     rope:make({color:0x958162,roughness:1}),iron:make({color:0x3a3832,roughness:.75,metalness:.5}),
     terra:make({color:0x9c5837,roughness:.92}),red:make({color:0x722f2b,roughness:1,side:THREE.DoubleSide}),
-    leaves:make({color:0x829269,roughness:.94,side:THREE.DoubleSide}),
-    grass:make({color:0x9aa977,roughness:1,side:THREE.DoubleSide}),
+    leaves:make({color:0x87976e,roughness:.88,side:THREE.DoubleSide}),
+    grass:make({color:0x8d986c,roughness:.94,side:THREE.DoubleSide}),
+    dryGrass:make({color:0xb4a77b,roughness:1,side:THREE.DoubleSide}),
     water:make({color:0x4f7b7c,roughness:.2,metalness:.27,transparent:true,opacity:.83,depthWrite:false}),
     mud:make({...maps.earth,color:0x4d5344,roughness:.72}),charcoal:make({color:0x292822,roughness:1})
   };
+  // One lit surface blends the generated soil image with the fine turf map.
+  // Vertex weights describe worn ground; they never encode movement rules.
+  const soilUniform={value:maps.earth.map};
+  m.ground.userData.soilTexture=soilUniform;
+  m.ground.onBeforeCompile=shader=>{
+    shader.uniforms.frontierSoil=soilUniform;
+    shader.vertexShader='attribute float soilMix; varying float vSoilMix;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSoilMix = soilMix;');
+    shader.fragmentShader='uniform sampler2D frontierSoil; varying float vSoilMix;\n'+shader.fragmentShader;
+    shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
+      vec4 turf = texture2D(map, vMapUv);
+      vec3 soil = mix(texture2D(frontierSoil, vMapUv * 0.71).rgb, texture2D(frontierSoil, vec2(-vMapUv.y, vMapUv.x) * 0.47 + vec2(0.37, 0.19)).rgb, 0.36);
+      diffuseColor *= vec4(mix(turf.rgb, soil * vec3(0.89, 0.91, 0.88), clamp(vSoilMix, 0.0, 1.0)), turf.a);
+    #endif`);
+  };
+  m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
-    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud']:[kind]){m[key].map=t;m[key].needsUpdate=true;}
+    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud']:[kind]){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
   },undefined,()=>{});
   return {materials:m,textures,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
 }

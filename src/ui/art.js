@@ -37,6 +37,12 @@ export function chapterAssets(chapter=1) {
   files.push(...animationAssets(n,true));
   return [...new Set(files.filter(Boolean))];
 }
+// Offline resources include code and textures; chapterAssets above stays image-
+// only because its consumers decode every entry through the artwork Image loader.
+export function chapterOfflineAssets(chapter,availableFiles=[]) {
+  const shared3D=Number(chapter)===1?availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&['./src/showcase/','./assets/showcase/','./vendor/three/'].some(prefix=>path.startsWith(prefix))):[];
+  return [...new Set([...chapterAssets(chapter),...shared3D])];
+}
 let chapterRequest=0;
 export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true}={}) {
   const request=++chapterRequest;

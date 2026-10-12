@@ -6,15 +6,27 @@
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
-The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The optional 3D study uses a locally bundled Three.js renderer; the campaign rules remain dependency-free and run in both a browser and Node.js.
+The game combines original prose and locally bundled painted artwork with a three-dimensional Chapter I battlefield and layered isometric presentation in later chapters. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
-## Version 0.9 — an optional 3D frontier battle
+## Version 0.10 — Chapter I in the campaign's 3D battlefield
 
-Choose **Enter the 3D frontier** on the title screen, or open `showcase/index.html` through the local server. This is a single playable battle with three-dimensional terrain and articulated figures, an orbiting camera, a compact command deck and the campaign's legal select–preview–confirm rules. It is a separate graphics study, not a conversion of the twelve-chapter campaign. Its temporary battle does not read or write the campaign save.
+Chapter I's training and frontier battle now open in a real 3D scene inside the normal campaign. Commands, previews, autosaves, retries and earned progress use the existing campaign state. **Switch to 2D** returns to the tactical view of the same encounter; Pause also saves this presentation preference. If WebGL initialization fails, the game returns to the 2D view. Chapters II–XII retain their existing 2D battles and political chambers.
+
+Drag to orbit, scroll or use **+ / −** to zoom, and choose **Overview** or **Follow unit** to frame the action. The focused campaign board keeps arrow-key tile navigation and Enter to select or confirm; named action and target selectors remain available. **G / Grid** reveals tile boundaries. Actions still require a legal preview and confirmation, and camera movement never spends a turn.
+
+Original procedural character rigs now include shaped anatomy and clothing, distinct practice and field equipment, and small generated fabric, leather, mail and shield-surface textures. Terrain, the training yard and frontier scenery are built from local mesh and material code. These are original procedural models and poses, not imported production character models or motion-capture performances. Performance/Balanced/High and reduced motion control presentation only.
+
+**Generated sound effects** remain optional and off by default in Pause. With sound enabled, the 3D action timeline cues restrained footsteps, cloth, weapons, shields and impacts synthesized locally with Web Audio. Volume is adjustable; no recordings or audio service are used. Sound stops when the page is hidden, and every action remains understandable without it.
+
+Three.js 0.186.1 and its MIT license are local files; no CDN or installation is required. The initial shell excludes the 3D modules and textures. Chapter I's offline download includes the shared renderer, materials and vendor files; the separate study page and its stylesheet join the explicit full download. See [3D presentation verification](docs/showcase-verification.md) for checks actually performed and pending browser/device work, and [art provenance](docs/3d-art-provenance.md) for how the models and materials were made.
+
+## Version 0.9 — the separate frontier study remains available
+
+Choose **Try a standalone skirmish** on the title screen, or open `showcase/index.html` through the local server. This is a single playable battle with three-dimensional terrain and articulated figures, an orbiting camera, a compact command deck and the campaign's legal select–preview–confirm rules. It is a separate graphics study, not a conversion of the twelve-chapter campaign. Its temporary battle does not read or write the campaign save.
 
 Drag to orbit, scroll to zoom, or focus the canvas and use arrows and **+ / −**. **Focus soldier** and **Field view** restore useful viewpoints. Named action and target controls provide a keyboard alternative to picking in the scene. Performance/Balanced/High and reduced motion control presentation only. Restart repeats this study; Return to campaign opens the existing game.
 
-The study requires WebGL 2 and bundles **Three.js 0.186.1** locally under its MIT license. No CDN or package installation is required. Its page, renderer, textures and vendor modules are excluded from the campaign's initial shell and chapter downloads. The explicit full offline download includes the study and its dependencies. See [3D study scope](docs/3d-study.md), [art provenance](docs/3d-art-provenance.md) and [license notices](docs/LICENSE-NOTICES.md). Device support, performance and accessibility claims require the separately recorded checks.
+The study requires WebGL 2 and shares the campaign's locally bundled renderer. Its own page and stylesheet are excluded from chapter downloads; the explicit full offline download includes them. See [3D study scope](docs/3d-study.md) and [license notices](docs/LICENSE-NOTICES.md). Device support, performance and accessibility claims require the separately recorded checks.
 
 ## Version 0.8 — battlefield presentation and direct controls
 
@@ -103,7 +115,7 @@ Keeping the same public origin when changing hosting preserves the browser addre
 - **Pause → Copy a save code** exports a checked portable save, including the active encounter checkpoint. Restore validates the code before asking to replace the current campaign.
 - Retry restores the entire encounter-start snapshot, including the random seed and staged promises. Rewards are committed when the result is recorded, once per encounter.
 - The first save requests persistent browser storage. A browser may decline that request, so keep a save code independently.
-- The production service worker first caches the shell and opening artwork. Artwork loads as you reach each chapter; suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign, choose **Pause → Download all chapters for offline play** and wait for **All chapters available offline**. Pause also provides a retry for missing chapter artwork. A new edition activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers.
+- The production service worker first caches the shell and opening artwork. Chapter resources load as you reach them, including Chapter I's shared 3D renderer and materials; suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign and standalone study, choose **Pause → Download all chapters for offline play** and wait for **All chapters available offline**. Pause also provides a retry for missing chapter resources. A new edition activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers.
 - On iPhone, Safari’s **Share → Add to Home Screen** provides the installation path. Real-device installation, long-term storage retention, and platform share menus require device testing.
 - The ending can create a PNG reign card with the ruler’s name, broad choices, accession route, and configured game link. It omits character fates. Download and device sharing happen only on the player’s action.
 
@@ -132,7 +144,10 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/ui/art.js` / `asset-loader.js` | Portrait/environment selection, chapter asset groups, bounded image loading and cache |
 | `src/ui/campaign-views.js` / `cinematic.css` | Readable story passages, character staging, promotions and accession |
 | `assets/` | Local WebP portraits, scenes, unit and prop atlases; provenance in docs/asset-manifest.json |
-| `showcase/` / `src/showcase/` | Optional standalone 3D frontier battle, command UI, WebGL scene and articulated figures |
+| `src/ui/battle-stage-controller.js` / `battle-3d.css` | Chapter I's shared-state 3D view, view switching and renderer lifecycle |
+| `src/showcase/stage.js` / `actors.js` / `actor-pose.js` | Shared WebGL scene, original procedural figures and articulated action poses |
+| `src/showcase/environment*.js` / `combat-presentation.js` / `battle-sound.js` | Procedural scenery/materials, visual event timing and optional synthesized combat sounds |
+| `showcase/` / `src/showcase/main.js` / `session.js` | Optional standalone frontier study and its isolated in-memory battle |
 | `vendor/three/` | Locally bundled Three.js 0.186.1 modules and their unchanged MIT license |
 | `src/ui/storage.js` | Browser save envelopes, mirrored storage, conflict handling, portable codes |
 | `src/ui/audio.js` | Optional browser-generated sound effects |
@@ -164,11 +179,11 @@ node scripts/verify-assets.mjs
 
 The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of version 0.7. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
 
-Commands and implemented checks are not proof of a particular result. See the [current overhaul verification report](docs/overhaul-verification.md) for checks actually run, browser sizes used, finale profiles, and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
+Commands and implemented checks are not proof of a particular result. See the [current 3D presentation verification](docs/showcase-verification.md) for this release and the [historical overhaul verification](docs/overhaul-verification.md) for the rules release's browser sizes, finale profiles and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 
 ## Scope and design choices
 
-This implementation uses native JavaScript modules, Canvas, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The rules remain directly executable under Node; the optional WebGL study adds locally bundled Three.js while the existing campaign keeps its Canvas renderer. Every runtime asset ships with the static game. There is no backend, monetization, multiplayer service, or native Android/iOS shell in this version.
+This implementation uses native JavaScript modules, Canvas/WebGL, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The rules remain directly executable under Node; Chapter I and the standalone study use locally bundled Three.js, while later chapters and the tactical fallback use Canvas. Every runtime asset ships with the static game. There is no backend, monetization, multiplayer service, or native Android/iOS shell in this version.
 
 The whole campaign is present, including the two final milestone locks, three campaign meters, obligations, cast absence branches, four main confrontation forms plus costly backing, and the accession bookend. The historical career is a disclosed composite; battle units and chamber votes are gameplay abstractions.
 

@@ -1,10 +1,12 @@
-# Frontier 3D study: art and dependency provenance
+# Chapter I and frontier study: 3D art and dependency provenance
 
-The optional frontier study renders an isolated Chapter I battle with real Three.js geometry. It reuses the campaign's legal commands and authored terrain. Its geometry, character rigs and animation poses are written in this repository; it does not import a third-party character model, animation clip, motion-capture library or environment kit. See the [project notices](LICENSE-NOTICES.md) for the project's existing rights qualifications. This record adds no separate license grant or claim of exclusive ownership for original or AI-generated work.
+Chapter I's campaign view and the optional isolated frontier study share real Three.js geometry and the campaign's legal commands and authored terrain. Geometry, character rigs and animation poses are written in this repository; no third-party character model, animation clip, motion-capture library or environment kit is imported. See the [project notices](LICENSE-NOTICES.md) for the project's existing rights qualifications. This record adds no separate license grant or claim of exclusive ownership for original or AI-generated work.
 
 ## Original geometry and materials
 
 `src/showcase/actors.js` constructs shaped clothing, faces, limbs, armor, shields and weapons from generated mesh profiles and curves. `actor-pose.js` supplies joint rotations for the action poses. These are hierarchical procedural rigs, not downloaded character assets or skeletal motion-capture animation. Equipment and the frontier setting are historically informed stylizations, not a claim to reconstruct a particular archaeological site or individual.
+
+Version 0.10 adds small deterministic 96 × 96 material tiles generated in `actors.js`: woven cloth, leather grain, mail rings and painted shield surfaces. Each uses colour, bump and roughness data constructed locally with arithmetic and stored in Three.js `DataTexture` objects. These code-generated microtextures are not image-generation outputs, photographs or additional exported raster files; the existing raster manifest and image-master hashes are unchanged. Their editable source is the actor module, and actor disposal releases their GPU resources.
 
 `environment.js`, `environment-layout.js`, `environment-props.js` and `environment-materials.js` construct the ground, terrain rises, road, rock formations, palisade, gate platforms, cloth tents, cart, pottery, vegetation, river and distant hills. The board uses 2.5 metres per tile, with centered coordinates and authored high terrain reaching 0.45 metres. Decorative scenery sits outside the playable area; visible rocks correspond to the authored blocked terrain. Road verges are visually feathered without changing legal tile costs or picking coordinates.
 

@@ -4,7 +4,7 @@ The source project is a static, single-player browser game. Read [reference requ
 
 ## Commands
 
-Use Node.js 20 or later. The campaign rules have no runtime dependencies. The optional 3D study bundles Three.js 0.186.1 and its MIT license in `vendor/three/`; no package-install step or CDN is required.
+Use Node.js 20 or later. The campaign rules have no runtime dependencies. The Chapter I 3D view and standalone study bundle Three.js 0.186.1 and its MIT license in `vendor/three/`; no package-install step or CDN is required.
 
 - `npm run dev` — serve the source locally.
 - `npm test` — run the Node.js rule tests.
@@ -37,6 +37,6 @@ Every recorded narrative choice needs a later visible consequence; every potenti
 
 The approved visual direction combines locally bundled original/AI-generated illustration with code-drawn tactical terrain, units and overlays. Record asset provenance, rights limitations and export settings in docs/asset-manifest.json and docs/art-generation.md. Do not add unlicensed third-party art, font or audio files. Keep the site static and free of accounts, payment, advertising or analytics integrations unless separately requested. Presentation must never mutate game state or consume gameplay randomness.
 
-The companion technical document specifies strict TypeScript, Vite, Vitest and Playwright. The current JavaScript/custom-build stack is an explicit implementation deviation; its optional WebGL study uses locally bundled Three.js. Do not describe the project as satisfying the specified stack requirement or claim unperformed browser/device, accessibility, timing or deployment checks.
+The companion technical document specifies strict TypeScript, Vite, Vitest and Playwright. The current JavaScript/custom-build stack is an explicit implementation deviation; its Chapter I WebGL view and standalone study use locally bundled Three.js. Do not describe the project as satisfying the specified stack requirement or claim unperformed browser/device, accessibility, timing or deployment checks.
 
 For review reports, distinguish automated tests, real-interface play, injected scenario tests and real devices. Record meaningful limitations plainly. The 90–150 minute target needs human playtesting.

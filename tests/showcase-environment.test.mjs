@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
 import {createEnvironment,gridToWorld} from '../src/showcase/environment.js';
-import {createGroundHeight,roadSegments,terrainAt} from '../src/showcase/environment-layout.js';
+import {createGroundHeight,roadSegments,terrainAt,isTrainingGround} from '../src/showcase/environment-layout.js';
 import {BATTLE_SCENARIOS} from '../src/data/encounters.js';
+import * as Game from '../src/core/game.js';
 
 const freeze=v=>{if(v&&typeof v==='object'){Object.freeze(v);Object.values(v).forEach(freeze);}return v;};
 const scenario=()=>({width:8,height:8,terrain:BATTLE_SCENARIOS['ch1-road'].map.map(row=>[...row].map(t=>({'.':'grass','X':'rock','^':'high','=':'road'}[t])))});
@@ -40,4 +41,40 @@ test('Quality changes only optional presentation density and all batches stay bo
   const low=createEnvironment(scenes[0],e,{quality:'performance',loadTextures:false}),balanced=createEnvironment(scenes[1],e,{quality:'balanced',loadTextures:false});
   assert.ok(balanced.stats().instances>low.stats().instances);assert.ok(balanced.stats().instances<16000);for(const [x,z]of [[0,0],[5,5],[-4,7],[12,-13]])assert.equal(low.groundHeight(x,z),balanced.groundHeight(x,z));
   low.dispose();balanced.dispose();
+});
+
+test('A legally opened drill gets a quiet training yard without props or duplicate trainers in playable spaces',()=>{
+  const state=Game.newGame('Yard check',275);assert.equal(Game.choose(state,'report').ok,true);assert.equal(Game.startEncounter(state,{}).ok,true);
+  const before=Game.serialize(state),e=freeze(state.encounter),scene=new THREE.Scene(),world=createEnvironment(scene,e,{loadTextures:false});
+  assert.equal(e.id,'ch1-training');assert.equal(world.stats().mode,'training');assert.equal(world.group.getObjectByName('frontier supply wagon'),undefined);
+  let lights=0;world.group.traverse(o=>{if(o.isPointLight)lights++;});assert.equal(lights,0,'Drill has no burning-wagon or campfire lights');
+  assert.equal(world.group.userData.trainingProps.length,4);
+  for(const bounds of world.group.userData.trainingProps)assert.ok(bounds.max[0]<-10||bounds.min[0]>10||bounds.max[2]<-10||bounds.min[2]>10,`${bounds.name} is fully outside the playable yard`);
+  for(let y=0;y<8;y++)for(let x=0;x<8;x++){const p=gridToWorld({x,y},e);assert.ok(Math.abs(world.groundHeight(p.x,p.z)-(terrainAt(e,x,y)==='high'?.45:0))<1e-9);}
+  const g=world.ground.geometry,soil=g.attributes.soilMix,position=g.attributes.position;assert.equal(soil.count,position.count);
+  for(let i=0;i<position.count;i++)if(Math.abs(position.getX(i))<8&&Math.abs(position.getZ(i))<8)assert.ok(soil.getX(i)>.8,'Packed yard covers the interior without replacing terrain');
+  world.update(0);world.update(2);assert.equal(Game.serialize(state),before);world.dispose();assert.equal(scene.children.length,0);
+  for(const shape of [{id:'ch1-training'},{id:'ch1-drill'},{type:'training'},{mode:'training'},{mission:{mode:'training'}}])assert.equal(isTrainingGround(shape),true);
+  assert.equal(isTrainingGround({id:'ch1-road',type:'battle'}),false);
+});
+
+test('Mixed soil shader has complete bounded inputs and all three quality levels stay within a geometric budget',()=>{
+  for(const quality of ['performance','balanced','high']){
+    const world=createEnvironment(new THREE.Scene(),freeze(scenario()),{quality,loadTextures:false}),g=world.ground.geometry;
+    assert.equal(g.attributes.soilMix.count,g.attributes.position.count);for(const n of g.attributes.soilMix.array)assert.ok(n>=0&&n<=1);
+    const material=world.ground.material,shader={uniforms:{},vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);
+    assert.equal(shader.uniforms.frontierSoil,material.userData.soilTexture);assert.equal(shader.uniforms.frontierSoil.value.isDataTexture,true,'Procedural soil is available before local image load');
+    let triangles=0;world.group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3*(o.isInstancedMesh?o.count:1);});
+    assert.ok(triangles<650000,`${quality} environment stays below 650k submitted surface triangles`);assert.ok(world.stats().meshes<150);assert.ok(world.stats().instances<20000);
+    world.dispose();
+  }
+});
+
+test('Standard animation pins the hanging edge, is reversible by time and is disabled at Performance quality',()=>{
+  for(const quality of ['balanced','performance']){
+    const e=freeze(scenario()),before=JSON.stringify(e),world=createEnvironment(new THREE.Scene(),e,{quality,loadTextures:false}),flag=world.group.getObjectByName('hanging standard'),a=flag.geometry.attributes.position,original=Float32Array.from(a.array);
+    world.update(.7);const atFirst=Float32Array.from(a.array);world.update(2.1);const atSecond=Float32Array.from(a.array);world.update(.7);assert.deepEqual(a.array,atFirst);
+    if(quality==='performance')assert.deepEqual(a.array,original);else{assert.notDeepEqual(atFirst,atSecond);for(let i=0;i<a.count;i++)if(original[i*3+1]>.899)assert.ok(Math.abs(a.getZ(i)-original[i*3+2])<1e-7);}
+    assert.equal(JSON.stringify(e),before);world.dispose();
+  }
 });

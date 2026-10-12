@@ -1,0 +1,24 @@
+/* Chapter I 3D view; all commands retain the campaign command dock. */
+.battle-camera{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;padding:.35rem clamp(.75rem,2.4vw,2.5rem);border-top:1px solid #53604c66;color:#b9bcac;font-size:.8rem}
+.battle-camera span{margin-inline-start:auto}
+.command-stage .battle-camera button{background:transparent;font-size:.8rem;padding:.35rem .65rem}
+.command-stage .battle-3d{isolation:isolate;background:#56665b}
+.command-stage .battle-3d canvas{touch-action:none;block-size:clamp(25rem,59dvh,48rem);height:clamp(25rem,59dvh,48rem)}
+.battle-loading{position:absolute;inset:45% 0 auto;text-align:center;color:#eee4cd;pointer-events:none}
+.battle-3d[data-ready=true] .battle-loading{display:none}
+.battle-3d .turn-replay{z-index:3}
+.world-labels{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.world-unit{position:absolute;inset-block-start:0;inset-inline-start:0;display:flex;flex-direction:column;align-items:center;gap:.2rem;min-inline-size:3.3rem;max-inline-size:9rem;pointer-events:none;will-change:transform}
+.world-name{padding:.18rem .45rem;border:1px solid #77907a75;border-radius:.2rem;background:#13231deb;color:#f6efdb;font-size:.6875rem;font-weight:650;line-height:1.35;letter-spacing:.015em;text-shadow:0 1px 2px #000;box-shadow:0 2px 6px #09140f45;overflow-wrap:anywhere;text-align:center}
+.world-health{display:block;inline-size:2.5rem;block-size:.2rem;overflow:hidden;border-radius:2px;background:#0d1715dc;box-shadow:0 0 0 1px #cfdfbc4d}
+.world-health>i{display:block;block-size:100%;max-inline-size:100%;background:#abc89a}
+.world-unit.enemy .world-name{border-color:#ba7b6866;background:#2e1c18eb;color:#f3ddce}
+.world-unit.enemy .world-health>i{background:#db9e81}
+.world-unit.selected .world-name{border-color:#d4b773;background:#3b3321f2;color:#fff1bd}
+.world-unit.selected .world-health{box-shadow:0 0 0 1px #ddc68c9c}
+.world-unit>strong{color:#ffe2b0;font-size:1rem;font-weight:800;line-height:1.2;text-shadow:0 1px 3px #000,1px 0 3px #000,-1px 0 3px #000}
+.world-unit>strong:empty{display:none}
+@media(max-width:600px){.battle-camera{gap:.2rem}.battle-camera span{flex-basis:100%;font-size:.75rem}.command-stage .battle-3d canvas{height:24rem;block-size:24rem}.world-name{font-size:.6rem;max-inline-size:7rem}}
+@media(max-height:500px) and (orientation:landscape){.command-stage .battle-3d canvas{height:27rem;block-size:27rem}}
+
+.camera-zoom{display:flex;gap:.2rem}

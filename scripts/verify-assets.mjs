@@ -44,9 +44,13 @@ assert.ok(build.showcaseAssets.includes('./vendor/three/three.core.js'));
 assert.ok(build.showcaseAssets.includes('./vendor/three/LICENSE'));
 for(const path of build.showcaseAssets){
   assert.ok(!build.initialAssets.includes(path),'3D study leaked into initial shell: '+path);
-  assert.ok(!Object.values(build.chapterAssets).flat().includes(path),'3D study leaked into campaign chapter: '+path);
   assert.ok(!stores.get(cacheName).has(normalize(path)),'3D study downloaded at installation: '+path);
 }
+const standalone=path=>path.startsWith('./showcase/')||path==='./src/showcase/showcase.css';
+const shared3D=build.showcaseAssets.filter(path=>!standalone(path));
+for(const path of shared3D)assert.ok(build.chapterAssets[1].includes(path),'Chapter I omitted shared 3D resource: '+path);
+for(const path of build.showcaseAssets.filter(standalone))assert.ok(!Object.values(build.chapterAssets).flat().includes(path),'Standalone study page entered campaign cache: '+path);
+for(const chapter of Object.keys(build.chapterAssets).filter(chapter=>chapter!=='1'))for(const path of shared3D)assert.ok(!build.chapterAssets[chapter].includes(path),'3D resources added to another chapter: '+chapter+' '+path);
 await event('message',{data:'offline-status',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 console.log('PASS shell-only install and truthful partial status');
@@ -57,11 +61,14 @@ assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.
 assert.ok(!messages.some(m=>m.type==='offline-ready'));
 console.log('PASS chapter 1 caches separately and never claims all chapters are offline');
 
-for(const path of build.showcaseAssets)assert.ok(!stores.get(cacheName).has(normalize(path)),'Chapter 1 downloaded 3D-only dependency: '+path);
+for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Chapter I failed to cache 3D dependency: '+path);
+for(const path of build.showcaseAssets.filter(standalone))assert.ok(!stores.get(cacheName).has(normalize(path)),'Chapter I downloaded standalone study page: '+path);
+offline=true;
+for(const path of shared3D){const resource=await event('fetch',{request:{method:'GET',url:normalize(path),mode:'cors'}});assert.equal(await resource.text(),'current:'+normalize(path));}
+offline=false;
 const studyPage=await event('fetch',{request:{method:'GET',url:normalize('./showcase/index.html'),mode:'navigate'}});
 assert.equal(await studyPage.text(),'current:'+normalize('./showcase/index.html'));
-assert.ok(!stores.get(cacheName).has(normalize('./vendor/three/three.module.js')));
-console.log('PASS optional 3D study stays deferred and first navigation returns its own document');
+console.log('PASS Chapter I caches shared 3D dependencies for offline reads; standalone page stays deferred until requested');
 
 await cache('sacramentum-old').put('./assets/portraits/hero-emperor.webp',new Response('OLD ART'));
 const fresh=await event('fetch',{request:{method:'GET',url:normalize('./assets/portraits/hero-emperor.webp'),mode:'cors'}});

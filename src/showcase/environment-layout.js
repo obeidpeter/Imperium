@@ -1,5 +1,6 @@
 // Pure presentation planning. Never consumes the campaign RNG or edits terrain.
 export const TILE_SIZE=2.5;
+export const isTrainingGround=e=>e?.id==='ch1-training'||e?.id==='ch1-drill'||e?.type==='training'||e?.mode==='training'||e?.mission?.mode==='training';
 export const clamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 export const smooth=n=>{const t=clamp(n);return t*t*(3-2*t);};
 export function hash(x,z=0,s=0){const a=Math.sin(x*127.1+z*311.7+s*74.7)*43758.5453;return a-Math.floor(a);}

@@ -2,15 +2,23 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.9’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.10’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+
+## Chapter I's battlefield view
+
+Training and the frontier battle open in 3D within the normal campaign. Your legal commands, autosaves, checkpoints and progress are shared with **Switch to 2D**; Pause's **Chapter I battlefield** setting remembers the view you prefer. If WebGL is unavailable, the tactical view takes over. Later chapters retain their existing 2D battlefields and political chambers.
+
+Drag to orbit and scroll or press **+ / −** to zoom. **Overview** restores a wide view and **Follow unit** frames the selected soldier. The campaign board keeps arrow-key tile navigation and Enter to select/confirm, plus named action/target selectors. **G / Grid** toggles tile boundaries. Camera movement never spends an action.
+
+**Generated sound effects** in Pause are off by default, with an adjustable effects volume. Enabled 3D combat sounds are synthesized locally and stop while the page is hidden. Every action is understandable without sound; reduced motion and graphics quality remain presentation settings.
 
 ## The optional 3D frontier
 
-**Enter the 3D frontier** on the title screen opens one separate battle. **Take command** begins the study; selecting your soldier, an action and a target produces a preview, then **Confirm order** commits it. Companions act autonomously, as in the campaign's opening field battle. **End turn** lets the other soldiers act. Restart and victory do not change your chronicle or grant campaign progress.
+**Try a standalone skirmish** on the title screen opens one separate battle. **Take command** begins the study; selecting your soldier, an action and a target produces a preview, then **Confirm order** commits it. Companions act autonomously, as in the campaign's opening field battle. **End turn** lets the other soldiers act. Restart and victory do not change your chronicle or grant campaign progress.
 
 Drag the scene to orbit and scroll to zoom. With the canvas focused, arrows rotate, **+ / −** zoom, **F** focuses the selected soldier and **Home** restores the field view. The **Focus soldier** and **Field view** buttons do the same. Use **Named action and target controls** for a complete alternative to pointing at the terrain. Reduce motion and the three graphics settings affect presentation, not outcomes. **Return to campaign** opens the normal game and its existing save.
 
-This study needs WebGL 2. Its renderer and textures load only on entry, or during an explicit complete offline download from campaign Settings. A current chapter's offline-ready message alone does not mean the 3D study is downloaded. The full campaign remains available through its established Canvas interface. See [study scope and limits](3d-study.md).
+This study needs WebGL 2. Its shared renderer and textures also download with Chapter I; the standalone page and stylesheet are included in the explicit complete offline download from campaign Settings. A chapter's offline-ready message alone does not establish that this separate page is cached. See [study scope and limits](3d-study.md).
 
 ## The campaign loop
 

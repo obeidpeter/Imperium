@@ -2,7 +2,7 @@ import {mkdir,cp,readdir,readFile,writeFile,rm} from 'node:fs/promises';
 import {resolve,relative,join,dirname,basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {gzipSync} from 'node:zlib';
-import {chapterAssets} from '../src/ui/art.js';
+import {chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 
 const root=resolve('.'),dist=resolve(root,'dist');
@@ -29,7 +29,7 @@ const openingArt=new Set(['./assets/scenes/frontier-oath.webp','./assets/portrai
 const showcaseAssets=assets.filter(url=>['./showcase/','./src/showcase/','./assets/showcase/','./vendor/'].some(prefix=>url.startsWith(prefix)));
 const showcaseSet=new Set(showcaseAssets);
 const initial=assets.filter(url=>!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
-const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterAssets(i+1)]));
+const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
 for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));
 await writeFile(join(dist,'sw.js'),sw);

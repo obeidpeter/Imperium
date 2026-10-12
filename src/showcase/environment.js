@@ -1,14 +1,14 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {createEnvironmentMaterials} from './environment-materials.js';
 import {createPropFactory} from './environment-props.js';
-import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable} from './environment-layout.js';
+import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
 /** Self-contained 3D presentation. The supplied encounter is never modified.
  * time is elapsed seconds; repeated updates cannot advance simulation state. */
 export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
-  const root=new THREE.Group();root.name='Danube frontier environment';scene.add(root);
+  const training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':'Danube frontier environment';root.userData.environmentMode=training?'training':'frontier';scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
   const library=createEnvironmentMaterials({loadTextures}),m=library.materials,p=createPropFactory(m,geometries),height=createGroundHeight(encounter,tileSize);
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
@@ -16,7 +16,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2;
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0};
-  if(!perf)for(const material of [m.grass,m.leaves]){
+  if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves]){
     material.onBeforeCompile=shader=>{shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
         float phase = environmentWind * 1.15 + instanceMatrix[3].x * 0.37 + instanceMatrix[3].z * 0.23;
@@ -26,13 +26,16 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     material.customProgramCacheKey=()=>`frontier-foliage-wind-v1`;
   }
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
-  const pos=groundGeometry.attributes.position,colors=[];
+  const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
   for(let i=0;i<pos.count;i++){
     const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,height(x,z));
     const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
+    const yard=1-smooth(Math.max(Math.abs(x)-halfX+.8,Math.abs(z)-halfZ+.8)/2.7),wear=training?yard*(.72+patch*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48;
+    soilWeights.push(clamp(.12+wear+damp*.42));
   }
   groundGeometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
   const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,groundUV.getX(i)*40,groundUV.getY(i)*40);
   groundGeometry.computeVertexNormals();const ground=p.mesh(root,groundGeometry,m.ground);ground.name='continuous ground';ground.castShadow=false;ground.userData.environmentGround=true;
 
@@ -43,7 +46,8 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.66,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
     for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
       const x=minX+ix*step,z=minZ+iz*step,d=roadDistance(x,z),edge=(noise(x*1.3,z*1.3,17)-.5)*.20,alpha=1-smooth((d+edge-tileSize*.25)/(tileSize*.34));
-      roadVertices.push(x,height(x,z)+.021,z);roadUV.push(x*.55,z*.55);roadColors.push(1,1,1,alpha*.97);
+      const rut=Math.exp(-Math.pow((d-tileSize*.19)/.105,2)),tone=1-rut*.14;
+      roadVertices.push(x,height(x,z)+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,alpha*(training?.62:.95));
       if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
     }
   }
@@ -76,24 +80,39 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(let j=0;j<11;j++)instance('watch platform',p.box,m.wood,[fortX-.15,base+3.57,zz+(j-5)*.18],[2.25,.13,.17]);
     for(const xx of [fortX-1.2,fortX+.9]){branch([xx,base+4.6,zz-1],[xx,base+4.6,zz+1],.075);for(const dz of [-1,-.35,.35,1])branch([xx,base+3.6,zz+dz],[xx,base+4.65,zz+dz],.065);}
     branch([fortX+.65,base+.15,zz-.7],[fortX+.65,base+3.45,zz+.7],.095);
+    branch([fortX-.87,base+.15,zz+.7],[fortX-.87,base+3.45,zz-.7],.095);
+    p.watchRoof(root,fortX-.15,base+5.82,zz);
+    for(const rail of [-.24,.24])branch([fortX-1.7,base,zz+rail],[fortX-.9,base+3.60,zz+rail],.04,'watchtower ladders');
+    for(let k=1;k<=10;k++){const t=k/11;branch([fortX-1.7+t*.8,base+t*3.60,zz-.26],[fortX-1.7+t*.8,base+t*3.60,zz+.26],.025,'ladder rungs');}
   }
   for(const yy of [3.5,4.15])branch([fortX,yy,gateZ-gateWidth/2-.5],[fortX,yy,gateZ+gateWidth/2+.5],.21,'gate lintels',m.darkWood);
   for(let i=0;i<12;i++)instance('gate walkway',p.box,m.wood,[fortX-.15,3.56,gateZ+(i-5.5)*.43],[1.9,.12,.41]);
-  p.banner(root,fortX+.35,height(fortX+.35,gateZ+4),gateZ+4);
+  const standard=p.banner(root,fortX+.35,height(fortX+.35,gateZ+4),gateZ+4);
+  if(!perf)standard.traverse(o=>{if(!o.userData.windCloth)return;const a=o.geometry.attributes.position,base=Float32Array.from(a.array);animated.push(t=>{for(let i=0;i<a.count;i++){const weight=(.9-base[i*3+1])/1.8;a.setZ(i,base[i*3+2]+Math.sin(t*1.7+base[i*3]*3.5+weight*2)*.07*weight);}a.needsUpdate=true;o.geometry.computeVertexNormals();});});
   for(const [x,z,s,r]of [[fortX-6,gateZ-7,1.1,.1],[fortX-7,gateZ+5,1.05,-.13],[fortX-13,gateZ+9,.8,.04]]){p.tent(root,x,height(x,z),z,s,r);p.crate(root,x+3,height(x+3,z+1),z+1,.8);p.amphora(root,x+2.7,height(x+2.7,z+2.2),z+2.2,.9);}
   for(let i=0;i<5;i++){const x=fortX-2.3-hash(i,3)*2,z=gateZ+7+hash(i,5)*3;p.amphora(root,x,height(x,z),z,.75+hash(i,7)*.3);}
-  const cartX=halfX+3.5,cartZ=3.8;p.wagon(root,cartX,height(cartX,cartZ),cartZ,-.2);
+  const cartX=halfX+3.5,cartZ=3.8;
+  const yardProps=[];
+  if(training){
+    const rack=p.practiceRack(root,halfX+2.3,height(halfX+2.3,3),3,Math.PI/2);yardProps.push(rack);
+    for(const x of [-5,0,5])yardProps.push(p.practicePost(root,x,height(x,-halfZ-2.3),-halfZ-2.3));
+    for(const x of [-5,0,5])p.crate(root,x,height(x,halfZ+3.1),halfZ+3.1,.7);
+    for(let x=-halfX;x<=halfX;x+=2.2){branch([x,height(x,halfZ+1.6),halfZ+1.6],[x,height(x,halfZ+1.6)+.62,halfZ+1.6],.045,'training yard boundary');if(x<halfX-2)branch([x,.49,halfZ+1.6],[x+2.2,.49,halfZ+1.6],.019,'training yard rope',m.rope);}
+  }else {const wagon=p.wagon(root,cartX,height(cartX,cartZ),cartZ,-.2);wagon.name='frontier supply wagon';}
+  root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
 
   // Volumetric branches and thousands of individual bent leaves build tree
   // crowns. Leaves are small 3D surfaces, never a whole-tree billboard.
-  const leafGeometry=p.geo(new THREE.BufferGeometry());leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,-.12,.13,.015,0,.32,.05,.12,.13,.015,0,.14,.06],3));leafGeometry.setIndex([0,1,4,1,2,4,2,3,4,3,0,4]);leafGeometry.computeVertexNormals();
+  const leafGeometry=p.geo(new THREE.BufferGeometry()),leafVertices=[],leafIndices=[];
+  for(let row=0;row<=5;row++)for(let col=0;col<3;col++){const t=row/5,s=col-1,w=Math.sin(Math.PI*t)*.105;leafVertices.push(s*w,t*.31,.035*t*t+.028*(1-s*s)*Math.sin(Math.PI*t));if(row<5&&col<2){const a=row*3+col;leafIndices.push(a,a+1,a+3,a+1,a+4,a+3);}}
+  leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute(leafVertices,3));leafGeometry.setIndex(leafIndices);leafGeometry.computeVertexNormals();
   const trees=[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
     const [x,z,h]=trees[t],base=height(x,z);branch([x,base-.15,z],[x+.18,base+h*.75,z-.1],.28,'oak trunk',m.darkWood);
     for(let k=0;k<8;k++){
       const angle=k*2.399+t,reach=h*(.26+hash(t,k)*.15),cy=base+h*(.55+hash(k,t)*.36),cx=x+Math.cos(angle)*reach,cz=z+Math.sin(angle)*reach;
       branch([x+.12,base+h*(.35+k*.033),z],[cx,cy,cz],.10,'oak bough',m.darkWood);
-      const n=perf?38:high?95:70;
+      const n=perf?30:high?80:58;
       for(let j=0;j<n;j++){const a=hash(j,k,t)*6.283,rr=Math.sqrt(hash(j,t,k))*h*.24,px=cx+Math.cos(a)*rr,pz=cz+Math.sin(a)*rr,py=cy+(hash(t+j,k,9)-.5)*h*.24,scale=.85+hash(j,k,12)*1.25;
         instance('oak leaves',leafGeometry,m.leaves,[px,py,pz],[scale,scale,scale],[hash(j,8)*1.5,hash(j,k)*6.28,hash(j,4)*1.5],new THREE.Color().setRGB(.60+hash(j,k)*.36,.72+hash(k,j)*.23,.47+hash(j,k,4)*.22));}
     }
@@ -105,22 +124,23 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(const [t,width]of [[0,.038],[.38,.028],[.72,.016],[1,0]])for(const side of [-1,1])bladeVertices.push(dx*bend*t*t-dz*width*side,h*t,dz*bend*t*t+dx*width*side);
     for(let j=0;j<3;j++){const n=start+j*2;bladeIndices.push(n,n+1,n+2,n+1,n+3,n+2);}
   }blade.setAttribute('position',new THREE.Float32BufferAttribute(bladeVertices,3));blade.setIndex(bladeIndices);blade.computeVertexNormals();
+  const normals=blade.attributes.normal;for(let i=0;i<normals.count;i++){const n=new THREE.Vector3(normals.getX(i)*.5,Math.abs(normals.getY(i))+.85,normals.getZ(i)*.5).normalize();normals.setXYZ(i,n.x,n.y,n.z);}
   const grassCount=perf?2400:high?13000:8500;
   for(let i=0;i<grassCount;i++){
     const x=(hash(i,31)-.5)*65,z=(hash(i,32)-.5)*55;if(z< -18)continue;
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
-    if(['rock','wall'].includes(type)||hash(i,9)>patch*.85+(inside?.1:.24)||Math.abs(x-fortX)<1)continue;
+    if(['rock','wall'].includes(type)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||Math.abs(x-fortX)<1)continue;
     if(roadDistance(x,z)<tileSize*(.34+hash(i,15)*.14))continue;
-    const s=inside?.14+hash(i,4)*.15:.23+hash(i,4)*.37;
-    instance('meadow grass',blade,m.grass,[x,height(x,z)-.01,z],[s,s,s],[0,hash(i,4)*6.28,0],new THREE.Color().setRGB(.63+hash(i,2)*.36,.68+hash(i,5)*.28,.44+hash(i,1)*.24));
+    const s=inside?(training?.065:.12)+hash(i,4)*.12:.18+hash(i,4)*.39,dry=hash(i,114)>.83;
+    instance(dry?'dry meadow grass':'meadow grass',blade,dry?m.dryGrass:m.grass,[x,height(x,z)-.01,z],[s*(.7+hash(i,8)*.6),s,s],[0,hash(i,4)*6.28,0],new THREE.Color().setRGB(.71+hash(i,2)*.25,.77+hash(i,5)*.2,.59+hash(i,1)*.24));
   }
   // Fern fronds are compound leaves along bent stems, kept outside the board.
   for(let i=0;i<(perf?12:30);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1))continue;const base=height(x,z);
     for(let f=0;f<5;f++){const angle=f*1.256+i,dx=Math.cos(angle),dz=Math.sin(angle);for(let j=1;j<8;j++)for(const side of [-1,1]){const t=j/8,reach=t*.85,s=.30*(1-t*.8);instance('fern leaves',leafGeometry,m.leaves,[x+dx*reach+dz*side*s*.2,base+Math.sin(t*2.5)*.47,z+dz*reach-dx*side*s*.2],[s*1.6,s*2,s],[.4,angle+side*.9,.4],new THREE.Color(.50,.70,.42));}}
   }
   for(const [name,batch]of batches){
-    const mesh=new THREE.InstancedMesh(batch.geometry,batch.material,batch.items.length);mesh.name=name;mesh.castShadow=!['meadow grass','fern leaves'].includes(name)&&!perf;mesh.receiveShadow=true;
+    const mesh=new THREE.InstancedMesh(batch.geometry,batch.material,batch.items.length);mesh.name=name;mesh.castShadow=!['meadow grass','dry meadow grass','fern leaves'].includes(name)&&!perf;mesh.receiveShadow=true;
     batch.items.forEach((item,i)=>{dummy.position.set(...item.position);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);if(item.color)mesh.setColorAt(i,item.color);});mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh);
   }
 
@@ -140,11 +160,11 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(let k=0;k<3;k++){const mat=ownMaterial(new THREE.MeshBasicMaterial({color:[0xf3a143,0xf5c777,0xbc502c][k],transparent:true,opacity:[.67,.6,.3][k],depthWrite:false,blending:THREE.AdditiveBlending}));const flame=p.mesh(g,p.sphere,mat,(k-1)*.11,.38,0,.12,.5,.12);flame.castShadow=false;flame.receiveShadow=false;flames.push({mesh:flame,seed:k+x,base:.40,scale});}
     if(!perf){const light=new THREE.PointLight(0xe99b53,1.6*scale,6,2);light.position.set(0,.9,0);g.add(light);animated.push(t=>light.intensity=scale*(1.4+Math.sin(t*7+x)*.17+Math.sin(t*11)*.12));}
   }
-  fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);
+  if(!training){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
   // Consolidate repeated solid prop parts after their parent transforms have
   // been composed. Animated flames/water and unique cloth remain independent.
   root.updateMatrixWorld(true);const staticParts=new Map(),inverseRoot=root.matrixWorld.clone().invert();
-  root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||extraMaterials.has(o.material)||o===river)return;const key=o.geometry.uuid+':'+o.material.uuid;if(!staticParts.has(key))staticParts.set(key,[]);staticParts.get(key).push(o);});
+  root.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||extraMaterials.has(o.material)||o===river||o.userData.windCloth)return;const key=o.geometry.uuid+':'+o.material.uuid;if(!staticParts.has(key))staticParts.set(key,[]);staticParts.get(key).push(o);});
   for(const parts of staticParts.values())if(parts.length>2){
     const source=parts[0],batch=new THREE.InstancedMesh(source.geometry,source.material,parts.length);batch.name='static prop parts';batch.castShadow=true;batch.receiveShadow=true;
     parts.forEach((o,i)=>{batch.setMatrixAt(i,inverseRoot.clone().multiply(o.matrixWorld));o.parent.remove(o);});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();root.add(batch);
@@ -153,6 +173,6 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   return {group:root,ground,groundHeight:height,
     update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;for(const fn of animated)fn(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
     dispose(){if(disposed)return;disposed=true;scene.remove(root);for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
-    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,disposed};}
+    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':'frontier',disposed};}
   };
 }

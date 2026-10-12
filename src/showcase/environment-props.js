@@ -33,6 +33,8 @@ export function createPropFactory(materials,geometries){
       if(row<14&&col<12){const a=row*13+col;indices.push(a,a+13,a+1,a+1,a+13,a+14);}
     }
     const roof=geo(new THREE.BufferGeometry());roof.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));roof.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));roof.setIndex(indices);roof.computeVertexNormals();mesh(g,roof,m.cloth);
+    // Stitched panel seams follow the sagging cloth; poles and guys stay rigid.
+    for(const u of [.17,.33,.67,.83]){const points=[];for(let k=0;k<=10;k++){const v=k/10;points.push(new THREE.Vector3((u-.5)*4.2,.29+2.95*(1-Math.abs(u*2-1))-.16*Math.sin(v*Math.PI)*Math.sin(Math.abs(u-.5)*Math.PI*2),(v-.5)*length));}mesh(g,geo(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),10,.006,3,false)),m.rope);}
     for(const zz of [-length/2,length/2]){
       beam(g,[0,0,zz],[0,3.37,zz],.065);beam(g,[-2.13,.22,zz],[0,3.28,zz],.025,m.rope);beam(g,[0,3.28,zz],[2.13,.22,zz],.025,m.rope);
       for(const side of [-1,1]){const panel=geo(new THREE.BufferGeometry());panel.setAttribute('position',new THREE.Float32BufferAttribute([side*.18,2.95,zz,side*.4,.15,zz,side*2.04,.25,zz],3));panel.setAttribute('uv',new THREE.Float32BufferAttribute([0,1,0,0,1,0],2));panel.computeVertexNormals();mesh(g,panel,m.cloth);}
@@ -51,7 +53,25 @@ export function createPropFactory(materials,geometries){
   }
   function banner(parent,x,y,z){const g=group(parent,x,y,z);beam(g,[0,0,0],[0,5.1,0],.045);beam(g,[-.7,4.7,0],[.7,4.7,0],.035);mesh(g,sphere,m.terra,0,5.2,0,.11,.16,.11);
     const cloth=geo(new THREE.PlaneGeometry(1.3,1.8,8,12));const attr=cloth.attributes.position;
-    for(let i=0;i<attr.count;i++){const yy=attr.getY(i);attr.setZ(i,.07*Math.sin(attr.getX(i)*4+yy*2)*(.9-yy));}cloth.computeVertexNormals();mesh(g,cloth,m.red,0,3.79,0);return g;
+    for(let i=0;i<attr.count;i++){const yy=attr.getY(i);attr.setZ(i,.07*Math.sin(attr.getX(i)*4+yy*2)*(.9-yy));}cloth.computeVertexNormals();const fabric=mesh(g,cloth,m.red,0,3.79,0);fabric.name='hanging standard';fabric.userData.windCloth=true;return g;
   }
-  return {mesh,beam,plank,group,crate,amphora,tent,wagon,banner,box,cylinder,sphere,geo};
+  function watchRoof(parent,x,y,z){const g=group(parent,x,y,z);g.name='watchtower canopy';
+    for(const xx of [-1.12,1.12])for(const zz of [-1.02,1.02])beam(g,[xx,-1.4,zz],[xx,.04,zz],.075);
+    for(const side of [-1,1])for(let row=0;row<5;row++)for(let j=0;j<6;j++){const a=(row+.5)/5,xx=side*a*1.5,yy=.7-a*.8,zz=(j-2.5)*.48;const board=plank(g,xx,yy,zz,.34,.055,.50,m.wood);board.rotation.z=-side*Math.atan(.8/1.5);}
+    beam(g,[0,.73,-1.55],[0,.73,1.55],.07);for(const zz of [-1.33,1.33]){beam(g,[-1.45,-.09,zz],[0,.7,zz],.045);beam(g,[0,.7,zz],[1.45,-.09,zz],.045);}
+    return g;
+  }
+  function practiceRack(parent,x,y,z,angle=0){const g=group(parent,x,y,z,angle);g.name='drill equipment rack';
+    for(const side of [-1,1]){beam(g,[side*1.22,0,-.30],[side*1.22,1.72,.05],.06);beam(g,[side*1.22,0,.44],[side*1.22,1.72,.05],.06);}beam(g,[-1.35,1.45,0],[1.35,1.45,0],.07);
+    for(let k=0;k<6;k++){const xx=(k-2.5)*.36;beam(g,[xx,.05,.35],[xx,2.20,-.03],.018,m.wood);beam(g,[xx,1.90,.015],[xx,2.26,-.045],.028,m.wood);}
+    for(const side of [-1,1]){const shield=mesh(g,geo(new THREE.SphereGeometry(1,16,10)),m.wood,side*.70,.60,.30,.33,.51,.045);shield.rotation.x=-.15;mesh(g,sphere,m.iron,side*.70,.60,.36,.08,.08,.025);}
+    return g;
+  }
+  function practicePost(parent,x,y,z,angle=0){const g=group(parent,x,y,z,angle);g.name='practice post outside yard';
+    beam(g,[0,-.06,0],[0,2.06,0],.105);beam(g,[-.65,1.3,0],[.65,1.3,0],.07);
+    mesh(g,cylinder,m.rope,0,1.36,0,.26,.88,.20);mesh(g,sphere,m.rope,0,1.99,0,.17,.19,.16);
+    for(let k=0;k<5;k++){const rope=geo(new THREE.TorusGeometry(.265,.012,4,16));const loop=mesh(g,rope,m.darkWood,0,1.04+k*.15,0);loop.rotation.x=Math.PI/2;loop.scale.y=.77;}
+    return g;
+  }
+  return {mesh,beam,plank,group,crate,amphora,tent,wagon,banner,watchRoof,practiceRack,practicePost,box,cylinder,sphere,geo};
 }
