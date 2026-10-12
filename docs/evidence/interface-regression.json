@@ -1,0 +1,620 @@
+{
+  "format": "sacramentum-interface-regression-v1",
+  "version": "0.5.0",
+  "recordedAt": "2026-10-12T07:35:02.462193+00:00",
+  "scope": "Automated local Node verification. Browser journeys and screenshots are recorded separately in the interface verification report.",
+  "tests": {
+    "command": "node --test tests/*.test.mjs",
+    "exitCode": 0,
+    "tests": 190,
+    "passed": 190,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 21069.5651,
+    "logSha256": "53c1e7d9d6fb7154b8b70c03699a18f91dd2c52ce3e0f16a9bf960bab495d4b0",
+    "productionRevisionAtRun": "a93ffede353d",
+    "subsequentChanges": "After the 190-test passing run, one production CSS rule set dialog max-width to calc(100% - 1rem), preventing the user-agent em-based limit from shrinking phone dialogs at enlarged text. No production JavaScript, rules, or save implementation changed. The development-only interface lab stress name was also constrained to the existing 40-character name limit. The full suite was not repeated for these changes; the final production build and nine asset/offline checks were rerun."
+  },
+  "autoplay": {
+    "command": "node scripts/autoplay.mjs",
+    "exitCode": 0,
+    "source": "New Game; legal gameplay API commands only",
+    "seed": 275,
+    "rank": "Augustus",
+    "completed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "encounters": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "won",
+        "turns": 3,
+        "losses": 0,
+        "heroHealth": 20,
+        "used": [
+          "move",
+          "throw",
+          "strike",
+          "brace"
+        ]
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 11,
+        "used": [
+          "move",
+          "brace",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch2-marsh",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 18,
+        "used": [
+          "move",
+          "brace",
+          "throw",
+          "assist",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "won",
+        "turns": 4,
+        "losses": 0,
+        "heroHealth": 16,
+        "used": [
+          "move",
+          "throw",
+          "strike",
+          "brace"
+        ]
+      },
+      {
+        "id": "ch3-station",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "won",
+        "turns": 4,
+        "losses": 0,
+        "heroHealth": 18,
+        "used": [
+          "scout",
+          "move",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch3-rolls",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 22,
+        "used": [
+          "move",
+          "brace",
+          "throw",
+          "assist"
+        ]
+      },
+      {
+        "id": "ch4-gate",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "won",
+        "turns": 13,
+        "losses": 3,
+        "heroHealth": 8,
+        "used": [
+          "order",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch4-wall",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 23,
+        "used": [
+          "order",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch5-mine",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 20,
+        "used": [
+          "formation",
+          "move",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch5-wall",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "won",
+        "turns": 12,
+        "losses": 1,
+        "heroHealth": 20,
+        "used": [
+          "formation",
+          "brace",
+          "throw",
+          "strike"
+        ]
+      },
+      {
+        "id": "ch6-wells",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "assist",
+          "order"
+        ]
+      },
+      {
+        "id": "ch6-eagle",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 24,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "strike",
+          "order"
+        ]
+      },
+      {
+        "id": "ch7-council",
+        "chapter": 7,
+        "kind": "contest",
+        "status": "won",
+        "turns": 8,
+        "losses": 0,
+        "heroHealth": 9,
+        "used": [
+          "move",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch7-legion",
+        "chapter": 7,
+        "kind": "battle",
+        "status": "won",
+        "turns": 7,
+        "losses": 0,
+        "heroHealth": 7,
+        "used": [
+          "deploy",
+          "formation",
+          "rally",
+          "move",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch8-parley",
+        "chapter": 8,
+        "kind": "contest",
+        "status": "won",
+        "turns": 10,
+        "losses": 1,
+        "heroHealth": 0,
+        "used": [
+          "move",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch8-ferry",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "won",
+        "turns": 11,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw",
+          "assist",
+          "order"
+        ]
+      },
+      {
+        "id": "ch8-crossing",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "won",
+        "turns": 9,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch9-city",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 8,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      },
+      {
+        "id": "ch10-road",
+        "chapter": 10,
+        "kind": "battle",
+        "status": "won",
+        "turns": 6,
+        "losses": 0,
+        "heroHealth": 26,
+        "used": [
+          "formation",
+          "move",
+          "rally",
+          "throw"
+        ]
+      },
+      {
+        "id": "ch10-tribunal",
+        "chapter": 10,
+        "kind": "contest",
+        "status": "won",
+        "turns": 12,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch11-accounts",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "won",
+        "turns": 12,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "record",
+          "denounce",
+          "address",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "won",
+        "turns": 14,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "denounce",
+          "record",
+          "rebut",
+          "persuade"
+        ]
+      },
+      {
+        "id": "ch12-legitimacy",
+        "chapter": 12,
+        "kind": "contest",
+        "status": "won",
+        "turns": 14,
+        "losses": 0,
+        "heroHealth": 12,
+        "used": [
+          "move",
+          "address",
+          "persuade",
+          "record",
+          "denounce",
+          "rebut"
+        ]
+      },
+      {
+        "id": "ch12-confrontation",
+        "chapter": 12,
+        "kind": "battle",
+        "status": "won",
+        "turns": 5,
+        "losses": 0,
+        "heroHealth": 22,
+        "used": [
+          "formation",
+          "move",
+          "throw",
+          "rally"
+        ]
+      }
+    ],
+    "totalTurns": 204
+  },
+  "assetsAndOffline": {
+    "command": "node scripts/verify-assets.mjs",
+    "exitCode": 0,
+    "checksPassed": 9,
+    "checks": [
+      "asset manifest integrity and portrait/title budgets",
+      "startup/chapter1/full 2 MB budgets, chapter groups and bundled asset provenance",
+      "shell-only install and truthful partial status",
+      "chapter 1 caches separately and never claims all chapters are offline",
+      "version-scoped lookup ignores old artwork",
+      "failed deferred fetch does not claim offline readiness",
+      "retry completes all deferred assets and reports readiness",
+      "server-unavailable navigation uses current shell cache",
+      "activation cleanup; no forced skipWaiting"
+    ],
+    "productionRevision": "c246f03a6e79"
+  },
+  "build": {
+    "command": "node scripts/build.mjs",
+    "exitCode": 0,
+    "version": "0.5.0",
+    "revision": "c246f03a6e79",
+    "files": 79,
+    "bytes": 2321270,
+    "gzipBytes": 1980413,
+    "initialGzipBytes": 310062,
+    "chapterOneGzipBytes": 1278153,
+    "completeGzipBytes": 1982904,
+    "firstLoadBudget": 2000000,
+    "completeBudget": 2000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace",
+    "rebuiltAt": "2026-10-12T07:35:02.454253+00:00",
+    "postRegressionCssFix": true
+  },
+  "protectedFiles": {
+    "baseline": "Frozen 0.4 source captured before the interface task",
+    "groups": [
+      "All src/core JavaScript modules, including development and legacy helpers",
+      "All src/data JavaScript modules",
+      "Browser storage implementation",
+      "Canvas renderer, tactical world and sprites, motion, ambient, quality, art loading, and turn replay"
+    ],
+    "count": 23,
+    "unchangedCount": 23,
+    "allUnchanged": true,
+    "files": [
+      {
+        "path": "src/core/battle.js",
+        "baselineSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+        "currentSha256": "9188a0be75d4ad60616f4d670d8cc37f247b35b8605a79f405307b260d52790b",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/career.js",
+        "baselineSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "currentSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/contest.js",
+        "baselineSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+        "currentSha256": "c98e0c8190d797043ae970fb37d0bc898f7b0088c81ed34c9ea345c9bcb5600a",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/debug.js",
+        "baselineSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "currentSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/game.js",
+        "baselineSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+        "currentSha256": "f9ca0b4758557fac4001e768eeafadc7b74a239b45b3036389932e431db0ea3a",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-battle.js",
+        "baselineSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "currentSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-contest.js",
+        "baselineSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "currentSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/shared.js",
+        "baselineSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+        "currentSha256": "4deab2366bbd5dd7f27f291de37c21e8139358ac1f68273526c4d77e55e525ea",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/campaign.js",
+        "baselineSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "currentSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/encounters.js",
+        "baselineSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "currentSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/story-stages.js",
+        "baselineSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "currentSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/ambient.js",
+        "baselineSha256": "10cac137ec89cc797b3a9f994743d6c50c02d038ceba7ac9740e3b54be32894e",
+        "currentSha256": "10cac137ec89cc797b3a9f994743d6c50c02d038ceba7ac9740e3b54be32894e",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/animation-timeline.js",
+        "baselineSha256": "84fdb22f80fc5409bf1c90445c696e8b9f5cdad3a7cc212a6653c6f80fdd37e4",
+        "currentSha256": "84fdb22f80fc5409bf1c90445c696e8b9f5cdad3a7cc212a6653c6f80fdd37e4",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/art.js",
+        "baselineSha256": "f804287c50e8c89714bb97736ceadfbadada079865681ff46f7bac69807ce087",
+        "currentSha256": "f804287c50e8c89714bb97736ceadfbadada079865681ff46f7bac69807ce087",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/asset-loader.js",
+        "baselineSha256": "657c9f986589289dc7e77c27c1923d172ed15de18012ff612b97f9f1d57cb4dc",
+        "currentSha256": "657c9f986589289dc7e77c27c1923d172ed15de18012ff612b97f9f1d57cb4dc",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/battle-art.js",
+        "baselineSha256": "a93551aee9cbbf0f909a82d85164b741cccc372a70c666383dc153d387365c9a",
+        "currentSha256": "a93551aee9cbbf0f909a82d85164b741cccc372a70c666383dc153d387365c9a",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/graphics-quality.js",
+        "baselineSha256": "58f888e53c9316cd1fdb378aa8b5611940c71085db8abf264e92d8759100f968",
+        "currentSha256": "58f888e53c9316cd1fdb378aa8b5611940c71085db8abf264e92d8759100f968",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/motion.js",
+        "baselineSha256": "047e03020524db719aa0bfab692ce619a5c16bad6775922a2e27445ab0b3ef1c",
+        "currentSha256": "047e03020524db719aa0bfab692ce619a5c16bad6775922a2e27445ab0b3ef1c",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/renderer.js",
+        "baselineSha256": "1d054b7b9d930aa47b1029cce6f1263e88169aaf7228bef956fea2b389867bca",
+        "currentSha256": "1d054b7b9d930aa47b1029cce6f1263e88169aaf7228bef956fea2b389867bca",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/storage.js",
+        "baselineSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+        "currentSha256": "bf9d2e14970c9ebb15d117bb34c69e910ed75001bf45c2b22b83024e7b131308",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/turn-replay.js",
+        "baselineSha256": "e0f49cd45a4d09bc27818dd398ba750ea332f9aec00e6ee2238ca52b4bbe5ea9",
+        "currentSha256": "e0f49cd45a4d09bc27818dd398ba750ea332f9aec00e6ee2238ca52b4bbe5ea9",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/unit-sprites.js",
+        "baselineSha256": "12e29c344ab8b70942ff74a522bd725d2b73adf9b1494ac1f5f05fe7d56c8150",
+        "currentSha256": "12e29c344ab8b70942ff74a522bd725d2b73adf9b1494ac1f5f05fe7d56c8150",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/world-art.js",
+        "baselineSha256": "c4a8da05c0c8d234489c0c88e41e0c8e66d156f382c3d45ad9350f2a54c01800",
+        "currentSha256": "c4a8da05c0c8d234489c0c88e41e0c8e66d156f382c3d45ad9350f2a54c01800",
+        "unchanged": true
+      }
+    ]
+  },
+  "limitations": [
+    "Autoplay validates a legal deterministic route, not enjoyment, human pacing, or every possible player strategy.",
+    "Node tests do not establish visual quality, real-device touch behavior, screen-reader compatibility, GPU/RAM use, or battery life.",
+    "Gzip build estimates are sums of compressed files, not an observed network trace.",
+    "Browser evidence is reported separately; no browser interaction is inferred from these automated results."
+  ]
+}

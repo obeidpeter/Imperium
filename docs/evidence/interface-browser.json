@@ -1,0 +1,487 @@
+{
+  "format": "sacramentum-interface-browser-evidence-v1",
+  "version": "0.5.0",
+  "productionRevision": "c246f03a6e79",
+  "recordedAt": "2026-10-12T07:37:43.293573+00:00",
+  "scope": "Fixed summary of saved actual browser evidence and operator-reported manual checks. No new browser test was inferred while generating this file.",
+  "rawEvidence": [
+    {
+      "file": "load-baseline.json",
+      "bytes": 202794,
+      "sha256": "11fa11f1510130cfd98a3f47d4e5e9ba1c4aea4968f3856dcbee3974f6e00dd7",
+      "location": "Separate interface-review deliverable; original raw evidence is not required by the game runtime."
+    },
+    {
+      "file": "load-current.json",
+      "bytes": 210276,
+      "sha256": "19a89669bda8d10e7914470bd5107608661b11f79cd858b931d346352a135d42",
+      "location": "Separate interface-review deliverable; original raw evidence is not required by the game runtime."
+    },
+    {
+      "file": "lab-stress-phone-200.json",
+      "bytes": 18387,
+      "sha256": "d62772d172e4fbe4f3004ff67465e4893fc7a13656fe09e94534987fc04efadc",
+      "location": "Separate interface-review deliverable; original raw evidence is not required by the game runtime."
+    }
+  ],
+  "coldEntry": {
+    "baseline": {
+      "label": "baseline",
+      "productionRevision": "0083df3834cf",
+      "capturedAt": "2026-10-12T07:22:00.300Z",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "devicePixelRatio": 1,
+        "origin": "http://127.0.0.1:4311",
+        "storageBefore": {
+          "localCampaign": false,
+          "databases": [],
+          "serviceWorkers": 0,
+          "caches": []
+        },
+        "controlledAtCapture": true
+      },
+      "durations": {
+        "landingReadyMs": 313.39999997615814,
+        "beginToChapterMs": 48.10000002384186,
+        "enterToBoardMs": 63.90000009536743,
+        "enterToArtworkSettledMs": 620.9000000953674,
+        "observedLandingToBoardMs": 17146.600000023842,
+        "humanDwellIncluded": true
+      },
+      "serverResponses": {
+        "requests": 99,
+        "encodedBodyBytes": 1783550,
+        "uncompressedBodyBytes": 2434917,
+        "failed": [],
+        "lastResponseMs": 11706.722900000008
+      },
+      "browserResources": {
+        "count": 74,
+        "transferBytes": 251624,
+        "encodedBodyBytes": 2433037,
+        "decodedBodyBytes": 2751889,
+        "zeroTransferEntries": 37
+      },
+      "interface": {
+        "width": 345,
+        "scrollWidth": 345,
+        "duplicateIds": [],
+        "unnamedControls": [],
+        "brokenFragments": [],
+        "primaryTargets": [
+          {
+            "name": "Confirm action",
+            "width": 190.6796875,
+            "height": 44,
+            "withinViewport": true
+          },
+          {
+            "name": "End turn →",
+            "width": 127.1171875,
+            "height": 44,
+            "withinViewport": true
+          }
+        ],
+        "smallControls": [],
+        "scope": "Visible DOM contracts and geometry only; not a full accessibility or contrast audit."
+      },
+      "artwork": {
+        "indicatorObserved": false,
+        "failedImages": []
+      }
+    },
+    "current": {
+      "label": "current-final",
+      "productionRevision": "c246f03a6e79",
+      "capturedAt": "2026-10-12T07:35:29.280Z",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "devicePixelRatio": 1,
+        "origin": "http://127.0.0.1:4314",
+        "storageBefore": {
+          "localCampaign": false,
+          "databases": [],
+          "serviceWorkers": 0,
+          "caches": []
+        },
+        "controlledAtCapture": true
+      },
+      "durations": {
+        "landingReadyMs": 356.2999999523163,
+        "beginToChapterMs": 31.600000023841858,
+        "enterToBoardMs": 59.799999952316284,
+        "enterToArtworkSettledMs": 638.0999999046326,
+        "observedLandingToBoardMs": 9905.199999928474,
+        "humanDwellIncluded": true
+      },
+      "serverResponses": {
+        "requests": 103,
+        "encodedBodyBytes": 1780316,
+        "uncompressedBodyBytes": 2476569,
+        "failed": [],
+        "lastResponseMs": 4899.3826000000045
+      },
+      "browserResources": {
+        "count": 76,
+        "transferBytes": 261716,
+        "encodedBodyBytes": 2442529,
+        "decodedBodyBytes": 2783992,
+        "zeroTransferEntries": 37
+      },
+      "interface": {
+        "width": 345,
+        "scrollWidth": 345,
+        "duplicateIds": [],
+        "unnamedControls": [],
+        "brokenFragments": [],
+        "primaryTargets": [
+          {
+            "name": "Confirm action",
+            "width": 190.6796875,
+            "height": 44,
+            "withinViewport": true
+          },
+          {
+            "name": "End turn →",
+            "width": 127.1171875,
+            "height": 44,
+            "withinViewport": true
+          }
+        ],
+        "smallControls": [],
+        "scope": "Visible DOM contracts and geometry only; not a full accessibility or contrast audit."
+      },
+      "artwork": {
+        "indicatorObserved": false,
+        "failedImages": []
+      }
+    },
+    "method": "Actual Play/Begin/decision/Enter controls in a same-origin 360x640 frame, fresh unused local ports, gzip/no-store development server. Its ledger includes worker and repeated requests; harness/API traffic excluded.",
+    "artworkEndpoint": "Board present and artwork progress region quiet for 500ms. Neither sample observed an active loading indicator; this is not a loading-cycle, GPU or offline-completion guarantee.",
+    "comparison": "One unthrottled local sample per edition. No speed-improvement claim. Total elapsed includes human reading/click delay. Response bodies exclude HTTP/TLS headers."
+  },
+  "componentLab": {
+    "caseCount": 11,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "method": "Real view/panel modules and styles in an isolated browser frame; action buttons inert, no app router/storage. Validated legal fixtures plus explicitly synthetic 40-character stress names and platform notices.",
+    "cases": [
+      {
+        "checkpoint": "camp-11",
+        "component": "showSettings",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:05.154Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": [
+            {
+              "name": "Reduced motionRemove nonessential motion; action feedback remains readable.",
+              "tag": "INPUT",
+              "id": "motion-setting"
+            },
+            {
+              "name": "Generated sound effectsOptional. Every action is understandable without sound.",
+              "tag": "INPUT",
+              "id": "audio-setting"
+            }
+          ]
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "camp",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:14.121Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "titleView",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:15.091Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showMap",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:16.070Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showCharacter",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:16.999Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showJournal",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:18.134Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showLedger",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:19.084Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showRestore",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:20.021Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showTakeover",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:20.843Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "camp-11",
+        "component": "showStorageUnavailable",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:21.729Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      },
+      {
+        "checkpoint": "ending",
+        "component": "camp",
+        "syntheticStress": true,
+        "textScale": 2,
+        "capturedAt": "2026-10-12T07:33:28.320Z",
+        "frame": {
+          "width": 360,
+          "height": 640
+        },
+        "renderLeftCampaignUnchanged": true,
+        "geometry": {
+          "width": 345,
+          "scrollWidth": 345,
+          "duplicateIds": [],
+          "unnamedControls": [],
+          "brokenFragments": [],
+          "smallControls": []
+        },
+        "failedImages": []
+      }
+    ],
+    "targetLimit": "Native checkbox inputs appear below 44px in the report; enclosing associated-label hit areas were not measured. No blanket 44px claim. Long 200% panels require vertical scrolling."
+  },
+  "actualApplicationChecks": [
+    {
+      "area": "First visit",
+      "observed": "Play visible in first 640px phone viewport at normal text; real Play/name/Begin reached camp and Chapter I."
+    },
+    {
+      "area": "Returning and navigation",
+      "observed": "Continue prominent; Home/Continue retained unfinished encounter turn and spent action."
+    },
+    {
+      "area": "Menu and focus",
+      "observed": "Working menu destinations and accessible name. Final Menu focused its heading; Escape closed and returned focus to Menu. Escape also returned to Accessibility settings invoker after rerender.",
+      "limit": "Tab boundary visited browser/body before returning to dialog; perfect wrapping not established."
+    },
+    {
+      "area": "Campaign",
+      "observed": "Current/locked chapters and requirements inspected; route-map disclosure opened."
+    },
+    {
+      "area": "Settings",
+      "observed": "Changed in-game 200% text and reduced motion; final dialog 313px at 360 viewport, page client/scroll width 345px.",
+      "limit": "Attempted Ctrl-plus did not establish genuine browser zoom."
+    },
+    {
+      "area": "Save import",
+      "observed": "Invalid code showed truthful error. Legally earned v0.4 chapter XI save imported using validation and explicit confirmation."
+    },
+    {
+      "area": "Contest",
+      "observed": "Persuade preview/confirm spent action; 640x360 board and essential tactical controls visible; 1600px desktop inspected."
+    },
+    {
+      "area": "Records",
+      "observed": "Character/equipment, journal 22 completed encounters and ledger 2 open/2 due inspected on imported checkpoint."
+    },
+    {
+      "area": "Website/reference",
+      "observed": "Below-fold media loaded; credits/privacy and crosslinks opened. Final landing recaptured at 1280x720."
+    },
+    {
+      "area": "Waiting update",
+      "observed": "Final production preview on port4193 showed a downloaded-edition notice advising close/reopen after saving. Closing/reopening the test tab on that origin removed the notice and displayed Play.",
+      "limit": "No user save existed there. This does not establish active-save migration or installed-PWA update behavior."
+    },
+    {
+      "area": "Final preview logs",
+      "observed": "No browser errors or warnings in the inspected final preview session.",
+      "limit": "Limited to that session, not an exhaustive runtime log guarantee."
+    }
+  ],
+  "limits": [
+    "Desktop Codex in-app Chromium on Windows, reported Chrome 154. Physical phones, physical touch and screen readers unverified.",
+    "In-game 200% text checked; genuine browser 200% zoom unverified.",
+    "No exhaustive keyboard/action matrix, formal contrast certification, production CDN/slow-network/device benchmark, or speed conclusion.",
+    "No new full-campaign manual playthrough or installed-device/offline-update result is claimed for this interface pass.",
+    "DOM geometry/image checks are limited to captured states; component stress cases are not reproduced storage failures or functional journeys."
+  ]
+}

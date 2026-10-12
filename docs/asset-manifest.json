@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "SACRAMENTUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "AI-generated for this project through the built-in image_gen tool. No third-party source imagery supplied. No exclusive copyright or third-party license ownership is asserted. Historical references inform design only; their images are not copied.",
+  "rightsNotice": "This manifest covers 35 project AI-generated artwork files, two mechanical crops of actual browser gameplay using that artwork, and three original code-native installed-app icons. No third-party source imagery was supplied. Provenance does not guarantee exclusive copyright, non-infringement or third-party license ownership. Historical references inform design only; their images are not copied.",
   "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
   "assets": [
     {
@@ -3226,10 +3226,182 @@
         "bytes": 131118,
         "sha256": "4bfeb27b2cc65bc359841991b3bdad065b68aa098afd25dc39179669c3bc7fec"
       }
+    },
+    {
+      "id": "site-battle",
+      "path": "assets/site/battle.webp",
+      "subject": "Chapter I field battle, cropped from the first board of the browser-rendered legal campaign graphics gallery",
+      "source": {
+        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
+        "sourceFile": "after-all12.png",
+        "reviewCapturePath": "outputs/graphics-review/after-all12.png",
+        "sourceSha256": "f974e5f40063b2cf08b9c6bcb6810187bc65e6ca63b02fd016d9c6658de1c3fa",
+        "sourceSize": [
+          1216,
+          2688
+        ],
+        "cropBox": [
+          0,
+          32,
+          600,
+          432
+        ],
+        "instructions": "docs/interface-assets.md",
+        "bundledSource": false
+      },
+      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "loading": "lazy-below-fold",
+      "export": {
+        "format": "WebP",
+        "width": 320,
+        "height": 213,
+        "quality": 40,
+        "method": 6,
+        "resampling": "Lanczos",
+        "bytes": 4554,
+        "sha256": "216056d333ef6f94d15df2cc5edaee82381db3fbfb172a029aa9d16890b81d91"
+      }
+    },
+    {
+      "id": "site-contest",
+      "path": "assets/site/contest.webp",
+      "subject": "Political Contest canvas, cropped from a real browser-interface screenshot; surrounding chapter, names and objective text omitted",
+      "source": {
+        "method": "Mechanical crop of actual local browser gameplay capture; no generated or composited replacement imagery",
+        "sourceFile": "desktop-senate.png",
+        "reviewCapturePath": "outputs/graphics-review/desktop-senate.png",
+        "sourceSha256": "f702b7d1ef01b797e3c49af95d76f84eb41842f4ffff28a8bb54c4bc3bac071f",
+        "sourceSize": [
+          1280,
+          1081
+        ],
+        "cropBox": [
+          48,
+          276,
+          786,
+          766
+        ],
+        "instructions": "docs/interface-assets.md",
+        "bundledSource": false
+      },
+      "usage": "Small landing-page gameplay preview. Visible caption identifies actual gameplay; controls and story UI are not pictured.",
+      "loading": "lazy-below-fold",
+      "export": {
+        "format": "WebP",
+        "width": 320,
+        "height": 212,
+        "quality": 40,
+        "method": 6,
+        "resampling": "Lanczos",
+        "bytes": 5276,
+        "sha256": "7118f27665c2267bf9d5ea5bcb7d752859b6a324877c3148cdedf83fd11fa641"
+      }
+    },
+    {
+      "id": "app-icon-180",
+      "path": "icons/icon-180.png",
+      "subject": "Installed-app emblem, 180-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-180.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-180.png",
+        "sourceSha256": "3f58d569702ff92ee017ded8872f91ca95d8b5b74bf3d2e137c3e731a432f879",
+        "sourceSize": [
+          180,
+          180
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 180,
+        "height": 180,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 4329,
+        "sha256": "b1f02aebdcd8fd5a8eeaf9a3fdc8ed365854fe6958849ec82291ceab1974aff4",
+        "meanAbsoluteChannelError": 0.004948559670781893,
+        "maxChannelError": 8
+      }
+    },
+    {
+      "id": "app-icon-192",
+      "path": "icons/icon-192.png",
+      "subject": "Installed-app emblem, 192-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-192.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-192.png",
+        "sourceSha256": "78f8d02d13ef95c0b6e4959c6378d55bfb872f0336b87004fe0e5cc4e62230c6",
+        "sourceSize": [
+          192,
+          192
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 192,
+        "height": 192,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 5128,
+        "sha256": "be5ba8185458a0012578a37dd000e196fe72363026f48030d49aaffe2bffa57b",
+        "meanAbsoluteChannelError": 0.012595847800925925,
+        "maxChannelError": 6
+      }
+    },
+    {
+      "id": "app-icon-512",
+      "path": "icons/icon-512.png",
+      "subject": "Installed-app emblem, 512-pixel PNG",
+      "source": {
+        "method": "Original code-native project emblem; palette optimization of the existing raster icon, not AI-generated artwork",
+        "sourceFile": "icon-512.png",
+        "baselinePath": "work/interface-baseline-04/Sacramentum/icons/icon-512.png",
+        "sourceSha256": "bdcace4d469d6b4c1fbedf1f114b527f8e774f16f977a4372a73bfeac1103916",
+        "sourceSize": [
+          512,
+          512
+        ],
+        "sourceMode": "RGB",
+        "relatedDesignSource": "icon.svg",
+        "relatedDesignSourceSha256": "11c95125acefc902c81acd737ac2667a5d408f223e3250989d9d5929f0d99bfe",
+        "instructions": "docs/interface-assets.md"
+      },
+      "usage": "Home-screen and installed-app icon; visual emblem and dimensions retained",
+      "loading": "application-shell",
+      "export": {
+        "format": "PNG",
+        "width": 512,
+        "height": 512,
+        "mode": "P",
+        "colors": 256,
+        "quantizer": "Pillow MEDIANCUT",
+        "dither": "NONE",
+        "bytes": 12739,
+        "sha256": "1c42c0a8aed7a9925435c07d93aa222c7fe54d10627d22c9228e4f612e2b9e70",
+        "meanAbsoluteChannelError": 0.005023956298828125,
+        "maxChannelError": 11
+      }
     }
   ],
-  "updatedAt": "2026-10-12T06:45:10.029370+00:00",
-  "totalArtworkBytes": 1773006,
+  "updatedAt": "2026-10-12T07:21:24.065993+00:00",
+  "totalArtworkBytes": 1805032,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -3238,6 +3410,8 @@
   "assetCounts": {
     "portraits": 22,
     "scenes": 8,
-    "tactical": 5
+    "tactical": 5,
+    "site": 2,
+    "icons": 3
   }
 }

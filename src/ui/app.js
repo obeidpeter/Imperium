@@ -18,6 +18,7 @@ import {sound,stopAudio} from './audio.js';
 import {heroPortrait,chapterScene,loadArt,prefetchChapter} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
+import {setupSiteMedia} from './site-media.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
@@ -26,13 +27,14 @@ let memoryOnly=false;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,artRequest=0,cachedChapterRequest=0;
 let cancelAmbient=null,ambientTime=null,ambientViewKey='';
 let renderedLocation='',pendingScroll=false;
+let cleanupSiteMedia=()=>{};
 let settings={textScale:1,audio:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
 if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory});
 function saveSettings(){try{localStorage.setItem('sacramentum.settings',JSON.stringify(settings));}catch{}}
 const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
 const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
-const {showNew,showMap,showLedger,showSettings,showHelp,showHistory,showJournal,showCharacter,showRestore}=createPanels(()=>({state,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements}));
+const {showNew,showMap,showLedger,showSettings,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -67,6 +69,7 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
   if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
 });
 function render(){
+  cleanupSiteMedia();
   stopMotion();
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
@@ -79,6 +82,7 @@ function render(){
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
+  if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
   renderScheduler.schedule({activeId});
 }
@@ -158,11 +162,26 @@ async function replaceCampaign({load,save,message}){
     }finally{saving=false;}
   });
 }
-function showModal(title,body){stopMotion();pendingMotion=null;replay.stop();modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');modal.innerHTML=`<div class="modal-head"><h2>${esc(title)}</h2><button class="ghost" data-cmd="close-modal" aria-label="Close panel">✕</button></div><div class="modal-body">${body}</div>`;modal.scrollTop=0;if(!modal.open)modal.showModal();else modal.querySelector('[data-cmd="close-modal"]').focus({preventScroll:true});}
-async function showExport(){const code=await saveCode(state);showModal('Keep a portable save',`<p>This code contains the entire campaign and current encounter checkpoint. Copy it somewhere safe, then restore it on any device. It contains your chosen name and game decisions; it is never uploaded by the game.</p><label for="save-code">Save code</label><textarea id="save-code" spellcheck="false" readonly>${esc(code)}</textarea><div class="settings-controls"><button class="primary" data-cmd="copy-code">Copy save code</button><button data-cmd="download-code">Download save text</button></div>`);}
+let modalReturn=null;
+function showModal(title,body){
+  stopMotion();pendingMotion=null;replay.stop();
+  if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
+  modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
+  modal.setAttribute('aria-labelledby','panel-title');modal.removeAttribute('aria-label');
+  modal.innerHTML=`<div class="modal-head"><div><span class="eyebrow">SACRAMENTUM · YOUR CHRONICLE</span><h2 id="panel-title" tabindex="-1">${esc(title)}</h2></div><button class="ghost" data-cmd="close-modal" aria-label="Close panel">×</button></div><div class="modal-body">${body}</div>`;
+  modal.scrollTop=0;if(!modal.open)modal.showModal();
+  modal.querySelector('#panel-title').focus({preventScroll:true});
+}
+modal.addEventListener('close',()=>{
+  const prior=modalReturn;modalReturn=null;
+  const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
+  if(el?.isConnected)el.focus({preventScroll:true});
+  else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
+});
+async function showExport(){showExportCode(await saveCode(state));}
 async function showShare(){
   shareFile=null;
-  showModal('Your reign, remembered',`<p>A keepsake of your reign, without character fates or plot twists. The game only shares when you choose the device’s share menu.</p><canvas id="reign-card" class="share-preview" role="img" aria-label="Your reign card"></canvas><div class="settings-controls"><button class="primary" data-cmd="download-card" disabled>Preparing card…</button><button data-cmd="share-card" disabled>Preparing card…</button></div>`);
+  showSharePreview();
   const canvas=document.querySelector('#reign-card');
   const summary={name:state.name,route:state.route,url:CONFIG.siteUrl||new URL('./',location.href).href,choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances']};
   const file=await prepareShareCard({canvas,summary,loadPortrait:()=>loadArt(heroPortrait('Augustus')),loadScene:()=>loadArt(chapterScene(12)),draw:drawReignCard,downloadButton:modal.querySelector('[data-cmd="download-card"]'),shareButton:modal.querySelector('[data-cmd="share-card"]'),makeFile:blob=>new File([blob],'sacramentum-reign.png',{type:'image/png'})});
@@ -171,13 +190,13 @@ async function showShare(){
 async function showRecovery(){
   try{
     const entries=await listRecoverySaves();
-    showModal('Recover an earlier chronicle',`<p>The three most recent distinct checkpoints and replaced campaigns are kept on this device. Inspect a record before restoring it. Your current chronicle will become a recovery record.</p>${entries.length?entries.map(entry=>`<article class="recovery-entry"><h3>${esc(entry.name)}</h3><p>Chapter ${roman(entry.chapter)} · ${esc(entry.rank)} · ${esc(entry.phase)}${entry.encounter?` · ${esc(entry.encounter)}`:''}<br>${esc(new Date(entry.savedAt).toLocaleString())}</p><button data-cmd="preview-recovery" data-id="${esc(entry.id)}" data-sequence="${entry.currentSequence}">Inspect this checkpoint</button></article>`).join(''):'<p class="notice">No earlier checkpoints yet. Recovery records are created as your campaign advances and when you replace a chronicle.</p>'}`);
+    showRecoveryRecords(entries);
   }catch(error){toast(error.message);}
 }
 async function previewRecovery(id,sequence){
   try{
     const restored=await readRecoverySave(id);pendingRecovery={id,sequence};
-    showModal('Recovery checkpoint verified',`<h3>${esc(restored.name)}</h3><p>Chapter ${roman(restored.chapter)} · ${esc(restored.rank)}<br>${restored.history.length} completed encounters · ${esc(restored.phase)}</p><p>The current chronicle will be archived before this record takes its place. If another tab changes the save while this panel is open, restoration will stop for a fresh review.</p><button class="primary" data-cmd="confirm-recovery">Restore this checkpoint</button> <button data-cmd="recovery">Back to recovery records</button>`);
+    showRecoveryVerified(restored);
   }catch(error){toast(error.message);}
 }
 function useRestoredState(restored){
@@ -188,19 +207,19 @@ function download(blob,name){const url=URL.createObjectURL(blob),a=document.crea
 document.addEventListener('click',async event=>{const b=event.target.closest('[data-cmd]');if(!b||b.disabled)return;const id=b.dataset.id,cmd=b.dataset.cmd;switch(cmd){case 'retry-offline':{const registration=await navigator.serviceWorker.getRegistration();if(registration?.active){fullDownloadRequested=true;offlineProgress='Downloading all twelve chapters…';updateLoadingStatus();registration.active.postMessage('cache-campaign');toast('Downloading all chapter artwork for offline play. Progress appears here and in the game header.');}else toast('Offline content is available from the production build.');break;}
 case 'close-modal':modal.close();break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying this chapter’s artwork. Other chapters are optional.');}break;
-case 'home':screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
+case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
   const candidate=Game.newGame(document.querySelector('#name-input').value);
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chapter I. You are a Tiro: a recruit in training.'});
   if(result.error?.code==='SAVE_UNAVAILABLE'){
     pendingNew=candidate;
-    showModal('Play without autosave?',`<p>Safe browser storage is unavailable. You can play in this tab and export a save code before closing it. Your previous saved chronicle will remain on this device.</p><button class="primary" data-cmd="begin-unsaved">Play in memory</button> <button data-cmd="close-modal">Cancel</button>`);
+    showStorageUnavailable();
   }
   break;
 }
 case 'begin-unsaved':if(pendingNew&&!sessionGate.busy){const candidate=pendingNew;pendingNew=null;useRestoredState(candidate);memoryOnly=true;lastSaved='';saveProblem='Playing in memory. Export a save code before closing this tab.';render();toast(saveProblem);}break;
-case 'continue':screen='game';render();break;
+case 'continue':modal.close();screen='game';render();break;
 case 'map':showMap();break;
 case 'chapter-info':showMap(Number(id));break;
 case 'history':showHistory();break;
@@ -209,7 +228,9 @@ case 'help':showHelp();break;
 case 'ledger':showLedger();break;
 case 'journal':showJournal();break;
 case 'character':showCharacter();break;
-case 'privacy':showModal('Your game stays with you','<p>Sacramentum has no account, advertising, analytics, or game server. Saves, settings and offline content stay in this browser. The hosting provider may keep ordinary access logs.</p><p>A save code contains your chosen name and game decisions. A reign card contains your name, broad choices and the game address. Nothing is sent until you copy, download or choose a destination in your device’s share menu.</p><p>Starting a new chronicle replaces the campaign in this browser. Clearing site data removes all local saves. Keep a portable save code if your progress matters to you.</p>');break;
+case 'privacy':showPrivacy();break;
+case 'credits':showCredits();break;
+case 'menu':showNavigation();break;
 case 'next-story':await change(()=>Game.setStoryProgress(state,Math.min(Game.storyProgress(state)+1,Game.storyLines(state).length-1)),{tone:null,silent:true});break;
 case 'previous-story':await change(()=>Game.setStoryProgress(state,Math.max(0,Game.storyProgress(state)-1)),{tone:null,silent:true});break;
 case 'choose':await change(()=>Game.choose(state,id));break;
@@ -226,7 +247,7 @@ case 'action':{action=id;target=null;const ts=targets();if(ts.length===1)target=
 case 'confirm':{const c=command();if(c)await change(()=>Game.act(state,c),{tone:action,command:c,clearSelection:true});break;}
 case 'skip-replay':replay.stop();break;
 case 'end-turn':await change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});break;
-case 'retry':showModal('Retry this encounter?',`<p>Restore the complete encounter-start checkpoint: health, positions, random seed, meters, inventory and staged promises. Your earlier campaign decisions stay as they were.</p><button class="primary" data-cmd="retry-confirm">Restore checkpoint</button> <button data-cmd="close-modal">Keep playing</button>`);break;
+case 'retry':showRetry();break;
 case 'retry-confirm':modal.close();await change(()=>Game.retry(state),{reset:true});break;
 case 'commit':await change(()=>Game.commitEncounter(state),{reset:true,tone:'promotion'});break;
 case 'advance':await change(()=>Game.advanceChapter(state),{reset:true,tone:'promotion'});break;
@@ -238,11 +259,11 @@ case 'restore':showRestore();break;
 case 'recovery':await showRecovery();break;
 case 'preview-recovery':await previewRecovery(id,Number(b.dataset.sequence));break;
 case 'confirm-recovery':if(pendingRecovery){const recovery=pendingRecovery;const result=await replaceCampaign({load:()=>restoreRecovery(recovery.id,{confirmed:true,expectedSequence:recovery.sequence}),message:'Earlier checkpoint restored. The displaced chronicle is in recovery records.'});if(result.ok)pendingRecovery=null;}break;
-case 'takeover':showModal('Continue in this tab',`<p>This will load the latest saved chronicle and make this tab the current writer. Unsaved changes in this tab will be replaced. Export them first if you need to keep them.</p><button data-cmd="export">Export this tab’s chronicle</button> <button class="primary" data-cmd="confirm-takeover">Load latest and continue here</button>`);break;
+case 'takeover':showTakeover();break;
 case 'confirm-takeover':await replaceCampaign({load:()=>takeOverSaveSession({confirmed:true}),message:'Latest chronicle loaded. This tab can now save safely.'});break;
 case 'copy-code':try{await navigator.clipboard.writeText(document.querySelector('#save-code').value);toast('Save code copied.');}catch{document.querySelector('#save-code').select();toast('Select and copy the highlighted save code.');}break;
 case 'download-code':download(new Blob([document.querySelector('#save-code').value],{type:'text/plain'}),'sacramentum-save.txt');break;
-case 'import-code':try{const imported=await restoreCode(document.querySelector('#restore-code').value);pendingImport=imported;showModal('Save code verified',`<p><strong>${esc(imported.name)}</strong><br>Chapter ${roman(imported.chapter)}: ${esc(CHAPTERS[imported.chapter-1].title)}<br>${esc(imported.rank)} · ${imported.history.length} completed encounters</p><p>Restore this verified chronicle and replace the current local campaign?</p><button class="primary" data-cmd="confirm-import">Restore this chronicle</button> <button data-cmd="close-modal">Cancel</button>`);}catch(error){toast(error.message);}break;
+case 'import-code':try{const imported=await restoreCode(document.querySelector('#restore-code').value);pendingImport=imported;showImportVerified(imported);}catch(error){toast(error.message);}break;
 case 'confirm-import':if(pendingImport){const candidate=pendingImport;const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chronicle restored. Chapter access was checked from earned milestones.'});if(result.ok)pendingImport=null;}break;
 case 'share':await showShare();break;
 case 'download-card':document.querySelector('#reign-card').toBlob(blob=>download(blob,'sacramentum-reign.png'));break;

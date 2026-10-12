@@ -1,16 +1,18 @@
 # SACRAMENTUM: From Recruit to Emperor
 
-![The playable Senate with directional figures, layered architecture, and accessible action controls](docs/images/graphics-gameplay.png)
+![The Senate rendering introduced in version 0.4, retained by the interface release](docs/images/graphics-gameplay.png)
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service, paid assets, or runtime package dependencies. Core rules run in both a browser and Node.js.
 
-## Version 0.4 — graphics release
+## Version 0.5 — website and interface release
 
-This release adds faction-specific battlefield figures, a more dimensional battlefield and Senate chamber, visible character aging, recurring-cast expressions, and increasingly elaborate promotion scenes. Performance, Balanced and High quality modes change optional presentation; reduced motion and text scaling remain available. The twelve chapters, choices, rank gates, combat and political rules, and existing save format are preserved.
+This release gives the title page an immediate Play or Continue action, a cinematic opening, and concise sections showing the career, world, an early decision, and actual gameplay captures. A shared ivory, charcoal, and Pompeian-red interface continues through the mobile menu, camp, chapter progression, character equipment, journal, obligations, settings, recovery, and reference panels. Chapters remain earned; navigation does not reset the campaign or bypass an unfinished encounter.
 
-Read the [graphics art direction](docs/graphics-art-direction.md), [rendering and loading architecture](docs/graphics-architecture.md), and [narrative artwork and generation record](docs/graphics-narrative-art.md). The [asset manifest](docs/asset-manifest.json) records the bundled art and provenance. This section describes implemented changes; it makes no measured performance or physical-device claim.
+Read the [interface design system](docs/interface-design-system.md), [initial interface audit](docs/interface-audit.md), [interface verification report](docs/interface-verification.md), and [automated regression evidence](docs/evidence/interface-regression.json). The report distinguishes desktop-browser checks from physical-device testing and records the measured loading journey.
+
+The 0.4 graphics remain: faction-specific figures, layered battlefields and chambers, character aging, recurring-cast expressions, and rank-specific ceremonies. Performance, Balanced, High, reduced motion, and text scaling remain available. The twelve chapters, choices, rank gates, rules, and save format are preserved. [Graphics art direction](docs/graphics-art-direction.md), [rendering architecture](docs/graphics-architecture.md), and [narrative artwork](docs/graphics-narrative-art.md) document that system. The [asset manifest](docs/asset-manifest.json) records locally bundled art and provenance.
 
 ## Play locally
 
@@ -20,7 +22,7 @@ Use Node.js 20 or later. Open a terminal in the `Sacramentum` project directory.
 node scripts/serve.mjs
 ```
 
-Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Play · Begin your story** to start, or **Continue the chronicle** if a local save exists. The first chapter teaches the controls. [Playing instructions](docs/PLAYING.md) cover commands, voting, advancement, and saving.
+Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Play now** to start, or **Continue your chronicle** if a local save exists. The first chapter teaches the controls. [Playing instructions](docs/PLAYING.md) cover commands, voting, advancement, and saving.
 
 Use the local server instead of opening `index.html` directly: native JavaScript modules require an HTTP origin. This source preview does not generate the production offline cache.
 
@@ -33,7 +35,7 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with initial and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects either initial or complete gzip estimates above 2,000,000 bytes. Both figures include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects any of these gzip estimates above 2,000,000 bytes. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
 
 ## Replit static deployment
 
@@ -65,7 +67,7 @@ Keeping the same public origin when changing hosting preserves the browser addre
 - **Pause → Copy a save code** exports a checked portable save, including the active encounter checkpoint. Restore validates the code before asking to replace the current campaign.
 - Retry restores the entire encounter-start snapshot, including the random seed and staged promises. Rewards are committed when the result is recorded, once per encounter.
 - The first save requests persistent browser storage. A browser may decline that request, so keep a save code independently.
-- The production service worker first caches the shell and opening artwork. Artwork loads as you reach each chapter; suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign, choose **Pause → Download all twelve chapters for offline play** and wait for **All chapters available offline**. Pause also provides a retry for missing chapter artwork. A new edition activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers.
+- The production service worker first caches the shell and opening artwork. Artwork loads as you reach each chapter; suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign, choose **Pause → Download all chapters for offline play** and wait for **All chapters available offline**. Pause also provides a retry for missing chapter artwork. A new edition activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers.
 - On iPhone, Safari’s **Share → Add to Home Screen** provides the installation path. Real-device installation, long-term storage retention, and platform share menus require device testing.
 - The ending can create a PNG reign card with the ruler’s name, broad choices, accession route, and configured game link. It omits character fates. Download and device sharing happen only on the player’s action.
 
@@ -93,11 +95,13 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `assets/` | Local WebP portraits, scenes, unit and prop atlases; provenance in docs/asset-manifest.json |
 | `src/ui/storage.js` | Browser save envelopes, mirrored storage, conflict handling, portable codes |
 | `src/ui/audio.js` | Optional browser-generated sound effects |
-| `src/ui/styles.css` | Responsive layout, focus states, palette, reduced-motion presentation |
+| `src/ui/styles.css` / `interface.css` | Shared tokens, responsive website and panels, focus states, status treatments, and reduced-motion presentation |
+| `src/ui/site-media.js` | Optional supporting website captures, loaded on request or suitable connections |
 | `src/config.js` | Source defaults; the builder supplies production `SITE_URL` and version configuration |
 | `scripts/build.mjs` / `scripts/serve.mjs` | Dependency-free static builder and local preview server |
 | `scripts/autoplay.mjs` | Full campaign runner using legal gameplay commands from New Game |
 | `scripts/graphics-fixtures.mjs` / `tests/graphics-lab.html` | Legal campaign scenes and a development graphics review surface |
+| `tests/interface-server.mjs` / `tests/interface-load.html` | Development-only observation of actual entry requests and rendered UI milestones |
 | `scripts/export-narrative-art.py` / `export-specialist-art.py` / `optimize-tactical.py` | Development-only cropping and compression of approved generated art |
 | `tests/` | Rules, progression, save, branch, and scenario checks; generated legal-route checkpoints |
 
@@ -114,7 +118,7 @@ node scripts/verify-assets.mjs
 
 `npm run verify` runs the rule tests, autoplay, build and asset/offline checks. `node scripts/autoplay.mjs --fixtures` also regenerates the legal-route chapter checkpoints and trace used for browser checks. The full-route runner starts at New Game and uses the same legality-enforced commands as the browser; chapter injection belongs only to separately identified development scenarios.
 
-The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain useful historical evidence; they are not performance measurements of the new 0.4 renderer. The [aesthetic report](docs/aesthetic-verification.md) documents the earlier 0.2 release. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
+The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of the current interface. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
 
 Commands and implemented checks are not proof of a particular result. See the accompanying verification report for checks actually run, browser sizes used, finale profiles, and slice-gate evidence. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 
