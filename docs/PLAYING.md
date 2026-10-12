@@ -2,7 +2,15 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.8’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.9’s **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+
+## The optional 3D frontier
+
+**Enter the 3D frontier** on the title screen opens one separate battle. **Take command** begins the study; selecting your soldier, an action and a target produces a preview, then **Confirm order** commits it. Companions act autonomously, as in the campaign's opening field battle. **End turn** lets the other soldiers act. Restart and victory do not change your chronicle or grant campaign progress.
+
+Drag the scene to orbit and scroll to zoom. With the canvas focused, arrows rotate, **+ / −** zoom, **F** focuses the selected soldier and **Home** restores the field view. The **Focus soldier** and **Field view** buttons do the same. Use **Named action and target controls** for a complete alternative to pointing at the terrain. Reduce motion and the three graphics settings affect presentation, not outcomes. **Return to campaign** opens the normal game and its existing save.
+
+This study needs WebGL 2. Its renderer and textures load only on entry, or during an explicit complete offline download from campaign Settings. A current chapter's offline-ready message alone does not mean the 3D study is downloaded. The full campaign remains available through its established Canvas interface. See [study scope and limits](3d-study.md).
 
 ## The campaign loop
 

@@ -55,14 +55,17 @@ self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;
   event.respondWith((async()=>{
-    const cache=await caches.open(CACHE),hit=await cache.match(event.request);
+    const cache=await caches.open(CACHE),navigation=event.request.mode==='navigate';
+    const page=navigation&&new URL(event.request.url).pathname.endsWith('/')?new URL('index.html',event.request.url).href:event.request.url;
+    const hit=await cache.match(page);
     if(hit)return hit;
-    if(event.request.mode==='navigate'){
-      const shell=await cache.match('./index.html');if(shell)return shell;
+    // Known optional pages must load their own document before the campaign
+    // fallback. Otherwise the cached title intercepts the first 3D-study visit.
+    if(KNOWN.has(page)){
+      try{await ensure(page);return await cache.match(page);}catch(error){if(!navigation)throw error;}
     }
-    if(KNOWN.has(event.request.url)){
-      await ensure(event.request.url);
-      return cache.match(event.request);
+    if(navigation){
+      const shell=await cache.match('./index.html');if(shell)return shell;
     }
     return fetch(event.request);
   })());

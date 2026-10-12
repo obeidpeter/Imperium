@@ -3760,19 +3760,126 @@
         "alphaPreserved": true,
         "instructions": "Unchanged dimensions; Pillow WebP quality92, method6, alpha preserved. No pixel painting, background repair, or cell rearrangement."
       }
+    },
+    {
+      "id": "showcase-earth",
+      "path": "assets/showcase/earth.webp",
+      "subject": "Neutral earth surface colour texture for the optional 3D frontier study",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-48086f9b-5710-45c4-8b57-d156fb9da343.png",
+        "sourceSha256": "1b784bb7402f337827f32cd899ad13505f07a7d03adbb0a57f0f779c4d39b32c",
+        "sourceSize": [
+          2172,
+          724
+        ],
+        "outputMaster": "showcase-art-masters/frontier-material-atlas.png",
+        "instructions": "docs/3d-art-provenance.md",
+        "crop": [
+          0,
+          0,
+          724,
+          724
+        ]
+      },
+      "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
+      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 90,
+        "bytes": 273096,
+        "sha256": "e7dfb0347e48d0e72535e05a7ad0faf73af0b49c834a2f06ad04ba468ce7bb18",
+        "alphaPreserved": false,
+        "instructions": "Mechanical crop of one equal horizontal atlas cell; RGB source, WebP quality90. No transparency in the source."
+      }
+    },
+    {
+      "id": "showcase-stone",
+      "path": "assets/showcase/stone.webp",
+      "subject": "Neutral stone surface colour texture for the optional 3D frontier study",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-48086f9b-5710-45c4-8b57-d156fb9da343.png",
+        "sourceSha256": "1b784bb7402f337827f32cd899ad13505f07a7d03adbb0a57f0f779c4d39b32c",
+        "sourceSize": [
+          2172,
+          724
+        ],
+        "outputMaster": "showcase-art-masters/frontier-material-atlas.png",
+        "instructions": "docs/3d-art-provenance.md",
+        "crop": [
+          724,
+          0,
+          1448,
+          724
+        ]
+      },
+      "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
+      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 90,
+        "bytes": 261528,
+        "sha256": "07aa0fec0850a2a5003a3cbe3643bafb0a4592a21bdbe617c03d2c1cde5b78c8",
+        "alphaPreserved": false,
+        "instructions": "Mechanical crop of one equal horizontal atlas cell; RGB source, WebP quality90. No transparency in the source."
+      }
+    },
+    {
+      "id": "showcase-timber",
+      "path": "assets/showcase/timber.webp",
+      "subject": "Neutral timber surface colour texture for the optional 3D frontier study",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-48086f9b-5710-45c4-8b57-d156fb9da343.png",
+        "sourceSha256": "1b784bb7402f337827f32cd899ad13505f07a7d03adbb0a57f0f779c4d39b32c",
+        "sourceSize": [
+          2172,
+          724
+        ],
+        "outputMaster": "showcase-art-masters/frontier-material-atlas.png",
+        "instructions": "docs/3d-art-provenance.md",
+        "crop": [
+          1448,
+          0,
+          2172,
+          724
+        ]
+      },
+      "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
+      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 90,
+        "bytes": 196884,
+        "sha256": "bc6b1c9fa3186e482cda8b3ce573e70c494c1984052e1d920899df1eee5f98b8",
+        "alphaPreserved": false,
+        "instructions": "Mechanical crop of one equal horizontal atlas cell; RGB source, WebP quality90. No transparency in the source."
+      }
     }
   ],
-  "updatedAt": "2026-10-12T07:21:24.065993+00:00",
-  "totalArtworkBytes": 1805032,
+  "updatedAt": "2026-10-12T12:07:02.401Z",
+  "totalArtworkBytes": 5841612,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
-    "compressedInitialAndCompleteBuildBytes": 2000000
+    "compressedInitialBuildBytes": 2000000,
+    "compressedChapterOneBuildBytes": 8000000,
+    "compressedCompleteBuildBytes": 24000000
   },
   "assetCounts": {
     "portraits": 22,
     "scenes": 8,
     "tactical": 5,
+    "animation": 5,
+    "world": 3,
+    "showcase": 3,
     "site": 2,
     "icons": 3
   }

@@ -38,6 +38,15 @@ async function event(name,data={}){let promise;handlers[name]({...data,waitUntil
 await event('install');
 assert.equal(stores.get(cacheName).size,build.initialFiles);
 assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
+assert.ok(build.showcaseAssets.includes('./showcase/index.html'));
+assert.ok(build.showcaseAssets.includes('./vendor/three/three.module.js'));
+assert.ok(build.showcaseAssets.includes('./vendor/three/three.core.js'));
+assert.ok(build.showcaseAssets.includes('./vendor/three/LICENSE'));
+for(const path of build.showcaseAssets){
+  assert.ok(!build.initialAssets.includes(path),'3D study leaked into initial shell: '+path);
+  assert.ok(!Object.values(build.chapterAssets).flat().includes(path),'3D study leaked into campaign chapter: '+path);
+  assert.ok(!stores.get(cacheName).has(normalize(path)),'3D study downloaded at installation: '+path);
+}
 await event('message',{data:'offline-status',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 console.log('PASS shell-only install and truthful partial status');
@@ -47,6 +56,12 @@ assert.equal(messages.at(-1).type,'chapter-offline');assert.equal(messages.at(-1
 assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
 assert.ok(!messages.some(m=>m.type==='offline-ready'));
 console.log('PASS chapter 1 caches separately and never claims all chapters are offline');
+
+for(const path of build.showcaseAssets)assert.ok(!stores.get(cacheName).has(normalize(path)),'Chapter 1 downloaded 3D-only dependency: '+path);
+const studyPage=await event('fetch',{request:{method:'GET',url:normalize('./showcase/index.html'),mode:'navigate'}});
+assert.equal(await studyPage.text(),'current:'+normalize('./showcase/index.html'));
+assert.ok(!stores.get(cacheName).has(normalize('./vendor/three/three.module.js')));
+console.log('PASS optional 3D study stays deferred and first navigation returns its own document');
 
 await cache('sacramentum-old').put('./assets/portraits/hero-emperor.webp',new Response('OLD ART'));
 const fresh=await event('fetch',{request:{method:'GET',url:normalize('./assets/portraits/hero-emperor.webp'),mode:'cors'}});
@@ -68,6 +83,9 @@ console.log('PASS retry completes all deferred assets and reports readiness');
 offline=true;
 const response=await event('fetch',{request:{method:'GET',url:base,mode:'navigate'}});
 assert.ok((await response.text()).includes('index.html'));
+for(const path of build.showcaseAssets)assert.ok(stores.get(cacheName).has(normalize(path)),'Complete download omitted 3D dependency: '+path);
+const offlineStudy=await event('fetch',{request:{method:'GET',url:normalize('./showcase/'),mode:'navigate'}});
+assert.equal(await offlineStudy.text(),'current:'+normalize('./showcase/index.html'));
 console.log('PASS server-unavailable navigation uses current shell cache');
 
 assert.ok(!code.includes('skipWaiting('));await event('activate');

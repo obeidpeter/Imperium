@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171c1a">
+  <meta name="description" content="Command a Roman patrol in a playable, three-dimensional Sacramentum battlefield study.">
+  <title>The frontier road — Sacramentum</title>
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../src/showcase/showcase.css">
+  <script type="module" src="../src/showcase/main.js"></script>
+</head>
+<body class="showcase">
+  <a class="skip-link" href="#command-deck">Skip to battle commands</a>
+  <header class="study-header">
+    <a class="wordmark" href="../index.html" aria-label="Sacramentum campaign">Sacramentum<span>A battlefield study</span></a>
+    <a class="campaign-link" href="../index.html">Return to campaign <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main class="study-main">
+    <section class="scene-shell" aria-label="The frontier road battlefield">
+      <div class="world-stage">
+        <canvas id="scene" tabindex="0" aria-label="Three-dimensional battlefield. Select a soldier or target with a click or tap. Arrow keys orbit the camera; plus and minus zoom." aria-describedby="camera-help">
+          The battlefield requires WebGL. Battle commands and named target controls are available below.
+        </canvas>
+        <div class="world-vignette" aria-hidden="true"></div>
+        <div class="mission-strip">
+          <div class="mission-copy">
+            <p class="eyebrow">Danube frontier · AD 250</p>
+            <h1>The frontier road</h1>
+            <p id="objective-label">Read the field. Keep your patrol together.</p>
+          </div>
+          <p class="turn-badge" id="turn-label">Turn 1 · Your command</p>
+        </div>
+        <div class="scene-caption">
+          <p id="scene-status" class="scene-status" role="status" aria-live="polite">Preparing the battlefield…</p>
+          <p class="camera-help" id="camera-help">Drag to orbit <span aria-hidden="true">·</span> Scroll to zoom <span aria-hidden="true">·</span> Arrows rotate</p>
+        </div>
+      </div>
+
+      <section class="command-deck" id="command-deck" aria-label="Battle commands" tabindex="-1">
+        <div class="company-strip">
+          <p class="eyebrow">Your patrol</p>
+          <div id="roster" class="roster" role="group" aria-label="Select a soldier"><span class="muted">Your soldiers will appear here.</span></div>
+        </div>
+
+        <div class="command-columns">
+          <section class="actor-panel" aria-labelledby="selection-name">
+            <p class="eyebrow">Under your command</p>
+            <h2 id="selection-name">Select a soldier</h2>
+            <p id="selection-detail">Choose a figure on the field or a name in your patrol.</p>
+          </section>
+
+          <section class="orders-panel" aria-label="Available orders">
+            <p class="eyebrow">Give an order</p>
+            <div id="actions" class="actions" role="group" aria-label="Choose an action">
+              <button type="button" class="action-button" data-action="move" disabled>Move</button>
+              <button type="button" class="action-button" data-action="strike" disabled>Strike</button>
+              <button type="button" class="action-button" data-action="brace" disabled>Brace</button>
+              <button type="button" class="action-button" data-action="throw" disabled>Throw</button>
+            </div>
+            <details class="named-controls" id="named-controls">
+              <summary>Named action and target controls</summary>
+              <div class="named-fields">
+                <label for="action-select">Action<select id="action-select"><option value="">Select a soldier first</option></select></label>
+                <label for="target-select">Target<select id="target-select"><option value="">Select an action first</option></select></label>
+              </div>
+            </details>
+          </section>
+
+          <section class="preview-panel" aria-label="Review and confirm your order">
+            <p class="eyebrow">Before you commit</p>
+            <p id="preview-text" class="preview-text" role="status" aria-live="polite">Choose an order and a target. Review its effect here before confirming.</p>
+            <div class="commit-actions">
+              <button id="confirm-action" class="primary-button" type="button" disabled>Confirm order</button>
+              <button id="end-turn" class="end-turn" type="button" disabled>End turn</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="utility-strip">
+          <details class="battle-record" id="battle-record">
+            <summary>Battle record</summary>
+            <ol id="battle-log" class="battle-log" aria-label="Recent battle events"><li>The patrol awaits your command.</li></ol>
+          </details>
+          <div class="presentation-controls" role="group" aria-label="Presentation settings">
+            <label class="quality-control" for="quality">Graphics<select id="quality"><option value="performance">Performance</option><option value="balanced" selected>Balanced</option><option value="high">High</option></select></label>
+            <label class="motion-control" for="motion-setting"><input id="motion-setting" type="checkbox">Reduce motion</label>
+          </div>
+          <div class="utility-actions">
+            <button id="focus-camera" class="text-button" type="button" title="Focus on the selected soldier (F)">Focus soldier</button>
+            <button id="home-camera" class="text-button" type="button" title="Restore the field view (Home)">Field view</button>
+            <button id="help-toggle" class="text-button" type="button" aria-expanded="false" aria-controls="help-panel">How to play</button>
+            <button id="reset-battle" class="text-button" type="button">Restart battle</button>
+          </div>
+        </div>
+
+        <section id="help-panel" class="help-panel" aria-labelledby="help-title" hidden>
+          <h2 id="help-title">The field is yours to command.</h2>
+          <div class="help-columns">
+            <div><h3>Choose. Review. Commit.</h3><p>Select your soldier, choose Move, Strike, Brace or Throw, then select a target. Read the preview before confirming. Your companions follow their own orders. End your turn when you are ready for the other soldiers to act.</p></div>
+            <div><h3>See the ground.</h3><p>Drag across the battlefield to orbit the camera. Scroll to zoom. With the battlefield focused, arrow keys rotate and <kbd>+</kbd> / <kbd>−</kbd> zoom. A click or tap selects a figure or position.</p></div>
+            <div><h3>Use the keyboard.</h3><p>Tab reaches every command. Named action and target controls provide an alternative to pointing at the field. Open them above, choose your order, then use Confirm order.</p></div>
+          </div>
+          <p class="study-note">This study is separate from your chronicle. Returning to the campaign keeps its existing save.</p>
+          <div class="graphics-diagnostics" aria-labelledby="graphics-diagnostics-title">
+            <h3 id="graphics-diagnostics-title">Current scene diagnostics</h3>
+            <output id="graphics-stats" class="study-note" aria-live="polite">Open this help panel to read the current scene's rendering counts. These are not a frame-rate measurement.</output>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="intro-panel" class="study-dialog intro-dialog" aria-labelledby="intro-title" aria-describedby="intro-description">
+    <div class="dialog-rule" aria-hidden="true"></div>
+    <p class="eyebrow">Sacramentum · A 3D tactical study</p>
+    <h2 id="intro-title">Hold the frontier road.</h2>
+    <p id="intro-description" class="dialog-lead">Read the ground. Choose your approach. Give the order.</p>
+    <p>Take command of a Roman patrol in a turn-based encounter. Turn the camera to read the battlefield, and review each order before committing.</p>
+    <p class="study-note">A playable graphics study. Your campaign save is untouched.</p>
+    <div class="dialog-actions"><button id="start-battle" class="primary-button" type="button" autofocus>Take command</button><a href="../index.html">Return to campaign</a></div>
+  </dialog>
+
+  <dialog id="result-panel" class="study-dialog result-dialog" aria-labelledby="result-title" aria-describedby="result-summary">
+    <div class="dialog-rule" aria-hidden="true"></div>
+    <p class="eyebrow">The frontier road · Battle concluded</p>
+    <h2 id="result-title">The field falls quiet.</h2>
+    <p id="result-summary" class="dialog-lead"></p>
+    <p class="study-note">Your campaign chronicle is unchanged.</p>
+    <div class="dialog-actions"><a class="primary-button" href="../index.html">Continue the campaign</a><button id="retry-battle" type="button">Play this battle again</button><button id="close-result" class="text-button" type="button">Inspect the battlefield</button></div>
+  </dialog>
+  <noscript><p class="no-script">This tactical study needs JavaScript. <a href="../index.html">Return to Sacramentum.</a></p></noscript>
+</body>
+</html>

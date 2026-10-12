@@ -6,7 +6,15 @@
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
-The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service, paid assets, or runtime package dependencies. Core rules run in both a browser and Node.js.
+The game combines original prose with locally bundled painted portraits, cinematic environments, four-direction unit sprites, and layered isometric battlefields. Movement, gestures and tactical effects animate the committed action while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The optional 3D study uses a locally bundled Three.js renderer; the campaign rules remain dependency-free and run in both a browser and Node.js.
+
+## Version 0.9 — an optional 3D frontier battle
+
+Choose **Enter the 3D frontier** on the title screen, or open `showcase/index.html` through the local server. This is a single playable battle with three-dimensional terrain and articulated figures, an orbiting camera, a compact command deck and the campaign's legal select–preview–confirm rules. It is a separate graphics study, not a conversion of the twelve-chapter campaign. Its temporary battle does not read or write the campaign save.
+
+Drag to orbit, scroll to zoom, or focus the canvas and use arrows and **+ / −**. **Focus soldier** and **Field view** restore useful viewpoints. Named action and target controls provide a keyboard alternative to picking in the scene. Performance/Balanced/High and reduced motion control presentation only. Restart repeats this study; Return to campaign opens the existing game.
+
+The study requires WebGL 2 and bundles **Three.js 0.186.1** locally under its MIT license. No CDN or package installation is required. Its page, renderer, textures and vendor modules are excluded from the campaign's initial shell and chapter downloads. The explicit full offline download includes the study and its dependencies. See [3D study scope](docs/3d-study.md), [art provenance](docs/3d-art-provenance.md) and [license notices](docs/LICENSE-NOTICES.md). Device support, performance and accessibility claims require the separately recorded checks.
 
 ## Version 0.8 — battlefield presentation and direct controls
 
@@ -124,6 +132,8 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/ui/art.js` / `asset-loader.js` | Portrait/environment selection, chapter asset groups, bounded image loading and cache |
 | `src/ui/campaign-views.js` / `cinematic.css` | Readable story passages, character staging, promotions and accession |
 | `assets/` | Local WebP portraits, scenes, unit and prop atlases; provenance in docs/asset-manifest.json |
+| `showcase/` / `src/showcase/` | Optional standalone 3D frontier battle, command UI, WebGL scene and articulated figures |
+| `vendor/three/` | Locally bundled Three.js 0.186.1 modules and their unchanged MIT license |
 | `src/ui/storage.js` | Browser save envelopes, mirrored storage, conflict handling, portable codes |
 | `src/ui/audio.js` | Optional browser-generated sound effects |
 | `src/ui/styles.css` / `interface.css` | Shared tokens, responsive website and panels, focus states, status treatments, and reduced-motion presentation |
@@ -158,7 +168,7 @@ Commands and implemented checks are not proof of a particular result. See the [c
 
 ## Scope and design choices
 
-This implementation uses native JavaScript modules, Canvas, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The smaller dependency-free stack keeps the rules directly executable under Node and ships every core asset with the static game. There is no backend, monetization, multiplayer service, or native Android/iOS shell in this version.
+This implementation uses native JavaScript modules, Canvas, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The rules remain directly executable under Node; the optional WebGL study adds locally bundled Three.js while the existing campaign keeps its Canvas renderer. Every runtime asset ships with the static game. There is no backend, monetization, multiplayer service, or native Android/iOS shell in this version.
 
 The whole campaign is present, including the two final milestone locks, three campaign meters, obligations, cast absence branches, four main confrontation forms plus costly backing, and the accession bookend. The historical career is a disclosed composite; battle units and chamber votes are gameplay abstractions.
 

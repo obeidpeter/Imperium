@@ -10,7 +10,7 @@ const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 // Delete only the reproducible output after checking its absolute boundary.
 if(dirname(dist)!==root||basename(dist)!=='dist'||packageInfo.name!=='sacramentum')throw new Error('Run the build from the Sacramentum project root.');
 await rm(dist,{recursive:true,force:true});await mkdir(dist,{recursive:true});
-for(const file of ['index.html','icon.svg','manifest.webmanifest','src','icons','assets'])await cp(join(root,file),join(dist,file),{recursive:true,filter:path=>!path.endsWith('debug.js')});
+for(const file of ['index.html','icon.svg','manifest.webmanifest','src','icons','assets','showcase','vendor'])await cp(join(root,file),join(dist,file),{recursive:true,filter:path=>!path.endsWith('debug.js')});
 const raw=process.env.SITE_URL||'';let siteUrl='';
 if(raw){const u=new URL(raw);if(!['https:','http:'].includes(u.protocol))throw new Error('SITE_URL must be an HTTP(S) address.');if(u.username||u.password||u.search||u.hash)throw new Error('SITE_URL must contain no credentials, query or fragment.');siteUrl=u.href.endsWith('/')?u.href:u.href+'/';}
 await writeFile(join(dist,'src/config.js'),'export const CONFIG=Object.freeze('+JSON.stringify({siteUrl,version:packageInfo.version,saveKey:'sacramentum.campaign.v1',development:false})+');\n');
@@ -26,7 +26,9 @@ const revision=hash.digest('hex').slice(0,12),assets=records.map(r=>r.url);
 // Install only the title/recruit shell. Current chapters are requested separately;
 // downloading the complete campaign always requires the user's explicit request.
 const openingArt=new Set(['./assets/scenes/frontier-oath.webp','./assets/portraits/hero-recruit.webp','./assets/portraits/varro.webp']);
-const initial=assets.filter(url=>!url.startsWith('./assets/')||openingArt.has(url));
+const showcaseAssets=assets.filter(url=>['./showcase/','./src/showcase/','./assets/showcase/','./vendor/'].some(prefix=>url.startsWith(prefix)));
+const showcaseSet=new Set(showcaseAssets);
+const initial=assets.filter(url=>!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterAssets(i+1)]));
 for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));
@@ -42,6 +44,6 @@ const chapterOneBytes=sum(chapterOneRecords,'bytes')+workerBytes,chapterOneGzipB
 const completeBytes=bytes+workerBytes,completeGzipBytes=gzipBytes+workerGzipBytes;
 // Keep the initial shell small; authored animation and environments arrive by chapter.
 if(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||completeGzipBytes>budget.completeGzipBytes)throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
-const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 
