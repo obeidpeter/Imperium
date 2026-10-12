@@ -1,5 +1,6 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {noise,hash,clamp} from './environment-layout.js';
+import {finishEnvironmentMaterial} from './environment-surface-shaders.js';
 
 export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   const textures=new Set(),materials=new Set();let disposed=false;
@@ -71,6 +72,11 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     #endif`);
   };
   m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
+  const finish={wet:profile?.setting==='wetland',arid:profile?.vegetation==='arid'};
+  finishEnvironmentMaterial(m.ground,'ground',finish);
+  for(const key of ['stone','marble','brick','darkStone','plaster','redMarble'])finishEnvironmentMaterial(m[key],'stone',finish);
+  for(const key of ['wood','darkWood'])finishEnvironmentMaterial(m[key],'wood',finish);
+  finishEnvironmentMaterial(m.leaves,'foliage',finish);finishEnvironmentMaterial(m.floor,'floor',finish);
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);

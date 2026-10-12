@@ -6,12 +6,14 @@ import {horsePose} from './actor-pose.js';
 export function createHorse(root,kit,b){
   const {part,mesh,profile,ellipsoid,strip,material,surface,leather,metal,hair,cloth}=b;
   const coat=material([0x6b4937,0x8b694b,0x5e5349][kit.identity%3],surface('horse')),hoof=material(0x322e29),mark=material(0xbdb39c),horse=part(root,'horse'),body=part(horse,'horse-body',0,1.04,0);
-  const trunk=mesh(body,profile([[-.83,.09,.19],[-.68,.30,.32],[-.4,.35,.36],[.2,.33,.37],[.55,.28,.32],[.67,.16,.22]],{segments:24}),coat);trunk.rotation.x=Math.PI/2;
+  const trunk=mesh(body,profile([[-.86,.075,.17],[-.72,.28,.29],[-.53,.365,.345],[-.26,.378,.373],[.05,.36,.385],[.31,.34,.37],[.53,.29,.325],[.68,.16,.20]],{segments:24}),coat);trunk.rotation.x=Math.PI/2;
   const neck=part(body,'horse-neck');
-  mesh(neck,profile([[.0,.235,.22,.51],[.25,.23,.25,.58],[.48,.18,.19,.70],[.67,.12,.15,.80],[.77,.10,.14,.85]],{segments:20}),coat);
+  mesh(neck,profile([[.0,.245,.23,.49],[.16,.265,.25,.54],[.32,.24,.245,.59],[.47,.193,.21,.67],[.60,.15,.178,.76],[.72,.12,.148,.82],[.79,.10,.125,.85]],{segments:20}),coat);
   const head=part(neck,'horse-head',0,.72,.87);head.rotation.x=.32;
-  mesh(head,profile([[-.24,.085,.10,.19],[-.15,.105,.11,.13],[.015,.118,.17,.032],[.12,.108,.13,-.018],[.19,.074,.082,-.019]],{segments:20}),coat);
-  ellipsoid(head,coat,0,-.22,.19,.11,.078,.106);
+  mesh(head,profile([[-.265,.09,.10,.202],[-.19,.114,.115,.155],[-.10,.106,.135,.115],[.025,.12,.157,.045],[.12,.115,.133,-.015],[.195,.073,.082,-.022]],{segments:20}),coat);
+  ellipsoid(head,coat,0,-.235,.205,.115,.073,.104);
+  // Separate broad cheek planes and a softer poll avoid a tube-shaped head.
+  for(const side of [-1,1])ellipsoid(head,coat,side*.077,-.035,.015,.064,.101,.115);
   for(const side of [-1,1]){
     const ear=mesh(head,profile([[0,.04,.033],[.09,.031,.02],[.18,.006,.01]],{segments:12}),coat,side*.067,.14,-.035);ear.rotation.z=side*-.15;
     ellipsoid(head,hoof,side*.103,.023,.09,.014,.017,.012);
@@ -32,8 +34,8 @@ export function createHorse(root,kit,b){
   const legs=[];
   for(let i=0;i<4;i++){
     const front=i<2,side=i%2?-1:1,pivot=part(horse,`${front?'fore':'hind'}-${side<0?'left':'right'}-leg`,side*.235,1.04,front?.54:-.54);
-    mesh(pivot,profile([[.03,front?.09:.13,.13],[-.15,.084,.10],[-.37,.047,.065],[-.53,.042,.047]],{segments:16}),coat);
-    const knee=part(pivot,'horse-knee',0,-.53,0);mesh(knee,profile([[.025,.046,.05],[-.07,.049,.049],[-.32,.029,.035],[-.48,.036,.036],[-.53,.04,.04]],{segments:14}),coat);
+    mesh(pivot,profile([[.04,front?.12:.15,.15],[-.10,front?.105:.13,.135],[-.25,.074,.097],[-.40,.051,.066],[-.55,.043,.052]],{segments:16}),coat);
+    const knee=part(pivot,'horse-knee',0,-.53,0);mesh(knee,profile([[.035,.050,.059],[-.07,.052,.059],[-.26,.035,.043],[-.41,.033,.039],[-.53,.043,.045]],{segments:14}),coat);
     const ankle=part(knee,'horse-fetlock',0,-.53,0);mesh(ankle,profile([[.03,.043,.058],[-.018,.054,.071,.015],[-.075,.071,.096,.025]],{segments:14}),hoof);
     legs.push({pivot,knee,ankle});
   }
@@ -44,5 +46,5 @@ export function createHorse(root,kit,b){
       ankleRotation.copy(legs[i].pivot.quaternion).multiply(legs[i].knee.quaternion).invert();surfaceRotation.setFromEuler(surfaceEuler.set(p.feet[i].roll+(p.feet[i].pitch??0),0,p.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(surfaceRotation));}
     return p;
   }
-  update({});return {group:horse,update,get pose(){return lastPose;}};
+  update({});return {group:horse,update,feet:legs.map(l=>l.ankle),get pose(){return lastPose;}};
 }

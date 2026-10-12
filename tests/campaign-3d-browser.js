@@ -1,11 +1,12 @@
 import * as Game from '../src/core/game.js';
+import * as T from '../vendor/three/three.module.js';
 import {createBattleStageController} from '../src/ui/battle-stage-controller.js';
 import {CONFIG} from '../src/config.js';
 
 const $=id=>document.getElementById(id),host=$('stage-host'),status=$('status'),output=$('result');
-const report={format:'sacramentum-campaign-3d-browser-v2',version:CONFIG.version,scope:'Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.',status:'not-run',checks:[],measurements:[],labelLayouts:[],horizonViews:[]};
+const report={format:'sacramentum-campaign-3d-browser-v2',version:CONFIG.version,scope:'Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.',status:'not-run',checks:[],measurements:[],labelLayouts:[],horizonViews:[],motionSamples:[]};
 let fixtures,controller=null,token=0,busy=false,lastError=null,mountedState=null,mountedScene=null;
-const catalogs=new Map(),buttons=['inspect','play','check','all','measure','overview','follow','horizon','sky-check','zoom-in','zoom-out','labels'];
+const catalogs=new Map(),buttons=['inspect','play','check','all','remaining','measure','overview','follow','horizon','sky-check','zoom-in','zoom-out','labels'];
 const ensure=(value,message)=>{if(!value)throw Error(message);};
 const write=()=>{output.textContent=JSON.stringify(report,null,2);status.dataset.state=report.status;status.setAttribute('aria-busy',String(report.status==='running'));};
 const viewport=()=>({width:innerWidth,height:innerHeight,devicePixelRatio});
@@ -57,13 +58,15 @@ function labelBoxes(stage){const canvas=stage.canvas.getBoundingClientRect(),box
   }return {width:canvas.width,height:canvas.height,boxes,hidden};
 }
 async function settledLabels(stage,t){let previous=null,stable=0,frames=0,lastPaint=stage.lastPaint;const started=performance.now();
-  while(stable<2&&performance.now()-started<15000){await until(()=>stage.lastPaint!==lastPaint,t,15000);lastPaint=stage.lastPaint;frames++;const current=labelBoxes(stage);
+  // An embedded preview can throttle RAF even while document.hidden is false.
+  // Give camera easing actual render frames; this is a layout check, not timing evidence.
+  while(stable<2&&frames<240&&performance.now()-started<90000){await until(()=>stage.lastPaint!==lastPaint,t,15000);lastPaint=stage.lastPaint;frames++;const current=labelBoxes(stage);
     const same=previous&&current.boxes.length===previous.boxes.length&&current.boxes.every((b,i)=>{const p=previous.boxes[i];return b.id===p.id&&Math.max(Math.abs(b.x-p.x),Math.abs(b.y-p.y),Math.abs(b.width-p.width),Math.abs(b.height-p.height))<.5;});
     stable=same&&frames>=6?stable+1:0;previous=current;
   }
   const data=previous??labelBoxes(stage),overlaps=[];
   for(let i=0;i<data.boxes.length;i++)for(let j=i+1;j<data.boxes.length;j++){const a=data.boxes[i],b=data.boxes[j],w=Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x),h=Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y);if(w>1&&h>1)overlaps.push({a:a.id,b:b.id,width:w,height:h,area:w*h});}
-  return {settled:stable>=2,settledRenderedFrames:frames,tolerancePx:1,canvas:{width:data.width,height:data.height},visible:data.boxes.length,hidden:data.hidden,outOfBounds:data.boxes.filter(b=>b.x< -1||b.y< -1||b.x+b.width>data.width+1||b.y+b.height>data.height+1).map(b=>b.id),overlaps,boxes:data.boxes,stageLayout:stage.labelStats?structuredClone(stage.labelStats):null};
+  return {settled:stable>=2,settledRenderedFrames:frames,settledElapsedMs:performance.now()-started,tolerancePx:1,canvas:{width:data.width,height:data.height},visible:data.boxes.length,hidden:data.hidden,outOfBounds:data.boxes.filter(b=>b.x< -1||b.y< -1||b.x+b.width>data.width+1||b.y+b.height>data.height+1).map(b=>b.id),overlaps,boxes:data.boxes,stageLayout:stage.labelStats?structuredClone(stage.labelStats):null};
 }
 async function currentStage(t){if(controller?.stage&&mountedScene===selected().id)return controller.stage;return mount(Game.deserialize(Game.serialize(selected().state)),t);}
 async function horizonDiagnostic(t,preset){const stage=await currentStage(t),saved=Game.serialize(mountedState);ensure(typeof stage.horizon==='function','This stage does not expose the Horizon camera yet.');if(preset)stage.horizon();const labels=await settledLabels(stage,t),info=stage.stats(),camera=stage.camera;
@@ -77,8 +80,8 @@ async function horizonDiagnostic(t,preset){const stage=await currentStage(t),sav
 async function inspectLabels(t){const stage=await currentStage(t),saved=Game.serialize(mountedState),layout=await settledLabels(stage,t);ensure(Game.serialize(mountedState)===saved,'Label inspection changed state.');report.labelLayouts.push({scene:mountedScene,turn:mountedState.encounter.turn,camera:cameraRecord(stage),viewport:viewport(),...layout,saveUnchanged:true});status.textContent=`Labels ${layout.settled?'settled':'not settled'}: ${layout.visible} visible, ${layout.overlaps.length} overlaps, ${layout.outOfBounds.length} outside scene. Observations are not a playability verdict.`;}
 async function inspect(t){const scene=selected(),state=Game.deserialize(Game.serialize(scene.state)),saved=Game.serialize(state);await mount(state,t);ensure(Game.serialize(state)===saved,'Rendering altered the campaign.');status.textContent=`Rendered ${scene.id}. Select a figure and Follow for inspection; no commands are granted.`;}
 async function play(t){const scene=selected(),motion=sample(scene,$('motion-select').value,Number($('sample-step').value)),saved=Game.serialize(motion.state),wasFollow=controller?.stage?.focusMode,stage=await mount(motion.state,t);
-  stage.setSelection(figureId(motion.state),[],null);if(wasFollow)stage.focusSelected();const pending=stage.play(motion.before,motion.after,motion.command);await until(()=>!stage.animation,t,20000);await pending;ensure(Game.serialize(motion.state)===saved,'Animation changed the committed state.');
-  report.lastSample={scene:scene.id,action:motion.command.action,actorId:motion.command.unitId??null,inspectedFigure:stage.selected,traceStep:motion.traceStep,movements:catalog(scene).find(c=>c.traceStep===motion.traceStep).moved,completed:true,reducedMotion:stage.reducedMotion,camera:cameraRecord(stage),saveUnchanged:true};status.textContent=`Completed legal ${motion.command.action} in ${scene.id}; committed save unchanged.`;
+  stage.setSelection(figureId(motion.state),[],null);if(wasFollow)stage.focusSelected();const costs=[],onFrame=stage.onFrame;stage.onFrame=cost=>{costs.push(cost);onFrame?.(cost);};const started=performance.now(),pending=stage.play(motion.before,motion.after,motion.command),duration=stage.animation?.timeline.duration??0;await until(()=>!stage.animation,t,20000);await pending;stage.onFrame=onFrame;ensure(Game.serialize(motion.state)===saved,'Animation changed the committed state.');
+  report.lastSample={renderFrames:costs.length,cpuRender:stats(costs),authoredDurationMs:duration,observedDurationMs:performance.now()-started,renderer:stage.stats(),scene:scene.id,action:motion.command.action,actorId:motion.command.unitId??null,inspectedFigure:stage.selected,traceStep:motion.traceStep,movements:catalog(scene).find(c=>c.traceStep===motion.traceStep).moved,completed:true,reducedMotion:stage.reducedMotion,camera:cameraRecord(stage),saveUnchanged:true};report.motionSamples.push(report.lastSample);status.textContent=`Completed legal ${motion.command.action} in ${scene.id}; committed save unchanged.`;
 }
 async function checkScene(scene,t){
   const row={scene:scene.id,chapter:scene.chapter,kind:scene.kind,status:'running',checks:[]};report.checks.push(row);write();
@@ -86,6 +89,8 @@ async function checkScene(scene,t){
   try{
     const state=Game.deserialize(Game.serialize(scene.state)),saved=Game.serialize(state),e=state.encounter,stage=await mount(state,t,{selected:'hero'}),visible=e.units.filter(u=>!u.hidden);
     check('WebGL context is live',!stage.renderer.getContext().isContextLost());
+    let skinnedMeshes=0;stage.scene.traverse(o=>{if(o.isSkinnedMesh)skinnedMeshes++;});check('Characters use actual weighted skinning',skinnedMeshes>=stage.actors.size);check('Local sky reflection texture is live',!!stage.scene.environment?.isTexture);
+    row.footContacts=[...stage.actors].flatMap(([id,actor])=>(actor.contacts.feet??[]).map(foot=>{const mounted=actor.group.userData.actor.mounted,p=foot.localToWorld(new T.Vector3(0,mounted?-.075:-.07,0));return {id,soleHeight:p.y,groundHeight:stage.environment.groundHeight(p.x,p.z),clearance:p.y-stage.environment.groundHeight(p.x,p.z)};}));
     check('Only visible rule figures are modeled',stage.actors.size===visible.length&&e.units.filter(u=>u.hidden).every(u=>!stage.actors.has(u.id)));
     check('Visible figure anchors match authoritative tiles',visible.every(u=>{const a=stage.actors.get(u.id),p=stage.world(u);return a&&Math.abs(a.group.position.x-p.x)<.001&&Math.abs(a.group.position.z-p.z)<.001;}));
     check('Visible labels use actual names',visible.every(u=>stage.labels.get(u.id)?.textContent.includes(u.name)));
@@ -130,6 +135,7 @@ $('labels').addEventListener('click',()=>run('labels',inspectLabels));
 $('horizon').addEventListener('click',()=>run('horizon',t=>horizonDiagnostic(t,true)));$('sky-check').addEventListener('click',()=>run('sky record',t=>horizonDiagnostic(t,false)));
 $('inspect').addEventListener('click',()=>run('inspect',inspect));$('play').addEventListener('click',()=>run('sample',play));$('check').addEventListener('click',()=>run('check selected',t=>checkScene(selected(),t)));
 $('all').addEventListener('click',()=>run('check all encounters',async t=>{report.checks=[];for(const scene of fixtures.scenes){status.textContent=`Checking ${scene.id}…`;await checkScene(scene,t);}}));
+$('remaining').addEventListener('click',()=>run('check selected and later encounters',async t=>{const start=fixtures.scenes.indexOf(selected());report.checks=[];for(const scene of fixtures.scenes.slice(start)){status.textContent=`Checking ${scene.id}…`;await checkScene(scene,t);}}));
 $('measure').addEventListener('click',()=>run('measure',measure));$('stop').addEventListener('click',()=>{token++;release();status.textContent='Stopped. Renderer released.';});
 $('download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='campaign-3d-browser-results.json';link.click();URL.revokeObjectURL(url);});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){token++;release();}});window.addEventListener('pagehide',()=>{token++;release();});

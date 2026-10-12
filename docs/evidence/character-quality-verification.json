@@ -1,0 +1,1694 @@
+{
+  "format": "sacramentum-character-quality-verification-v1",
+  "version": "0.14.0",
+  "productionRevision": "c1dfd852cc93",
+  "status": "complete",
+  "automated": {
+    "tests": {
+      "tests": 401,
+      "pass": 401,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 46728.7241
+    },
+    "assetChecks": {
+      "passed": 11,
+      "checks": [
+        "asset manifest integrity and portrait/title budgets",
+        "declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance",
+        "shell-only install and truthful partial status",
+        "cold Chapter XI restore retries missing shared renderer and caches its own complete resource group",
+        "chapter 1 caches separately and never claims all chapters are offline",
+        "chapter-cached shared 3D dependencies survive offline reads; standalone page stays deferred until requested",
+        "version-scoped lookup ignores old artwork",
+        "failed deferred fetch does not claim offline readiness",
+        "retry completes all deferred assets and reports readiness",
+        "server-unavailable navigation uses current shell cache",
+        "activation cleanup; no forced skipWaiting"
+      ]
+    },
+    "autoplay": {
+      "source": "New Game; legal gameplay API commands only",
+      "seed": 275,
+      "rank": "Augustus",
+      "chapters": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "encounters": 25,
+      "won": 25,
+      "totalTurns": 213
+    }
+  },
+  "build": {
+    "version": "0.14.0",
+    "revision": "c1dfd852cc93",
+    "files": 144,
+    "bytes": 8927729,
+    "gzipBytes": 6593732,
+    "initialFiles": 64,
+    "initialBytes": 856034,
+    "initialGzipBytes": 361215,
+    "chapterOneFiles": 122,
+    "chapterOneBytes": 7791819,
+    "chapterOneGzipBytes": 5444563,
+    "completeBytes": 8964183,
+    "completeGzipBytes": 6597068,
+    "deferredFiles": 80,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace"
+  },
+  "geometry": {
+    "scope": "Constructed environment mesh/instanced triangle counts only; excludes actors, effects and shadow passes; not browser draw calls or speed.",
+    "rows": [
+      {
+        "scene": "ch1-road",
+        "quality": "performance",
+        "before": {
+          "id": "ch1-road",
+          "quality": "performance",
+          "meshes": 45,
+          "instances": 5072,
+          "triangles": 193378
+        },
+        "after": {
+          "id": "ch1-road",
+          "quality": "performance",
+          "meshes": 47,
+          "instances": 5197,
+          "triangles": 195758,
+          "meshDelta": 2,
+          "triangleDelta": 2380
+        }
+      },
+      {
+        "scene": "ch1-road",
+        "quality": "balanced",
+        "before": {
+          "id": "ch1-road",
+          "quality": "balanced",
+          "meshes": 45,
+          "instances": 11472,
+          "triangles": 377934
+        },
+        "after": {
+          "id": "ch1-road",
+          "quality": "balanced",
+          "meshes": 47,
+          "instances": 11672,
+          "triangles": 381814,
+          "meshDelta": 2,
+          "triangleDelta": 3880
+        }
+      },
+      {
+        "scene": "ch1-road",
+        "quality": "high",
+        "before": {
+          "id": "ch1-road",
+          "quality": "high",
+          "meshes": 45,
+          "instances": 15394,
+          "triangles": 509034
+        },
+        "after": {
+          "id": "ch1-road",
+          "quality": "high",
+          "meshes": 47,
+          "instances": 15679,
+          "triangles": 514614,
+          "meshDelta": 2,
+          "triangleDelta": 5580
+        }
+      },
+      {
+        "scene": "ch2-marsh",
+        "quality": "performance",
+        "before": {
+          "id": "ch2-marsh",
+          "quality": "performance",
+          "meshes": 31,
+          "instances": 2445,
+          "triangles": 135264
+        },
+        "after": {
+          "id": "ch2-marsh",
+          "quality": "performance",
+          "meshes": 31,
+          "instances": 2445,
+          "triangles": 133728,
+          "meshDelta": 0,
+          "triangleDelta": -1536
+        }
+      },
+      {
+        "scene": "ch2-marsh",
+        "quality": "balanced",
+        "before": {
+          "id": "ch2-marsh",
+          "quality": "balanced",
+          "meshes": 31,
+          "instances": 5508,
+          "triangles": 226502
+        },
+        "after": {
+          "id": "ch2-marsh",
+          "quality": "balanced",
+          "meshes": 31,
+          "instances": 5508,
+          "triangles": 223846,
+          "meshDelta": 0,
+          "triangleDelta": -2656
+        }
+      },
+      {
+        "scene": "ch2-marsh",
+        "quality": "high",
+        "before": {
+          "id": "ch2-marsh",
+          "quality": "high",
+          "meshes": 31,
+          "instances": 6323,
+          "triangles": 281992
+        },
+        "after": {
+          "id": "ch2-marsh",
+          "quality": "high",
+          "meshes": 31,
+          "instances": 6323,
+          "triangles": 279336,
+          "meshDelta": 0,
+          "triangleDelta": -2656
+        }
+      },
+      {
+        "scene": "ch9-wing",
+        "quality": "performance",
+        "before": {
+          "id": "ch9-wing",
+          "quality": "performance",
+          "meshes": 19,
+          "instances": 412,
+          "triangles": 59112
+        },
+        "after": {
+          "id": "ch9-wing",
+          "quality": "performance",
+          "meshes": 19,
+          "instances": 454,
+          "triangles": 65230,
+          "meshDelta": 0,
+          "triangleDelta": 6118
+        }
+      },
+      {
+        "scene": "ch9-wing",
+        "quality": "balanced",
+        "before": {
+          "id": "ch9-wing",
+          "quality": "balanced",
+          "meshes": 19,
+          "instances": 831,
+          "triangles": 96332
+        },
+        "after": {
+          "id": "ch9-wing",
+          "quality": "balanced",
+          "meshes": 19,
+          "instances": 873,
+          "triangles": 114834,
+          "meshDelta": 0,
+          "triangleDelta": 18502
+        }
+      },
+      {
+        "scene": "ch9-wing",
+        "quality": "high",
+        "before": {
+          "id": "ch9-wing",
+          "quality": "high",
+          "meshes": 19,
+          "instances": 1114,
+          "triangles": 135862
+        },
+        "after": {
+          "id": "ch9-wing",
+          "quality": "high",
+          "meshes": 19,
+          "instances": 1156,
+          "triangles": 154364,
+          "meshDelta": 0,
+          "triangleDelta": 18502
+        }
+      },
+      {
+        "scene": "ch11-adlection",
+        "quality": "performance",
+        "before": {
+          "id": "ch11-adlection",
+          "quality": "performance",
+          "meshes": 24,
+          "instances": 627,
+          "triangles": 49650
+        },
+        "after": {
+          "id": "ch11-adlection",
+          "quality": "performance",
+          "meshes": 24,
+          "instances": 687,
+          "triangles": 53130,
+          "meshDelta": 0,
+          "triangleDelta": 3480
+        }
+      },
+      {
+        "scene": "ch11-adlection",
+        "quality": "balanced",
+        "before": {
+          "id": "ch11-adlection",
+          "quality": "balanced",
+          "meshes": 24,
+          "instances": 627,
+          "triangles": 74690
+        },
+        "after": {
+          "id": "ch11-adlection",
+          "quality": "balanced",
+          "meshes": 24,
+          "instances": 687,
+          "triangles": 127994,
+          "meshDelta": 0,
+          "triangleDelta": 53304
+        }
+      },
+      {
+        "scene": "ch11-adlection",
+        "quality": "high",
+        "before": {
+          "id": "ch11-adlection",
+          "quality": "high",
+          "meshes": 24,
+          "instances": 627,
+          "triangles": 105730
+        },
+        "after": {
+          "id": "ch11-adlection",
+          "quality": "high",
+          "meshes": 24,
+          "instances": 687,
+          "triangles": 159034,
+          "meshDelta": 0,
+          "triangleDelta": 53304
+        }
+      }
+    ]
+  },
+  "actors": {
+    "scope": "Visible mesh and geometry counts only, not browser draw-call/frame-rate measurements. Identical injected visual role inputs; no claim of earned game progression.",
+    "baseline": "v0.12 packaged original actor modules (unchanged actor implementation used by v0.13)",
+    "rows": [
+      {
+        "label": "recruit",
+        "baseline": {
+          "high": {
+            "near": {
+              "meshes": 34,
+              "triangles": 16680,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 18,
+              "triangles": 8460,
+              "skinned": 0
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 34,
+              "triangles": 9948,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 18,
+              "triangles": 5888,
+              "skinned": 0
+            }
+          }
+        },
+        "current": {
+          "high": {
+            "near": {
+              "meshes": 17,
+              "triangles": 17144,
+              "skinned": 8
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 8864,
+              "skinned": 1
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 17,
+              "triangles": 10228,
+              "skinned": 8
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 6048,
+              "skinned": 1
+            }
+          }
+        }
+      },
+      {
+        "label": "legionary",
+        "baseline": {
+          "high": {
+            "near": {
+              "meshes": 42,
+              "triangles": 18696,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 20,
+              "triangles": 10188,
+              "skinned": 0
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 42,
+              "triangles": 11424,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 20,
+              "triangles": 7244,
+              "skinned": 0
+            }
+          }
+        },
+        "current": {
+          "high": {
+            "near": {
+              "meshes": 19,
+              "triangles": 19400,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 10832,
+              "skinned": 1
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 19,
+              "triangles": 11832,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 7532,
+              "skinned": 1
+            }
+          }
+        }
+      },
+      {
+        "label": "officer",
+        "baseline": {
+          "high": {
+            "near": {
+              "meshes": 44,
+              "triangles": 19480,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 21,
+              "triangles": 10972,
+              "skinned": 0
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 44,
+              "triangles": 11952,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 21,
+              "triangles": 7772,
+              "skinned": 0
+            }
+          }
+        },
+        "current": {
+          "high": {
+            "near": {
+              "meshes": 19,
+              "triangles": 20184,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 11616,
+              "skinned": 1
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 19,
+              "triangles": 12360,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 4,
+              "triangles": 8060,
+              "skinned": 1
+            }
+          }
+        }
+      },
+      {
+        "label": "civic",
+        "baseline": {
+          "high": {
+            "near": {
+              "meshes": 26,
+              "triangles": 10408,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 17,
+              "triangles": 5732,
+              "skinned": 0
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 26,
+              "triangles": 6080,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 17,
+              "triangles": 3548,
+              "skinned": 0
+            }
+          }
+        },
+        "current": {
+          "high": {
+            "near": {
+              "meshes": 13,
+              "triangles": 11064,
+              "skinned": 7
+            },
+            "overview": {
+              "meshes": 3,
+              "triangles": 6328,
+              "skinned": 1
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 13,
+              "triangles": 6552,
+              "skinned": 7
+            },
+            "overview": {
+              "meshes": 3,
+              "triangles": 3900,
+              "skinned": 1
+            }
+          }
+        }
+      },
+      {
+        "label": "horse",
+        "baseline": {
+          "high": {
+            "near": {
+              "meshes": 64,
+              "triangles": 22120,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 36,
+              "triangles": 12756,
+              "skinned": 0
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 64,
+              "triangles": 13356,
+              "skinned": 0
+            },
+            "overview": {
+              "meshes": 36,
+              "triangles": 8824,
+              "skinned": 0
+            }
+          }
+        },
+        "current": {
+          "high": {
+            "near": {
+              "meshes": 23,
+              "triangles": 23712,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 8,
+              "triangles": 14288,
+              "skinned": 1
+            }
+          },
+          "performance": {
+            "near": {
+              "meshes": 23,
+              "triangles": 14188,
+              "skinned": 10
+            },
+            "overview": {
+              "meshes": 8,
+              "triangles": 9536,
+              "skinned": 1
+            }
+          }
+        }
+      }
+    ]
+  },
+  "browser": {
+    "status": "complete",
+    "scope": "Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "startedAt": "2026-10-12T16:01:48.996Z",
+    "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+    "fixtureCommands": 1041,
+    "scenes": [
+      {
+        "scene": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 42
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 14
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch2-marsh",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 11
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 9
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch3-station",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 14
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch3-rolls",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 11
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 11
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch4-gate",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 12
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch4-wall",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 12
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch5-mine",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 12
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch5-wall",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 8
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch6-wells",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 9
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch6-eagle",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 12
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch7-council",
+        "chapter": 7,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 10
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch7-legion",
+        "chapter": 7,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 16
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 9
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch8-parley",
+        "chapter": 8,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 11
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 8
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch8-ferry",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 8
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch8-crossing",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 16
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 10
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch9-city",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 29
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch10-road",
+        "chapter": 10,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 16
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch10-tribunal",
+        "chapter": 10,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch11-accounts",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 14
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 8
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch12-legitimacy",
+        "chapter": 12,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 9
+            }
+          }
+        ],
+        "failed": []
+      },
+      {
+        "scene": "ch12-confrontation",
+        "chapter": 12,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "settlement": [
+          {
+            "name": "Overview: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 15
+            }
+          },
+          {
+            "name": "After canceled motion: unit and objective labels settle",
+            "pass": true,
+            "detail": {
+              "renderedFrames": 7
+            }
+          }
+        ],
+        "failed": []
+      }
+    ],
+    "assertions": 518,
+    "measurements": [
+      {
+        "scene": "ch1-road",
+        "kind": "battle",
+        "activity": "Idle legally reached encounter; no active animation",
+        "quality": "balanced",
+        "camera": {
+          "mode": "overview",
+          "selected": "hero",
+          "inspected": "hero",
+          "yaw": -0.55,
+          "pitch": 0.67,
+          "distance": 36.33512311704675,
+          "target": [
+            0,
+            0.7,
+            0
+          ],
+          "quality": "balanced"
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "warmupFrames": 18,
+        "renderFrames": 120,
+        "elapsedMs": 2692,
+        "cpuRender": {
+          "count": 120,
+          "medianMs": 5.700000047683716,
+          "p95Ms": 7.699999928474426,
+          "maxMs": 8.800000071525574
+        },
+        "stageIntervals": {
+          "count": 119,
+          "medianMs": 17.5,
+          "p95Ms": 35.60000002384186,
+          "maxMs": 37.10000002384186
+        },
+        "rafIntervals": {
+          "count": 158,
+          "medianMs": 16.69999999999709,
+          "p95Ms": 16.80000000000291,
+          "maxMs": 33.5
+        },
+        "drawCalls": {
+          "min": 83,
+          "mean": 94.6,
+          "max": 141,
+          "last": 83
+        },
+        "triangles": {
+          "min": 427258,
+          "mean": 464207.6,
+          "max": 612006,
+          "last": 427258
+        },
+        "saveUnchanged": true
+      }
+    ],
+    "motionSamples": [
+      {
+        "scene": "ch1-road",
+        "quality": "balanced",
+        "camera": {
+          "mode": "follow",
+          "selected": "hero",
+          "inspected": "hero",
+          "yaw": 1.2490457723982544,
+          "pitch": 0.36,
+          "distance": 7.5,
+          "target": [
+            -3.75,
+            0.85,
+            -1.25
+          ],
+          "quality": "balanced"
+        },
+        "renderFrames": 81,
+        "cpuRender": {
+          "count": 81,
+          "medianMs": 9.300000071525574,
+          "p95Ms": 24,
+          "maxMs": 63.200000047683716
+        },
+        "stageIntervals": null,
+        "rafIntervals": null,
+        "saveUnchanged": true,
+        "action": "move",
+        "actorId": "hero",
+        "traceStep": 12,
+        "completed": true,
+        "reducedMotion": false,
+        "authoredDurationMs": 2400,
+        "observedDurationMs": 2518.899999976158
+      },
+      {
+        "scene": "ch1-road",
+        "quality": "balanced",
+        "camera": {
+          "mode": "follow",
+          "selected": "hero",
+          "inspected": "hero",
+          "yaw": 0.7853981633974483,
+          "pitch": 0.36,
+          "distance": 7.5,
+          "target": [
+            -1.25,
+            0.85,
+            -1.25
+          ],
+          "quality": "balanced"
+        },
+        "renderFrames": 52,
+        "cpuRender": {
+          "count": 52,
+          "medianMs": 7.899999976158142,
+          "p95Ms": 11,
+          "maxMs": 15.200000047683716
+        },
+        "stageIntervals": null,
+        "rafIntervals": null,
+        "saveUnchanged": true,
+        "action": "strike",
+        "actorId": "hero",
+        "traceStep": 16,
+        "completed": true,
+        "reducedMotion": false,
+        "authoredDurationMs": 1089,
+        "observedDurationMs": 1130.6000000238419
+      },
+      {
+        "scene": "ch9-wing",
+        "quality": "balanced",
+        "camera": {
+          "mode": "follow",
+          "selected": "enemy0",
+          "inspected": "enemy0",
+          "yaw": -0.19739555984988075,
+          "pitch": 0.36,
+          "distance": 10,
+          "target": [
+            1.25,
+            1.65,
+            -6.25
+          ],
+          "quality": "balanced"
+        },
+        "renderFrames": 133,
+        "cpuRender": {
+          "count": 133,
+          "medianMs": 11.299999952316284,
+          "p95Ms": 12.600000023841858,
+          "maxMs": 14.600000023841858
+        },
+        "stageIntervals": null,
+        "rafIntervals": null,
+        "saveUnchanged": true,
+        "action": "endTurn",
+        "actorId": null,
+        "traceStep": 712,
+        "completed": true,
+        "reducedMotion": false,
+        "authoredDurationMs": 2934.114285714286,
+        "observedDurationMs": 2976.5
+      }
+    ],
+    "limits": [
+      "Actual desktop browser; no physical-device proof",
+      "Synchronous CPU measurements exclude GPU timing and are not an FPS guarantee",
+      "Legal checkpoint harness does not itself exercise campaign save storage or establish human enjoyment"
+    ],
+    "batches": [
+      {
+        "file": "browser-final-partial.json",
+        "acceptedScenes": 13,
+        "scope": "First thirteen scenes passed on final runtime, before the harness settle timeout adjustment."
+      },
+      {
+        "file": "browser-final-resumed.json",
+        "acceptedScenes": 12,
+        "scope": "Remaining scenes passed with frame-aware settling; runtime unchanged."
+      }
+    ],
+    "failedAttempts": [
+      {
+        "scene": "ch7-legion",
+        "error": "ch7-legion: Overview: unit and objective labels settle",
+        "settledRenderedFrames": 15
+      }
+    ],
+    "harnessChanges": "Label settling now permits 240 actual frames within 90 seconds; the frame cap, exact bounds/overlap/state assertions and final runtime are unchanged.",
+    "completedAt": "2026-10-12T16:02:20.164Z",
+    "productionRevision": "c1dfd852cc93",
+    "labelLayouts": [
+      {
+        "scene": "ch11-adlection",
+        "camera": {
+          "mode": "horizon",
+          "selected": "hero",
+          "inspected": "hero",
+          "yaw": -0.55,
+          "pitch": 0.105,
+          "distance": 49.89112772206982,
+          "target": [
+            0,
+            2.7,
+            0
+          ],
+          "quality": "performance"
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "canvas": {
+          "width": 360,
+          "height": 420
+        },
+        "settled": true,
+        "settledRenderedFrames": 7,
+        "settledElapsedMs": 252.59999990463257,
+        "visible": 11,
+        "hidden": [
+          {
+            "id": "speaker-ally",
+            "layout": "occluded"
+          },
+          {
+            "id": "member3",
+            "layout": "occluded"
+          }
+        ],
+        "outOfBounds": [],
+        "overlaps": [],
+        "saveUnchanged": true
+      }
+    ],
+    "horizonViews": [
+      {
+        "scene": "ch11-adlection",
+        "camera": {
+          "mode": "horizon",
+          "selected": "hero",
+          "inspected": "hero",
+          "yaw": -0.55,
+          "pitch": 0.105,
+          "distance": 49.89112772206982,
+          "target": [
+            0,
+            2.7,
+            0
+          ],
+          "quality": "performance"
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 1
+        },
+        "canvas": {
+          "width": 360,
+          "height": 420
+        },
+        "reducedMotion": true,
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 7440,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "rome",
+          "silhouetteKind": "Roman urban rooflines"
+        },
+        "skyProbes": [
+          {
+            "elevationDegrees": 0,
+            "ndc": [
+              8.610539402837974e-17,
+              0.2895500082559647,
+              0.9997471994313828
+            ],
+            "inFrustum": true,
+            "pixelY": 149.1944982662474
+          },
+          {
+            "elevationDegrees": 6,
+            "ndc": [
+              8.706983889847549e-17,
+              0.5847991552977179,
+              0.9997415673385593
+            ],
+            "inFrustum": true,
+            "pixelY": 87.19217738747925
+          },
+          {
+            "elevationDegrees": 12,
+            "ndc": [
+              8.807842315772128e-17,
+              0.8935608600828692,
+              0.9997356774838417
+            ],
+            "inFrustum": true,
+            "pixelY": 22.352219382597475
+          }
+        ],
+        "projectionScope": "Projects horizontal/above-horizontal directions, not a pixel or structural-occlusion test. Inspect the actual rendered scene separately.",
+        "labelsSettled": true,
+        "saveUnchanged": true
+      }
+    ],
+    "console": {
+      "scope": "Recorded console messages for the final browser review",
+      "errors": 0,
+      "warnings": 1,
+      "messages": [
+        {
+          "level": "warn",
+          "message": "THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision\n(210,82-106): warning X4122: sum of 1 and -1.66644e-018 cannot be represented accurately in double precision",
+          "timestamp": "2026-10-12T16:01:38.943Z",
+          "url": "http://127.0.0.1:4383/vendor/three/three.core.js"
+        }
+      ]
+    }
+  },
+  "observations": {
+    "finalSignoff": true,
+    "productionRevision": "c1dfd852cc93",
+    "url": "http://127.0.0.1:4387/",
+    "scope": "Normal production UI on a fresh loopback origin; original saved campaigns on other origins untouched.",
+    "route": [
+      "New Game, default Aurelius Marcellus",
+      "Tell Varro the truth",
+      "Enter drill",
+      "Move 1D to 2D",
+      "Throw at Training partner 3D",
+      "End turn",
+      "Strike Training partner 3D",
+      "End turn",
+      "Brace",
+      "Drill victory on turn 3; four of four actions",
+      "Record result",
+      "Swear military oath",
+      "Enter boundary road",
+      "Follow/Horizon camera controls",
+      "Switch 3D to 2D to 3D",
+      "Export save code, reload, Continue, export save code"
+    ],
+    "finalEncounter": "Fire on the boundary road",
+    "turn": 1,
+    "hero": {
+      "health": 22,
+      "maxHealth": 22,
+      "tile": "1D",
+      "moveReady": true,
+      "actionReady": true
+    },
+    "exactExportEquality": true,
+    "narrowViewport": {
+      "bodyWidth": 345,
+      "canvas": {
+        "bottom": 671.9453125,
+        "height": 384,
+        "left": 0,
+        "right": 345,
+        "top": 287.9453125,
+        "width": 345,
+        "x": 0,
+        "y": 287.9453125
+      },
+      "scrollWidth": 345,
+      "viewport": {
+        "height": 800,
+        "width": 360
+      }
+    },
+    "console": [],
+    "physicalDevicesTested": false,
+    "independentHumanPlayers": false,
+    "offlineBrowserSessionThisPass": false,
+    "screenshots": [
+      "final-frontier-follow.png",
+      "final-production-360.png",
+      "final-production-horizon.png"
+    ],
+    "limits": [
+      "Desktop viewport emulation is not a physical phone",
+      "Shader precision warnings recorded separately from errors",
+      "No subjective human enjoyment or listening verdict"
+    ]
+  },
+  "rawEvidence": [
+    {
+      "path": "work/character-quality-review/final-tests.txt",
+      "bytes": 44335,
+      "sha256": "6caafc2b7a25b876da5b4427fa86bf75f3ea187ee6853a6de22dfd0d56b9b4cb"
+    },
+    {
+      "path": "work/character-quality-review/build.json",
+      "bytes": 38499,
+      "sha256": "cdc2b60e050112e6e1dc7dfc62bb052b05f2148a6f8a6354d4b6d54206b0ce5a"
+    },
+    {
+      "path": "work/character-quality-review/assets.txt",
+      "bytes": 771,
+      "sha256": "937a0d1551247fd22436f138a126c8739eaadd0016c709371aead6982b6b94a2"
+    },
+    {
+      "path": "work/character-quality-review/autoplay.json",
+      "bytes": 6904,
+      "sha256": "3c3edc00db7adf92d5f171e1a1013c2dcbdec2e6b297659a6c7acc91c89532f4"
+    },
+    {
+      "path": "work/v014-environment-before.json",
+      "bytes": 1488,
+      "sha256": "abbb5dc10b9505922b49b0bdd983c49ea0fe8deeb67c0778929e3c95101bbf97"
+    },
+    {
+      "path": "work/v014-environment-after.json",
+      "bytes": 2061,
+      "sha256": "6c6d47a4421f3e78f0ebd81bd24c53fb092132a8deea029bb63ede16369a4469"
+    },
+    {
+      "path": "work/character-quality-review/actor-metrics.json",
+      "bytes": 6089,
+      "sha256": "0c1ae6232308ea36ef2aab4c78ab535c342fa85999f1cc307161d6b8908d088c"
+    },
+    {
+      "path": "work/character-quality-review/browser-final.json",
+      "bytes": 361643,
+      "sha256": "bae3ee7b978fe6581a752ab71eb9e88f8f750bab18b788d356ff4360b5a58c9d"
+    },
+    {
+      "path": "work/character-quality-review/browser-console.json",
+      "bytes": 749,
+      "sha256": "43a200e7aa692eef8768872528ab2937ddd5bcedc31e672f850bcf5b547c82a9"
+    },
+    {
+      "path": "work/character-quality-review/browser-final-partial.json",
+      "bytes": 161160,
+      "sha256": "f3a8d65fc41d447b7ac256c75b180bd437027c241e944e7111ffb852dc2070c5"
+    },
+    {
+      "path": "work/character-quality-review/browser-final-resumed.json",
+      "bytes": 208572,
+      "sha256": "e252270bf75d98c979ceb66d1e138fb0e7a4512d5c34c1ef096349671b5b5030"
+    },
+    {
+      "path": "work/character-quality-review/production-smoke.json",
+      "bytes": 1712,
+      "sha256": "68e70b4f7c521aae29166c5c498195402f71f44a9a962fd857ae283a7974679a"
+    },
+    {
+      "path": "work/character-quality-review/final-frontier-follow.png",
+      "bytes": 49130,
+      "sha256": "c005f7469e16a8123f227e0c8a4e20df1a3a443b5e49664440293d69b1beae6b"
+    },
+    {
+      "path": "work/character-quality-review/final-production-360.png",
+      "bytes": 40428,
+      "sha256": "2e571604fc2d3361d8e55d08f04a21bea9ca9fdcbe06aac21320e5aad80307c4"
+    },
+    {
+      "path": "work/character-quality-review/final-production-horizon.png",
+      "bytes": 109824,
+      "sha256": "1c8c2a382c03c7f0d6003928bf06a01157d3887d1048da1411cadececb08459a"
+    }
+  ],
+  "rawEvidenceNote": "Paths identify retained task-local evidence. This compact record is self-contained; raw reports are not runtime or source-package dependencies."
+}

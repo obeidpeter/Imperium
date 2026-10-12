@@ -28,7 +28,7 @@ test('Walking, throwing, absent targets and distant targets cannot invent melee 
 test('Sound cues use committed timeline timestamps, stable ordering and bounded step/event counts without mutation',()=>{
   const timeline=freeze({tracks:[{start:100,duration:800,path:Array.from({length:20},(_,x)=>({x,y:0}))},{start:10,duration:400,pose:'brace'}],effects:[{type:'impact',start:610},{type:'projectile',projectile:'arrow',start:250},{type:'slash',start:460},{type:'shield',start:600},{type:'projectile',projectile:'javelin',start:310},{type:'dust',start:100}]});
   const before=JSON.stringify(timeline),cues=combatCues(timeline);assert.equal(JSON.stringify(timeline),before);assert.equal(cues.filter(c=>c.kind==='footstep').length,14);assert.ok(cues.every((c,i)=>i===0||c.time>=cues[i-1].time));
-  for(const [kind,time]of [['cloth',130],['bow',250],['javelin',310],['clash',500],['block',600],['impact',610]])assert.ok(cues.some(c=>c.kind===kind&&c.time===time));
+  for(const [kind,time]of [['cloth',130],['bow',250],['javelin',310],['swing',460],['block',600],['impact',610]])assert.ok(cues.some(c=>c.kind===kind&&c.time===time));
   const capped=combatCues({tracks:[],effects:Array.from({length:120},(_,i)=>({type:'impact',start:119-i}))});assert.equal(capped.length,100);assert.equal(capped[0].time,0);assert.equal(capped.at(-1).time,99);assert.deepEqual(combatCues({tracks:[],effects:[]}),[]);
 });
 

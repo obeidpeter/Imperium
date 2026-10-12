@@ -1,15 +1,17 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash} from './environment-layout.js';
+import {createMasonryBlockGeometry} from './environment-primitives.js';
 
 // Geometry factories share materials with the owning environment. No timers,
 // assets or scene-global lighting are created here.
-export function createPropFactory(materials,geometries){
+export function createPropFactory(materials,geometries,{quality='balanced'}={}){
   const m=materials;
   const geo=g=>{geometries.add(g);return g;};
   const box=geo(new THREE.BoxGeometry(1,1,1)),cylinder=geo(new THREE.CylinderGeometry(1,1,1,12)),sphere=geo(new THREE.SphereGeometry(1,16,10));
+  const masonryBlock=quality==='performance'?box:geo(createMasonryBlockGeometry()),masonryMaterials=new Set([m.stone,m.marble,m.brick,m.darkStone,m.plaster,m.redMarble,m.ivory]);
   function mesh(parent,g,material,x=0,y=0,z=0,sx=1,sy=1,sz=1){const o=new THREE.Mesh(g,material);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
   function beam(parent,a,b,r,material=m.wood){const va=new THREE.Vector3(...a),vb=new THREE.Vector3(...b),o=mesh(parent,cylinder,material,...va.clone().add(vb).multiplyScalar(.5).toArray(),r,va.distanceTo(vb),r);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),vb.sub(va).normalize());return o;}
-  function plank(parent,x,y,z,w,h,d,material=m.wood){return mesh(parent,box,material,x,y,z,w,h,d);}
+  function plank(parent,x,y,z,w,h,d,material=m.wood){return mesh(parent,masonryMaterials.has(material)?masonryBlock:box,material,x,y,z,w,h,d);}
   function group(parent,x,y,z,angle=0){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=angle;parent.add(g);return g;}
   function crate(parent,x,y,z,scale=1){const g=group(parent,x,y,z);g.scale.setScalar(scale);
     for(let side=-1;side<=1;side+=2)for(let i=0;i<5;i++){plank(g,side*.5,.48,(i-2)*.205,.07,.92,.19);plank(g,(i-2)*.205,.48,side*.5,.19,.92,.07);}
@@ -73,5 +75,5 @@ export function createPropFactory(materials,geometries){
     for(let k=0;k<5;k++){const rope=geo(new THREE.TorusGeometry(.265,.012,4,16));const loop=mesh(g,rope,m.darkWood,0,1.04+k*.15,0);loop.rotation.x=Math.PI/2;loop.scale.y=.77;}
     return g;
   }
-  return {mesh,beam,plank,group,crate,amphora,tent,wagon,banner,watchRoof,practiceRack,practicePost,box,cylinder,sphere,geo};
+  return {mesh,beam,plank,group,crate,amphora,tent,wagon,banner,watchRoof,practiceRack,practicePost,box,masonryBlock,cylinder,sphere,geo};
 }

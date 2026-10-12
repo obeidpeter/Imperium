@@ -24,7 +24,8 @@ test('A legal world move uses actual traveled distance for gait, turns continuou
   const after=state.encounter,serialized=Game.serialize(state),timeline=buildEncounterTimeline(before,after,{command}),move=timeline.tracks.find(t=>t.unitId==='hero'&&t.path),hero=after.units.find(u=>u.id==='hero');
   for(const fraction of [.02,.2,.5,.8]){
     const frame=sampleEncounterTimeline(timeline,move.start+move.duration*fraction),pose=stageActorPose(hero,frame,timeline),distance=fraction*fraction*(3-2*fraction)*(move.path.length-1)*2.5;
-    assert.ok(Math.abs(pose.phase-distance/.72)<1e-10);
+    assert.ok(Math.abs(pose.locomotionDistance-distance)<1e-10);
+    assert.ok(Math.abs(pose.phase-distance/(pose.motion==='run'?1.5:1.15))<1e-10);
     assert.ok(Number.isFinite(pose.direction));assert.equal(pose.selected,false,'The stage owns the sole selection ring.');
   }
   assert.equal(Game.serialize(state),serialized);
@@ -130,9 +131,42 @@ test('Civic Resolve, gestures and withdrawal remain finite and never become comb
 test('Zoom remains monotonic beyond desktop limits and withdrawn civic figures do not intercept live picks',()=>{
   const stage=Object.create(BattleStage.prototype);Object.assign(stage,{orbit:{distance:96},overviewDistance:()=>100});
   stage.zoom(2);assert.equal(stage.orbit.distance,98);stage.zoom(-2);assert.equal(stage.orbit.distance,96);stage.zoom(20);assert.equal(stage.orbit.distance,100);stage.zoom(2);assert.equal(stage.orbit.distance,100);
-  const live={id:'live',x:2,y:3,resolve:6,role:'speaker'},withdrawn={id:'withdrawn',x:1,y:3,resolve:0,role:'speaker'},liveMesh=new T.Group(),withdrawnMesh=new T.Group();liveMesh.userData.unitId='live';withdrawnMesh.userData.unitId='withdrawn';
-  Object.assign(stage,{canvas:{getBoundingClientRect:()=>({left:0,top:0,width:800,height:600})},ndc:new T.Vector2(),camera:{},encounter:{units:[withdrawn,live]},actors:new Map([['withdrawn',{group:withdrawnMesh}],['live',{group:liveMesh}]]),ray:{setFromCamera(){},intersectObjects(groups){assert.deepEqual(groups,[liveMesh]);return [{object:liveMesh}];}}});
+  const live={id:'live',x:2,y:3,resolve:6,role:'speaker'},withdrawn={id:'withdrawn',x:1,y:3,resolve:0,role:'speaker'},liveMesh=new T.Group(),withdrawnMesh=new T.Group(),surface=new T.Mesh(new T.BoxGeometry(1,1,1));liveMesh.userData.unitId='live';withdrawnMesh.userData.unitId='withdrawn';liveMesh.add(surface);
+  Object.assign(stage,{canvas:{getBoundingClientRect:()=>({left:0,top:0,width:800,height:600})},ndc:new T.Vector2(),camera:{},encounter:{units:[withdrawn,live]},actors:new Map([['withdrawn',{group:withdrawnMesh}],['live',{group:liveMesh}]]),ray:{setFromCamera(){},intersectObjects(meshes,recursive){assert.deepEqual(meshes,[surface]);assert.equal(recursive,false);return [{object:surface}];}}});
   assert.deepEqual(stage.pick({clientX:400,clientY:300}),{x:2,y:3,unitId:'live'});
+  surface.geometry.dispose();surface.material.dispose();
+});
+
+test('Actual weighted actor picking skips hidden skin detail before raycasting while visible bodies remain selectable',async()=>{
+  const {createActor}=await import('../src/showcase/actors.js'),unit={id:'hero',side:'player',role:'soldier',x:3,y:3,hp:10},actor=createActor(unit,{chapter:1}),stage=Object.create(BattleStage.prototype),camera=new T.PerspectiveCamera(40,800/600,.1,100);
+  actor.group.userData.unitId=unit.id;actor.update({motion:'idle',detailDistance:30});actor.group.updateMatrixWorld(true);camera.position.set(0,1,5);camera.lookAt(0,1,0);camera.updateMatrixWorld(true);
+  let hidden=0,visible=0,calls=0;
+  actor.group.traverse(o=>{if(!o.isSkinnedMesh)return;if(!o.visible){hidden++;o.raycast=()=>assert.fail('Hidden near-detail skin must not transform vertices during an overview pick.');}else{visible++;const raycast=o.raycast;o.raycast=function(...args){calls++;return raycast.apply(this,args);};}});
+  Object.assign(stage,{canvas:{getBoundingClientRect:()=>({left:0,top:0,width:800,height:600})},ndc:new T.Vector2(),camera,ray:new T.Raycaster(),encounter:{units:[unit]},actors:new Map([[unit.id,actor]])});
+  assert.ok(hidden>0&&visible>0);assert.deepEqual(stage.pick({clientX:400,clientY:300}),{x:3,y:3,unitId:'hero'});assert.ok(calls>0,'Selection intersects the actual deformed visible body, not a replacement box.');actor.dispose();
+});
+
+test('Reused cells attach effects to the reinforcement or current dying victim, never an old defeated token',()=>{
+  const old={id:'enemy0',x:2,y:4,hp:0,role:'soldier'},reinforcement={id:'reinforce0',x:2,y:4,hp:6,role:'cavalry'},stage=Object.create(BattleStage.prototype);
+  Object.assign(stage,{visibleUnits:[old,reinforcement],world:tile=>new T.Vector3(tile.x,0,tile.y)});
+  const saved=JSON.stringify(stage.visibleUnits);
+  assert.equal(stage.unitAt({x:2,y:4}),reinforcement,'The live body owns projectile release, impact and label lookup despite the earlier corpse.');
+  assert.equal(stage.bodyPoint({x:2,y:4}).y,2.05,'Missiles aim at the actual mounted recipient.');
+  assert.equal(stage.unitAt({x:7,y:7}),undefined);
+  assert.equal(stage.unitAt(null),undefined);
+  assert.equal(JSON.stringify(stage.visibleUnits),saved);
+
+  const dying={...reinforcement,hp:0},timeline={units:{enemy0:{before:{...old}},reinforce0:{before:{...reinforcement}}}};
+  stage.visibleUnits=[old,dying];stage.animation={timeline};const frozen=JSON.stringify({units:stage.visibleUnits,timeline});
+  assert.equal(stage.unitAt({x:2,y:4}),dying,'A victim alive before this action retains its contact anchor through the withdrawal.');
+  assert.equal(stage.bodyPoint({x:2,y:4}).y,2.05);
+  assert.equal(JSON.stringify({units:stage.visibleUnits,timeline}),frozen);
+  stage.animation=null;assert.equal(stage.unitAt({x:2,y:4}),undefined,'Completed defeats cannot capture a later tile effect.');
+
+  const withdrawn={id:'speaker',role:'speaker',x:2,y:4,hp:6,resolve:0};stage.visibleUnits=[old,withdrawn];
+  assert.equal(stage.unitAt({x:2,y:4}),undefined,'Civic Resolve takes precedence over a legacy HP field.');
+  stage.animation={timeline:{units:{speaker:{before:{...withdrawn,resolve:3}}}}};
+  assert.equal(stage.unitAt({x:2,y:4}),withdrawn,'A currently yielding speaker retains the visible Resolve result.');
 });
 
 test('Directed actions face their exact recipient, including diagonal civic gestures',()=>{

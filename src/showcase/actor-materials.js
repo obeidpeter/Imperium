@@ -8,12 +8,13 @@ export function acquireActorSurface(kind){
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
     const hash=((Math.imul(x+1,374761393)^Math.imul(y+9,668265263))>>>0)%997/997;
     let h=.5,c=.94,r=.88;
-    if(kind==='cloth'){const warp=Math.cos(x*Math.PI/2),weft=Math.cos(y*Math.PI/2);h=.5+.15*warp+.13*weft+.035*(hash-.5);c=.89+.055*warp+.03*weft;r=.86+.10*hash;}
-    else if(kind==='leather'){const grain=Math.sin(x*Math.PI/12+Math.cos(y*Math.PI/16))*Math.cos(y*Math.PI/12);h=.5+.12*grain+.12*(hash-.5);c=.84+.07*grain+.05*hash;r=.72+.16*hash;}
+    const broad=Math.sin(x*Math.PI/48)*Math.sin(y*Math.PI/48),worn=Math.max(0,Math.sin(x*Math.PI/16+y*Math.PI/24)*Math.cos(y*Math.PI/48));
+    if(kind==='cloth'){const warp=Math.cos(x*Math.PI/2),weft=Math.cos(y*Math.PI/2);h=.5+.12*warp+.11*weft+.065*broad+.035*(hash-.5);c=.85+.055*warp+.03*weft+.065*broad+.045*worn;r=.88+.08*hash;}
+    else if(kind==='leather'){const grain=Math.sin(x*Math.PI/12+Math.cos(y*Math.PI/16))*Math.cos(y*Math.PI/12);h=.5+.12*grain+.12*(hash-.5);c=.77+.07*grain+.07*hash+.13*worn;r=.76+.16*hash-.14*worn;}
     else if(kind==='mail'){const row=Math.floor(y/12),xx=(x+(row%2)*6)%12-6,yy=y%12-6,d=Math.hypot(xx,yy*.83),ring=Math.max(0,1-Math.abs(d-3.65)/1.35);h=.16+.75*ring;c=.32+.58*ring;r=.38+.36*(1-ring);}
     else if(kind==='scale'){const row=Math.floor(y/16),xx=(x+(row%2)*6)%12-6,yy=y%16,edge=Math.max(0,1-Math.abs(yy-(13-Math.abs(xx)*.65))/1.5);h=.28+yy/30-edge*.2;c=.52+yy/50-edge*.25;r=.43+edge*.35;}
-    else if(kind==='horse'){const hair=Math.cos(x*Math.PI/2+y*Math.PI/8);h=.5+.09*hair+.03*(hash-.5);c=.9+.05*hair+.035*hash;r=.72+.12*hash;}
-    else {h=.48+.10*Math.sin(x*Math.PI/12+Math.sin(y*Math.PI/48))+.03*(hash-.5);c=.90+.045*Math.sin(x*Math.PI/12+Math.sin(y*Math.PI/48));r=.76+.10*hash;}
+    else if(kind==='horse'){const hair=Math.cos(x*Math.PI/2+y*Math.PI/8);h=.5+.065*hair+.025*(hash-.5);c=.84+.045*hair+.03*hash+.09*broad;r=.57+.12*hash+.08*broad;}
+    else {h=.48+.10*Math.sin(x*Math.PI/12+Math.sin(y*Math.PI/48))+.03*(hash-.5);c=.86+.055*Math.sin(x*Math.PI/12+Math.sin(y*Math.PI/48))+.065*worn;r=.76+.10*hash;}
     const i=(y*size+x)*4;colour.set([c*255,c*255,c*255,255],i);height.set([h*255,h*255,h*255,255],i);rough.set([r*255,r*255,r*255,255],i);
   }
   const texture=(data,color=false)=>{const t=new T.DataTexture(data,size,size,T.RGBAFormat);t.wrapS=t.wrapT=T.RepeatWrapping;t.magFilter=T.LinearFilter;t.minFilter=T.LinearMipmapLinearFilter;t.generateMipmaps=true;t.repeat.set(kind==='mail'||kind==='scale'?3:kind==='cloth'?5:2,kind==='mail'||kind==='scale'?3:kind==='cloth'?4:2);if(color)t.colorSpace=T.SRGBColorSpace;t.needsUpdate=true;return t;};

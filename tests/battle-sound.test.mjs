@@ -51,6 +51,23 @@ test('Voice budget rejects a whole event, returns capacity on completion, and st
   sound.dispose();sound.dispose();assert.equal(await sound.unlock(),false);
 });
 
+test('Committed contact can replace quiet walking tails without exceeding the live voice budget',async()=>{
+  const p=platform(),sound=p.create();sound.setEnabled(true,.4);await sound.unlock();
+  for(let i=0;i<6;i++)assert.equal(sound.cue('footstep'),true);
+  const context=p.contexts[0],footsteps=[...context.sources];assert.equal(footsteps.length,18);
+  assert.equal(sound.cue('block'),true,'A shield contact remains audible when incidental walking almost fills the budget.');
+  assert.equal(context.sources.filter(s=>!s.disconnected).length,20);assert.equal(footsteps.filter(s=>s.disconnected).length,1);
+  assert.equal(sound.cue('swing'),false,'A quiet extra swing cannot evict an impact or exceed capacity.');
+  sound.dispose();assert.ok(context.sources.every(s=>s.disconnected));
+});
+
+test('Footing changes actual synthesis recipes and a swing does not invent a metal collision',()=>{
+  const dirt=battleSoundPlan('footstep',{surface:'grass'}),stone=battleSoundPlan('footstep',{surface:'stone'}),swing=battleSoundPlan('swing');
+  assert.notDeepEqual(dirt.layers,stone.layers);assert.ok(stone.layers[0].duration<dirt.layers[0].duration);
+  assert.ok(swing.layers.length>0);assert.ok(swing.layers.every(l=>l.source==='noise'&&l.duration<.2&&l.gain<.1));
+  const shield=battleSoundPlan('block');assert.ok(shield.layers.some(l=>l.source==='ring'&&l.partials[0][0]<250),'Wooden shield body has a low resonant mode.');
+});
+
 test('Hiding the page immediately clears audio and a stale unlock cannot restart it',async()=>{
   const p=platform(),sound=p.create();sound.setEnabled(true);await sound.unlock();sound.cue('wind');
   p.page.hidden=true;p.listeners.get('visibilitychange')();assert.equal(p.contexts[0].state,'suspended');assert.ok(p.contexts[0].sources.every(s=>s.disconnected));

@@ -8,6 +8,16 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.14 — weighted figures and material detail
+
+Original character meshes now use weighted skeletal deformation at clothing and limb joints, with bounded cloth motion and planted sole/hoof contacts. Locally generated reflection lighting helps metal, cloth and stone respond to the scene's sky and sun. Soft foot contacts and short pose-aligned impact effects connect figures to the ground and committed actions.
+
+Walking and mounted strides follow distance travelled. The 3D action sequence gives movement, anticipation, contact and recovery more time while keeping footsteps, weapon release and impacts aligned. Shield blocks and reactions face their source; optional synthesized sound distinguishes hard-ground footsteps, hooves and wading. These changes preserve turn rules, committed results and reduced-motion behavior.
+
+The environment adds smoother boulders, compound palm fronds, tapered tree branches, verge plants, fluted columns and jointed masonry arches. Broad ground variation and material weathering retain the existing continuous terrain, legal grid and distant landscape. Performance keeps simpler masonry; Balanced and High add beveled edges. These remain original procedural models and scripted performances, not imported character sculpts or motion capture. No new downloaded texture files are required.
+
+The [version 0.14 verification record](docs/character-quality-verification.md) reports **401 passing tests**, legal completion of all **25 encounters**, and **25 browser scenes / 518 assertions** checked in two batches. Ordinary production play completed the drill and entered the road; camera/view changes and reload preserved the exact save code. A 360 px desktop viewport had no horizontal overflow. Measured desktop rendering costs and the shader precision warning are disclosed; physical phones, independent human playtests and a fresh browser-offline session were not tested. Previous-version results below remain historical evidence.
+
 ## Version 0.13 — sky and distant landscape
 
 The 3D scene adds an original procedural sky and a regional landscape beyond the playable ground. Choose **Horizon** or press **H** to look toward them; **Overview** or **Home** returns to the tactical frame, and **Follow unit** remains available for inspection. The campaign and standalone skirmish expose the same explicit Horizon control. Camera changes spend no turn and leave the encounter state unchanged; the initial view remains the tactical overview.

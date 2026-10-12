@@ -1,5 +1,6 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash,terrainAt,gridToWorld,isPlayable} from './environment-layout.js';
+import {createPalmFrondGeometry,createColumnGeometry} from './environment-primitives.js';
 
 // Scene landmarks occupy the perimeter. The small reeds are soft vegetation,
 // not collision objects; the game continues to own every legal destination.
@@ -8,7 +9,7 @@ export function addCampaignScenery(ctx){
   const landmarks=[];root.userData.environmentLandmarks=landmarks;
   const landmark=(name,group)=>{group.name=name;landmarks.push(name);return group;};
   const place=(name,x,z)=>landmark(name,p.group(root,x,height(x,z),z));
-  const columnGeo=p.geo(new THREE.LatheGeometry([[.48,0],[.48,.15],[.34,.20],[.29,.40],[.24,4.05],[.32,4.20],[.43,4.28],[.43,4.45]].map(v=>new THREE.Vector2(...v)),16));
+  const columnGeo=p.geo(createColumnGeometry());
   const column=(parent,x,z,scale=1)=>{const col=p.mesh(parent,columnGeo,m.marble,x,0,z,scale,scale,scale);p.plank(parent,x,4.50*scale,z,.96*scale,.13*scale,.96*scale,m.marble);return col;};
   function tiledRoof(g,w,d,y){
     for(const side of [-1,1])for(let row=0;row<4;row++)for(let col=0;col<Math.ceil(d/.8);col++){const f=(row+.5)/4,mesh=p.plank(g,side*f*w/2,y+(1-f)*1.15,(col-(Math.ceil(d/.8)-1)/2)*.8,w/8+.10,.10,.79,m.terra);mesh.rotation.z=-side*Math.atan(2.3/w);}
@@ -21,17 +22,29 @@ export function addCampaignScenery(ctx){
     if(roof)tiledRoof(g,w+1,d+1,3.8);return g;
   }
   function arch(g,x,y,z,w=3.0,h=4.2,depth=.55){
-    const shape=new THREE.Shape(),r=w/2,R=r+.42;shape.absarc(0,0,R,0,Math.PI,false);shape.lineTo(-r,0);shape.absarc(0,0,r,Math.PI,0,true);shape.closePath();
-    const geo=p.geo(new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:16}));p.mesh(g,geo,m.stone,x,y+h-r,z-depth/2);
-    for(const side of [-1,1])p.plank(g,x+side*(r+.21),y+(h-r)/2,z,.42,h-r,depth,m.stone);
+    const r=w/2,R=r+.42,segments=11;
+    // Radial stone courses have real narrow joints and a slightly proud
+    // keystone, rather than an unbroken extruded half-ring.
+    for(let i=0;i<segments;i++){
+      const a=i*Math.PI/segments+.005,b=(i+1)*Math.PI/segments-.005,outer=R+(i===5?.045:0),shape=new THREE.Shape();
+      shape.moveTo(Math.cos(a)*outer,Math.sin(a)*outer);shape.absarc(0,0,outer,a,b,false);shape.lineTo(Math.cos(b)*r,Math.sin(b)*r);shape.absarc(0,0,r,b,a,true);shape.closePath();
+      const geo=p.geo(new THREE.ExtrudeGeometry(shape,{depth:depth+(i===5?.045:0),bevelEnabled:false,curveSegments:2}));p.mesh(g,geo,m.stone,x,y+h-r,z-depth/2);
+    }
+    for(const side of [-1,1])for(let row=0;row<Math.ceil((h-r)/.53);row++){const rows=Math.ceil((h-r)/.53),blockH=(h-r)/rows;p.plank(g,x+side*(r+.21),y+(row+.5)*blockH,z,.42,blockH-.012,depth,m.stone);}
   }
   function perimeterWall(name,x,z,w,h=4.6){const g=place(name,x,z);for(let row=0;row<Math.ceil(h/.46);row++)for(let k=0;k<Math.ceil(w/.95);k++)p.plank(g,(k-(Math.ceil(w/.95)-1)/2)*.95+(row%2?.25:0),.23+row*.46,0,.93,.44,.64,profile.setting==='siege'?m.brick:m.stone);return g;}
   function pier(name,x,z,length=5){const g=place(name,x,z);for(let k=0;k<Math.ceil(length/.25);k++)p.plank(g,0,.13,(k-(Math.ceil(length/.25)-1)/2)*.25,2.1,.15,.23,m.wood);for(const xx of [-.95,.95])for(const zz of [-length/2,0,length/2])p.beam(g,[xx,-1.6,zz],[xx,.7,zz],.095);return g;}
   function boat(name,x,z,y=-1.18){const g=landmark(name,p.group(root,x,y,z,.18));const hull=p.geo(new THREE.SphereGeometry(1,20,10,0,Math.PI*2,Math.PI/2,Math.PI/2));p.mesh(g,hull,m.wood,0,0,0,1.03,.65,3.6);
     for(const side of [-1,1])p.beam(g,[side*.90,0,-2.6],[side*.9,0,2.6],.07);for(let k=-2;k<=2;k++)p.plank(g,0,-.08,k*.83,1.72,.1,.25,m.wood);p.beam(g,[.15,0,0],[.15,4.6,0],.05);p.beam(g,[.15,3.9,-1.9],[.15,3.9,1.9],.045);const sail=p.mesh(g,p.geo(new THREE.PlaneGeometry(3.6,2.8,8,8)),m.cloth,.16,2.45,0);sail.rotation.y=Math.PI/2;return g;}
   function well(x,z){const g=place('stone well and water jars',x,z);const ring=p.geo(new THREE.CylinderGeometry(.95,.95,.65,24,1,true));p.mesh(g,ring,m.stone,0,.35,0);p.mesh(g,p.geo(new THREE.CircleGeometry(.88,24)),m.charcoal,0,.06,0).rotation.x=-Math.PI/2;for(const side of [-1,1])p.beam(g,[side*1.1,0,0],[side*1.1,2.4,0],.085);p.beam(g,[-1.2,2.4,0],[1.2,2.4,0],.11);p.beam(g,[0,2.4,0],[0,.2,0],.014,m.rope);p.amphora(g,1.5,0,.8,.7);return g;}
-  function palm(x,z,h=5.5){const y=height(x,z),trunk=p.geo(new THREE.CylinderGeometry(.12,.23,h,10));const g=place('date palm',x,z);p.mesh(g,trunk,m.wood,0,h/2,0);
-    const leaf=p.geo(new THREE.BufferGeometry()),v=[],idx=[];for(let row=0;row<=10;row++)for(const side of [-1,1]){const t=row/10;v.push(t*2.75,.65*Math.sin(t*Math.PI)-t*.58,side*Math.sin(t*Math.PI)*.30);if(row<10&&side===-1){const a=row*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);}}leaf.setAttribute('position',new THREE.Float32BufferAttribute(v,3));leaf.setIndex(idx);leaf.computeVertexNormals();for(let j=0;j<11;j++)instance('palm fronds',leaf,m.leaves,[x,y+h,z],[1,1,1],[0,j*2.399,0]);return g;}
+  let palmLeaf=null;
+  function palm(x,z,h=5.5){
+    const y=height(x,z),lean=.32+hash(x,z,82)*.38,trunk=p.geo(new THREE.CylinderGeometry(.12,.24,h,12,12)),v=trunk.attributes.position,g=place('date palm',x,z);
+    for(let i=0;i<v.count;i++){const t=(v.getY(i)+h/2)/h,ridge=1+Math.sin(t*h*19)*.035;v.setXYZ(i,v.getX(i)*ridge+lean*t*t,v.getY(i),v.getZ(i)*ridge+Math.sin(t*Math.PI)*.13);}trunk.computeVertexNormals();p.mesh(g,trunk,m.wood,0,h/2,0);
+    if(!palmLeaf)palmLeaf=p.geo(createPalmFrondGeometry());
+    for(let j=0;j<11;j++){const scale=.82+hash(j,x,z)*.30;instance('palm fronds',palmLeaf,m.leaves,[x+lean,y+h,z],[scale,scale,scale],[(hash(j,z)-.5)*.24,j*2.399,(hash(j,x)-.5)*.12],new THREE.Color(.77+hash(j,8)*.2,.85+hash(j,4)*.12,.63+hash(j,9)*.25));}
+    return g;
+  }
   function cypress(x,z,h=6){const g=place('Italian cypress',x,z);p.mesh(g,p.cylinder,m.wood,0,h*.25,0,.11,h*.5,.11);for(let k=0;k<6;k++)p.mesh(g,p.sphere,m.leaves,(hash(k,x)-.5)*.2,h*(.40+k*.085),0,.70-k*.07,.90,.62-k*.06);return g;}
 
   if(profile.architecture==='marsh'){

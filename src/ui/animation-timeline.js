@@ -71,9 +71,20 @@ export function buildEncounterTimeline(before,after,{command=null,quality='balan
   const oldLog=before.log??[],newLog=after.log??[];let overlap=Math.min(oldLog.length,newLog.length);
   while(overlap&&!oldLog.slice(-overlap).every((line,i)=>line===newLog[i]))overlap--;
   const recordedEvents=newLog.length?newLog.slice(overlap):(!command||command.action==='endTurn'?after.turnEvents??[]:[]);
+  const namedPositions=new Map();
   for(const line of recordedEvents){
-    const match=after.units.filter(u=>visible(u)&&visible(previous.get(u.id))).sort((a,b)=>(b.name?.length??0)-(a.name?.length??0)).find(u=>u.name&&line.startsWith(u.name+' '));if(!match)continue;
-    const victim=after.units.find(u=>visible(u)&&u.id!==match.id&&u.name&&line.includes(u.name));
+    // Reused troop names cannot resurrect an already-withdrawn token. A move
+    // explicitly naming a destination can disambiguate subsequent prose; when
+    // several living names remain ambiguous, leave the result effect alone.
+    let candidates=after.units.filter(u=>visible(u)&&visible(previous.get(u.id))&&living(previous.get(u.id))&&u.name&&line.startsWith(u.name+' ')).sort((a,b)=>b.name.length-a.name.length);
+    if(!candidates.length)continue;const name=candidates[0].name;candidates=candidates.filter(u=>u.name===name);
+    const destination=/ moves to (\d+)([A-Z])\b/.exec(line);if(destination){namedPositions.set(name,{x:Number(destination[1])-1,y:destination[2].charCodeAt(0)-65});continue;}
+    const named=namedPositions.get(name);if(named&&candidates.length>1)candidates=candidates.filter(u=>u.x===named.x&&u.y===named.y);
+    if(candidates.length!==1)continue;const match=candidates[0];
+    const consequence=line.slice(name.length+1);
+    let victims=after.units.filter(u=>visible(u)&&visible(previous.get(u.id))&&living(previous.get(u.id))&&u.id!==match.id&&u.name&&consequence.includes(u.name)).sort((a,b)=>b.name.length-a.name.length);
+    if(victims.length){victims=victims.filter(u=>u.name===victims[0].name);if(victims.length>1){const changed=victims.filter(u=>(u.resolve??u.hp??0)<(previous.get(u.id).resolve??previous.get(u.id).hp??0));if(changed.length===1)victims=changed;}}
+    const victim=victims.length===1?victims[0]:null;
     if(actionEvents.some(e=>e.actor.id===match.id&&['strike','throw'].includes(e.action)))continue;
     if(/ (hits|strikes) /.test(line)&&victim)actionEvents.push({actor:match,target:victim,action:match.role==='archer'?'throw':'strike'});
     else if(/ (attacks|challenges) /.test(line)&&victim)actionEvents.push({actor:match,target:victim,action:line.includes('Resolve')?'denounce':'persuade'});
@@ -86,7 +97,7 @@ export function buildEncounterTimeline(before,after,{command=null,quality='balan
     // Six authored poses: anticipation, contact and follow-through have time
     // to read. The throw's fourth frame releases at 50%, then the missile flies.
     const release=310,flight=230,impact=start+(action==='throw'?release+flight:230);
-    if(target&&target.id!==actor.id){impactTimes.set(target.id,Math.max(impactTimes.get(target.id)??0,impact));impactSources.set(target.id,position(actor));}
+    if(target&&target.id!==actor.id&&impact>=(impactTimes.get(target.id)??0)){impactTimes.set(target.id,impact);impactSources.set(target.id,position(actor));}
     if(!political&&action==='strike'&&target)addEffect({type:'slash',from:position(actor),to:position(target),start:start+190,duration:160,essential:false});
     if(action==='throw'&&target)addEffect({type:'projectile',projectile:actor.role==='archer'?'arrow':'javelin',from:position(actor),to:position(target),start:start+release,duration:flight,essential:true});
     if(political)addEffect({type:'speech',at:position(actor),to:target&&position(target),action,start:start+70,duration:310,essential:true});

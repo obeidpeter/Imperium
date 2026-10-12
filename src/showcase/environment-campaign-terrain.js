@@ -25,10 +25,10 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance}
     if(type==='river'){instance('authored deep river',riverGeo,m.water,[xx,-.06,zz],[1,1,1]);cells.push({type,x,y});}
     if(type==='marsh')cells.push({type,x,y});
     if(type==='ford'){
-      instance('shallow ford',riverGeo,m.water,[xx,-.028,zz],[1,1,1]);for(let k=0;k<5;k++)instance('ford stepping stones',p.box,m.stone,[xx+(hash(k,x,y)-.5)*tileSize*.84,.015,zz+(hash(x,k,y)-.5)*tileSize*.76],[.33,.07,.26],[0,hash(k,y)*.4,0]);cells.push({type,x,y});
+      instance('shallow ford',riverGeo,m.water,[xx,-.028,zz],[1,1,1]);for(let k=0;k<5;k++)instance('ford stepping stones',p.masonryBlock,m.stone,[xx+(hash(k,x,y)-.5)*tileSize*.84,.015,zz+(hash(x,k,y)-.5)*tileSize*.76],[.33,.07,.26],[0,hash(k,y)*.4,0]);cells.push({type,x,y});
     }
     if(type==='wall'){
-      for(let row=0;row<3;row++)for(let k=0;k<4;k++)instance('authored low wall cover',p.box,profile.setting==='siege'?m.brick:m.stone,[xx+(k-1.5)*tileSize*.22+(row%2?tileSize*.055:0),height(xx,zz)+.12+row*.19,zz-tileSize*.37],[tileSize*.21,.18,tileSize*.20],[0,0,0]);cells.push({type,x,y});
+      for(let row=0;row<3;row++)for(let k=0;k<4;k++)instance('authored low wall cover',p.masonryBlock,profile.setting==='siege'?m.brick:m.stone,[xx+(k-1.5)*tileSize*.22+(row%2?tileSize*.055:0),height(xx,zz)+.12+row*.19,zz-tileSize*.37],[tileSize*.21,.18,tileSize*.20],[0,0,0]);cells.push({type,x,y});
     }
     if(type==='stone'){
       for(let k=0;k<4;k++)instance('authored stone paving',p.box,m.marble,[xx+(k%2-.5)*tileSize*.5,.014,zz+(Math.floor(k/2)-.5)*tileSize*.5],[tileSize*.48,.028,tileSize*.48]);cells.push({type,x,y});

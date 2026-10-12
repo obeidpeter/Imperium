@@ -5,20 +5,25 @@ const noise=(duration,gain,frequency,type='lowpass',offset=0,q=.7)=>({source:'no
 const ring=(duration,gain,partials,offset=0)=>({source:'ring',duration,gain,partials,offset,attack:.001,frequency:6200,type:'lowpass',q:.7});
 
 /** Event-sized sound recipes; side changes texture, never gameplay or volume. */
-export function battleSoundPlan(kind,{side='player',intensity=1}={}){
+export function battleSoundPlan(kind,{side='player',intensity=1,surface}={}){
   const aliases={step:'footstep',move:'footstep',block:'shield',brace:'shield',metal:'clash',strike:'clash',throw:'javelin',arrow:'bow',hurt:'impact'};
   const key=aliases[kind]??kind,amount=level(intensity),texture=side==='enemy'?31:side==='ally'?17:5;
   let layers=[];
-  if(key==='footstep')layers=[noise(.105,.32,175),noise(.13,.07,1900,'bandpass',.008,.85),noise(.095,.032,2800,'highpass',.045)];
+  if(key==='footstep'){
+    const hard=['stone','chamber','road','wall'].includes(surface);
+    layers=[noise(hard?.075:.105,.29,hard?330:175),noise(.10,hard?.095:.06,hard?2300:1600,'bandpass',.008,.85),noise(.08,.028,2800,'highpass',.035)];
+  }
   else if(key==='hoof')layers=[noise(.075,.27,240),ring(.09,.085,[[173,1],[379,.35]],.005),noise(.065,.10,900,'bandpass',.09)];
   else if(key==='wade')layers=[{...noise(.25,.16,1700,'bandpass',0,.9),attack:.012,endFrequency:420},noise(.09,.18,180),noise(.22,.06,4200,'highpass',.035)];
   else if(key==='speech')layers=[{...noise(.2,.075,1100,'bandpass'),attack:.045,endFrequency:2100},noise(.07,.08,340,'lowpass',.02)];
   else if(key==='vote')layers=[noise(.025,.11,800),ring(.13,.025,[[291,1],[613,.2]],.003)];
-  else if(key==='shield')layers=[noise(.11,.2,490),ring(.32,.16,[[731,1],[1319,.55],[2683,.2]]),noise(.055,.08,2800,'highpass')];
+  // The oval shield is a resonant wooden body with a metal boss, not a bell.
+  else if(key==='shield')layers=[noise(.14,.27,270),ring(.23,.09,[[193,1],[731,.48],[1319,.15]]),noise(.035,.055,2600,'highpass')];
   else if(key==='clash')layers=[noise(.045,.1,1700,'highpass'),ring(.28,.12,[[1523,1],[2711,.55],[4327,.24]],.003),noise(.12,.06,550,'bandpass',.01)];
   else if(key==='javelin')layers=[{...noise(.18,.07,1600,'bandpass',0,.8),attack:.035,endFrequency:4100},noise(.075,.03,700,'bandpass',.025)];
   else if(key==='bow')layers=[noise(.032,.11,1800,'highpass'),ring(.12,.06,[[163,1],[467,.35],[919,.12]],.001),{...noise(.09,.045,2800,'bandpass',.02),endFrequency:1100}];
   else if(key==='impact')layers=[noise(.12,.28,200),noise(.085,.09,950,'bandpass',.004),noise(.13,.045,2200,'lowpass',.015)];
+  else if(key==='swing')layers=[{...noise(.11,.065,950,'bandpass',0,.65),attack:.018,endFrequency:2800}];
   else if(key==='cloth')layers=[{...noise(.19,.04,1300,'bandpass'),attack:.025,endFrequency:2300}];
   // A caller may request a single quiet gust. There is no self-starting loop.
   else if(key==='wind')layers=[{...noise(1.2,.027,620,'lowpass'),attack:.28,endFrequency:950}];
@@ -84,13 +89,21 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
   function cue(kind,options={}){
     if(disposed||!enabled||!volume||!ready||hidden()||context?.state!=='running')return false;
     const plan=battleSoundPlan(kind,options);
-    if(!plan.layers.length||voices.size+plan.layers.length>BATTLE_SOUND_LIMITS.voices)return false;
+    if(!plan.layers.length)return false;
+    const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech'].includes(plan.kind)?1:0;
+    // Quiet walking/rustle tails yield to a committed contact. Equal-priority
+    // impacts retain the strict budget rather than stacking louder and louder.
+    if(voices.size+plan.layers.length>BATTLE_SOUND_LIMITS.voices){
+      const spare=[...voices].filter(v=>v.priority<priority);
+      if(spare.length<voices.size+plan.layers.length-BATTLE_SOUND_LIMITS.voices)return false;
+      for(const voice of spare){if(voices.size+plan.layers.length<=BATTLE_SOUND_LIMITS.voices)break;try{voice.source.stop();}catch{}cleanup(voice);}
+    }
     const created=[],now=context.currentTime;
     try{
       sequence++;
       for(const layer of plan.layers){
         const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
-        const voice={source,nodes:[source,filter,gain]};voices.add(voice);created.push(voice);source.onended=()=>cleanup(voice);
+        const voice={source,nodes:[source,filter,gain],priority};voices.add(voice);created.push(voice);source.onended=()=>cleanup(voice);
         filter.type=layer.type;filter.frequency.setValueAtTime(layer.frequency,now+layer.offset);filter.Q.value=layer.q;
         if(layer.endFrequency)filter.frequency.exponentialRampToValueAtTime(layer.endFrequency,now+layer.offset+layer.duration);
         const start=now+layer.offset,end=start+layer.duration;

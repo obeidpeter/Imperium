@@ -7,6 +7,7 @@ import {addCampaignScenery} from './environment-campaign-scenery.js';
 import {addEnvironmentDepth} from './environment-depth.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
+import {smoothCoincidentNormals} from './environment-primitives.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -16,20 +17,21 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
-  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries),height=createGroundHeight(encounter,tileSize,{profile});
+  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=createGroundHeight(encounter,tileSize,{profile});
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
   const e={width:encounter.width,height:encounter.height,terrain:terrainSnapshot};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2;
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0};
   if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves]){
-    material.onBeforeCompile=shader=>{shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+    const previousCompile=material.onBeforeCompile,previousKey=material.customProgramCacheKey();
+    material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
         float phase = environmentWind * 1.15 + instanceMatrix[3].x * 0.37 + instanceMatrix[3].z * 0.23;
         transformed.x += sin(phase) * position.y * position.y * 0.09;
         transformed.z += cos(phase * 0.79) * position.y * 0.035;
       #endif`);};
-    material.customProgramCacheKey=()=>`frontier-foliage-wind-v1`;
+    material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v1`;
   }
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
   const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
@@ -64,10 +66,11 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // independent draw calls. Matrices use real solid geometry and cast shadows.
   const batches=new Map(),dummy=new THREE.Object3D();
   function instance(key,g,material,position,scale,rotation=[0,0,0],color=null){if(!batches.has(key))batches.set(key,{geometry:g,material,items:[]});batches.get(key).items.push({position,scale,rotation,color});}
-  function branch(a,b,r,key='timber',material=m.wood){const av=new THREE.Vector3(...a),bv=new THREE.Vector3(...b),mid=av.clone().add(bv).multiplyScalar(.5),q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),bv.clone().sub(av).normalize()),rot=new THREE.Euler().setFromQuaternion(q);instance(key,p.cylinder,material,mid.toArray(),[r,av.distanceTo(bv),r],[rot.x,rot.y,rot.z]);}
+  const taperedTimber=p.geo(new THREE.CylinderGeometry(.58,1,1,10));
+  function branch(a,b,r,key='timber',material=m.wood){const av=new THREE.Vector3(...a),bv=new THREE.Vector3(...b),mid=av.clone().add(bv).multiplyScalar(.5),q=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,1,0),bv.clone().sub(av).normalize()),rot=new THREE.Euler().setFromQuaternion(q);instance(key,/oak|willow|root buttress/.test(key)?taperedTimber:p.cylinder,material,mid.toArray(),[r,av.distanceTo(bv),r],[rot.x,rot.y,rot.z]);}
   const rockGeometry=p.geo(new THREE.IcosahedronGeometry(1,2));
   const rockPos=rockGeometry.attributes.position;
-  for(let i=0;i<rockPos.count;i++){const x=rockPos.getX(i),y=rockPos.getY(i),z=rockPos.getZ(i),k=.83+noise(x*3+5,z*3+2,y*3)*.3;rockPos.setXYZ(i,x*k,y*(.85+hash(x,z,y)*.12),z*k);}rockGeometry.computeVertexNormals();
+  for(let i=0;i<rockPos.count;i++){const x=rockPos.getX(i),y=rockPos.getY(i),z=rockPos.getZ(i),k=.83+noise(x*3+5,z*3+2,y*3)*.3;rockPos.setXYZ(i,x*k,y*(.85+hash(x,z,y)*.12),z*k);}smoothCoincidentNormals(rockGeometry);
   function boulder(x,z,scale=1,seed=0){instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
   for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
@@ -118,7 +121,9 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute(leafVertices,3));leafGeometry.setIndex(leafIndices);leafGeometry.computeVertexNormals();
   const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
-    const [x,z,h]=trees[t],base=height(x,z);branch([x,base-.15,z],[x+.18,base+h*.75,z-.1],.28,'oak trunk',m.darkWood);
+    const [x,z,h]=trees[t],base=height(x,z);
+    for(let root=0;root<3;root++){const angle=root*2.399+t*.71,reach=.85+hash(root,t)*.6,xx=x+Math.cos(angle)*reach,zz=z+Math.sin(angle)*reach;branch([xx,height(xx,zz)+.025,zz],[x,base+.6,z],.13,'oak root buttresses',m.darkWood);}
+    branch([x,base-.15,z],[x+.18,base+h*.75,z-.1],.28,'oak trunk',m.darkWood);
     for(let k=0;k<8;k++){
       const angle=k*2.399+t,reach=h*(.26+hash(t,k)*.15),cy=base+h*(.55+hash(k,t)*.36),cx=x+Math.cos(angle)*reach,cz=z+Math.sin(angle)*reach;
       branch([x+.12,base+h*(.35+k*.033),z],[cx,cy,cz],.10,'oak bough',m.darkWood);
@@ -144,6 +149,12 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     if(roadDistance(x,z)<tileSize*(.34+hash(i,15)*.14))continue;
     const s=inside?(training?.065:.12)+hash(i,4)*.12:.18+hash(i,4)*.39,dry=hash(i,114)>.83;
     instance(dry?'dry meadow grass':'meadow grass',blade,dry?m.dryGrass:m.grass,[x,height(x,z)-.01,z],[s*(.7+hash(i,8)*.6),s,s],[0,hash(i,4)*6.28,0],new THREE.Color().setRGB(.71+hash(i,2)*.25,.77+hash(i,5)*.2,.59+hash(i,1)*.24));
+  }
+  // Low broadleaf growth occupies irregular verge patches, not the legal
+  // board. Its shared leaves add a second scale to the fine grass tufts.
+  if(profile.vegetation==='meadow')for(let i=0;i<(perf?40:high?150:100);i++){
+    const x=(hash(i,204)-.5)*48,z=(hash(i,205)-.5)*36;if(isPlayable(x,z,e,tileSize,1.8)||z<-18||roadDistance(x,z)<tileSize*.7||noise(x*.24,z*.24,77)<.43)continue;
+    for(let j=0;j<5;j++){const angle=j*2.399+hash(i,j)*.7,s=1.15+hash(i,j,207)*.65;instance('broadleaf verge growth',leafGeometry,m.leaves,[x+(hash(i,j,208)-.5)*.45,height(x,z)+.025,z+(hash(j,i,209)-.5)*.45],[s*1.4,s,s],[1.03+(hash(j,i)-.5)*.35,angle,0],new THREE.Color(.68+hash(i,j,210)*.24,.78+hash(j,i,211)*.18,.52+hash(i,j,212)*.25));}
   }
   // Fern fronds are compound leaves along bent stems, kept outside the board.
   for(let i=0;i<(profile.vegetation==='meadow'?(perf?12:30):0);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1))continue;const base=height(x,z);
