@@ -64,6 +64,7 @@ for(const path of build.showcaseAssets){
 }
 const standalone=path=>path.startsWith('./showcase/')||path==='./src/showcase/showcase.css';
 const retiredCharacterAtlas='./assets/showcase/character-materials-v015.webp';
+const retiredAssets=[retiredCharacterAtlas,'./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'];
 const activeAtlases=['./assets/showcase/character-materials-v016.webp','./assets/showcase/foliage-v016.webp'];
 // Historical artwork remains part of the complete package, but is not a
 // dependency of a current actor or a cold chapter restore.
@@ -71,7 +72,7 @@ assert.ok(build.showcaseAssets.includes(retiredCharacterAtlas),'Complete 3D inve
 assert.ok(build.deferredAssets.includes(retiredCharacterAtlas),'Historical atlas stays in the complete deferred pack');
 assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await readFile(retiredCharacterAtlas.slice(2)),'Built historical atlas preserves its source bytes');
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
-const shared3D=build.showcaseAssets.filter(path=>!standalone(path)&&path!==retiredCharacterAtlas);
+const shared3D=build.showcaseAssets.filter(path=>!standalone(path)&&!retiredAssets.includes(path));
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');

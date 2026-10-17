@@ -27,7 +27,7 @@ const revision=hash.digest('hex').slice(0,12),assets=records.map(r=>r.url);
 // Install only the title/recruit shell. Current chapters are requested separately;
 // downloading the complete campaign always requires the user's explicit request.
 const openingArt=new Set(['./assets/scenes/frontier-oath.webp','./assets/portraits/hero-recruit.webp','./assets/portraits/varro.webp']);
-const showcaseAssets=assets.filter(url=>['./showcase/','./src/showcase/','./assets/showcase/','./vendor/'].some(prefix=>url.startsWith(prefix)));
+const showcaseAssets=assets.filter(url=>['./showcase/','./src/showcase/','./assets/showcase/','./assets/models/','./vendor/'].some(prefix=>url.startsWith(prefix)));
 const showcaseSet=new Set(showcaseAssets);
 const initial=assets.filter(url=>!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));

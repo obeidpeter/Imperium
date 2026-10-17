@@ -85,23 +85,23 @@ export function buildEncounterTimeline(before,after,{command=null,quality='balan
     let victims=after.units.filter(u=>visible(u)&&visible(previous.get(u.id))&&living(previous.get(u.id))&&u.id!==match.id&&u.name&&consequence.includes(u.name)).sort((a,b)=>b.name.length-a.name.length);
     if(victims.length){victims=victims.filter(u=>u.name===victims[0].name);if(victims.length>1){const changed=victims.filter(u=>(u.resolve??u.hp??0)<(previous.get(u.id).resolve??previous.get(u.id).hp??0));if(changed.length===1)victims=changed;}}
     const victim=victims.length===1?victims[0]:null;
-    if(actionEvents.some(e=>e.actor.id===match.id&&['strike','throw'].includes(e.action)))continue;
+    if(actionEvents.some(e=>e.actor.id===match.id&&['strike','throw','volley'].includes(e.action)))continue;
     if(/ (hits|strikes) /.test(line)&&victim)actionEvents.push({actor:match,target:victim,action:match.role==='archer'?'throw':'strike'});
     else if(/ (attacks|challenges) /.test(line)&&victim)actionEvents.push({actor:match,target:victim,action:line.includes('Resolve')?'denounce':'persuade'});
   }
   const impactTimes=new Map(),impactSources=new Map();
   for(const event of actionEvents.slice(0,12)){
-    const {actor,target,action}=event,start=Math.min(800,endOfMove(actor.id)+40),political=after.kind==='contest';
-    let pose=political?'speak':action==='strike'?cavalry(actor)?'cavalry-attack':'attack':action==='throw'?'throw':action==='brace'?'brace':action==='rally'?'rally':action==='order'?'order':action==='formation'?'order':action==='assist'?'rally':'order';
-    const t=addTrack(actor,pose,start,action==='brace'?460:620,{action,target:target&&position(target),formation:command?.formation});if(!t)continue;
+    const {actor,target,action}=event,start=Math.min(800,endOfMove(actor.id)+40),political=after.kind==='contest',ranged=['throw','volley'].includes(action),guard=['brace','guard'].includes(action);
+    let pose=political?'speak':action==='strike'?cavalry(actor)?'cavalry-attack':'attack':ranged?'throw':guard?'brace':['rally','inspire'].includes(action)?'rally':action==='order'?'order':action==='formation'?'order':action==='assist'?'rally':'order';
+    const t=addTrack(actor,pose,start,guard?460:620,{action,target:target&&position(target),formation:command?.formation});if(!t)continue;
     // Six authored poses: anticipation, contact and follow-through have time
     // to read. The throw's fourth frame releases at 50%, then the missile flies.
-    const release=310,flight=230,impact=start+(action==='throw'?release+flight:230);
+    const release=310,flight=230,impact=start+(ranged?release+flight:230);
     if(target&&target.id!==actor.id&&impact>=(impactTimes.get(target.id)??0)){impactTimes.set(target.id,impact);impactSources.set(target.id,position(actor));}
     if(!political&&action==='strike'&&target)addEffect({type:'slash',from:position(actor),to:position(target),start:start+190,duration:160,essential:false});
-    if(action==='throw'&&target)addEffect({type:'projectile',projectile:actor.role==='archer'?'arrow':'javelin',from:position(actor),to:position(target),start:start+release,duration:flight,essential:true});
+    if(ranged&&target)addEffect({type:'projectile',projectile:actor.role==='archer'?'arrow':'javelin',from:position(actor),to:position(target),start:start+release,duration:flight,essential:true});
     if(political)addEffect({type:'speech',at:position(actor),to:target&&position(target),action,start:start+70,duration:310,essential:true});
-    else if(['rally','order','formation','assist','scout'].includes(action))addEffect({type:'ring',at:position(actor),action,start:start+90,duration:330,essential:true});
+    else if(['rally','inspire','guard','order','formation','assist','scout'].includes(action))addEffect({type:'ring',at:position(actor),action,start:start+90,duration:330,essential:true});
     if(command?.action==='formation'||command?.action==='order')for(const unit of after.units.filter(u=>visible(u)&&u.side==='ally'&&u.ordered&&!previous.get(u.id)?.ordered&&!actionEvents.some(a=>a.actor.id===u.id&&['strike','throw'].includes(a.action))))addTrack(unit,command.action==='formation'?'formation':'order',Math.min(endOfMove(unit.id)+20,800),460,{formation:unit.formation,action:command.orderAction});
   }
   for(const unit of after.units.filter(visible).slice(0,40)){

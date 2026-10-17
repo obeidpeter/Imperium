@@ -6,6 +6,7 @@ import {addCampaignTerrain} from './environment-campaign-terrain.js';
 import {addCampaignScenery} from './environment-campaign-scenery.js';
 import {addEnvironmentDepth} from './environment-depth.js';
 import {addEncounterPrecinct} from './environment-precincts.js';
+import {addInhabitedEnvironment} from './environment-inhabited.js';
 import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
@@ -117,7 +118,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }
   const vegetation=createVegetationFactory({p,m,instance,height,quality});
   const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation};
-  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);
+  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);addInhabitedEnvironment(campaignContext);
 
   // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
   // batches. The small geometric leaves below remain a low-growth fallback.
@@ -127,7 +128,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
     const [x,z,h]=trees[t];
-    if(precinctRoute(x,z)>.10)continue;
+    if(precinctRoute(x,z)>.10||root.userData.inhabitedSetpieces.some(b=>x>b.min[0]-2&&x<b.max[0]+2&&z>b.min[2]-2&&z<b.max[2]+2))continue;
     vegetation.tree('oak',x,z,h,t);
   }
   // Grasses use crossed, tapered geometry with varying height, not a flat

@@ -17,7 +17,7 @@ export function actionEnvelope(motion,phase){
 }
 
 /** Local articulated pose only. No clocks, RNG, unit mutations or world movement. */
-export function actorPose({time=0,motion='idle',phase,direction=0,health=1,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,reducedMotion=false}={}){
+export function actorPose({time=0,motion='idle',phase,direction=0,health=1,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,reducedMotion=false,weapon='sword',mounted=false}={}){
   time=reducedMotion?0:finite(time);direction=finite(direction);health=clamp(finite(health,1),0,1);
   const p=clamp(finite(phase),0,1),breath=Math.sin(time*2.1)*.003;
   const pose={yaw:direction,hipX:0,hipY:.91+breath,hipZ:0,bodyX:0,bodyY:0,bodyZ:0,headX:0,headY:0,
@@ -40,7 +40,8 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
   }else if(['attack','strike','throw'].includes(motion)){
     // Clips keep exact230/620 contact and310/620 release poses; foot grounding
     // and held-equipment aiming still solve after sampling.
-    applyActorClip(pose,motion==='throw'?'throw':'attack',p);
+    applyActorClip(pose,motion==='throw'?'throw':weapon==='spear'?'spearAttack':mounted?'mountedAttack':'attack',p);
+    if(mounted&&weapon==='spear'){const reach=actionEnvelope(motion,p).reach;pose.bodyZ+=.045*reach;pose.headY-=.04*reach;}
   }else if(['brace','formation'].includes(motion)){
     applyActorClip(pose,'brace',phase===undefined?1:p);
   }else if(['hit','hurt','block'].includes(motion)){

@@ -6,6 +6,8 @@ import {BATTLE_BALANCE as B,FORMATION_RULES,ROUGH_TERRAIN} from '../data/battle-
 export {FORMATION_RULES};
 import {deploymentVeteran,applyCompanyKit,difficultyRule} from './campaign-options.js';
 import {initializeOperation,operationEscortsMove,operationQualified,advanceOperation,operationGather} from './operations.js';
+import {applyVeteranSpecializations,veteranActions,veteranTargets,veteranPreview,applyVeteranAction,guardProtection} from './progression-veterans.js';
+import {applyOperationConsequences} from './progression-operations.js';
 
 export const commandCapacity = chapter => chapter<4?0:chapter===4?1:chapter===5?3:chapter===6?4:chapter<9?5:6;
 const point=([x,y])=>({x,y});
@@ -37,7 +39,7 @@ export function createBattle(state,data,options={}){
  if(c>=6){e.condition=state.supplies>=4?'supplied':state.supplies>0?'strained':'exhausted';e.staged.supplies=-1;if(!state.supplies)e.units.filter(u=>u.side==='ally').forEach(u=>{u.hp=Math.max(8,u.hp-2);u.morale=Math.min(u.morale,60);});note(e,`Troop condition: ${e.condition}. One supply convoy is spent on commit.`);}
  if(c===12&&data.type==='confrontation')configureFinale(state,e,options.forecast,options.combatVersion!==1);
  for(const unit of e.units)if(blocked(e.terrain[unit.y][unit.x])||e.units.some(other=>other!==unit&&other.x===unit.x&&other.y===unit.y&&e.units.indexOf(other)<e.units.indexOf(unit))){const safe=[];for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(!blocked(e.terrain[y][x])&&!unitAt(e,x,y))safe.push({x,y});safe.sort((a,b)=>distance(a,unit)-distance(b,unit));if(safe[0])Object.assign(unit,safe[0]);}
- applyCompanyKit(state,e);initializeOperation(state,e);if(e.campaignRules===2&&e.type!=='training'){const difficulty=difficultyRule(e);e.turnLimit=Math.min(30,Math.max(8,e.turnLimit+difficulty.turns));for(const wave of e.mission.waves)wave.turn=Math.max(2,wave.turn+difficulty.wave);note(e,`${state.difficulty} field rules: deadline ${e.turnLimit}; objective pressure ${difficulty.pressure} per unopposed round.`);}
+ applyCompanyKit(state,e);applyVeteranSpecializations(state,e);initializeOperation(state,e);if(e.campaignRules===2&&e.type!=='training'){const difficulty=difficultyRule(e);e.turnLimit=Math.min(30,Math.max(8,e.turnLimit+difficulty.turns));for(const wave of e.mission.waves)wave.turn=Math.max(2,wave.turn+difficulty.wave);note(e,`${state.difficulty} field rules: deadline ${e.turnLimit}; objective pressure ${difficulty.pressure} per unopposed round.`);}applyOperationConsequences(state,e);
  if(options.combatVersion!==1){e.combatVersion=2;for(const u of e.units)u.lastMoveDistance=0;refreshBattleIntents(e);}
  updateBattleProgress(e);e.objective+=` ${e.mission.variant??''} ${missionDescription(e)} Finish by turn ${e.turnLimit}.`;note(e,e.objective);return e;
 }
@@ -74,6 +76,7 @@ export function combatBreakdown(e,unit,target,ranged=false){
  const sameSide=u=>u.side===target.side||['player','ally'].includes(u.side)&&['player','ally'].includes(target.side),cohesive=e.units.some(u=>u.id!==target.id&&alive(u)&&sameSide(u)&&u.formation===target.formation&&distance(u,target)===1);
  add('Cohesive shield wall',target.formation==='shield-wall'&&front&&cohesive?-1:0);add('Line ranged screen',target.formation==='line'&&ranged&&cohesive?-1:0);
  add('Escort screen',target.role==='escort'&&e.units.some(u=>['ally','player'].includes(u.side)&&alive(u)&&distance(u,target)<=1)?-1:0);
+ add('Veteran protector',-guardProtection(e,target));
  add('Wedge on firm ground',!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)?1:0);add('Wedge exposure',target.formation==='wedge'?1:0);
  add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced?B.chargeBonus:0);
  add('Shaken morale',(unit.morale??80)<=B.shakenThreshold?-1:0);
@@ -81,13 +84,14 @@ export function combatBreakdown(e,unit,target,ranged=false){
 }
 export function battleActions(state,unit) {if(!state.encounter.mission)return Legacy.battleActions(state,unit);
   const e=state.encounter,c=state.chapter;if(!unit||!alive(unit)||e.status!=='active'||!['player','ally'].includes(unit.side)) return [];
-  if(unit.side==='ally') {if(c<4)return [];return !unit.ordered&&e.commandsLeft>0?['order',...(c>=5?['formation']:[])]:[];}
+  if(unit.side==='ally') {if(c<4)return veteranActions(e,unit);return !unit.ordered&&e.commandsLeft>0?['order',...(c>=5?['formation']:[]),...veteranActions(e,unit)]:[];}
   const actions=[];if(!unit.moved)actions.push('move');if(!unit.acted) {actions.push('strike','brace');if(unit.ammo>0)actions.push('throw');if(c>=2)actions.push('assist');if(c>=3)actions.push('scout');if(c>=6)actions.push('rally');}
   if(c>=4&&e.commandsLeft>0)actions.push('order');if(c>=5&&e.commandsLeft>0)actions.push('formation');
   if(c===7&&e.turn===1&&!unit.moved&&!e.usedAbilities.includes('deploy'))actions.push('deploy');return actions;
 }
 export function battleTargets(state,unit,action) {if(!state.encounter.mission)return Legacy.battleTargets(state,unit,action);
   const e=state.encounter;
+  if(['guard','inspire','volley'].includes(action))return veteranTargets(e,unit,action);
   if(action==='move')return reachable(e,unit);
   if(action==='deploy')return reachable(e,unit,5).filter(p=>p.x<=3);
   if(action==='strike'||action==='throw')return e.units.filter(u=>alive(u)&&!u.hidden&&opposing(unit).includes(u.side)&&distance(u,unit)<=(action==='strike'?1:3)&&(action==='strike'||lineOfSight(e,unit,u))).map(u=>({x:u.x,y:u.y,unitId:u.id,label:u.name}));
@@ -100,6 +104,7 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
   if(!battleActions(state,unit).includes(action))return result(false,'That action is unavailable or has already been spent this turn.');
   const target=battleTargets(state,unit,action).find(p=>p.x===command.x&&p.y===command.y&&(!command.targetId||p.unitId===command.targetId));if(!target)return result(false,'Choose a highlighted legal target.');
   const other=e.units.find(u=>u.id===(command.targetId??target.unitId));
+  if(['guard','inspire','volley'].includes(action))return veteranPreview(e,unit,action,other,action==='volley'?damagePreview(e,unit,other,true):0);
   if(action==='formation'&&!['line','shield-wall','wedge'].includes(command.formation??'shield-wall'))return result(false,'Choose line, shield-wall, or wedge.');
   if(['order','formation'].includes(action)&&!['advance','attack','hold','rally',...(e.combatVersion===2?['withdraw']:[])].includes(command.orderAction??'advance'))return result(false,e.combatVersion===2?'Choose advance, attack, hold, rally, or withdrawal for the order.':'Choose advance, attack, hold, or rally for the order.');
   if(e.combatVersion===2&&action==='formation'&&command.destination)return result(false,'Choose an individual order to specify a destination.');
@@ -117,7 +122,8 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
 export function applyBattle(state,command) {if(!state.encounter.mission)return Legacy.applyBattle(state,command);
   const checked=previewBattle(state,command);if(!checked.ok)return checked;
   const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),action=command.action,target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y);
-  if(action==='move'||action==='deploy'){if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  if(['guard','inspire','volley'].includes(action)){applyVeteranAction(e,unit,action,target,()=>{faceToward(unit,target);const damage=resolveHit(e,unit,target,true);note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);});}
+  else if(action==='move'||action==='deploy'){if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
   else if(action==='strike'||action==='throw'){if(action==='throw')unit.ammo--;faceToward(unit,target);const damage=e.combatVersion===2?resolveHit(e,unit,target,action==='throw'):damagePreview(e,unit,target,action==='throw');if(e.combatVersion!==2)target.hp=Math.max(0,target.hp-damage);unit.acted=true;note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);}
   else if(action==='brace'){unit.braced=true;unit.acted=true;}
   else if(action==='assist'){target.hp=Math.min(target.maxHp,target.hp+3);target.braced=true;target.escorted=true;unit.acted=true;}
@@ -243,7 +249,7 @@ export function endBattleTurn(state){if(!state.encounter.mission)return Legacy.e
  for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<8&&p.x>=0&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
  if(e.combatVersion===2&&['hold','supply'].includes(e.mission?.mode)&&foes(e).some(u=>distance(u,e.goal)<=1)&&!friendly(e).some(u=>distance(u,e.goal)<=1)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`Unopposed enemy occupation damages the objective (−${pressure} integrity this round).`);}
  progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
- if(e.status==='active'){e.turn++;e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
+ if(e.status==='active'){e.turn++;e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
  return result(true,e.status==='active'?'The enemy turn ends.':e.status==='won'?'Objective secured. Commit the encounter to preserve its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
 export function checkBattle(state,atTurnEnd=false){if(!state.encounter.mission)return Legacy.checkBattle(state,atTurnEnd);const e=state.encounter,hero=e.units.find(u=>u.id==='hero');if(e.status!=='active')return;

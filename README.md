@@ -1,12 +1,20 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Actual version 0.16 Chapter I Horizon view in the production game](docs/images/imperium-v016-preview.png)
+![Actual version 0.17 Chapter I Follow view in the production game](docs/images/imperium-v017-preview.png)
 
-*Actual v0.16 desktop browser capture: the Chapter I road battle in Horizon view. The command dock sits below the visible scene. This is rendered gameplay, not illustrative key art.*
+*Actual v0.17 desktop production capture: the Chapter I road battle in a close Follow view, with the field guide and command dock. This is rendered gameplay, not illustrative key art.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
+
+## Version 0.17 — a developing company and recurring political rivals
+
+New chronicles add **22 operation alternatives across eleven encounters**, three permanent veteran specializations, and nine named representatives who recur across all six political Contests. Branches change objectives and later field benefits; negotiated agreements exchange support now for supply payments and lasting trust. The optional opening guide explains legal commands and their forecasts. Older chronicles retain their previous rules and exact retry checkpoints.
+
+Locally bundled CC0 anatomy supplies male heads, necks and exposed arms, fitted to the existing rig and identity system. Clothing, hands, legs, female figures and horses remain original project models. Weapon-specific authored clips, inhabited settlements and richer chambers improve presentation; camera cutaways and body-aware labels help keep inspected figures visible. GPU-based adaptive resolution is optional and affects the scene buffer rather than interface text. Audio recordings are unchanged.
+
+The [v0.17 validation record](docs/release-validation-v017.md) records **510 passing Node tests**, **25 browser scenes / 518 assertions**, 63 targeted assertions, 21 dedicated GPU checks, thirteen asset/offline checks, eleven isolated browser progression checks and two legal 25-encounter routes. Production revision **`9faf31555b45`** meets the declared download budgets and retains exact previous-version compatibility. Normal-interface progression controls and a server-stopped Chapter I continuation were checked, with the save preserved exactly. Physical-device and independent human playtests remain unperformed.
 
 ## Version 0.16 — fuller scenery and stronger character form
 
@@ -185,8 +193,10 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/ui/app.js` | Event routing and persistence; screen views are split into `campaign-views.js`, `encounter-view.js`, and `panels.js` |
 | `src/ui/render-controller.js` / `turn-replay.js` | Tested render scheduling, asynchronous share preparation and cancellable turn summaries |
 | `src/core/career.js` / `src/data/story-stages.js` | Persistent company service, recovery and state-aware story scenes |
+| `src/core/progression*.js` / `src/data/progression-operations.js` / `negotiators.js` | Versioned operation branches, veteran specializations, recurring representatives and staged agreements |
 | `src/data/encounters.js` | Authored battlefield layouts, objectives, pressure and route variants |
 | `src/data/campaign-guidance.js` / `src/ui/tactical-intel.js` | Chapter responsibilities, mission briefs, coalition status and visible field intentions |
+| `src/ui/progression-views.js` / `field-guide.js` | Camp specialization/operation choices, agreement terms and optional contextual opening guidance |
 | `src/core/legacy-*.js` | Original suspended-encounter rules retained only for old saves and their exact retries |
 | `src/ui/renderer.js` / `battle-art.js` | Canvas battlefield/chamber rendering, depth order, contact shadows, cached ground and path previews |
 | `src/ui/unit-sprites.js` / `sprite-poses.js` | Authored directional unit atlases, faction gear and procedural articulation of painted figures |
@@ -195,9 +205,11 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/ui/graphics-quality.js` | Player-selectable presentation tiers and adaptation to measured rendering cost |
 | `src/ui/art.js` / `asset-loader.js` | Portrait/environment selection, chapter asset groups, bounded image loading and cache |
 | `src/ui/campaign-views.js` / `cinematic.css` | Readable story passages, character staging, promotions and accession |
-| `assets/` | Local WebP portraits, scenes, unit and prop atlases; provenance in docs/asset-manifest.json |
+| `assets/` | Local portraits, scenes, atlases, materials, audio and the fitted character GLB; provenance in docs/asset-manifest.json |
 | `src/ui/battle-stage-controller.js` / `battle-3d.css` | All-chapter battle/chamber 3D view, view switching and renderer lifecycle |
-| `src/showcase/stage.js` / `actors.js` / `actor-pose.js` | Shared WebGL scene, original procedural figures and articulated action poses |
+| `src/showcase/stage.js` / `actors.js` / `actor-pose.js` | Shared WebGL scene, fitted imported anatomy with original rigs/equipment, and articulated action poses |
+| `src/showcase/actor-assets.js` / `actor-clips.js` | Local CC0 anatomy loading/fallback, identity fitting and original weapon-specific joint clips |
+| `src/showcase/frame-budget.js` / `environment-occlusion.js` / `stage-label-layout.js` | Asynchronous GPU timing, bounded scene resolution, scenery cutaways and collision-aware labels |
 | `src/showcase/environment*.js` / `combat-presentation.js` / `battle-sound.js` | Procedural scenery/materials, visual event timing and optional synthesized combat sounds |
 | `src/showcase/campaign-scene-profile.js` / `stage-readout.js` | Campaign scene identity, military/civic labels and mission markers |
 | `showcase/` / `src/showcase/main.js` / `session.js` | Optional standalone frontier study and its isolated in-memory battle |
@@ -209,6 +221,7 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/config.js` | Source defaults; the builder supplies production `SITE_URL` and version configuration |
 | `scripts/build.mjs` / `scripts/serve.mjs` | Dependency-free static builder and local preview server |
 | `scripts/autoplay.mjs` | Full campaign runner using legal gameplay commands from New Game |
+| `scripts/progression-autoplay.mjs` | Legal new-progression routes, branch/specialist/agreement coverage and exact retries |
 | `scripts/political-diagnostics.mjs` | Explicitly injected political scenario comparisons using legal commands; separate from full-campaign evidence |
 | `scripts/graphics-fixtures.mjs` / `tests/graphics-lab.html` | Legal campaign scenes and a development graphics review surface |
 | `scripts/campaign-3d-fixtures.mjs` / `tests/campaign-3d-browser.*` | All 25 legally reached start checkpoints, command replays and explicit real-WebGL review harness |
@@ -233,7 +246,7 @@ node scripts/verify-assets.mjs
 
 The earlier 0.3 release changed gameplay, campaign scenes, the phone action loop and local save recovery. Its [campaign improvements](docs/campaign-improvements.md), [save recovery](docs/save-recovery.md), and [playability verification report](docs/playability-verification.md) remain historical evidence. The [graphics report](docs/graphics-verification.md) documents 0.4; the [aesthetic report](docs/aesthetic-verification.md) documents 0.2. Those are not measurements of version 0.7. The [physical-device and human playtest kit](docs/playtest-kit.md) remains available for further evaluation.
 
-Commands and implemented checks are not proof of a particular result. See the [current presentation refinement record](docs/campaign-3d-refinement-verification.md), the completed [version 0.11 campaign 3D verification](docs/campaign-3d-verification.md), and the [historical overhaul verification](docs/overhaul-verification.md) for their respective scopes. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
+Commands and implemented checks are not proof of a particular result. See the [v0.17 validation record](docs/release-validation-v017.md) for completed automated, browser, ordinary-interface and local offline evidence, the [v0.16 graphics record](docs/release-validation-v016.md), and the [historical overhaul verification](docs/overhaul-verification.md) for their respective scopes. Autoplay does not establish enjoyable pacing, emotional impact, touch ergonomics on a physical device, or real-world offline durability.
 
 ## Scope and design choices
 

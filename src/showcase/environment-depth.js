@@ -34,7 +34,28 @@ export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,
     const sideBays=7,bayDepth=(frontZ-backZ)/sideBays;
     for(const side of [-1,1])for(let i=0;i<sideBays;i++)panel(g,side*wallX,backZ+(i+.5)*bayDepth,bayDepth,side*-Math.PI/2);
     const backBays=8,bayWidth=wallX*2/backBays;
-    for(let i=0;i<backBays;i++)panel(g,-wallX+(i+.5)*bayWidth,backZ,bayWidth);
+    for(let i=0;i<backBays;i++){const x=-wallX+(i+.5)*bayWidth;if(Math.abs(x)>bayWidth)panel(g,x,backZ,bayWidth);}
+    // A real recessed hemicycle gives the presiding end a recognisable civic
+    // silhouette. It replaces the central flat back wall and is wholly beyond
+    // the grid, rather than placing a decorative objective on a legal cell.
+    const apse=p.group(g,0,0,backZ),radius=bayWidth,segments=perf?7:11;
+    apse.name=senate?'Senate recessed hemicycle':'basilica apsidal audience recess';
+    for(let i=0;i<segments;i++){
+      const a=Math.PI+(i+.5)*Math.PI/segments,x=Math.cos(a)*radius,z=Math.sin(a)*radius;
+      panel(apse,x,z,2*radius*Math.sin(Math.PI/(2*segments))+.025,Math.atan2(-Math.cos(a),-Math.sin(a)));
+    }
+    p.plank(apse,0,-.12,-radius/2,radius*2+.35,.24,radius+.4,m.marble);
+    const shell=p.geo(new THREE.SphereGeometry(1,perf?18:28,perf?6:10,0,Math.PI,0,Math.PI/2));shell.rotateY(Math.PI);
+    p.mesh(apse,shell,m.brick,0,8.2,0,radius+.20,1.85,radius+.20);
+    // The underside has reversed winding and normals, so interior light reads
+    // the coffered niche without a global DoubleSide material.
+    const inner=p.geo(shell.clone());const idx=inner.index;for(let i=0;i<idx.count;i+=3){const b=idx.getX(i+1);idx.setX(i+1,idx.getX(i+2));idx.setX(i+2,b);}inner.computeVertexNormals();
+    p.mesh(apse,inner,m.ivory,0,8.16,0,radius,1.65,radius);
+    for(let i=0;i<=segments;i++){
+      const a=Math.PI+i*Math.PI/segments,points=[];for(let k=0;k<=8;k++){const t=k/8*Math.PI/2;points.push(new THREE.Vector3(Math.cos(a)*radius*Math.cos(t),8.11+1.65*Math.sin(t),Math.sin(a)*radius*Math.cos(t)));}
+      p.mesh(apse,p.geo(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),8,.035,4,false)),m.brass);
+    }
+    mark(apse.name,apse);
     // Dark coffer recesses and projecting mouldings read as real roof depth.
     // Roof strips are wholly outside the playable board, even in tall views.
     for(const side of [-1,1])for(let i=0;i<sideBays;i++){
@@ -58,7 +79,7 @@ export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,
     // A low entry threshold completes the cutaway foreground without blocking
     // the camera or pretending that off-grid seats are movable game objects.
     for(const z of [hz+1.1,hz+2.1,hz+3.1])p.plank(g,0,-.02,z,wallX*2,.10,.7,m.darkStone);
-    root.userData.interiorEnvelope={kind:profile.architecture,wallX,backZ,frontZ,wallHeight:8.8,openRoof:true};
+    root.userData.interiorEnvelope={kind:profile.architecture,wallX,backZ,frontZ,wallHeight:8.8,apseDepth:radius,openRoof:true};
     return;
   }
   if(profile.civic)return;
@@ -85,17 +106,8 @@ export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,
   }
   if(profile.architecture==='colonnaded-city'){
     const g=group('connected Palmyrene urban edge'),back=-hz-8;
-    // A continuous backdrop with real projecting lintels, shop recesses and
-    // uneven terracotta roofs joins the formerly isolated colonnades.
-    for(const side of [-1,1])for(let row=0;row<5;row++){
-      const x=side*(hx+7),z=(row-2)*5.4,h=4.3+hash(row,side)*1.6;
-      p.plank(g,x,h/2,z,4.8,h,5.2,m.plaster);p.plank(g,x,h+.15,z,5.15,.27,5.35,m.stone);
-      const front=x-side*2.46;
-      p.plank(g,front,1.6,z,.05,3.2,2.5,m.darkWood);
-      for(const dz of [-1.40,1.40])p.plank(g,front-side*.12,1.8,z+dz,.42,3.6,.38,m.marble);
-      p.plank(g,front-side*.12,3.8,z,.48,.4,3.4,m.marble);
-      for(const k of [-1,1])p.plank(g,x+k*.98,h+.32,z,1.8,.16,4.8,m.terra);
-    }
+    // The open porticoes connect to the proper courtyard houses authored in
+    // environment-inhabited, rather than a row of sealed solid box facades.
     for(const side of [-1,1]){
       p.plank(g,side*(hx+3.1),-.05,0,4.4,.16,e.height*tileSize+9,m.stone);
       for(let row=0;row<3;row++)p.plank(g,side*(hx+1.45+row*.7),.055+row*.09,0,.75,.12,e.height*tileSize+4,m.marble);

@@ -36,7 +36,7 @@ let hoverTile=null,showGrid=false,failed3D=false;
 const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; your progress is preserved. '+message);}});
 function uses3D(){return screen!=='title'&&chapterHas3D(state)&&settings.battleView!=='2d'&&!failed3D;}
 function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover'),u=visibleUnitAt(state.encounter,point);if(label)label.textContent=point?`${u?u.name+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}`:'';}
-let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
+let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
 // Preserve the legacy settings key so existing players keep their preferences.
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
 if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory});
@@ -58,7 +58,7 @@ function selectedUnit(){return selectedActor(state,selected);}
 function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction});}
 
-function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),coach:settings.coach,state,selected,action,target,focusTile,showGrid,formation,orderAction,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
+function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span><small>TURN RESOLVED · ${index}/${total}</small>${esc(text)}</span><button class="ghost small" data-cmd="skip-replay">Skip</button>`;announce(text);},
   finish(){const panel=document.querySelector('#turn-replay');if(panel)panel.hidden=true;}
@@ -92,7 +92,7 @@ function render(){
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion;pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected,targets:targets(),target:target||focusTile,grid:showGrid,quality:graphics.mode,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion;pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected,targets:targets(),target:target||focusTile,grid:showGrid,quality:graphics.mode,adaptiveResolution:settings.adaptiveResolution,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
@@ -184,7 +184,7 @@ async function persist(){
   catch(error){lastSaved='';saveProblem=error.message;saveConflict=error.code==='SAVE_CONFLICT';return {ok:false,error};}
   finally{saving=false;}
 }
-async function change(fn,{reset=false,tone='click',turn=false,silent=false,command:issuedCommand=null,clearSelection=false}={}){
+async function change(fn,{reset=false,tone='click',turn=false,silent=false,command:issuedCommand=null,clearSelection=false,afterRender=null}={}){
   if(sessionGate.busy)return;
   if(saveConflict){toast(saveProblem);return;}
   return sessionGate.run(async()=>{
@@ -192,18 +192,20 @@ async function change(fn,{reset=false,tone='click',turn=false,silent=false,comma
     replay.stop();
     try{
       const before=snapshotEncounter(state.encounter),commandSnapshot=issuedCommand?structuredClone(issuedCommand):null,result=fn();
-      if(result?.ok===false){render();toast(result.message);return;}
+      if(result?.ok===false){render();afterRender?.();toast(result.message);return;}
       if(reset){pendingMotion=null;feedback='';selected='hero';action=null;target=null;focusTile=null;}
       else{const after=snapshotEncounter(state.encounter);pendingMotion={before,after,command:commandSnapshot};if(turn)pendingReplay=turnReplaySteps(before,after,state.encounter?.turnEvents||[]);}
       if(clearSelection){action=null;target=null;}
       const saved=await persist();
       if(tone&&!(uses3D()&&issuedCommand)){const status=state.encounter?.status;const cue=before?.status==='active'&&status&&status!=='active'?(status==='won'?'victory':'defeat'):tone;sound(cue,settings.audio,settings.audioVolume);}
       render();
+      afterRender?.();
       if(!saved.ok)toast(saveProblem);
       else if(result?.message&&!silent)toast(result.message);
     }catch(error){toast(`The action could not be completed: ${error.message}`);console.error(error);}
   });
 }
+function refreshOpenLedger(){if(modal.open&&modal.dataset.panel==='obligations-alliances')showLedger();}
 async function replaceCampaign({load,save,message}){
   if(sessionGate.busy){toast('Please wait for the current save to finish.');return {ok:false};}
   return sessionGate.run(async()=>{
@@ -274,7 +276,7 @@ case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offline
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
-  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
+  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
   if(document.querySelector('#new-soundscape')?.checked){settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chapter I. You are a Tiro: a recruit in training.'});
   if(result.error?.code==='SAVE_UNAVAILABLE'){
@@ -301,6 +303,11 @@ case 'previous-story':await change(()=>Game.setStoryProgress(state,Math.max(0,Ga
 case 'choose':await change(()=>Game.choose(state,id));break;
 case 'oath':await change(()=>Game.swearOath(state));break;
 case 'prepare':await change(()=>Game.prepare(state,id));break;
+case 'dismiss-guide':settings.guide=false;saveSettings();render();announce('Field guide hidden. Reopen it in Settings.');break;
+case 'operation-choice':await change(()=>Game.chooseOperation(state,id),{tone:null});break;
+case 'specialize-veteran':{const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;}
+case 'agreement-demand':case 'agreement-counter':await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'));break;
+case 'agreement-honour':case 'agreement-break':await change(()=>Game.settleAgreement(state,id,cmd==='agreement-honour'),{afterRender:refreshOpenLedger});break;
 case 'company-package':await change(()=>Game.prepareCompany(state,id),{tone:null});break;
 case 'company-up':case 'company-down':{const ids=[...Game.companyPlan(state).selectedIds],from=Number(id),to=from+(cmd==='company-up'?-1:1);if(to>=0&&to<ids.length){[ids[from],ids[to]]=[ids[to],ids[from]];await change(()=>Game.selectCompany(state,ids),{tone:null});}break;}
 case 'voice-briefing':settings.voices=true;saveSettings();soundscape.configure(settings);if(!await soundscape.speak(id))toast('The recording is unavailable. The complete briefing is shown beside this button.');break;
@@ -329,7 +336,7 @@ case 'commit':await change(()=>Game.commitEncounter(state),{reset:true,tone:'pro
 case 'advance':await change(()=>Game.advanceChapter(state),{reset:true,tone:'promotion'});break;
 case 'fallback':await change(()=>Game.acceptFallback(state),{reset:true});break;
 case 'replay':if(Game.replayLastEncounter)await change(()=>Game.replayLastEncounter(state),{reset:true});else toast('Use the encounter checkpoint save to return and demonstrate the missing capability.');break;
-case 'settle-honour':case 'settle-break':await change(()=>Game.settleObligation(state,id,cmd==='settle-honour'));showLedger();break;
+case 'settle-honour':case 'settle-break':await change(()=>Game.settleObligation(state,id,cmd==='settle-honour'),{afterRender:refreshOpenLedger});break;
 case 'export':await showExport();break;
 case 'restore':showRestore();break;
 case 'recovery':await showRecovery();break;
@@ -349,7 +356,10 @@ document.addEventListener('change',async event=>{
   if(control.matches('.company-slot')){const ids=[...document.querySelectorAll('.company-slot')].map(node=>node.value);await change(()=>Game.selectCompany(state,ids),{tone:null});}
   if(['music-setting','ambience-setting','voices-setting'].includes(control.id)){settings[control.id.replace('-setting','')]=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   if(control.id==='soundtrack-volume'){settings.soundtrackVolume=audioLevel(Number(control.value)/100);saveSettings();soundscape.configure(settings);soundscape.unlock();const label=document.querySelector('#soundtrack-volume-value');if(label)label.textContent=Math.round(settings.soundtrackVolume*100)+'%';}
+  if(control.id==='guide-setting'){settings.guide=control.checked;saveSettings();render();}
+  if(control.id==='adaptive-resolution'){settings.adaptiveResolution=control.checked;saveSettings();battleStage.adaptive(control.checked);}
   if(control.id==='coach-setting'){settings.coach=control.checked;saveSettings();render();}
+  if(control.id==='delegate-inspect'){const unit=state.encounter.units.find(u=>u.id===control.value&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;render();announce('Considering an agreement with '+unit.name+'. No speech has been spent.');}}
   if(control.id==='unit-select'){selected=control.value;action=null;target=null;render();}
   if(control.id==='action-select')chooseAction(control.value||null);
   if(control.id==='restore-file'&&control.files?.[0]){const file=control.files[0],field=document.querySelector('#restore-code');if(file.size>3000000){toast('Save file is too large.');return;}const text=await file.text();if(field?.isConnected)field.value=text;}

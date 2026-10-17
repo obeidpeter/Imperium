@@ -7,6 +7,7 @@ const steps=[
   ['legal campaign checkpoints','scripts/autoplay.mjs',['--fixtures']],
   ['campaign graphics scenes','scripts/graphics-fixtures.mjs',[]],
   ['legal graphics action cases','tests/graphics-action-fixtures.mjs',[]],
+  ['earned progression review checkpoints','tests/generate-progression-fixtures.mjs',[]],
   ['all-chapter 3D review checkpoints','scripts/campaign-3d-fixtures.mjs',[]],
 ];
 

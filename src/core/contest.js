@@ -3,6 +3,7 @@ export const createLegacyContest=Legacy.createContest;
 import {CHAMBER_SCENARIOS} from '../data/encounters.js';
 import {INTEREST_EFFECTS,BLOC_AFFINITIES,POLITICAL_BALANCE as BALANCE,RIVAL_PRIORITIES} from '../data/contest-balance.js';
 import {difficultyRule} from './campaign-options.js';
+import {applyCoalition} from './progression-politics.js';
 export {INTEREST_EFFECTS} from '../data/contest-balance.js';
 import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt} from './shared.js';
 
@@ -19,7 +20,7 @@ export function createContest(state,data,options={}) {
     const interest=scenario.interests[(i+Math.floor(i/3))%scenario.interests.length],position=scenario.layout[i];let stance=Math.min(2,Math.floor(value/30))-(i===4?1:0);if(c===10){if(bloc==='Landholders'&&(state.allocation?.town??0)>=3)stance++;if(state.judgment==='shared'&&bloc==='Civic')stance++;if(state.judgment==='settlers')stance+=bloc==='Veterans'?1:bloc==='Landholders'?-1:0;}
     e.units.push(makeUnit(`member${i}`,`${bloc} delegate ${Math.floor(i/3)+1}`,'neutral',...position,{hp:1,role:'voter',bloc,interest,stance:clamp(stance,-6,6),vote:null}));
   }
-  if(options.fallback) e.units.filter(u=>u.bloc==='Landholders').forEach(u=>u.stance=3);
+  applyCoalition(state,e);if(options.fallback) e.units.filter(u=>u.bloc==='Landholders').forEach(u=>u.stance=3);
   e.electorate=e.units.length;e.majority=Math.floor(e.electorate/2)+1;
   e.objective+=` Issue: ${e.issue}. Interests change the value of each argument; check the preview.`;note(e,`${e.majority} of ${e.electorate} votes required at the end of turn ${e.turnLimit}. An early majority does not end the debate; a tie fails.`);
   if(e.politicsVersion===2)refreshIntents({...state,encounter:e});
@@ -133,7 +134,7 @@ export function contestIntents(state){
   for(const enemy of simulation.encounter.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const plan=rivalPlan(simulation,enemy);plans.push(plan);applyRivalPlan(simulation.encounter,plan);}
   return plans;
 }
-function refreshIntents(state){for(const plan of contestIntents(state))state.encounter.units.find(u=>u.id===plan.unitId).intent=plan.message;}
+export function refreshIntents(state){for(const plan of contestIntents(state))state.encounter.units.find(u=>u.id===plan.unitId).intent=plan.message;}
 export function endContestTurn(state){if(!state.encounter.issue)return Legacy.endContestTurn(state);const e=state.encounter;e.turnEvents=[];
   if(e.politicsVersion===2)for(const plan of contestIntents(state)){applyRivalPlan(e,plan);note(e,plan.message);e.turnEvents.push(plan.message);}
   else for(const enemy of e.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'&&alive(u)).sort((a,b)=>distance(enemy,a)-distance(enemy,b)||a.resolve-b.resolve),members=e.units.filter(u=>u.role==='voter').sort((a,b)=>Math.abs(a.stance-1)-Math.abs(b.stance-1)||distance(enemy,a)-distance(enemy,b));

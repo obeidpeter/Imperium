@@ -8,13 +8,13 @@ const root=new URL('../',import.meta.url);
 async function paths(folder){
   const result=[];for(const entry of await readdir(new URL(folder,root),{withFileTypes:true})){const path=folder+entry.name;result.push(...entry.isDirectory()?await paths(path+'/'):['./'+path]);}return result;
 }
-const files=(await Promise.all(['src/showcase/','assets/showcase/','vendor/three/','showcase/'].map(paths))).flat();
+const files=(await Promise.all(['src/showcase/','assets/showcase/','assets/models/','vendor/three/','showcase/'].map(paths))).flat();
 
 test('Every chapter can be restored cold with actual renderer, sound, vendor and materials; image decoding stays image-only',async()=>{
   const stage=await readFile(new URL('src/showcase/stage.js',root),'utf8');
   for(let chapter=1;chapter<=12;chapter++){
     const group=chapterOfflineAssets(chapter,files);
-    for(const required of ['./src/showcase/stage.js','./src/showcase/battle-sound.js','./vendor/three/three.module.js','./vendor/three/three.core.js','./vendor/three/LICENSE','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'])assert.ok(group.includes(required),`Chapter ${chapter}: ${required}`);
+    for(const required of ['./assets/models/roman-human-v017.glb','./vendor/three/addons/loaders/GLTFLoader.js','./src/showcase/stage.js','./src/showcase/battle-sound.js','./vendor/three/three.module.js','./vendor/three/three.core.js','./vendor/three/LICENSE','./assets/showcase/earth-v017.webp','./assets/showcase/stone-v017.webp','./assets/showcase/timber-v017.webp'])assert.ok(group.includes(required),`Chapter ${chapter}: ${required}`);
     assert.ok(!group.includes('./showcase/index.html'));assert.ok(!group.includes('./src/showcase/showcase.css'));
     assert.ok(chapterAssets(chapter).every(path=>/\.(webp|png|jpe?g)$/.test(path)),'An image decoder must never receive a JS/CSS dependency');
     for(const match of stage.matchAll(/from\s+['"](\.\/[^'"]+)['"]/g))assert.ok(group.includes('./src/showcase/'+match[1].slice(2)),`Chapter ${chapter}: stage dependency omitted: ${match[1]}`);

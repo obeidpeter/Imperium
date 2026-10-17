@@ -54,8 +54,9 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // Every chapter therefore owns the shared renderer dependencies; the worker
   // deduplicates their URLs, so subsequent chapters reuse the same cached bytes.
   // The v0.15 character atlas is retained in the complete historical pack,
-  // but current actors use v0.16. Cold chapter restores need only active art.
-  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&path!=='./assets/showcase/character-materials-v015.webp'&&['./src/showcase/','./assets/showcase/','./vendor/three/'].some(prefix=>path.startsWith(prefix)));
+  // and the original material maps remain in the complete historical pack.
+  // Cold chapter restores need only active v0.16/v0.17 artwork and anatomy.
+  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
 }
 let chapterRequest=0;

@@ -9,7 +9,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused}=latest;
     stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setGrid(grid);
     if(stage.quality!==quality)stage.applyQuality(quality);
-    stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
+    stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
     if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };
   function release(){version++;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
@@ -35,6 +35,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     unlock(){return stage?.sound?.unlock();},
     audio(enabled,volume){if(latest){latest.audio=enabled;latest.audioVolume=volume;}stage?.setAudio(enabled,volume);},
     quality(value){if(latest)latest.quality=value;stage?.applyQuality(value);},
+    adaptive(value){if(latest)latest.adaptiveResolution=value;stage?.setAdaptiveResolution?.(value);},
     reduced(value){if(latest)latest.reducedMotion=value;stage?.setReducedMotion(value);},
     home(){stage?.home();},focus(){stage?.focusSelected();},horizon(){stage?.horizon();},
     zoom(delta){if(stage)stage.zoom(delta);},

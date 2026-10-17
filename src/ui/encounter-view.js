@@ -1,3 +1,5 @@
+import {fieldGuide} from './field-guide.js';
+import {agreementConversation} from './progression-views.js';
 import * as Game from '../core/game.js';
 import {operationBanner,tacticalCoaching,voicedBriefing} from './campaign-upgrade-views.js';
 import {esc, roman, actionNames, actionSymbols} from './view-helpers.js';
@@ -141,6 +143,7 @@ export function encounterView(context) {
       <div class="battle-stage command-canvas ${view3D?'battle-3d':''}">${view3D?`<span class="battle-loading" role="status">${political?'Preparing the chamber…':'Preparing the battlefield…'}</span>`:''}<canvas id="battle-board" tabindex="0" role="application" aria-label="${political ? 'Political chamber' : 'Battlefield'} grid. Select a friendly unit, opponent or ground to preview. Select the same target again to confirm. Arrow keys move the cursor; Enter selects or confirms; Escape cancels.${view3D?' H shows the horizon.':''} Named controls are below." aria-describedby="command-hint"></canvas><div id="turn-replay" class="turn-replay" hidden role="status"></div></div>
       <div class="command-board-caption"><span id="board-hover" role="status"></span><span class="command-board-key">${political ? 'Select a delegate to consider their position' : 'Select a figure or a position to give an order'}</span></div>
     </section>
+    ${fieldGuide(state,{selected:actor.id,action,target,enabled:context.guide!==false})}
     <section class="command-dock" aria-label="Command dock">
       <section class="command-company" aria-label="${political ? 'Your speakers' : 'Your company'}">
         <div class="command-actor"><span class="command-kicker">${political ? 'YOUR SPEAKER' : 'YOUR UNIT'}</span><h2>${esc(actor.name)}</h2><p>${actor.resolve ?? actor.hp}/${actor.maxResolve ?? actor.maxHp} ${political ? 'Resolve' : 'health'} · ${location(actor)}${actor.facing && !political ? ` · ${esc(actor.facing)}` : ''}</p><span class="command-readiness">${independentAlly ? `<span class="${actorReadiness.available ? '' : 'is-spent'}">${esc(actorReadiness.description)}</span>` : `<span class="${actions.includes('move') || actions.includes('deploy') ? '' : 'is-spent'}">${actions.includes('move') || actions.includes('deploy') ? 'Move ready' : 'Move spent'}</span><span class="${actions.some(a => !['move','deploy'].includes(a)) ? '' : 'is-spent'}">${actor.acted ? (actions.includes('order') ? 'Orders ready' : 'Action spent') : active ? 'Action ready' : 'Encounter resolved'}</span>`}</span></div>
@@ -151,10 +154,12 @@ export function encounterView(context) {
         <p id="command-hint" class="command-hint">${esc(directHint || instruction(state, action, target, actor))}</p>
         <div class="command-actions" role="group" aria-label="Available actions">${actions.map((a, i) => `<button id="action-${a}" data-cmd="action" data-id="${a}" aria-pressed="${action === a}" title="${esc(actionNames[a])}${i < 9 ? ` · key ${i + 1}` : ''}"><span class="command-action-symbol" aria-hidden="true">${actionSymbols[a] || '·'}</span><span>${esc(actionNames[a])}</span>${i < 9 ? `<kbd aria-hidden="true">${i + 1}</kbd>` : ''}</button>`).join('')}</div>
         ${formationControls(e, action, formation, orderAction)}
+        ${political&&state.progressionVersion===1?`<label class="delegate-selector" for="delegate-inspect">Consider an agreement<select id="delegate-inspect"><option value="">Inspect a representative…</option>${voters.filter(v=>!v.hidden).map(v=>`<option value="${esc(v.id)}" ${point?.unitId===v.id?'selected':''}>${esc(v.name)} · ${esc(v.interest)}</option>`).join('')}</select></label>`:''}
       </section>
       <section class="command-inspector" aria-label="Target and action preview">
         <div class="command-inspection" ${!active ? 'hidden' : ''}>
           ${inspector(e, actor, point, Boolean(target))}
+          ${political?agreementConversation(state,inspectedUnit(e,point)?.id):''}
           ${previewCard(preview, action, e)}
           <div class="command-commit"><button id="confirm-action" class="primary" data-cmd="confirm" ${!preview?.ok || !active ? 'disabled' : ''}>Confirm ${esc(actionNames[action] || 'order')} <span aria-hidden="true">↵</span></button><button id="end-turn" data-cmd="end-turn" ${!active ? 'disabled' : ''}>End turn <span aria-hidden="true">→</span></button>${action ? '<button class="command-cancel" data-cmd="cancel-action" aria-label="Cancel selected action">Cancel</button>' : ''}</div>
           <p id="action-feedback" class="action-feedback" role="status" ${feedback ? '' : 'hidden'}>${esc(feedback)}</p>

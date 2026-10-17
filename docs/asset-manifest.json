@@ -4287,10 +4287,105 @@
         "alphaPreserved": false,
         "instructions": "Decode the existing v0.15 RGB WebP, resize to 512 by 512 with Image.Resampling.LANCZOS, then WebP quality90 method6. No new generation or creative repainting."
       }
+    },
+    {
+      "id": "earth-v017",
+      "path": "assets/showcase/earth-v017.webp",
+      "subject": "Compressed local earth material with preserved image dimensions",
+      "source": {
+        "method": "Mechanical recompression of existing project-generated WebP; no creative image edit",
+        "derivedFrom": "assets/showcase/earth.webp",
+        "derivedFromSha256": "e7dfb0347e48d0e72535e05a7ad0faf73af0b49c834a2f06ad04ba468ce7bb18",
+        "instructions": "Decode existing RGB material; WebP quality82 method6 exact=True at unchanged724x724 resolution. Original retained unchanged."
+      },
+      "usage": "3D terrain and architecture; same authored surface at smaller transfer size",
+      "loading": "Deferred; all chapter resource groups. Original material retained in complete historical pack.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 82,
+        "method": 6,
+        "bytes": 194904,
+        "sha256": "c06a9aa4c2c020ba049a1ca3b9bd9d9c516bd46ccbe18fda8f9b001a38367f57",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "stone-v017",
+      "path": "assets/showcase/stone-v017.webp",
+      "subject": "Compressed local stone material with preserved image dimensions",
+      "source": {
+        "method": "Mechanical recompression of existing project-generated WebP; no creative image edit",
+        "derivedFrom": "assets/showcase/stone.webp",
+        "derivedFromSha256": "07aa0fec0850a2a5003a3cbe3643bafb0a4592a21bdbe617c03d2c1cde5b78c8",
+        "instructions": "Decode existing RGB material; WebP quality82 method6 exact=True at unchanged724x724 resolution. Original retained unchanged."
+      },
+      "usage": "3D terrain and architecture; same authored surface at smaller transfer size",
+      "loading": "Deferred; all chapter resource groups. Original material retained in complete historical pack.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 82,
+        "method": 6,
+        "bytes": 200174,
+        "sha256": "ce544f86cf6f5c00ff6f1fcb0ac721e132a9c7b97fc41711e8ba58e127d1f7e6",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "timber-v017",
+      "path": "assets/showcase/timber-v017.webp",
+      "subject": "Compressed local timber material with preserved image dimensions",
+      "source": {
+        "method": "Mechanical recompression of existing project-generated WebP; no creative image edit",
+        "derivedFrom": "assets/showcase/timber.webp",
+        "derivedFromSha256": "bc6b1c9fa3186e482cda8b3ce573e70c494c1984052e1d920899df1eee5f98b8",
+        "instructions": "Decode existing RGB material; WebP quality82 method6 exact=True at unchanged724x724 resolution. Original retained unchanged."
+      },
+      "usage": "3D terrain and architecture; same authored surface at smaller transfer size",
+      "loading": "Deferred; all chapter resource groups. Original material retained in complete historical pack.",
+      "export": {
+        "format": "WebP",
+        "width": 724,
+        "height": 724,
+        "quality": 82,
+        "method": 6,
+        "bytes": 134538,
+        "sha256": "c3e600be293e5c597e8440b6b7bbfdbc30e051a1f1922168db19bb78f4dcc5c7",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "roman-human-v017",
+      "path": "assets/models/roman-human-v017.glb",
+      "subject": "Imported authored human head, neck and exposed arms; six weighted joints",
+      "source": {
+        "method": "Deterministic original adaptation/conversion of official MakeHuman CC0 anatomical mesh and macro targets",
+        "repository": "https://github.com/makehumancommunity/makehuman",
+        "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+        "license": "CC0-1.0",
+        "provenance": "vendor/makehuman/source.json",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "converter": "scripts/build-actor-asset.mjs",
+        "instructions": "Apply young male target +0.35 maximum muscle target; exclude hidden body and helpers; map head/arms into established rig; indexed float positions, normalized packed normals/UVs/weights."
+      },
+      "usage": "Near-detail male 3D actors; existing equipment, hands, boots, horse and female sculpt retained; fallback articulated original rig",
+      "loading": "Deferred local GLB; every campaign chapter; shared immutable master with per-actor geometry and skeleton",
+      "export": {
+        "format": "GLB 2.0",
+        "bytes": 220008,
+        "gzipLevel9Bytes": 136985,
+        "sha256": "8fb9f97b1da03f54c3e9a1065f25da0752020254e9d6f60cb2477303c2ffccc4",
+        "vertices": 5255,
+        "triangles": 9904,
+        "joints": 6
+      }
     }
   ],
-  "updatedAt": "2026-10-17T18:40:24.084010Z",
-  "totalArtworkBytes": 6738498,
+  "updatedAt": "2026-10-17T19:10:08.720335+00:00",
+  "totalArtworkBytes": 7268114,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -4306,9 +4401,11 @@
     "scenes": 8,
     "world": 3,
     "animation": 5,
-    "showcase": 6,
-    "audio": 14
+    "showcase": 9,
+    "audio": 14,
+    "models": 1
   },
   "totalAudioBytes": 3273036,
-  "totalBundledAssetBytes": 10011534
+  "totalBundledAssetBytes": 10761158,
+  "totalModelBytes": 220008
 }

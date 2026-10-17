@@ -58,16 +58,16 @@ test('Roman audience rooms have a real enclosing perimeter with an open tactical
     const s=fixture.scenes.find(s=>s.id===id),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:s.chapter,quality:'balanced',loadTextures:false});
     const envelope=world.group.userData.interiorEnvelope;assert.ok(envelope);assert.ok(envelope.wallX>s.state.encounter.width*2.5/2+4);assert.ok(envelope.backZ<-(s.state.encounter.height*2.5/2+3));assert.ok(envelope.wallHeight>8);assert.equal(envelope.openRoof,true);
     assert.ok(world.group.userData.environmentLandmarks.includes('enclosed Roman audience hall'));
-    assert.ok(world.stats().meshes<30,'Layered enclosure stays under thirty environment draw objects');
+    assert.ok(world.stats().meshes<35,'Furnished enclosure and recessed apse stay under thirty-five environment draw objects');
     world.group.updateMatrixWorld(true);
     for(const [x,z]of [[envelope.wallX,0],[-envelope.wallX,0],[0,envelope.backZ]]){
-      const ray=new THREE.Raycaster(new THREE.Vector3(x,2,z+1),new THREE.Vector3(0,0,-1),0,2); // back wall only; side-wall proof uses transverse ray below
+      const ray=new THREE.Raycaster(new THREE.Vector3(x,2,z+1),new THREE.Vector3(0,0,-1),0,x===0?envelope.apseDepth+2:2); // the central back wall is now a real recessed hemicycle
       if(x===0)assert.ok(ray.intersectObject(world.group,true).length,'Back wall is actual depth-bearing geometry');
       else {ray.set(new THREE.Vector3(x-Math.sign(x),2,z),new THREE.Vector3(Math.sign(x),0,0));assert.ok(ray.intersectObject(world.group,true).length,'Both side walls are solid enclosure');}
     }
     world.dispose();
   }
   for(const [id,landmark]of [['ch2-marsh','continuous muddy wetland banks'],['ch9-wing','connected Palmyrene urban edge']]){
-    const s=fixture.scenes.find(s=>s.id===id),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:s.chapter,quality:'balanced',loadTextures:false});assert.ok(world.group.userData.environmentLandmarks.includes(landmark));assert.ok(world.stats().meshes<35);world.dispose();
+    const s=fixture.scenes.find(s=>s.id===id),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:s.chapter,quality:'balanced',loadTextures:false});assert.ok(world.group.userData.environmentLandmarks.includes(landmark));assert.ok(world.stats().meshes<42);world.dispose();
   }
 });

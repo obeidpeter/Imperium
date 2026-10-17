@@ -19,7 +19,7 @@ function render(state, extra = {}) {
     header:() => { throw new Error('The website header must not enter the command stage.'); },
     footer:() => { throw new Error('The website footer must not enter the command stage.'); }, ...extra});
   assert.equal(Game.serialize(state), before, 'Rendering and previewing must not spend actions, alter state, or advance the seed.');
-  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(new Set(ids).size, ids.length, 'Control IDs must remain unique.');
   return html;
 }

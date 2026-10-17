@@ -1,9 +1,10 @@
 import {BATTLE_OPERATIONS} from '../data/battle-operations.js';
 import {blocked,distance,makeUnit,note,unitAt} from './shared.js';
 import {difficultyRule} from './campaign-options.js';
+import {PROGRESSION_OPERATIONS,progressionOperationDefinition} from '../data/progression-operations.js';
 
 const point=([x,y])=>({x,y});
-const definition=e=>e.operation?.version===1?BATTLE_OPERATIONS[e.operation.id]:null;
+const definition=e=>e.operation?.version===2?progressionOperationDefinition(e.operation.id,e.operation.branch):e.operation?.version===1?BATTLE_OPERATIONS[e.operation.id]:null;
 function applyPhase(e){
   const phase=definition(e).phases[e.operation.index],escort=e.units.find(u=>e.mission.escortIds.includes(u.id));
   e.goal=phase.goal==='escort'?{x:escort.x,y:escort.y}:point(phase.goal);
@@ -19,8 +20,9 @@ function applyPhase(e){
   note(e,`${phase.label}. ${phase.objective}`);
 }
 export function initializeOperation(state,e){
-  const spec=BATTLE_OPERATIONS[e.id];if(state.campaignRules!==2||!spec)return;
-  e.operation={version:1,id:e.id,index:0,completed:[],startedTurn:1};e.turnLimit=Math.min(27,e.turnLimit+spec.extraTurns);applyPhase(e);
+  const branch=state.progressionVersion===1?(state.progression.operationChoices[e.id]??PROGRESSION_OPERATIONS[e.id]?.[0].id):null;
+  const spec=branch?progressionOperationDefinition(e.id,branch):BATTLE_OPERATIONS[e.id];if(state.campaignRules!==2||!spec)return;
+  e.operation={version:branch?2:1,id:e.id,index:0,completed:[],startedTurn:1,...(branch?{branch}:{})};e.turnLimit=Math.min(27,e.turnLimit+spec.extraTurns);applyPhase(e);
 }
 export function operationEscortsMove(e){return !definition(e)?.phases[e.operation.index].pauseEscorts;}
 export function operationGather(e){
@@ -47,8 +49,8 @@ export function operationPhase(e){
 }
 export function validateOperation(e,fail){
   if(e.operation===undefined){if(e.campaignRules===2&&BATTLE_OPERATIONS[e.id])fail('missing operation phase.');return;}
-  const o=e.operation,spec=BATTLE_OPERATIONS[e.id];
-  if(e.campaignRules!==2||!o||o.version!==1||o.id!==e.id||!spec||!Number.isInteger(o.index)||o.index<0||o.index>=spec.phases.length||!Number.isInteger(o.startedTurn)||o.startedTurn<1||o.startedTurn>e.turn||!Array.isArray(o.completed)||o.completed.length!==o.index||o.completed.some((id,i)=>id!==spec.phases[i].id))fail('operation phase.');
+  const o=e.operation,spec=definition(e);
+  if(e.campaignRules!==2||!o||![1,2].includes(o.version)||o.version===2&&e.progressionVersion!==1||e.progressionVersion===1&&o.version!==2||o.id!==e.id||!spec||!Number.isInteger(o.index)||o.index<0||o.index>=spec.phases.length||!Number.isInteger(o.startedTurn)||o.startedTurn<1||o.startedTurn>e.turn||!Array.isArray(o.completed)||o.completed.length!==o.index||o.completed.some((id,i)=>id!==spec.phases[i].id))fail('operation phase.');
   if(e.mission.mode!==spec.phases[o.index].mode)fail('operation objective.');
   const phase=spec.phases[o.index],goal=phase.goal==='escort'?e.units.find(u=>e.mission.escortIds.includes(u.id)):point(phase.goal);
   if(!goal||e.goal.x!==goal.x||e.goal.y!==goal.y||e.mission.holdRequired!==(phase.hold??0))fail('operation target.');

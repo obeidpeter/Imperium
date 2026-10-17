@@ -1,0 +1,970 @@
+{
+  "schema": "imperium-presentation-verification-v017",
+  "version": "0.17.0",
+  "revision": "9faf31555b45",
+  "status": "complete",
+  "scope": "Compact summaries of completed automated, legal-command, actual desktop renderer/GPU, build, agent-operated ordinary interface and server-stopped offline checks. Scope limitations remain explicit; no physical-device or independent human-study claim. Raw local reports are identified by exact SHA-256 rather than embedded.",
+  "automated": {
+    "node": {
+      "tests": 510,
+      "passed": 510,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 64484.2406
+    },
+    "assetChecks": {
+      "status": "complete",
+      "passed": 13,
+      "checks": [
+        "asset manifest integrity and portrait/title budgets",
+        "declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance",
+        "complete audio provenance, deferred installation and chapter-specific soundscape groups",
+        "active chapter atlases exclude superseded artwork while the complete inventory preserves its exact bytes",
+        "shell-only install and truthful partial status",
+        "cold Chapter XI restore retries missing shared renderer and caches its own complete resource group",
+        "chapter 1 caches separately and never claims all chapters are offline",
+        "chapter-cached shared 3D dependencies survive offline reads; standalone page stays deferred until requested",
+        "version-scoped lookup ignores old artwork",
+        "failed deferred fetch does not claim offline readiness",
+        "retry completes all deferred assets and reports readiness",
+        "server-unavailable navigation uses current shell cache",
+        "both-brand activation cleanup preserves the current edition and unrelated caches; no forced skipWaiting"
+      ],
+      "scope": "Manifest/budget/provenance integrity plus simulated service-worker/cache behavior; actual browser offline evidence is recorded separately."
+    }
+  },
+  "compatibility": {
+    "source": "tests/compatibility/campaign-v016-route.json",
+    "oldVersion": "0.16.0",
+    "commands": 1079,
+    "exactRetries": 25,
+    "saveRoundTripsExact": true,
+    "verifiedBy": "node-final-510.txt",
+    "scope": "Frozen previous-version legal route; no migration into new progression rules."
+  },
+  "legalProgression": {
+    "source": "scripts/progression-autoplay.mjs",
+    "routes": [
+      {
+        "name": "primary",
+        "source": "New Game with progression:true; public legal commands only; no debug state injection",
+        "seed": 275,
+        "difficulty": "standard",
+        "rank": "Augustus",
+        "completedChapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "encounters": 25,
+        "won": 25,
+        "totalTurns": 233,
+        "exactRetries": 25,
+        "specialistActions": [
+          "guard",
+          "inspire",
+          "volley"
+        ],
+        "earnedSpecializations": 5,
+        "operationChoices": [
+          {
+            "encounter": "ch1-road",
+            "id": "pursue"
+          },
+          {
+            "encounter": "ch2-rearguard",
+            "id": "withdraw"
+          },
+          {
+            "encounter": "ch3-station",
+            "id": "records"
+          },
+          {
+            "encounter": "ch4-gate",
+            "id": "evacuate"
+          },
+          {
+            "encounter": "ch5-mine",
+            "id": "engineers"
+          },
+          {
+            "encounter": "ch6-wells",
+            "id": "wells"
+          },
+          {
+            "encounter": "ch7-legion",
+            "id": "field"
+          },
+          {
+            "encounter": "ch8-ferry",
+            "id": "direct"
+          },
+          {
+            "encounter": "ch8-crossing",
+            "id": "last-ferry"
+          },
+          {
+            "encounter": "ch9-city",
+            "id": "streets"
+          },
+          {
+            "encounter": "ch10-road",
+            "id": "grain"
+          }
+        ],
+        "agreementEncounters": [
+          "ch7-council",
+          "ch8-parley",
+          "ch10-tribunal",
+          "ch11-accounts",
+          "ch11-adlection",
+          "ch12-legitimacy"
+        ],
+        "agreementOutcomes": {
+          "honoured": 0,
+          "broken": 6,
+          "open": 0
+        }
+      },
+      {
+        "name": "alternate",
+        "source": "New Game with progression:true; public legal commands only; no debug state injection",
+        "seed": 275,
+        "difficulty": "standard",
+        "rank": "Augustus",
+        "completedChapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "encounters": 25,
+        "won": 25,
+        "totalTurns": 216,
+        "exactRetries": 25,
+        "specialistActions": [
+          "guard",
+          "inspire",
+          "volley"
+        ],
+        "earnedSpecializations": 5,
+        "operationChoices": [
+          {
+            "encounter": "ch1-road",
+            "id": "screen"
+          },
+          {
+            "encounter": "ch2-rearguard",
+            "id": "counterattack"
+          },
+          {
+            "encounter": "ch3-station",
+            "id": "secure"
+          },
+          {
+            "encounter": "ch4-gate",
+            "id": "hold"
+          },
+          {
+            "encounter": "ch5-mine",
+            "id": "assault"
+          },
+          {
+            "encounter": "ch6-wells",
+            "id": "rear-road"
+          },
+          {
+            "encounter": "ch7-legion",
+            "id": "consolidate"
+          },
+          {
+            "encounter": "ch8-ferry",
+            "id": "southern"
+          },
+          {
+            "encounter": "ch8-crossing",
+            "id": "stores"
+          },
+          {
+            "encounter": "ch9-city",
+            "id": "corridor"
+          },
+          {
+            "encounter": "ch10-road",
+            "id": "intercept"
+          }
+        ],
+        "agreementEncounters": [
+          "ch7-council",
+          "ch8-parley",
+          "ch10-tribunal",
+          "ch11-accounts",
+          "ch11-adlection",
+          "ch12-legitimacy"
+        ],
+        "agreementOutcomes": {
+          "honoured": 2,
+          "broken": 4,
+          "open": 0
+        }
+      }
+    ],
+    "operationAlternativesAcrossRoutes": 22,
+    "limits": "Legal New Game bot routes, not human pacing, balance or enjoyment evidence. Isolated focused rule scenarios remain separate."
+  },
+  "campaignBrowser": {
+    "version": "0.17.0",
+    "status": "complete",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+    "fixtureCommands": 1079,
+    "scope": "Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.",
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "devicePixelRatio": 2
+    },
+    "canvas": {
+      "width": 1233,
+      "height": 468
+    },
+    "quality": "balanced",
+    "assertions": 518,
+    "passed": 518,
+    "scenes": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch2-marsh",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch3-station",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch3-rolls",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch4-gate",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch4-wall",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch5-mine",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch5-wall",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch6-wells",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch6-eagle",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch7-council",
+        "chapter": 7,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch7-legion",
+        "chapter": 7,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch8-parley",
+        "chapter": 8,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch8-ferry",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch8-crossing",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch9-city",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch10-road",
+        "chapter": 10,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch10-tribunal",
+        "chapter": 10,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch11-accounts",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch12-legitimacy",
+        "chapter": 12,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      },
+      {
+        "id": "ch12-confrontation",
+        "chapter": 12,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true,
+        "importedAnatomyReady": true
+      }
+    ],
+    "limits": "A renderer sweep over legally reached checkpoints, not uninterrupted normal-interface play or browser coverage of every new operation alternative. Startup render samples are not a performance benchmark."
+  },
+  "progressionBrowser": {
+    "fixtureSource": "Generated from a legal New Game progression campaign. No checkpoint data was injected or edited.",
+    "scope": "Isolated public-API checks on copied legal fixtures in the browser; not ordinary campaign interface interactions.",
+    "assertions": 11,
+    "passed": 11,
+    "checks": [
+      {
+        "name": "Legal Chapter III has an earned eligible veteran",
+        "pass": true
+      },
+      {
+        "name": "Training read is pure",
+        "pass": true
+      },
+      {
+        "name": "Unknown path rejects without mutation",
+        "pass": true
+      },
+      {
+        "name": "Real permanent path command succeeds",
+        "pass": true
+      },
+      {
+        "name": "Changing a permanent path rejects without mutation",
+        "pass": true
+      },
+      {
+        "name": "Legal Chapter VII offers a named agreement",
+        "pass": true
+      },
+      {
+        "name": "Agreement preview is pure",
+        "pass": true
+      },
+      {
+        "name": "Agreement consumes the commander’s actual speech",
+        "pass": true
+      },
+      {
+        "name": "Agreement remains staged until commit",
+        "pass": true
+      },
+      {
+        "name": "Retry restores exact agreement-start state",
+        "pass": true
+      },
+      {
+        "name": "Legacy/default campaigns retain no new progression controls",
+        "pass": true
+      }
+    ]
+  },
+  "targetedBrowser": {
+    "status": "complete",
+    "version": "0.17.0",
+    "scope": "Only the last three rows of the cumulative 28-row raw report are counted here; the original 25-scene sweep is reported separately.",
+    "assertions": 63,
+    "passed": 63,
+    "scenes": [
+      {
+        "id": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "high",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "compositorEnabled": true,
+        "importedAnatomyReady": true,
+        "reducedMotionCommandSaveExact": true
+      },
+      {
+        "id": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 360,
+          "height": 420
+        },
+        "compositorEnabled": true,
+        "importedAnatomyReady": true,
+        "reducedMotionCommandSaveExact": true
+      },
+      {
+        "id": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "performance",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "compositorEnabled": false,
+        "importedAnatomyReady": true,
+        "reducedMotionCommandSaveExact": true
+      }
+    ],
+    "limits": "The narrow 360×420 canvas is inside a desktop browser, not a physical phone. Each scene includes legal reduced-motion output, cancellation and exact-state checks; these are not full normal-interface playthroughs."
+  },
+  "gpu": {
+    "status": "complete",
+    "compositor": {
+      "status": "passed",
+      "assertions": 21,
+      "passed": 21,
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "dpr": 2
+      },
+      "drawingBuffer": {
+        "width": 720,
+        "height": 400
+      },
+      "floatTargetsSupported": true,
+      "checks": [
+        {
+          "name": "Direct reference has visible, nonuniform color",
+          "passed": true
+        },
+        {
+          "name": "balanced: visible nonblack, nonuniform output",
+          "passed": true
+        },
+        {
+          "name": "balanced: neutral transfer agrees with direct reference",
+          "passed": true
+        },
+        {
+          "name": "balanced: no unexpected GPU error",
+          "passed": true
+        },
+        {
+          "name": "balanced: compositor remains enabled",
+          "passed": true
+        },
+        {
+          "name": "balanced: nearby geometry causes contact darkening",
+          "passed": true
+        },
+        {
+          "name": "balanced: render targets and fullscreen geometry are released",
+          "passed": true
+        },
+        {
+          "name": "high: visible nonblack, nonuniform output",
+          "passed": true
+        },
+        {
+          "name": "high: neutral transfer agrees with direct reference",
+          "passed": true
+        },
+        {
+          "name": "high: no unexpected GPU error",
+          "passed": true
+        },
+        {
+          "name": "high: compositor remains enabled",
+          "passed": true
+        },
+        {
+          "name": "high: nearby geometry causes contact darkening",
+          "passed": true
+        },
+        {
+          "name": "high: render targets and fullscreen geometry are released",
+          "passed": true
+        },
+        {
+          "name": "performance: visible nonblack, nonuniform output",
+          "passed": true
+        },
+        {
+          "name": "performance: neutral transfer agrees with direct reference",
+          "passed": true
+        },
+        {
+          "name": "performance: no unexpected GPU error",
+          "passed": true
+        },
+        {
+          "name": "Performance remains a direct rendering path",
+          "passed": true
+        },
+        {
+          "name": "performance: render targets and fullscreen geometry are released",
+          "passed": true
+        },
+        {
+          "name": "Prefix luminance collision is detected and gives a visible fallback",
+          "passed": true
+        },
+        {
+          "name": "Existing shader diagnostic hook is restored",
+          "passed": true
+        },
+        {
+          "name": "Normal compositor shaders compiled without errors",
+          "passed": true
+        }
+      ],
+      "deliberateShaderFailureExpected": true,
+      "expectedShaderErrors": 1,
+      "scope": "Actual GPU output/transfer/contact-shading/resource-cleanup tests, including intentionally broken-shader visible direct fallback."
+    },
+    "timerObservation": {
+      "source": "gpu-timer-ui.json",
+      "quality": "balanced",
+      "cameraView": "horizon",
+      "gpu": {
+        "supported": true,
+        "measured": 259,
+        "lastMs": 21.90177,
+        "pending": 1,
+        "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+      },
+      "resolution": {
+        "enabled": true,
+        "scale": 1,
+        "targetFps": 45,
+        "acceptedGpuSamples": 259,
+        "lastGpuMs": 21.90177,
+        "changes": 0
+      },
+      "scope": "One saved ordinary-stage hardware-query snapshot. Last GPU time is one sample, not a percentile or benchmark; scale remained one. This does not prove a speedup, target FPS or real-device thermal/battery behavior."
+    }
+  },
+  "build": {
+    "status": "complete",
+    "version": "0.17.0",
+    "revision": "9faf31555b45",
+    "files": 200,
+    "bytes": 14215160,
+    "gzipBytes": 11512700,
+    "initialFiles": 79,
+    "initialBytes": 974138,
+    "initialGzipBytes": 397938,
+    "chapterOneFiles": 168,
+    "chapterOneBytes": 10623562,
+    "chapterOneGzipBytes": 7903090,
+    "completeBytes": 14268589,
+    "completeGzipBytes": 11516769,
+    "deferredFiles": 121,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace",
+    "builtAt": "2026-10-17T19:22:51.399Z"
+  },
+  "ordinaryUI": {
+    "status": "complete",
+    "version": "0.17.0",
+    "revision": "9faf31555b45",
+    "scope": "Agent-operated ordinary local browser interface, including the final production origin http://localhost:4419. Legally earned checkpoints were restored through the validated portable-save dialog. This is not an independent human playtest, physical-device test or complete twelve-chapter interface playthrough.",
+    "recordingMethod": "Compact observation record transcribed from the operating agent's completed interface checks. These are observed interactions, not a machine assertion count.",
+    "observations": [
+      {
+        "area": "New chronicle and guide",
+        "observed": "The default new chronicle enabled progression. A legal Move advanced the displayed training progress to 2/4."
+      },
+      {
+        "area": "Permanent specialization",
+        "observed": "After restoring an earned Chapter III checkpoint, the camp controls trained Lucan as Formation leader and showed the permanent choice."
+      },
+      {
+        "area": "Negotiated agreement",
+        "observed": "After restoring Chapter VII, the accessible representative selector selected Titus Valens. A limited counterproposal was staged and spent the commander's speech."
+      },
+      {
+        "area": "Agreement settlement",
+        "observed": "After restoring Chapter VIII with zero supplies, Honour was disabled. Explicitly breaking the agreement reduced trust by two and Public Confidence by three; displayed counts refreshed."
+      },
+      {
+        "area": "Operation selection",
+        "observed": "The Chapter I pursue operation choice persisted through reload, then Enter the field started that encounter."
+      },
+      {
+        "area": "Guide preference",
+        "observed": "The guide could be hidden and reopened using the normal controls."
+      },
+      {
+        "area": "Adaptive resolution preference",
+        "observed": "Turning adaptive resolution off was reflected in renderer diagnostics; it was then turned on again."
+      },
+      {
+        "area": "Production restore and camera purity",
+        "observed": "The production restore matched the source export. Follow and zoom preserved the exact saved campaign."
+      },
+      {
+        "area": "Production offline continuation",
+        "observed": "With the production server process stopped, the cached title reloaded and continued Chapter I road, turn one. Imported anatomy, the finishing pass and current-chapter offline readiness remained available; the exported save stayed exact.",
+        "evidence": "production-offline.json"
+      }
+    ],
+    "physicalDevice": false,
+    "independentHumanStudy": false,
+    "completeCampaignInterfacePlaythrough": false,
+    "completeCampaignOfflineClaim": false
+  },
+  "offline": {
+    "status": "complete",
+    "version": "0.17.0",
+    "revision": "9faf31555b45",
+    "scope": "Actual ordinary production UI at local4419; restored legally earned checkpoint through validated portable-save dialog; server process stopped before reload; no app-state injection.",
+    "serverStopped": true,
+    "cachedTitleLoaded": true,
+    "continuedEncounter": "ch1-road",
+    "turn": 1,
+    "importedAssets": {
+      "ready": true,
+      "pending": false,
+      "error": null
+    },
+    "compositor": {
+      "enabled": true,
+      "quality": "balanced",
+      "method": "linear HDR + depth contact shading + edge antialiasing",
+      "directions": 8,
+      "depthSamples": 16,
+      "width": 1897,
+      "height": 637,
+      "drawingWidth": 1897,
+      "drawingHeight": 637,
+      "passes": 2,
+      "temporalHistory": false,
+      "fallback": null
+    },
+    "saveMatchesSource": true,
+    "saveExactAfterOfflineReload": true,
+    "currentChapterReady": true,
+    "completeCampaignOfflineClaim": false,
+    "physicalDevice": false,
+    "limits": "Local desktop-browser cache with the origin server process stopped. No physical-device, all-network-disconnected, operating-system-crash or complete-campaign-offline claim."
+  },
+  "unperformed": [
+    "Physical-phone GPU, memory, thermal, battery and installation testing",
+    "Independent human onboarding, accessibility, balance, pacing and enjoyment study"
+  ],
+  "rawEvidenceRoot": "work/v017 (local task evidence; not embedded in the source distribution)",
+  "evidence": [
+    {
+      "name": "campaign-browser-all.json",
+      "bytes": 370882,
+      "sha256": "0930f4fc3bff19c467796ae31bd7d3e75cec765d9eafbfbd336004f13c6db540"
+    },
+    {
+      "name": "progression-primary.json",
+      "bytes": 19479,
+      "sha256": "fbf8a3fb20f5c43034815398bec52be093f1abc1fabe464dd68365e079ffaf3f"
+    },
+    {
+      "name": "progression-alternate.json",
+      "bytes": 19520,
+      "sha256": "25426f75e4751f4bc340efe59147bdfe84639a2794ff86f2c4c6cb5337a90f4f"
+    },
+    {
+      "name": "progression-browser-report.json",
+      "bytes": 1809,
+      "sha256": "526d8fb77e4f49d251604caed8309faa31e44bca9f1bb913c0c0b5461a2759d2"
+    },
+    {
+      "name": "core-regression.txt",
+      "bytes": 8108,
+      "sha256": "1377783e5d57833afbff3333ab49db8f925e804892a852cd2581a3fead0fac03"
+    },
+    {
+      "name": "node-final-510.txt",
+      "bytes": 57219,
+      "sha256": "4d790f9fc2e858a400a47b7c3ae481fc3b293abaa096e7252f8cfa6694f63b83"
+    },
+    {
+      "name": "assets-final.txt",
+      "bytes": 1049,
+      "sha256": "ccd8e099d495f2347752aa92af1363b5fe6dfed1ee6f9c2e96dfe7ff3658cc83"
+    },
+    {
+      "name": "campaign-browser-targeted.json",
+      "bytes": 416228,
+      "sha256": "6c7d7a9a60b3a2d1a700afe1aa087e6f73d5363ca49d6a2faf8402c2c6911888"
+    },
+    {
+      "name": "compositor-browser.json",
+      "bytes": 6692,
+      "sha256": "3df555936c7b987dd23b40a63cc8400d06137273f3e43d31f0eed28db389dddc"
+    },
+    {
+      "name": "gpu-timer-ui.json",
+      "bytes": 1442,
+      "sha256": "9142fa0ab26967f5d86fb47a46f9bdbd3b88d9f070bde070131fba2b7e73f68c"
+    },
+    {
+      "name": "build-report-final.json",
+      "bytes": 58973,
+      "sha256": "8f98e19964d9549c65b397811301b1f87784cc60be1138462f2f69d174e6f1db"
+    },
+    {
+      "name": "ordinary-ui.json",
+      "bytes": 2664,
+      "sha256": "a183ef860f5455c178cd2d02f007a0f2ab11945f257eac731660eecd10448d00"
+    },
+    {
+      "name": "production-offline.json",
+      "bytes": 952,
+      "sha256": "dc375403d359c5e2c20dc202bd842f0c8eab89ea836860dcb6e5e96ed6af1603"
+    }
+  ],
+  "preview": {
+    "name": "docs/images/imperium-v017-preview.png",
+    "bytes": 236663,
+    "sha256": "7cfae8b680a355dd87360f826b54c77a7cb149b9a26f64c4b8c1c2015c1dfb0b",
+    "scope": "Actual v0.17 desktop production Chapter I road scene, in a close view of the selected recruit. Command guide and dock are visible; no key-art rendering."
+  }
+}

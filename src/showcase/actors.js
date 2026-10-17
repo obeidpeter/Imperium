@@ -9,6 +9,7 @@ import {createHeadGeometry,createHairGeometry,faceSurfacePoint} from './actor-he
 import {garmentGeometry} from './actor-geometry.js';
 import {sampleActorClip} from './actor-clips.js';
 import {sculptActorGeometry} from './actor-anatomy.js';
+import {actorAnatomy,warmActorAssets,actorAssetStatus,mountActorAnatomy} from './actor-assets.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -25,18 +26,31 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
  * action progress, or one walking cycle (about .72m); omitted gait uses time.
  */
 export function createActor(unit={},options={}){
+  let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group;
+  const contacts=rig.contacts,source=options.assetLibrary;
+  const ready=(source?source.warm():typeof window!=='undefined'?warmActorAssets():Promise.resolve(actorAssetStatus().ready)).then(loaded=>{
+    if(!loaded||disposed||group.userData.actor.imported)return loaded&&!disposed;
+    const parent=group.parent;rig.dispose();group.clear();
+    rig=createActorRig(unit,options,group);Object.assign(contacts,rig.contacts);
+    if(parent)parent.add(group);rig.update({...lastInput,resetPose:true});return true;
+  });
+  return {group,contacts,ready,update(input={}){if(!disposed){lastInput={...input};rig.update(input);}},getReleasePoint(target){return rig.getReleasePoint(target);},dispose(){if(disposed)return;disposed=true;rig.dispose();}};
+}
+function createActorRig(unit={},options={},reuseGroup=null){
   const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed,identity=actorIdentity(unit,kit);
+  const anatomy=identity.female?null:(options.assetLibrary?.anatomy(identity)??actorAnatomy(identity)),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
   const detail=options.quality!=='performance',profile=(rings,spec={})=>{const g=garmentGeometry(rings,{...spec,subdivisions:spec.subdivisions??(detail&&(spec.anatomy||spec.folds)?2:1),segments:detail?Math.min(spec.segments??18,20):Math.min(spec.segments??18,12)});return spec.anatomy?sculptActorGeometry(g,spec.anatomy,spec.side?{...identity,side:spec.side}:identity):g;};
   const factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
   const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...options.palette};
-  const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:'original-landmark-sculpt',clips:'authored-v015'};
+  const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,clips:'authored-v017'};
   const material=(color,extra={})=>{const m=new T.MeshStandardMaterial({color,roughness:.84,metalness:0,...extra});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
   const skin=material(new T.Color(p.skin).offsetHSL(0,-.01,((kit.identity%9)-4)*.008),{roughness:.78,...surface('skin')}),cloth=material(p.cloth,clothSurface),clothDark=material(new T.Color(p.cloth).lerp(new T.Color(0x705238),.32).multiplyScalar(.72),clothSurface),leather=material(p.leather,leatherSurface),hair=material(new T.Color(p.hair).lerp(new T.Color(0x807669),identity.grey)),metal=material(p.metal,{metalness:.62,roughness:.38}),bronze=material(p.bronze,{metalness:.6,roughness:.42}),white=material(0xd7cbaa),black=material(0x241b17),eyeWhite=material(0xd0bca0),iris=material(0x31281c),shieldPaint=material(p.shield,paintSurface),lip=material(raider?0x925c47:0x85503f),practiceWood=trainer?material(0x9d8053,paintSurface):null;
   cloth.name='woven tunic';leather.name='worked leather';shieldPaint.name='painted wooden shield';
-  const mesh=(parent,geometry,mat,x=0,y=0,z=0)=>{geometries.add(geometry);const m=new T.Mesh(geometry,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;};
+  let replacingAnatomy=false;
+  const mesh=(parent,geometry,mat,x=0,y=0,z=0)=>{geometries.add(geometry);const m=new T.Mesh(geometry,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;m.userData.anatomyReplacement=replacingAnatomy;parent.add(m);return m;};
   const ellipsoid=(parent,mat,x,y,z,rx,ry,rz)=>{const m=mesh(parent,new T.SphereGeometry(1,detail?16:10,detail?10:7),mat,x,y,z);m.scale.set(rx,ry,rz);return m;};
   const faceDetail=(parent,mat,x,y,z,rx,ry,rz)=>{const m=mesh(parent,new T.SphereGeometry(1,detail?10:8,detail?6:5),mat,x,y,z);m.scale.set(rx,ry,rz);return m;};
   const part=(parent,name,x=0,y=0,z=0)=>{const g=new T.Bone();g.name=name;g.position.set(x,y,z);parent.add(g);return g;};
@@ -53,34 +67,39 @@ export function createActor(unit={},options={}){
   mesh(torso,profile([[.02,.183,.127],[.069,.184,.127]],{segments:24}),leather);
   mesh(torso,shapeGeometry([[-.028,-.025],[.028,-.025],[.028,.025],[-.028,.025]],.006),bronze,0,.044,.132);
   const neck=mesh(torso,profile([[.466,.077,.061],[.49,.064,.057],[.535,.057,.055],[.578,.060,.058],[.60,.061,.059]],{segments:18}),skin);
+  replacingAnatomy=true;
   const head=part(torso,'head',0,.575,0);
   // A continuous landmark sculpt replaces the former ellipsoid/wedge face.
   const faceSkin=skin.clone();faceSkin.vertexColors=true;materials.add(faceSkin);
   mesh(head,createHeadGeometry(identity,{detail}),faceSkin);
   const lids=[];
   for(const side of [-1,1]){
+    replacingAnatomy=true;
     faceDetail(head,skin,side*.095,.069,-.008,.012,.027,.012);
     faceDetail(head,lip,side*.102,.069,-.004,.0025,.014,.004);
-    const eyeX=side*.036*identity.eyes,eyeZ=faceSurfacePoint(eyeX,.096,identity)[2]+.002;
-    faceDetail(head,eyeWhite,eyeX,.096,eyeZ,.0155,.006,.005);
-    faceDetail(head,iris,eyeX-side*.001,.096,eyeZ+.0047,.0052,.0055,.002);
-    strip(head,hair,[[side*.018,.116],[side*.036,.120],[side*.058,.114]].map(([x,y])=>faceSurfacePoint(x,y,identity,.003)),.003*identity.brow);
-    strip(head,skin,[[side*.020,.091],[eyeX,.088],[side*.053,.092]].map(([x,y])=>faceSurfacePoint(x,y,identity,.0035)),.0025);
-    strip(head,skin,[[side*.021,.100],[eyeX,.104],[side*.052,.100]].map(([x,y])=>faceSurfacePoint(x,y,identity,.0035)),.0027);
-    const lid=part(head,side<0?'right-eyelid':'left-eyelid',eyeX,.101,eyeZ+.004);
-    faceDetail(lid,skin,0,0,0,.0155,.0025,.0035);lids.push(lid);
+    replacingAnatomy=false;
+    const eyeX=side*.036*(anatomy?1:identity.eyes),eyeZ=anatomy?.074:facePoint(eyeX,.096,identity)[2]+.002;
+    faceDetail(head,eyeWhite,eyeX,.096,eyeZ,.0155,anatomy?.0065:.006,anatomy?.014:.005);
+    faceDetail(head,iris,eyeX-side*.001,.096,eyeZ+(anatomy?.013:.0047),anatomy?.0053:.0052,.005,.002);
+    if(!anatomy)strip(head,hair,[[side*.018,.116],[side*.036,.120],[side*.058,.114]].map(([x,y])=>facePoint(x,y,identity,.003)),.003*identity.brow);
+    if(!anatomy)strip(head,skin,[[side*.020,.091],[eyeX,.088],[side*.053,.092]].map(([x,y])=>facePoint(x,y,identity,.0035)),.0025);
+    if(!anatomy)strip(head,skin,[[side*.021,.100],[eyeX,.104],[side*.052,.100]].map(([x,y])=>facePoint(x,y,identity,.0035)),.0027);
+    const lid=part(head,side<0?'right-eyelid':'left-eyelid',eyeX,.101,eyeZ+(anatomy?.012:.004));
+    faceDetail(lid,skin,0,0,0,.0155,.0025,.0035);lid.userData.openY=.101;lids.push(lid);
     // Nostrils and mature nasolabial creases are inset surface marks.
-    const nostril=faceSurfacePoint(side*.011,.031,identity,.0015);faceDetail(head,lip,...nostril,.004,.0018,.0018);
-    if(identity.age>34&&detail)strip(head,lip,[[side*.026,.039],[side*.032,.021],[side*.034,.007]].map(([x,y])=>faceSurfacePoint(x,y,identity,.001)),.0008);
+    if(!anatomy){const nostril=facePoint(side*.011,.031,identity,.0015);faceDetail(head,lip,...nostril,.004,.0018,.0018);}
+    if(!anatomy&&identity.age>34&&detail)strip(head,lip,[[side*.026,.039],[side*.032,.021],[side*.034,.007]].map(([x,y])=>facePoint(x,y,identity,.001)),.0008);
   }
-  const mouthZ=faceSurfacePoint(0,.003,identity)[2],mouth=part(head,'facial-jaw',0,.001,mouthZ);
+  replacingAnatomy=true;
+  const mouthZ=facePoint(0,.003,identity)[2],mouth=part(head,'facial-jaw',0,.001,mouthZ);
   const lipPoints=[[-.026*identity.mouth,.003],[-.010,.006],[0,.004],[.010,.006],[.026*identity.mouth,.003]];
-  strip(mouth,lip,lipPoints.map(([x,y])=>{const v=faceSurfacePoint(x,y,identity,.002);return [v[0],v[1]-.001,v[2]-mouthZ];}),.0023);
-  strip(mouth,skin,[[-.021,-.002],[0,-.005],[.021,-.002]].map(([x,y])=>{const v=faceSurfacePoint(x,y,identity,.003);return [v[0],v[1]-.001,v[2]-mouthZ];}),.003);
-  if(identity.scar)strip(head,skin,[[.063,.077],[.061,.065],[.058,.049]].map(([x,y])=>faceSurfacePoint(x,y,identity,.001)),.0014);
+  strip(mouth,lip,lipPoints.map(([x,y])=>{const v=facePoint(x,y,identity,.002);return [v[0],v[1]-.001,v[2]-mouthZ];}),.0023);
+  strip(mouth,skin,[[-.021,-.002],[0,-.005],[.021,-.002]].map(([x,y])=>{const v=facePoint(x,y,identity,.003);return [v[0],v[1]-.001,v[2]-mouthZ];}),.003);
+  if(identity.scar)strip(head,skin,[[.063,.077],[.061,.065],[.058,.049]].map(([x,y])=>facePoint(x,y,identity,.001)),.0014);
   mesh(head,createHairGeometry(identity,{detail}),hair);
   if(identity.beard>.3)mesh(head,createHairGeometry(identity,{detail,beard:true}),hair);
   if(identity.hair==='bound')ellipsoid(head,hair,0,.09,-.105,.066,.055,.045);
+  replacingAnatomy=false;
   // Neckline and clavicle folds give the shoulder a continuous draped contour.
   for(const side of [-1,1])strip(torso,cloth,[[side*.065,.478,.070],[side*.130,.447,.087],[side*.203,.405,.071]],.007);
 
@@ -101,11 +120,13 @@ export function createActor(unit={},options={}){
   const arms=[];
   for(const side of [-1,1]){
     const shoulder=part(torso,side<0?'right-shoulder':'left-shoulder',side*.240,.419,0);
-    if(!veteran)mesh(shoulder,profile([[.012,.008,.018],[-.005,.045,.054],[-.038,.075,.077],[-.078,.083,.079],[-.125,.074,.070],[-.165,.063,.064]],{folds:.055,foldCount:5,anatomy:'shoulder',side}),cloth);
+    if(!veteran)mesh(shoulder,profile([[.040,.037,.048],[.012,.064,.065],[-.030,.071,.068],[-.082,.069,.066],[-.125,.065,.063],[-.165,.061,.060]],{folds:.055,foldCount:5,anatomy:'shoulder',side}),cloth);
     mesh(shoulder,profile([[-.172,.064,.065],[-.155,.068,.068]],{segments:18}),clothDark);
+    replacingAnatomy=true;
     mesh(shoulder,profile([[-.125,.059,.060],[-.17,.062,.061],[-.225,.055,.055],[-.278,.044,.047],[-.318,.040,.043]],{segments:18,anatomy:'arm'}),skin);
     const elbow=part(shoulder,'elbow',0,-.30,0);
     mesh(elbow,profile([[.037,.039,.043],[-.015,.048,.051],[-.055,.052,.054],[-.105,.046,.049],[-.18,.033,.037],[-.24,.026,.031],[-.266,.026,.029]],{segments:18,anatomy:'forearm'}),skin);
+    replacingAnatomy=false;
     if(veteran)mesh(elbow,profile([[-.145,.038,.041],[-.20,.034,.037]],{segments:18}),leather);
     const hand=part(elbow,'hand',0,-.258,0);
     mesh(hand,profile([[.012,.026,.026],[-.016,.032,.024],[-.045,.034,.021],[-.071,.031,.019],[-.080,.025,.017]],{segments:14}),skin);
@@ -240,6 +261,7 @@ export function createActor(unit={},options={}){
     const simple=mesh(parent,g,overviewMaterial);simple.name='overview-detail';simple.userData.overview=true;simple.visible=false;farMeshes.push(simple);
   }
   overview(group);
+  if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}
   // Batch rigid details by material within each joint. Faces, folds, fingers
   // and equipment remain real geometry without hundreds of separate draws.
   const tintedMaterials=new Map();
@@ -257,8 +279,9 @@ export function createActor(unit={},options={}){
   group.traverse(o=>{if(o.isMesh&&o.material.isMeshStandardMaterial&&!o.userData.overview)nearMeshes.push(o);});
   nearMeshes=bindActorSurfaces(group,nearMeshes,{geometries,materials,skeletons,clothRigs});
   farMeshes=bindActorSurfaces(group,farMeshes,{geometries,materials,skeletons,clothRigs,overview:true});
+  if(anatomy)nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin,hair,geometries,materials,skeletons}));
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
-  let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null;
+  let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;
   const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
   function detailLevel(input){const distance=Number.isFinite(input.detailDistance)?input.detailDistance:0,next=input.active||input.selected?false:far?distance>=14:distance>18;
     if(next!==far){far=next;for(const m of nearMeshes)m.visible=!far;for(const m of farMeshes)m.visible=far;}
@@ -267,13 +290,15 @@ export function createActor(unit={},options={}){
   function update(input={}){
     if(disposed)return;
     detailLevel(input);
-    if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;}
+    if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;previousYaw=null;}
     if(!(Number.isFinite(input.dt)&&input.dt>0))transition=null;
     const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
-    let pose=actorPose(mapped);const motion=mapped.motion??'idle';
+    let pose=actorPose({...mapped,weapon:raider?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
     if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0};
     if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/.12);if(transition.elapsed>=.12)transition=null;}
     lastMotion=motion;
+    if(previousYaw!==null&&!input.reducedMotion&&['walk','run','retreat'].includes(motion)&&input.dt>0){const turn=Math.atan2(Math.sin(pose.yaw-previousYaw),Math.cos(pose.yaw-previousYaw)),lean=Math.max(-.18,Math.min(.18,turn/Math.max(.008,input.dt)*.028));pose.bodyY-=lean;pose.headY+=lean*.6;pose.bodyZ-=lean*.22;}
+    previousYaw=pose.yaw;
     if(civic){if(!['yield','speak','rally','order'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
     if(kit.wounded){pose.leftArm[0]=-.60;pose.leftElbow=-1.3;pose.bodyZ-=.035;}
     const throwing=armed&&!archer&&input.motion==='throw';if(weapon)weapon.visible=!archer&&!throwing;if(javelin)javelin.visible=throwing&&(input.phase??0)<.5;
@@ -293,7 +318,7 @@ export function createActor(unit={},options={}){
     }
     group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
     const seconds=Number.isFinite(input.time)?Math.max(0,input.time):0,blinkPhase=(seconds+((kit.identity%13)*.13))%4.7,blink=input.reducedMotion?0:blinkPhase>4.46?Math.sin((blinkPhase-4.46)/.24*Math.PI):0;
-    for(const lid of lids){lid.position.y=.101-blink*.005;lid.scale.y=1+blink*2.5;}
+    for(const lid of lids){lid.position.y=lid.userData.openY-blink*(anatomy?.009:.005);lid.scale.y=1+blink*2.5;}
     const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0;
     mouth.rotation.x=emphasis*.10;mouth.position.y=.001-emphasis*.002;
     for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;

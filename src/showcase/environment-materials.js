@@ -83,7 +83,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   for(const key of ['wood','darkWood','bark'])finishEnvironmentMaterial(m[key],'wood',finish);
   for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);finishEnvironmentMaterial(m.floor,'floor',finish);
   // Local neutral colour maps; procedural surfaces remain usable on failure.
-  if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}.webp`,import.meta.url).href,t=>{
+  if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
     for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
   },undefined,()=>{});

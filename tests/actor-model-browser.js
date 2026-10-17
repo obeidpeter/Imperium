@@ -1,0 +1,9 @@
+import * as T from '../vendor/three/three.module.js';
+import {createActor} from '../src/showcase/actors.js';
+import {warmActorAssets,actorAssetStatus} from '../src/showcase/actor-assets.js';
+const canvas=document.querySelector('canvas'),renderer=new T.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(2,devicePixelRatio));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+const scene=new T.Scene();scene.background=new T.Color('#bfc6c7');scene.add(new T.HemisphereLight(0xd9ecff,0xb5a68a,1.6));const key=new T.DirectionalLight(0xffe1b8,2.2);key.position.set(-3,5,4);scene.add(key);const fill=new T.DirectionalLight(0xc8dfff,.7);fill.position.set(3,2,-1);scene.add(fill);
+await warmActorAssets();const actor=createActor({id:'hero',side:'player'},{chapter:1});await actor.ready;scene.add(actor.group);const camera=new T.PerspectiveCamera(32,1,.01,50);let close=true,angle=0;
+const motion=document.querySelector('#motion');document.querySelector('#view').onclick=()=>close=!close;document.querySelector('#rotate').onclick=()=>angle+=Math.PI/4;
+let previous=0;function frame(ms){const rect=canvas.getBoundingClientRect();renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.updateProjectionMatrix();camera.position.set(close?.01:0,close?1.68:1.4,close?.85:4.2);camera.lookAt(0,close?1.67:1.05,0);actor.update({motion:motion.value,time:ms/1000,phase:(ms%1800)/1800,direction:angle,dt:Math.min(.05,(ms-previous)/1000),active:true});previous=ms;renderer.render(scene,camera);requestAnimationFrame(frame);}requestAnimationFrame(frame);
+document.querySelector('#report').textContent=JSON.stringify({asset:actorAssetStatus(),actor:actor.group.userData.actor,scope:'Development rendering inspection; no gameplay state, compositor or shadow mapping.'},null,2);
