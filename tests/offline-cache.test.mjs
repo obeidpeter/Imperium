@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
 
 const template=await readFile(new URL('../scripts/service-worker.template.js',import.meta.url),'utf8');
-const base='https://sacramentum.test/game/',revision='test-edition';
+const base='https://imperium.test/game/',revision='test-edition';
 const initial=['./index.html','./src/ui/app.js','./assets/title.webp'];
 const groups={1:['./assets/first.webp'],12:['./assets/final.webp']};
 const files=[...initial,...groups[1],...groups[12]];
@@ -27,7 +27,7 @@ function harness(){
   const code=template.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(files)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(groups));
   vm.runInNewContext(code,{self,caches:{open:async name=>cache(name),keys:async()=>[...stores.keys()],delete:async name=>stores.delete(name)},fetch:fetcher,URL,Request,Response,console});
   const fire=async(name,data={})=>{let result;handlers[name]({...data,waitUntil:p=>{result=p;},respondWith:p=>{result=p;}});return result;};
-  return {fire,client,messages,stores,fetches,cache,normalize,cacheName:'sacramentum-'+revision,setFail:path=>{fail=path?normalize(path):null;},setOffline:value=>{offline=value;},skipCalls:()=>skipCalls};
+  return {fire,client,messages,stores,fetches,cache,normalize,cacheName:'imperium-'+revision,setFail:path=>{fail=path?normalize(path):null;},setOffline:value=>{offline=value;},skipCalls:()=>skipCalls};
 }
 
 test('CACHE-01 install and activation fetch only the opening shell without forcing activation',async()=>{
@@ -75,8 +75,21 @@ test('CACHE-06 offline navigation and downloaded chapter assets survive server u
   await assert.rejects(h.fire('fetch',{request:{method:'GET',url:h.normalize(groups[12][0]),mode:'cors'}}));
 });
 test('CACHE-07 incomplete initial install fails and leaves the old edition untouched',async()=>{
-  const h=harness();await h.cache('sacramentum-old').put('./index.html',new Response('old working shell'));
+  const h=harness();for(const name of ['sacramentum-old','imperium-old'])await h.cache(name).put('./index.html',new Response('old working shell'));
   h.setFail(initial[1]);await assert.rejects(h.fire('install'));
-  assert.equal(await(await h.cache('sacramentum-old').match('./index.html')).text(),'old working shell');
+  for(const name of ['sacramentum-old','imperium-old'])assert.equal(await(await h.cache(name).match('./index.html')).text(),'old working shell');
   assert.equal(h.skipCalls(),0);
+});
+
+test('CACHE-08 Imperium activation cleans both obsolete brands while retaining its complete current cache and unrelated apps',async()=>{
+  const h=harness();
+  for(const name of ['sacramentum-old','imperium-old','another-game-v1','unrelated-imperium-notes'])await h.cache(name).put('./index.html',new Response(name));
+  await h.fire('install');await h.fire('message',{data:'cache-campaign',source:h.client});
+  assert.ok(h.stores.has('sacramentum-old'),'Installation alone cannot retire the running old edition.');
+  const current=[...h.stores.get(h.cacheName).keys()];await h.fire('activate');
+  assert.ok(!h.stores.has('sacramentum-old'));assert.ok(!h.stores.has('imperium-old'));
+  assert.deepEqual([...h.stores.get(h.cacheName).keys()],current);
+  for(const name of ['another-game-v1','unrelated-imperium-notes'])assert.equal(await(await h.cache(name).match('./index.html')).text(),name);
+  h.setOffline(true);const response=await h.fire('fetch',{request:{method:'GET',url:h.normalize(groups[12][0]),mode:'cors'}});
+  assert.equal(await response.text(),'current:'+h.normalize(groups[12][0]));assert.equal(h.skipCalls(),0);
 });

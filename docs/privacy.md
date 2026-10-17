@@ -1,6 +1,6 @@
 # Privacy — local preview build
 
-This version of Sacramentum is a single-player static browser game. It has no account system, backend, advertising, payment integration or analytics endpoint. No player identifier or campaign data is intentionally sent to a game service.
+This version of Imperium is a single-player static browser game. It has no account system, backend, advertising, payment integration or analytics endpoint. No player identifier or campaign data is intentionally sent to a game service.
 
 Progress and settings are stored in your browser on the device where you play. Browser settings, storage limits, clearing site data or private browsing can affect whether they survive. The save export feature lets you keep a separate copy and move progress to another device. A save code contains campaign progress and the name entered for the protagonist; treat it as something you choose to disclose, rather than a secret encrypted backup.
 

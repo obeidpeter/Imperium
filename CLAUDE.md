@@ -1,6 +1,8 @@
-# Sacramentum contributor guide
+# Imperium contributor guide
 
 The source project is a static, single-player browser game. Read [reference requirements](docs/reference-requirements.md), [historical notes](docs/historical-research.md), the Contest rules sheet and the verification summary before changing game behaviour.
+
+The current product and repository name is **Imperium** (`obeidpeter/Imperium`). Keep original names in archived evidence, exact generation prompts and supplied source-file citations. Retain legacy save/storage identifiers for compatibility, and distinguish the Latin military oath *sacramentum* from the former product name.
 
 ## Commands
 

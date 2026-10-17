@@ -4,16 +4,17 @@ import {createHash} from 'node:crypto';
 import {gzipSync} from 'node:zlib';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
+import {CONFIG} from '../src/config.js';
 
 const root=resolve('.'),dist=resolve(root,'dist');
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 // Delete only the reproducible output after checking its absolute boundary.
-if(dirname(dist)!==root||basename(dist)!=='dist'||packageInfo.name!=='sacramentum')throw new Error('Run the build from the Sacramentum project root.');
+if(dirname(dist)!==root||basename(dist)!=='dist'||packageInfo.name!=='imperium')throw new Error('Run the build from the Imperium project root.');
 await rm(dist,{recursive:true,force:true});await mkdir(dist,{recursive:true});
 for(const file of ['index.html','icon.svg','manifest.webmanifest','src','icons','assets','showcase','vendor'])await cp(join(root,file),join(dist,file),{recursive:true,filter:path=>!path.endsWith('debug.js')});
 const raw=process.env.SITE_URL||'';let siteUrl='';
 if(raw){const u=new URL(raw);if(!['https:','http:'].includes(u.protocol))throw new Error('SITE_URL must be an HTTP(S) address.');if(u.username||u.password||u.search||u.hash)throw new Error('SITE_URL must contain no credentials, query or fragment.');siteUrl=u.href.endsWith('/')?u.href:u.href+'/';}
-await writeFile(join(dist,'src/config.js'),'export const CONFIG=Object.freeze('+JSON.stringify({siteUrl,version:packageInfo.version,saveKey:'sacramentum.campaign.v1',development:false})+');\n');
+await writeFile(join(dist,'src/config.js'),'export const CONFIG=Object.freeze('+JSON.stringify({siteUrl,version:packageInfo.version,saveKey:CONFIG.saveKey,development:false})+');\n');
 const manifest=JSON.parse(await readFile(join(dist,'manifest.webmanifest'),'utf8'));
 if(siteUrl){manifest.id=siteUrl;manifest.start_url=siteUrl;manifest.scope=siteUrl;}
 await writeFile(join(dist,'manifest.webmanifest'),JSON.stringify(manifest,null,2));

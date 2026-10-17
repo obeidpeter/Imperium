@@ -1,4 +1,4 @@
-/* SACRAMENTUM — a restored military chronicle.
+/* IMPERIUM — a restored military chronicle.
    Shared tokens, components, scenes, responsive rules, then reduced motion. */
 @layer tokens, base, shell, components, scenes, overlays, states, responsive, motion;
 @layer tokens {

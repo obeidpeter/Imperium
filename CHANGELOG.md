@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.1 — Imperium
+
+- Renames the game and current project documentation to **Imperium**, with the repository at `obeidpeter/Imperium`.
+- Preserves existing save identifiers and portable formats. Earlier verification records, exact artwork prompts and supplied source filenames retain their original names; the Roman military oath remains *sacramentum*.
+
 ## 0.14.0 — character and material quality
 
 - Adds weighted skeletal surfaces across original character, clothing and horse joints, with bounded cloth deformation, deterministic seeking and preserved equipment/foot contacts. These are repository-authored procedural figures and poses, not imported character assets or motion capture.

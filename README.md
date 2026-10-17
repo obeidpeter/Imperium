@@ -1,4 +1,4 @@
-# SACRAMENTUM: From Recruit to Emperor
+# IMPERIUM: From Recruit to Emperor
 
 ![Actual version 0.8 Chapter I battlefield rendered from a legally reached campaign state](docs/images/production-battle.jpg)
 
@@ -7,6 +7,10 @@
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
+
+## Version 0.14.1 — Imperium
+
+The game is now **Imperium**, formerly Sacramentum. The source repository is [obeidpeter/Imperium](https://github.com/obeidpeter/Imperium). Existing saves and portable codes remain compatible. Historical verification records, original artwork prompts and source filenames retain their recorded names; *sacramentum* still means the Roman military oath where used in the story or historical notes.
 
 ## Version 0.14 — weighted figures and material detail
 
@@ -96,7 +100,7 @@ The underlying 0.4 artwork remains: faction-specific figures, layered battlefiel
 
 ## Play locally
 
-Use Node.js 20 or later. Open a terminal in the `Sacramentum` project directory. There is no `npm install` step.
+Use Node.js 20 or later. Open a terminal in the project directory. There is no `npm install` step.
 
 ```sh
 node scripts/serve.mjs
@@ -119,7 +123,7 @@ The build writes `dist/build-report.json` with startup, chapter I, and full-camp
 
 ## Replit static deployment
 
-Build this source repository outside Replit’s agent. Import or upload the project and use a **Static** deployment with:
+Build this source repository outside Replit’s agent. Import [obeidpeter/Imperium](https://github.com/obeidpeter/Imperium) or upload the project, name the Replit app **Imperium**, and use a **Static** deployment with:
 
 | Setting | Value |
 | --- | --- |

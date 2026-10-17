@@ -21,6 +21,8 @@ function safeGlobal(name){try{return globalThis[name];}catch{return undefined;}}
 
 /** Isolated stores are for development harnesses; normal app imports use the singleton below. */
 export function createSaveStore(options={}){
+  // These pre-Imperium IDs are a persistence protocol, not visible branding.
+  // Keep the database, lock and channel shared with older open tabs and saves.
   const namespace=options.namespace||'',dbName=namespace||'sacramentum',key=namespace||CONFIG.saveKey;
   const idb='indexedDB'in options?options.indexedDB:safeGlobal('indexedDB');
   const ls='localStorage'in options?options.localStorage:safeGlobal('localStorage');
@@ -147,8 +149,7 @@ export function createSaveStore(options={}){
 }
 const defaultStore=createSaveStore();
 export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges}=defaultStore;
-
-
+// SAC1/SAC1J identify the portable format; retain both across the Imperium rename.
 export async function saveCode(state){const payload=serialize(state);const raw=new TextEncoder().encode(JSON.stringify({format:1,payload,checksum:checksum(payload)}));let bytes=raw,prefix='SAC1J.';if(globalThis.CompressionStream){bytes=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());prefix='SAC1.';}let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return prefix+btoa(binary);}
 export async function restoreCode(code){const text=code.trim();if(text.length>3000000)throw new Error('Save code is too large.');if(text.startsWith('{'))return deserialize(text);let bytes;try{const parts=text.split('.');if(!['SAC1','SAC1J'].includes(parts[0])||parts.length!==2)throw new Error();bytes=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));if(parts[0]==='SAC1'){if(!globalThis.DecompressionStream)throw new Error('This browser cannot read compressed save codes. Use a recent browser.');const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();const chunks=[];let total=0;for(;;){const {value,done}=await reader.read();if(done)break;total+=value.length;if(total>2000000){await reader.cancel();throw new Error('Expanded save exceeds the size limit.');}chunks.push(value);}bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}}const decoded=new TextDecoder('utf-8',{fatal:true}).decode(bytes);const parsed=JSON.parse(decoded);if(parsed.format===1){const checked=unpack(parsed);if(!checked)throw new Error('Checksum or save validation failed.');return checked.state;}return deserialize(decoded);}catch(error){throw new Error(error.message?.includes('browser')?error.message:'This save code is invalid or incompatible. Your existing chronicle has not been changed.');}}
 

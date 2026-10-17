@@ -32,7 +32,7 @@ test('Shared dependencies use identical deduplicated URLs across chapters withou
 });
 
 test('A cold restored Senate chapter retries missing 3D code, works offline and reuses it for the next chapter',async()=>{
-  const template=await readFile(new URL('scripts/service-worker.template.js',root),'utf8'),base='https://sacramentum.test/game/',initial=['./index.html','./src/ui/app.js'];
+  const template=await readFile(new URL('scripts/service-worker.template.js',root),'utf8'),base='https://imperium.test/game/',initial=['./index.html','./src/ui/app.js'];
   const groups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,files)])),all=[...new Set([...initial,...files,...Object.values(groups).flat()])];
   const handlers={},stores=new Map(),messages=[],fetches=[],normal=p=>new URL(typeof p==='string'?p:p.url,base).href;
   let failed=normal('./src/showcase/stage.js'),offline=false;

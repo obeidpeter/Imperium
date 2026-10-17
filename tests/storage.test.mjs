@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {gzipSync,gunzipSync} from 'node:zlib';
-import {newGame,choose,startEncounter,endTurn,serialize} from '../src/core/game.js';
+import {readFileSync} from 'node:fs';
+import {newGame,choose,startEncounter,endTurn,serialize,deserialize} from '../src/core/game.js';
 import {CONFIG} from '../src/config.js';
 import {createSaveStore,saveCode,restoreCode} from '../src/ui/storage.js';
 
@@ -27,11 +28,11 @@ async function withPlatform(run){
     };
     transactionTail=transactionTail.then(execute);return tx;
   }};
-  const indexedDB={open(){const request={};queueMicrotask(()=>{if(env.idbOpenFails){request.onerror?.();return;}request.result=db;request.onsuccess?.();});return request;}};
+  const indexedDB={open(name,version){assert.equal(name,'sacramentum');assert.equal(version,1);const request={};queueMicrotask(()=>{if(env.idbOpenFails){request.onerror?.();return;}request.result=db;request.onsuccess?.();});return request;}};
   const localStorage={getItem(key){if(env.localFails)throw Error('localStorage unavailable');return env.local.get(key)??null;},setItem(key,value){if(env.localFails)throw Error('localStorage unavailable');env.local.set(key,value);}};
   const navigator={locks:{request(name,fn){assert.equal(name,'sacramentum-save');env.lockCalls++;const result=lockTail.then(fn);lockTail=result.catch(()=>{});return result;}},storage:{persist:async()=>{env.persistCalls++;return true;}}};
   const channels=new Set();
-  class Channel{constructor(name){this.name=name;channels.add(this);}postMessage(data){for(const channel of channels)if(channel!==this&&channel.name===this.name)queueMicrotask(()=>channel.onmessage?.({data}));}close(){channels.delete(this);}}
+  class Channel{constructor(name){assert.equal(name,'sacramentum-save-changes');this.name=name;channels.add(this);}postMessage(data){for(const channel of channels)if(channel!==this&&channel.name===this.name)queueMicrotask(()=>channel.onmessage?.({data}));}close(){channels.delete(this);}}
   activeOptions={indexedDB,localStorage,navigator,BroadcastChannel:Channel};env.options=activeOptions;
   try{await run(env);}finally{for(const channel of channels)channel.close();for(const[name,descriptor]of previous){if(descriptor)Object.defineProperty(globalThis,name,descriptor);else delete globalThis[name];}}
 }
@@ -231,6 +232,23 @@ test('SAV-05 legacy v1 envelopes without history or writer metadata remain loada
   for(const key of ['recovery','writerId','campaignId','checkpoint','id'])delete env.idb[key];env.local.clear();
   const reader=await importStorage();assert.equal((await reader.loadLocal()).state.name,'Legacy');assert.deepEqual(await reader.listRecoverySaves(),[]);
   await reader.saveLocal((await reader.loadLocal()).state);assert.equal(env.idb.sequence,2);
+}));
+
+test('Imperium continues a frozen pre-rename checkpoint in the original stores and portable formats',async()=>withPlatform(async env=>{
+  const fixture=JSON.parse(readFileSync(new URL('./compatibility/v06-ui-checkpoints.json',import.meta.url),'utf8'));
+  const payload=JSON.stringify(fixture.scenes.find(scene=>scene.id==='board-ch1-road').state);
+  let digest=2166136261;for(const character of payload){digest^=character.charCodeAt(0);digest=Math.imul(digest,16777619);}
+  const legacy={format:1,sequence:41,savedAt:'2026-10-12T12:00:00.000Z',payload,checksum:(digest>>>0).toString(16)};
+  env.idb=structuredClone(legacy);env.local.set('sacramentum.campaign.v1',JSON.stringify(legacy));env.local.set('unrelated-app','untouched');
+  const expected=serialize(deserialize(payload)),store=await importStorage(),loaded=await store.loadLocal();
+  assert.equal(serialize(loaded.state),expected);assert.deepEqual(env.idb,legacy,'Loading must not rewrite the old checkpoint.');
+  for(const code of ['SAC1.'+gzipSync(JSON.stringify(legacy)).toString('base64'),'SAC1J.'+Buffer.from(JSON.stringify(legacy)).toString('base64'),'SAC1J.'+Buffer.from(payload).toString('base64')])assert.equal(serialize(await restoreCode(code)),expected);
+  const notifications=[],oldTab=new env.options.BroadcastChannel('sacramentum-save-changes');oldTab.onmessage=event=>notifications.push(event.data);
+  loaded.state.name='Imperium continued chronicle';await store.saveLocal(loaded.state);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(env.idb.sequence,42);assert.equal(notifications.at(-1).sequence,42);
+  assert.equal(JSON.parse(env.local.get('sacramentum.campaign.v1')).sequence,42);
+  assert.deepEqual([...env.local.keys()].sort(),['sacramentum.campaign.v1','unrelated-app']);assert.equal(env.local.get('unrelated-app'),'untouched');
+  assert.equal((await(await importStorage()).loadLocal()).state.name,'Imperium continued chronicle');
 }));
 
 for(const useWebLocks of [false,true])test(`SAV-13 failed takeover retains stale-write protection (${useWebLocks?'with':'without'} Web Locks)`,async()=>withPlatform(async env=>{

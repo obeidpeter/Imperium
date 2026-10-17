@@ -1,4 +1,4 @@
-const CACHE='sacramentum-__REVISION__';
+const CACHE='imperium-__REVISION__';
 const FILES=__ALL_FILES__;
 const INITIAL=__INITIAL_FILES__;
 const CHAPTERS=__CHAPTER_FILES__;
@@ -51,7 +51,8 @@ async function download(paths,{chapter,source}={}){
 
 self.addEventListener('install',event=>event.waitUntil(Promise.all(INITIAL.map(ensure))));
 // Waiting editions activate after old tabs close, never during an encounter.
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('sacramentum-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+// Remove obsolete editions under either brand; browser save stores are separate.
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>(k.startsWith('imperium-')||k.startsWith('sacramentum-'))&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET'||new URL(event.request.url).origin!==self.location.origin)return;
   event.respondWith((async()=>{

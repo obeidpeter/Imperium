@@ -1,4 +1,4 @@
-# Sacramentum — historical notes and research
+# Imperium — historical notes and research
 
 Research checked 11 October 2026. These are short design notes, not a claim that the fictional campaign happened. Ancient narratives are often partisan, late, or contradictory. The game preserves the major public events through Aurelian's death, while its personal missions, cast, appointments, dialogue, battles and votes are authored fiction.
 

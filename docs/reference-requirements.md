@@ -1,5 +1,7 @@
 # Reference requirements and implementation scope
 
+The current game is **Imperium** as of version 0.14.1. The original brief title and private document filenames below are retained exactly for traceability.
+
 The operative request is the supplied “SACRAMENTUM: Game Build Prompt.” The three Word documents were read as supporting references:
 
 - `sacramentum-technical-requirements-v1.1.docx`

@@ -33,7 +33,7 @@ The original `loadLocal`, `saveLocal`, `saveCode` and `restoreCode` exports rema
 
 On `SAVE_CONFLICT`, keep the in-memory campaign exportable. Offer reload/takeover explicitly; do not silently replace it. `SAVE_UNAVAILABLE` allows memory-only play with a clear warning and export. The existing `saveLocal(state,{replace:true})` is reserved for already confirmed New Game/import/recovery actions, not routine autosave.
 
-The default production database remains `sacramentum`, store `saves`, record `campaign`; the default localStorage key remains `sacramentum.campaign.v1`. Existing state is not deleted as part of this change. History and writer metadata live in the envelope, outside gameplay state and portable exports.
+The default production database remains `sacramentum`, store `saves`, record `campaign`; the default localStorage key remains `sacramentum.campaign.v1`. These identifiers deliberately retain the former name after the Imperium rename in version 0.14.1 so existing local saves remain accessible on the same origin. Existing state is not deleted as part of this change. History and writer metadata live in the envelope, outside gameplay state and portable exports.
 
 ## Verification and isolated browser harness
 

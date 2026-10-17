@@ -59,7 +59,7 @@ def main():
     manifest_path = ROOT / 'docs/asset-manifest.json'
     manifest = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else {
         'schemaVersion': 1,
-        'project': 'SACRAMENTUM',
+        'project': 'IMPERIUM',
         'artDirection': 'Cinematic painted chronicle, restored fresco pigment, quiet olive plaster, warm left light',
         'rightsNotice': 'AI-generated for this project through the built-in image_gen tool. No third-party source imagery supplied. No exclusive copyright or third-party license ownership is asserted. Historical references inform design only; their images are not copied.',
         'runtimePolicy': 'Local files only; no runtime generation, external image fetching, new subscription or paid CLI.',

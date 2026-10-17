@@ -4,6 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
+import {CONFIG} from '../src/config.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -16,14 +17,17 @@ assert.ok(manifest.assets.find(a=>a.id==='frontier-oath').export.bytes<=350000);
 console.log('PASS asset manifest integrity and portrait/title budgets');
 
 const code=await readFile('dist/sw.js','utf8'),build=JSON.parse(await readFile('dist/build-report.json','utf8'));
+const {CONFIG:builtConfig}=await import('../dist/src/config.js');
+assert.equal(builtConfig.saveKey,CONFIG.saveKey,'The built rename must keep the existing campaign store.');
+assert.equal(builtConfig.version,build.version);
 assert.ok(build.initialGzipBytes<=budget.initialGzipBytes&&build.chapterOneGzipBytes<=budget.chapterOneGzipBytes&&build.completeGzipBytes<=budget.completeGzipBytes);
 assert.equal(Object.keys(build.chapterAssets).length,12);
 for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
 for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
 console.log('PASS declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance');
-const base='https://sacramentum.test/',handlers={},stores=new Map(),messages=[];
+const base='https://imperium.test/',handlers={},stores=new Map(),messages=[];
 const normalize=p=>new URL(typeof p==='string'?p:p.url,base).href;
-const cacheName='sacramentum-'+build.revision;
+const cacheName='imperium-'+build.revision;
 let failing=null,offline=false;
 const fetcher=async p=>{const url=normalize(p);if(offline||url===failing)throw Error('network unavailable');return new Response('current:'+url,{status:200});};
 function cache(name){
@@ -105,4 +109,9 @@ console.log('PASS server-unavailable navigation uses current shell cache');
 
 assert.ok(!code.includes('skipWaiting('));await event('activate');
 assert.ok(!stores.has('sacramentum-old'));
-console.log('PASS activation cleanup; no forced skipWaiting');
+await cache('imperium-old').put('./index.html',new Response('OLD IMPERIUM'));
+await cache('unrelated-game').put('./index.html',new Response('UNRELATED'));
+const currentCount=stores.get(cacheName).size;await event('activate');
+assert.ok(!stores.has('imperium-old'));assert.equal(stores.get(cacheName).size,currentCount);
+assert.equal(await(await cache('unrelated-game').match('./index.html')).text(),'UNRELATED');
+console.log('PASS both-brand activation cleanup preserves the current edition and unrelated caches; no forced skipWaiting');

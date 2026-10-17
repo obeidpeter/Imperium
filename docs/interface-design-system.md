@@ -1,4 +1,4 @@
-# Sacramentum interface design system
+# Imperium interface design system
 
 The interface presents a cinematic Roman opening and a quieter, readable chronicle once play begins. Warm plaster and ivory support reading; Pompeian red identifies the main action; charcoal anchors navigation and ceremony. Bronze supplies small labels and rules rather than outlining every surface. Imperial purple is reserved for late-career ceremony. The battlefield’s semantic markers remain consistent with the separate graphics system.
 
