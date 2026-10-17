@@ -63,3 +63,4 @@
 @media(prefers-reduced-motion:reduce){.cinematic-mural>img,.cinematic-story .story-portrait img,.cinematic-promotion .ceremony-scene img{animation:none}}
 html[data-reduced="true"] .cinematic-mural>img,html[data-reduced="true"] .cinematic-story .story-portrait img,html[data-reduced="true"] .cinematic-promotion .ceremony-scene img{animation:none}
 html[data-hidden="true"] .cinematic-mural>img,html[data-hidden="true"] .cinematic-story .story-portrait img,html[data-hidden="true"] .cinematic-promotion .ceremony-scene img{animation-play-state:paused}
+.epilogue-service-record{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.25rem;margin-bottom:1.5rem}

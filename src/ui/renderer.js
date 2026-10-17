@@ -58,7 +58,7 @@ export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=n
     ellipse(c,-39,44,6,6,'#c8aa6d');lineCard(c,[[-33,47],[-18,63],[8,73]],'#a87975',1);c.restore();
   }
   const fade=c.createLinearGradient(0,460,0,735);fade.addColorStop(0,'#29292a00');fade.addColorStop(.7,'#2d2c2bd4');fade.addColorStop(1,'#2d2c2b');c.fillStyle=fade;c.fillRect(90,460,900,280);c.restore();
-  c.textAlign='center';c.fillStyle=bronze;c.font='26px Georgia';c.fillText('S A C R A M E N T U M',540,85);lineCard(c,[[502,111],[578,111]],'#b6a07788',1);
+  c.textAlign='center';c.fillStyle=bronze;c.font='26px Georgia';c.fillText('I M P E R I U M',540,85);lineCard(c,[[502,111],[578,111]],'#b6a07788',1);
   // A modest lead seal recalls the recruit without revealing any character fate.
   lineCard(c,[[529,659],[522,678],[540,704],[558,677],[550,659]],'#958c715c',1.5);
   ellipse(c,540,701,25,27,'#a7a798');ellipse(c,539,699,21,23,'#858b81');c.strokeStyle='#c9c5ab';c.lineWidth=1;c.beginPath();c.ellipse(539,699,18,20,-.08,0,Math.PI*2);c.stroke();c.fillStyle='#4b5b52';c.font='23px Georgia';c.fillText('A',539,707);lineCard(c,[[533,683],[529,708]],'#bcc1ab66',1);

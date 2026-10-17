@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.22.0 — 3D ground paths, multi-unit forecasts, opponent intent arcs, custom Order destinations and Imperial epilogue record
+
+- Adds 3D ground movement path polylines (`stagePreviewPath`), action-intent target ring color coding (`targetRingColor`), a directional facing chevron on `selectedRing`, and 3D formation cohesion links (`kind: 'cohesion'`) between adjacent friendly units sharing an active formation.
+- Adds multi-unit 3D floating forecast badges (`previewBadges`) across all units affected by `Formation`, `Rally` (including defection morale thresholds), `Address`, and `Threaten` (including `-1 stance` bloc backlash).
+- Projects a crimson 3D opponent intent arc (`kind: 'intent'`) from an inspected enemy soldier or rival speaker toward their authoritative `unit.intent` target or objective.
+- Exposes engine-supported custom `Order` advance coordinates (`allyDestinations`, `#order-destination`) in `encounterView` so players can direct ordered allies onto specific flanking or high-ground tiles.
+- Adds a `Speed 1×` / `Speed 2×` 3D playback toggle (`data-cmd="camera-speed"`) and click/`Space` fast-forward acceleration during active 3D animations.
+- Updates the shareable Reign Card header in `drawReignCard` to `I M P E R I U M` and adds an **Imperial Archive · Service Summary & Company Roll** section to the Chapter XII accession epilogue.
+
 ## 0.21.0 — 3D pre-action forecast badges, specialist foley and camp progression clarity
 
 - Adds floating 3D pre-action forecast badges (`previewBadge`) directly on the targeted unit's 3D world label during order previews across both the main campaign and standalone 3D showcase (`−4 HP · Flank`, `Ward −2 dmg`, `+20 morale · +1 HP`, `+3 stance (-1 → 2)`, `Support 3 → 5`, `-4 Resolve`, `Blunt speech`).

@@ -31,9 +31,10 @@ export function selectedActor(state, selected) {
   return available.find(u => u.id === selected) || available.find(u => u.id === 'hero') || available[0] || units.find(u => u.id === 'hero');
 }
 
-export function selectedCommand({selected, action, target, formation, orderAction}) {
+export function selectedCommand({selected, action, target, formation, orderAction, orderDestination}) {
   if (!action || !target) return null;
-  return {unitId: selected, action, x: target.x, y: target.y, ...(target.unitId ? {targetId: target.unitId} : {}), formation, orderAction};
+  const destination = action === 'order' && (orderAction || 'advance') === 'advance' && orderDestination ? orderDestination : undefined;
+  return {unitId: selected, action, x: target.x, y: target.y, ...(target.unitId ? {targetId: target.unitId} : {}), formation, orderAction, ...(destination ? {destination} : {})};
 }
 
 export function targetName(state, target) {
@@ -108,17 +109,20 @@ function previewCard(preview, action, e) {
   </div>`;
 }
 
-function formationControls(e, action, formation, orderAction) {
+function formationControls(state, action, formation, orderAction, target, orderDestination) {
   if (!['order', 'formation'].includes(action)) return '';
+  const e = state.encounter;
+  const destinations = action === 'order' && (orderAction || 'advance') === 'advance' && e.combatVersion === 2 && target?.unitId ? Game.allyDestinations(state, target.unitId) : [];
   return `<div class="command-formation">
     ${action === 'formation' ? `<label for="formation-kind">Formation<select id="formation-kind">${[['shield-wall', 'Shield wall · protection, move 1'], ['line', e.combatVersion === 2 ? 'Line · movement, morale and screen' : 'Line · movement and morale'], ['wedge', e.combatVersion === 2 ? 'Wedge · attack on firm ground, exposed' : 'Wedge · +1 attack, +1 damage taken']].map(([value, label]) => `<option value="${value}" ${formation === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>` : ''}
     <label for="order-kind">Order<select id="order-kind">${[['advance', 'Advance toward objective'], ['attack', e.combatVersion === 2 ? 'Attack the strongest opportunity' : 'Attack nearest enemy'], ['hold', 'Hold and brace'], ['rally', 'Restore morale'], ...(e.combatVersion === 2 ? [['withdraw', 'Withdraw toward commander']] : [])].map(([value, label]) => `<option value="${value}" ${orderAction === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
+    ${destinations.length ? `<label for="order-destination">Advance position<select id="order-destination"><option value="">Nearest path toward objective</option>${destinations.map(d => `<option value="${d.x},${d.y}" ${orderDestination && orderDestination.x === d.x && orderDestination.y === d.y ? 'selected' : ''}>${location(d)} · ${esc(terrainLabel(e, d))} (${d.cost} move)</option>`).join('')}</select></label>` : ''}
     ${action === 'formation' && e.combatVersion === 2 ? `<p>${esc(FORMATION_RULES[formation || 'shield-wall']?.summary || '')}</p>` : ''}
   </div>`;
 }
 
 export function encounterView(context) {
-  const {view3D=false,can3D=false,state, selected, action, target, focusTile, showGrid = false, formation, orderAction, feedback = '', directHint, requirements = () => '', artProgress = '', offlineProgress = '', saving = false, lastSaved = '', saveProblem = '', saveConflict = false} = context;
+  const {view3D=false,can3D=false,fastMotion=false,state, selected, action, target, focusTile, showGrid = false, formation, orderAction, orderDestination, feedback = '', directHint, requirements = () => '', artProgress = '', offlineProgress = '', saving = false, lastSaved = '', saveProblem = '', saveConflict = false} = context;
   const e = state.encounter, actor = selectedActor(state, selected), active = e.status === 'active', political = e.kind === 'contest';
   const actions = Game.getActions(state, actor.id), targets = action ? Game.getTargets(state, actor.id, action) : [];
   const command = selectedCommand({...context, selected: actor.id}), preview = command ? Game.preview(state, command) : null;
@@ -139,7 +143,7 @@ export function encounterView(context) {
     <div class="command-runtime"><span id="art-loading-status" role="status" ${artProgress ? '' : 'hidden'}>${esc(artProgress)}</span><span id="offline-status" role="status" ${offlineProgress ? '' : 'hidden'}>${esc(offlineProgress)}</span></div>
     <section class="command-field" aria-label="${political ? 'Political chamber' : 'Battlefield'}">
       <div class="command-field-status"><p>${vote ? `<strong>${vote.for >= vote.majority ? 'Majority held for now' : `${Math.max(0, vote.majority - vote.for)} more votes needed`}</strong> · ${Math.max(0, e.turnLimit - e.turn + 1)} turns to vote · ${Math.max(0, 2 - (e.promises?.length || 0))} promises left` : esc(progress || e.objective)}</p><button class="command-grid-toggle" data-cmd="toggle-grid" aria-pressed="${showGrid}">Grid ${showGrid ? 'on' : 'off'}</button></div>
-      ${can3D ? `<div class="battle-camera" aria-label="Scene view"><button data-cmd="view-3d">${view3D?'Switch to 2D':'Switch to 3D'}</button>${view3D?'<button data-cmd="camera-home">Overview</button><button data-cmd="camera-focus">Follow unit</button><button data-cmd="camera-horizon" aria-keyshortcuts="H" title="See the sky and distant landscape (H)">Horizon</button><div class="camera-zoom"><button data-cmd="camera-in" aria-label="Zoom in">+</button><button data-cmd="camera-out" aria-label="Zoom out">−</button></div><span>Drag to orbit · scroll to zoom · H for horizon</span>':''}</div>`:''}
+      ${can3D ? `<div class="battle-camera" aria-label="Scene view"><button data-cmd="view-3d">${view3D?'Switch to 2D':'Switch to 3D'}</button>${view3D?`<button data-cmd="camera-home">Overview</button><button data-cmd="camera-focus">Follow unit</button><button data-cmd="camera-horizon" aria-keyshortcuts="H" title="See the sky and distant landscape (H)">Horizon</button><button data-cmd="camera-speed" aria-pressed="${Boolean(fastMotion)}" title="Toggle 2× turn playback speed (or click/Space during motion)">Speed ${fastMotion?'2×':'1×'}</button><div class="camera-zoom"><button data-cmd="camera-in" aria-label="Zoom in">+</button><button data-cmd="camera-out" aria-label="Zoom out">−</button></div><span>Drag to orbit · scroll to zoom · H for horizon</span>`:''}</div>`:''}
       <div class="battle-stage command-canvas ${view3D?'battle-3d':''}">${view3D?`<span class="battle-loading" role="status">${political?'Preparing the chamber…':'Preparing the battlefield…'}</span>`:''}<canvas id="battle-board" tabindex="0" role="application" aria-label="${political ? 'Political chamber' : 'Battlefield'} grid. Select a friendly unit, opponent or ground to preview. Select the same target again to confirm. Arrow keys move the cursor; Enter selects or confirms; Escape cancels.${view3D?' H shows the horizon.':''} Named controls are below." aria-describedby="command-hint"></canvas><div id="turn-replay" class="turn-replay" hidden role="status"></div></div>
       <div class="command-board-caption"><span id="board-hover" role="status"></span><span class="command-board-key">${political ? 'Select a delegate to consider their position' : 'Select a figure or a position to give an order'}</span></div>
     </section>
@@ -153,7 +157,7 @@ export function encounterView(context) {
       <section class="command-options" aria-label="Available commands" ${!active ? 'hidden' : ''}>
         <p id="command-hint" class="command-hint">${esc(directHint || instruction(state, action, target, actor))}</p>
         <div class="command-actions" role="group" aria-label="Available actions">${actions.map((a, i) => `<button id="action-${a}" data-cmd="action" data-id="${a}" aria-pressed="${action === a}" title="${esc(actionNames[a])}${i < 9 ? ` · key ${i + 1}` : ''}"><span class="command-action-symbol" aria-hidden="true">${actionSymbols[a] || '·'}</span><span>${esc(actionNames[a])}</span>${i < 9 ? `<kbd aria-hidden="true">${i + 1}</kbd>` : ''}</button>`).join('')}</div>
-        ${formationControls(e, action, formation, orderAction)}
+        ${formationControls(state, action, formation, orderAction, target, orderDestination)}
         ${political&&state.progressionVersion===1?`<label class="delegate-selector" for="delegate-inspect">Consider an agreement<select id="delegate-inspect"><option value="">Inspect a representative…</option>${voters.filter(v=>!v.hidden).map(v=>`<option value="${esc(v.id)}" ${point?.unitId===v.id?'selected':''}>${esc(v.name)} · ${esc(v.interest)}</option>`).join('')}</select></label>`:''}
       </section>
       <section class="command-inspector" aria-label="Target and action preview">

@@ -189,18 +189,23 @@ test('The visible javelin and arrow tip meet their actual release and target anc
   assert.deepEqual([from.toArray(),to.toArray()],saved);
 });
 
-test('Stage renders 3D tactical guard/aim arcs, records floating preview targets and re-frames overview camera when an operation phase advances',async()=>{
-  const stage=Object.create(BattleStage.prototype),overlay=new T.Group();
-  const encounter={kind:'battle',units:[{id:'hero',side:'player',hp:10,maxHp:10,x:1,y:1},{id:'ally0',side:'ally',hp:10,maxHp:10,x:1,y:2,specialization:'protector',guardTargetId:'hero'}]};
-  Object.assign(stage,{overlay,encounter,visibleUnits:encounter.units,selected:'hero',matrix:new T.Matrix4(),legalTargets:{count:0,instanceMatrix:{count:8,needsUpdate:false},setMatrixAt(){}},hoverRing:new T.Object3D(),world:tile=>new T.Vector3(tile.x*2.5,0,tile.y*2.5)});
-  stage.setSelection('hero',[{x:1,y:2,unitId:'ally0'}],{x:1,y:2,unitId:'ally0',previewBadge:{text:'Ward −2 dmg',color:'#edcf7c'}});
+test('Stage renders 3D tactical guard/aim/path/intent arcs, records multi-unit preview targets, scales motion speed, and re-frames overview camera when an operation phase advances',async()=>{
+  const stage=Object.create(BattleStage.prototype),overlay=new T.Group(),targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb'});
+  const encounter={kind:'battle',width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('grass')),units:[{id:'hero',name:'Aurelius',side:'player',hp:10,maxHp:10,x:1,y:1,move:3},{id:'ally0',name:'Lucan',side:'ally',hp:10,maxHp:10,x:1,y:2,specialization:'protector',guardTargetId:'hero'},{id:'enemy0',name:'Raider',side:'enemy',hp:8,maxHp:8,x:4,y:1,intent:'Charge Aurelius'}]};
+  Object.assign(stage,{overlay,targetMaterial,encounter,visibleUnits:encounter.units,selected:'hero',matrix:new T.Matrix4(),legalTargets:{count:0,instanceMatrix:{count:8,needsUpdate:false},setMatrixAt(){}},hoverRing:new T.Object3D(),world:tile=>new T.Vector3(tile.x*2.5,0,tile.y*2.5)});
+  stage.setSelection('hero',[{x:1,y:2,unitId:'ally0'}],{x:1,y:2,unitId:'ally0',action:'guard',previewBadge:{text:'Ward −2 dmg',color:'#edcf7c'},previewBadges:{hero:{text:'Ward −2 dmg',color:'#edcf7c'},ally0:{text:'Ward −2 dmg',color:'#edcf7c'}}});
   assert.deepEqual(stage.previewTarget,{unitId:'ally0',text:'Ward −2 dmg',color:'#edcf7c'});
-  stage.updateTacticalLinks({x:4,y:1});
-  assert.equal(stage.tacticalArcs.filter(l=>l.visible).length,2);
-  assert.deepEqual(stage.tacticalArcs.filter(l=>l.visible).map(l=>l.userData.linkKind),['guard','aim']);
-  stage.updateTacticalLinks(null);
+  assert.deepEqual(Object.keys(stage.previewTargets),['hero','ally0']);
+  assert.equal('#'+stage.targetMaterial.color.getHexString(),'#edcf7c');
+  stage.setSelection('hero',[{x:3,y:1}],{x:3,y:1,action:'move'});
+  assert.deepEqual(stage.tacticalArcs.filter(l=>l.visible).map(l=>l.userData.linkKind),['guard','path']);
+  stage.updateTacticalLinks({x:4,y:1,unitId:'enemy0'},'strike');
+  assert.deepEqual(stage.tacticalArcs.filter(l=>l.visible).map(l=>l.userData.linkKind),['guard','aim','intent']);
+  stage.updateTacticalLinks(null,null);
   assert.equal(stage.tacticalArcs.filter(l=>l.visible).length,1);
   for(const line of stage.tacticalArcs){line.geometry.dispose();line.material.dispose();}
+  targetMaterial.dispose();
+  stage.animation={scale:1};stage.setMotionSpeed(2);assert.equal(stage.motionSpeed,2);assert.equal(stage.animation.scale,.5);stage.animation=null;
   let homed=0;
   Object.assign(stage,{paused:true,focusMode:false,cameraView:'overview',finishMotion(){},sync(after){stage.encounter=after;},home(){homed++;}});
   await stage.play({operation:{index:0}},{operation:{index:1}});

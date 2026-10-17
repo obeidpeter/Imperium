@@ -273,4 +273,5 @@ export function checkBattle(state,atTurnEnd=false){if(!state.encounter.mission)r
  if(objective&&operationQualified(e)&&capable){e.status='won';note(e,'The chapter objective is secured.');}
  else if(atTurnEnd&&e.turn>=e.turnLimit){e.status='lost';note(e,!capable?`Deadline: demonstrate ${(e.requiredAbilities??[]).concat(required??[]).join(', ')}.`:`Deadline: ${e.objectiveProgress}.`);}
 }
+export function allyDestinations(state,unitId){const e=state?.encounter,u=e?.units?.find(x=>x.id===unitId);return e?.kind==='battle'&&e.combatVersion===2&&u&&u.side==='ally'&&alive(u)?reachable(e,u):[];}
 

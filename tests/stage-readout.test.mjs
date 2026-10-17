@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {actorVisible,actorReadout,effectReadout,missionReadouts,tacticalLinks,previewBadge} from '../src/showcase/stage-readout.js';
+import {actorVisible,actorReadout,effectReadout,missionReadouts,tacticalLinks,previewBadge,previewBadges,stagePreviewPath,targetRingColor} from '../src/showcase/stage-readout.js';
 import {combatCues} from '../src/showcase/combat-presentation.js';
 import {battleSoundPlan} from '../src/showcase/battle-sound.js';
 
@@ -32,13 +32,18 @@ test('Battle readouts, tactical links and floating preview badges distinguish co
   assert.equal(actorReadout({...escort,intent:'Withdraw toward commander'},e).signal,'Withdrawing');
   assert.equal(actorReadout({...escort,morale:20},e).signal,'Low morale');
   assert.equal(actorReadout({...escort,hp:25},e).ratio,1);
-  const hero={id:'hero',side:'player',hp:12,maxHp:14,x:2,y:2},protector={id:'ally0',side:'ally',hp:10,maxHp:10,x:2,y:3,specialization:'protector',guardTargetId:'hero'},ranged={id:'ally1',side:'ally',hp:9,maxHp:9,x:1,y:2,specialization:'ranged',specialistAmmo:2};
-  const guardedEncounter={kind:'battle',units:[hero,protector,ranged]};
+  const hero={id:'hero',name:'Aurelius',side:'player',hp:12,maxHp:14,x:2,y:2,move:3,formation:'shield-wall'},protector={id:'ally0',name:'Lucan',side:'ally',hp:10,maxHp:10,x:2,y:3,specialization:'protector',guardTargetId:'hero',formation:'shield-wall'},ranged={id:'ally1',name:'Varro',side:'ally',hp:9,maxHp:9,x:1,y:2,specialization:'ranged',specialistAmmo:2},enemy={id:'enemy0',name:'Raider',side:'enemy',hp:8,maxHp:8,x:4,y:2,intent:'Shoot Varro from range'};
+  const guardedEncounter={kind:'battle',width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('grass')),units:[hero,protector,ranged,enemy]};
   assert.equal(actorReadout(protector,guardedEncounter).signal,'Guarding');
   assert.equal(actorReadout(hero,guardedEncounter).signal,'Guarded');
   assert.equal(actorReadout(hero,guardedEncounter).detail,'12/14 health · Ward −2');
   assert.equal(actorReadout(ranged,guardedEncounter).detail,'9/9 health · Volley 2');
-  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'ally1',target:{x:4,y:2}}).map(l=>l.kind),['guard','aim']);
+  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'ally1',target:{x:4,y:2,unitId:'enemy0'},action:'volley'}).map(l=>l.kind),['guard','cohesion','aim','intent']);
+  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'hero',target:{x:4,y:2},action:'move'}).map(l=>l.kind),['guard','cohesion','path']);
+  assert.equal(stagePreviewPath(guardedEncounter,hero,{x:4,y:2}).length,3);
+  assert.equal(targetRingColor('strike',guardedEncounter,{unitId:'enemy0'}),'#d97a6c');
+  assert.equal(targetRingColor('guard',guardedEncounter,{unitId:'hero'}),'#edcf7c');
+  assert.equal(targetRingColor('move',guardedEncounter,{x:3,y:2}),'#89cfcb');
   assert.equal(effectReadout({type:'impact',political:true,delta:-3}).text,'-3 Resolve');
   assert.equal(effectReadout({type:'stance',delta:2}).text,'+2 stance');
   assert.equal(effectReadout({type:'impact',delta:-3}).ring,false);
@@ -51,6 +56,14 @@ test('Battle readouts, tactical links and floating preview badges distinguish co
   assert.deepEqual(previewBadge({ok:true,forecast:{stanceChanges:[{from:0,to:1},{from:1,to:2}],votesBefore:3,votesAfter:5}},'address'),{text:'Support 3 → 5',color:'#c7d9a1'});
   assert.deepEqual(previewBadge({ok:true,forecast:{resolveChanges:[{from:8,to:4}]}},'denounce'),{text:'-4 Resolve',color:'#ecb394'});
   assert.deepEqual(previewBadge({ok:true,forecast:{bluntedIds:['rival']}},'rebut'),{text:'Blunt speech',color:'#89cfcb'});
+  const formationBadges=previewBadges({encounter:guardedEncounter},{unitId:'hero',action:'formation',x:2,y:3,targetId:'ally0',formation:'wedge',orderAction:'hold'},{ok:true,message:'Formation order'});
+  assert.deepEqual(Object.keys(formationBadges).sort(),['ally0','hero']);
+  assert.equal(formationBadges.ally0.text,'Wedge +1 dmg · Brace');
+  const rallyBadges=previewBadges({encounter:{...guardedEncounter,route:'defection'}},{unitId:'hero',action:'rally',x:4,y:2,targetId:'enemy0'},{ok:true,message:'Rally'});
+  assert.equal(rallyBadges.hero.text,'+25 morale · +2 HP');
+  assert.equal(rallyBadges.enemy0.text,'−40 morale · Defects');
+  const threatenBadges=previewBadges({encounter:{kind:'contest',units:[{id:'m1',role:'voter',hp:1},{id:'m2',role:'voter',hp:1}]}},{unitId:'hero',action:'threaten',x:2,y:2,targetId:'m1'},{ok:true,forecast:{stanceChanges:[{id:'m1',from:0,to:3},{id:'m2',from:1,to:0}]}});
+  assert.deepEqual(threatenBadges,{m1:{text:'+3 stance (0 → 3)',color:'#c7d9a1'},m2:{text:'-1 stance (1 → 0)',color:'#ecb394'}});
 });
 
 test('Civic and specialist action audio use distinct foley plans; mounted and marsh movement use their actual surface',()=>{

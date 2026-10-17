@@ -1,4 +1,5 @@
 // Read the committed encounter; these descriptors never predict an outcome.
+import {movementPinned} from '../core/shared.js';
 const bounded = (n, max) => Math.max(0, Math.min(1, Number(n) / Math.max(1, Number(max)) || 0));
 export const civicActor = unit => ['speaker', 'voter'].includes(unit.role);
 export const actorVisible = unit => !unit.hidden && (civicActor(unit) || (unit.resolve ?? unit.hp ?? 0) > 0);
@@ -40,17 +41,80 @@ export function missionReadouts(encounter) {
   return entries;
 }
 
-export function tacticalLinks(encounter, {selected, target} = {}) {
-  if (!encounter || encounter.kind !== 'battle') return [];
+export function targetRingColor(action, encounter, target) {
+  if (['strike', 'throw', 'volley', 'denounce', 'threaten'].includes(action)) return '#d97a6c';
+  if (['guard', 'brace', 'order', 'formation', 'promise', 'rebut'].includes(action)) return '#edcf7c';
+  if (['move', 'deploy', 'scout', 'assist', 'inspire', 'rally', 'persuade', 'address', 'record'].includes(action)) return '#89cfcb';
+  const unit = target?.unitId && encounter?.units?.find(u => u.id === target.unitId);
+  return unit?.side === 'enemy' ? '#d97a6c' : '#89cfcb';
+}
+
+export function stagePreviewPath(encounter, unit, target) {
+  if (!encounter || !unit || !target || !Number.isFinite(target.x) || !Number.isFinite(target.y)) return [];
+  if (unit.x === target.x && unit.y === target.y) return [];
+  const blocked = t => ['wall', 'river', 'stone'].includes(t);
+  const units = (encounter.units ?? []).filter(actorVisible);
+  const occupied = (x, y) => units.some(u => u.id !== unit.id && u.x === x && u.y === y);
+  const queue = [[{x:unit.x, y:unit.y}]], seen = new Set([`${unit.x},${unit.y}`]);
+  while (queue.length) {
+    const path = queue.shift(), cur = path[path.length - 1];
+    if (cur.x === target.x && cur.y === target.y) return path;
+    if (path.length - 1 >= (unit.move || 3)) continue;
+    if (path.length > 1 && encounter.kind === 'battle' && movementPinned(encounter, unit, cur)) continue;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = cur.x + dx, ny = cur.y + dy, key = `${nx},${ny}`;
+      if (nx < 0 || ny < 0 || nx >= (encounter.width || 8) || ny >= (encounter.height || 8) || seen.has(key)) continue;
+      if (blocked(encounter.terrain?.[ny]?.[nx]) || occupied(nx, ny)) continue;
+      seen.add(key);
+      queue.push([...path, {x:nx, y:ny}]);
+    }
+  }
+  return [{x:unit.x, y:unit.y}, {x:target.x, y:target.y}];
+}
+
+function intentTarget(encounter, enemy, units) {
+  const intent = String(enemy?.intent || '');
+  if (!intent) return null;
+  const named = units.filter(u => u.id !== enemy.id && u.side !== 'enemy' && intent.includes(u.name))
+    .sort((a, b) => b.name.length - a.name.length)[0];
+  if (named) return {x:named.x, y:named.y};
+  if (/objective/i.test(intent) && encounter.goal) return {x:encounter.goal.x, y:encounter.goal.y};
+  const coord = /\b([1-8])([A-H])\b/.exec(intent);
+  if (coord) return {x:Number(coord[1]) - 1, y:coord[2].charCodeAt(0) - 65};
+  return null;
+}
+
+export function tacticalLinks(encounter, {selected, target, action} = {}) {
+  if (!encounter) return [];
   const units = (encounter.units ?? []).filter(actorVisible), links = [];
-  for (const unit of units) {
-    if (unit.specialization !== 'protector' || !unit.guardTargetId) continue;
-    const ward = units.find(u => u.id === unit.guardTargetId && Math.abs(u.x - unit.x) + Math.abs(u.y - unit.y) <= 1);
-    if (ward) links.push({id:`guard:${unit.id}:${ward.id}`, kind:'guard', from:{x:unit.x, y:unit.y}, to:{x:ward.x, y:ward.y}, color:'#edcf7c'});
+  if (encounter.kind === 'battle') {
+    for (const unit of units) {
+      if (unit.specialization === 'protector' && unit.guardTargetId) {
+        const ward = units.find(u => u.id === unit.guardTargetId && Math.abs(u.x - unit.x) + Math.abs(u.y - unit.y) <= 1);
+        if (ward) links.push({id:`guard:${unit.id}:${ward.id}`, kind:'guard', from:{x:unit.x, y:unit.y}, to:{x:ward.x, y:ward.y}, color:'#edcf7c'});
+      }
+      if (['player', 'ally'].includes(unit.side) && unit.formation) {
+        for (const other of units) {
+          if (['player', 'ally'].includes(other.side) && other.formation === unit.formation && unit.id < other.id && Math.abs(unit.x - other.x) + Math.abs(unit.y - other.y) <= 1) {
+            links.push({id:`cohesion:${unit.id}:${other.id}`, kind:'cohesion', from:{x:unit.x, y:unit.y}, to:{x:other.x, y:other.y}, color:'#89cfcb'});
+          }
+        }
+      }
+    }
   }
   const actor = selected && units.find(u => u.id === selected);
-  if (actor && target && Number.isFinite(target.x) && Number.isFinite(target.y) && Math.abs(actor.x - target.x) + Math.abs(actor.y - target.y) > 1) {
-    links.push({id:`aim:${actor.id}`, kind:'aim', from:{x:actor.x, y:actor.y}, to:{x:target.x, y:target.y}, color:'#89cfcb'});
+  if (actor && target && action === 'move' && Number.isFinite(target.x) && Number.isFinite(target.y)) {
+    const path = stagePreviewPath(encounter, actor, target);
+    if (path.length >= 2) links.push({id:`path:${actor.id}`, kind:'path', from:path[0], to:path[path.length - 1], points:path, color:'#89cfcb'});
+  } else if (encounter.kind === 'battle' && actor && target && Number.isFinite(target.x) && Number.isFinite(target.y) && Math.abs(actor.x - target.x) + Math.abs(actor.y - target.y) > 1) {
+    links.push({id:`aim:${actor.id}`, kind:'aim', from:{x:actor.x, y:actor.y}, to:{x:target.x, y:target.y}, color:targetRingColor(action, encounter, target)});
+  }
+  const inspected = target && units.find(u => (target.unitId && u.id === target.unitId) || (u.x === target.x && u.y === target.y));
+  if (inspected?.side === 'enemy') {
+    const goal = intentTarget(encounter, inspected, units);
+    if (goal && (goal.x !== inspected.x || goal.y !== inspected.y)) {
+      links.push({id:`intent:${inspected.id}`, kind:'intent', from:{x:inspected.x, y:inspected.y}, to:goal, color:'#df9d85'});
+    }
   }
   return links;
 }
@@ -90,4 +154,50 @@ export function previewBadge(preview, action) {
   if (res) return {text:`${res[1]} Resolve`, color:'#d5badc'};
   return null;
 }
+
+export function previewBadges(state, command, preview) {
+  const e = state?.encounter, action = command?.action;
+  if (!preview?.ok || !e || !action || ['move', 'deploy', 'scout'].includes(action)) return {};
+  const badges = {}, units = (e.units ?? []).filter(actorVisible), f = preview.forecast;
+  if (f) {
+    for (const c of f.stanceChanges ?? []) {
+      const d = c.to - c.from;
+      badges[c.id] = {text:`${d >= 0 ? '+' : ''}${d} stance (${c.from} → ${c.to})`, color:d >= 0 ? '#c7d9a1' : '#ecb394'};
+    }
+    for (const c of f.resolveChanges ?? []) {
+      const d = c.to - c.from;
+      badges[c.id] = {text:`${d >= 0 ? '+' : ''}${d} Resolve`, color:d >= 0 ? '#a7d7a9' : '#ecb394'};
+    }
+    for (const id of f.bluntedIds ?? []) badges[id] = {text:'Blunt speech', color:'#89cfcb'};
+    if (Object.keys(badges).length) return badges;
+  }
+  if (e.kind === 'battle' && action === 'formation') {
+    const ally = units.find(u => u.id === command.targetId || (u.x === command.x && u.y === command.y));
+    if (ally) {
+      const group = [ally, ...units.filter(u => ['player', 'ally'].includes(u.side) && u.id !== ally.id && Math.abs(u.x - ally.x) + Math.abs(u.y - ally.y) <= 1)].slice(0, 3);
+      const kind = command.formation || 'shield-wall';
+      const label = `${kind === 'wedge' ? 'Wedge +1 dmg' : kind === 'line' ? 'Line formation' : 'Shield wall −2 dmg'}${command.orderAction === 'hold' ? ' · Brace' : ''}`;
+      for (const u of group) badges[u.id] = {text:label, color:'#edcf7c'};
+      return badges;
+    }
+  }
+  if (e.kind === 'battle' && action === 'rally') {
+    const actor = units.find(u => u.id === command.unitId);
+    if (actor) {
+      for (const u of units.filter(v => ['player', 'ally'].includes(v.side) && Math.abs(v.x - actor.x) + Math.abs(v.y - actor.y) <= 3)) {
+        badges[u.id] = {text:'+25 morale · +2 HP', color:'#a7d7a9'};
+      }
+      if (e.route === 'defection') {
+        const foe = units.find(v => v.side === 'enemy' && (v.id === command.targetId || (v.x === command.x && v.y === command.y)));
+        if (foe) badges[foe.id] = {text:(foe.morale ?? 60) - 40 <= 25 ? '−40 morale · Defects' : '−40 morale', color:'#87d9d3'};
+      }
+      return badges;
+    }
+  }
+  const single = previewBadge(preview, action);
+  const targetUnit = units.find(u => (command.targetId && u.id === command.targetId) || (u.x === command.x && u.y === command.y));
+  if (single && targetUnit) badges[targetUnit.id] = single;
+  return badges;
+}
+
 

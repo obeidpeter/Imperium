@@ -1,7 +1,7 @@
 import * as Game from '../core/game.js';
 import {createShowcaseSession,commandFor,isAlive,tileName} from './session.js';
 import {directIntent} from '../ui/direct-controls.js';
-import {previewBadge} from './stage-readout.js';
+import {previewBadge,previewBadges} from './stage-readout.js';
 
 const $=id=>document.getElementById(id),names={move:'Move',strike:'Strike',brace:'Brace',throw:'Throw'};
 let state=createShowcaseSession(),selected='hero',action='move',target=null,stage=null,busy=false,resultShown=false,Stage=null,graphicsError='';
@@ -16,7 +16,7 @@ function updatePreview(){
   text('preview-text',busy?'The order is unfolding. Press Escape to finish its animation.':preview?.message??(action&&targets().length?`${names[action]}: choose a marked position or use the named target controls.`:Game.getActions(state,selected).length?'No targets in reach for this order. Move closer or choose another action.':selected==='hero'?'Your orders are spent. End the turn when ready.':'Lucan acts with the patrol at the end of your turn.'));
   $('confirm-action').disabled=busy||!preview?.ok;text('confirm-action',target?`Confirm ${names[action]?.toLowerCase()??'order'}`:'Confirm order');
   $('target-select').value=target?String(targets().findIndex(t=>t.x===target.x&&t.y===target.y&&t.unitId===target.unitId)):'';
-  stage?.setSelection(selected,busy?[]:targets(),busy?null:(target?{...target,previewBadge:previewBadge(preview,action)}:null));
+  stage?.setSelection(selected,busy?[]:targets(),busy?null:(target?{...target,action,previewBadge:previewBadge(preview,action),previewBadges:previewBadges(state,command,preview)}:{action}));
 }
 function render(){
   const e=state.encounter,u=currentUnit(),available=Game.getActions(state,selected),focus=document.activeElement?.dataset;

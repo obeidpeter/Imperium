@@ -68,3 +68,22 @@ test('Help describes earned Chapter III specializations and their command requir
   let body='';createPanels(()=>({showModal:(_title,html)=>{body=html;}})).showHelp();
   assert.match(body,/two completed deployments to specialize from Chapter III/);assert.match(body,/Specialist actions require available command capacity/);assert.match(body,/formation leader adds one command per round/);assert.match(body,/Ordinary Order unlocks in IV/);assert.doesNotMatch(body,/I–III you control only yourself/);
 });
+
+test('Order advance destination selector, 3D playback speed toggle, and Imperial epilogue service summary render cleanly',async()=>{
+  const {encounterView,selectedCommand}=await import('../src/ui/encounter-view.js');
+  const {createCampaignViews}=await import('../src/ui/campaign-views.js');
+  const s=start('ch4-pass');
+  const allyTarget=G.getTargets(s,'hero','order')[0];assert.ok(allyTarget?.unitId);
+  const destinations=G.allyDestinations(s,allyTarget.unitId);assert.ok(destinations.length>0);
+  const chosen=destinations[0];
+  const cmd=selectedCommand({selected:'hero',action:'order',target:allyTarget,orderAction:'advance',orderDestination:{x:chosen.x,y:chosen.y}});
+  assert.deepEqual(cmd.destination,{x:chosen.x,y:chosen.y});
+  assert.ok(G.preview(s,cmd).ok);
+  const html=pure(s,()=>encounterView({view3D:true,can3D:true,fastMotion:true,state:s,selected:'hero',action:'order',target:allyTarget,orderAction:'advance',orderDestination:{x:chosen.x,y:chosen.y}}));
+  assert.match(html,/id="order-destination"/);
+  assert.match(html,/data-cmd="camera-speed" aria-pressed="true"[^>]*>Speed 2×<\/button>/);
+  const views=createCampaignViews(()=>({state:s,screen:'game',settings:{}}));
+  const epilogueHtml=pure(s,()=>views.ending());
+  assert.match(epilogueHtml,/IMPERIAL ARCHIVE · SERVICE SUMMARY/);
+  assert.match(epilogueHtml,/epilogue-service-record/);
+});
