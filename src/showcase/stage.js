@@ -1,5 +1,7 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createActor} from './actors.js';
+import {warmActorMaterials} from './actor-materials.js';
+import {campaignSoundscape} from '../ui/soundscape.js';
 import {createEnvironment,gridToWorld} from './environment.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../ui/animation-timeline.js';
 import {facingYaw,isAlive} from './session.js';
@@ -70,7 +72,8 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
 export class BattleStage{
   constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',reducedMotion=false,keyboardMode='orbit',onFrame=()=>{},chapter,rank}={}){
     this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.profile=getSceneProfile(encounter,{chapter:this.chapter});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
-    this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.sound=createBattleSound();this.cuesPlayed=0;
+    this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});this.cuesPlayed=0;
+    this.materialReady=warmActorMaterials().then(ready=>{if(!this.disposed){this.shadowDirty=true;this.canvas.dataset.materials=ready?'atlas':'fallback';}return ready;});
     this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=this.profile.exposure??1.05;
     this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;this.shadowDirty=true;this.shadowUpdates=0;this.lastShadow=-Infinity;this.renderCounts=[];
     this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0};this.poseReset=new Set();this.visibleUnits=[];this.labelSizeDirty=true;this.screenPoint=new T.Vector3();this.matrix=new T.Matrix4();
@@ -138,7 +141,7 @@ export class BattleStage{
     this.inspected=target&&(target.unitId??this.unitAt(target)?.id);
     this.hoverRing.visible=!!target;if(target){this.hoverRing.position.copy(this.world(target));this.hoverRing.position.y+=.08;}
   }
-  setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);}
+  setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setGrid(show){
     if(!this.grid){const lines=[];for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])lines.push(p.x+a,p.y+.04,p.z+b,p.x+c,p.y+.04,p.z+d);}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
@@ -154,7 +157,7 @@ export class BattleStage{
     return Math.max(drill?13:20,...points.map(point=>{const p=point.clone().sub(this.baseTarget);return p.dot(out)+Math.max(Math.abs(p.dot(right))/(tangent*this.camera.aspect),Math.abs(p.dot(up))/tangent);}));
   }
   resize(){const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,this.overviewDistance());}
-  home(){this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.encounter.kind==='contest'?-.28:-.55;this.orbit.pitch=this.encounter.kind==='contest'?.76:.67;this.baseTarget.set(0,.7,0);if(this.encounter.id==='ch1-training'){const alive=this.encounter.units.filter(isAlive);if(alive.length){const center=alive.reduce((v,u)=>v.add(this.world(u)),new T.Vector3()).divideScalar(alive.length);this.baseTarget.copy(center);this.baseTarget.y+=.5;this.orbit.pitch=.58;}}this.orbit.distance=this.overviewDistance();}
+  home(){this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.profile?.staging?.camera.yaw??(this.encounter.kind==='contest'?-.28:-.55);this.orbit.pitch=this.profile?.staging?.camera.pitch??(this.encounter.kind==='contest'?.76:.67);this.baseTarget.set(0,.7,0);if(this.encounter.id==='ch1-training'){const alive=this.encounter.units.filter(isAlive);if(alive.length){const center=alive.reduce((v,u)=>v.add(this.world(u)),new T.Vector3()).divideScalar(alive.length);this.baseTarget.copy(center);this.baseTarget.y+=.5;this.orbit.pitch=.58;}}this.orbit.distance=this.overviewDistance();}
   horizon(){
     // Lift the point of interest, rather than merely flattening an orbit aimed
     // at the ground. The sky occupies the upper third while units remain framed.
@@ -173,21 +176,21 @@ export class BattleStage{
     if(!intersectGround(this.ray.ray,this.environment.groundHeight,this.hit))return null;const x=Math.round(this.hit.x/2.5+(this.encounter.width-1)/2),y=Math.round(this.hit.z/2.5+(this.encounter.height-1)/2);return x>=0&&y>=0&&x<this.encounter.width&&y<this.encounter.height?{x,y}:null;
   }
   bind(){this.events=[];const on=(target,type,fn,opts)=>{target.addEventListener(type,fn,opts);this.events.push(()=>target.removeEventListener(type,fn,opts));};
-    on(this.canvas,'pointerdown',e=>{this.sound.unlock();this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};this.canvas.setPointerCapture(e.pointerId);});
+    on(this.canvas,'pointerdown',e=>{this.sound.unlock();campaignSoundscape().unlock();this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};this.canvas.setPointerCapture(e.pointerId);});
     on(this.canvas,'pointermove',e=>{if(this.drag){const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=true;if(this.drag.moved){this.orbit.yaw-=dx*.006;this.orbit.pitch=clamp(this.orbit.pitch+dy*.004,.04,1.15);}this.drag.lastX=e.clientX;this.drag.lastY=e.clientY;}else{const point=this.pick(e);this.hovered=point?.unitId??null;this.onHover(point);}});
     on(this.canvas,'pointerleave',()=>{this.hovered=null;this.onHover(null);});
     on(this.canvas,'pointerup',e=>{if(this.drag&&!this.drag.moved&&!this.animation)this.onPick(this.pick(e));this.drag=null;});on(this.canvas,'pointercancel',()=>this.drag=null);
     on(this.canvas,'wheel',e=>{e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
-    on(this.canvas,'keydown',e=>{this.sound.unlock();if(this.keyboardMode==='grid'&&e.key.startsWith('Arrow'))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=.12;break;case'ArrowRight':this.orbit.yaw+=.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;default:handled=false;}if(handled)e.preventDefault();});
+    on(this.canvas,'keydown',e=>{this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&e.key.startsWith('Arrow'))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=.12;break;case'ArrowRight':this.orbit.yaw+=.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;default:handled=false;}if(handled)e.preventDefault();});
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
     on(this.canvas,'webglcontextlost',e=>{e.preventDefault();this.finishMotion();this.contextLost=true;this.onError?.('The 3D graphics context was interrupted.');});
   }
   play(before,after,command){this.finishMotion();this.sync(after);if(this.reducedMotion||this.paused)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
     this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1,cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map()};return new Promise(resolve=>this.animation.resolve=resolve);
   }
-  finishMotion(){if(!this.animation)return;const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
+  finishMotion(cancelAudio=true){if(!this.animation)return;if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
   tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused)return;const interval=1000/QUALITY[this.quality].fps;if(now-this.lastPaint<interval)return;const dt=Math.min(.08,(now-this.lastPaint)/1000||.016);this.lastPaint=now-(now-this.lastPaint)%interval;this.elapsed+=dt;const renderStart=performance.now();let frame=null;
-    if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];if(elapsed-cue.time<150&&this.sound.cue(cue.kind,cue))this.cuesPlayed++;}if(frame.complete){this.finishMotion();frame=null;}}
+    if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
     this.environment.update(this.reducedMotion?0:this.elapsed);
     for(const unit of this.visibleUnits){
       const a=this.actors.get(unit.id),o=frame?.unitOverrides[unit.id],position=o??unit;

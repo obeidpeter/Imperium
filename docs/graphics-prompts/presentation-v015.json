@@ -1,0 +1,175 @@
+{
+  "image": {
+    "method": "OpenAI built-in image_gen",
+    "sourceFile": "exec-756b9ada-492b-445b-915c-02eb61b43daf.png",
+    "sourceSha256": "6c37b39b980da7b63a679e1820aadcd513cce0a1129dab1e9955dd6001440f55",
+    "sourceSize": [
+      1254,
+      1254
+    ],
+    "requestedSize": [
+      2048,
+      2048
+    ],
+    "preservedMaster": "work/v015/character-materials-master.png (outside published source)",
+    "prompt": "Use case: stylized-concept. Asset type: production 3D game albedo material texture atlas for Imperium, a restrained painterly historical Roman tactical game. Create one square 2048 by 2048 image, exactly four equal seamless-looking square material samples in a 2 by 2 grid, no gutters, borders, labels, lettering, objects or perspective. Top left quadrant: fine warm ivory natural linen weave, visible irregular threads and subtle wear, low contrast. Top right: dark oxblood brown worn leather, fine creases and pores, muted warm brown. Bottom left: densely interlinked small iron mail rings, believable alternating rows, neutral grey iron with subtle rough metal variation, uniform ring scale, not knit fabric. Bottom right: warm olive Mediterranean human skin microtexture, very subtle pores and natural mottling, no face, no features, no hair, no wounds. Flat diffuse evenly lit material scans, no cast shadows, no directional highlights, no vignette, no dramatic light. Rich carefully painted realistic material detail suitable to wrap over original 3D characters; each quadrant extends fully to all its edges with near matching edge color. All four quadrants exact equal size, useful high quality texture maps, not a moodboard.",
+    "referenceImages": [],
+    "instructions": "docs/presentation-assets-v015.md"
+  },
+  "audio": [
+    {
+      "key": "music-frontier",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "lyria-3-clip",
+      "prompt": "Instrumental intimate historical Roman strategy game underscore. No vocals, no speech. Restrained lyre-like plucked strings, low warm bowed drone, distant breathy reed, very sparse hand percussion, 68 bpm, contemplative courage and human vulnerability. Original melody, no imitation of any existing score or artist. Subtle dynamics, no trailer impacts, no modern synth lead, no bombastic fanfare. Quiet stable looping exploration bed with a soft open ending, suited beneath dialogue and tactical planning.",
+      "voice": null,
+      "taskId": "58448fc5-2416-4481-896c-a54cf97233e2",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "music-battle",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "lyria-3-clip",
+      "prompt": "Instrumental tense historical tactical battle underscore for an original Roman strategy game. No vocals or speech. Low strings pulse with restrained frame drums and dry wooden percussion, sparse plucked lyre-like accents, 88 bpm. Disciplined tension and resolve, no frantic pace. Stable loop-friendly structure with soft open ending, minimal harmonic movement so it crossfades smoothly. No existing melody or artist imitation, no modern electronic beat, no loud brass or cinematic crashes. Leave space for weapons and orders.",
+      "voice": null,
+      "taskId": "3174077e-2a50-4756-9364-dc42d6e08124",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "music-council",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "lyria-3-clip",
+      "prompt": "Original instrumental historical strategy-game music for a Roman council chamber and political negotiation. No vocals or speech. Sparse intimate plucked strings, low viola-like sustained notes, a soft breathy reed phrase, 60 bpm, dignified uncertainty, measured and quiet. Stable seamless-feeling ambient bed without big climax, soft open ending for crossfading. No imitation of existing artist or score, no electronic beat, no choir, no fantasy bombast. Clear space for dialogue.",
+      "voice": null,
+      "taskId": "6f6d4617-4038-4db5-9540-d486ce004b7a",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "ambience-frontier",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "Gentle riverbank ambience near an ancient rural camp: flowing water at middle distance, light wind through reeds and leaves, two sparse natural bird calls, distant soft canvas rustle. Quiet continuous outdoor bed. No music, speech, modern machinery, traffic, bells or sudden loud events.",
+      "voice": null,
+      "taskId": "4c6fc2d1-bcfa-4892-b013-6d5cd5354a11",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 8,
+      "requestedLoop": true
+    },
+    {
+      "key": "ambience-dry",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "Quiet dry ancient stone fortress courtyard: warm wind moving through open arches, very distant dry foliage rustling, occasional faint dust and fabric movement, subdued broad airy space. Calm uninterrupted outdoor ambience. No voices, music, engines, modern sounds, dramatic gusts or sharp transient.",
+      "voice": null,
+      "taskId": "c285c7f0-10c5-4caf-b009-62dcf5d6c29e",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 8,
+      "requestedLoop": true
+    },
+    {
+      "key": "ambience-council",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "A large ancient stone council hall before a speech: soft indistinct crowd murmur far away, occasional robe rustle and subdued sandal shuffle, short natural stone room reverberation. Very quiet sustained indoor atmosphere. No intelligible words, music, modern sounds, cheering or applause.",
+      "voice": null,
+      "taskId": "5cb80558-ccef-4eca-8ed5-f97e7671b11f",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 8,
+      "requestedLoop": true
+    },
+    {
+      "key": "ambience-rain",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "Soft steady rainfall over wet earth and reeds at an ancient military camp. Fine rain patter on canvas, gentle distant water and wind. Quiet continuous close natural bed. No thunder, speech, music, vehicles or dramatic bursts.",
+      "voice": null,
+      "taskId": "f8a6f00e-ec66-4d21-b244-d96af36adbd0",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 8,
+      "requestedLoop": true
+    },
+    {
+      "key": "foley-shield",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "One close, dry, heavy impact of an iron sword striking the iron boss of a wooden oval shield, short metal scrape and resonant wood thud, leather gear rustle. Realistic restrained battlefield foley. Single impact near start and clean decay. No voices, music, repeated strikes or long reverb.",
+      "voice": null,
+      "taskId": "ed7c56d9-2855-43fc-9b0e-f45b93e880b8",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 2,
+      "requestedLoop": false
+    },
+    {
+      "key": "foley-step",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "One firm leather Roman sandal footstep on compacted gritty earth, brief grit crunch with quiet leather equipment creak. Single isolated close dry step near start, natural decay and then silence. No voices, music, repeated footsteps or reverb.",
+      "voice": null,
+      "taskId": "6bae7047-d092-42c3-a911-865c313faa04",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 2,
+      "requestedLoop": false
+    },
+    {
+      "key": "foley-impact",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "workflow_audio_sfx",
+      "prompt": "One restrained heavy blunt impact into padded cloth and leather armor, dull chesty thud with brief layered cloth rustle, close dry tactical combat foley. One hit near start and clean decay. No pain voice, gore, music, sharp gunshot, or long reverb.",
+      "voice": null,
+      "taskId": "1fff61bc-117a-49e8-9c1c-4e0e71d54f14",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md",
+      "requestedDurationSeconds": 2,
+      "requestedLoop": false
+    },
+    {
+      "key": "voice-arrival",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "eleven_v3",
+      "prompt": "You arrive at the edge of an empire. For now, your duty is simple: learn the ground, stand beside your comrades, and bring them home.",
+      "voice": "Elias",
+      "taskId": "159e22be-87dd-476e-9657-b7f8a1d0db17",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "voice-varro",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "eleven_v3",
+      "prompt": "Stay beside your comrades. Let the enemy come against a line, not a lone shield.",
+      "voice": "Kirk",
+      "taskId": "6be2d667-5072-45a0-adf9-70202f0b2400",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "voice-rally",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "eleven_v3",
+      "prompt": "Hold your ground. Watch the flanks. We leave this field together.",
+      "voice": "Clint",
+      "taskId": "962944ea-00c2-439a-8c25-b05f8e436df4",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    },
+    {
+      "key": "voice-council",
+      "method": "Original AI generation through the connected Runway tool",
+      "model": "eleven_v3",
+      "prompt": "The chamber is listening. Give them a reason to trust the promise.",
+      "voice": "Marlene",
+      "taskId": "cc8f4504-232c-405c-863a-d686769ec1c8",
+      "referenceAudio": "None supplied",
+      "instructions": "docs/presentation-assets-v015.md"
+    }
+  ]
+}

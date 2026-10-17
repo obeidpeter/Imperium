@@ -150,6 +150,8 @@ test('Company: a rescued tagged veteran earns service, but defectors do not beco
 test('Compatibility: old v1 active saves gain defaults without losing a transaction, choice, or rank',()=>{
   const state=Game.newGame();Game.choose(state,'report');Game.startEncounter(state);
   const legacy=JSON.parse(Game.serialize(state));
+  // Simulate the complete historical schema, including absence of later campaign options.
+  for(const record of [legacy,legacy.snapshot,legacy.encounter]){delete record.campaignRules;delete record.difficulty;delete record.companyOrders;delete record.companyPackage;}
   delete legacy.company;delete legacy.storyProgress;
   delete legacy.snapshot.company;delete legacy.snapshot.storyProgress;
   const restored=Game.deserialize(JSON.stringify(legacy));

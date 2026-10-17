@@ -51,5 +51,5 @@ test('Frozen v0.6 active mission reproduces its exact next turn and exact retry 
  assert.ok(G.retry(state).ok);assert.deepEqual(state.encounter,f.start.encounter);assert.equal(state.rng,f.start.rng);assert.equal(state.encounterOptions.combatVersion,1);
 });
 test('Seeded tactical policy has a measurable objective advantage; direct opening policy remains viable',async()=>{
- const report=await combatDiagnostics({scenarios:[[1,'ch1-road'],[2,'ch2-marsh'],[5,'ch5-mine']],seeds:[17,275,913]}),{simple,tactical}=report.summaries;assert.ok(tactical.wins>=simple.wins);assert.ok(tactical.meanRemainingStrength>simple.meanRemainingStrength||tactical.wins>simple.wins);assert.equal(report.runs.filter(r=>r.encounter==='ch1-road'&&r.policy==='simple'&&r.status==='won').length,3);assert.ok(report.runs.every(r=>r.objectiveFraction>=0&&r.objectiveFraction<=1));
+ const report=await combatDiagnostics({seeds:[17,275,913]}),{simple,tactical}=report.summaries;assert.ok(tactical.wins>=simple.wins);assert.ok(tactical.meanRemainingStrength>simple.meanRemainingStrength||tactical.wins>simple.wins);assert.equal(report.runs.filter(r=>r.encounter==='ch1-road'&&r.policy==='simple'&&r.status==='won').length,3);assert.ok(report.runs.every(r=>r.objectiveFraction>=0&&r.objectiveFraction<=1));
 });

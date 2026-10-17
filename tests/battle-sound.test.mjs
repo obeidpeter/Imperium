@@ -17,7 +17,7 @@ function platform(){
     async suspend(){this.state='suspended';}
     async close(){this.state='closed';}
   }
-  return {contexts,page,listeners,Context,create:()=>createBattleSound({AudioContext:Context,document:page})};
+  return {contexts,page,listeners,Context,create:(extra={})=>createBattleSound({AudioContext:Context,document:page,...extra})};
 }
 
 test('Original foley plans are bounded, distinct and pure; invalid or silent cues produce no layers',()=>{
@@ -101,4 +101,11 @@ test('Unsupported or rejected audio remains optional and cannot throw into gamep
   const unsupported=createBattleSound({AudioContext:null,document:null});unsupported.setEnabled(true);assert.equal(await unsupported.unlock(),false);assert.equal(unsupported.cue('impact'),false);unsupported.dispose();
   class Denied{constructor(){throw new Error('Unavailable');}}
   const denied=createBattleSound({AudioContext:Denied,document:null});denied.setEnabled(true);assert.equal(await denied.unlock(),false);assert.equal(denied.cue('clash'),false);denied.dispose();
+});
+
+test('Recorded effects share interruption/mute/dispose cancellation and a failing recording falls back to native synthesis',async()=>{
+  const p=platform();let recorded=0,stops=0,fail=false;const sound=p.create({recordedCue:()=>{if(fail)throw new Error('Recording unavailable');recorded++;return true;},stopRecordings:()=>{stops++;}});
+  sound.setEnabled(true);await sound.unlock();assert.equal(sound.cue('clash'),true);assert.equal(recorded,1);assert.equal(p.contexts[0].sources.length,0);
+  sound.stop();assert.equal(stops,1);await sound.unlock();fail=true;assert.equal(sound.cue('clash'),true);assert.ok(p.contexts[0].sources.length>0);
+  sound.setEnabled(false);assert.equal(stops,2);sound.dispose();assert.equal(stops,3);
 });

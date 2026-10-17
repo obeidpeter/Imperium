@@ -39,12 +39,22 @@ export function chapterAssets(chapter=1) {
 }
 // Offline resources include code and textures; chapterAssets above stays image-
 // only because its consumers decode every entry through the artwork Image loader.
+export function chapterAudioAssets(chapter=1){
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),council=[7,8,10,11,12].includes(n);
+  const keys=['music-frontier','foley-step','foley-impact','foley-shield'];
+  if(n!==11)keys.push('music-battle',n===2?'ambience-rain':[5,6,9].includes(n)?'ambience-dry':'ambience-frontier');
+  else keys.push('ambience-frontier'); // Chapter XI camp precedes its civic encounters.
+  if(council)keys.push('music-council','ambience-council','voice-council');
+  if(n===1)keys.push('voice-arrival','voice-varro');
+  if(n>=4)keys.push('voice-rally');
+  return keys.map(key=>`./assets/audio/${key}.mp3`);
+}
 export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // A restored later chapter may be the first one visited on this device.
   // Every chapter therefore owns the shared renderer dependencies; the worker
   // deduplicates their URLs, so subsequent chapters reuse the same cached bytes.
   const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&['./src/showcase/','./assets/showcase/','./vendor/three/'].some(prefix=>path.startsWith(prefix)));
-  return [...new Set([...chapterAssets(chapter),...shared3D])];
+  return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
 }
 let chapterRequest=0;
 export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true}={}) {

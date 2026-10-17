@@ -74,18 +74,18 @@ export function combatCues(timeline,{encounter}={}){
       for(let i=0;i<steps;i++){
         const progress=inverseSmooth((i+1)*step/distance),point=track.path[Math.min(track.path.length-1,Math.floor((i+1)*step/2.5))],raw=encounter?.terrain?.[point.y]?.[point.x],surface=typeof raw==='string'?raw:raw?.type;
         const kind=['marsh','ford'].includes(surface)?'wade':track.pose==='cavalry-move'?'hoof':'footstep';
-        cues.push({time:track.start+progress*track.duration,kind,intensity:.32+Math.sin(progress*Math.PI)*.16,surface,side:unit(track.unitId)?.side,unitId:track.unitId});
+        cues.push({time:track.start+progress*track.duration,kind,intensity:.32+Math.sin(progress*Math.PI)*.16,surface,at:point,side:unit(track.unitId)?.side,unitId:track.unitId});
       }
     }else if(track.pose==='brace')cues.push({time:track.start+track.duration*.3,kind:'cloth',intensity:.45,side:unit(track.unitId)?.side});
     else if(['attack','cavalry-attack','throw'].includes(track.pose))cues.push({time:track.start+track.duration*.10,kind:'cloth',intensity:.25,side:unit(track.unitId)?.side});
   }
   for(const effect of timeline.effects){
     const side=at(effect.from??effect.at)?.side;
-    if(effect.type==='projectile')cues.push({time:effect.start,kind:effect.projectile==='arrow'?'bow':'javelin',intensity:.8,side});
-    if(['shield','impact'].includes(effect.type))cues.push({time:effect.start,kind:effect.political?'cloth':effect.type==='shield'?'block':'impact',intensity:effect.political?.4:.9,side});
-    if(effect.type==='slash')cues.push({time:effect.start,kind:'swing',intensity:.5,side});
+    if(effect.type==='projectile')cues.push({time:effect.start,kind:effect.projectile==='arrow'?'bow':'javelin',intensity:.8,side,at:effect.from??effect.at});
+    if(['shield','impact'].includes(effect.type))cues.push({time:effect.start,kind:effect.political?'cloth':effect.type==='shield'?'block':'impact',intensity:effect.political?.4:.9,side,at:effect.at});
+    if(effect.type==='slash')cues.push({time:effect.start,kind:'swing',intensity:.5,side,at:effect.at});
     if(effect.type==='speech')cues.push({time:effect.start,kind:'speech',intensity:.45,side});
-    if(effect.type==='stance')cues.push({time:effect.start,kind:'vote',intensity:.5,side});
+    if(effect.type==='stance')cues.push({time:effect.start,kind:'vote',intensity:.5,side,at:effect.at});
   }
   return cues.sort((a,b)=>a.time-b.time).slice(0,100);
 }

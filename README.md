@@ -8,6 +8,14 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.15 — company, operations and presentation
+
+New chronicles offer **Story, Standard and Veteran** difficulty, selectable veterans and deployment order, and one optional supply package before each eligible battle. Eleven battles now unfold through two earned objective phases. Contextual field and chamber advice responds to the current position. Existing chronicles retain their original campaign rules and complete retry checkpoints.
+
+All 25 encounters have authored entrances, destination landmarks and camera compositions. Characters gain distinct facial anatomy, age and identity details, code-authored joint animation clips and a shared generated material atlas. Optional local music, environmental ambience, spatial combat foley and four voiced briefings add sound without requiring it to understand a command. Exact spoken text stays available.
+
+The [v0.15 validation record](docs/release-validation-v015.md) separates automated, browser and still-needed human/device evidence. [Asset provenance](docs/presentation-assets-v015.md) records the original prompts and file hashes. Characters and animation remain original code-authored models and clips; recordings are generated, not professional actor performances.
+
 ## Version 0.14.1 — Imperium
 
 The game is now **Imperium**, formerly Sacramentum. The source repository is [obeidpeter/Imperium](https://github.com/obeidpeter/Imperium). Existing saves and portable codes remain compatible. Historical verification records, original artwork prompts and source filenames retain their recorded names; *sacramentum* still means the Roman military oath where used in the story or historical notes.

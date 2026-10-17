@@ -5,6 +5,8 @@ import {getSceneProfile} from './campaign-scene-profile.js';
 import {addCampaignTerrain} from './environment-campaign-terrain.js';
 import {addCampaignScenery} from './environment-campaign-scenery.js';
 import {addEnvironmentDepth} from './environment-depth.js';
+import {addEncounterPrecinct} from './environment-precincts.js';
+import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
@@ -21,6 +23,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
   const e={width:encounter.width,height:encounter.height,terrain:terrainSnapshot};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2;
+  const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0};
   if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves]){
@@ -40,7 +43,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
     const yard=1-smooth(Math.max(Math.abs(x)-halfX+.8,Math.abs(z)-halfZ+.8)/2.7),wear=training?yard*(.72+patch*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48;
-    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42));
+    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78));
   }
   groundGeometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
@@ -73,7 +76,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(let i=0;i<rockPos.count;i++){const x=rockPos.getX(i),y=rockPos.getY(i),z=rockPos.getZ(i),k=.83+noise(x*3+5,z*3+2,y*3)*.3;rockPos.setXYZ(i,x*k,y*(.85+hash(x,z,y)*.12),z*k);}smoothCoincidentNormals(rockGeometry);
   function boulder(x,z,scale=1,seed=0){instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
-  for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
+  for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41||precinctRoute(x,z)>.12)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
 
   // The gate meets the real west-edge road. Its walls and camp are outside the
   // playable rectangle; nothing here becomes an invented pathfinding blocker.
@@ -112,7 +115,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
   const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial};
-  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);
+  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);
 
   // Volumetric branches and thousands of individual bent leaves build tree
   // crowns. Leaves are small 3D surfaces, never a whole-tree billboard.
@@ -122,6 +125,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
     const [x,z,h]=trees[t],base=height(x,z);
+    if(precinctRoute(x,z)>.10)continue;
     for(let root=0;root<3;root++){const angle=root*2.399+t*.71,reach=.85+hash(root,t)*.6,xx=x+Math.cos(angle)*reach,zz=z+Math.sin(angle)*reach;branch([xx,height(xx,zz)+.025,zz],[x,base+.6,z],.13,'oak root buttresses',m.darkWood);}
     branch([x,base-.15,z],[x+.18,base+h*.75,z-.1],.28,'oak trunk',m.darkWood);
     for(let k=0;k<8;k++){
@@ -146,18 +150,18 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
     if(['rock','wall','river','ford','stone','chamber','marsh'].includes(type)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||(profile.architecture==='fort'&&Math.abs(x-fortX)<1))continue;
-    if(roadDistance(x,z)<tileSize*(.34+hash(i,15)*.14))continue;
+    if(roadDistance(x,z)<tileSize*(.34+hash(i,15)*.14)||precinctRoute(x,z)>.12)continue;
     const s=inside?(training?.065:.12)+hash(i,4)*.12:.18+hash(i,4)*.39,dry=hash(i,114)>.83;
     instance(dry?'dry meadow grass':'meadow grass',blade,dry?m.dryGrass:m.grass,[x,height(x,z)-.01,z],[s*(.7+hash(i,8)*.6),s,s],[0,hash(i,4)*6.28,0],new THREE.Color().setRGB(.71+hash(i,2)*.25,.77+hash(i,5)*.2,.59+hash(i,1)*.24));
   }
   // Low broadleaf growth occupies irregular verge patches, not the legal
   // board. Its shared leaves add a second scale to the fine grass tufts.
   if(profile.vegetation==='meadow')for(let i=0;i<(perf?40:high?150:100);i++){
-    const x=(hash(i,204)-.5)*48,z=(hash(i,205)-.5)*36;if(isPlayable(x,z,e,tileSize,1.8)||z<-18||roadDistance(x,z)<tileSize*.7||noise(x*.24,z*.24,77)<.43)continue;
+    const x=(hash(i,204)-.5)*48,z=(hash(i,205)-.5)*36;if(isPlayable(x,z,e,tileSize,1.8)||z<-18||roadDistance(x,z)<tileSize*.7||precinctRoute(x,z)>.12||noise(x*.24,z*.24,77)<.43)continue;
     for(let j=0;j<5;j++){const angle=j*2.399+hash(i,j)*.7,s=1.15+hash(i,j,207)*.65;instance('broadleaf verge growth',leafGeometry,m.leaves,[x+(hash(i,j,208)-.5)*.45,height(x,z)+.025,z+(hash(j,i,209)-.5)*.45],[s*1.4,s,s],[1.03+(hash(j,i)-.5)*.35,angle,0],new THREE.Color(.68+hash(i,j,210)*.24,.78+hash(j,i,211)*.18,.52+hash(i,j,212)*.25));}
   }
   // Fern fronds are compound leaves along bent stems, kept outside the board.
-  for(let i=0;i<(profile.vegetation==='meadow'?(perf?12:30):0);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1))continue;const base=height(x,z);
+  for(let i=0;i<(profile.vegetation==='meadow'?(perf?12:30):0);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1)||precinctRoute(x,z)>.12)continue;const base=height(x,z);
     for(let f=0;f<5;f++){const angle=f*1.256+i,dx=Math.cos(angle),dz=Math.sin(angle);for(let j=1;j<8;j++)for(const side of [-1,1]){const t=j/8,reach=t*.85,s=.30*(1-t*.8);instance('fern leaves',leafGeometry,m.leaves,[x+dx*reach+dz*side*s*.2,base+Math.sin(t*2.5)*.47,z+dz*reach-dx*side*s*.2],[s*1.6,s*2,s],[.4,angle+side*.9,.4],new THREE.Color(.50,.70,.42));}}
   }
   for(const [name,batch]of batches){

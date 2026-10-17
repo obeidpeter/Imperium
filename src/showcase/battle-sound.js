@@ -1,4 +1,5 @@
-// Original procedural foley. No recordings, imports, timers or gameplay RNG.
+// Original procedural foley with an optional caller-owned recording bridge.
+// No imports, timers or gameplay RNG.
 export const BATTLE_SOUND_LIMITS=Object.freeze({voices:20,bufferSeconds:2,maxCueSeconds:1.3});
 const level=(value,fallback=1)=>Number.isFinite(value)?Math.max(0,Math.min(1,value)):fallback;
 const noise=(duration,gain,frequency,type='lowpass',offset=0,q=.7)=>({source:'noise',duration,gain,frequency,type,q,offset,attack:.003});
@@ -47,7 +48,7 @@ function metalBuffer(context,layer){
 }
 
 /** The optional argument is a platform seam for tests; ordinary use takes none. */
-export function createBattleSound({AudioContext:Context=globalThis.AudioContext??globalThis.webkitAudioContext,document:page=globalThis.document}={}){
+export function createBattleSound({AudioContext:Context=globalThis.AudioContext??globalThis.webkitAudioContext,document:page=globalThis.document,recordedCue=null,stopRecordings=null}={}){
   let enabled=false,volume=.5,context=null,master=null,compressor=null,noiseBuffer=null,ready=false,disposed=false,generation=0,sequence=0;
   const voices=new Set(),rings=new Map();
   const hidden=()=>Boolean(page?.hidden);
@@ -58,6 +59,7 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
   }
   function stop(){
     ready=false;generation++;
+    try{stopRecordings?.();}catch{}
     for(const voice of [...voices]){try{voice.source.stop();}catch{}cleanup(voice);}
     try{context?.suspend()?.catch(()=>{});}catch{}
   }
@@ -88,6 +90,7 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
   }
   function cue(kind,options={}){
     if(disposed||!enabled||!volume||!ready||hidden()||context?.state!=='running')return false;
+    try{if(recordedCue?.(kind,options))return true;}catch{ /* Optional recording failure retains native foley. */ }
     const plan=battleSoundPlan(kind,options);
     if(!plan.layers.length)return false;
     const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech'].includes(plan.kind)?1:0;

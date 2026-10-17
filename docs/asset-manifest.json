@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 43 project AI-generated artwork files, two mechanical crops of actual browser gameplay using that artwork, and three original code-native installed-app icons. No third-party source imagery was supplied. Provenance does not guarantee exclusive copyright, non-infringement or third-party license ownership. Historical references inform design only; their images are not copied.",
-  "runtimePolicy": "Local files only; no runtime generation, external image fetching, new subscription or paid CLI.",
+  "rightsNotice": "This manifest covers 47 project AI-generated artwork files, two mechanical crops of actual browser gameplay, three original code-native installed-app icons, and fourteen original AI-generated audio files. No third-party source imagery or reference audio was supplied for the new generation. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
+  "runtimePolicy": "All shipped artwork and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
       "id": "units-specialists",
@@ -3783,7 +3783,7 @@
         ]
       },
       "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
-      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "loading": "Shared campaign 3D surface texture: excluded from the initial shell, included in each chapter download and the explicit complete download.",
       "export": {
         "format": "WebP",
         "width": 724,
@@ -3817,7 +3817,7 @@
         ]
       },
       "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
-      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "loading": "Shared campaign 3D surface texture: excluded from the initial shell, included in each chapter download and the explicit complete download.",
       "export": {
         "format": "WebP",
         "width": 724,
@@ -3851,7 +3851,7 @@
         ]
       },
       "usage": "Local repeating colour map on geometric scenery; procedural normals and fallback surfaces remain code-generated.",
-      "loading": "Optional 3D study only; excluded from campaign initial shell and chapter downloads. Included by explicit complete offline download.",
+      "loading": "Shared campaign 3D surface texture: excluded from the initial shell, included in each chapter download and the explicit complete download.",
       "export": {
         "format": "WebP",
         "width": 724,
@@ -3862,10 +3862,367 @@
         "alphaPreserved": false,
         "instructions": "Mechanical crop of one equal horizontal atlas cell; RGB source, WebP quality90. No transparency in the source."
       }
+    },
+    {
+      "id": "character-materials-v015",
+      "path": "assets/showcase/character-materials-v015.webp",
+      "subject": "Linen, worn leather, iron mail and skin albedo for original procedural 3D characters",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-756b9ada-492b-445b-915c-02eb61b43daf.png",
+        "sourceSha256": "6c37b39b980da7b63a679e1820aadcd513cce0a1129dab1e9955dd6001440f55",
+        "sourceSize": [
+          1254,
+          1254
+        ],
+        "requestedSize": [
+          2048,
+          2048
+        ],
+        "preservedMaster": "work/v015/character-materials-master.png (outside published source)",
+        "prompt": "Use case: stylized-concept. Asset type: production 3D game albedo material texture atlas for Imperium, a restrained painterly historical Roman tactical game. Create one square 2048 by 2048 image, exactly four equal seamless-looking square material samples in a 2 by 2 grid, no gutters, borders, labels, lettering, objects or perspective. Top left quadrant: fine warm ivory natural linen weave, visible irregular threads and subtle wear, low contrast. Top right: dark oxblood brown worn leather, fine creases and pores, muted warm brown. Bottom left: densely interlinked small iron mail rings, believable alternating rows, neutral grey iron with subtle rough metal variation, uniform ring scale, not knit fabric. Bottom right: warm olive Mediterranean human skin microtexture, very subtle pores and natural mottling, no face, no features, no hair, no wounds. Flat diffuse evenly lit material scans, no cast shadows, no directional highlights, no vignette, no dramatic light. Rich carefully painted realistic material detail suitable to wrap over original 3D characters; each quadrant extends fully to all its edges with near matching edge color. All four quadrants exact equal size, useful high quality texture maps, not a moodboard.",
+        "referenceImages": [],
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "The four 627 by 627 quadrants are sampled to 256 by 256 neutralized shared colour maps at runtime; original procedural bump/roughness and failure fallbacks remain. This changes surface colour, not character geometry.",
+      "loading": "Deferred from initial shell; included in every campaign chapter shared 3D resource group and explicit full download.",
+      "export": {
+        "format": "WebP",
+        "width": 1254,
+        "height": 1254,
+        "quality": 84,
+        "method": 6,
+        "bytes": 438826,
+        "sha256": "8e8c326d36067f6b2a8e1713366376501b130c1b6a07af438711e009df7d8536",
+        "alphaPreserved": false,
+        "instructions": "Pillow RGB WebP quality84 method6; no resize or creative repainting."
+      }
+    },
+    {
+      "id": "music-frontier",
+      "path": "assets/audio/music-frontier.mp3",
+      "subject": "Original instrumental music bed",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "lyria-3-clip",
+        "prompt": "Instrumental intimate historical Roman strategy game underscore. No vocals, no speech. Restrained lyre-like plucked strings, low warm bowed drone, distant breathy reed, very sparse hand percussion, 68 bpm, contemplative courage and human vulnerability. Original melody, no imitation of any existing score or artist. Subtle dynamics, no trailer impacts, no modern synth lead, no bombastic fanfare. Quiet stable looping exploration bed with a soft open ending, suited beneath dialogue and tactical planning.",
+        "voice": null,
+        "taskId": "58448fc5-2416-4481-896c-a54cf97233e2",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 735591,
+        "sha256": "b98ab55f7d0d8dd1444040865179ca907d5a48159cc65d1d2bb5557aea01da66",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "music-battle",
+      "path": "assets/audio/music-battle.mp3",
+      "subject": "Original instrumental music bed",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "lyria-3-clip",
+        "prompt": "Instrumental tense historical tactical battle underscore for an original Roman strategy game. No vocals or speech. Low strings pulse with restrained frame drums and dry wooden percussion, sparse plucked lyre-like accents, 88 bpm. Disciplined tension and resolve, no frantic pace. Stable loop-friendly structure with soft open ending, minimal harmonic movement so it crossfades smoothly. No existing melody or artist imitation, no modern electronic beat, no loud brass or cinematic crashes. Leave space for weapons and orders.",
+        "voice": null,
+        "taskId": "3174077e-2a50-4756-9364-dc42d6e08124",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 744995,
+        "sha256": "101e2283e02440ca347cb8166e61be849abe656b0ef4022bff81d083dff97b4b",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "music-council",
+      "path": "assets/audio/music-council.mp3",
+      "subject": "Original instrumental music bed",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "lyria-3-clip",
+        "prompt": "Original instrumental historical strategy-game music for a Roman council chamber and political negotiation. No vocals or speech. Sparse intimate plucked strings, low viola-like sustained notes, a soft breathy reed phrase, 60 bpm, dignified uncertainty, measured and quiet. Stable seamless-feeling ambient bed without big climax, soft open ending for crossfading. No imitation of existing artist or score, no electronic beat, no choir, no fantasy bombast. Clear space for dialogue.",
+        "voice": null,
+        "taskId": "6f6d4617-4038-4db5-9540-d486ce004b7a",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 746248,
+        "sha256": "b87f656ed74c7b45bc8ba5e5abab8badcb3a142bcbc0160a0d413730c4a7a3f1",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "ambience-frontier",
+      "path": "assets/audio/ambience-frontier.mp3",
+      "subject": "Original environmental ambience",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "Gentle riverbank ambience near an ancient rural camp: flowing water at middle distance, light wind through reeds and leaves, two sparse natural bird calls, distant soft canvas rustle. Quiet continuous outdoor bed. No music, speech, modern machinery, traffic, bells or sudden loud events.",
+        "voice": null,
+        "taskId": "4c6fc2d1-bcfa-4892-b013-6d5cd5354a11",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 8,
+        "requestedLoop": true
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 129192,
+        "sha256": "4f8817e7c34d9f5b861865ae90f8db95337a56ff2c69c43da5139f33f27e7ec6",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "ambience-dry",
+      "path": "assets/audio/ambience-dry.mp3",
+      "subject": "Original environmental ambience",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "Quiet dry ancient stone fortress courtyard: warm wind moving through open arches, very distant dry foliage rustling, occasional faint dust and fabric movement, subdued broad airy space. Calm uninterrupted outdoor ambience. No voices, music, engines, modern sounds, dramatic gusts or sharp transient.",
+        "voice": null,
+        "taskId": "c285c7f0-10c5-4caf-b009-62dcf5d6c29e",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 8,
+        "requestedLoop": true
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 129192,
+        "sha256": "25b0425484744cc78cc8e9cc1de884a6cf258a6f609723743bda24101cf380ab",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "ambience-council",
+      "path": "assets/audio/ambience-council.mp3",
+      "subject": "Original environmental ambience",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "A large ancient stone council hall before a speech: soft indistinct crowd murmur far away, occasional robe rustle and subdued sandal shuffle, short natural stone room reverberation. Very quiet sustained indoor atmosphere. No intelligible words, music, modern sounds, cheering or applause.",
+        "voice": null,
+        "taskId": "5cb80558-ccef-4eca-8ed5-f97e7671b11f",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 8,
+        "requestedLoop": true
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 129192,
+        "sha256": "fcfada6c8b9bb08cc789789f2181569ab17ced849c6210599a19306b4d229048",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "ambience-rain",
+      "path": "assets/audio/ambience-rain.mp3",
+      "subject": "Original environmental ambience",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "Soft steady rainfall over wet earth and reeds at an ancient military camp. Fine rain patter on canvas, gentle distant water and wind. Quiet continuous close natural bed. No thunder, speech, music, vehicles or dramatic bursts.",
+        "voice": null,
+        "taskId": "f8a6f00e-ec66-4d21-b244-d96af36adbd0",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 8,
+        "requestedLoop": true
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 129192,
+        "sha256": "23edaf9ebea438f7f2063d463096c614fc42393b8e8384ff302bec8de2857a76",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "foley-shield",
+      "path": "assets/audio/foley-shield.mp3",
+      "subject": "Original combat/footstep foley",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "One close, dry, heavy impact of an iron sword striking the iron boss of a wooden oval shield, short metal scrape and resonant wood thud, leather gear rustle. Realistic restrained battlefield foley. Single impact near start and clean decay. No voices, music, repeated strikes or long reverb.",
+        "voice": null,
+        "taskId": "ed7c56d9-2855-43fc-9b0e-f45b93e880b8",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 2,
+        "requestedLoop": false
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 33061,
+        "sha256": "f8595da332a6115ed0baa07474f67e7a29b85811f2538eba6d766cfb7cfb2324",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "foley-step",
+      "path": "assets/audio/foley-step.mp3",
+      "subject": "Original combat/footstep foley",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "One firm leather Roman sandal footstep on compacted gritty earth, brief grit crunch with quiet leather equipment creak. Single isolated close dry step near start, natural decay and then silence. No voices, music, repeated footsteps or reverb.",
+        "voice": null,
+        "taskId": "6bae7047-d092-42c3-a911-865c313faa04",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 2,
+        "requestedLoop": false
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 33061,
+        "sha256": "e21ec02c28197364c85c9246ed8ef6b3b4b86c0c420ad8eecfb306f6e201e3cd",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "foley-impact",
+      "path": "assets/audio/foley-impact.mp3",
+      "subject": "Original combat/footstep foley",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "workflow_audio_sfx",
+        "prompt": "One restrained heavy blunt impact into padded cloth and leather armor, dull chesty thud with brief layered cloth rustle, close dry tactical combat foley. One hit near start and clean decay. No pain voice, gore, music, sharp gunshot, or long reverb.",
+        "voice": null,
+        "taskId": "1fff61bc-117a-49e8-9c1c-4e0e71d54f14",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md",
+        "requestedDurationSeconds": 2,
+        "requestedLoop": false
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 33061,
+        "sha256": "5ebfa5e156172d45c7e5200bd31a607297b4675229dbc5ef0ac82eb1bb1b7b02",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "voice-arrival",
+      "path": "assets/audio/voice-arrival.mp3",
+      "subject": "Original fictional-character voice line",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "eleven_v3",
+        "prompt": "You arrive at the edge of an empire. For now, your duty is simple: learn the ground, stand beside your comrades, and bring them home.",
+        "voice": "Elias",
+        "taskId": "159e22be-87dd-476e-9657-b7f8a1d0db17",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 160957,
+        "sha256": "23243bf01518170b7f75776f26d308c1649ee7af3b773f9de783a92a6c9b0215",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "voice-varro",
+      "path": "assets/audio/voice-varro.mp3",
+      "subject": "Original fictional-character voice line",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "eleven_v3",
+        "prompt": "Stay beside your comrades. Let the enemy come against a line, not a lone shield.",
+        "voice": "Kirk",
+        "taskId": "6be2d667-5072-45a0-adf9-70202f0b2400",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 100771,
+        "sha256": "d2511a80d0d4f604bf81dc550c215e5e12da8fe4b2e2d6a47fa2c823f1e844af",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "voice-rally",
+      "path": "assets/audio/voice-rally.mp3",
+      "subject": "Original fictional-character voice line",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "eleven_v3",
+        "prompt": "Hold your ground. Watch the flanks. We leave this field together.",
+        "voice": "Clint",
+        "taskId": "962944ea-00c2-439a-8c25-b05f8e436df4",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 88232,
+        "sha256": "d7d802c24cdac9bfa8e50add3f10e5737fc82abf92bdbe3b699ba3e7b0531d27",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
+    },
+    {
+      "id": "voice-council",
+      "path": "assets/audio/voice-council.mp3",
+      "subject": "Original fictional-character voice line",
+      "source": {
+        "method": "Original AI generation through the connected Runway tool",
+        "model": "eleven_v3",
+        "prompt": "The chamber is listening. Give them a reason to trust the promise.",
+        "voice": "Marlene",
+        "taskId": "cc8f4504-232c-405c-863a-d686769ec1c8",
+        "referenceAudio": "None supplied",
+        "instructions": "docs/presentation-assets-v015.md"
+      },
+      "usage": "Optional locally bundled audio. Playback policy and consent belong to the game soundscape controls.",
+      "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
+      "export": {
+        "format": "MP3",
+        "bytes": 80291,
+        "sha256": "2463b792b1822cc0d1086e2c6269c2de08d4b39e9fb41cf3219372dc4164d4be",
+        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+      }
     }
   ],
-  "updatedAt": "2026-10-12T12:07:02.401Z",
-  "totalArtworkBytes": 5841612,
+  "updatedAt": "2026-10-17T16:50:42.613Z",
+  "totalArtworkBytes": 6280438,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -3874,13 +4231,16 @@
     "compressedCompleteBuildBytes": 24000000
   },
   "assetCounts": {
+    "tactical": 5,
+    "site": 2,
+    "icons": 3,
     "portraits": 22,
     "scenes": 8,
-    "tactical": 5,
-    "animation": 5,
     "world": 3,
-    "showcase": 3,
-    "site": 2,
-    "icons": 3
-  }
+    "animation": 5,
+    "showcase": 4,
+    "audio": 14
+  },
+  "totalAudioBytes": 3273036,
+  "totalBundledAssetBytes": 9553474
 }

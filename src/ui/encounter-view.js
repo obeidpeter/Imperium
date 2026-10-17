@@ -1,4 +1,5 @@
 import * as Game from '../core/game.js';
+import {operationBanner,tacticalCoaching,voicedBriefing} from './campaign-upgrade-views.js';
 import {esc, roman, actionNames, actionSymbols} from './view-helpers.js';
 import {missionBrief, coalitionPanel, fieldIntel, selectedGround, resultRecord, terrainLabel} from './tactical-intel.js';
 import {politicalPosition} from '../core/contest.js';
@@ -131,6 +132,7 @@ export function encounterView(context) {
       <div class="command-clock"><strong>TURN ${e.turn}<span> / ${e.turnLimit}</span></strong><span>${vote ? `${vote.for}/${vote.total} support · ${vote.majority} needed` : e.commandCapacity ? `${e.commandsLeft}/${e.commandCapacity} orders` : 'One move · one action'}</span><span class="save-status" role="status">${saving ? 'Saving…' : lastSaved ? 'Saved' : ''}</span></div>
       <nav class="command-navigation" aria-label="Encounter menu"><button data-cmd="journal" aria-label="Open orders and chronicle">Orders</button><button data-cmd="menu">Menu</button></nav>
     </header>
+    ${operationBanner(e)}
     ${saveProblem ? `<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>${saveConflict ? '<button data-cmd="takeover">Continue in this tab</button>' : ''}</div></div>` : ''}
     <div class="command-runtime"><span id="art-loading-status" role="status" ${artProgress ? '' : 'hidden'}>${esc(artProgress)}</span><span id="offline-status" role="status" ${offlineProgress ? '' : 'hidden'}>${esc(offlineProgress)}</span></div>
     <section class="command-field" aria-label="${political ? 'Political chamber' : 'Battlefield'}">
@@ -160,12 +162,14 @@ export function encounterView(context) {
       </section>
     </section>
     <section class="command-records" aria-label="Encounter reference and accessible controls">
+      ${tacticalCoaching(state,context.coach!==false)}
       <details id="command-named-controls" class="command-named-controls"><summary>Named controls & keyboard</summary><div class="command-selectors">
         <label for="unit-select">${political ? 'Speaker' : 'Unit'}<select id="unit-select">${units.map(u => `<option value="${esc(u.id)}" ${actor.id === u.id ? 'selected' : ''}>${esc(u.name)} · ${u.resolve ?? u.hp}/${u.maxResolve ?? u.maxHp}</option>`).join('')}</select></label>
         <label for="action-select">Action<select id="action-select" aria-describedby="command-hint"><option value="">Choose an action…</option>${actions.map(a => `<option value="${a}" ${action === a ? 'selected' : ''}>${esc(actionNames[a])}</option>`).join('')}</select></label>
         <label for="target-select">Target<select id="target-select" ${!targets.length ? 'disabled' : ''}><option value="">${targets.length ? 'Choose a target…' : 'No legal targets'}</option>${selectOptions}</select></label>
       </div><p>${view3D?'In 3D: drag to orbit, scroll or +/− to zoom, F to follow, Home for overview, H for the horizon. ':''}On the board: arrows move the cursor; Enter selects or confirms. Keys 1–9 choose commands, N cycles units, E ends the turn. Escape or right-click cancels the selected command. Tab reaches every control.</p></details>
       <details id="command-mission-record" class="command-mission-record"><summary>${political ? 'Motion, delegates & obligations' : 'Mission & company orders'}</summary>
+        ${voicedBriefing(state)}
         ${missionBrief(e)}<div class="command-reference-grid"><section><h2>Your objective</h2><p>${esc(e.objective)}</p>${e.issue ? `<p><strong>Before the chamber:</strong> ${esc(e.issue)}</p>` : ''}${requirements()}${e.mission?.points?.length ? `<p>Objectives: ${e.mission.points.map(p => `${location(p)}${p.secured ? ' ✓' : ''}`).join(' · ')}</p>` : ''}${e.pressure ? `<p>${esc(e.pressure)}</p>` : ''}
         <p class="command-legend">★ Commander · ◆ Allies · ▼ Rivals · ⚑ Objective. Outlined positions are legal targets. Base arrows show facing; arcs show bracing. Formation bases show a line, wedge or battlement; ! marks low morale. Double vote rims show commitment; wax seals mark promises.</p><div class="command-reference-buttons"><button data-cmd="retry">Retry checkpoint</button><button data-cmd="help">Rules & controls</button></div></section>
         ${vote ? `<section>${coalitionPanel(e, vote)}<h2>The delegates</h2><div class="delegate-list">${voters.map(u => `<article><strong>${esc(u.name)}</strong><span>${esc(u.bloc)} · ${u.stance >= 1 ? 'Supports' : 'Opposes'} (${signed(u.stance)})</span><small>Interest: ${esc(u.interest || 'Listen to the delegate’s position.')}</small></article>`).join('')}</div>${e.staged?.obligations?.length ? `<h3>Promises made in this chamber</h3><ul>${e.staged.obligations.map(o => `<li>${esc(o.to)} · ${Number(o.cost) || 2} supplies, due chapter ${o.due}. ${esc(o.consequence)}</li>`).join('')}</ul>` : ''}</section>` : ''}</div>

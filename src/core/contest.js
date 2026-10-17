@@ -2,13 +2,14 @@ import * as Legacy from './legacy-contest.js';
 export const createLegacyContest=Legacy.createContest;
 import {CHAMBER_SCENARIOS} from '../data/encounters.js';
 import {INTEREST_EFFECTS,BLOC_AFFINITIES,POLITICAL_BALANCE as BALANCE,RIVAL_PRIORITIES} from '../data/contest-balance.js';
+import {difficultyRule} from './campaign-options.js';
 export {INTEREST_EFFECTS} from '../data/contest-balance.js';
 import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt} from './shared.js';
 
 export const CONTEST_RULES={stanceMin:-6,stanceMax:6,commitment:3,addressCooldown:3,denounce:4,rebut:4,promiseLimit:2,recordPerRecipient:1};
 export function createContest(state,data,options={}) {
   const c=state.chapter,scenario=CHAMBER_SCENARIOS[data.id]??CHAMBER_SCENARIOS['ch7-council'],e={issue:scenario.issue,rivalStyle:scenario.rival,recordUses:[],id:data.id,kind:'contest',title:data.title,objective:data.objective,type:data.type,width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('chamber')),units:[],turn:1,turnLimit:data.turnLimit??(c===7?8:10),status:'active',commandsLeft:0,commandCapacity:0,log:[],usedAbilities:[],goal:{x:4,y:3},requiredAbility:data.requiredAbility,promises:[],hardened:[],cooldowns:{},staged:{meters:{army:0,political:0,public:0},supplies:0,obligations:[]},fallback:options.fallback??false};
-  if(options.politicsVersion!==1)e.politicsVersion=2;
+  if(options.politicsVersion!==1)e.politicsVersion=2;if(state.campaignRules===2){e.campaignRules=2;e.difficulty=state.difficulty;}
   e.units.push(makeUnit('hero',state.name,'player',...scenario.hero,{hp:12,resolve:12,maxResolve:12,move:3,role:'speaker',vote:'for'}));
   e.units.push(makeUnit('speaker-ally',c===7?'Veteran quartermaster':state.decisions.ch8==='families'?'Dacian delegate':'Provincial advocate','ally',...scenario.ally,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'for'}));
   e.units.push(makeUnit('rival-speaker',c>=11?'Crispus’s advocate':'Court opposition speaker','enemy',7,3,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'against',intent:scenario.rival==='lobby'?'Lobby wavering members; attack speakers every third turn.':scenario.rival==='broker'?'Challenge promised votes; attack nearby speakers on even turns.':'Attack nearby speakers on even turns; otherwise lobby wavering members.'}));
@@ -103,7 +104,8 @@ function rivalPlan(state,enemy){
   for(const target of e.units.filter(u=>u.role==='voter'||u.role==='speaker'&&['player','ally'].includes(u.side)&&alive(u))){
     const lobbying=target.role==='voter',promised=e.promises.includes(target.id),range=lobbying?1:3;
     const position=positions.filter(p=>distance(p,target)<=range).sort((a,b)=>a.cost-b.cost||distance(a,target)-distance(b,target)||a.y-b.y||a.x-b.x)[0];if(!position)continue;
-    const amount=enemy.blunted?1:lobbying?BALANCE.rivalLobby+(e.rivalStyle==='broker'&&promised?BALANCE.brokerPromisePressure:0):BALANCE.rivalResolve;
+    const adjustment=difficultyRule(e).speech;
+    const amount=enemy.blunted?1:Math.max(1,(lobbying?BALANCE.rivalLobby+(e.rivalStyle==='broker'&&promised?BALANCE.brokerPromisePressure:0):BALANCE.rivalResolve)+(lobbying?adjustment:Math.min(0,adjustment)));
     const from=lobbying?target.stance:target.resolve,to=lobbying?shiftedStance(target,-amount):Math.max(0,from-amount),loss=from-to;
     const score=lobbying?Number(from>=1&&to<1)*style.vote+loss*.55+(from>=1?1.7:from>-3?.5:-3)+(promised&&from>=1?style.promise:0):loss*style.pressure+(to===0?style.withdraw:0);
     candidates.push({unitId:enemy.id,action:lobbying?'lobby':'pressure',targetId:target.id,destination:{x:position.x,y:position.y},amount,score:score-position.cost*.04,...(lobbying?{stanceBefore:from,stanceAfter:to}:{resolveBefore:from,resolveAfter:to})});

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile} from 'node:fs/promises';
-import {chapterAssets,chapterOfflineAssets} from '../src/ui/art.js';
+import {chapterAssets,chapterAudioAssets,chapterOfflineAssets} from '../src/ui/art.js';
 import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
@@ -22,11 +22,11 @@ test('Every chapter can be restored cold with actual renderer, sound, vendor and
 });
 
 test('Shared dependencies use identical deduplicated URLs across chapters without losing any chapter-specific art',()=>{
-  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path));
+  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path));
   for(let chapter=1;chapter<=12;chapter++){
     const art=chapterAssets(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
-    assert.deepEqual(group.filter(path=>!art.includes(path)),first);
+    assert.deepEqual(group.filter(path=>!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)),first);
     for(const path of art)assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
 });

@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
+import {chapterAudioAssets} from '../src/ui/art.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -25,6 +26,17 @@ assert.equal(Object.keys(build.chapterAssets).length,12);
 for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
 for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
 console.log('PASS declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance');
+const audioPaths=manifest.assets.filter(a=>a.path.startsWith('assets/audio/')).map(a=>'./'+a.path);
+assert.equal(audioPaths.length,14,'All original generated audio files have provenance');
+for(const path of audioPaths){assert.ok(build.deferredAssets.includes(path),'Audio stays out of installation: '+path);assert.ok(!build.initialAssets.includes(path));}
+for(let chapter=1;chapter<=12;chapter++){
+  const bundled=build.chapterAssets[chapter].filter(path=>path.startsWith('./assets/audio/'));
+  assert.deepEqual([...bundled].sort(),[...chapterAudioAssets(chapter)].sort(),'Chapter '+chapter+' audio set');
+}
+assert.ok(build.chapterAssets[2].includes('./assets/audio/ambience-rain.mp3'));
+for(const n of [5,6,9])assert.ok(build.chapterAssets[n].includes('./assets/audio/ambience-dry.mp3'));
+assert.ok(!build.chapterAssets[1].includes('./assets/audio/music-council.mp3'));
+console.log('PASS complete audio provenance, deferred installation and chapter-specific soundscape groups');
 const base='https://imperium.test/',handlers={},stores=new Map(),messages=[];
 const normalize=p=>new URL(typeof p==='string'?p:p.url,base).href;
 const cacheName='imperium-'+build.revision;
@@ -72,6 +84,7 @@ assert.equal(messages.at(-1).type,'chapter-offline');assert.equal(messages.at(-1
 assert.ok(!stores.get(cacheName).has(normalize('./assets/portraits/hero-emperor.webp')));
 assert.ok(!messages.some(m=>m.type==='offline-ready'));
 console.log('PASS chapter 1 caches separately and never claims all chapters are offline');
+for(const path of chapterAudioAssets(1))assert.ok(stores.get(cacheName).has(normalize(path)),'Opening chapter omitted audio: '+path);
 
 for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Chapter I failed to cache 3D dependency: '+path);
 for(const path of build.showcaseAssets.filter(standalone))assert.ok(!stores.get(cacheName).has(normalize(path)),'Chapter I downloaded standalone study page: '+path);
@@ -103,6 +116,7 @@ offline=true;
 const response=await event('fetch',{request:{method:'GET',url:base,mode:'navigate'}});
 assert.ok((await response.text()).includes('index.html'));
 for(const path of build.showcaseAssets)assert.ok(stores.get(cacheName).has(normalize(path)),'Complete download omitted 3D dependency: '+path);
+for(const path of audioPaths){const audio=await event('fetch',{request:{method:'GET',url:normalize(path),mode:'cors'}});assert.equal(await audio.text(),'current:'+normalize(path),'Server-unavailable audio: '+path);}
 const offlineStudy=await event('fetch',{request:{method:'GET',url:normalize('./showcase/'),mode:'navigate'}});
 assert.equal(await offlineStudy.text(),'current:'+normalize('./showcase/index.html'));
 console.log('PASS server-unavailable navigation uses current shell cache');
