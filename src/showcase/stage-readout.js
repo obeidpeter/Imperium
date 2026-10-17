@@ -66,3 +66,28 @@ export function effectReadout(effect) {
   if (['ring','victory','defeat'].includes(effect.type)) return {text:'', color:effect.type === 'defeat' ? '#cb907e' : '#decc90', ring:true};
   return {text:delta ? signed : '', color:effect.type === 'shield' ? '#ffe2a3' : '#bdac91', ring:false};
 }
+
+export function previewBadge(preview, action) {
+  if (!preview?.ok || !action || ['move', 'deploy', 'scout'].includes(action)) return null;
+  const f = preview.forecast, msg = String(preview.message || '');
+  if (f) {
+    if (f.stanceChanges?.length === 1) { const c = f.stanceChanges[0], d = c.to - c.from; return {text:`${d >= 0 ? '+' : ''}${d} stance (${c.from} → ${c.to})`, color:'#c7d9a1'}; }
+    if (f.stanceChanges?.length > 1) return {text:`Support ${f.votesBefore} → ${f.votesAfter}`, color:'#c7d9a1'};
+    if (f.resolveChanges?.length === 1) { const c = f.resolveChanges[0], d = c.to - c.from; return {text:`${d >= 0 ? '+' : ''}${d} Resolve`, color:d >= 0 ? '#a7d7a9' : '#ecb394'}; }
+    if (f.bluntedIds?.length) return {text:'Blunt speech', color:'#89cfcb'};
+  }
+  const dmg = /(\d+) damage/.exec(msg);
+  if (dmg && ['strike', 'throw', 'volley'].includes(action)) return {text:`−${dmg[1]} HP${/\bFlank(?:ing)?\b/.test(msg) ? ' · Flank' : ''}`, color:'#f3b78b'};
+  if (action === 'guard') return {text:'Ward −2 dmg', color:'#edcf7c'};
+  if (action === 'brace') return {text:'Brace −2 dmg', color:'#edcf7c'};
+  if (action === 'inspire') return {text:'+20 morale · +1 HP', color:'#a7d7a9'};
+  if (action === 'assist') return {text:'+3 HP · Brace', color:'#a7d7a9'};
+  if (action === 'rally') return {text:'+25 morale · +2 HP', color:'#a7d7a9'};
+  if (action === 'order' || action === 'formation') return {text:action === 'formation' ? 'Formation order' : 'Direct order', color:'#edcf7c'};
+  const st = /stance (-?\d+) → (-?\d+)/.exec(msg);
+  if (st) { const d = Number(st[2]) - Number(st[1]); return {text:`${d >= 0 ? '+' : ''}${d} stance (${st[1]} → ${st[2]})`, color:'#c7d9a1'}; }
+  const res = /([+-−]\d+) Resolve/.exec(msg);
+  if (res) return {text:`${res[1]} Resolve`, color:'#d5badc'};
+  return null;
+}
+

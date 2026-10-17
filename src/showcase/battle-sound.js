@@ -7,7 +7,7 @@ const ring=(duration,gain,partials,offset=0)=>({source:'ring',duration,gain,part
 
 /** Event-sized sound recipes; side changes texture, never gameplay or volume. */
 export function battleSoundPlan(kind,{side='player',intensity=1,surface}={}){
-  const aliases={step:'footstep',move:'footstep',block:'shield',brace:'shield',metal:'clash',strike:'clash',throw:'javelin',arrow:'bow',hurt:'impact'};
+  const aliases={step:'footstep',move:'footstep',block:'shield',brace:'shield',ward:'guard',rally:'inspire',order:'inspire',seal:'agreement',metal:'clash',strike:'clash',throw:'javelin',arrow:'bow',hurt:'impact'};
   const key=aliases[kind]??kind,amount=level(intensity),texture=side==='enemy'?31:side==='ally'?17:5;
   let layers=[];
   if(key==='footstep'){
@@ -18,8 +18,11 @@ export function battleSoundPlan(kind,{side='player',intensity=1,surface}={}){
   else if(key==='wade')layers=[{...noise(.25,.16,1700,'bandpass',0,.9),attack:.012,endFrequency:420},noise(.09,.18,180),noise(.22,.06,4200,'highpass',.035)];
   else if(key==='speech')layers=[{...noise(.2,.075,1100,'bandpass'),attack:.045,endFrequency:2100},noise(.07,.08,340,'lowpass',.02)];
   else if(key==='vote')layers=[noise(.025,.11,800),ring(.13,.025,[[291,1],[613,.2]],.003)];
+  else if(key==='agreement')layers=[noise(.03,.12,920,'bandpass'),ring(.21,.045,[[352,1],[704,.35],[1056,.15]],.004)];
   // The oval shield is a resonant wooden body with a metal boss, not a bell.
   else if(key==='shield')layers=[noise(.14,.27,270),ring(.23,.09,[[193,1],[731,.48],[1319,.15]]),noise(.035,.055,2600,'highpass')];
+  else if(key==='guard')layers=[noise(.13,.24,250),ring(.26,.095,[[211,1],[643,.45],[1187,.2]],.004),noise(.04,.05,2200,'highpass',.01)];
+  else if(key==='inspire')layers=[ring(.34,.09,[[264,1],[396,.65],[528,.35]],.005),{...noise(.22,.055,880,'bandpass',.01,.9),attack:.04,endFrequency:1320}];
   else if(key==='clash')layers=[noise(.045,.1,1700,'highpass'),ring(.28,.12,[[1523,1],[2711,.55],[4327,.24]],.003),noise(.12,.06,550,'bandpass',.01)];
   else if(key==='javelin')layers=[{...noise(.18,.07,1600,'bandpass',0,.8),attack:.035,endFrequency:4100},noise(.075,.03,700,'bandpass',.025)];
   else if(key==='bow')layers=[noise(.032,.11,1800,'highpass'),ring(.12,.06,[[163,1],[467,.35],[919,.12]],.001),{...noise(.09,.045,2800,'bandpass',.02),endFrequency:1100}];
@@ -93,7 +96,7 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
     try{if(recordedCue?.(kind,options))return true;}catch{ /* Optional recording failure retains native foley. */ }
     const plan=battleSoundPlan(kind,options);
     if(!plan.layers.length)return false;
-    const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech'].includes(plan.kind)?1:0;
+    const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech','guard','inspire','agreement'].includes(plan.kind)?1:0;
     // Quiet walking/rustle tails yield to a committed contact. Equal-priority
     // impacts retain the strict budget rather than stacking louder and louder.
     if(voices.size+plan.layers.length>BATTLE_SOUND_LIMITS.voices){

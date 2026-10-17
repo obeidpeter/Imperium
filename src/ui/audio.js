@@ -30,9 +30,9 @@ export function sound(kind, enabled, volume=.5) {
     else if (['move','deploy'].includes(kind)) [.04,.21,.38].forEach(at => {tone(88,at,.075,'triangle',42,.05);tone(230,at+.01,.045,'sine',130,.018);});
     else if (kind === 'throw') { tone(1150,.15,.17,'triangle',320,.018); tone(125,.46,.16,'triangle',55); }
     else if (kind === 'strike') { tone(620,.1,.09,'triangle',210,.02);tone(180,.2,.11,'sawtooth',65,.022); tone(710,.22,.2,'sine',540,.018); }
-    else if (['brace','formation'].includes(kind)) { tone(155,0,.13,'triangle',75); tone(470,.055,.18,'sine',450,.021); }
-    else if (['rally','order'].includes(kind)) { tone(196,0,.23,'triangle'); tone(294,.11,.3,'triangle'); }
-    else if (kind==='promise') [247,294,370].forEach((f,i)=>tone(f,i*.065,.25,'triangle',f,.025));
+    else if (['brace','formation','guard'].includes(kind)) { tone(155,0,.13,'triangle',75); tone(470,.055,.18,'sine',450,.021); }
+    else if (['rally','order','inspire'].includes(kind)) { tone(196,0,.23,'triangle'); tone(294,.11,.3,'triangle'); }
+    else if (['promise','agreement'].includes(kind)) [247,294,370].forEach((f,i)=>tone(f,i*.065,.25,'triangle',f,.025));
     else if (['persuade','record','address','rebut'].includes(kind)) [196,247,294].forEach((note,i)=>tone(note,i*.055,.2,'sine',note*1.03,.019));
     else if (['threaten','denounce'].includes(kind)) { tone(174,0,.21,'triangle',131); tone(220,.07,.19,'sine',165,.02); }
     else if (['assist','scout'].includes(kind)) { tone(330,0,.18); tone(440,.08,.2); }

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.21.0 — 3D pre-action forecast badges, specialist foley and camp progression clarity
+
+- Adds floating 3D pre-action forecast badges (`previewBadge`) directly on the targeted unit's 3D world label during order previews across both the main campaign and standalone 3D showcase (`−4 HP · Flank`, `Ward −2 dmg`, `+20 morale · +1 HP`, `+3 stance (-1 → 2)`, `Support 3 → 5`, `-4 Resolve`, `Blunt speech`).
+- Adds distinct synthesized foley plans (`guard`, `inspire`, `agreement`) to `battleSoundPlan` and `combatCues`, plus subtle 3D shimmer on active Protector `Guard` ward and `aim` arcs when reduced motion is off.
+- Auto-opens `veteranAcademy` in camp when any veteran is eligible for permanent specialization (surfacing the ready count in the summary) and auto-opens the compact camp `relationshipLedger` when an open agreement is `dueNow`.
+- Adds `order` and `conversation` motions and a `Head gaze` (`#gaze`) slider to the standalone character inspector (`tests/actor-model-browser.html`).
+
 ## 0.20.0 — expressive gaze, 3D tactical wards and Chapter I budget headroom
 
 - Adds weighted eyebrow bones (`left-brow`, `right-brow`) and deterministic `actorExpression` posture across speech, rally, combat drive, bracing, and injury states, plus multi-syllable jaw articulation and bounded head gaze targeting (`gazeYaw`, `gazePitch`) toward inspected or addressed figures.

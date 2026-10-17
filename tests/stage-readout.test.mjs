@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {actorVisible,actorReadout,effectReadout,missionReadouts,tacticalLinks} from '../src/showcase/stage-readout.js';
+import {actorVisible,actorReadout,effectReadout,missionReadouts,tacticalLinks,previewBadge} from '../src/showcase/stage-readout.js';
 import {combatCues} from '../src/showcase/combat-presentation.js';
 import {battleSoundPlan} from '../src/showcase/battle-sound.js';
 
@@ -25,7 +25,7 @@ test('World markers expose real objectives, active operation phases and the next
   assert.equal(missionReadouts({...e,mission:{mode:'capture',points:[{x:2,y:2,secured:true}],waves:[]}})[0].tone,'secured');
 });
 
-test('Battle readouts and tactical links distinguish Protector guard wards, Ranged volley ammo, bracing and intentions',()=>{
+test('Battle readouts, tactical links and floating preview badges distinguish combat, specialist and Contest forecasts',()=>{
   const e={},escort={role:'escort',hp:5,maxHp:10,side:'neutral'};
   assert.equal(actorReadout(escort,e).detail,'5/10 health · Protect');
   assert.equal(actorReadout({...escort,braced:true},e).signal,'Braced');
@@ -42,14 +42,23 @@ test('Battle readouts and tactical links distinguish Protector guard wards, Rang
   assert.equal(effectReadout({type:'impact',political:true,delta:-3}).text,'-3 Resolve');
   assert.equal(effectReadout({type:'stance',delta:2}).text,'+2 stance');
   assert.equal(effectReadout({type:'impact',delta:-3}).ring,false);
+  assert.equal(previewBadge(null,'strike'),null);
+  assert.equal(previewBadge({ok:true,message:'Move to 2B.'},'move'),null);
+  assert.deepEqual(previewBadge({ok:true,message:'Strike Raider: 4 damage. Flank; morale −12.'},'strike'),{text:'−4 HP · Flank',color:'#f3b78b'});
+  assert.deepEqual(previewBadge({ok:true,message:'Guard Aurelius'},'guard'),{text:'Ward −2 dmg',color:'#edcf7c'});
+  assert.deepEqual(previewBadge({ok:true,message:'Inspire Lucan'},'inspire'),{text:'+20 morale · +1 HP',color:'#a7d7a9'});
+  assert.deepEqual(previewBadge({ok:true,forecast:{stanceChanges:[{from:-1,to:2}]}},'persuade'),{text:'+3 stance (-1 → 2)',color:'#c7d9a1'});
+  assert.deepEqual(previewBadge({ok:true,forecast:{stanceChanges:[{from:0,to:1},{from:1,to:2}],votesBefore:3,votesAfter:5}},'address'),{text:'Support 3 → 5',color:'#c7d9a1'});
+  assert.deepEqual(previewBadge({ok:true,forecast:{resolveChanges:[{from:8,to:4}]}},'denounce'),{text:'-4 Resolve',color:'#ecb394'});
+  assert.deepEqual(previewBadge({ok:true,forecast:{bluntedIds:['rival']}},'rebut'),{text:'Blunt speech',color:'#89cfcb'});
 });
 
-test('Civic action audio avoids metal combat cues; mounted and marsh movement use their actual surface',()=>{
-  const civic=combatCues({tracks:[],effects:[{type:'speech',start:70},{type:'stance',start:230,delta:2},{type:'impact',political:true,start:230,delta:-2}]});
-  assert.deepEqual(civic.map(x=>x.kind),['speech','vote','cloth']);
+test('Civic and specialist action audio use distinct foley plans; mounted and marsh movement use their actual surface',()=>{
+  const civic=combatCues({tracks:[{pose:'brace',action:'guard',start:0,duration:400},{pose:'rally',action:'inspire',start:50,duration:400}],effects:[{type:'speech',start:70},{type:'stance',start:230,delta:2},{type:'impact',political:true,start:230,delta:-2}]});
+  assert.deepEqual(civic.map(x=>x.kind),['speech','guard','inspire','vote','cloth']);
   const timeline={tracks:[{pose:'cavalry-move',start:0,duration:700,path:[{x:0,y:0},{x:1,y:0}]}],effects:[]};
   const mounted=combatCues(timeline,{encounter:{terrain:[['sand','sand']]}}),wet=combatCues(timeline,{encounter:{terrain:[['marsh','ford']]}});
   assert.ok(mounted.every(x=>x.kind==='hoof'));assert.ok(wet.every(x=>x.kind==='wade'));
-  for(const kind of ['hoof','wade','speech','vote'])assert.ok(battleSoundPlan(kind).layers.length>0);
+  for(const kind of ['hoof','wade','speech','vote','guard','inspire','agreement'])assert.ok(battleSoundPlan(kind).layers.length>0);
 });
 

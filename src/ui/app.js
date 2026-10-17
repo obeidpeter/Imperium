@@ -23,6 +23,7 @@ import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
 import {setupSiteMedia} from './site-media.js';
 import {campaignSoundscape} from './soundscape.js';
+import {previewBadge} from '../showcase/stage-readout.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
@@ -92,7 +93,7 @@ function render(){
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion;pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected,targets:targets(),target:target||focusTile,grid:showGrid,quality:graphics.mode,adaptiveResolution:settings.adaptiveResolution,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion;pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected,targets:targets(),target:target?{...target,previewBadge:previewBadge(command()?Game.preview(state,command()):null,action)}:focusTile,grid:showGrid,quality:graphics.mode,adaptiveResolution:settings.adaptiveResolution,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
@@ -306,8 +307,8 @@ case 'prepare':await change(()=>Game.prepare(state,id));break;
 case 'dismiss-guide':settings.guide=false;saveSettings();render();announce('Field guide hidden. Reopen it in Settings.');break;
 case 'operation-choice':await change(()=>Game.chooseOperation(state,id),{tone:null});break;
 case 'specialize-veteran':{const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;}
-case 'agreement-demand':case 'agreement-counter':await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'));break;
-case 'agreement-honour':case 'agreement-break':await change(()=>Game.settleAgreement(state,id,cmd==='agreement-honour'),{afterRender:refreshOpenLedger});break;
+case 'agreement-demand':case 'agreement-counter':await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'),{tone:'agreement',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('agreement',{intensity:.7});}});break;
+case 'agreement-honour':case 'agreement-break':await change(()=>Game.settleAgreement(state,id,cmd==='agreement-honour'),{tone:cmd==='agreement-honour'?'agreement':'threaten',afterRender:refreshOpenLedger});break;
 case 'company-package':await change(()=>Game.prepareCompany(state,id),{tone:null});break;
 case 'company-up':case 'company-down':{const ids=[...Game.companyPlan(state).selectedIds],from=Number(id),to=from+(cmd==='company-up'?-1:1);if(to>=0&&to<ids.length){[ids[from],ids[to]]=[ids[to],ids[from]];await change(()=>Game.selectCompany(state,ids),{tone:null});}break;}
 case 'voice-briefing':settings.voices=true;saveSettings();soundscape.configure(settings);if(!await soundscape.speak(id))toast('The recording is unavailable. The complete briefing is shown beside this button.');break;

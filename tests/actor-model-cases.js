@@ -18,7 +18,7 @@ export const ACTOR_CASES=freeze([
   {id:'paullus',label:'Paullus · named elder',unit:{id:'paullus',name:'Lucius Cassius Paullus',side:'ally',role:'voter',bloc:'Landholders'},options:{chapter:11}},
   {id:'sabinus',label:'Sabinus · named soldier',unit:{id:'sabinus',name:'Sabinus',side:'ally',role:'infantry'},options:{chapter:4}}
 ]);
-export const ACTOR_MOTIONS=Object.freeze(['idle','walk','run','retreat','attack','throw','brace','block','hit','rally','speak','yield','withdrawn']);
+export const ACTOR_MOTIONS=Object.freeze(['idle','walk','run','retreat','attack','throw','brace','block','hit','rally','order','speak','conversation','yield','withdrawn']);
 export const actorCase=id=>ACTOR_CASES.find(item=>item.id===id)??ACTOR_CASES[0];
 export function sampleSummary(samples){
   const ordered=samples.filter(Number.isFinite).slice(-120).sort((a,b)=>a-b),at=q=>ordered.length?ordered[Math.min(ordered.length-1,Math.ceil(ordered.length*q)-1)]:null;

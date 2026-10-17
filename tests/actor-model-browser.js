@@ -16,12 +16,12 @@ window.addEventListener('error',event=>error(event.message));window.addEventList
 $('actor').innerHTML=ACTOR_CASES.map(item=>`<option value="${item.id}">${item.label}</option>`).join('');
 $('motion').innerHTML=ACTOR_MOTIONS.map(motion=>`<option value="${motion}">${motion}</option>`).join('');
 for(const id of ['actor','lighting','view','motion','quality']){const value=params.get(id);if(value&&[...$(id).options].some(option=>option.value===value))$(id).value=value;}
-for(const [id,min,max]of [['phase',0,1],['yaw',-180,180]])if(params.has(id)&&Number.isFinite(Number(params.get(id))))$(id).value=Math.max(min,Math.min(max,Number(params.get(id))));
+for(const [id,min,max]of [['phase',0,1],['yaw',-180,180],['gaze',-18,18]])if(params.has(id)&&Number.isFinite(Number(params.get(id))))$(id).value=Math.max(min,Math.min(max,Number(params.get(id))));
 const dpr=Math.max(.5,Math.min(2,Number(params.get('dpr'))||devicePixelRatio||1));
 const neutral={sky:'#c2c8c9',fog:'#c2c8c9',sun:'#fff2de',ambient:'#e3eaf2',ambientGround:'#a6a49c',sunPosition:[-3,5,4],sunIntensity:2.2,ambientIntensity:1.6,exposure:1.1};
 const timeout=(promise,ms)=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(`Asset readiness exceeded ${ms/1000} seconds; reload to retry.`)),ms);promise.then(value=>{clearTimeout(timer);resolve(value);},cause=>{clearTimeout(timer);reject(cause);});});
 
-function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,phase:Number($('phase').value),yaw:Number($('yaw').value),pixelRatio:dpr,closedEyelids:$('blink').checked};}
+function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,phase:Number($('phase').value),yaw:Number($('yaw').value),gaze:Number($('gaze')?.value||0),pixelRatio:dpr,closedEyelids:$('blink').checked};}
 const selectedIdentity=()=>actorIdentity(selection.unit,actorKit(selection.unit,selection.options));
 function syncUrl(){const query=new URLSearchParams();for(const [key,value]of Object.entries(configuration()))query.set(key==='pixelRatio'?'dpr':key,value);history.replaceState(null,'',`${location.pathname}?${query}`);}
 function report(){
@@ -62,16 +62,16 @@ function draw(ms){
     const moving=playUntil>ms||!!sampling,delta=previous?Math.max(0,Math.min(.05,(ms-previous)/1000)):0,interval=previous?ms-previous:null;previous=ms;
     if(moving){elapsed+=delta;$('phase').value=(elapsed%1.8)/1.8;}
     const phase=Number($('phase').value),started=performance.now();resize();
-    actor.update({motion:$('motion').value,time:$('blink').checked?4.58-(actorKit(selection.unit,selection.options).identity%13)*.13:elapsed,phase,direction:Number($('yaw').value)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:2,active:true});resetPose=false;
+    actor.update({motion:$('motion').value,time:$('blink').checked?4.58-(actorKit(selection.unit,selection.options).identity%13)*.13:elapsed,phase,direction:Number($('yaw').value)*Math.PI/180,gazeYaw:Number($('gaze')?.value||0)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:2,active:true});resetPose=false;
     frameCamera();renderer.render(scene,camera);const cost=performance.now()-started;
-    $('phase-label').textContent=`${Math.round(phase*100)}%`;$('yaw-label').textContent=`${$('yaw').value}Â°`;$('caption').textContent=`${selection.label} Â· ${$('lighting').selectedOptions[0].textContent} Â· ${$('motion').value} ${Math.round(phase*100)}%`;
+    $('phase-label').textContent=`${Math.round(phase*100)}%`;$('yaw-label').textContent=`${$('yaw').value}°`;if($('gaze-label'))$('gaze-label').textContent=`${$('gaze').value}°`;$('caption').textContent=`${selection.label} · ${$('lighting').selectedOptions[0].textContent} · ${$('motion').value} ${Math.round(phase*100)}%`;
     if(sampling&&sampling.warmup--<=0){frameCosts.push(cost);if(interval!==null)frameIntervals.push(interval);if(frameCosts.length>=120){sampling=null;clearTimeout(sampleTimer);playUntil=0;sampleResult={completed:true,frames:120};$('sample').disabled=false;$('play').textContent='Play 12 seconds';$('status').textContent='Completed 120 actual render samples. See scope and timings below.';resourceStats=actorResources(actor.group);report();}}
     if(!moving||!sampling&&playUntil<=ms){$('play').textContent='Play 12 seconds';resourceStats=actorResources(actor.group);report();}else if(frameCosts.length&&frameCosts.length%30===0)report();
     if(playUntil>ms||sampling)requestFrame();
   }catch(cause){stop('render failure');error(cause.stack??cause.message);report();}
 }
 async function replaceActor(){
-  if(!renderer)return;stop('selection changed');const ticket=++generation;actor?.dispose();if(actor)disposedActors++;actor=null;resourceStats=null;frameCosts=[];frameIntervals=[];sampleResult=null;renderer.renderLists.dispose();selection=actorCase($('actor').value);$('status').textContent=`Preparing ${selection.label}â€¦`;
+  if(!renderer)return;stop('selection changed');const ticket=++generation;actor?.dispose();if(actor)disposedActors++;actor=null;resourceStats=null;frameCosts=[];frameIntervals=[];sampleResult=null;renderer.renderLists.dispose();selection=actorCase($('actor').value);$('status').textContent=`Preparing ${selection.label}…`;
   const candidate=createActor(selection.unit,{...selection.options,quality:$('quality').value});createdActors++;
   try{await timeout(candidate.ready,15000);if(disposed||ticket!==generation){candidate.dispose();disposedActors++;return;}actor=candidate;scene.add(actor.group);elapsed=Number($('phase').value)*1.8;resetPose=true;setLighting();resourceStats=actorResources(actor.group);syncUrl();$('status').textContent=`Ready: ${selection.label}. Choose a pose or play a bounded 12-second loop.`;requestFrame();}
   catch(cause){candidate.dispose();disposedActors++;if(actor===candidate)actor=null;error(cause.stack??cause.message);report();}
@@ -80,7 +80,7 @@ function manualPose(){stop('manual pose');clearSamples();resetPose=true;elapsed=
 for(const id of ['actor','quality'])$(id).addEventListener('change',replaceActor);
 $('lighting').addEventListener('change',()=>{stop('lighting changed');clearSamples();setLighting();syncUrl();requestFrame();});
 for(const id of ['view','motion'])$(id).addEventListener('change',manualPose);
-for(const id of ['phase','yaw'])$(id).addEventListener('input',manualPose);
+for(const id of ['phase','yaw','gaze'])$(id)?.addEventListener('input',manualPose);
 $('blink').addEventListener('change',manualPose);
 $('rotate').onclick=()=>{$('yaw').value=(Number($('yaw').value)+225)%360-180;manualPose();};
 $('play').onclick=()=>{if(playUntil>performance.now()){stop();requestFrame();return;}if(!actor)return;previous=0;playUntil=performance.now()+12000;$('play').textContent='Pause';$('status').textContent='Playing a maximum of 12 seconds; hidden tabs stop immediately.';requestFrame();};

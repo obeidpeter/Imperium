@@ -20,12 +20,12 @@ test('Operation choices show actual resources, conditional next-field benefits a
   assert.ok(G.startEncounter(s).ok);assert.equal(operationPlanning(s),'','Operation choice must disappear after departure');
 });
 
-test('Earned training controls expose permanent specialization and escape companion names',()=>{
+test('Earned training controls expose permanent specialization, auto-open when eligible, and escape companion names',()=>{
   const s=start('ch2-rearguard');assert.equal(playEncounter(s).status,'won');assert.ok(G.commitEncounter(s).ok);assert.ok(G.advanceChapter(s).ok);
   const veteran=G.veteranTraining(s).veterans.find(v=>v.eligible);assert.ok(veteran);
   // Isolated display-string fixture; progression is earned by legal commands.
   s.company.find(v=>v.id===veteran.id).name='<img src=x onerror=alert(1)>';
-  const html=pure(s,()=>veteranAcademy(s));assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);assert.doesNotMatch(html,/<img src=x/);assert.ok(html.includes(`for="veteran-path-${veteran.id}"`));assert.match(html,/Train permanently/);
+  const html=pure(s,()=>veteranAcademy(s));assert.match(html,/<details id="veteran-academy" class="progression-panel" open><summary>Veteran training · shape your company · \d+ ready<\/summary>/);assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);assert.doesNotMatch(html,/<img src=x/);assert.ok(html.includes(`for="veteran-path-${veteran.id}"`));assert.match(html,/Train permanently/);
   assert.ok(G.specializeVeteran(s,veteran.id,'protector').ok);const trained=pure(s,()=>veteranAcademy(s));assert.ok(!trained.includes(`data-cmd="specialize-veteran" data-id="${veteran.id}"`));assert.match(trained,/Protector/);
 });
 
@@ -37,11 +37,12 @@ test('Named negotiation remains discoverable outside range, explains speech owne
   assert.equal(agreementConversation(s,'hero'),'');
 });
 
-test('Ledger explains affordability and settlement timing; drill never asks for an already-spent action',()=>{
+test('Ledger explains affordability, auto-opens in compact camp view when due now, and drill never asks for an already-spent action',()=>{
   const s=start('ch7-council'),target=s.encounter.units.find(u=>G.agreementOptions(s,u.id).enabled);assert.ok(G.negotiateAgreement(s,target.id,'demand').ok);
   assert.equal(playEncounter(s).status,'won');assert.ok(G.commitEncounter(s).ok);assert.ok(G.startEncounter(s).ok);assert.equal(playEncounter(s).status,'won');assert.ok(G.commitEncounter(s).ok);assert.ok(G.advanceChapter(s).ok);
   s.supplies=0; // Isolated low-treasury display case; the agreement was earned.
   const ledger=pure(s,()=>relationshipLedger(s));assert.match(ledger,/1 open agreement/);assert.match(ledger,/You need 3 supplies/);assert.match(ledger,/Leave it open/);assert.match(ledger,/data-cmd="agreement-honour"[^>]*disabled/);
+  const compact=pure(s,()=>relationshipLedger(s,{compact:true}));assert.match(compact,/<details id="persistent-coalition" class="progression-panel" open><summary>Relationships & agreements · 1 open · 1 due now<\/summary>/);
   const drill=G.newGame('Learner',275,{progression:true});assert.ok(G.choose(drill,G.getChapter(drill).decision.options[0].id).ok);assert.ok(G.startEncounter(drill).ok);
   const move=G.getTargets(drill,'hero','move')[0];assert.ok(G.act(drill,{unitId:'hero',action:'move',x:move.x,y:move.y}).ok);
   const self=G.getTargets(drill,'hero','brace')[0];assert.ok(G.act(drill,{unitId:'hero',action:'brace',x:self.x,y:self.y}).ok);

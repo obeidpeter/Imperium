@@ -8,6 +8,10 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.21 — 3D pre-action forecast badges, specialist foley and camp progression clarity
+
+Previewing an attack, specialist ability or political speech now displays an authoritative floating outcome badge directly on the targeted figure's 3D world label (`−4 HP · Flank`, `Ward −2 dmg`, `+20 morale · +1 HP`, `+3 stance`, `Support 3 → 5`, `-4 Resolve`, `Blunt speech`) in both the main campaign and the standalone 3D showcase. Protector `Guard`, Formation leader `Inspire` and political `agreement` actions have distinct synthesized foley recipes, and active 3D ward and trajectory arcs gently shimmer when reduced motion is off. In camp, the Veteran training and Relationships & agreements panels automatically open and highlight counts whenever a veteran is ready to specialize or a political agreement is due now.
+
 ## Version 0.20 — expressive gaze, 3D tactical wards and Chapter I budget headroom
 
 Weighted eyebrow joints (`left-brow`, `right-brow`), syllabic jaw cadence and bounded head gaze (`gazeYaw`, `gazePitch`) give speaking delegates, rallying commanders and braced soldiers clearer facial expression without altering idle or reduced-motion poses. On the 3D stage, Protector veterans now project visible gold ward tethers to adjacent guarded allies, ranged and javelin previews display trajectory arcs, and multi-phase operations label active `Phase 1` / `Phase 2` objectives while smoothly re-centering the overview camera on phase transitions. Cross-platform build normalization reclaims ~159 KB of Chapter I compressed budget headroom (`7.84 MB` / `8.00 MB`).

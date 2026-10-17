@@ -21,8 +21,8 @@ function platform(){
 }
 
 test('Original foley plans are bounded, distinct and pure; invalid or silent cues produce no layers',()=>{
-  const options=Object.freeze({side:'enemy',intensity:.6}),plans=['footstep','shield','clash','javelin','bow','impact','cloth','wind'].map(kind=>battleSoundPlan(kind,options));
-  assert.equal(new Set(plans.map(plan=>JSON.stringify(plan.layers))).size,8);
+  const options=Object.freeze({side:'enemy',intensity:.6}),plans=['footstep','shield','guard','inspire','agreement','clash','javelin','bow','impact','cloth','wind'].map(kind=>battleSoundPlan(kind,options));
+  assert.equal(new Set(plans.map(plan=>JSON.stringify(plan.layers))).size,11);
   for(const plan of plans){
     assert.deepEqual(plan,battleSoundPlan(plan.kind,options));
     assert.ok(plan.layers.length>0&&plan.layers.length<=3);
@@ -30,6 +30,9 @@ test('Original foley plans are bounded, distinct and pure; invalid or silent cue
   }
   assert.equal(battleSoundPlan('unknown').layers.length,0);assert.equal(battleSoundPlan('impact',{intensity:0}).layers.length,0);
   assert.deepEqual(battleSoundPlan('throw'),battleSoundPlan('javelin'));
+  assert.deepEqual(battleSoundPlan('ward'),battleSoundPlan('guard'));
+  assert.deepEqual(battleSoundPlan('rally'),battleSoundPlan('inspire'));
+  assert.deepEqual(battleSoundPlan('seal'),battleSoundPlan('agreement'));
   const first=battleSoundPlan('shield');first.layers[1].partials[0][0]=1;assert.notEqual(battleSoundPlan('shield').layers[1].partials[0][0],1);
 });
 
