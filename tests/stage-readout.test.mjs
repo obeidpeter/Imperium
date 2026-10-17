@@ -1,13 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {actorVisible,actorReadout,effectReadout,missionReadouts} from '../src/showcase/stage-readout.js';
+import {actorVisible,actorReadout,effectReadout,missionReadouts,tacticalLinks} from '../src/showcase/stage-readout.js';
 import {combatCues} from '../src/showcase/combat-presentation.js';
 import {battleSoundPlan} from '../src/showcase/battle-sound.js';
 
 test('Civic labels preserve voting, promises and withdrawn speaker votes without inventing health',()=>{
-  const e={promises:['v']},voter={id:'v',role:'voter',side:'neutral',hp:1,stance:3,bloc:'Veterans'};
+  const e={promises:['v'],staged:{agreements:[{personId:'lucan'}]}},voter={id:'v',role:'voter',side:'neutral',hp:1,stance:3,bloc:'Veterans'};
   const original=JSON.stringify({e,voter}),readout=actorReadout(voter,e);
   assert.equal(readout.type,'vote');assert.equal(readout.signal,'✓ +3 stance');assert.equal(readout.detail,'Veterans · Committed · Promised');
+  assert.equal(actorReadout({...voter,id:'v2',negotiatorId:'lucan'},e).detail,'Veterans · Committed · Agreed');
   assert.equal(JSON.stringify({e,voter}),original);
   const speaker={id:'s',role:'speaker',side:'enemy',resolve:0,maxResolve:10,hp:0,vote:'against'};
   assert.equal(actorVisible(speaker),true);assert.deepEqual(actorReadout(speaker,e),{type:'resolve',tone:'opposition',value:0,ratio:0,signal:'Withdrawn',detail:'Vote retained · opposes'});
@@ -15,21 +16,29 @@ test('Civic labels preserve voting, promises and withdrawn speaker votes without
   assert.equal(actorVisible({role:'soldier',hp:0}),false);
 });
 
-test('World markers expose real objectives and the next announced wave, not unused goals or hidden foes',()=>{
+test('World markers expose real objectives, active operation phases and the next announced wave',()=>{
   const mission={mode:'extract',points:[],waves:[{x:7,y:2,turn:3,arrived:true},{x:7,y:4,turn:6,arrived:false},{x:7,y:1,turn:9,arrived:false}]},e={kind:'battle',goal:{x:7,y:5},mission};
   assert.deepEqual(missionReadouts(e).map(m=>m.label),['Extraction','Reinforcements · turn 6']);
+  assert.equal(missionReadouts({...e,operation:{index:1,phases:[{},{}]}})[0].label,'Phase 2 · Extraction');
   assert.deepEqual(missionReadouts({...e,kind:'contest'}),[]);
   assert.deepEqual(missionReadouts({...e,mission:{mode:'clear',waves:[],points:[]}}),[]);
   assert.equal(missionReadouts({...e,mission:{mode:'capture',points:[{x:2,y:2,secured:true}],waves:[]}})[0].tone,'secured');
 });
 
-test('Battle readouts distinguish protection, bracing and announced intentions',()=>{
+test('Battle readouts and tactical links distinguish Protector guard wards, Ranged volley ammo, bracing and intentions',()=>{
   const e={},escort={role:'escort',hp:5,maxHp:10,side:'neutral'};
   assert.equal(actorReadout(escort,e).detail,'5/10 health · Protect');
   assert.equal(actorReadout({...escort,braced:true},e).signal,'Braced');
   assert.equal(actorReadout({...escort,intent:'Withdraw toward commander'},e).signal,'Withdrawing');
   assert.equal(actorReadout({...escort,morale:20},e).signal,'Low morale');
   assert.equal(actorReadout({...escort,hp:25},e).ratio,1);
+  const hero={id:'hero',side:'player',hp:12,maxHp:14,x:2,y:2},protector={id:'ally0',side:'ally',hp:10,maxHp:10,x:2,y:3,specialization:'protector',guardTargetId:'hero'},ranged={id:'ally1',side:'ally',hp:9,maxHp:9,x:1,y:2,specialization:'ranged',specialistAmmo:2};
+  const guardedEncounter={kind:'battle',units:[hero,protector,ranged]};
+  assert.equal(actorReadout(protector,guardedEncounter).signal,'Guarding');
+  assert.equal(actorReadout(hero,guardedEncounter).signal,'Guarded');
+  assert.equal(actorReadout(hero,guardedEncounter).detail,'12/14 health · Ward −2');
+  assert.equal(actorReadout(ranged,guardedEncounter).detail,'9/9 health · Volley 2');
+  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'ally1',target:{x:4,y:2}}).map(l=>l.kind),['guard','aim']);
   assert.equal(effectReadout({type:'impact',political:true,delta:-3}).text,'-3 Resolve');
   assert.equal(effectReadout({type:'stance',delta:2}).text,'+2 stance');
   assert.equal(effectReadout({type:'impact',delta:-3}).ring,false);
@@ -43,3 +52,4 @@ test('Civic action audio avoids metal combat cues; mounted and marsh movement us
   assert.ok(mounted.every(x=>x.kind==='hoof'));assert.ok(wet.every(x=>x.kind==='wade'));
   for(const kind of ['hoof','wade','speech','vote'])assert.ok(battleSoundPlan(kind).layers.length>0);
 });
+

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0 — expressive gaze, 3D tactical wards and Chapter I budget headroom
+
+- Adds weighted eyebrow bones (`left-brow`, `right-brow`) and deterministic `actorExpression` posture across speech, rally, combat drive, bracing, and injury states, plus multi-syllable jaw articulation and bounded head gaze targeting (`gazeYaw`, `gazePitch`) toward inspected or addressed figures.
+- Adds 3D on-stage Protector `Guard` ward tethers, Ranged `Volley` / javelin preview arcs, operation phase objective prefixes (`Phase 1` / `Phase 2`), and automatic overview camera re-centering when a multi-phase operation advances.
+- Normalizes line endings in `dist/` and strips non-license JSDoc blocks from bundled `dist/vendor/three/` modules during build, reclaiming ~159 KB of Chapter I compressed budget headroom (`7.84 MB` / `8.00 MB`) across Windows and Linux while preserving all source files and provenance checks.
+
 ## 0.19.0 — more natural faces
 
 - Fits almond eye openings to imported anatomy and clips irises without folded triangles. Upper eyelids blend between the moving lid and fixed head; eye corners remain anchored during blinks.

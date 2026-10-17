@@ -11,7 +11,7 @@ import {facingYaw,isAlive} from './session.js';
 import {createBattleSound} from './battle-sound.js';
 import {meleeOffset,combatCues,retimeStageTimeline,locomotionPhase,combatReaction} from './combat-presentation.js';
 import {getSceneProfile} from './campaign-scene-profile.js';
-import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts} from './stage-readout.js';
+import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,tacticalLinks} from './stage-readout.js';
 import {layoutStageLabels} from './stage-label-layout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
@@ -142,12 +142,31 @@ export class BattleStage{
       if(!this.missionMarkers.has(mark.id)){const mesh=new T.Mesh(this.goalMarker.geometry,this.goalMarker.material.clone());mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);const label=document.createElement('span');label.className='world-objective';this.labelLayer.append(label);this.missionMarkers.set(mark.id,{mesh,label});}
       const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;marker.label.dataset.tone=mark.tone;
     }
+    this.updateTacticalLinks();
+  }
+  updateTacticalLinks(target=null){
+    if(!this.overlay)return;
+    this.tacticalArcs=this.tacticalArcs??[];
+    const links=tacticalLinks(this.encounter,{selected:this.selected,target});
+    this.tacticalArcs.forEach(line=>line.visible=false);
+    for(const [i,link]of links.entries()){
+      if(!this.tacticalArcs[i]){
+        const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
+        const m=new T.LineBasicMaterial({color:link.color,transparent:true,opacity:.85,depthWrite:false});
+        const line=new T.Line(g,m);line.name='tactical-link';line.frustumCulled=false;this.overlay.add(line);this.tacticalArcs.push(line);
+      }
+      const line=this.tacticalArcs[i],pos=line.geometry.attributes.position,from=this.world(link.from),to=this.world(link.to);
+      const baseY=link.kind==='aim'?1.15:.22,peak=link.kind==='aim'?1.35:.36;
+      for(let s=0;s<=16;s++){const t=s/16;pos.setXYZ(s,from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t+baseY+Math.sin(t*Math.PI)*peak,from.z+(to.z-from.z)*t);}
+      pos.needsUpdate=true;line.material.color.set(link.color);line.userData.linkKind=link.kind;line.visible=true;
+    }
   }
   setSelection(selected,targets=[],target=null){this.selected=selected;this.targets=targets;this.labelSizeDirty=true;
     const rotation=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),scale=new T.Vector3(1,1,1);this.legalTargets.count=Math.min(targets.length,this.legalTargets.instanceMatrix.count);
     for(let i=0;i<this.legalTargets.count;i++){const point=this.world(targets[i]);point.y+=.055;this.matrix.compose(point,rotation,scale);this.legalTargets.setMatrixAt(i,this.matrix);}this.legalTargets.instanceMatrix.needsUpdate=true;
     this.inspected=target&&(target.unitId??this.unitAt(target)?.id);
     this.hoverRing.visible=!!target;if(target){this.hoverRing.position.copy(this.world(target));this.hoverRing.position.y+=.08;}
+    this.updateTacticalLinks(target);
   }
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
@@ -195,7 +214,7 @@ export class BattleStage{
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
     on(this.canvas,'webglcontextlost',e=>{e.preventDefault();this.finishMotion();this.contextLost=true;this.onError?.('The 3D graphics context was interrupted.');});
   }
-  play(before,after,command){this.finishMotion();this.sync(after);if(this.reducedMotion||this.paused)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
+  play(before,after,command){this.finishMotion();this.sync(after);if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();if(this.reducedMotion||this.paused)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
     this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1,cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map()};return new Promise(resolve=>this.animation.resolve=resolve);
   }
   finishMotion(cancelAudio=true){if(!this.animation)return;if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
@@ -208,7 +227,11 @@ export class BattleStage{
       const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle';
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
       const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
-      a.update({...stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion}),groundHeight:this.environment.groundHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
+      const pose=stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
+      const focusUnit=victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
+      let gazeYaw=0,gazePitch=0;
+      if(focusUnit){const d=this.world(focusUnit).sub(a.group.position),rel=Math.atan2(Math.sin(Math.atan2(d.x,d.z)-pose.direction),Math.cos(Math.atan2(d.x,d.z)-pose.direction));if(Math.abs(rel)<1.35){gazeYaw=clamp(rel*.45,-.32,.32);gazePitch=clamp(-Math.atan2(d.y,Math.max(.5,Math.hypot(d.x,d.z)))*.35,-.18,.18);}}
+      a.update({...pose,gazeYaw,gazePitch,groundHeight:this.environment.groundHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
       const label=this.labels.get(unit.id),refs=this.labelRefs.get(unit.id),key=`${unit.id===this.selected}:${unit.id===this.inspected||unit.id===this.hovered}`;label.hidden=false;
       if(refs.stateKey!==key){refs.stateKey=key;label.classList.toggle('selected',unit.id===this.selected);label.classList.toggle('inspected',unit.id===this.inspected||unit.id===this.hovered);refs.width=0;this.labelSizeDirty=true;}
       if(refs.effect.textContent)refs.effect.textContent='';

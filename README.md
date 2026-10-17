@@ -8,6 +8,10 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.20 — expressive gaze, 3D tactical wards and Chapter I budget headroom
+
+Weighted eyebrow joints (`left-brow`, `right-brow`), syllabic jaw cadence and bounded head gaze (`gazeYaw`, `gazePitch`) give speaking delegates, rallying commanders and braced soldiers clearer facial expression without altering idle or reduced-motion poses. On the 3D stage, Protector veterans now project visible gold ward tethers to adjacent guarded allies, ranged and javelin previews display trajectory arcs, and multi-phase operations label active `Phase 1` / `Phase 2` objectives while smoothly re-centering the overview camera on phase transitions. Cross-platform build normalization reclaims ~159 KB of Chapter I compressed budget headroom (`7.84 MB` / `8.00 MB`).
+
 ## Version 0.19 — more natural faces
 
 Fitted almond eye openings, restrained irises and weighted eyelids replace the prominent round eye surfaces. Fine tapered eyebrows follow the skin. Complexion normalization preserves more highlight variation; mature faces gain subtle cheek and fold shaping. Beards include fuller moustaches and feather into the skin, while scalp edges and the imported short-hair cutout are softened.

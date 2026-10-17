@@ -52,7 +52,8 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
         if(cloth){if(localY>=cloth.middle){a=base;b=boneIndex.get(cloth.mid);w=smooth((cloth.top-localY)/(cloth.top-cloth.middle));}else{a=boneIndex.get(cloth.mid);b=boneIndex.get(cloth.hem);w=smooth((cloth.middle-localY)/(cloth.middle-cloth.bottom));}}
         else if(up!==undefined){
           if(/eyelid$/.test(bone.name)&&source.attributes.lidWeight)w=1-source.attributes.lidWeight.getX(i);
-          if(/shoulder$/.test(bone.name))w=1-smooth((.065-localY)/.18);
+          else if(/brow$/.test(bone.name)&&source.attributes.browWeight)w=1-source.attributes.browWeight.getX(i);
+          else if(/shoulder$/.test(bone.name))w=1-smooth((.065-localY)/.18);
           else if(bone.name==='elbow'||bone.name==='knee'||bone.name==='horse-knee')w=1-smooth((.045-localY)/.10);
           else if(/thigh$/.test(bone.name))w=1-smooth((.055-localY)/.15);
           else if(bone.name==='torso')w=1-smooth((localY+.025)/.20);

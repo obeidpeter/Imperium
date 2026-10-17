@@ -6,7 +6,7 @@ import {GLTFLoader} from '../vendor/three/addons/loaders/GLTFLoader.js';
 import {createActorAssetCatalog,ACTOR_MODEL_URL,FEMALE_ACTOR_MODEL_URL} from '../src/showcase/actor-assets.js';
 import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {actorKit} from '../src/showcase/actor-kit.js';
-import {actorEye,actorBrow} from '../src/showcase/actor-face.js';
+import {actorEye,actorBrow,actorExpression} from '../src/showcase/actor-face.js';
 import {createActor} from '../src/showcase/actors.js';
 
 const bytes=await Promise.all([ACTOR_MODEL_URL,FEMALE_ACTOR_MODEL_URL].map(path=>readFile(new URL('../'+path,import.meta.url))));
@@ -93,3 +93,20 @@ test('Beards and bound hair feather at the skin boundary and mature beards inclu
     }release(model);
   }
 });
+
+test('Weighted brow strands deform with expression posture, syllabic jaw cadence varies during speech, and head gaze stays bounded',()=>{
+  assert.deepEqual(actorExpression({motion:'idle'}),{jawOpen:0,browY:0,browTilt:0,lidFocus:0,headYawOffset:0,headPitchOffset:0});
+  const rally=actorExpression({motion:'rally',phase:.45,time:1.2,seed:3}),attack=actorExpression({motion:'attack',phase:.45,time:1.2}),strained=actorExpression({motion:'hit',phase:.3});
+  assert.ok(rally.browY>0&&rally.jawOpen>0);assert.ok(attack.browY<0&&attack.lidFocus>0);assert.ok(strained.browY<0&&strained.browTilt>0);
+  const gaze=actorExpression({gazeYaw:.9,gazePitch:-.8});assert.equal(gaze.headYawOffset,.32);assert.equal(gaze.headPitchOffset,-.18);
+  const actor=createActor(units[0],{assetLibrary:catalog}),head=actor.group.getObjectByName('head'),browEntries=[];
+  actor.group.traverse(mesh=>{if(!mesh.isSkinnedMesh||mesh.userData.overview)return;const ids=mesh.geometry.attributes.skinIndex,w=mesh.geometry.attributes.skinWeight;for(let i=0;i<ids.count;i++)if(mesh.skeleton.bones[ids.getX(i)].name==='left-brow')browEntries.push({mesh,i,weight:w.getX(i)});});
+  assert.ok(browEntries.length>200&&browEntries.some(e=>e.weight===1)&&browEntries.some(e=>e.weight<.5));
+  const sampleBrow=()=>browEntries.map(({mesh,i})=>mesh.getVertexPosition(i,new T.Vector3()).applyMatrix4(mesh.matrixWorld).applyMatrix4(head.matrixWorld.clone().invert()));
+  actor.update({time:0,motion:'idle',resetPose:true});const rest=sampleBrow();
+  actor.update({time:.4,motion:'rally',phase:.5,resetPose:true});const baseHeadY=head.rotation.y;
+  actor.update({time:.4,motion:'rally',phase:.5,gazeYaw:.22,gazePitch:-.08,resetPose:true});const lifted=sampleBrow();
+  assert.ok(lifted.some((v,i)=>v.y>rest[i].y+.0008));assert.ok(Math.abs(head.rotation.y-(baseHeadY+.22))<1e-6);
+  actor.dispose();
+});
+

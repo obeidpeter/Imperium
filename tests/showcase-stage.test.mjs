@@ -188,3 +188,20 @@ test('The visible javelin and arrow tip meet their actual release and target anc
   }
   assert.deepEqual([from.toArray(),to.toArray()],saved);
 });
+
+test('Stage renders 3D tactical guard/aim arcs and re-frames overview camera when an operation phase advances',async()=>{
+  const stage=Object.create(BattleStage.prototype),overlay=new T.Group();
+  const encounter={kind:'battle',units:[{id:'hero',side:'player',hp:10,maxHp:10,x:1,y:1},{id:'ally0',side:'ally',hp:10,maxHp:10,x:1,y:2,specialization:'protector',guardTargetId:'hero'}]};
+  Object.assign(stage,{overlay,encounter,selected:'hero',world:tile=>new T.Vector3(tile.x*2.5,0,tile.y*2.5)});
+  stage.updateTacticalLinks({x:4,y:1});
+  assert.equal(stage.tacticalArcs.filter(l=>l.visible).length,2);
+  assert.deepEqual(stage.tacticalArcs.filter(l=>l.visible).map(l=>l.userData.linkKind),['guard','aim']);
+  stage.updateTacticalLinks(null);
+  assert.equal(stage.tacticalArcs.filter(l=>l.visible).length,1);
+  for(const line of stage.tacticalArcs){line.geometry.dispose();line.material.dispose();}
+  let homed=0;
+  Object.assign(stage,{paused:true,focusMode:false,cameraView:'overview',finishMotion(){},sync(after){stage.encounter=after;},home(){homed++;}});
+  await stage.play({operation:{index:0}},{operation:{index:1}});
+  assert.equal(homed,1);
+});
+

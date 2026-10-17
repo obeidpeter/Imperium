@@ -16,7 +16,7 @@ import {handGeometry,bootGeometry} from './actor-extremities.js';
 import {acquireActorHairSurface,releaseActorHairSurface} from './actor-hair-asset.js';
 import {acquireActorComplexion,releaseActorComplexion,warmActorComplexion} from './actor-complexion.js';
 import {warmActorHair} from './actor-hair-asset.js';
-import {actorEye,actorBrow} from './actor-face.js';
+import {actorEye,actorBrow,actorExpression} from './actor-face.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -102,8 +102,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
   // A continuous landmark sculpt replaces the former ellipsoid/wedge face.
   const faceSkin=skin.clone();faceSkin.vertexColors=true;materials.add(faceSkin);
   mesh(head,createHeadGeometry(identity,{detail}),faceSkin);
-  const lids=[];
+  const lids=[],brows=[];
   for(const side of [-1,1]){
+    const brow=part(head,side<0?'right-brow':'left-brow');brow.userData.side=side;brows.push(brow);
     replacingAnatomy=true;
     faceDetail(head,skin,side*.095,.069,-.008,.012,.027,.012);
     faceDetail(head,lip,side*.102,.069,-.004,.0025,.014,.004);
@@ -112,12 +113,12 @@ function createActorRig(unit={},options={},reuseGroup=null){
       const face=(x,y,offset)=>anatomy.facePoint(x,y,offset),eye=actorEye({side,seed:kit.identity,identity,facePoint:face});
       eyeWhite.vertexColors=true;mesh(head,eye.sclera,eyeWhite);mesh(head,eye.iris,iris);
       const lid=part(head,side<0?'right-eyelid':'left-eyelid');mesh(lid,eye.upperLid,importedSkin);mesh(head,eye.lowerLid,importedSkin);lid.userData.closeDistance=eye.closeDistance;lids.push(lid);
-      mesh(head,actorBrow({side,identity,facePoint:face}),browHair);
+      mesh(brow,actorBrow({side,identity,facePoint:face}),browHair);
     }else{
     const eyeX=side*.036*identity.eyes,eyeZ=facePoint(eyeX,.096,identity)[2]+.002;
     faceDetail(head,eyeWhite,eyeX,.096,eyeZ,.0155,anatomy?.0065:.006,anatomy?.014:.005);
     mesh(head,irisGeometry(kit.identity),iris,eyeX-side*.001,.096,eyeZ+(anatomy?.0134:.0047));
-    strip(head,hair,[[side*.018,.116],[side*.036,.121],[side*.059,.113]].map(([x,y])=>facePoint(x,y,identity,.001)),(identity.female?.0011:.0015)*identity.brow);
+    strip(brow,hair,[[side*.018,.116],[side*.036,.121],[side*.059,.113]].map(([x,y])=>facePoint(x,y,identity,.001)),(identity.female?.0011:.0015)*identity.brow);
     strip(head,skin,[[side*.021,.091],[eyeX,.088],[side*.052,.092]].map(([x,y])=>facePoint(x,y,identity,.0014)),.0016);
     strip(head,skin,[[side*.021,.100],[eyeX,.104],[side*.052,.100]].map(([x,y])=>facePoint(x,y,identity,.0014)),.0017);
     const lid=part(head,side<0?'right-eyelid':'left-eyelid',eyeX,.101,eyeZ+(anatomy?.012:.004));
@@ -347,11 +348,13 @@ function createActorRig(unit={},options={},reuseGroup=null){
       // Blending feet also needs a fresh IK solve when no terrain is supplied.
       groundHumanPose(pose,samples??pose.feet.map((f,i)=>({height:0,x:(i?1:-1)*.104,z:f.z})));
     }
-    group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
-    const seconds=Number.isFinite(input.time)?Math.max(0,input.time):0,blinkPhase=(seconds+((kit.identity%13)*.13))%4.7,blink=input.reducedMotion?0:blinkPhase>4.46?Math.sin((blinkPhase-4.46)/.24*Math.PI):0;
-    for(const lid of lids){if(lid.userData.closeDistance){lid.position.y=-blink*lid.userData.closeDistance;lid.position.z=blink*.0006;}else{lid.position.y=lid.userData.openY-blink*.005;lid.scale.y=1+blink*2.5;}}
-    const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0;
-    mouth.rotation.x=emphasis*.10;mouth.position.y=.001-emphasis*.002;
+    const expr=actorExpression({...mapped,seed:kit.identity,gazeYaw:input.gazeYaw,gazePitch:input.gazePitch,reducedMotion:input.reducedMotion});
+    group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX+expr.headPitchOffset,pose.headY+expr.headYawOffset,0);skirt.rotation.x=pose.skirt;
+    const seconds=Number.isFinite(input.time)?Math.max(0,input.time):0,blinkPhase=(seconds+((kit.identity%13)*.13))%4.7,blink=input.reducedMotion?0:blinkPhase>4.46?Math.sin((blinkPhase-4.46)/.24*Math.PI):0,closure=Math.min(1,blink+expr.lidFocus*(1-blink));
+    for(const lid of lids){if(lid.userData.closeDistance){lid.position.y=-closure*lid.userData.closeDistance;lid.position.z=closure*.0006;}else{lid.position.y=lid.userData.openY-closure*.005;lid.scale.y=1+closure*2.5;}}
+    for(const brow of brows){brow.position.y=expr.browY;brow.position.z=Math.abs(expr.browY)*.25;brow.rotation.z=brow.userData.side*expr.browTilt;}
+    const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0,jaw=Math.max(emphasis,expr.jawOpen);
+    mouth.rotation.x=jaw*.12;mouth.position.y=.001-jaw*.0024;
     for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;
       if(mounted)legs[i].ankle.rotation.set(-.60,0,0);else {ankleRotation.copy(legs[i].thigh.quaternion).multiply(legs[i].knee.quaternion).invert();footRotation.setFromEuler(footEuler.set(pose.feet[i].roll+(pose.feet[i].pitch??0),0,pose.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(footRotation));}
     }

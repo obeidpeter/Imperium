@@ -48,15 +48,32 @@ export function actorEye({side=1,seed=0,identity={},facePoint}){
 
 /** Individually tapered brow hairs follow the surface instead of a dark tube. */
 export function actorBrow({side=1,identity={},facePoint}){
-  const p=[],uv=[],colors=[],indices=[],count=identity.female?34:46;
+  const p=[],uv=[],colors=[],weights=[],indices=[],count=identity.female?34:46;
   for(let i=0;i<count;i++)for(let row=0;row<2;row++){
     const t=(i+.5)/count,x=side*(.018+.043*t),arch=Math.sin(t*Math.PI),y=.112+.0045*arch-.002*t;
-    const length=(identity.female?.002:.003)*(identity.brow??1)*(.55+.45*arch),width=.00034*(.35+.65*Math.sin(t*Math.PI)**.4),start=p.length/3;
+    const length=(identity.female?.002:.003)*(identity.brow??1)*(.55+.45*arch),width=.00034*(.35+.65*Math.sin(t*Math.PI)**.4),start=p.length/3,w=Math.max(0,Math.min(1,1.15-.85*t));
     for(let j=0;j<3;j++)for(const s of [-1,1]){
       const a=j/2,point=facePoint(x+side*length*a*.45+s*width*(1-a*.88),y+length*a-row*.0012,.00055);
-      p.push(...point);uv.push(t,a);const tint=.6+.35*Math.sin(i*2.8)**2;colors.push(tint,tint*.98,tint*.96);
+      p.push(...point);uv.push(t,a);const tint=.6+.35*Math.sin(i*2.8)**2;colors.push(tint,tint*.98,tint*.96);weights.push(w);
     }
     for(let j=0;j<2;j++){const k=start+j*2;indices.push(k,k+1,k+3,k,k+3,k+2);}
   }
-  return geometry(p,uv,colors,indices);
+  const g=geometry(p,uv,colors,indices);g.setAttribute('browWeight',new T.Float32BufferAttribute(weights,1));return g;
 }
+
+/** Deterministic facial expression and bounded gaze offsets for head/brow/jaw/lid joints. */
+export function actorExpression({motion='idle',phase=0,time=0,braced=false,defended=false,health=1,gazeYaw=0,gazePitch=0,seed=0,reducedMotion=false}={}){
+  const p=Math.max(0,Math.min(1,Number.isFinite(phase)?phase:0)),t=reducedMotion?0:Number.isFinite(time)?Math.max(0,time):0;
+  const speaking=['speak','conversation','rally','order'].includes(motion),commanding=['rally','order'].includes(motion);
+  const combative=['attack','strike','throw'].includes(motion),guarded=['brace','formation','block'].includes(motion)||((braced||defended)&&motion!=='idle');
+  const strained=['hit','hurt','withdrawn','dead'].includes(motion)||(motion!=='idle'&&health<.45),yielding=motion==='yield';
+  const envelope=Math.sin(p*Math.PI),syllable=.55+.45*Math.sin((p*14+t*5.2+(seed%7)*.45)*Math.PI);
+  const jawOpen=reducedMotion?0:speaking?Math.max(0,envelope*syllable*(commanding?1.2:1)):combative&&p>.18&&p<.62?Math.sin((p-.18)/.44*Math.PI)*.42:0;
+  const browY=commanding?.0016*envelope:speaking?.0011*envelope:combative?-.0015*envelope:guarded?-.0011:strained?-.0014:yielding?.0008:0;
+  const browTilt=commanding?.045*envelope:speaking?.03*envelope:combative?-.065*envelope:guarded?-.045:strained?.055:yielding?.04:0;
+  const lidFocus=reducedMotion||motion==='idle'?0:combative?.16*envelope:guarded?.12:strained?.20:0;
+  const headYawOffset=Math.max(-.32,Math.min(.32,Number.isFinite(gazeYaw)?gazeYaw:0));
+  const headPitchOffset=Math.max(-.18,Math.min(.18,Number.isFinite(gazePitch)?gazePitch:0));
+  return {jawOpen,browY,browTilt,lidFocus,headYawOffset,headPitchOffset};
+}
+

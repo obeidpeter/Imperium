@@ -20,9 +20,20 @@ if(siteUrl){manifest.id=siteUrl;manifest.start_url=siteUrl;manifest.scope=siteUr
 await writeFile(join(dist,'manifest.webmanifest'),JSON.stringify(manifest,null,2));
 async function files(dir){const result=[];for(const entry of await readdir(dir,{withFileTypes:true})){const path=join(dir,entry.name);if(entry.isDirectory())result.push(...await files(path));else if(!['sw.js','build-report.json'].includes(entry.name))result.push(path);}return result.sort();}
 const list=await files(dist),hash=createHash('sha256'),records=[];
-const workerTemplate=await readFile(join(root,'scripts/service-worker.template.js'),'utf8');
+const workerTemplate=(await readFile(join(root,'scripts/service-worker.template.js'),'utf8')).replaceAll('\r\n','\n');
 hash.update(workerTemplate);
-for(const path of list){const data=await readFile(path),url='./'+relative(dist,path).replaceAll('\\','/');hash.update(url);hash.update(data);records.push({url,bytes:data.length,gzipBytes:gzipSync(data).length});}
+const textExt=/\.(?:js|mjs|html|css|json|svg|webmanifest|txt)$/i;
+for(const path of list){
+  const url='./'+relative(dist,path).replaceAll('\\','/');
+  let data=await readFile(path);
+  if(textExt.test(url)){
+    let text=data.toString('utf8').replaceAll('\r\n','\n');
+    if(url.startsWith('./vendor/three/')&&url.endsWith('.js'))text=text.replace(/\/\*\*(?!\s*\*\s*@license)[\s\S]*?\*\//g,'').replace(/^[ \t]+/gm,'').replace(/\n{2,}/g,'\n');
+    const normalized=Buffer.from(text,'utf8');
+    if(!normalized.equals(data)){data=normalized;await writeFile(path,data);}
+  }
+  hash.update(url);hash.update(data);records.push({url,bytes:data.length,gzipBytes:gzipSync(data).length});
+}
 const revision=hash.digest('hex').slice(0,12),assets=records.map(r=>r.url);
 // Install only the title/recruit shell. Current chapters are requested separately;
 // downloading the complete campaign always requires the user's explicit request.
