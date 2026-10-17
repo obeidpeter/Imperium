@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {locomotionPhase} from './actor-pose.js';
+import {actorMaterialKey} from './actor-material-key.js';
 
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
 const smooth=x=>{const t=clamp(x);return t*t*(3-2*t);};
@@ -20,7 +21,7 @@ export function createClothRig(parent,top,middle,bottom){
   }};
 }
 
-function materialKey(m){return [m.map?.uuid,m.bumpMap?.uuid,m.roughnessMap?.uuid,m.roughness,m.metalness,m.bumpScale,m.side,m.transparent].join('|');}
+const materialKey=actorMaterialKey;
 
 /** Consolidate articulated surfaces into real weighted SkinnedMeshes. Equipment
  * with its own visibility and the named sole geometry stay on their old joints.

@@ -65,16 +65,19 @@ for(const path of build.showcaseAssets){
 const standalone=path=>path.startsWith('./showcase/')||path==='./src/showcase/showcase.css';
 const retiredCharacterAtlas='./assets/showcase/character-materials-v015.webp';
 const retiredAssets=[retiredCharacterAtlas,'./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'];
-const activeAtlases=['./assets/showcase/character-materials-v016.webp','./assets/showcase/foliage-v016.webp'];
+const activeAtlases=['./assets/showcase/character-materials-v016.webp','./assets/showcase/foliage-v016.webp','./assets/textures/complexion-male-v018.webp'];
 // Historical artwork remains part of the complete package, but is not a
 // dependency of a current actor or a cold chapter restore.
 assert.ok(build.showcaseAssets.includes(retiredCharacterAtlas),'Complete 3D inventory retains the historical character atlas');
 assert.ok(build.deferredAssets.includes(retiredCharacterAtlas),'Historical atlas stays in the complete deferred pack');
 assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await readFile(retiredCharacterAtlas.slice(2)),'Built historical atlas preserves its source bytes');
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
-const shared3D=build.showcaseAssets.filter(path=>!standalone(path)&&!retiredAssets.includes(path));
+const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
+for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&build.deferredAssets.includes(path),'Complete deferred inventory retains female resources: '+path);
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path));
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
+  for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');
   for(const path of activeAtlases)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted active atlas: '+path);
 }
@@ -90,6 +93,7 @@ assert.equal(messages.at(-1).ready,false,'A cold later chapter must not claim re
 failing=null;await event('message',{data:{type:'cache-chapter',chapter:11},source:client});
 assert.equal(messages.at(-1).ready,true);
 for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Cold Senate restore omitted: '+path);
+for(const path of femaleAssets)assert.ok(stores.get(cacheName).has(normalize(path)),'Cold Senate restore omitted female resource: '+path);
 assert.ok(!stores.get(cacheName).has(normalize(retiredCharacterAtlas)),'Cold Senate restore must not fetch historical character artwork');
 assert.ok(!stores.get(cacheName).has(normalize('./assets/scenes/danube.webp')),'Cold later restore must not require opening chapter art');
 console.log('PASS cold Chapter XI restore retries missing shared renderer and caches its own complete resource group');

@@ -29,7 +29,10 @@ test('Actual campaign factory roles select distinct visual kits without changing
     if(!kit.armed){for(const name of ['sword','spear','held-javelin','oval-shield','bow','scabbard'])assert.equal(a.group.getObjectByName(name),undefined,`${kit.role} must not carry ${name}`);}
     assert.equal(Boolean(a.group.getObjectByName('horse')),kit.mounted);
     assert.ok(measure.draws<=(kit.mounted?80:55),`${kit.role}/${kit.faction}: ${measure.draws} rigid draw batches`);
-    assert.ok(measure.triangles<25000,`${kit.role}/${kit.faction}: ${measure.triangles} triangles`);
+    // v0.18 connected costumes and articulated hands/boots measured a maximum
+    // 31,204 visible fallback triangles across these 19 factory role/kit sets.
+    // Imported anatomy/groom has its own checks; this cap remains fallback-only.
+    assert.ok(measure.triangles<=32000,`${kit.role}/${kit.faction}: ${measure.triangles} fallback triangles`);
     assert.ok(measure.bounds.min.y>-.005);assert.ok(measure.bounds.max.y<=a.group.userData.actor.height+.02,'Label height covers visible head/helmet.');
     a.dispose();
   }

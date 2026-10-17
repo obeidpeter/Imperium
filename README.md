@@ -1,14 +1,24 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Actual version 0.17 Chapter I Follow view in the production game](docs/images/imperium-v017-preview.png)
+![Version 0.18 character presentation in the production game](docs/images/imperium-v018-preview.png)
 
-*Actual v0.17 desktop production capture: the Chapter I road battle in a close Follow view, with the field guide and command dock. This is rendered gameplay, not illustrative key art.*
+*Actual version 0.18 production gameplay.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
-## Version 0.17 — a developing company and recurring political rivals
+## Version 0.18 — fitted characters and wearable equipment
+
+Characters use fitted complexion textures on imported male and separate female anatomy. Their original UV coordinates keep facial features aligned with the sculpt. Fitted necklines and helmet openings follow the head and collar, and eye surfaces retain their intended highlights through material batching. A locally bundled short-hair model and cutout texture replace the scalp cap on eligible male figures; bound female hair retains its original fitted geometry. The short-haired figures share one source model, with identity-specific fitting and tint.
+
+Connected tunic and armor shells bend across sewn sleeve seams, with shaped folds, turned openings and a fuller protective silhouette. Cloth, leather, mail, scale and metal have distinct local normal and roughness maps. Rebuilt hands have shaped palms, tapered fingers and an opposing thumb; fitted boots distinguish the heel, instep, toe and sole. Dedicated overview meshes reduce distant hand and boot detail while preserving grip and ground-contact frames. Geometry remains deterministic, with explicit ownership and disposal of shared textures and skeletal resources.
+
+This is a presentation-only release: campaign rules, choices, save formats and authoritative action timing remain unchanged. The [v0.18 validation record](docs/release-validation-v018.md) records a **562-test full regression**, **78 final actor checks**, **6 final surface checks**, **25 browser scenes / 518 assertions**, **63 targeted browser assertions** and **13 asset checks**. Production revision **`a0dbf383f33b`** meets the declared download budgets. After the all-chapters download, a server-stopped reload and normal Continue action restored Chapter VI with the exact same portable save code.
+
+The [character surface provenance](docs/character-surfaces-v018.md) records source licenses and export details. These figures combine imported anatomy and surfaces with original stylized equipment and authored joint animation. They are not complete scanned characters or motion-captured performances; physical-device performance and independent human playtesting remain unverified.
+
+## Historical version 0.17 — a developing company and recurring political rivals
 
 New chronicles add **22 operation alternatives across eleven encounters**, three permanent veteran specializations, and nine named representatives who recur across all six political Contests. Branches change objectives and later field benefits; negotiated agreements exchange support now for supply payments and lasting trust. The optional opening guide explains legal commands and their forecasts. Older chronicles retain their previous rules and exact retry checkpoints.
 

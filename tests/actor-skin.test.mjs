@@ -27,30 +27,28 @@ test('Human, civic and mounted surfaces are genuinely weighted across joints, no
 });
 
 test('Weighted sleeve vertices bend continuously instead of rotating as one disconnected shoulder block',()=>{
-  const a=createActor({id:'hero',side:'player'},{chapter:1});let found;
-  for(const mesh of skins(a).filter(m=>!m.userData.overview)){
-    const w=mesh.geometry.attributes.skinWeight,ids=mesh.geometry.attributes.skinIndex;
-    for(let i=0;i<w.count;i++)if(w.getY(i)>.2&&w.getY(i)<.8&&mesh.skeleton.bones[ids.getX(i)].name==='right-shoulder'){found={mesh,i};break;}
-    if(found)break;
-  }
-  assert.ok(found);const {mesh,i}=found,before=vertex(mesh,i);
+  const a=createActor({id:'hero',side:'player'},{chapter:1}),mesh=skins(a).find(m=>m.userData.costume&&!m.userData.overview);
+  assert.ok(mesh,'The actual connected tunic supplies the rendered sleeve seam.');
+  const ids=mesh.geometry.attributes.skinIndex,w=mesh.geometry.attributes.skinWeight;
+  const i=mesh.geometry.userData.seamLoops.flat().find(i=>w.getZ(i)>.2&&w.getZ(i)<.8&&mesh.skeleton.bones[ids.getZ(i)].name==='right-shoulder');
+  assert.notEqual(i,undefined);const before=vertex(mesh,i);
   a.update({motion:'attack',phase:.25,resetPose:true});const bent=vertex(mesh,i);
   assert.ok(before.distanceTo(bent)>.005,'Actual rendered skin vertex responds to the action.');
-  const ids=mesh.geometry.attributes.skinIndex,w=mesh.geometry.attributes.skinWeight,source=new T.Vector3().fromBufferAttribute(mesh.geometry.attributes.position,i).applyMatrix4(mesh.bindMatrix);
-  const first=new T.Matrix4().multiplyMatrices(mesh.skeleton.bones[ids.getX(i)].matrixWorld,mesh.skeleton.boneInverses[ids.getX(i)]),second=new T.Matrix4().multiplyMatrices(mesh.skeleton.bones[ids.getY(i)].matrixWorld,mesh.skeleton.boneInverses[ids.getY(i)]);
-  const rigid=source.clone().applyMatrix4(first).applyMatrix4(mesh.bindMatrixInverse),expected=source.clone().applyMatrix4(first).multiplyScalar(w.getX(i)).add(source.clone().applyMatrix4(second).multiplyScalar(w.getY(i))).applyMatrix4(mesh.bindMatrixInverse);
+  const source=new T.Vector3().fromBufferAttribute(mesh.geometry.attributes.position,i).applyMatrix4(mesh.bindMatrix),expected=new T.Vector3(),matrix=new T.Matrix4();
+  for(let slot=0;slot<4;slot++){const bone=ids.getComponent(i,slot);matrix.multiplyMatrices(mesh.skeleton.bones[bone].matrixWorld,mesh.skeleton.boneInverses[bone]);expected.addScaledVector(source.clone().applyMatrix4(matrix),w.getComponent(i,slot));}
+  expected.applyMatrix4(mesh.bindMatrixInverse);const shoulder=ids.getZ(i),rigid=source.clone().applyMatrix4(matrix.multiplyMatrices(mesh.skeleton.bones[shoulder].matrixWorld,mesh.skeleton.boneInverses[shoulder])).applyMatrix4(mesh.bindMatrixInverse);
   assert.ok(bent.distanceTo(rigid)>.001,'The seam is blended, not rigidly assigned to one joint.');assert.ok(bent.distanceTo(expected)<1e-6);
   a.update({motion:'idle',resetPose:true});assert.ok(vertex(mesh,i).distanceTo(before)<1e-7);a.dispose();
 });
 
-test('Consolidation retains each garment tint instead of turning dark trousers into the ivory tunic',()=>{
-  const a=createActor({id:'hero',side:'player'},{chapter:1});let compared=false;
+test('Batched trousers retain their dark tint beside the separately weighted connected ivory tunic',()=>{
+  const a=createActor({id:'hero',side:'player'},{chapter:1}),legs=[],torso=[];
   for(const mesh of skins(a).filter(m=>!m.userData.overview&&m.material.map)){
-    const ids=mesh.geometry.attributes.skinIndex,color=mesh.geometry.attributes.color,legs=[],torso=[];
-    for(let i=0;i<ids.count;i++){const name=mesh.skeleton.bones[ids.getX(i)].name,value=(color.getX(i)+color.getY(i)+color.getZ(i))/3;if(name==='right-thigh')legs.push(value);if(name==='torso')torso.push(value);}
-    if(legs.length&&torso.length){const mean=v=>v.reduce((a,b)=>a+b,0)/v.length;assert.ok(mean(legs)<mean(torso)*.8,'Material tint remains visibly distinct after sharing one draw.');compared=true;}
+    const ids=mesh.geometry.attributes.skinIndex,color=mesh.geometry.attributes.color,tint=mesh.material.color;
+    for(let i=0;i<ids.count;i++){const name=mesh.skeleton.bones[ids.getX(i)].name,value=(tint.r*color.getX(i)+tint.g*color.getY(i)+tint.b*color.getZ(i))/3;if(name==='right-thigh')legs.push(value);if(mesh.userData.costume&&name==='torso')torso.push(value);}
   }
-  assert.ok(compared,'Test compares actual trouser and torso vertices sharing a draw.');a.dispose();
+  assert.ok(legs.length>100&&torso.length>100,'Test samples actual trouser and connected tunic vertices.');const mean=v=>v.reduce((a,b)=>a+b,0)/v.length;
+  assert.ok(mean(legs)<mean(torso)*.8,'Material color multiplied by batched vertex color preserves the visible distinction.');a.dispose();
 });
 
 test('Cloth has bounded secondary deformation and exact seek/reduced-motion behavior without moving contacts',()=>{

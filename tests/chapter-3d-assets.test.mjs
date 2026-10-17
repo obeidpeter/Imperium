@@ -8,13 +8,14 @@ const root=new URL('../',import.meta.url);
 async function paths(folder){
   const result=[];for(const entry of await readdir(new URL(folder,root),{withFileTypes:true})){const path=folder+entry.name;result.push(...entry.isDirectory()?await paths(path+'/'):['./'+path]);}return result;
 }
-const files=(await Promise.all(['src/showcase/','assets/showcase/','assets/models/','vendor/three/','showcase/'].map(paths))).flat();
+const files=(await Promise.all(['src/showcase/','assets/showcase/','assets/models/','assets/textures/','vendor/three/','showcase/'].map(paths))).flat();
+const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
 
 test('Every chapter can be restored cold with actual renderer, sound, vendor and materials; image decoding stays image-only',async()=>{
   const stage=await readFile(new URL('src/showcase/stage.js',root),'utf8');
   for(let chapter=1;chapter<=12;chapter++){
     const group=chapterOfflineAssets(chapter,files);
-    for(const required of ['./assets/models/roman-human-v017.glb','./vendor/three/addons/loaders/GLTFLoader.js','./src/showcase/stage.js','./src/showcase/battle-sound.js','./vendor/three/three.module.js','./vendor/three/three.core.js','./vendor/three/LICENSE','./assets/showcase/earth-v017.webp','./assets/showcase/stone-v017.webp','./assets/showcase/timber-v017.webp'])assert.ok(group.includes(required),`Chapter ${chapter}: ${required}`);
+    for(const required of ['./assets/models/roman-human-v017.glb','./assets/models/short-hair-v018.bin','./assets/textures/short-hair-v018.webp','./vendor/three/addons/loaders/GLTFLoader.js','./src/showcase/stage.js','./src/showcase/battle-sound.js','./vendor/three/three.module.js','./vendor/three/three.core.js','./vendor/three/LICENSE','./assets/showcase/earth-v017.webp','./assets/showcase/stone-v017.webp','./assets/showcase/timber-v017.webp'])assert.ok(group.includes(required),`Chapter ${chapter}: ${required}`);
     assert.ok(!group.includes('./showcase/index.html'));assert.ok(!group.includes('./src/showcase/showcase.css'));
     assert.ok(chapterAssets(chapter).every(path=>/\.(webp|png|jpe?g)$/.test(path)),'An image decoder must never receive a JS/CSS dependency');
     for(const match of stage.matchAll(/from\s+['"](\.\/[^'"]+)['"]/g))assert.ok(group.includes('./src/showcase/'+match[1].slice(2)),`Chapter ${chapter}: stage dependency omitted: ${match[1]}`);
@@ -26,9 +27,14 @@ test('Shared dependencies use identical deduplicated URLs across chapters withou
   for(let chapter=1;chapter<=12;chapter++){
     const art=chapterAssets(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
-    assert.deepEqual(group.filter(path=>!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)),first);
+    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)),first);
     for(const path of art)assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
+});
+
+test('Female anatomy and complexion are deferred through Chapter VII; male complexion is available for every cold restore',()=>{
+  for(const female of femaleAssets){assert.ok(files.includes(female));for(let chapter=1;chapter<=12;chapter++)assert.equal(chapterOfflineAssets(chapter,files).includes(female),chapter>=8,`Chapter ${chapter}: ${female}`);}
+  for(let chapter=1;chapter<=12;chapter++)assert.ok(chapterOfflineAssets(chapter,files).includes('./assets/textures/complexion-male-v018.webp'));
 });
 
 test('Cold chapters contain current character and foliage atlases while the superseded atlas remains in the full file inventory',()=>{

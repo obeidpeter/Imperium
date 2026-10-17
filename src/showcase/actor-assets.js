@@ -1,8 +1,13 @@
 import * as T from '../../vendor/three/three.module.js';
 import {GLTFLoader} from '../../vendor/three/addons/loaders/GLTFLoader.js';
+import {groomActorHair} from './actor-groom.js';
+import {fitActorNeck} from './actor-neck.js';
+import {actorHairGeometry} from './actor-hair-asset.js';
 
 export const ACTOR_MODEL_URL='assets/models/roman-human-v017.glb';
+export const FEMALE_ACTOR_MODEL_URL='assets/models/roman-woman-v018.glb';
 const url=new URL(`../../${ACTOR_MODEL_URL}`,import.meta.url).href;
+const femaleUrl=new URL(`../../${FEMALE_ACTOR_MODEL_URL}`,import.meta.url).href;
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 // One immutable loaded master. Each actor owns its adapted geometry/skeleton;
 // disposing an actor never disposes geometry still used by another actor.
@@ -11,38 +16,48 @@ export function createActorAssetLibrary(load=async()=>new GLTFLoader().loadAsync
   return {
     warm(){return pending??=(async()=>{try{const gltf=await load(),mesh=gltf.scene.getObjectByName('imported-human-anatomy');if(!mesh?.isSkinnedMesh||!mesh.geometry.attributes.skinWeight||mesh.skeleton.bones.length!==6)throw Error('Invalid anatomy asset');master={geometry:mesh.geometry,bones:mesh.skeleton.bones.map(b=>b.name)};return true;}catch(error){failure=String(error?.message??error);return false;}})();},
     status(){return {ready:!!master,pending:!!pending&&!master&&!failure,error:failure};},
-    anatomy(identity){return master?adaptAnatomy(master,identity):null;}
+    anatomy(identity,options){return master?adaptAnatomy(master,identity,options):null;}
   };
 }
-const library=createActorAssetLibrary();
-export const warmActorAssets=()=>library.warm();
-export const actorAssetStatus=()=>library.status();
-export const actorAnatomy=identity=>library.anatomy(identity);
+// Separate lazy masters avoid both an early female download and accidental male
+// substitution when female loading fails. The single-loader factory above keeps
+// its original injectable contract for tests and other authored anatomy sources.
+export function createActorAssetCatalog({maleLoad=async()=>new GLTFLoader().loadAsync(url),femaleLoad=async()=>new GLTFLoader().loadAsync(femaleUrl)}={}){
+  const male=createActorAssetLibrary(maleLoad),female=createActorAssetLibrary(femaleLoad),select=identity=>identity?.female===true?female:male;
+  return {warm:identity=>select(identity).warm(),status:identity=>select(identity).status(),anatomy:(identity,options)=>select(identity).anatomy(identity,options)};
+}
+const library=createActorAssetCatalog();
+export const warmActorAssets=identity=>library.warm(identity);
+export const actorAssetStatus=identity=>library.status(identity);
+export const actorAnatomy=(identity,options)=>library.anatomy(identity,options);
 
-function adaptAnatomy(master,id){
+function adaptAnatomy(master,id,{quality='balanced'}={}){
   const geometry=master.geometry.clone(),p=geometry.attributes.position,c=[];
   for(let i=0;i<p.count;i++){
     let x=p.getX(i),y=p.getY(i),z=p.getZ(i);const head=geometry.attributes.skinIndex.getX(i)===1,ly=y-1.485;
     if(head){const jaw=Math.exp(-(((ly+.012)/.055)**2)),cheek=Math.exp(-(((ly-.061)/.045)**2)),front=clamp((z+.01)/.09),nose=Math.exp(-((x/.024)**2+((ly-.05)/.055)**2));
       x*=1+(id.jaw-1)*jaw*.6+(id.cheek-1)*cheek*.6;z+=(id.nose-1)*.055*nose*front;
-      // The source crop includes the base of the neck. Tuck that boundary
-      // inside the continuous rig neck instead of exposing shoulder-like tabs.
-      const tuck=1-T.MathUtils.smoothstep(y,1.420,1.462),radius=Math.max(1,Math.hypot(x/.056,z/.052));x*=1-tuck*(1-1/radius);z*=1-tuck*(1-1/radius);
       const lip=Math.exp(-((x/.031)**4+((ly-.008)/.010)**2))*front,stubble=(id.beard??0)*.13*Math.exp(-(((ly+.015)/.045)**2))*front;
-      c.push(1-stubble-lip*.09,.98-stubble-lip*.27,.95-stubble-lip*.23);
-    }else {x+=(x<0?-1:1)*.006*((id.build??1)-1);c.push(.98,.96,.93);}
+      c.push(1-stubble*.4-lip*.02,.99-stubble*.4-lip*.06,.98-stubble*.4-lip*.04);
+    }else {x+=(x<0?-1:1)*.006*((id.build??1)-1);c.push(1,.99,.98);}
     p.setXYZ(i,x,y,z);
   }
+  fitActorNeck(master.geometry,geometry);
   // Packed glTF normals must be replaced before recomputation: accumulating
   // tiny facial triangle areas into normalized Int16 rounds them to zero.
   geometry.setAttribute('color',new T.Float32BufferAttribute(c,3));geometry.deleteAttribute('normal');geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();geometry.userData={asset:'MakeHuman CC0',identity:id.key};
-  const hair=surfaceSubset(geometry,(x,y,z)=>Math.min(y-(1.485+.085+clamp((z+.03)/.09)*((id.hair==='receding'?.17:.14)-.085)),.097-Math.abs(x)),.0055,id);
-  const beard=(id.beard??0)>.3?surfaceSubset(geometry,(x,y,z)=>Math.min(z-.015,y-1.418,1.507-y,Math.max(Math.abs(x)-.030,1.474-y)),.0028+id.beard*.003,id):null;
+  // The bound female groom reaches the nape; the male short/receding cut keeps
+  // its existing back and temple heights. The bound frontal hairline stays .148.
+  const backHairline=id.female?.038:.073,templeRise=id.female?.016:.028;
+  const hairline=(x,y,z)=>Math.min(y-(1.485+backHairline+clamp((z+.03)/.09)*((id.hair==='receding'?.165:id.hair==='bound'?.148:.133)-backHairline)+templeRise*clamp(Math.abs(x)/.085)**2+Math.sin(x*102)*(id.female?0:.0013)),.096-Math.abs(x));
+  const importedHair=actorHairGeometry(id),hair=importedHair??groomActorHair(surfaceSubset(geometry,hairline,.0035,id),id,{quality});
+  const beardLine=(x,y,z)=>{const side=clamp(Math.abs(x)/.10),mouth=(Math.hypot(x/.041,(y-1.494)/.022)-1)*.022;return Math.min(z-.015,y-(1.445+.012*side),1.493+.036*side**.7-y,mouth);};
+  const beard=(id.beard??0)>.3?groomActorHair(surfaceSubset(geometry,beardLine,.0019+id.beard*.002,id),id,{beard:true,quality}):null;
   function facePoint(x,y,offset=0){let front=-Infinity;const a=geometry.attributes.position,indices=geometry.index.array,py=y+1.485;
     for(let i=0;i<indices.length;i+=3){const ia=indices[i],ib=indices[i+1],ic=indices[i+2];if(geometry.attributes.skinIndex.getX(ia)!==1)continue;const ax=a.getX(ia),ay=a.getY(ia),bx=a.getX(ib),by=a.getY(ib),cx=a.getX(ic),cy=a.getY(ic),den=(by-cy)*(ax-cx)+(cx-bx)*(ay-cy);if(Math.abs(den)<1e-12)continue;const u=((by-cy)*(x-cx)+(cx-bx)*(py-cy))/den,v=((cy-ay)*(x-cx)+(ax-cx)*(py-cy))/den,w=1-u-v;if(u>=0&&v>=0&&w>=0)front=Math.max(front,u*a.getZ(ia)+v*a.getZ(ib)+w*a.getZ(ic));}
     return [x,y,Number.isFinite(front)?front+offset:.065+offset];
   }
-  return {geometry,hair,beard,bones:master.bones,facePoint};
+  return {geometry,hair,beard,importedHair:!!importedHair,bones:master.bones,facePoint};
 }
 function surfaceSubset(source,distance,offset,id){
   const p=source.attributes.position,n=source.attributes.normal,uv=source.attributes.uv,lookup=source.index.array,positions=[],normals=[],uvs=[],joints=[],weights=[];
@@ -56,12 +71,12 @@ function surfaceSubset(source,distance,offset,id){
   const g=new T.BufferGeometry();for(const [key,array,size]of [['position',positions,3],['normal',normals,3],['uv',uvs,2],['skinWeight',weights,4]])g.setAttribute(key,new T.Float32BufferAttribute(array,size));g.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));return g;
 }
 
-export function mountActorAnatomy(group,anatomy,{skin,hair,geometries,materials,skeletons}){
+export function mountActorAnatomy(group,anatomy,{skin,hair,beardHair=hair,geometries,materials,skeletons}){
   const all=[];group.traverse(o=>{if(o.isBone)all.push(o);});
   const bones=anatomy.bones.map(name=>name==='right-elbow'?all.find(b=>b.name==='elbow'&&b.parent.name==='right-shoulder'):name==='left-elbow'?all.find(b=>b.name==='elbow'&&b.parent.name==='left-shoulder'):all.find(b=>b.name===name));
   if(bones.some(b=>!b))throw Error('Missing anatomy bind joint');
   group.updateMatrixWorld(true);const skeleton=new T.Skeleton(bones);skeletons.add(skeleton);const meshes=[];
-  for(const [geometry,material,name]of [[anatomy.geometry,skin,'imported-anatomy'],[anatomy.hair,hair,'fitted-hair'],[anatomy.beard,hair,'fitted-beard']]){if(!geometry)continue;geometries.add(geometry);const mat=material.clone();mat.vertexColors=!!geometry.attributes.color;materials.add(mat);const mesh=new T.SkinnedMesh(geometry,mat);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;group.add(mesh);mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);meshes.push(mesh);}
+  for(const [geometry,material,name]of [[anatomy.geometry,skin,'imported-anatomy'],[anatomy.hair,hair,'fitted-hair'],[anatomy.beard,beardHair,'fitted-beard']]){if(!geometry)continue;geometries.add(geometry);const mat=material.clone();mat.vertexColors=!!geometry.attributes.color;materials.add(mat);const mesh=new T.SkinnedMesh(geometry,mat);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;group.add(mesh);mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);meshes.push(mesh);}
   return meshes;
 }
 

@@ -1,0 +1,44 @@
+{
+  "archive": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+  "license": "CC0-1.0",
+  "licenseFile": "LICENSE.CC0.md",
+  "creditedCreators": [
+    "Data Collection AB",
+    "Joel Palmius",
+    "Jonas Hauquier"
+  ],
+  "sourceScope": "Official CC0 short04 hair geometry, binding and alpha diffuse. Base anatomy and male macro-target hashes remain in source.json.",
+  "files": [
+    {
+      "file": "short04.mhmat",
+      "member": "hair/short04/short04.mhmat",
+      "bytes": 1316,
+      "sha256": "7a3ac74db8478aa0afdb8a596c6fe3997d1a8a09d12211d70e8f1e9f0b7e0e97"
+    },
+    {
+      "file": "short04.obj",
+      "member": "hair/short04/short04.obj",
+      "bytes": 55152,
+      "sha256": "676964a133ee35ffcea1195382bf75542da7a298931e4001bc7b0d7b707225de"
+    },
+    {
+      "file": "short04.mhclo",
+      "member": "hair/short04/short04.mhclo",
+      "bytes": 59195,
+      "sha256": "d60640aa4c4ffce1aa269647ba436b6ee0bb21bb948f927b84e27a48d2107157"
+    }
+  ],
+  "textureSource": {
+    "file": "short04_diffuse.png",
+    "member": "hair/short04/short04_diffuse.png",
+    "bytes": 2308132,
+    "sha256": "0bef7fc0e403db5a40fabb2111ebfa6f7e8158e204c6e56b8da98e9ef527846e"
+  },
+  "adaptation": {
+    "converter": "scripts/build-hair-actor-asset.mjs",
+    "binding": "Each mhclo vertex is its three target-deformed base vertices weighted by source coefficients plus axis offsets scaled by the named source-axis landmark difference / nominal.",
+    "headTransform": "Same male head transform as build-actor-asset.mjs; all weights bind to head joint index1.",
+    "packedFormat": "IHR1: bounds-quantized uint16 positions, normalized int8 normals, uint16UVs, uint16 triangle indices.",
+    "texture": "Full image resized2048\u2192256 LANCZOS; WebPquality76 method6 alpha_quality75 exact=True. No crop or repaint."
+  }
+}

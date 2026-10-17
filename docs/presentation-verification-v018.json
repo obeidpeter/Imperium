@@ -1,0 +1,912 @@
+{
+  "schema": "imperium-presentation-verification-v018",
+  "version": "0.18.0",
+  "revision": "a0dbf383f33b",
+  "status": "completed-verification",
+  "scope": "Presentation-only release. Measurements distinguish the full regression checkpoint, final targeted reruns, actual desktop browser fixture checks and agent-operated production interface/offline observations. No physical-device or independent human-study claim.",
+  "automated": {
+    "fullRegression": {
+      "tests": 562,
+      "passed": 562,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 55964.2689,
+      "source": "node-final.log",
+      "scope": "Full checkpoint before the final female/beard, helmet/crest and mail material polish."
+    },
+    "finalActors": {
+      "tests": 78,
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 15619.7197,
+      "source": "actor-final.log",
+      "scope": "After final geometry, costume, helmet/crest, female/beard and ownership changes; before the final mail scalar adjustment."
+    },
+    "finalMaterial": {
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 927.4157,
+      "source": "mail-final.log",
+      "scope": "After final mail metalness and roughness-field scalar adjustment."
+    },
+    "assetChecks": {
+      "passed": 13,
+      "checks": [
+        "asset manifest integrity and portrait/title budgets",
+        "declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance",
+        "complete audio provenance, deferred installation and chapter-specific soundscape groups",
+        "active chapter atlases exclude superseded artwork while the complete inventory preserves its exact bytes",
+        "shell-only install and truthful partial status",
+        "cold Chapter XI restore retries missing shared renderer and caches its own complete resource group",
+        "chapter 1 caches separately and never claims all chapters are offline",
+        "chapter-cached shared 3D dependencies survive offline reads; standalone page stays deferred until requested",
+        "version-scoped lookup ignores old artwork",
+        "failed deferred fetch does not claim offline readiness",
+        "retry completes all deferred assets and reports readiness",
+        "server-unavailable navigation uses current shell cache",
+        "both-brand activation cleanup preserves the current edition and unrelated caches; no forced skipWaiting"
+      ],
+      "source": "assets-final.log",
+      "scope": "Final build provenance/budgets plus simulated worker/cache protocols. Actual offline browser operation is separate."
+    }
+  },
+  "protectedComparison": {
+    "baselineVersion": "0.17.0",
+    "baselineSource": "work/v018/baseline/source/Imperium",
+    "files": 26,
+    "allUnchanged": true,
+    "coreFiles": 14,
+    "dataFiles": 9,
+    "saveAndSessionFiles": [
+      "src/showcase/session.js",
+      "src/ui/session-gate.js",
+      "src/ui/storage.js"
+    ],
+    "saveKey": "sacramentum.campaign.v1",
+    "saveKeyUnchanged": true,
+    "records": [
+      {
+        "path": "src/core/battle.js",
+        "baselineBytes": 43766,
+        "bytes": 43766,
+        "baselineSha256": "2ae1746616a96ac3b95c26ed074023ebce5f485c61f2bbc8b4270648d4f5c94a",
+        "sha256": "2ae1746616a96ac3b95c26ed074023ebce5f485c61f2bbc8b4270648d4f5c94a",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/campaign-options.js",
+        "baselineBytes": 10511,
+        "bytes": 10511,
+        "baselineSha256": "2faac4cfd19665e992127b2a64b3e0428968c0335057fc14ea9fccf31a7f9e95",
+        "sha256": "2faac4cfd19665e992127b2a64b3e0428968c0335057fc14ea9fccf31a7f9e95",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/career.js",
+        "baselineBytes": 6747,
+        "bytes": 6747,
+        "baselineSha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "sha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/contest.js",
+        "baselineBytes": 22943,
+        "bytes": 22943,
+        "baselineSha256": "c14cf5832fb6658af68743abbf0bc39a2de0a055940ec2a0aeaecbb3f344ae88",
+        "sha256": "c14cf5832fb6658af68743abbf0bc39a2de0a055940ec2a0aeaecbb3f344ae88",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/debug.js",
+        "baselineBytes": 951,
+        "bytes": 951,
+        "baselineSha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "sha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/game.js",
+        "baselineBytes": 37869,
+        "bytes": 37869,
+        "baselineSha256": "91c9fb268ceabe307263dcec11bf44a0ce3629c2c80716f2f3eb03e4e2c184db",
+        "sha256": "91c9fb268ceabe307263dcec11bf44a0ce3629c2c80716f2f3eb03e4e2c184db",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-battle.js",
+        "baselineBytes": 21650,
+        "bytes": 21650,
+        "baselineSha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "sha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-contest.js",
+        "baselineBytes": 13020,
+        "bytes": 13020,
+        "baselineSha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "sha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/operations.js",
+        "baselineBytes": 5525,
+        "bytes": 5525,
+        "baselineSha256": "1820f2c4c2ad9413b8dba381e449d70d7140cd33c3500a9a60209339b2dc668e",
+        "sha256": "1820f2c4c2ad9413b8dba381e449d70d7140cd33c3500a9a60209339b2dc668e",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/progression-operations.js",
+        "baselineBytes": 3528,
+        "bytes": 3528,
+        "baselineSha256": "3fee3604fd0557b90ad76caa45eed86af9198bc4dc1280b82436e5c1b7267569",
+        "sha256": "3fee3604fd0557b90ad76caa45eed86af9198bc4dc1280b82436e5c1b7267569",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/progression-politics.js",
+        "baselineBytes": 5583,
+        "bytes": 5583,
+        "baselineSha256": "d1b50da98e50bfdce3cc881ae15638c8ab684d51d5d4f72cd259b0b505b68be1",
+        "sha256": "d1b50da98e50bfdce3cc881ae15638c8ab684d51d5d4f72cd259b0b505b68be1",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/progression-veterans.js",
+        "baselineBytes": 4961,
+        "bytes": 4961,
+        "baselineSha256": "5f8ec5c2381aa10e796ab04afd1606fcaea7e872ce0ed022e465eef4896dec8f",
+        "sha256": "5f8ec5c2381aa10e796ab04afd1606fcaea7e872ce0ed022e465eef4896dec8f",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/progression.js",
+        "baselineBytes": 4971,
+        "bytes": 4971,
+        "baselineSha256": "404456c6bd34e2a6d163c719f5b8ea24dc6ef3be440c48cfc429da7439c0bc02",
+        "sha256": "404456c6bd34e2a6d163c719f5b8ea24dc6ef3be440c48cfc429da7439c0bc02",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/shared.js",
+        "baselineBytes": 3954,
+        "bytes": 3954,
+        "baselineSha256": "36a8b1bed07ae93979cb192ad5437cf02b9a1909b4465d1ffbae386fa71c5c4b",
+        "sha256": "36a8b1bed07ae93979cb192ad5437cf02b9a1909b4465d1ffbae386fa71c5c4b",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/battle-balance.js",
+        "baselineBytes": 1039,
+        "bytes": 1039,
+        "baselineSha256": "56800f108b0e5370fd7fba81c7bde6c53e16f057ba393d4034af59755a7ba515",
+        "sha256": "56800f108b0e5370fd7fba81c7bde6c53e16f057ba393d4034af59755a7ba515",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/battle-operations.js",
+        "baselineBytes": 4869,
+        "bytes": 4869,
+        "baselineSha256": "da42b95c74ed73a9e1744cf890a08c0668a42350d44bd5893167c0298800ae3a",
+        "sha256": "da42b95c74ed73a9e1744cf890a08c0668a42350d44bd5893167c0298800ae3a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/campaign-guidance.js",
+        "baselineBytes": 5719,
+        "bytes": 5719,
+        "baselineSha256": "17a86d5168ad696b9e6d83c890857f9f5a001d5515cea52a5ff4e04a6f42220c",
+        "sha256": "17a86d5168ad696b9e6d83c890857f9f5a001d5515cea52a5ff4e04a6f42220c",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/campaign.js",
+        "baselineBytes": 77226,
+        "bytes": 77226,
+        "baselineSha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "sha256": "9ea795f278d163a990bc90143419c8f73f62ab1b70850aa9899f103472eea23a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/contest-balance.js",
+        "baselineBytes": 1058,
+        "bytes": 1058,
+        "baselineSha256": "1cba2f634b4cd88db5c6965fda671af1d32126db64fdb48b5c1ce16c2517a4e9",
+        "sha256": "1cba2f634b4cd88db5c6965fda671af1d32126db64fdb48b5c1ce16c2517a4e9",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/encounters.js",
+        "baselineBytes": 5402,
+        "bytes": 5402,
+        "baselineSha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "sha256": "4d55897c5a67065ee1072573ac1c8fc75f2a24699243c7286ba6987b08602a6a",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/negotiators.js",
+        "baselineBytes": 1656,
+        "bytes": 1656,
+        "baselineSha256": "09df5a2e69332cc08fc29a74582e792fa4922ac17fad23d24173097865a41c64",
+        "sha256": "09df5a2e69332cc08fc29a74582e792fa4922ac17fad23d24173097865a41c64",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/progression-operations.js",
+        "baselineBytes": 6693,
+        "bytes": 6693,
+        "baselineSha256": "302b5a6d37df106c6a9d51a494e8a0ae6694951072a46b354f136e91e78437e7",
+        "sha256": "302b5a6d37df106c6a9d51a494e8a0ae6694951072a46b354f136e91e78437e7",
+        "unchanged": true
+      },
+      {
+        "path": "src/data/story-stages.js",
+        "baselineBytes": 20426,
+        "bytes": 20426,
+        "baselineSha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "sha256": "84ac98722fce4833ec1972a66b68306188621d521da1d9fabc616266f34bb021",
+        "unchanged": true
+      },
+      {
+        "path": "src/showcase/session.js",
+        "baselineBytes": 1448,
+        "bytes": 1448,
+        "baselineSha256": "567addd04ef16f7226361c798872d270d48be5af0a86654e0b37712a17ffcfd7",
+        "sha256": "567addd04ef16f7226361c798872d270d48be5af0a86654e0b37712a17ffcfd7",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/session-gate.js",
+        "baselineBytes": 1243,
+        "bytes": 1243,
+        "baselineSha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+        "sha256": "62d8d2f3ddaec7f9dd1fe6a018981e38071afa2d7a3bc230a6cc6b74affb16bb",
+        "unchanged": true
+      },
+      {
+        "path": "src/ui/storage.js",
+        "baselineBytes": 13452,
+        "bytes": 13452,
+        "baselineSha256": "6ccc8614f4efc2467cc3b5ea26ce6121d4dcdca8bca35e8b41e2eb2452dfa1d7",
+        "sha256": "6ccc8614f4efc2467cc3b5ea26ce6121d4dcdca8bca35e8b41e2eb2452dfa1d7",
+        "unchanged": true
+      }
+    ]
+  },
+  "legalCampaign": {
+    "source": "autoplay-final.log",
+    "seed": 275,
+    "rank": "Augustus",
+    "completedChapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "wonEncounters": 25,
+    "totalTurns": 217,
+    "scope": "New Game; legal gameplay API commands only"
+  },
+  "compatibility": {
+    "verifiedIn": "node-final.log",
+    "frozenRoutes": [
+      {
+        "version": "0.14.1",
+        "commands": 1041,
+        "exactRetries": 25
+      },
+      {
+        "version": "0.16.0",
+        "commands": 1079,
+        "exactRetries": 25
+      }
+    ],
+    "legacyActiveBattleAndContest": true,
+    "saveRoundTripsAndRngExact": true,
+    "progressionRoutes": "Full suite also legally exercises both progression careers, all 22 operation alternatives, all three earned veteran actions and six agreements; no new gameplay feature is introduced by v0.18."
+  },
+  "browser": {
+    "sweep": {
+      "status": "passed",
+      "rows": 25,
+      "assertions": 518,
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+      "fixtureCommands": 1079,
+      "scenes": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        }
+      ]
+    },
+    "additional": {
+      "status": "passed",
+      "rows": 3,
+      "assertions": 63,
+      "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+      "fixtureCommands": 1079,
+      "scenes": [
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "assertions": 20,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 1233,
+            "height": 468
+          }
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "assertions": 23,
+          "viewport": {
+            "width": 1280,
+            "height": 720,
+            "devicePixelRatio": 2
+          },
+          "canvas": {
+            "width": 360,
+            "height": 420
+          }
+        }
+      ]
+    },
+    "scope": "Actual Chromium 154 on Windows, viewport 1280×720 / DPR 2. The main canvas was 1233×468; the added narrow finale canvas was 360×420 inside that desktop viewport. Both reports precede only the final mail scalar tweak, subsequently inspected in the final ordinary-interface preview. The targeted raw file is cumulative (28 rows / 581 assertions); this record counts its three additional rows separately. No automated visual realism score or new FPS/GPU claim."
+  },
+  "ordinaryInterface": {
+    "source": "ui-final-offline.json; parent reviewer ordinary-interface observation, with exported-code equality independently rechecked.",
+    "restoredLegalChapter": 6,
+    "usedSaveDialog": true,
+    "enteredField": true,
+    "allChaptersDownloadReportedComplete": true,
+    "ownPreviewServerStopped": true,
+    "reloadedFromWorker": true,
+    "continueRestoredEncounter": true,
+    "portableSave": {
+      "byteIdentical": true,
+      "bytes": 4609,
+      "sha256": "b7f6f2bb2b4f2d24561465d07b34ea17081f881c211e26792cfb7d34680f8f37",
+      "before": "ui-save-before.txt",
+      "after": "ui-save-after-final-offline.txt"
+    },
+    "scope": "Final production revision on a clean local origin. Normal save-dialog restore, explicit complete download, owned preview server stopped, reload and Continue restored Chapter VI. This does not establish every chapter played offline, device OS airplane mode, installation, quota eviction or update durability on physical devices.",
+    "revision": "a0dbf383f33b",
+    "origin": "http://127.0.0.1:4427",
+    "encounter": "ch6-wells"
+  },
+  "build": {
+    "version": "0.18.0",
+    "revision": "a0dbf383f33b",
+    "runtimeFiles": 215,
+    "initialFiles": 79,
+    "deferredFiles": 136,
+    "initialGzipBytes": 398221,
+    "chapterOneGzipBytes": 7994830,
+    "completeGzipBytes": 11802569,
+    "completeBytes": 14676900,
+    "gates": {
+      "initial": 2000000,
+      "chapterOne": 8000000,
+      "complete": 24000000
+    },
+    "chapterOneHeadroomBytes": 5170,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace",
+    "reportSha256": "85faeb053de452d1c8409ed1749742a41e7657b8a4a37610c2f8f10ba52fe6f1"
+  },
+  "assetPolicy": {
+    "maleAnatomyAndComplexion": "Shared by all chapters.",
+    "shortHair": "One shared CC0 short topology and alpha texture; all chapters, independently owned actor geometry and reference-counted map.",
+    "femaleAnatomyAndComplexion": "Deferred until Chapter VIII; excluded from the initial shell and Chapters I–VII.",
+    "newThirdPartyRuntimeDependencies": 0,
+    "provenance": "docs/character-surfaces-v018.md and docs/asset-manifest.json"
+  },
+  "rawEvidence": [
+    {
+      "file": "node-final.log",
+      "workspacePath": "work/v018/node-final.log",
+      "bytes": 63277,
+      "sha256": "69c9888b8dc7ec55bdc476ad65b4eaadb6a0f9dc24f7b248f036eb9011c3b685"
+    },
+    {
+      "file": "actor-final.log",
+      "workspacePath": "work/v018/actor-final.log",
+      "bytes": 9394,
+      "sha256": "741aa9829e13a529363fd3a56da9bb0f70ad0b641660f6404201940dd8ce4e59"
+    },
+    {
+      "file": "mail-final.log",
+      "workspacePath": "work/v018/mail-final.log",
+      "bytes": 799,
+      "sha256": "4bf6d07add558da80f256d76f1287e280fc7de3ff47167a3e5e64ae732b66457"
+    },
+    {
+      "file": "assets-final.log",
+      "workspacePath": "work/v018/assets-final.log",
+      "bytes": 1049,
+      "sha256": "ccd8e099d495f2347752aa92af1363b5fe6dfed1ee6f9c2e96dfe7ff3658cc83"
+    },
+    {
+      "file": "build-final.log",
+      "workspacePath": "work/v018/build-final.log",
+      "bytes": 69296,
+      "sha256": "d17b4ce84fa0e4ad1430de3ea85fa53e1d8d61190c47c2b080ffd495812228a6"
+    },
+    {
+      "file": "autoplay-final.log",
+      "workspacePath": "work/v018/autoplay-final.log",
+      "bytes": 7343,
+      "sha256": "9071995de4fb063e1cda63a45898b18f950f23a13da1f05bd8ed359abe596323"
+    },
+    {
+      "file": "campaign-final.json",
+      "workspacePath": "work/v018/campaign-final.json",
+      "bytes": 370974,
+      "sha256": "f4e6ab20900874fb0e50210372cd56fddf80983a28561d1b7e81a2539041c558"
+    },
+    {
+      "file": "campaign-targeted-final.json",
+      "workspacePath": "work/v018/campaign-targeted-final.json",
+      "bytes": 416430,
+      "sha256": "5f14f3982b5dd00dd0ad42dcb7178c2aa65d36e7f9a39ecdd7fdaa182588815f"
+    },
+    {
+      "file": "character-recruit-measured.json",
+      "workspacePath": "work/v018/character-recruit-measured.json",
+      "bytes": 2540,
+      "sha256": "0ecf9234a02a5d2a108a700f531d431e15fe4e8dc32393af669db08fc1cafe62"
+    },
+    {
+      "file": "ui-save-before.txt",
+      "workspacePath": "work/v018/ui-save-before.txt",
+      "bytes": 4609,
+      "sha256": "b7f6f2bb2b4f2d24561465d07b34ea17081f881c211e26792cfb7d34680f8f37"
+    },
+    {
+      "file": "ui-save-after-offline.txt",
+      "workspacePath": "work/v018/ui-save-after-offline.txt",
+      "bytes": 4609,
+      "sha256": "b7f6f2bb2b4f2d24561465d07b34ea17081f881c211e26792cfb7d34680f8f37"
+    },
+    {
+      "file": "ui-final-offline.json",
+      "workspacePath": "work/v018/ui-final-offline.json",
+      "bytes": 325,
+      "sha256": "fed798185c3c5e3c25e28fb9eeecffaab2578c08545ba401f75c7debfa0e7cf5"
+    },
+    {
+      "file": "ui-save-after-final-offline.txt",
+      "workspacePath": "work/v018/ui-save-after-final-offline.txt",
+      "bytes": 4609,
+      "sha256": "b7f6f2bb2b4f2d24561465d07b34ea17081f881c211e26792cfb7d34680f8f37"
+    }
+  ],
+  "limitations": [
+    "Physical phones, Safari/iOS/Android GPU/thermal/battery behavior and human screen-reader testing were not performed.",
+    "Independent recruited human playtesting, enjoyment, likeness recognition and the target 90–150 minute pacing remain unverified.",
+    "The models combine imported exposed anatomy/complexion/short hair with original procedural clothing, equipment, limbs, female bound hair and horses; they are not full imported production characters or mocap performances.",
+    "One short hairstyle is reused across eligible male identities. Overview deliberately uses simpler geometry and surface detail.",
+    "A few horizontal source-rim triangles remain below the garment collar; neutral-pose circumference checks do not establish every extreme animated neck deformation.",
+    "Release archive/source-rebuild validation and remote publication are separate delivery steps and are not claimed by this verification record."
+  ],
+  "finalPreview": {
+    "path": "docs/images/imperium-v018-preview.png",
+    "bytes": 271560,
+    "sha256": "60cac4f75078f79d5c3cf8aad2693ab74229479b02fe4a996f3fde44f47c5521",
+    "revision": "a0dbf383f33b",
+    "scope": "Actual ordinary production interface after restoring the same legally reached Chapter VI portable code; final material calibration visible."
+  }
+}

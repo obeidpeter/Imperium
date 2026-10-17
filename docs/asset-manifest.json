@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 49 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, three original code-native installed-app icons, and fourteen original AI-generated audio files. No third-party source imagery or reference audio was supplied for the new generation. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
-  "runtimePolicy": "All shipped artwork and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
+  "rightsNotice": "This manifest covers 49 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
+  "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
       "id": "units-specialists",
@@ -4382,10 +4382,179 @@
         "triangles": 9904,
         "joints": 6
       }
+    },
+    {
+      "id": "roman-woman-v018",
+      "path": "assets/models/roman-woman-v018.glb",
+      "subject": "Female human head, neck and exposed arms; six weighted joints",
+      "source": {
+        "method": "Deterministic original adaptation/conversion of official MakeHuman CC0 anatomical mesh and female macro target",
+        "repository": "https://github.com/makehumancommunity/makehuman",
+        "revision": "a8bc2d54ff0ac92e78ff71431b1023eda42bf482",
+        "license": "CC0-1.0",
+        "provenance": "vendor/makehuman/female-source.json",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "converter": "scripts/build-female-actor-asset.mjs",
+        "instructions": "Apply the full female-young target, with no male or muscle target; fit actual female eye and arm landmarks to the established six-joint rig; preserve source OBJ UV coordinates."
+      },
+      "usage": "Female anatomy with original project clothing, hair, hands and rig; does not substitute a scaled male head.",
+      "loading": "Deferred local GLB with female complexion; first campaign use in Chapter VIII.",
+      "export": {
+        "format": "GLB 2.0",
+        "bytes": 225896,
+        "gzipLevel9Bytes": 134514,
+        "sha256": "b92c3c5bbc101453bf24aee5d804237f35b0fa80208b61b7a6461d363eb933ff",
+        "vertices": 5393,
+        "triangles": 10168,
+        "joints": 6
+      }
+    },
+    {
+      "id": "complexion-male-v018",
+      "path": "assets/textures/complexion-male-v018.webp",
+      "subject": "UV-matched male diffuse skin texture for imported exposed anatomy",
+      "source": {
+        "method": "Mechanical full-image reduction and WebP compression of an official MakeHuman CC0 diffuse texture; no AI generation or repainting",
+        "archive": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+        "member": "skins/young_caucasian_male/young_lightskinned_male_diffuse.png",
+        "sourceSha256": "862a26e335e958b70534cb5f0d7c47ef30ab148a56c42b3e9da969cf76f12963",
+        "sourceSize": [
+          2048,
+          2048
+        ],
+        "metadataMember": "skins/young_caucasian_male/young_caucasian_male.mhmat",
+        "metadataSha256": "6eda60b07ff2afbde078a2535ef3913593d84e9de92b2eb76c30f396a181fe2e",
+        "license": "CC0-1.0",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "creditedCreators": [
+          "Data Collection AB",
+          "Joel Palmius",
+          "Jonas Hauquier"
+        ],
+        "provenance": "docs/character-surfaces-v018.md",
+        "instructions": "Pillow RGB conversion, full 2048x2048 image resized to1024x1024 with LANCZOS, WebP quality80 method6 exact=True. No crop, UV rearrangement, pixel colour edit or file orientation change."
+      },
+      "usage": "Original spatial skin variation, lips and stubble; average source undertone is neutralized in memory before the actor tint. Repeat1 and flipY=true match the OBJ UV coordinates retained by the project GLB converter. No tiled bump or normal map is applied to this imported anatomy.",
+      "loading": "Deferred; male complexion in every chapter resource group.",
+      "export": {
+        "width": 1024,
+        "height": 1024,
+        "format": "WebP",
+        "quality": 80,
+        "method": 6,
+        "bytes": 36954,
+        "gzipLevel9Bytes": 36911,
+        "sha256": "9467b9111bb88cc62eed260a244d4159b6b4b54275d8225168c331dcd4788adf",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "complexion-female-v018",
+      "path": "assets/textures/complexion-female-v018.webp",
+      "subject": "UV-matched female diffuse skin texture for imported exposed anatomy",
+      "source": {
+        "method": "Mechanical full-image reduction and WebP compression of an official MakeHuman CC0 diffuse texture; no AI generation or repainting",
+        "archive": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+        "member": "skins/young_caucasian_female/young_lightskinned_female_diffuse.png",
+        "sourceSha256": "b2a6ac8cd4f9febdb447368e29c76cd68410bb66e46d9dcfa2d5f75126eea8fc",
+        "sourceSize": [
+          2048,
+          2048
+        ],
+        "metadataMember": "skins/young_caucasian_female/young_caucasian_female.mhmat",
+        "metadataSha256": "0bdea7786201f0b1132a24088336a97496ccdc54e9984db65d253a6a6d66f24f",
+        "license": "CC0-1.0",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "creditedCreators": [
+          "Data Collection AB",
+          "Joel Palmius",
+          "Jonas Hauquier"
+        ],
+        "provenance": "docs/character-surfaces-v018.md",
+        "instructions": "Pillow RGB conversion, full 2048x2048 image resized to1024x1024 with LANCZOS, WebP quality82 method6 exact=True. No crop, UV rearrangement, pixel colour edit or file orientation change."
+      },
+      "usage": "Original spatial skin variation, lips and stubble; average source undertone is neutralized in memory before the actor tint. Repeat1 and flipY=true match the OBJ UV coordinates retained by the project GLB converter. No tiled bump or normal map is applied to this imported anatomy.",
+      "loading": "Deferred with the female model; first campaign use in Chapter VIII.",
+      "export": {
+        "width": 1024,
+        "height": 1024,
+        "format": "WebP",
+        "quality": 82,
+        "method": 6,
+        "bytes": 50734,
+        "gzipLevel9Bytes": 50772,
+        "sha256": "6a7de0b783e0e76ce1a554f3c1d3df854f6b6b51caafddcd3ba9e449506fc887",
+        "alphaPreserved": false
+      }
+    },
+    {
+      "id": "short-hair-model-v018",
+      "path": "assets/models/short-hair-v018.bin",
+      "subject": "Fitted CC0 short04 head-weighted hair geometry",
+      "source": {
+        "method": "Deterministic fitting and quantized packing of official CC0 hair",
+        "archive": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+        "member": "hair/short04/short04.obj",
+        "sourceSha256": "676964a133ee35ffcea1195382bf75542da7a298931e4001bc7b0d7b707225de",
+        "license": "CC0-1.0",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "creditedCreators": [
+          "Data Collection AB",
+          "Joel Palmius",
+          "Jonas Hauquier"
+        ],
+        "provenance": "vendor/makehuman/hair-source.json",
+        "instructions": "scripts/build-hair-actor-asset.mjs verifies sources, applies mhclo fitting to pinned male target and packs positions/normals/UVs/indices."
+      },
+      "usage": "Shared short male hairstyle; female bound and long styles retain original groom. Alpha cutout0.4, no transparent sorting.",
+      "loading": "Lazy local asset; shared campaign chapter resources, excluded initial shell.",
+      "export": {
+        "format": "IHR1 packed geometry",
+        "bytes": 19223,
+        "gzipLevel9Bytes": 16559,
+        "sha256": "7565a90117e15ca3b68d2106dad0952349a1b40255a12ad133ff1c7000a1e8c4",
+        "vertices": 991,
+        "triangles": 1050,
+        "joints": 1
+      }
+    },
+    {
+      "id": "short-hair-texture-v018",
+      "path": "assets/textures/short-hair-v018.webp",
+      "subject": "Matching CC0 short04 alpha hair diffuse",
+      "source": {
+        "method": "Mechanical full-image resizing/compression of official CC0 alpha diffuse; no repainting",
+        "archive": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+        "member": "hair/short04/short04_diffuse.png",
+        "sourceSha256": "0bef7fc0e403db5a40fabb2111ebfa6f7e8158e204c6e56b8da98e9ef527846e",
+        "license": "CC0-1.0",
+        "licenseText": "vendor/makehuman/LICENSE.CC0.md",
+        "creditedCreators": [
+          "Data Collection AB",
+          "Joel Palmius",
+          "Jonas Hauquier"
+        ],
+        "provenance": "vendor/makehuman/hair-source.json",
+        "instructions": "Full2048RGBA→256RGBA LANCZOS; WebPquality76 method6 alpha_quality75 exact=True. Preserve full UV layout and alpha."
+      },
+      "usage": "Shared short male hairstyle; female bound and long styles retain original groom. Alpha cutout0.4, no transparent sorting.",
+      "loading": "Lazy local asset; shared campaign chapter resources, excluded initial shell.",
+      "export": {
+        "format": "WebP",
+        "bytes": 15974,
+        "gzipLevel9Bytes": 15997,
+        "sha256": "0759f18339119418d95e5a7c9d0fe967ce5ee000e3ecd1fcb6651e8650c098e8",
+        "width": 256,
+        "height": 256,
+        "quality": 76,
+        "method": 6,
+        "alphaQuality": 75,
+        "alphaPreserved": true
+      }
     }
   ],
-  "updatedAt": "2026-10-17T19:10:08.720335+00:00",
-  "totalArtworkBytes": 7268114,
+  "updatedAt": "2026-10-17T19:56:58.560354+00:00",
+  "totalArtworkBytes": 7371776,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -4396,16 +4565,19 @@
   "assetCounts": {
     "tactical": 5,
     "site": 2,
-    "icons": 3,
+    "icon-180.png": 1,
+    "icon-192.png": 1,
+    "icon-512.png": 1,
     "portraits": 22,
     "scenes": 8,
     "world": 3,
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 1
+    "models": 3,
+    "textures": 3
   },
   "totalAudioBytes": 3273036,
-  "totalBundledAssetBytes": 10761158,
-  "totalModelBytes": 220008
+  "totalBundledAssetBytes": 11109939,
+  "totalModelBytes": 465127
 }

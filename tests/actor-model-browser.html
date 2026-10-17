@@ -1,1 +1,21 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><title>Imported anatomy review — development only</title><style>body{margin:0;background:#d6cfc0;font:16px system-ui;color:#242724}header{padding:12px;display:flex;gap:12px;align-items:center}canvas{display:block;width:100%;height:82vh}button,select{padding:8px}pre{white-space:pre-wrap;padding:12px}</style><header>Actual imported character · neutral-light review <select id="motion"><option>idle</option><option>walk</option><option>attack</option><option>throw</option><option>brace</option><option>hit</option></select><button id="view">Head / body</button><button id="rotate">Rotate</button></header><canvas id="canvas"></canvas><pre id="report">Loading local CC0 anatomy…</pre><script type="module" src="./actor-model-browser.js"></script></html>
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imperium character inspection — development only</title>
+<style>
+:root{color-scheme:dark;font:15px/1.45 system-ui,sans-serif;color:#e4e3dc;background:#161a1d}*{box-sizing:border-box}body{margin:0}header{padding:14px 20px;border-bottom:1px solid #42494d}h1{font-size:1.15rem;margin:0 0 5px}p{margin:4px 0;color:#bbc2c4}.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:end;padding:12px 20px;background:#22282c}label{display:grid;gap:3px;font-size:.8rem}select,button,input{font:inherit}select,button{min-height:40px;border:1px solid #717b80;border-radius:4px;padding:7px 10px;background:#303a40;color:#f4f3ed}button:disabled{opacity:.5}input[type=range]{width:150px}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #e4c77f;outline-offset:2px}#stage{position:relative;background:#bdc3c3}canvas{display:block;width:100%;height:min(69vh,780px);min-height:300px}#caption{position:absolute;left:16px;bottom:12px;padding:6px 10px;color:#f6f4ed;background:#101820c9;pointer-events:none}#status{padding:9px 20px;border-bottom:1px solid #42494d}details{padding:10px 20px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.45 ui-monospace,monospace;color:#c4d9cb}#errors{color:#ffbfaa}small{color:#bec7c9}@media(max-width:600px){.controls{padding:10px;gap:8px}header{padding:12px}canvas{height:60vh}label{flex:1 1 130px}select{max-width:100%}#caption{font-size:12px;left:8px;bottom:8px}}
+</style>
+<header><h1>Production character inspection</h1><p>Actual actor, material and animation modules. Presentation archetypes only: no campaign, save or gameplay mutations.</p><small>Neutral light exposes anatomy and surface defects. Field light uses the selected chapter’s production lighting profile and reflection generator; this is not the complete battlefield renderer.</small></header>
+<div class="controls">
+  <label>Character<select id="actor"></select></label>
+  <label>Lighting<select id="lighting"><option value="neutral">Neutral studio</option><option value="field">Chapter field light</option></select></label>
+  <label>Framing<select id="view"><option value="body">Full body</option><option value="head">Head and shoulders</option></select></label>
+  <label>Motion<select id="motion"></select></label>
+  <label>Quality<select id="quality"><option value="performance">Performance</option><option value="balanced" selected>Balanced</option><option value="high">High</option></select></label>
+  <label>Action phase <output id="phase-label">0%</output><input id="phase" type="range" min="0" max="1" step=".005" value="0"></label>
+  <label>Facing <output id="yaw-label">0°</output><input id="yaw" type="range" min="-180" max="180" step="1" value="0"></label>
+  <button id="rotate">Rotate 45°</button><button id="play">Play 12 seconds</button><button id="sample">Measure 120 frames</button><button id="dispose">Dispose actor</button><button id="reload">Reload actor</button><button id="download">Download report</button>
+</div>
+<div id="status" role="status" aria-live="polite">Loading production character assets…</div>
+<div id="stage"><canvas id="canvas" aria-label="3D character inspection"></canvas><div id="caption">Loading…</div></div>
+<details open><summary>Measured resources and diagnostic results</summary><pre id="report">Waiting for the first frame.</pre><pre id="errors" role="alert"></pre></details>
+<script type="module" src="./actor-model-browser.js"></script></html>
