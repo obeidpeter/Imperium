@@ -8,11 +8,12 @@ const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve
 test('Complexion neutralization keeps UV pixel order and facial contrast without baking a second skin tint',()=>{
   const pixels=sample().data,before=pixels.slice(),result=normalizeActorComplexion(pixels);
   assert.deepEqual(pixels,before);assert.notEqual(result,pixels);
-  assert.ok(result.slice(0,3).every(n=>n>=245&&n<=247),'Ordinary skin becomes almost neutral white for actor tint.');
+  assert.ok(result.slice(0,3).every(n=>n>=227&&n<=229),'Neutral skin leaves highlight headroom for actor tint.');
   assert.ok(result[4]>result[5]&&result[4]>result[6],'The lip remains relatively red.');
   assert.ok(result[4]<result[0]-40,'Dark facial detail is not flattened.');
   assert.equal(result[3],255);assert.equal(result[7],255);
-  const female=normalizeActorComplexion(new Uint8Array([217,179,151,255]),'female');assert.ok(female.slice(0,3).every(n=>n>=245&&n<=247));
+  const female=normalizeActorComplexion(new Uint8Array([217,179,151,255]),'female');assert.ok(female.slice(0,3).every(n=>n>=227&&n<=229));
+  const highlights=normalizeActorComplexion(new Uint8Array([245,198,166,255,250,204,172,255]));assert.ok(highlights[4]>highlights[0]&&highlights[4]<255,'Nearby highlights retain distinct values instead of clipping flat white.');
   assert.throws(()=>normalizeActorComplexion(new Uint8Array(3)),RangeError);
 });
 test('Shared material upgrades in place, matches retained OBJ UV coordinates and never requests the other complexion',async()=>{

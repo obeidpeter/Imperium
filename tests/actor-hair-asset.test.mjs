@@ -24,7 +24,7 @@ test('Lazy master waits for the matching alpha image; actor clones preserve head
 });
 test('Hair alpha survives neutralization, uses cutout depth, and shared GPU resources release exactly once',async()=>{
   const pixels=new Uint8Array([10,20,30,0,30,35,40,96,40,40,40,255]),before=pixels.slice(),after=normalizeActorHair(pixels);assert.deepEqual(pixels,before);assert.deepEqual([after[3],after[7],after[11]],[0,96,255]);assert.ok(after[4]>pixels[4]*4);
-  const library=createActorHairLibrary({loadBinary:async()=>binary,loadTexture:async()=>image()});await library.warm();const a=library.acquire(),b=library.acquire();assert.equal(a.map,b.map);assert.equal(a.transparent,false);assert.equal(a.alphaTest,.4);assert.equal(a.side,T.DoubleSide);assert.equal(a.map.flipY,true);assert.equal(a.map.image.width,256);assert.equal(a.map.colorSpace,T.SRGBColorSpace);assert.equal(a.normalMap,null);
+  const library=createActorHairLibrary({loadBinary:async()=>binary,loadTexture:async()=>image()});await library.warm();const a=library.acquire(),b=library.acquire();assert.equal(a.map,b.map);assert.equal(a.transparent,false);assert.equal(a.alphaTest,.28);assert.equal(a.side,T.DoubleSide);assert.equal(a.map.flipY,true);assert.equal(a.map.image.width,256);assert.equal(a.map.colorSpace,T.SRGBColorSpace);assert.equal(a.normalMap,null);
   let disposals=0;a.map.addEventListener('dispose',()=>disposals++);library.release();assert.equal(disposals,0);library.release();assert.equal(disposals,1);library.release();assert.equal(disposals,1);const next=library.acquire();assert.notEqual(next.map,a.map);assert.equal(next.map.image.width,256);library.release();library.dispose();
 });
 test('Failed or late asset loads never expose partial geometry or revive disposed maps',async()=>{
@@ -33,3 +33,4 @@ test('Failed or late asset loads never expose partial geometry or revive dispose
   const final=deferred(),closed=createActorHairLibrary({loadBinary:()=>final.promise,loadTexture:async()=>image()}),p=closed.warm();closed.dispose();final.resolve(binary);assert.equal(await p,false);assert.equal(closed.geometry(),null);
 });
 test('Default Node import and construction do not fetch or require image decoding',async()=>{const library=createActorHairLibrary();assert.equal(await library.warm(),false);assert.equal(library.status().error,null);assert.equal(library.geometry(),null);library.dispose();});
+

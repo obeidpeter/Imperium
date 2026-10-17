@@ -104,8 +104,9 @@ test('Final production actors retain two forward-facing physical irises through 
     const actor=createActor(unit,{assetLibrary:catalog,quality:'balanced'}),eyes=[];actor.group.traverse(o=>{if(o.isSkinnedMesh&&o.material?.isMeshPhysicalMaterial&&o.material.clearcoat===.8)eyes.push(o);});
     assert.equal(eyes.length,1,'Both irises share one physical material draw after batching.');const mesh=eyes[0],p=mesh.geometry.attributes.position,n=mesh.geometry.attributes.normal;
     assert.equal(p.count,1920);assert.equal(mesh.material.roughness,.27);assert.equal(mesh.material.clearcoatRoughness,.15);assert.equal(mesh.material.vertexColors,true);
-    // The center ring repeats its point; zero-area fan triangles have no visible surface.
-    let nondegenerate=0;for(let i=0;i<p.count;i+=3){a.fromBufferAttribute(p,i);b.fromBufferAttribute(p,i+1);c.fromBufferAttribute(p,i+2);normal.subVectors(b,a).cross(c.sub(a));if(normal.lengthSq()<1e-22)continue;assert.ok(normal.z>0);for(let j=0;j<3;j++)assert.ok(n.getZ(i+j)>0,'Every rendered eye triangle shades forward.');nondegenerate++;}assert.ok(nondegenerate>500);
+    // The center ring repeats its point; aperture-clipped outer rings also meet
+    // at the eyelid boundary. Both legitimately create zero-area triangles.
+    let nondegenerate=0;for(let i=0;i<p.count;i+=3){a.fromBufferAttribute(p,i);b.fromBufferAttribute(p,i+1);c.fromBufferAttribute(p,i+2);normal.subVectors(b,a).cross(c.sub(a));if(normal.lengthSq()<1e-22)continue;assert.ok(normal.z>0);for(let j=0;j<3;j++)assert.ok(n.getZ(i+j)>0,'Every rendered eye triangle shades forward.');nondegenerate++;}assert.ok(nondegenerate>400);
     actor.dispose();
   }
 });

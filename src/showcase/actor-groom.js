@@ -2,12 +2,12 @@ import * as T from '../../vendor/three/three.module.js';
 
 // Small opaque, sculpted locks follow the actual adapted scalp. The connected
 // underlayer closes every viewing angle; no sorting-dependent alpha cards.
-export function groomActorHair(surface,identity,{beard=false,quality='balanced'}={}){
+export function groomActorHair(surface,identity,{beard=false,quality='balanced',edgeDistance=null}={}){
   if(!surface?.attributes.position.count)return surface;
   const positions=[],normals=[],uvs=[],colors=[],joints=[],weights=[];
   const p=surface.attributes.position,n=surface.attributes.normal;
   const hash=(x,y,z)=>{const a=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453;return a-Math.floor(a);};
-  function vertex(point,normal,tint){positions.push(...point.toArray());normals.push(...normal.toArray());uvs.push(Math.atan2(point.x,point.z+.02)/Math.PI*3,(point.y-1.4)*20);colors.push(tint,tint*.99,tint*.97);joints.push(1,0,0,0);weights.push(1,0,0,0);}
+  function vertex(point,normal,tint){positions.push(...point.toArray());normals.push(...normal.toArray());uvs.push(Math.atan2(point.x,point.z+.02)/Math.PI*3,(point.y-1.4)*20);colors.push(tint,tint*.99,tint*.97);if(edgeDistance)colors.push(edgeDistance?Math.max(0,Math.min(1,(edgeDistance(point.x,point.y,point.z)-.0002)/.0045)):1);joints.push(1,0,0,0);weights.push(1,0,0,0);}
   const sculpt=(point,normal)=>{
     const a=Math.atan2(point.x,point.z+.02),height=point.y-1.4,wave=identity.hair==='curly'?Math.sin(a*22+height*165)*Math.cos(height*160-a*3):Math.sin(a*34+height*55);
     return {p:point.clone().addScaledVector(normal,(beard?.00025:.0011)*wave),n:normal,tint:.91+wave*.07};
@@ -47,5 +47,5 @@ export function groomActorHair(surface,identity,{beard=false,quality='balanced'}
     }
     for(let j=0;j<ringCount;j++)for(let k=0;k<ringSides;k++)for(const [r,c]of [[j,k],[j+1,k],[j,k+1],[j,k+1],[j+1,k],[j+1,k+1]])vertex(rings[r][c].p,rings[r][c].n,.84+seed*.25);
   }
-  const geometry=new T.BufferGeometry();for(const [key,array,size]of [['position',positions,3],['normal',normals,3],['uv',uvs,2],['color',colors,3],['skinWeight',weights,4]])geometry.setAttribute(key,new T.Float32BufferAttribute(array,size));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));geometry.computeBoundingSphere();geometry.userData={groom:true,locks:locks.length,beard};surface.dispose();return geometry;
+  const geometry=new T.BufferGeometry();for(const [key,array,size]of [['position',positions,3],['normal',normals,3],['uv',uvs,2],['color',colors,edgeDistance?4:3],['skinWeight',weights,4]])geometry.setAttribute(key,new T.Float32BufferAttribute(array,size));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));geometry.computeBoundingSphere();geometry.userData={groom:true,locks:locks.length,beard};surface.dispose();return geometry;
 }

@@ -1,14 +1,20 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Version 0.18 character presentation in the production game](docs/images/imperium-v018-preview.png)
+![Version 0.19 recruit face in the production-character inspection scene](docs/images/imperium-v019-face.png)
 
-*Actual version 0.18 production gameplay.*
+*Actual version 0.19 character, shown in the neutral-light development inspection scene.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
-## Version 0.18 — fitted characters and wearable equipment
+## Version 0.19 — more natural faces
+
+Fitted almond eye openings, restrained irises and weighted eyelids replace the prominent round eye surfaces. Fine tapered eyebrows follow the skin. Complexion normalization preserves more highlight variation; mature faces gain subtle cheek and fold shaping. Beards include fuller moustaches and feather into the skin, while scalp edges and the imported short-hair cutout are softened.
+
+The changes use the existing male and female anatomy and textures, with no new runtime art downloads. Gameplay and save files remain unchanged. See the [v0.19 validation record](docs/release-validation-v019.md) for the final build, regression results and browser-check scope.
+
+## Historical version 0.18 — fitted characters and wearable equipment
 
 Characters use fitted complexion textures on imported male and separate female anatomy. Their original UV coordinates keep facial features aligned with the sculpt. Fitted necklines and helmet openings follow the head and collar, and eye surfaces retain their intended highlights through material batching. A locally bundled short-hair model and cutout texture replace the scalp cap on eligible male figures; bound female hair retains its original fitted geometry. The short-haired figures share one source model, with identity-specific fitting and tint.
 

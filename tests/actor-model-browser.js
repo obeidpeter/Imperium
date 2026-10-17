@@ -11,7 +11,7 @@ const $=id=>document.getElementById(id),params=new URLSearchParams(location.sear
 let renderer,scene,camera,actor=null,lighting=null,lightGroup=null,floor=null,selection=actorCase(params.get('actor')),generation=0,disposed=false,raf=0,previous=0,elapsed=0,playUntil=0,sampling=null,resetPose=true,resourceStats=null;
 let disposedActors=0,createdActors=0,loadMs=0,profile=null,frameCosts=[],frameIntervals=[],sampleResult=null,sampleTimer=0;
 const canvas=$('canvas');
-function error(message){errors.push(String(message));if(errors.length>12)errors.shift();$('errors').textContent=errors.join('\n');$('status').textContent='Diagnostic error — see the report below.';}
+function error(message){errors.push(String(message));if(errors.length>12)errors.shift();$('errors').textContent=errors.join('\n');$('status').textContent='Diagnostic error â€” see the report below.';}
 window.addEventListener('error',event=>error(event.message));window.addEventListener('unhandledrejection',event=>error(event.reason?.message??event.reason));
 $('actor').innerHTML=ACTOR_CASES.map(item=>`<option value="${item.id}">${item.label}</option>`).join('');
 $('motion').innerHTML=ACTOR_MOTIONS.map(motion=>`<option value="${motion}">${motion}</option>`).join('');
@@ -21,7 +21,7 @@ const dpr=Math.max(.5,Math.min(2,Number(params.get('dpr'))||devicePixelRatio||1)
 const neutral={sky:'#c2c8c9',fog:'#c2c8c9',sun:'#fff2de',ambient:'#e3eaf2',ambientGround:'#a6a49c',sunPosition:[-3,5,4],sunIntensity:2.2,ambientIntensity:1.6,exposure:1.1};
 const timeout=(promise,ms)=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(`Asset readiness exceeded ${ms/1000} seconds; reload to retry.`)),ms);promise.then(value=>{clearTimeout(timer);resolve(value);},cause=>{clearTimeout(timer);reject(cause);});});
 
-function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,phase:Number($('phase').value),yaw:Number($('yaw').value),pixelRatio:dpr};}
+function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,phase:Number($('phase').value),yaw:Number($('yaw').value),pixelRatio:dpr,closedEyelids:$('blink').checked};}
 const selectedIdentity=()=>actorIdentity(selection.unit,actorKit(selection.unit,selection.options));
 function syncUrl(){const query=new URLSearchParams();for(const [key,value]of Object.entries(configuration()))query.set(key==='pixelRatio'?'dpr':key,value);history.replaceState(null,'',`${location.pathname}?${query}`);}
 function report(){
@@ -62,16 +62,16 @@ function draw(ms){
     const moving=playUntil>ms||!!sampling,delta=previous?Math.max(0,Math.min(.05,(ms-previous)/1000)):0,interval=previous?ms-previous:null;previous=ms;
     if(moving){elapsed+=delta;$('phase').value=(elapsed%1.8)/1.8;}
     const phase=Number($('phase').value),started=performance.now();resize();
-    actor.update({motion:$('motion').value,time:elapsed,phase,direction:Number($('yaw').value)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:2,active:true});resetPose=false;
+    actor.update({motion:$('motion').value,time:$('blink').checked?4.58-(actorKit(selection.unit,selection.options).identity%13)*.13:elapsed,phase,direction:Number($('yaw').value)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:2,active:true});resetPose=false;
     frameCamera();renderer.render(scene,camera);const cost=performance.now()-started;
-    $('phase-label').textContent=`${Math.round(phase*100)}%`;$('yaw-label').textContent=`${$('yaw').value}°`;$('caption').textContent=`${selection.label} · ${$('lighting').selectedOptions[0].textContent} · ${$('motion').value} ${Math.round(phase*100)}%`;
+    $('phase-label').textContent=`${Math.round(phase*100)}%`;$('yaw-label').textContent=`${$('yaw').value}Â°`;$('caption').textContent=`${selection.label} Â· ${$('lighting').selectedOptions[0].textContent} Â· ${$('motion').value} ${Math.round(phase*100)}%`;
     if(sampling&&sampling.warmup--<=0){frameCosts.push(cost);if(interval!==null)frameIntervals.push(interval);if(frameCosts.length>=120){sampling=null;clearTimeout(sampleTimer);playUntil=0;sampleResult={completed:true,frames:120};$('sample').disabled=false;$('play').textContent='Play 12 seconds';$('status').textContent='Completed 120 actual render samples. See scope and timings below.';resourceStats=actorResources(actor.group);report();}}
     if(!moving||!sampling&&playUntil<=ms){$('play').textContent='Play 12 seconds';resourceStats=actorResources(actor.group);report();}else if(frameCosts.length&&frameCosts.length%30===0)report();
     if(playUntil>ms||sampling)requestFrame();
   }catch(cause){stop('render failure');error(cause.stack??cause.message);report();}
 }
 async function replaceActor(){
-  if(!renderer)return;stop('selection changed');const ticket=++generation;actor?.dispose();if(actor)disposedActors++;actor=null;resourceStats=null;frameCosts=[];frameIntervals=[];sampleResult=null;renderer.renderLists.dispose();selection=actorCase($('actor').value);$('status').textContent=`Preparing ${selection.label}…`;
+  if(!renderer)return;stop('selection changed');const ticket=++generation;actor?.dispose();if(actor)disposedActors++;actor=null;resourceStats=null;frameCosts=[];frameIntervals=[];sampleResult=null;renderer.renderLists.dispose();selection=actorCase($('actor').value);$('status').textContent=`Preparing ${selection.label}â€¦`;
   const candidate=createActor(selection.unit,{...selection.options,quality:$('quality').value});createdActors++;
   try{await timeout(candidate.ready,15000);if(disposed||ticket!==generation){candidate.dispose();disposedActors++;return;}actor=candidate;scene.add(actor.group);elapsed=Number($('phase').value)*1.8;resetPose=true;setLighting();resourceStats=actorResources(actor.group);syncUrl();$('status').textContent=`Ready: ${selection.label}. Choose a pose or play a bounded 12-second loop.`;requestFrame();}
   catch(cause){candidate.dispose();disposedActors++;if(actor===candidate)actor=null;error(cause.stack??cause.message);report();}
@@ -81,6 +81,7 @@ for(const id of ['actor','quality'])$(id).addEventListener('change',replaceActor
 $('lighting').addEventListener('change',()=>{stop('lighting changed');clearSamples();setLighting();syncUrl();requestFrame();});
 for(const id of ['view','motion'])$(id).addEventListener('change',manualPose);
 for(const id of ['phase','yaw'])$(id).addEventListener('input',manualPose);
+$('blink').addEventListener('change',manualPose);
 $('rotate').onclick=()=>{$('yaw').value=(Number($('yaw').value)+225)%360-180;manualPose();};
 $('play').onclick=()=>{if(playUntil>performance.now()){stop();requestFrame();return;}if(!actor)return;previous=0;playUntil=performance.now()+12000;$('play').textContent='Pause';$('status').textContent='Playing a maximum of 12 seconds; hidden tabs stop immediately.';requestFrame();};
 $('sample').onclick=()=>{if(!actor)return;stop('new sample');frameCosts=[];frameIntervals=[];sampleResult=null;previous=0;sampling={warmup:12};$('sample').disabled=true;$('status').textContent='Measuring 120 actual frames after 12 warm-up frames; no FPS/GPU inference.';sampleTimer=setTimeout(()=>stop('30-second deadline'),30000);requestFrame();};

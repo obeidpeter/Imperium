@@ -9,7 +9,7 @@ const kindOf=kind=>kind==='female'||kind?.female===true?'female':'male';
 export function normalizeActorComplexion(source,kind='male'){
   if(!source||source.length%4)throw new RangeError('Expected RGBA complexion pixels');
   const data=new Uint8Array(source.length),base=reference[kindOf(kind)];
-  for(let i=0;i<source.length;i+=4){for(let c=0;c<3;c++)data[i+c]=Math.max(18,Math.min(255,Math.round(246*(1+.9*(source[i+c]/base[c]-1)))));data[i+3]=255;}
+  for(let i=0;i<source.length;i+=4){for(let c=0;c<3;c++)data[i+c]=Math.max(18,Math.min(255,Math.round(228*(1+1.1*(source[i+c]/base[c]-1)))));data[i+3]=255;}
   return data;
 }
 async function decodeBrowserTexture(url){
@@ -33,7 +33,7 @@ export function createActorComplexionLibrary(load=decodeBrowserTexture){
   function record(kind){
     if(disposed)throw Error('Complexion library disposed');
     let entry=records.get(kind);if(entry)return entry;
-    const map=new T.DataTexture(new Uint8Array([246,246,246,255]),1,1,T.RGBAFormat);
+    const map=new T.DataTexture(new Uint8Array([228,228,228,255]),1,1,T.RGBAFormat);
     // The project GLBs preserve the source OBJ's UV coordinates verbatim.
     // Their V axis therefore needs the image flip despite the GLB container.
     map.colorSpace=T.SRGBColorSpace;map.flipY=true;map.wrapS=map.wrapT=T.ClampToEdgeWrapping;

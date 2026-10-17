@@ -49,7 +49,7 @@ export function createActorHairLibrary({loadBinary,loadTexture}={}){
     acquire(){
       if(disposed)throw Error('Hair library disposed');refs++;
       if(!map){map=new T.DataTexture(pixels?.data??new Uint8Array([220,220,220,255]),pixels?.width??1,pixels?.height??1,T.RGBAFormat);map.colorSpace=T.SRGBColorSpace;map.flipY=true;map.wrapS=map.wrapT=T.ClampToEdgeWrapping;map.magFilter=T.LinearFilter;map.minFilter=T.LinearMipmapLinearFilter;map.generateMipmaps=true;map.anisotropy=4;map.userData.source=ACTOR_HAIR_TEXTURE;map.needsUpdate=true;}
-      void warm();return {map,normalMap:null,bumpMap:null,roughnessMap:null,bumpScale:0,roughness:.82,metalness:0,side:T.DoubleSide,alphaTest:.4,transparent:false,alphaToCoverage:true};
+      void warm();return {map,normalMap:null,bumpMap:null,roughnessMap:null,bumpScale:0,roughness:.82,metalness:0,side:T.DoubleSide,alphaTest:.28,transparent:false,alphaToCoverage:true};
     },
     release(){if(refs>0)refs--;if(!refs&&map){map.dispose();map=null;}},
     dispose(){if(disposed)return;disposed=true;map?.dispose();map=null;master=pixels=null;refs=0;}

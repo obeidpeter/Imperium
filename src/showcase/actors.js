@@ -16,6 +16,7 @@ import {handGeometry,bootGeometry} from './actor-extremities.js';
 import {acquireActorHairSurface,releaseActorHairSurface} from './actor-hair-asset.js';
 import {acquireActorComplexion,releaseActorComplexion,warmActorComplexion} from './actor-complexion.js';
 import {warmActorHair} from './actor-hair-asset.js';
+import {actorEye,actorBrow} from './actor-face.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -78,6 +79,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const skin=material(new T.Color(p.skin).offsetHSL(0,-.01,((kit.identity%9)-4)*.008),{roughness:.78,...surface('skin')}),cloth=material(p.cloth,clothSurface),clothDark=material(new T.Color(p.cloth).lerp(new T.Color(0x705238),.32).multiplyScalar(.72),clothSurface),leather=material(p.leather,leatherSurface),hair=material(new T.Color(p.hair).lerp(new T.Color(0x807669),identity.grey),surface('hair')),metal=material(p.metal,surface('metal')),bronze=material(p.bronze,surface('metal')),white=material(0xd7cbaa),black=material(0x241b17),eyeWhite=material(0xbfb4a2,{roughness:.28}),iris=new T.MeshPhysicalMaterial({color:0xffffff,vertexColors:true,roughness:.27,clearcoat:.8,clearcoatRoughness:.15}),shieldPaint=material(p.shield,paintSurface),lip=material(raider?0x925c47:0x85503f),practiceWood=trainer?material(0x9d8053,paintSurface):null;
   materials.add(iris);let armorMaterial=null;
   cloth.name='woven tunic';leather.name='worked leather';shieldPaint.name='painted wooden shield';
+  const importedSkin=anatomy?skin.clone():null;if(importedSkin){Object.assign(importedSkin,complexion.acquire(identity));materials.add(importedSkin);}
+  const browHair=material(new T.Color(p.hair).lerp(new T.Color(0x807669),identity.grey*.65).multiplyScalar(.65),{roughness:.95});
   let replacingAnatomy=false;
   const mesh=(parent,geometry,mat,x=0,y=0,z=0)=>{geometries.add(geometry);const m=new T.Mesh(geometry,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;m.userData.anatomyReplacement=replacingAnatomy;parent.add(m);return m;};
   const ellipsoid=(parent,mat,x,y,z,rx,ry,rz)=>{const m=mesh(parent,new T.SphereGeometry(1,detail?16:10,detail?10:7),mat,x,y,z);m.scale.set(rx,ry,rz);return m;};
@@ -105,7 +108,13 @@ function createActorRig(unit={},options={},reuseGroup=null){
     faceDetail(head,skin,side*.095,.069,-.008,.012,.027,.012);
     faceDetail(head,lip,side*.102,.069,-.004,.0025,.014,.004);
     replacingAnatomy=false;
-    const eyeX=side*.036*(anatomy?1:identity.eyes),eyeZ=anatomy?.074:facePoint(eyeX,.096,identity)[2]+.002;
+    if(anatomy){
+      const face=(x,y,offset)=>anatomy.facePoint(x,y,offset),eye=actorEye({side,seed:kit.identity,identity,facePoint:face});
+      eyeWhite.vertexColors=true;mesh(head,eye.sclera,eyeWhite);mesh(head,eye.iris,iris);
+      const lid=part(head,side<0?'right-eyelid':'left-eyelid');mesh(lid,eye.upperLid,importedSkin);mesh(head,eye.lowerLid,importedSkin);lid.userData.closeDistance=eye.closeDistance;lids.push(lid);
+      mesh(head,actorBrow({side,identity,facePoint:face}),browHair);
+    }else{
+    const eyeX=side*.036*identity.eyes,eyeZ=facePoint(eyeX,.096,identity)[2]+.002;
     faceDetail(head,eyeWhite,eyeX,.096,eyeZ,.0155,anatomy?.0065:.006,anatomy?.014:.005);
     mesh(head,irisGeometry(kit.identity),iris,eyeX-side*.001,.096,eyeZ+(anatomy?.0134:.0047));
     strip(head,hair,[[side*.018,.116],[side*.036,.121],[side*.059,.113]].map(([x,y])=>facePoint(x,y,identity,.001)),(identity.female?.0011:.0015)*identity.brow);
@@ -113,6 +122,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     strip(head,skin,[[side*.021,.100],[eyeX,.104],[side*.052,.100]].map(([x,y])=>facePoint(x,y,identity,.0014)),.0017);
     const lid=part(head,side<0?'right-eyelid':'left-eyelid',eyeX,.101,eyeZ+(anatomy?.012:.004));
     faceDetail(lid,skin,0,0,0,.0155,.0025,.0035);lid.userData.openY=.101;lids.push(lid);
+    }
     // Nostrils and mature nasolabial creases are inset surface marks.
     if(!anatomy){const nostril=facePoint(side*.011,.031,identity,.0015);faceDetail(head,lip,...nostril,.004,.0018,.0018);}
     if(!anatomy&&identity.age>34&&detail)strip(head,lip,[[side*.026,.039],[side*.032,.021],[side*.034,.007]].map(([x,y])=>facePoint(x,y,identity,.001)),.0008);
@@ -300,7 +310,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   farMeshes=bindActorSurfaces(group,farMeshes,{geometries,materials,skeletons,clothRigs,overview:true});
   const costume=mountActorCostume(group,{kit,cloth,armor:armorMaterial,quality:options.quality,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
-  if(anatomy){const importedSkin=skin.clone();Object.assign(importedSkin,complexion.acquire(identity));materials.add(importedSkin);let fittedHair=hair;if(anatomy.importedHair){fittedHair=hair.clone();Object.assign(fittedHair,acquireActorHairSurface(identity));materials.add(fittedHair);}const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
+  if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
   let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;
   const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
@@ -339,7 +349,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     }
     group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX,pose.headY,0);skirt.rotation.x=pose.skirt;
     const seconds=Number.isFinite(input.time)?Math.max(0,input.time):0,blinkPhase=(seconds+((kit.identity%13)*.13))%4.7,blink=input.reducedMotion?0:blinkPhase>4.46?Math.sin((blinkPhase-4.46)/.24*Math.PI):0;
-    for(const lid of lids){lid.position.y=lid.userData.openY-blink*(anatomy?.009:.005);lid.scale.y=1+blink*2.5;}
+    for(const lid of lids){if(lid.userData.closeDistance){lid.position.y=-blink*lid.userData.closeDistance;lid.position.z=blink*.0006;}else{lid.position.y=lid.userData.openY-blink*.005;lid.scale.y=1+blink*2.5;}}
     const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0;
     mouth.rotation.x=emphasis*.10;mouth.position.y=.001-emphasis*.002;
     for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;
