@@ -31,6 +31,14 @@ test('Shared dependencies use identical deduplicated URLs across chapters withou
   }
 });
 
+test('Cold chapters contain current character and foliage atlases while the superseded atlas remains in the full file inventory',()=>{
+  const retired='./assets/showcase/character-materials-v015.webp';assert.ok(files.includes(retired),'The historical file is retained for the complete download');
+  for(let chapter=1;chapter<=12;chapter++){
+    const group=chapterOfflineAssets(chapter,files);assert.ok(!group.includes(retired),`Chapter ${chapter} must not download the unused atlas`);
+    for(const current of ['./assets/showcase/character-materials-v016.webp','./assets/showcase/foliage-v016.webp'])assert.ok(group.includes(current),`Chapter ${chapter} needs ${current}`);
+  }
+});
+
 test('A cold restored Senate chapter retries missing 3D code, works offline and reuses it for the next chapter',async()=>{
   const template=await readFile(new URL('scripts/service-worker.template.js',root),'utf8'),base='https://imperium.test/game/',initial=['./index.html','./src/ui/app.js'];
   const groups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,files)])),all=[...new Set([...initial,...files,...Object.values(groups).flat()])];
@@ -50,7 +58,10 @@ test('A cold restored Senate chapter retries missing 3D code, works offline and 
   await fire('message',{data:{type:'cache-chapter',chapter:12},source:client});assert.equal(messages.at(-1).ready,true);
   assert.equal(fetches.filter(url=>url===normal('./vendor/three/three.module.js')).length,count,'Same-edition renderer must not redownload by chapter');
   assert.ok(!fetches.includes(normal('./showcase/index.html')));assert.ok(!fetches.includes(normal('./src/showcase/showcase.css')));
+  const retired='./assets/showcase/character-materials-v015.webp';assert.ok(!fetches.includes(normal(retired)),'Chapter installation never requests the retired atlas');
   assert.ok(!messages.some(m=>m.type==='offline-ready'),'Two restored chapters are not the complete campaign');
   offline=true;
   for(const path of groups[11]){const response=await fire('fetch',{request:{method:'GET',url:normal(path),mode:'cors'}});assert.equal(await response.text(),'current:'+normal(path));}
+  offline=false;await fire('message',{data:'cache-campaign',source:client});assert.ok(messages.some(m=>m.type==='offline-ready'),'Explicit complete download still includes historical files');
+  assert.ok(fetches.includes(normal(retired)));offline=true;const historical=await fire('fetch',{request:{method:'GET',url:normal(retired),mode:'cors'}});assert.equal(await historical.text(),'current:'+normal(retired));
 });

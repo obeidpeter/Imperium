@@ -2,7 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 const cached=new Map();
 const paintedTiles=new Map();
 let atlasPromise=null,atlasState='procedural';
-export const ACTOR_MATERIAL_ATLAS=new URL('../../assets/showcase/character-materials-v015.webp',import.meta.url).href;
+export const ACTOR_MATERIAL_ATLAS=new URL('../../assets/showcase/character-materials-v016.webp',import.meta.url).href;
 // Source quadrants have no padding: use the decoded image dimensions, including
 // the shipped 1254px image, rather than assuming a power-of-two master.
 export function actorAtlasRects(width,height){
@@ -17,7 +17,7 @@ export function normalizeActorAlbedo(source,kind){
   for(let i=0;i<source.length;i+=4){for(let c=0;c<3;c++)data[i+c]=Math.max(35,Math.min(255,220+(source[i+c]/Math.max(1,mean[c])-1)*220*contrast));data[i+3]=255;}
   return data;
 }
-function installTile(kind,entry){const tile=paintedTiles.get(kind);if(!tile)return;entry.surface.map.image={data:tile.data,width:tile.size,height:tile.size};entry.surface.map.needsUpdate=true;entry.surface.map.userData.source='character-materials-v015';}
+function installTile(kind,entry){const tile=paintedTiles.get(kind);if(!tile)return;entry.surface.map.image={data:tile.data,width:tile.size,height:tile.size};entry.surface.map.needsUpdate=true;entry.surface.map.userData.source='character-materials-v016';}
 /** Optional browser preload; synchronous actor construction always has a native
  * fallback. Live maps update in place, so rig/skin batches need no rebuilding. */
 export function warmActorMaterials(){

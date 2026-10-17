@@ -9,7 +9,7 @@ const fixtures=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',i
 function view(position,mounted,pose){const target=new T.Vector3(position.x,position.y+(mounted?1.2:.85),position.z),camera=target.clone().add(new T.Vector3(Math.sin(pose.yaw)*Math.cos(pose.pitch)*pose.distance,Math.sin(pose.pitch)*pose.distance,Math.cos(pose.yaw)*Math.cos(pose.pitch)*pose.distance));return {target,camera};}
 function assertSightlines(world,position,mounted,pose){
   const {camera}=view(position,mounted,pose),ray=new T.Raycaster(),solids=[];world.group.updateMatrixWorld(true);
-  world.group.traverse(o=>{if(o.isMesh&&o!==world.ground&&!o.material.transparent&&!(o.material.side===T.DoubleSide&&!o.material.map))solids.push(o);});
+  world.group.traverse(o=>{if(o.isMesh&&o!==world.ground&&!o.material.userData.environmentVegetation&&!o.material.transparent&&!(o.material.side===T.DoubleSide&&!o.material.map))solids.push(o);});
   for(const height of mounted?[.95,2.05,3.05]:[.65,1.35,2.13]){
     const target=new T.Vector3(position.x,position.y+height,position.z),length=target.distanceTo(camera);
     ray.set(camera,target.clone().sub(camera).normalize());ray.near=.015;ray.far=length-.18;assert.equal(ray.intersectObjects(solids,false).length,0,`Clear camera-to-body sightline at ${height}m`);
@@ -47,4 +47,13 @@ test('Focus returns null for enclosed candidates and ignores nonblocking foliage
   const shell=new T.Mesh(new T.BoxGeometry(4,7,4),new T.MeshStandardMaterial({side:T.DoubleSide,map:new T.Texture()}));group.add(shell);
   assert.equal(findFocusCamera({group},{position}),null);assert.equal(findFocusCamera({group},{position:{x:NaN,y:0,z:0}}),null);
   group.traverse(o=>{o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();});
+});
+
+test('Textured alpha foliage does not steer Follow, while the same opaque architectural shell still blocks it',()=>{
+  const group=new T.Group(),map=new T.DataTexture(new Uint8Array([91,121,57,255]),1,1),material=new T.MeshStandardMaterial({map,side:T.DoubleSide,alphaTest:.42}),geometry=new T.BoxGeometry(4,7,4),mesh=new T.Mesh(geometry,material);group.add(mesh);
+  material.userData.environmentVegetation=true;
+  assert.deepEqual(findFocusCamera({group},{position:{x:0,y:0,z:0}}),{yaw:1.1,pitch:.36,distance:7.5});
+  delete material.userData.environmentVegetation;
+  assert.equal(findFocusCamera({group},{position:{x:0,y:0,z:0}}),null,'Textured tent or opaque bark surfaces do not inherit the foliage exemption');
+  geometry.dispose();material.dispose();map.dispose();
 });

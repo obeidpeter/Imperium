@@ -31,7 +31,7 @@ export function createSceneLighting(renderer,scene,profile,{quality='balanced'}=
   const source=new T.DataTexture(data,width,height,T.RGBAFormat,T.FloatType);source.mapping=T.EquirectangularReflectionMapping;source.needsUpdate=true;
   const generator=new T.PMREMGenerator(renderer);let output;
   try{output=generator.fromEquirectangular(source);}finally{source.dispose();generator.dispose();}
-  scene.environment=output.texture;scene.environmentIntensity=.68;
+  scene.environment=output.texture;scene.environmentIntensity=.46;
   let disposed=false;
   return {stats:()=>({type:'locally generated HDR sky reflection',width,height,intensity:scene.environmentIntensity,perFrameCaptures:0}),dispose(){if(disposed)return;disposed=true;if(scene.environment===output.texture)scene.environment=null;output.dispose();}};
 }

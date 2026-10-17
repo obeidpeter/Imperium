@@ -10,6 +10,8 @@ import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
+import {createVegetationFactory} from './environment-foliage.js';
+import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -26,7 +28,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0};
-  if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves]){
+  if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves,m.foliage]){
     const previousCompile=material.onBeforeCompile,previousKey=material.customProgramCacheKey();
     material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
@@ -36,6 +38,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
       #endif`);};
     material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v1`;
   }
+  const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
   const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
   for(let i=0;i<pos.count;i++){
@@ -43,22 +46,20 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
     const yard=1-smooth(Math.max(Math.abs(x)-halfX+.8,Math.abs(z)-halfZ+.8)/2.7),wear=training?yard*(.72+patch*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48;
-    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78));
+    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78+roadSurface.sample(x,z).verge*.61));
   }
   groundGeometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
   const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,groundUV.getX(i)*40,groundUV.getY(i)*40);
   groundGeometry.computeVertexNormals();const ground=p.mesh(root,groundGeometry,m.ground);ground.name='continuous ground';ground.castShadow=false;ground.userData.environmentGround=true;
 
-  const roads=roadSegments(e,tileSize),roadVertices=[],roadUV=[],roadColors=[],roadIndices=[];
-  const roadDistance=(x,z)=>roads.reduce((nearest,[a,b])=>{const dx=b.x-a.x,dz=b.z-a.z,t=clamp(((x-a.x)*dx+(z-a.z)*dz)/(dx*dx+dz*dz));return Math.min(nearest,Math.hypot(x-a.x-dx*t,z-a.z-dz*t));},Infinity);
+  const roadVertices=[],roadUV=[],roadColors=[],roadIndices=[];
   // A single distance-field surface follows the authored road, with rounded
   // joins and a feathered verge. No tile-sized quads or overlapping junctions.
-  if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.66,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
+  if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.78,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
     for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
-      const x=minX+ix*step,z=minZ+iz*step,d=roadDistance(x,z),edge=(noise(x*1.3,z*1.3,17)-.5)*.20,alpha=1-smooth((d+edge-tileSize*.25)/(tileSize*.34));
-      const rut=Math.exp(-Math.pow((d-tileSize*.19)/.105,2)),tone=1-rut*.14;
-      roadVertices.push(x,height(x,z)+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,alpha*(training?.62:.95));
+      const x=minX+ix*step,z=minZ+iz*step,surface=roadSurface.sample(x,z),tone=surface.tone;
+      roadVertices.push(x,height(x,z)+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
       if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
     }
   }
@@ -114,27 +115,20 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }else {const wagon=p.wagon(root,cartX,height(cartX,cartZ),cartZ,-.2);wagon.name='frontier supply wagon';}
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
-  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial};
+  const vegetation=createVegetationFactory({p,m,instance,height,quality});
+  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation};
   addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);
 
-  // Volumetric branches and thousands of individual bent leaves build tree
-  // crowns. Leaves are small 3D surfaces, never a whole-tree billboard.
+  // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
+  // batches. The small geometric leaves below remain a low-growth fallback.
   const leafGeometry=p.geo(new THREE.BufferGeometry()),leafVertices=[],leafIndices=[];
   for(let row=0;row<=5;row++)for(let col=0;col<3;col++){const t=row/5,s=col-1,w=Math.sin(Math.PI*t)*.105;leafVertices.push(s*w,t*.31,.035*t*t+.028*(1-s*s)*Math.sin(Math.PI*t));if(row<5&&col<2){const a=row*3+col;leafIndices.push(a,a+1,a+3,a+1,a+4,a+3);}}
   leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute(leafVertices,3));leafGeometry.setIndex(leafIndices);leafGeometry.computeVertexNormals();
   const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
-    const [x,z,h]=trees[t],base=height(x,z);
+    const [x,z,h]=trees[t];
     if(precinctRoute(x,z)>.10)continue;
-    for(let root=0;root<3;root++){const angle=root*2.399+t*.71,reach=.85+hash(root,t)*.6,xx=x+Math.cos(angle)*reach,zz=z+Math.sin(angle)*reach;branch([xx,height(xx,zz)+.025,zz],[x,base+.6,z],.13,'oak root buttresses',m.darkWood);}
-    branch([x,base-.15,z],[x+.18,base+h*.75,z-.1],.28,'oak trunk',m.darkWood);
-    for(let k=0;k<8;k++){
-      const angle=k*2.399+t,reach=h*(.26+hash(t,k)*.15),cy=base+h*(.55+hash(k,t)*.36),cx=x+Math.cos(angle)*reach,cz=z+Math.sin(angle)*reach;
-      branch([x+.12,base+h*(.35+k*.033),z],[cx,cy,cz],.10,'oak bough',m.darkWood);
-      const n=perf?30:high?80:58;
-      for(let j=0;j<n;j++){const a=hash(j,k,t)*6.283,rr=Math.sqrt(hash(j,t,k))*h*.24,px=cx+Math.cos(a)*rr,pz=cz+Math.sin(a)*rr,py=cy+(hash(t+j,k,9)-.5)*h*.24,scale=.85+hash(j,k,12)*1.25;
-        instance('oak leaves',leafGeometry,m.leaves,[px,py,pz],[scale,scale,scale],[hash(j,8)*1.5,hash(j,k)*6.28,hash(j,4)*1.5],new THREE.Color().setRGB(.60+hash(j,k)*.36,.72+hash(k,j)*.23,.47+hash(j,k,4)*.22));}
-    }
+    vegetation.tree('oak',x,z,h,t);
   }
   // Grasses use crossed, tapered geometry with varying height, not a flat
   // green carpet. Board tufts are shorter and sparser than the framing meadow.
@@ -158,7 +152,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // board. Its shared leaves add a second scale to the fine grass tufts.
   if(profile.vegetation==='meadow')for(let i=0;i<(perf?40:high?150:100);i++){
     const x=(hash(i,204)-.5)*48,z=(hash(i,205)-.5)*36;if(isPlayable(x,z,e,tileSize,1.8)||z<-18||roadDistance(x,z)<tileSize*.7||precinctRoute(x,z)>.12||noise(x*.24,z*.24,77)<.43)continue;
-    for(let j=0;j<5;j++){const angle=j*2.399+hash(i,j)*.7,s=1.15+hash(i,j,207)*.65;instance('broadleaf verge growth',leafGeometry,m.leaves,[x+(hash(i,j,208)-.5)*.45,height(x,z)+.025,z+(hash(j,i,209)-.5)*.45],[s*1.4,s,s],[1.03+(hash(j,i)-.5)*.35,angle,0],new THREE.Color(.68+hash(i,j,210)*.24,.78+hash(j,i,211)*.18,.52+hash(i,j,212)*.25));}
+    for(let j=0;j<(perf?2:3);j++){const angle=j*2.399+hash(i,j)*.7,s=.50+hash(i,j,207)*.30;vegetation.spray('meadow','broadleaf verge growth',x+(hash(i,j,208)-.5)*.25,height(x,z)+.025,z+(hash(j,i,209)-.5)*.25,[s,s,s],[.08,angle,(hash(i,j)-.5)*.3],i*7+j);}
   }
   // Fern fronds are compound leaves along bent stems, kept outside the board.
   for(let i=0;i<(profile.vegetation==='meadow'?(perf?12:30):0);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1)||precinctRoute(x,z)>.12)continue;const base=height(x,z);

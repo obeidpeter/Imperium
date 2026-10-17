@@ -1,4 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
+import {closeRadialNormals} from './actor-geometry.js';
 const bell=(v,c,w)=>Math.exp(-(((v-c)/w)**2)*2);
 // Original landmark sculpt over an owned garment mesh. Joint origins and soles
 // are unchanged: anatomy shapes the surface without stretching the contact rig.
@@ -14,6 +15,10 @@ export function sculptActorGeometry(geometry,region,identity={build:1}){
       // Broad diagonal tension across the belt, not periodic corrugation.
       z+=front*.004*Math.sin(y*32+x*11)*waist;
       if(identity.female)x*=1-.045*waist;
+    }else if(region==='shoulder'){
+      // Sleeve crown nests inside the torso slope; the joint stays put. The
+      // old high centered dome looked like a separate armored shoulder ball.
+      x-=(identity.side??1)*.028*bell(y,.006,.10);
     }else if(region==='thigh'){
       const muscle=bell(y,-.15,.13);x*=1+(build-1)*muscle*.7;z+=front*.009*muscle;
     }else if(region==='calf'){
@@ -34,5 +39,7 @@ export function sculptActorGeometry(geometry,region,identity={build:1}){
     p.setXYZ(i,x,y,z);colours.push(shade,shade,shade);
   }
   if(region.startsWith('horse'))geometry.setAttribute('color',new T.Float32BufferAttribute(colours,3));
-  p.needsUpdate=true;geometry.computeVertexNormals();geometry.userData.anatomy=region;return geometry;
+  p.needsUpdate=true;
+  if(geometry.userData.radialClosed)closeRadialNormals(geometry,geometry.userData.radialColumns,geometry.userData.radialRows);else geometry.computeVertexNormals();
+  geometry.userData.anatomy=region;return geometry;
 }

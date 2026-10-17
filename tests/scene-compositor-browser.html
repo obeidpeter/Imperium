@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Imperium compositor · local GPU checks</title>
+<style>body{margin:0;background:#f3eddf;color:#242724;font:16px/1.45 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:20px}h1{font:28px Georgia,serif}button{min-height:44px;padding:10px 18px;color:white;background:#742b30;border:0;font:inherit}button:disabled{opacity:.5}canvas{display:block;width:min(100%,720px);height:auto;margin:16px 0;background:#242724}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#fffaf0;padding:16px;font:12px/1.4 monospace}.samples{display:flex;gap:12px;flex-wrap:wrap}.samples figure{margin:0;width:240px}.samples img{width:100%}small{display:block}</style>
+<script type="module" src="./scene-compositor-browser.js"></script></head>
+<body><main><h1>Compositor · local GPU checks</h1>
+<p>Development harness. Renders a small neutral scene through the actual Three.js renderer and game compositor. Reads visible framebuffer pixels immediately after rendering. No game state, saves, storage or network services are used.</p>
+<button id="run">Run GPU compositor checks</button>
+<small>Checks all three qualities and deliberately compiles one invalid finishing shader to verify a visible fallback. Shader errors from that final diagnostic are expected and labelled. This is correctness testing, not a GPU performance benchmark.</small>
+<p id="status" role="status" aria-live="polite">Ready. No checks have run.</p>
+<canvas id="view" width="720" height="400" aria-label="Actual neutral GPU test scene"></canvas>
+<div id="samples" class="samples"></div><pre id="result" tabindex="0">{"status":"not-run"}</pre></main></body></html>

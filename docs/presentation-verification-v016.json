@@ -1,0 +1,790 @@
+{
+  "schema": "imperium-presentation-verification-v016",
+  "version": "0.16.0",
+  "revision": "e134886e141e",
+  "scope": "Compact aggregate of recorded local automated, legal-command, actual desktop browser and ordinary production UI evidence. Raw local task evidence is not embedded.",
+  "automated": {
+    "node": {
+      "tests": 473,
+      "passed": 473,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 113979.0208
+    },
+    "finalRender": {
+      "tests": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0,
+      "durationMs": 3104.1449
+    },
+    "assetChecks": {
+      "passed": 13,
+      "scope": "Build manifest, budgets, provenance and simulated service-worker/offline behavior."
+    }
+  },
+  "build": {
+    "files": 178,
+    "bytes": 13203993,
+    "gzipBytes": 10772905,
+    "initialFiles": 71,
+    "initialGzipBytes": 379690,
+    "chapterOneGzipBytes": 7894819,
+    "completeGzipBytes": 10776706,
+    "completeBytes": 13250855,
+    "deferredFiles": 107,
+    "firstLoadBudget": 2000000,
+    "chapterOneBudget": 8000000,
+    "completeBudget": 24000000,
+    "measurement": "sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace"
+  },
+  "legalAutoplay": {
+    "source": "New Game; legal gameplay API commands only",
+    "seed": 275,
+    "rank": "Augustus",
+    "completedChapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "encounters": 25,
+    "won": 25,
+    "totalTurns": 217,
+    "withdrawals": 2,
+    "limitations": "One seeded legal New Game route re-run for this graphics release; not human pacing or enjoyment evidence."
+  },
+  "campaignBrowser": {
+    "version": "0.16.0",
+    "status": "complete",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "fixtureSource": "New Game, seed 275. Full legal autoplay trace replay; complete encounter-start checkpoints and exact legal commands. No debug injection, progression editing or browser save writes.",
+    "fixtureCommands": 1079,
+    "scope": "Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.",
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "devicePixelRatio": 2
+    },
+    "canvas": {
+      "width": 1233,
+      "height": 468
+    },
+    "scenes": [
+      {
+        "id": "ch1-training",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch1-road",
+        "chapter": 1,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch2-marsh",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch2-rearguard",
+        "chapter": 2,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch3-station",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch3-rolls",
+        "chapter": 3,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch4-gate",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch4-wall",
+        "chapter": 4,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch5-mine",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch5-wall",
+        "chapter": 5,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch6-wells",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch6-eagle",
+        "chapter": 6,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch7-council",
+        "chapter": 7,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch7-legion",
+        "chapter": 7,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch8-parley",
+        "chapter": 8,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch8-ferry",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch8-crossing",
+        "chapter": 8,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch9-wing",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch9-city",
+        "chapter": 9,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch10-road",
+        "chapter": 10,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch10-tribunal",
+        "chapter": 10,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch11-accounts",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch11-adlection",
+        "chapter": 11,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch12-legitimacy",
+        "chapter": 12,
+        "kind": "contest",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "compositorEnabled": true
+      },
+      {
+        "id": "ch12-confrontation",
+        "chapter": 12,
+        "kind": "battle",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "balanced",
+        "compositorEnabled": true
+      }
+    ],
+    "assertions": 518,
+    "passed": 518
+  },
+  "gpuCompositor": {
+    "status": "passed",
+    "checks": 21,
+    "passed": 21,
+    "viewport": {
+      "width": 1280,
+      "height": 720,
+      "dpr": 2
+    },
+    "drawingBuffer": {
+      "width": 720,
+      "height": 400
+    },
+    "floatTargetsSupported": true,
+    "qualities": [
+      {
+        "quality": "balanced",
+        "meanLuminance": 146.36705563861562,
+        "luminanceRange": 86.79519999999998,
+        "neutralDelta": 1,
+        "contactDarkening": {
+          "max": 28,
+          "mean": 9.331606666666673
+        },
+        "glError": 0,
+        "enabled": true
+      },
+      {
+        "quality": "high",
+        "meanLuminance": 146.25377386500145,
+        "luminanceRange": 86.79519999999998,
+        "neutralDelta": 1,
+        "contactDarkening": {
+          "max": 34.21260000000001,
+          "mean": 12.376091111111117
+        },
+        "glError": 0,
+        "enabled": true
+      },
+      {
+        "quality": "performance",
+        "meanLuminance": 141.43384251872692,
+        "luminanceRange": 45.88860000000001,
+        "neutralDelta": 0,
+        "contactDarkening": {
+          "max": 0,
+          "mean": 0
+        },
+        "glError": 0,
+        "enabled": false
+      }
+    ],
+    "unexpectedShaderErrors": 0,
+    "expectedInjectedShaderErrors": 1,
+    "deliberateFailureFallbackEnabled": true,
+    "limitation": "Synthetic neutral-scene correctness test using the real GPU; not a campaign performance or physical-device test."
+  },
+  "matchedRoadComparison": {
+    "baselineVersion": "0.15.0",
+    "candidateVersion": "0.16.0",
+    "sameCamera": true,
+    "sameSave": true,
+    "baseline": {
+      "scene": "ch1-road",
+      "turn": 1,
+      "quality": "balanced",
+      "camera": {
+        "mode": "follow",
+        "selected": "hero",
+        "inspected": "hero",
+        "yaw": 1.4288992721907328,
+        "pitch": 0.36,
+        "distance": 7.5,
+        "target": [
+          -8.75,
+          0.85,
+          -1.25
+        ],
+        "quality": "balanced"
+      },
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 5.099999904632568,
+        "p95Ms": 6.6000001430511475,
+        "maxMs": 8.599999904632568
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 17.200000047683716,
+        "p95Ms": 35,
+        "maxMs": 49.40000009536743
+      },
+      "rafIntervals": {
+        "count": 159,
+        "medianMs": 16.699999999953434,
+        "p95Ms": 16.800000000046566,
+        "maxMs": 33.29999999993015
+      },
+      "drawCalls": {
+        "min": 95,
+        "mean": 114.2,
+        "max": 191,
+        "last": 191
+      },
+      "triangles": {
+        "min": 422348,
+        "mean": 463822.4,
+        "max": 629720,
+        "last": 629720
+      },
+      "resources": {
+        "textures": 40,
+        "geometries": 108
+      },
+      "compositor": null,
+      "startSaveSHA256": "1fdca2352013bc1188ce6814f69b6c9de9583f37f8bce784c9c7af5bde76e465",
+      "saveUnchanged": true
+    },
+    "candidate": {
+      "scene": "ch1-road",
+      "turn": 1,
+      "quality": "balanced",
+      "camera": {
+        "mode": "follow",
+        "selected": "hero",
+        "inspected": "hero",
+        "yaw": 1.4288992721907328,
+        "pitch": 0.36,
+        "distance": 7.5,
+        "target": [
+          -8.75,
+          0.85,
+          -1.25
+        ],
+        "quality": "balanced"
+      },
+      "activity": "Idle legally reached encounter; no active animation",
+      "warmupFrames": 18,
+      "renderFrames": 120,
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "devicePixelRatio": 2
+      },
+      "canvas": {
+        "width": 1233,
+        "height": 468
+      },
+      "cpuRender": {
+        "count": 120,
+        "medianMs": 5.099999904632568,
+        "p95Ms": 6.799999952316284,
+        "maxMs": 7.900000095367432
+      },
+      "stageIntervals": {
+        "count": 119,
+        "medianMs": 17.100000143051147,
+        "p95Ms": 35.299999952316284,
+        "maxMs": 36.700000047683716
+      },
+      "rafIntervals": {
+        "count": 160,
+        "medianMs": 16.699999999982538,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 16.800000000017462
+      },
+      "drawCalls": {
+        "min": 96,
+        "mean": 116,
+        "max": 192,
+        "last": 192
+      },
+      "triangles": {
+        "min": 397009,
+        "mean": 434690.6666666667,
+        "max": 577881,
+        "last": 577881
+      },
+      "resources": {
+        "textures": 45,
+        "geometries": 113
+      },
+      "compositor": {
+        "enabled": true,
+        "quality": "balanced",
+        "method": "linear HDR + depth contact shading + edge antialiasing",
+        "directions": 8,
+        "depthSamples": 16,
+        "width": 1849,
+        "height": 702,
+        "drawingWidth": 1849,
+        "drawingHeight": 702,
+        "passes": 2,
+        "temporalHistory": false,
+        "fallback": null
+      },
+      "startSaveSHA256": "1fdca2352013bc1188ce6814f69b6c9de9583f37f8bce784c9c7af5bde76e465",
+      "saveUnchanged": true
+    },
+    "interpretation": "One warmed idle Follow-camera sample on this desktop browser. CPU submission medians are both approximately5.1ms; these measurements do not establish GPU time, a speedup, stable FPS or phone performance."
+  },
+  "ordinaryProductionUI": {
+    "version": "0.16.0",
+    "revision": "e134886e141e",
+    "origin": "http://127.0.0.1:4395/",
+    "scope": "Ordinary desktop browser controls using the disposable existing Story chronicle",
+    "before": {
+      "chapter": 1,
+      "encounter": "ch1-road",
+      "turn": 3,
+      "operationPhase": 2
+    },
+    "editionUpdateSaveExact": true,
+    "cameraViewsQualityReducedMotionSaveExact": true,
+    "qualitiesObserved": [
+      "balanced",
+      "high",
+      "performance"
+    ],
+    "offlineServerStopped": true,
+    "offlineChapterReady": true,
+    "offlineCompositorEnabled": true,
+    "offlineSaveExact": true,
+    "sourceSave4387Untouched": true,
+    "limitations": "Existing disposable Story checkpoint, normal desktop controls and same-origin production cache. No uninterrupted human campaign, mobile device, or remote deployment claim."
+  },
+  "coreIntegrity": {
+    "scope": "Every file under src/core; exact byte length and SHA-256 compared to frozen v0.15 source. No core files modified by this check.",
+    "files": 10,
+    "allUnchanged": true,
+    "added": [],
+    "removed": [],
+    "hashes": [
+      {
+        "path": "src/core/battle.js",
+        "bytes": 42791,
+        "sha256": "300afd0d201f87227c2accacab083a8b9d53e6008a667739c08a49a4f1a0a61b",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/campaign-options.js",
+        "bytes": 10511,
+        "sha256": "2faac4cfd19665e992127b2a64b3e0428968c0335057fc14ea9fccf31a7f9e95",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/career.js",
+        "bytes": 6747,
+        "sha256": "d534bb1f4c6265c2135e30f27156e5e86fe1f424ae85e7a307e9659601c2b180",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/contest.js",
+        "bytes": 22853,
+        "sha256": "3fd54495d4c5212f7eb8334675a0713b63b4a92fc843f7e6af8fb3464c9be0dc",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/debug.js",
+        "bytes": 951,
+        "sha256": "c9ad9dadca1d76232ce0f91c11f5a75ddf4b944e7521ecd4f4600389f994d947",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/game.js",
+        "bytes": 36942,
+        "sha256": "3f68652a9dc174f6bf17fbf1a2ad7697273c7e35c5e58e60e33f955dd6f314c0",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-battle.js",
+        "bytes": 21650,
+        "sha256": "b215b22f2bfc67f92c768f679ac89d449afd102c3567868d5991f558d775b601",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/legacy-contest.js",
+        "bytes": 13020,
+        "sha256": "92caa1f2abc6ac2b535b26065a91696fdd77279740e11dffaa5969409107fedd",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/operations.js",
+        "bytes": 5029,
+        "sha256": "cba93902b5e72ad687d4c622ee3b4fcec78a949d44fa77d44e5f0a2e6c59d351",
+        "unchanged": true
+      },
+      {
+        "path": "src/core/shared.js",
+        "bytes": 3954,
+        "sha256": "36a8b1bed07ae93979cb192ad5437cf02b9a1909b4465d1ffbae386fa71c5c4b",
+        "unchanged": true
+      }
+    ]
+  },
+  "limitations": [
+    "Stylized original procedural/skinned models and authored procedural clips remain; no photorealistic, scanned or motion-captured character claim.",
+    "Screen-space AO and the small spatial edge filter remain view dependent; they cannot remove every thin-edge shimmer or coarse silhouette.",
+    "No new physical-phone GPU, battery, thermal, accessibility or human playtesting result is established.",
+    "CPU render-submission timing and RAF intervals are separate observations; neither is a guaranteed FPS or GPU timing measurement.",
+    "No remote publish or deployment verification is inferred from local production/offline checks."
+  ],
+  "evidence": [
+    {
+      "name": "build.json",
+      "bytes": 51018,
+      "sha256": "3af1a702d790a4ae8bbbf28d4a2ffc19fa3e8c6ced8506fdeb3c9ce7cd7fdecf"
+    },
+    {
+      "name": "node-tests.txt",
+      "bytes": 52748,
+      "sha256": "9e86da8b66d486a3b957c91e918360d49932f2c0d9a048a39202d30a3f7f0c27"
+    },
+    {
+      "name": "final-render-tests.txt",
+      "bytes": 2405,
+      "sha256": "350612d4886e491ce81740a00d2970803699ef420d5ca99bc91202501584e13d"
+    },
+    {
+      "name": "assets-verification.txt",
+      "bytes": 1036,
+      "sha256": "c02541918f58cb4d25dfe54ee1ec2f8f1717c4d3ad162a0f3b66785898db033b"
+    },
+    {
+      "name": "autoplay.json",
+      "bytes": 6938,
+      "sha256": "b9b2df163a3f47411d23a18150ec5b996b18ce2bcb2b4168284534a52e959954"
+    },
+    {
+      "name": "campaign-browser.json",
+      "bytes": 352840,
+      "sha256": "ff65b9a77a548d74b939ea66462314d5fd6b1ee465c6b0fad0e35bad9d8fb705"
+    },
+    {
+      "name": "compositor-gpu.json",
+      "bytes": 6692,
+      "sha256": "3df555936c7b987dd23b40a63cc8400d06137273f3e43d31f0eed28db389dddc"
+    },
+    {
+      "name": "baseline-measurements.json",
+      "bytes": 2668,
+      "sha256": "b7545d797c9b902374f25e130852abafcd3cc0a8551f4a9a0deb0b2bb3b5c874"
+    },
+    {
+      "name": "candidate-measurements.json",
+      "bytes": 3093,
+      "sha256": "4f450616c95646ec82da9f02ef7cd357fe9b4179b9879b46a3fff17c89e82406"
+    },
+    {
+      "name": "ordinary-ui.json",
+      "bytes": 616,
+      "sha256": "df6af7073f78a403f4f60304bc2dbf4daca2bacb93da157cefa968b642a8960e"
+    },
+    {
+      "name": "core-unchanged.json",
+      "bytes": 3945,
+      "sha256": "ea98e593c3ba4db1f3706e33112060da836ea3a74fbd299314cda91869e1d64e"
+    },
+    {
+      "name": "baseline-archive-verification.json",
+      "bytes": 428,
+      "sha256": "653abccbf06cf4a6ba0603aa4c7d5f4e27501eee4dc76a0cb3c442ed55460c26"
+    },
+    {
+      "name": "imperium-v016-preview.png",
+      "bytes": 112492,
+      "sha256": "5381a2f2377f96a2b2c93506109977e2d50d4d99cd7615b4ce799b474ac3d316"
+    },
+    {
+      "name": "targeted-browser.json",
+      "bytes": 48286,
+      "sha256": "cba9976d61cdd39f493085b99b427dab87eced4aa7e19db3200d99368dfd6ee7"
+    }
+  ],
+  "targetedBrowser": {
+    "version": "0.16.0",
+    "status": "complete",
+    "scope": "Actual browser renderer checks using legally reached checkpoints; no saved campaign reads/writes, debug injection, human playtest or physical-device claim.",
+    "assertions": 63,
+    "passed": 63,
+    "scenes": [
+      {
+        "id": "ch9-wing",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "high",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "compositorEnabled": true,
+        "reducedMotionCommandSaveExact": true
+      },
+      {
+        "id": "ch11-adlection",
+        "status": "passed",
+        "assertions": 23,
+        "passed": 23,
+        "quality": "balanced",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 360,
+          "height": 420
+        },
+        "compositorEnabled": true,
+        "reducedMotionCommandSaveExact": true
+      },
+      {
+        "id": "ch2-marsh",
+        "status": "passed",
+        "assertions": 20,
+        "passed": 20,
+        "quality": "performance",
+        "viewport": {
+          "width": 1280,
+          "height": 720,
+          "devicePixelRatio": 2
+        },
+        "canvas": {
+          "width": 1233,
+          "height": 468
+        },
+        "compositorEnabled": false,
+        "reducedMotionCommandSaveExact": true
+      }
+    ],
+    "limitations": "Three additional targeted checks of existing campaign scenes. The narrow360px canvas is inside a desktop browser, not a physical phone. Reduced-motion output is tested within each check; final renderer stats are sampled after that temporary mode is restored."
+  }
+}

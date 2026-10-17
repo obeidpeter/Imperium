@@ -32,7 +32,7 @@ test('Every legal battle and council builds finite bounded geometry, preserves i
 
 test('Marshes use contiguous irregular water and asymmetric willows, while the legal causeways stay dry and clear',()=>{
   const s=fixture.scenes.find(s=>s.id==='ch2-marsh'),world=createEnvironment(new THREE.Scene(),s.state.encounter,{chapter:2,quality:'balanced',loadTextures:false}),flood=world.group.getObjectByName('continuous irregular marsh water');
-  assert.ok(flood);assert.equal(world.group.getObjectByName('marsh pools'),undefined);assert.ok(world.group.getObjectByName('willow leaves'));assert.ok(world.group.getObjectByName('willow upper trunks'));assert.ok(world.group.getObjectByName('marsh reed stems'));
+  assert.ok(flood);assert.equal(world.group.getObjectByName('marsh pools'),undefined);assert.ok(world.group.getObjectByName('willow leaves'));assert.ok(world.group.getObjectByName('natural bark 0')?.isInstancedMesh,'Willows have solid, batched branching trunks');assert.ok(world.group.getObjectByName('marsh reed stems'));
   const color=flood.geometry.attributes.color,alphas=Array.from({length:color.count},(_,i)=>color.getW(i));assert.ok(alphas.some(a=>a===0));assert.ok(alphas.some(a=>a>.9));assert.ok(alphas.some(a=>a>.1&&a<.8));
   const e=s.state.encounter;for(let y=0;y<8;y++)for(let x=0;x<8;x++){const type=terrainAt(e,x,y),p=gridToWorld({x,y},e);assert.ok(Math.abs(world.groundHeight(p.x,p.z)-(type==='marsh'?-.065:0))<1e-8);}
   assert.ok(world.profile.fogDensity<.022);world.dispose();

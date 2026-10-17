@@ -1,11 +1,11 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash,terrainAt,gridToWorld,isPlayable} from './environment-layout.js';
-import {createPalmFrondGeometry,createColumnGeometry} from './environment-primitives.js';
+import {createColumnGeometry} from './environment-primitives.js';
 
 // Scene landmarks occupy the perimeter. The small reeds are soft vegetation,
 // not collision objects; the game continues to own every legal destination.
 export function addCampaignScenery(ctx){
-  const {root,e,p,m,profile,height,tileSize,quality,instance,branch}=ctx,hx=e.width*tileSize/2,hz=e.height*tileSize/2,perf=quality==='performance';
+  const {root,e,p,m,profile,height,tileSize,quality,instance,branch,vegetation}=ctx,hx=e.width*tileSize/2,hz=e.height*tileSize/2,perf=quality==='performance';
   const landmarks=[];root.userData.environmentLandmarks=landmarks;
   const landmark=(name,group)=>{group.name=name;landmarks.push(name);return group;};
   const place=(name,x,z)=>landmark(name,p.group(root,x,height(x,z),z));
@@ -37,15 +37,8 @@ export function addCampaignScenery(ctx){
   function boat(name,x,z,y=-1.18){const g=landmark(name,p.group(root,x,y,z,.18));const hull=p.geo(new THREE.SphereGeometry(1,20,10,0,Math.PI*2,Math.PI/2,Math.PI/2));p.mesh(g,hull,m.wood,0,0,0,1.03,.65,3.6);
     for(const side of [-1,1])p.beam(g,[side*.90,0,-2.6],[side*.9,0,2.6],.07);for(let k=-2;k<=2;k++)p.plank(g,0,-.08,k*.83,1.72,.1,.25,m.wood);p.beam(g,[.15,0,0],[.15,4.6,0],.05);p.beam(g,[.15,3.9,-1.9],[.15,3.9,1.9],.045);const sail=p.mesh(g,p.geo(new THREE.PlaneGeometry(3.6,2.8,8,8)),m.cloth,.16,2.45,0);sail.rotation.y=Math.PI/2;return g;}
   function well(x,z){const g=place('stone well and water jars',x,z);const ring=p.geo(new THREE.CylinderGeometry(.95,.95,.65,24,1,true));p.mesh(g,ring,m.stone,0,.35,0);p.mesh(g,p.geo(new THREE.CircleGeometry(.88,24)),m.charcoal,0,.06,0).rotation.x=-Math.PI/2;for(const side of [-1,1])p.beam(g,[side*1.1,0,0],[side*1.1,2.4,0],.085);p.beam(g,[-1.2,2.4,0],[1.2,2.4,0],.11);p.beam(g,[0,2.4,0],[0,.2,0],.014,m.rope);p.amphora(g,1.5,0,.8,.7);return g;}
-  let palmLeaf=null;
-  function palm(x,z,h=5.5){
-    const y=height(x,z),lean=.32+hash(x,z,82)*.38,trunk=p.geo(new THREE.CylinderGeometry(.12,.24,h,12,12)),v=trunk.attributes.position,g=place('date palm',x,z);
-    for(let i=0;i<v.count;i++){const t=(v.getY(i)+h/2)/h,ridge=1+Math.sin(t*h*19)*.035;v.setXYZ(i,v.getX(i)*ridge+lean*t*t,v.getY(i),v.getZ(i)*ridge+Math.sin(t*Math.PI)*.13);}trunk.computeVertexNormals();p.mesh(g,trunk,m.wood,0,h/2,0);
-    if(!palmLeaf)palmLeaf=p.geo(createPalmFrondGeometry());
-    for(let j=0;j<11;j++){const scale=.82+hash(j,x,z)*.30;instance('palm fronds',palmLeaf,m.leaves,[x+lean,y+h,z],[scale,scale,scale],[(hash(j,z)-.5)*.24,j*2.399,(hash(j,x)-.5)*.12],new THREE.Color(.77+hash(j,8)*.2,.85+hash(j,4)*.12,.63+hash(j,9)*.25));}
-    return g;
-  }
-  function cypress(x,z,h=6){const g=place('Italian cypress',x,z);p.mesh(g,p.cylinder,m.wood,0,h*.25,0,.11,h*.5,.11);for(let k=0;k<6;k++)p.mesh(g,p.sphere,m.leaves,(hash(k,x)-.5)*.2,h*(.40+k*.085),0,.70-k*.07,.90,.62-k*.06);return g;}
+  function palm(x,z,h=5.5){const g=place('date palm',x,z);vegetation.palm(x,z,h,Math.floor(Math.abs(x+z)*13));return g;}
+  function cypress(x,z,h=6){const g=place('Italian cypress',x,z);vegetation.cypress(x,z,h,Math.floor(Math.abs(x+z)*7));return g;}
 
   if(profile.architecture==='marsh'){
     pier('damaged marsh landing',hx+3,1,6);const boatGroup=boat('abandoned shallow-draft river boat',hx+4,7,-.02);boatGroup.scale.setScalar(.7);
@@ -55,17 +48,8 @@ export function addCampaignScenery(ctx){
       const point=gridToWorld({x,y},e,tileSize);for(let k=0;k<(perf?5:11);k++){const side=k%4,xx=point.x+(side<2?-.86:.86)+(hash(k,x,y)-.5)*.25,zz=point.z+(side%2?-.82:.82)+(hash(y,k,x)-.5)*.23,h=.44+hash(x,k,y)*.63;
         instance('marsh reed stems',reed,m.dryGrass,[xx,height(xx,zz)+h/2,zz],[1,h,1],[.04,0,.08]);if(k%3===0)instance('cattail heads',head,m.darkWood,[xx+.03,height(xx,zz)+h,zz],[1,1,1]);}
     }
-    const willowLeaf=p.geo(new THREE.BufferGeometry());willowLeaf.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,-.05,-.12,.01,0,-.38,.035,.05,-.12,.01,0,-.13,.055],3));willowLeaf.setIndex([0,1,4,1,2,4,2,3,4,3,0,4]);willowLeaf.computeVertexNormals();
-    for(const [index,[x,z,h]]of [[-14,-8,5.4],[15,-11,4.6],[-7,15,6.1],[15,10,4.7]].entries()){
-      const y=height(x,z),leanX=.4+hash(index,21)*.7,leanZ=(hash(index,22)-.5)*1.1;
-      branch([x,y,z],[x+leanX*.3,y+h*.48,z+leanZ*.3],.24,'willow trunks',m.darkWood);branch([x+leanX*.3,y+h*.48,z+leanZ*.3],[x+leanX,y+h*.86,z+leanZ],.16,'willow upper trunks',m.darkWood);
-      for(let k=0;k<5;k++){const a=k*1.71+index*.91+hash(k,index)*.7,reach=1.3+hash(index,k,51)*2.0,cx=x+leanX+Math.cos(a)*reach,cz=z+leanZ+Math.sin(a)*reach,cy=y+h*(.67+hash(index,k)*.23);
-        branch([x+leanX*.6,y+h*(.48+k*.045),z+leanZ*.6],[cx,cy,cz],.055+(k===0?.018:0),'willow boughs',m.darkWood);
-        for(let j=0;j<(perf?8:15);j++){const xx=cx+(hash(j,k,index)-.5)*1.65,zz=cz+(hash(k,j,index)-.5)*1.65,length=.8+hash(j,k,6)*1.9;branch([xx,cy,zz],[xx+.18,cy-length,zz+.09],.007,'willow hanging twigs',m.darkWood);
-          for(let n=0;n<7;n++){const t=n/7;instance('willow leaves',willowLeaf,m.leaves,[xx+.18*t+(hash(n,j,k)-.5)*.18,cy-length*t,zz+.09*t],[1.15,1.15,1.15],[.1,hash(n,k,index)*6.28,.15],new THREE.Color(.66+hash(n,j)*.20,.77+hash(n,k)*.17,.55+hash(j,k)*.18));}}
-      }
-      branch([x+leanX*.35,y+h*.50,z],[x-.55-index*.10,y+h*.63,z-.12],.065,'broken willow limb',m.darkWood);
-    }landmarks.push('asymmetric willow canopy and flooded causeway');
+    for(const [index,[x,z,h]]of [[-14,-8,5.4],[15,-11,4.6],[-7,15,6.1],[15,10,4.7]].entries())vegetation.tree('willow',x,z,h,index);
+    landmarks.push('asymmetric willow canopy and flooded causeway');
   }else if(profile.architecture==='road-station'){
     building('plague-struck courier station',-hx-5,-2,7,7,{columns:true});const stores=building('sealed road-station archive',hx+4,-hz-3,5,4,{roof:false});p.crate(stores,0,.42,0,.9);p.amphora(stores,1.4,.42,0,.8);well(hx+3,5);
     const fence=place('station timber boundary',0,-hz-2);for(let x=-6;x<=6;x+=1.5){p.beam(fence,[x,0,0],[x,1.1,0],.055);if(x<6)p.beam(fence,[x,.7,0],[x+1.5,.7,0],.03);}p.banner(root,-hx-1.8,height(-hx-1.8,7),7);

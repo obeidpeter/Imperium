@@ -63,9 +63,22 @@ for(const path of build.showcaseAssets){
   assert.ok(!stores.get(cacheName).has(normalize(path)),'3D study downloaded at installation: '+path);
 }
 const standalone=path=>path.startsWith('./showcase/')||path==='./src/showcase/showcase.css';
-const shared3D=build.showcaseAssets.filter(path=>!standalone(path));
+const retiredCharacterAtlas='./assets/showcase/character-materials-v015.webp';
+const activeAtlases=['./assets/showcase/character-materials-v016.webp','./assets/showcase/foliage-v016.webp'];
+// Historical artwork remains part of the complete package, but is not a
+// dependency of a current actor or a cold chapter restore.
+assert.ok(build.showcaseAssets.includes(retiredCharacterAtlas),'Complete 3D inventory retains the historical character atlas');
+assert.ok(build.deferredAssets.includes(retiredCharacterAtlas),'Historical atlas stays in the complete deferred pack');
+assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await readFile(retiredCharacterAtlas.slice(2)),'Built historical atlas preserves its source bytes');
+for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
+const shared3D=build.showcaseAssets.filter(path=>!standalone(path)&&path!==retiredCharacterAtlas);
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
+for(const [chapter,paths]of Object.entries(build.chapterAssets)){
+  assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');
+  for(const path of activeAtlases)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted active atlas: '+path);
+}
 for(const path of build.showcaseAssets.filter(standalone))assert.ok(!Object.values(build.chapterAssets).flat().includes(path),'Standalone study page entered campaign cache: '+path);
+console.log('PASS active chapter atlases exclude superseded artwork while the complete inventory preserves its exact bytes');
 await event('message',{data:'offline-status',source:client});
 assert.equal(messages.at(-1).type,'offline-progress');
 console.log('PASS shell-only install and truthful partial status');
@@ -76,6 +89,7 @@ assert.equal(messages.at(-1).ready,false,'A cold later chapter must not claim re
 failing=null;await event('message',{data:{type:'cache-chapter',chapter:11},source:client});
 assert.equal(messages.at(-1).ready,true);
 for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Cold Senate restore omitted: '+path);
+assert.ok(!stores.get(cacheName).has(normalize(retiredCharacterAtlas)),'Cold Senate restore must not fetch historical character artwork');
 assert.ok(!stores.get(cacheName).has(normalize('./assets/scenes/danube.webp')),'Cold later restore must not require opening chapter art');
 console.log('PASS cold Chapter XI restore retries missing shared renderer and caches its own complete resource group');
 
@@ -87,6 +101,7 @@ console.log('PASS chapter 1 caches separately and never claims all chapters are 
 for(const path of chapterAudioAssets(1))assert.ok(stores.get(cacheName).has(normalize(path)),'Opening chapter omitted audio: '+path);
 
 for(const path of shared3D)assert.ok(stores.get(cacheName).has(normalize(path)),'Chapter I failed to cache 3D dependency: '+path);
+assert.ok(!stores.get(cacheName).has(normalize(retiredCharacterAtlas)),'Chapter I must not fetch historical character artwork');
 for(const path of build.showcaseAssets.filter(standalone))assert.ok(!stores.get(cacheName).has(normalize(path)),'Chapter I downloaded standalone study page: '+path);
 offline=true;
 for(const path of shared3D){const resource=await event('fetch',{request:{method:'GET',url:normalize(path),mode:'cors'}});assert.equal(await resource.text(),'current:'+normalize(path));}
@@ -116,6 +131,8 @@ offline=true;
 const response=await event('fetch',{request:{method:'GET',url:base,mode:'navigate'}});
 assert.ok((await response.text()).includes('index.html'));
 for(const path of build.showcaseAssets)assert.ok(stores.get(cacheName).has(normalize(path)),'Complete download omitted 3D dependency: '+path);
+const historicalAtlas=await event('fetch',{request:{method:'GET',url:normalize(retiredCharacterAtlas),mode:'cors'}});
+assert.equal(await historicalAtlas.text(),'current:'+normalize(retiredCharacterAtlas),'Explicit complete download retains server-unavailable access to the historical atlas');
 for(const path of audioPaths){const audio=await event('fetch',{request:{method:'GET',url:normalize(path),mode:'cors'}});assert.equal(await audio.text(),'current:'+normalize(path),'Server-unavailable audio: '+path);}
 const offlineStudy=await event('fetch',{request:{method:'GET',url:normalize('./showcase/'),mode:'navigate'}});
 assert.equal(await offlineStudy.text(),'current:'+normalize('./showcase/index.html'));

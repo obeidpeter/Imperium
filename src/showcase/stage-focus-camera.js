@@ -17,9 +17,9 @@ export function findFocusCamera(environment,{position,mounted=false,distance=mou
     if(!o.isMesh||o===environment.ground||!o.visible)return;
     for(let parent=o.parent;parent;parent=parent.parent)if(!parent.visible)return;
     const materials=Array.isArray(o.material)?o.material:[o.material];
-    // Grass/leaves are untextured double-sided surfaces. Textured tent canvas
-    // remains structural, while transparent rivers and roads never block.
-    if(materials.every(m=>!m||m.transparent||m.side===T.DoubleSide&&!m.map))return;
+    // Cutout foliage cards do not form solid rectangular camera blockers.
+    // Textured tent canvas and opaque tree trunks remain structural.
+    if(materials.every(m=>!m||m.userData.environmentVegetation||m.transparent||m.side===T.DoubleSide&&!m.map))return;
     blockers.push(o);
   });
   const ray=new T.Raycaster(),direction=new T.Vector3(),camera=new T.Vector3(),candidates=[],seen=new Set();

@@ -13,6 +13,7 @@ import {layoutStageLabels} from './stage-label-layout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
 import {createSceneLighting} from './scene-lighting.js';
+import {createSceneCompositor} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
 import {createParticleMask,sampleImpactParticles} from './stage-particles.js';
 
@@ -82,9 +83,9 @@ export class BattleStage{
     this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});
     this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});
     this.contactShadows=createContactShadows(this.scene);
-    const sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity);this.scene.add(sky);
+    const sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity*.72);this.scene.add(sky);
     this.sun=new T.DirectionalLight(this.profile.sun,this.profile.sunIntensity);this.sun.position.fromArray(this.profile.sunPosition??[-16,24,-12]);this.sun.castShadow=true;Object.assign(this.sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:1,far:80});this.sun.shadow.normalBias=.012;this.sun.shadow.bias=-.00008;this.sun.shadow.radius=3;this.scene.add(this.sun);
-    const rim=new T.DirectionalLight('#b9d8e9',.65);rim.position.set(15,6,9);this.scene.add(rim);
+    const rim=new T.DirectionalLight('#b9d8e9',.38);rim.position.set(15,6,9);this.scene.add(rim);
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
@@ -100,6 +101,7 @@ export class BattleStage{
     this.labelLayer=document.createElement('div');this.labelLayer.className='world-labels';this.labelLayer.setAttribute('aria-hidden','true');canvas.parentElement.append(this.labelLayer);
     this.projectile=new T.Group();const shaft=new T.Mesh(new T.CylinderGeometry(.025,.025,1.45,8),new T.MeshStandardMaterial({color:'#7d4e24',roughness:.85}));shaft.rotation.x=Math.PI/2;const tip=new T.Mesh(new T.ConeGeometry(.075,.32,6),new T.MeshStandardMaterial({color:'#afb3b1',metalness:.8,roughness:.35}));tip.rotation.x=Math.PI/2;tip.position.z=.85;this.projectile.add(shaft,tip);this.effectGroup.add(this.projectile);this.projectile.visible=false;
     this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,blending:T.AdditiveBlending});this.sparks=new T.Points(this.sparkGeometry,this.sparkMaterial);this.sparks.frustumCulled=false;this.effectGroup.add(this.sparks);this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
+    this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});
     this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
   }
   world(tile){const p=gridToWorld(tile,this.encounter,2.5);return new T.Vector3(p.x,this.environment.groundHeight(p.x,p.z),p.z);}
@@ -147,7 +149,7 @@ export class BattleStage{
     if(!this.grid){const lines=[];for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])lines.push(p.x+a,p.y+.04,p.z+b,p.x+c,p.y+.04,p.z+d);}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
     this.grid.visible=!!show;
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
   setReducedMotion(value){if(this.reducedMotion!==value){this.shadowDirty=true;this.poseReset=new Set(this.actors.keys());}this.reducedMotion=value;if(value)this.finishMotion();}
   overviewDistance(){
     const drill=this.encounter.id==='ch1-training',yaw=this.orbit.yaw??-.55,pitch=this.orbit.pitch??.64;
@@ -156,7 +158,7 @@ export class BattleStage{
     if(!drill)for(const x of [-.18,this.encounter.width-.82])for(const y of [-.18,this.encounter.height-.82])points.push(this.world({x,y}));
     return Math.max(drill?13:20,...points.map(point=>{const p=point.clone().sub(this.baseTarget);return p.dot(out)+Math.max(Math.abs(p.dot(right))/(tangent*this.camera.aspect),Math.abs(p.dot(up))/tangent);}));
   }
-  resize(){const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,this.overviewDistance());}
+  resize(){const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();this.compositor?.resize();if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,this.overviewDistance());}
   home(){this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.profile?.staging?.camera.yaw??(this.encounter.kind==='contest'?-.28:-.55);this.orbit.pitch=this.profile?.staging?.camera.pitch??(this.encounter.kind==='contest'?.76:.67);this.baseTarget.set(0,.7,0);if(this.encounter.id==='ch1-training'){const alive=this.encounter.units.filter(isAlive);if(alive.length){const center=alive.reduce((v,u)=>v.add(this.world(u)),new T.Vector3()).divideScalar(alive.length);this.baseTarget.copy(center);this.baseTarget.y+=.5;this.orbit.pitch=.58;}}this.orbit.distance=this.overviewDistance();}
   horizon(){
     // Lift the point of interest, rather than merely flattening an orbit aimed
@@ -228,7 +230,7 @@ export class BattleStage{
     this.positionLabels();
     const shadowInterval=this.quality==='high'?70:100;
     if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){this.renderer.shadowMap.needsUpdate=true;this.shadowDirty=false;this.lastShadow=now;this.shadowUpdates++;}
-    this.renderer.render(this.scene,this.camera);const cost=performance.now()-renderStart;this.samples.push(cost);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
+    if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);const cost=performance.now()-renderStart;this.samples.push(cost);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
   }
   positionLabels(){
     const width=this.viewportWidth,height=this.viewportHeight,items=[],elements=new Map();if(!width||!height)return;
@@ -249,6 +251,6 @@ export class BattleStage{
     }
     this.labelStats=counts;this.labelSizeDirty=false;
   }
-  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.contactShadows.dispose();this.particleMask.dispose();this.labelLayer.remove();const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.renderer.dispose();}
+  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,compositor:this.compositor?.stats(),lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
+  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.particleMask.dispose();this.labelLayer.remove();const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.renderer.dispose();}
 }

@@ -1,0 +1,59 @@
+{
+  "version": "0.16.0",
+  "foliage": {
+    "method": "OpenAI built-in image_gen",
+    "sourceFile": "exec-8439d013-46a4-4bf3-ad78-5025e5ef1ebc.png",
+    "sourceSha256": "aefee6e68f08ef659f6e27a8b2063936a3e84f306d3eea07a8610d415d30f54a",
+    "sourceSize": [
+      1254,
+      1254
+    ],
+    "requestedSize": [
+      2048,
+      2048
+    ],
+    "preservedMaster": "work/v016/foliage-master.png (outside published source)",
+    "promptRecord": "Summary only. The exact submitted prompt was not retained; this is not a verbatim reconstruction.",
+    "promptSummary": "Square transparent four-quadrant atlas: top left oak twig spray with 35–50 leaves; top right drooping willow; bottom left date-palm frond; bottom right meadow, fern and grass cluster. Realistic neutral diffuse olive green; no background, cast shadows or labels. Requested 2048 by 2048; delivered 1254 by 1254 RGBA.",
+    "referenceImages": [],
+    "instructions": "docs/presentation-assets-v016.md"
+  },
+  "characterDerivative": {
+    "method": "Mechanical derivative of the original OpenAI built-in image_gen character atlas; no new generation",
+    "derivedFrom": "assets/showcase/character-materials-v015.webp",
+    "derivedFromSha256": "8e8c326d36067f6b2a8e1713366376501b130c1b6a07af438711e009df7d8536",
+    "derivedFromSize": [
+      1254,
+      1254
+    ],
+    "originalGeneration": "docs/graphics-prompts/presentation-v015.json",
+    "originalSourceFile": "exec-756b9ada-492b-445b-915c-02eb61b43daf.png",
+    "originalSourceSha256": "6c37b39b980da7b63a679e1820aadcd513cce0a1129dab1e9955dd6001440f55",
+    "instructions": "docs/presentation-assets-v016.md"
+  },
+  "exportSettings": {
+    "foliage-v016": {
+      "format": "WebP",
+      "width": 768,
+      "height": 768,
+      "quality": 76,
+      "method": 4,
+      "alphaQuality": 85,
+      "bytes": 348748,
+      "sha256": "5c1ccc1fd079a06f695d43e9930a8c199e0f3c95f605f717e41890df857e1dec",
+      "alphaPreserved": true,
+      "instructions": "Pillow RGBA resize to 768 by 768 with Image.Resampling.LANCZOS; WebP quality76 method4 alpha_quality85. No creative repainting."
+    },
+    "character-materials-v016": {
+      "format": "WebP",
+      "width": 512,
+      "height": 512,
+      "quality": 90,
+      "method": 6,
+      "bytes": 109312,
+      "sha256": "747ccc2099675e49df5dc14988c5e9a75b01b0573672b4eb31ea2177fdfcc38f",
+      "alphaPreserved": false,
+      "instructions": "Decode the existing v0.15 RGB WebP, resize to 512 by 512 with Image.Resampling.LANCZOS, then WebP quality90 method6. No new generation or creative repainting."
+    }
+  }
+}

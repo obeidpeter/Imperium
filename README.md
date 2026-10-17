@@ -1,12 +1,20 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Actual version 0.8 Chapter I battlefield rendered from a legally reached campaign state](docs/images/production-battle.jpg)
+![Actual version 0.16 Chapter I Horizon view in the production game](docs/images/imperium-v016-preview.png)
 
-*Actual v0.8 browser-rendered Chapter I board, sampled during a legal Move transition. The capture shows the battlefield; the command controls sit outside this crop.*
+*Actual v0.16 desktop browser capture: the Chapter I road battle in Horizon view. The command dock sits below the visible scene. This is rendered gameplay, not illustrative key art.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
+
+## Version 0.16 — fuller scenery and stronger character form
+
+Oak, willow and cypress canopies now use original textured leaf sprays on branching trunks, with curved date-palm fronds and softer road verges. Rebuilt facial contours, connected shoulders and limbs, fitted mail and open helmet guards give the original procedural characters cleaner silhouettes.
+
+Balanced and High add a linear HDR finishing pass with depth-based contact shading, edge smoothing and restrained color treatment. Directional lighting has less flat fill. Performance retains a direct rendering path; unsupported hardware or a failed finishing shader also falls back to it. Graphics and camera controls preserve the existing rules and complete saves.
+
+The [v0.16 validation record](docs/release-validation-v016.md) separates real GPU checks, campaign-scene checks, ordinary interface/offline checks and desktop timings from unperformed physical-device or human playtests. [Texture provenance](docs/presentation-assets-v016.md) records the new foliage and optimized character atlas. These remain stylized, code-authored models and animation.
 
 ## Version 0.15 — company, operations and presentation
 
