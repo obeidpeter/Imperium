@@ -58,3 +58,22 @@
 .world-unit.selected .world-name,.world-unit.inspected .world-name{font-size:.73rem;box-shadow:0 2px 9px #0006}
 .world-unit[data-layout=occluded],.world-unit[data-layout=offscreen]{visibility:hidden}
 .world-unit.inspected{z-index:4}.world-unit.selected{z-index:3}
+/* v0.29 compact markers: rank-and-file units show a role glyph and a strength bar;
+   names stay for the people the story follows, the selection and what is under the pointer. */
+.world-role{display:none;inline-size:1.15rem;block-size:1.15rem;border-radius:50%;background:#13231deb center/72% no-repeat;box-shadow:0 0 0 1px #77907a99,0 1px 4px #0007}
+.world-unit.enemy .world-role{background-color:#2e1c18eb;box-shadow:0 0 0 1px #ba7b6899,0 1px 4px #0007}
+.world-unit.neutral .world-role{background-color:#292b22e8}
+.world-unit:not(.selected):not(.inspected):not(.named):not([data-type=vote]):not([data-type=resolve]) .world-name{display:none}
+.world-unit:not(.selected):not(.inspected):not(.named):not([data-type=vote]):not([data-type=resolve]) .world-role{display:block}
+.world-unit:not(.selected):not(.inspected):not(.named):not([data-type=vote]):not([data-type=resolve]) .world-health{inline-size:1.6rem}
+.world-unit[data-role=infantry] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12 12 4M10.5 3.2 12.8 5.5M3.5 9.6 6.4 12.5M3 13l1-1'/%3E%3C/svg%3E")}
+.world-unit[data-role=archer] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 2.5c5 2 5 9 0 11M5 2.5v11M3.5 8h9M10.6 6.2 12.5 8l-1.9 1.8'/%3E%3C/svg%3E")}
+.world-unit[data-role=cavalry] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13.5 6.2 8c.4-2.6 2-4.6 4.6-4.6l2.4 2.8-2.6.6-.2 6.7M8.4 3.6 7.6 2'/%3E%3C/svg%3E")}
+.world-unit[data-role=guard] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 2.5h6c.8 3.5.8 7.5 0 11H5c-.8-3.5-.8-7.5 0-11ZM8 4v8'/%3E%3C/svg%3E")}
+.world-unit[data-role=raider] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 13.5 11 4.5M9 3c2.5-.6 4.4 1 4.4 3.6-1.4-.8-2.8-.9-4-.2Z'/%3E%3C/svg%3E")}
+.world-unit[data-role=commander] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 14V2M5 3h6.5L10 5l1.5 2H5'/%3E%3C/svg%3E")}
+/* A delegate's bloc as a colour edge on its stance marker, matching the toga trim. */
+.world-unit[data-bloc=Veterans] .world-short{box-shadow:inset 3px 0 0 #c4463a}
+.world-unit[data-bloc=Landholders] .world-short{box-shadow:inset 3px 0 0 #63a050}
+.world-unit[data-bloc=Civic] .world-short{box-shadow:inset 3px 0 0 #5a8ad0}
+.world-unit[data-bloc=Chamber] .world-short{box-shadow:inset 3px 0 0 #a070b8}

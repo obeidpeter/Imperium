@@ -16,7 +16,8 @@ import {facingYaw,isAlive} from './session.js';
 import {createBattleSound} from './battle-sound.js';
 import {meleeOffset,combatCues,retimeStageTimeline,locomotionPhase,combatReaction} from './combat-presentation.js';
 import {getSceneProfile} from './campaign-scene-profile.js';
-import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,reinforcementBeacons,tacticalLinks,targetRingColor} from './stage-readout.js';
+import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,reinforcementBeacons,tacticalLinks,targetRingColor,threatEnvelope} from './stage-readout.js';
+import {createInkOverlay} from './ink-overlay.js';
 import {layoutStageLabels} from './stage-label-layout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
@@ -34,6 +35,12 @@ const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shad
 export {FIGURE_STYLES};
 export const figureStyleFinish=style=>({tiltShift:style==='painted'?1:0,ink:style==='inked'?1:0});
 // Painted figures were authored for diagonal views; the overview settles there.
+// Compact by default: a role glyph and strength bar; names for the people the
+// story follows, the selection and whatever is under the pointer.
+export function labelRole(unit){const r=unit?.role;return ['voter','speaker','commander','archer','guard','raider','trainer','escort'].includes(r)?r:['cavalry','heavy'].includes(r)?'cavalry':'infantry';}
+export function namedFigure(unit){return unit?.id==='hero'||!!unit?.veteranId||['escort','trainer','commander','speaker'].includes(unit?.role)||/claimant/i.test(unit?.name??'');}
+// Delegates show their stance in posture: assent leans in, dissent folds its arms.
+export function voterPosture(unit){const stance=Number(unit?.stance)||0;return stance>=1?{motion:'assent',phase:Math.min(1,stance/3)}:stance<=-1?{motion:'dissent',phase:Math.min(1,-stance/3)}:null;}
 export const diagonalYaw=yaw=>Math.round((yaw-Math.PI/4)/(Math.PI/2))*(Math.PI/2)+Math.PI/4;
 const blendYaw=(from,to,t)=>from+Math.atan2(Math.sin(to-from),Math.cos(to-from))*ease(clamp(t,0,1));
 const pathYaw=(a,b)=>Math.atan2(b.x-a.x,b.y-a.y);
@@ -116,6 +123,7 @@ export class BattleStage{
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});
+    this.ink=createInkOverlay(this.scene,encounter,this.environment.groundHeight);
     this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
@@ -160,9 +168,9 @@ export class BattleStage{
       // A committed defection changes the uniform and allegiance together.
       if(actor&&actor.group.userData.styleKey!==styleKey){this.scene.remove(actor.group);actor.dispose();this.actors.delete(u.id);actor=null;}
       if(!actor){actor=(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm});if(actor.painted)this.loadPaintedArt();this.attachFormation(u,actor);actor.group.userData.unitId=u.id;actor.group.userData.styleKey=styleKey;this.scene.add(actor.group);this.actors.set(u.id,actor);this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';}});}
-      if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
+      if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-role"></span><span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
       const label=this.labels.get(u.id),readout=actorReadout(u,encounter);
-      label.className=`world-unit ${u.side==='enemy'?'enemy':u.side==='neutral'?'neutral':'friendly'} ${readout.tone}${civicActor(u)&&!isAlive(u)?' withdrawn':''}`;label.dataset.type=readout.type;
+      label.className=`world-unit ${u.side==='enemy'?'enemy':u.side==='neutral'?'neutral':'friendly'} ${readout.tone}${civicActor(u)&&!isAlive(u)?' withdrawn':''}`;label.dataset.type=readout.type;label.dataset.role=labelRole(u);if(u.bloc)label.dataset.bloc=u.bloc;else delete label.dataset.bloc;label.classList.toggle('named',namedFigure(u));
       const refs=this.labelRefs.get(u.id);refs.name.textContent=u.name||u.id;refs.signal.textContent=readout.signal;refs.detail.textContent=readout.detail;refs.short.textContent=readout.type==='vote'?`${readout.value>0?'+':''}${readout.value}`:readout.type==='resolve'?`${readout.value} R`:'';refs.short.title=readout.signal;
       refs.health.style.width=`${readout.ratio*100}%`;label.hidden=!actorVisible(u);refs.stateKey=null;
       const point=this.world(u);if(actor.group.position.distanceTo(point)>.25)this.poseReset.add(u.id);actor.group.position.copy(point);actor.group.visible=actorVisible(u);
@@ -177,6 +185,7 @@ export class BattleStage{
     this.updateChamberStandards(encounter);
     this.updateFieldworks(encounter);
     this.updateBattleDecals(encounter);
+    this.updateInk();
     this.updateMoraleRings(encounter);
     this.updateReinforcementBeacons(encounter);
     this.updateTacticalLinks();
@@ -334,7 +343,13 @@ export class BattleStage{
     this.previewTarget=target?.previewBadge&&this.inspected?{unitId:this.inspected,...target.previewBadge}:null;
     this.previewTargets=target?.previewBadges??(this.previewTarget?{[this.previewTarget.unitId]:this.previewTarget}:null);
     this.hoverRing.visible=!!target;if(target){this.hoverRing.position.copy(this.world(target));this.hoverRing.position.y+=.08;}
-    this.updateTacticalLinks(target,this.selectedAction);
+    this.updateTacticalLinks(target,this.selectedAction);this.updateInk();
+  }
+  // The ink shows the chosen action's reach and, for an enemy under the
+  // pointer or inspected, everything it could strike next turn.
+  updateInk(){
+    if(!this.ink||!this.encounter)return;const enemy=[this.inspected,this.hovered].find(id=>id&&this.encounter.units?.find(u=>u.id===id)?.side==='enemy');
+    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null});
   }
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
@@ -414,7 +429,7 @@ export class BattleStage{
   }
   finishMotion(cancelAudio=true){if(!this.animation)return;if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
   tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
-    if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);}
+    if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
     const renderStart=performance.now();let frame=null;
     if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
     this.environment.update(this.reducedMotion?0:this.elapsed);
@@ -425,6 +440,7 @@ export class BattleStage{
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
       const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
       const pose=stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
+      if(unit.role==='voter'&&pose.motion==='idle')Object.assign(pose,voterPosture(unit)??{});
       if(unit.id===this.selected)this.selectedYaw=pose.direction;
       const focusUnit=victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
       let gazeYaw=0,gazePitch=0;
@@ -520,8 +536,8 @@ export class BattleStage{
     }
     this.labelStats=counts;this.labelSizeDirty=false;
   }
-  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
+  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
+  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.
     if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();}

@@ -485,3 +485,66 @@ test('v0.29.0: painted followers are instanced cards of the same painting with t
     actor.dispose();assert.equal(cards.parent, null);assert.equal(shadows.parent, null);
   } finally {canvas.restore();}
 });
+
+test('v0.29.0: labels are compact by default; named figures, the selection and the pointer keep their names', async () => {
+  const {labelRole, namedFigure, voterPosture} = await import('../src/showcase/stage.js');
+  const {readFile} = await import('node:fs/promises');
+  assert.equal(labelRole({role: 'infantry'}), 'infantry');assert.equal(labelRole({role: 'heavy'}), 'cavalry');assert.equal(labelRole({role: 'soldier'}), 'infantry');assert.equal(labelRole({role: 'archer'}), 'archer');
+  for (const unit of [{id: 'hero'}, {id: 'ally0', veteranId: 'v-lucan'}, {id: 'e0', role: 'escort'}, {id: 'enemy0', name: 'Rival claimant', role: 'infantry'}]) assert.equal(namedFigure(unit), true);
+  for (const unit of [{id: 'enemy1', name: 'Gothic raider', role: 'raider'}, {id: 'ally6', name: 'Relief cohort 7', role: 'archer'}]) assert.equal(namedFigure(unit), false);
+  assert.deepEqual(voterPosture({stance: 3}), {motion: 'assent', phase: 1});assert.deepEqual(voterPosture({stance: -1}), {motion: 'dissent', phase: 1 / 3});assert.equal(voterPosture({stance: 0}), null);
+  const css = await readFile(new URL('../src/ui/battle-3d.css', import.meta.url), 'utf8');
+  for (const role of ['infantry', 'archer', 'cavalry', 'guard', 'raider', 'commander']) assert.match(css, new RegExp(`\\[data-role=${role}\\] \\.world-role\\{background-image:url\\("data:image/svg\\+xml`), `${role} has a glyph`);
+  assert.match(css, /:not\(\.named\)[^{]*\.world-name\{display:none\}/, 'Rank-and-file names hide by default');
+  for (const bloc of ['Veterans', 'Landholders', 'Civic', 'Chamber']) assert.match(css, new RegExp(`\\[data-bloc=${bloc}\\]`));
+});
+
+test('v0.29.0: Senate delegates wear their bloc on the toga trim and show their stance in posture', async () => {
+  const {BLOC_TRIM, createActor} = await import('../src/showcase/actors.js');
+  const {actorPose} = await import('../src/showcase/actor-pose.js');
+  const trims = ['Veterans', 'Landholders', 'Civic', 'Chamber'].map(b => BLOC_TRIM[b]);
+  assert.equal(new Set(trims).size, 4, 'Every data bloc has its own trim');
+  const actor = createActor({id: 'member2', name: 'Civic delegate 1', role: 'voter', side: 'neutral', bloc: 'Civic', stance: 2}, {chapter: 11});
+  // Colours are baked (linear, lightly shaded) into merged vertex colours, so compare hue, not exact values.
+  const THREE = await import('../vendor/three/three.module.js'), hue = c => {const m = Math.max(c.r, c.g, c.b, 1e-6);return [c.r / m, c.g / m, c.b / m];};
+  const target = hue(new THREE.Color(BLOC_TRIM.Civic)), samples = [];
+  actor.group.traverse(o => {if (!o.isMesh) return;const c = o.geometry.attributes.color, base = o.material?.color ?? new THREE.Color(1, 1, 1);
+    if (c) for (let i = 0; i < c.count; i++) samples.push(new THREE.Color(c.getX(i) * base.r, c.getY(i) * base.g, c.getZ(i) * base.b));else samples.push(base.clone());});
+  assert.ok(samples.some(s => hue(s).every((v, i) => Math.abs(v - target[i]) < .06)), 'The Civic delegate’s trim is the Civic colour');
+  actor.dispose();
+  const idle = actorPose({motion: 'idle', reducedMotion: true}), assent = actorPose({motion: 'assent', phase: 1, reducedMotion: true}), dissent = actorPose({motion: 'dissent', phase: 1, reducedMotion: true}), slight = actorPose({motion: 'dissent', phase: .33, reducedMotion: true});
+  assert.ok(assent.rightArm[0] < idle.rightArm[0] - .3, 'Assent reaches toward the speaker');
+  assert.ok(dissent.leftElbow < idle.leftElbow - 1 && dissent.rightElbow < idle.rightElbow - 1, 'Dissent folds both arms');
+  assert.ok(Math.abs(slight.leftElbow - idle.leftElbow) < Math.abs(dissent.leftElbow - idle.leftElbow), 'Wavering delegates fold less');
+  for (const pose of [assent, dissent]) assert.ok([...pose.leftArm, ...pose.rightArm, pose.headX, pose.bodyX].every(Number.isFinite));
+});
+
+test('v0.29.0: move reach and enemy threat are inked on the ground from what the rules returned', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createInkOverlay, threatCells} = await import('../src/showcase/ink-overlay.js');
+  const {BattleStage} = await import('../src/showcase/stage.js');
+  const {RIVER_WATER_LEVEL} = await import('../src/showcase/environment-layout.js');
+  assert.deepEqual(threatCells({moveTiles: [{x: 0, y: 0}], range: 1}, {width: 8, height: 8}).map(c => `${c.x},${c.y}`).sort(), ['0,0', '0,1', '1,0']);
+  assert.equal(threatCells({moveTiles: [{x: 4, y: 4}], range: 3}).length, 25, 'An archer threatens a diamond three cells out');
+  assert.deepEqual(threatCells(null), []);
+  const canvas = installFakeCanvas({alpha: 255});
+  try {
+    const encounter = {width: 8, height: 8}, heightAt = (x, z) => x > 5 ? -1.3 : .2, scene = new T.Scene(), ink = createInkOverlay(scene, encounter, heightAt);
+    assert.ok(ink && ink.mesh.parent === scene && !ink.mesh.visible);
+    const pos = ink.mesh.geometry.attributes.position;
+    for (let i = 0; i < pos.count; i += 13) assert.ok(pos.getY(i) >= Math.max(heightAt(pos.getX(i), pos.getZ(i)), RIVER_WATER_LEVEL) + .03, 'The ink lies on the ground or the water surface');
+    assert.equal(ink.paint({targets: [{x: 1, y: 1}, {x: 2, y: 1}], color: '#89cfcb'}), true);assert.equal(ink.mesh.visible, true);
+    assert.equal(ink.paint({targets: [{x: 2, y: 1}, {x: 1, y: 1}], color: '#89cfcb'}), false, 'The same reach is not repainted');
+    assert.equal(ink.paint({targets: [], threat: {moveTiles: [{x: 5, y: 5}], range: 1}}), true);assert.equal(ink.mesh.visible, true);
+    assert.equal(ink.paint({}), true);assert.equal(ink.mesh.visible, false);
+    const hits = [];ink.mesh.raycast(new T.Raycaster(), hits);assert.equal(hits.length, 0, 'Ink never takes a pick');
+    ink.dispose();assert.equal(ink.mesh.parent, null);
+  } finally {canvas.restore();}
+  const painted = [], stage = Object.create(BattleStage.prototype);
+  Object.assign(stage, {ink: {paint(p) {painted.push(p);}}, targets: [{x: 1, y: 1}], targetMaterial: new T.MeshBasicMaterial({color: '#89cfcb'}), inspected: 'enemy0', hovered: null,
+    encounter: {kind: 'battle', width: 8, height: 8, terrain: Array.from({length: 8}, () => Array(8).fill('grass')), units: [{id: 'enemy0', side: 'enemy', role: 'infantry', x: 4, y: 4, hp: 5, move: 2}, {id: 'hero', side: 'player', x: 4, y: 6, hp: 5}]}});
+  const before = JSON.stringify(stage.encounter);stage.updateInk();
+  assert.equal(painted[0].threat?.unitId, 'enemy0', 'An inspected enemy shows its threat');assert.equal(painted[0].color, '#89cfcb');
+  stage.inspected = 'hero';stage.updateInk();assert.equal(painted[1].threat, null, 'Friendly figures show no threat');
+  assert.equal(JSON.stringify(stage.encounter), before, 'Inking reads the encounter without changing it');
+});

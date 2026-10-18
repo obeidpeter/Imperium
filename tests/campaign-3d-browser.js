@@ -17,7 +17,9 @@ function release(){controller?.release();controller=null;mountedState=null;mount
 async function until(fn,t,timeout=10000){const start=performance.now();while(!fn()){active(t);ensure(performance.now()-start<timeout,'Timed out waiting for real render callbacks.');await new Promise(requestAnimationFrame);}active(t);}
 function board(){let canvas=host.querySelector('canvas');if(!canvas){canvas=document.createElement('canvas');canvas.tabIndex=0;canvas.setAttribute('aria-label','Development review scene. Drag to orbit, plus/minus to zoom.');host.append(canvas);}delete host.dataset.ready;return canvas;}
 const figureId=state=>state.encounter.units.some(u=>u.id===$('figure-select').value&&!u.hidden)?$('figure-select').value:'hero';
-const options=(state,extra={})=>({encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected:figureId(state),targets:[],target:null,grid:false,quality:$('quality').value,figureStyle:$('figure-style').value,reducedMotion:$('reduced-motion').checked,audio:false,audioVolume:0,paused:false,...extra});
+// Read-only previews: legal move cells from the rules API, or an inspected enemy.
+const preview=state=>{const mode=$('preview')?.value,enemy=state.encounter.units.find(u=>u.side==='enemy'&&!u.hidden&&(u.hp??1)>0);if(mode==='move')return {targets:Game.getTargets(state,figureId(state),'move')??[],target:null};if(mode==='threat'&&enemy)return {targets:[],target:{x:enemy.x,y:enemy.y,unitId:enemy.id}};return {targets:[],target:null};};
+const options=(state,extra={})=>({encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected:figureId(state),...preview(state),grid:false,quality:$('quality').value,figureStyle:$('figure-style').value,reducedMotion:$('reduced-motion').checked,audio:false,audioVolume:0,paused:false,...extra});
 async function mount(state,t,extra={}){
   release();lastError=null;controller=createBattleStageController({onError:error=>{lastError=String(error);}});
   controller.mount(board(),options(state,extra));await until(()=>controller?.stage,t);const stage=controller.stage;
