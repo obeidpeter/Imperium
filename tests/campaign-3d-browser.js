@@ -17,7 +17,7 @@ function release(){controller?.release();controller=null;mountedState=null;mount
 async function until(fn,t,timeout=10000){const start=performance.now();while(!fn()){active(t);ensure(performance.now()-start<timeout,'Timed out waiting for real render callbacks.');await new Promise(requestAnimationFrame);}active(t);}
 function board(){let canvas=host.querySelector('canvas');if(!canvas){canvas=document.createElement('canvas');canvas.tabIndex=0;canvas.setAttribute('aria-label','Development review scene. Drag to orbit, plus/minus to zoom.');host.append(canvas);}delete host.dataset.ready;return canvas;}
 const figureId=state=>state.encounter.units.some(u=>u.id===$('figure-select').value&&!u.hidden)?$('figure-select').value:'hero';
-const options=(state,extra={})=>({encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected:figureId(state),targets:[],target:null,grid:false,quality:$('quality').value,reducedMotion:$('reduced-motion').checked,audio:false,audioVolume:0,paused:false,...extra});
+const options=(state,extra={})=>({encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected:figureId(state),targets:[],target:null,grid:false,quality:$('quality').value,figureStyle:$('figure-style').value,reducedMotion:$('reduced-motion').checked,audio:false,audioVolume:0,paused:false,...extra});
 async function mount(state,t,extra={}){
   release();lastError=null;controller=createBattleStageController({onError:error=>{lastError=String(error);}});
   controller.mount(board(),options(state,extra));await until(()=>controller?.stage,t);const stage=controller.stage;
@@ -129,7 +129,7 @@ async function run(label,fn){if(busy||!fixtures)return;busy=true;const t=++token
 }
 $('scene-select').addEventListener('change',()=>{release();sceneOptions();});$('scene-size').addEventListener('change',()=>{host.dataset.size=$('scene-size').value;controller?.stage?.resize();});
 $('figure-select').addEventListener('change',()=>{motionOptions();if(controller?.stage){controller.stage.setSelection(figureId(mountedState),[],null);if(controller.stage.focusMode)controller.focus();}});$('figure-only').addEventListener('change',motionOptions);$('motion-select').addEventListener('change',sampleOptions);
-$('quality').addEventListener('change',()=>controller?.quality($('quality').value));$('reduced-motion').addEventListener('change',()=>controller?.reduced($('reduced-motion').checked));
+$('quality').addEventListener('change',()=>controller?.quality($('quality').value));$('figure-style').addEventListener('change',()=>controller?.figures?.($('figure-style').value));$('reduced-motion').addEventListener('change',()=>controller?.reduced($('reduced-motion').checked));
 for(const [id,apply] of [['overview',s=>s.home()],['follow',s=>s.focusSelected()],['zoom-in',s=>s.zoom(-2)],['zoom-out',s=>s.zoom(2)]])$(id).addEventListener('click',()=>run('camera',async t=>{const stage=await currentStage(t),saved=Game.serialize(mountedState);stage.setSelection(figureId(mountedState),[],null);apply(stage);await settledLabels(stage,t);ensure(Game.serialize(mountedState)===saved,'Camera changed state.');status.textContent=`${id}: ${stage.selected}. Camera inspection only.`;}));
 $('labels').addEventListener('click',()=>run('labels',inspectLabels));
 $('horizon').addEventListener('click',()=>run('horizon',t=>horizonDiagnostic(t,true)));$('sky-check').addEventListener('click',()=>run('sky record',t=>horizonDiagnostic(t,false)));
@@ -139,7 +139,7 @@ $('remaining').addEventListener('click',()=>run('check selected and later encoun
 $('measure').addEventListener('click',()=>run('measure',measure));$('stop').addEventListener('click',()=>{token++;release();status.textContent='Stopped. Renderer released.';});
 $('download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='campaign-3d-browser-results.json';link.click();URL.revokeObjectURL(url);});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){token++;release();}});window.addEventListener('pagehide',()=>{token++;release();});
-try{const response=await fetch('./fixtures/campaign-3d.json');ensure(response.ok,'Generate fixtures first: node scripts/campaign-3d-fixtures.mjs');fixtures=await response.json();ensure(fixtures.format==='sacramentum-campaign-3d-v1','Unexpected fixture format');
+try{const response=await fetch('./tests/fixtures/campaign-3d.json');ensure(response.ok,'Generate fixtures first: node scripts/campaign-3d-fixtures.mjs');fixtures=await response.json();ensure(fixtures.format==='sacramentum-campaign-3d-v1','Unexpected fixture format');
   for(const scene of fixtures.scenes){const option=document.createElement('option');option.value=scene.id;option.textContent=`${scene.chapter} · ${scene.encounterTitle} (${scene.kind})`;$('scene-select').append(option);}
   $('scene-select').value='ch2-marsh';$('scene-select').disabled=false;buttons.forEach(id=>$(id).disabled=false);sceneOptions();report.fixtureSource=fixtures.source;report.fixtureCommands=fixtures.commandCount;status.textContent='Ready. No browser checks have run.';write();
 }catch(error){status.textContent=error.message;report.status='unavailable';report.error=error.message;write();}

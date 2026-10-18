@@ -270,3 +270,119 @@ test('v0.29.0: water keeps a dim sun sheen with glitter and caps its reflected h
   assert.equal(lib.materials.riverWater.vertexColors, true, 'Channel depth travels in vertex alpha');
   lib.dispose();
 });
+
+// A recording 2D canvas: enough for the painted-figure card in Node.
+function installFakeCanvas({alpha = 255} = {}) {
+  const log = {draws: 0, clears: 0};
+  class FakeCanvas {
+    constructor(width, height) {this.width = width;this.height = height;}
+    getContext() {
+      const gradient = {addColorStop() {}};
+      return new Proxy({createLinearGradient: () => gradient, getImageData: () => ({data: [0, 0, 0, alpha]}), clearRect: () => {log.clears++;}}, {get: (target, key) => key in target ? target[key] : (...args) => {log.draws++;return undefined;}, set: () => true});
+    }
+  }
+  const previous = globalThis.OffscreenCanvas;globalThis.OffscreenCanvas = FakeCanvas;
+  return {log, restore() {if (previous === undefined) delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas = previous;}};
+}
+
+test('v0.29.0: painted figures pick the authored facing seen from the camera, as the 2D board does', async () => {
+  const {paintedColumn, paintedLight, facingDirection} = await import('../src/showcase/painted-actor.js');
+  const iso = {x: 1, z: 1}; // the 2D board's own view: grid east runs right and toward the viewer
+  assert.deepEqual(['east', 'south', 'west', 'north'].map(f => paintedColumn(facingDirection(f), iso)), ['east', 'south', 'west', 'north']);
+  const turned = {x: -1, z: 1}; // a quarter turn of the camera rotates every column
+  assert.deepEqual(['east', 'south', 'west', 'north'].map(f => paintedColumn(facingDirection(f), turned)), ['north', 'east', 'south', 'west']);
+  const day = paintedLight({sun: '#ffe4b4', ambient: '#a1b1a7', timeOfDay: 'day'}), night = paintedLight({sun: '#9eb8dc', ambient: '#4d6282', timeOfDay: 'night'});
+  assert.ok(day.every(v => v > .9 && v <= 1.2), 'Daylight barely tints the painting');
+  assert.ok(night.every((v, i) => v < day[i]) && night[2] > night[0], 'Night darkens and cools it');
+});
+
+test('v0.29.0: a painted figure card faces the camera, casts its silhouette toward the sun and is picked only on paint', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createPaintedActor} = await import('../src/showcase/painted-actor.js');
+  const solid = installFakeCanvas({alpha: 255});
+  try {
+    const unit = {id: 'hero', side: 'player', role: 'soldier', x: 3, y: 3, hp: 10, maxHp: 10, facing: 'east'}, before = JSON.stringify(unit);
+    const actor = createPaintedActor(unit, {chapter: 1});
+    assert.ok(actor?.painted, 'A painted card is built when a 2D canvas exists');
+    const [card, shadow] = actor.group.children;
+    assert.equal(card.castShadow, false);assert.equal(shadow.castShadow, true);
+    assert.equal(shadow.material.colorWrite, false);assert.equal(shadow.material.depthWrite, false);
+    assert.equal(shadow.material.map, card.material.map, 'The shadow pass cuts the same painted silhouette');
+    assert.equal(shadow.material.shadowSide, T.DoubleSide);assert.ok(shadow.material.alphaTest > 0);
+    const scene = new T.Scene(), camera = new T.PerspectiveCamera(40, 1.5, .1, 100);scene.add(actor.group);
+    actor.group.position.set(2, 0, -1);camera.position.set(12, 10, 14);camera.lookAt(2, 1, -1);camera.updateMatrixWorld();
+    actor.update({direction: Math.PI / 2, unit, override: null});actor.faceCamera(camera, {sunYaw: .7});
+    card.updateWorldMatrix(true, false);
+    const worldCard = card.getWorldQuaternion(new T.Quaternion()), worldCamera = camera.getWorldQuaternion(new T.Quaternion());
+    assert.ok(Math.abs(Math.abs(worldCard.dot(worldCamera)) - 1) < 1e-6, 'The card is parallel to the view');
+    const shadowYaw = new T.Euler().setFromQuaternion(shadow.getWorldQuaternion(new T.Quaternion()), 'YXZ').y;
+    assert.ok(Math.abs(Math.atan2(Math.sin(shadowYaw - .7), Math.cos(shadowYaw - .7))) < 1e-6, 'The shadow card turns to the sun');
+    const repaints = solid.log.clears;actor.faceCamera(camera, {sunYaw: .7});
+    assert.equal(solid.log.clears, repaints, 'An unchanged view does not repaint the card');
+    actor.update({direction: -Math.PI / 2, unit, override: null});actor.faceCamera(camera, {sunYaw: .7});
+    assert.ok(solid.log.clears > repaints, 'Turning to another painted facing repaints it');
+    const ray = new T.Raycaster(), hits = [];ray.setFromCamera(new T.Vector2(0, 0), camera);
+    const aimed = new T.Raycaster(camera.position.clone(), actor.group.position.clone().add(new T.Vector3(0, 1, 0)).sub(camera.position).normalize());
+    actor.group.updateMatrixWorld(true);aimed.intersectObject(actor.group, true, hits);
+    assert.ok(hits.length > 0 && hits.every(hit => hit.object === card), 'Only the painted card is pickable');
+    assert.ok(Number.isFinite(actor.getReleasePoint(new T.Vector3()).length()));
+    assert.equal(JSON.stringify(unit), before, 'Painting never edits the unit');
+    let disposed = 0;card.geometry.addEventListener('dispose', () => disposed++);actor.dispose();actor.dispose();assert.equal(disposed, 1);
+  } finally {solid.restore();}
+  const clear = installFakeCanvas({alpha: 0});
+  try {
+    const actor = createPaintedActor({id: 'e', side: 'enemy', role: 'soldier', facing: 'west'}, {chapter: 2}), camera = new T.PerspectiveCamera(40, 1, .1, 100);
+    camera.position.set(0, 4, 10);camera.lookAt(0, 1, 0);camera.updateMatrixWorld();actor.faceCamera(camera);actor.group.updateMatrixWorld(true);
+    const hits = new T.Raycaster(camera.position.clone(), new T.Vector3(0, 1, 0).sub(camera.position).normalize()).intersectObject(actor.group, true);
+    assert.equal(hits.length, 0, 'A transparent part of the card is not the figure');actor.dispose();
+  } finally {clear.restore();}
+  const {createPaintedActor: again} = await import('../src/showcase/painted-actor.js');
+  assert.equal(again({id: 'x'}), null, 'Without a canvas no painted card is created (the stage keeps sculpted figures)');
+});
+
+test('v0.29.0: switching figure style swaps only the presentation and sets the matching scene finish', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {BattleStage, FIGURE_STYLES, figureStyleFinish, diagonalYaw} = await import('../src/showcase/stage.js');
+  const {FIGURE_STYLES: shared} = await import('../src/ui/graphics-quality.js');
+  assert.equal(FIGURE_STYLES, shared, 'The UI and the stage share one list');
+  assert.deepEqual(figureStyleFinish('painted'), {tiltShift: 1, ink: 0});assert.deepEqual(figureStyleFinish('inked'), {tiltShift: 0, ink: 1});assert.deepEqual(figureStyleFinish('sculpted'), {tiltShift: 0, ink: 0});
+  for (const [yaw, expected] of [[-.55, -Math.PI / 4], [.2, Math.PI / 4], [2, 3 * Math.PI / 4], [-2.6, -3 * Math.PI / 4]]) assert.ok(Math.abs(diagonalYaw(yaw) - expected) < 1e-12);
+  const encounter = {id: 'ch1-road', kind: 'battle', units: [{id: 'hero', x: 1, y: 1}]}, frozen = JSON.stringify(encounter), styles = [], synced = [];let disposed = 0;
+  const stage = Object.create(BattleStage.prototype);
+  Object.assign(stage, {figureStyle: 'sculpted', disposed: false, encounter, scene: new T.Scene(), actors: new Map([['hero', {group: new T.Group(), dispose() {disposed++;}}]]), compositor: {setStyle(s) {styles.push(s);}}, sync(e) {synced.push(e);}});
+  stage.setFigureStyle('painted');
+  assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 1);assert.equal(stage.actors.size, 0);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
+  stage.setFigureStyle('painted');assert.equal(synced.length, 1, 'Re-selecting the same style does nothing');
+  stage.setFigureStyle('invented');assert.equal(stage.figureStyle, 'sculpted', 'Unknown styles fall back to sculpted');
+  assert.equal(JSON.stringify(encounter), frozen, 'The encounter is untouched');
+});
+
+test('v0.29.0: the compositor offers tilt-shift and ink finishes, clamped, and the controller forwards the setting', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createSceneCompositor} = await import('../src/showcase/scene-compositor.js');
+  let quad = null;
+  const renderer = {extensions: {has: () => true}, capabilities: {maxTextureSize: 4096}, info: {autoReset: true, reset() {}}, getDrawingBufferSize: v => v.set(640, 360), getRenderTarget: () => null, setRenderTarget() {}, render(object) {if (!object.isScene) quad = object;}};
+  const compositor = createSceneCompositor(renderer, new T.PerspectiveCamera(), {quality: 'high'});
+  compositor.render(new T.Scene());
+  const u = quad.material.uniforms;
+  assert.equal(u.tiltShift.value, 0);assert.equal(u.ink.value, 0);
+  compositor.setStyle({tiltShift: 4, ink: -1});assert.equal(u.tiltShift.value, 1);assert.equal(u.ink.value, 0);
+  compositor.setStyle({ink: .5});assert.equal(u.tiltShift.value, 0);assert.equal(u.ink.value, .5);
+  compositor.setFocus(31);assert.equal(u.focusDepth.value, 31);compositor.setFocus(-4);assert.equal(u.focusDepth.value, 31, 'Invalid focus distances are ignored');
+  assert.match(quad.material.fragmentShader, /tiltShiftColor/);assert.match(quad.material.fragmentShader, /inkFinish/);
+  assert.equal(compositor.stats().ink, .5);compositor.dispose();
+  const {createBattleStageController} = await import('../src/ui/battle-stage-controller.js');
+  const calls = [];
+  class FakeStage {
+    constructor(board) {this.canvas = board;this.labelLayer = {};this.quality = 'balanced';this.figureStyle = 'sculpted';}
+    sync() {} setSelection() {} setGrid() {} applyQuality() {} setReducedMotion() {} setPaused() {} setAudio() {} home() {} resize() {} dispose() {}
+    setFigureStyle(style) {calls.push(style);this.figureStyle = style;}
+  }
+  const host = {dataset: {}, append() {}}, canvas = {parentElement: host, isConnected: true, replaceWith() {}};
+  const controller = createBattleStageController({load: async () => ({BattleStage: FakeStage})});
+  controller.mount(canvas, {encounter: {id: 'ch1-road', kind: 'battle', units: []}, quality: 'balanced', figureStyle: 'painted'});
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(calls, ['painted'], 'The saved style reaches a new stage');
+  controller.figures('inked');assert.deepEqual(calls, ['painted', 'inked']);
+  controller.release();
+});

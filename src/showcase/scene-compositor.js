@@ -65,6 +65,9 @@ uniform float gradeSaturation;
 uniform float gradeContrast;
 uniform vec3 gradeShadow;
 uniform vec3 gradeHighlight;
+uniform float tiltShift;
+uniform float focusDepth;
+uniform float ink;
 varying vec2 vUv;
 float imperiumLuma(vec3 c){return dot(c,vec3(0.2126,0.7152,0.0722));}
 vec3 viewPosition(vec2 uv,float depth){
@@ -138,6 +141,33 @@ vec3 aerialGrade(vec3 color,vec3 p,float depth){
   vec3 horizonTint=hazeColor*max(0.45,min(1.15,imperiumLuma(color)+0.32));
   return mix(color,horizonTint,haze);
 }
+float viewDepth(vec2 uv){float d=texture2D(sceneDepth,uv).r;return d>=0.99999?1000.0:-viewPosition(uv,d).z;}
+// Diorama tilt-shift: the board around the focus stays sharp, ground beyond
+// it and the near foreground soften. Taps nearer than the pixel contribute
+// little, so a sharp figure never smears over the blurred land behind it.
+vec3 tiltShiftColor(vec3 center,float z){
+  float blur=clamp(smoothstep(focusDepth+9.0,focusDepth+70.0,z)+(1.0-smoothstep(focusDepth-20.0,focusDepth-9.0,z))*0.7,0.0,1.0)*tiltShift;
+  if(blur<0.02)return center;
+  vec2 pixel=1.0/resolution;vec3 sum=center;float weight=1.0;
+  for(int i=0;i<12;i++){
+    float a=float(i)*2.39996323,r=sqrt((float(i)+0.5)/12.0)*blur*7.0;
+    vec2 q=clamp(vUv+vec2(cos(a),sin(a))*r*pixel,vec2(0.001),vec2(0.999));
+    float w=viewDepth(q)>=z-2.0?1.0:0.2;sum+=texture2D(sceneColor,q).rgb*w;weight+=w;
+  }
+  return sum/weight;
+}
+// Ink and wash: outlines on the near side of every depth step (figures,
+// walls, ridges), and soft value banding like washes laid on paper.
+vec3 inkFinish(vec3 color,float z){
+  if(z>=999.0)return color;
+  vec2 pixel=vec2(max(1.25,resolution.y/640.0))/resolution;float edge=0.0;
+  edge=max(edge,viewDepth(vUv+vec2(pixel.x,0.0))-z);edge=max(edge,viewDepth(vUv-vec2(pixel.x,0.0))-z);
+  edge=max(edge,viewDepth(vUv+vec2(0.0,pixel.y))-z);edge=max(edge,viewDepth(vUv-vec2(0.0,pixel.y))-z);
+  float line=smoothstep(0.035,0.09,edge/max(z,0.5))*(1.0-smoothstep(60.0,140.0,z));
+  float l=imperiumLuma(color),banded=floor(l*5.0+0.5)/5.0;
+  color*=mix(1.0,clamp(banded/max(l,0.0001),0.8,1.2),0.35*ink);
+  return mix(color,vec3(0.035,0.028,0.022),line*ink*0.85);
+}
 float frescoVignette(vec2 uv){
   vec2 d=(uv-0.5)*vec2(1.12,0.96);
   return 1.0-smoothstep(0.18,0.72,dot(d,d))*vignetteStrength;
@@ -146,6 +176,8 @@ void main(){
   float depth=texture2D(sceneDepth,vUv).r;
   vec3 p=viewPosition(vUv,depth);
   vec3 base=antialiasedColor();
+  float z=depth>=0.99999?1000.0:-p.z;
+  if(tiltShift>0.001)base=tiltShiftColor(base,z);
   vec3 color=base*localOcclusion(p,depth)+specularBloom(base);
   color=aerialGrade(color,p,depth);
   float l=imperiumLuma(color);
@@ -155,6 +187,7 @@ void main(){
   l=imperiumLuma(color);
   color*=mix(gradeShadow,gradeHighlight,smoothstep(0.04,0.9,l));
   color*=frescoVignette(vUv);
+  if(ink>0.001)color=inkFinish(color,z);
   gl_FragColor=vec4(max(color,vec3(0.0)),1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -166,7 +199,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   const geometry=new T.BufferGeometry();
   geometry.setAttribute('position',new T.Float32BufferAttribute([-1,-1,0,3,-1,0,-1,3,0],3));
   geometry.setAttribute('uv',new T.Float32BufferAttribute([0,0,2,0,0,2],2));
-  const material=new T.ShaderMaterial({name:'Imperium depth and edge finish',defines:{AO_DIRECTIONS:8},uniforms:{sceneColor:{value:null},sceneDepth:{value:null},inverseProjection:{value:inverseProjection},resolution:{value:size},projectionScale:{value:1},worldRadius:{value:1.05},strength:{value:1.55},bloomStrength:{value:0.24},casStrength:{value:0.18},aerialStrength:{value:0.16},vignetteStrength:{value:0.14},edgeBlend:{value:0.32},hazeRange:{value:new T.Vector2(DEFAULT_HAZE.near,DEFAULT_HAZE.far)},hazeColor:{value:new T.Color(...DEFAULT_HAZE.color)},gradeSaturation:{value:DEFAULT_GRADE.saturation},gradeContrast:{value:DEFAULT_GRADE.contrast},gradeShadow:{value:new T.Vector3(...DEFAULT_GRADE.shadow)},gradeHighlight:{value:new T.Vector3(...DEFAULT_GRADE.highlight)}},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:true});
+  const material=new T.ShaderMaterial({name:'Imperium depth and edge finish',defines:{AO_DIRECTIONS:8},uniforms:{sceneColor:{value:null},sceneDepth:{value:null},inverseProjection:{value:inverseProjection},resolution:{value:size},projectionScale:{value:1},worldRadius:{value:1.05},strength:{value:1.55},bloomStrength:{value:0.24},casStrength:{value:0.18},aerialStrength:{value:0.16},vignetteStrength:{value:0.14},edgeBlend:{value:0.32},hazeRange:{value:new T.Vector2(DEFAULT_HAZE.near,DEFAULT_HAZE.far)},hazeColor:{value:new T.Color(...DEFAULT_HAZE.color)},gradeSaturation:{value:DEFAULT_GRADE.saturation},gradeContrast:{value:DEFAULT_GRADE.contrast},gradeShadow:{value:new T.Vector3(...DEFAULT_GRADE.shadow)},gradeHighlight:{value:new T.Vector3(...DEFAULT_GRADE.highlight)},tiltShift:{value:0},focusDepth:{value:27},ink:{value:0}},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:true});
   const quad=new T.Mesh(geometry,material);quad.frustumCulled=false;
   const screenCamera=new T.Camera();let target=null,disposed=false,failure=null,tier=COMPOSITOR_TIERS.balanced;
   // The renderer's target disposal also disposes its allocated depth texture.
@@ -204,6 +237,12 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
       if(Number.isFinite(contrast))material.uniforms.gradeContrast.value=Math.max(.5,Math.min(1.6,contrast));
       if(finite(shadow))material.uniforms.gradeShadow.value.fromArray(shadow);if(finite(highlight))material.uniforms.gradeHighlight.value.fromArray(highlight);
     },
+    // Presentation styles: tilt-shift (painted figures) and ink (inked), each 0 to 1.
+    setStyle({tiltShift=0,ink=0}={}){
+      if(disposed)return;const unit=v=>Number.isFinite(v)?Math.max(0,Math.min(1,v)):0;
+      material.uniforms.tiltShift.value=unit(tiltShift);material.uniforms.ink.value=unit(ink);
+    },
+    setFocus(distance){if(!disposed&&Number.isFinite(distance)&&distance>0)material.uniforms.focusDepth.value=distance;},
     setHaze({near=DEFAULT_HAZE.near,far=DEFAULT_HAZE.far,color}={}){
       if(disposed||!Number.isFinite(near)||!Number.isFinite(far))return;
       material.uniforms.hazeRange.value.set(Math.max(0,near),Math.max(near+1,far));
@@ -236,7 +275,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
       finally{renderer.setRenderTarget(previousTarget);renderer.info.autoReset=autoReset;}
       if(failure){release();renderer.info.reset();renderer.render(scene,camera);}
     },
-    stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,temporalHistory:false,fallback:failure??(supported?null:'float render targets unavailable')};},
+    stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,tiltShift:enabled?material.uniforms.tiltShift.value:0,ink:enabled?material.uniforms.ink.value:0,temporalHistory:false,fallback:failure??(supported?null:'float render targets unavailable')};},
     dispose(){if(disposed)return;disposed=true;release();geometry.dispose();material.dispose();}
   };
 }
