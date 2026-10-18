@@ -62,9 +62,12 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
 }
 let chapterRequest=0;
-export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true}={}) {
+// Atlases only the 2D tactical view draws. The 3D view never decodes them; they
+// stay in the offline chapter group and the 2D view loads them on demand.
+export const TACTICAL_2D_ONLY=Object.freeze(['./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp']);
+export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true,skip=()=>false}={}) {
   const request=++chapterRequest;
-  const current=await artLoader.prefetch(chapterAssets(chapter),{onProgress,retry});
+  const current=await artLoader.prefetch(chapterAssets(chapter).filter(path=>!skip(path)),{onProgress,retry});
   const nextAllowed=request===chapterRequest&&next&&chapter<12&&!constrainedConnection(connection)&&shouldPrefetchNext();
   // Optional next-chapter requests warm compressed responses only: decoding them
   // here would evict sprites still used by the current battlefield.

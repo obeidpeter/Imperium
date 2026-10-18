@@ -18,7 +18,7 @@ import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave} from './storage.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
-import {heroPortrait,chapterScene,loadArt,prefetchChapter} from './art.js';
+import {heroPortrait,chapterScene,loadArt,prefetchChapter,TACTICAL_2D_ONLY} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
 import {setupSiteMedia} from './site-media.js';
@@ -131,7 +131,7 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
   const chapter=state.chapter;
   if(loadedArtChapter!==chapter){
     loadedArtChapter=chapter;currentChapterOffline=offline;const request=++artRequest;
-    prefetchChapter(chapter,{retry,shouldPrefetchNext:()=>request===artRequest&&screen!=='title'&&!document.hidden,onProgress:progress=>{if(request!==artRequest)return;artProgress=progress.completed<progress.total?`Preparing chapter artwork · ${progress.completed}/${progress.total}`:progress.failed?'Some artwork is unavailable. Readable tactical symbols remain available.':'';updateLoadingStatus();}}).then(()=>{if(request===artRequest)offlineWorker?.postMessage({type:'offline-status',chapter});});
+    prefetchChapter(chapter,{retry,skip:path=>settings.battleView!=='2d'&&!failed3D&&TACTICAL_2D_ONLY.includes(path),shouldPrefetchNext:()=>request===artRequest&&screen!=='title'&&!document.hidden,onProgress:progress=>{if(request!==artRequest)return;artProgress=progress.completed<progress.total?`Preparing chapter artwork · ${progress.completed}/${progress.total}`:progress.failed?'Some artwork is unavailable. Readable tactical symbols remain available.':'';updateLoadingStatus();}}).then(()=>{if(request===artRequest)offlineWorker?.postMessage({type:'offline-status',chapter});});
   }
   requestCurrentChapter({allowTitle});updateLoadingStatus();
 }

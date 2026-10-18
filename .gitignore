@@ -6,3 +6,5 @@ dist/
 .env.*
 coverage/
 tests/fixtures/
+tests/visual-baselines/
+tests/visual-results/
