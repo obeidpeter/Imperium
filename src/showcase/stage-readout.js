@@ -1,6 +1,6 @@
 // Read the committed encounter; these descriptors never predict an outcome.
 import {movementPinned, reachable, lineOfSight} from '../core/shared.js';
-import {combatBreakdown} from '../core/battle.js';
+import {combatBreakdown, enemyFormationLinks} from '../core/battle.js';
 import {politicalPosition, INTEREST_EFFECTS} from '../core/contest.js';
 import {BLOC_AFFINITIES} from '../data/contest-balance.js';
 const bounded = (n, max) => Math.max(0, Math.min(1, Number(n) / Math.max(1, Number(max)) || 0));
@@ -104,6 +104,9 @@ export function tacticalLinks(encounter, {selected, target, action} = {}) {
         }
       }
     }
+    for (const link of enemyFormationLinks(encounter)) {
+      links.push({id:`enemy-cohesion:${link.fromId}:${link.toId}`, kind:'enemy-cohesion', from:link.from, to:link.to, color:'#d97a6c'});
+    }
   }
   const actor = selected && units.find(u => u.id === selected);
   if (actor && target && action === 'move' && Number.isFinite(target.x) && Number.isFinite(target.y)) {
@@ -130,7 +133,7 @@ export function effectReadout(effect) {
   if (effect.type === 'speech') return {text:'', color:'#ddc491', ring:true};
   if (effect.political && delta) return {text:`${signed} Resolve`, color:'#d5badc', ring:true};
   if (effect.healing) return {text:'Restored', color:'#a7d7a9', ring:true};
-  if (['ring','victory','defeat'].includes(effect.type)) return {text:'', color:effect.type === 'defeat' ? '#cb907e' : '#decc90', ring:true};
+  if (['ring','victory','defeat'].includes(effect.type)) return {text:'', color:effect.type === 'defeat' ? '#cb907e' : ['rally','inspire'].includes(effect.action) ? '#f0cf7b' : '#decc90', ring:true, radius:['rally','inspire'].includes(effect.action)?2.6:1.2};
   return {text:delta ? signed : '', color:effect.type === 'shield' ? '#ffe2a3' : '#bdac91', ring:false};
 }
 
@@ -229,6 +232,7 @@ export function combatModifiers(state, command) {
       {label: 'Base', value: hit.base, tone: 'neutral'},
       ...hit.modifiers.map(m => ({label: m.label, value: m.value, tone: m.value > 0 ? 'bonus' : 'penalty'})),
       {label: hit.aspect === 'flank' ? 'Flank' : 'Front', value: null, tone: hit.aspect === 'flank' ? 'bonus' : 'neutral'},
+      ...(hit.formationBreakLabel ? [{label: hit.formationBreakLabel, value: null, tone: 'bonus'}] : []),
     ];
   }
   if (e.kind === 'contest' && ['persuade', 'promise', 'threaten', 'record', 'address'].includes(action) && actor) {

@@ -13,7 +13,7 @@ import {GRAPHICS_MODES,createGraphicsQuality,defaultGraphicsMode} from './graphi
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
-import {drawBattle,pickBattlePoint,drawReignCard} from './renderer.js';
+import {drawBattle,pickBattlePoint,drawReignCard,reignLaurels} from './renderer.js';
 import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges} from './storage.js';
@@ -243,11 +243,11 @@ modal.addEventListener('close',()=>{
   battleStage.pause(false);startAtmosphere();
 });
 async function showExport(){showExportCode(await saveCode(state));}
-async function showShare(){
+async function showShare(selectedTheme='imperial'){
   shareFile=null;
-  showSharePreview();
+  showSharePreview(selectedTheme);
   const canvas=document.querySelector('#reign-card');
-  const summary={name:state.name,route:state.route,url:CONFIG.siteUrl||new URL('./',location.href).href,choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances'],stats:{encounters:(state.history||[]).length,turns:(state.history||[]).reduce((n,h)=>n+(h.turns||0),0),commendations:(state.company||[]).reduce((n,v)=>n+(v.commendations||0),0)}};
+  const summary={name:state.name,route:state.route,theme:selectedTheme,laurels:reignLaurels(state),url:CONFIG.siteUrl||new URL('./',location.href).href,choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances'],stats:{encounters:(state.history||[]).length,turns:(state.history||[]).reduce((n,h)=>n+(h.turns||0),0),commendations:(state.company||[]).reduce((n,v)=>n+(v.commendations||0),0)}};
   const file=await prepareShareCard({canvas,summary,loadPortrait:()=>loadArt(heroPortrait('Augustus')),loadScene:()=>loadArt(chapterScene(12)),draw:drawReignCard,downloadButton:modal.querySelector('[data-cmd="download-card"]'),shareButton:modal.querySelector('[data-cmd="share-card"]'),makeFile:blob=>new File([blob],'imperium-reign.png',{type:'image/png'})});
   if(canvas.isConnected)shareFile=file;
 }
@@ -386,6 +386,7 @@ document.addEventListener('change',async event=>{
   if(control.id==='formation-kind'){formation=control.value;render();}
   if(control.id==='order-kind'){orderAction=control.value;orderDestination=null;render();}
   if(control.id==='order-destination'){const [x,y]=(control.value||'').split(',').map(Number);orderDestination=control.value&&Number.isInteger(x)&&Number.isInteger(y)?{x,y}:null;render();if(target)announce(Game.preview(state,command()).message);}
+  if(control.id==='reign-card-theme'){await showShare(control.value);return;}
   if(['audio-setting','motion-setting'].includes(control.id)){stopMotion();pendingMotion=null;replay.stop();settings[control.id==='audio-setting'?'audio':'reducedMotion']=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();document.documentElement.dataset.reduced=settings.reducedMotion;battleStage.audio(settings.audio,settings.audioVolume);battleStage.reduced(settings.reducedMotion);if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();}
 });
 document.addEventListener('keydown',event=>{

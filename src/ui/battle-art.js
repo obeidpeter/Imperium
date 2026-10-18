@@ -1,5 +1,6 @@
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
 import {movementPinned} from '../core/shared.js';
+import {enemyFormationLinks} from '../core/battle.js';
 import {drawUnitSprite,spriteHeight} from './unit-sprites.js';
 import {worldGround,scenery,drawScenery,atmosphere} from './world-art.js';
 import {idlePose} from './animation-timeline.js';
@@ -74,6 +75,12 @@ export function drawFieldwork(c,g,q,type){
 }
 function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUnit=e.units.find(u=>u.id===selected);
   if(options.grid)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)polygon(c,diamond(g,xy(g,x,y)),null,'#d5dec42b',.65);
+  if(e.kind==='battle'){
+    for(const link of enemyFormationLinks(e)){
+      const a=xy(g,link.from.x,link.from.y),b=xy(g,link.to.x,link.to.y);
+      c.save();c.setLineDash([3,3]);line(c,[[a.x,a.y+2],[b.x,b.y+2]],'#d97a6c90',1.5);c.restore();
+    }
+  }
   if(e.kind==='battle'&&!options.action&&focus){
     const inspectedEnemy=e.units.find(u=>!u.hidden&&u.side==='enemy'&&(u.hp??1)>0&&(u.id===focus.unitId||(u.x===focus.x&&u.y===focus.y)));
     if(inspectedEnemy){
@@ -110,6 +117,9 @@ function baseMarker(c,p,s,u,active){const color=u.side==='enemy'?FIELD_COLORS.en
   else if(u.side==='enemy')polygon(c,[[p.x-11*s,p.y+3*s],[p.x+11*s,p.y+3*s],[p.x,p.y+8*s]],color,IVORY,.8);
   else if(u.side==='neutral')oval(c,p.x,p.y+3*s,10*s,3.8*s,color,0,'#f5e7c4',.65);
   else polygon(c,[[p.x-12*s,p.y+2*s],[p.x,p.y-3*s],[p.x+12*s,p.y+2*s],[p.x,p.y+7*s]],color,IVORY,.8);
+  if(u.name==='Pledged cohort')oval(c,p.x,p.y+2*s,14*s,5.4*s,null,0,'#e3c16f',1.4*s);
+  const mState=u.resolve===undefined?moraleState(u):null;
+  if(mState){c.save();c.setLineDash(mState==='broken'?[2.5*s,2*s]:[4*s,2*s]);oval(c,p.x,p.y+2*s,15.5*s,6.2*s,null,0,mState==='broken'?'#b84234':'#c9933b',1.5*s);c.restore();}
   const formation=formationGlyph(u.formation).map(([x,y])=>[p.x+x*s,p.y+(9+y)*s]);
   if(formation.length){line(c,formation,IVORY,3*s);line(c,formation,color,1.5*s);}
   if(u.braced){c.beginPath();c.ellipse(p.x,p.y,17*s,7*s,0,PI,PI*2);c.strokeStyle=IVORY;c.lineWidth=3*s;c.stroke();c.strokeStyle=color;c.lineWidth=1.6*s;c.stroke();}

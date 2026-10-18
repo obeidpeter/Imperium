@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.27.0 — tactical formation counter-play (Cuneus & Testudo), live chamber whip forecast, 3D/2D morale spectacle, camp War Council, after-action chronicle and customizable Reign Cards
+
+- **Cuneus & Testudo**: adds [`enemyFormationLinks`](src/core/battle.js) to render enemy cohesion tethers in 3D ([`stage-readout.js`](src/showcase/stage-readout.js)) and 2D ([`battle-art.js`](src/ui/battle-art.js)), and enriches [`combatBreakdown`](src/core/battle.js) and [`combatModifiers`](src/showcase/stage-readout.js) with explicit `formationBreak` / `formationBreakLabel` chips (`Wedge splits shield wall`, `Flank breaks shield line`).
+- **Calculus Curiae**: adds [`coalitionWhipForecast`](src/core/contest.js) and updates [`coalitionPanel`](src/ui/tactical-intel.js) to highlight current supporters **At Risk** from rival speakers' next-turn lobby intentions (`.vote-seat.at-risk`) and list **1-speech flips** in reach.
+- **Signa & Terror**: adds expanding golden shockwave rings (`radius: 2.6`) for `Rally` and `Inspire` in 3D ([`stage.js`](src/showcase/stage.js)) and 2D ([`battle-effects.js`](src/ui/battle-effects.js)), plus shaken (`<= 40`), broken (`<= 20`), and pledged-cohort base rings (`updateMoraleRings`, `baseMarker`).
+- **Consilium Castrorum**: adds [`warCouncilAdvisories`](src/ui/campaign-upgrade-views.js) and [`warCouncilPanel`](src/ui/campaign-upgrade-views.js) in camp so present companions (`Varro`, `Lucan`/`Sabinus`, `Crispus`, `Aelia`, `Paullus`) provide character-voiced counsel on the chapter's decision and upcoming encounter.
+- **Acta Diurna**: adds [`encounterDebrief`](src/ui/tactical-intel.js) to [`resultRecord`](src/ui/tactical-intel.js), surfacing Distinguished Service citations, key Turning Points from the encounter log, and concrete Defeat Diagnostics & retry guidance when an encounter is lost.
+- **Monumentum Aeternum**: adds selectable Reign Card **Monument Themes** (`REIGN_CARD_THEMES`: *Imperial Purple*, *Senatorial Marble*, *Legionary Bronze*) and automatic **Service Laurels** (`reignLaurels`) in [`renderer.js`](src/ui/renderer.js) and [`panels.js`](src/ui/panels.js).
+
 ## 0.26.0 — player-control overhaul, unavailable-action diagnostics, formation roster preview and chamber/allocation clarity
 
 - Adds [`actionCostLabel`](src/ui/direct-controls.js), [`explainActionTargetGap`](src/ui/direct-controls.js), [`explainUnavailableActions`](src/ui/direct-controls.js), and [`unusedTurnSummary`](src/ui/direct-controls.js) so every action button states its exact cost (`1 move`, `1 action`, `1 order`, `1 speech`, `1 javelin`, cooldown, promise limit), empty-target states explain why no target is in reach, `#command-named-controls` and `#command-coaching` (`What can I do?`) explain why unavailable capabilities cannot be used right now, and `#end-turn` summarizes any remaining moves, actions, speeches, or command orders.

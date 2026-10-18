@@ -41,7 +41,7 @@ function recordCanvas(width = 640, height = 400) {
 }
 
 test('v0.25.0 Lux Imperii: single-pass HDR specular bloom, CAS micro-sharpening, depth aerial perspective, and fresco vignette', () => {
-  assert.equal(CONFIG.version, '0.25.0');
+  assert.ok(CONFIG.version >= '0.25.0');
   assert.equal(COMPOSITOR_TIERS.performance.enabled, false);
   assert.equal(COMPOSITOR_TIERS.performance.bloomStrength, 0);
   assert.ok(COMPOSITOR_TIERS.balanced.bloomStrength > 0);

@@ -84,6 +84,10 @@ export function drawBattleEffects(c,g,frame,quality='balanced'){
       }
     }else if(effect.type==='ring'&&effect.formation){
       const points=formationGlyph(effect.formation);c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(q.x+x*s*(1+t*.3),q.y+y*s+9*s):c.moveTo(q.x+x*s*(1+t*.3),q.y+y*s+9*s));c.strokeStyle='#f5e6bf';c.lineWidth=3*s;c.stroke();c.strokeStyle='#3f756f';c.lineWidth=1.4*s;c.stroke();
+    }else if(effect.type==='ring'&&['rally','inspire'].includes(effect.action)){
+      const rx=(18+t*28)*s,ry=(8+t*13)*s;
+      c.beginPath();c.ellipse(q.x,q.y,rx,ry,0,0,TAU);c.strokeStyle='#f5df9e';c.lineWidth=Math.max(1,2.6*(1-t*.4)*s);c.stroke();
+      c.beginPath();c.ellipse(q.x,q.y,rx*.68,ry*.68,0,0,TAU);c.strokeStyle='#c99b42a8';c.lineWidth=Math.max(.8,1.5*s);c.stroke();
     }else{
       c.beginPath();c.ellipse(q.x,q.y,(14+t*13)*s,(6+t*7)*s,0,0,TAU);c.strokeStyle=effect.type==='defeat'?'#a35643':effect.healing?'#9cc0a4':'#c1a466';c.lineWidth=Math.max(.8,2*s);c.stroke();
     }

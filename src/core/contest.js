@@ -253,4 +253,47 @@ export function delegateCallout(encounter,command){
   const text=typeof lines[action]==='string'?lines[action]:(lines[action]?.[bloc]??lines.persuade.Civic);
   return {speaker:target.name,bloc,role:target.role,action,text};
 }
+export function coalitionWhipForecast(state){
+  const e=state?.encounter??(state?.kind==='contest'?state:null);
+  if(!e||e.kind!=='contest')return null;
+  const fullState=state?.encounter?state:{chapter:10,meters:{army:30,political:30,public:30},company:[],capabilityUse:{},chapterCapabilities:{},encounter:e};
+  const intents=contestIntents(fullState),atRisk=[];
+  for(const plan of intents){
+    if(plan.action==='lobby'&&plan.targetId){
+      const member=e.units.find(u=>u.id===plan.targetId&&u.role==='voter');
+      const rival=e.units.find(u=>u.id===plan.unitId);
+      if(member){
+        const stanceBefore=plan.stanceBefore??member.stance,stanceAfter=plan.stanceAfter??member.stance;
+        atRisk.push({id:member.id,name:member.name,bloc:member.bloc,stanceBefore,stanceAfter,losesVote:stanceBefore>=1&&stanceAfter<1,rivalId:rival?.id??plan.unitId,rivalName:rival?.name??'Opposition speaker'});
+      }
+    }
+  }
+  const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'&&alive(u)&&!u.acted);
+  const oneSpeechFlips=[];
+  for(const voter of e.units.filter(u=>u.role==='voter'&&u.stance<1)){
+    let best=null;
+    for(const speaker of speakers){
+      const acts=contestActions(fullState,speaker).filter(a=>['persuade','record','address','promise'].includes(a));
+      const positions=speaker.moved?[{x:speaker.x,y:speaker.y,cost:0}]:[{x:speaker.x,y:speaker.y,cost:0},...reachable(e,speaker,3)];
+      for(const action of acts){
+        if(action==='record'&&(e.recordUses??[]).includes(voter.id))continue;
+        if(action==='promise'&&((e.promises??[]).includes(voter.id)||(e.promises?.length??0)>=2))continue;
+        const range=action==='persuade'?1:action==='record'||action==='address'?3:2;
+        const inReachNow=distance(speaker,voter)<=range;
+        const pos=inReachNow?{x:speaker.x,y:speaker.y,cost:0}:positions.find(p=>distance(p,voter)<=range);
+        if(!pos)continue;
+        const simSpeaker=inReachNow?speaker:{...speaker,x:pos.x,y:pos.y};
+        const simState={...fullState,encounter:{...e,units:e.units.map(u=>u.id===speaker.id?simSpeaker:u)}};
+        const to=shiftedStance(voter,speechStrength(simState,action,voter,simSpeaker));
+        if(to<1)continue;
+        const score=(inReachNow?20:0)+(action==='promise'?0:10)+to;
+        if(!best||score>best.score)best={action,to,speakerId:speaker.id,speakerName:speaker.name,requiresMove:!inReachNow,score};
+      }
+    }
+    if(best)oneSpeechFlips.push({id:voter.id,name:voter.name,bloc:voter.bloc,interest:voter.interest,from:voter.stance,to:best.to,action:best.action,speakerId:best.speakerId,speakerName:best.speakerName,requiresMove:best.requiresMove});
+  }
+  const currentVotes=votes(e).for,projectedVotesAfterRivals=Math.max(0,currentVotes-atRisk.filter(r=>r.losesVote).length);
+  return {currentVotes,majority:e.majority,projectedVotesAfterRivals,atRisk,oneSpeechFlips};
+}
+
 

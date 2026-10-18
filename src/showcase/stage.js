@@ -150,7 +150,26 @@ export class BattleStage{
     this.updateChamberStandards(encounter);
     this.updateFieldworks(encounter);
     this.updateBattleDecals(encounter);
+    this.updateMoraleRings(encounter);
     this.updateTacticalLinks();
+  }
+  updateMoraleRings(encounter=this.encounter){
+    if(!this.overlay)return;
+    this.moraleRings=this.moraleRings??new Map();
+    const units=encounter?.kind==='battle'?(encounter.units??[]).filter(u=>actorVisible(u)&&((u.morale??80)<=40||u.name==='Pledged cohort')):[];
+    const wanted=new Set(units.map(u=>u.id));
+    for(const [id,mesh]of this.moraleRings)if(!wanted.has(id)){this.overlay.remove(mesh);mesh.material.dispose();this.moraleRings.delete(id);}
+    for(const u of units){
+      if(!this.moraleRings.has(u.id)){
+        const mesh=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.78,depthWrite:false,side:T.DoubleSide}));
+        mesh.name='unit-morale-ring';mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);this.moraleRings.set(u.id,mesh);
+      }
+      const mesh=this.moraleRings.get(u.id),broken=(u.morale??80)<=20,shaken=(u.morale??80)<=40;
+      mesh.position.copy(this.world(u));mesh.position.y+=.048;
+      mesh.material.color.set(broken?'#c44d3f':shaken?'#d89b3c':'#e8c86b');
+      mesh.userData.moraleState=broken?'broken':shaken?'shaken':'pledged';
+      mesh.visible=true;
+    }
   }
   updateChamberStandards(encounter=this.encounter){
     if(!this.overlay)return;
@@ -345,7 +364,7 @@ export class BattleStage{
       if(fx.at&&readout.text){const unit=this.unitAt(fx.at),label=this.labelRefs.get(unit?.id)?.effect;if(label){label.textContent=readout.text;label.style.color=readout.color;}}
       if(readout.ring&&fx.at&&ringCount<6){
         if(!this.effectRings[ringCount]){const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));ring.rotation.x=-Math.PI/2;this.effectGroup.add(ring);this.effectRings.push(ring);}
-        const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;ring.scale.setScalar(.65+fx.progress*1.2);ring.material.color.set(readout.color);ring.material.opacity=(1-fx.progress)*.75;ring.visible=true;
+        const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;ring.scale.setScalar(.65+fx.progress*(readout.radius??1.2));ring.material.color.set(readout.color);ring.material.opacity=(1-fx.progress)*.75;ring.visible=true;
       }
       if(fx.type==='projectile'&&projectileCount<4){
       if(!this.projectiles[projectileCount]){const p=this.projectile.clone();this.effectGroup.add(p);this.projectiles.push(p);}const projectile=this.projectiles[projectileCount++];projectile.scale.setScalar(fx.projectile==='arrow'?.52:1);

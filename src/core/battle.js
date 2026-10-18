@@ -67,7 +67,7 @@ export function damagePreview(e,unit,target,ranged=false) {if(!e.mission)return 
   return Math.max(1,(ranged?3:unit.damage??3)-cover-flank-brace-screen+(unit.formation==='wedge'?1:0)+(target.formation==='wedge'?1:0));
 }
 export function combatBreakdown(e,unit,target,ranged=false){
- if(e.combatVersion!==2)return {damage:damagePreview(e,unit,target,ranged),base:ranged?3:unit.damage??3,modifiers:[],aspect:facingDefence(target,unit)?'front':'flank'};
+ if(e.combatVersion!==2){const aspect=facingDefence(target,unit)?'front':'flank',formationBreak=Boolean(!ranged&&((aspect==='flank'&&(target.formation==='shield-wall'||target.braced))||(unit.formation==='wedge'&&target.formation==='shield-wall')));return {damage:damagePreview(e,unit,target,ranged),base:ranged?3:unit.damage??3,modifiers:[],aspect,formationBreak,formationBreakLabel:formationBreak?(aspect==='flank'?'Flank breaks shield line':'Wedge splits shield wall'):null};}
  const terrain=e.terrain[target.y][target.x],source=e.terrain[unit.y][unit.x],dx=unit.x-target.x,dy=unit.y-target.y;
  const forward=target.facing==='east'?dx:target.facing==='west'?-dx:target.facing==='south'?dy:-dy,side=['east','west'].includes(target.facing)?Math.abs(dy):Math.abs(dx),front=forward>0&&forward>=side;
  const modifiers=[],add=(label,value)=>{if(value)modifiers.push({label,value});},base=ranged?3:unit.damage??3;
@@ -82,7 +82,18 @@ export function combatBreakdown(e,unit,target,ranged=false){
  add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced&&!stakeStop?B.chargeBonus:0);
  if(fw.length){if(['player','ally','neutral'].includes(target.side)){if(fw.some(f=>f.type==='rampart'&&f.x===target.x&&f.y===target.y))add('Earthwork rampart',-2);if(fw.some(f=>f.type==='stakes'&&distance(f,target)<=1))add('Stake palings',-1);}if(ranged&&['player','ally'].includes(unit.side)&&fw.some(f=>f.type==='brazier'&&distance(f,unit)<=2))add('Signal brazier',1);}
  add('Shaken morale',(unit.morale??80)<=B.shakenThreshold?-1:0);
- return {damage:Math.max(1,base+modifiers.reduce((n,m)=>n+m.value,0)),base,modifiers,aspect:front?'front':'flank'};
+ const aspect=front?'front':'flank',flankBreak=!ranged&&!front&&(target.formation==='shield-wall'||target.braced),wedgeBreak=!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)&&target.formation==='shield-wall';
+ const formationBreak=Boolean(flankBreak||wedgeBreak),formationBreakLabel=wedgeBreak?'Wedge splits shield wall':flankBreak?'Flank breaks shield line':null;
+ return {damage:Math.max(1,base+modifiers.reduce((n,m)=>n+m.value,0)),base,modifiers,aspect,formationBreak,formationBreakLabel};
+}
+export function enemyFormationLinks(e){
+ if(!e||e.kind!=='battle')return [];
+ const enemies=(e.units??[]).filter(u=>u.side==='enemy'&&alive(u)&&!u.hidden&&(u.formation||['guard','infantry'].includes(u.role))),links=[];
+ for(let i=0;i<enemies.length;i++)for(let j=i+1;j<enemies.length;j++){
+  const a=enemies[i],b=enemies[j];
+  if(distance(a,b)===1&&(a.formation&&a.formation===b.formation||!a.formation&&!b.formation&&a.role===b.role))links.push({fromId:a.id,toId:b.id,from:{x:a.x,y:a.y},to:{x:b.x,y:b.y},formation:a.formation??'line'});
+ }
+ return links;
 }
 export function battleActions(state,unit) {if(!state.encounter.mission)return Legacy.battleActions(state,unit);
   const e=state.encounter,c=state.chapter;if(!unit||!alive(unit)||e.status!=='active'||!['player','ally'].includes(unit.side)) return [];

@@ -4,7 +4,7 @@ import {createCompany,normalizeCareer,replaceFallenComrade,recordCompanyService,
 export {storyStageKey,companyRoster,leadershipSummary,provinceSummary};export {cursusHonorum} from './career.js';
 import {alive,clamp,clone,distance,result} from './shared.js';
 import {allyDestinations,applyBattle,battleActions,battleTargets,createBattle,createLegacyBattle,endBattleTurn,previewBattle} from './battle.js';
-export {allyDestinations};export {combatBreakdown,FIELDWORK_TYPES,fieldworkOptions,previewFieldwork,invokeFieldwork} from './battle.js';
+export {allyDestinations};export {combatBreakdown,enemyFormationLinks,FIELDWORK_TYPES,fieldworkOptions,previewFieldwork,invokeFieldwork} from './battle.js';
 import {applyContest,contestActions,contestTargets,createContest,createLegacyContest,endContestTurn,previewContest,votes,refreshIntents as refreshContestIntents} from './contest.js';
 import {initialCampaignOptions,validateCampaignOptions,departureProblem,departCompany,finaleCompanySize,campaignOptionsProblem} from './campaign-options.js';
 import {validateOperation} from './operations.js';
@@ -14,7 +14,7 @@ import {initialProgression,validateProgression} from './progression.js';
 import {commitOperationResult} from './progression-operations.js';
 import {commitAgreements,negotiateAgreement as makeAgreement} from './progression-politics.js';
 export {veteranTraining,specializeVeteran,veteranRank,companionCallout,VETERAN_RANKS} from './progression-veterans.js';
-export {precedentOptions,previewPrecedent,invokePrecedent,PRECEDENT_MOTIONS,delegateCallout} from './contest.js';
+export {precedentOptions,previewPrecedent,invokePrecedent,PRECEDENT_MOTIONS,delegateCallout,coalitionWhipForecast} from './contest.js';
 export {operationChoices,chooseOperation} from './progression-operations.js';
 export {coalition,agreementOptions,previewAgreement,settleAgreement} from './progression-politics.js';
 export function negotiateAgreement(state,targetId,kind){const response=makeAgreement(state,targetId,kind);if(response.ok)refreshContestIntents(state);return response;}
