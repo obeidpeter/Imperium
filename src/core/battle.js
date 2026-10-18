@@ -135,15 +135,19 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
 export function applyBattle(state,command) {if(!state.encounter.mission)return Legacy.applyBattle(state,command);
   const checked=previewBattle(state,command);if(!checked.ok)return checked;
   const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),action=command.action,target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y);
-  if(['guard','inspire','volley'].includes(action)){applyVeteranAction(e,unit,action,target,()=>{faceToward(unit,target);const damage=resolveHit(e,unit,target,true);note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);});}
-  else if(action==='move'||action==='deploy'){if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
-  else if(action==='strike'||action==='throw'){if(action==='throw')unit.ammo--;faceToward(unit,target);const damage=e.combatVersion===2?resolveHit(e,unit,target,action==='throw'):damagePreview(e,unit,target,action==='throw');if(e.combatVersion!==2)target.hp=Math.max(0,target.hp-damage);unit.acted=true;note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);}
-  else if(action==='brace'){unit.braced=true;unit.acted=true;}
-  else if(action==='assist'){target.hp=Math.min(target.maxHp,target.hp+3);target.braced=true;target.escorted=true;unit.acted=true;}
-  else if(action==='scout'){e.units.forEach(u=>u.hidden=false);e.scouted=true;unit.acted=true;}
-  else if(action==='rally'){e.units.filter(u=>['ally','player','neutral'].includes(u.side)&&alive(u)&&distance(unit,u)<=3).forEach(u=>{u.morale=clamp(u.morale+25);u.hp=Math.min(u.maxHp,u.hp+2);});if(e.mission?.mode==='defection'){const rival=e.units.filter(u=>u.side==='enemy'&&alive(u)&&distance(unit,u)<=3).sort((a,b)=>a.morale-b.morale)[0];if(rival){rival.morale=clamp(rival.morale-40);note(e,`${rival.name} hears the oath: morale ${rival.morale}.`);if(rival.morale<=25)defect(e,rival);}}if(e.mission)e.mission.rallyProgress++;unit.acted=true;}
-  else if(action==='order'){e.commandsLeft--;target.ordered=true;actAlly(e,target,command.orderAction??'advance',command.destination);}
-  else if(action==='formation') {e.commandsLeft--;const group=[target,...e.units.filter(u=>u.side==='ally'&&u.id!==target.id&&alive(u)&&distance(u,target)<=1&&!u.ordered)].slice(0,3);group.forEach(u=>{u.formation=command.formation??'shield-wall';if(u.formation==='shield-wall')u.braced=true;u.ordered=true;if(e.combatVersion!==2)actAlly(e,u,command.orderAction??'advance');});if(e.combatVersion===2)group.forEach(u=>actAlly(e,u,command.orderAction??'advance'));note(e,`${group.length} units form ${command.formation??'shield-wall'}; one command spent.`);}
+  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:{x:unit.x,y:unit.y,facing:unit.facing??'east',lastMoveDistance:unit.lastMoveDistance??0},writable:true,configurable:true,enumerable:false});if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  else{
+    for(const u of e.units)delete u.moveOrigin;
+    if(['guard','inspire','volley'].includes(action)){applyVeteranAction(e,unit,action,target,()=>{faceToward(unit,target);const damage=resolveHit(e,unit,target,true);note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);});}
+    else if(action==='deploy'){if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+    else if(action==='strike'||action==='throw'){if(action==='throw')unit.ammo--;faceToward(unit,target);const damage=e.combatVersion===2?resolveHit(e,unit,target,action==='throw'):damagePreview(e,unit,target,action==='throw');if(e.combatVersion!==2)target.hp=Math.max(0,target.hp-damage);unit.acted=true;note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);}
+    else if(action==='brace'){unit.braced=true;unit.acted=true;}
+    else if(action==='assist'){target.hp=Math.min(target.maxHp,target.hp+3);target.braced=true;target.escorted=true;unit.acted=true;}
+    else if(action==='scout'){e.units.forEach(u=>u.hidden=false);e.scouted=true;unit.acted=true;}
+    else if(action==='rally'){e.units.filter(u=>['ally','player','neutral'].includes(u.side)&&alive(u)&&distance(unit,u)<=3).forEach(u=>{u.morale=clamp(u.morale+25);u.hp=Math.min(u.maxHp,u.hp+2);});if(e.mission?.mode==='defection'){const rival=e.units.filter(u=>u.side==='enemy'&&alive(u)&&distance(unit,u)<=3).sort((a,b)=>a.morale-b.morale)[0];if(rival){rival.morale=clamp(rival.morale-40);note(e,`${rival.name} hears the oath: morale ${rival.morale}.`);if(rival.morale<=25)defect(e,rival);}}if(e.mission)e.mission.rallyProgress++;unit.acted=true;}
+    else if(action==='order'){e.commandsLeft--;target.ordered=true;actAlly(e,target,command.orderAction??'advance',command.destination);}
+    else if(action==='formation') {e.commandsLeft--;const group=[target,...e.units.filter(u=>u.side==='ally'&&u.id!==target.id&&alive(u)&&distance(u,target)<=1&&!u.ordered)].slice(0,3);group.forEach(u=>{u.formation=command.formation??'shield-wall';if(u.formation==='shield-wall')u.braced=true;u.ordered=true;if(e.combatVersion!==2)actAlly(e,u,command.orderAction??'advance');});if(e.combatVersion===2)group.forEach(u=>actAlly(e,u,command.orderAction??'advance'));note(e,`${group.length} units form ${command.formation??'shield-wall'}; one command spent.`);}
+  }
   if(!e.usedAbilities.includes(action))e.usedAbilities.push(action);state.capabilityUse[action]=true;note(e,checked.message);checkBattle(state);refreshBattleIntents(e);return checked;
 }
 function friendly(e){return e.units.filter(u=>['player','ally'].includes(u.side)&&alive(u));}
@@ -256,13 +260,14 @@ function progressMission(e){const m=e.mission;if(!m)return;const allies=friendly
  updateBattleProgress(e);
 }
 export function endBattleTurn(state){if(!state.encounter.mission)return Legacy.endBattleTurn(state);const e=state.encounter,hero=e.units.find(u=>u.id==='hero');e.turnEvents=[];e.collectTurnEvents=true;
+ for(const u of e.units)delete u.moveOrigin;
  for(const u of e.units.filter(u=>u.side==='ally'))actAlly(e,u);
  for(const enemy of foes(e)){if(enemy.hidden&&!e.scouted&&distance(enemy,hero)>2)continue;enemy.hidden=false;enemyTurn(state,e,enemy);}
  for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1)stepToward(e,escort,e.goal,2);
  for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<8&&p.x>=0&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
  if(e.combatVersion===2&&['hold','supply'].includes(e.mission?.mode)&&foes(e).some(u=>distance(u,e.goal)<=1)&&!friendly(e).some(u=>distance(u,e.goal)<=1)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`Unopposed enemy occupation damages the objective (−${pressure} integrity this round).`);}
  progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
- if(e.status==='active'){e.turn++;e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
+ if(e.status==='active'){e.turn++;e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;delete u.moveOrigin;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
  return result(true,e.status==='active'?'The enemy turn ends.':e.status==='won'?'Objective secured. Commit the encounter to preserve its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
 export function checkBattle(state,atTurnEnd=false){if(!state.encounter.mission)return Legacy.checkBattle(state,atTurnEnd);const e=state.encounter,hero=e.units.find(u=>u.id==='hero');if(e.status!=='active')return;
@@ -325,6 +330,7 @@ export function previewFieldwork(state,typeId){
 export function invokeFieldwork(state,typeId){
   const checked=previewFieldwork(state,typeId);if(!checked.ok)return checked;
   const e=state.encounter,hero=e.units.find(u=>u.id==='hero'),opt=fieldworkOptions(state).options.find(o=>o.id===typeId);
+  for(const u of e.units)delete u.moveOrigin;
   hero.acted=true;e.fieldworkUsed=typeId;e.fieldworks??=[];
   e.fieldworks.push({type:typeId,x:opt.tile.x,y:opt.tile.y});
   if(typeId==='rampart')hero.braced=true;
@@ -332,5 +338,17 @@ export function invokeFieldwork(state,typeId){
   note(e,checked.message);refreshBattleIntents(e);
   return checked;
 }
+export function reinforcementBeacons(e){
+  if(!e||e.kind!=='battle'||!Array.isArray(e.mission?.waves))return [];
+  const turn=e.turn??1;
+  return e.mission.waves
+    .map((w,index)=>({...w,index}))
+    .filter(w=>!w.arrived)
+    .map(w=>{
+      const turnsLeft=Math.max(0,w.turn-turn),imminent=turnsLeft<=1,coord=`${w.x+1}${String.fromCharCode(65+w.y)}`,role=w.role??'infantry';
+      return {id:`wave-${w.index}`,index:w.index,x:w.x,y:w.y,turn:w.turn,turnsLeft,imminent,role,coord,label:`T${w.turn} · ${role[0].toUpperCase()+role.slice(1)}`};
+    });
+}
+
 
 

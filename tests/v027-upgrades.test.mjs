@@ -187,7 +187,7 @@ test('v0.27.0: Post-Encounter After-Action Chronicle & Defeat Diagnostics (Acta 
 
 test('v0.27.0: Customizable Reign Card & Career Trophy Themes (Monumentum Aeternum)', async () => {
   const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.27.0');
+  assert.match(CONFIG.version, /^0\.(2[7-9]|[3-9]\d)\./);
   const completed = clone(ensureCampaign().state);
   assert.ok(REIGN_CARD_THEMES.imperial);
   assert.ok(REIGN_CARD_THEMES.marble);

@@ -320,9 +320,10 @@ case 'allocate':await change(()=>Game.allocate(state,{river:Number(document.quer
 case 'route':await change(()=>{state.route=id;return {ok:true,message:'Confrontation approach selected. Enter the field when ready.'};});break;
 case 'start':await change(()=>Game.startEncounter(state,state.chapter===12?{route:state.route||'backer'}:{}),{reset:true});break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
-case 'inspect-delegate':{const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();announce(`Inspecting ${unit.name} (${unit.bloc}). No speech has been spent.`);}break;}
+case 'inspect-delegate':{const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();if(uses3D())battleStage.focusPoint(focusTile);announce(`Inspecting ${unit.name} (${unit.bloc}). No speech has been spent.`);}break;}
 case 'action':chooseAction(id);break;
 case 'cancel-action':cancelCommand();break;
+case 'undo-move':await change(()=>Game.undoMove(state,selected),{tone:'move',clearSelection:true});break;
 case 'view-3d':settings.battleView=uses3D()?'2d':'3d';failed3D=false;saveSettings();render();break;
 case 'camera-home':battleStage.home();break;
 case 'camera-focus':battleStage.focus();break;
@@ -403,6 +404,7 @@ document.addEventListener('keydown',event=>{
   const next=keyboardAction(event.key,Game.getActions(state,selected));
   if(next){event.preventDefault();chooseAction(next);return;}
   if(event.key==='Escape'){event.preventDefault();cancelCommand();}
+  else if(event.key.toLowerCase()==='u'&&Game.canUndoMove(state,selected).available){event.preventDefault();change(()=>Game.undoMove(state,selected),{tone:'move',clearSelection:true});}
   else if(event.key.toLowerCase()==='n'){event.preventDefault();selected=nextReadyUnit(state,selected);action=null;target=null;focusTile=null;render();announce(`Selected ${selectedUnit().name}.`);}
   else if(event.key.toLowerCase()==='e'){event.preventDefault();change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});}
   else if(event.key.toLowerCase()==='g'){event.preventDefault();showGrid=!showGrid;render();}

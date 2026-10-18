@@ -11,7 +11,7 @@ import {facingYaw,isAlive} from './session.js';
 import {createBattleSound} from './battle-sound.js';
 import {meleeOffset,combatCues,retimeStageTimeline,locomotionPhase,combatReaction} from './combat-presentation.js';
 import {getSceneProfile} from './campaign-scene-profile.js';
-import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,tacticalLinks,targetRingColor} from './stage-readout.js';
+import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,reinforcementBeacons,tacticalLinks,targetRingColor} from './stage-readout.js';
 import {layoutStageLabels} from './stage-label-layout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
@@ -151,6 +151,7 @@ export class BattleStage{
     this.updateFieldworks(encounter);
     this.updateBattleDecals(encounter);
     this.updateMoraleRings(encounter);
+    this.updateReinforcementBeacons(encounter);
     this.updateTacticalLinks();
   }
   updateMoraleRings(encounter=this.encounter){
@@ -169,6 +170,29 @@ export class BattleStage{
       mesh.material.color.set(broken?'#c44d3f':shaken?'#d89b3c':'#e8c86b');
       mesh.userData.moraleState=broken?'broken':shaken?'shaken':'pledged';
       mesh.visible=true;
+    }
+  }
+  updateReinforcementBeacons(encounter=this.encounter){
+    if(!this.overlay)return;
+    this.reinforcementBeacons=this.reinforcementBeacons??new Map();
+    const waves=reinforcementBeacons(encounter);
+    const wanted=new Set(waves.map(w=>w.id));
+    for(const [id,group]of this.reinforcementBeacons)if(!wanted.has(id)){this.overlay.remove(group);this.reinforcementBeacons.delete(id);}
+    for(const w of waves){
+      if(!this.reinforcementBeacons.has(w.id)){
+        const group=new T.Group();group.name='reinforcement-beacon';
+        const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide}));
+        ring.rotation.x=-Math.PI/2;
+        const spire=new T.Mesh(new T.ConeGeometry(.16,.55,4),new T.MeshBasicMaterial({color:'#df9d85',transparent:true,opacity:.82}));
+        spire.position.set(0,.32,0);spire.rotation.x=Math.PI;
+        group.add(ring,spire);this.overlay.add(group);this.reinforcementBeacons.set(w.id,group);
+      }
+      const group=this.reinforcementBeacons.get(w.id),color=w.imminent?'#c44d3f':'#d89b3c';
+      group.position.copy(this.world(w));group.position.y+=.06;
+      group.children[0]?.material?.color?.set(color);
+      group.children[1]?.material?.color?.set(color);
+      group.userData.wave=w;
+      group.visible=true;
     }
   }
   updateChamberStandards(encounter=this.encounter){

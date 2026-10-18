@@ -1,6 +1,6 @@
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
 import {movementPinned} from '../core/shared.js';
-import {enemyFormationLinks} from '../core/battle.js';
+import {enemyFormationLinks,reinforcementBeacons} from '../core/battle.js';
 import {drawUnitSprite,spriteHeight} from './unit-sprites.js';
 import {worldGround,scenery,drawScenery,atmosphere} from './world-art.js';
 import {idlePose} from './animation-timeline.js';
@@ -79,6 +79,14 @@ function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUni
     for(const link of enemyFormationLinks(e)){
       const a=xy(g,link.from.x,link.from.y),b=xy(g,link.to.x,link.to.y);
       c.save();c.setLineDash([3,3]);line(c,[[a.x,a.y+2],[b.x,b.y+2]],'#d97a6c90',1.5);c.restore();
+    }
+    for(const beacon of reinforcementBeacons(e)){
+      const bp=xy(g,beacon.x,beacon.y),col=beacon.imminent?'#c44d3f':'#d89b3c',ss=Math.min(1,g.tw/55);
+      c.save();c.setLineDash([4,2]);polygon(c,diamond(g,bp,2),'#c44d3f18',col,beacon.imminent?2.1:1.5);c.restore();
+      c.save();c.translate(bp.x+g.tw*.24,bp.y-g.th*.14);c.scale(ss,ss);
+      polygon(c,[[-6,0],[0,-10],[6,0]],col,IVORY,.75);
+      c.fillStyle=IVORY;c.font='bold 8.5px system-ui';c.textAlign='center';c.fillText(`T${beacon.turn}`,0,9);
+      c.restore();
     }
   }
   if(e.kind==='battle'&&!options.action&&focus){

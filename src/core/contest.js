@@ -84,8 +84,8 @@ export function previewContest(state,command){if(!state.encounter.issue)return L
   return result(true,`${action==='record'?'Invoke your military record':action[0].toUpperCase()+action.slice(1)}: ${target.name} stance ${target.stance} → ${next}.${extra} Costs one speech.${action==='record'?' This member can hear your Record only once per Contest.':''} Interest: ${target.interest}.`);
 }
 export function applyContest(state,command){if(!state.encounter.issue)return Legacy.applyContest(state,command);const checked=previewContest(state,command);if(!checked.ok)return checked;const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y),action=command.action;
-  if(action==='move'){faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
-  else if(e.politicsVersion===2){faceToward(unit,target);unit.acted=true;const f=checked.forecast;
+  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:{x:unit.x,y:unit.y,facing:unit.facing??'east'},writable:true,configurable:true,enumerable:false});faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  else if(e.politicsVersion===2){for(const u of e.units)delete u.moveOrigin;faceToward(unit,target);unit.acted=true;const f=checked.forecast;
     for(const change of f.stanceChanges)e.units.find(u=>u.id===change.id).stance=change.to;
     for(const change of f.resolveChanges){const member=e.units.find(u=>u.id===change.id);member.resolve=change.to;member.hp=change.to;}
     for(const id of f.bluntedIds)e.units.find(u=>u.id===id).blunted=true;
@@ -94,7 +94,7 @@ export function applyContest(state,command){if(!state.encounter.issue)return Leg
     if(f.promise){e.promises.push(target.id);e.staged.obligations.push({...f.promise});}
     if(action==='threaten'){e.staged.meters.public-=f.publicCost;if(!e.hardened.includes(target.bloc))e.hardened.push(target.bloc);}
   }
-  else {faceToward(unit,target);unit.acted=true;if(action==='address'){e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3).forEach(u=>u.stance=shiftedStance(u,speechStrength(state,'address',u)));e.cooldowns[`${unit.id}:address`]=e.turn+3;}
+  else {for(const u of e.units)delete u.moveOrigin;faceToward(unit,target);unit.acted=true;if(action==='address'){e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3).forEach(u=>u.stance=shiftedStance(u,speechStrength(state,'address',u)));e.cooldowns[`${unit.id}:address`]=e.turn+3;}
     else if(action==='denounce'){target.resolve=Math.max(0,target.resolve-4);target.hp=target.resolve;}
     else if(action==='rebut'){if(target.side==='enemy')target.blunted=true;else{target.resolve=Math.min(target.maxResolve,target.resolve+4);target.hp=target.resolve;}}
     else {target.stance=shiftedStance(target,speechStrength(state,action,target));if(action==='record')e.recordUses.push(target.id);if(action==='promise'){e.promises.push(target.id);e.staged.obligations.push({id:`${e.id}:${target.id}`,to:target.bloc,promise:target.interest==='office'?'Endow a civic office for this delegation.':target.interest==='law'?'Fund a legal guarantee for this delegation.':'Provide two grain convoys for this bloc at accession.',due:12,cost:2,consequence:'Honour: −2 supplies. Break: −8 Public Confidence, −4 Political Backing.',status:'open'});}if(action==='threaten'){e.staged.meters.public-=3;e.units.filter(u=>u.role==='voter'&&u.bloc===target.bloc&&u.id!==target.id).forEach(u=>u.stance=shiftedStance(u,-1));if(!e.hardened.includes(target.bloc))e.hardened.push(target.bloc);}}}
@@ -184,6 +184,7 @@ export function previewPrecedent(state,motionId){
 export function invokePrecedent(state,motionId){
   const checked=previewPrecedent(state,motionId);if(!checked.ok)return checked;
   const e=state.encounter,hero=e.units.find(u=>u.id==='hero');
+  for(const u of e.units)delete u.moveOrigin;
   hero.acted=true;e.precedentUsed=motionId;
   if(motionId==='frontier-roll'){
     for(const u of e.units.filter(u=>u.role==='voter'&&u.bloc==='Veterans'))u.stance=shiftedStance(u,1);
@@ -206,13 +207,14 @@ export function invokePrecedent(state,motionId){
   return checked;
 }
 export function endContestTurn(state){if(!state.encounter.issue)return Legacy.endContestTurn(state);const e=state.encounter;e.turnEvents=[];
+  for(const u of e.units)delete u.moveOrigin;
   if(e.politicsVersion===2)for(const plan of contestIntents(state)){applyRivalPlan(e,plan);note(e,plan.message);e.turnEvents.push(plan.message);}
   else for(const enemy of e.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'&&alive(u)).sort((a,b)=>distance(enemy,a)-distance(enemy,b)||a.resolve-b.resolve),members=e.units.filter(u=>u.role==='voter').sort((a,b)=>Math.abs(a.stance-1)-Math.abs(b.stance-1)||distance(enemy,a)-distance(enemy,b));
     const attacking=(e.rivalStyle==='lobby'?e.turn%3===0:e.turn%2===0)&&speakers[0]&&distance(enemy,speakers[0])<=5,target=attacking?speakers[0]:(e.rivalStyle==='broker'?members.find(u=>e.promises.includes(u.id)&&u.stance>=1):null)??members.find(u=>u.stance>=0)??members[0];if(!target)continue;const range=attacking?3:1;if(distance(enemy,target)>range)stepToward(e,enemy,target,3);
     if(distance(enemy,target)<=range){faceToward(enemy,target);const strength=enemy.blunted?1:attacking?3:2;if(attacking){target.resolve=Math.max(0,target.resolve-strength);target.hp=target.resolve;const event=`${enemy.name} attacks ${target.name}’s Resolve (−${strength}).`;note(e,event);e.turnEvents.push(event);}else{target.stance=shiftedStance(target,-strength);const event=`${enemy.name} challenges ${target.name} on ${target.interest}: stance −${strength}.`;note(e,event);e.turnEvents.push(event);}enemy.blunted=false;}
   }
   if(e.turn>=e.turnLimit){const tally=votes(e),required=e.requiredAbility,qualified=(!required||e.usedAbilities.includes(required)||(['negotiate','judge','allocate'].includes(required)&&state.chapterCapabilities[state.chapter]?.includes(required)))&&(e.requiredAbilities??[]).every(a=>e.usedAbilities.includes(a)||state.chapterCapabilities[state.chapter]?.includes(a));e.status=tally.for>=e.majority&&qualified?'won':'lost';note(e,`Deadline vote: ${tally.for} for, ${tally.against} against; ${e.majority} needed. ${!qualified?`A required chapter capability was not demonstrated: ${(e.requiredAbilities??[required]).join(', ')}.`:e.status==='won'?'The motion passes.':'The status quo prevails.'}`);}
-  else{e.turn++;e.units.forEach(u=>{u.moved=false;u.acted=false;});note(e,`Turn ${e.turn}. Vote in ${e.turnLimit-e.turn+1} turns. Current support: ${votes(e).for}/${e.electorate}.`);if(e.politicsVersion===2)refreshIntents(state);}
+  else{e.turn++;e.units.forEach(u=>{u.moved=false;u.acted=false;delete u.moveOrigin;});note(e,`Turn ${e.turn}. Vote in ${e.turnLimit-e.turn+1} turns. Current support: ${votes(e).for}/${e.electorate}.`);if(e.politicsVersion===2)refreshIntents(state);}
   return result(true,e.status==='active'?'Rival speakers have replied.':e.status==='won'?'The vote is won. Commit the result.':'The motion failed. Retry, or accept a patron-backed re-run with a major Obligation.');
 }
 export function delegateCallout(encounter,command){

@@ -2,9 +2,9 @@ import {CHAPTERS} from '../data/campaign.js';
 import {stagedStoryLines,storyStageKey} from '../data/story-stages.js';
 import {createCompany,normalizeCareer,replaceFallenComrade,recordCompanyService,companyRoster,leadershipSummary,provinceSummary,VETERAN_IDS} from './career.js';
 export {storyStageKey,companyRoster,leadershipSummary,provinceSummary};export {cursusHonorum} from './career.js';
-import {alive,clamp,clone,distance,result} from './shared.js';
-import {allyDestinations,applyBattle,battleActions,battleTargets,createBattle,createLegacyBattle,endBattleTurn,previewBattle} from './battle.js';
-export {allyDestinations};export {combatBreakdown,enemyFormationLinks,FIELDWORK_TYPES,fieldworkOptions,previewFieldwork,invokeFieldwork} from './battle.js';
+import {alive,clamp,clone,distance,note,result,unitAt} from './shared.js';
+import {allyDestinations,applyBattle,battleActions,battleTargets,checkBattle,createBattle,createLegacyBattle,endBattleTurn,previewBattle,refreshBattleIntents,reinforcementBeacons} from './battle.js';
+export {allyDestinations,reinforcementBeacons};export {combatBreakdown,enemyFormationLinks,FIELDWORK_TYPES,fieldworkOptions,previewFieldwork,invokeFieldwork} from './battle.js';
 import {applyContest,contestActions,contestTargets,createContest,createLegacyContest,endContestTurn,previewContest,votes,refreshIntents as refreshContestIntents} from './contest.js';
 import {initialCampaignOptions,validateCampaignOptions,departureProblem,departCompany,finaleCompanySize,campaignOptionsProblem} from './campaign-options.js';
 import {validateOperation} from './operations.js';
@@ -17,7 +17,7 @@ export {veteranTraining,specializeVeteran,veteranRank,companionCallout,VETERAN_R
 export {precedentOptions,previewPrecedent,invokePrecedent,PRECEDENT_MOTIONS,delegateCallout,coalitionWhipForecast} from './contest.js';
 export {operationChoices,chooseOperation} from './progression-operations.js';
 export {coalition,agreementOptions,previewAgreement,settleAgreement} from './progression-politics.js';
-export function negotiateAgreement(state,targetId,kind){const response=makeAgreement(state,targetId,kind);if(response.ok)refreshContestIntents(state);return response;}
+export function negotiateAgreement(state,targetId,kind){const response=makeAgreement(state,targetId,kind);if(response.ok){for(const u of state.encounter?.units??[])delete u.moveOrigin;refreshContestIntents(state);}return response;}
 
 const PREPARATIONS=['fortify','rest','drill','march'],STRATAGEMS=['night','feint','flank'];
 const CHAPTER_CAPABILITIES={1:['move','strike','brace','throw','oath'],2:['assist'],3:['scout'],4:['order'],5:['formation'],6:['rally'],7:['prepare','deploy','persuade'],8:['negotiate'],9:['stratagem'],10:['allocate','judge','address','rebut'],11:['record','denounce']};
@@ -51,6 +51,23 @@ export function getActions(state,unitId){if(state.phase!=='encounter'||!state.en
 export function getTargets(state,unitId,action){if(!getActions(state,unitId).includes(action))return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestTargets(state,unit,action):battleTargets(state,unit,action);}
 export function preview(state,command){if(state.phase!=='encounter'||!state.encounter||state.encounter.status!=='active')return result(false,'No active encounter.');if(!command||!Number.isInteger(command.x)||!Number.isInteger(command.y))return result(false,'A unit, action and grid target are required.');return state.encounter.kind==='contest'?previewContest(state,command):previewBattle(state,command);}
 export function act(state,command){const checked=preview(state,command);if(!checked.ok)return checked;const response=state.encounter.kind==='contest'?applyContest(state,command):applyBattle(state,command);if(response.ok)mark(state,command.action);return response;}
+export function canUndoMove(state,unitId='hero'){
+  const e=state?.encounter,u=e?.units?.find(x=>x.id===unitId);
+  if(state?.phase!=='encounter'||!e||e.status!=='active'||!u||!alive(u)||!['player','ally'].includes(u.side)||!u.moved||u.acted||!u.moveOrigin)return {available:false,unitId,origin:null,reason:'Move a unit or speaker before acting to undo that move.'};
+  if(unitAt(e,u.moveOrigin.x,u.moveOrigin.y,u.id))return {available:false,unitId,origin:u.moveOrigin,reason:'The starting tile is now occupied.'};
+  return {available:true,unitId:u.id,origin:{...u.moveOrigin},reason:`Undo ${u.name}’s move and return to ${u.moveOrigin.x+1}${String.fromCharCode(65+u.moveOrigin.y)}.`};
+}
+export function undoMove(state,unitId='hero'){
+  const check=canUndoMove(state,unitId);if(!check.available)return result(false,check.reason);
+  const e=state.encounter,u=e.units.find(x=>x.id===unitId),origin=u.moveOrigin;
+  u.x=origin.x;u.y=origin.y;u.facing=origin.facing??u.facing??'east';
+  if(e.kind==='battle'&&e.combatVersion===2)u.lastMoveDistance=origin.lastMoveDistance??0;
+  u.moved=false;delete u.moveOrigin;
+  const coord=`${u.x+1}${String.fromCharCode(65+u.y)}`;
+  note(e,`${u.name} steps back to ${coord}; movement restored.`);
+  if(e.kind==='battle'){checkBattle(state);refreshBattleIntents(e);}else if(e.politicsVersion===2)refreshContestIntents(state);
+  return result(true,`${u.name} returned to ${coord}; movement restored.`);
+}
 export function endTurn(state){if(state.phase!=='encounter'||state.encounter?.status!=='active')return result(false,'No active encounter turn.');return state.encounter.kind==='contest'?endContestTurn(state):endBattleTurn(state);}
 export function retry(state){if(!state.snapshot||!state.encounter)return result(false,'There is no encounter checkpoint to retry.');const restored=clone(state.snapshot),options=clone(state.encounterOptions??{});restored.phase='camp';restored.encounter=null;restored.snapshot=null;const response=startEncounter(restored,options);if(!response.ok)return response;for(const key of Object.keys(state))delete state[key];Object.assign(state,restored);return result(true,'Restored the complete encounter-start campaign, RNG, inventory, decisions, meters and obligations.');}
 export function acceptFallback(state){if(state.phase!=='encounter'||state.encounter?.status!=='lost'||state.encounter.kind!=='contest')return result(false,'A patron-backed re-run is available after a failed Contest.');if(state.encounter.fallback)return result(false,'The patron is already backing this vote. Retry its checkpoint.');const id=state.encounter.id,snapshot=clone(state.snapshot),options=clone(state.encounterOptions??{});for(const key of Object.keys(state))delete state[key];Object.assign(state,snapshot);state.phase='camp';state.encounter=null;state.snapshot=null;state.supplies=Math.max(0,state.supplies-2);const debt={id:`fallback:${id}`,to:'The grain syndicate',promise:'Give the syndicate first claim on the next two provincial harvests.',due:12,cost:5,consequence:'A re-run with three votes committed; the province bears a five-convoy debt.',status:'open'};if(!state.obligations.some(o=>o.id===debt.id))state.obligations.push(debt);campaignLog(state,`Accepted costly backing for ${id}. No rank or milestone has been granted. The next checkpoint is the re-run of this same vote.`);return startEncounter(state,{...options,fallback:true});}
@@ -60,6 +77,26 @@ export function advanceChapter(state){if(state.phase!=='promotion')return result
   if(state.chapter===9)addMilestone(state,'dux');if(state.chapter===10)addMilestone(state,'governorship');if(state.chapter===11)addMilestone(state,'senator');if(state.chapter===12){if(!state.milestones.includes('senator')||!state.milestones.includes('confrontation'))return result(false,'Accession requires both Senate admission and the final confrontation.');addMilestone(state,'augustus');state.rank='Augustus';state.phase='epilogue';campaignLog(state,'The army acclaims you Augustus. The Senate confirms. The oath returns to the hand that first held the lead seal.');return result(true,'The campaign is complete. Read the accession and epilogue.');}
   const equipment={1:'Military belt and mail',3:'Optio’s staff',4:'Centurion’s vine stick',6:'Equestrian gold ring and narrow-striped tunic',9:'General’s cloak',11:'Senatorial broad stripe'}[state.chapter];if(equipment&&!state.inventory.includes(equipment))state.inventory.push(equipment);campaignLog(state,`${chapter.promotion}: ${chapter.reward}`);state.chapter++;state.rank=RANKS[state.chapter-1];state.encounterIndex=0;state.phase='camp';state.preparation=null;state.stratagem=null;state.route=null;return result(true,`Chapter ${state.chapter}: ${getChapter(state).title}.`);}
 export function finaleForecast(state){const {army,political,public:confidence}=state.meters;const allies=finaleCompanySize(state),enemies=Math.max(3,6-Math.floor(confidence/30));const routes=[{id:'backer',label:'Accept costly backing',description:'A guaranteed relief force joins you. Defeat every rival field formation by turn 16; owe two years of revenue to the army’s creditors.'},{id:'battle',label:'Win the field',description:'Defeat every rival field formation by turn 16 through manoeuvre and command. No new accession debt.'}];if(army>=55)routes.push({id:'defection',label:'Win the legions',description:'Rally within three tiles of rival infantry to lower morale by 40. At 25 morale or less they pledge allegiance. Secure three pledges by turn 16; defeating the remaining rivals also wins.'});if(political>=50)routes.push({id:'settlement',label:'Negotiate a settlement',description:'Escort the Senate’s envoy within one tile of 7D. Bring the commander within two tiles, Rally, and sustain the meeting through two end turns by turn 16.'});if(confidence>=60&&political>=40)routes.push({id:'surrender',label:'Receive the surrender',description:'Secure both approaches at 5B and 5G: a friendly unit within one tile, with no enemy within one. Then bring the commander within one tile of the standard at 7D by turn 16.'});return {routes,allies,enemies,description:`${allies} loyal formations against ${enemies} rival formations. ${state.decisions.ch2==='leave'?'Sabinus commands the minimum relief legion in Lucan’s absence.':'Lucan brings the minimum relief legion.'} ${political>=50?'Senatorial backing lowers enemy morale and opens settlement.':'The rival retains senatorial cover.'} ${confidence>=60?'The gates stand open.':'The city watches behind its walls.'} The costly backer remains available even at zero standing. The commander must survive every route.`,enemyMorale:Math.max(20,80-Math.floor(political/2)),enemyDamage:Math.max(2,4-Math.floor(political/50)),enemyHealth:Math.max(8,12-Math.floor(confidence/30))};}
+export function quartermasterForecast(state){
+  const supplies=state?.supplies??0;
+  const openObligations=(state?.obligations??[]).filter(o=>o.status==='open').map(o=>({...o,cost:Number(o.cost)||2,due:o.due??12,dueNow:(state?.chapter??1)>=(o.due??12)}));
+  const openAgreements=state?.progressionVersion===1?(state?.progression?.agreements??[]).filter(a=>a.status==='open').map(a=>({...a,cost:Number(a.cost)||1,due:a.due??12,dueNow:(state?.chapter??1)>=(a.due??12)})):[];
+  const obligationCost=openObligations.reduce((n,o)=>n+o.cost,0);
+  const agreementCost=openAgreements.reduce((n,a)=>n+a.cost,0);
+  const totalCommittedCost=obligationCost+agreementCost;
+  const dueNowCost=openObligations.filter(o=>o.dueNow).reduce((n,o)=>n+o.cost,0)+openAgreements.filter(a=>a.dueNow).reduce((n,a)=>n+a.cost,0);
+  const dueNowCount=openObligations.filter(o=>o.dueNow).length+openAgreements.filter(a=>a.dueNow).length;
+  const netBalance=supplies-totalCommittedCost,solvent=netBalance>=0,shortfall=Math.max(0,-netBalance);
+  const {army=0,political=0,public:confidence=0}=state?.meters??{};
+  const finaleRoutes=[
+    {id:'backer',label:'Accept costly backing',unlocked:true,requirement:'Always available (adds 6-supply debt)',progress:'Ready'},
+    {id:'battle',label:'Win the field',unlocked:true,requirement:'Always available (tactical victory)',progress:'Ready'},
+    {id:'defection',label:'Win the legions',unlocked:army>=55,requirement:'55+ Army Loyalty',progress:`Army ${army}/55`},
+    {id:'settlement',label:'Negotiate a settlement',unlocked:political>=50,requirement:'50+ Political Backing',progress:`Political ${political}/50`},
+    {id:'surrender',label:'Receive the surrender',unlocked:confidence>=60&&political>=40,requirement:'60+ Public & 40+ Political',progress:`Public ${confidence}/60 · Political ${political}/40`},
+  ];
+  return {supplies,openObligations,openAgreements,obligationCost,agreementCost,totalCommittedCost,dueNowCount,dueNowCost,netBalance,solvent,shortfall,finaleRoutes,unlockedRouteCount:finaleRoutes.filter(r=>r.unlocked).length};
+}
 export function legalCommands(state){if(state.phase!=='encounter')return [];return state.encounter.units.flatMap(unit=>getActions(state,unit.id).flatMap(action=>getTargets(state,unit.id,action).map(target=>({unitId:unit.id,action,x:target.x,y:target.y,...(target.unitId?{targetId:target.unitId}:{})}))));}
 export function voteCount(state){return state.encounter?.kind==='contest'?votes(state.encounter):null;}
 export function archiveEncounters(state){
@@ -107,7 +144,7 @@ function validateEncounter(e,fail){
   if(new Set(e.units.map(u=>u.id)).size!==e.units.length||e.units.filter(u=>u.id==='hero'&&u.side==='player').length!==1)fail('unit identities.');
   if(e.units.filter(u=>['player','ally'].includes(u.side)&&alive(u)).length>8)fail('force exceeds eight units.');
   for(const u of e.units){if(typeof u.id!=='string'||typeof u.name!=='string'||!['player','ally','enemy','neutral'].includes(u.side)||typeof u.moved!=='boolean'||typeof u.acted!=='boolean'||!bounded(u.maxHp,1,100)||!bounded(u.move,0,8))fail('unit schema.');if(e.kind==='contest'&&u.role==='speaker'&&(!bounded(u.resolve,0,u.maxResolve)||!bounded(u.maxResolve,1,100)))fail('speaker Resolve.');if(e.kind==='contest'&&u.role==='voter'&&!bounded(u.stance,-6,6))fail('member Stance.');}
-  for(const u of e.units){if(u.lastMoveDistance!==undefined&&!bounded(u.lastMoveDistance,0,8))fail('last movement distance.');if(u.facing!==undefined&&!['north','east','south','west'].includes(u.facing))fail('unit facing.');if(u.formation!==undefined&&u.formation!==null&&!['line','shield-wall','wedge'].includes(u.formation))fail('unit formation.');if(u.veteranId!==undefined&&!VETERAN_IDS.includes(u.veteranId))fail('unit veteran identity.');if(u.anchor!==undefined&&!point(u.anchor))fail('unit anchor.');}
+  for(const u of e.units){if(u.lastMoveDistance!==undefined&&!bounded(u.lastMoveDistance,0,8))fail('last movement distance.');if(u.facing!==undefined&&!['north','east','south','west'].includes(u.facing))fail('unit facing.');if(u.formation!==undefined&&u.formation!==null&&!['line','shield-wall','wedge'].includes(u.formation))fail('unit formation.');if(u.veteranId!==undefined&&!VETERAN_IDS.includes(u.veteranId))fail('unit veteran identity.');if(u.anchor!==undefined&&!point(u.anchor))fail('unit anchor.');if(u.moveOrigin!==undefined&&(!point(u.moveOrigin)||(u.moveOrigin.facing!==undefined&&!['north','east','south','west'].includes(u.moveOrigin.facing))||(u.moveOrigin.lastMoveDistance!==undefined&&!bounded(u.moveOrigin.lastMoveDistance,0,8))))fail('unit move origin.');}
   if(e.turnEvents!==undefined&&(!Array.isArray(e.turnEvents)||e.turnEvents.length>160||e.turnEvents.some(message=>typeof message!=='string'||message.length>1000)))fail('turn events.');
   if(e.collectTurnEvents!==undefined&&typeof e.collectTurnEvents!=='boolean')fail('turn event capture.');
   if(e.kind==='battle'&&(e.mission!==undefined||e.scenario!==undefined)){

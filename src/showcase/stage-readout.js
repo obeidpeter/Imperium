@@ -1,6 +1,7 @@
 // Read the committed encounter; these descriptors never predict an outcome.
 import {movementPinned, reachable, lineOfSight} from '../core/shared.js';
-import {combatBreakdown, enemyFormationLinks} from '../core/battle.js';
+import {combatBreakdown, enemyFormationLinks, reinforcementBeacons} from '../core/battle.js';
+export {reinforcementBeacons};
 import {politicalPosition, INTEREST_EFFECTS} from '../core/contest.js';
 import {BLOC_AFFINITIES} from '../data/contest-balance.js';
 const bounded = (n, max) => Math.max(0, Math.min(1, Number(n) / Math.max(1, Number(max)) || 0));
