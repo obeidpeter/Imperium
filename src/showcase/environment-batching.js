@@ -22,7 +22,22 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set()}={}){
     const key=[o.material.uuid,signature,o.castShadow,o.receiveShadow,o.renderOrder,o.layers.mask,o.visible].join(':');
     if(!groups.has(key))groups.set(key,[]);groups.get(key).push(o);
   });
-  let mergedSources=0,mergedBatches=0,instancedSources=0,instancedBatches=0;
+  let mergedSources=0,mergedBatches=0,instancedSources=0,instancedBatches=0,foldedSources=0;
+  // Repeated parts matching an existing named instance batch (same geometry,
+  // material and render flags) join it instead of adding another draw object.
+  const flags=o=>[o.castShadow,o.receiveShadow,o.renderOrder,o.layers.mask,o.visible].join(':'),targets=new Map();
+  for(const o of root.children)if(o.isInstancedMesh&&!exclude.has(o)&&!Array.isArray(o.material)&&!o.material.transparent&&!o.material.userData?.environmentVegetation&&!o.userData.environmentDynamic&&!o.morphTexture)targets.set(`${o.geometry.uuid}:${o.material.uuid}:${flags(o)}`,o);
+  const fold=(target,parts)=>{
+    const batch=new THREE.InstancedMesh(target.geometry,target.material,target.count+parts.length),local=target.matrixWorld.clone().invert();
+    batch.instanceMatrix.array.set(target.instanceMatrix.array.subarray(0,target.count*16));
+    if(target.instanceColor){batch.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(batch.count*3).fill(1),3);batch.instanceColor.array.set(target.instanceColor.array.subarray(0,target.count*3));}
+    parts.forEach((part,i)=>batch.setMatrixAt(target.count+i,local.clone().multiply(part.matrixWorld)));
+    batch.name=target.name;batch.userData={...target.userData,foldedNames:[...new Set([...(target.userData.foldedNames??[]),...parts.map(p=>p.name).filter(Boolean)])]};
+    batch.matrixAutoUpdate=target.matrixAutoUpdate;batch.position.copy(target.position);batch.quaternion.copy(target.quaternion);batch.scale.copy(target.scale);batch.frustumCulled=target.frustumCulled;
+    batch.castShadow=target.castShadow;batch.receiveShadow=target.receiveShadow;batch.renderOrder=target.renderOrder;batch.layers.mask=target.layers.mask;batch.visible=target.visible;
+    batch.instanceMatrix.needsUpdate=true;batch.computeBoundingBox();batch.computeBoundingSphere();
+    for(const part of parts)part.removeFromParent();target.parent.add(batch);target.removeFromParent();target.dispose();return batch;
+  };
   const configure=(batch,source,parts)=>{
     batch.castShadow=source.castShadow;batch.receiveShadow=source.receiveShadow;batch.renderOrder=source.renderOrder;
     batch.layers.mask=source.layers.mask;batch.visible=source.visible;
@@ -35,7 +50,9 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set()}={}){
     const repeated=new Map();for(const part of parts){const key=part.geometry.uuid;if(!repeated.has(key))repeated.set(key,[]);repeated.get(key).push(part);}
     const remaining=[];
     for(const instances of repeated.values()){
-      if(instances.length<3||instances.some(o=>inverse.clone().multiply(o.matrixWorld).determinant()<0)){remaining.push(...instances);continue;}
+      const mirrored=instances.some(o=>inverse.clone().multiply(o.matrixWorld).determinant()<0),key=`${instances[0].geometry.uuid}:${instances[0].material.uuid}:${flags(instances[0])}`;
+      if(!mirrored&&targets.has(key)){targets.set(key,fold(targets.get(key),instances));foldedSources+=instances.length;continue;}
+      if(instances.length<3||mirrored){remaining.push(...instances);continue;}
       const first=instances[0],batch=new THREE.InstancedMesh(first.geometry,first.material,instances.length);batch.name='static repeated environment';
       for(let i=0;i<instances.length;i++)batch.setMatrixAt(i,inverse.clone().multiply(instances[i].matrixWorld));
       batch.instanceMatrix.needsUpdate=true;batch.computeBoundingBox();batch.computeBoundingSphere();configure(batch,first,instances);
@@ -60,5 +77,5 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set()}={}){
     const batch=new THREE.Mesh(geometry,source.material);batch.name='merged static environment';configure(batch,source,remaining);mergedSources+=remaining.length;mergedBatches++;
   }
   let after=0;root.traverse(o=>{if(o.isMesh)after++;});
-  return Object.freeze({before,after,savedDrawObjects:before-after,mergedSources,mergedBatches,instancedSources,instancedBatches});
+  return Object.freeze({before,after,savedDrawObjects:before-after,mergedSources,mergedBatches,instancedSources,instancedBatches,foldedSources});
 }

@@ -144,3 +144,129 @@ test('v0.29.0: the compositor applies a chapter grade with clamped values and ke
   assert.equal(compositor.stats().multisamples, 4, 'Balanced renders into a multisampled target');
   compositor.dispose();
 });
+
+test('v0.29.0: high ground is a readable plateau whose bank stays inside its cell, rivers sit in a channel and roads never climb a bank', async () => {
+  const {createGroundHeight, gridToWorld, terrainAt, HIGH_GROUND_HEIGHT, RIVER_WATER_LEVEL, RIVER_BED, FORD_BED} = await import('../src/showcase/environment-layout.js');
+  const grid = rows => ({width: rows[0].length, height: rows.length, terrain: rows.map(row => [...row].map(t => ({'.': 'grass', '^': 'high', '~': 'river', 'f': 'ford', '=': 'road'}[t])))});
+  const e = grid(['........', '.^^.....', '........', '====....', '...^....', '.~~f~~..', '........', '........']), height = createGroundHeight(e), level = createGroundHeight(e, 2.5, {relief: false});
+  const at = (x, y) => gridToWorld({x, y}, e);
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) {
+    const p = at(x, y), type = terrainAt(e, x, y), h = height(p.x, p.z);
+    assert.ok(Math.abs(h - ({high: HIGH_GROUND_HEIGHT, river: RIVER_BED, ford: FORD_BED}[type] ?? 0)) < 1e-9, `${x},${y} ${type}`);
+  }
+  const a = at(1, 1), b = at(2, 1);
+  for (let t = 0; t <= 1; t += .05) assert.ok(Math.abs(height(a.x + (b.x - a.x) * t, a.z) - HIGH_GROUND_HEIGHT) < 1e-9, 'Adjoining high cells form one plateau without a dip');
+  const lone = at(3, 4);
+  assert.ok(height(lone.x, lone.z - 1.25) > .3 && height(lone.x, lone.z - 1.25) < HIGH_GROUND_HEIGHT, 'The bank is still falling at the cell edge');
+  assert.ok(Math.abs(height(lone.x, lone.z - 1.56)) < 1e-9, 'The bank ends 0.3 m into the neighbouring cell');
+  assert.ok(RIVER_BED < FORD_BED && FORD_BED < RIVER_WATER_LEVEL && RIVER_WATER_LEVEL < 0, 'Fords are shallower than the channel and both lie under the water level');
+  for (let x = -10; x <= 10; x += .25) for (let z = -10; z <= 10; z += .25) assert.ok(level(x, z) <= height(x, z) + 1e-9, 'The relief-free surface never rises above the real ground');
+});
+
+test('v0.29.0: the diorama board has one river channel surface, cell-edge walls, kerbed roads and a denser ground over the board', async () => {
+  const THREE = await import('../vendor/three/three.module.js');
+  const {readFile} = await import('node:fs/promises');
+  const {createEnvironment, gridToWorld} = await import('../src/showcase/environment.js');
+  const {createGroundHeight, terrainAt, RIVER_WATER_LEVEL} = await import('../src/showcase/environment-layout.js');
+  const {wallFace, wallStyle} = await import('../src/showcase/environment-campaign-terrain.js');
+  const fixture = JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json', import.meta.url), 'utf8'));
+  const build = (id, quality = 'balanced') => {const s = fixture.scenes.find(s => s.id === id); return {s, world: createEnvironment(new THREE.Scene(), s.state.encounter, {chapter: s.chapter, quality, loadTextures: false})};};
+  {
+    const {s, world} = build('ch8-ferry'), water = world.group.getObjectByName('authored river channel water'), e = s.state.encounter;
+    assert.ok(water && !water.isInstancedMesh, 'Every river and ford cell shares one water surface');
+    const pos = water.geometry.attributes.position, color = water.geometry.attributes.color;
+    for (let i = 0; i < pos.count; i += 7) {
+      assert.ok(Math.abs(pos.getY(i) - RIVER_WATER_LEVEL) < 1e-6, 'One flat water level');
+      const ground = world.groundHeight(pos.getX(i), pos.getZ(i));
+      if (Math.abs(ground - RIVER_WATER_LEVEL) > 1e-3) assert.equal(color.getW(i) === 0, ground > RIVER_WATER_LEVEL, 'Water is clear exactly where the ground rises above it');
+    }
+    let deep = 0;for (let i = 0; i < color.count; i++) if (color.getW(i) > .95) deep++;
+    assert.ok(deep > 50, 'The channel has deep, opaque water');
+    water.geometry.computeBoundingBox();
+    if ([0, e.height - 1].some(y => [...Array(e.width).keys()].some(x => terrainAt(e, x, y) === 'river'))) assert.ok(water.geometry.boundingBox.max.z - water.geometry.boundingBox.min.z > e.height * 2.5 + 20, 'A river leaving the board keeps flowing beyond it');
+    world.dispose();
+  }
+  {
+    const e = {width: 3, height: 4, terrain: [['wall', 'grass', 'grass'], ['wall', 'grass', 'grass'], ['grass', 'wall', 'wall'], ['grass', 'grass', 'grass']]};
+    assert.equal(wallFace(e, 0, 0), 'east');assert.equal(wallFace(e, 0, 1), 'east');assert.equal(wallFace(e, 1, 2), 'north');assert.equal(wallFace(e, 2, 2), 'north');
+    assert.equal(wallStyle({setting: 'fortress'}), 'stone');assert.equal(wallStyle({setting: 'siege'}), 'mudbrick');assert.equal(wallStyle({setting: 'frontier'}), 'timber');
+  }
+  {
+    const {s, world} = build('ch1-road'), e = s.state.encounter, level = createGroundHeight(e, 2.5, {profile: world.profile, relief: false});
+    assert.ok(world.group.getObjectByName('road kerb stones')?.isInstancedMesh, 'Roads are edged with kerb stones');
+    const road = world.group.getObjectByName('authored boundary road').geometry.attributes.position;
+    for (let i = 0; i < road.count; i++) assert.ok(road.getY(i) <= level(road.getX(i), road.getZ(i)) + .021 + 1e-6, 'The road surface passes under a plateau bank instead of climbing it');
+    const ground = world.ground.geometry.attributes.position;let inner = 0;
+    for (let i = 0; i < ground.count; i++) if (Math.max(Math.abs(ground.getX(i)), Math.abs(ground.getZ(i))) <= 10) inner++;
+    assert.ok(inner > ground.count * (20 / 80) ** 2 * 2.4, 'The board holds well over twice its even share of ground vertices');
+    for (let y = 0; y < e.height; y++) for (let x = 0; x < e.width; x++) {const p = gridToWorld({x, y}, e);assert.ok(Number.isFinite(world.groundHeight(p.x, p.z)));}
+    world.dispose();
+  }
+});
+
+test('v0.29.0: repeated static parts fold into a matching named instance batch without moving a vertex', async () => {
+  const THREE = await import('../vendor/three/three.module.js');
+  const {batchStaticEnvironment} = await import('../src/showcase/environment-batching.js');
+  const root = new THREE.Group(), geometry = new THREE.BoxGeometry(), material = new THREE.MeshStandardMaterial(), other = new THREE.MeshStandardMaterial();
+  root.position.set(3, 0, -2);
+  const named = new THREE.InstancedMesh(geometry, material, 2);named.name = 'road kerb stones';named.castShadow = named.receiveShadow = true;
+  const matrix = new THREE.Matrix4();named.setMatrixAt(0, matrix.makeTranslation(1, 0, 0));named.setMatrixAt(1, matrix.makeTranslation(-1, 0, 0));
+  named.setColorAt(0, new THREE.Color(.5, .6, .7));named.setColorAt(1, new THREE.Color(.2, .3, .4));root.add(named);
+  const parts = [];for (let i = 0; i < 3; i++) {const mesh = new THREE.Mesh(geometry, material);mesh.position.set(i * 2, 1, 4);mesh.rotation.y = i * .3;mesh.castShadow = mesh.receiveShadow = true;root.add(mesh);parts.push(mesh);}
+  const unrelated = [];for (let i = 0; i < 3; i++) {const mesh = new THREE.Mesh(geometry, other);mesh.position.x = -5 - i;mesh.castShadow = mesh.receiveShadow = true;root.add(mesh);unrelated.push(mesh);}
+  root.updateMatrixWorld(true);
+  const world = parts.map(p => p.matrixWorld.clone()), stats = batchStaticEnvironment(root, {geometries: new Set()});
+  const folded = root.getObjectByName('road kerb stones');
+  assert.equal(stats.foldedSources, 3);assert.equal(folded.count, 5);assert.notEqual(folded, named);
+  assert.deepEqual(folded.userData.foldedNames ?? [], []);
+  folded.updateMatrixWorld(true);
+  for (let i = 0; i < 3; i++) {folded.getMatrixAt(2 + i, matrix);matrix.premultiply(folded.matrixWorld);assert.ok(matrix.elements.every((v, k) => Math.abs(v - world[i].elements[k]) < 1e-5), 'Folded parts keep their world transform (float32 instance matrices)');}
+  const color = new THREE.Color();folded.getColorAt(0, color);assert.deepEqual(color.toArray().map(v => Math.round(v * 10) / 10), [.5, .6, .7]);folded.getColorAt(3, color);assert.deepEqual(color.toArray(), [1, 1, 1], 'Folded parts are untinted');
+  assert.equal(root.children.filter(o => o.isInstancedMesh).length, 2, 'Only parts with another material form their own batch');
+  for (const p of [...parts, ...unrelated]) assert.equal(p.parent, null);
+});
+
+test('v0.29.0: the painted regional backdrop wraps seamlessly, picks a regional landmark and is never terrain', async () => {
+  const THREE = await import('../vendor/three/three.module.js');
+  const {ridgeProfile, backdropLandmark, createPaintedBackdrop, paintBackdrop, BACKDROP_RADIUS} = await import('../src/showcase/environment-backdrop.js');
+  for (const options of [{seed: 3}, {seed: 11, sharp: true, amplitude: .26, base: .3}]) {
+    assert.ok(Math.abs(ridgeProfile(0, options) - ridgeProfile(1, options)) < 1e-9, 'The panorama has no seam where it wraps');
+    for (let u = 0; u <= 1; u += .01) {const y = ridgeProfile(u, options), base = options.base ?? .5, amplitude = options.amplitude ?? .18;assert.ok(y >= base - amplitude - 1e-9 && y <= base + amplitude + 1e-9);}
+  }
+  assert.equal(backdropLandmark({setting: 'rome'}), 'city');assert.equal(backdropLandmark({setting: 'palmyra'}), 'palmyra');assert.equal(backdropLandmark({setting: 'italy'}), 'alps');assert.equal(backdropLandmark({setting: 'unknown'}), 'hills');
+  const none = createPaintedBackdrop({setting: 'frontier', chapter: 1});
+  assert.equal(none.stats.painted, false, 'Without a canvas no panorama is built');assert.equal(none.group.children.length, 0);none.dispose();
+  // A recording 2D context stands in for a browser canvas.
+  const calls = [], gradient = {addColorStop() {}};
+  class FakeCanvas {constructor(width, height) {this.width = width;this.height = height;}getContext() {return new Proxy({createLinearGradient: () => gradient}, {get: (target, key) => key in target ? target[key] : (...args) => {calls.push(args);}, set: () => true});}}
+  const previous = globalThis.OffscreenCanvas;globalThis.OffscreenCanvas = FakeCanvas;
+  try {
+    for (const setting of ['frontier', 'rome', 'palmyra', 'siege', 'italy', 'wetland']) {
+      calls.length = 0;
+      const canvas = paintBackdrop({setting, chapter: 4, fog: '#b8c6c2', groundTint: '#859271', stoneColor: '#bab9ad'}, {quality: 'performance'});
+      assert.deepEqual([canvas.width, canvas.height], [1024, 192]);
+      assert.ok(calls.length > 100 && calls.every(args => args.every(v => typeof v !== 'number' || Number.isFinite(v))), `${setting} paints finite strokes`);
+    }
+    const civic = createPaintedBackdrop({setting: 'rome', civic: true, chapter: 11});assert.equal(civic.stats.painted, false, 'Enclosed chambers have no panorama');
+    const backdrop = createPaintedBackdrop({setting: 'italy', chapter: 10}, {quality: 'balanced'}), mesh = backdrop.group.children[0];
+    assert.equal(backdrop.stats.landmark, 'alps');assert.equal(mesh.geometry.parameters.radiusTop, BACKDROP_RADIUS);
+    assert.equal(mesh.material.side, THREE.BackSide);assert.equal(mesh.material.fog, false);assert.equal(mesh.material.depthWrite, false);assert.equal(mesh.castShadow, false);
+    assert.ok(BACKDROP_RADIUS > 550 && BACKDROP_RADIUS < 700, 'It stands beyond the outer ridges and inside the sky');
+    let disposed = 0;mesh.geometry.addEventListener('dispose', () => disposed++);backdrop.dispose();assert.equal(disposed, 1);
+  } finally {if (previous === undefined) delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas = previous;}
+});
+
+test('v0.29.0: water keeps a dim sun sheen with glitter and caps its reflected highlight; open water foams faintly', async () => {
+  const THREE = await import('../vendor/three/three.module.js');
+  const {createEnvironmentMaterials} = await import('../src/showcase/environment-materials.js');
+  const lib = createEnvironmentMaterials({loadTextures: false, profile: {setting: 'crossing', chapter: 8, waterColor: '#608f94', stoneColor: '#bab9ad'}});
+  for (const [name, foam] of [['water', '.14'], ['riverWater', '.0']]) {
+    const material = lib.materials[name], shader = {uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader};
+    material.onBeforeCompile(shader);
+    assert.match(shader.fragmentShader, /envGlitter/);assert.match(shader.fragmentShader, /reflectedLight\.indirectSpecular=min\(/);
+    assert.ok(shader.fragmentShader.includes(`*${foam};`), `${name} foam scale`);
+    assert.ok(material.metalness < .1, 'Water is a dielectric');
+  }
+  assert.equal(lib.materials.riverWater.vertexColors, true, 'Channel depth travels in vertex alpha');
+  lib.dispose();
+});

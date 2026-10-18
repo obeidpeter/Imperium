@@ -6,6 +6,7 @@ import {actorAssetStatus} from './actor-assets.js';
 import {warmActorMaterials} from './actor-materials.js';
 import {campaignSoundscape} from '../ui/soundscape.js';
 import {createEnvironment,gridToWorld} from './environment.js';
+import {HIGH_GROUND_HEIGHT,RIVER_BED,RIVER_WATER_LEVEL,terrainAt} from './environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../ui/animation-timeline.js';
 import {facingYaw,isAlive} from './session.js';
 import {createBattleSound} from './battle-sound.js';
@@ -33,12 +34,21 @@ export function positionProjectileTip(projectile,from,to,progress){
   projectile.position.copy(tip);projectile.lookAt(tip.clone().add(direction));projectile.position.addScaledVector(direction,-1.01*projectile.scale.z);
 }
 
-// Picking follows the visible elevation, including the two raised board cells.
-export function intersectGround(ray,height,target=new T.Vector3()){
-  const plane=new T.Plane(new T.Vector3(0,1,0),0);
-  if(!ray.intersectPlane(plane,target))return null;
-  for(let i=0;i<8;i++){const y=height(target.x,target.z);if(Math.abs(target.y-y)<.0001)break;plane.constant=-y;if(!ray.intersectPlane(plane,target))return null;}
-  return target;
+// Picking follows the visible relief: march the ray through the band between
+// the river bed and the plateau tops, then bisect the crossing. Refining a flat
+// plane alone would slide past a 1.6m rise to the ground behind it.
+export function intersectGround(ray,height,target=new T.Vector3(),{top=HIGH_GROUND_HEIGHT+.5,bottom=RIVER_BED-.5,maxDistance=900,step=.2}={}){
+  const o=ray.origin,d=ray.direction,above=t=>o.y+d.y*t-height(o.x+d.x*t,o.z+d.z*t);
+  if(d.y>=0&&o.y>top)return null;
+  const start=d.y<0?Math.max(0,(top-o.y)/d.y):0,end=d.y<0?Math.min(maxDistance,(bottom-o.y)/d.y):maxDistance;
+  if(!(end>=start))return null;
+  if(above(start)<=0)return ray.at(start,target);
+  for(let previous=start,t=start+step;previous<end;previous=t,t+=step){
+    const next=Math.min(t,end);if(above(next)>0)continue;
+    let lo=previous,hi=next;for(let i=0;i<24;i++){const mid=(lo+hi)/2;if(above(mid)>0)lo=mid;else hi=mid;}
+    return ray.at(hi,target);
+  }
+  return null;
 }
 
 // Interpret the shared 2D presentation timeline without modifying it or the
@@ -151,7 +161,7 @@ export class BattleStage{
     for(const [id,marker] of this.missionMarkers)if(!wanted.has(id)){this.overlay.remove(marker.mesh);marker.mesh.material.dispose();marker.label.remove();this.missionMarkers.delete(id);}
     for(const mark of marks){
       if(!this.missionMarkers.has(mark.id)){const mesh=new T.Mesh(this.goalMarker.geometry,this.goalMarker.material.clone());mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);const label=document.createElement('span');label.className='world-objective';this.labelLayer.append(label);this.missionMarkers.set(mark.id,{mesh,label});}
-      const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;marker.label.dataset.tone=mark.tone;
+      const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;marker.mesh.scale.setScalar(['high','hill'].includes(terrainAt(encounter,mark.x,mark.y))?.85:1);marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;marker.label.dataset.tone=mark.tone;
     }
     this.updateChamberStandards(encounter);
     this.updateFieldworks(encounter);
@@ -319,7 +329,8 @@ export class BattleStage{
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
   setGrid(show){
-    if(!this.grid){const lines=[];for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])lines.push(p.x+a,p.y+.04,p.z+b,p.x+c,p.y+.04,p.z+d);}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
+    // Grid edges drape over plateau banks and lie on river water rather than floating at a cell's centre height.
+    if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
     this.grid.visible=!!show;
   }
   applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}

@@ -10,6 +10,7 @@ import {addInhabitedEnvironment} from './environment-inhabited.js';
 import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
+import {createPaintedBackdrop} from './environment-backdrop.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
@@ -22,7 +23,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
-  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=createGroundHeight(encounter,tileSize,{profile});
+  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=createGroundHeight(encounter,tileSize,{profile}),level=createGroundHeight(encounter,tileSize,{profile,relief:false});
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
   const e={width:encounter.width,height:encounter.height,terrain:terrainSnapshot};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2;
@@ -43,16 +44,24 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
   const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
+  // Rows gather over the board and its margin (0.6 of the even spacing) and
+  // spread toward the 80 m edge, which stays exactly where the outer bridge
+  // meets it, so plateau banks and river cuts resolve without adding rows.
+  const gather=r=>{if(r<=20)return r*.6;const t=(r-20)/20,t2=t*t,t3=t2*t;return (2*t3-3*t2+1)*12+(t3-2*t2+t)*12+(3*t2-2*t3)*40+(t3-t2)*32;};
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),r=Math.max(Math.abs(x),Math.abs(z));if(r>0&&r<40){const s=gather(r)/r;pos.setXYZ(i,x*s,0,z*s);}}
   for(let i=0;i<pos.count;i++){
     const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,height(x,z));
     const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
     const yard=1-smooth(Math.max(Math.abs(x)-halfX+.8,Math.abs(z)-halfZ+.8)/2.7),wear=training?yard*(.72+patch*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48;
-    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78+roadSurface.sample(x,z).verge*.61));
+    // Steep relief near the board (plateau banks, river cuts) shows bare earth
+    // rather than turf; it fades out well before the outer bridge's shared edge.
+    const slope=Math.hypot(height(x+.3,z)-height(x-.3,z),height(x,z+.3)-height(x,z-.3))/.6,near=1-smooth((Math.max(Math.abs(x)-halfX,Math.abs(z)-halfZ)-16)/6);
+    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78+roadSurface.sample(x,z).verge*.61+smooth(slope*.9)*.75*near));
   }
   groundGeometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
-  const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,groundUV.getX(i)*40,groundUV.getY(i)*40);
+  const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,(pos.getX(i)+40)/2,(40-pos.getZ(i))/2);
   groundGeometry.computeVertexNormals();const ground=p.mesh(root,groundGeometry,m.ground);ground.name='continuous ground';ground.castShadow=false;ground.userData.environmentGround=true;
 
   const roadVertices=[],roadUV=[],roadColors=[],roadIndices=[];
@@ -61,7 +70,8 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.78,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
     for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
       const x=minX+ix*step,z=minZ+iz*step,surface=roadSurface.sample(x,z),tone=surface.tone;
-      roadVertices.push(x,height(x,z)+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
+      // The tread never climbs a plateau bank; there it passes under the ground.
+      roadVertices.push(x,Math.min(height(x,z),level(x,z))+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
       if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
     }
   }
@@ -118,7 +128,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
   const vegetation=createVegetationFactory({p,m,instance,height,quality});
-  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation};
+  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry};
   addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);addInhabitedEnvironment(campaignContext);
 
   // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
@@ -183,12 +193,13 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // Preserve animated surfaces and authoritative ground objects. Static
   // scenery is instanced where repeated, otherwise merged by exact material
   // and render flags, with all parent transforms baked into root space.
-  const batching=batchStaticEnvironment(root,{geometries,exclude:new Set([ground,road,river,root.getObjectByName('continuous civic stone floor'),...flames.map(f=>f.mesh)])});
+  const batching=batchStaticEnvironment(root,{geometries,exclude:new Set([ground,road,river,root.getObjectByName('continuous civic stone floor'),root.getObjectByName('authored river channel water'),...flames.map(f=>f.mesh)])});
   const horizon=createEnvironmentHorizon({ground,profile,height,quality});root.add(horizon.group);
+  const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,
     update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;if(!perf&&library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
-    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
-    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,disposed};}
+    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
+    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,disposed};}
   };
 }
