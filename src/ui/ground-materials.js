@@ -18,12 +18,50 @@ export function texturePlacements(rect,size){
   for(let y=top;y<bottom;y++)for(let x=left;x<right;x++)result.push({x:x*size,y:y*size,size,flipX:Math.abs(x)%2===1,flipY:Math.abs(y)%2===1});
   return result;
 }
+// Edge weight for the seam-free cross-fade: 0 at a cell border, 1 beyond the
+// outer 30%. The half-offset copy supplies the borders, which therefore wrap.
+export function seamWeight(t,size){const d=Math.min(t,size-1-t)/Math.max(1,size*.3);const k=Math.max(0,Math.min(1,d));return k*k*(3-2*k);}
+// Blend RGBA pixels so the cell tiles without mirroring: first across x, then
+// across y. Each pass keeps the other axis seamless; the shifted copy's own
+// wrap line falls where the original has full weight, so no seam is drawn.
+export function crossFadeSeamless(data,size){
+  const out=new Uint8ClampedArray(data.length),half=Math.floor(size/2),blend=(source,target,horizontal)=>{
+    for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+      const w=seamWeight(horizontal?x:y,size),sx=horizontal?(x+half)%size:x,sy=horizontal?y:(y+half)%size,i=(y*size+x)*4,j=(sy*size+sx)*4;
+      for(let k=0;k<4;k++)target[i+k]=source[i+k]*w+source[j+k]*(1-w);
+    }
+  };
+  const across=new Uint8ClampedArray(data.length);blend(data,across,true);blend(across,out,false);return out;
+}
+const seamlessCache=new WeakMap();
+function makeCanvas(size){const canvas=typeof OffscreenCanvas==='function'?new OffscreenCanvas(size,size):globalThis.document?.createElement?.('canvas');if(canvas){canvas.width=size;canvas.height=size;}return canvas;}
+function seamlessPattern(c,image,index,sw,sh){
+  let cells=seamlessCache.get(image);if(!cells){cells=new Map();seamlessCache.set(image,cells);}
+  if(cells.has(index))return cells.get(index);
+  let tile=null;
+  try{
+    const size=Math.floor(Math.min(sw,sh))-1,canvas=makeCanvas(size),ctx=canvas?.getContext?.('2d');
+    if(ctx?.getImageData&&ctx.putImageData){
+      ctx.drawImage(image,(index%3)*sw+.5,Math.floor(index/3)*sh+.5,sw-1,sh-1,0,0,size,size);
+      const pixels=ctx.getImageData(0,0,size,size);pixels.data.set(crossFadeSeamless(pixels.data,size));ctx.putImageData(pixels,0,0);tile={canvas,size};
+    }
+  }catch{tile=null;}
+  cells.set(index,tile);return tile;
+}
 export function paintMaterial(c,g,rect,index=0,opacity=1){
   const image=peekArt(WORLD_ASSETS[0]);if(!image)return false;
   const sw=(image.naturalWidth||image.width)/3,sh=(image.naturalHeight||image.height)/2;
   if(!sw||!sh)return false;
   const size=Math.max(80,Math.min(340,g.tw*3.25));
   c.save();c.beginPath();c.rect(rect.x,rect.y,rect.w,rect.h);c.clip();c.globalAlpha=(Number.isFinite(c.globalAlpha)?c.globalAlpha:1)*Math.max(0,Math.min(1,opacity));
+  // Browsers fill from one seamless pattern anchored at the canvas origin, then
+  // add a larger, offset pass at low opacity so the repeat period stops reading.
+  const tile=seamlessPattern(c,image,index,sw,sh),pattern=tile&&c.createPattern?.(tile.canvas,'repeat');
+  if(pattern&&typeof pattern.setTransform==='function'&&typeof DOMMatrix==='function'){
+    const base=c.globalAlpha;pattern.setTransform(new DOMMatrix().scale(size/tile.size));c.fillStyle=pattern;c.fillRect(rect.x,rect.y,rect.w,rect.h);
+    const macro=c.createPattern(tile.canvas,'repeat');macro.setTransform(new DOMMatrix().translate(size*.37,size*.61).rotate(90).scale(size*2.31/tile.size));c.globalAlpha=base*.24;c.fillStyle=macro;c.fillRect(rect.x,rect.y,rect.w,rect.h);
+    c.restore();return true;
+  }
   for(const tile of texturePlacements(rect,size)){
     c.save();c.translate(tile.x+(tile.flipX?size:0),tile.y+(tile.flipY?size:0));c.scale(tile.flipX?-1:1,tile.flipY?-1:1);
     c.drawImage(image,(index%3)*sw+.5,Math.floor(index/3)*sh+.5,sw-1,sh-1,0,0,size,size);c.restore();
