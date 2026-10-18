@@ -1,6 +1,6 @@
 import * as Legacy from './legacy-battle.js';
 export const createLegacyBattle=Legacy.createBattle;
-import {alive, blocked, clamp, distance, faceToward, lineOfSight, makeUnit, note, reachable, result, rng, stepToward, unitAt} from './shared.js';
+import {alive, blocked, clamp, distance, faceToward, lineOfSight, makeUnit, note, reachable, result, rng, stepToward, unitAt, withMoveCredit} from './shared.js';
 import {BATTLE_SCENARIOS} from '../data/encounters.js';
 import {BATTLE_BALANCE as B,FORMATION_RULES,ROUGH_TERRAIN} from '../data/battle-balance.js';
 export {FORMATION_RULES};
@@ -135,7 +135,7 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
 export function applyBattle(state,command) {if(!state.encounter.mission)return Legacy.applyBattle(state,command);
   const checked=previewBattle(state,command);if(!checked.ok)return checked;
   const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),action=command.action,target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y);
-  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:{x:unit.x,y:unit.y,facing:unit.facing??'east',lastMoveDistance:unit.lastMoveDistance??0},writable:true,configurable:true,enumerable:false});if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:withMoveCredit({x:unit.x,y:unit.y,facing:unit.facing??'east',lastMoveDistance:unit.lastMoveDistance??0},state,e),writable:true,configurable:true,enumerable:false});if(e.combatVersion===2)unit.lastMoveDistance=distance(unit,command);faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
   else{
     for(const u of e.units)delete u.moveOrigin;
     if(['guard','inspire','volley'].includes(action)){applyVeteranAction(e,unit,action,target,()=>{faceToward(unit,target);const damage=resolveHit(e,unit,target,true);note(e,`${unit.name} hits ${target.name} for ${damage}${target.hp===0?' — withdrawn from the field':''}.`);});}

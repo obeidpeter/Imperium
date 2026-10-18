@@ -18,6 +18,13 @@ function newest(values){return values.filter(Boolean).sort((a,b)=>b.sequence-a.s
 function historyFrom(raw){const values=rawObject(raw)?.recovery;return Array.isArray(values)?values.slice(0,HISTORY_LIMIT).map(localEnvelope).filter(Boolean):[];}
 function mergedHistory(raws,extra=[],exclude=null){const candidates=[...extra,...raws.flatMap(historyFrom)].filter(Boolean).sort((a,b)=>b.sequence-a.sequence),seen=new Set(),result=[];for(const e of candidates){const key=historyKey(e);if(exclude&&(key===historyKey(exclude)||e.payload===exclude.payload)||seen.has(key))continue;seen.add(key);result.push(compact(e));if(result.length===HISTORY_LIMIT)break;}return result;}
 function safeGlobal(name){try{return globalThis[name];}catch{return undefined;}}
+// A stored record that no longer validates (damaged or from an incompatible
+// edition) is set aside before any write replaces it, never silently dropped.
+const QUARANTINE_LIMIT=2,QUARANTINE_LOCAL_LIMIT=1500000;
+function rawText(raw){try{return typeof raw==='string'?raw:JSON.stringify(raw);}catch{return null;}}
+function unreadable(raw){return raw!==null&&raw!==undefined&&raw!==''&&!localEnvelope(raw);}
+function quarantined(value){return Array.isArray(value)?value.filter(item=>item?.type==='unreadable-save'&&typeof item.text==='string'&&typeof item.source==='string').slice(0,QUARANTINE_LIMIT):[];}
+function withQuarantine(list,raw,source){const text=rawText(raw);if(!text||list.some(item=>item.text===text))return list;return [{type:'unreadable-save',source,preservedAt:new Date().toISOString(),bytes:text.length,checksum:checksum(text),text},...list].slice(0,QUARANTINE_LIMIT);}
 
 /** Isolated stores are for development harnesses; normal app imports use the singleton below. */
 export function createSaveStore(options={}){
@@ -36,6 +43,9 @@ export function createSaveStore(options={}){
   let dbPromise,sequence=0,observed='',campaignId=null,persistAsked=false,channel=null,closed=false;
   const listeners=new Set();
   function localRaw(){try{return ls?.getItem(key)||null;}catch{return null;}}
+  const quarantineKey=key+'.unreadable';
+  function localQuarantine(){try{return quarantined(JSON.parse(ls?.getItem(quarantineKey)||'[]'));}catch{return [];}}
+  function keepLocal(raw,source){if(!unreadable(raw))return;const list=withQuarantine(localQuarantine(),raw,source);try{const text=JSON.stringify(list);if(text.length<=QUARANTINE_LOCAL_LIMIT)ls?.setItem(quarantineKey,text);}catch{}}
   async function database(){
     if(!idb||closed)return null;
     return dbPromise??=new Promise(resolve=>{try{
@@ -77,9 +87,14 @@ export function createSaveStore(options={}){
     return new Promise((resolve,reject)=>{
       let tx,next,rejection=null;
       try{
-        tx=db.transaction('saves','readwrite');const store=tx.objectStore('saves'),request=store.get('campaign');
+        tx=db.transaction('saves','readwrite');const store=tx.objectStore('saves'),request=store.get('campaign'),held=store.get('unreadable');
         request.onsuccess=()=>{
-          try{next=prepareEnvelope(payload,[localRaw(),request.result||null],settings);store.put(next,'campaign');}
+          try{
+            next=prepareEnvelope(payload,[localRaw(),request.result||null],settings);
+            // Preserve an unreadable record in the same transaction, before it is replaced.
+            if(unreadable(request.result))store.put(withQuarantine(quarantined(held.result),request.result,'indexedDB'),'unreadable');
+            store.put(next,'campaign');
+          }
           catch(error){rejection=error;try{tx.abort();}catch{reject(error);}}
         };
         request.onerror=()=>{try{tx.abort();}catch{resolve(null);}};
@@ -98,6 +113,7 @@ export function createSaveStore(options={}){
     // Capture and validate before asynchronous persistence; never mutate caller state.
     const payload=serialize(state);deserialize(payload);
     const write=async(locked=false)=>{
+      keepLocal(localRaw(),'localStorage');
       let next=await atomicIDB(payload,settings);
       if(!next){
         // localStorage has no cross-tab compare-and-swap. Never pretend it is safe without a lock.
@@ -143,13 +159,31 @@ export function createSaveStore(options={}){
     const current=newest((await records()).map(localEnvelope));
     return {sequence:current?.sequence||0,writerId:current?.writerId||null,isCurrent:!current||fingerprint(current)===observed,atomicIndexedDB:Boolean(await database()),webLocks:useLocks};
   }
+  // Unreadable records set aside before a write, newest first, for export.
+  async function listUnreadableSaves(){
+    let stored=[];const db=await database();
+    if(db)stored=await new Promise(resolve=>{try{const tx=db.transaction('saves'),r=tx.objectStore('saves').get('unreadable');r.onsuccess=()=>resolve(quarantined(r.result));r.onerror=()=>resolve([]);tx.onabort=()=>resolve([]);}catch{resolve([]);}});
+    const seen=new Set(),list=[];for(const item of [...stored,...localQuarantine()])if(!seen.has(item.text)){seen.add(item.text);list.push(item);}
+    // A live record that fails validation is also offered, so nothing needs a write first.
+    for(const [raw,source]of [[localRaw(),'localStorage'],[await idbRaw(),'indexedDB']]){const text=unreadable(raw)?rawText(raw):null;if(text&&!seen.has(text)){seen.add(text);list.unshift({type:'unreadable-save',source,preservedAt:null,bytes:text.length,checksum:checksum(text),text});}}
+    return list.map(({text,...item},index)=>({...item,index}));
+  }
+  async function readUnreadableSave(index){
+    const list=await listUnreadableSaves(),item=list.find(entry=>entry.index===index);if(!item)throw new Error('That preserved record is unavailable.');
+    const db=await database();let stored=[];
+    if(db)stored=await new Promise(resolve=>{try{const r=db.transaction('saves').objectStore('saves').get('unreadable');r.onsuccess=()=>resolve(quarantined(r.result));r.onerror=()=>resolve([]);}catch{resolve([]);}});
+    const live=[[localRaw(),'localStorage'],[await idbRaw(),'indexedDB']].filter(([raw])=>unreadable(raw)).map(([raw,source])=>({source,text:rawText(raw),checksum:checksum(rawText(raw))}));
+    const match=[...live,...stored,...localQuarantine()].find(entry=>entry.checksum===item.checksum);
+    if(!match)throw new Error('That preserved record is unavailable.');return match.text;
+  }
   function subscribeSaveChanges(listener){listeners.add(listener);listen();return()=>listeners.delete(listener);}
   async function close(){closed=true;channel?.close();channel=null;const db=await dbPromise;db?.close?.();listeners.clear();}
-  return {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,close};
+  return {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave,close};
 }
 const defaultStore=createSaveStore();
-export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges}=defaultStore;
+export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave}=defaultStore;
 // SAC1/SAC1J identify the portable format; retain both across the Imperium rename.
 export async function saveCode(state){const payload=serialize(state);const raw=new TextEncoder().encode(JSON.stringify({format:1,payload,checksum:checksum(payload)}));let bytes=raw,prefix='SAC1J.';if(globalThis.CompressionStream){bytes=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());prefix='SAC1.';}let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return prefix+btoa(binary);}
 export async function restoreCode(code){const text=code.trim();if(text.length>3000000)throw new Error('Save code is too large.');if(text.startsWith('{'))return deserialize(text);let bytes;try{const parts=text.split('.');if(!['SAC1','SAC1J'].includes(parts[0])||parts.length!==2)throw new Error();bytes=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));if(parts[0]==='SAC1'){if(!globalThis.DecompressionStream)throw new Error('This browser cannot read compressed save codes. Use a recent browser.');const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();const chunks=[];let total=0;for(;;){const {value,done}=await reader.read();if(done)break;total+=value.length;if(total>2000000){await reader.cancel();throw new Error('Expanded save exceeds the size limit.');}chunks.push(value);}bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}}const decoded=new TextDecoder('utf-8',{fatal:true}).decode(bytes);const parsed=JSON.parse(decoded);if(parsed.format===1){const checked=unpack(parsed);if(!checked)throw new Error('Checksum or save validation failed.');return checked.state;}return deserialize(decoded);}catch(error){throw new Error(error.message?.includes('browser')?error.message:'This save code is invalid or incompatible. Your existing chronicle has not been changed.');}}
 
+

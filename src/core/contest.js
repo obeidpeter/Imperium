@@ -5,7 +5,7 @@ import {INTEREST_EFFECTS,BLOC_AFFINITIES,POLITICAL_BALANCE as BALANCE,RIVAL_PRIO
 import {difficultyRule} from './campaign-options.js';
 import {applyCoalition} from './progression-politics.js';
 export {INTEREST_EFFECTS} from '../data/contest-balance.js';
-import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt} from './shared.js';
+import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt, withMoveCredit} from './shared.js';
 
 export const CONTEST_RULES={stanceMin:-6,stanceMax:6,commitment:3,addressCooldown:3,denounce:4,rebut:4,promiseLimit:2,recordPerRecipient:1};
 export function createContest(state,data,options={}) {
@@ -84,7 +84,7 @@ export function previewContest(state,command){if(!state.encounter.issue)return L
   return result(true,`${action==='record'?'Invoke your military record':action[0].toUpperCase()+action.slice(1)}: ${target.name} stance ${target.stance} → ${next}.${extra} Costs one speech.${action==='record'?' This member can hear your Record only once per Contest.':''} Interest: ${target.interest}.`);
 }
 export function applyContest(state,command){if(!state.encounter.issue)return Legacy.applyContest(state,command);const checked=previewContest(state,command);if(!checked.ok)return checked;const e=state.encounter,unit=e.units.find(u=>u.id===command.unitId),target=e.units.find(u=>u.id===command.targetId)||unitAt(e,command.x,command.y),action=command.action;
-  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:{x:unit.x,y:unit.y,facing:unit.facing??'east'},writable:true,configurable:true,enumerable:false});faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
+  if(action==='move'){Object.defineProperty(unit,'moveOrigin',{value:withMoveCredit({x:unit.x,y:unit.y,facing:unit.facing??'east'},state,e),writable:true,configurable:true,enumerable:false});faceToward(unit,command);unit.x=command.x;unit.y=command.y;unit.moved=true;}
   else if(e.politicsVersion===2){for(const u of e.units)delete u.moveOrigin;faceToward(unit,target);unit.acted=true;const f=checked.forecast;
     for(const change of f.stanceChanges)e.units.find(u=>u.id===change.id).stance=change.to;
     for(const change of f.resolveChanges){const member=e.units.find(u=>u.id===change.id);member.resolve=change.to;member.hp=change.to;}
