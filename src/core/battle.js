@@ -78,7 +78,9 @@ export function combatBreakdown(e,unit,target,ranged=false){
  add('Escort screen',target.role==='escort'&&e.units.some(u=>['ally','player'].includes(u.side)&&alive(u)&&distance(u,target)<=1)?-1:0);
  add('Veteran protector',-guardProtection(e,target));
  add('Wedge on firm ground',!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)?1:0);add('Wedge exposure',target.formation==='wedge'?1:0);
- add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced?B.chargeBonus:0);
+ const fw=e.fieldworks??[],stakeStop=unit.side==='enemy'&&fw.some(f=>f.type==='stakes'&&(distance(f,target)<=1||distance(f,unit)<=1));
+ add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced&&!stakeStop?B.chargeBonus:0);
+ if(fw.length){if(['player','ally','neutral'].includes(target.side)){if(fw.some(f=>f.type==='rampart'&&f.x===target.x&&f.y===target.y))add('Earthwork rampart',-2);if(fw.some(f=>f.type==='stakes'&&distance(f,target)<=1))add('Stake palings',-1);}if(ranged&&['player','ally'].includes(unit.side)&&fw.some(f=>f.type==='brazier'&&distance(f,unit)<=2))add('Signal brazier',1);}
  add('Shaken morale',(unit.morale??80)<=B.shakenThreshold?-1:0);
  return {damage:Math.max(1,base+modifiers.reduce((n,m)=>n+m.value,0)),base,modifiers,aspect:front?'front':'flank'};
 }
@@ -274,4 +276,50 @@ export function checkBattle(state,atTurnEnd=false){if(!state.encounter.mission)r
  else if(atTurnEnd&&e.turn>=e.turnLimit){e.status='lost';note(e,!capable?`Deadline: demonstrate ${(e.requiredAbilities??[]).concat(required??[]).join(', ')}.`:`Deadline: ${e.objectiveProgress}.`);}
 }
 export function allyDestinations(state,unitId){const e=state?.encounter,u=e?.units?.find(x=>x.id===unitId);return e?.kind==='battle'&&e.combatVersion===2&&u&&u.side==='ally'&&alive(u)?reachable(e,u):[];}
+export const FIELDWORK_TYPES=[
+  {id:'stakes',label:'Stake Palings (Sudes)',latin:'Sudes',summary:'Plant sharpened oak stakes on an adjacent open tile: −1 incoming damage to adjacent friendly units and negates enemy mounted charge.'},
+  {id:'rampart',label:'Earthwork Rampart (Vallum)',latin:'Vallum',summary:'Raise a turf-and-timber rampart on the commander’s tile: −2 incoming damage on that tile and braces the commander.'},
+  {id:'brazier',label:'Signal Brazier (Specula)',latin:'Specula',summary:'Kindle an iron watch-brazier on the commander’s tile: reveals hidden enemies within 3 tiles and grants +1 ranged damage to friendly units within 2 tiles.'},
+];
+function stakeTile(e,hero){
+  if(!e||!hero)return null;
+  const dirs={east:[[1,0],[0,-1],[0,1],[-1,0]],west:[[-1,0],[0,-1],[0,1],[1,0]],south:[[0,1],[1,0],[-1,0],[0,-1]],north:[[0,-1],[1,0],[-1,0],[0,1]]}[hero.facing]??[[1,0],[0,-1],[0,1],[-1,0]];
+  for(const [dx,dy]of dirs){
+    const x=hero.x+dx,y=hero.y+dy;
+    if(x>=0&&y>=0&&x<e.width&&y<e.height&&!blocked(e.terrain[y][x])&&!unitAt(e,x,y)&&!(e.fieldworks??[]).some(f=>f.x===x&&f.y===y))return {x,y};
+  }
+  return null;
+}
+export function fieldworkOptions(state){
+  const e=state?.encounter;
+  if(state?.phase!=='encounter'||!e||e.kind!=='battle'||e.combatVersion!==2||e.status!=='active'||e.type==='training')return {enabled:false,unlocked:false,used:e?.fieldworkUsed??null,fieldworks:e?.fieldworks??[],options:[]};
+  const unlocked=(state.chapter??1)>=3,hero=e.units.find(u=>u.id==='hero'),canAct=Boolean(unlocked&&hero&&alive(hero)&&!hero.acted&&!e.fieldworkUsed);
+  const heroClear=Boolean(hero&&!(e.fieldworks??[]).some(f=>f.x===hero.x&&f.y===hero.y)),adj=stakeTile(e,hero);
+  const options=FIELDWORK_TYPES.map(fw=>{
+    const tile=fw.id==='stakes'?adj:heroClear?{x:hero.x,y:hero.y}:null;
+    return {...fw,unlocked,tile,available:Boolean(canAct&&tile)};
+  });
+  return {enabled:canAct&&options.some(o=>o.available),unlocked,used:e.fieldworkUsed??null,fieldworks:e.fieldworks??[],options};
+}
+export function previewFieldwork(state,typeId){
+  const plan=fieldworkOptions(state),opt=plan.options.find(o=>o.id===typeId);
+  if(!opt)return result(false,'Unknown field engineering work.');
+  if(plan.used)return result(false,'A field engineering work has already been constructed in this battle.');
+  if(!opt.unlocked)return result(false,'Field engineering (Munitiones) unlocks in Chapter III (Immunis).');
+  if(!opt.tile)return result(false,typeId==='stakes'?'Need an adjacent open tile to plant stake palings.':'The commander’s tile already holds a fieldwork.');
+  if(!opt.available)return result(false,'The commander must be active and have an unspent action to construct fieldworks.');
+  const coord=`${opt.tile.x+1}${String.fromCharCode(65+opt.tile.y)}`;
+  return result(true,`${opt.label} at ${coord}: ${opt.summary} Costs the commander’s action; once per battle.`);
+}
+export function invokeFieldwork(state,typeId){
+  const checked=previewFieldwork(state,typeId);if(!checked.ok)return checked;
+  const e=state.encounter,hero=e.units.find(u=>u.id==='hero'),opt=fieldworkOptions(state).options.find(o=>o.id===typeId);
+  hero.acted=true;e.fieldworkUsed=typeId;e.fieldworks??=[];
+  e.fieldworks.push({type:typeId,x:opt.tile.x,y:opt.tile.y});
+  if(typeId==='rampart')hero.braced=true;
+  if(typeId==='brazier')for(const u of e.units)if(u.side==='enemy'&&u.hidden&&distance(u,hero)<=3)u.hidden=false;
+  note(e,checked.message);refreshBattleIntents(e);
+  return checked;
+}
+
 

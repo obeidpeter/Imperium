@@ -72,7 +72,7 @@ test('Help describes earned Chapter III specializations and their command requir
 test('Order advance destination selector, 3D playback speed toggle, and Imperial epilogue service summary render cleanly',async()=>{
   const {encounterView,selectedCommand}=await import('../src/ui/encounter-view.js');
   const {createCampaignViews}=await import('../src/ui/campaign-views.js');
-  const s=start('ch4-pass');
+  const s=start('ch4-gate');
   const allyTarget=G.getTargets(s,'hero','order')[0];assert.ok(allyTarget?.unitId);
   const destinations=G.allyDestinations(s,allyTarget.unitId);assert.ok(destinations.length>0);
   const chosen=destinations[0];

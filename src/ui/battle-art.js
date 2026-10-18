@@ -10,6 +10,7 @@ import {stoneOutcrop,masonryWall} from './material-forms.js';
 import {peekArt} from './art.js';
 import {worldAssetKey} from './world-assets.js';
 import {paintMaterial,materialIndex,drawNaturalProp,environmentLight} from './ground-materials.js';
+import {threatEnvelope} from '../showcase/stage-readout.js';
 const INK='#292c27',IVORY='#f4ecd6';
 export const FIELD_COLORS={selection:'#175d67',movement:'#277c82',attack:'#9c4036',ally:'#285e62',enemy:'#97382e',neutral:'#886736',objective:'#bd9954'};
 const PI=Math.PI;
@@ -52,8 +53,38 @@ function landform(c,g,q,type,p){const sx=g.tw/60;
     if(!drawNaturalProp(c,'rock',55,q.x*.01+q.y*.03))stoneOutcrop(c,1,q.x*.01+q.y*.03);
   }c.restore();
 }
+export function drawFieldwork(c,g,q,type){
+  const sx=g.tw/60;c.save();c.translate(q.x,q.y);c.scale(sx,sx);
+  if(type==='stakes'){
+    for(const x of [-11,0,11]){
+      oval(c,x+1,3,4.2,1.8,'#1c272042');
+      polygon(c,[[x-2.2,3],[x-5.5,-13],[x-3,-17],[x+2,2]],'#7a5a3a','#4a3520',.8);
+    }
+  }else if(type==='rampart'){
+    oval(c,0,6,20,5.5,'#1c272038');
+    polygon(c,[[-18,4],[0,12],[18,4],[15,-5],[0,2],[-15,-5]],'#7c694c','#4d3f2c',.9);
+    polygon(c,[[-15,-5],[0,2],[15,-5],[0,-10]],'#849464');
+  }else if(type==='brazier'){
+    oval(c,12,5,8.5,3.6,'#ff9a3c38');
+    polygon(c,[[8,4],[10,-8],[14,-8],[16,4]],'#4a453e',INK,.7);
+    oval(c,12,-9,5.5,2.5,'#6b3824');
+    polygon(c,[[9,-9],[11,-20],[13,-14],[15,-22],[16,-9]],'#ffad48','#ffd984',.6);
+  }
+  c.restore();
+}
 function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUnit=e.units.find(u=>u.id===selected);
   if(options.grid)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)polygon(c,diamond(g,xy(g,x,y)),null,'#d5dec42b',.65);
+  if(e.kind==='battle'&&!options.action&&focus){
+    const inspectedEnemy=e.units.find(u=>!u.hidden&&u.side==='enemy'&&(u.hp??1)>0&&(u.id===focus.unitId||(u.x===focus.x&&u.y===focus.y)));
+    if(inspectedEnemy){
+      const env=threatEnvelope(e,inspectedEnemy.id);
+      for(const tile of [...(env?.moveTiles??[]),...(env?.threatenedUnits??[])]){
+        const tp=xy(g,tile.x,tile.y),s=Math.max(3,g.tw*.12);
+        polygon(c,diamond(g,tp,2),'#9c403616','#c85a4870',1);
+        line(c,[[tp.x-s,tp.y-s*.45],[tp.x+s,tp.y+s*.45]],'#c85a4855',1);
+      }
+    }
+  }
   if(options.hover&&Number.isInteger(options.hover.x)&&Number.isInteger(options.hover.y)&&options.hover.x>=0&&options.hover.y>=0&&options.hover.x<e.width&&options.hover.y<e.height)polygon(c,diamond(g,xy(g,options.hover.x,options.hover.y),1),'#e6ddba18','#eee3bf8c',1);
   for(const target of targets){const p=xy(g,target.x,target.y),other=e.units.find(u=>u.id===(target.unitId??target.targetId)),attack=['strike','throw','denounce','threaten'].includes(options.action)||(!options.action&&other?.side==='enemy'),color=attack?FIELD_COLORS.attack:FIELD_COLORS.movement;
     polygon(c,diamond(g,p,1),attack?'#9c40362d':'#277c822b','#f4ecd6b8',3);
@@ -190,6 +221,7 @@ export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={})
   tacticalOverlay(c,g,e,selected,targets,focus,options);
   const items=scenery(e,chapter,quality).map(item=>({...item,kind:'scenery'}));
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++){const type=terrain(e,x,y);if(['wall','high','hill','rubble','cover'].includes(type)||type==='rock'&&!river)items.push({kind:'terrain',type,x,y});}
+  if(e.kind==='battle'&&Array.isArray(e.fieldworks))for(const fw of e.fieldworks)if(Number.isInteger(fw?.x)&&Number.isInteger(fw?.y))items.push({kind:'fieldwork',type:fw.type,x:fw.x,y:fw.y});
   const units=e.units.filter(u=>!u.hidden&&u.x>=0&&((u.resolve??u.hp??1)>0||(frame?.unitOverrides?.[u.id]?.alpha??0)>0)).map(u=>({...u,...frame?.unitOverrides?.[u.id],kind:'unit',original:u}));
   const s=Math.min(1.3,g.tw/48),watch=units.filter(u=>u.id===selected||u.id===options.target?.unitId).map(u=>xy(g,u.x,u.y));
   items.push(...units);items.sort((a,b)=>a.x+a.y-b.x-b.y||a.x-b.x||(a.kind==='unit'?1:-1));
@@ -198,6 +230,8 @@ export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={})
       const active=item.id===selected;c.globalAlpha=item.alpha??1;contactShadow(c,g,q,item,quality);baseMarker(c,q,s,item,active);
       if(item.role==='voter')seat(c,q.x,q.y,s*.8,item.bloc);
       if(!drawUnitSprite(c,g,q,item,chapter,e.kind==='contest',frame?.unitOverrides?.[item.id])){if(e.kind==='contest')orator(c,q,s,item,chapter);else warrior(c,q,s,item,chapter);}
+    }else if(item.kind==='fieldwork'){
+      drawFieldwork(c,g,q,item.type);
     }else{
       // Fade an occluder only when its upper silhouette covers an important unit.
       const overlap=watch.some(point=>Math.abs(point.x-q.x)<g.tw*.55&&q.y>point.y&&q.y-point.y<g.tw);
@@ -205,7 +239,7 @@ export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={})
       if(item.kind==='terrain')terrainObject(c,g,q,item.type,p);else drawScenery(c,g,item,chapter);
     }c.restore();
   }
-  atmosphere(c,w,h,g,chapter,e.kind==='contest',frame,quality);drawBattleEffects(c,g,frame,quality);
+  atmosphere(c,w,h,g,chapter,e.kind==='contest',frame,quality,e);drawBattleEffects(c,g,frame,quality);
   // Information draws last, so props never hide selection or health/Resolve.
   for(const u of units){const q=xy(g,u.x,u.y);c.save();c.globalAlpha=u.alpha??1;status(c,g,q,s,{...u,promised:e.promises?.includes(u.id)},u.id===selected,e.kind==='contest');c.restore();}
   labels(c,w,h,g,e,p,river);

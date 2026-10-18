@@ -39,8 +39,8 @@ test('Battle readouts, tactical links and floating preview badges distinguish co
   assert.equal(actorReadout(hero,guardedEncounter).detail,'12/14 health · Ward −2');
   assert.equal(actorReadout(ranged,guardedEncounter).detail,'9/9 health · Volley 2');
   assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'ally1',target:{x:4,y:2,unitId:'enemy0'},action:'volley'}).map(l=>l.kind),['guard','cohesion','aim','intent']);
-  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'hero',target:{x:4,y:2},action:'move'}).map(l=>l.kind),['guard','cohesion','path']);
-  assert.equal(stagePreviewPath(guardedEncounter,hero,{x:4,y:2}).length,3);
+  assert.deepEqual(tacticalLinks(guardedEncounter,{selected:'hero',target:{x:3,y:3},action:'move'}).map(l=>l.kind),['guard','cohesion','path']);
+  assert.equal(stagePreviewPath(guardedEncounter,hero,{x:3,y:3}).length,3);
   assert.equal(targetRingColor('strike',guardedEncounter,{unitId:'enemy0'}),'#d97a6c');
   assert.equal(targetRingColor('guard',guardedEncounter,{unitId:'hero'}),'#edcf7c');
   assert.equal(targetRingColor('move',guardedEncounter,{x:3,y:2}),'#89cfcb');

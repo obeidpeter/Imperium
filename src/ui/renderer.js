@@ -33,7 +33,7 @@ export function drawBattle(canvas,e,selected='hero',targets=[],focus=null,chapte
   paintBattle(c,w,h,g,e,selected,targets,focus,chapter,{...options,pixelRatio:d});
 }
 // The optional image elements must already be loaded locally by the UI.
-export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=null,scene=null}){
+export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=null,scene=null,stats=null}){
   canvas.width=1080;canvas.height=1350;const c=canvas.getContext('2d');
   const charcoal='#222823',ivory='#f2e8d2',bronze='#b6a077';
   c.fillStyle=charcoal;c.fillRect(0,0,1080,1350);
@@ -74,6 +74,7 @@ export function drawReignCard(canvas,{name='',route,choices=[],url='',portrait=n
   lineCard(c,[[430,995],[650,995]],'#b6a07766',1);
   choices.slice(0,3).forEach((choice,i)=>{const content=fittedLines(choice,850,26,2,18);c.fillStyle=ivory;c.font=content.size+'px Georgia';content.list.forEach((text,j)=>c.fillText(text,540,1050+i*60+j*(content.size+4)));});
   const destination=fittedLines(url,900,18,2,12,'system-ui');c.fillStyle='#b8aa91';c.font=destination.size+'px system-ui';destination.list.forEach((text,i)=>c.fillText(text,540,1254+i*(destination.size+5)));
+  if(stats){c.fillStyle='#c9ba9b';c.font='16px Georgia';c.fillText(`RES GESTAE · XII CHAPTERS · ${stats.encounters||12} ENCOUNTERS · ${stats.turns||0} TURNS · ${stats.commendations||0} COMMENDATIONS`,540,1292);}
   c.fillStyle=bronze;c.font='17px Georgia';c.fillText('FROM RECRUIT TO EMPEROR',540,1320);
   lineCard(c,[[42,50],[42,1300]],'#b6a0773b',1);lineCard(c,[[1038,50],[1038,1300]],'#b6a0773b',1);
 }

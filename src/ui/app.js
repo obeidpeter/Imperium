@@ -1,6 +1,6 @@
 import {chapterHas3D,createBattleStageController} from './battle-stage-controller.js';
 import {esc,roman} from './view-helpers.js';
-import {createCampaignViews} from './campaign-views.js';
+import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
@@ -28,7 +28,7 @@ import {previewBadge,previewBadges} from '../showcase/stage-readout.js';
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
 const sessionGate=createSessionGate();
-let memoryOnly=false;
+let memoryOnly=false,archivePrimaryState=null;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,artRequest=0,cachedChapterRequest=0;
 let cancelAmbient=null,ambientTime=null;
 let renderedLocation='',pendingScroll=false;
@@ -93,7 +93,7 @@ function render(){
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null;pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,quality:graphics.mode,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,quality:graphics.mode,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
@@ -155,11 +155,11 @@ function bindBoard(){
   board.addEventListener('pointerleave',()=>{hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
   board.addEventListener('keydown',event=>{
     const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
-    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}`);}
+    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}`);}
     if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}
   });
 }
-async function confirmCommand(){const c=command();if(c&&Game.preview(state,c).ok)await change(()=>Game.act(state,c),{tone:action,command:c,clearSelection:true});}
+async function confirmCommand(){const c=command();if(c&&Game.preview(state,c).ok){const callout=Game.companionCallout(state.encounter,c)||Game.delegateCallout(state.encounter,c);await change(()=>{const res=Game.act(state,c);if(res?.ok&&callout)res.message=`${res.message} · ${callout.speaker} (${callout.rankTitle||callout.bloc}): “${callout.text}”`;return res;},{tone:action,command:c,clearSelection:true});}}
 function chooseAction(next){
   action=next;target=null;orderDestination=null;
   const legal=targets(),atFocus=legal.find(t=>samePoint(t,focusTile));
@@ -178,7 +178,7 @@ function selectPoint(point){
   const u=visibleUnitAt(state.encounter,point);announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${terrainLabel(state.encounter,point)}. Outside this unit’s movement range.`);
 }
 async function persist(){
-  if(memoryOnly)return {ok:true};
+  if(memoryOnly||state?.archiveReplay)return {ok:true};
   saving=true;
   const label=document.querySelector('.save-status');if(label)label.textContent='Saving…';
   try{lastSaved=await saveLocal(state);saveProblem='';saveConflict=false;return {ok:true};}
@@ -247,7 +247,7 @@ async function showShare(){
   shareFile=null;
   showSharePreview();
   const canvas=document.querySelector('#reign-card');
-  const summary={name:state.name,route:state.route,url:CONFIG.siteUrl||new URL('./',location.href).href,choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances']};
+  const summary={name:state.name,route:state.route,url:CONFIG.siteUrl||new URL('./',location.href).href,choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances'],stats:{encounters:(state.history||[]).length,turns:(state.history||[]).reduce((n,h)=>n+(h.turns||0),0),commendations:(state.company||[]).reduce((n,v)=>n+(v.commendations||0),0)}};
   const file=await prepareShareCard({canvas,summary,loadPortrait:()=>loadArt(heroPortrait('Augustus')),loadScene:()=>loadArt(chapterScene(12)),draw:drawReignCard,downloadButton:modal.querySelector('[data-cmd="download-card"]'),shareButton:modal.querySelector('[data-cmd="share-card"]'),makeFile:blob=>new File([blob],'imperium-reign.png',{type:'image/png'})});
   if(canvas.isConnected)shareFile=file;
 }
@@ -265,13 +265,13 @@ async function previewRecovery(id,sequence){
 }
 function useRestoredState(restored){
   battleStage.release();
-  memoryOnly=false;
+  memoryOnly=false;archivePrimaryState=null;
   renderedLocation='';state=restored;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;pendingMotion=null;pendingReplay=null;saveProblem='';saveConflict=false;lastSaved=new Date().toISOString();modal.close();render();
 }
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}
 document.addEventListener('pointerdown',()=>{soundscape.unlock();if(settings.audio)battleStage.unlock();},{passive:true});
 document.addEventListener('keydown',()=>{soundscape.unlock();if(settings.audio)battleStage.unlock();});
-document.addEventListener('click',async event=>{const b=event.target.closest('[data-cmd]');if(!b||b.disabled)return;const id=b.dataset.id,cmd=b.dataset.cmd;switch(cmd){case 'retry-offline':{const registration=await navigator.serviceWorker.getRegistration();if(registration?.active){fullDownloadRequested=true;offlineProgress='Downloading all twelve chapters…';updateLoadingStatus();registration.active.postMessage('cache-campaign');toast('Downloading all chapter artwork for offline play. Progress appears here and in the game header.');}else toast('Offline content is available from the production build.');break;}
+document.addEventListener('click',async event=>{const node=event.target.closest?.('.tabula-node[data-theatre]');if(node?.dataset?.theatre&&modal.open){const key=globalThis.CSS?.escape?CSS.escape(node.dataset.theatre):node.dataset.theatre,detail=modal.querySelector(`details.tabula-theatre[data-theatre="${key}"]`);if(detail){detail.open=true;detail.scrollIntoView({behavior:'smooth',block:'nearest'});}return;}const b=event.target.closest('[data-cmd]');if(!b||b.disabled)return;const id=b.dataset.id,cmd=b.dataset.cmd;switch(cmd){case 'retry-offline':{const registration=await navigator.serviceWorker.getRegistration();if(registration?.active){fullDownloadRequested=true;offlineProgress='Downloading all twelve chapters…';updateLoadingStatus();registration.active.postMessage('cache-campaign');toast('Downloading all chapter artwork for offline play. Progress appears here and in the game header.');}else toast('Offline content is available from the production build.');break;}
 case 'close-modal':modal.close();break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying this chapter’s artwork. Other chapters are optional.');}break;
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
@@ -315,10 +315,12 @@ case 'voice-briefing':settings.voices=true;saveSettings();soundscape.configure(s
 case 'negotiate':await change(()=>Game.negotiate(state,id));break;
 case 'stratagem':await change(()=>Game.selectStratagem(state,id));break;
 case 'judge':await change(()=>Game.judge(state,id));break;
+case 'allocation-preset':{const [r,f,t]=(id||'2,2,2').split(',').map(Number),rEl=document.querySelector('#river'),fEl=document.querySelector('#farms'),tEl=document.querySelector('#town');if(rEl&&fEl&&tEl){rEl.value=r;fEl.value=f;tEl.value=t;const prev=document.querySelector('#allocation-preview');if(prev)prev.outerHTML=allocationDraftPreview({river:r,farms:f,town:t});announce(`Preset ${r}-${f}-${t} selected. Review the preview and dispatch when ready.`);}break;}
 case 'allocate':await change(()=>Game.allocate(state,{river:Number(document.querySelector('#river').value),farms:Number(document.querySelector('#farms').value),town:Number(document.querySelector('#town').value)}));break;
 case 'route':await change(()=>{state.route=id;return {ok:true,message:'Confrontation approach selected. Enter the field when ready.'};});break;
 case 'start':await change(()=>Game.startEncounter(state,state.chapter===12?{route:state.route||'backer'}:{}),{reset:true});break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
+case 'inspect-delegate':{const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();announce(`Inspecting ${unit.name} (${unit.bloc}). No speech has been spent.`);}break;}
 case 'action':chooseAction(id);break;
 case 'cancel-action':cancelCommand();break;
 case 'view-3d':settings.battleView=uses3D()?'2d':'3d';failed3D=false;saveSettings();render();break;
@@ -352,9 +354,20 @@ case 'import-code':try{const imported=await restoreCode(document.querySelector('
 case 'confirm-import':if(pendingImport){const candidate=pendingImport;const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chronicle restored. Chapter access was checked from earned milestones.'});if(result.ok)pendingImport=null;}break;
 case 'share':await showShare();break;
 case 'download-card':document.querySelector('#reign-card').toBlob(blob=>download(blob,'imperium-reign.png'));break;
+case 'archive-replay':{const source=archivePrimaryState||state,res=Game.createArchiveReplay(source,id);if(res.ok){archivePrimaryState??=state;state=res.state;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;modal.close();render();toast(res.message);}else toast(res.message);break;}
+case 'exit-archive':if(archivePrimaryState){state=archivePrimaryState;archivePrimaryState=null;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();toast('Returned from the Archive to your active chronicle.');}break;
+case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
+case 'invoke-fieldwork':await change(()=>Game.invokeFieldwork(state,id),{tone:'brace',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('fieldwork',{intensity:.75});}});break;
+case 'apply-archive-mutators':{if(!state.archiveReplay)break;const opts={difficulty:document.querySelector('#archive-difficulty')?.value,weather:document.querySelector('#archive-weather')?.value,timeOfDay:document.querySelector('#archive-time')?.value,route:document.querySelector('#archive-route')?.value},source=archivePrimaryState||state,res=Game.createArchiveReplay(source,state.archiveReplay.encounterId,opts);if(res.ok){state=res.state;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();toast(res.message);}else toast(res.message);break;}
+case 'scrub-step':{const x=b.dataset.x!==''?Number(b.dataset.x):null,y=b.dataset.y!==''?Number(b.dataset.y):null;if(Number.isFinite(x)&&Number.isFinite(y)){focusTile={x,y};if(b.dataset.unit&&state.encounter?.units?.some(u=>u.id===b.dataset.unit))selected=b.dataset.unit;if(uses3D())battleStage.focusPoint(focusTile);else paint();}if(b.title)toast(b.title);break;}
 case 'share-card':{const file=shareFile;if(!file){toast('The card is still being prepared.');break;}try{if(navigator.canShare?.({files:[file]}))await navigator.share({files:[file],title:'My Imperium reign'});else{download(file,'imperium-reign.png');toast('Card downloaded. Share it using your preferred app.');}}catch(error){if(error.name!=='AbortError')toast('Sharing was unavailable. Use Download card.');}break;}}});
+document.addEventListener('input',event=>{
+  const control=event.target;
+  if(['river','farms','town'].includes(control?.id)){const prev=document.querySelector('#allocation-preview');if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),town:Number(document.querySelector('#town')?.value)});}
+});
 document.addEventListener('change',async event=>{
   const control=event.target;
+  if(['river','farms','town'].includes(control.id)){const prev=document.querySelector('#allocation-preview');if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),town:Number(document.querySelector('#town')?.value)});}
   if(control.matches('.company-slot')){const ids=[...document.querySelectorAll('.company-slot')].map(node=>node.value);await change(()=>Game.selectCompany(state,ids),{tone:null});}
   if(['music-setting','ambience-setting','voices-setting'].includes(control.id)){settings[control.id.replace('-setting','')]=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   if(control.id==='soundtrack-volume'){settings.soundtrackVolume=audioLevel(Number(control.value)/100);saveSettings();soundscape.configure(settings);soundscape.unlock();const label=document.querySelector('#soundtrack-volume-value');if(label)label.textContent=Math.round(settings.soundtrackVolume*100)+'%';}
@@ -378,7 +391,13 @@ document.addEventListener('change',async event=>{
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
-  if(event.key.toLowerCase()==='h'&&uses3D()){event.preventDefault();if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}return;}
+  if(uses3D()){
+    if(event.key.toLowerCase()==='h'){event.preventDefault();if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}return;}
+    if(event.key.toLowerCase()==='f'){event.preventDefault();battleStage.focus();announce('Camera focused on active unit.');return;}
+    if(event.key==='Home'){event.preventDefault();battleStage.home();announce('Camera reset to default overview.');return;}
+    if(event.key==='+'||event.key==='='){event.preventDefault();battleStage.zoom(-3);return;}
+    if(event.key==='-'){event.preventDefault();battleStage.zoom(3);return;}
+  }
   if(state.encounter.status!=='active')return;
   const next=keyboardAction(event.key,Game.getActions(state,selected));
   if(next){event.preventDefault();chooseAction(next);return;}

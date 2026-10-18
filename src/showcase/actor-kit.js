@@ -10,7 +10,10 @@ export function actorKit(unit={},options={}){
   const armored=!trainer&&!civic&&!escort&&!recruit&&(faction==='Roman'||mounted||unit.role==='guard'||eastern);
   const role=civic?unit.role:escort?'escort':trainer?'trainer':mounted?'cavalry':archer?'archer':officer?'officer':recruit?'recruit':faction==='Roman'?'veteran':'raider';
   let identity=2166136261;for(const c of String(unit.veteranId??unit.name??unit.id??role))identity=Math.imul(identity^c.charCodeAt(0),16777619)>>>0;
-  return {role,faction,chapter,rank,trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,
+  const commendations=Number.isFinite(options.commendations)?options.commendations:Number.isFinite(options.commendations?.[unit.veteranId])?options.commendations[unit.veteranId]:Number.isFinite(unit.commendations)?unit.commendations:unit.moraleResistance?6:unit.specialization?3:0;
+  const veteranTier=!civic&&!escort&&!trainer&&faction==='Roman'?(commendations>=6?3:commendations>=3?2:commendations>=1?1:0):0;
+  const signum=options.signum==='aquila'||escort&&/eagle-bearer/i.test(name)?'aquila':options.signum==='signum'||options.signum===true||(!civic&&!escort&&!trainer&&faction==='Roman'&&unit.specialization==='leader')?'signum':null;
+  return {role,faction,chapter,rank,trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
     helmet:armored?(eastern?'conical':faction==='Roman'?'ridge':'segmented'):null,
     cloak:officer||!archer&&armored&&faction==='Roman',wounded:escort&&/wounded|Varro/i.test(name)};
 }

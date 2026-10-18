@@ -2,6 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {actorPose,horsePose,groundHumanPose,groundHorsePose,blendActorPose,createFootPlanting,actionEnvelope} from './actor-pose.js';
 import {actorKit} from './actor-kit.js';
 import {acquireActorSurface,releaseActorSurface} from './actor-materials.js';
+import {finishActorMaterial} from './actor-surface.js';
 import {createHorse} from './actor-horse.js';
 import {bindActorSurfaces,createClothRig} from './actor-skin.js';
 import {actorIdentity} from './actor-identity.js';
@@ -72,7 +73,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
   const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...options.palette};
   const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-v017'};
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-v017'};
   const material=(color,extra={})=>{const m=new T.MeshStandardMaterial({color,roughness:.84,metalness:0,...extra});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
@@ -252,6 +253,15 @@ function createActorRig(unit={},options={},reuseGroup=null){
       for(let i=14;i>=0;i--){const x=(i/14-.5)*.23;plume.push([x,.292-.036*(x/.115)**2]);}
       mesh(crest,shapeGeometry(plume,.024),crestMat,0,0,-.02);
       for(let i=0;i<=22;i++){const x=(i/22-.5)*.22;strip(crest,crestMat,[[x,.294-.031*(x/.11)**2,.006],[x*1.13,.333-.035*(x/.11)**2,.008],[x*1.25,.365-.044*(x/.11)**2,.006]],.0015);}
+    }else if(kit.veteranTier>=3){
+      const vCrest=part(helmetRoot,'veteran-crest');
+      strip(vCrest,bronze,[[-.085,.252,-.008],[0,.276,-.008],[.085,.252,-.008]],.01);
+      mesh(vCrest,shapeGeometry([[-.095,.27],[-.07,.335],[0,.345],[.07,.335],[.095,.27]],.018),clothDark,0,0,-.016);
+    }
+    if(kit.veteranTier>=2){
+      const phalerae=part(torso,'veteran-phalerae');
+      strip(phalerae,leather,[[-.09,.33,.156],[0,.26,.162],[.09,.33,.156]],.009);
+      for(const [px,py]of [[-.068,.315],[0,.325],[.068,.315],[-.042,.235],[.042,.235]])faceDetail(phalerae,bronze,px,py,.164,.018,.018,.006);
     }
   }
   let cloak=null;
@@ -272,6 +282,15 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
     for(const x of [-.10,.10])strip(torso,leather,[[x,-.02,.13],[x,.43,.14],[x,.48,-.13],[x,.06,-.27]],.012);
     if(kit.wounded){const wrap=part(torso,'wounded-arm-sling');mesh(wrap,drape([[.32,-.15,.045,.17],[.18,0,.21,.24],[.13,.05,.22,.21]]),white);}
+  }
+  let signum=null;
+  if(kit.signum){
+    signum=part(torso,'actor-signum',.16,.12,-.15);signum.userData.signumKind=kit.signum;
+    mesh(signum,new T.CylinderGeometry(.009,.011,1.32,8),bronze,0,.52,0);
+    const bar=mesh(signum,new T.CylinderGeometry(.007,.007,.28,8),bronze,0,1.06,0);bar.rotation.z=Math.PI/2;
+    for(const dy of [.62,.76,.90])faceDetail(signum,bronze,0,dy,.014,.022,.022,.005);
+    if(kit.signum==='aquila')mesh(signum,shapeGeometry([[0,1.15],[-.12,1.22],[-.05,1.25],[0,1.19],[.05,1.25],[.12,1.22]],.012),bronze);
+    else mesh(signum,shapeGeometry([[0,1.28],[-.035,1.17],[0,1.14],[.035,1.17]],.009),bronze);
   }
   const horse=mounted?createHorse(root,kit,{part,mesh,profile:(rings,spec={})=>profile(rings,{...spec,subdivisions:1}),ellipsoid,strip,material,surface,leather,metal,hair,cloth}):null;
   const ring=mesh(group,new T.RingGeometry(mounted?.72:.32,mounted?.75:.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
@@ -312,6 +331,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const costume=mountActorCostume(group,{kit,cloth,armor:armorMaterial,quality:options.quality,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
+  for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial)finishActorMaterial(m);
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
   let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;
   const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
@@ -362,6 +382,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
     if(shield){shield.rotation.x=-(pose.leftArm[0]+pose.leftElbow+pose.leftWrist)+pose.shieldTilt;shield.rotation.z=-pose.leftArm[2];}
     if(weapon&&raider&&!archer){const ready=['attack','strike'].includes(input.motion)?actionEnvelope(input.motion,input.phase).preparation:0;weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow-.18*(1-ready);}
     if(cloak){cloak.rotation.x=pose.skirt*.55+Math.max(0,-pose.bodyX)*.12;cloak.rotation.z=pose.bodyY*-.08;}
+    if(signum){
+      if(input.reducedMotion||!Number.isFinite(input.time)){signum.rotation.set(0,0,0);}
+      else{const sway=input.time*2.2+(kit.identity%7)*.7;signum.rotation.set(Math.cos(sway*.78)*.035-pose.bodyX*.25,0,Math.sin(sway)*.045);}
+    }
     for(const rig of clothRigs)rig.update(pose,{...input,mounted});
     ring.visible=!!input.selected;
     group.updateMatrixWorld(true);

@@ -77,6 +77,7 @@ export function combatCues(timeline,{encounter}={}){
         cues.push({time:track.start+progress*track.duration,kind,intensity:.32+Math.sin(progress*Math.PI)*.16,surface,at:point,side:unit(track.unitId)?.side,unitId:track.unitId});
       }
     }else if(track.pose==='brace')cues.push({time:track.start+track.duration*.3,kind:track.action==='guard'?'guard':'cloth',intensity:track.action==='guard'?.65:.45,side:unit(track.unitId)?.side});
+    else if(track.action==='formation')cues.push({time:track.start+track.duration*.18,kind:'cornu',intensity:.68,side:unit(track.unitId)?.side});
     else if(track.action==='inspire'||track.pose==='rally')cues.push({time:track.start+track.duration*.22,kind:'inspire',intensity:.6,side:unit(track.unitId)?.side});
     else if(['attack','cavalry-attack','throw'].includes(track.pose))cues.push({time:track.start+track.duration*.10,kind:'cloth',intensity:.25,side:unit(track.unitId)?.side});
   }

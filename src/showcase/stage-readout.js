@@ -1,5 +1,8 @@
 // Read the committed encounter; these descriptors never predict an outcome.
-import {movementPinned} from '../core/shared.js';
+import {movementPinned, reachable, lineOfSight} from '../core/shared.js';
+import {combatBreakdown} from '../core/battle.js';
+import {politicalPosition, INTEREST_EFFECTS} from '../core/contest.js';
+import {BLOC_AFFINITIES} from '../data/contest-balance.js';
 const bounded = (n, max) => Math.max(0, Math.min(1, Number(n) / Math.max(1, Number(max)) || 0));
 export const civicActor = unit => ['speaker', 'voter'].includes(unit.role);
 export const actorVisible = unit => !unit.hidden && (civicActor(unit) || (unit.resolve ?? unit.hp ?? 0) > 0);
@@ -199,5 +202,54 @@ export function previewBadges(state, command, preview) {
   if (single && targetUnit) badges[targetUnit.id] = single;
   return badges;
 }
+
+export function threatEnvelope(encounter, unitId) {
+  if (!encounter || encounter.kind !== 'battle' || !unitId) return null;
+  const unit = (encounter.units ?? []).find(u => u.id === unitId && actorVisible(u));
+  if (!unit || unit.side !== 'enemy') return null;
+  const moveTiles = [{x: unit.x, y: unit.y, cost: 0}, ...reachable(encounter, {...unit, moved: false})];
+  const range = unit.role === 'archer' ? 3 : 1;
+  const friends = (encounter.units ?? []).filter(u => actorVisible(u) && ['player', 'ally', 'neutral'].includes(u.side));
+  const threatenedUnits = friends.filter(f => moveTiles.some(p => {
+    const d = Math.abs(p.x - f.x) + Math.abs(p.y - f.y);
+    return d <= range && (range === 1 || lineOfSight(encounter, p, f));
+  })).map(f => ({id: f.id, name: f.name, x: f.x, y: f.y}));
+  return {unitId: unit.id, range, moveTiles, threatenedUnits};
+}
+
+export function combatModifiers(state, command) {
+  const e = state?.encounter, action = command?.action;
+  if (!e || !action) return [];
+  const actor = e.units?.find(u => u.id === command.unitId);
+  const target = e.units?.find(u => (command.targetId && u.id === command.targetId) || (u.x === command.x && u.y === command.y));
+  if (e.kind === 'battle' && ['strike', 'throw', 'volley'].includes(action) && actor && target) {
+    const ranged = action === 'throw' || action === 'volley' || actor.role === 'archer';
+    const hit = combatBreakdown(e, actor, target, ranged);
+    return [
+      {label: 'Base', value: hit.base, tone: 'neutral'},
+      ...hit.modifiers.map(m => ({label: m.label, value: m.value, tone: m.value > 0 ? 'bonus' : 'penalty'})),
+      {label: hit.aspect === 'flank' ? 'Flank' : 'Front', value: null, tone: hit.aspect === 'flank' ? 'bonus' : 'neutral'},
+    ];
+  }
+  if (e.kind === 'contest' && ['persuade', 'promise', 'threaten', 'record', 'address'].includes(action) && actor) {
+    const member = target?.role === 'voter' ? target : e.units?.find(u => u.role === 'voter');
+    if (!member) return [];
+    const chips = [];
+    const base = INTEREST_EFFECTS[member.interest]?.[action] ?? 2;
+    chips.push({label: `Interest (${member.interest})`, value: base, tone: 'neutral'});
+    const affinity = e.politicsVersion === 2 ? (BLOC_AFFINITIES[member.bloc]?.[action] ?? 0) : 0;
+    if (affinity) chips.push({label: `${member.bloc} affinity`, value: affinity, tone: affinity > 0 ? 'bonus' : 'penalty'});
+    if (action === 'persuade') {
+      const coop = politicalPosition(state, actor.id).persuadeBonus;
+      if (coop) chips.push({label: 'Speaker cooperation', value: coop, tone: 'bonus'});
+    }
+    if (action === 'threaten' && e.hardened?.includes(member.bloc)) chips.push({label: 'Hardened bloc', value: -1, tone: 'penalty'});
+    return chips;
+  }
+  return [];
+}
+
+
+
 
 

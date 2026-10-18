@@ -77,11 +77,15 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     #endif`);
   };
   m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
-  const finish={wet:profile?.setting==='wetland',arid:profile?.vegetation==='arid'};
+  const waterTime={value:0};
+  const finish={wet:profile?.setting==='wetland'||profile?.weather==='rain',arid:profile?.vegetation==='arid',rain:profile?.weather==='rain',waterTime};
   finishEnvironmentMaterial(m.ground,'ground',finish);
   for(const key of ['stone','marble','brick','darkStone','plaster','redMarble'])finishEnvironmentMaterial(m[key],'stone',finish);
   for(const key of ['wood','darkWood','bark'])finishEnvironmentMaterial(m[key],'wood',finish);
-  for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);finishEnvironmentMaterial(m.floor,'floor',finish);
+  for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);
+  finishEnvironmentMaterial(m.floor,'floor',finish);
+  finishEnvironmentMaterial(m.water,'water',finish);
+  finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true});
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
@@ -92,5 +96,5 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
   },undefined,()=>{});
-  return {materials:m,textures,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
+  return {materials:m,textures,waterTime,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
 }

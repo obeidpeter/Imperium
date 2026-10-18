@@ -34,10 +34,11 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
         float phase = environmentWind * 1.15 + instanceMatrix[3].x * 0.37 + instanceMatrix[3].z * 0.23;
-        transformed.x += sin(phase) * position.y * position.y * 0.09;
-        transformed.z += cos(phase * 0.79) * position.y * 0.035;
+        float flutter = sin(phase * 2.6 + position.x * 5.4) * 0.014 * clamp(position.y, 0.0, 1.5);
+        transformed.x += sin(phase) * position.y * position.y * 0.09 + flutter;
+        transformed.z += cos(phase * 0.79) * position.y * 0.035 - flutter * 0.5;
       #endif`);};
-    material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v1`;
+    material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v2`;
   }
   const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
@@ -186,7 +187,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const horizon=createEnvironmentHorizon({ground,profile,height,quality});root.add(horizon.group);
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
+    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;if(!perf&&library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
     dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
     stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,disposed};}
   };

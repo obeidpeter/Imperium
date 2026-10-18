@@ -15,6 +15,18 @@ export function turnReplaySteps(before, after, events = []) {
   }).slice(-6);
 }
 
+export function turnScrubberItems(encounter, events = []) {
+  if (!encounter) return [];
+  const raw = (events?.length ? events : encounter.turnEvents?.length ? encounter.turnEvents : (encounter.log ?? []).slice(-6)).filter(line => typeof line === 'string' && line.trim()).slice(-6);
+  return raw.map((text, index) => {
+    const unit = (encounter.units ?? []).find(u => u.name && text.includes(u.name));
+    const coord = /\b([1-8])([A-H])\b/.exec(text);
+    const x = coord ? Number(coord[1]) - 1 : (unit?.x ?? null);
+    const y = coord ? coord[2].charCodeAt(0) - 65 : (unit?.y ?? null);
+    return { index, text, unitId: unit?.id ?? null, x, y, label: coord ? `${coord[1]}${coord[2]}` : (unit?.name ?? `Step ${index + 1}`) };
+  });
+}
+
 export function createTurnReplay({show, finish, delay = fn => setTimeout(fn, 380), cancelDelay = clearTimeout}) {
   let timer, generation = 0, active = false;
   function stop() {

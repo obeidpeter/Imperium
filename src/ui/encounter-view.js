@@ -6,6 +6,9 @@ import {esc, roman, actionNames, actionSymbols} from './view-helpers.js';
 import {missionBrief, coalitionPanel, fieldIntel, selectedGround, resultRecord, terrainLabel} from './tactical-intel.js';
 import {politicalPosition} from '../core/contest.js';
 import {FORMATION_RULES} from '../data/battle-balance.js';
+import {turnScrubberItems} from './turn-replay.js';
+import {combatModifiers, threatEnvelope} from '../showcase/stage-readout.js';
+import {actionCostLabel, explainActionTargetGap, explainUnavailableActions, formationRosterPreview, delegateAppealSummary, unusedTurnSummary} from './direct-controls.js';
 
 const location = point => `${point.x + 1}${String.fromCharCode(65 + point.y)}`;
 const signed = value => value > 0 ? `+${value}` : String(value);
@@ -46,11 +49,12 @@ function instruction(state, action, target, actor) {
   const e = state.encounter;
   if (e.status !== 'active') return 'Review the outcome and record it, or regroup at the checkpoint.';
   if (e.kind === 'battle' && actor.side === 'ally' && !Game.getActions(state, actor.id).length) return `${readiness(state, actor).description}. Select your commander to act, or end the turn.`;
-  if (action && !Game.getTargets(state, actor.id, action).length) return 'No target in reach. Move closer, choose another command, or end the turn.';
+  if (action && !Game.getTargets(state, actor.id, action).length) return explainActionTargetGap(state, actor.id, action);
   if (target) return 'Review the cost. Select this target again, or Confirm, to act.';
   if (action) return `Select a highlighted target for ${actionNames[action]}.`;
   if (actor.acted && Game.getActions(state, actor.id).some(a => ['order', 'formation'].includes(a))) return 'Personal action spent. Your remaining commands can still direct the company.';
-  if (actor.acted) return actor.moved ? (e.units.some(u => u.id !== actor.id && Game.getActions(state, u.id).length) ? 'This unit has finished. Select a ready comrade or end the turn.' : 'This unit has finished. End the turn when ready.') : 'Action spent. Select ground to move, or end the turn.';
+  const nextReady = e.units.find(u => u.id !== actor.id && ['player', 'ally'].includes(u.side) && (u.resolve ?? u.hp) > 0 && Game.getActions(state, u.id).length);
+  if (actor.acted) return actor.moved ? (nextReady ? `This unit has finished. Select a ready comrade (${nextReady.name}, key N) or end the turn.` : 'This unit has finished. End the turn when ready.') : 'Action spent. Select ground to move, or end the turn.';
   if (e.type === 'training') {
     const next = ['move', 'throw', 'strike', 'brace'].find(a => !e.usedAbilities.includes(a));
     return next ? `Varro’s next lesson: ${actionNames[next]}. Select a command, then its target.` : 'The drill is complete. End your turn for Varro’s assessment.';
@@ -58,9 +62,18 @@ function instruction(state, action, target, actor) {
   return e.kind === 'contest' ? 'Select a delegate to consider an appeal, or ground to move your speaker.' : 'Select a comrade, an opponent or the ground. Review the order before you commit.';
 }
 
-function outcome(e) {
+function outcome(e, archiveReplay = null) {
   if (e.status === 'active') return '';
   const won = e.status === 'won';
+  if (archiveReplay) {
+    return `<section class="result command-result ${won ? 'result-won' : 'result-lost'}" role="status">
+      <span class="eyebrow">ARCHIVE OF THE REIGN · SANDBOX COMPLETE</span>
+      <h2>${won ? 'Archive replay victorious.' : 'Archive replay concluded.'}</h2>
+      <p>${esc(e.log?.at(-1) || '')}</p>${resultRecord(e)}
+      <p class="panel-note">Chronicle record: ${archiveReplay.recordedTurns} turns · This sandbox run: ${e.turn} turns. Your primary campaign save remains untouched.</p>
+      <div class="panel-actions"><button class="primary" data-cmd="exit-archive">Return to chronicle →</button><button data-cmd="retry">Replay again</button></div>
+    </section>`;
+  }
   return `<section class="result command-result ${won ? 'result-won' : 'result-lost'}" role="status">
     <span class="eyebrow">${won ? 'OBJECTIVE ACHIEVED' : 'A CHANCE TO REGROUP'}</span>
     <h2>${won ? (e.kind === 'contest' ? 'The motion carries.' : 'The day is yours.') : (e.kind === 'contest' ? 'The motion is defeated.' : 'The field is lost.')}</h2>
@@ -79,26 +92,33 @@ function inspector(e, actor, point, hasTarget) {
   const subject = inspectedUnit(e, point);
   if (subject?.role === 'voter') {
     const committed = Math.abs(subject.stance) >= 3;
+    const appeals = delegateAppealSummary(subject, e.politicsVersion);
     return `<div class="command-person delegate-conversation">
       <div class="delegate-seal" aria-hidden="true">${esc((subject.bloc || 'Delegate').slice(0, 1))}</div>
       <div><span class="command-kicker">${esc(subject.bloc)} · ${esc(subject.interest || 'delegate')}</span><h2>${esc(subject.name)}</h2>
       <p class="delegate-position ${subject.stance >= 1 ? 'is-supporting' : ''}">${subject.stance >= 1 ? 'Supports you' : 'Opposes you'} <strong>${signed(subject.stance)}</strong>${committed ? ' · committed' : ' · wavering'}${e.promises?.includes(subject.id) ? ' · promised' : ''}</p></div>
-      <p class="delegate-interest">${esc(interestNotes[subject.interest] || 'Consider this delegate’s position before choosing an appeal.')}${!hasTarget ? ' Choose a command or move into reach.' : ''}</p>
+      <p class="delegate-interest">${esc(interestNotes[subject.interest] || 'Consider this delegate’s position before choosing an appeal.')}${appeals ? ` ${esc(appeals)}.` : ''}${!hasTarget ? ' Choose a command or move into reach.' : ''}</p>
     </div>`;
   }
   if (subject && subject.id !== actor.id) return `<div class="command-person ${subject.side === 'enemy' ? 'is-rival' : 'is-friendly'}">
     <span class="command-kicker">${subject.side === 'enemy' ? 'OPPOSITION' : 'COMPANY'} · ${location(subject)}</span><h2>${esc(subject.name)}</h2>
-    <p>${subject.resolve !== undefined ? `${subject.resolve}/${subject.maxResolve} Resolve` : `${subject.hp}/${subject.maxHp} health · ${subject.morale ?? 80} morale`}${subject.facing ? ` · facing ${esc(subject.facing)}` : ''}</p>
-    ${subject.intent ? `<p class="command-intent"><span>Next plan if the position holds</span>${esc(subject.intent)}</p>` : ''}</div>`;
+    <p>${subject.resolve !== undefined ? `${subject.resolve}/${subject.maxResolve} Resolve (speaking stamina; 0 withdraws from speaking, vote remains)` : `${subject.hp}/${subject.maxHp} health · ${subject.morale ?? 80} morale`}${subject.facing ? ` · facing ${esc(subject.facing)}` : ''}</p>
+    ${subject.intent ? `<p class="command-intent"><span>Next plan if the position holds</span>${esc(subject.intent)}</p>` : ''}${subject.side === 'enemy' && e.kind === 'battle' ? (() => {const env = threatEnvelope(e, subject.id); return env ? `<p class="threat-envelope-readout">Reach: ${env.moveTiles.length} tiles · range ${env.range}${env.threatenedUnits.length ? ` · threatens ${esc(env.threatenedUnits.map(u => u.name).join(', '))}` : ''}</p>` : '';})() : ''}</div>`;
   return `<div class="command-ground">${selectedGround(e, actor, point)}${actor.intent ? `<p class="command-intent"><span>Current plan</span>${esc(actor.intent)}</p>` : ''}</div>`;
 }
 
-function previewCard(preview, action, e) {
+function renderModifierChips(modifiers = []) {
+  if (!modifiers.length) return '';
+  return `<div class="modifier-chips" aria-label="Action modifiers">${modifiers.map(m => `<span class="modifier-chip is-${esc(m.tone || 'neutral')}">${esc(m.label)}${m.value !== null && m.value !== undefined ? ` <strong>${signed(m.value)}</strong>` : ''}</span>`).join('')}</div>`;
+}
+
+function previewCard(preview, action, e, modifiers = []) {
   if (!preview) return '';
+  const chips = renderModifierChips(modifiers);
   const f = preview.forecast;
-  if (!f) return `<div id="action-preview" class="command-preview ${preview.ok ? '' : 'is-invalid'}" role="status">${esc(preview.message)}</div>`;
+  if (!f) return `<div id="action-preview" class="command-preview ${preview.ok ? '' : 'is-invalid'}" role="status">${chips}${esc(preview.message)}</div>`;
   const changes = [...f.stanceChanges.map(c => `${c.name}: ${signed(c.from)} → ${signed(c.to)}`), ...f.resolveChanges.map(c => `${c.name}: ${c.from} → ${c.to} Resolve`)];
-  return `<div id="action-preview" class="command-preview" role="status">
+  return `<div id="action-preview" class="command-preview" role="status">${chips}
     <div class="command-forecast"><strong>Support ${f.votesBefore} → ${f.votesAfter}</strong><span>${f.speechCost} speech${f.publicCost ? ` · −${f.publicCost} Public` : ''}</span></div>
     ${changes.length ? `<p class="command-change">${esc(changes.join(' · '))}</p>` : '<p>Blunts this rival’s next speech to at most 1 stance or Resolve loss.</p>'}
     ${f.promise ? `<p class="command-debt"><strong>Promise ${e.promises.length + 1}/2 · ${f.promise.cost} supplies owed at accession.</strong> Each missing supply costs 1 Public. Break it: −8 Public, −4 Backing.</p>` : ''}
@@ -113,12 +133,31 @@ function formationControls(state, action, formation, orderAction, target, orderD
   if (!['order', 'formation'].includes(action)) return '';
   const e = state.encounter;
   const destinations = action === 'order' && (orderAction || 'advance') === 'advance' && e.combatVersion === 2 && target?.unitId ? Game.allyDestinations(state, target.unitId) : [];
+  const roster = action === 'formation' && target?.unitId ? formationRosterPreview(state, target.unitId, formation || 'shield-wall') : null;
   return `<div class="command-formation">
     ${action === 'formation' ? `<label for="formation-kind">Formation<select id="formation-kind">${[['shield-wall', 'Shield wall · protection, move 1'], ['line', e.combatVersion === 2 ? 'Line · movement, morale and screen' : 'Line · movement and morale'], ['wedge', e.combatVersion === 2 ? 'Wedge · attack on firm ground, exposed' : 'Wedge · +1 attack, +1 damage taken']].map(([value, label]) => `<option value="${value}" ${formation === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>` : ''}
     <label for="order-kind">Order<select id="order-kind">${[['advance', 'Advance toward objective'], ['attack', e.combatVersion === 2 ? 'Attack the strongest opportunity' : 'Attack nearest enemy'], ['hold', 'Hold and brace'], ['rally', 'Restore morale'], ...(e.combatVersion === 2 ? [['withdraw', 'Withdraw toward commander']] : [])].map(([value, label]) => `<option value="${value}" ${orderAction === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
     ${destinations.length ? `<label for="order-destination">Advance position<select id="order-destination"><option value="">Nearest path toward objective</option>${destinations.map(d => `<option value="${d.x},${d.y}" ${orderDestination && orderDestination.x === d.x && orderDestination.y === d.y ? 'selected' : ''}>${location(d)} · ${esc(terrainLabel(e, d))} (${d.cost} move)</option>`).join('')}</select></label>` : ''}
     ${action === 'formation' && e.combatVersion === 2 ? `<p>${esc(FORMATION_RULES[formation || 'shield-wall']?.summary || '')}</p>` : ''}
+    ${roster ? `<p class="formation-roster-preview">${esc(roster.summary)}</p>` : ''}
   </div>`;
+}
+
+function precedentPanel(state) {
+  const plan = Game.precedentOptions(state);
+  if (!plan.motions.length) return '';
+  return `<details id="chamber-precedents" class="progression-panel chamber-precedents"><summary>Career precedent motions · ${plan.used ? `Invoked (${esc(plan.used)})` : '1 per Contest'}</summary><p>Invoke your earned military, provincial, or fiscal record once per Contest using your commander’s speech.</p><div class="precedent-list">${plan.motions.map(m => `<article class="precedent-card ${m.unlocked ? 'unlocked' : 'locked'}"><div><strong>${esc(m.label)}</strong> <span class="status-pill">${esc(m.bloc)}</span><p>${esc(m.summary)}</p></div><button data-cmd="invoke-precedent" data-id="${esc(m.id)}" ${m.available ? '' : 'disabled'}>${plan.used === m.id ? 'Invoked' : m.unlocked ? 'Invoke precedent' : 'Locked'}</button></article>`).join('')}</div></details>`;
+}
+
+function fieldworkPanel(state) {
+  const plan = Game.fieldworkOptions(state);
+  if (!plan.options?.length) return '';
+  return `<details id="battle-fieldworks" class="progression-panel battle-fieldworks"><summary>Legionary munitiones · ${plan.used ? `Erected (${esc(plan.used)})` : '1 per battle'}</summary><p>Order your engineering detachment to erect field fortifications on your commander’s tile once per battle.</p><div class="precedent-list">${plan.options.map(t => `<article class="precedent-card ${t.unlocked ? 'unlocked' : 'locked'}"><div><strong>${esc(t.label)}</strong> <span class="status-pill">${esc(t.latin)}</span><p>${esc(t.summary)}</p></div><button data-cmd="invoke-fieldwork" data-id="${esc(t.id)}" ${t.available ? '' : 'disabled'}>${plan.used === t.id ? 'Erected' : t.unlocked ? 'Erect fieldwork' : 'Locked'}</button></article>`).join('')}</div></details>`;
+}
+
+function archiveMutators(state) {
+  const m = state.archiveReplay || {}, e = state.encounter;
+  return `<details class="archive-mutators"><summary>War-Room Mutators</summary><div class="archive-mutator-controls"><label>Difficulty<select id="archive-difficulty">${['story','standard','veteran'].map(d => `<option value="${d}" ${(m.difficulty || state.difficulty || 'standard') === d ? 'selected' : ''}>${d}</option>`).join('')}</select></label><label>Weather<select id="archive-weather">${['clear','mist','rain','dust','embers'].map(w => `<option value="${w}" ${(m.weather || e.weather || 'clear') === w ? 'selected' : ''}>${w}</option>`).join('')}</select></label><label>Hour<select id="archive-time">${['day','dawn','dusk','night'].map(t => `<option value="${t}" ${(m.timeOfDay || e.timeOfDay || 'day') === t ? 'selected' : ''}>${t}</option>`).join('')}</select></label>${state.chapter === 12 ? `<label>Approach<select id="archive-route">${['backer','battle','defection','settlement','surrender'].map(r => `<option value="${r}" ${(m.route || state.route || 'backer') === r ? 'selected' : ''}>${r}</option>`).join('')}</select></label>` : ''}<button class="ghost small" data-cmd="apply-archive-mutators">Apply mutators</button></div></details>`;
 }
 
 export function encounterView(context) {
@@ -132,12 +171,15 @@ export function encounterView(context) {
   const progress = typeof e.objectiveProgress === 'string' ? e.objectiveProgress : '';
   const point = target || focusTile;
   const actorReadiness = readiness(state, actor), independentAlly = !political && actor.side === 'ally';
+  const scrubber = turnScrubberItems(e, e.turnEvents);
+  const turnSummary = unusedTurnSummary(state), unavailable = explainUnavailableActions(state, actor.id);
   return `<main id="main" class="encounter-frame command-stage ${political ? 'command-chamber' : 'command-battle'}" data-outcome="${esc(e.status)}">
     <header class="command-mission" aria-label="Current tactical objective">
       <div class="command-title"><span class="command-kicker">CHAPTER ${roman(state.chapter)} · ${political ? 'THE CHAMBER' : e.type === 'training' ? 'THE DRILL GROUND' : 'IN THE FIELD'}</span><h1>${esc(e.title)}</h1></div>
       <div class="command-clock"><strong>TURN ${e.turn}<span> / ${e.turnLimit}</span></strong><span>${vote ? `${vote.for}/${vote.total} support · ${vote.majority} needed` : e.commandCapacity ? `${e.commandsLeft}/${e.commandCapacity} orders` : 'One move · one action'}</span><span class="save-status" role="status">${saving ? 'Saving…' : lastSaved ? 'Saved' : ''}</span></div>
       <nav class="command-navigation" aria-label="Encounter menu"><button data-cmd="journal" aria-label="Open orders and chronicle">Orders</button><button data-cmd="menu">Menu</button></nav>
     </header>
+    ${state.archiveReplay ? `<div class="archive-banner" role="status"><div><span class="eyebrow">ARCHIVE OF THE REIGN · SANDBOX REPLAY</span><strong>${esc(state.archiveReplay.title)}</strong><span>Chronicle record: ${state.archiveReplay.recordedTurns} turns · ${state.archiveReplay.recordedLosses} withdrawn. Primary save is untouched.</span></div>${archiveMutators(state)}<button class="ghost small" data-cmd="exit-archive">Return to chronicle →</button></div>` : ''}
     ${operationBanner(e)}
     ${saveProblem ? `<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>${saveConflict ? '<button data-cmd="takeover">Continue in this tab</button>' : ''}</div></div>` : ''}
     <div class="command-runtime"><span id="art-loading-status" role="status" ${artProgress ? '' : 'hidden'}>${esc(artProgress)}</span><span id="offline-status" role="status" ${offlineProgress ? '' : 'hidden'}>${esc(offlineProgress)}</span></div>
@@ -146,17 +188,18 @@ export function encounterView(context) {
       ${can3D ? `<div class="battle-camera" aria-label="Scene view"><button data-cmd="view-3d">${view3D?'Switch to 2D':'Switch to 3D'}</button>${view3D?`<button data-cmd="camera-home">Overview</button><button data-cmd="camera-focus">Follow unit</button><button data-cmd="camera-horizon" aria-keyshortcuts="H" title="See the sky and distant landscape (H)">Horizon</button><button data-cmd="camera-speed" aria-pressed="${Boolean(fastMotion)}" title="Toggle 2× turn playback speed (or click/Space during motion)">Speed ${fastMotion?'2×':'1×'}</button><div class="camera-zoom"><button data-cmd="camera-in" aria-label="Zoom in">+</button><button data-cmd="camera-out" aria-label="Zoom out">−</button></div><span>Drag to orbit · scroll to zoom · H for horizon</span>`:''}</div>`:''}
       <div class="battle-stage command-canvas ${view3D?'battle-3d':''}">${view3D?`<span class="battle-loading" role="status">${political?'Preparing the chamber…':'Preparing the battlefield…'}</span>`:''}<canvas id="battle-board" tabindex="0" role="application" aria-label="${political ? 'Political chamber' : 'Battlefield'} grid. Select a friendly unit, opponent or ground to preview. Select the same target again to confirm. Arrow keys move the cursor; Enter selects or confirms; Escape cancels.${view3D?' H shows the horizon.':''} Named controls are below." aria-describedby="command-hint"></canvas><div id="turn-replay" class="turn-replay" hidden role="status"></div></div>
       <div class="command-board-caption"><span id="board-hover" role="status"></span><span class="command-board-key">${political ? 'Select a delegate to consider their position' : 'Select a figure or a position to give an order'}</span></div>
+      ${scrubber.length ? `<div id="turn-scrubber" class="turn-scrubber" role="toolbar" aria-label="Turn event scrubber"><span class="scrubber-label">Recent steps</span>${scrubber.map(item => `<button class="scrubber-pill" data-cmd="scrub-step" data-index="${item.index}" data-unit="${esc(item.unitId || '')}" data-x="${item.x ?? ''}" data-y="${item.y ?? ''}" title="${esc(item.text)}">${item.index + 1}. ${esc(item.label)}</button>`).join('')}</div>` : ''}
     </section>
     ${fieldGuide(state,{selected:actor.id,action,target,enabled:context.guide!==false})}
     <section class="command-dock" aria-label="Command dock">
       <section class="command-company" aria-label="${political ? 'Your speakers' : 'Your company'}">
-        <div class="command-actor"><span class="command-kicker">${political ? 'YOUR SPEAKER' : 'YOUR UNIT'}</span><h2>${esc(actor.name)}</h2><p>${actor.resolve ?? actor.hp}/${actor.maxResolve ?? actor.maxHp} ${political ? 'Resolve' : 'health'} · ${location(actor)}${actor.facing && !political ? ` · ${esc(actor.facing)}` : ''}</p><span class="command-readiness">${independentAlly ? `<span class="${actorReadiness.available ? '' : 'is-spent'}">${esc(actorReadiness.description)}</span>` : `<span class="${actions.includes('move') || actions.includes('deploy') ? '' : 'is-spent'}">${actions.includes('move') || actions.includes('deploy') ? 'Move ready' : 'Move spent'}</span><span class="${actions.some(a => !['move','deploy'].includes(a)) ? '' : 'is-spent'}">${actor.acted ? (actions.includes('order') ? 'Orders ready' : 'Action spent') : active ? 'Action ready' : 'Encounter resolved'}</span>`}</span></div>
+        <div class="command-actor"><span class="command-kicker">${political ? 'YOUR SPEAKER' : 'YOUR UNIT'}</span><h2>${esc(actor.name)}</h2><p ${political ? 'title="Resolve: speaking stamina; 0 withdraws from speaking, vote remains"' : ''}>${actor.resolve ?? actor.hp}/${actor.maxResolve ?? actor.maxHp} ${political ? 'Resolve' : 'health'} · ${location(actor)}${actor.facing && !political ? ` · ${esc(actor.facing)}` : ''}</p><span class="command-readiness">${independentAlly ? `<span class="${actorReadiness.available ? '' : 'is-spent'}">${esc(actorReadiness.description)}</span>` : `<span class="${actions.includes('move') || actions.includes('deploy') ? '' : 'is-spent'}">${actions.includes('move') || actions.includes('deploy') ? 'Move ready' : 'Move spent'}</span><span class="${actions.some(a => !['move','deploy'].includes(a)) ? '' : 'is-spent'}">${actor.acted ? (actions.includes('order') ? 'Orders ready' : 'Action spent') : active ? 'Action ready' : 'Encounter resolved'}</span>`}</span></div>
         ${units.length > 1 ? `<div class="command-roster" role="group" aria-label="Select a ${political ? 'speaker' : 'unit'}">${units.map(u => {const status = readiness(state, u);return `<button id="select-unit-${esc(u.id)}" data-cmd="select-unit" data-id="${esc(u.id)}" aria-pressed="${actor.id === u.id}" aria-label="${esc(u.name)}, ${u.resolve ?? u.hp} ${political ? 'Resolve' : 'health'}, ${esc(status.description)}"><span class="roster-mark ${status.available ? '' : 'is-spent'}" aria-hidden="true">${u.id === 'hero' ? '★' : '◆'}</span><span>${esc(u.name)}<small>${u.resolve ?? u.hp} · ${status.label}</small></span></button>`;}).join('')}</div>` : ''}
         ${political && e.politicsVersion === 2 ? `<p class="command-cooperation">${esc(politicalPosition(state, actor.id).message)}</p>` : ''}
       </section>
       <section class="command-options" aria-label="Available commands" ${!active ? 'hidden' : ''}>
         <p id="command-hint" class="command-hint">${esc(directHint || instruction(state, action, target, actor))}</p>
-        <div class="command-actions" role="group" aria-label="Available actions">${actions.map((a, i) => `<button id="action-${a}" data-cmd="action" data-id="${a}" aria-pressed="${action === a}" title="${esc(actionNames[a])}${i < 9 ? ` · key ${i + 1}` : ''}"><span class="command-action-symbol" aria-hidden="true">${actionSymbols[a] || '·'}</span><span>${esc(actionNames[a])}</span>${i < 9 ? `<kbd aria-hidden="true">${i + 1}</kbd>` : ''}</button>`).join('')}</div>
+        <div class="command-actions" role="group" aria-label="Available actions">${actions.map((a, i) => `<button id="action-${a}" data-cmd="action" data-id="${a}" aria-pressed="${action === a}" title="${esc(actionNames[a])} (${esc(actionCostLabel(state, actor, a))})${i < 9 ? ` · key ${i + 1}` : ''}"><span class="command-action-symbol" aria-hidden="true">${actionSymbols[a] || '·'}</span><span>${esc(actionNames[a])}</span>${i < 9 ? `<kbd aria-hidden="true">${i + 1}</kbd>` : ''}</button>`).join('')}</div>
         ${formationControls(state, action, formation, orderAction, target, orderDestination)}
         ${political&&state.progressionVersion===1?`<label class="delegate-selector" for="delegate-inspect">Consider an agreement<select id="delegate-inspect"><option value="">Inspect a representative…</option>${voters.filter(v=>!v.hidden).map(v=>`<option value="${esc(v.id)}" ${point?.unitId===v.id?'selected':''}>${esc(v.name)} · ${esc(v.interest)}</option>`).join('')}</select></label>`:''}
       </section>
@@ -164,26 +207,28 @@ export function encounterView(context) {
         <div class="command-inspection" ${!active ? 'hidden' : ''}>
           ${inspector(e, actor, point, Boolean(target))}
           ${political?agreementConversation(state,inspectedUnit(e,point)?.id):''}
-          ${previewCard(preview, action, e)}
-          <div class="command-commit"><button id="confirm-action" class="primary" data-cmd="confirm" ${!preview?.ok || !active ? 'disabled' : ''}>Confirm ${esc(actionNames[action] || 'order')} <span aria-hidden="true">↵</span></button><button id="end-turn" data-cmd="end-turn" ${!active ? 'disabled' : ''}>End turn <span aria-hidden="true">→</span></button>${action ? '<button class="command-cancel" data-cmd="cancel-action" aria-label="Cancel selected action">Cancel</button>' : ''}</div>
+          ${previewCard(preview, action, e, combatModifiers(state, command))}
+          <div class="command-commit"><button id="confirm-action" class="primary" data-cmd="confirm" ${!preview?.ok || !active ? 'disabled' : ''}>Confirm ${esc(actionNames[action] || 'order')} <span aria-hidden="true">↵</span></button><button id="end-turn" data-cmd="end-turn" title="${esc(turnSummary.message)}" ${!active ? 'disabled' : ''}>End turn <span aria-hidden="true">→</span></button>${action ? '<button class="command-cancel" data-cmd="cancel-action" aria-label="Cancel selected action">Cancel</button>' : ''}</div>
           <p id="action-feedback" class="action-feedback" role="status" ${feedback ? '' : 'hidden'}>${esc(feedback)}</p>
-        </div>${outcome(e)}
+        </div>${outcome(e, state.archiveReplay)}
       </section>
     </section>
     <section class="command-records" aria-label="Encounter reference and accessible controls">
-      ${tacticalCoaching(state,context.coach!==false)}
+      ${political && e.politicsVersion === 2 ? precedentPanel(state) : (!political && e.combatVersion === 2 && e.type !== 'training' ? fieldworkPanel(state) : '')}
+      ${tacticalCoaching(state,context.coach!==false,actor.id)}
       <details id="command-named-controls" class="command-named-controls"><summary>Named controls & keyboard</summary><div class="command-selectors">
         <label for="unit-select">${political ? 'Speaker' : 'Unit'}<select id="unit-select">${units.map(u => `<option value="${esc(u.id)}" ${actor.id === u.id ? 'selected' : ''}>${esc(u.name)} · ${u.resolve ?? u.hp}/${u.maxResolve ?? u.maxHp}</option>`).join('')}</select></label>
-        <label for="action-select">Action<select id="action-select" aria-describedby="command-hint"><option value="">Choose an action…</option>${actions.map(a => `<option value="${a}" ${action === a ? 'selected' : ''}>${esc(actionNames[a])}</option>`).join('')}</select></label>
+        <label for="action-select">Action<select id="action-select" aria-describedby="command-hint"><option value="">Choose an action…</option>${actions.map(a => `<option value="${a}" ${action === a ? 'selected' : ''}>${esc(actionNames[a])} (${esc(actionCostLabel(state, actor, a))})</option>`).join('')}</select></label>
         <label for="target-select">Target<select id="target-select" ${!targets.length ? 'disabled' : ''}><option value="">${targets.length ? 'Choose a target…' : 'No legal targets'}</option>${selectOptions}</select></label>
-      </div><p>${view3D?'In 3D: drag to orbit, scroll or +/− to zoom, F to follow, Home for overview, H for the horizon. ':''}On the board: arrows move the cursor; Enter selects or confirms. Keys 1–9 choose commands, N cycles units, E ends the turn. Escape or right-click cancels the selected command. Tab reaches every control.</p></details>
+      </div>${unavailable.length ? `<p class="command-unavailable-note"><strong>Unavailable right now:</strong> ${esc(unavailable.map(item => `${item.label} (${item.reason})`).join(' · '))}</p>` : ''}<p>${view3D?'In 3D: drag to orbit, scroll or +/− to zoom, F to follow, Home for overview, H for the horizon. ':''}On the board: arrows move the cursor; Enter selects or confirms. Keys 1–9 choose commands, N cycles units, E ends the turn. Escape or right-click cancels the selected command. Tab reaches every control.</p></details>
       <details id="command-mission-record" class="command-mission-record"><summary>${political ? 'Motion, delegates & obligations' : 'Mission & company orders'}</summary>
         ${voicedBriefing(state)}
         ${missionBrief(e)}<div class="command-reference-grid"><section><h2>Your objective</h2><p>${esc(e.objective)}</p>${e.issue ? `<p><strong>Before the chamber:</strong> ${esc(e.issue)}</p>` : ''}${requirements()}${e.mission?.points?.length ? `<p>Objectives: ${e.mission.points.map(p => `${location(p)}${p.secured ? ' ✓' : ''}`).join(' · ')}</p>` : ''}${e.pressure ? `<p>${esc(e.pressure)}</p>` : ''}
         <p class="command-legend">★ Commander · ◆ Allies · ▼ Rivals · ⚑ Objective. Outlined positions are legal targets. Base arrows show facing; arcs show bracing. Formation bases show a line, wedge or battlement; ! marks low morale. Double vote rims show commitment; wax seals mark promises.</p><div class="command-reference-buttons"><button data-cmd="retry">Retry checkpoint</button><button data-cmd="help">Rules & controls</button></div></section>
-        ${vote ? `<section>${coalitionPanel(e, vote)}<h2>The delegates</h2><div class="delegate-list">${voters.map(u => `<article><strong>${esc(u.name)}</strong><span>${esc(u.bloc)} · ${u.stance >= 1 ? 'Supports' : 'Opposes'} (${signed(u.stance)})</span><small>Interest: ${esc(u.interest || 'Listen to the delegate’s position.')}</small></article>`).join('')}</div>${e.staged?.obligations?.length ? `<h3>Promises made in this chamber</h3><ul>${e.staged.obligations.map(o => `<li>${esc(o.to)} · ${Number(o.cost) || 2} supplies, due chapter ${o.due}. ${esc(o.consequence)}</li>`).join('')}</ul>` : ''}</section>` : ''}</div>
+        ${vote ? `<section>${coalitionPanel(e, vote)}<h2>The delegates</h2><div class="delegate-list">${voters.map(u => `<article><div><strong>${esc(u.name)}</strong><span>${esc(u.bloc)} · ${u.stance >= 1 ? 'Supports' : 'Opposes'} (${signed(u.stance)})</span><small>Interest: ${esc(u.interest || 'Listen to the delegate’s position.')} · ${esc(delegateAppealSummary(u, e.politicsVersion))}</small></div><button class="ghost small" data-cmd="inspect-delegate" data-id="${esc(u.id)}" aria-label="Inspect ${esc(u.name)}">Inspect</button></article>`).join('')}</div>${e.staged?.obligations?.length ? `<h3>Promises made in this chamber</h3><ul>${e.staged.obligations.map(o => `<li>${esc(o.to)} · ${Number(o.cost) || 2} supplies, due chapter ${o.due}. ${esc(o.consequence)}</li>`).join('')}</ul>` : ''}</section>` : ''}</div>
       </details>
       <details id="command-intelligence" class="command-intelligence"><summary>${political ? 'Rival intentions & chamber record' : 'Visible threats & field dispatches'}</summary>${fieldIntel(e)}<h2>${political ? 'Chamber record' : 'Field dispatches'}</h2><div class="combat-log" aria-label="Encounter log">${(e.log || []).slice(-14).reverse().map(t => `<p>${esc(t)}</p>`).join('')}</div></details>
     </section>
   </main>`;
 }
+

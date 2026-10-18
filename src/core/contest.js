@@ -106,7 +106,7 @@ function rivalPlan(state,enemy){
     const lobbying=target.role==='voter',promised=e.promises.includes(target.id),range=lobbying?1:3;
     const position=positions.filter(p=>distance(p,target)<=range).sort((a,b)=>a.cost-b.cost||distance(a,target)-distance(b,target)||a.y-b.y||a.x-b.x)[0];if(!position)continue;
     const adjustment=difficultyRule(e).speech;
-    const amount=enemy.blunted?1:Math.max(1,(lobbying?BALANCE.rivalLobby+(e.rivalStyle==='broker'&&promised?BALANCE.brokerPromisePressure:0):BALANCE.rivalResolve)+(lobbying?adjustment:Math.min(0,adjustment)));
+    const amount=enemy.blunted?1:Math.max(1,(lobbying?BALANCE.rivalLobby+(e.rivalStyle==='broker'&&promised&&!e.precedentShield?BALANCE.brokerPromisePressure:0):BALANCE.rivalResolve)+(lobbying?adjustment:Math.min(0,adjustment)));
     const from=lobbying?target.stance:target.resolve,to=lobbying?shiftedStance(target,-amount):Math.max(0,from-amount),loss=from-to;
     const score=lobbying?Number(from>=1&&to<1)*style.vote+loss*.55+(from>=1?1.7:from>-3?.5:-3)+(promised&&from>=1?style.promise:0):loss*style.pressure+(to===0?style.withdraw:0);
     candidates.push({unitId:enemy.id,action:lobbying?'lobby':'pressure',targetId:target.id,destination:{x:position.x,y:position.y},amount,score:score-position.cost*.04,...(lobbying?{stanceBefore:from,stanceAfter:to}:{resolveBefore:from,resolveAfter:to})});
@@ -135,6 +135,76 @@ export function contestIntents(state){
   return plans;
 }
 export function refreshIntents(state){for(const plan of contestIntents(state))state.encounter.units.find(u=>u.id===plan.unitId).intent=plan.message;}
+export const PRECEDENT_MOTIONS=[
+  {id:'frontier-roll',label:'Invoke the Frontier Roll',bloc:'Veterans',summary:'Veterans bloc +1 stance; allied speaker +2 Resolve. Requires 4+ company commendations or 35+ Army Loyalty.'},
+  {id:'provincial-charter',label:'Cite the Provincial Charter',bloc:'Civic',summary:'Civic bloc +1 stance (plus +1 to the most doubtful Civic delegate after grain or shared-tenure rulings). Requires crossing terms, provincial judgment, or 35+ Public Confidence.'},
+  {id:'fiscal-audit',label:'Table the Quartermaster’s Audit',bloc:'Landholders',summary:'Landholders bloc +1 stance and shields pledged supporters from broker pressure. Requires 6+ supplies or 35+ Political Backing.'},
+  {id:'consular-privilege',label:'Assert Consular Privilege',bloc:'Chamber',summary:'Blunts the lead opposition speaker and restores +3 Resolve to the commander. Requires Chapter X+ or the Dux milestone.'},
+];
+export function precedentOptions(state){
+  const e=state.encounter;
+  if(state.phase!=='encounter'||!e||e.kind!=='contest'||e.politicsVersion!==2||e.status!=='active')return {enabled:false,used:e?.precedentUsed??null,motions:[]};
+  const hero=e.units.find(u=>u.id==='hero'),commendations=(state.company??[]).reduce((n,v)=>n+(v.commendations??0),0);
+  const canAct=Boolean(hero&&alive(hero)&&!hero.acted&&!e.precedentUsed);
+  const unlocked={
+    'frontier-roll':commendations>=4||(state.meters?.army??0)>=35,
+    'provincial-charter':Boolean(state.negotiation||state.allocation||state.judgment||(state.meters?.public??0)>=35),
+    'fiscal-audit':(state.supplies??0)>=6||(state.meters?.political??0)>=35,
+    'consular-privilege':state.chapter>=10||Boolean(state.milestones?.includes('dux')),
+  };
+  const motions=PRECEDENT_MOTIONS.map(m=>({...m,unlocked:Boolean(unlocked[m.id]),available:Boolean(canAct&&unlocked[m.id])}));
+  return {enabled:canAct&&motions.some(m=>m.available),used:e.precedentUsed??null,motions};
+}
+export function previewPrecedent(state,motionId){
+  const plan=precedentOptions(state),motion=plan.motions.find(m=>m.id===motionId);
+  if(!motion)return result(false,'Unknown career precedent motion.');
+  if(plan.used)return result(false,'A career precedent motion has already been entered in this Contest.');
+  if(!motion.unlocked)return result(false,`Career record required: ${motion.summary}`);
+  if(!motion.available)return result(false,'The commander must be active and have an unspent speech to table a precedent motion.');
+  const e=state.encounter,before=votes(e).for;
+  let after=before,detail='';
+  if(motionId==='frontier-roll'){
+    const members=e.units.filter(u=>u.role==='voter'&&u.bloc==='Veterans');
+    after+=members.reduce((n,u)=>n+Number(shiftedStance(u,1)>=1)-Number(u.stance>=1),0);
+    detail=`${members.length} Veterans delegates shift +1 stance; allied speaker +2 Resolve.`;
+  }else if(motionId==='provincial-charter'){
+    const members=e.units.filter(u=>u.role==='voter'&&u.bloc==='Civic');
+    const bonus=state.judgment==='shared'||state.negotiation==='grain'?[...members].sort((a,b)=>a.stance-b.stance)[0]?.id:null;
+    after+=members.reduce((n,u)=>n+Number(shiftedStance(u,u.id===bonus?2:1)>=1)-Number(u.stance>=1),0);
+    detail=`${members.length} Civic delegates shift +1 stance${bonus?' (+2 on the most doubtful Civic delegate)':''}.`;
+  }else if(motionId==='fiscal-audit'){
+    const members=e.units.filter(u=>u.role==='voter'&&u.bloc==='Landholders');
+    after+=members.reduce((n,u)=>n+Number(shiftedStance(u,1)>=1)-Number(u.stance>=1),0);
+    detail=`${members.length} Landholders delegates shift +1 stance; broker promise pressure is neutralized.`;
+  }else{
+    detail='Lead opposition speaker is blunted to 1 stance/Resolve loss; commander restores +3 Resolve.';
+  }
+  return result(true,`${motion.label}: ${detail} Support ${before} → ${after}/${e.electorate}. Costs the commander’s speech; once per Contest.`);
+}
+export function invokePrecedent(state,motionId){
+  const checked=previewPrecedent(state,motionId);if(!checked.ok)return checked;
+  const e=state.encounter,hero=e.units.find(u=>u.id==='hero');
+  hero.acted=true;e.precedentUsed=motionId;
+  if(motionId==='frontier-roll'){
+    for(const u of e.units.filter(u=>u.role==='voter'&&u.bloc==='Veterans'))u.stance=shiftedStance(u,1);
+    const ally=e.units.find(u=>u.id==='speaker-ally'&&alive(u));
+    if(ally){ally.resolve=Math.min(ally.maxResolve,ally.resolve+2);ally.hp=ally.resolve;}
+  }else if(motionId==='provincial-charter'){
+    const members=e.units.filter(u=>u.role==='voter'&&u.bloc==='Civic');
+    const bonus=state.judgment==='shared'||state.negotiation==='grain'?[...members].sort((a,b)=>a.stance-b.stance)[0]?.id:null;
+    for(const u of members)u.stance=shiftedStance(u,u.id===bonus?2:1);
+  }else if(motionId==='fiscal-audit'){
+    for(const u of e.units.filter(u=>u.role==='voter'&&u.bloc==='Landholders'))u.stance=shiftedStance(u,1);
+    e.precedentShield=true;
+  }else if(motionId==='consular-privilege'){
+    const rival=e.units.find(u=>u.id==='rival-speaker'&&alive(u))??e.units.find(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u));
+    if(rival)rival.blunted=true;
+    hero.resolve=Math.min(hero.maxResolve,hero.resolve+3);hero.hp=hero.resolve;
+  }
+  note(e,checked.message);
+  if(e.politicsVersion===2)refreshIntents(state);
+  return checked;
+}
 export function endContestTurn(state){if(!state.encounter.issue)return Legacy.endContestTurn(state);const e=state.encounter;e.turnEvents=[];
   if(e.politicsVersion===2)for(const plan of contestIntents(state)){applyRivalPlan(e,plan);note(e,plan.message);e.turnEvents.push(plan.message);}
   else for(const enemy of e.units.filter(u=>u.side==='enemy'&&u.role==='speaker'&&alive(u))){const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'&&alive(u)).sort((a,b)=>distance(enemy,a)-distance(enemy,b)||a.resolve-b.resolve),members=e.units.filter(u=>u.role==='voter').sort((a,b)=>Math.abs(a.stance-1)-Math.abs(b.stance-1)||distance(enemy,a)-distance(enemy,b));
@@ -145,3 +215,42 @@ export function endContestTurn(state){if(!state.encounter.issue)return Legacy.en
   else{e.turn++;e.units.forEach(u=>{u.moved=false;u.acted=false;});note(e,`Turn ${e.turn}. Vote in ${e.turnLimit-e.turn+1} turns. Current support: ${votes(e).for}/${e.electorate}.`);if(e.politicsVersion===2)refreshIntents(state);}
   return result(true,e.status==='active'?'Rival speakers have replied.':e.status==='won'?'The vote is won. Commit the result.':'The motion failed. Retry, or accept a patron-backed re-run with a major Obligation.');
 }
+export function delegateCallout(encounter,command){
+  if(!encounter||encounter.kind!=='contest'||!command?.action||command.action==='move')return null;
+  const actor=encounter.units?.find(u=>u.id===command.unitId);
+  const target=command.action==='address'?encounter.units?.filter(u=>u.role==='voter'&&distance(u,actor??{x:4,y:3})<=3)[0]:(encounter.units?.find(u=>u.id===command.targetId)??unitAt(encounter,command.x,command.y));
+  if(!target)return null;
+  const action=command.action,bloc=target.bloc??(target.side==='enemy'?'Opposition':'Chamber');
+  const lines={
+    persuade:{
+      Veterans:'We know the cost of the frontier road. Show us that the legions are not forgotten.',
+      Landholders:'Order on the estates requires predictability. Your argument has weight.',
+      Civic:'The municipia ask only for lawful administration and open granaries.',
+    },
+    promise:{
+      Veterans:'Enter that undertaking on the military tablet; the cohorts will remember it at accession.',
+      Landholders:'A binding guarantee! The curial estates will hold you to this pledge when the treasury settles.',
+      Civic:'The towns accept your bond. Do not let the granaries stand empty when the reckoning arrives.',
+    },
+    threaten:{
+      Veterans:'You speak with the edge of a camp prefect—careful lest the standards harden against you.',
+      Landholders:'Coercion in the chamber? You win a reluctant vote today and earn our wariness tomorrow.',
+      Civic:'The cities yield to necessity, commander, not to affection.',
+    },
+    record:{
+      Veterans:'Those names on the roll marched beside us. None here can dispute that service.',
+      Landholders:'Your field record is undeniable, even to those who guard the census.',
+      Civic:'A commander who kept the roads open has earned a hearing from the benches.',
+    },
+    address:{
+      Veterans:'The frontier benches hear you—hold the line in this chamber as you held the river.',
+      Landholders:'The landed orders take note of your public undertaking before the house.',
+      Civic:'Your voice carries across the rostra; the civic delegations weigh your words.',
+    },
+    denounce:'You challenge our standing before the house? The opposition will not yield the floor lightly!',
+    rebut:target.side==='enemy'?'You cut across my argument before the benches—the house sees your manoeuvre.':'Thank you, colleague; my voice is steadied for the next exchange.',
+  };
+  const text=typeof lines[action]==='string'?lines[action]:(lines[action]?.[bloc]??lines.persuade.Civic);
+  return {speaker:target.name,bloc,role:target.role,action,text};
+}
+

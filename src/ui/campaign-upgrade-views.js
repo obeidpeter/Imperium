@@ -1,6 +1,7 @@
 import * as Game from '../core/game.js';
-import {esc} from './view-helpers.js';
+import {esc,actionNames} from './view-helpers.js';
 import {briefingFor} from './soundscape-data.js';
+import {explainUnavailableActions,unusedTurnSummary} from './direct-controls.js';
 
 export function difficultyChoices(){return `<fieldset class="difficulty-choices"><legend>The pace of your campaign</legend>${Game.difficultyOptions().map(d=>`<label class="difficulty-choice"><input type="radio" name="campaign-difficulty" value="${d.id}" ${d.id==='standard'?'checked':''}><span><strong>${esc(d.label)}</strong><small>${esc(d.description)}</small></span></label>`).join('')}<p class="settings-description">Applies to this new chronicle. Your choice stays with its checkpoints.</p></fieldset>`;}
 
@@ -15,10 +16,11 @@ export function operationBanner(encounter){
   return `<section class="operation-banner" aria-label="Operation progress"><div><span class="eyebrow">PHASE ${phase.index} OF ${phase.total}</span><strong>${esc(phase.label)}</strong><p>${esc(phase.objective)}</p></div><details><summary>${phase.completed.length?`${phase.completed.length} phase completed`:'The operation ahead'}</summary>${phase.completed.length?`<p>Completed: ${phase.completed.map(esc).join(' · ')}</p>`:''}<p>${phase.next?`Then: ${esc(phase.next)}`:'This is the final phase.'}</p></details></section>`;
 }
 
-export function tacticalCoaching(state,enabled=true){
+export function tacticalCoaching(state,enabled=true,selected='hero'){
   if(!enabled||state.encounter?.status!=='active')return '';
   const tips=Game.tacticalAdvice(state);if(!tips.length)return '';
-  return `<details id="command-coaching" class="tactical-coaching" ${state.encounter?.type==='training'?'open':''}><summary>${state.encounter?.kind==='contest'?'Advice for the chamber':'Field advice'} · ${state.difficulty?esc(Game.difficultyOptions().find(d=>d.id===state.difficulty)?.label||'Standard'):'Original campaign'}</summary><ul>${tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p class="settings-description">Advice responds to the current position. You decide the next order.</p></details>`;
+  const summary=unusedTurnSummary(state),unavailable=explainUnavailableActions(state,selected),missing=Game.chapterRequirements(state).filter(r=>!r.done);
+  return `<details id="command-coaching" class="tactical-coaching" ${state.encounter?.type==='training'?'open':''}><summary>${state.encounter?.kind==='contest'?'Advice for the chamber':'Field advice'} · ${state.difficulty?esc(Game.difficultyOptions().find(d=>d.id===state.difficulty)?.label||'Standard'):'Original campaign'} · What can I do?</summary><div class="coaching-status"><p><strong>Turn status:</strong> ${esc(summary.message)}</p>${missing.length?`<p><strong>Required before promotion:</strong> Demonstrate ${esc(missing.map(r=>actionNames[r.id]||r.id).join(', '))}.</p>`:''}${unavailable.length?`<p><strong>Unavailable on selected unit:</strong> ${esc(unavailable.map(u=>`${u.label}: ${u.reason}`).join(' · '))}</p>`:''}</div><ul>${tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p class="settings-description">Advice responds to the current position. You decide the next order.</p></details>`;
 }
 
 export function voicedBriefing(state){const line=briefingFor(state);return line?`<aside class="voiced-briefing"><p class="eyebrow">${esc(line.speaker)}</p><blockquote>“${esc(line.text)}”</blockquote><button data-cmd="voice-briefing" data-id="${line.id}">Hear this briefing</button><small>Optional voiced reading · text remains available</small></aside>`:'';}

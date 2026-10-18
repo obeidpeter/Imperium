@@ -109,3 +109,46 @@ export function composeActorAlbedo(painted,kind,size){
   for(let i=0;i<native.length;i+=4)for(let channel=0;channel<3;channel++)native[i+channel]=Math.round(clamp(native[i+channel]*(1+strength*(painted[i+channel]/220-1)),kind==='mail'?125:kind==='skin'?200:80,250));
   return native;
 }
+
+export function evaluateActorShading(input,ndotl=0.5,ndotv=0.5){
+  const kind=actorSurfaceKind(input),l=clamp(ndotl),v=clamp(ndotv);
+  if(kind==='skin'){
+    const subsurface=Math.pow(clamp(1-l*0.75),1.6)*(0.28+0.22*(1-v));
+    return {kind,subsurface,sheen:0.06*(1-v),anisotropy:0,roughnessScale:0.94};
+  }
+  if(kind==='cloth'){
+    const sheen=Math.pow(1-v,2.4)*0.34;
+    return {kind,subsurface:0.05*(1-l),sheen,anisotropy:0,roughnessScale:0.96};
+  }
+  if(['mail','scale','metal'].includes(kind)){
+    const anisotropy=Math.pow(clamp(v*0.65+l*0.35),3.2)*(kind==='metal'?0.38:0.28);
+    return {kind,subsurface:0,sheen:0.12*(1-v),anisotropy,roughnessScale:kind==='metal'?0.86:0.9};
+  }
+  return {kind,subsurface:0.02*(1-l),sheen:Math.pow(1-v,2.8)*0.14,anisotropy:0,roughnessScale:0.95};
+}
+
+export function finishActorMaterial(material,kind){
+  if(!material?.isMeshStandardMaterial)return material;
+  const resolved=actorSurfaceKind(kind??material.normalMap?.userData?.actorSurface??material.map?.userData?.actorSurface??material.userData?.actorFinish);
+  const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
+  material.onBeforeCompile=(shader,...args)=>{
+    previous.call(material,shader,...args);
+    let color='',roughness='';
+    if(resolved==='skin'){
+      color='diffuseColor.rgb*=vec3(1.03,.97,.95);';
+      roughness='roughnessFactor*=.94;';
+    }else if(resolved==='cloth'){
+      color='diffuseColor.rgb*=1.04;';
+      roughness='roughnessFactor*=.96;';
+    }else if(['mail','scale','metal'].includes(resolved)){
+      color='diffuseColor.rgb*=1.03;';
+      roughness=`roughnessFactor*=${resolved==='metal'?'.86':'.90'};`;
+    }else{
+      roughness='roughnessFactor*=.95;';
+    }
+    shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\n${color}`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n${roughness}`);
+  };
+  material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v1:${resolved}`;
+  material.userData.actorFinish=resolved;
+  return material;
+}

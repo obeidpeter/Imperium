@@ -173,12 +173,33 @@ export function worldGround(c,w,h,g,e,p,chapter,quality){
   }
 }
 
-export function atmosphere(c,w,h,g,chapter,contest,frame,quality){
+export function atmosphere(c,w,h,g,chapter,contest,frame,quality,encounter=null){
   if(quality==='performance'||![w,h].every(Number.isFinite)||w<=0||h<=0)return;
   c.save();
   const veil=c.createLinearGradient(0,0,w,h);veil.addColorStop(0,contest?'#fff3c429':'#ffe6a913');veil.addColorStop(.55,'#f3e6ba00');veil.addColorStop(1,'#344c471b');c.fillStyle=veil;c.fillRect(0,0,w,h);
   if(contest){poly(c,[[w*.1,0],[w*.25,0],[w*.76,h],[w*.56,h]],'#fff5d410');poly(c,[[w*.35,0],[w*.4,0],[w*.94,h],[w*.8,h]],'#fff5d40b');}
   const time=frame?.time??0,count=quality==='high'?12:6;
   for(let i=0;i<count;i++){const x=(hash(i,chapter)*w+time*.003*(i%3+1))%w,y=(hash(i,14)*h+Math.sin(time/650+i)*2);oval(c,x,y,i%3===0?1.2:.65,i%3===0?1.2:.65,contest?'#ffe9b348':chapter===2?'#d4e0c332':'#eee1b137');}
+  const timeOfDay=encounter?.timeOfDay??(encounter?.stratagem==='night'?'night':null);
+  if(timeOfDay==='night'){
+    c.fillStyle='#0d182834';c.fillRect(0,0,w,h);
+    oval(c,w*.5,h*.52,w*.26,h*.22,'#ffaa5018');
+  }else if(timeOfDay==='dusk'){
+    const dusk=c.createLinearGradient(0,0,w,h);dusk.addColorStop(0,'#e07b3c24');dusk.addColorStop(1,'#2d243b22');c.fillStyle=dusk;c.fillRect(0,0,w,h);
+  }else if(timeOfDay==='dawn'){
+    const dawn=c.createLinearGradient(0,0,w,h);dawn.addColorStop(0,'#f2c4a222');dawn.addColorStop(1,'#3b525818');c.fillStyle=dawn;c.fillRect(0,0,w,h);
+  }
+  const weather=encounter?.weather;
+  if(weather&&weather!=='clear'){
+    const wCount=quality==='high'?16:10;
+    for(let i=0;i<wCount;i++){
+      const wx=((hash(i,chapter+31)*w+time*.04*(i%3+1))%w+w)%w;
+      const wy=((hash(i,chapter+47)*h+time*(weather==='embers'?-.03:.05))%h+h)%h;
+      if(weather==='rain')line(c,[[wx,wy],[wx-4,wy+12]],'#bfd4e258',1);
+      else if(weather==='embers')oval(c,wx,wy,1.4,1.4,'#ff9d4280');
+      else if(weather==='dust')oval(c,wx,wy,2.2,.9,'#d8be8c48');
+      else if(weather==='mist')oval(c,wx,wy,22,5.5,'#dce8e224');
+    }
+  }
   c.restore();
 }

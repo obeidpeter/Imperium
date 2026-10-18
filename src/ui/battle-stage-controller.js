@@ -15,7 +15,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
   function release(){version++;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
-      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}`;
+      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}`;
       if(key!==nextKey){release();key=nextKey;}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
       if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
@@ -38,7 +38,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     adaptive(value){if(latest)latest.adaptiveResolution=value;stage?.setAdaptiveResolution?.(value);},
     speed(value){if(latest)latest.motionSpeed=value;stage?.setMotionSpeed?.(value);},
     reduced(value){if(latest)latest.reducedMotion=value;stage?.setReducedMotion(value);},
-    home(){stage?.home();},focus(){stage?.focusSelected();},horizon(){stage?.horizon();},
+    home(){stage?.home();},focus(){stage?.focusSelected();},focusPoint(tile){stage?.focusPoint?.(tile);},horizon(){stage?.horizon();},
     zoom(delta){if(stage)stage.zoom(delta);},
     release,get stage(){return stage;}
   };

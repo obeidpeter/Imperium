@@ -18,10 +18,13 @@ const civicArchitecture={7:'command-council',8:'river-parley',10:'provincial-tri
 export function getSceneProfile(encounter={},options={}){
   const inferred=Number(/^ch(\d+)-/.exec(encounter.id??'')?.[1]),candidate=options.chapter??encounter.chapter??inferred,chapter=Number.isInteger(candidate)&&candidate>=1&&candidate<=12?candidate:1;
   const [region,setting,architecture,sky,fog,sun,ambient,groundTint,fogDensity,exposure]=regions[chapter-1],civic=encounter.kind==='contest',training=encounter.id==='ch1-training'||encounter.id==='ch1-drill'||encounter.type==='training'||encounter.mission?.mode==='training';
-  const court=civic&&chapter>=10;
-  return Object.freeze({key:`ch${chapter}-${civic?'civic':training?'training':'battle'}`,chapter,title:encounter.title||`${region}${civic?' — council':''}`,region,setting,civic,training,staging:getEncounterStaging(encounter,{chapter,civic,training}),architecture:civic?(civicArchitecture[chapter]??'provincial-tribunal'):architecture,
-    sky:court?'#8a8174':sky,fog:court?'#928779':fog,sun,ambient:court?'#ded4be':ambient,groundTint,fogDensity:court?.006:fogDensity,exposure:court?1.12:exposure,sunIntensity:chapter===2?2.55:court?2.4:3.3,ambientIntensity:court?2.15:2.1,ambientGround:court?'#9c8871':'#60694f',sunPosition:Object.freeze(chapter===2?[-12,18,-8]:court?[-9,22,-9]:[-16,24,-12]),
+  const court=civic&&chapter>=10,stratagem=options.stratagem??encounter.stratagem??null;
+  const night=Boolean(!civic&&(stratagem==='night'||options.timeOfDay==='night'||encounter.timeOfDay==='night'));
+  const timeOfDay=night?'night':civic?'interior':[5,6,12].includes(chapter)?'dusk':[2,8].includes(chapter)?'dawn':'day';
+  const weather=civic?'clear':options.weather??encounter.weather??(chapter===2?'rain':chapter===5||chapter===12?'embers':[6,9].includes(chapter)?'dust':[1,4,8].includes(chapter)?'mist':'clear');
+  return Object.freeze({key:`ch${chapter}-${civic?'civic':training?'training':night?'night':'battle'}`,chapter,title:encounter.title||`${region}${civic?' — council':''}`,region,setting,civic,training,timeOfDay,weather,torchlight:night||civic&&chapter===7,staging:getEncounterStaging(encounter,{chapter,civic,training}),architecture:civic?(civicArchitecture[chapter]??'provincial-tribunal'):architecture,
+    sky:night?'#1d2b44':court?'#8a8174':sky,fog:night?'#24324c':court?'#928779':fog,sun:night?'#9eb8dc':sun,ambient:night?'#4d6282':court?'#ded4be':ambient,groundTint:night?'#3e4c5e':groundTint,fogDensity:night?.025:court?.006:fogDensity,exposure:night?.92:court?1.12:exposure,sunIntensity:night?1.45:chapter===2?2.55:court?2.4:3.3,ambientIntensity:night?1.35:court?2.15:2.1,ambientGround:night?'#25303f':court?'#9c8871':'#60694f',sunPosition:Object.freeze(night?[-10,20,-14]:chapter===2?[-12,18,-8]:court?[-9,22,-9]:[-16,24,-12]),
     vegetation:['desert','siege','palmyra'].includes(setting)?'arid':setting==='wetland'?'reeds':civic?'court':'meadow',soilMix:['desert','siege','palmyra'].includes(setting)?.85:setting==='wetland'?.62:.18,
-    distantWater:['frontier','wetland','fortress','crossing','province'].includes(setting)&&(!civic||chapter===8),stoneColor:chapter===5?'#c7b08a':chapter>=9?'#d5c8ab':'#bab9ad',waterColor:chapter===2?'#59766e':'#608f94'});
+    distantWater:['frontier','wetland','fortress','crossing','province'].includes(setting)&&(!civic||chapter===8),stoneColor:chapter===5?'#c7b08a':chapter>=9?'#d5c8ab':'#bab9ad',waterColor:night?'#2c475c':chapter===2?'#59766e':'#608f94'});
 }
 export const getCampaignSceneProfile=getSceneProfile;

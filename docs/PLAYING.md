@@ -40,20 +40,20 @@ There is no mandatory grinding. The campaign map shows completed chapters and se
 Every battle and Contest action follows the same route:
 
 1. Select a unit on the board or the named unit selector.
-2. Choose an available action.
-3. Select a highlighted tile or choose a target from the target list.
-4. Read the effect, target, and cost in the preview.
+2. Choose an available action. Each button states its exact cost (`1 move`, `1 action`, `1 order`, `1 speech`, `1 javelin`, cooldown, or promise limit).
+3. Select a highlighted tile or choose a target from the target list. If an action has no legal target in reach, the command dock states why (for example, no visible enemy on an adjacent tile or beyond javelin range).
+4. Read the effect, target, and cost in the preview. For **Formation**, the preview also names which up to 3 adjacent allies will join and which nearby allies are excluded (already ordered, beyond 1 tile from the anchor, or beyond the 3-unit cap).
 5. Press **Confirm**, or activate that same target again. Nothing is spent merely by examining a new target.
 
-**End turn** lets uncommanded allies and the enemy act, then refreshes the next player-side turn. One turn means a whole player-side turn, not a single soldier’s action.
+**End turn** lets uncommanded allies and the enemy act, then refreshes the next player-side turn. Its tooltip summarizes any remaining unspent moves, actions, speeches, or command orders. One turn means a whole player-side turn, not a single soldier’s action. Open **Tactical advice** (`What can I do?`) or **Named action & target controls** below the dock to see why any capability on the selected unit is currently unavailable and which chapter capabilities still need to be demonstrated before promotion.
 
 ### Mouse and touch
 
-Click or tap a figure to select it. Reachable empty ground automatically previews Move; an opponent automatically previews an available attack. The action dock provides other actions. Activate the previewed target again, or use Confirm. The target selector supplies the same choices as the map. No essential action requires hover or a timing-sensitive double tap. On a narrow screen, the board, roster, actions, target preview, Confirm and End turn are grouped together. Supporting mission details and dispatches open below. Enlarged text uses normal scrolling.
+Click or tap a figure to select it. Reachable empty ground automatically previews Move; an opponent automatically previews an available attack. The action dock provides other actions. Activate the previewed target again, or use Confirm. The target selector supplies the same choices as the map. In political Contests, you can also press **Inspect** beside any delegate in the chamber roster to examine their stance, interest, and best appeals without finding their seat on the board. No essential action requires hover or a timing-sensitive double tap. On a narrow screen, the board, roster, actions, target preview, Confirm and End turn are grouped together. Supporting mission details and dispatches open below. Enlarged text uses normal scrolling.
 
 ### Keyboard
 
-Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor and Enter selects a unit, previews a target, then confirms that same target. **1–9** choose available actions, **N** cycles ready units, **E** ends the turn, **G** toggles the grid, and **Escape** clears the current action. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
+Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate them. When the board has focus, arrow keys move its cursor (updating the visible `#board-hover` readout and screen-reader announcement) and Enter selects a unit, previews a target, then confirms that same target. **1–9** choose available actions, **N** cycles ready units, **E** ends the turn, **G** toggles the grid, and **Escape** clears the current action. In 3D scenes, **H** switches to Horizon view, **F** focuses on the active unit, **Home** resets the camera overview, and **+ / −** zoom. Native target, formation, and order selectors work with arrow keys. The named unit selector and target selector provide a complete alternative to navigating the board spatially.
 
 Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional, with an **Effects volume** slider. Reduced motion is available, and game meaning never depends on audio alone.
 

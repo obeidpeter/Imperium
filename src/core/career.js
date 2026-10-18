@@ -1,4 +1,5 @@
 import {alive} from './shared.js';
+import {CHAPTERS} from '../data/campaign.js';
 
 // A small roll of service, not a second army-management game. Recovery can
 // soften the next deployment, but never removes a veteran or blocks progress.
@@ -90,3 +91,31 @@ export function provinceSummary(state) {
     : 'Settler priority gives the displaced first title. Veteran delegates begin the tribunal one stance point more supportive, while Landholders begin one point less supportive; established tenants petition against the loss.');
   return lines;
 }
+
+export function cursusHonorum(state) {
+  const completed = state?.completed ?? [], current = state?.chapter ?? 1, history = state?.history ?? [];
+  return CHAPTERS.map(ch => {
+    const isCompleted = completed.includes(ch.id), isCurrent = current === ch.id && !isCompleted;
+    const status = isCompleted ? 'completed' : isCurrent ? 'current' : 'locked';
+    const choiceId = state?.decisions?.[ch.decision?.id];
+    const decision = ch.decision?.options?.find(o => o.id === choiceId)?.label ?? null;
+    const records = history.filter(h => h.chapter === ch.id);
+    const acclaimed = ch.id === 12 && state?.phase === 'epilogue';
+    return {
+      chapter: ch.id,
+      title: ch.title,
+      year: ch.year,
+      location: ch.location,
+      rank: acclaimed ? 'Augustus' : ch.rank,
+      rankMeaning: acclaimed ? 'Acclaimed Emperor of Rome' : ch.rankMeaning,
+      promotion: ch.promotion,
+      capability: ch.capability,
+      reward: ch.reward,
+      status,
+      decision,
+      encountersWon: records.length,
+      turns: records.reduce((n, r) => n + (r.turns || 0), 0),
+    };
+  });
+}
+
