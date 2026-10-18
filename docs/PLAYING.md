@@ -2,7 +2,7 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.12 with the unchanged **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.26 with the unchanged **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
 
 ## Battlefield and chamber views
 

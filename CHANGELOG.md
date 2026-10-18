@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.26.0 — player-control overhaul, unavailable-action diagnostics, formation roster preview and chamber/allocation clarity
+
+- Adds [`actionCostLabel`](src/ui/direct-controls.js), [`explainActionTargetGap`](src/ui/direct-controls.js), [`explainUnavailableActions`](src/ui/direct-controls.js), and [`unusedTurnSummary`](src/ui/direct-controls.js) so every action button states its exact cost (`1 move`, `1 action`, `1 order`, `1 speech`, `1 javelin`, cooldown, promise limit), empty-target states explain why no target is in reach, `#command-named-controls` and `#command-coaching` (`What can I do?`) explain why unavailable capabilities cannot be used right now, and `#end-turn` summarizes any remaining moves, actions, speeches, or command orders.
+- Adds [`formationRosterPreview`](src/ui/direct-controls.js) to `Formation` order previews in Chapters V+, explicitly naming up to 3 adjacent allies who will join (`Joining shield-wall (N/3): …`) and any nearby allies excluded (`already ordered this turn`, `more than 1 tile from anchor unit`, or `3-unit formation cap reached`).
+- Clarifies political Contest rules in [`coalitionPanel`](src/ui/tactical-intel.js) and [`encounterView`](src/ui/encounter-view.js): defines **Resolve** (*"speaking stamina; 0 withdraws from speaking, vote remains"*), states that votes are counted at the deadline (`end of turn X`; an early majority does not end the debate), displays [`delegateAppealSummary`](src/ui/direct-controls.js) (`Strongest appeals: …`) for each delegate's interest and bloc, and adds `Inspect` (`data-cmd="inspect-delegate"`) buttons to the chamber delegate roster.
+- Adds [`allocationDraftPreview`](src/ui/campaign-views.js) and four preset buttons (`Balanced 2·2·2`, `River focus 4·1·1`, `Farms focus 1·4·1`, `Town focus 1·1·4`) to Chapter X camp preparation, showing live `N / 6` validation and exact Supplies, Army/Public/Political meter, road morale, store integrity, and Landholder tribunal stance effects before dispatching.
+- Updates keyboard arrow-key navigation on `#battle-board` to visibly update `#board-hover` alongside screen-reader announcements, and binds 3D camera shortcuts (`F`, `Home`, `+`, `-`, `H`) in campaign encounters. See [controls overhaul verification](docs/controls-overhaul-verification.md).
+
+## 0.25.0 — Lux Imperii HDR post-processing, dynamic 3D water, subsurface foliage, physical armor shaders, volumetric fire and 2D Tabula Picta
+
+- **Lux Imperii**: upgrades the 3D post-processing shader in [`scene-compositor.js`](src/showcase/scene-compositor.js) with single-pass HDR specular bloom, Contrast-Adaptive Micro-Sharpening (CAS), depth-aware atmospheric aerial perspective, and a subtle warm Roman fresco edge vignette.
+- **Flumen & Vadum**: adds custom animated GLSL vertex/fragment water shaders in [`environment-surface-shaders.js`](src/showcase/environment-surface-shaders.js) with dual-rippling normal waves, Fresnel sky reflection, shallow-ford shoreline foam, and concentric rain ripples.
+- **Ventus & Marmor**: adds wind-swaying foliage vertex displacement with warm backlit subsurface scattering, wet micro-puddle specular ground reflections during rain/marsh scenes, and procedural Cipollino/Carrara veined marble with polished floor reflections in Senate and council chambers.
+- **Lorica & Paludamentum**: enriches [`actor-surface.js`](src/showcase/actor-surface.js) with anisotropic brushed iron/bronze metallic sheen (`sheen`, `clearcoat`) on Roman armor and helmets, velvet-like rim sheen on tunics and imperial purple cloaks, and harmonic vertex wave flutter on cloth banners and vexilla.
+- **Ignis & Ferrum**: adds 3D volumetric rising ember/flame plumes on braziers and torches, multi-segment projectile ribbon trails on javelins and arrows, and persistent ground scorch/scuff decals in [`stage-particles.js`](src/showcase/stage-particles.js).
+- **Tabula Picta**: upgrades the 2D tactical canvas ([`renderer.js`](src/ui/renderer.js), [`battle-art.js`](src/ui/battle-art.js), [`world-art.js`](src/ui/world-art.js)) with isometric 2D fieldwork sprites (`stakes`, `rampart`, `brazier`), diagonal crimson hatching on inspected enemy threat envelopes, time-of-day color grading overlays, and 2D weather particles.
+
+## 0.24.0 — legionary fieldworks (Munitiones), war-room mutators, 3D Aquila & Cornu brass, Oculus Tactica threat envelopes, Rostra interjections and Cursus Honorum monument
+
+- Adds **Tactical Field Engineering (`Munitiones`)** in Chapters IV+ (`stakes`, `rampart`, `brazier`), allowing the commander's engineering detachment to erect one fortification per battle that modifies `combatBreakdown` (negating cavalry charges, adding +2 wall defence, or +1 ranged fire damage) and renders in 3D and 2D.
+- Adds **Archive War-Room Mutators** (`difficulty`, `weather`, `timeOfDay`, and Chapter XII `route`) to sandbox Archive replays without altering the primary campaign save.
+- Adds **3D Legionary Aquila & Signum standards** with golden eagles, phalerae medallions, and crimson vexillum cloth on commanders and formation leaders, paired with synthesized **Roman Cornu & Buccina brass horn cues** (`rally`, `formation`, `fieldwork`).
+- Adds **Oculus Tactica** (`combatBreakdown` modifier chips and `threatEnvelope` reach/target readouts) in the command inspector and 3D stage.
+- Adds **Named Senate Delegate Interjections** (`delegateCallout`) and a **3D Marble Rostra Speaker's Dais & Curia Bench Tiers** in political Contests, plus an interactive **Cursus Honorum Monument** (`cursusHonorum`) in the character dossier.
+
+## 0.23.0 — Archive of the Reign sandbox, dynamic 3D weather & night-march torchlight, veteran commendation ranks, interactive Tabula and Senate precedent motions
+
+- Adds **Archive of the Reign** (`archiveEncounters`, `createArchiveReplay`) in the Mission Journal and Accession Epilogue so any completed battle or political Contest can be replayed in an isolated sandbox session.
+- Adds **Dynamic 3D Weather & Night-March Torchlight** (`weather`, `timeOfDay`, `buildWeatherParticleSpecs`, `pointLights`) across all 25 encounters (rain, mist, desert dust, siege embers, and flickering night-march/dusk torchlight).
+- Adds **Veteran Commendation Ranks & Evocatus Mastery** (`veteranRank`: *Gregarius → Immunis → Principalis → Evocatus*), granting passive mastery bonuses at 2+ and 4+ commendations, 3D crest/torc insignia, and contextual companion callouts (`companionCallout`).
+- Adds an **Interactive Imperial Command Tabula** (clickable SVG theatre nodes and expandable theatre dossiers in the Campaign Map) and a **Turn-Step Scrubber** (`#turn-scrubber`) for reviewing recent turn events on the board.
+- Adds **Senate Career Precedent Motions** (`precedentOptions`, `invokePrecedent`) in Chapters VII–XII Contests, allowing players to invoke earned military, provincial, or fiscal milestones once per Contest.
+
 ## 0.22.0 — 3D ground paths, multi-unit forecasts, opponent intent arcs, custom Order destinations and Imperial epilogue record
 
 - Adds 3D ground movement path polylines (`stagePreviewPath`), action-intent target ring color coding (`targetRingColor`), a directional facing chevron on `selectedRing`, and 3D formation cohesion links (`kind: 'cohesion'`) between adjacent friendly units sharing an active formation.
