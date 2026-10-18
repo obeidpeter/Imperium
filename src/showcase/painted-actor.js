@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {drawUnitSprite,spriteSpec} from '../ui/unit-sprites.js';
+import {placeFollowers} from './formation.js';
 
 // Painted figures (HD-2D): the 2D campaign's own authored unit paintings stand
 // in the 3D diorama as camera-facing cards. A second, sun-facing card casts the
@@ -65,7 +66,7 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
   // Picking follows the painted silhouette, not the transparent card margin.
   const hits=[];
   card.raycast=(raycaster,intersects)=>{hits.length=0;T.Mesh.prototype.raycast.call(card,raycaster,hits);for(const hit of hits){if(!hit.uv)continue;const x=Math.min(width-1,Math.max(0,Math.floor(hit.uv.x*width))),y=Math.min(height-1,Math.max(0,Math.floor((1-hit.uv.y)*height)));if(c.getImageData(x,y,1,1).data[3]>90)intersects.push(hit);}};
-  let state={direction:0,override:null,unit},key='',disposed=false,painted=false;
+  let state={direction:0,override:null,unit},key='',disposed=false,painted=false,crowd=null;
   const view=new T.Vector3(),origin=new T.Vector3(),quaternion=new T.Quaternion(),parentInverse=new T.Quaternion(),UP=new T.Vector3(0,1,0);
   function draw(column){
     c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,width,height);c.setTransform(SCALE,0,0,SCALE,0,0);
@@ -90,10 +91,25 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
       group.updateWorldMatrix(true,false);group.getWorldQuaternion(parentInverse).invert();
       card.quaternion.copy(parentInverse).multiply(camera.getWorldQuaternion(quaternion));
       if(Number.isFinite(sunYaw))shadow.quaternion.setFromAxisAngle(UP,sunYaw-group.rotation.y);
+      crowd?.place();
+    },
+    // Followers are more cards of the same painting, each facing the camera and
+    // casting its own silhouette; they never take a pick from the leader.
+    createCrowd(max=8){
+      if(disposed||max<1)return null;crowd?.dispose();
+      const cards=new T.InstancedMesh(geometry,material,max),shadows=new T.InstancedMesh(geometry,shadowMaterial,max),matrix=new T.Matrix4(),position=new T.Vector3(),scale=new T.Vector3();
+      cards.name='painted formation followers';shadows.name='painted formation shadows';cards.count=shadows.count=0;cards.castShadow=false;shadows.castShadow=true;cards.receiveShadow=shadows.receiveShadow=false;
+      cards.frustumCulled=shadows.frustumCulled=false;cards.raycast=shadows.raycast=()=>{};group.add(cards,shadows);
+      let placed=[],gone=false;const footprints=[];
+      crowd={max,footprints,get count(){return placed.length;},
+        update({slots=[],visible=0,heightAt=null}={}){if(gone)return;placed=placeFollowers(group,{slots,visible,heightAt,max});footprints.length=0;for(const p of placed)footprints.push(p.world);},
+        place(){if(gone)return;placed.forEach((p,i)=>{const s=1+p.yaw*.18;position.set(p.x,p.y,p.z);scale.set(s,s,s);cards.setMatrixAt(i,matrix.compose(position,card.quaternion,scale));shadows.setMatrixAt(i,matrix.compose(position,shadow.quaternion,scale));});cards.count=shadows.count=placed.length;cards.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;},
+        dispose(){if(gone)return;gone=true;cards.removeFromParent();shadows.removeFromParent();cards.dispose();shadows.dispose();if(crowd===this)crowd=null;}};
+      return crowd;
     },
     repaint(){key='';},
     setLight(value){material.color.fromArray(value);},
     getReleasePoint(target=new T.Vector3()){return body.getWorldPosition(target).add(new T.Vector3(Math.sin(state.direction)*.35,.35,Math.cos(state.direction)*.35));},
-    dispose(){if(disposed)return;disposed=true;group.removeFromParent();geometry.dispose();material.dispose();shadowMaterial.dispose();texture.dispose();}
+    dispose(){if(disposed)return;disposed=true;crowd?.dispose();group.removeFromParent();geometry.dispose();material.dispose();shadowMaterial.dispose();texture.dispose();}
   };
 }

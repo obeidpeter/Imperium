@@ -193,7 +193,7 @@ test('v0.29.0: the diorama board has one river channel surface, cell-edge walls,
   }
   {
     const {s, world} = build('ch1-road'), e = s.state.encounter, level = createGroundHeight(e, 2.5, {profile: world.profile, relief: false});
-    assert.ok(world.group.getObjectByName('road kerb stones')?.isInstancedMesh, 'Roads are edged with kerb stones');
+    assert.ok(world.group.getObjectByName('squared stone masonry')?.count > 60, 'Roads are edged with kerb stones (batched with other squared stone)');
     const road = world.group.getObjectByName('authored boundary road').geometry.attributes.position;
     for (let i = 0; i < road.count; i++) assert.ok(road.getY(i) <= level(road.getX(i), road.getZ(i)) + .021 + 1e-6, 'The road surface passes under a plateau bank instead of climbing it');
     const ground = world.ground.geometry.attributes.position;let inner = 0;
@@ -385,4 +385,103 @@ test('v0.29.0: the compositor offers tilt-shift and ink finishes, clamped, and t
   assert.deepEqual(calls, ['painted'], 'The saved style reaches a new stage');
   controller.figures('inked');assert.deepEqual(calls, ['painted', 'inked']);
   controller.release();
+});
+
+test('v0.29.0: from Chapter IV military units stand as formations whose men fall with their strength', async () => {
+  const {formationEligible, formationSlots, formationShape, followerCount, FORMATION_LIMIT} = await import('../src/showcase/formation.js');
+  const legion = {id: 'ally0', role: 'infantry', side: 'ally', hp: 17, maxHp: 17};
+  assert.equal(formationEligible(legion, {chapter: 7}), true);
+  assert.equal(formationEligible(legion, {chapter: 3}), false, 'Early chapters are skirmishes between individuals');
+  assert.equal(formationEligible({...legion, id: 'hero'}, {chapter: 9}), false, 'The commander is always one figure');
+  assert.equal(formationEligible(legion, {chapter: 9, contest: true}), false);
+  assert.equal(formationEligible({id: 'v1', role: 'voter'}, {chapter: 11}), false);
+  assert.equal(formationShape({...legion, formation: 'wedge'}), 'wedge');assert.equal(formationShape({...legion, braced: true}), 'shield-wall');
+  assert.equal(formationShape({...legion, role: 'cavalry'}), 'mounted');assert.equal(formationShape({...legion, role: 'archer'}), 'archer');
+  for (const unit of [legion, {...legion, formation: 'shield-wall'}, {...legion, formation: 'wedge'}, {...legion, role: 'archer'}, {...legion, role: 'raider'}, {...legion, role: 'cavalry'}]) {
+    const slots = formationSlots(unit);
+    assert.ok(slots.length >= 2 && slots.length <= 8);
+    assert.ok(slots.every(s => Math.abs(s.x) <= 1.1 && Math.abs(s.z) <= 1.1 && Math.abs(s.yaw) <= .11), `${formationShape(unit)} stays inside its own tile`);
+    assert.ok(slots.every(s => Math.hypot(s.x, s.z) > .5), 'No follower stands on the leader');
+    assert.deepEqual(formationSlots(unit), slots, 'Formations are deterministic');
+  }
+  assert.equal(followerCount(legion, 8), 8);assert.equal(followerCount({...legion, hp: 9}, 8), 4);assert.equal(followerCount({...legion, hp: 0}, 8), 0);
+  assert.equal(followerCount({id: 'x', role: 'infantry'}, 5), 5, 'Units without a strength record keep their full formation');
+  assert.ok(FORMATION_LIMIT.performance < FORMATION_LIMIT.balanced && FORMATION_LIMIT.balanced < FORMATION_LIMIT.high);
+});
+
+test('v0.29.0: a sculpted formation is one instanced draw per overview surface, skinned by the leader and placed on the ground', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createActor} = await import('../src/showcase/actors.js');
+  const {createSkinnedCrowd, formationSlots, followerCount} = await import('../src/showcase/formation.js');
+  const unit = {id: 'ally1', name: 'Aulus Naso', role: 'infantry', side: 'ally', x: 3, y: 3, hp: 12, maxHp: 17, facing: 'east'}, before = JSON.stringify(unit);
+  const actor = createActor(unit, {chapter: 7, quality: 'balanced'}), group = actor.group;
+  group.position.set(1.25, .4, -3.75);group.rotation.y = .6;group.updateMatrixWorld(true);
+  const leaderMeshes = [];group.traverse(o => {if (o.isMesh) leaderMeshes.push(o);});
+  const crowd = createSkinnedCrowd(group, {max: 5});
+  assert.ok(crowd && crowd.meshes.length >= 1);
+  const overview = leaderMeshes.filter(o => o.isSkinnedMesh && o.userData.overview);
+  for (const mesh of crowd.meshes) {
+    assert.ok(mesh.isSkinnedMesh && mesh.geometry.isInstancedBufferGeometry);
+    assert.ok(overview.some(o => o.skeleton.bones === mesh.skeleton.bones) || mesh.skeleton.bones.every(b => b.isBone), 'Followers are posed by the leader’s bones');
+    let picks = [];mesh.raycast(new T.Raycaster(), picks);assert.equal(picks.length, 0, 'Followers never take a pick');
+  }
+  const shared = crowd.meshes.find(m => overview.some(o => o.geometry.attributes.position === m.geometry.attributes.position));
+  assert.ok(shared, 'Follower surfaces reuse the leader’s vertex buffers instead of copying them');
+  const slots = formationSlots(unit), visible = followerCount(unit, Math.min(slots.length, crowd.max)), heightAt = (x, z) => .4 + x * .01;
+  crowd.update({slots, visible, heightAt});
+  assert.equal(crowd.count, visible);assert.ok(crowd.meshes.every(m => m.geometry.instanceCount === visible));
+  assert.equal(crowd.footprints.length, visible);
+  for (const [i, p] of crowd.footprints.entries()) {
+    assert.ok(Math.abs(p.y - heightAt(p.x, p.z)) < 1e-9, 'Each man stands on the ground under him');
+    const offset = crowd.meshes[0].geometry.attributes.crowdOffset;
+    assert.ok(Math.abs(offset.getX(i) - slots[i].x) < 1e-6 && Math.abs(offset.getZ(i) - slots[i].z) < 1e-6);
+  }
+  crowd.update({slots, visible: 0, heightAt});assert.ok(crowd.meshes.every(m => m.geometry.instanceCount === 0));
+  const leaderGeometry = overview[0].geometry;let leaderDisposed = 0;leaderGeometry.addEventListener('dispose', () => leaderDisposed++);
+  crowd.dispose();crowd.dispose();
+  assert.ok(crowd.meshes.every(m => !m.parent), 'Disposal removes every follower');
+  assert.equal(leaderDisposed, 0, 'The leader keeps its own geometry');
+  assert.equal(JSON.stringify(unit), before, 'Formations never edit the unit');
+  actor.dispose();
+});
+
+test('v0.29.0: the stage attaches formations by chapter and quality, disposes them with the figure, and shades their feet', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {BattleStage} = await import('../src/showcase/stage.js');
+  const {createActor} = await import('../src/showcase/actors.js');
+  const {createContactShadows} = await import('../src/showcase/contact-shadows.js');
+  const stage = Object.create(BattleStage.prototype);
+  Object.assign(stage, {chapter: 7, quality: 'balanced', encounter: {kind: 'battle'}});
+  const unit = {id: 'enemy2', name: 'Gothic infantry', role: 'infantry', side: 'enemy', hp: 10, maxHp: 10, x: 4, y: 4};
+  const actor = createActor(unit, {chapter: 7, quality: 'balanced'});
+  stage.attachFormation(unit, actor);
+  assert.ok(actor.crowd, 'A Chapter VII unit gets a formation');assert.equal(actor.crowd.max, 5, 'Balanced quality shows up to five followers');
+  assert.equal(stage.followerSlots(unit), stage.followerSlots(unit), 'Slots are cached per unit and shape');
+  actor.crowd.update({slots: stage.followerSlots(unit), visible: 5, heightAt: () => 0});
+  const scene = new T.Scene(), shadows = createContactShadows(scene);
+  shadows.update(new Map([[unit.id, actor]]), () => 0);
+  const withFollowers = shadows.stats().stamps;actor.crowd.update({slots: stage.followerSlots(unit), visible: 0, heightAt: () => 0});shadows.update(new Map([[unit.id, actor]]), () => 0);
+  assert.equal(withFollowers - shadows.stats().stamps, 5, 'Each follower adds its own contact shading');
+  const crowd = actor.crowd;actor.dispose();assert.ok(crowd.meshes.every(m => !m.parent), 'Disposing the figure disposes its formation');
+  stage.chapter = 2;const early = createActor({...unit, id: 'enemy0'}, {chapter: 2});stage.attachFormation({...unit, id: 'enemy0'}, early);
+  assert.equal(early.crowd, null, 'Chapter II units stay single figures');early.dispose();shadows.dispose();
+});
+
+test('v0.29.0: painted followers are instanced cards of the same painting with their own shadows', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createPaintedActor} = await import('../src/showcase/painted-actor.js');
+  const {formationSlots} = await import('../src/showcase/formation.js');
+  const canvas = installFakeCanvas({alpha: 255});
+  try {
+    const unit = {id: 'ally3', role: 'infantry', side: 'ally', hp: 17, maxHp: 17, facing: 'north'}, actor = createPaintedActor(unit, {chapter: 9});
+    const crowd = actor.createCrowd(4), camera = new T.PerspectiveCamera(40, 1, .1, 100);
+    camera.position.set(8, 9, 10);camera.lookAt(0, 0, 0);camera.updateMatrixWorld();
+    actor.update({direction: 0, unit});crowd.update({slots: formationSlots(unit), visible: 3, heightAt: () => 0});actor.faceCamera(camera, {sunYaw: 1});
+    const cards = actor.group.getObjectByName('painted formation followers'), shadows = actor.group.getObjectByName('painted formation shadows');
+    assert.equal(cards.count, 3);assert.equal(shadows.count, 3);assert.equal(cards.material, actor.group.children[0].material, 'Followers share the leader’s painting');
+    assert.equal(cards.castShadow, false);assert.equal(shadows.castShadow, true);
+    const m = new T.Matrix4();for (let i = 0; i < 3; i++) {cards.getMatrixAt(i, m);assert.ok(m.elements.every(Number.isFinite));}
+    const hits = [];cards.raycast(new T.Raycaster(), hits);assert.equal(hits.length, 0);
+    actor.dispose();assert.equal(cards.parent, null);assert.equal(shadows.parent, null);
+  } finally {canvas.restore();}
 });

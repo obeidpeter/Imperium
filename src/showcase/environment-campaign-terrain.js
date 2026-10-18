@@ -33,6 +33,9 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
   const half=tileSize/2,hx=e.width*tileSize/2,hz=e.height*tileSize/2,at=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height?terrainAt(e,x,y):null;
   const pebble=p.geo(new THREE.IcosahedronGeometry(1,0)),rounded=p.geo(new THREE.IcosahedronGeometry(1,1)),reed=p.geo(createReedGeometry());
   const tint=(base,k,seed)=>new THREE.Color(base).multiplyScalar(.86+hash(k,seed,7)*.22);
+  // Squared blocks of one material share a batch: wall courses, copings,
+  // merlons, terrace faces and kerbs are one draw per stone (or mudbrick).
+  const masonry=material=>material===m.brick?'squared mudbrick masonry':'squared stone masonry';
   if(profile.setting==='wetland'){
     const w=e.width*tileSize+12,d=e.height*tileSize+12,rows=96,g=p.geo(new THREE.PlaneGeometry(w,d,rows,rows));g.rotateX(-Math.PI/2);const pos=g.attributes.position,colors=[];
     const wet=(x,y)=>terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)))==='marsh'?1:0;
@@ -78,29 +81,40 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
         for(const row of [.28,.62,.96])place(0,[row,0],[length,.17,.07],'timber breastwork planks',m.darkWood,null,p.box);
       }else{
         const course=style==='stone'?.34:.28;
-        for(let row=0;row<3;row++)for(let u=-length/2+(row%2?.3:0);u<length/2-.05;u+=.6){const w=Math.min(.58,length/2-u);if(w<.12)continue;place(u+w/2,[course*(row+.5),0],[w-.03,course-.02,.58],'wall courses',material,tint(style==='stone'?'#cfc6b3':'#b88d68',u*7+row,x*3+y));}
-        place(0,[course*3+.05,0],[length,.1,.66],'wall coping',material);
-        for(let u=-length/2+.2;u<length/2;u+=.62)place(u,[course*3+.28,.13],[.34,.36,.36],'wall merlons',material,tint(style==='stone'?'#d6cdb9':'#c09470',u*5,y));
+        for(let row=0;row<3;row++)for(let u=-length/2+(row%2?.3:0);u<length/2-.05;u+=.6){const w=Math.min(.58,length/2-u);if(w<.12)continue;place(u+w/2,[course*(row+.5),0],[w-.03,course-.02,.58],masonry(material),material,tint(style==='stone'?'#cfc6b3':'#b88d68',u*7+row,x*3+y));}
+        place(0,[course*3+.05,0],[length,.1,.66],masonry(material),material);
+        for(let u=-length/2+.2;u<length/2;u+=.62)place(u,[course*3+.28,.13],[.34,.36,.36],masonry(material),material,tint(style==='stone'?'#d6cdb9':'#c09470',u*5,y));
       }
     }
     if(type==='stone'){
       cells.push({type,x,y});
       // Flagstones in courses of irregular length; a few lift or go missing at the edges.
       for(let row=0;row<4;row++){let u=-half+.02;const depth=tileSize/4;
-        while(u<half-.12){const w=Math.min(half-u,.42+hash(row,u*3,x+y)*.5),missing=(row===0||row===3)&&hash(u*5,row,x*y)>.82;
+        while(u<half-.12){const w=Math.min(half-u,.42+hash(row,u*3,x+y)*.5),missing=(row===0||row===3)&&hash(u*5,row,x*y)>.95;
           if(!missing)instance('authored flagstones',p.box,m.marble,[xx+u+w/2,height(xx+u+w/2,zz-half+(row+.5)*depth)+.012+hash(u,row,y)*.012,zz-half+(row+.5)*depth],[w-.045,.034,depth-.045],[0,(hash(row,u,x)-.5)*.03,0],tint('#e4dccb',u*11+row,x*5+y));
           u+=w;}
       }
     }
   }
 
-  // Rocky outcrops break each exposed plateau bank, but only above open ground:
-  // a neighbouring road, wall, ford or paving keeps its edge clear, and no rock
-  // reaches within 0.6 m of a neighbour's standing centre.
-  const high=(x,y)=>['high','hill'].includes(at(x,y)),open=(x,y)=>[null,'grass','rock','rubble'].includes(at(x,y));
+  // Rocky outcrops break each exposed plateau bank above open ground. Beside
+  // a road, paving or water the bank is faced as a masonry terrace instead.
+  // Neither reaches within 0.6 m of a neighbour's standing centre.
+  const high=(x,y)=>['high','hill'].includes(at(x,y)),open=(x,y)=>[null,'grass','rock','rubble','marsh'].includes(at(x,y));
+  const terraceMaterial=wallStyle(profile)==='mudbrick'?m.brick:m.stone;
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++){
     if(!high(x,y))continue;const c=gridToWorld({x,y},e,tileSize);cells.push({type:'high',x,y});
-    for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){if(high(x+dx,y+dy)||!open(x+dx,y+dy))continue;
+    for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){if(high(x+dx,y+dy))continue;
+      if(!open(x+dx,y+dy)){
+        if(at(x+dx,y+dy)==='wall')continue;
+        // Courses of squared stone from the plateau rim (0.85 m) to just past the cell edge.
+        // The foot follows the lower ground beside it (a river cut, a sunken road).
+        const top=height(c.x,c.z),depth=.5,mid=tileSize*.34+depth/2,foot=Math.min(0,height(c.x+dx*(mid+depth/2+.05),c.z+dy*(mid+depth/2+.05))),course=(top-foot)/4;
+        for(let row=0;row<4;row++){const offset=row%2?.3:0;
+          for(let u=-half+offset;u<half-.05;u+=.62){const w=Math.min(.6,half-u);if(w<.15)continue;const along=u+w/2,px=c.x+dx*mid+(dy?along:0),pz=c.z+dy*mid+(dx?along:0);
+            instance(masonry(terraceMaterial),p.masonryBlock,terraceMaterial,[px,foot+course*(row+.5),pz],dx?[depth,course-.02,w-.03]:[w-.03,course-.02,depth],[0,0,0],tint('#cbc2ad',along*7+row,x+y*3));}}
+        continue;
+      }
       for(let k=0;k<4;k++){const along=(k-1.5)*.62+(hash(k,x,y)-.5)*.2,out=half-.05+hash(y,k)*.1,rx=c.x+dx*out+(dy?along:0),rz=c.z+dy*out+(dx?along:0),s=.32+hash(k,dx,dy+x)*.18;
         instance('limestone',rockGeometry??rounded,m.stone,[rx,height(rx,rz)+s*.15,rz],[s*1.2,s*1.15,s*.8],[hash(k,1)*.4,Math.atan2(dx,dy)+hash(k,2)*.6,hash(k,3)*.3],tint('#bdb5a3',k+x,y+dx));}}
   }
@@ -113,7 +127,7 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
       for(const side of [-1,1]){const kx=cx-uz*side*1.08,kz=cz+ux*side*1.08;
         // At a junction or bend this point lies inside another road's tread: no kerb there.
         if(roadDistance(kx,kz)<1.0)continue;
-        instance('road kerb stones',p.masonryBlock,m.stone,[kx,height(kx,kz)+.05,kz],[ux?.42:.16,.12,ux?.16:.42],[0,(hash(s,side)-.5)*.06,0],tint('#cfc7b5',s*9,side+3));}
+        instance(masonry(m.stone),p.masonryBlock,m.stone,[kx,height(kx,kz)+.05,kz],[ux?.42:.16,.12,ux?.16:.42],[0,(hash(s,side)-.5)*.06,0],tint('#cfc7b5',s*9,side+3));}
     }
   }
   root.userData.terrainFeatures=cells;
