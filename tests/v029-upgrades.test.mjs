@@ -107,3 +107,40 @@ test('v0.29.0: the real app saves routes through the rules API and a hidden tab 
   await hide();
   assert.equal(campaignWrites(), count, 'The route was already saved; hiding writes nothing new');
 });
+
+test('v0.29.0: every chapter carries a bounded colour-script grade and light balance; night and court override them', async () => {
+  const {getSceneProfile, sceneGrade} = await import('../src/showcase/campaign-scene-profile.js');
+  const seen = new Set();
+  for (let chapter = 1; chapter <= 12; chapter++) {
+    const profile = getSceneProfile({id: `ch${chapter}-x`, kind: 'battle', units: []}, {chapter}), g = profile.grade;
+    assert.ok(Object.isFrozen(g));
+    assert.ok(g.saturation >= .8 && g.saturation <= 1.2 && g.contrast >= 1 && g.contrast <= 1.2, `chapter ${chapter} grade stays restrained`);
+    for (const tint of [g.shadow, g.highlight]) assert.ok(tint.length === 3 && tint.every(v => v >= .8 && v <= 1.2));
+    assert.ok(g.ambient > .6 && g.ambient <= 1 && g.sun >= .9 && g.sun <= 1.2 && /^#[0-9a-f]{6}$/i.test(g.haze) && /^#[0-9a-f]{6}$/i.test(g.rim));
+    seen.add(JSON.stringify(g));
+  }
+  assert.equal(seen.size, 12, 'Each chapter has its own grade');
+  assert.notDeepEqual(getSceneProfile({id: 'ch4-gate', kind: 'battle', units: []}, {chapter: 4, stratagem: 'night'}).grade, sceneGrade(4));
+  assert.deepEqual(getSceneProfile({id: 'ch11-accounts', kind: 'contest', units: []}, {chapter: 11}).grade, sceneGrade(11, {court: true}));
+});
+
+test('v0.29.0: the compositor applies a chapter grade with clamped values and keeps the neutral default', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createSceneCompositor, DEFAULT_GRADE} = await import('../src/showcase/scene-compositor.js');
+  let quad = null;
+  const renderer = {extensions: {has: () => true}, capabilities: {maxTextureSize: 4096}, info: {autoReset: true, reset() {}}, getDrawingBufferSize: v => v.set(640, 360), getRenderTarget: () => null, setRenderTarget() {}, render(object) { if (!object.isScene) quad = object; }};
+  const compositor = createSceneCompositor(renderer, new T.PerspectiveCamera(), {quality: 'balanced'});
+  compositor.render(new T.Scene());
+  const u = quad.material.uniforms;
+  assert.equal(u.gradeSaturation.value, DEFAULT_GRADE.saturation);
+  compositor.setGrade({saturation: 9, contrast: .1, shadow: [0.9, 1, 1.1], highlight: [1.1, 1, 0.9]});
+  assert.equal(u.gradeSaturation.value, 2);
+  assert.equal(u.gradeContrast.value, .5);
+  assert.deepEqual(u.gradeShadow.value.toArray(), [0.9, 1, 1.1]);
+  compositor.setGrade({shadow: [NaN, 1, 1]});
+  assert.deepEqual(u.gradeShadow.value.toArray(), [0.9, 1, 1.1], 'Malformed tints are ignored');
+  compositor.setHaze({near: 30, far: 20, color: '#ffffff'});
+  assert.deepEqual(u.hazeRange.value.toArray(), [30, 31], 'The haze range never inverts');
+  assert.equal(compositor.stats().multisamples, 4, 'Balanced renders into a multisampled target');
+  compositor.dispose();
+});

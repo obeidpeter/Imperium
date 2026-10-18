@@ -13,6 +13,8 @@ export const COMPOSITOR_TIERS=Object.freeze({
 // Default haze begins 14m from the camera. The stage moves it beyond the playable
 // board each frame, so figures and terrain keep their contrast at any zoom.
 export const DEFAULT_HAZE=Object.freeze({near:14,far:88,color:Object.freeze([0.76,0.81,0.88])});
+// The neutral grade reproduces the earlier fixed finish; chapters supply their own.
+export const DEFAULT_GRADE=Object.freeze({saturation:1.055,contrast:1,shadow:Object.freeze([0.9936,1,1.0072]),highlight:Object.freeze([1,1,1])});
 export function multisampleCount(renderer,tier){
   if(!tier?.enabled||!tier.msaa||renderer?.capabilities?.isWebGL2===false)return 0;
   const limit=Number(renderer?.capabilities?.maxSamples);
@@ -59,6 +61,10 @@ uniform float vignetteStrength;
 uniform float edgeBlend;
 uniform vec2 hazeRange;
 uniform vec3 hazeColor;
+uniform float gradeSaturation;
+uniform float gradeContrast;
+uniform vec3 gradeShadow;
+uniform vec3 gradeHighlight;
 varying vec2 vUv;
 float imperiumLuma(vec3 c){return dot(c,vec3(0.2126,0.7152,0.0722));}
 vec3 viewPosition(vec2 uv,float depth){
@@ -143,8 +149,11 @@ void main(){
   vec3 color=base*localOcclusion(p,depth)+specularBloom(base);
   color=aerialGrade(color,p,depth);
   float l=imperiumLuma(color);
-  color=mix(vec3(l),color,1.055);
-  color*=mix(vec3(1.0),vec3(0.96,1.0,1.045),(1.0-smoothstep(0.08,0.8,l))*0.16);
+  color=mix(vec3(l),color,gradeSaturation);
+  // Contrast pivots on linear mid-grey, so overall exposure is kept.
+  color=0.18*pow(max(color,vec3(0.0))/0.18,vec3(gradeContrast));
+  l=imperiumLuma(color);
+  color*=mix(gradeShadow,gradeHighlight,smoothstep(0.04,0.9,l));
   color*=frescoVignette(vUv);
   gl_FragColor=vec4(max(color,vec3(0.0)),1.0);
   #include <tonemapping_fragment>
@@ -157,7 +166,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   const geometry=new T.BufferGeometry();
   geometry.setAttribute('position',new T.Float32BufferAttribute([-1,-1,0,3,-1,0,-1,3,0],3));
   geometry.setAttribute('uv',new T.Float32BufferAttribute([0,0,2,0,0,2],2));
-  const material=new T.ShaderMaterial({name:'Imperium depth and edge finish',defines:{AO_DIRECTIONS:8},uniforms:{sceneColor:{value:null},sceneDepth:{value:null},inverseProjection:{value:inverseProjection},resolution:{value:size},projectionScale:{value:1},worldRadius:{value:1.05},strength:{value:1.55},bloomStrength:{value:0.24},casStrength:{value:0.18},aerialStrength:{value:0.16},vignetteStrength:{value:0.14},edgeBlend:{value:0.32},hazeRange:{value:new T.Vector2(DEFAULT_HAZE.near,DEFAULT_HAZE.far)},hazeColor:{value:new T.Color(...DEFAULT_HAZE.color)}},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:true});
+  const material=new T.ShaderMaterial({name:'Imperium depth and edge finish',defines:{AO_DIRECTIONS:8},uniforms:{sceneColor:{value:null},sceneDepth:{value:null},inverseProjection:{value:inverseProjection},resolution:{value:size},projectionScale:{value:1},worldRadius:{value:1.05},strength:{value:1.55},bloomStrength:{value:0.24},casStrength:{value:0.18},aerialStrength:{value:0.16},vignetteStrength:{value:0.14},edgeBlend:{value:0.32},hazeRange:{value:new T.Vector2(DEFAULT_HAZE.near,DEFAULT_HAZE.far)},hazeColor:{value:new T.Color(...DEFAULT_HAZE.color)},gradeSaturation:{value:DEFAULT_GRADE.saturation},gradeContrast:{value:DEFAULT_GRADE.contrast},gradeShadow:{value:new T.Vector3(...DEFAULT_GRADE.shadow)},gradeHighlight:{value:new T.Vector3(...DEFAULT_GRADE.highlight)}},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:true});
   const quad=new T.Mesh(geometry,material);quad.frustumCulled=false;
   const screenCamera=new T.Camera();let target=null,disposed=false,failure=null,tier=COMPOSITOR_TIERS.balanced;
   // The renderer's target disposal also disposes its allocated depth texture.
@@ -189,6 +198,12 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   setQuality(quality);
   return {
     resize,setQuality,
+    setGrade({saturation=DEFAULT_GRADE.saturation,contrast=DEFAULT_GRADE.contrast,shadow=DEFAULT_GRADE.shadow,highlight=DEFAULT_GRADE.highlight}={}){
+      if(disposed)return;const finite=list=>Array.isArray(list)&&list.length===3&&list.every(Number.isFinite);
+      if(Number.isFinite(saturation))material.uniforms.gradeSaturation.value=Math.max(0,Math.min(2,saturation));
+      if(Number.isFinite(contrast))material.uniforms.gradeContrast.value=Math.max(.5,Math.min(1.6,contrast));
+      if(finite(shadow))material.uniforms.gradeShadow.value.fromArray(shadow);if(finite(highlight))material.uniforms.gradeHighlight.value.fromArray(highlight);
+    },
     setHaze({near=DEFAULT_HAZE.near,far=DEFAULT_HAZE.far,color}={}){
       if(disposed||!Number.isFinite(near)||!Number.isFinite(far))return;
       material.uniforms.hazeRange.value.set(Math.max(0,near),Math.max(near+1,far));
