@@ -548,3 +548,109 @@ test('v0.29.0: move reach and enemy threat are inked on the ground from what the
   stage.inspected = 'hero';stage.updateInk();assert.equal(painted[1].threat, null, 'Friendly figures show no threat');
   assert.equal(JSON.stringify(stage.encounter), before, 'Inking reads the encounter without changing it');
 });
+
+test('v0.29.0: the painted Tabula inks the career route by chapter and keeps the theatre-node contract', async () => {
+  const {careerLegs, legStatus, paintedJourneyMap, THEATRES} = await import('../src/ui/campaign-map.js');
+  const {journeyMap} = await import('../src/ui/art.js');
+  const legs = careerLegs();
+  assert.deepEqual(legs.map(l => l.chapter), [2, 3, 5, 7, 8, 9, 10, 11], 'One leg per change of theatre');
+  assert.ok(legs.every(l => l.from !== l.to));
+  assert.equal(legStatus(legs[3], 7, [1, 2, 3, 4, 5, 6]), 'current');assert.equal(legStatus(legs[0], 7, []), 'done');assert.equal(legStatus(legs[6], 7, []), 'ahead');
+  const svg = paintedJourneyMap(9, [1, 2, 3, 4, 5, 6, 7, 8]);
+  assert.equal(journeyMap(9, [1, 2, 3, 4, 5, 6, 7, 8]), svg, 'journeyMap is the painted Tabula');
+  for (const [slug] of THEATRES) assert.match(svg, new RegExp(`class="tabula-node[^"]*" data-theatre="${slug}"`));
+  assert.equal((svg.match(/career-leg current/g) ?? []).length, 1, 'Only the leg into this chapter draws itself');
+  assert.equal((svg.match(/career-leg done/g) ?? []).length, 5);assert.equal((svg.match(/career-leg ahead/g) ?? []).length, 2);
+  assert.match(svg, /style="--len:\d+px"/);assert.match(svg, /<filter id="tabula-ink"/);
+  const css = await (await import('node:fs/promises')).readFile(new URL('../src/ui/styles.css', import.meta.url), 'utf8');
+  assert.match(css, /\.career-leg\.current \{[^}]*stroke-dashoffset:0;[^}]*animation:tabula-draw/, 'Reduced motion (no animation) leaves the leg fully drawn');
+});
+
+test('v0.29.0: the finale stands before the rising Aurelian Walls with massed legions, all outside the board', async () => {
+  const THREE = await import('../vendor/three/three.module.js');
+  const {readFile} = await import('node:fs/promises');
+  const {createEnvironment} = await import('../src/showcase/environment.js');
+  const {finaleLayout, createMassedSoldierGeometry} = await import('../src/showcase/environment-finale.js');
+  const fixture = JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json', import.meta.url), 'utf8'));
+  const s = fixture.scenes.find(s => s.id === 'ch12-confrontation'), e = s.state.encounter, before = JSON.stringify(s.state);
+  const layout = finaleLayout(e), hx = e.width * 2.5 / 2, hz = e.height * 2.5 / 2;
+  assert.ok(layout.wallX > hx + 6, 'The curtain stands beyond the gate, east of the board');
+  for (const b of layout.blocks) assert.ok(Math.abs(b.x) > hx + 1, `${b.side} legions stand off the board`);
+  assert.deepEqual([...new Set(layout.blocks.map(b => b.side))].sort(), ['claimant', 'commander']);
+  const g = createMassedSoldierGeometry();g.computeBoundingBox();assert.ok(g.boundingBox.max.y > 1.7 && g.boundingBox.max.y < 1.9, 'A man at distance is about 1.8 m');g.dispose();
+  const world = createEnvironment(new THREE.Scene(), e, {chapter: 12, quality: 'balanced', loadTextures: false});
+  assert.ok(world.group.userData.environmentLandmarks.includes('the rising Aurelian Walls'));
+  const figures = world.group.getObjectByName('massed legion figures');assert.ok(figures?.isInstancedMesh && figures.count >= 200);
+  assert.ok(world.stats().meshes < 60, 'The finale stays inside the draw-object budget');
+  const m = new THREE.Matrix4(), p = new THREE.Vector3();
+  for (let i = 0; i < figures.count; i++) {figures.getMatrixAt(i, m);p.setFromMatrixPosition(m);assert.ok(Math.abs(p.x) > hx || Math.abs(p.z) > hz, 'No soldier stands on the legal board');}
+  assert.equal(JSON.stringify(s.state), before);world.dispose();
+  const other = fixture.scenes.find(s => s.id === 'ch7-legion'), plain = createEnvironment(new THREE.Scene(), other.state.encounter, {chapter: 7, quality: 'balanced', loadTextures: false});
+  assert.equal(plain.group.getObjectByName('massed legion figures'), undefined, 'Only the finale is staged this way');plain.dispose();
+});
+
+test('v0.29.0: the action camera frames a committed attack side-on and closer, then gives the view back', async () => {
+  const {sideOnYaw, actionFraming} = await import('../src/showcase/stage.js');
+  const orbit = {yaw: -.55, pitch: .67, distance: 30};
+  assert.deepEqual(actionFraming(orbit, {weight: 0, sideYaw: 1}), {yaw: -.55, pitch: .67, distance: 30}, 'At rest nothing changes');
+  const full = actionFraming(orbit, {weight: 1, sideYaw: .2});
+  assert.ok(full.distance < 18 && full.distance >= 9 && full.pitch < orbit.pitch && full.pitch >= .3);
+  assert.ok(Math.abs(full.yaw - (-.55 + (.2 + .55) * .35)) < 1e-9, 'It turns a third of the way toward side-on');
+  assert.equal(actionFraming(orbit, {weight: 1, sideYaw: .2, painted: true}).yaw, -.55, 'Painted figures keep their diagonal view');
+  assert.equal(actionFraming({yaw: 0, pitch: .4, distance: 12}, {weight: 1}).distance, 9, 'Never closer than nine metres');
+  const side = sideOnYaw({x: 0, z: 0}, {x: 0, z: 5}, 0);assert.ok(Math.abs(Math.abs(side) - Math.PI / 2) < 1e-9, 'Side-on is perpendicular to the attack');
+  assert.ok(Math.abs(sideOnYaw({x: 0, z: 0}, {x: 0, z: 5}, 1.4) - Math.PI / 2) < 1e-9, 'and on the side nearest the current view');
+});
+
+test('v0.29.0: after the rules decide a Senate vote, the division walks each delegate to the side he was counted on', async () => {
+  const {discessioPlan, BattleStage} = await import('../src/showcase/stage.js');
+  const {votes} = await import('../src/core/contest.js');
+  const {readFile} = await import('node:fs/promises');
+  const fixture = JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json', import.meta.url), 'utf8'));
+  const e = structuredClone(fixture.scenes.find(s => s.id === 'ch11-accounts').state.encounter);
+  assert.equal(discessioPlan({...e, status: 'active'}), null, 'Nothing is staged before the vote');
+  assert.equal(discessioPlan({...e, kind: 'battle', status: 'won'}), null);
+  const decided = {...e, status: 'won'}, plan = discessioPlan(decided), frozen = JSON.stringify(decided);
+  const voters = decided.units.filter(u => u.role === 'voter' && !u.hidden);
+  assert.equal(plan.moves.length, voters.length, 'Every delegate divides');
+  assert.equal(plan.moves.filter(m => m.side === 'for').length, voters.filter(u => u.vote === 'for' || u.vote !== 'against' && u.stance >= 1).length);
+  const tally = votes(decided);assert.ok(plan.moves.filter(m => m.side === 'for').length <= tally.for, 'The ayes never exceed the rules’ count');
+  for (const m of plan.moves) assert.ok(m.to.x >= 0 && m.to.y >= 0 && m.to.x <= e.width - 1 && m.to.y <= e.height - 1, 'Everyone stays in the chamber');
+  assert.deepEqual(discessioPlan(decided), plan, 'The division is deterministic');assert.equal(JSON.stringify(decided), frozen);
+  const stage = Object.create(BattleStage.prototype);
+  Object.assign(stage, {reducedMotion: true, discessio: {...plan, start: 0, end: 5000, byUnit: new Map(plan.moves.map(m => [m.unitId, m]))}, encounter: decided, environment: {groundHeight: () => 0}});
+  const move = plan.moves[0], step = stage.divisionStep(voters.find(v => v.id === move.unitId), 10);
+  assert.deepEqual(step.at, move.to, 'Reduced motion places each delegate at once');assert.equal(step.moving, false);
+  stage.reducedMotion = false;const mid = stage.divisionStep(voters.find(v => v.id === move.unitId), 300 + move.order * 220);
+  assert.ok(mid.moving || mid.at.x === move.to.x, 'Otherwise they walk there');
+});
+
+test('v0.29.0: the oath and accession tableaux are presentation-only scenes mounted over their paintings', async () => {
+  const {ceremonyScene, CEREMONY_KINDS} = await import('../src/showcase/ceremony.js');
+  const {terrainAt} = await import('../src/showcase/environment-layout.js');
+  const {createCeremonyController} = await import('../src/ui/ceremony-controller.js');
+  const {readFile} = await import('node:fs/promises');
+  assert.deepEqual([...CEREMONY_KINDS], ['oath', 'accession']);assert.equal(ceremonyScene('coronation'), null);
+  const oath = ceremonyScene('oath', {name: 'Gaius'}), accession = ceremonyScene('accession', {name: 'Gaius'});
+  assert.equal(oath.encounter.units.find(u => u.id === 'hero').name, 'Gaius');assert.equal(oath.chapter, 1);
+  assert.ok(oath.encounter.units.filter(u => oath.poses[u.id] === 'speak').length >= 5, 'The recruits swear together');
+  const emperor = accession.encounter.units.find(u => u.id === 'hero');
+  assert.equal(terrainAt(accession.encounter, emperor.x, emperor.y), 'high', 'Augustus stands on a raised tribunal');
+  assert.ok(accession.palettes.hero.cloth, 'He wears imperial purple');assert.equal(accession.chapter, 12);
+  assert.ok(accession.encounter.units.filter(u => accession.poses[u.id] === 'rally').length >= 5, 'The legions acclaim him');
+  // The controller mounts a stage over the painting and keeps the painting on failure.
+  const calls = [];class FakeStage {constructor(canvas, encounter, options) {calls.push({encounter, options});this.quality = options.quality;} home() {calls.push('home');} setReducedMotion() {} applyQuality() {} dispose() {calls.push('dispose');}}
+  const appended = [];const host = {dataset: {}, append(node) {appended.push(node);node.isConnected = true;node.remove = () => {node.isConnected = false;};}};
+  const previousDocument = globalThis.document;globalThis.document = {createElement: () => ({setAttribute() {}, className: ''})};
+  try {
+    const c = createCeremonyController({load: async () => [{BattleStage: FakeStage}, {ceremonyScene}]});
+    c.mount(host, {kind: 'accession', name: 'Gaius', quality: 'high'});await new Promise(r => setImmediate(r));
+    assert.equal(calls[0].options.ceremony.chapter, 12);assert.equal(calls[0].options.chapter, 12);assert.ok(calls.includes('home'));assert.equal(host.dataset.ceremonyReady, 'true');
+    c.release();assert.ok(calls.includes('dispose'));assert.equal(host.dataset.ceremonyReady, undefined, 'Releasing shows the painting again');
+    const failing = createCeremonyController({load: async () => [{BattleStage: class {constructor() {throw new Error('no WebGL');}}}, {ceremonyScene}]});
+    failing.mount(host, {kind: 'oath', name: 'Gaius'});await new Promise(r => setImmediate(r));
+    assert.equal(host.dataset.ceremonyReady, undefined, 'A failed stage leaves the painting');
+  } finally {globalThis.document = previousDocument;}
+  const views = await readFile(new URL('../src/ui/campaign-views.js', import.meta.url), 'utf8');
+  assert.match(views, /data-ceremony="accession"/);assert.match(views, /line\.text===OATH\?'<figure class="ceremony-scene oath-scene" data-ceremony="oath"/, 'The oath scene keys on the one shared OATH entry');
+});
