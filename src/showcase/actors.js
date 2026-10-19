@@ -20,6 +20,7 @@ import {warmActorHair} from './actor-hair-asset.js';
 import {actorEye,actorBrow,actorExpression} from './actor-face.js';
 import {BLOC_STYLE,trimBands} from '../ui/bloc-style.js';
 import {FALLEN_POSE,MOUNTED_FALLEN_POSE,bakeFallenGeometry} from './battle-remains.js';
+import {installCloudShadows} from './atmosphere.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -307,7 +308,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   // Build overview geometry once, before near-detail batching. One colored
   // draw per rigid joint keeps the real role silhouette while dropping tiny
   // rivets, fingers and surface sampling that cannot be read at this distance.
-  let farMeshes=[],nearMeshes=[];const overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});
+  let farMeshes=[],nearMeshes=[];const overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});installCloudShadows(overviewMaterial);
   overviewMaterial.name='overview role colors';
   function overview(parent){
     for(const child of [...parent.children])if(child.isGroup||child.isBone)overview(child);

@@ -81,6 +81,9 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   };
   m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
   const waterTime={value:0};
+  // Board water (marsh flood, river channel) can mirror the scene on High.
+  const reflectionFallback=new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1);reflectionFallback.needsUpdate=true;textures.add(reflectionFallback);
+  const waterReflection={waterReflectionMap:{value:reflectionFallback},waterReflectionMatrix:{value:new THREE.Matrix4()},waterReflectionStrength:{value:0}};
   const finish={wet:profile?.setting==='wetland'||profile?.weather==='rain',arid:profile?.vegetation==='arid',rain:profile?.weather==='rain',waterTime};
   finishEnvironmentMaterial(m.ground,'ground',finish);
   for(const key of ['stone','marble','brick','darkStone','plaster','redMarble'])finishEnvironmentMaterial(m[key],'stone',finish);
@@ -88,8 +91,8 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);
   finishEnvironmentMaterial(m.floor,'floor',finish);
   finishEnvironmentMaterial(m.water,'water',finish);
-  finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true});
-  finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true});
+  finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true,reflection:waterReflection});
+  finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.gravel,'stone',finish);
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href,t=>{
@@ -101,5 +104,5 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
   },undefined,()=>{});
-  return {materials:m,textures,waterTime,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
+  return {materials:m,textures,waterTime,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
 }

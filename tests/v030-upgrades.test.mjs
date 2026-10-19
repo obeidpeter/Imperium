@@ -368,3 +368,79 @@ test('v0.30.0: blows carry weight: blade trails, whole-rank volleys, thrown dust
   stage.actionCamera = false;stage.cameraKick = 0;stage.animation = {start: 0, marks: [blow(10)]};stage.markGround(20);assert.equal(stage.cameraKick, 0, 'No jolt without the action camera');
   stage.reducedMotion = true;stage.animation = {start: 0, marks: [blow(10)]};stage.markGround(20);assert.equal(stage.animation.start, 0, 'Reduced motion never holds or jolts');
 });
+
+test('v0.30.0: faint cloud shadows drift over ground, scenery and figures alike', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {CLOUD_UNIFORMS, cloudStrength, cloudWind, installCloudShadows, sampleCloudShade} = await import('../src/showcase/atmosphere.js');
+  assert.ok(cloudStrength({weather: 'clear', timeOfDay: 'day'}) > .15 && cloudStrength({weather: 'clear', timeOfDay: 'day'}) <= .25, 'Faint on a clear day');
+  for (const profile of [{weather: 'rain'}, {timeOfDay: 'night'}, {timeOfDay: 'interior'}, {civic: true}, {weather: 'embers'}]) assert.equal(cloudStrength(profile), 0, `No cloud shadows for ${JSON.stringify(profile)}`);
+  assert.deepEqual(cloudWind(7), cloudWind(7));
+  const shades = [];for (let x = -40; x <= 40; x += 4) for (let z = -40; z <= 40; z += 4) shades.push(sampleCloudShade(x, z, 0));
+  assert.ok(Math.min(...shades) < .9 && Math.max(...shades) === 1 && shades.every(v => v >= 1 - .22 - 1e-9), 'Patches of shade, never deeper than the strength');
+  const later = [];for (let x = -40; x <= 40; x += 4) for (let z = -40; z <= 40; z += 4) later.push(sampleCloudShade(x, z, 400));
+  assert.notDeepEqual(later, shades, 'The field drifts with time');
+  const material = new T.MeshStandardMaterial();assert.ok(installCloudShadows(material));assert.equal(installCloudShadows(material), false, 'Installed once');
+  const shader = {uniforms: {}, vertexShader: T.ShaderLib.physical.vertexShader, fragmentShader: T.ShaderLib.physical.fragmentShader};material.onBeforeCompile(shader, null);
+  assert.equal(shader.uniforms.cloudTime, CLOUD_UNIFORMS.cloudTime, 'One clock for every lit surface');
+  assert.match(shader.fragmentShader, /#include <lights_fragment_end>\s*if\(cloudStrength>0\.0\)/);
+  assert.match(shader.fragmentShader, /reflectedLight\.directDiffuse\*=cloudShade;/, 'Only direct light is dimmed');
+  // Ground, scenery, sculpted and painted figures all take the same shadows.
+  const {createEnvironment} = await import('../src/showcase/environment.js');
+  const {createActor} = await import('../src/showcase/actors.js');
+  const scene = fixtureScene('ch9-city'), env = createEnvironment(new T.Scene(), scene.state.encounter, {tileSize: 2.5, quality: 'balanced', loadTextures: false, chapter: scene.chapter});
+  assert.equal(env.ground.material.userData.cloudShadows, true);
+  const actor = createActor({id: 'ally1', role: 'infantry', side: 'ally', hp: 10, maxHp: 10}, {chapter: 9});
+  let lit = 0, clouded = 0;actor.group.traverse(o => {if (o.isMesh && o.material?.isMeshStandardMaterial) {lit++;if (o.material.userData.cloudShadows) clouded++;}});
+  assert.ok(clouded >= lit * .9, `${clouded} of ${lit} figure surfaces take cloud shade`);
+  actor.dispose();env.dispose();
+});
+
+test('v0.30.0: sun shafts slant through dawn, mist and halls; board water mirrors the scene on High', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {createLightShafts, shaftsWanted, SHAFT_COUNT} = await import('../src/showcase/atmosphere.js');
+  assert.equal(shaftsWanted({timeOfDay: 'day', weather: 'clear'}), false);
+  assert.ok(shaftsWanted({timeOfDay: 'dawn'}) && shaftsWanted({weather: 'mist'}) && shaftsWanted({timeOfDay: 'interior'}));
+  assert.equal(createLightShafts(new T.Scene(), {timeOfDay: 'day', weather: 'clear'}), null);
+  const scene = new T.Scene(), bounds = {minX: -10, maxX: 10, minZ: -10, maxZ: 10};
+  for (const quality of ['performance', 'balanced', 'high']) {
+    const shafts = createLightShafts(scene, {timeOfDay: 'dawn', weather: 'mist'}, {quality, bounds, sunDirection: new T.Vector3(-.4, .8, -.3), seed: 8});
+    assert.equal(shafts.count, SHAFT_COUNT[quality]);
+    for (const mesh of shafts.group.children.filter(c => c.name === 'sun shaft')) assert.ok(Math.hypot(mesh.position.x, mesh.position.z) >= 10 * .85 - 1e-9, 'Outdoors, shafts fall on the margins, not on the board’s centre');
+    if (shafts.motes) {const motes = shafts.group.children.find(c => c.name === 'shaft motes'), before = [...motes.geometry.attributes.position.array];shafts.update(5, {reducedMotion: true});assert.deepEqual([...motes.geometry.attributes.position.array], before, 'Reduced motion holds the motes still');shafts.update(5);assert.notDeepEqual([...motes.geometry.attributes.position.array], before);}
+    assert.ok(shafts.group.children.every(c => c.raycast() === undefined));
+    shafts.dispose();
+  }
+  assert.equal(scene.children.length, 0);
+  // The mirror: a camera reflected in the water's plane with an oblique near plane.
+  const {mirrorCamera, createWaterReflection, reflectionAvailable, REFLECTION_SCALE} = await import('../src/showcase/water-reflection.js');
+  const camera = new T.PerspectiveCamera(40, 1.5, .1, 800);camera.position.set(6, 14, 12);camera.lookAt(0, 0, 0);camera.updateMatrixWorld();
+  const level = -.42, mirror = mirrorCamera(camera, level);
+  assert.ok(Math.abs(mirror.position.y - (2 * level - 14)) < 1e-6 && Math.abs(mirror.position.x - 6) < 1e-6, 'The eye is reflected in the water plane');
+  assert.notEqual(mirror.projectionMatrix.elements[10], camera.projectionMatrix.elements[10], 'Nothing below the surface leaks in');
+  const below = new T.PerspectiveCamera();below.position.set(0, -2, 0);below.updateMatrixWorld();assert.equal(mirrorCamera(below, level), null);
+  assert.equal(reflectionAvailable({extensions: {has: () => true}}, 'balanced'), false, 'High quality only');
+  const uniforms = {waterReflectionMap: {value: null}, waterReflectionMatrix: {value: new T.Matrix4()}, waterReflectionStrength: {value: 0}};
+  const hiddenDuring = [], water = new T.Mesh(), overlay = new T.Group();
+  const clears = [], scene3 = new T.Scene();scene3.background = new T.Color('#88aacc');
+  const renderer = {info: {autoReset: true}, getDrawingBufferSize: v => v.set(1200, 800), getRenderTarget: () => null, setRenderTarget() {}, clear() {}, getClearAlpha: () => 1, getClearColor: c => c.set('#123456'), setClearColor: (c, a) => clears.push(a), render(scene) {hiddenDuring.push(water.visible, overlay.visible, scene.background);}};
+  const reflection = createWaterReflection(renderer, uniforms, {level, hide: () => [water, overlay]});
+  assert.ok(reflection.render(scene3, camera));
+  assert.deepEqual(hiddenDuring, [false, false, null], 'Water, overlays and the sky are left out of the mirror');
+  assert.deepEqual(clears, [0, 1], 'The mirror clears transparent, then the renderer’s clear is restored');assert.equal(scene3.background.getHexString(), '88aacc');
+  assert.ok(water.visible && overlay.visible, '...and restored');
+  assert.equal(reflection.target.width, 1200 * REFLECTION_SCALE);assert.equal(uniforms.waterReflectionStrength.value, 1);
+  reflection.dispose();assert.equal(uniforms.waterReflectionStrength.value, 0);
+  // Board water reads the mirror, capped like the sky reflection it replaces.
+  const {finishEnvironmentMaterial} = await import('../src/showcase/environment-surface-shaders.js');
+  const river = new T.MeshStandardMaterial({vertexColors: true, transparent: true});finishEnvironmentMaterial(river, 'water', {shore: true, reflection: uniforms});
+  const shader = {uniforms: {}, vertexShader: T.ShaderLib.physical.vertexShader, fragmentShader: T.ShaderLib.physical.fragmentShader};river.onBeforeCompile(shader, null);
+  assert.match(shader.fragmentShader, /vec4 mirrored=texture2D\(waterReflectionMap,/);
+  assert.match(shader.fragmentShader, /waterReflectionStrength\*mirrorFresnel\*clamp\(mirrored\.a,0\.0,1\.0\)/, 'Only covered texels are mirrored; open water keeps the sky');
+  assert.ok(shader.uniforms.waterReflectionMatrix === uniforms.waterReflectionMatrix);
+  const danube = new T.MeshStandardMaterial({transparent: true});finishEnvironmentMaterial(danube, 'water', {});
+  const plain = {uniforms: {}, vertexShader: T.ShaderLib.physical.vertexShader, fragmentShader: T.ShaderLib.physical.fragmentShader};danube.onBeforeCompile(plain, null);
+  assert.doesNotMatch(plain.fragmentShader, /waterReflectionMap/, 'Distant water keeps the sky alone');
+  const {createEnvironment} = await import('../src/showcase/environment.js');
+  const env = createEnvironment(new T.Scene(), fixtureScene('ch8-crossing').state.encounter, {tileSize: 2.5, quality: 'high', loadTextures: false, chapter: 8});
+  assert.equal(env.reflectionLevel, -.42);assert.equal(env.waterMeshes.length, 1);env.dispose();
+});

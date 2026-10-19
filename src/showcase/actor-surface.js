@@ -1,3 +1,4 @@
+import {installCloudShadows} from './atmosphere.js';
 // Original, periodic material fields. No browser state, image decoder, clock or
 // gameplay randomness: identical inputs produce identical bounded texels.
 const TAU=Math.PI*2,clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),fract=v=>v-Math.floor(v);
@@ -150,5 +151,7 @@ export function finishActorMaterial(material,kind){
   };
   material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v1:${resolved}`;
   material.userData.actorFinish=resolved;
+  // Figures dim under passing cloud like the ground they stand on.
+  installCloudShadows(material);
   return material;
 }

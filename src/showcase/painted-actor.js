@@ -1,6 +1,7 @@
 import * as T from '../../vendor/three/three.module.js';
 import {drawUnitSprite,spriteSpec} from '../ui/unit-sprites.js';
 import {placeFollowers} from './formation.js';
+import {installCloudShadows} from './atmosphere.js';
 
 // Painted figures (HD-2D): the 2D campaign's own authored unit paintings stand
 // in the 3D diorama as camera-facing cards. A second, sun-facing card casts the
@@ -111,7 +112,7 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
   const geometry=new T.PlaneGeometry(width/PER_METRE,height/PER_METRE,4,8);geometry.translate(0,(feet-height/2)/PER_METRE,0);
   const puppet={puppetTime:{value:0},puppetSeed:{value:paintedSeed(unit.id)},puppetLean:{value:0},puppetHit:{value:0},puppetFacing:{value:1}};
   const material=new T.MeshLambertMaterial({name:'Painted figure',map:texture,emissiveMap:texture,color:new T.Color(PAINTED_SHADING.lit,PAINTED_SHADING.lit,PAINTED_SHADING.lit),emissive:new T.Color().fromArray(light).multiplyScalar(PAINTED_SHADING.self),alphaTest:.5,alphaToCoverage:true,side:T.DoubleSide});
-  paintedShader(material,{...lighting,...puppet});
+  paintedShader(material,{...lighting,...puppet});installCloudShadows(material);
   const card=new T.Mesh(geometry,material);card.name='painted figure card';card.castShadow=false;card.receiveShadow=true;card.renderOrder=1;
   // The shadow card never shows in the colour pass: it writes neither colour
   // nor depth there. Three builds the shadow pass's depth material from this
