@@ -445,6 +445,18 @@ test('v0.30.0: sun shafts slant through dawn, mist and halls; board water mirror
   assert.equal(env.reflectionLevel, -.42);assert.equal(env.waterMeshes.length, 1);env.dispose();
 });
 
+test('v0.30.0: rain puddles keep a dull wet sheen instead of white discs', async () => {
+  const T = await import('../vendor/three/three.module.js');
+  const {finishEnvironmentMaterial} = await import('../src/showcase/environment-surface-shaders.js');
+  const compile = options => {const material = new T.MeshStandardMaterial();finishEnvironmentMaterial(material, 'ground', options);const shader = {uniforms: {}, vertexShader: T.ShaderLib.physical.vertexShader, fragmentShader: T.ShaderLib.physical.fragmentShader};material.onBeforeCompile(shader, null);return shader.fragmentShader;};
+  const wet = compile({wet: true, rain: true}), dry = compile({});
+  // On Chapter II at High the earlier caps (0.12 + 0.3) still left the low-roughness puddles
+  // four to five times brighter on screen than the marsh ground around them.
+  assert.match(wet, /#include <lights_fragment_end>\s*reflectedLight\.indirectSpecular=min\(reflectedLight\.indirectSpecular,vec3\(\.05\)\);\s*reflectedLight\.directSpecular=min\(reflectedLight\.directSpecular,vec3\(\.07\)\);/);
+  assert.match(wet, /envPuddle/, 'Puddles remain, as a sheen');
+  assert.doesNotMatch(dry, /min\(reflectedLight\.directSpecular/, 'Dry ground keeps its own highlights');
+});
+
 test('v0.30.0: this edition is 0.30.0', async () => {
   const {CONFIG} = await import('../src/config.js');
   assert.equal(CONFIG.version, '0.30.0');

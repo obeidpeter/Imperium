@@ -4,8 +4,8 @@ This records what was checked for the 0.30 graphics refinement and how. It does 
 
 ## Automated checks
 
-- `npm run verify` passed: 656 Node tests, the legal-command campaign autoplay (New Game to Augustus), the production build and the asset/offline checks.
-- Chapter I is 7,278,693 bytes compressed of its 8,000,000-byte budget (0.29: 7,237,302); the first-load (443,161 of 2,000,000) and complete-campaign (10,756,746 of 24,000,000) budgets also pass.
+- `npm run verify` passed: 657 Node tests, the legal-command campaign autoplay (New Game to Augustus), the production build and the asset/offline checks.
+- Chapter I is 7,278,795 bytes compressed of its 8,000,000-byte budget (0.29: 7,237,302); the first-load (443,165 of 2,000,000) and complete-campaign (10,756,848 of 24,000,000) budgets also pass.
 - `tests/v030-upgrades.test.mjs` covers each new system. Among other things it checks:
   - every pair of delegate blocs stays apart under simulated protanopia, deuteranopia and tritanopia (Machado, Oliveira and Fernandes 2009), the 2D board and the 3D trims draw the same colours and letters, and trims differ in shape;
   - the grade written into tone mapping uses the finishing pass's terms and clamps and costs one direct render with no extra pass, and a partial grade update keeps the fields it does not name;
@@ -15,15 +15,20 @@ This records what was checked for the 0.30 graphics refinement and how. It does 
   - painted cards are lit and puppeted, and reduced motion holds the idle terms;
   - trails, volleys, dust, the held beat (bounded per motion) and the camera jolt (only with the action camera, never with reduced motion);
   - cloud strength by weather and setting, a deterministic field that drifts, and cloud shade on ground, scenery and figure surfaces;
-  - sun-shaft counts by tier and placement, motes held under reduced motion, the mirror camera's reflected eye and oblique plane, what the mirror hides and restores, and the water shader reading the mirror by alpha;
+  - sun-shaft counts by tier and placement, motes held under reduced motion, the mirror camera's reflected eye and oblique plane, what the mirror hides and restores, the water shader reading the mirror by alpha, and the wet-ground highlight caps;
   - story paintings: a depth map for each of the eight paintings with the painting's own shape, the chapter groups that carry them (Chapter IX's promotion painting included), weather by place and chapter, the `object-fit: cover` window, the CSS arrival curve, motion with no jump over two minutes sampled at 30 fps and within small bounds, and the controller: no canvas on Performance or with reduced motion, about 30 or 60 draws a second, the same canvas and clock across re-renders, pausing when hidden or scrolled away, and the still painting after a failed load, shader, lost context or missing WebGL, without touching `Math.random`.
 - The eight depth maps regenerate byte for byte from `scripts/scene-depth.py` with the recorded model and tool versions. `scripts/verify-assets.mjs` checks their manifest sizes and hashes like every other asset.
 - The atmosphere and story-painting commits were each also tested on their own tree (the v0.30 tests plus the related environment, asset and actor suites).
-- Correction: the message of the commit that moved the grade into tone mapping says AgX and Neutral were compared with ACES. Only AgX had been compared (ACES and AgX at High in Chapters II, V, IX and XII); the chapter grades read flatter under AgX, so ACES stays.
+- Correction: the message of the commit that moved the grade into tone mapping says AgX and Neutral were compared with ACES. At that point only AgX had been. Neutral was compared afterwards for this record, with that commit's code and the same four High views (Chapters II, V, IX and XII; figure below). Under AgX the chapter grades read flatter; under Neutral they read darker in the mid-tones and over-saturated in the warm scenes. ACES stays.
 
 ## Real interface (scripted browser, software GPU)
 
-A scripted headless Chromium session (SwiftShader) ran the actual app from the development server: New Game, then the Chapter I camp. The camp mural's canvas appeared (decorative, `aria-hidden`, no pointer events; the `<img>` with its text alternative stayed in place) and remained the same element across three story re-renders. Choosing Performance removed it and High restored it; turning on Reduced motion removed it and turning it off restored it. The first run of this check found that the Reduced motion switch left the canvas running; that was fixed before release (`mountPainting()` now runs on that switch and on quality changes). The only console error was the development server's missing `sw.js`, which exists only in the build. This was a scripted check, not a human playthrough, and software rendering says nothing about smoothness.
+A scripted headless Chromium session (SwiftShader) ran the actual app from the development server: New Game, then the Chapter I camp. The camp mural's canvas appeared (decorative, `aria-hidden`, no pointer events; the `<img>` with its text alternative stayed in place) and remained the same element across three story re-renders. Choosing Performance removed it and High restored it; turning on Reduced motion removed it and turning it off restored it. The first run of this check found that the Reduced motion switch left the canvas running; that was fixed before release (`mountPainting()` now runs on that switch and on quality changes). The only console error was the development server's missing `sw.js`, which exists only in the build. Two further browser checks used the 3D harness: the stage reported the water mirror active on High at the Chapter VIII crossing (17 mirror renders into a 534 × 227 target, float colour targets available), and reading that target back found mirrored scenery in 35% of its texels with the open sky left transparent. This was a scripted check, not a human playthrough, and software rendering says nothing about smoothness.
+
+## Found and fixed during verification
+
+- **Rain puddles.** The first 0.30 commits capped wet-ground highlights and the release notes said white discs were gone, but a High-quality capture of Chapter II still showed them. Isolating the shading terms in the browser (turning the sun, rain particles, sky reflection and finishing pass on and off, then rendering each lighting term alone) showed the discs were puddle highlights that stayed within the cap, but the cap (0.12 + 0.3 in linear light) still left them four to five times brighter on screen than the dark marsh ground. The caps are now 0.05 and 0.07, and the same view shows a dull wet sheen (above). Only Chapter II has wet ground.
+- **Reduced motion and the story paintings.** Described above under the real-interface check.
 
 ## Injected and synthetic scenarios
 
@@ -45,6 +50,10 @@ Captured with headless Chromium using SwiftShader (software WebGL) from the deve
 
 *Chapter XI chamber at High: each stance marker leads with its bloc's letter (V, L, C) before the stance.*
 
+![Chapter I road at Performance quality in 0.29 and 0.30](images/v030-performance.jpg)
+
+*Performance quality, the same Chapter I view in 0.29 and 0.30: the chapter grade now applies without the finishing pass, and the ground darkens beside the palisade, tents and rocks.*
+
 ![Painted figures in 0.29 and 0.30](images/v030-painted-figures.jpg)
 
 *Painted (HD-2D) figures, the same Chapter VIII view in 0.29 (the image from that release's record) and 0.30, now lit by the scene.*
@@ -53,11 +62,23 @@ Captured with headless Chromium using SwiftShader (software WebGL) from the deve
 
 *Injected, presentation-only replays: a blade trail at the blow, and an archer rank loosing with its leader.*
 
+![Sun shafts at dawn in Chapter VIII; Chapter II rain with dull puddles](images/v030-atmosphere.jpg)
+
+*Weather on the light at High: sun shafts slanting across the Chapter VIII crossing at dawn, and Chapter II's rain-soaked ground, whose puddles now hold a dull sheen.*
+
+![The reflected scene held by the water mirror's render target](images/v030-mirror-target.jpg)
+
+*What the water mirror holds, read back from its half-resolution target in the software-rendered browser at the Chapter VIII horizon view: the formations, banks, buildings and far panorama, mirrored. Open sky is left transparent (purple here) so the water keeps its own sky reflection. On screen the mirror is subtle by design (a Fresnel-weighted, capped share of the water's highlight), which is why the read-back, not a screenshot, is the evidence that it renders.*
+
+![ACES, AgX and Neutral tone mapping in four chapters](images/v030-tone-mapping.jpg)
+
+*Tone mapping at High in Chapters II, V, IX and XII: ACES (kept), AgX and Neutral, each with the chapter grades tuned for ACES. Rendered from the commit that moved the grade into tone mapping, so the Chapter II puddles predate their fix.*
+
 ![A story painting with its rain layer and depth map, and crops of rain, embers, dust and motes](images/v030-story-paintings.jpg)
 
 *Story paintings, frames from the development harness on its manual clock: the Chapter II camp painting with its rain layer and depth map (inset), then rain behind the near reeds, embers over the burning fort, dust, and motes in the Curia's light.*
 
-Other views were also inspected this way during development: tone mapping under ACES and AgX in Chapters II, V, IX and XII; baked occlusion in Chapters I, IV, IX and XI; formation and fallen layouts in Chapter VII; the Chapter VIII crossing and ferry; and all eight story paintings, each with the weather of a chapter that shows it.
+Other views were also inspected this way during development: baked occlusion in Chapters I, IV, IX and XI; formation and fallen layouts in Chapter VII; the Chapter VIII crossing and ferry; and all eight story paintings, each with the weather of a chapter that shows it.
 
 ## Not checked
 

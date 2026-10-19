@@ -122,10 +122,11 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
     // A smooth water plane turns the sun into one saturated sheet, and its
     // reflected sky highlight into white blotches. Keep a dim sheen, cap the
     // reflected highlight, and let the sun show as fine moving glitter.
-    // Rain puddles keep a wet sheen, not white discs of reflected sky and sun.
+    // Rain puddles keep a wet sheen, not white discs of reflected sky and sun:
+    // their highlight stays within about twice the dark wet ground around them.
     if(kind==='ground'&&(wet||rain))shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
-      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(.12));
-      reflectedLight.directSpecular=min(reflectedLight.directSpecular,vec3(.3));`);
+      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(.05));
+      reflectedLight.directSpecular=min(reflectedLight.directSpecular,vec3(.07));`);
     if(kind==='water')shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
       float envGlitter=pow(envNoise(vEnvironmentSurface.xz*7.3+vec2(envTime*.9,-envTime*.6)),6.0);
       reflectedLight.directSpecular*=${shore?'.2':'.28'}+envGlitter*1.8;
