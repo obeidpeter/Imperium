@@ -1,5 +1,5 @@
 import * as THREE from '../../vendor/three/three.module.js';
-import {gridToWorld,terrainAt,hash,noise,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL} from './environment-layout.js';
+import {gridToWorld,terrainAt,hash,noise,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 
 // Authored terrain reads as landform, not as tile squares. Plateaus carry rock
@@ -40,7 +40,7 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
     const w=e.width*tileSize+12,d=e.height*tileSize+12,rows=96,g=p.geo(new THREE.PlaneGeometry(w,d,rows,rows));g.rotateX(-Math.PI/2);const pos=g.attributes.position,colors=[];
     const wet=(x,y)=>terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)))==='marsh'?1:0;
     for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),gx=x/tileSize+(e.width-1)/2,gy=z/tileSize+(e.height-1)/2,ix=Math.floor(gx),iy=Math.floor(gy),u=smooth(gx-ix),v=smooth(gy-iy),weight=(wet(ix,iy)*(1-u)+wet(ix+1,iy)*u)*(1-v)+(wet(ix,iy+1)*(1-u)+wet(ix+1,iy+1)*u)*v;
-      const contour=noise(x*.31,z*.31,37)*.48+noise(x*.94,z*.94,43)*.12,alpha=smooth((weight-.30-contour)*3.4);pos.setY(i,-.027);colors.push(.91,.95,.88,alpha);
+      const contour=noise(x*.31,z*.31,37)*.48+noise(x*.94,z*.94,43)*.12,alpha=smooth((weight-.30-contour)*3.4);pos.setY(i,MARSH_WATER_LEVEL);colors.push(.91,.95,.88,alpha);
     }g.setAttribute('color',new THREE.Float32BufferAttribute(colors,4));const flood=p.mesh(root,g,m.marshWater);flood.name='continuous irregular marsh water';flood.castShadow=false;
   }
 

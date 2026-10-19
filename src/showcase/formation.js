@@ -48,28 +48,66 @@ export function placeFollowers(group,{slots=[],visible=0,heightAt=null,max=8}={}
 // Crowd rendering for sculpted figures: each follower is an instance of the
 // leader's own overview surfaces, skinned by the leader's skeleton and then
 // turned and offset per instance, so a whole formation costs one draw per
-// surface and moves with the leader's pose.
-const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
+// surface and moves with the leader's pose. Followers do not move in unison:
+// each plays one of a few banks of the leader's recent pose, the same motion a
+// fixed fraction of a second later, so a swing or a step ripples through the
+// rank. Banks are chosen per man from his unit and slot, never at random.
+export const POSE_BANK_DELAYS=Object.freeze([0,.11,.23,.36]);
+export function poseBank(id,index){let h=2166136261;for(const c of `${id}:bank:${index}`)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)%POSE_BANK_DELAYS.length;}
+const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
+const CROWD_SKIN_BASE=`#ifdef USE_SKINNING
+  float crowdBoneBase=crowdBank*float(CROWD_BONES);
+  mat4 boneMatX=getBoneMatrix(skinIndex.x+crowdBoneBase);
+  mat4 boneMatY=getBoneMatrix(skinIndex.y+crowdBoneBase);
+  mat4 boneMatZ=getBoneMatrix(skinIndex.z+crowdBoneBase);
+  mat4 boneMatW=getBoneMatrix(skinIndex.w+crowdBoneBase);
+#endif`;
 function crowdShader(shader){
   shader.vertexShader=CROWD_VERTEX_HEAD+shader.vertexShader
+    .replace('#include <skinbase_vertex>',CROWD_SKIN_BASE)
     .replace('#include <skinnormal_vertex>','#include <skinnormal_vertex>\n  objectNormal=crowdTurn(objectNormal);')
     .replace('#include <skinning_vertex>','#include <skinning_vertex>\n  transformed=crowdTurn(transformed)+crowdOffset.xyz;');
 }
-function crowdMaterial(source){
+function crowdMaterial(source,bones){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
+  material.defines={...material.defines,CROWD_BONES:bones};
   material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader);};
-  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v1`;
+  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v2`;
   return material;
 }
-function crowdDepthMaterial(){
-  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});
-  material.onBeforeCompile=crowdShader;material.customProgramCacheKey=()=>'formation-crowd-depth-v1';return material;
+function crowdDepthMaterial(bones){
+  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.defines={CROWD_BONES:bones};
+  material.onBeforeCompile=crowdShader;material.customProgramCacheKey=()=>'formation-crowd-depth-v2';return material;
 }
-function instanced(source,max,offsets){
+function instanced(source,max,offsets,banks){
   const geometry=new T.InstancedBufferGeometry();
   for(const [name,attribute]of Object.entries(source.attributes))geometry.setAttribute(name,attribute);
   if(source.index)geometry.setIndex(source.index);
-  geometry.setAttribute('crowdOffset',offsets);geometry.instanceCount=0;geometry.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);return geometry;
+  geometry.setAttribute('crowdOffset',offsets);geometry.setAttribute('crowdBank',banks);geometry.instanceCount=0;geometry.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);return geometry;
+}
+// A skeleton whose bone texture holds the leader's pose now and as it was a
+// moment ago, one block of bones per bank. Three updates it once per frame.
+const HISTORY_FRAMES=48;
+export function createPoseHistory(source,delays=POSE_BANK_DELAYS){
+  const bones=source.bones.length,floats=bones*16,frames=[],skeleton=new T.Skeleton([],[]);
+  const size=Math.max(4,Math.ceil(Math.sqrt(bones*4*delays.length)/4)*4);
+  skeleton.boneMatrices=new Float32Array(size*size*4);
+  skeleton.boneTexture=new T.DataTexture(skeleton.boneMatrices,size,size,T.RGBAFormat,T.FloatType);skeleton.boneTexture.needsUpdate=true;
+  skeleton.computeBoneTexture=function(){return this;};
+  let now=0,last=-Infinity,flush=true;
+  skeleton.update=function(){
+    const current=source.boneMatrices;if(!current||current.length<floats)return;
+    if(flush||now<last){frames.length=0;flush=false;last=-Infinity;}
+    if(now>last){const entry=frames.length>=HISTORY_FRAMES?frames.shift():{time:0,data:new Float32Array(floats)};entry.time=now;entry.data.set(current.subarray(0,floats));frames.push(entry);last=now;}
+    for(let b=0;b<delays.length;b++){
+      const wanted=now-delays[b];let pick=frames[0];
+      for(const frame of frames){if(frame.time<=wanted+1e-6)pick=frame;else break;}
+      this.boneMatrices.set(pick.data,b*floats);
+    }
+    this.boneTexture.needsUpdate=true;
+  };
+  const dispose=skeleton.dispose.bind(skeleton);skeleton.dispose=()=>{frames.length=0;dispose();};
+  return {skeleton,bones,banks:delays.length,setTime(t){if(Number.isFinite(t))now=t;},reset(){flush=true;},get frames(){return frames.length;}};
 }
 // Rigid overview parts (boots, hooves, weapons) ride their nearest bone as
 // weight-one skinned vertices so followers keep their feet and arms.
@@ -98,25 +136,38 @@ export function createSkinnedCrowd(group,{max=8}={}){
   const sources=[];group.updateMatrixWorld(true);group.traverse(o=>{if(o.isMesh&&o.userData.overview&&!o.userData.formationCrowd)sources.push(o);});
   const skinned=sources.filter(o=>o.isSkinnedMesh),rigid=sources.filter(o=>!o.isSkinnedMesh);
   if(!skinned.length||max<1)return null;
-  const offsets=new T.InstancedBufferAttribute(new Float32Array(max*4),4).setUsage(T.DynamicDrawUsage),meshes=[],owned=[],materials=[],depth=crowdDepthMaterial();materials.push(depth);
+  const offsets=new T.InstancedBufferAttribute(new Float32Array(max*4),4).setUsage(T.DynamicDrawUsage),banks=new T.InstancedBufferAttribute(new Float32Array(max),1).setUsage(T.DynamicDrawUsage),meshes=[],owned=[],materials=[],histories=new Map();
+  const historyFor=skeleton=>{if(!histories.has(skeleton))histories.set(skeleton,createPoseHistory(skeleton));return histories.get(skeleton);};
   const add=(geometry,source,skeleton,bindMatrix)=>{
-    const material=crowdMaterial(source.material);materials.push(material);
-    const mesh=new T.SkinnedMesh(instanced(geometry,max,offsets),material);mesh.name='formation followers';mesh.userData.formationCrowd=true;mesh.userData.overview=false;
-    mesh.bind(skeleton,bindMatrix);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.customDepthMaterial=depth;mesh.raycast=()=>{};
+    const history=historyFor(skeleton),material=crowdMaterial(source.material,history.bones),depth=crowdDepthMaterial(history.bones);materials.push(material,depth);
+    const mesh=new T.SkinnedMesh(instanced(geometry,max,offsets,banks),material);mesh.name='formation followers';mesh.userData.formationCrowd=true;mesh.userData.overview=false;
+    mesh.bind(history.skeleton,bindMatrix);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.customDepthMaterial=depth;mesh.raycast=()=>{};
     owned.push(mesh.geometry);group.add(mesh);meshes.push(mesh);
   };
   for(const source of skinned)add(source.geometry,source,source.skeleton,source.bindMatrix);
   const rigidGeometry=rigidAsSkinned(group,rigid,skinned[0].skeleton,skinned[0].bindMatrix);
   if(rigidGeometry){owned.push(rigidGeometry);add(rigidGeometry,rigid[0],skinned[0].skeleton,skinned[0].bindMatrix);}
-  const footprints=[];let count=0,disposed=false;
+  const footprints=[],lastAt=new T.Vector3();let count=0,disposed=false,placedBefore=[],anchored=false;
   return {meshes,max,footprints,
     get count(){return count;},
+    get histories(){return [...histories.values()];},
+    // A crowd rebuilt mid-battle (imported anatomy arriving late) keeps the
+    // ranks it replaces, so men lost since still fall where they stood.
+    get ranks(){return placedBefore;},
+    inherit(ranks=[]){if(!count&&!placedBefore.length)placedBefore=ranks.map(p=>({...p,world:p.world.clone()}));},
     // slots: formationSlots(unit); visible: followerCount(); heightAt(x,z) keeps every man's feet on the ground.
-    update({slots=[],visible=0,heightAt=null}={}){
-      if(disposed)return;const placed=placeFollowers(group,{slots,visible,heightAt,max});count=placed.length;footprints.length=0;
-      placed.forEach((p,i)=>{offsets.setXYZW(i,p.x,p.y,p.z,p.yaw);footprints.push(p.world);});
-      offsets.needsUpdate=true;for(const mesh of meshes)mesh.geometry.instanceCount=count;
+    // time: the stage's presentation clock; reset after a jump or a pose reset.
+    // onFall({world,yaw,index}) receives each man who leaves the rank.
+    update({slots=[],visible=0,heightAt=null,time=null,reset=false,unitId='',onFall=null}={}){
+      if(disposed)return;const placed=placeFollowers(group,{slots,visible,heightAt,max});
+      if(reset||!anchored||group.position.distanceTo(lastAt)>1.2)for(const h of histories.values())h.reset();
+      lastAt.copy(group.position);anchored=true;
+      for(const h of histories.values())h.setTime(time);
+      if(typeof onFall==='function')for(let i=placed.length;i<placedBefore.length;i++)onFall({world:placedBefore[i].world.clone(),yaw:group.rotation.y+(placedBefore[i].yaw??0),index:i});
+      placedBefore=placed;count=placed.length;footprints.length=0;
+      placed.forEach((p,i)=>{offsets.setXYZW(i,p.x,p.y,p.z,p.yaw);banks.setX(i,poseBank(unitId,i));footprints.push(p.world);});
+      offsets.needsUpdate=true;banks.needsUpdate=true;for(const mesh of meshes)mesh.geometry.instanceCount=count;
     },
-    dispose(){if(disposed)return;disposed=true;for(const mesh of meshes)mesh.removeFromParent();for(const g of owned)g.dispose();for(const m of materials)m.dispose();}
+    dispose(){if(disposed)return;disposed=true;for(const mesh of meshes)mesh.removeFromParent();for(const g of owned)g.dispose();for(const m of materials)m.dispose();for(const h of histories.values())h.skeleton.dispose();histories.clear();}
   };
 }

@@ -18,6 +18,9 @@ import {acquireActorHairSurface,releaseActorHairSurface} from './actor-hair-asse
 import {acquireActorComplexion,releaseActorComplexion,warmActorComplexion} from './actor-complexion.js';
 import {warmActorHair} from './actor-hair-asset.js';
 import {actorEye,actorBrow,actorExpression} from './actor-face.js';
+import {BLOC_STYLE,trimBands} from '../ui/bloc-style.js';
+import {FALLEN_POSE,MOUNTED_FALLEN_POSE,bakeFallenGeometry} from './battle-remains.js';
+import {installCloudShadows} from './atmosphere.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -44,9 +47,9 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
  * Direction is yaw radians. Caller owns group.position. Phase is normalized
  * action progress, or one walking cycle (about .72m); omitted gait uses time.
  */
-// A delegate's bloc reads from the toga trim: soldiers' crimson, landed green,
-// the city's blue, the old Chamber's purple (and the legacy Army/People blocs).
-export const BLOC_TRIM=Object.freeze({Veterans:0xb3362c,Landholders:0x4f8a3c,Civic:0x3f6eb0,Chamber:0x7d4a96,Army:0x786844,People:0x6a7969});
+// A delegate's bloc reads from the toga trim, in the colour both views share
+// (bloc-style.js) and in a trim shape of its own.
+export const BLOC_TRIM=Object.freeze(Object.fromEntries(Object.entries(BLOC_STYLE).map(([bloc,style])=>[bloc,parseInt(style.color.slice(1),16)])));
 export function createActor(unit={},options={}){
   let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group;
   const contacts=rig.contacts,source=options.assetLibrary;
@@ -66,7 +69,10 @@ export function createActor(unit={},options={}){
     rig=createActorRig(unit,options,group);Object.assign(contacts,rig.contacts);
     if(parent)parent.add(group);rig.update({...lastInput,resetPose:true});return true;
   }).finally(releasePendingComplexion);
-  return {group,contacts,ready,update(input={}){if(!disposed){lastInput={...input};rig.update(input);}},getReleasePoint(target){return rig.getReleasePoint(target);},dispose(){if(disposed)return;disposed=true;releasePendingComplexion();rig.dispose();}};
+  return {group,contacts,ready,update(input={}){if(!disposed){lastInput={...input};rig.update(input);}},
+    // The figure's overview surfaces held in its collapse and laid on the
+    // ground, for the battle's remains; its own pose is restored at once.
+    bakeFallen(){if(disposed)return null;const mounted=!!group.userData.actor?.mounted;rig.update({...(mounted?MOUNTED_FALLEN_POSE:FALLEN_POSE),unit:lastInput.unit});const geometry=bakeFallenGeometry(group,{mounted});rig.update({...lastInput,resetPose:true});return geometry;},getReleasePoint(target){return rig.getReleasePoint(target);},dispose(){if(disposed)return;disposed=true;releasePendingComplexion();rig.dispose();}};
 }
 function createActorRig(unit={},options={},reuseGroup=null){
   const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed,identity=actorIdentity(unit,kit);
@@ -279,7 +285,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
     mesh(toga,drape(rows),ivory);
     // The colored edging follows the same fold surface with a small outward
     // offset. Independent flat chest stripes formerly cut through the drape.
-    for(const from of [.11,.83])mesh(toga,drape(rows,{from,to:from+.055,offset:.009}),stripe);
+    // Its bands (broad, double, broken or gilt-lined) name the bloc without colour.
+    let gilt=null;
+    for(const band of trimBands(unit.bloc))mesh(toga,drape(band.rows?rows.slice(band.rows[0],band.rows[1]+1):rows,{from:band.from,to:band.to,offset:band.offset??.009}),band.gilt?(gilt??=material(0xc9a64a,{...clothSurface,side:T.DoubleSide})):stripe);
     const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
   }else if(escort){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
@@ -300,7 +308,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   // Build overview geometry once, before near-detail batching. One colored
   // draw per rigid joint keeps the real role silhouette while dropping tiny
   // rivets, fingers and surface sampling that cannot be read at this distance.
-  let farMeshes=[],nearMeshes=[];const overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});
+  let farMeshes=[],nearMeshes=[];const overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});installCloudShadows(overviewMaterial);
   overviewMaterial.name='overview role colors';
   function overview(parent){
     for(const child of [...parent.children])if(child.isGroup||child.isBone)overview(child);

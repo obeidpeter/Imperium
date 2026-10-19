@@ -18,6 +18,16 @@ export function chapterScene(chapter=1) {
   const scenes=['danube','marsh','danube','danube','eastern-fort','eastern-fort','danube','river-crossing','eastern-fort','province','rome','rome'];
   return `./assets/scenes/${scenes[chapter-1]||'danube'}.webp`;
 }
+// The promotion ceremony's painting: the province for the civil chapters, Rome from the Senate on.
+export function promotionScene(chapter=1) {
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
+  return n===9||n===10?'./assets/scenes/province.webp':n>=11?'./assets/scenes/rome.webp':chapterScene(n);
+}
+// A scene painting's greyscale depth map, for the 2.5D drift (scene-parallax.js).
+export function sceneDepth(src='') {
+  const match=/^\.\/assets\/scenes\/([a-z-]+)\.webp$/.exec(String(src||''));
+  return match?`./assets/scenes/depth/${match[1]}.webp`:null;
+}
 export const loadArt=(src,options)=>artLoader.load(src,options);
 export const peekArt=src=>artLoader.peek(src);
 export const artCacheStats=()=>artLoader.stats();
@@ -29,8 +39,11 @@ const speakers=[['varro','lucan'],['varro','lucan','sabinus'],['crispus','varro'
 export function chapterAssets(chapter=1) {
   const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
   // The ledger is available in every chapter and displays the complete recurring cast.
-  const files=[chapterScene(n),heroPortrait(ranks[n-1]),heroPortrait(promotions[n-1]),'./assets/portraits/oath-seal.webp',...sharedSpeakers.map(s=>speakerPortrait(s)),...speakers[n-1].map(s=>speakerPortrait(s,'intense'))];
+  const files=[chapterScene(n),promotionScene(n),heroPortrait(ranks[n-1]),heroPortrait(promotions[n-1]),'./assets/portraits/oath-seal.webp',...sharedSpeakers.map(s=>speakerPortrait(s)),...speakers[n-1].map(s=>speakerPortrait(s,'intense'))];
   if(n===12)files.push('./assets/scenes/accession.webp');
+  // Depth maps for this chapter's paintings, and for the oath's (its painting is in the opening shell).
+  files.push(...files.map(sceneDepth));
+  if(n===1||n===12)files.push(sceneDepth('./assets/scenes/frontier-oath.webp'));
   if(n!==11)files.push('./assets/tactical/units-roman.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
   if([2,3,4,6,7,8,10,11,12].includes(n))files.push('./assets/tactical/units-civic.webp');
   files.push('./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp');

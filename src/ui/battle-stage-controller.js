@@ -10,7 +10,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setGrid(grid);
     if(stage.quality!==quality)stage.applyQuality(quality);
     if((stage.figureStyle??'sculpted')!==(latest.figureStyle??'sculpted'))stage.setFigureStyle?.(latest.figureStyle);
-    stage.actionCamera=latest.actionCamera!==false;
+    stage.actionCamera=latest.actionCamera!==false;stage.setBattleRemains?.(latest.battleRemains!==false);
     stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setMotionSpeed?.(latest.motionSpeed??1);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
     if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };
@@ -39,6 +39,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     quality(value){if(latest)latest.quality=value;stage?.applyQuality(value);},
     figures(value){if(latest)latest.figureStyle=value;stage?.setFigureStyle?.(value);},
     actionCamera(value){if(latest)latest.actionCamera=value;if(stage)stage.actionCamera=value!==false;},
+    remains(value){if(latest)latest.battleRemains=value;stage?.setBattleRemains?.(value);},
     adaptive(value){if(latest)latest.adaptiveResolution=value;stage?.setAdaptiveResolution?.(value);},
     speed(value){if(latest)latest.motionSpeed=value;stage?.setMotionSpeed?.(value);},
     reduced(value){if(latest)latest.reducedMotion=value;stage?.setReducedMotion(value);},

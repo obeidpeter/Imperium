@@ -3,7 +3,8 @@ export const TILE_SIZE=2.5;
 // Readable relief: authored high ground is a flat-topped rise whose bank falls
 // mostly inside its own cell, so a neighbouring road or standing centre stays
 // level. Rivers sit in a channel below one water level; a ford is a shallow bar.
-export const HIGH_GROUND_HEIGHT=1.6,RIVER_WATER_LEVEL=-.42,RIVER_BED=-1.3,FORD_BED=-.62;
+// A marsh flood lies just under the ground's surface.
+export const HIGH_GROUND_HEIGHT=1.6,RIVER_WATER_LEVEL=-.42,RIVER_BED=-1.3,FORD_BED=-.62,MARSH_WATER_LEVEL=-.027;
 // Rounded-square plateau weight: a flat top 0.85 m either side of the centre
 // (room for every cell ring), a bank to 0 by 1.55 m. Sides joined to another
 // high cell run flat to the shared edge, so adjoining high ground is one plateau.

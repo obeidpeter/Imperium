@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 49 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
+  "rightsNotice": "This manifest covers 49 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -3428,6 +3428,286 @@
       }
     },
     {
+      "id": "frontier-oath-depth",
+      "path": "assets/scenes/depth/frontier-oath.webp",
+      "subject": "Greyscale depth map of the frontier-oath scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/frontier-oath.webp",
+        "sourceSha256": "ad667b28fb6f9085083f438ab9bfab2b644bb265a3615836cf03371743f335ef",
+        "sourceSize": [
+          832,
+          467
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 216,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1956,
+        "sha256": "51c4a22a35077764db26d17e75ee32493414728d7c0d627d2c7cac32bd4a3c9d"
+      }
+    },
+    {
+      "id": "danube-depth",
+      "path": "assets/scenes/depth/danube.webp",
+      "subject": "Greyscale depth map of the danube scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/danube.webp",
+        "sourceSha256": "3dd79409bd5d1507db0ff08bfd0ada94aec8f3cc914bbedab0422aa45f4a9a80",
+        "sourceSize": [
+          768,
+          430
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 215,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1612,
+        "sha256": "0fe6b398ee430e69d73c8465e1df14170f902a09b5fcf5e4ed6ace17fd8b8efd"
+      }
+    },
+    {
+      "id": "marsh-depth",
+      "path": "assets/scenes/depth/marsh.webp",
+      "subject": "Greyscale depth map of the marsh scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/marsh.webp",
+        "sourceSha256": "209151e084f0273da0bb5f6e0ae664cafbc9adf91ad922d4f05e3711fb1b676b",
+        "sourceSize": [
+          768,
+          430
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 215,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1738,
+        "sha256": "11dc16b3e4f74bfc79494d4892bfcdb0224d29bfbf30bbc94dbba0aa2aef8ae1"
+      }
+    },
+    {
+      "id": "eastern-fort-depth",
+      "path": "assets/scenes/depth/eastern-fort.webp",
+      "subject": "Greyscale depth map of the eastern-fort scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/eastern-fort.webp",
+        "sourceSha256": "a88b0034c29718e89a845d49ef3e836b0629f889f1dd836e5d506afd194b8a5a",
+        "sourceSize": [
+          768,
+          431
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 216,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1530,
+        "sha256": "74161886fea8a1b2e4eab635e0dccb0e16da70e7e9aa2d16e10d3ee520b319a8"
+      }
+    },
+    {
+      "id": "river-crossing-depth",
+      "path": "assets/scenes/depth/river-crossing.webp",
+      "subject": "Greyscale depth map of the river-crossing scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/river-crossing.webp",
+        "sourceSha256": "070761e082a9e3b05a52183900d50cf66a347f5ecd8acae1cf34dbca0b143b6e",
+        "sourceSize": [
+          768,
+          431
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 216,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1644,
+        "sha256": "8b7db4a7c025458a972c6765b917cd478444c361848c86b627de3a5f75205e2c"
+      }
+    },
+    {
+      "id": "province-depth",
+      "path": "assets/scenes/depth/province.webp",
+      "subject": "Greyscale depth map of the province scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/province.webp",
+        "sourceSha256": "47850209a0c577513332b828d2fea2dde2cb8f9158b4ebe2ac87ef819b066b5b",
+        "sourceSize": [
+          768,
+          430
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 215,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1658,
+        "sha256": "578d7977dce45be7a88d1b2f0e08e4b46ff0c978ee6ea407f6de699baa968fcd"
+      }
+    },
+    {
+      "id": "rome-depth",
+      "path": "assets/scenes/depth/rome.webp",
+      "subject": "Greyscale depth map of the rome scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/rome.webp",
+        "sourceSha256": "8c18af617b467bda1b7ef74b2d1643d0293502ca515475e6f842598c328b7e60",
+        "sourceSize": [
+          768,
+          430
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 215,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1788,
+        "sha256": "5bb6c31e72f764e94438efb235552daf07bf5b6dbea37b09f38e4328f09258a7"
+      }
+    },
+    {
+      "id": "accession-depth",
+      "path": "assets/scenes/depth/accession.webp",
+      "subject": "Greyscale depth map of the accession scene painting (near = light, far = dark)",
+      "source": {
+        "method": "Offline monocular depth estimate of the project's own shipped scene painting with the MIT-licensed MiDaS v2.1 small model; no generated, repainted or third-party imagery",
+        "sourceFile": "assets/scenes/accession.webp",
+        "sourceSha256": "795d97da0b2ced70361b8f11fefddfde109a4b23c4bfa8f2045a43c12a52f259",
+        "sourceSize": [
+          768,
+          431
+        ],
+        "model": "MiDaS v2.1 small (model-small.onnx)",
+        "modelRepository": "https://github.com/isl-org/MiDaS",
+        "modelRelease": "https://github.com/isl-org/MiDaS/releases/tag/v2_1",
+        "modelSha256": "2d8c6cb8f415229daf1eb041024208e2608c9f98e17c81cc7c6ecb449c56fd58",
+        "modelLicense": "MIT (Copyright (c) 2019 Intel ISL); the model is not bundled, only its output",
+        "runtime": "onnxruntime 1.31.0 (CPU), NumPy 2.5.4, Pillow 12.3.0 with libwebp 1.6.0",
+        "converter": "scripts/scene-depth.py",
+        "instructions": "docs/art-generation.md (Scene depth maps): 256x256 bicubic input with ImageNet mean/std; inverse depth spread between its 2nd and 98th percentiles, gamma 0.85; bicubic resize to 384 wide; Gaussian blur radius 1.2; greyscale stored as RGB WebP. Regeneration is byte-identical with the recorded tool versions.",
+        "bundledSource": true
+      },
+      "usage": "2.5D drift and weather layering of the story painting (src/ui/scene-parallax.js); presentation only, never shown on its own",
+      "loading": "chapter",
+      "export": {
+        "format": "WebP",
+        "width": 384,
+        "height": 216,
+        "quality": 88,
+        "method": 6,
+        "resampling": "Bicubic",
+        "bytes": 1864,
+        "sha256": "c189284ded495b9c7b809ef36ba555ff783bb311e6ff7122094126610b096c5f"
+      }
+    },
+    {
       "id": "ground-materials",
       "path": "assets/world/ground-materials.webp",
       "subject": "Continuous meadow, dry earth, limestone, water, marsh and road materials",
@@ -4553,8 +4833,8 @@
       }
     }
   ],
-  "updatedAt": "2026-10-17T19:56:58.560354+00:00",
-  "totalArtworkBytes": 7371776,
+  "updatedAt": "2026-10-19T09:50:26.791467+00:00",
+  "totalArtworkBytes": 7385566,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -4569,7 +4849,7 @@
     "icon-192.png": 1,
     "icon-512.png": 1,
     "portraits": 22,
-    "scenes": 8,
+    "scenes": 16,
     "world": 3,
     "animation": 5,
     "showcase": 9,
@@ -4578,6 +4858,6 @@
     "textures": 3
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 10071109,
+  "totalBundledAssetBytes": 10084899,
   "totalModelBytes": 465127
 }

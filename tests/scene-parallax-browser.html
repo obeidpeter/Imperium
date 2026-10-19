@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Story paintings · local verification</title>
+<link rel="stylesheet" href="./src/ui/styles.css"><link rel="stylesheet" href="./src/ui/cinematic.css">
+<style>body{margin:0;background:#eee8db;color:#282b27;font:16px/1.45 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:16px}.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-block:12px}button,select,input{min-block-size:44px;font:inherit}#host{inline-size:min(100%,var(--host-width,1100px))}html[data-arrival="off"] .cinematic-mural>img{animation:none}</style>
+<script type="module" src="./tests/scene-parallax-browser.js"></script></head><body><main>
+<h1>Story paintings in 2.5D</h1><p>Development only. A camp mural with its depth map and weather layer, on a manual clock. No campaign, save or outcome is read or changed.</p>
+<div class="controls"><label>Painting<select id="painting"><option>frontier-oath</option><option selected>danube</option><option>marsh</option><option>eastern-fort</option><option>river-crossing</option><option>province</option><option>rome</option><option>accession</option></select></label><label>Chapter<select id="chapter"></select></label><label>Quality<select id="quality"><option value="balanced">Balanced</option><option value="high">High</option><option value="performance">Performance</option></select></label><label>Seconds<input id="seconds" type="number" min="0" step="0.5" value="12"></label><label><input id="reduced-motion" type="checkbox"> Reduced motion</label><label><input id="arrival" type="checkbox"> CSS arrival</label><button id="show">Show painting</button></div>
+<p id="status" role="status">Loading…</p>
+<figure id="host" class="camp-mural cinematic-mural"><img src="./assets/scenes/danube.webp" width="768" height="430" decoding="async" alt="Painted impression of the scene"><figcaption class="mural-overlay"><p>Development caption over the painting, to check the canvas stays beneath it.</p></figcaption></figure>
+</main></body></html>

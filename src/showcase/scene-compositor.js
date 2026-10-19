@@ -15,6 +15,31 @@ export const COMPOSITOR_TIERS=Object.freeze({
 export const DEFAULT_HAZE=Object.freeze({near:14,far:88,color:Object.freeze([0.76,0.81,0.88])});
 // The neutral grade reproduces the earlier fixed finish; chapters supply their own.
 export const DEFAULT_GRADE=Object.freeze({saturation:1.055,contrast:1,shadow:Object.freeze([0.9936,1,1.0072]),highlight:Object.freeze([1,1,1])});
+const finiteTriple=list=>Array.isArray(list)&&list.length===3&&list.every(Number.isFinite);
+// Valid fields of a grade, clamped as the pass clamps them, over a base grade
+// (malformed or missing fields keep the base's values).
+export function normalizeGrade({saturation,contrast,shadow,highlight}={},base=DEFAULT_GRADE){
+  return {saturation:Number.isFinite(saturation)?Math.max(0,Math.min(2,saturation)):base.saturation,contrast:Number.isFinite(contrast)?Math.max(.5,Math.min(1.6,contrast)):base.contrast,shadow:finiteTriple(shadow)?[...shadow]:[...base.shadow],highlight:finiteTriple(highlight)?[...highlight]:[...base.highlight]};
+}
+// Without the finishing pass (Performance quality, or a pass that failed) the
+// chapter grade rides in the tone-mapping step every lit material already runs:
+// the same saturation, mid-grey contrast and split tone as the pass, then ACES.
+// Its constants are written into Three's custom tone-mapping chunk just before
+// this renderer draws, so it costs no extra pass and no extra target.
+const BASE_TONEMAPPING_CHUNK=T.ShaderChunk.tonemapping_pars_fragment;
+const CUSTOM_TONEMAPPING='vec3 CustomToneMapping( vec3 color ) { return color; }';
+const glslFloat=value=>{const text=String(Math.round(value*1e5)/1e5);return /[.e]/.test(text)?text:`${text}.0`;};
+export function gradeToneMappingChunk(grade=DEFAULT_GRADE){
+  const g=normalizeGrade(grade),vec=list=>`vec3( ${list.map(glslFloat).join(', ')} )`;
+  return BASE_TONEMAPPING_CHUNK.replace(CUSTOM_TONEMAPPING,`vec3 CustomToneMapping( vec3 color ) {
+	float gradeLuma = dot( color, vec3( 0.2126, 0.7152, 0.0722 ) );
+	color = mix( vec3( gradeLuma ), color, ${glslFloat(g.saturation)} );
+	color = 0.18 * pow( max( color, vec3( 0.0 ) ) / 0.18, vec3( ${glslFloat(g.contrast)} ) );
+	gradeLuma = dot( color, vec3( 0.2126, 0.7152, 0.0722 ) );
+	color *= mix( ${vec(g.shadow)}, ${vec(g.highlight)}, smoothstep( 0.04, 0.9, gradeLuma ) );
+	return ACESFilmicToneMapping( max( color, vec3( 0.0 ) ) );
+}`);
+}
 export function multisampleCount(renderer,tier){
   if(!tier?.enabled||!tier.msaa||renderer?.capabilities?.isWebGL2===false)return 0;
   const limit=Number(renderer?.capabilities?.maxSamples);
@@ -202,6 +227,12 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   const material=new T.ShaderMaterial({name:'Imperium depth and edge finish',defines:{AO_DIRECTIONS:8},uniforms:{sceneColor:{value:null},sceneDepth:{value:null},inverseProjection:{value:inverseProjection},resolution:{value:size},projectionScale:{value:1},worldRadius:{value:1.05},strength:{value:1.55},bloomStrength:{value:0.24},casStrength:{value:0.18},aerialStrength:{value:0.16},vignetteStrength:{value:0.14},edgeBlend:{value:0.32},hazeRange:{value:new T.Vector2(DEFAULT_HAZE.near,DEFAULT_HAZE.far)},hazeColor:{value:new T.Color(...DEFAULT_HAZE.color)},gradeSaturation:{value:DEFAULT_GRADE.saturation},gradeContrast:{value:DEFAULT_GRADE.contrast},gradeShadow:{value:new T.Vector3(...DEFAULT_GRADE.shadow)},gradeHighlight:{value:new T.Vector3(...DEFAULT_GRADE.highlight)},tiltShift:{value:0},focusDepth:{value:27},ink:{value:0}},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:true});
   const quad=new T.Mesh(geometry,material);quad.frustumCulled=false;
   const screenCamera=new T.Camera();let target=null,disposed=false,failure=null,tier=COMPOSITOR_TIERS.balanced;
+  const baseToneMapping=renderer.toneMapping===T.CustomToneMapping?T.ACESFilmicToneMapping:renderer.toneMapping;let grade=normalizeGrade(),gradeChunk=gradeToneMappingChunk(grade);
+  // Direct rendering grades in tone mapping; the pass grades itself and keeps ACES.
+  const directGrade=on=>{
+    if(on){if(T.ShaderChunk.tonemapping_pars_fragment!==gradeChunk)T.ShaderChunk.tonemapping_pars_fragment=gradeChunk;if(renderer.toneMapping!==T.CustomToneMapping)renderer.toneMapping=T.CustomToneMapping;}
+    else if(renderer.toneMapping===T.CustomToneMapping)renderer.toneMapping=baseToneMapping;
+  };
   // The renderer's target disposal also disposes its allocated depth texture.
   const release=()=>{if(target){target.dispose();target=null;material.uniforms.sceneColor.value=null;material.uniforms.sceneDepth.value=null;}};
   function resize(){
@@ -231,11 +262,11 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   setQuality(quality);
   return {
     resize,setQuality,
-    setGrade({saturation=DEFAULT_GRADE.saturation,contrast=DEFAULT_GRADE.contrast,shadow=DEFAULT_GRADE.shadow,highlight=DEFAULT_GRADE.highlight}={}){
-      if(disposed)return;const finite=list=>Array.isArray(list)&&list.length===3&&list.every(Number.isFinite);
-      if(Number.isFinite(saturation))material.uniforms.gradeSaturation.value=Math.max(0,Math.min(2,saturation));
-      if(Number.isFinite(contrast))material.uniforms.gradeContrast.value=Math.max(.5,Math.min(1.6,contrast));
-      if(finite(shadow))material.uniforms.gradeShadow.value.fromArray(shadow);if(finite(highlight))material.uniforms.gradeHighlight.value.fromArray(highlight);
+    setGrade(next={}){
+      if(disposed)return;const g=grade=normalizeGrade(next,grade);
+      material.uniforms.gradeSaturation.value=g.saturation;material.uniforms.gradeContrast.value=g.contrast;
+      material.uniforms.gradeShadow.value.fromArray(g.shadow);material.uniforms.gradeHighlight.value.fromArray(g.highlight);
+      gradeChunk=gradeToneMappingChunk(g);
     },
     // Presentation styles: tilt-shift (painted figures) and ink (inked), each 0 to 1.
     setStyle({tiltShift=0,ink=0}={}){
@@ -250,7 +281,8 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
     },
     render(scene){
       if(disposed)return;
-      if(!supported||!tier.enabled||failure){renderer.render(scene,camera);return;}
+      if(!supported||!tier.enabled||failure){directGrade(true);renderer.render(scene,camera);return;}
+      directGrade(false);
       resize();inverseProjection.copy(camera.projectionMatrixInverse);material.uniforms.projectionScale.value=camera.projectionMatrix.elements[5]*0.5;
       const previousTarget=renderer.getRenderTarget(),autoReset=renderer.info.autoReset;
       renderer.info.autoReset=false;renderer.info.reset();
@@ -273,9 +305,10 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
         failure=error instanceof Error?error.message:String(error);
       }
       finally{renderer.setRenderTarget(previousTarget);renderer.info.autoReset=autoReset;}
-      if(failure){release();renderer.info.reset();renderer.render(scene,camera);}
+      if(failure){release();renderer.info.reset();directGrade(true);renderer.render(scene,camera);}
     },
-    stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,tiltShift:enabled?material.uniforms.tiltShift.value:0,ink:enabled?material.uniforms.ink.value:0,temporalHistory:false,fallback:failure??(supported?null:'float render targets unavailable')};},
-    dispose(){if(disposed)return;disposed=true;release();geometry.dispose();material.dispose();}
+    stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,tiltShift:enabled?material.uniforms.tiltShift.value:0,ink:enabled?material.uniforms.ink.value:0,temporalHistory:false,gradeInToneMapping:!disposed&&renderer.toneMapping===T.CustomToneMapping,fallback:failure??(supported?null:'float render targets unavailable')};},
+    toneMapping:()=>({direct:renderer.toneMapping===T.CustomToneMapping,chunk:gradeChunk}),
+    dispose(){if(disposed)return;disposed=true;release();geometry.dispose();material.dispose();if(T.ShaderChunk.tonemapping_pars_fragment===gradeChunk)T.ShaderChunk.tonemapping_pars_fragment=BASE_TONEMAPPING_CHUNK;}
   };
 }

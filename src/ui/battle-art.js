@@ -10,6 +10,7 @@ import {scenePalette,formationGlyph,moraleState} from './scene-materials.js';
 import {stoneOutcrop,masonryWall} from './material-forms.js';
 import {peekArt} from './art.js';
 import {worldAssetKey} from './world-assets.js';
+import {BLOC_STYLE,DELEGATE_BLOCS} from './bloc-style.js';
 import {paintMaterial,materialIndex,drawNaturalProp,environmentLight} from './ground-materials.js';
 import {threatEnvelope} from '../showcase/stage-readout.js';
 const INK='#292c27',IVORY='#f4ecd6';
@@ -163,7 +164,8 @@ function warrior(c,p,s,u,chapter){const enemy=u.side==='enemy',hero=u.id==='hero
   if(u.braced){line(c,[[-15,-14],[-11,-11],[-6,-15]],'#e8d9ac',1.2);}
   c.restore();
 }
-const BLOCS={Veterans:{color:'#60775e',symbol:'V'},Landholders:{color:'#92734b',symbol:'L'},Civic:{color:'#827188',symbol:'C'}};
+// One colour and letter per bloc, shared with the 3D view (bloc-style.js).
+const BLOCS=Object.fromEntries(DELEGATE_BLOCS.map(bloc=>[bloc,{color:BLOC_STYLE[bloc].color,symbol:BLOC_STYLE[bloc].letter}]));
 function seat(c,x,y,s,bloc){c.save();c.translate(x,y);c.scale(s,s);const color=BLOCS[bloc]?.color??'#887959';polygon(c,[[-14,-6],[-14,-18],[-8,-21],[12,-13],[12,0]],'#b2a489');polygon(c,[[-14,-18],[-8,-21],[12,-13],[6,-10]],'#e0d5bb');polygon(c,[[-14,-6],[6,3],[13,-1],[13,3],[6,7],[-14,-2]],'#c7b99b');line(c,[[7,4],[7,10]],'#8b8068',2);line(c,[[-12,-2],[-12,5]],'#8b8068',2);polygon(c,[[-10,-12],[-6,-14],[8,-8],[4,-6]],color);c.restore();}
 function orator(c,p,s,u,chapter){const voter=u.role==='voter',bloc=BLOCS[u.bloc]??{color:FIELD_COLORS.neutral,symbol:'•'},hero=u.id==='hero',enemy=u.side==='enemy';c.save();c.translate(p.x,p.y);c.scale(s,s);
   if(voter){polygon(c,[[-7,-23],[5,-25],[10,-7],[6,-1],[-10,-6]],'#ddd3b7');polygon(c,[[-7,-21],[-11,-15],[-8,-7],[-3,-9],[3,-22]],'#b8b395');polygon(c,[[-4,-21],[3,-22],[8,-9],[1,-12]],'#f2e7cc');line(c,[[-6,-9],[5,-4]],bloc.color,2.2);oval(c,0,-29,4.6,5.3,'#c5a078');polygon(c,[[-5,-30],[-4,-35],[1,-36],[5,-32],[3,-30]],'#817b65');oval(c,2,-29,.65,.65,'#404635');line(c,[[3,-27],[5,-26]],'#a07a56',.8);}

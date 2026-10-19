@@ -49,13 +49,14 @@ export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false}={}){
   return {wave,foam,ripple,roughness,tint};
 }
 
-export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waterTime=null}={}){
+export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waterTime=null,reflection=null}={}){
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
   const timeUniform=waterTime??{value:0};
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);
     shader.uniforms=shader.uniforms||{};
     if(kind==='water')shader.uniforms.environmentWaterTime=timeUniform;
+    const mirror=kind==='water'&&reflection;if(mirror)Object.assign(shader.uniforms,reflection);
     shader.vertexShader='varying vec3 vEnvironmentSurface;\n'+shader.vertexShader;
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       vec4 environmentPosition=vec4(transformed,1.0);
@@ -63,7 +64,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         environmentPosition=instanceMatrix*environmentPosition;
       #endif
       vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;`);
-    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+fields+shader.fragmentShader;
+    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
     let color='',roughness='';
     if(kind==='water'){
       // Foam belongs to shores and current, not to fixed bands: open water keeps
@@ -121,12 +122,27 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
     // A smooth water plane turns the sun into one saturated sheet, and its
     // reflected sky highlight into white blotches. Keep a dim sheen, cap the
     // reflected highlight, and let the sun show as fine moving glitter.
+    // Rain puddles keep a wet sheen, not white discs of reflected sky and sun:
+    // their highlight stays within about twice the dark wet ground around them.
+    if(kind==='ground'&&(wet||rain))shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(.05));
+      reflectedLight.directSpecular=min(reflectedLight.directSpecular,vec3(.07));`);
     if(kind==='water')shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
       float envGlitter=pow(envNoise(vEnvironmentSurface.xz*7.3+vec2(envTime*.9,-envTime*.6)),6.0);
       reflectedLight.directSpecular*=${shore?'.2':'.28'}+envGlitter*1.8;
-      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(${shore?'.14':'.2'}));`);
+      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(${shore?'.14':'.2'}));
+      ${mirror?`// Board water mirrors what stands above it (High quality; strength 0 otherwise).
+      if(waterReflectionStrength>0.0){
+        vec4 mirrorClip=waterReflectionMatrix*vec4(vEnvironmentSurface,1.0);
+        vec2 mirrorUv=mirrorClip.xy/max(mirrorClip.w,1e-4)+vec2(envWaveA,envWaveB)*.006;
+        // The mirror holds only what stands over the water (alpha = cover); open
+        // water keeps its own capped sky reflection.
+        vec4 mirrored=texture2D(waterReflectionMap,clamp(mirrorUv,vec2(.002),vec2(.998)));
+        float mirrorFresnel=.22+.55*pow(1.0-saturate(dot(geometryNormal,geometryViewDir)),2.0);
+        reflectedLight.indirectSpecular=mix(reflectedLight.indirectSpecular,min(mirrored.rgb,vec3(.6))*.8,waterReflectionStrength*mirrorFresnel*clamp(mirrored.a,0.0,1.0));
+      }`:''}`);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:environment-finish-v4:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}`;
+  material.customProgramCacheKey=()=>`${oldKey}:environment-finish-v4:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}`;
   material.userData.environmentFinish=kind;
   material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh),shore:Boolean(shore)};
   if(kind==='water')material.userData.waterTime=timeUniform;

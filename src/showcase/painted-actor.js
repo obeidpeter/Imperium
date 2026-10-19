@@ -1,6 +1,7 @@
 import * as T from '../../vendor/three/three.module.js';
 import {drawUnitSprite,spriteSpec} from '../ui/unit-sprites.js';
 import {placeFollowers} from './formation.js';
+import {installCloudShadows} from './atmosphere.js';
 
 // Painted figures (HD-2D): the 2D campaign's own authored unit paintings stand
 // in the 3D diorama as camera-facing cards. A second, sun-facing card casts the
@@ -29,10 +30,67 @@ export function paintedLight(profile={}){
   const level={night:.62,interior:.96,dusk:.93,dawn:.97}[profile.timeOfDay]??1;
   return light.multiplyScalar(level*1.08).toArray().map(v=>Math.min(1.2,v));
 }
+// Painted figures are lit by the scene: a bevel at the painting's own edge
+// (and a little relief from its brush values) gives each card a shape for the
+// sun, torches and the rim light; light wraps a little past the terminator so a
+// figure with the sun behind it is not lost; and a share of the painting's own
+// light stays as self-illumination, so the art never goes muddy. The card takes
+// its shadow from one point just sunward of the figure (in a wall's shade or
+// out of it), never from its own sun-facing shadow card.
+export const PAINTED_SHADING=Object.freeze({lit:.9,self:.3,wrap:.5,bevel:2.4,relief:.7,radius:3});
+export function createPaintedLighting(){return {paintedSunShift:{value:new T.Vector3()}};}
+const PAINTED_VERTEX_HEAD='uniform vec3 paintedSunShift;\nuniform float puppetTime;\nuniform float puppetSeed;\nuniform float puppetLean;\nuniform float puppetHit;\nuniform float puppetFacing;\n';
+// Puppetry: breath lifts the shoulders, the figure sways from the feet, leans
+// into an attack toward the side it faces on screen and squashes when struck.
+// Followers take their own phase from where they stand. Reduced motion freezes
+// the idle terms (the stage passes time 0).
+const PAINTED_PUPPET=`
+  float puppetHeight=clamp(position.y/2.0,0.0,1.25);
+  float puppetPhase=puppetSeed*6.2831853;
+  #ifdef USE_INSTANCING
+    puppetPhase+=instanceMatrix[3].x*1.7+instanceMatrix[3].z*2.3;
+  #endif
+  float puppetBreath=sin(puppetTime*2.2+puppetPhase),puppetSway=sin(puppetTime*1.15+puppetPhase*1.3);
+  transformed.x+=(puppetSway*.018+puppetLean*.16*puppetFacing)*puppetHeight*puppetHeight;
+  transformed.y*=1.0+puppetBreath*.008*smoothstep(.35,.9,puppetHeight)-puppetHit*.06;
+  transformed.x*=1.0+puppetHit*.045;
+`;
+const PAINTED_SHADOW_ANCHOR=`
+  #ifdef USE_SHADOWMAP
+    #ifdef USE_INSTANCING
+      worldPosition=modelMatrix*vec4(instanceMatrix[3].xyz,1.0);
+    #else
+      worldPosition=modelMatrix*vec4(0.0,0.0,0.0,1.0);
+    #endif
+    worldPosition.xyz+=vec3(0.0,1.0,0.0)+paintedSunShift;
+  #endif
+`;
+const PAINTED_NORMAL=`
+  {
+    vec2 paintTexel=${PAINTED_SHADING.radius.toFixed(1)}/vec2(textureSize(map,0));
+    float aL=texture2D(map,vMapUv-vec2(paintTexel.x,0.0)).a,aR=texture2D(map,vMapUv+vec2(paintTexel.x,0.0)).a,aD=texture2D(map,vMapUv-vec2(0.0,paintTexel.y)).a,aU=texture2D(map,vMapUv+vec2(0.0,paintTexel.y)).a;
+    vec3 lumaWeights=vec3(.299,.587,.114);
+    float lL=dot(texture2D(map,vMapUv-vec2(paintTexel.x,0.0)).rgb,lumaWeights),lR=dot(texture2D(map,vMapUv+vec2(paintTexel.x,0.0)).rgb,lumaWeights),lD=dot(texture2D(map,vMapUv-vec2(0.0,paintTexel.y)).rgb,lumaWeights),lU=dot(texture2D(map,vMapUv+vec2(0.0,paintTexel.y)).rgb,lumaWeights);
+    vec2 paintSlope=vec2(aR-aL,aU-aD)*${PAINTED_SHADING.bevel.toFixed(2)}+vec2(lR-lL,lU-lD)*${PAINTED_SHADING.relief.toFixed(2)};
+    normal=normalize(vec3(-paintSlope,1.0));
+  }
+`;
+function paintedShader(material,uniforms){
+  const previous=material.onBeforeCompile,key=material.customProgramCacheKey();
+  material.onBeforeCompile=(shader,...args)=>{
+    previous.call(material,shader,...args);Object.assign(shader.uniforms,uniforms);
+    shader.vertexShader=PAINTED_VERTEX_HEAD+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>'+PAINTED_PUPPET).replace('#include <shadowmap_vertex>',PAINTED_SHADOW_ANCHOR+'#include <shadowmap_vertex>');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>'+PAINTED_NORMAL)
+      .replace('#include <lights_lambert_pars_fragment>',T.ShaderChunk.lights_lambert_pars_fragment.replace('float dotNL = saturate( dot( geometryNormal, directLight.direction ) );','float dotNL = saturate( ( dot( geometryNormal, directLight.direction ) + PAINTED_WRAP ) / ( 1.0 + PAINTED_WRAP ) );'));
+  };
+  material.defines={...material.defines,PAINTED_WRAP:PAINTED_SHADING.wrap.toFixed(2)};
+  material.customProgramCacheKey=()=>`${key}:painted-lit-v1`;
+}
 function makeCanvas(width,height){
   if(typeof OffscreenCanvas==='function')return new OffscreenCanvas(width,height);
   const canvas=globalThis.document?.createElement?.('canvas');if(!canvas)return null;canvas.width=width;canvas.height=height;return canvas;
 }
+const paintedSeed=id=>{let h=2166136261;for(const c of String(id??''))h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)/4294967295;};
 const SIDE_COLOR={friendly:'#8e3a2f',enemy:'#5d5b3d',neutral:'#7c6a52'};
 // Until the authored atlas has decoded, a plain painted silhouette keeps the
 // unit visible in its side's colour (never an empty card).
@@ -45,15 +103,17 @@ function placeholder(c,unit,mounted){
   c.fillStyle='#b7372d';c.beginPath();c.ellipse(x+h*.1,feet-h*(mounted?.66:.42),h*.09,h*.17,0,0,Math.PI*2);c.fill();c.restore();
 }
 
-export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1]}={}){
+export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1],lighting=createPaintedLighting()}={}){
   const {width,height,feet}=PAINTED_CANVAS,canvas=makeCanvas(width,height),c=canvas?.getContext?.('2d');if(!c)return null;
   const mounted=['cavalry','heavy'].includes(unit.role),spec=spriteSpec(unit,chapter,contest);
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;
   // The card's origin is the sole point; the card extends past it only by the
   // canvas margin, which the alpha test discards.
-  const geometry=new T.PlaneGeometry(width/PER_METRE,height/PER_METRE);geometry.translate(0,(feet-height/2)/PER_METRE,0);
-  const material=new T.MeshBasicMaterial({name:'Painted figure',map:texture,color:new T.Color().fromArray(light),alphaTest:.5,alphaToCoverage:true,side:T.DoubleSide});
-  const card=new T.Mesh(geometry,material);card.name='painted figure card';card.castShadow=false;card.receiveShadow=false;card.renderOrder=1;
+  const geometry=new T.PlaneGeometry(width/PER_METRE,height/PER_METRE,4,8);geometry.translate(0,(feet-height/2)/PER_METRE,0);
+  const puppet={puppetTime:{value:0},puppetSeed:{value:paintedSeed(unit.id)},puppetLean:{value:0},puppetHit:{value:0},puppetFacing:{value:1}};
+  const material=new T.MeshLambertMaterial({name:'Painted figure',map:texture,emissiveMap:texture,color:new T.Color(PAINTED_SHADING.lit,PAINTED_SHADING.lit,PAINTED_SHADING.lit),emissive:new T.Color().fromArray(light).multiplyScalar(PAINTED_SHADING.self),alphaTest:.5,alphaToCoverage:true,side:T.DoubleSide});
+  paintedShader(material,{...lighting,...puppet});installCloudShadows(material);
+  const card=new T.Mesh(geometry,material);card.name='painted figure card';card.castShadow=false;card.receiveShadow=true;card.renderOrder=1;
   // The shadow card never shows in the colour pass: it writes neither colour
   // nor depth there. Three builds the shadow pass's depth material from this
   // one (its map, alpha test and shadow side), which cuts the silhouette.
@@ -77,14 +137,19 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
   }
   return {group,contacts:{body,shield,feet:[]},painted:true,
     ready:Promise.resolve(true),
-    update(input={}){if(disposed)return;state={direction:Number.isFinite(input.direction)?input.direction:state.direction,override:input.override??null,unit:input.unit??state.unit};group.rotation.y=state.direction;},
+    update(input={}){
+      if(disposed)return;state={direction:Number.isFinite(input.direction)?input.direction:state.direction,override:input.override??null,unit:input.unit??state.unit};group.rotation.y=state.direction;
+      const motion=input.motion??'idle',arc=Number.isFinite(input.phase)?Math.sin(Math.PI*Math.max(0,Math.min(1,input.phase))):0;
+      puppet.puppetTime.value=input.reducedMotion?0:Number.isFinite(input.time)?input.time:0;
+      puppet.puppetLean.value=['attack','strike','throw'].includes(motion)?arc:0;puppet.puppetHit.value=motion==='hit'?arc:0;
+    },
     // Called after the camera moves each frame: face it, choose the painted
     // column for this view and repaint only when what is shown has changed.
     faceCamera(camera,{sunYaw=null}={}){
       if(disposed||!camera)return;
       camera.getWorldPosition(view);view.sub(group.getWorldPosition(origin));const toward={x:view.x,z:view.z};
       if(Math.hypot(toward.x,toward.z)<1e-6){camera.getWorldDirection(view);toward.x=-view.x;toward.z=-view.z;}
-      const column=paintedColumn(state.direction,toward),o=state.override??{},u=state.unit??{};
+      const column=paintedColumn(state.direction,toward),o=state.override??{},u=state.unit??{};puppet.puppetFacing.value=['east','north'].includes(column)?1:-1;
       const next=[column,o.pose??'idle',Math.round((o.progress??0)*36),Math.round((o.stridePhase??0)*6),u.braced?1:0,Number.isFinite(u.morale)&&u.morale<35?1:0,(u.hp??u.resolve??1)/(u.maxHp??u.maxResolve??1)<.35?1:0].join(':');
       // A placeholder is replaced when the stage calls repaint() after the atlas decodes.
       if(next!==key){key=next;draw(column);}
@@ -98,17 +163,26 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
     createCrowd(max=8){
       if(disposed||max<1)return null;crowd?.dispose();
       const cards=new T.InstancedMesh(geometry,material,max),shadows=new T.InstancedMesh(geometry,shadowMaterial,max),matrix=new T.Matrix4(),position=new T.Vector3(),scale=new T.Vector3();
-      cards.name='painted formation followers';shadows.name='painted formation shadows';cards.count=shadows.count=0;cards.castShadow=false;shadows.castShadow=true;cards.receiveShadow=shadows.receiveShadow=false;
+      cards.name='painted formation followers';shadows.name='painted formation shadows';cards.count=shadows.count=0;cards.castShadow=false;shadows.castShadow=true;cards.receiveShadow=true;shadows.receiveShadow=false;
       cards.frustumCulled=shadows.frustumCulled=false;cards.raycast=shadows.raycast=()=>{};group.add(cards,shadows);
       let placed=[],gone=false;const footprints=[];
-      crowd={max,footprints,get count(){return placed.length;},
-        update({slots=[],visible=0,heightAt=null}={}){if(gone)return;placed=placeFollowers(group,{slots,visible,heightAt,max});footprints.length=0;for(const p of placed)footprints.push(p.world);},
+      crowd={max,footprints,get count(){return placed.length;},get ranks(){return placed;},
+        inherit(ranks=[]){if(!placed.length)placed=ranks.map(p=>({...p,world:p.world.clone()}));},
+        update({slots=[],visible=0,heightAt=null,onFall=null}={}){if(gone)return;const next=placeFollowers(group,{slots,visible,heightAt,max});
+          if(typeof onFall==='function')for(let i=next.length;i<placed.length;i++)onFall({world:placed[i].world.clone(),yaw:group.rotation.y+(placed[i].yaw??0),index:i});
+          placed=next;footprints.length=0;for(const p of placed)footprints.push(p.world);},
         place(){if(gone)return;placed.forEach((p,i)=>{const s=1+p.yaw*.18;position.set(p.x,p.y,p.z);scale.set(s,s,s);cards.setMatrixAt(i,matrix.compose(position,card.quaternion,scale));shadows.setMatrixAt(i,matrix.compose(position,shadow.quaternion,scale));});cards.count=shadows.count=placed.length;cards.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;},
         dispose(){if(gone)return;gone=true;cards.removeFromParent();shadows.removeFromParent();cards.dispose();shadows.dispose();if(crowd===this)crowd=null;}};
       return crowd;
     },
     repaint(){key='';},
-    setLight(value){material.color.fromArray(value);},
+    // The painting as it is now, at half size, for a body laid on the ground.
+    snapshot(scale=.5){
+      if(disposed)return null;const w=Math.max(8,Math.round(width*scale)),h=Math.max(8,Math.round(height*scale)),out=makeCanvas(w,h),x=out?.getContext?.('2d');if(!x)return null;
+      x.drawImage(canvas,0,0,w,h);return {canvas:out,width:width/PER_METRE,height:height/PER_METRE,feetOffset:(feet-height/2)/PER_METRE};
+    },
+    setLight(value){material.emissive.fromArray(value).multiplyScalar(PAINTED_SHADING.self);},
+    puppet,material,
     getReleasePoint(target=new T.Vector3()){return body.getWorldPosition(target).add(new T.Vector3(Math.sin(state.direction)*.35,.35,Math.cos(state.direction)*.35));},
     dispose(){if(disposed)return;disposed=true;crowd?.dispose();group.removeFromParent();geometry.dispose();material.dispose();shadowMaterial.dispose();texture.dispose();}
   };
