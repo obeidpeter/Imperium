@@ -1,3 +1,4 @@
+import {expandedPanel} from './expanded-views.js';
 import {fieldGuide} from './field-guide.js';
 import {agreementConversation} from './progression-views.js';
 import * as Game from '../core/game.js';
@@ -196,7 +197,8 @@ export function encounterView(context) {
       <section class="command-company" aria-label="${political ? 'Your speakers' : 'Your company'}">
         <div class="command-actor"><span class="command-kicker">${political ? 'YOUR SPEAKER' : 'YOUR UNIT'}</span><h2>${esc(actor.name)}</h2><p ${political ? 'title="Resolve: speaking stamina; 0 withdraws from speaking, vote remains"' : ''}>${actor.resolve ?? actor.hp}/${actor.maxResolve ?? actor.maxHp} ${political ? 'Resolve' : 'health'} · ${location(actor)}${actor.facing && !political ? ` · ${esc(actor.facing)}` : ''}</p><span class="command-readiness">${independentAlly ? `<span class="${actorReadiness.available ? '' : 'is-spent'}">${esc(actorReadiness.description)}</span>` : `<span class="${actions.includes('move') || actions.includes('deploy') ? '' : 'is-spent'}">${actions.includes('move') || actions.includes('deploy') ? 'Move ready' : 'Move spent'}</span><span class="${actions.some(a => !['move','deploy'].includes(a)) ? '' : 'is-spent'}">${actor.acted ? (actions.includes('order') ? 'Orders ready' : 'Action spent') : active ? 'Action ready' : 'Encounter resolved'}</span>`}</span></div>
         ${units.length > 1 ? `<div class="command-roster" role="group" aria-label="Select a ${political ? 'speaker' : 'unit'}">${units.map(u => {const status = readiness(state, u);return `<button id="select-unit-${esc(u.id)}" data-cmd="select-unit" data-id="${esc(u.id)}" aria-pressed="${actor.id === u.id}" aria-label="${esc(u.name)}, ${u.resolve ?? u.hp} ${political ? 'Resolve' : 'health'}, ${esc(status.description)}"><span class="roster-mark ${status.available ? '' : 'is-spent'}" aria-hidden="true">${u.id === 'hero' ? '★' : '◆'}</span><span>${esc(u.name)}<small>${u.resolve ?? u.hp} · ${status.label}</small></span></button>`;}).join('')}</div>` : ''}
-        ${political && e.politicsVersion === 2 ? `<p class="command-cooperation">${esc(politicalPosition(state, actor.id).message)}</p>` : ''}
+        ${e.featureEdition===31&&!political&&e.type!=='training'?`<p class="command-cohesion">Cohesion ${actor.cohesion??80}/100 · suppression ${actor.suppression??0}/3</p>`:''}
+      ${political && e.politicsVersion === 2 ? `<p class="command-cooperation">${esc(politicalPosition(state, actor.id).message)}</p>` : ''}
       </section>
       <section class="command-options" aria-label="Available commands" ${!active ? 'hidden' : ''}>
         <p id="command-hint" class="command-hint">${esc(directHint || instruction(state, action, target, actor))}</p>
@@ -215,6 +217,7 @@ export function encounterView(context) {
       </section>
     </section>
     <section class="command-records" aria-label="Encounter reference and accessible controls">
+      ${expandedPanel(state)}
       ${political && e.politicsVersion === 2 ? precedentPanel(state) : (!political && e.combatVersion === 2 && e.type !== 'training' ? fieldworkPanel(state) : '')}
       ${tacticalCoaching(state,context.coach!==false,actor.id)}
       <details id="command-named-controls" class="command-named-controls"><summary>Named controls & keyboard</summary><div class="command-selectors">

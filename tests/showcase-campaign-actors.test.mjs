@@ -70,7 +70,7 @@ test('Civic withdrawal remains standing and lowered quality retains silhouettes 
   civic.update({motion:'withdrawn',phase:1,health:0});assert.ok(metrics(civic).bounds.max.y>1.6,'Political withdrawal must not collapse like a casualty.');civic.dispose();
   for(const unit of [{id:'hero',side:'player',role:'commander'},{id:'horse',name:'Persian cavalry',side:'enemy',role:'cavalry'}]){
     const full=createActor(unit,{chapter:7,quality:'high'}),low=createActor(unit,{chapter:7,quality:'performance'}),a=metrics(full),b=metrics(low);
-    assert.equal(full.group.userData.actor.role,low.group.userData.actor.role);assert.equal(a.draws,b.draws);assert.ok(b.triangles<a.triangles*.8,`${b.triangles} <80% of${a.triangles}`);assert.ok(a.bounds.getSize(new T.Vector3()).distanceTo(b.bounds.getSize(new T.Vector3()))<.03);
+    assert.equal(full.group.userData.actor.role,low.group.userData.actor.role);assert.ok(b.draws<=a.draws&&a.draws-b.draws<=3,'High cloth sheen may add at most three material batches; Performance retains fewer draws.');assert.ok(b.triangles<a.triangles*.8,`${b.triangles} <80% of${a.triangles}`);assert.ok(a.bounds.getSize(new T.Vector3()).distanceTo(b.bounds.getSize(new T.Vector3()))<.03);
     full.dispose();low.dispose();
   }
 });

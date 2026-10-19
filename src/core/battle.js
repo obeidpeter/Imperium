@@ -1,3 +1,5 @@
+import {expandedCombat,expandedHit,advanceExpandedBattle,coordinatedAssignment,moveProtectedColumn} from './expanded-campaign.js';
+import {fieldBlocked,fieldMoveCost} from './field-geometry.js';
 import * as Legacy from './legacy-battle.js';
 export const createLegacyBattle=Legacy.createBattle;
 import {alive, blocked, clamp, distance, faceToward, lineOfSight, makeUnit, note, reachable, result, rng, stepToward, unitAt, withMoveCredit} from './shared.js';
@@ -81,6 +83,7 @@ export function combatBreakdown(e,unit,target,ranged=false){
  const fw=e.fieldworks??[],stakeStop=unit.side==='enemy'&&fw.some(f=>f.type==='stakes'&&(distance(f,target)<=1||distance(f,unit)<=1));
  add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced&&!stakeStop?B.chargeBonus:0);
  if(fw.length){if(['player','ally','neutral'].includes(target.side)){if(fw.some(f=>f.type==='rampart'&&f.x===target.x&&f.y===target.y))add('Earthwork rampart',-2);if(fw.some(f=>f.type==='stakes'&&distance(f,target)<=1))add('Stake palings',-1);}if(ranged&&['player','ally'].includes(unit.side)&&fw.some(f=>f.type==='brazier'&&distance(f,unit)<=2))add('Signal brazier',1);}
+ for(const modifier of expandedCombat(e,unit,target,ranged))add(modifier.label,modifier.value);
  add('Shaken morale',(unit.morale??80)<=B.shakenThreshold?-1:0);
  const aspect=front?'front':'flank',flankBreak=!ranged&&!front&&(target.formation==='shield-wall'||target.braced),wedgeBreak=!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)&&target.formation==='shield-wall';
  const formationBreak=Boolean(flankBreak||wedgeBreak),formationBreakLabel=wedgeBreak?'Wedge splits shield wall':flankBreak?'Flank breaks shield line':null;
@@ -126,6 +129,7 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
   const messages={move:`Move to ${command.x+1}${String.fromCharCode(65+command.y)}. Costs this unit’s movement.`,deploy:'Deploy the command unit before the first clash. Uses this turn’s movement.',strike:`Strike ${other?.name} for ${other?damagePreview(e,unit,other):0} damage. ${other?`${facingDefence(other,unit)?"Frontal approach: shield defence applies":"Flanking approach: frontal defence bypassed"}; target faces ${other.facing}.`:""} High ground and walls reduce damage.`,throw:`Throw one javelin at ${other?.name} for ${other?damagePreview(e,unit,other,true):0} damage; ${Math.max(0,unit.ammo-1)} remain.`,brace:'Brace the shield: reduce incoming damage by 2 until your next turn. Costs one action.',assist:`Shield ${other?.name}, restore 3 health, and escort wounded survivors toward the standard. Costs one action.`,scout:'Reveal every hidden enemy and a safe path to the standard. Costs one action.',rally:'Restore 25 morale and 2 health to friends within 3 tiles. On the defection route, also lower one nearby opponent morale by 40; at 25 they pledge allegiance. Costs one action.',order:`Spend 1 command to override ${other?.name}’s announced intent: ${orderEffect}. Their normal move and action limits still apply.`,formation:`Spend 1 command: ${command.formation??'shield-wall'} affects an adjacent group of up to 3 allies. Each will ${orderEffect}. Lasts this round. Shield wall: protection 2, march 1; Line: normal marsh cost and morale loss −5; Wedge: attack +1 and incoming damage +1. Each moves and acts at most once.`};
   if(e.combatVersion===2){
    if(action==='order'&&(command.orderAction??'advance')==='attack')messages[action]=`Spend 1 command: ${other.name} will take the strongest legal attack opportunity, considering protection and facing. Normal move/action limits apply.`;
+   if(action==='rally'&&e.featureEdition===31)messages.rally+=' Also restore 20 cohesion and clear suppression within three tiles.';
    if(action==='strike'||action==='throw'){const hit=combatBreakdown(e,unit,other,action==='throw');messages[action]=`${action==='throw'?'Throw at':'Strike'} ${other.name}: ${hit.damage} damage (${hit.base} base${hit.modifiers.map(m=>`, ${m.value>0?'+':''}${m.value} ${m.label.toLowerCase()}`).join('')}). ${hit.aspect==='flank'?'Flank':'Front'}; morale −${Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(other.formation==='line'?5:0)-(other.moraleResistance??0))}.${action==='throw'?` One javelin; ${unit.ammo-1} remain.`:''}`;}
    if(action==='formation')messages[action]=`Spend 1 command on up to 3 adjacent allies. ${FORMATION_RULES[command.formation??'shield-wall'].summary} Each will ${command.orderAction==='attack'?'take a strong legal attack opportunity':orderEffect}. Normal move/action limits apply.`;
    if(action==='move')messages[action]+=` Terrain: ${e.terrain[command.y][command.x]}. Facing changes with movement; a later attack faces its target.`;
@@ -144,7 +148,7 @@ export function applyBattle(state,command) {if(!state.encounter.mission)return L
     else if(action==='brace'){unit.braced=true;unit.acted=true;}
     else if(action==='assist'){target.hp=Math.min(target.maxHp,target.hp+3);target.braced=true;target.escorted=true;unit.acted=true;}
     else if(action==='scout'){e.units.forEach(u=>u.hidden=false);e.scouted=true;unit.acted=true;}
-    else if(action==='rally'){e.units.filter(u=>['ally','player','neutral'].includes(u.side)&&alive(u)&&distance(unit,u)<=3).forEach(u=>{u.morale=clamp(u.morale+25);u.hp=Math.min(u.maxHp,u.hp+2);});if(e.mission?.mode==='defection'){const rival=e.units.filter(u=>u.side==='enemy'&&alive(u)&&distance(unit,u)<=3).sort((a,b)=>a.morale-b.morale)[0];if(rival){rival.morale=clamp(rival.morale-40);note(e,`${rival.name} hears the oath: morale ${rival.morale}.`);if(rival.morale<=25)defect(e,rival);}}if(e.mission)e.mission.rallyProgress++;unit.acted=true;}
+    else if(action==='rally'){e.units.filter(u=>['ally','player','neutral'].includes(u.side)&&alive(u)&&distance(unit,u)<=3).forEach(u=>{u.morale=clamp(u.morale+25);if(e.featureEdition===31){u.cohesion=clamp((u.cohesion??80)+20);u.suppression=0;}u.hp=Math.min(u.maxHp,u.hp+2);});if(e.mission?.mode==='defection'){const rival=e.units.filter(u=>u.side==='enemy'&&alive(u)&&distance(unit,u)<=3).sort((a,b)=>a.morale-b.morale)[0];if(rival){rival.morale=clamp(rival.morale-40);note(e,`${rival.name} hears the oath: morale ${rival.morale}.`);if(rival.morale<=25)defect(e,rival);}}if(e.mission)e.mission.rallyProgress++;unit.acted=true;}
     else if(action==='order'){e.commandsLeft--;target.ordered=true;actAlly(e,target,command.orderAction??'advance',command.destination);}
     else if(action==='formation') {e.commandsLeft--;const group=[target,...e.units.filter(u=>u.side==='ally'&&u.id!==target.id&&alive(u)&&distance(u,target)<=1&&!u.ordered)].slice(0,3);group.forEach(u=>{u.formation=command.formation??'shield-wall';if(u.formation==='shield-wall')u.braced=true;u.ordered=true;if(e.combatVersion!==2)actAlly(e,u,command.orderAction??'advance');});if(e.combatVersion===2)group.forEach(u=>actAlly(e,u,command.orderAction??'advance'));note(e,`${group.length} units form ${command.formation??'shield-wall'}; one command spent.`);}
   }
@@ -203,8 +207,8 @@ function objectiveFor(e,unit,orderAction){
 function routeField(e,unit,goal){
  const costs=new Map(),queue=[{x:goal.x,y:goal.y,cost:0}];costs.set(`${goal.x},${goal.y}`,0);
  while(queue.length){queue.sort((a,b)=>a.cost-b.cost);const p=queue.shift();if(costs.get(`${p.x},${p.y}`)!==p.cost)continue;
-  for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const x=p.x+dx,y=p.y+dy;if(x<0||y<0||x>=e.width||y>=e.height||blocked(e.terrain[y][x])||unitAt(e,x,y,unit.id)&&!(x===unit.x&&y===unit.y))continue;
-   const cost=p.cost+(e.terrain[p.y][p.x]==='marsh'&&unit.formation!=='line'?2:1),key=`${x},${y}`;if(!costs.has(key)||cost<costs.get(key)){costs.set(key,cost);queue.push({x,y,cost});}
+  for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const x=p.x+dx,y=p.y+dy;if(x<0||y<0||x>=e.width||y>=e.height||blocked(e.terrain[y][x])||fieldBlocked(e,x,y)||unitAt(e,x,y,unit.id)&&!(x===unit.x&&y===unit.y))continue;
+   const cost=p.cost+fieldMoveCost(e,unit,p.x,p.y),key=`${x},${y}`;if(!costs.has(key)||cost<costs.get(key)){costs.set(key,cost);queue.push({x,y,cost});}
   }
  }return p=>costs.get(`${p.x},${p.y}`)??distance(p,goal)+12;
 }
@@ -214,16 +218,18 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
  if(orderAction==='hold')return idle;
  if(orderAction==='rally')return {...idle,action:'rally',intent:'Restore morale before rejoining the line.'};
  const foes=visibleOpponents(e,unit),friends=companions(e,unit),broken=(unit.morale??80)<=B.brokenThreshold,withdrawing=orderAction==='withdraw'||broken;
- const goal=destination??objectiveFor(e,unit,withdrawing?'withdraw':orderAction),path=routeField(e,unit,goal),range=unit.role==='archer'?3:1;
+ const assignment=coordinatedAssignment(e,unit);
+ const goal=destination??(!withdrawing&&assignment?assignment.goal:objectiveFor(e,unit,withdrawing?'withdraw':orderAction)),path=routeField(e,unit,goal),range=unit.role==='archer'?3:1;
  let positions=[{x:unit.x,y:unit.y,cost:0},...(!unit.moved?reachable(e,unit):[])];if(e.id==='ch1-road'&&unit.side==='ally'){const recruit=e.units.find(u=>u.id==='hero');if(recruit)positions=positions.filter(p=>distance(p,recruit)<=Math.max(2,distance(unit,recruit)-1));}if(destination&&!unit.moved)positions=positions.filter(p=>p.x===destination.x&&p.y===destination.y);if(!positions.length)positions=[unit];
  let best=null;
  for(const p of positions){
   const projected={...unit,x:p.x,y:p.y,lastMoveDistance:p.cost?distance(unit,p):unit.lastMoveDistance??0},terrain=e.terrain[p.y][p.x];
-  const targets=foes.filter(u=>distance(p,u)<=(unit.ammo>0?3:range)&&(distance(p,u)<=1||lineOfSight(e,p,u))),target=targets.map(u=>({unit:u,ranged:range>1||distance(p,u)>1,damage:damagePreview(e,projected,u,range>1||distance(p,u)>1)})).sort((a,b)=>b.damage*B.weights.damage+(b.damage>=b.unit.hp?B.weights.finish:0)-a.damage*B.weights.damage-(a.damage>=a.unit.hp?B.weights.finish:0))[0];
+  const targets=foes.filter(u=>distance(p,u)<=(unit.ammo>0?3:range)&&(distance(p,u)<=1||lineOfSight(e,p,u))),target=targets.map(u=>({unit:u,ranged:range>1||distance(p,u)>1,damage:damagePreview(e,projected,u,range>1||distance(p,u)>1)})).sort((a,b)=>(b.unit.id===assignment?.targetId?3:0)-(a.unit.id===assignment?.targetId?3:0)+b.damage*B.weights.damage+(b.damage>=b.unit.hp?B.weights.finish:0)-a.damage*B.weights.damage-(a.damage>=a.unit.hp?B.weights.finish:0))[0];
   const threat=foes.reduce((n,u)=>{const gap=distance(p,u),reach=(u.move??2)+(u.role==='archer'?3:1);if(gap>reach||u.role==='archer'&&!lineOfSight(e,u,p))return n;return n+damagePreview(e,u,projected,u.role==='archer')*(gap<=(u.role==='archer'?3:1)?1:.4);},0);
   const cover=terrain==='wall'?2:terrain==='high'?1:terrain==='cover'?1:0,support=friends.filter(u=>distance(p,u)===1).length;
   let score=-path(p)*B.weights.progress-(p.cost??0)*.04;
-  const reasons=[];
+  const reasons=assignment?[`${assignment.role.toLowerCase()} the shared target`]:[];
+  if(assignment&&target?.unit.id===assignment.targetId)score+=1.5;
   if(style!=='simple'){
    score+=cover*B.weights.cover+Math.min(2,support)*B.weights.cohesion-threat*B.weights.threat*(unit.side==='player'?1.6:unit.role==='archer'?1.5:unit.hp<=unit.maxHp/3?1.3:.65);
    if(unit.role==='archer'){const nearest=Math.min(8,...foes.map(u=>distance(p,u)));score+=nearest>=2&&nearest<=3?3:nearest<=1?-5:0;if(terrain==='high')score+=1;}
@@ -242,7 +248,7 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
  }return best??idle;
 }
 export function refreshBattleIntents(e){if(e.combatVersion!==2)return;for(const u of e.units)if(alive(u)&&!u.hidden&&['ally','enemy'].includes(u.side))u.intent=planBattleUnit(e,{...u,moved:false,acted:false}).intent;}
-function resolveHit(e,attacker,target,ranged=false){const hit=combatBreakdown(e,attacker,target,ranged),wasAlive=alive(target);target.hp=Math.max(0,target.hp-hit.damage);
+function resolveHit(e,attacker,target,ranged=false){const hit=combatBreakdown(e,attacker,target,ranged),wasAlive=alive(target);target.hp=Math.max(0,target.hp-hit.damage);expandedHit(e,target,ranged);
  const loss=Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(target.formation==='line'?FORMATION_RULES.line.morale:0)-(target.moraleResistance??0));target.morale=clamp(target.morale-loss);
  if(wasAlive&&!alive(target))for(const u of companions(e,target).filter(u=>distance(u,target)<=2))u.morale=clamp(u.morale-B.withdrawalShock);
  return hit.damage;
@@ -263,10 +269,10 @@ export function endBattleTurn(state){if(!state.encounter.mission)return Legacy.e
  for(const u of e.units)delete u.moveOrigin;
  for(const u of e.units.filter(u=>u.side==='ally'))actAlly(e,u);
  for(const enemy of foes(e)){if(enemy.hidden&&!e.scouted&&distance(enemy,hero)>2)continue;enemy.hidden=false;enemyTurn(state,e,enemy);}
- for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1)stepToward(e,escort,e.goal,2);
- for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<8&&p.x>=0&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
+ for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1){if(e.featureEdition===31)moveProtectedColumn(e,escort,hero);else stepToward(e,escort,e.goal,2);}
+ for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<e.height&&p.x>=0&&p.x<e.width&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
  if(e.combatVersion===2&&['hold','supply'].includes(e.mission?.mode)&&foes(e).some(u=>distance(u,e.goal)<=1)&&!friendly(e).some(u=>distance(u,e.goal)<=1)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`Unopposed enemy occupation damages the objective (−${pressure} integrity this round).`);}
- progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
+ advanceExpandedBattle(e);progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
  if(e.status==='active'){e.turn++;e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;delete u.moveOrigin;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
  return result(true,e.status==='active'?'The enemy turn ends.':e.status==='won'?'Objective secured. Commit the encounter to preserve its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }

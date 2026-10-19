@@ -45,7 +45,13 @@ export function retimeStageTimeline(timeline){
 /** A reaction is justified only by a committed hit track. Local source angle
  * bends the torso away from contact without changing the defender's facing. */
 export function combatReaction(unit,frame,timeline,direction){
-  const override=frame?.unitOverrides?.[unit.id];if(override?.pose!=='hit')return {};
+  if(!frame||!timeline)return {};
+  const override=frame?.unitOverrides?.[unit.id];
+  if(override?.pose!=='hit'){
+    const incoming=timeline?.tracks.find(t=>t.unitId===unit.id&&t.pose==='hit'&&frame.time<t.start&&frame.time>=t.start-170);
+    const defended=incoming&&timeline.effects.some(e=>e.type==='shield'&&!e.political&&e.defended!==false&&Math.abs(e.start-incoming.start)<1e-5&&same(e.at,unit));
+    return defended&&!['attack','cavalry-attack','throw'].includes(override?.pose)?{motion:'block',phase:.12+.22*(1-(incoming.start-frame.time)/170),defended:true}:{};
+  }
   const track=timeline?.tracks.find(t=>t.unitId===unit.id&&t.pose==='hit'&&frame.time>=t.start&&frame.time<t.start+t.duration);if(!track)return {};
   const yaw=Number.isFinite(direction)?direction:({north:Math.PI,east:Math.PI/2,south:0,west:-Math.PI/2}[override.facing??unit.facing]??0),source=track.source;
   const impactDirection=source?Math.atan2(Math.sin(Math.atan2(source.x-unit.x,source.y-unit.y)-yaw),Math.cos(Math.atan2(source.x-unit.x,source.y-unit.y)-yaw)):0;

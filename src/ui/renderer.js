@@ -7,6 +7,13 @@ function poly(c,points,fill,stroke){c.beginPath();points.forEach((p,i)=>i?c.line
 function ellipse(c,x,y,rx,ry,color){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
 const battleLaidOut=r=>Number.isFinite(r.width)&&Number.isFinite(r.height)&&r.width>34&&r.height>80;
 function geometryFromRect(r,e){const w=Number.isFinite(r.width)?Math.max(0,r.width):0,h=Number.isFinite(r.height)?Math.max(0,r.height):0;
+  if(e.featureEdition===31){
+    // Reserve a full mounted figure above the far corner and centre rectangular
+    // boards by their actual diamond bounds. Tile picking shares this geometry.
+    const span=e.width+e.height,tw=Math.max(.01,Math.min((w-48)/(span/2),(h-48)/((span-1)*.24+1.62))),th=tw*.48;
+    const headroom=1.62*tw,total=headroom+(span-1)*th/2;
+    return {w,h,tw,th,ox:w/2-(e.width-e.height)*tw/4,oy:(h-total)/2+headroom};
+  }
   // Preserve the board fit at normal sizes; transient collapsed layouts must
   // never create negative radii or divide-by-zero coordinates in consumers.
   const tw=Math.max(.01,Math.min((w-34)/(Math.max(e.width,e.height)||8),(h-80)/((e.width+e.height)*.24))),th=tw*.48;

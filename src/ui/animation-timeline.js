@@ -1,3 +1,4 @@
+import {fieldBlocked,fieldMoveCost} from '../core/field-geometry.js';
 // Presentation-only timelines. Pure movement predicates; no mutation, RNG, DOM or clock.
 import {movementPinned} from '../core/shared.js';
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,n));
@@ -26,8 +27,8 @@ function movementPath(before,after,unit,next){
     if(p.cost>0&&movementPinned(before,unit,p))continue;
     for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){
       const cell={x:p.x+dx,y:p.y+dy},id=key(cell),raw=terrain?.[cell.y]?.[cell.x],ground=typeof raw==='string'?raw:raw?.type;
-      if(cell.x<0||cell.y<0||cell.x>=width||cell.y>=height||['rock','river'].includes(ground)||occupied.has(id)&&id!==key(end))continue;
-      const cost=p.cost+(ground==='marsh'&&unit.formation!=='line'?2:1);
+      if(cell.x<0||cell.y<0||cell.x>=width||cell.y>=height||['rock','river'].includes(ground)||fieldBlocked(before,cell.x,cell.y)||occupied.has(id)&&id!==key(end))continue;
+      const cost=p.cost+fieldMoveCost(before,unit,cell.x,cell.y);
       if(costs.has(id)&&costs.get(id)<=cost)continue;costs.set(id,cost);parents.set(id,position(p));queue.push({...cell,cost});
     }
   }
