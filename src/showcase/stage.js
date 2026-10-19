@@ -2,8 +2,10 @@ import * as T from '../../vendor/three/three.module.js';
 import {createSceneryOcclusion} from './environment-occlusion.js';
 import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-budget.js';
 import {createActor} from './actors.js';
-import {createPaintedActor,paintedLight} from './painted-actor.js';
+import {createPaintedLighting,createPaintedActor,paintedLight} from './painted-actor.js';
 import {FORMATION_LIMIT,formationEligible,formationSlots,formationShape,followerCount,createSkinnedCrowd} from './formation.js';
+import {createBattleRemains,sculptedFallenKind,paintedFallenKind} from './battle-remains.js';
+import {createCombatEffects} from './combat-effects.js';
 import {loadTacticalArt} from '../ui/unit-sprites.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
 import {actorAssetStatus} from './actor-assets.js';
@@ -134,9 +136,9 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
   return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,...combatReaction(unit,frame,timeline,direction),braced:unit.braced||pair?.before.braced,locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false};
 }
 export class BattleStage{
-  constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null}={}){
+  constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true}={}){
     try{
-    this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;this.commendations=commendations??{};this.profile=getSceneProfile(encounter,{chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
+    this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;this.commendations=commendations??{};this.profile=getSceneProfile(encounter,{chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
     this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});this.cuesPlayed=0;
     this.gpuTimer=createGpuTimer(this.renderer.getContext());this.adaptiveResolution=adaptiveResolution;
     this.resolutionBudget=createResolutionBudget({fps:QUALITY[quality]?.fps??60,enabled:adaptiveResolution,onChange:()=>this.updatePixelRatio()});this.cadence=createFrameCadence({fps:QUALITY[quality]?.fps??60});
@@ -156,6 +158,7 @@ export class BattleStage{
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});
     this.ink=createInkOverlay(this.scene,encounter,this.environment.groundHeight);
     this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);
+    this.battleRemains=battleRemains!==false;this.rebuildRemains();
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
     this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide});
@@ -172,6 +175,7 @@ export class BattleStage{
     this.labelLayer=document.createElement('div');this.labelLayer.className='world-labels';this.labelLayer.setAttribute('aria-hidden','true');canvas.parentElement.append(this.labelLayer);if(this.ceremony)this.labelLayer.hidden=true;
     this.projectile=new T.Group();const shaft=new T.Mesh(new T.CylinderGeometry(.025,.025,1.45,8),new T.MeshStandardMaterial({color:'#7d4e24',roughness:.85}));shaft.rotation.x=Math.PI/2;const tip=new T.Mesh(new T.ConeGeometry(.075,.32,6),new T.MeshStandardMaterial({color:'#afb3b1',metalness:.8,roughness:.35}));tip.rotation.x=Math.PI/2;tip.position.z=.85;const trail=new T.Mesh(new T.ConeGeometry(.045,1.35,8,1,true),new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide}));trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);this.projectile.visible=false;
     this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,blending:T.AdditiveBlending});this.sparks=new T.Points(this.sparkGeometry,this.sparkMaterial);this.sparks.frustumCulled=false;this.effectGroup.add(this.sparks);this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
+    this.combat=createCombatEffects(this.scene,{particleMask:this.particleMask,quality});this.dustDebt=new Map();
     this.weatherCloud=createWeatherField(this.particleMask);this.effectGroup.add(this.weatherCloud);sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});
     this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);this.effectGroup.add(this.nightLight);
     this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});this.compositor.setGrade?.(this.profile.grade??{});this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));
@@ -199,7 +203,7 @@ export class BattleStage{
       const styleKey=`${u.side}:${u.role}:${u.name}:${vComm}:${this.quality}:${this.figureStyle}`;let actor=this.actors.get(u.id);
       // A committed defection changes the uniform and allegiance together.
       if(actor&&actor.group.userData.styleKey!==styleKey){this.scene.remove(actor.group);actor.dispose();this.actors.delete(u.id);actor=null;}
-      if(!actor){actor=(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]});if(actor.painted)this.loadPaintedArt();this.attachFormation(u,actor);actor.group.userData.unitId=u.id;actor.group.userData.styleKey=styleKey;this.scene.add(actor.group);this.actors.set(u.id,actor);this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';}});}
+      if(!actor){actor=(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]});if(actor.painted)this.loadPaintedArt();this.attachFormation(u,actor);actor.group.userData.unitId=u.id;actor.group.userData.styleKey=styleKey;this.scene.add(actor.group);this.actors.set(u.id,actor);this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';}});}
       if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-role"></span><span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
       const label=this.labels.get(u.id),readout=actorReadout(u,encounter);
       label.className=`world-unit ${u.side==='enemy'?'enemy':u.side==='neutral'?'neutral':'friendly'} ${readout.tone}${civicActor(u)&&!isAlive(u)?' withdrawn':''}`;label.dataset.type=readout.type;label.dataset.role=labelRole(u);if(u.bloc)label.dataset.bloc=u.bloc;else delete label.dataset.bloc;label.classList.toggle('named',namedFigure(u));
@@ -391,7 +395,7 @@ export class BattleStage{
     if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
     this.grid.visible=!!show;
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.rebuildRemains();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
@@ -410,12 +414,30 @@ export class BattleStage{
     const heading=t<1?Math.atan2(to.x-from.x,to.z-from.z):Math.atan2(this.world(move.face).x-to.x,this.world(move.face).z-to.z);
     return {at,moving:t>0&&t<1,distance:length*k,yaw:Number.isFinite(heading)?heading:0};
   }
+  // What the battle leaves on the ground (bodies, spent arrows, trodden earth),
+  // rebuilt with the ground it marks. Contests and ceremonies leave none.
+  rebuildRemains(){
+    this.remains?.dispose();this.remains=null;if(this.encounter.kind==='contest'||this.ceremony)return;
+    const hx=this.encounter.width*1.25+2,hz=this.encounter.height*1.25+2;
+    this.remains=createBattleRemains(this.scene,{quality:this.quality,ground:this.environment.ground,heightAt:this.environment.groundHeight,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},visible:this.battleRemains});
+  }
+  setBattleRemains(value){this.battleRemains=value!==false;this.remains?.setVisible(this.battleRemains);}
+  // One appearance per fallen batch: a painted unit's own painting, or a sculpted kind of man.
+  fallenKind(unit,actor){
+    if(actor.painted)return {key:`painted:${unit.id}`,make:paintedFallenKind(actor)};
+    const kit=actor.group.userData.actor??{};return {key:`sculpted:${unit.role}:${unit.side}:${kit.faction??''}:${kit.mounted?'mounted':'foot'}`,make:sculptedFallenKind(actor,{label:unit.role})};
+  }
+  // A defeated unit is laid down once its fall has played (at once on a rebuilt stage).
+  layFallen(unit,actor){
+    if(!this.remains||civicActor(unit)||actorVisible(unit)||this.remains.hasLaid(unit.id))return;
+    this.remains.layUnit(unit,{...this.fallenKind(unit,actor),world:actor.group.position.clone(),yaw:actor.group.rotation.y+.4,animate:!!this.animation&&!this.reducedMotion});
+  }
   // Military units from Chapter IV stand as formations; a rebuilt rig gets a new crowd.
   attachFormation(unit,actor){
-    actor.crowd?.dispose();actor.crowd=null;
+    const ranks=actor.crowd?.ranks??[];actor.crowd?.dispose();actor.crowd=null;
     if(!formationEligible(unit,{chapter:this.chapter,contest:this.encounter?.kind==='contest'}))return;
     const max=Math.min(FORMATION_LIMIT[this.quality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
-    actor.crowd=actor.painted?actor.createCrowd?.(max)??null:createSkinnedCrowd(actor.group,{max});
+    actor.crowd=actor.painted?actor.createCrowd?.(max)??null:createSkinnedCrowd(actor.group,{max});actor.crowd?.inherit?.(ranks);
     if(actor.crowd&&!actor.crowdOwned){const dispose=actor.dispose.bind(actor);actor.dispose=()=>{actor.crowd?.dispose();dispose();};actor.crowdOwned=true;}
   }
   followerSlots(unit){
@@ -468,9 +490,45 @@ export class BattleStage{
     on(this.canvas,'webglcontextrestored',()=>{clearTimeout(this.restoreTimer);this.restoreTimer=null;this.contextLost=false;this.shadowDirty=true;this.labelSizeDirty=true;this.poseReset=new Set(this.actors.keys());this.compositor?.resize();this.cadence?.reset(QUALITY[this.quality].fps);});
   }
   play(before,after,command){this.finishMotion();this.sync(after);if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();if(this.reducedMotion||this.paused||this.contextLost)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
-    this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1/(this.motionSpeed||1),cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map()};return new Promise(resolve=>this.animation.resolve=resolve);
+    this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1/(this.motionSpeed||1),cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map(),marks:timeline.effects.filter(fx=>!fx.political&&(fx.type==='projectile'&&fx.from&&fx.to||['impact','shield'].includes(fx.type)&&fx.at)).map(fx=>({fx,at:fx.type==='projectile'?fx.start+fx.duration:fx.start,done:false,volley:fx.type==='projectile'?this.actors.get(this.unitAt(fx.from)?.id)?.crowd?.count??0:0}))};return new Promise(resolve=>this.animation.resolve=resolve);
   }
-  finishMotion(cancelAudio=true){if(!this.animation)return;if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
+  // The timeline's own clock marks the ground, however few frames are drawn:
+  // a shot leaves a spent arrow or javelin when its flight ends, a blow churns
+  // the earth when it lands. Ending or skipping the motion marks the rest.
+  markGround(time=Infinity){
+    const live=Number.isFinite(time)&&!this.reducedMotion;
+    for(const mark of this.animation?.marks??[]){
+      if(mark.done||mark.at>time)continue;mark.done=true;const fx=mark.fx;
+      // A blow that lands holds the motion for a beat and jolts the camera.
+      if(live&&fx.type!=='projectile'){const hold=Math.min(70,220-(this.animation.hitStop??0));if(hold>0){this.animation.start+=hold;this.animation.hitStop=(this.animation.hitStop??0)+hold;}if(this.actionCamera!==false)this.cameraKick=Math.min(1,(this.cameraKick??0)+.75);}
+      if(!this.remains)continue;
+      if(fx.type==='projectile')this.remains.arrows({from:this.world(fx.from).add(new T.Vector3(0,1.4,0)),to:this.world(fx.to),count:Math.min(9,1+(mark.volley??0)),seed:`${fx.start}:${fx.from.x}:${fx.from.y}`,size:fx.projectile==='arrow'?1:2.1});
+      else if(fx.at){const at=this.world(fx.at);this.remains.churn(at.x,at.z);}
+    }
+  }
+  // Per figure and frame: a ribbon behind the swung blade (a brushed arc for
+  // painted figures) and dust under running men and horses on dry ground.
+  combatMotion(unit,actor,pose,override,dt){
+    if(!this.combat)return;const motion=pose.motion,phase=Number.isFinite(pose.phase)?pose.phase:0;
+    if(['attack','strike'].includes(motion)&&phase>=.18&&phase<=.62){
+      if(actor.painted){
+        const facing=actor.puppet?.puppetFacing.value??1,right=new T.Vector3().setFromMatrixColumn(this.camera.matrixWorld,0).setY(0).normalize(),center=actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.7:1.15,0));
+        const angle=2.2-(phase-.18)/.44*2.7,tip=center.clone().addScaledVector(right,Math.cos(angle)*.85*facing).add(new T.Vector3(0,Math.sin(angle)*.85,0));
+        this.combat.trail(unit.id,tip,center.clone().lerp(tip,.45));
+      }else{
+        const tip=actor.contacts?.weapon?.getWorldPosition(new T.Vector3()),body=actor.contacts?.body?.getWorldPosition(new T.Vector3());
+        if(tip&&body)this.combat.trail(unit.id,tip,tip.clone().lerp(body,.38));
+      }
+    }
+    const mounted=!!actor.group.userData.actor?.mounted,running=motion==='run'||mounted&&motion==='walk';
+    if(!running)return;
+    const tile=override??unit,ground=this.encounter.terrain?.[Math.round(tile.y)]?.[Math.round(tile.x)];
+    if(['rain','mist'].includes(this.profile.weather)&&!mounted||['marsh','ford','river'].includes(typeof ground==='string'?ground:ground?.type)||this.profile.weather==='rain')return;
+    const debt=(this.dustDebt.get(unit.id)??0)+dt*(mounted?14:6),puffs=Math.floor(debt);this.dustDebt.set(unit.id,debt-puffs);
+    if(!puffs)return;const p=actor.group.position;this.combat.dust(p.x,p.y,p.z,{amount:puffs,seed:unit.id});
+    if(mounted)for(const f of actor.crowd?.footprints??[])this.combat.dust(f.x,f.y,f.z,{amount:Math.max(1,puffs-1),seed:`${unit.id}:${f.x.toFixed(1)}`});
+  }
+  finishMotion(cancelAudio=true){if(!this.animation)return;this.markGround();if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
   tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
     if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
     const renderStart=performance.now();let frame=null;
@@ -479,7 +537,7 @@ export class BattleStage{
     for(const unit of this.visibleUnits){
       const a=this.actors.get(unit.id),o=frame?.unitOverrides[unit.id],position=o??unit;
       const walk=this.divisionStep(unit,now);
-      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;a.group.position.z+=contact.z;a.group.position.y=this.environment.groundHeight(a.group.position.x,a.group.position.z);a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;continue;}
+      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;a.group.position.z+=contact.z;a.group.position.y=this.environment.groundHeight(a.group.position.x,a.group.position.z);a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
       const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle';
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
       const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
@@ -492,8 +550,16 @@ export class BattleStage{
       const focusUnit=victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
       let gazeYaw=0,gazePitch=0;
       if(focusUnit){const d=this.world(focusUnit).sub(a.group.position),rel=Math.atan2(Math.sin(Math.atan2(d.x,d.z)-pose.direction),Math.cos(Math.atan2(d.x,d.z)-pose.direction));if(Math.abs(rel)<1.35){gazeYaw=clamp(rel*.45,-.32,.32);gazePitch=clamp(-Math.atan2(d.y,Math.max(.5,Math.hypot(d.x,d.z)))*.35,-.18,.18);}}
-      if(a.crowd){const slots=this.followerSlots(unit);a.crowd.update({slots,visible:followerCount(unit,Math.min(slots.length,a.crowd.max)),heightAt:this.environment.groundHeight});}
+      if(a.crowd){
+        // Ranks thin when the blow lands, not when the order is given.
+        const pair=this.animation?.timeline.units?.[unit.id],pending=pair&&this.animation.timeline.tracks.some(t=>t.unitId===unit.id&&['hit','retreat'].includes(t.pose)&&(frame?.time??Infinity)<t.start),ranks=pending?pair.before:unit;
+        const slots=this.followerSlots(unit);a.crowd.update({slots,visible:followerCount(ranks,Math.min(slots.length,a.crowd.max)),heightAt:this.environment.groundHeight,time:this.elapsed,reset:this.poseReset.has(unit.id),unitId:unit.id,
+          onFall:this.remains?fall=>this.remains.fall({...this.fallenKind(unit,a),world:fall.world,yaw:fall.yaw+.35*(fall.index%2?1:-1),animate:!this.reducedMotion}):null});
+      }
       a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,groundHeight:this.environment.groundHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
+      // Marching feet and hooves wear the ground of the board.
+      if(this.remains&&!this.reducedMotion&&['walk','run'].includes(pose.motion)){const mounted=!!a.group.userData.actor?.mounted;this.remains.tread(a.group.position.x,a.group.position.z,{mounted,id:unit.id});(a.crowd?.footprints??[]).forEach((f,i)=>this.remains.tread(f.x,f.z,{mounted,id:`${unit.id}:${i}`}));}
+      if(!this.reducedMotion)this.combatMotion(unit,a,pose,o,dt);
       const label=this.labels.get(unit.id),refs=this.labelRefs.get(unit.id),key=`${unit.id===this.selected}:${unit.id===this.inspected||unit.id===this.hovered}`;label.hidden=false;
       if(refs.stateKey!==key){refs.stateKey=key;label.classList.toggle('selected',unit.id===this.selected);label.classList.toggle('inspected',unit.id===this.inspected||unit.id===this.hovered);refs.width=0;this.labelSizeDirty=true;}
       const preview=!this.animation&&(this.previewTargets?.[unit.id]??(this.previewTarget?.unitId===unit.id?this.previewTarget:null));
@@ -502,7 +568,7 @@ export class BattleStage{
     if(this.tacticalArcs)for(const [i,line]of this.tacticalArcs.entries())if(line.visible)line.material.opacity=this.reducedMotion?.85:(line.userData.linkKind==='guard'?.78+.17*Math.sin(this.elapsed*3.2+i):.75+.2*Math.sin(this.elapsed*4.8+i));
     this.contactShadows.update(this.actors,this.environment.groundHeight);
     const selected=this.actors.get(this.selected);this.selectedRing.visible=!!selected?.group.visible&&!this.ceremony;if(selected){this.selectedRing.position.copy(selected.group.position);this.selectedRing.position.y+=.065;this.selectedRing.rotation.y=this.selectedYaw??0;this.selectedRing.scale.setScalar(selected.group.userData.actor?.mounted?1.45:1);}
-    this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);let projectileCount=0,sparkCount=0,ringCount=0;
+    this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);let projectileCount=0,sparkCount=0,ringCount=0;const volleyShots=[];
     for(const fx of frame?.effects??[]){const readout=effectReadout(fx);
       if(fx.at&&readout.text){const unit=this.unitAt(fx.at),label=this.labelRefs.get(unit?.id)?.effect;if(label){label.textContent=readout.text;label.style.color=readout.color;}}
       if(readout.ring&&fx.at&&ringCount<6){
@@ -514,6 +580,8 @@ export class BattleStage{
       const key=`${fx.start}:${fx.from.x}:${fx.from.y}`,origins=this.animation.releasePoints;
       if(!origins.has(key)){const source=this.unitAt(fx.from),actor=this.actors.get(source?.id);origins.set(key,actor?.getReleasePoint(new T.Vector3())??this.world(fx.from).add(new T.Vector3(0,1.4,0)));}
       positionProjectileTip(projectile,origins.get(key),this.bodyPoint(fx.to),fx.progress);projectile.visible=true;
+      // The shooter's whole rank looses with him.
+      const rank=this.actors.get(this.unitAt(fx.from)?.id)?.crowd;if(rank?.count)rank.footprints.forEach((f,i)=>volleyShots.push({from:f.clone().add(new T.Vector3(0,1.35,0)),to:this.world(fx.to),progress:fx.progress,index:i,seed:key,size:fx.projectile==='arrow'?1:2.1}));
     }else if(['impact','shield'].includes(fx.type)&&!fx.political){
       if(fx.at)this.updateBattleDecals(this.encounter,[fx.at]);
       if(sparkCount>=8)continue;if(!this.sparkClouds[sparkCount]){const cloud=new T.Points(this.sparkGeometry.clone(),this.sparkMaterial.clone());cloud.frustumCulled=false;this.effectGroup.add(cloud);this.sparkClouds.push(cloud);}const cloud=this.sparkClouds[sparkCount++];
@@ -527,6 +595,11 @@ export class BattleStage{
       if(group.userData.brazierLight)group.userData.brazierLight.intensity=this.reducedMotion?1.85:1.85+.28*Math.sin(this.elapsed*8.5+group.position.x);
     }
     sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed,{reducedMotion:this.reducedMotion});
+    this.combat?.volley(volleyShots);
+    if(this.animation&&frame)this.markGround(frame.time);
+    // Combat effects run on the motion's own clock (faster at double speed).
+    this.combatClock=(this.combatClock??0)+dt*(this.animation?1/this.animation.scale:1);
+    this.remains?.update(this.elapsed);this.combat?.update(this.combatClock);
     if(this.nightLight){this.nightLight.intensity=this.profile.torchlight?(this.reducedMotion?2.35:2.35+.22*Math.sin(this.elapsed*7.5)):0;if(selected)this.nightLight.position.set(selected.group.position.x,selected.group.position.y+2.8,selected.group.position.z);}
     const target=this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone();
     let actionGoal=0;
@@ -542,9 +615,16 @@ export class BattleStage{
     this.actionBlend=(this.actionBlend??0)+(actionGoal-(this.actionBlend??0))*Math.min(1,dt*4);if(this.reducedMotion||!this.animation&&this.actionBlend<.002)this.actionBlend=0;
     if(this.ceremony&&!this.reducedMotion&&!this.drag)this.orbit.yaw+=dt*.045; // a slow, steady circuit of the tableau
     if(this.figureStyle==='painted'&&!this.drag&&this.cameraView==='overview'){const goal=diagonalYaw(this.orbit.yaw);this.orbit.yaw+=(goal-this.orbit.yaw)*(this.reducedMotion?1:Math.min(1,dt*5));}
-    this.lookTarget.lerp(target,this.reducedMotion?1:Math.min(1,dt*3));const {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);this.camera.lookAt(this.lookTarget);this.camera.updateMatrixWorld();this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
+    this.lookTarget.lerp(target,this.reducedMotion?1:Math.min(1,dt*3));const {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);this.camera.lookAt(this.lookTarget);
+    // A landed blow jolts the view a few centimetres and settles in a quarter second.
+    if(this.cameraKick>.002&&!this.reducedMotion){const k=this.cameraKick,offset=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(Math.sin(this.elapsed*61)*.07*k).add(new T.Vector3(0,Math.cos(this.elapsed*47)*.045*k,0));this.camera.position.add(offset);this.camera.lookAt(this.lookTarget.clone().add(offset));}
+    this.cameraKick=this.reducedMotion?0:(this.cameraKick??0)*Math.exp(-dt*12);
+    this.camera.updateMatrixWorld();this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
     // Painted cards face the camera only after it has moved this frame.
-    const sunYaw=Math.atan2(this.sunOffset.x,this.sunOffset.z);for(const a of this.actors.values())if(a.group.visible)a.faceCamera?.(this.camera,{sunYaw});this.compositor?.setFocus?.(this.camera.position.distanceTo(this.lookTarget));
+    const sunYaw=Math.atan2(this.sunOffset.x,this.sunOffset.z);
+    // Painted cards read their shade from a point just sunward of the figure.
+    const sunReach=Math.hypot(this.sunOffset.x,this.sunOffset.z)||1;this.paintedLighting.paintedSunShift.value.set(this.sunOffset.x/sunReach*.55,0,this.sunOffset.z/sunReach*.55);
+    for(const a of this.actors.values())if(a.group.visible)a.faceCamera?.(this.camera,{sunYaw});this.compositor?.setFocus?.(this.camera.position.distanceTo(this.lookTarget));
     // Aerial haze starts past the board's far corner from this camera (half-diagonal ~14m).
     const focusDistance=this.camera.position.distanceTo(this.lookTarget);this.compositor?.setHaze?.({near:focusDistance+14,far:focusDistance+140,color:this.profile.grade?.haze});
     // Scene fog likewise begins past the board (sooner in mist and rain), so the
@@ -594,8 +674,8 @@ export class BattleStage{
     }
     this.labelStats=counts;this.labelSizeDirty=false;
   }
-  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
+  stats(){return {cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
+  dispose(){if(this.disposed)return;this.disposed=true;this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.
     if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();}

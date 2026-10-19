@@ -145,3 +145,6 @@ try{const response=await fetch('./tests/fixtures/campaign-3d.json');ensure(respo
   for(const scene of fixtures.scenes){const option=document.createElement('option');option.value=scene.id;option.textContent=`${scene.chapter} · ${scene.encounterTitle} (${scene.kind})`;$('scene-select').append(option);}
   $('scene-select').value='ch2-marsh';$('scene-select').disabled=false;buttons.forEach(id=>$(id).disabled=false);sceneOptions();report.fixtureSource=fixtures.source;report.fixtureCommands=fixtures.commandCount;status.textContent='Ready. No browser checks have run.';write();
 }catch(error){status.textContent=error.message;report.status='unavailable';report.error=error.message;write();}
+
+// Read-only inspection handle for scripted visual checks (stage stats, injected presentation scenarios).
+globalThis.__campaign3d={get stage(){return controller?.stage;}};
