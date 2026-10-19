@@ -23,6 +23,7 @@ import {heroPortrait,chapterScene,loadArt,prefetchChapter,TACTICAL_2D_ONLY} from
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
 import {setupSiteMedia} from './site-media.js';
+import {createScenePainting} from './scene-parallax.js';
 import {campaignSoundscape} from './soundscape.js';
 import {previewBadge,previewBadges} from '../showcase/stage-readout.js';
 
@@ -38,6 +39,8 @@ let hoverTile=null,showGrid=false,failed3D=false,preservedUnreadable=0,lastPersi
 const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; your progress is preserved. '+message);}});
 // The oath and accession may be staged in 3D over their paintings; a failure keeps the painting.
 const ceremony=createCeremonyController({onError:()=>{}});
+// Story paintings drift in 2.5D over their still image; any failure keeps the still image.
+const scenePainting=createScenePainting({load:src=>loadArt(src)});
 function uses3D(){return screen!=='title'&&chapterHas3D(state)&&settings.battleView!=='2d'&&!failed3D;}
 function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover'),u=visibleUnitAt(state.encounter,point);if(label)label.textContent=point?`${u?u.name+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}`:'';}
 let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
@@ -49,7 +52,7 @@ settings.audioVolume=audioLevel(settings.audioVolume);
 settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
 const soundscape=campaignSoundscape();soundscape.configure(settings);
 function saveSettings(){try{localStorage.setItem('sacramentum.settings',JSON.stringify(settings));}catch{}}
-const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{battleStage.quality(mode);settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
+const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
 const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
@@ -98,11 +101,18 @@ function render(){
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
   soundscape.update(state,screen);
   if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
-  const ceremonyHost=document.querySelector('[data-ceremony]');if(ceremonyHost&&settings.battleView!=='2d'&&!failed3D)ceremony.mount(ceremonyHost,{kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
+  const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);if(ceremony3D)ceremony.mount(ceremonyHost,{kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
+  mountPainting();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
   renderScheduler.schedule({activeId});
+}
+// One painting drifts at a time: a 2D-staged oath or accession first, else the camp mural or the promotion scene.
+function mountPainting(){
+  const ceremonyHost=app.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
+  const host=screen==='title'?null:(!ceremony3D&&ceremonyHost)||app.querySelector('.cinematic-mural')||app.querySelector('.ceremony-scene:not([data-ceremony])');
+  if(host)scenePainting.mount(host,{chapter:state?.chapter,quality:graphics.mode,reducedMotion:settings.reducedMotion});else scenePainting.release();
 }
 function stopMotion(){battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;if(stopAmbient)stopAmbient();ambientTime=null;}
 function startAtmosphere(canvas=document.querySelector('#battle-board'),encounter=state?.encounter){
@@ -397,7 +407,7 @@ document.addEventListener('change',async event=>{
   if(control.id==='order-kind'){orderAction=control.value;orderDestination=null;render();}
   if(control.id==='order-destination'){const [x,y]=(control.value||'').split(',').map(Number);orderDestination=control.value&&Number.isInteger(x)&&Number.isInteger(y)?{x,y}:null;render();if(target)announce(Game.preview(state,command()).message);}
   if(control.id==='reign-card-theme'){await showShare(control.value);return;}
-  if(['audio-setting','motion-setting'].includes(control.id)){stopMotion();pendingMotion=null;replay.stop();settings[control.id==='audio-setting'?'audio':'reducedMotion']=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();document.documentElement.dataset.reduced=settings.reducedMotion;battleStage.audio(settings.audio,settings.audioVolume);battleStage.reduced(settings.reducedMotion);if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();}
+  if(['audio-setting','motion-setting'].includes(control.id)){stopMotion();pendingMotion=null;replay.stop();settings[control.id==='audio-setting'?'audio':'reducedMotion']=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();document.documentElement.dataset.reduced=settings.reducedMotion;battleStage.audio(settings.audio,settings.audioVolume);battleStage.reduced(settings.reducedMotion);mountPainting();if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();}
 });
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;

@@ -444,3 +444,170 @@ test('v0.30.0: sun shafts slant through dawn, mist and halls; board water mirror
   const env = createEnvironment(new T.Scene(), fixtureScene('ch8-crossing').state.encounter, {tileSize: 2.5, quality: 'high', loadTextures: false, chapter: 8});
   assert.equal(env.reflectionLevel, -.42);assert.equal(env.waterMeshes.length, 1);env.dispose();
 });
+
+// Width and height from a WebP file's first chunk.
+function webpSize(buffer) {
+  assert.equal(buffer.toString('ascii', 0, 4), 'RIFF');assert.equal(buffer.toString('ascii', 8, 12), 'WEBP');
+  const chunk = buffer.toString('ascii', 12, 16);
+  if (chunk === 'VP8 ') return [buffer.readUInt16LE(26) & 0x3fff, buffer.readUInt16LE(28) & 0x3fff];
+  if (chunk === 'VP8L') {const bits = buffer.readUInt32LE(21);return [(bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1];}
+  if (chunk === 'VP8X') return [1 + buffer.readUIntLE(24, 3), 1 + buffer.readUIntLE(27, 3)];
+  throw new Error('Unknown WebP chunk ' + chunk);
+}
+// A page with one painting host, a manual animation clock and a recording WebGL context.
+function paintingPage({compiles = true} = {}) {
+  let sequence = 0;
+  const raf = new Map(), listeners = new Map(), observers = [], contexts = [], loads = [], log = {draws: 0, lost: 0, deleted: 0, times: []};
+  const win = {devicePixelRatio: 2, requestAnimationFrame(fn) {raf.set(++sequence, fn);return sequence;}, cancelAnimationFrame(id) {raf.delete(id);},
+    getComputedStyle: () => ({objectPosition: '50% 45%'}),
+    IntersectionObserver: class {constructor(callback) {this.callback = callback;observers.push(this);} observe(target) {this.target = target;} disconnect() {this.disconnected = true;}}};
+  const doc = {hidden: false, defaultView: win, addEventListener(type, fn) {listeners.set(type, fn);}, removeEventListener(type, fn) {if (listeners.get(type) === fn) listeners.delete(type);},
+    createElement() {
+      const node = {className: '', dataset: {}, width: 300, height: 150, parentNode: null, attributes: {}, events: new Map(),
+        setAttribute(k, v) {this.attributes[k] = v;}, addEventListener(type, fn) {this.events.set(type, fn);}, removeEventListener(type, fn) {if (this.events.get(type) === fn) this.events.delete(type);},
+        remove() {if (this.parentNode) {this.parentNode.children.splice(this.parentNode.children.indexOf(this), 1);this.parentNode = null;}},
+        get isConnected() {return this.parentNode?.isConnected === true;}};
+      return node;
+    }};
+  function host(src) {
+    return {ownerDocument: doc, isConnected: true, children: [], getBoundingClientRect: () => ({width: 1100, height: 330}),
+      querySelector: selector => selector === 'img' ? {getAttribute: () => src, getAnimations: () => []} : null,
+      append(child) {child.remove?.();child.parentNode = this;this.children.push(child);}};
+  }
+  function createContext(canvas) {
+    const gl = {VERTEX_SHADER: 1, FRAGMENT_SHADER: 2, COMPILE_STATUS: 3, LINK_STATUS: 4, ARRAY_BUFFER: 5, STATIC_DRAW: 6, TEXTURE_2D: 7, TEXTURE0: 100, UNPACK_FLIP_Y_WEBGL: 8, UNPACK_PREMULTIPLY_ALPHA_WEBGL: 9,
+      TEXTURE_MIN_FILTER: 10, TEXTURE_MAG_FILTER: 11, TEXTURE_WRAP_S: 12, TEXTURE_WRAP_T: 13, LINEAR: 14, CLAMP_TO_EDGE: 15, RGB: 16, UNSIGNED_BYTE: 17, FLOAT: 18, TRIANGLES: 19, canvas,
+      createShader: () => ({}), shaderSource() {}, compileShader() {}, getShaderParameter: () => compiles, getShaderInfoLog: () => 'compile failed', deleteShader() {},
+      createProgram: () => ({}), attachShader() {}, linkProgram() {}, getProgramParameter: () => true, getProgramInfoLog: () => '', getUniformLocation: (program, name) => name, getAttribLocation: () => 0,
+      createBuffer: () => ({}), bindBuffer() {}, bufferData() {}, createTexture: () => ({}), activeTexture() {}, bindTexture() {}, pixelStorei() {}, texParameteri() {}, texImage2D() {},
+      viewport() {}, useProgram() {}, uniform1i() {}, uniform1f(name, value) {if (name === 'time') log.times.push(value);}, uniform2f() {}, uniform2fv() {}, uniform3fv() {}, uniform4fv() {},
+      enableVertexAttribArray() {}, vertexAttribPointer() {}, drawArrays() {log.draws++;}, deleteTexture() {log.deleted++;}, deleteProgram() {}, deleteBuffer() {},
+      getExtension: name => name === 'WEBGL_lose_context' ? {loseContext() {log.lost++;}} : null};
+    contexts.push(gl);return gl;
+  }
+  const image = {naturalWidth: 768, naturalHeight: 430};
+  return {win, doc, raf, listeners, observers, contexts, loads, log, host, createContext,
+    load: async src => {loads.push(src);return image;},
+    frames(from, to, step = 1000 / 60) {for (let t = from; t <= to + 1e-6; t += step) {const batch = [...raf.values()];raf.clear();batch.forEach(fn => fn(t));}}};
+}
+const settle = () => new Promise(resolve => setTimeout(resolve, 0));
+
+test('v0.30.0: every story painting has a depth map in its chapter’s group, and weather fit for the place', async () => {
+  const {readdir, readFile} = await import('node:fs/promises');
+  const P = await import('../src/ui/scene-parallax.js'), Art = await import('../src/ui/art.js');
+  const files = (await readdir(new URL('../assets/scenes/', import.meta.url))).filter(name => name.endsWith('.webp')).sort();
+  assert.equal(files.length, 8);
+  for (const file of files) {
+    const src = `./assets/scenes/${file}`, name = file.slice(0, -5);
+    assert.equal(P.scenePaintingName(src), name);assert.ok(P.SCENE_PAINTINGS[name].focus > .3 && P.SCENE_PAINTINGS[name].focus < .6);
+    assert.equal(Art.sceneDepth(src), `./assets/scenes/depth/${file}`);
+    const [width, height] = webpSize(await readFile(new URL(`../assets/scenes/${file}`, import.meta.url)));
+    const [depthWidth, depthHeight] = webpSize(await readFile(new URL(`../assets/scenes/depth/${file}`, import.meta.url)));
+    assert.equal(depthWidth, 384);assert.ok(Math.abs(depthWidth / depthHeight - width / height) < .01, `${name} depth keeps the painting's shape`);
+  }
+  assert.equal(P.scenePaintingName('./assets/portraits/varro.webp'), null);assert.equal(Art.sceneDepth('./assets/portraits/varro.webp'), null);
+  // A chapter's group holds the depth map of every painting it can show, the promotion's included.
+  for (let chapter = 1; chapter <= 12; chapter++) {
+    const assets = Art.chapterAssets(chapter);assert.equal(new Set(assets).size, assets.length);
+    for (const scene of [Art.chapterScene(chapter), Art.promotionScene(chapter), ...(chapter === 12 ? ['./assets/scenes/accession.webp'] : [])]) {
+      assert.ok(assets.includes(scene), `Chapter ${chapter}: ${scene}`);assert.ok(assets.includes(Art.sceneDepth(scene)), `Chapter ${chapter}: depth of ${scene}`);
+    }
+    assert.equal(assets.includes('./assets/scenes/depth/frontier-oath.webp'), chapter === 1 || chapter === 12, 'The oath painting’s depth travels with the oath');
+  }
+  assert.equal(Art.promotionScene(9), './assets/scenes/province.webp');assert.equal(Art.promotionScene(11), './assets/scenes/rome.webp');assert.equal(Art.promotionScene(4), Art.chapterScene(4));
+  const views = await readFile(new URL('../src/ui/campaign-views.js', import.meta.url), 'utf8');
+  assert.match(views, /const scene=promotionScene\(ch\.id\);/, 'The promotion view and the chapter group name the same painting');
+  // The chapter's weather outdoors (the same as its 3D battle); motes in the Curia and the accession's evening light.
+  const {chapterWeather} = await import('../src/ui/chapter-weather.js'), {getSceneProfile} = await import('../src/showcase/campaign-scene-profile.js');
+  for (let chapter = 1; chapter <= 12; chapter++) {
+    assert.equal(P.paintingWeather(Art.chapterScene(chapter), chapter), Art.chapterScene(chapter).endsWith('rome.webp') ? 'motes' : chapterWeather(chapter));
+    assert.equal(getSceneProfile({id: `ch${chapter}-test`}).weather, chapterWeather(chapter), 'One weather table for battle and painting');
+  }
+  assert.equal(P.paintingWeather('./assets/scenes/marsh.webp', 2), 'rain');assert.equal(P.paintingWeather('./assets/scenes/eastern-fort.webp', 5), 'embers');
+  assert.equal(P.paintingWeather('./assets/scenes/accession.webp', 12), 'motes');
+  assert.notDeepEqual(P.paintingWeatherStyle('mist', 8).color, P.paintingWeatherStyle('mist', 1).color, 'Dawn mist is warmer than day mist');
+  assert.equal(P.paintingWeatherStyle('clear').strength, 0);assert.equal(P.paintingWeatherStyle('rain').kind, P.PAINTING_WEATHER.rain);
+});
+
+test('v0.30.0: the painting takes over from its still image without a jump and drifts only a little', async () => {
+  const P = await import('../src/ui/scene-parallax.js');
+  assert.equal(P.paintingWanted({quality: 'performance'}), false);assert.equal(P.paintingWanted({reducedMotion: true}), false);assert.equal(P.paintingWanted({quality: 'balanced'}), true);
+  // object-fit: cover, as the browser crops the <img>.
+  assert.deepEqual(P.coverWindow(768, 430, 768, 430), [0, 0, 1, 1]);
+  const wide = P.coverWindow(1100, 330, 768, 430, [.5, .45]), shown = (768 / 430) / (1100 / 330);
+  assert.equal(wide[0], 0);assert.equal(wide[2], 1);assert.ok(Math.abs(wide[3] - shown) < 1e-12 && Math.abs(wide[1] - (1 - shown) * .45) < 1e-12);
+  const narrow = P.coverWindow(360, 272, 768, 430);assert.equal(narrow[1], 0);assert.equal(narrow[3], 1);assert.ok(Math.abs(narrow[0] + narrow[2] / 2 - .5) < 1e-12);
+  assert.deepEqual(P.objectPosition('50% 45%'), [.5, .45]);assert.deepEqual(P.objectPosition('20%'), [.2, .5]);assert.deepEqual(P.objectPosition('left top'), [.5, .5]);
+  // The CSS ease-out curve, and the arrival it drives.
+  assert.equal(P.easeOut(0), 0);assert.equal(P.easeOut(1), 1);assert.ok(Math.abs(P.easeOut(.5) - .6846) < .001);
+  const start = P.paintingMotion(0, {arrival: 4.5});
+  assert.deepEqual(start, {arrival: 1.035, drift: [0, 0], zoom: 0, weather: 0}, 'At first the canvas is exactly the arriving <img>');
+  let previous = start, largest = 0, deepest = 0;
+  for (let i = 1; i <= 3600; i++) {
+    const motion = P.paintingMotion(i / 30, {arrival: 4.5});
+    assert.ok(Math.abs(motion.arrival - previous.arrival) < .002 && Math.hypot(motion.drift[0] - previous.drift[0], motion.drift[1] - previous.drift[1]) < .0005 && Math.abs(motion.zoom - previous.zoom) < .0005, `No jump at ${i / 30}s`);
+    largest = Math.max(largest, Math.hypot(...motion.drift));deepest = Math.max(deepest, motion.zoom);assert.ok(motion.zoom >= 0, 'The dolly only moves in, so the image never runs out');previous = motion;
+  }
+  assert.ok(largest > .008 && largest <= .0125 && deepest <= .035, `A small drift (${largest.toFixed(4)}) and dolly (${deepest.toFixed(4)})`);
+  assert.equal(P.paintingMotion(5, {arrival: 4.5}).arrival, 1);assert.equal(P.paintingMotion(4, {arrival: 0}).arrival, 1, 'No arrival without the CSS animation');
+  const css = await (await import('node:fs/promises')).readFile(new URL('../src/ui/cinematic.css', import.meta.url), 'utf8');
+  assert.match(css, /\.scene-depth-canvas\{position:absolute;inset:0;[^}]*pointer-events:none;opacity:0;transition:opacity \.8s ease-out\}/);
+  assert.match(css, /\.scene-depth-canvas\[data-ready="true"\]\{opacity:1\}/);
+  assert.match(css, /@keyframes scene-arrival\{from\{transform:scale\(1\.035\)\}to\{transform:scale\(1\)\}\}/, 'The canvas repeats this arrival');
+});
+
+test('v0.30.0: one painting canvas at a time; it pauses unseen, survives re-renders and falls back to the still image', async () => {
+  const {createScenePainting, PAINTING_BUDGET} = await import('../src/ui/scene-parallax.js');
+  const random = Math.random;Math.random = () => {throw new Error('Presentation must not draw gameplay randomness');};
+  try {
+    // Performance and reduced motion keep the still painting: no canvas, no work.
+    for (const options of [{quality: 'performance'}, {reducedMotion: true}]) {
+      const page = paintingPage(), painting = createScenePainting({load: page.load, createContext: page.createContext}), host = page.host('./assets/scenes/danube.webp');
+      assert.equal(painting.mount(host, options), null);assert.equal(host.children.length, 0);assert.equal(page.raf.size, 0);assert.equal(page.listeners.size, 0);assert.equal(page.loads.length, 0);
+    }
+    const page = paintingPage(), painting = createScenePainting({load: page.load, createContext: page.createContext});
+    const first = page.host('./assets/scenes/danube.webp'), canvas = painting.mount(first, {chapter: 1, quality: 'balanced'});
+    assert.equal(canvas.className, 'scene-depth-canvas');assert.equal(canvas.attributes['aria-hidden'], 'true');assert.equal(first.children[0], canvas);
+    await settle();
+    assert.deepEqual(page.loads, ['./assets/scenes/danube.webp', './assets/scenes/depth/danube.webp']);assert.equal(page.contexts.length, 1);
+    assert.equal(painting.stats().ready, true);assert.equal(painting.stats().weather, 'mist');
+    page.frames(0, 1000);
+    assert.ok(page.log.draws >= 29 && page.log.draws <= 32, `Balanced draws about 30 frames a second (${page.log.draws})`);
+    assert.equal(canvas.dataset.ready, 'true');assert.equal(canvas.width, Math.round(1100 * PAINTING_BUDGET.balancedPixelRatio));assert.equal(canvas.height, Math.round(330 * PAINTING_BUDGET.balancedPixelRatio));
+    // A re-render with the same painting moves the canvas, keeping its context and its clock.
+    const second = page.host('./assets/scenes/danube.webp'), before = page.log.times.at(-1);
+    assert.equal(painting.mount(second, {chapter: 1, quality: 'high'}), canvas);
+    assert.equal(canvas.parentNode, second);assert.equal(first.children.length, 0);assert.equal(page.contexts.length, 1);assert.equal(page.loads.length, 2);
+    const drawn = page.log.draws;page.frames(1000 + 1000 / 60, 2000);
+    assert.ok(page.log.times.at(-1) > before && page.log.times.at(-1) < before + 1.1, 'The clock carries on');assert.ok(page.log.draws - drawn >= 55, 'High draws every frame');
+    // Hidden or scrolled away, it stops; back in view, it resumes.
+    page.doc.hidden = true;page.listeners.get('visibilitychange')();assert.equal(page.raf.size, 0);
+    page.doc.hidden = false;page.listeners.get('visibilitychange')();assert.equal(page.raf.size, 1);
+    const observer = page.observers.at(-1);assert.equal(observer.target, second);
+    observer.callback([{isIntersecting: false}]);assert.equal(page.raf.size, 0);let still = page.log.draws;page.frames(2100, 2300);assert.equal(page.log.draws, still);
+    observer.callback([{isIntersecting: true}]);page.frames(2400, 2500);assert.ok(page.log.draws > still);
+    // Another painting replaces it and frees the old context.
+    const rome = page.host('./assets/scenes/rome.webp'), next = painting.mount(rome, {chapter: 11, quality: 'balanced'});
+    assert.notEqual(next, canvas);assert.equal(canvas.parentNode, null);assert.equal(page.log.lost, 1);assert.ok(page.log.deleted >= 2);assert.ok(observer.disconnected);
+    await settle();assert.equal(painting.stats().weather, 'motes');
+    painting.release();assert.equal(next.parentNode, null);assert.equal(page.raf.size, 0);assert.equal(page.listeners.size, 0);assert.equal(page.log.lost, 2);
+    // A failed load, shader or lost context leaves the still painting, and is not retried.
+    const failing = paintingPage(), broken = createScenePainting({load: async src => src.includes('/depth/') ? null : {naturalWidth: 768, naturalHeight: 430}, createContext: failing.createContext});
+    const marsh = failing.host('./assets/scenes/marsh.webp');broken.mount(marsh, {chapter: 2});await settle();
+    assert.equal(marsh.children.length, 0);assert.deepEqual(broken.stats().failed, ['./assets/scenes/marsh.webp']);assert.equal(broken.mount(failing.host('./assets/scenes/marsh.webp'), {chapter: 2}), null);
+    const unlit = paintingPage({compiles: false}), noShader = createScenePainting({load: unlit.load, createContext: unlit.createContext}), fort = unlit.host('./assets/scenes/eastern-fort.webp');
+    noShader.mount(fort, {chapter: 5});await settle();assert.equal(fort.children.length, 0);assert.equal(noShader.stats().ready, false);
+    const lost = paintingPage(), losing = createScenePainting({load: lost.load, createContext: lost.createContext}), crossing = lost.host('./assets/scenes/river-crossing.webp');
+    const lostCanvas = losing.mount(crossing, {chapter: 8});await settle();lostCanvas.events.get('webglcontextlost')();
+    assert.equal(crossing.children.length, 0);assert.equal(lost.raf.size, 0);assert.deepEqual(losing.stats().failed, ['./assets/scenes/river-crossing.webp']);
+    const noGl = paintingPage(), headless = createScenePainting({load: noGl.load, createContext: () => null}), province = noGl.host('./assets/scenes/province.webp');
+    headless.mount(province, {chapter: 10});await settle();assert.equal(province.children.length, 0);
+    assert.equal(createScenePainting({load: page.load, createContext: page.createContext}).mount(page.host('./assets/portraits/varro.webp')), null, 'Only scene paintings drift');
+  } finally {Math.random = random;}
+  // The app mounts one painting per render: a 2D-staged oath or accession first, else the mural or the promotion scene.
+  const app = await (await import('node:fs/promises')).readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
+  assert.match(app, /const scenePainting=createScenePainting\(\{load:src=>loadArt\(src\)\}\);/);
+  assert.match(app, /const host=screen==='title'\?null:\(!ceremony3D&&ceremonyHost\)\|\|app\.querySelector\('\.cinematic-mural'\)\|\|app\.querySelector\('\.ceremony-scene:not\(\[data-ceremony\]\)'\);/);
+  assert.match(app, /if\(host\)scenePainting\.mount\(host,\{chapter:state\?\.chapter,quality:graphics\.mode,reducedMotion:settings\.reducedMotion\}\);else scenePainting\.release\(\);/);
+  assert.equal(app.match(/mountPainting\(\);/g).length, 3, 'Every render, the reduced-motion switch and a quality change re-mount or release it');
+});

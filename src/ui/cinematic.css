@@ -70,3 +70,6 @@ html[data-hidden="true"] .cinematic-mural>img,html[data-hidden="true"] .cinemati
 [data-ceremony-ready="true"]>img{visibility:hidden}
 .oath-scene{margin:0 0 1rem;aspect-ratio:16/9;max-block-size:26rem;overflow:hidden;background:#172a27;box-shadow:0 12px 30px #172a2722}
 .oath-scene>img{display:block;inline-size:100%;block-size:100%;object-fit:cover}
+/* Story paintings drift in 2.5D over the still painting, which stays underneath as the fallback. */
+.scene-depth-canvas{position:absolute;inset:0;inline-size:100%;block-size:100%;display:block;pointer-events:none;opacity:0;transition:opacity .8s ease-out}
+.scene-depth-canvas[data-ready="true"]{opacity:1}

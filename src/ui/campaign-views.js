@@ -4,7 +4,7 @@ import {companyPreparation,voicedBriefing,warCouncilPanel} from './campaign-upgr
 import {CHAPTERS,CAST,OATH,MENTOR_LESSON,sceneLines,epilogue} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
 import {CAREER_GUIDANCE} from '../data/campaign-guidance.js';
-import {heroPortrait,speakerPortrait,chapterScene} from './art.js';
+import {heroPortrait,speakerPortrait,chapterScene,promotionScene} from './art.js';
 import {esc,roman,actionNames,companyPanel} from './view-helpers.js';
 
 export function allocationDraftPreview(allocation={river:2,farms:2,town:2}){
@@ -84,7 +84,7 @@ function camp(){
 function promotion(){
   const {state}=context(),ch=Game.getChapter(state),missing=Game.chapterRequirements(state).filter(r=>!r.done);
   const tier=ch.id<=3?'field':ch.id<=6?'legion':ch.id<=9?'command':ch.id===10?'civil':ch.id===11?'senate':'threshold';
-  const scene=ch.id===9||ch.id===10?'./assets/scenes/province.webp':ch.id>=11?'./assets/scenes/rome.webp':chapterScene(state.chapter);
+  const scene=promotionScene(ch.id);
   const portrait=heroPortrait(ch.id===12?state.rank:ch.promotion);
   return `${header()}<main id="main" class="cinematic-page"><section class="promotion cinematic-promotion ceremony-${tier}" aria-labelledby="promotion-title"><div class="ceremony-scene" aria-hidden="true"><img src="${scene}" alt="" width="768" height="432"></div><div class="ceremony-tableau"><div class="ceremony-portrait"><img class="promotion-art" src="${portrait}" width="400" height="400" alt="${esc(state.name)}, ${esc(ch.id===12?state.rank:ch.promotion)}">${state.oath?'<img class="ceremony-seal" src="./assets/portraits/oath-seal.webp" width="256" height="256" alt="The worn lead seal carried since the first oath">':''}</div><div class="ceremony-title"><p class="eyebrow">CHAPTER ${roman(ch.id)} COMPLETE · EARNED THROUGH SERVICE</p><p class="ceremony-kicker">${ch.id===12?'THE LEGIONS AWAIT THEIR EMPEROR':ch.id===11?'A VOICE IN THE CURIA':ch.id===10?'THE WEIGHT OF CIVIL OFFICE':ch.id>=7?'THE STANDARD PASSES TO YOU':'THE OATH ENDURES'}</p><h1 id="promotion-title">${esc(ch.promotion)}</h1><p class="caps">${esc(ch.promotionMeaning)}</p><blockquote>${esc(ch.reward)}</blockquote></div></div><div class="ceremony-record">${careerBrief(state,true)}${Game.storyLines(state).map(l=>`<p><span class="ceremony-voice">${esc(CAST[l.speaker]?.name||l.speaker)}</span>${esc(l.text)}</p>`).join('')}</div><div class="ceremony-advance">${missing.length?`<p class="notice">Before advancement, demonstrate: ${missing.map(r=>esc(actionNames[r.id]||r.id)).join(', ')}.</p><button data-cmd="replay">Replay the final encounter</button>`:`<button data-cmd="advance">${ch.id===12?'Receive the oath':'Accept the appointment'} →</button>`}</div></section></main>${footer()}`;
 }
