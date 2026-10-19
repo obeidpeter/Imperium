@@ -3,6 +3,7 @@ import {stagedStoryLines,storyStageKey} from '../data/story-stages.js';
 import {createCompany,normalizeCareer,replaceFallenComrade,recordCompanyService,companyRoster,leadershipSummary,provinceSummary,VETERAN_IDS} from './career.js';
 export {storyStageKey,companyRoster,leadershipSummary,provinceSummary};export {cursusHonorum} from './career.js';
 import {alive,clamp,clone,distance,note,result,unitAt} from './shared.js';
+import {planMove} from './movement.js';
 import {allyDestinations,applyBattle,battleActions,battleTargets,checkBattle,createBattle,createLegacyBattle,endBattleTurn,previewBattle,refreshBattleIntents,reinforcementBeacons} from './battle.js';
 export {allyDestinations,reinforcementBeacons};export {combatBreakdown,enemyFormationLinks,FIELDWORK_TYPES,fieldworkOptions,previewFieldwork,invokeFieldwork} from './battle.js';
 import {applyContest,contestActions,contestTargets,createContest,createLegacyContest,endContestTurn,previewContest,votes,refreshIntents as refreshContestIntents} from './contest.js';
@@ -52,6 +53,14 @@ export function startEncounter(state,options={}){const optionProblem=campaignOpt
   if(options.preparation&&state.chapter===7)prepare(state,options.preparation);if(options.stratagem&&state.chapter===9)selectStratagem(state,options.stratagem);state.encounterOptions=clone(options);state.snapshot=clone({...state,snapshot:null,encounter:null});departCompany(state);const create=data.kind==='contest'?(options.legacyLayout===true?createLegacyContest:createContest):(options.legacyLayout===true?createLegacyBattle:createBattle);state.encounter=create(state,data,options);if(options.weather&&['clear','rain','embers','dust','mist'].includes(options.weather))state.encounter.weather=options.weather;if(options.timeOfDay&&['day','dawn','dusk','night'].includes(options.timeOfDay))state.encounter.timeOfDay=options.timeOfDay;state.encounter.requiredAbilities=state.encounterIndex===chapter.encounters.length-1?chapterRequirements(state).filter(r=>!r.done).map(r=>r.id):[];state.phase='encounter';return result(true,`${data.title}. A complete checkpoint has been saved before any encounter effects.`);}
 export function getActions(state,unitId){if(state.phase!=='encounter'||!state.encounter)return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestActions(state,unit):battleActions(state,unit);}
 export function getTargets(state,unitId,action){if(!getActions(state,unitId).includes(action))return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestTargets(state,unit,action):battleTargets(state,unit,action);}
+// What a click on ground would do with this unit's move this turn: where it
+// stops, the route it walks and the rest of the way (movement.js planMove).
+// Read-only; null when there is no ground to plan for.
+export function moveRoute(state,unitId,point){
+  const e=state?.encounter,unit=e?.units?.find(u=>u.id===unitId);
+  if(state?.phase!=='encounter'||!e||e.status!=='active'||!unit||!alive(unit)||!point||!Number.isInteger(point.x)||!Number.isInteger(point.y)||point.x<0||point.y<0||point.x>=e.width||point.y>=e.height||point.x===unit.x&&point.y===unit.y)return null;
+  return planMove(e,unit,point,getTargets(state,unitId,'move'));
+}
 export function preview(state,command){if(state.phase!=='encounter'||!state.encounter||state.encounter.status!=='active')return result(false,'No active encounter.');if(!command||!Number.isInteger(command.x)||!Number.isInteger(command.y))return result(false,'A unit, action and grid target are required.');return state.encounter.kind==='contest'?previewContest(state,command):previewBattle(state,command);}
 export function act(state,command){const checked=preview(state,command);if(!checked.ok)return checked;const response=state.encounter.kind==='contest'?applyContest(state,command):applyBattle(state,command);if(response.ok)mark(state,command.action);return response;}
 export function canUndoMove(state,unitId='hero'){

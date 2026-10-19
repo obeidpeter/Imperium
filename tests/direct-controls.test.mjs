@@ -7,13 +7,29 @@ import {geometry,pickBattlePoint} from '../src/ui/renderer.js';
 import {spriteHeight} from '../src/ui/unit-sprites.js';
 
 function opening(){const s=Game.newGame('Direct controls');Game.choose(s,Game.getChapter(s).decision.options[0].id);Game.startEncounter(s);return s;}
-test('Direct movement previews first, confirms only the same legal target, and never mutates rules',()=>{
+test('One click on open ground walks there (or toward it); Confirm moves keeps the preview; nothing mutates the rules',()=>{
   const s=opening(),before=Game.serialize(s),targets=Game.getTargets(s,'hero','move');assert.ok(targets.length>1);
-  const first=directIntent(s,{point:targets[0]});assert.equal(first.kind,'preview');assert.equal(first.action,'move');
-  const second=directIntent(s,{action:first.action,target:first.target,point:targets[0]});assert.equal(second.kind,'confirm');
-  const other=directIntent(s,{action:first.action,target:first.target,point:targets[1]});assert.equal(other.kind,'preview');
-  assert.equal(Game.serialize(s),before);
-  assert.ok(Game.preview(s,{unitId:'hero',action:second.action,x:second.target.x,y:second.target.y}).ok);
+  const walk=directIntent(s,{point:targets[0]});assert.equal(walk.kind,'move');assert.equal(walk.action,'move');
+  assert.deepEqual(walk.target,targets[0]);assert.deepEqual(walk.route,Game.moveRoute(s,'hero',targets[0]));assert.equal(walk.route.reachable,true);
+  assert.ok(Game.preview(s,{unitId:'hero',action:'move',x:walk.target.x,y:walk.target.y}).ok,'A walk is an ordinary legal move');
+  // Beyond reach: as far toward the clicked ground as the rules allow this turn.
+  const far=directIntent(s,{point:{x:7,y:0}});assert.equal(far.kind,'move');assert.deepEqual(far.goal,{x:7,y:0});
+  assert.ok(targets.some(t=>t.x===far.target.x&&t.y===far.target.y));assert.equal(far.route.reachable,false);
+  // Choosing Move first behaves the same; another chosen command never turns a ground click into a walk.
+  assert.equal(directIntent(s,{action:'move',point:targets[1]}).kind,'move');
+  assert.equal(directIntent(s,{action:'strike',point:targets[0]}).kind,'preview');
+  assert.equal(directIntent(s,{action:'strike',point:{x:7,y:0}}).kind,'inspect');
+  // With Confirm moves on, the original contract: preview, then the same target again confirms.
+  const first=directIntent(s,{point:targets[0],moveOnClick:false});assert.equal(first.kind,'preview');assert.equal(first.action,'move');
+  const second=directIntent(s,{action:first.action,target:first.target,point:targets[0],moveOnClick:false});assert.equal(second.kind,'confirm');
+  const other=directIntent(s,{action:first.action,target:first.target,point:targets[1],moveOnClick:false});assert.equal(other.kind,'preview');
+  // Far ground previews the stop; the same far ground (or the stop) again confirms that stop.
+  const farPreview=directIntent(s,{point:{x:7,y:0},moveOnClick:false});assert.equal(farPreview.kind,'preview');assert.equal(farPreview.action,'move');
+  assert.deepEqual(farPreview.target,far.target,'Previewed and walked moves stop on the same tile');
+  assert.equal(directIntent(s,{action:'move',target:farPreview.target,point:{x:7,y:0},moveOnClick:false}).kind,'confirm');
+  assert.equal(directIntent(s,{action:'move',target:farPreview.target,point:farPreview.target,moveOnClick:false}).kind,'confirm');
+  assert.equal(directIntent(s,{action:'strike',point:{x:7,y:0},moveOnClick:false}).kind,'inspect');
+  assert.equal(Game.serialize(s),before,'Intentions never spend anything by themselves');
 });
 test('Invalid, hidden and uncommandable targets cannot become automatic commands',()=>{
   const s=opening(),hero=s.encounter.units.find(u=>u.id==='hero');

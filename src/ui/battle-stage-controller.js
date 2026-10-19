@@ -7,7 +7,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
   const update=()=>{
     if(!stage||!latest)return;
     const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused}=latest;
-    stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setGrid(grid);
+    stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setRoute?.(latest.route??null,latest.reach??[]);stage.setGrid(grid);
     if(stage.quality!==quality)stage.applyQuality(quality);
     if((stage.figureStyle??'sculpted')!==(latest.figureStyle??'sculpted'))stage.setFigureStyle?.(latest.figureStyle);
     stage.actionCamera=latest.actionCamera!==false;stage.setBattleRemains?.(latest.battleRemains!==false);

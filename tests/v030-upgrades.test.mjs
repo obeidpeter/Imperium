@@ -457,9 +457,9 @@ test('v0.30.0: rain puddles keep a dull wet sheen instead of white discs', async
   assert.doesNotMatch(dry, /min\(reflectedLight\.directSpecular/, 'Dry ground keeps its own highlights');
 });
 
-test('v0.30.0: this edition is 0.30.0', async () => {
-  const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.30.0');
+test('v0.30.0: the configured edition matches the package', async () => {
+  const {CONFIG} = await import('../src/config.js'), {readFile} = await import('node:fs/promises');
+  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).version);
 });
 
 // Width and height from a WebP file's first chunk.

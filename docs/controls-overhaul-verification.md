@@ -23,12 +23,15 @@ Before implementing changes, we audited the full campaign loop (Chapters I–XII
 | **Inspect ally, enemy, or delegate** | Click figure on board, hover tile, or click `Inspect` in chamber delegate list | Tap figure on board, tap `Inspect` in chamber delegate list, or use `#delegate-inspect` | Arrow keys + `Enter`/`Space` on `#battle-board`, `#delegate-inspect` dropdown, or `Tab` to `Inspect` button |
 | **Choose action** | Click action button in `#action-bar` | Tap action button in `#action-bar` | Keys `1–9` or `#action-select` dropdown |
 | **Preview target** | Click highlighted tile/unit on board or choose from `#target-select` | Tap highlighted tile/unit on board or choose from `#target-select` | Arrow keys + `Enter`/`Space` on `#battle-board` or `#target-select` dropdown |
+| **Walk to ground** (since 0.31) | Click open ground; pointing at it first draws the route. Ground beyond this turn's reach walks as far toward it as allowed. With **Confirm moves** on, the click previews instead | Tap open ground (no hover, so the walk itself shows the route and `Undo Move` takes it back); with **Confirm moves** on, the tap previews | Arrow keys to the tile (the announcement gives the route summary) + `Enter`/`Space`; `U` undoes the walk until the unit acts |
 | **Configure Order / Formation** | Choose `#order-kind`, `#order-destination`, or `#formation-kind` in `#command-dock` | Tap `#order-kind`, `#order-destination`, or `#formation-kind` in `#command-dock` | `Tab` to `#order-kind`, `#order-destination`, or `#formation-kind` and use Arrow keys |
 | **Confirm previewed command** | Click `#confirm-action` (`Confirm`) or click the previewed target tile a second time | Tap `#confirm-action` (`Confirm`) or tap the previewed target tile a second time (no timing-sensitive double-tap) | `Enter` on `#confirm-action` or `Enter`/`Space` on the already-previewed `#battle-board` tile |
 | **Cancel preview** | Click `Cancel` (`[data-cmd="cancel-action"]`) or right-click board | Tap `Cancel` (`[data-cmd="cancel-action"]`) | `Escape` |
 | **End turn** | Click `#end-turn` | Tap `#end-turn` | `E` or `Enter` on `#end-turn` |
 | **Toggle tactical grid** | Click `Grid` (`[data-cmd="toggle-grid"]`) | Tap `Grid` (`[data-cmd="toggle-grid"]`) | `G` |
 | **3D camera framing & zoom** | Drag to orbit, wheel to zoom, or click `Overview`, `Follow unit`, `Horizon`, `+`, `−`, `2× motion` | 1-finger drag to orbit, 2-finger pinch to zoom, or tap camera bar buttons | `H` (Horizon), `F` (Focus active unit), `Home` (Overview), `+`/`=` (Zoom in), `-` (Zoom out) |
+
+Since 0.31 a plain walk is the one exception to **Select → Choose action/target → Review → Confirm**: it commits on one selection and stays undoable until the unit acts. See [movement verification for 0.31](movement-verification-v031.md).
 
 ---
 

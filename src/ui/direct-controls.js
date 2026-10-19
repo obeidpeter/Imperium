@@ -9,14 +9,22 @@ export function visibleUnitAt(encounter,point){
   return encounter?.units?.find(u=>!u.hidden&&alive(u)&&samePoint(u,point))??null;
 }
 
-// Intention only: clicking never bypasses the authoritative preview or spends
-// an action. The UI commits only a second deliberate activation of a preview.
-export function directIntent(state,{selected='hero',action=null,target=null,point}={}){
+// Intention only: clicking never bypasses the rules or spends anything an
+// earlier preview did not show. Moving is the one command a single click
+// commits: with no other command chosen, a click on ground walks there, or as
+// far toward it as the rules allow this turn (`kind:'move'`), through the
+// ordinary legal move command, and Undo Move takes it back until the unit
+// acts. Every other command previews first and commits only on a second
+// deliberate activation (or Confirm). `moveOnClick:false` previews moves too,
+// far ground included: the preview is the stop, and the same stop confirms.
+export function directIntent(state,{selected='hero',action=null,target=null,point,moveOnClick=true}={}){
   const e=state?.encounter;
   if(!e||e.status!=='active'||!point||point.x<0||point.y<0||point.x>=e.width||point.y>=e.height)return {kind:'none'};
   const unit=visibleUnitAt(e,point),actions=Game.getActions(state,selected);
   const legal=a=>actions.includes(a)?Game.getTargets(state,selected,a).find(t=>samePoint(t,point)&&(!t.unitId||!unit||t.unitId===unit.id)):null;
+  const moving=!action||action==='move',walk=moveOnClick&&moving;
   const explicit=action&&legal(action);
+  if(explicit&&action==='move'&&walk)return walkTo(state,selected,explicit);
   if(explicit)return {kind:samePoint(target,explicit)?'confirm':'preview',action,target:explicit};
   if(unit&&['player','ally'].includes(unit.side))return {kind:'select',unitId:unit.id};
   const preferred=unit
@@ -32,9 +40,25 @@ export function directIntent(state,{selected='hero',action=null,target=null,poin
         ?!preview.forecast.stanceChanges.some(change=>change.to>change.from)
         :unit.stance>=6))continue;
     }
+    if(candidate==='move'&&walk)return walkTo(state,selected,t);
     return {kind:'preview',action:candidate,target:t};
   }
+  // Ground beyond this turn's reach: walk as far toward it as the rules allow.
+  if(!unit&&moving&&actions.includes('move')){
+    const route=Game.moveRoute(state,selected,point),stop=route?.stop&&{x:route.stop.x,y:route.stop.y,cost:route.stop.cost};
+    if(stop&&walk)return {kind:'move',action:'move',target:stop,goal:{x:point.x,y:point.y},route};
+    if(stop)return {kind:action==='move'&&samePoint(target,stop)?'confirm':'preview',action:'move',target:stop};
+  }
   return {kind:'inspect',unitId:unit?.id??null,point:{x:point.x,y:point.y}};
+}
+function walkTo(state,selected,t){return {kind:'move',action:'move',target:t,goal:{x:t.x,y:t.y},route:Game.moveRoute(state,selected,t)};}
+
+// What walking to `point` would do, in words for the board readout and screen
+// readers ('' when there is nothing to say, such as over a unit).
+export function routeSummary(route){
+  if(!route)return '';
+  if(route.stop)return route.reachable?`Walk here · ${route.cost} movement`:`Beyond reach · stops at ${tile(route.stop)} this turn`;
+  return {moved:'Movement already spent this turn',blocked:'Impassable ground',unreachable:'No route from here','no-closer':'No nearer ground this turn'}[route.reason]??'';
 }
 
 export function nextReadyUnit(state,selected='hero'){
