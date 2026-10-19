@@ -24,6 +24,16 @@ The same release adds `scene-lighting.js`, which constructs a small floating-poi
 
 `environment-primitives.js` and `environment-surface-shaders.js` add shared beveled masonry, fluted column profiles, compound palm fronds, smoother boulder normals and locally computed ground/material variation. Trees and low verge growth remain outside legal standing centers; authored low walls and ford stones retain their rule geometry. Performance keeps simpler masonry, and static pieces continue to share batches or instances. The [version 0.14 verification record](character-quality-verification.md) separates constructed geometry counts, Node tests and actual browser observations; none establishes photorealism or physical-device performance.
 
+Version 0.29 adds no image, model or audio file to the 3D view, apart from the re-encoded music recorded in `asset-manifest.json`. Its additions are code-built or code-painted and original to this repository:
+- **Terrain features** (`environment-campaign-terrain.js`): 1.6 m plateaus (replacing the 0.45 m rises described above) with rock outcrops or squared-stone terraces, river channels under one water surface, gravel fords with stepping stones, faced wall runs, flagstones, reed beds and kerbs.
+- **Panorama** (`environment-backdrop.js`): ranges and landmark silhouettes painted at runtime on a canvas from periodic ridge profiles.
+- **Finale staging** (`environment-finale.js`): the brick curtain, scaffolding and instanced figures of the massed legions, built from boxes, cylinders and spheres. They are a game staging of the Aurelian Walls under construction, not an archaeological reconstruction.
+- **Ink overlay** (`ink-overlay.js`): canvas washes and hatching.
+- **Painted Tabula** (`campaign-map.js`): an SVG map whose land outline, rivers and theatre coordinates are the earlier schematic ones, now with filter-based washes.
+- **Ceremony tableaux** (`ceremony.js`): figures and boards from the existing actor and environment code.
+
+The painted (HD-2D) figure style reuses the existing generated 2D unit atlases and animation sheets, whose provenance is already recorded in `asset-manifest.json` and `art-generation.md`. Bloc trim colours, formation layouts and stance poses are presentation conventions of the game, not historical claims about the Senate's dress.
+
 ## Generated material colour maps
 
 The three neutral material images were generated with OpenAI's built-in `image_gen` tool. No third-party reference image was supplied. The direction was a horizontal triptych: damp olive-brown earth and fine gravel on the left, weathered grey limestone in the middle, and dark vertical oak on the right, with neutral lighting. The exact prompt is retained with the external master in `outputs/showcase-art-masters/material-prompt.txt` and included in the versioned art-master archive.

@@ -18,6 +18,11 @@ function started(id) {
 // Undo is complete when only the action log remembers the step back.
 const withoutLog = s => JSON.stringify({...s, encounter: {...s.encounter, log: []}, log: []});
 
+test('v0.29.0: this edition is 0.29.0', async () => {
+  const {CONFIG} = await import('../src/config.js');
+  assert.equal(CONFIG.version, '0.29.0');
+});
+
 test('v0.29.0: the Chapter XII approach is chosen through the rules API and validated against the forecast', () => {
   const s = camp('ch12-confrontation'), saved = Game.serialize(s);
   assert.equal(Game.chooseRoute(s, 'invented').ok, false);
