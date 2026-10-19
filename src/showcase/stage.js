@@ -384,12 +384,16 @@ export class BattleStage{
     this.hoverRing.visible=!!target;if(target){this.hoverRing.position.copy(this.world(target));this.hoverRing.position.y+=.08;}
     this.updateTacticalLinks(target,this.selectedAction);this.updateInk();
   }
-  // The ink shows the chosen action's reach and, for an enemy under the
-  // pointer or inspected, everything it could strike next turn.
+  // The ink shows the chosen action's reach (or, with nothing chosen, the
+  // ground the unit can walk to), the route a click there would walk and,
+  // for an enemy under the pointer or inspected, everything it could strike
+  // next turn.
   updateInk(){
     if(!this.ink||!this.encounter)return;const enemy=[this.inspected,this.hovered].find(id=>id&&this.encounter.units?.find(u=>u.id===id)?.side==='enemy');
-    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null});
+    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null,reach:this.reach??[],route:this.route??null});
   }
+  // From the campaign UI (Game.moveRoute and the selected unit's move targets).
+  setRoute(route=null,reach=[]){this.route=route;this.reach=reach;this.updateInk();}
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}

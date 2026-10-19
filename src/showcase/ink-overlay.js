@@ -2,10 +2,12 @@ import * as T from '../../vendor/three/three.module.js';
 import {RIVER_WATER_LEVEL} from './environment-layout.js';
 
 // Tactical reach painted onto the ground like ink: a wash over the cells the
-// chosen action can reach, a brushed rim where that reach ends, and hatching
-// over the cells an inspected enemy threatens. The board's own tiles carry
-// the painting, draped over plateaus and water. Presentation only: it is drawn
-// from the targets the rules already returned and never decides legality.
+// chosen action can reach (or, with nothing chosen, a fainter wash over the
+// ground the unit can walk to), a brushed rim where that reach ends, hatching
+// over the cells an inspected enemy threatens, and the route a click would
+// walk. The board's own tiles carry the painting, draped over plateaus and
+// water. Presentation only: it is drawn from what the rules already returned
+// and never decides legality.
 export const INK_PIXELS_PER_TILE=96;
 function makeCanvas(width,height){
   if(typeof OffscreenCanvas==='function')return new OffscreenCanvas(width,height);
@@ -53,6 +55,21 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
     }
     c.restore();
   }
+  // The route a click would walk: a brushed line with footfalls to where the
+  // unit stops this turn, a broken line on to the clicked ground beyond.
+  function trail(route){
+    const at=p=>[(p.x+.5)*cell,(p.y+.5)*cell],stroke=(points,width,style,alpha)=>{c.globalAlpha=alpha;c.strokeStyle=style;c.lineWidth=width;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke();};
+    const walked=route.path.map(at);c.save();c.lineCap='round';c.lineJoin='round';
+    if(route.beyond?.length){
+      const onward=[walked.at(-1),...route.beyond.map(at)],[gx,gy]=at(route.goal);c.setLineDash([cell*.16,cell*.13]);
+      stroke(onward,cell*.07,'#1e2b27',.35);stroke(onward,cell*.04,'#f1e6c8',.7);
+      c.beginPath();c.arc(gx,gy,cell*.2,0,Math.PI*2);c.lineWidth=cell*.035;c.stroke();c.setLineDash([]);
+    }
+    stroke(walked,cell*.13,'#1e2b27',.4);stroke(walked,cell*.075,'#f1e6c8',.9);
+    c.globalAlpha=.9;c.fillStyle='#f1e6c8';for(const [x,y]of walked.slice(1,-1)){c.beginPath();c.arc(x,y,cell*.07,0,Math.PI*2);c.fill();}
+    const [sx,sy]=at(route.stop);c.beginPath();c.arc(sx,sy,cell*.31,0,Math.PI*2);c.lineWidth=cell*.11;c.strokeStyle='#1e2b27';c.globalAlpha=.4;c.stroke();c.lineWidth=cell*.055;c.strokeStyle='#f1e6c8';c.globalAlpha=.95;c.stroke();
+    c.restore();
+  }
   function hatch(tiles,color){
     c.save();c.beginPath();for(const t of tiles)c.rect(t.x*cell+cell*.06,t.y*cell+cell*.06,cell*.88,cell*.88);c.clip();
     c.strokeStyle=color;c.globalAlpha=.5;c.lineWidth=cell*.03;c.lineCap='round';
@@ -61,13 +78,18 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
   }
   return {mesh,
     // targets: legal cells for the chosen action; threat: an enemy's threat
-    // envelope (stage-readout threatEnvelope) or null.
-    paint({targets=[],color='#89cfcb',threat=null}={}){
-      if(disposed)return false;const threatened=threatCells(threat,encounter),next=`${key(targets)}|${color}|${key(threatened)}`;
+    // envelope (stage-readout threatEnvelope) or null; reach: the ground the
+    // unit can walk to, shown only without targets; route: Game.moveRoute.
+    paint({targets=[],color='#89cfcb',threat=null,reach=[],route=null}={}){
+      if(disposed)return false;
+      const threatened=threatCells(threat,encounter),walkable=targets.length?[]:reach,walk=route?.stop&&route.path?.length>1?route:null,order=tiles=>tiles.map(t=>`${t.x},${t.y}`).join(';');
+      const next=`${key(targets)}|${color}|${key(threatened)}|${key(walkable)}|${walk?`${order(walk.path)}>${order(walk.beyond??[])}`:''}`;
       if(next===painted)return false;painted=next;c.clearRect(0,0,width,height);
       if(threatened.length)hatch(threatened,'#8a2f22');
       if(targets.length)wash(targets,color,.3);
-      mesh.visible=targets.length>0||threatened.length>0;texture.needsUpdate=true;return true;
+      else if(walkable.length)wash(walkable,'#89cfcb',.13);
+      if(walk)trail(walk);
+      mesh.visible=targets.length>0||threatened.length>0||walkable.length>0||!!walk;texture.needsUpdate=true;return true;
     },
     stats:()=>({visible:mesh.visible,width,height}),
     dispose(){if(disposed)return;disposed=true;mesh.removeFromParent();geometry.dispose();material.dispose();texture.dispose();}

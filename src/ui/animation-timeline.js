@@ -1,9 +1,8 @@
 // Presentation-only timelines. Pure movement predicates; no mutation, RNG, DOM or clock.
-import {movementPinned} from '../core/shared.js';
+import {movementRoute} from '../core/movement.js';
 const clamp=(n,min=0,max=1)=>Math.max(min,Math.min(max,n));
 const lerp=(a,b,t)=>a+(b-a)*t;
 const smooth=t=>t*t*(3-2*t);
-const distance=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 const position=u=>({x:u.x,y:u.y});
 const living=u=>(u.resolve??u.hp??1)>0;
 const cavalry=u=>['cavalry','heavy'].includes(u.role);
@@ -13,27 +12,15 @@ const facing=(from,to,fallback='east')=>Math.abs(to.x-from.x)>=Math.abs(to.y-fro
 const neutralPose=()=>({pose:'idle',phase:'recovery',progress:1,bob:0,lean:0,weapon:0,shield:0,alpha:1});
 export const MOTION_BUDGETS=Object.freeze({performance:{effects:6,fps:30},balanced:{effects:14,fps:60},high:{effects:22,fps:60}});
 
-// The engine records destinations, not animation paths. Reconstruct a passable
-// orthogonal route; ignore cells vacated by other units during the same turn.
+// The engine records destinations, not animation paths. Walk the same route
+// the move's preview showed (core movementRoute), ignoring cells vacated by
+// other units during the same turn.
 function movementPath(before,after,unit,next){
-  const width=before.width??8,height=before.height??8,terrain=before.terrain??after.terrain;
   const changed=new Set(after.units.filter(v=>{const old=before.units.find(o=>o.id===v.id);return old&&(old.x!==v.x||old.y!==v.y||!living(v));}).map(v=>v.id));
-  const occupied=new Set(before.units.filter(v=>v.id!==unit.id&&living(v)&&!changed.has(v.id)).map(v=>`${v.x},${v.y}`));
-  const start=position(unit),end=position(next),key=p=>`${p.x},${p.y}`,costs=new Map([[key(start),0]]),parents=new Map(),queue=[{...start,cost:0}];
-  while(queue.length){
-    queue.sort((a,b)=>a.cost-b.cost||distance(a,end)-distance(b,end));const p=queue.shift();
-    if(p.x===end.x&&p.y===end.y){const path=[end];let cursor=key(end);while(parents.has(cursor)){const old=parents.get(cursor);path.unshift(old);cursor=key(old);}return path;}
-    if(p.cost>0&&movementPinned(before,unit,p))continue;
-    for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){
-      const cell={x:p.x+dx,y:p.y+dy},id=key(cell),raw=terrain?.[cell.y]?.[cell.x],ground=typeof raw==='string'?raw:raw?.type;
-      if(cell.x<0||cell.y<0||cell.x>=width||cell.y>=height||['rock','river'].includes(ground)||occupied.has(id)&&id!==key(end))continue;
-      const cost=p.cost+(ground==='marsh'&&unit.formation!=='line'?2:1);
-      if(costs.has(id)&&costs.get(id)<=cost)continue;costs.set(id,cost);parents.set(id,position(p));queue.push({...cell,cost});
-    }
-  }
+  const route=movementRoute({...before,terrain:before.terrain??after.terrain},unit,position(next),{ignore:changed});
   // A malformed or irrecoverably ambiguous visual path fades in place rather
   // than depicting travel through a rule obstacle. Final state remains exact.
-  return [start];
+  return route?.path??[position(unit)];
 }
 
 export function idlePose(unit,time=0){

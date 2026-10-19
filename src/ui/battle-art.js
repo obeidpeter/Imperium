@@ -1,5 +1,5 @@
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
-import {movementPinned} from '../core/shared.js';
+import {movementRoute} from '../core/movement.js';
 import {enemyFormationLinks,reinforcementBeacons} from '../core/battle.js';
 import {drawUnitSprite,spriteHeight} from './unit-sprites.js';
 import {worldGround,scenery,drawScenery,atmosphere} from './world-art.js';
@@ -102,6 +102,9 @@ function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUni
     }
   }
   if(options.hover&&Number.isInteger(options.hover.x)&&Number.isInteger(options.hover.y)&&options.hover.x>=0&&options.hover.y>=0&&options.hover.x<e.width&&options.hover.y<e.height)polygon(c,diamond(g,xy(g,options.hover.x,options.hover.y),1),'#e6ddba18','#eee3bf8c',1);
+  // The selected unit's walkable ground, washed faintly while no command is chosen.
+  if(!options.action)for(const t of options.reach??[])polygon(c,diamond(g,xy(g,t.x,t.y),1),'#277c8217',null);
+  routeOverlay(c,g,options.route);
   for(const target of targets){const p=xy(g,target.x,target.y),other=e.units.find(u=>u.id===(target.unitId??target.targetId)),attack=['strike','throw','denounce','threaten'].includes(options.action)||(!options.action&&other?.side==='enemy'),color=attack?FIELD_COLORS.attack:FIELD_COLORS.movement;
     polygon(c,diamond(g,p,1),attack?'#9c40362d':'#277c822b','#f4ecd6b8',3);
     polygon(c,diamond(g,p,1),null,color,1.6);
@@ -119,6 +122,21 @@ function tacticalOverlay(c,g,e,selected,targets,focus,options){const selectedUni
   }
   if(selectedUnit&&((selectedUnit.resolve??selectedUnit.hp??1)>0)){const p=xy(g,selectedUnit.x,selectedUnit.y);polygon(c,diamond(g,p,1),'#175d6716',IVORY,3.5);polygon(c,diamond(g,p,1),null,FIELD_COLORS.selection,2);}
   if(focus){const p=xy(g,focus.x,focus.y);c.save();c.setLineDash([Math.max(3,g.tw*.075),2]);polygon(c,diamond(g,p,3),null,IVORY,3);polygon(c,diamond(g,p,3),null,FIELD_COLORS.selection,1.5);c.restore();}
+}
+// The route a click would walk (Game.moveRoute): a firm line with footfalls to
+// where the unit stops this turn, then a faint dashed line for the rest of the way.
+function routeOverlay(c,g,route){
+  if(!route?.stop||!(route.path?.length>1))return;
+  const at=p=>{const q=xy(g,p.x,p.y);return [q.x,q.y+2];},walked=route.path.map(at);
+  c.save();c.lineCap='round';c.lineJoin='round';
+  if(route.beyond?.length){
+    c.setLineDash([Math.max(3,g.tw*.08),Math.max(3,g.tw*.07)]);line(c,[walked.at(-1),...route.beyond.map(at)],'#f4ecd6a6',1.6);
+    polygon(c,diamond(g,xy(g,route.goal.x,route.goal.y),4),null,'#f4ecd6b0',1.2);c.setLineDash([]);
+  }
+  line(c,walked,'#f4ecd6c8',Math.max(3.5,g.tw*.07));line(c,walked,FIELD_COLORS.selection,Math.max(1.8,g.tw*.035));
+  for(const [x,y] of walked.slice(1,-1))oval(c,x,y,Math.max(2,g.tw*.035),Math.max(1.1,g.th*.035),FIELD_COLORS.selection);
+  const stop=xy(g,route.stop.x,route.stop.y);polygon(c,diamond(g,stop,3),'#175d6726',IVORY,2.6);polygon(c,diamond(g,stop,3),null,FIELD_COLORS.selection,1.6);
+  c.restore();
 }
 function baseMarker(c,p,s,u,active){const color=u.side==='enemy'?FIELD_COLORS.enemy:u.side==='neutral'?FIELD_COLORS.neutral:FIELD_COLORS.ally;
   oval(c,p.x+3*s,p.y+2*s,13*s,5*s,'#24342d38');
@@ -200,13 +218,8 @@ function labels(c,w,h,g,e,p,river){c.fillStyle='#dfd3b3';c.font='10px Georgia';c
 }
 // A shortest legal preview respects the same impassable and occupied cells as
 // movement. This has no rule side effects and never invents a straight shortcut.
-export function previewPath(e,unit,target){
-  const key=p=>`${p.x},${p.y}`,start={x:unit.x,y:unit.y},queue=[{...start,cost:0}],costs=new Map([[key(start),0]]),parents=new Map();
-  while(queue.length){queue.sort((a,b)=>a.cost-b.cost);const cell=queue.shift();if(cell.x===target.x&&cell.y===target.y){const path=[{x:cell.x,y:cell.y}];let k=key(cell);while(parents.has(k)){const previous=parents.get(k);path.unshift(previous);k=key(previous);}return path;}
-    if(cell.cost>0&&movementPinned(e,unit,cell))continue;
-    for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const next={x:cell.x+dx,y:cell.y+dy},k=key(next);if(next.x<0||next.y<0||next.x>=e.width||next.y>=e.height||['rock','river'].includes(terrain(e,next.x,next.y))||e.units.some(u=>u.id!==unit.id&&(u.resolve??u.hp??1)>0&&u.x===next.x&&u.y===next.y))continue;const cost=cell.cost+(terrain(e,next.x,next.y)==='marsh'&&unit.formation!=='line'?2:1);if(costs.has(k)&&costs.get(k)<=cost)continue;costs.set(k,cost);parents.set(k,{x:cell.x,y:cell.y});queue.push({...next,cost});}
-  }return [];
-}
+// The route a move to `target` walks (the same one the animation follows), or [].
+export function previewPath(e,unit,target){return movementRoute(e,unit,target)?.path??[];}
 let groundCache=null;
 export function rendererCacheStats(){return {surfaces:groundCache?1:0,estimatedBytes:groundCache?groundCache.surface.width*groundCache.surface.height*4:0};}
 export function clearBattleCache(){if(groundCache){groundCache.surface.width=1;groundCache.surface.height=1;}groundCache=null;}

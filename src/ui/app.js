@@ -5,7 +5,7 @@ import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
-import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint} from './direct-controls.js';
+import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint,routeSummary} from './direct-controls.js';
 import {terrainLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
@@ -42,8 +42,21 @@ const ceremony=createCeremonyController({onError:()=>{}});
 // Story paintings drift in 2.5D over their still image; any failure keeps the still image.
 const scenePainting=createScenePainting({load:src=>loadArt(src)});
 function uses3D(){return screen!=='title'&&chapterHas3D(state)&&settings.battleView!=='2d'&&!failed3D;}
-function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover'),u=visibleUnitAt(state.encounter,point);if(label)label.textContent=point?`${u?u.name+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}`:'';}
-let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
+function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover');if(label)label.textContent=hoverText(point);if(uses3D())battleStage.stage?.setRoute?.(routeAt(point),walkableReach());}
+// The route a click on this ground would walk: only over open ground, for the
+// selected unit, while no other command is chosen. Read-only (Game.moveRoute).
+function routeAt(point){
+  if(!point||screen==='title'||state?.encounter?.status!=='active'||action&&action!=='move'||visibleUnitAt(state.encounter,point))return null;
+  return Game.moveRoute(state,selected,point);
+}
+// The selected unit's walkable ground, washed faintly while no command is chosen.
+function walkableReach(){return !action&&state?.encounter?.status==='active'?Game.getTargets(state,selected,'move'):[];}
+function hoverText(point){
+  if(!point||!state?.encounter)return '';
+  const u=visibleUnitAt(state.encounter,point),walk=routeSummary(routeAt(point));
+  return `${u?u.name+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}${walk?` · ${walk}`:''}`;
+}
+let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,confirmMoves:false,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
 // Preserve the legacy settings key so existing players keep their preferences.
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
 if(!FIGURE_STYLES.includes(settings.figureStyle))settings.figureStyle='sculpted';
@@ -66,7 +79,7 @@ function selectedUnit(){return selectedActor(state,selected);}
 function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction,orderDestination});}
 
-function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
+function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span><small>TURN RESOLVED · ${index}/${total}</small>${esc(text)}</span><button class="ghost small" data-cmd="skip-replay">Skip</button>`;announce(text);},
   finish(){const panel=document.querySelector('#turn-replay');if(panel)panel.hidden=true;}
@@ -100,7 +113,7 @@ function render(){
   const activeId=document.activeElement?.id;
   app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,route:routeAt(hoverTile),reach:walkableReach(),quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);if(ceremony3D)ceremony.mount(ceremonyHost,{kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
   mountPainting();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
@@ -127,7 +140,7 @@ function paint(animation=null){
   const canvas=document.querySelector('#battle-board');if(!canvas?.isConnected)return;
   if(uses3D())return;
   const started=performance.now();
-  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,hover:hoverTile,grid:showGrid,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
+  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,hover:hoverTile,route:animation?null:routeAt(hoverTile),reach:animation?[]:walkableReach(),grid:showGrid,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
   graphics.recordFrame(performance.now()-started,{hidden:document.hidden,active:true});
 }
 function updateLoadingStatus(){
@@ -153,7 +166,12 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
 function bindBoard(){
   const board=document.querySelector('#battle-board');if(!board||!state.encounter)return;
   if(board.dataset.bound)return;board.dataset.bound='true';
-  if(!uses3D())board.addEventListener('click',event=>selectPoint(pickBattlePoint(board,state.encounter,event.clientX,event.clientY)));
+  // A click reports whole pixels, but the pointer that drew the route preview
+  // can sit between them; pick from the pointer's own position so the tile
+  // that walks is the tile that was shown.
+  let pressed=null;
+  if(!uses3D())board.addEventListener('pointerdown',event=>{pressed={x:event.clientX,y:event.clientY};});
+  if(!uses3D())board.addEventListener('click',event=>{const at=pressed&&Math.abs(pressed.x-event.clientX)<1&&Math.abs(pressed.y-event.clientY)<1?pressed:{x:event.clientX,y:event.clientY};pressed=null;selectPoint(pickBattlePoint(board,state.encounter,at.x,at.y));});
   board.addEventListener('contextmenu',event=>{event.preventDefault();cancelCommand();});
   let queued=false;
   if(!uses3D())board.addEventListener('pointermove',event=>{
@@ -162,15 +180,15 @@ function bindBoard(){
     const next=p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height?p:null;
     if(samePoint(hoverTile,next)||(!hoverTile&&!next))return;hoverTile=next;
     if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;if(!board.isConnected)return;
-      const label=document.querySelector('#board-hover'),u=visibleUnitAt(e,hoverTile);
-      if(label)label.textContent=hoverTile?`${u?u.name+' · ':''}${terrainLabel(e,hoverTile)} · ${hoverTile.x+1}${String.fromCharCode(65+hoverTile.y)}`:'';
+      const label=document.querySelector('#board-hover');
+      if(label)label.textContent=hoverText(hoverTile);
       board.style.cursor=hoverTile?'pointer':'default';paint(currentAnimation);
     });}
   });
   board.addEventListener('pointerleave',()=>{hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
   board.addEventListener('keydown',event=>{
     const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
-    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}`);}
+    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();const walk=routeSummary(routeAt(focusTile));announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}${walk?`. ${walk}`:''}`);}
     if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}
   });
 }
@@ -181,16 +199,26 @@ function chooseAction(next){
   if(atFocus)target=atFocus;else if(legal.length===1)target=legal[0];
   render();if(target)announce(Game.preview(state,command()).message);
 }
+// One click walks: the ordinary legal move command, so the rules check it, the
+// save records it and Undo Move can take it back until the unit acts.
+async function walk(intent){
+  action='move';target=intent.target;orderDestination=null;feedback='';
+  const c=command();if(!c||!Game.preview(state,c).ok){action=null;target=null;render();return;}
+  const place=p=>`${p.x+1}${String.fromCharCode(65+p.y)}`,short=intent.route&&!intent.route.reachable;
+  await change(()=>{const res=Game.act(state,c);if(res?.ok)res.message=`Walked to ${place(c)} (${intent.target.cost??intent.route?.cost??1} movement).${short?` ${place(intent.goal)} is beyond this turn’s reach.`:''} Undo Move (U) takes it back until you act.`;return res;},{tone:'move',command:c,clearSelection:true});
+}
 function cancelCommand(){action=null;target=null;orderDestination=null;feedback='';render();announce('Command cancelled. No action was spent.');}
 function selectPoint(point){
   if(sessionGate.busy)return;
-  const intent=directIntent(state,{selected,action,target,point});if(intent.kind==='none')return;
+  const intent=directIntent(state,{selected,action,target,point,moveOnClick:!settings.confirmMoves});if(intent.kind==='none')return;
   focusTile={x:point.x,y:point.y};hoverTile=null;
+  if(intent.kind==='move'){walk(intent);return;}
   if(intent.kind==='confirm'){confirmCommand();return;}
   if(intent.kind==='select'){selected=intent.unitId;action=null;target=null;orderDestination=null;feedback='';render();return;}
   if(intent.kind==='preview'){action=intent.action;target=intent.target;orderDestination=null;feedback='';render();announce(Game.preview(state,command()).message+' Activate the target again, or use Confirm.');return;}
+  const u=visibleUnitAt(state.encounter,point),why=u?'':routeSummary(routeAt(point));
   action=null;target=null;orderDestination=null;render();
-  const u=visibleUnitAt(state.encounter,point);announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${terrainLabel(state.encounter,point)}. Outside this unit’s movement range.`);
+  announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${terrainLabel(state.encounter,point)}. ${why?`${why}.`:'Outside this unit’s movement range.'}`);
 }
 async function persist(){
   if(memoryOnly||state?.archiveReplay)return {ok:true};
@@ -392,6 +420,7 @@ document.addEventListener('change',async event=>{
   if(control.id==='adaptive-resolution'){settings.adaptiveResolution=control.checked;saveSettings();battleStage.adaptive(control.checked);}
   if(control.id==='action-camera'){settings.actionCamera=control.checked;saveSettings();battleStage.actionCamera(control.checked);}
   if(control.id==='battle-remains'){settings.battleRemains=control.checked;saveSettings();battleStage.remains(control.checked);}
+  if(control.id==='confirm-moves'){settings.confirmMoves=control.checked;saveSettings();render();}
   if(control.id==='figure-style'){settings.figureStyle=FIGURE_STYLES.includes(control.value)?control.value:'sculpted';saveSettings();battleStage.figures(settings.figureStyle);}
   if(control.id==='coach-setting'){settings.coach=control.checked;saveSettings();render();}
   if(control.id==='delegate-inspect'){const unit=state.encounter.units.find(u=>u.id===control.value&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();announce('Considering an agreement with '+unit.name+'. No speech has been spent.');}}
