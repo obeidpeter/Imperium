@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import * as Game from '../src/core/game.js';
 import {votes} from '../src/core/contest.js';
@@ -32,7 +33,8 @@ function start(id) {
 }
 
 test('v0.28.0: Tactical Undo Move Before Acting (Regressus) in battles and Contests', () => {
-  assert.equal(CONFIG.version, '0.28.0');
+  // The configured edition always matches the package (0.28.0 introduced this feature).
+  assert.equal(CONFIG.version, JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version);
 
   // 1. Field battle undo move flow
   const battleState = start('ch2-marsh');

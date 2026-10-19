@@ -56,6 +56,12 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     applyActorClip(pose,motion==='speak'?'speech':'conversation',p);
   }else if(['rally','order'].includes(motion)){
     applyActorClip(pose,'speech',p);const reach=sampleActorClip('speech',p);pose.rightArm[0]+=(reach.rightArmX??0)*(motion==='order'?.50:1.15);
+  }else if(motion==='assent'){
+    // Support: a nod and an open hand toward the speaker, scaled by commitment.
+    const w=smooth(phase===undefined?1:p);pose.headX=.09*w;pose.bodyX=-.025*w;pose.rightArm=[-.1-.42*w,0,.08+.1*w];pose.rightElbow=-.35-.55*w;pose.rightWrist=-.25*w;
+  }else if(motion==='dissent'){
+    // Opposition: arms folded high across the chest, chin up, weight back.
+    const w=smooth(phase===undefined?1:p);pose.headX=-.07*w;pose.bodyX=.035*w;pose.leftArm=[-.2-.46*w,0,-.1+.3*w];pose.rightArm=[-.1-.5*w,0,.08-.3*w];pose.leftElbow=-.55-1.4*w;pose.rightElbow=-.35-1.55*w;
   }else if(motion==='yield'){
     const close=smooth(phase===undefined?1:p);pose.headX=.18*close;pose.bodyX=.035*close;pose.leftArm=[-.2-.34*close,0,-.1+.16*close];pose.rightArm=[-.1-.36*close,0,.08-.16*close];pose.leftElbow=-.55-.9*close;pose.rightElbow=-.35-1.05*close;
   }else if(['dead','withdrawn'].includes(motion)||health<=0){

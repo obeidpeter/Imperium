@@ -44,6 +44,9 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
  * Direction is yaw radians. Caller owns group.position. Phase is normalized
  * action progress, or one walking cycle (about .72m); omitted gait uses time.
  */
+// A delegate's bloc reads from the toga trim: soldiers' crimson, landed green,
+// the city's blue, the old Chamber's purple (and the legacy Army/People blocs).
+export const BLOC_TRIM=Object.freeze({Veterans:0xb3362c,Landholders:0x4f8a3c,Civic:0x3f6eb0,Chamber:0x7d4a96,Army:0x786844,People:0x6a7969});
 export function createActor(unit={},options={}){
   let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group;
   const contacts=rig.contacts,source=options.assetLibrary;
@@ -271,12 +274,12 @@ function createActorRig(unit={},options={},reuseGroup=null){
     ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
   }
   if(civic){
-    const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(unit.bloc==='Army'?0x786844:unit.bloc==='People'?0x6a7969:0x764653,{...clothSurface,side:T.DoubleSide});
+    const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(BLOC_TRIM[unit.bloc]??0x764653,{...clothSurface,side:T.DoubleSide});
     const rows=[[.49,.18,.15,.15],[.37,.08,.38,.205],[.19,-.015,.46,.225],[.02,-.025,.48,.215],[-.22,.025,.49,.22],[-.40,.06,.42,.205],[-.54,.08,.34,.185]];
     mesh(toga,drape(rows),ivory);
     // The colored edging follows the same fold surface with a small outward
     // offset. Independent flat chest stripes formerly cut through the drape.
-    for(const from of [.12,.84])mesh(toga,drape(rows,{from,to:from+.035,offset:.009}),stripe);
+    for(const from of [.11,.83])mesh(toga,drape(rows,{from,to:from+.055,offset:.009}),stripe);
     const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
   }else if(escort){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);

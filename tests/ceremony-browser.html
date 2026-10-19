@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="../"><title>Ceremonies · local verification</title>
+<link rel="stylesheet" href="./src/ui/battle-3d.css"><link rel="stylesheet" href="./src/ui/cinematic.css">
+<style>body{margin:0;background:#eee8db;color:#282b27;font:16px/1.45 system-ui,sans-serif}main{max-width:1200px;margin:auto;padding:16px}.stage-host{position:relative;block-size:600px;background:#172a27}.controls{display:flex;gap:8px;align-items:end;margin-block:12px}button,select{min-block-size:44px;font:inherit}</style>
+<script type="module" src="./tests/ceremony-browser.js"></script></head><body><main>
+<h1>3D ceremonies</h1><p>Development only. The oath and the accession tableaux on synthetic boards the rules never see. No campaign, save or outcome is read or changed.</p>
+<div class="controls"><label>Ceremony<select id="kind"><option value="oath">Oath</option><option value="accession">Accession</option></select></label><label>Quality<select id="quality"><option value="balanced">Balanced</option><option value="high">High</option><option value="performance">Performance</option></select></label><label>Figures<select id="figure-style"><option value="sculpted">Sculpted</option><option value="painted">Painted (HD-2D)</option><option value="inked">Ink and wash</option></select></label><label><input id="reduced-motion" type="checkbox"> Reduced motion</label><button id="show">Show ceremony</button></div>
+<p id="status" role="status">Loading…</p><div id="host" class="stage-host" data-ceremony></div></main></body></html>

@@ -61,9 +61,13 @@ Use **Pause** for settings, help, save codes, and campaign panels. Sound is opti
 
 In **Pause → Graphics quality**, choose **Performance**, **Balanced**, or **High quality**. These change optional atmosphere, particles, shadows and rendering resolution. Essential figures, legal targets, labels and rules stay the same. Repeated slow rendering can lower the setting automatically; the game announces that change, and you can choose another setting in Pause.
 
+**3D figure style** chooses *Sculpted* figures, *Painted (HD-2D)*, the campaign's painted unit art standing in the 3D scene, or *Ink and wash* outlines. The painted style settles the overview on diagonal views and adds a tilt-shift; both finishes need Balanced or High quality. **Action camera** (on by default) briefly closes in on each committed attack and then returns; it never moves with reduced motion or while you follow a figure.
+
 **Reduced motion** disables transition animation, while **Text size** offers enlargement up to 200%. The named unit and target controls remain the alternative to selecting a figure on the battlefield. Unit artwork shows faction, role and facing; movement and gesture effects visualize the committed action and never spend an additional action themselves.
 
 ## Fighting and keeping people alive
+
+From Chapter IV each military unit in the 3D view stands as a formation: its leader plus the men of the unit, drawn up in line, shield wall or wedge. Men leave the formation as the unit loses strength, so a thin formation is a weakened one. The rules still treat it as one unit on one tile. When you choose an action, the cells it can reach are washed in ink on the ground; pointing at or inspecting an enemy hatches in red everything it could strike next turn. Rank-and-file units show a small role sign and strength bar instead of a name; point at a unit or select it to see its name.
 
 The protagonist is marked with a star. His fall loses the battle. Each unit has a movement allowance and one action; ordering a unit twice cannot create another move or attack. The early chapters control only the protagonist. Allies display their own intentions.
 
@@ -91,6 +95,8 @@ Named companions’ permanent fates follow clearly signalled narrative choices. 
 ## Political Contests
 
 A Contest is a chamber encounter on the same grid. Speakers move to reach members and each gets one move and one speech per turn. **Resolve** replaces health. A speaker at zero Resolve withdraws and cannot act, but their own vote still counts; the majority required does not shrink.
+
+In the 3D chamber a member's toga trim shows his bloc (Veterans crimson, Landholders green, Civic blue, Chamber purple), and his posture shows his stance: leaning in with an open hand for your motion, arms folded against it. When the deadline vote is decided, the members divide (*discessio*) and walk to stand behind the speaker whose side they were counted on. Click the board to skip the walk.
 
 Members’ **Stance** runs from −6 to +6. At +1 a member votes for your motion. At −3 or +3, commitment hardens, so reversing it takes more effort. The interface shows the support count and the deadline. **Only the vote at the deadline wins**; gaining an early majority does not end the Contest. A tie rejects the motion.
 

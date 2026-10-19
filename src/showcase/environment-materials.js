@@ -37,7 +37,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
     foliage:make({map:texture(createFoliagePixels(),512),color:0xf2f3de,roughness:.86,side:THREE.DoubleSide,alphaTest:.42,transparent:false,depthWrite:true}),
     grass:make({color:0x8d986c,roughness:.94,side:THREE.DoubleSide}),
     dryGrass:make({color:0xb4a77b,roughness:1,side:THREE.DoubleSide}),
-    water:make({color:0x4f7b7c,roughness:.2,metalness:.27,transparent:true,opacity:.83,depthWrite:false}),
+    water:make({color:0x4f7b7c,roughness:.3,metalness:.04,transparent:true,opacity:.83,depthWrite:false}),
     mud:make({...maps.earth,color:0x4d5344,roughness:.72}),charcoal:make({color:0x292822,roughness:1})
   };
   m.foliage.name='cutout leaf sprays';m.foliage.userData.environmentVegetation=true;m.leaves.userData.environmentVegetation=true;
@@ -60,7 +60,10 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   m.darkStone=make({...maps.stone,color:0x786f61,roughness:.94});
   m.inlay=make({color:0x9c7861,roughness:.72});m.brass=make({color:0xb8a36f,roughness:.52,metalness:.55});
   m.marshWater=make({color:0x3e5145,roughness:.34,metalness:.08,transparent:true,opacity:.70,depthWrite:false,vertexColors:true});
-  if(profile){m.ground.color.set(profile.vegetation==='reeds'?'#c9ceb9':'#eee5cf');if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);if(profile.setting==='wetland'){m.ground.roughness=.86;m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid'){m.ground.color.set('#ecdbc0');m.road.color.set('#cfb991');}}
+  // Board rivers: vertex alpha carries depth below one water level (shallows clear, channel dark).
+  m.riverWater=make({color:0x3f6e74,roughness:.44,metalness:.04,transparent:true,opacity:.94,depthWrite:false,vertexColors:true});
+  m.gravel=make({...maps.stone,color:0xa69a83,roughness:.96,normalScale:new THREE.Vector2(.2,.2)});
+  if(profile){m.ground.color.set(profile.vegetation==='reeds'?'#c9ceb9':'#eee5cf');if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);m.riverWater.color.set(profile.waterColor).multiplyScalar(.64);if(profile.setting==='wetland'){m.ground.roughness=.86;m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid'){m.ground.color.set('#ecdbc0');m.road.color.set('#cfb991');}}
   // One lit surface blends the generated soil image with the fine turf map.
   // Vertex weights describe worn ground; they never encode movement rules.
   const soilUniform={value:maps.earth.map};
@@ -86,10 +89,12 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   finishEnvironmentMaterial(m.floor,'floor',finish);
   finishEnvironmentMaterial(m.water,'water',finish);
   finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true});
+  finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true});
+  finishEnvironmentMaterial(m.gravel,'stone',finish);
   // Local neutral colour maps; procedural surfaces remain usable on failure.
   if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href,t=>{
     if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
-    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
+    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone','gravel']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
   },undefined,()=>{});
   if(loadTextures&&!profile?.civic&&typeof document!=='undefined')new THREE.TextureLoader().load(FOLIAGE_ATLAS_URL.href,t=>{
     if(disposed){t.dispose();return;}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;textures.add(t);const fallback=m.foliage.map;m.foliage.map=t;m.foliage.needsUpdate=true;

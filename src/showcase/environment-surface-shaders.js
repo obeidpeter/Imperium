@@ -49,7 +49,7 @@ export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false}={}){
   return {wave,foam,ripple,roughness,tint};
 }
 
-export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,waterTime=null}={}){
+export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waterTime=null}={}){
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
   const timeUniform=waterTime??{value:0};
   material.onBeforeCompile=(shader,...args)=>{
@@ -66,13 +66,15 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
     shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+fields+shader.fragmentShader;
     let color='',roughness='';
     if(kind==='water'){
-      const speed=marsh?'.45':'1.0',amp=marsh?'.42':'1.0',foamScale=marsh?'.32':'1.0';
+      // Foam belongs to shores and current, not to fixed bands: open water keeps
+      // only faint streaks; shore water (vertex alpha = depth) foams at its edge.
+      const speed=marsh?'.45':'1.0',amp=marsh?'.42':'1.0',foamScale=marsh?'.32':shore?'.0':'.14';
       color=`float envTime=environmentWaterTime*${speed};
         float envWaveA=sin(vEnvironmentSurface.x*1.45-envTime*1.65+vEnvironmentSurface.z*.55);
         float envWaveB=cos(vEnvironmentSurface.z*2.15+envTime*1.25-vEnvironmentSurface.x*.48);
         float envCoarse=envNoise(vEnvironmentSurface.xz*.62+vec2(-envTime*.35,envTime*.22));
         float envWave=(envWaveA*.52+envWaveB*.48)*${amp};
-        float envBank=1.0-smoothstep(.12,.46,abs(fract(vEnvironmentSurface.z*.4)-.5));
+        float envBank=${shore?'0.0':'1.0-smoothstep(.12,.46,abs(fract(vEnvironmentSurface.z*.4)-.5))'};
         float envFoam=smoothstep(.60,.91,envCoarse+envWave*.26+envBank*.24)*${foamScale};
         float envRipple=0.0;
         ${rain?`vec2 envRainCell=floor(vEnvironmentSurface.xz*1.8);
@@ -82,9 +84,15 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         vec3 envDeep=diffuseColor.rgb*vec3(.86,.93,.98);
         vec3 envCrest=diffuseColor.rgb*vec3(1.14,1.18,1.22);
         diffuseColor.rgb=mix(envDeep,envCrest,clamp(.5+envWave*.38,0.0,1.0));
+        ${shore?`float envDepth=clamp((vColor.a-.36)/.64,0.0,1.0);
+        float envStreak=smoothstep(.62,.95,envNoise(vec2(vEnvironmentSurface.x*2.4,vEnvironmentSurface.z*.32-envTime*.55)));
+        float envShore=(1.0-smoothstep(.0,.22,envDepth))*(.55+.45*envNoise(vEnvironmentSurface.xz*3.1+vec2(envTime*.4,-envTime*.3)));
+        diffuseColor.rgb=mix(diffuseColor.rgb*vec3(1.18,1.20,1.06),diffuseColor.rgb*vec3(.62,.74,.80),envDepth);
+        envFoam=clamp(envShore*.85+envStreak*.18*envDepth,0.0,1.0);`:''}
         diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.90,.94,.96),clamp(envFoam*.62+envRipple*.38,0.0,1.0));
         diffuseColor.a=clamp(diffuseColor.a+envFoam*.11+envRipple*.06,0.0,1.0);`;
-      roughness='roughnessFactor*=clamp(.88-envWave*.24-envRipple*.28+envFoam*.18,.32,1.05);';
+      // The floor keeps wave troughs from mirroring the sky's sun highlight as white blotches.
+      roughness='roughnessFactor*=clamp(.88-envWave*.24-envRipple*.28+envFoam*.18,.62,1.05);';
     }else if(kind==='ground'){
       color=`float envBroad=envNoise(vEnvironmentSurface.xz*.13),envFine=envNoise(vEnvironmentSurface.xz*.77+vec2(9.0,17.0));
         diffuseColor.rgb*=mix(vec3(${arid?'.86,.82,.73':'.72,.85,.65'}),vec3(1.13,1.10,.97),smoothstep(.15,.85,envBroad))*(.94+envFine*.10);
@@ -110,9 +118,16 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
       roughness=kind==='stone'&&(wet||rain)?'roughnessFactor*=mix(.58,.92,envGrain);':'roughnessFactor*=mix(.91,1.0,envGrain);';
     }
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\n${color}`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n${roughness}`);
+    // A smooth water plane turns the sun into one saturated sheet, and its
+    // reflected sky highlight into white blotches. Keep a dim sheen, cap the
+    // reflected highlight, and let the sun show as fine moving glitter.
+    if(kind==='water')shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+      float envGlitter=pow(envNoise(vEnvironmentSurface.xz*7.3+vec2(envTime*.9,-envTime*.6)),6.0);
+      reflectedLight.directSpecular*=${shore?'.2':'.28'}+envGlitter*1.8;
+      reflectedLight.indirectSpecular=min(reflectedLight.indirectSpecular,vec3(${shore?'.14':'.2'}));`);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:environment-finish-v2:${kind}:${wet}:${arid}:${rain}:${marsh}`;
+  material.customProgramCacheKey=()=>`${oldKey}:environment-finish-v4:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}`;
   material.userData.environmentFinish=kind;
-  material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh)};
+  material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh),shore:Boolean(shore)};
   if(kind==='water')material.userData.waterTime=timeUniform;
 }

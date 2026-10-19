@@ -3915,9 +3915,9 @@
       "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
       "export": {
         "format": "MP3",
-        "bytes": 735591,
-        "sha256": "b98ab55f7d0d8dd1444040865179ca907d5a48159cc65d1d2bb5557aea01da66",
-        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+        "bytes": 345308,
+        "sha256": "24315e3bea9f9777130677bc4b8f178d117c8533bb876390af178fbf937dd982",
+        "instructions": "Re-encoded in v0.29 to reduce download size: ffmpeg libmp3lame VBR -q:a 6, 44.1 kHz stereo, metadata stripped. Decoded sample count matches the delivered file exactly (music-frontier). Delivered original: 735591 bytes, sha256 b98ab55f7d0d8dd1444040865179ca907d5a48159cc65d1d2bb5557aea01da66; it remains in the repository history. The new file carries an encoder-delay tag; a decoder that ignores it plays about 25 ms of extra lead-in at the loop seam."
       }
     },
     {
@@ -3937,9 +3937,9 @@
       "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
       "export": {
         "format": "MP3",
-        "bytes": 744995,
-        "sha256": "101e2283e02440ca347cb8166e61be849abe656b0ef4022bff81d083dff97b4b",
-        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+        "bytes": 439505,
+        "sha256": "791bd9197c4bcfdf338ca70349eca8a4c14556552175134dd8b771a5c8a457fb",
+        "instructions": "Re-encoded in v0.29 to reduce download size: ffmpeg libmp3lame VBR -q:a 6, 44.1 kHz stereo, metadata stripped. Decoded sample count matches the delivered file exactly (music-battle). Delivered original: 744995 bytes, sha256 101e2283e02440ca347cb8166e61be849abe656b0ef4022bff81d083dff97b4b; it remains in the repository history. The new file carries an encoder-delay tag; a decoder that ignores it plays about 25 ms of extra lead-in at the loop seam."
       }
     },
     {
@@ -3959,9 +3959,9 @@
       "loading": "Excluded from the initial installation; selected per chapter and included by explicit complete download.",
       "export": {
         "format": "MP3",
-        "bytes": 746248,
-        "sha256": "b87f656ed74c7b45bc8ba5e5abab8badcb3a142bcbc0160a0d413730c4a7a3f1",
-        "instructions": "Original delivered MP3 downloaded locally without re-encoding or audio edits."
+        "bytes": 403191,
+        "sha256": "2b8eba17a7cfd5df006de6233b589512ab24e4531c56a4e4eb5d00d3010a6a62",
+        "instructions": "Re-encoded in v0.29 to reduce download size: ffmpeg libmp3lame VBR -q:a 6, 44.1 kHz stereo, metadata stripped. Decoded sample count matches the delivered file exactly (music-council). Delivered original: 746248 bytes, sha256 b87f656ed74c7b45bc8ba5e5abab8badcb3a142bcbc0160a0d413730c4a7a3f1; it remains in the repository history. The new file carries an encoder-delay tag; a decoder that ignores it plays about 25 ms of extra lead-in at the loop seam."
       }
     },
     {
@@ -4577,7 +4577,7 @@
     "models": 3,
     "textures": 3
   },
-  "totalAudioBytes": 3273036,
-  "totalBundledAssetBytes": 11109939,
+  "totalAudioBytes": 2234206,
+  "totalBundledAssetBytes": 10071109,
   "totalModelBytes": 465127
 }

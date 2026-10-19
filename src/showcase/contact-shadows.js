@@ -3,7 +3,7 @@ import * as T from '../../vendor/three/three.module.js';
 // One pooled draw for soft ambient contact beneath the figures, complementing
 // directional cast shadows. The tessellated surface follows visible ground,
 // including raised cells; it is neither a gameplay obstacle nor a pick target.
-export function createContactShadows(scene,{capacity=128,segments=4}={}){
+export function createContactShadows(scene,{capacity=256,segments=4}={}){
   const n=segments+1,vertices=n*n,positions=new Float32Array(capacity*vertices*3),uvs=[],indices=[],strengths=new Float32Array(capacity*vertices);
   for(let slot=0;slot<capacity;slot++)for(let z=0;z<n;z++)for(let x=0;x<n;x++){
     uvs.push(x/segments,z/segments);
@@ -31,6 +31,8 @@ export function createContactShadows(scene,{capacity=128,segments=4}={}){
       if(!actor.group.visible||count>=capacity)continue;
       const g=actor.group,mounted=g.userData.actor?.mounted,yaw=g.rotation.y;
       stamp(g.position,mounted?.77:.58,mounted?1.28:.48,yaw,.24);figures++;
+      // Formation followers stand on the same ground with a softer contact.
+      for(const p of actor.crowd?.footprints??[])stamp(p,mounted?.66:.42,mounted?1.1:.36,yaw,.2);
       for(const foot of actor.contacts?.feet??[]){
         foot.localToWorld(sole.set(0,mounted?-.075:-.07,mounted?.015:.045));
         const lift=Math.max(0,sole.y-heightAt(sole.x,sole.z));

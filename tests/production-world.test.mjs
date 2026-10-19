@@ -1,7 +1,7 @@
 import test,{after} from 'node:test';
 import assert from 'node:assert/strict';
 import {WORLD_ASSETS,worldAssetKey} from '../src/ui/world-assets.js';
-import {materialIndex,texturePlacements,paintMaterial,drawNaturalProp} from '../src/ui/ground-materials.js';
+import {materialIndex,texturePlacements,paintMaterial,drawNaturalProp,crossFadeSeamless,seamWeight} from '../src/ui/ground-materials.js';
 import {loadArt,peekArt,clearArtCache} from '../src/ui/art.js';
 import {drawBattle,geometry,pickTile} from '../src/ui/renderer.js';
 import {clearBattleCache} from '../src/ui/battle-art.js';
@@ -92,4 +92,21 @@ test('No idle lattice is drawn; explicit Grid leaves legal picking, objectives a
   assert.equal(quiet.calls.filter(c=>c.method==='stroke'&&c.stroke==='#d5dec42b').length,0);assert.equal(grid.calls.filter(c=>c.method==='stroke'&&c.stroke==='#d5dec42b').length,64);
   const geom=geometry(grid,state);for(let y=0;y<8;y++)for(let x=0;x<8;x++){const point=pickTile(grid,state,10+geom.ox+(x-y)*geom.tw/2,20+geom.oy+(x+y)*geom.th/2);assert.ok(point.x===x&&point.y===y);}
   assert.equal(JSON.stringify(state),before);quiet.balanced();grid.balanced();
+});
+
+test('Seamless cross-fade wraps a non-periodic cell without mirroring it',()=>{
+  const size=64,data=new Uint8ClampedArray(size*size*4);
+  // A diagonal ramp has a large jump where it would wrap, in both directions.
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){const i=(y*size+x)*4;data[i]=x*4;data[i+1]=y*4;data[i+2]=(x+y)*2;data[i+3]=255;}
+  const out=crossFadeSeamless(data,size),at=(x,y,k)=>out[(y*size+x)*4+k];
+  assert.equal(seamWeight(0,size),0);assert.equal(seamWeight(size/2,size),1);
+  let wrapX=0,wrapY=0,inner=0,mirrored=0;
+  for(let y=0;y<size;y++)for(const k of [0,1,2]){wrapX=Math.max(wrapX,Math.abs(at(0,y,k)-at(size-1,y,k)));inner=Math.max(inner,Math.abs(at(20,y,k)-at(21,y,k)));}
+  for(let x=0;x<size;x++)for(const k of [0,1,2])wrapY=Math.max(wrapY,Math.abs(at(x,0,k)-at(x,size-1,k)));
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++)mirrored+=Math.abs(at(x,y,0)-at(size-1-x,y,0));
+  assert.ok(wrapX<=12&&wrapY<=12,`wrap steps ${wrapX}/${wrapY} stay close to an ordinary neighbour step`);
+  assert.ok(data[0]!==data[(size-1)*4]&&Math.abs(data[0]-data[(size-1)*4])>200,'The source itself does not tile');
+  assert.ok(mirrored>size*size*8,'The result is not a mirror image of itself');
+  for(let i=3;i<out.length;i+=4)assert.equal(out[i],255,'Opaque ground stays opaque');
+  assert.ok(inner<=12);
 });

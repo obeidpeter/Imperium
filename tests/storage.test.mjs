@@ -12,18 +12,19 @@ const importStorage=async()=>({...createSaveStore(activeOptions),saveCode,restor
 // Direct module tests with transactional doubles; real-browser harness is separate.
 async function withPlatform(run){
   const previous=new Map(['CompressionStream','DecompressionStream'].map(name=>[name,Object.getOwnPropertyDescriptor(globalThis,name)]));
-  const env={local:new Map(),idb:null,localFails:false,idbOpenFails:false,idbWriteFails:false,delayCommit:false,pending:[],persistCalls:0,lockCalls:0};
+  const env={local:new Map(),idb:null,idbOther:new Map(),localFails:false,idbOpenFails:false,idbWriteFails:false,delayCommit:false,pending:[],persistCalls:0,lockCalls:0};
   let transactionTail=Promise.resolve(),lockTail=Promise.resolve();
   const db={close(){},transaction(name,mode='readonly'){
     const operations=[],writes=[];let aborted=false;
     const tx={abort(){aborted=true;},objectStore(){return {
-      get(key){const request={};operations.push(()=>{request.result=structuredClone(env.idb);request.onsuccess?.();});return request;},
-      put(value,key){writes.push(structuredClone(value));}
+      // env.idb is the campaign record; other keys (the unreadable quarantine) are kept separately.
+      get(key){const request={};operations.push(()=>{request.result=structuredClone(key==='campaign'?env.idb:env.idbOther.get(key)??null);request.onsuccess?.();});return request;},
+      put(value,key){writes.push({key,value:structuredClone(value)});}
     };}};
     const execute=async()=>{
       for(const operation of operations){if(aborted)break;operation();}
       if(aborted){tx.onabort?.();return;}
-      if(writes.length){if(env.delayCommit)await new Promise(resolve=>env.pending.push(resolve));if(env.idbWriteFails){tx.onabort?.();return;}env.idb=writes.at(-1);}
+      if(writes.length){if(env.delayCommit)await new Promise(resolve=>env.pending.push(resolve));if(env.idbWriteFails){tx.onabort?.();return;}for(const {key,value}of writes){if(key==='campaign')env.idb=value;else env.idbOther.set(key,value);}}
       tx.oncomplete?.();
     };
     transactionTail=transactionTail.then(execute);return tx;
@@ -274,3 +275,23 @@ for(const useWebLocks of [false,true])test(`SAV-13 failed takeover retains stale
   assert.equal(JSON.parse(env.idb.payload).name,adopted.name);
 }));
 
+
+test('SAV-14 an unreadable stored chronicle is preserved before a new save replaces it, and can be read back exactly',async()=>withPlatform(async env=>{
+  // An incompatible edition's record: valid JSON, but not a readable envelope.
+  const foreign=JSON.stringify({format:7,payload:'{"version":99}',checksum:'0'}),idbForeign={format:9,payload:'not a campaign',checksum:'1'};
+  env.local.set(CONFIG.saveKey,foreign);env.idb=structuredClone(idbForeign);
+  const storage=await importStorage(),loaded=await storage.loadLocal();
+  assert.equal(loaded.state,null);assert.match(loaded.error,/damaged or incompatible/);
+  // Listing works before any write: nothing has to be overwritten to be offered.
+  const before=await storage.listUnreadableSaves();assert.equal(before.length,2);assert.ok(before.every(item=>!('text' in item)&&item.bytes>0));
+  await storage.saveLocal(newGame('Fresh start'));
+  const after=await storage.listUnreadableSaves(),sources=after.map(item=>item.source).sort();
+  assert.deepEqual(sources,['indexedDB','localStorage'],'Both stores keep their own unreadable record');
+  const texts=await Promise.all(after.map(item=>storage.readUnreadableSave(item.index)));
+  assert.ok(texts.includes(foreign),'The localStorage record is byte-identical');
+  assert.ok(texts.some(text=>JSON.stringify(JSON.parse(text))===JSON.stringify(idbForeign)),'The IndexedDB record is preserved');
+  assert.equal(JSON.parse(JSON.parse(env.local.get(CONFIG.saveKey)).payload).name,'Fresh start','The new chronicle is saved normally');
+  await storage.saveLocal(newGame('Second save'));assert.equal((await storage.listUnreadableSaves()).filter(item=>item.source==='localStorage').length,1,'Repeated saves do not duplicate a preserved record');
+  await assert.rejects(storage.readUnreadableSave(99),/unavailable/);
+}));
+

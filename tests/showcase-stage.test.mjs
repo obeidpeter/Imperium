@@ -48,7 +48,7 @@ test('A committed withdrawal remains standing before impact, then uses a fall po
 test('A paused or reduced-motion stage accepts committed state without queuing animation or unlocking sound',async()=>{
   const state=createShowcaseSession(),before=structuredClone(state.encounter),target=Game.getTargets(state,'hero','move')[0],command={unitId:'hero',action:'move',x:target.x,y:target.y};
   assert.ok(Game.act(state,command).ok);const after=state.encounter,save=Game.serialize(state);
-  for(const mode of ['paused','reducedMotion']){
+  for(const mode of ['paused','reducedMotion','contextLost']){
     const calls=[],stage=Object.create(BattleStage.prototype);
     Object.assign(stage,{[mode]:true,finishMotion:()=>calls.push('finish'),sync:value=>{stage.encounter=value;calls.push('sync');},sound:{unlock:()=>calls.push('unlock')}});
     await stage.play(before,after,command);
@@ -212,3 +212,14 @@ test('Stage renders 3D tactical guard/aim/path/intent arcs, records multi-unit p
   assert.equal(homed,1);
 });
 
+
+test('The fitted sun shadow tightens for close cameras, keeps the overview box and only refits on real change',()=>{
+  const stage=Object.create(BattleStage.prototype),sun=new T.DirectionalLight('#fff',1);sun.position.set(-16,24,-12);
+  Object.assign(stage,{sun,sunOffset:sun.position.clone(),shadowFit:{x:0,z:0,half:23},orbit:{distance:40},lookTarget:new T.Vector3(),shadowDirty:false});
+  stage.fitShadow();assert.equal(stage.shadowDirty,false,'The overview already matches the default fit');assert.equal(sun.shadow.camera.right,5,'Untouched until a refit');
+  stage.orbit.distance=8;stage.lookTarget.set(6.2,0,-3.9);stage.fitShadow();
+  assert.equal(stage.shadowDirty,true);assert.equal(stage.shadowFit.half,9,'Close view uses the minimum box');assert.equal(sun.shadow.camera.left,-9);assert.equal(sun.shadow.camera.top,9);
+  assert.deepEqual(sun.target.position.toArray(),[6,0,-4]);assert.deepEqual(sun.position.toArray(),[-10,24,-16],'The light keeps its direction while following the view');
+  stage.shadowDirty=false;stage.lookTarget.set(6.6,0,-3.6);stage.fitShadow();assert.equal(stage.shadowDirty,false,'Small camera drift does not re-render the shadow map');
+  stage.orbit.distance=60;stage.fitShadow();assert.equal(stage.shadowFit.half,23,'Far views never exceed the original coverage');
+});

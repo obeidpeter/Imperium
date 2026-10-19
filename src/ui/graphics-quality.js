@@ -5,6 +5,9 @@ export const GRAPHICS_MODES=Object.freeze({
   balanced:Object.freeze({maxPixelRatio:1.5,particles:6,shadowLayers:2,atmosphere:true}),
   high:Object.freeze({maxPixelRatio:2,particles:12,shadowLayers:3,atmosphere:true})
 });
+// 3D figure presentation: sculpted models, the painted 2D figures standing in
+// the 3D scene (HD-2D), or sculpted figures finished in ink and wash.
+export const FIGURE_STYLES=Object.freeze(['sculpted','painted','inked']);
 const ORDER=['performance','balanced','high'];
 const WINDOW=30,OVER_BUDGET_MS=22,OVER_BUDGET_COUNT=18;
 

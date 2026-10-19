@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
 import {createEnvironment,gridToWorld} from '../src/showcase/environment.js';
-import {createGroundHeight,roadSegments,terrainAt,isTrainingGround} from '../src/showcase/environment-layout.js';
+import {createGroundHeight,roadSegments,terrainAt,isTrainingGround,HIGH_GROUND_HEIGHT} from '../src/showcase/environment-layout.js';
 import {BATTLE_SCENARIOS} from '../src/data/encounters.js';
 import * as Game from '../src/core/game.js';
 
@@ -12,7 +12,7 @@ const scenario=()=>({width:8,height:8,terrain:BATTLE_SCENARIOS['ch1-road'].map.m
 test('3D environment keeps centered coordinates, authored elevation and road adjacency',()=>{
   const e=freeze(scenario()),height=createGroundHeight(e);
   assert.deepEqual(gridToWorld({x:0,y:0},e),{x:-8.75,y:0,z:-8.75});assert.deepEqual(gridToWorld({x:7,y:7},e),{x:8.75,y:0,z:8.75});
-  for(let y=0;y<8;y++)for(let x=0;x<8;x++){const p=gridToWorld({x,y},e),v=height(p.x,p.z);assert.ok(Math.abs(v-(terrainAt(e,x,y)==='high'?.45:0))<1e-9);}
+  for(let y=0;y<8;y++)for(let x=0;x<8;x++){const p=gridToWorld({x,y},e),v=height(p.x,p.z);assert.ok(Math.abs(v-(terrainAt(e,x,y)==='high'?HIGH_GROUND_HEIGHT:0))<1e-9);}
   for(const [a,b]of roadSegments(e)){const distance=Math.hypot(a.x-b.x,a.z-b.z);assert.ok(Math.abs(distance-2.5)<1e-9||distance===18);assert.equal(a.x===b.x||a.z===b.z,true);}
 });
 
@@ -50,7 +50,7 @@ test('A legally opened drill gets a quiet training yard without props or duplica
   let lights=0;world.group.traverse(o=>{if(o.isPointLight)lights++;});assert.equal(lights,0,'Drill has no burning-wagon or campfire lights');
   assert.equal(world.group.userData.trainingProps.length,4);
   for(const bounds of world.group.userData.trainingProps)assert.ok(bounds.max[0]<-10||bounds.min[0]>10||bounds.max[2]<-10||bounds.min[2]>10,`${bounds.name} is fully outside the playable yard`);
-  for(let y=0;y<8;y++)for(let x=0;x<8;x++){const p=gridToWorld({x,y},e);assert.ok(Math.abs(world.groundHeight(p.x,p.z)-(terrainAt(e,x,y)==='high'?.45:0))<1e-9);}
+  for(let y=0;y<8;y++)for(let x=0;x<8;x++){const p=gridToWorld({x,y},e);assert.ok(Math.abs(world.groundHeight(p.x,p.z)-(terrainAt(e,x,y)==='high'?HIGH_GROUND_HEIGHT:0))<1e-9);}
   const g=world.ground.geometry,soil=g.attributes.soilMix,position=g.attributes.position;assert.equal(soil.count,position.count);
   for(let i=0;i<position.count;i++)if(Math.abs(position.getX(i))<8&&Math.abs(position.getZ(i))<8)assert.ok(soil.getX(i)>.8,'Packed yard covers the interior without replacing terrain');
   world.update(0);world.update(2);assert.equal(Game.serialize(state),before);world.dispose();assert.equal(scene.children.length,0);
