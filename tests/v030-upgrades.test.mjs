@@ -445,6 +445,11 @@ test('v0.30.0: sun shafts slant through dawn, mist and halls; board water mirror
   assert.equal(env.reflectionLevel, -.42);assert.equal(env.waterMeshes.length, 1);env.dispose();
 });
 
+test('v0.30.0: this edition is 0.30.0', async () => {
+  const {CONFIG} = await import('../src/config.js');
+  assert.equal(CONFIG.version, '0.30.0');
+});
+
 // Width and height from a WebP file's first chunk.
 function webpSize(buffer) {
   assert.equal(buffer.toString('ascii', 0, 4), 'RIFF');assert.equal(buffer.toString('ascii', 8, 12), 'WEBP');

@@ -34,6 +34,14 @@ Version 0.29 adds no image, model or audio file to the 3D view, apart from the r
 
 The painted (HD-2D) figure style reuses the existing generated 2D unit atlases and animation sheets, whose provenance is already recorded in `asset-manifest.json` and `art-generation.md`. Bloc trim colours, formation layouts and stance poses are presentation conventions of the game, not historical claims about the Senate's dress.
 
+Version 0.30 adds no image, model or audio file to the 3D view. Its additions are code-built and original to this repository:
+- **Battle remains** (`battle-remains.js`): fallen figures are the existing actors, posed in a collapse and skinned once on the CPU; spent shafts are a small code-built arrow; ground wear is drawn at runtime on a canvas.
+- **Atmosphere** (`atmosphere.js`, `water-reflection.js`): cloud shadows from procedural noise, sun shafts from open cylinders and points, and a planar mirror of the scene itself.
+- **Combat effects** (`combat-effects.js`): trail ribbons and dust from generated geometry and the existing particle mask.
+- **Baked occlusion** (`environment-baked-occlusion.js`): a data texture computed from the scene's own geometry.
+
+The 2D story paintings gain eight greyscale depth maps (`assets/scenes/depth/`), estimated offline from the project's own shipped paintings with the MIT-licensed MiDaS v2.1 small model. They are recorded in `asset-manifest.json` and `art-generation.md`; the model itself is not bundled. Bloc letters, trim shapes and colours are presentation conventions of the game, not historical claims.
+
 ## Generated material colour maps
 
 The three neutral material images were generated with OpenAI's built-in `image_gen` tool. No third-party reference image was supplied. The direction was a horizontal triptych: damp olive-brown earth and fine gravel on the left, weathered grey limestone in the middle, and dark vertical oak on the right, with neutral lighting. The exact prompt is retained with the external master in `outputs/showcase-art-masters/material-prompt.txt` and included in the versioned art-master archive.
