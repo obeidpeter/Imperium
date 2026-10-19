@@ -72,8 +72,10 @@
 .world-unit[data-role=guard] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 2.5h6c.8 3.5.8 7.5 0 11H5c-.8-3.5-.8-7.5 0-11ZM8 4v8'/%3E%3C/svg%3E")}
 .world-unit[data-role=raider] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 13.5 11 4.5M9 3c2.5-.6 4.4 1 4.4 3.6-1.4-.8-2.8-.9-4-.2Z'/%3E%3C/svg%3E")}
 .world-unit[data-role=commander] .world-role{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f3ead2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 14V2M5 3h6.5L10 5l1.5 2H5'/%3E%3C/svg%3E")}
-/* A delegate's bloc as a colour edge on its stance marker, matching the toga trim. */
-.world-unit[data-bloc=Veterans] .world-short{box-shadow:inset 3px 0 0 #c4463a}
-.world-unit[data-bloc=Landholders] .world-short{box-shadow:inset 3px 0 0 #63a050}
-.world-unit[data-bloc=Civic] .world-short{box-shadow:inset 3px 0 0 #5a8ad0}
-.world-unit[data-bloc=Chamber] .world-short{box-shadow:inset 3px 0 0 #a070b8}
+/* A delegate's bloc leads its stance marker as the letter the 2D board prints,
+   on a colour edge matching the toga trim (bloc-style.js): it reads without colour. */
+.world-unit[data-bloc] .world-short::before{display:inline-block;margin-inline-end:.3rem;padding-inline-end:.3rem;border-inline-end:1px solid #eef1d950;font-family:Georgia,serif}
+.world-unit[data-bloc=Veterans] .world-short{box-shadow:inset 3px 0 0 #d0564a}.world-unit[data-bloc=Veterans] .world-short::before{content:"V"}
+.world-unit[data-bloc=Landholders] .world-short{box-shadow:inset 3px 0 0 #d8ae4c}.world-unit[data-bloc=Landholders] .world-short::before{content:"L"}
+.world-unit[data-bloc=Civic] .world-short{box-shadow:inset 3px 0 0 #6a96dc}.world-unit[data-bloc=Civic] .world-short::before{content:"C"}
+.world-unit[data-bloc=Chamber] .world-short{box-shadow:inset 3px 0 0 #a070b8}.world-unit[data-bloc=Chamber] .world-short::before{content:"Ch"}
