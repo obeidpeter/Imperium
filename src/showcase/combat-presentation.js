@@ -15,7 +15,9 @@ export function retimeStageTimeline(timeline){
   const result=structuredClone(timeline),scale=1.65,moves=new Map(),pairs=timeline.tracks.map((old,i)=>({old,next:result.tracks[i]}));
   for(const {old,next}of pairs){next.start=old.start*scale;next.duration=old.duration*scale;if(old.path?.length>1){
     const metres=(old.path.length-1)*2.5,speed=old.pose==='cavalry-move'?4.2:old.pose==='run'?3.2:1.9;
-    next.duration=Math.min(2400,Math.max(550,metres/speed*1000));moves.set(old.unitId,{old,next});
+    // The cubic ease reaches 1.5 times average speed. Account for that peak
+    // instead of forcing a long route into 2.4 seconds and making feet skate.
+    next.duration=Math.max(650,metres/speed*1500);moves.set(old.unitId,{old,next});
   }}
   const unitTime=(time,id)=>{const move=moves.get(id);return move&&time>=move.old.start+move.old.duration?move.next.start+move.next.duration+(time-move.old.start-move.old.duration)*scale:time*scale;};
   const unitAt=point=>Object.entries(timeline.units??{}).find(([,p])=>same(p.after,point))?.[0];
@@ -76,7 +78,7 @@ export function combatCues(timeline,{encounter}={}){
   const unit=id=>timeline.units?.[id]?.after??encounter?.units?.find(u=>u.id===id),at=point=>Object.values(timeline.units??{}).find(p=>same(p.after,point))?.after;
   for(const track of timeline.tracks){
     if(track.path?.length>1){
-      const distance=(track.path.length-1)*2.5,step=locomotionStride(track.pose,track.pose==='cavalry-move')/2,steps=Math.min(14,Math.floor(distance/step));
+      const distance=(track.path.length-1)*2.5,step=locomotionStride(track.pose,track.pose==='cavalry-move')/2,steps=Math.min(64,Math.floor(distance/step));
       for(let i=0;i<steps;i++){
         const progress=inverseSmooth((i+1)*step/distance),point=track.path[Math.min(track.path.length-1,Math.floor((i+1)*step/2.5))],raw=encounter?.terrain?.[point.y]?.[point.x],surface=typeof raw==='string'?raw:raw?.type;
         const kind=['marsh','ford'].includes(surface)?'wade':track.pose==='cavalry-move'?'hoof':'footstep';
@@ -95,5 +97,7 @@ export function combatCues(timeline,{encounter}={}){
     if(effect.type==='speech')cues.push({time:effect.start,kind:'speech',intensity:.45,side});
     if(effect.type==='stance')cues.push({time:effect.start,kind:'vote',intensity:.5,side,at:effect.at});
   }
-  return cues.sort((a,b)=>a.time-b.time).slice(0,100);
+  // Footfalls cannot evict an impact, order or voice cue on a busy enemy turn.
+  const step=c=>['footstep','hoof','wade'].includes(c.kind),events=cues.filter(c=>!step(c)).sort((a,b)=>a.time-b.time).slice(0,100);
+  return [...events,...cues.filter(step).slice(0,100-events.length)].sort((a,b)=>a.time-b.time);
 }

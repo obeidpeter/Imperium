@@ -1,4 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
+import {skinMicroNormal,skinRoughness} from './skin-response.js';
 
 export const ACTOR_COMPLEXION_ASSETS=Object.freeze({male:'assets/textures/complexion-male-v018.webp',female:'assets/textures/complexion-female-v018.webp'});
 const reference=Object.freeze({male:Object.freeze([234.176,187.514,156.912]),female:Object.freeze([216.698,178.544,150.852])});
@@ -39,7 +40,13 @@ export function createActorComplexionLibrary(load=decodeBrowserTexture){
     map.colorSpace=T.SRGBColorSpace;map.flipY=true;map.wrapS=map.wrapT=T.ClampToEdgeWrapping;
     map.magFilter=T.LinearFilter;map.minFilter=T.LinearMipmapLinearFilter;map.generateMipmaps=true;map.anisotropy=4;
     map.userData={actorComplexion:kind,source:ACTOR_COMPLEXION_ASSETS[kind],state:'placeholder'};map.needsUpdate=true;
-    entry={refs:0,ready:false,error:null,surface:{map,normalMap:null,bumpMap:null,roughnessMap:null,bumpScale:0,roughness:.64,metalness:0}};
+    const pore=skinMicroNormal(),normalMap=new T.DataTexture(pore.data,pore.width,pore.height,T.RGBAFormat),roughnessMap=new T.DataTexture(new Uint8Array([184,184,184,255]),1,1,T.RGBAFormat);
+    normalMap.wrapS=normalMap.wrapT=T.RepeatWrapping;normalMap.repeat.set(9,9);normalMap.flipY=true;
+    normalMap.magFilter=T.LinearFilter;normalMap.minFilter=T.LinearMipmapLinearFilter;normalMap.generateMipmaps=true;normalMap.anisotropy=4;
+    normalMap.userData={actorSurface:'skin',source:'original-periodic-pores-v035'};normalMap.needsUpdate=true;
+    roughnessMap.image={width:1,height:1,data:new Uint8Array([184,184,184,255])};roughnessMap.colorSpace=T.NoColorSpace;roughnessMap.userData={actorSurface:'skin'};roughnessMap.needsUpdate=true;
+    roughnessMap.flipY=true;roughnessMap.wrapS=roughnessMap.wrapT=T.ClampToEdgeWrapping;roughnessMap.magFilter=T.LinearFilter;roughnessMap.minFilter=T.LinearMipmapLinearFilter;roughnessMap.generateMipmaps=true;roughnessMap.anisotropy=4;
+    entry={refs:0,ready:false,error:null,surface:{map,normalMap,normalScale:new T.Vector2(.23,.23),bumpMap:null,roughnessMap,bumpScale:0,roughness:1,metalness:0}};
     records.set(kind,entry);return entry;
   }
   function warm(value='male'){
@@ -52,16 +59,17 @@ export function createActorComplexionLibrary(load=decodeBrowserTexture){
       if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>1024||height>1024||data?.length!==width*height*4)throw Error('Invalid complexion pixels');
       const current=records.get(kind);if(disposed||!current)return false;
       current.surface.map.image={width,height,data:normalizeActorComplexion(data,kind)};
+      current.surface.roughnessMap.image={width,height,data:skinRoughness(data)};current.surface.roughnessMap.needsUpdate=true;
       current.surface.map.userData.state='ready';current.surface.map.needsUpdate=true;current.ready=true;return true;
     }).catch(error=>{const current=records.get(kind);if(current&&!disposed){current.error=String(error?.message??error);current.surface.map.userData.state='fallback';}return false;}).finally(()=>{if(requests.get(kind)===request)requests.delete(kind);});
     requests.set(kind,request);return request;
   }
   return {
     acquire(value='male'){const kind=kindOf(value),entry=record(kind);entry.refs++;void warm(kind);return entry.surface;},
-    release(value='male'){const kind=kindOf(value),entry=records.get(kind);if(!entry)return;if(entry.refs>0)entry.refs--;if(entry.refs===0){entry.surface.map.dispose();records.delete(kind);}},
+    release(value='male'){const kind=kindOf(value),entry=records.get(kind);if(!entry)return;if(entry.refs>0)entry.refs--;if(entry.refs===0){for(const key of ['map','normalMap','roughnessMap'])entry.surface[key].dispose();records.delete(kind);}},
     warm,
     status(value='male'){const kind=kindOf(value),entry=records.get(kind);return {ready:entry?.ready??false,pending:requests.has(kind),error:entry?.error??null,refs:entry?.refs??0};},
-    dispose(){if(disposed)return;disposed=true;for(const entry of records.values())entry.surface.map.dispose();records.clear();requests.clear();}
+    dispose(){if(disposed)return;disposed=true;for(const entry of records.values())for(const key of ['map','normalMap','roughnessMap'])entry.surface[key].dispose();records.clear();requests.clear();}
   };
 }
 const library=createActorComplexionLibrary();

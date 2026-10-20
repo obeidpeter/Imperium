@@ -95,7 +95,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   }else if(!arid){
     // Low-poly closed tree crowns are small distant silhouettes, never nearby
     // billboard scenery. They occupy every bearing, with broad natural gaps.
-    for(let i=0;i<(quality==='performance'?22:33);i++){
+    for(let i=0;i<(quality==='performance'?20:29);i++){
       const angle=i*2.39996,r=(wet?105:155)+hash(i,seed)*135,x=Math.cos(angle)*r,z=Math.sin(angle)*r,y=terrainHeight(x,z),h=wet?4.8+hash(i,8)*4:5+hash(i,8)*5,c=tint(x,z,y,.06).multiplyScalar(.87);
       box(x,y,z,.32,h*.48,.32,c);
       // Three uneven, overlapping volumes break up a single ball-on-a-stick
@@ -110,9 +110,39 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     }
     group.userData.silhouetteKind=wet?'distant willow wetlands':'wooded ridgelines';
   }else group.userData.silhouetteKind='open eastern escarpments';
+  // Three authored bearings establish a middle distance before the far hills.
+  // Closed volumes share the distant batch: no billboards or playable cells.
+  const landmarkKinds=['frontier watch','marsh watch','road station','marching camp','siege aqueduct','frontier watch','colonnade','river watch','hill sanctuary','farm settlement','urban temple','urban temple'];
+  const landmarkKind=landmarkKinds[(profile.chapter??1)-1]??'frontier watch';
+  for(let cluster=0;cluster<3;cluster++){
+    const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=(city?195:115)+cluster*28,cx=Math.cos(angle)*r,cz=Math.sin(angle)*r,base=terrainHeight(cx,cz),c=tint(cx,cz,base,.03);
+    if(landmarkKind==='siege aqueduct'||landmarkKind==='colonnade'){
+      const aqueduct=landmarkKind==='siege aqueduct',count=aqueduct?8:6;
+      for(let i=0;i<count;i++){
+        const x=cx+(i-(count-1)/2)*3.5,y=terrainHeight(x,cz);
+        box(x,y,cz,aqueduct?1.25:.65,base+8-y,1.25,c);
+        box(x,base+7.4,cz,3.5,.9,1.55,c);
+        if(aqueduct){box(x,base+6.5,cz,2.25,.9,1.3,c);box(x,base+5.9,cz,1.7,.6,1.3,c);}
+      }
+    }else if(landmarkKind==='urban temple'||landmarkKind==='hill sanctuary'){
+      box(cx,base,cz,18,1.4,11,c);
+      for(const side of [-1,1])for(let i=0;i<6;i++)box(cx+(i-2.5)*2.8,base+1.4,cz+side*4.6,.7,7,.7,c);
+      box(cx,base+8.4,cz,19,1.1,12,c);
+      const roof=c.clone().multiplyScalar(.88);
+      for(const side of [-1,1])triangle([cx-9.5,base+9.5,cz+side*6],[cx+9.5,base+9.5,cz+side*6],[cx,base+13,cz+side*6],roof);
+      triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz-6],[cx,base+13,cz+6],roof);triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx-9.5,base+9.5,cz+6],roof);
+      triangle([cx+9.5,base+9.5,cz-6],[cx+9.5,base+9.5,cz+6],[cx,base+13,cz+6],roof);triangle([cx+9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx,base+13,cz-6],roof);
+    }else if(landmarkKind==='farm settlement'||landmarkKind==='marching camp'){
+      for(let i=0;i<7;i++){const x=cx+(i%4)*6,z=cz+Math.floor(i/4)*9,y=terrainHeight(x,z);box(x,y,z,4,landmarkKind==='marching camp'?2.5:4.5,5,c);}
+    }else{
+      box(cx,base,cz,5.8,8.5,5.8,c);box(cx,base+8.5,cz,6.4,.7,6.4,c);
+      for(const side of [-1,1])for(let i=0;i<3;i++)box(cx+(i-1)*2,base+9.2,cz+side*2.7,.9,1.1,1,c);
+      box(cx+11,terrainHeight(cx+11,cz),cz,12,2.3,1.3,c);
+    }
+  }
   if(silhouettePositions.length){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silhouettePositions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(silhouetteColors,3));geometry.computeVertexNormals();addMesh('regional distant silhouettes',geometry,distant);}
   let triangles=0;group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;});
-  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind});
+  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3});
   group.userData.horizonStats=stats;
   const cameraRay=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000),cameraHits=[],cameraSurfaces=[bridge,ridges];
   let lastCameraX=NaN,lastCameraZ=NaN,lastCameraHeight=0;

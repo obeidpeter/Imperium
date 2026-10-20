@@ -21,13 +21,13 @@ import * as Game from '../src/core/game.js';
 const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
 const images=resolve(arg('--images')||resolve(repo,'docs/images'));
-const reportPath=resolve(arg('--report')||resolve(repo,'docs/evidence/benchmark-v034.json'));
+const reportPath=resolve(arg('--report')||resolve(repo,'docs/evidence/benchmark-v035.json'));
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const externalBase=arg('--base')||process.env.BENCHMARK_BASE_URL;
 const report={method:'Legal New Game and public commands only; snapshots restored through the visible Restore dialog; observations through DOM and public Export; no browser state injection.',build:externalBase?'external preview':'production dist',browser:'Chromium / SwiftShader',physicalDeviceTest:false,started:new Date().toISOString(),scenes:[],checks:[],errors:[]};
 if(!externalBase)report.buildRevision=JSON.parse(await readFile(resolve(repo,'dist/build-report.json'),'utf8')).revision;
 const snapshots=[],camps=[];
-const campaign=runCommandCampaign({
+const campaign=runCommandCampaign({featureEdition:35,
   onEncounter:s=>snapshots.push({chapter:s.chapter,id:s.encounter.id,title:s.encounter.title,kind:s.encounter.kind,code:Game.encodeSave(s),serialized:Game.serialize(s)}),
   onCheckpoint:s=>camps.push({chapter:s.chapter,code:Game.encodeSave(s),serialized:Game.serialize(s)}),
 });
@@ -140,7 +140,7 @@ async function captureObservation(page){
   });
 }
 async function captureScene(page,id,expected){
-  const path=resolve(images,`v034-${id}.png`),clip=await page.locator('.battle-stage').boundingBox();
+  const path=resolve(images,`v035-${id}.png`),clip=await page.locator('.battle-stage').boundingBox();
   assert.ok(clip?.width&&clip?.height);
   const before=await captureObservation(page);assertCaptureObservation(before,expected,`${id} before capture`);
   await page.screenshot({path,clip,timeout:120000});
@@ -148,7 +148,7 @@ async function captureScene(page,id,expected){
   return {screenshot:relative(repo,path).replaceAll('\\','/'),observations:{before,after}};
 }
 async function capture(page,id,{full=false,stage=true}={}){
-  const path=resolve(images,`v034-${id}.png`);
+  const path=resolve(images,`v035-${id}.png`);
   if(stage){const clip=await page.locator('.battle-stage').boundingBox();assert.ok(clip?.width&&clip?.height);await page.screenshot({path,clip,timeout:120000});}
   else await page.screenshot({path,fullPage:full,timeout:60000});
   return relative(repo,path).replaceAll('\\','/');

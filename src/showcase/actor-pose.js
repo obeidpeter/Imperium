@@ -44,7 +44,7 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     // Clips keep exact230/620 contact and310/620 release poses; foot grounding
     // and held-equipment aiming still solve after sampling.
     applyActorClip(pose,motion==='throw'?'throw':weapon==='spear'?'spearAttack':mounted?'mountedAttack':'attack',p);
-    if(motion!=='throw')applyPerformance(pose,'strike',p);
+    if(motion!=='throw'){applyPerformance(pose,'strike',p);if(p>.48)applyPerformance(pose,'recover',(p-.48)/.52);}
     if(mounted&&weapon==='spear'){const reach=actionEnvelope(motion,p).reach;pose.bodyZ+=.045*reach;pose.headY-=.04*reach;}
   }else if(['brace','formation'].includes(motion)){
     applyActorClip(pose,'brace',phase===undefined?1:p);
@@ -54,6 +54,7 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     // A quick compression lands with the committed impact, followed by a
     // slower recovery. The defender keeps facing instead of snapping to a hit.
     pose.bodyX+=(blocked?.065:.20)*front*hit;pose.bodyZ-=(blocked?.035:.13)*side*hit;pose.headX=.07*front*hit;pose.headY=-.07*side*hit;
+    if(!blocked)applyPerformance(pose,'recoil',p);
     pose.hipY-=(blocked?.028:.065)*hit;pose.hipZ-=.055*front*hit;pose.hipX-=.035*side*hit;
     pose.leftArm[0]-=(blocked?.18:.28)*hit;pose.leftElbow-=(blocked?.20:.36)*hit;pose.shieldTilt+=(blocked?.17:.08)*hit;
     pose.rightElbow-=.1*hit;

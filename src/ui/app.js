@@ -338,7 +338,7 @@ case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offline
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
-  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{featureEdition:34,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
+  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{featureEdition:35,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
   if(document.querySelector('#new-soundscape')?.checked){settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chapter I. You are a Tiro: a recruit in training.'});
   if(result.error?.code==='SAVE_UNAVAILABLE'){
@@ -420,8 +420,10 @@ case 'download-card':document.querySelector('#reign-card').toBlob(blob=>download
 case 'archive-replay':{const source=archivePrimaryState||state,res=Game.createArchiveReplay(source,id);if(res.ok){archivePrimaryState??=state;state=res.state;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;modal.close();render();toast(res.message);}else toast(res.message);break;}
 case 'exit-archive':if(archivePrimaryState){state=archivePrimaryState;archivePrimaryState=null;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();toast('Returned from the Archive to your active chronicle.');}break;
 case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
-case 'render-report':{const report=battleStage.stage?.stats?.();showModal('Current frame report',report?`<p>Current quality: ${esc(report.quality)}. Measured in this browser; no claim of physical-device testing.</p><pre class="frame-report">${esc(JSON.stringify(report.frameProfile,null,2))}</pre><p>GPU query: ${report.gpu?.supported?'available':'unavailable'} · resolution scale ${report.resolution?.scale??1} · draws ${report.calls}</p>`:'<p>Open a 3D encounter to collect a frame report.</p>');break;}
+case 'render-report':{const report=battleStage.stage?.stats?.();showModal('Current frame report',report?`<p>Current quality: ${esc(report.quality)}. Measured in this browser; no claim of physical-device testing.</p><p>Graphics backend: ${esc(report.device?.renderer??'Unavailable')} · ${report.device?.software?'software rendering':'hardware status requires device verification'}</p><pre class="frame-report">${esc(JSON.stringify(report.frameProfile,null,2))}</pre><p>GPU query: ${report.gpu?.supported?'available':'unavailable'} · resolution scale ${report.resolution?.scale??1} · draws ${report.calls}</p>`:'<p>Open a 3D encounter to collect a frame report.</p>');break;}
 case 'expanded-upgrade':await change(()=>Game.enableExpandedCampaign(state));break;
+case 'approach-upgrade':await change(()=>Game.enableFieldApproaches(state));break;
+case 'field-approach':await change(()=>Game.chooseFieldApproach(state,id));break;
 case 'command-upgrade':await change(()=>Game.enableCommandCampaign(state));break;
 case 'operational-plan':await change(()=>Game.chooseOperationalPlan(state,id));break;
 case 'inspect-case':showModal('Present a documented case',casePreview(state,id));break;

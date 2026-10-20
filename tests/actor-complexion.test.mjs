@@ -20,12 +20,17 @@ test('Shared material upgrades in place, matches retained OBJ UV coordinates and
   const request=deferred(),calls=[],library=createActorComplexionLibrary((url,kind)=>{calls.push({url,kind});return request.promise;});
   const a=library.acquire('male'),b=library.acquire({female:false}),map=a.map;
   assert.equal(a,b);assert.deepEqual(map.repeat.toArray(),[1,1]);assert.equal(map.flipY,true,'The GLB converter retains the OBJ V axis; the diffuse image must flip.');assert.equal(map.wrapS,T.ClampToEdgeWrapping);assert.equal(map.wrapT,T.ClampToEdgeWrapping);assert.equal(map.colorSpace,T.SRGBColorSpace);
-  assert.equal(a.normalMap,null);assert.equal(a.bumpMap,null);assert.equal(a.roughnessMap,null);assert.equal(a.metalness,0);
+  assert.ok(a.normalMap.isDataTexture);assert.equal(a.bumpMap,null);assert.ok(a.roughnessMap.isDataTexture);assert.equal(a.metalness,0);
+  assert.equal(a.normalMap.colorSpace,T.NoColorSpace);assert.equal(a.roughnessMap.colorSpace,T.NoColorSpace);
+  assert.deepEqual(a.normalScale.toArray(),[.23,.23]);const normal=a.normalMap,roughness=a.roughnessMap;
   const loading=library.warm('male');await Promise.resolve();assert.equal(calls.length,1);assert.equal(calls[0].kind,'male');assert.ok(calls[0].url.endsWith(ACTOR_COMPLEXION_ASSETS.male));
   assert.equal(library.status('female').pending,false);request.resolve(sample());assert.equal(await loading,true);
   assert.equal(a.map,map);assert.equal(b.map.image.width,2);assert.deepEqual(map.image.data,normalizeActorComplexion(sample().data));
+  assert.equal(a.normalMap,normal);assert.equal(a.roughnessMap,roughness);assert.equal(roughness.image.width,2);
+  let physicalDisposed=0;for(const t of [normal,roughness])t.addEventListener('dispose',()=>physicalDisposed++);
   let disposed=0;map.addEventListener('dispose',()=>disposed++);library.release('male');assert.equal(disposed,0);library.release({female:false});assert.equal(disposed,1);library.release('male');assert.equal(disposed,1);
   assert.equal(library.status('male').refs,0);assert.equal(library.status('male').ready,false);library.dispose();assert.equal(disposed,1);
+  assert.equal(physicalDisposed,2);
 });
 test('Late decode cannot resurrect a released map; a new live owner can share the pending request',async()=>{
   const pending=deferred();let calls=0;const library=createActorComplexionLibrary(()=>{calls++;return pending.promise;});
