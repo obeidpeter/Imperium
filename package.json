@@ -1,6 +1,6 @@
 {
   "name": "imperium",
-  "version": "0.32.1",
+  "version": "0.33.0",
   "private": true,
   "type": "module",
   "description": "A complete twelve-chapter Roman tactical chronicle for the browser.",
@@ -13,7 +13,8 @@
     "autoplay": "node scripts/autoplay.mjs",
     "verify": "npm test && npm run autoplay && npm run autoplay:expanded && npm run build && node scripts/verify-assets.mjs && npm run audit:characters",
     "audit:characters": "node scripts/audit-character-assets.mjs",
-    "autoplay:expanded": "node scripts/expanded-autoplay.mjs"
+    "autoplay:expanded": "node scripts/expanded-autoplay.mjs",
+    "smoke": "node scripts/browser-smoke.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -72,5 +72,5 @@ The expanded campaign merged in 0.32.0 adds closed gates and extra cost for high
 ## Known limitations
 
 - A far goal is planned one turn at a time and is not remembered for later turns.
-- Touch has no hover, so on a phone the route is not drawn before a tap. The walk itself shows where the unit went and Undo Move takes it back; with Confirm moves on, the first tap previews the destination.
+- Touch has no hover, so in 0.31 a phone drew the route only after a tap, by walking it, and Undo Move took it back; with Confirm moves on, the first tap previewed the destination. Since 0.33.0, holding a finger still on the board shows the route first.
 - The rest of the way is measured over visible ground, so a hidden unit can make the real way longer than the dashed line shows. This is deliberate, so the preview never reveals hidden units. This turn's legal tiles still come from the rules, which, as before, never let a unit walk onto a tile a hidden unit holds. The walk then stops short of that tile, or, if the unit is already next to it, the readout says there is no nearer ground.

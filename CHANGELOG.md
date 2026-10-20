@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.33.0 — hold a finger to see the route, and browser smoke tests on every pull request
+
+- **Press and hold on touch screens** ([`touch-hold.js`](src/ui/touch-hold.js), [`app.js`](src/ui/app.js), [`stage.js`](src/showcase/stage.js)):
+  - Touch has no hover, so on a phone the route could not be seen before committing to it. Holding a finger still on the board for about half a second now shows what a tap there would do, in 2D and 3D: the readout and, on open ground, the route.
+  - Lifting the finger after a hold does nothing; a tap then walks as before.
+  - Moving the finger cancels the hold; in 3D it orbits the camera as before.
+  - The preview stays after the finger lifts.
+  - A long press no longer cancels a pending order through the browser's context menu.
+- **Browser smoke tests** ([`browser-smoke.mjs`](scripts/browser-smoke.mjs), `npm run smoke`): the production build is driven in headless Chromium through the real interface. The test fails on any page or console error. It covers:
+  - New Game and the Chapter I drill in 2D: keyboard and pointer walks, Undo, Confirm moves, an opponent's preview and Help;
+  - a keyboard walk in 3D;
+  - a legal Chapter V expanded checkpoint restored through the Restore dialog, with field objects named in the cursor, readout, announcement and ground note;
+  - touch at phone width: hold to preview in 2D and 3D, tap to walk.
+- **CI**: the smoke test runs on every pull request, with Playwright 1.56.1 installed for that job only. It is not a project dependency, and the game still needs no install step.
+- **Wording**: the in-game Help, the player guide and the drill lesson add holding a finger to pointing and the cursor as ways to see the route.
+- **Checks**:
+  - `npm run verify` passes on Node 20: 698 tests, the standard and four expanded legal-command campaigns to Augustus with unchanged turn counts, the build, the asset and offline checks, and the character audit. `npm test` also passes on Node 22.
+  - The smoke test passed four times in a row locally on the production build, in headless Chromium with software rendering. That was after one fix to the test: it now waits for a re-rendered board to be live before clicking, as a player waits for it to be redrawn. A click within the single frame after a re-render is not handled, which only a script is fast enough to hit.
+  - Touch was driven by Chrome's touch emulation, not a real phone. There were no real-device or screen-reader checks.
+
 ## 0.32.1 — field objects named on the board, a player guide to the expanded campaign, and continuous integration
 
 - **Field objects named wherever a tile is described** ([`tactical-intel.js`](src/ui/tactical-intel.js), [`app.js`](src/ui/app.js), [`encounter-view.js`](src/ui/encounter-view.js)): the board readout, the arrow-key cursor's announcement, the announcement for a click that cannot walk, the named target list and the ground note in the command dock now name any field object on a tile and its state, for example "Side gate (closed)" or "Abandoned supply cart (available)". Previously a gate tile read "Open ground", and carts, signal stations, barricades and braziers were not mentioned. A closed gate's route summary now reads "No passage until opened". On high ground in the rain, the ground note says each step onto it costs one more movement.
