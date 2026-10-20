@@ -6,7 +6,7 @@ import {createPanels} from './panels.js';
 import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
 import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint,routeSummary} from './direct-controls.js';
-import {terrainLabel} from './tactical-intel.js';
+import {terrainLabel,fieldLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
@@ -53,9 +53,12 @@ function routeAt(point){
 function walkableReach(){return !action&&state?.encounter?.status==='active'?Game.getTargets(state,selected,'move'):[];}
 function hoverText(point){
   if(!point||!state?.encounter)return '';
-  const u=visibleUnitAt(state.encounter,point),walk=routeSummary(routeAt(point));
-  return `${u?u.name+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}${walk?` · ${walk}`:''}`;
+  const u=visibleUnitAt(state.encounter,point),field=fieldLabel(state.encounter,point),walk=routeSummary(routeAt(point));
+  return `${u?u.name+' · ':''}${field?field+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}${walk?` · ${walk}`:''}`;
 }
+// What stands on a tile, in words for announcements: the visible unit or the
+// ground, and any field object either way.
+function placeName(point){const e=state.encounter,u=visibleUnitAt(e,point);return [u?.name,fieldLabel(e,point),u?'':terrainLabel(e,point)].filter(Boolean).join('. ');}
 let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,confirmMoves:false,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
 // Preserve the legacy settings key so existing players keep their preferences.
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
@@ -188,7 +191,7 @@ function bindBoard(){
   board.addEventListener('pointerleave',()=>{hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
   board.addEventListener('keydown',event=>{
     const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
-    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();const walk=routeSummary(routeAt(focusTile));announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${visibleUnitAt(state.encounter,focusTile)?.name||terrainLabel(state.encounter,focusTile)}${walk?`. ${walk}`:''}`);}
+    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();const walk=routeSummary(routeAt(focusTile));announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${placeName(focusTile)}${walk?`. ${walk}`:''}`);}
     if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}
   });
 }
@@ -218,7 +221,7 @@ function selectPoint(point){
   if(intent.kind==='preview'){action=intent.action;target=intent.target;orderDestination=null;feedback='';render();announce(Game.preview(state,command()).message+' Activate the target again, or use Confirm.');return;}
   const u=visibleUnitAt(state.encounter,point),why=u?'':routeSummary(routeAt(point));
   action=null;target=null;orderDestination=null;render();
-  announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${terrainLabel(state.encounter,point)}. ${why?`${why}.`:'Outside this unit’s movement range.'}`);
+  announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${placeName(point)}. ${why?`${why}.`:'Outside this unit’s movement range.'}`);
 }
 async function persist(){
   if(memoryOnly||state?.archiveReplay)return {ok:true};

@@ -120,6 +120,26 @@ Concrete promises carry their debt beyond the vote. Breaking one costs eight Pub
 
 The coalition panel distinguishes committed delegates from wavering support, shows remaining promises, and includes a live **Chamber Whip Forecast** marking supporters **At Risk** from rival speakers’ next-turn lobby intentions alongside **1-speech flips** in reach. Rivals’ next replies are forecasts if the position holds: lobbyists value swing votes, prosecutors exploit vulnerable speakers, and brokers contest pledged support. Your actions can change those plans. Use both player speakers, compare staying together with covering distant seats, and defend enough votes while demonstrating the chapter’s required abilities. The [Contest rules sheet](contest-rules.md) contains exact tuning values.
 
+## The expanded campaign
+
+New chronicles started from the title screen use the expanded campaign. A chronicle begun before 0.32 keeps its original rules until you press **Enable expanded campaign** in camp, and an encounter already under way is never changed. The exact numbers are in the [expanded campaign rules](expanded-campaign-v031.md).
+
+### Field objects
+
+Every battle after the training drill offers two opportunities, and you can take only one: recover an abandoned supply cart (2 supplies if you win) or raise the signal station (15 cohesion for your side at once, and 2 Army Loyalty if you win). Either closes after turn 7, or one turn before a shorter mission's deadline, and neither replaces the main objective. From Chapter III a timber barricade gives adjacent defenders 1 protection until it is dismantled. A pitch brazier, once lit, blocks sight through its smoke and hurts **both sides** within one tile at the end of each round; it burns for three rounds, or one in rain. Chapters V, VIII, IX and XII add a side corridor reached through a closed gate, which blocks movement and sight until opened, and a damaged footbridge, which becomes a ford when repaired. Until then the corridor cannot be reached, and the board says so.
+
+To use an object, bring your commander onto it or next to it, then press its button in the battlefield panel below the board: **Secure objective**, **Open gate**, **Repair bridge**, **Dismantle**, **Ignite** or **Extinguish**. This spends the commander's personal action, not their move or the company's orders. The board readout, the arrow-key cursor, the target list and the ground note in the command dock all name each object and its state, for example "Side gate (closed)".
+
+### Cohesion, suppression and weather
+
+Every unit has cohesion (80 at the start) and suppression (0–3). Blows wear cohesion down; arrows and javelins wear it less but add suppression. After Chapter I, cohesion below 40 and suppression of 2 or more each take 1 off that unit's attacks. **Brace**, or a friend standing next to the unit, restores cohesion and lifts one point of suppression at the end of the round; **Rally** restores more and clears suppression. In rain each step onto high ground costs one more movement, which the walk preview already counts. Rain, mist and dust take 1 off ranged damage beyond two tiles. The attack preview lists every modifier that applies.
+
+Visible enemies now work together against one exposed unit of yours: archers suppress it, flankers look for a side approach and the rest hold it in place. Their intentions are shown and update as the field changes. A protected column advances toward its goal while staying within three tiles of your commander and away from visible enemies, so screen its route.
+
+### Policy debates
+
+In each Contest you may table one policy motion from the policy panel (**Table motion**, one speech). After the next reply the rival offers amended terms: **Accept amendment** or **Defend original motion**, each one speech; leaving it unanswered keeps the original. The motion's costs and lasting effects apply only when you win and record the Contest, and each motion can be enacted once per campaign. The camp ledger lists enacted policies and the field opportunities you secured.
+
 ## What each chapter adds
 
 | Chapter | New responsibility | Required preparation or demonstration |

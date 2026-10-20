@@ -8,6 +8,10 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.32.1 — field objects named on the board, and a player guide
+
+The board readout, the arrow-key cursor, the target list and the ground note now name field objects and their state, for example "Side gate (closed)". The [player guide](docs/PLAYING.md) and the in-game Help explain the expanded campaign; the Help also describes walking. Every pull request now runs the full `npm run verify` on GitHub. See the [changelog](CHANGELOG.md).
+
 ## Version 0.32 — expanded battlefields, policy debates and character refinement
 
 New chronicles gain interactive gates, damaged bridges, barricades, pitch fire and competing supply/signal objectives. Selected chapters expand to 10 × 8 boards. Cohesion, suppression and weather enter the exact combat forecast; enemies coordinate their approach and protected columns stay with the commander. Political Contests add motions, rival amendments and reforms that affect later battles. Existing chronicles can opt in at camp, preserving suspended encounters and exact retries.

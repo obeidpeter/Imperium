@@ -67,7 +67,7 @@ This was a scripted check, not a human playthrough, and only the Chapter I drill
 
 ## Since 0.32.0
 
-The expanded campaign merged in 0.32.0 adds closed gates and extra cost for high ground in the rain. The shared route follows both through the rules' own field geometry, and a closed gate reads "Closed gate". The checks are recorded in [Integration into 0.32.0](release-validation-v031.md#integration-into-0320).
+The expanded campaign merged in 0.32.0 adds closed gates and extra cost for high ground in the rain. The shared route follows both through the rules' own field geometry. Since 0.32.1 the readout names a closed gate, "Side gate (closed)", and says "No passage until opened". The checks are recorded in [Integration into 0.32.0](release-validation-v031.md#integration-into-0320).
 
 ## Known limitations
 

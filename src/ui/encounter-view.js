@@ -4,7 +4,7 @@ import {agreementConversation} from './progression-views.js';
 import * as Game from '../core/game.js';
 import {operationBanner,tacticalCoaching,voicedBriefing} from './campaign-upgrade-views.js';
 import {esc, roman, actionNames, actionSymbols} from './view-helpers.js';
-import {missionBrief, coalitionPanel, fieldIntel, selectedGround, resultRecord, terrainLabel} from './tactical-intel.js';
+import {missionBrief, coalitionPanel, fieldIntel, selectedGround, resultRecord, terrainLabel, fieldLabel} from './tactical-intel.js';
 import {politicalPosition} from '../core/contest.js';
 import {FORMATION_RULES} from '../data/battle-balance.js';
 import {turnScrubberItems} from './turn-replay.js';
@@ -43,7 +43,7 @@ export function selectedCommand({selected, action, target, formation, orderActio
 
 export function targetName(state, target) {
   const unit = state.encounter.units.find(u => u.id === target.unitId);
-  return `${unit?.name || target.label || terrainLabel(state.encounter, target)} · ${location(target)}${target.cost !== undefined ? ` · ${target.cost} movement` : ''}${unit?.stance !== undefined ? ` · stance ${unit.stance}` : ''}${unit?.interest ? ` · ${unit.interest}` : ''}`;
+  return `${unit?.name || target.label || [fieldLabel(state.encounter, target), terrainLabel(state.encounter, target)].filter(Boolean).join(' · ')} · ${location(target)}${target.cost !== undefined ? ` · ${target.cost} movement` : ''}${unit?.stance !== undefined ? ` · stance ${unit.stance}` : ''}${unit?.interest ? ` · ${unit.interest}` : ''}`;
 }
 
 function instruction(state, action, target, actor, confirmMoves = false) {

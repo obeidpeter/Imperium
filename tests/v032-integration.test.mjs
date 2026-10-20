@@ -6,6 +6,7 @@ import {movementRoute} from '../src/core/movement.js';
 import {clone} from '../src/core/shared.js';
 import {fieldBlocked,fieldMoveCost} from '../src/core/field-geometry.js';
 import {routeSummary} from '../src/ui/direct-controls.js';
+import {readFile} from 'node:fs/promises';
 
 // Positions from an expanded campaign played from New Game with public
 // commands only: every encounter start and the start of every expanded turn.
@@ -71,13 +72,54 @@ test('v0.32.0: a closed gate is not a destination until the gate is opened', () 
   e.units = e.units.filter(u => u === hero || !(Math.abs(u.x - gate.x) + Math.abs(u.y - gate.y) <= 1));
   Object.assign(hero, {x: gate.x - 1, y: gate.y, moved: false, acted: false});
   const shut = Game.moveRoute(s, 'hero', gate);
-  assert.equal(shut.stop, null);assert.equal(shut.reason, 'gate');assert.equal(routeSummary(shut), 'Closed gate');
+  assert.equal(shut.stop, null);assert.equal(shut.reason, 'gate');assert.equal(routeSummary(shut), 'No passage until opened');
   assert.ok(Game.fieldAction(s, gate.id).ok, 'Opening the gate is a legal field action');
   const open = Game.moveRoute(s, 'hero', gate);
   assert.equal(open.reachable, true);assert.deepEqual(open.path, [{x: gate.x - 1, y: gate.y}, {x: gate.x, y: gate.y}]);
 });
 
-test('v0.32.0: this edition is 0.32.0', async () => {
+test('v0.32.0: the configured edition matches the package', async () => {
+  const {CONFIG} = await import('../src/config.js'), {readFile} = await import('node:fs/promises');
+  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).version);
+});
+
+test('v0.32.1: the readout, announcements, target list and ground note name field objects and their state', async () => {
+  const {fieldLabel, selectedGround} = await import('../src/ui/tactical-intel.js');
+  const {targetName} = await import('../src/ui/encounter-view.js');
+  const start = expandedPlay().find(s => (s.encounter.field?.objects ?? []).some(o => o.kind === 'gate' && o.state === 'closed') && s.encounter.turn === 1);
+  const s = clone(start), e = s.encounter, hero = e.units.find(u => u.id === 'hero'), find = kind => e.field.objects.find(o => o.kind === kind);
+  const gate = find('gate'), bridge = find('bridge'), cart = find('stores');
+  assert.equal(fieldLabel(e, gate), 'Side gate (closed)');
+  assert.equal(fieldLabel(e, bridge), 'Damaged footbridge', 'A state already in the name is not repeated');
+  assert.equal(fieldLabel(e, cart), 'Abandoned supply cart (available)');
+  assert.equal(fieldLabel(e, hero), '', 'Nothing to name on open ground');
+  assert.equal(fieldLabel({...e, featureEdition: undefined}, gate), '', 'Older chronicles have no field objects');
+  assert.match(selectedGround(e, hero, gate), /Target: Open ground<\/strong> · 9C · Side gate \(closed\)/);
+  assert.match(targetName(s, {x: cart.x, y: cart.y, cost: 2}), /^Abandoned supply cart \(available\) · \S[^·]* · \d+[A-H] · 2 movement$/);
+  // Rain makes each step onto high ground cost one more; the ground note says so (an injected weather change).
+  const high = {x: 9, y: 0};assert.equal(e.terrain[high.y][high.x], 'high');
+  assert.doesNotMatch(selectedGround(e, hero, high), /In rain/);
+  assert.match(selectedGround({...e, weather: 'rain'}, hero, high), /Offers defensive cover\. In rain, each step onto it costs 1 more movement\./);
+  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
+  assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),field=fieldLabel\(state\.encounter,point\),walk=routeSummary\(routeAt\(point\)\);/, 'The hover readout names field objects');
+  assert.match(app, /function placeName\(point\)\{const e=state\.encounter,u=visibleUnitAt\(e,point\);return \[u\?\.name,fieldLabel\(e,point\),u\?'':terrainLabel\(e,point\)\]\.filter\(Boolean\)\.join\('\. '\);\}/);
+  assert.match(app, /announce\(`Grid \$\{focusTile\.x\+1\}\$\{String\.fromCharCode\(65\+focusTile\.y\)\}\. \$\{placeName\(focusTile\)\}/, 'The arrow-key cursor names them');
+  assert.match(app, /:`\$\{placeName\(point\)\}\. \$\{why\?/, 'So does a click that cannot walk');
+});
+
+test('v0.32.1: in-game Help explains walking, the U key and the expanded campaign', async () => {
+  const {createPanels} = await import('../src/ui/panels.js');
+  let html = '';
+  createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp();
+  assert.match(html, /<strong>Walk\.<\/strong> Select open ground to walk there/);
+  assert.match(html, /Enter selects a unit, walks to open ground, or previews a target and then confirms that same target/);
+  assert.match(html, /U takes back a move until the unit acts/);
+  assert.match(html, /Pause → Confirm moves makes walks preview first too/);
+  assert.doesNotMatch(html, /choose reachable ground or an opponent to preview/, 'The pre-0.31 two-step move is gone');
+  assert.match(html, /Expanded campaign.*bring your commander onto or beside it and press its button/s);
+});
+
+test('v0.32.1: this edition is 0.32.1', async () => {
   const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.32.0');
+  assert.equal(CONFIG.version, '0.32.1');
 });
