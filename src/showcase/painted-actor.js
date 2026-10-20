@@ -138,7 +138,7 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
   return {group,contacts:{body,shield,feet:[]},painted:true,
     ready:Promise.resolve(true),
     update(input={}){
-      if(disposed)return;state={direction:Number.isFinite(input.direction)?input.direction:state.direction,override:input.override??null,unit:input.unit??state.unit};group.rotation.y=state.direction;
+      if(disposed)return;state={direction:Number.isFinite(input.direction)?input.direction:state.direction,override:['block','assent','dissent','yield','withdrawn'].includes(input.motion)?{...input.override,pose:input.motion,progress:input.phase??1}:input.override??null,unit:input.unit??state.unit};group.rotation.y=state.direction;
       const motion=input.motion??'idle',arc=Number.isFinite(input.phase)?Math.sin(Math.PI*Math.max(0,Math.min(1,input.phase))):0;
       puppet.puppetTime.value=input.reducedMotion?0:Number.isFinite(input.time)?input.time:0;
       puppet.puppetLean.value=['attack','strike','throw'].includes(motion)?arc:0;puppet.puppetHit.value=motion==='hit'?arc:0;

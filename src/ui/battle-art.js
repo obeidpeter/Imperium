@@ -1,3 +1,4 @@
+import {drawFieldFeature} from './field-feature-art.js';
 // Painted, deterministic presentation only. Never reads or advances gameplay RNG.
 import {movementRoute} from '../core/movement.js';
 import {enemyFormationLinks,reinforcementBeacons} from '../core/battle.js';
@@ -257,12 +258,14 @@ export function paintBattle(c,w,h,g,e,selected,targets,focus,chapter,options={})
   if(e.kind==='battle'&&Array.isArray(e.fieldworks))for(const fw of e.fieldworks)if(Number.isInteger(fw?.x)&&Number.isInteger(fw?.y))items.push({kind:'fieldwork',type:fw.type,x:fw.x,y:fw.y});
   const units=e.units.filter(u=>!u.hidden&&u.x>=0&&((u.resolve??u.hp??1)>0||(frame?.unitOverrides?.[u.id]?.alpha??0)>0)).map(u=>({...u,...frame?.unitOverrides?.[u.id],kind:'unit',original:u}));
   const s=Math.min(1.3,g.tw/48),watch=units.filter(u=>u.id===selected||u.id===options.target?.unitId).map(u=>xy(g,u.x,u.y));
+  for(const feature of e.field?.objects??[])items.push({kind:'interactive-feature',x:feature.x,y:feature.y,feature});
   items.push(...units);items.sort((a,b)=>a.x+a.y-b.x-b.y||a.x-b.x||(a.kind==='unit'?1:-1));
   for(const item of items){const q=xy(g,item.x,item.y);c.save();
     if(item.kind==='unit'){
       const active=item.id===selected;c.globalAlpha=item.alpha??1;contactShadow(c,g,q,item,quality);baseMarker(c,q,s,item,active);
       if(item.role==='voter')seat(c,q.x,q.y,s*.8,item.bloc);
       if(!drawUnitSprite(c,g,q,item,chapter,e.kind==='contest',frame?.unitOverrides?.[item.id])){if(e.kind==='contest')orator(c,q,s,item,chapter);else warrior(c,q,s,item,chapter);}
+    }else if(item.kind==='interactive-feature'){drawFieldFeature(c,g,q,item.feature);
     }else if(item.kind==='fieldwork'){
       drawFieldwork(c,g,q,item.type);
     }else{

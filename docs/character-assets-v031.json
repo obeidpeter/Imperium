@@ -1,0 +1,5400 @@
+{
+  "kind": "asset and pose coverage audit; not browser or device performance",
+  "models": [
+    {
+      "path": "assets/models/roman-human-v017.glb",
+      "bytes": 220008,
+      "triangles": 9904,
+      "skins": 1,
+      "sha256": "8fb9f97b1da03f54c3e9a1065f25da0752020254e9d6f60cb2477303c2ffccc4"
+    },
+    {
+      "path": "assets/models/roman-woman-v018.glb",
+      "bytes": 225896,
+      "triangles": 10168,
+      "skins": 1,
+      "sha256": "b92c3c5bbc101453bf24aee5d804237f35b0fa80208b61b7a6461d363eb933ff"
+    }
+  ],
+  "coverageCount": 768,
+  "authored": 24,
+  "procedural": 744,
+  "coverage": [
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "throw",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "brace",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "hit",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "throw",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "brace",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "hit",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 0,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 1,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 2,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "roman",
+      "row": 3,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "walk",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "attack",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 0,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 1,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 2,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "frontier",
+      "row": 3,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 0,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "speak",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "speak",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "speak",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "speak",
+      "source": "authored bitmap sequence"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 1,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 2,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "civic",
+      "row": 3,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 0,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 1,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 2,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "east",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "south",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "north",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "walk",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "attack",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "throw",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "brace",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "hit",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "block",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "speak",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "rally",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "order",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "assent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "dissent",
+      "source": "procedural painted rig"
+    },
+    {
+      "atlas": "specialists",
+      "row": 3,
+      "facing": "west",
+      "pose": "yield",
+      "source": "procedural painted rig"
+    }
+  ]
+}

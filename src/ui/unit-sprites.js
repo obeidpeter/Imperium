@@ -1,3 +1,4 @@
+import {ROMAN_DETAIL_ATLAS,normalizedRomanAtlas} from './roman-atlas.js';
 import {loadArt,peekArt} from './art.js';
 import {sampleSpritePose,spriteMesh} from './sprite-poses.js';
 import {animationAssets,authoredFrame} from './sprite-frames.js';
@@ -5,7 +6,7 @@ import {WORLD_ASSETS} from './world-assets.js';
 
 // Four authored facings; no directional mirroring reverses shield/weapon hands.
 export const FACING_COLUMN=Object.freeze({east:0,south:1,north:2,west:3});
-const atlases={roman:'./assets/tactical/units-roman.webp',frontier:'./assets/tactical/units-frontier.webp',civic:'./assets/tactical/units-civic.webp',specialists:'./assets/tactical/units-specialists.webp'};
+const atlases={roman:ROMAN_DETAIL_ATLAS,frontier:'./assets/tactical/units-frontier.webp',civic:'./assets/tactical/units-civic.webp',specialists:'./assets/tactical/units-specialists.webp'};
 function militaryFaction(unit,chapter){
   // The factories name ordinary opponents by faction. IDs retain origin when
   // a finale pledge changes side/name; a player's chosen name is never gear.
@@ -36,7 +37,7 @@ export async function loadTacticalArt(encounter){return Promise.all(tacticalAsse
 export function spriteHeight(g,u){return Math.min(140,Math.max(.1,g.tw*(['cavalry','heavy'].includes(u.role)?1.62:1.36)));}
 
 export function drawUnitSprite(c,g,p,u,chapter,contest,override={}){
-  const spec=spriteSpec(u,chapter,contest),sheet=peekArt(atlases[spec.atlas]);if(!sheet)return false;
+  const spec=spriteSpec(u,chapter,contest),raw=peekArt(atlases[spec.atlas]);if(!raw)return false;const sheet=spec.atlas==='roman'?normalizedRomanAtlas(raw):raw;
   const height=spriteHeight(g,u),width=height*.75,scale=height/256;
   const draw=(facing,alpha)=>{
     const frame=authoredFrame(spec,facing,override,u),actionSheet=frame&&peekArt(frame.asset);

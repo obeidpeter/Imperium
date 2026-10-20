@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.32.0 — interactive battlefields, enduring policies and character refinement
+
+- New UI chronicles use expanded rules; existing games opt in at camp. Saves validate edition, feature state and policy records; previews remain pure and Retry restores the complete transaction.
+- Gates, repairable bridges, dismantlable barricades, pitch fire/smoke, chapter landmarks and mutually exclusive cart/signal opportunities appear in both renderers. Selected chapters use 10 × 8 boards; the 2D fit reserves headroom and retains correct picking.
+- Weather, cohesion and suppression modify exact attack previews. Visible enemies share tactical focus and roles; protected columns advance with their commander instead of outrunning the screen.
+- Three policy motions offer original and amended terms, rival counterproposals, precise delegate forecasts, staged costs and permanent consequences shown in the camp ledger.
+- Sculpted kit gains scabbards, straps, fittings, stitch and role details; High cloth gains sheen. A new Roman atlas supplies four painted directions per costume. Additional procedural poses cover block, assent, dissent and yielding.
+- Weapon correction targets the committed recipient; shield anticipation and painted attack contact follow the impact clock. Frame reports separate CPU submission, display cadence and GPU observations; reflection refresh responds to measured cost.
+- An asset audit distinguishes authored bitmap sequences from procedural responses and checks bundled model budgets. Verification and limitations are recorded in [release-validation-v031.md](docs/release-validation-v031.md).
+
 ## 0.31.0 — click to walk: one selection moves the unit, far ground walks as far as the turn allows, and the route shows before you commit
 
 The rules are unchanged: a walk is the ordinary legal move command, checked, saved and taken back by Undo Move as before, with no new random-number use and no save format change. Checked with automated tests and scripted runs of the real interface in software rendering (2D and 3D, desktop and phone width); see [movement verification for 0.31](docs/movement-verification-v031.md) for what was and was not checked.

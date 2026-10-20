@@ -8,12 +8,16 @@ const rest=()=>({hip:0,lean:0,arm:0,reach:0,lift:0,guard:0,nod:0,left:0,right:0,
 // time, weight drop, torso pitch, weapon/gesture rotation, reach, hand lift,
 // guard compression, head acknowledgement. Every action returns to rest.
 const keys={
-  attack:[[0,0,0,0,0,0,0,0],[.22,2,-.055,-.32,-3,-3,.1,-.02],[.46,1,.095,.56,8,-3,.25,.015],[.64,2,.045,.18,3,0,.15,0],[1,0,0,0,0,0,0,0]],
+  attack:[[0,0,0,0,0,0,0,0],[.22,2,-.055,-.32,-3,-3,.1,-.02],[230/620,1,.095,.56,8,-3,.25,.015],[.64,2,.045,.18,3,0,.15,0],[1,0,0,0,0,0,0,0]],
   throw:[[0,0,0,0,0,0,0,0],[.3,1,-.065,-.5,-6,-8,.1,-.025],[.54,0,.075,.48,9,-8,0,.02],[.72,2,.04,.17,4,-2,0,0],[1,0,0,0,0,0,0,0]],
   brace:[[0,0,0,0,0,0,0,0],[.24,4,-.025,-.08,-1,-2,.65,-.04],[.55,5,-.055,-.12,-2,-1,1,-.03],[.76,3,-.03,-.04,0,0,.55,-.01],[1,0,0,0,0,0,0,0]],
   hit:[[0,0,0,0,0,0,0,0],[.2,3,-.095,-.13,-3,1,.55,-.07],[.48,5,-.06,-.07,-1,0,.4,-.025],[.76,1,.012,0,0,0,.15,.01],[1,0,0,0,0,0,0,0]],
   command:[[0,0,0,0,0,0,0,0],[.22,0,-.025,-.2,-2,-5,0,-.02],[.44,-1,.02,.32,3,-11,0,.02],[.72,0,.015,.24,2,-6,0,.01],[1,0,0,0,0,0,0,0]],
-  speak:[[0,0,0,0,0,0,0,0],[.23,0,-.015,-.18,-1,-4,0,-.03],[.49,0,.035,.28,5,-7,0,.035],[.7,0,.012,.15,3,-3,0,-.01],[1,0,0,0,0,0,0,0]]
+  speak:[[0,0,0,0,0,0,0,0],[.23,0,-.015,-.18,-1,-4,0,-.03],[.49,0,.035,.28,5,-7,0,.035],[.7,0,.012,.15,3,-3,0,-.01],[1,0,0,0,0,0,0,0]],
+  block:[[0,0,0,0,0,0,0,0],[.2,2,-.025,-.04,-1,0,.6,-.02],[.42,4,-.065,-.06,-3,1,1,-.045],[.7,2,-.02,0,-1,0,.45,-.01],[1,0,0,0,0,0,0,0]],
+  assent:[[0,0,0,0,0,0,0,0],[.3,1,.018,0,0,0,.08,.08],[.65,0,0,0,0,0,0,-.015],[1,0,0,0,0,0,0,0]],
+  dissent:[[0,0,0,0,0,0,0,0],[.25,1,-.02,-.12,-2,1,.35,-.02],[.55,1,-.025,.05,0,0,.45,.025],[1,0,0,0,0,0,0,0]],
+  yield:[[0,0,0,0,0,0,0,0],[.3,3,.045,-.04,-1,3,0,.045],[1,4,.06,-.07,-2,5,0,.07]]
 };
 function sampleKeys(table,p){
   const i=Math.max(0,table.findIndex(row=>row[0]>=p)-1),a=table[i],b=table[Math.min(i+1,table.length-1)],t=ease(clamp((p-a[0])/(b[0]-a[0]||1)));
@@ -35,7 +39,7 @@ export function sampleSpritePose(override={},profile={}){
     pose.arm=-stride*weight*(civic?.025:.07);pose.guard=stride*weight*.06;
     pose.nod=-Math.sin(phase*2)*weight*.012;pose.active=weight>0;
   }else{
-    const key=name==='cavalry-attack'?'attack':['rally','order','formation'].includes(name)?'command':name==='hurt'?'hit':name;
+    const key=name==='cavalry-attack'?'attack':['rally','order','formation'].includes(name)?'command':name==='hurt'?'hit':name==='withdrawn'?'yield':name;
     if(keys[key]){Object.assign(pose,sampleKeys(keys[key],p));pose.active=p>0&&p<1;
       if(profile.archer&&name==='throw'){pose.arm*=.35;pose.reach*=.6;pose.lift*=.55;pose.guard=-pose.arm*.4;}
       if(civic&&['threaten','denounce'].includes(override.action)){pose.arm*=.65;pose.reach*=1.3;pose.nod*=-.4;}

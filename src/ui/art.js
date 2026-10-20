@@ -44,7 +44,7 @@ export function chapterAssets(chapter=1) {
   // Depth maps for this chapter's paintings, and for the oath's (its painting is in the opening shell).
   files.push(...files.map(sceneDepth));
   if(n===1||n===12)files.push(sceneDepth('./assets/scenes/frontier-oath.webp'));
-  if(n!==11)files.push('./assets/tactical/units-roman.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
+  if(n!==11)files.push('./assets/tactical/units-roman-v031.webp','./assets/tactical/units-roman.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
   if([2,3,4,6,7,8,10,11,12].includes(n))files.push('./assets/tactical/units-civic.webp');
   files.push('./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp');
   if(n!==11)files.push(...animationAssets(n,false));

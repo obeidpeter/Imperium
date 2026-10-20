@@ -1,3 +1,4 @@
+import {fieldBlocked} from '../core/field-geometry.js';
 // Read the committed encounter; these descriptors never predict an outcome.
 import {movementPinned, reachable, lineOfSight} from '../core/shared.js';
 import {combatBreakdown, enemyFormationLinks, reinforcementBeacons} from '../core/battle.js';
@@ -42,6 +43,7 @@ export function missionReadouts(encounter) {
   // Only the next publicly announced wave is marked, matching the orders panel.
   const wave=mission.waves?.find(item=>!item.arrived);
   if (wave) entries.push({id:'wave',x:wave.x,y:wave.y,label:`Reinforcements · turn ${wave.turn}`,tone:'warning'});
+  for(const o of encounter.field?.objects??[])if(['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
   return entries;
 }
 
@@ -68,7 +70,7 @@ export function stagePreviewPath(encounter, unit, target) {
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const nx = cur.x + dx, ny = cur.y + dy, key = `${nx},${ny}`;
       if (nx < 0 || ny < 0 || nx >= (encounter.width || 8) || ny >= (encounter.height || 8) || seen.has(key)) continue;
-      if (blocked(encounter.terrain?.[ny]?.[nx]) || occupied(nx, ny)) continue;
+      if (blocked(encounter.terrain?.[ny]?.[nx]) || fieldBlocked(encounter,nx,ny) || occupied(nx, ny)) continue;
       seen.add(key);
       queue.push([...path, {x:nx, y:ny}]);
     }

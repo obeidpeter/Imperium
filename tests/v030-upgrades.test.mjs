@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
 
@@ -457,9 +458,9 @@ test('v0.30.0: rain puddles keep a dull wet sheen instead of white discs', async
   assert.doesNotMatch(dry, /min\(reflectedLight\.directSpecular/, 'Dry ground keeps its own highlights');
 });
 
-test('v0.30.0: the configured edition matches the package', async () => {
-  const {CONFIG} = await import('../src/config.js'), {readFile} = await import('node:fs/promises');
-  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).version);
+test('Edition metadata matches the package version', async () => {
+  const {CONFIG} = await import('../src/config.js');
+  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8')).version);
 });
 
 // Width and height from a WebP file's first chunk.

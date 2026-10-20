@@ -1,0 +1,166 @@
+{
+  "environment": "Codex in-app browser on Windows; physical-device matrix not tested",
+  "checkpoint": "Chapter X tribunal, reached by legal autoplay and imported with the normal Restore controls",
+  "stats": {
+    "frameProfile": {
+      "frames": 651,
+      "cpuSubmission": {
+        "samples": 240,
+        "meanMs": 8.172916662693023,
+        "p95Ms": 11.100000143051147,
+        "worstMs": 12.900000095367432
+      },
+      "displayInterval": {
+        "samples": 240,
+        "meanMs": 33.32749999999999,
+        "p95Ms": 33.69999999999709,
+        "worstMs": 36.700000000004366
+      },
+      "reflectionSubmission": {
+        "samples": 240,
+        "meanMs": 0.10208334624767304,
+        "p95Ms": 0.20000004768371582,
+        "worstMs": 0.39999985694885254
+      },
+      "reflectionStride": 1,
+      "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+    },
+    "pairedContacts": 0,
+    "fieldFeatures": null,
+    "cuesPlayed": 0,
+    "renderMs": 8.139999995628992,
+    "samples": 120,
+    "calls": 116,
+    "callsMean": 140.75,
+    "callsMax": 206,
+    "shadowUpdates": 259,
+    "labels": {
+      "visible": 13,
+      "occluded": 0,
+      "offscreen": 0,
+      "overlaps": 0
+    },
+    "triangles": 169936,
+    "textures": 86,
+    "geometries": 315,
+    "quality": "performance",
+    "cameraView": "overview",
+    "actorAssets": {
+      "ready": true,
+      "pending": false,
+      "error": null
+    },
+    "gpu": {
+      "supported": true,
+      "measured": 156,
+      "lastMs": 9.454635,
+      "pending": 0,
+      "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+    },
+    "resolution": {
+      "enabled": true,
+      "scale": 1,
+      "targetFps": 30,
+      "acceptedGpuSamples": 156,
+      "lastGpuMs": 9.454635,
+      "acceptedFrameIntervals": 0,
+      "changes": 0
+    },
+    "occlusion": {
+      "active": false,
+      "targets": 0,
+      "materials": 15,
+      "meshes": 27,
+      "amount": 0,
+      "disposed": false
+    },
+    "compositor": {
+      "enabled": false,
+      "quality": "performance",
+      "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+      "multisamples": 0,
+      "hazeNear": 49.5634548457489,
+      "directions": 0,
+      "depthSamples": 0,
+      "bloomStrength": 0,
+      "casStrength": 0,
+      "aerialStrength": 0,
+      "vignetteStrength": 0,
+      "width": 0,
+      "height": 0,
+      "drawingWidth": 1,
+      "drawingHeight": 1,
+      "passes": 1,
+      "tiltShift": 0,
+      "ink": 0,
+      "temporalHistory": false,
+      "gradeInToneMapping": true,
+      "fallback": null
+    },
+    "figureStyle": "sculpted",
+    "ink": {
+      "visible": false,
+      "width": 768,
+      "height": 768
+    },
+    "remains": null,
+    "combat": {
+      "trails": 0,
+      "volley": 0,
+      "dust": 0,
+      "disposed": false
+    },
+    "atmosphere": {
+      "clouds": 0,
+      "shafts": {
+        "shafts": 2,
+        "motes": 0,
+        "interior": true,
+        "strength": 0.1,
+        "disposed": false
+      },
+      "reflection": null
+    },
+    "lighting": {
+      "type": "locally generated HDR sky reflection",
+      "width": 128,
+      "height": 64,
+      "intensity": 0.46,
+      "perFrameCaptures": 0
+    },
+    "contactShadows": {
+      "draws": 1,
+      "figures": 13,
+      "stamps": 39,
+      "triangles": 1248
+    },
+    "sky": {
+      "draws": 1,
+      "triangles": 528,
+      "textures": 0,
+      "cloudOctaves": 2,
+      "cloudTime": 21.84490000000003,
+      "reducedMotion": false,
+      "quality": "performance"
+    },
+    "horizon": {
+      "meshes": 3,
+      "triangles": 9052,
+      "innerEdgeSamples": 480,
+      "outerRadius": 550,
+      "region": "province",
+      "silhouetteKind": "wooded ridgelines"
+    }
+  },
+  "checks": [
+    "New Game and tutorial movement, throw, strike, brace, victory commit, reload",
+    "Chapter V legal checkpoint import; sculpted, painted and 2D views",
+    "Adjacent cart action secures stores and closes signal opportunity",
+    "Chapter X audit motion, rival counterproposal and accepted amendment",
+    "No captured browser console errors"
+  ],
+  "limitations": [
+    "Short scripted browser smoke test, not a full human campaign playthrough",
+    "Frame window is a live observation, not a controlled before/after benchmark"
+  ]
+}
