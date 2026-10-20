@@ -1,62 +1,16 @@
 # IMPERIUM: From Recruit to Emperor
 
-## Version 0.35.1 — one battle per approach, and fixes after the 0.35 review
+![Version 0.19 recruit face in the production-character inspection scene](docs/images/imperium-v019-face.png)
 
-A field approach now covers one battle, like the operational preparation, so a costly approach is not charged again unless you choose it. A rider withdrawn by a braced counter blow shakes nearby companions. Fallen figures on a repaired bridge rest on the deck, a figure-style change keeps figures until their replacements are ready, footstep sounds are shared fairly on busy turns, and the signal flag no longer changes shared materials. A change to the character code no longer fails `npm test` until the handoff GLBs are re-exported; `npm run audit:handoff` reports a stale export. See the [changelog](CHANGELOG.md).
-
-## Version 0.35 — character production and field approaches
-
-Improved skin and equipment materials, formed helmets, tailored clothing, authored combat recovery, distance-based movement timing and contextual labels now use the shared twelve-chapter renderer. New campaigns add engineering, diversion and defensive approaches, with supply costs, opening tradeoffs and visible enemy responses; older saves can opt in at camp.
-
-The [production notes](docs/production-v035.md) describe the implementation, evidence and deferred physical-phone/player checks. The [character handoff](art-source/characters/README.md) includes full-body, rigged GLBs with embedded materials and four clips, plus a local browser workshop. These development assets are excluded from player downloads. Four legal campaign runs validate all 25 encounters and each Chapter V approach.
-
-The image below records the preceding 0.34 benchmark.
-
-![Version 0.34 Chapter V siege battlefield in the Horizon camera](docs/images/v034-ch5-mine-horizon.png)
-
-*Actual version 0.34 gameplay at a legally reached Chapter V checkpoint, using Sculpted figures, Balanced quality and the Horizon camera. Captured in software-rendered Chromium.*
+*Actual version 0.19 character, shown in the neutral-light development inspection scene.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
-## Version 0.34 — Chapter V benchmark and twelve-chapter command campaign
+## Version 0.29 — Tripo 3D + Headless Blender 5.2 + Unreal Engine 5.8 asset pipeline and rigged 3D Roman Aquila standard
 
-Chapter V has a new fractured mudbrick siege precinct and detailed, stateful field equipment. Twelve regional material palettes extend the environmental direction through the campaign. Repaired bridges support figures, picking, movement previews and tactical overlays at their actual deck height.
-
-Characters gain continuous clothing, individual campaign and cast finishes, facial corrective motion, eleven additional authored joint performances, refined horses and reduced overview geometry. An original local surface atlas supplies cloth, leather and metal colour detail. This is code-authored geometry and animation built on the existing licensed anatomy, not a commissioned character pack or motion capture.
-
-New chronicles add deployment plans with real supply costs and tradeoffs, visible enemy doctrines, distinct chapter opportunities, a limited braced-defender reaction and two documented political cases for each hearing. Older chronicles opt in at camp; suspended encounters retain their rules. Preparation costs, outcomes and evidence obey the same save, retry and once-only result boundaries.
-
-The interface adds exact case previews, a command record, camp practice access, a compact battlefield view, high-contrast controls, six remappable shortcuts and configurable touch-preview delay. Contextual sound direction uses the existing local recordings with chapter, weather and objective-pressure mixing.
-
-See the [production ledger](docs/benchmark-production-v034.md), [command rules](docs/command-campaign-v034.md), [character production record](docs/character-production-v034.md), [environment record](docs/environment-production-v034.md) and [release validation](docs/release-validation-v034.md). Run `npm run verify` for rules, compatibility, build, offline and asset checks; `npm run benchmark` restores legally reached checkpoints through the real interface and captures all twelve chapters. Browser automation requires a separately installed Playwright/Chromium. Automated correctness and software-rendered captures do not establish physical-device performance or human enjoyment.
-
-## Version 0.33 — hold a finger to see the route
-
-On a touch screen, holding a finger still on the board now shows what a tap there would do, including the route a walk would take, in both 2D and 3D. Lifting the finger after a hold does nothing, and a tap then walks. Every pull request now also drives the production build in headless Chromium (`npm run smoke`): New Game, walking, Confirm moves, a restored expanded field and phone touch. Playwright is installed only for that check and is not a project dependency. See the [changelog](CHANGELOG.md).
-
-## Version 0.32.1 — field objects named on the board, and a player guide
-
-The board readout, the arrow-key cursor, the target list and the ground note now name field objects and their state, for example "Side gate (closed)". The [player guide](docs/PLAYING.md) and the in-game Help explain the expanded campaign; the Help also describes walking. Every pull request now runs the full `npm run verify` on GitHub. See the [changelog](CHANGELOG.md).
-
-## Version 0.32 — expanded battlefields, policy debates and character refinement
-
-New chronicles gain interactive gates, damaged bridges, barricades, pitch fire and competing supply/signal objectives. Selected chapters expand to 10 × 8 boards. Cohesion, suppression and weather enter the exact combat forecast; enemies coordinate their approach and protected columns stay with the commander. Political Contests add motions, rival amendments and reforms that affect later battles. Existing chronicles can opt in at camp, preserving suspended encounters and exact retries.
-
-Sculpted figures receive fitted equipment details and High-quality cloth sheen; painted Roman figures gain a new four-direction atlas and additional rig responses. Melee contact and shield reactions follow the committed impact. Settings exposes real frame measurements, with reflection refresh adapting to its measured cost. Click-to-walk routes go around closed gates and count rain on high ground, so the preview and the walk still match the rules. This work was prepared as draft 0.31 and renumbered 0.32 when it was merged after click to walk; its records keep their `v031` file names. See the [rules](docs/expanded-campaign-v031.md), [art provenance](docs/art-generation-v031.md) and [verification record](docs/release-validation-v031.md) for coverage and limits.
-
-## Version 0.31 — click to walk
-
-Moving is now one selection: with no other action chosen, click or tap open ground and the selected unit walks there. Ground beyond this turn's reach walks the unit as far toward it as the rules allow. Pointing at ground first draws the route (solid to where the unit stops this turn, dashed beyond) over a faint wash of the ground it can reach, and the figure then walks exactly that route in 2D and 3D. A walk is the ordinary legal move, so **Undo Move** (`U`) takes it back until the unit acts; attacks, speeches and orders still preview first. **Pause → Confirm moves** brings back preview-then-confirm for moves. The rules are unchanged. This was checked with automated tests and scripted, software-rendered runs of the real interface, not on real devices or with a screen reader; see [movement verification for 0.31](docs/movement-verification-v031.md).
-
-## Version 0.30 — graphics refinement: Senate blocs beyond colour, a graded Performance tier, living formations and battle remains, weightier combat, weather on the light and story paintings in 2.5D
-
-Senate delegates' blocs no longer rest on colour: both views share one palette (Landholders are now wheat ochre), the 3D stance marker carries the bloc's letter, and each bloc's toga trim has its own shape. **Performance** quality keeps each chapter's grade and gains baked ground occlusion around walls, tents and rocks. Followers in a formation move a beat behind their leader instead of in unison, and with the new **Battle remains** setting the fallen, spent arrows and trodden ground stay on the field until the encounter ends. Painted (HD-2D) figures are lit by the scene and breathe and sway; blows carry trails, a held beat and a small camera jolt; archers in formation loose together. Faint cloud shadows drift across the field, shafts of sunlight slant through dawn mist and the Senate's halls, and on High the board's rivers mirror the figures above them. On Balanced and High the story paintings drift slowly in depth, with each chapter's weather drawn between near and far. Everything is presentation only and was checked with automated tests and software rendering, not on real devices; see [graphics verification for 0.30](docs/graphics-verification-v030.md).
-
-## Version 0.29 — graphics overhaul: readable diorama terrain, painted (HD-2D) and ink-and-wash figures, formations, inked tactical ground and signature moments
-
-The 3D board now reads as a diorama: high ground is a 1.6 m plateau with earth and rock banks (or squared-stone terraces beside paving), rivers sit in a channel under one water surface with gravel fords, walls run as faced stone, mudbrick or timber, roads have kerbs, and a code-painted regional panorama stands beyond the ridges. Each chapter is lit to its own colour script, and fog now starts beyond the board. **Pause → 3D figure style** offers *Sculpted*, *Painted (HD-2D)*, which stands the campaign's own painted unit art in the 3D scene with silhouette shadows and a tilt-shift finish, and *Ink and wash*. From Chapter IV military units appear as formations whose men fall with the unit's strength. Rank-and-file labels are compact glyphs; move reach and enemy threat are inked onto the ground. Senate delegates show their bloc on the toga trim and their stance in posture, and after the vote they divide to the side they were counted on. The finale stands before Aurelian's half-built walls with massed legions, an optional **Action camera** follows committed attacks, the oath and the accession are staged in 3D over their paintings, and the Imperial Tabula is a painted map of your career. All of this is presentation only and respects reduced motion. The release also improves frame pacing, anti-aliasing and shadows, trims the Chapter I download, and fixes the Chapter XII route, unreadable-save, Undo Move credit, Archive export and tab-conflict bugs. See the [changelog](CHANGELOG.md) and the [0.29 graphics verification](docs/graphics-verification-v029.md), which also lists what was not checked: no real-device, real-GPU or other-browser runs and no human playtesting.
+Adds a complete automated 3D asset pipeline (`npm run pipeline` / [`orchestrate.mjs`](scripts/pipeline/orchestrate.mjs)) combining **Tripo 3D API v2** ([`tripo-client.mjs`](scripts/pipeline/tripo-client.mjs) for text/image-to-3D `.glb` generation and `animate_rig` skeleton auto-rigging), **headless Blender 5.2 LTS** ([`blender-process.py`](scripts/pipeline/blender-process.py) for `bpy`/`bmesh` refinement, decimation, ground-contact origin normalization, and 3-bone/6-bone armature binding), **browser `.glb` provenance & runtime loading** ([`aquila-asset.js`](src/showcase/aquila-asset.js) and [`roman-aquila-v029.glb`](assets/models/roman-aquila-v029.glb), a Blender-sculpted and 3-bone rigged Roman Legionary Aquila standard mounted on eagle-bearers in [`actors.js`](src/showcase/actors.js)), and an **Unreal Engine 5.8 Python bridge** ([`unreal-import.py`](scripts/pipeline/unreal-import.py) for batch `.glb` import and 8×8 Roman tactical grid staging via `UnrealEditor-Cmd.exe`).
 
 ## Version 0.28 — tactical Undo Move (Regressus), 3D/2D reinforcement arrival beacons (Exploratores), clickable chamber vote seats (Tabula Curiae) and Quartermaster solvency & succession forecast (Ratio Imperii)
 
@@ -76,7 +30,7 @@ The 3D finishing pass (`Lux Imperii`) adds single-pass HDR specular bloom, Contr
 
 ## Version 0.24 — legionary fieldworks (Munitiones), war-room mutators, 3D Aquila & Cornu brass, Oculus Tactica threat envelopes, Rostra interjections and Cursus Honorum monument
 
-From Chapter III (Immunis) battles, the commander's engineering detachment can erect one tactical fortification per battle (`stakes`, `rampart`, or `brazier`) that alters combat modifiers and renders in 3D and 2D. Archive sandbox replays gain War-Room Mutators (`difficulty`, `weather`, `timeOfDay`, and Chapter XII `route`), commanders and formation leaders carry 3D Legionary Aquila & Signum standards with synthesized Roman Cornu brass cues, the command inspector and 3D stage display `Oculus Tactica` combat modifier chips and enemy threat envelopes, political Contests feature named delegate interjections and a 3D marble Rostra dais, and the character dossier includes an interactive `Cursus Honorum` monument.
+In Chapters IV+ battles, the commander's engineering detachment can erect one tactical fortification per battle (`stakes`, `rampart`, or `brazier`) that alters combat modifiers and renders in 3D and 2D. Archive sandbox replays gain War-Room Mutators (`difficulty`, `weather`, `timeOfDay`, and Chapter XII `route`), commanders and formation leaders carry 3D Legionary Aquila & Signum standards with synthesized Roman Cornu brass cues, the command inspector and 3D stage display `Oculus Tactica` combat modifier chips and enemy threat envelopes, political Contests feature named delegate interjections and a 3D marble Rostra dais, and the character dossier includes an interactive `Cursus Honorum` monument.
 
 ## Version 0.23 — Archive of the Reign sandbox, dynamic 3D weather & night-march torchlight, veteran commendation ranks, interactive Tabula and Senate precedent motions
 
@@ -340,9 +294,6 @@ npm test
 node scripts/autoplay.mjs
 node scripts/build.mjs
 node scripts/verify-assets.mjs
-# optional, development only (needs Playwright and a browser):
-node scripts/visual-regression.mjs --record   # then later: node scripts/visual-regression.mjs
-npm run build && npm run smoke                 # drive the production build in headless Chromium
 ```
 
 `npm test` automatically runs `scripts/prepare-tests.mjs` first. It sequentially generates the legal campaign checkpoints, graphics scenes, graphics action cases and all-chapter 3D review checkpoints, then starts the tests. Generated `tests/fixtures/` files are excluded from the source archive and repository; their generators and the fixed `tests/compatibility/` inputs are included. For a direct `node --test` invocation on a fresh source copy, run `node scripts/prepare-tests.mjs` first.
