@@ -1,0 +1,28 @@
+{
+  "id": "ch5-storage-jars",
+  "status": "proposed: awaiting the owner's review and Tripo access",
+  "chapters": [
+    5
+  ],
+  "use": "Off-board scenery: stores inside the Chapter V fortress; decorative, outside the playable board, never a game cell.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Three large terracotta storage jars, two standing and one cracked and lying on its side, half-sunk in sand, rope slings around one. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 1.1,
+    "minHeight": 0.8,
+    "maxHeight": 1.4
+  },
+  "provenance": {
+    "taskId": null,
+    "modelVersion": null,
+    "generatedAt": null,
+    "rawSha256": null,
+    "licence": "Record the terms of the owner's Tripo plan before the model ships."
+  }
+}

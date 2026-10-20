@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **Generated 3D asset pipeline (tooling only; the game is unchanged):** `npm run asset:process` turns a generated model into a game-ready GLB under Blender (decimation, scale, WebP textures, a provenance report), `npm run asset:check` checks it against its budget and the game's loader, and `npm run asset:preview` renders a review sheet. See [the asset pipeline](docs/asset-pipeline.md), which also proposes five Chapter V props for Tripo. No Tripo model has been generated yet.
+
 ## 0.35.1 — one battle per approach, a handoff that no longer blocks the tests, and smaller fixes
 
 - **The character handoff no longer blocks `npm test`** ([`check-character-handoff.mjs`](scripts/check-character-handoff.mjs), [`character-handoff.test.mjs`](tests/character-handoff.test.mjs)):
