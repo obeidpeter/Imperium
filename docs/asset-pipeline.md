@@ -11,9 +11,10 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 ## One-time setup
 
 1. **Tripo access**, in the cloud environment's settings, by the owner:
-   - Allow `api.tripo3d.ai` under Network access → Allowed domains, and the host that Tripo's result links use (it appears in the first task's output).
-   - Add the API key as the environment variable `TRIPO_API_KEY`.
-   - A new session picks up both. Never commit the key or paste it into a chat.
+   - Allow `api.tripo3d.ai` under Network access → Allowed domains, and the host that Tripo's result links use (it appears in the first task's output). This was done on 2026-10-20.
+   - Store the key as a **network secret**: Secret type **Bearer**, Allowed websites `api.tripo3d.ai`, header `Authorization` with prefix `Bearer`. The agent proxy adds the header to every request for that host, so the session never sees the key and the API client sends no key of its own. Only where network secrets are unavailable, use an environment variable `TRIPO_API_KEY` instead.
+   - Check from a session without generating anything: `curl -sS https://api.tripo3d.ai/v2/openapi/user/balance` should answer `"code":0` with the balance. `"code":1002` ("Authentication failed") means the secret did not reach the request: the session predates the secret, or the value, host or prefix is wrong.
+   - Never commit the key or paste it into a chat.
 2. **Blender**, either way:
    - Blender's Python module: `python3 -m venv /tmp/blender && /tmp/blender/bin/pip install bpy==5.2.2`, then `export BLENDER_PYTHON=/tmp/blender/bin/python`. The wheel must match the Python version (5.2.2 installs on Python 3.13); it takes about 1 GB.
    - The Blender 5.2 application: `export BLENDER=/path/to/blender`.
@@ -22,7 +23,7 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 ## Workflow for each asset
 
 1. **Request.** `art-source/models/requests/<id>.json` holds the exact prompt, kept verbatim as CLAUDE.md requires, plus the chapters, the use and the budget. The owner approves the prompt.
-2. **Generate.** Use Tripo's HTTP API with `TRIPO_API_KEY`: text-to-model, or image-to-model from a reference the project owns.
+2. **Generate.** Use Tripo's HTTP API (the network secret authenticates it): text-to-model, or image-to-model from a reference the project owns.
    - Save the result as `art-source/models/raw/<id>.glb`. Raw downloads are gitignored; the provenance and processed model are committed.
    - Record the task id, model version, date, raw SHA-256 and the licence of the owner's plan in the request file.
    - The small API client is the first job of a session with access, written against Tripo's current API documentation.
