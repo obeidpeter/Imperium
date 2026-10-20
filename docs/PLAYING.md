@@ -2,7 +2,7 @@
 
 Start at the title screen with **Play · Begin your story**. Give the recruit a name or keep Aurelius Marcellus. You begin as a *tiro*, a recruit: no command authority, no political office, and only your own actions to control. **Continue the chronicle** restores the latest valid local save.
 
-This guide describes version 0.26 with the unchanged **Standard** rules. Graphics quality affects presentation, not difficulty. An encounter resumed from an older edition keeps its original rules through Retry; the following new encounter adopts the current rules.
+This guide describes version 0.34 with **Standard** difficulty. Graphics quality affects presentation, not difficulty. New chronicles include the command campaign below. Older chronicles can enable it in camp; a suspended encounter and its Retry retain their original rules.
 
 ## Battlefield and chamber views
 
@@ -59,6 +59,8 @@ Use **Tab** and **Shift+Tab** to move among controls and **Enter** to activate t
 
 Use **Pause** for settings, help, save codes, and campaign panels. Sound is optional, with an **Effects volume** slider. Reduced motion is available, and game meaning never depends on audio alone.
 
+These are the default letter shortcuts. **Pause → Controls & readability** lets you remap Undo, Next unit, End turn, Grid, Focus and Horizon. Choosing a letter already in use swaps the two commands. Help and command hints follow your bindings. The same panel changes the touch-preview delay, enables stronger interface contrast and switches the compact battlefield layout.
+
 ### Graphics and readability
 
 In **Pause → Graphics quality**, choose **Performance**, **Balanced**, or **High quality**. These change optional atmosphere, particles, shadows and rendering resolution. Essential figures, legal targets, labels and rules stay the same. Repeated slow rendering can lower the setting automatically; the game announces that change, and you can choose another setting in Pause.
@@ -88,7 +90,7 @@ The protagonist is marked with a star. His fall loses the battle. Each unit has 
 | Rally | Restore nearby morale when the army risks breaking. |
 | Deploy | Reposition the command at the beginning of the legion battle; use it before spending the opening movement. |
 
-Marsh slows movement. Walls and high ground protect; height also improves ranged attacks. River crossings funnel movement through fords. Entering a tile beside a visible hostile melee unit ends movement, so a line can screen an approach. You can still leave an engaged starting tile; there are no automatic reaction attacks. Flanks bypass frontal shield defence, and cavalry needs an open approach to charge. Read the damage preview’s actual modifiers before committing.
+Marsh slows movement. Walls and high ground protect; height also improves ranged attacks. River crossings funnel movement through fords. Entering a tile beside a visible hostile melee unit ends movement, so a line can screen an approach. Leaving an engaged starting tile does not trigger an attack. Flanks bypass frontal shield defence, and cavalry needs an open approach to charge. In the command campaign, a braced defender that survives a frontal mounted charge answers with one damage, once per round; the preview includes this response. Read the damage preview’s actual modifiers before committing.
 
 Command capacity is **1** in Chapter IV, **3** in V, **4** in VI, **5** in VII–VIII, and **6** thereafter. The protagonist’s own direct actions do not spend this budget. Unordered allies follow their visible intentions. Formation orders use the units’ existing action limits and last only for the current round. Shield wall gives two protection, limits movement to one and gains extra frontal protection beside another shield-wall member. Line ignores the marsh surcharge, reduces morale loss and screens ranged attacks when cohesive. Wedge adds melee damage on firm open ground but increases incoming damage; its attack benefit is lost in marsh, fords and fortifications.
 
@@ -126,7 +128,7 @@ New chronicles started from the title screen use the expanded campaign. A chroni
 
 ### Field objects
 
-Every battle after the training drill offers two opportunities, and you can take only one: recover an abandoned supply cart (2 supplies if you win) or raise the signal station (15 cohesion for your side at once, and 2 Army Loyalty if you win). Either closes after turn 7, or one turn before a shorter mission's deadline, and neither replaces the main objective. From Chapter III a timber barricade gives adjacent defenders 1 protection until it is dismantled. A pitch brazier, once lit, blocks sight through its smoke and hurts **both sides** within one tile at the end of each round; it burns for three rounds, or one in rain. Chapters V, VIII, IX and XII add a side corridor reached through a closed gate, which blocks movement and sight until opened, and a damaged footbridge, which becomes a ford when repaired. Until then the corridor cannot be reached, and the board says so.
+Every battle after the training drill offers two opportunities, and you can take only one. Their labels and exact effects appear in the field panel. In the command campaign they serve distinct chapter purposes; for example, Chapter V offers engineer plans to open the side gate and repair the footbridge, or a water detail to extinguish pitch fires and heal living friends. Older expanded chronicles retain the supply-cart and signal-station effects. Either opportunity closes after turn 7, or one turn before a shorter mission's deadline, and neither replaces the main objective. From Chapter III a timber barricade gives adjacent defenders 1 protection until it is dismantled. A pitch brazier, once lit, blocks sight through its smoke and hurts **both sides** within one tile at the end of each round; it burns for three rounds, or one in rain. Chapters V, VIII, IX and XII add a side corridor reached through a closed gate, which blocks movement and sight until opened, and a damaged footbridge, which becomes a ford when repaired. Until then the corridor cannot be reached, and the board says so.
 
 To use an object, bring your commander onto it or next to it, then press its button in the battlefield panel below the board: **Secure objective**, **Open gate**, **Repair bridge**, **Dismantle**, **Ignite** or **Extinguish**. This spends the commander's personal action, not their move or the company's orders. The board readout, the arrow-key cursor, the target list and the ground note in the command dock all name each object and its state, for example "Side gate (closed)".
 
@@ -139,6 +141,18 @@ Visible enemies now work together against one exposed unit of yours: archers sup
 ### Policy debates
 
 In each Contest you may table one policy motion from the policy panel (**Table motion**, one speech). After the next reply the rival offers amended terms: **Accept amendment** or **Defend original motion**, each one speech; leaving it unanswered keeps the original. The motion's costs and lasting effects apply only when you win and record the Contest, and each motion can be enacted once per campaign. The camp ledger lists enacted policies and the field opportunities you secured.
+
+## The command campaign
+
+New chronicles include this edition. In an older chronicle, choose **Enable command campaign** in camp when ready. Existing suspended encounters retain their rules.
+
+Before field battles from Chapter III, the commander's table offers four operational preparations: keep the company together for free, reconnaissance for one supply, or engineers for two. A command reserve costing two supplies becomes available in Chapter IV. Each card states its benefit and trade-off. These costs combine with your company supply package and are paid at departure, so spending the last supplies affects the troops' condition. Retry restores the complete camp checkpoint and the same departure.
+
+Open the field intelligence panel to inspect enemy doctrine, its current focus and the chapter's opportunities. A reserve held back early can still commit when threatened. Intentions can change after your orders; use the current forecast.
+
+In a hearing, open **Evidence & interests** to inspect either documented case. Availability depends on your earlier service, choices and surviving witnesses. Inspection shows each delegate's exact stance change and spends nothing. Presenting a case spends the commander's speech, once per hearing. It can gain one interest's support while losing another's, and the rival can respond before the deadline. Your successful cases and opportunities enter the command record when you record the result.
+
+Camp also offers **Practice completed encounters**. Practice allows weather, time and difficulty variations without replacing the active chronicle or awarding progress. Returning to camp or reloading restores your main chronicle. See the [command rules](command-campaign-v034.md) for all chapter effects and preparation values.
 
 ## What each chapter adds
 

@@ -198,7 +198,7 @@ test('v0.31.0: the app walks through the rules API, previews routes on hover and
   assert.match(app, /if\(intent\.kind==='move'\)\{walk\(intent\);return;\}/);
   assert.match(app, /async function walk\(intent\)\{\r?\n  action='move';target=intent\.target;/);
   assert.match(app, /await change\(\(\)=>\{const res=Game\.act\(state,c\);/, 'A walk is committed by the rules, like any command');
-  assert.match(app, /Undo Move \(U\) takes it back until you act\./);
+  assert.match(app, /Undo Move \(\$\{controlKeys\(settings\.keyBindings\)\.undo\}\) takes it back until you act\./);
   assert.match(app, /battleRemains:true,confirmMoves:false,/, 'One click walks by default');
   assert.match(app, /if\(control\.id==='confirm-moves'\)\{settings\.confirmMoves=control\.checked;saveSettings\(\);render\(\);\}/, 'The board hint follows the setting at once');
   assert.match(app, /confirmMoves:Boolean\(settings\.confirmMoves\),/);

@@ -30,12 +30,19 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;
   // A grid draped a few centimetres above the ground (or the river surface).
   const w=encounter.width*tileSize,d=encounter.height*tileSize,segX=encounter.width*8,segZ=encounter.height*8,geometry=new T.PlaneGeometry(w,d,segX,segZ);geometry.rotateX(-Math.PI/2);
-  const pos=geometry.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),ground=heightAt(x,z);pos.setY(i,Math.max(Number.isFinite(ground)?ground:0,RIVER_WATER_LEVEL)+.035);}
-  geometry.computeVertexNormals();
+  const pos=geometry.attributes.position;
   const material=new T.MeshBasicMaterial({name:'Ink ground overlay',map:texture,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2,fog:false});
   const mesh=new T.Mesh(geometry,material);mesh.name='ink tactical overlay';mesh.renderOrder=1;mesh.visible=false;mesh.castShadow=false;mesh.receiveShadow=false;mesh.raycast=()=>{};scene.add(mesh);
   const cell=INK_PIXELS_PER_TILE;
   let painted='',disposed=false;
+  // A repaired crossing changes the surface without changing legal ink or its
+  // texture. Resample only after committed field changes or a quality rebuild.
+  function redrape(){
+    if(disposed)return false;
+    for(let i=0;i<pos.count;i++){const ground=heightAt(pos.getX(i),pos.getZ(i));pos.setY(i,Math.max(Number.isFinite(ground)?ground:0,RIVER_WATER_LEVEL)+.035);}
+    pos.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();return true;
+  }
+  redrape();
   const inside=(set,x,y)=>set.has(`${x},${y}`);
   function wash(tiles,color,alpha){
     const set=new Set(tiles.map(t=>`${t.x},${t.y}`));
@@ -76,7 +83,7 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
     for(let s=-height;s<width;s+=cell*.16){c.beginPath();c.moveTo(s,0);c.lineTo(s+height,height);c.stroke();}
     c.restore();
   }
-  return {mesh,
+  return {mesh,redrape,
     // targets: legal cells for the chosen action; threat: an enemy's threat
     // envelope (stage-readout threatEnvelope) or null; reach: the ground the
     // unit can walk to, shown only without targets; route: Game.moveRoute.

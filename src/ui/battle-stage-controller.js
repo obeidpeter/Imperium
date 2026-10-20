@@ -11,6 +11,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     if(stage.quality!==quality)stage.applyQuality(quality);
     if((stage.figureStyle??'sculpted')!==(latest.figureStyle??'sculpted'))stage.setFigureStyle?.(latest.figureStyle);
     stage.actionCamera=latest.actionCamera!==false;stage.setBattleRemains?.(latest.battleRemains!==false);
+    stage.touchHold?.configure?.({delay:latest.holdDelay??450});
     stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setMotionSpeed?.(latest.motionSpeed??1);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
     if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };

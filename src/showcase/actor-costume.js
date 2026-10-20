@@ -30,10 +30,14 @@ function rowAt(rows,y){
 
 /** Connected cloth/mail/scale geometry, including the turned neckline and
  * cuffs. No textures, timers, random numbers or campaign objects are read. */
-export function costumeGeometry({kind='tunic',detail='near',quality='balanced'}={}){
+export function costumeGeometry({kind='tunic',detail='near',quality='balanced',hem,identity={}}={}){
   if(!['tunic','mail','scale'].includes(kind))throw new TypeError('Unknown costume shell.');
   const armor=kind!=='tunic',far=detail==='overview',columns=far?16:quality==='performance'?24:40;
-  const base=armor?ARMOR:CLOTH,ys=[];
+  const fullLength=!armor&&Number.isFinite(hem)&&hem<-.12;
+  const bottom=fullLength?clamp(hem,-.72,-.18):null;
+  const skirtRows=fullLength?[[bottom,.238,.156],[bottom+.035,.239,.155],[bottom*.62,.224,.149],[-.085,.198,.14],[-.02,.184,.131]]:[];
+  const base=armor?ARMOR:[...skirtRows,...CLOTH],ys=[];
+  const boneNames=fullLength?[...BONE_NAMES,'tunic-hem-fold','tunic-hem-edge']:BONE_NAMES;
   for(let j=0;j<base.length;j++){
     ys.push(base[j][0]);
     if(!far&&j<base.length-1&&(base[j+1][0]-base[j][0])>.024)ys.push((base[j][0]+base[j+1][0])/2);
@@ -46,7 +50,12 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced'}=
     const id=positions.length/3;positions.push(...p);uvs.push(u,v);colors.push(tint,tint,tint);
     // Waist follows hips; upper garment and cuffs blend to the real shoulders.
     const hip=(1-smooth((p[1]+.015)/.17))*(1-weight);
-    boneIndices.push(0,1,shoulder,0);boneWeights.push(1-hip-weight,hip,weight,0);return id;
+    if(fullLength&&p[1]<-.025){
+      const mid=bottom*.45;
+      const w=p[1]>mid?smooth((-.025-p[1])/(-.025-mid)):smooth((mid-p[1])/(mid-bottom));
+      boneIndices.push(p[1]>mid?1:4,p[1]>mid?4:5,0,0);boneWeights.push(1-w,w,0,0);
+    }else{boneIndices.push(0,1,shoulder,0);boneWeights.push(1-hip-weight,hip,weight,0);}
+    return id;
   };
   const surface=(y,a)=>{
     const [,rx,rz]=rowAt(base,y),front=Math.max(0,Math.cos(a)),waist=1-smooth((y-.07)/.29);
@@ -58,7 +67,10 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced'}=
     const scaleStep=kind==='scale'&&y<.285?.0045*Math.pow(.5+.5*Math.cos((y+.13)*TAU/.063),6):0;
     const scallop=armor&&y<-.10?.0035*Math.cos(a*12)*(1-smooth((y+.135)/.035)):0;
     const collarDrop=y>.468?.006*front*smooth((y-.468)/.034):0;
-    return [Math.sin(a)*(rx+fold+scaleStep),y+scallop-collarDrop,Math.cos(a)*(rz+fold+scaleStep)+chest];
+    const build=clamp(identity.build??1,.90,1.13)-1;
+    const tailored=1+build*.52*Math.exp(-(((y-.22)/.23)**2));
+    const drape=fullLength&&y<0?.007*Math.cos(a*7+y*4)*(1-smooth((y-bottom)/(-bottom))):0;
+    return [Math.sin(a)*(rx+fold+scaleStep+drape)*tailored,y+scallop-collarDrop,Math.cos(a)*(rz+fold+scaleStep+drape)*(1+build*.28)+chest];
   };
   for(let j=0;j<rows.length;j++){
     const ring=[];
@@ -119,8 +131,9 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced'}=
       if(isCuff){p[0]=side*.248+(p[0]-side*.248)*.95;p[2]*=.95;p[1]+=.006;}
       else{p[0]*=.972;p[2]*=.972;p[1]+=j===2?.006:-.006;}
       const id=add(p,uvs[index*2],uvs[index*2+1],boneIndices[index*4+2],boneWeights[index*4+2],.72);
-      // Copy all weights, including the lower garment's hip influence.
-      for(let k=0;k<4;k++)boneWeights[id*4+k]=boneWeights[index*4+k];next.push(id);
+      // Copy every binding as well as weights: the sewn hem can follow its
+      // existing cloth joints while the neckline stays on torso/shoulders.
+      for(let k=0;k<4;k++){boneWeights[id*4+k]=boneWeights[index*4+k];boneIndices[id*4+k]=boneIndices[index*4+k];}next.push(id);
     }
     for(let k=0;k<original.length;k++){
       const n=(k+1)%original.length,a=original[k],b=original[n],c=next[k],d=next[n];
@@ -137,15 +150,17 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced'}=
   geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(pack(boneIndices,4),4));
   geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(pack(boneWeights,4),4));
   geometry.setIndex(triangles.map(i=>remap.get(i)));geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
-  geometry.userData={originalModel:'connected-sewn-costume',kind,detail,metricUvTile:tile,boneNames:[...BONE_NAMES],seamLoops:seamLoops.map(loop=>loop.map(i=>remap.get(i))),boundaryLoops:finalBoundaries.map(loop=>loop.map(i=>remap.get(i)))};
+  geometry.userData={originalModel:'connected-sewn-costume',kind,detail,fullLength,hem:bottom,metricUvTile:tile,boneNames:[...boneNames],seamLoops:seamLoops.map(loop=>loop.map(i=>remap.get(i))),boundaryLoops:finalBoundaries.map(loop=>loop.map(i=>remap.get(i)))};
   return geometry;
 }
 
 /** Install after the actor's ordinary surface batching. The returned arrays
  * join the existing near/far visibility lists. Resource sets retain ownership;
  * there are no independent caches, new joints, timers or pose state. */
-export function mountActorCostume(group,{kit={},cloth,armor,quality='balanced',geometries,materials,skeletons}={}){
-  const bones=BONE_NAMES.map(name=>group.getObjectByName(name));
+export function mountActorCostume(group,{kit={},cloth,armor,quality='balanced',hem,identity,geometries,materials,skeletons}={}){
+  const fullLength=!kit.armored&&Number.isFinite(hem)&&hem<-.12;
+  const boneNames=fullLength?[...BONE_NAMES,'tunic-hem-fold','tunic-hem-edge']:BONE_NAMES;
+  const bones=boneNames.map(name=>group.getObjectByName(name));
   if(bones.some(b=>!b?.isBone))throw new TypeError('Costume requires the existing torso, hips and shoulder bones.');
   const source=kit.armored?armor:cloth;
   if(!source?.isMeshStandardMaterial)throw new TypeError('Costume requires its cloth or armor material.');
@@ -154,7 +169,7 @@ export function mountActorCostume(group,{kit={},cloth,armor,quality='balanced',g
   const skeleton=new T.Skeleton(bones);skeletons.add(skeleton);
   const nearMeshes=[],farMeshes=[];let nearTriangles=0,farTriangles=0;
   for(const detail of ['near','overview']){
-    const g=costumeGeometry({kind:kit.armored?kit.armor==='scale'?'scale':'mail':'tunic',quality,detail});
+    const g=costumeGeometry({kind:kit.armored?kit.armor==='scale'?'scale':'mail':'tunic',quality,detail,hem,identity});
     g.applyMatrix4(local);geometries.add(g);
     const m=source.clone();m.vertexColors=true;
     if(detail==='overview'){m.name=`overview connected ${kit.armored?'armor':'tunic'}`;m.map=null;m.normalMap=null;m.bumpMap=null;m.roughnessMap=null;m.roughness=.86;}

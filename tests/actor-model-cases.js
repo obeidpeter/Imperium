@@ -16,9 +16,22 @@ export const ACTOR_CASES=freeze([
   {id:'crispus',label:'Crispus · named rival',unit:{id:'crispus',name:'Crispus',side:'enemy',role:'speaker'},options:{chapter:11}},
   {id:'severianus',label:'Severianus · named patron',unit:{id:'severianus',name:'Severianus',side:'ally',role:'speaker'},options:{chapter:10}},
   {id:'paullus',label:'Paullus · named elder',unit:{id:'paullus',name:'Lucius Cassius Paullus',side:'ally',role:'voter',bloc:'Landholders'},options:{chapter:11}},
-  {id:'sabinus',label:'Sabinus · named soldier',unit:{id:'sabinus',name:'Sabinus',side:'ally',role:'infantry'},options:{chapter:4}}
+  {id:'sabinus',label:'Sabinus · named soldier',unit:{id:'sabinus',name:'Sabinus',side:'ally',role:'infantry'},options:{chapter:4}},
+  ...Array.from({length:12},(_,i)=>({id:`hero-ch${i+1}`,label:`Chapter ${i+1} · Marcellus`,unit:{id:'hero',name:'Aurelius Marcellus',side:'player',role:i>=9?'speaker':'infantry',...(i>=9?{bloc:'Civic'}:{})},options:{chapter:i+1}}))
 ]);
-export const ACTOR_MOTIONS=Object.freeze(['idle','walk','run','retreat','attack','throw','brace','block','hit','rally','order','speak','conversation','yield','withdrawn']);
+export const ACTOR_MOTIONS=Object.freeze(['idle','start','walk','run','stop','turn','retreat','attack','throw','brace','block','hit','rally','order','speak','conversation','assent','dissent','yield','withdrawn']);
+export const CHARACTER_REVIEW_SEQUENCE=Object.freeze([
+  {motion:'idle',seconds:.65},{motion:'start',seconds:.35},{motion:'walk',seconds:1.6},
+  {motion:'stop',seconds:.4},{motion:'turn',seconds:.65},{motion:'brace',seconds:.65},
+  {motion:'attack',seconds:1.023},{motion:'block',seconds:.55},{motion:'order',seconds:1.2},
+  {motion:'idle',seconds:1}
+].map(Object.freeze));
+export function characterReviewStep(seconds=0){
+  const duration=CHARACTER_REVIEW_SEQUENCE.reduce((sum,step)=>sum+step.seconds,0);
+  let t=((Number.isFinite(seconds)?seconds:0)%duration+duration)%duration;
+  for(const step of CHARACTER_REVIEW_SEQUENCE){if(t<step.seconds)return {motion:step.motion,phase:t/step.seconds};t-=step.seconds;}
+  return {motion:'idle',phase:0};
+}
 export const actorCase=id=>ACTOR_CASES.find(item=>item.id===id)??ACTOR_CASES[0];
 export function sampleSummary(samples){
   const ordered=samples.filter(Number.isFinite).slice(-120).sort((a,b)=>a-b),at=q=>ordered.length?ordered[Math.min(ordered.length-1,Math.ceil(ordered.length*q)-1)]:null;
@@ -28,7 +41,7 @@ export function actorResources(group){
   const geometries=new Set(),materials=new Set(),textures=new Set(),buffers=new Set(),skeletons=new Set();let meshes=0,skinnedMeshes=0,bones=0,visibleMeshes=0,visibleTriangles=0,geometryBytes=0,textureBytes=0;
   group.traverse(object=>{if(object.isBone)bones++;if(object.isMesh){meshes++;if(object.isSkinnedMesh)skinnedMeshes++;if(object.skeleton)skeletons.add(object.skeleton);if(object.geometry)geometries.add(object.geometry);for(const material of Array.isArray(object.material)?object.material:[object.material])if(material)materials.add(material);}});
   group.traverseVisible(object=>{if(object.isMesh){visibleMeshes++;visibleTriangles+=(object.geometry.index?.count??object.geometry.attributes.position.count)/3;}});
-  for(const geometry of geometries)for(const attribute of [geometry.index,...Object.values(geometry.attributes)]){const array=attribute?.array??attribute?.data?.array;if(array&&!buffers.has(array.buffer)){buffers.add(array.buffer);geometryBytes+=array.buffer.byteLength;}}
+  for(const geometry of geometries)for(const attribute of [geometry.index,...Object.values(geometry.attributes),...Object.values(geometry.morphAttributes).flat()]){const array=attribute?.array??attribute?.data?.array;if(array&&!buffers.has(array.buffer)){buffers.add(array.buffer);geometryBytes+=array.buffer.byteLength;}}
   for(const material of materials)for(const value of Object.values(material))if(value?.isTexture)textures.add(value);
   for(const texture of textures){const image=texture.image;if(image)textureBytes+=(image.data?.byteLength??(image.width??0)*(image.height??0)*4)*(texture.generateMipmaps?4/3:1);}
   return {meshes,skinnedMeshes,bones,visibleMeshes,visibleTriangles,geometries:geometries.size,materials:materials.size,textures:textures.size,skeletons:skeletons.size,geometryArrayBytes:geometryBytes,estimatedTextureBytes:Math.ceil(textureBytes),textureEstimateScope:'Decoded image bytes plus approximate mipmaps; not measured GPU allocation.'};

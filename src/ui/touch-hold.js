@@ -16,6 +16,7 @@ export function createTouchHold(onHold,{delay=HOLD_MS,slop=HOLD_SLOP,timers=glob
     },
     move(event){if(timer!==null&&Math.hypot(event.clientX-start.clientX,event.clientY-start.clientY)>slop)cancel();},
     up(){cancel();},
+    configure(options={}){const next=Number(options.delay);if(Number.isFinite(next)&&next!==delay){cancel();held=false;start=null;delay=Math.max(250,Math.min(1200,next));}},
     // True once after a hold: the tap or pick that ends it should do nothing.
     consume(){const was=held;held=false;return was;},
     dispose(){cancel();held=false;start=null;},

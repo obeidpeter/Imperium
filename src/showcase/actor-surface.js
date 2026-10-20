@@ -14,6 +14,7 @@ const grain=(u,v)=>noise(u,v,12)*.6+noise(u,v,36)*.4;
 export const ACTOR_SURFACE_SPEC=Object.freeze({
   skin:Object.freeze({repeat:[2,2],normalGain:.010,normalScale:.42,roughness:1,metalness:0}),
   cloth:Object.freeze({repeat:[5,4],normalGain:.008,normalScale:.7,roughness:1,metalness:0}),
+  wool:Object.freeze({repeat:[4,4],normalGain:.006,normalScale:.55,roughness:1,metalness:0}),
   leather:Object.freeze({repeat:[2,2],normalGain:.012,normalScale:.72,roughness:1,metalness:0}),
   mail:Object.freeze({repeat:[3,3],normalGain:.020,normalScale:.85,roughness:1,metalness:.70}),
   scale:Object.freeze({repeat:[3,3],normalGain:.020,normalScale:.8,roughness:1,metalness:.76}),
@@ -46,11 +47,12 @@ export function actorSurfaceSample(input,u,v){
   const kind=actorSurfaceKind(input);u=fract(u);v=fract(v);
   if(kind==='mail')return mail(u,v);
   const n=grain(u,v),broad=noise(u,v,4),micro=noise(u,v,48);
-  if(kind==='cloth'){
+  if(kind==='cloth'||kind==='wool'){
     // Opposing yarns take turns on top. Rounded thread crowns and fine fibers
     // make a weave rather than a regular embossed square checkerboard.
     const x=u*12,y=v*12,warp=(.5+.5*Math.cos(TAU*x))**1.7,weft=(.5+.5*Math.cos(TAU*y))**1.7,over=.5+.5*Math.cos(Math.PI*x)*Math.cos(Math.PI*y);
     const crown=warp*(.065+.125*over)+weft*(.19-.125*over),fiber=Math.sin(TAU*(u*48+v*12))*.008;
+    if(kind==='wool')return [.44+crown*.55+fiber*.7+.045*(n-.5),.82+crown*.22+.065*(broad-.5),.94+.025*(n-.5)];
     return [.37+crown+fiber+.025*(n-.5),.81+crown*.38+.055*(broad-.5),.88+.07*(1-crown/.255)+.02*(n-.5)];
   }
   if(kind==='leather'){

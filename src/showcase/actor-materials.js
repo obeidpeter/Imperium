@@ -3,7 +3,13 @@ import {ACTOR_SURFACE_SPEC,actorSurfaceKind,createActorSurfaceData,composeActorA
 const cached=new Map();
 const paintedTiles=new Map();
 let atlasPromise=null,atlasState='procedural';
+let premiumPromise=null,premiumState='procedural';
 export const ACTOR_MATERIAL_ATLAS=new URL('../../assets/showcase/character-materials-v016.webp',import.meta.url).href;
+export const ACTOR_PREMIUM_ATLAS=new URL('../../assets/textures/roman-surfaces-v034.webp',import.meta.url).href;
+export function premiumActorAtlasRects(width,height){
+  const r=actorAtlasRects(width,height);
+  return {cloth:r.cloth,wool:r.leather,leather:r.mail,metal:r.skin};
+}
 // Source quadrants have no padding: use the decoded image dimensions, including
 // the shipped 1254px image, rather than assuming a power-of-two master.
 export function actorAtlasRects(width,height){
@@ -18,7 +24,26 @@ export function normalizeActorAlbedo(source,kind){
   for(let i=0;i<source.length;i+=4){for(let c=0;c<3;c++)data[i+c]=Math.max(35,Math.min(255,220+(source[i+c]/Math.max(1,mean[c])-1)*220*contrast));data[i+3]=255;}
   return data;
 }
-function installTile(kind,entry){const tile=paintedTiles.get(kind);if(!tile)return;entry.surface.map.image={data:tile.data,width:tile.size,height:tile.size};entry.surface.map.needsUpdate=true;entry.surface.map.userData.source='character-materials-v016';entry.surface.map.userData.detail='original periodic relief with restrained painted wear';}
+function installTile(kind,entry){const tile=paintedTiles.get(kind);if(!tile)return;entry.surface.map.image={data:tile.data,width:tile.size,height:tile.size};entry.surface.map.needsUpdate=true;entry.surface.map.userData.source=tile.source??'character-materials-v016';entry.surface.map.userData.detail='original periodic relief with restrained painted wear';}
+/** One decode feeds four shared 256px maps; no per-person image, texture copy
+ * or extra shader sampler. Procedural maps remain if this optional art fails. */
+export function warmPremiumActorMaterials(){
+  if(premiumPromise)return premiumPromise;
+  if(typeof document==='undefined'||typeof Image==='undefined')return Promise.resolve(false);
+  premiumState='loading';premiumPromise=new Promise(resolve=>{
+    const image=new Image();image.onload=()=>{
+      try{
+        const size=256,canvas=document.createElement('canvas');canvas.width=canvas.height=size;
+        const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)throw new Error('No material decoder');
+        for(const [kind,rect]of Object.entries(premiumActorAtlasRects(image.naturalWidth,image.naturalHeight))){
+          context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);
+          paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size),source:'roman-surfaces-v034'});
+        }
+        for(const [kind,entry]of cached)installTile(kind,entry);premiumState='painted';resolve(true);
+      }catch{premiumState='procedural';resolve(false);}
+    };image.onerror=()=>{premiumState='procedural';resolve(false);};image.src=ACTOR_PREMIUM_ATLAS;
+  });return premiumPromise;
+}
 /** Optional browser preload; synchronous actor construction always has a native
  * fallback. Live maps update in place, so rig/skin batches need no rebuilding. */
 export function warmActorMaterials(){
@@ -28,13 +53,14 @@ export function warmActorMaterials(){
   atlasPromise=new Promise(resolve=>{
     const image=new Image();image.onload=()=>{
       try{const size=256,canvas=document.createElement('canvas');canvas.width=canvas.height=size;const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)throw new Error('No material decoder');
-        for(const [kind,rect]of Object.entries(actorAtlasRects(image.naturalWidth,image.naturalHeight))){context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size)});}
-        for(const [kind,entry]of cached)installTile(kind,entry);atlasState='painted';resolve(true);
+        for(const [kind,rect]of Object.entries(actorAtlasRects(image.naturalWidth,image.naturalHeight))){if(paintedTiles.get(kind)?.source==='roman-surfaces-v034')continue;context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size)});}
+        for(const [kind,entry]of cached)installTile(kind,entry);atlasState='painted';void warmPremiumActorMaterials();resolve(true);
       }catch{atlasState='procedural';resolve(false);}
-    };image.onerror=()=>{atlasState='procedural';resolve(false);};image.src=ACTOR_MATERIAL_ATLAS;
+    };image.onerror=()=>{atlasState='procedural';void warmPremiumActorMaterials();resolve(false);};image.src=ACTOR_MATERIAL_ATLAS;
   });return atlasPromise;
 }
 export const actorMaterialStatus=()=>atlasState;
+export const premiumActorMaterialStatus=()=>premiumState;
 // Only immutable native texture tiles are shared. Each actor owns its meshes
 // and tint materials; the last owner releases the GPU texture objects.
 export function acquireActorSurface(kind){

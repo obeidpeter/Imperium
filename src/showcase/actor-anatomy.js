@@ -29,11 +29,16 @@ export function sculptActorGeometry(geometry,region,identity={build:1}){
       x*=1+.07*bell(y,-.06,.07);z+=.004*bell(y,-.08,.08)*front;
     }else if(region==='horse-barrel'){
       const rump=bell(y,-.54,.22),shoulder=bell(y,.40,.18);
-      x*=1+.045*rump+.045*shoulder-.035*bell(y,.04,.22);
-      z+=.012*bell(y,-.10,.45)*front;
+      // Withers, a deep ribcage and tucked flank; local profile Y becomes the
+      // horse's fore/aft axis. Joint origins and saddle contacts stay fixed.
+      x*=1+.035*rump+.025*shoulder-.070*bell(y,-.12,.20);
+      const upper=Math.max(0,-z)/Math.max(.01,Math.hypot(x,z));
+      z-=upper*(.043*shoulder+.018*rump);
+      z+=front*(.015*bell(y,.20,.24)-.030*bell(y,-.30,.22));
       shade=.95+.05*(1-front);
     }else if(region==='horse-neck'){
-      x*=1+.055*bell(y,.27,.19);z+=.011*bell(y,.29,.20)*front;
+      x*=1+.025*bell(y,.27,.19)-.075*bell(y,.64,.15);
+      z+=.018*bell(y,.24,.20)*front-.012*bell(y,.58,.18)*(1-front);
       shade=.94+.06*bell(y,.44,.40);
     }
     p.setXYZ(i,x,y,z);colours.push(shade,shade,shade);

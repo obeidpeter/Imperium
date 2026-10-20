@@ -40,7 +40,7 @@ test('v0.33.0: a quick tap, a drag, a mouse and a disposed board never hold', ()
 
 test('v0.33.0: the 2D board and the 3D stage both preview on a held touch and keep it after the finger lifts', async () => {
   const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
-  assert.match(app, /const hold=createTouchHold\(at=>\{if\(!board\.isConnected\)return;const p=pickBattlePoint\(board,state\.encounter,at\.clientX,at\.clientY\),e=state\.encounter;if\(p\.x>=0&&p\.y>=0&&p\.x<e\.width&&p\.y<e\.height\)\{boardHover\(p\);paint\(currentAnimation\);\}\}\);/);
+  assert.match(app, /const hold=createTouchHold\(at=>\{if\(!board\.isConnected\)return;const p=pickBattlePoint\(board,state\.encounter,at\.clientX,at\.clientY\),e=state\.encounter;if\(p\.x>=0&&p\.y>=0&&p\.x<e\.width&&p\.y<e\.height\)\{boardHover\(p\);paint\(currentAnimation\);\}\},\{delay:settings\.holdDelay\}\);/);
   assert.match(app, /board\.addEventListener\('click',event=>\{if\(hold\.consume\(\)\)return;/, 'The release after a hold does not walk');
   assert.match(app, /if\(event\.pointerType==='touch'\)\{hold\.move\(event\);return;\}/);
   assert.match(app, /board\.addEventListener\('pointerleave',event=>\{if\(event\.pointerType==='touch'\)return;/, 'A lifted finger keeps the preview');
@@ -70,7 +70,8 @@ test('v0.33.0: CI drives the production build in a browser with a pinned Playwri
   assert.equal(pkg.dependencies, undefined);assert.equal(pkg.devDependencies, undefined, 'Playwright stays outside the project');
 });
 
-test('v0.33.0: this edition is 0.33.0', async () => {
+test('the source edition matches the package version', async () => {
   const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.33.0');
+  const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+  assert.equal(CONFIG.version,pkg.version);
 });

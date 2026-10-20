@@ -1,12 +1,24 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Version 0.32 painted officer and company in the Chapter V battlefield](docs/images/v031-painted.png)
+![Version 0.34 Chapter V siege battlefield in the Horizon camera](docs/images/v034-ch5-mine-horizon.png)
 
-*Actual gameplay from the 0.32 work (captured as draft 0.31, before click to walk was merged in), using the Painted figure style at a legally reached Chapter V checkpoint.*
+*Actual version 0.34 gameplay at a legally reached Chapter V checkpoint, using Sculpted figures, Balanced quality and the Horizon camera. Captured in software-rendered Chromium.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
+
+## Version 0.34 — Chapter V benchmark and twelve-chapter command campaign
+
+Chapter V has a new fractured mudbrick siege precinct and detailed, stateful field equipment. Twelve regional material palettes extend the environmental direction through the campaign. Repaired bridges support figures, picking, movement previews and tactical overlays at their actual deck height.
+
+Characters gain continuous clothing, individual campaign and cast finishes, facial corrective motion, eleven additional authored joint performances, refined horses and reduced overview geometry. An original local surface atlas supplies cloth, leather and metal colour detail. This is code-authored geometry and animation built on the existing licensed anatomy, not a commissioned character pack or motion capture.
+
+New chronicles add deployment plans with real supply costs and tradeoffs, visible enemy doctrines, distinct chapter opportunities, a limited braced-defender reaction and two documented political cases for each hearing. Older chronicles opt in at camp; suspended encounters retain their rules. Preparation costs, outcomes and evidence obey the same save, retry and once-only result boundaries.
+
+The interface adds exact case previews, a command record, camp practice access, a compact battlefield view, high-contrast controls, six remappable shortcuts and configurable touch-preview delay. Contextual sound direction uses the existing local recordings with chapter, weather and objective-pressure mixing.
+
+See the [production ledger](docs/benchmark-production-v034.md), [command rules](docs/command-campaign-v034.md), [character production record](docs/character-production-v034.md), [environment record](docs/environment-production-v034.md) and [release validation](docs/release-validation-v034.md). Run `npm run verify` for rules, compatibility, build, offline and asset checks; `npm run benchmark` restores legally reached checkpoints through the real interface and captures all twelve chapters. Browser automation requires a separately installed Playwright/Chromium. Automated correctness and software-rendered captures do not establish physical-device performance or human enjoyment.
 
 ## Version 0.33 — hold a finger to see the route
 

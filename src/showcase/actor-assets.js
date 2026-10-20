@@ -3,6 +3,7 @@ import {GLTFLoader} from '../../vendor/three/addons/loaders/GLTFLoader.js';
 import {groomActorHair} from './actor-groom.js';
 import {fitActorNeck} from './actor-neck.js';
 import {actorHairGeometry} from './actor-hair-asset.js';
+import {addActorExpressionMorphs} from './actor-expression-mesh.js';
 
 export const ACTOR_MODEL_URL='assets/models/roman-human-v017.glb';
 export const FEMALE_ACTOR_MODEL_URL='assets/models/roman-woman-v018.glb';
@@ -66,6 +67,7 @@ function adaptAnatomy(master,id,{quality='balanced'}={}){
     for(const i of cells.get(Math.floor(x/cell)+','+Math.floor(py/cell))??[]){const ia=indices[i],ib=indices[i+1],ic=indices[i+2];const ax=a.getX(ia),ay=a.getY(ia),bx=a.getX(ib),by=a.getY(ib),cx=a.getX(ic),cy=a.getY(ic),den=(by-cy)*(ax-cx)+(cx-bx)*(ay-cy);if(Math.abs(den)<1e-12)continue;const u=((by-cy)*(x-cx)+(cx-bx)*(py-cy))/den,v=((cy-ay)*(x-cx)+(ax-cx)*(py-cy))/den,w=1-u-v;if(u>=0&&v>=0&&w>=0){const depth=u*a.getZ(ia)+v*a.getZ(ib)+w*a.getZ(ic);if(depth>front){front=depth;uv=[u*tex.getX(ia)+v*tex.getX(ib)+w*tex.getX(ic),u*tex.getY(ia)+v*tex.getY(ib)+w*tex.getY(ic)];}}}
     const point=[x,y,Number.isFinite(front)?front+offset:.065+offset];point.uv=uv;return point;
   }
+  addActorExpressionMorphs(geometry);
   return {geometry,hair,beard,importedHair:!!importedHair,bones:master.bones,facePoint};
 }
 function surfaceSubset(source,distance,offset,id){

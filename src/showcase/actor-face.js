@@ -8,7 +8,9 @@ function geometry(positions,uv,colors,indices){
 /** Fitted almond aperture, restrained corneal relief and a skin-weighted lid.
  * Coordinates belong to the existing head joint; no new pose/contact frame. */
 export function actorEye({side=1,seed=0,identity={},facePoint}){
-  const cx=side*.036,cy=.094,w=.0148,upper=.0045,lower=.0035;
+  // The relaxed lid covers the top and bottom of the iris. A broad exposed
+  // white patch with a small free-floating iris reads as a permanent stare.
+  const cx=side*.036,cy=.094,w=.0133,upper=.0036,lower=.0034;
   const sample=(x,y,offset=0)=>facePoint(x,y,offset),z=sample(cx,.104)[2]-.0011;
   const edge=(x,top)=>cy+(top?upper:-lower)*Math.max(0,1-(x/w)**2)**.7+side*x*.035;
   const surface=(x,y)=>z-.0024*(x/w)**2-.0005*((y-cy)/.005)**2;
@@ -21,14 +23,14 @@ export function actorEye({side=1,seed=0,identity={},facePoint}){
     const shade=.80+.20*(1-t*t);color.push(shade,shade*.97,shade*.94);
     if(j&&i){const k=j*(n+1)+i;index.push(k-n-1,k-1,k,k-n-1,k-n-2,k-1);}
   }
-  const sclera=geometry(p,uv,color,index),ip=[],iu=[],ic=[],ii=[],radii=[0,.0021,.00235,.0048,.0055];
+  const sclera=geometry(p,uv,color,index),ip=[],iu=[],ic=[],ii=[],radii=[0,.0021,.00235,.0059,.0066];
   const irisColor=new T.Color(seed%5===0?0x515138:0x665039),pupil=new T.Color(0x090806);
   for(let j=0;j<radii.length;j++)for(let i=0;i<=n;i++){
-    const a=i/n*TAU,dx=Math.cos(a),dy=Math.sin(a);let lo=0,hi=.0055;
+    const a=i/n*TAU,dx=Math.cos(a),dy=Math.sin(a);let lo=0,hi=.0066;
     // Radial clipping preserves nested ring order where the curved lid meets the iris.
     for(let k=0;k<16;k++){const r=(lo+hi)/2,x=dx*r,y=cy+dy*r;if(y>=edge(x,false)+.00015&&y<=edge(x,true)-.00015)lo=r;else hi=r;}
     const r=Math.min(radii[j],lo),x=dx*r,y=cy+dy*r;
-    ip.push(cx+x,y,surface(x,y)+.00018);iu.push(x/.011+.5,(y-cy)/.011+.5);
+    ip.push(cx+x,y,surface(x,y)+.00018);iu.push(x/.0132+.5,(y-cy)/.0132+.5);
     const c=j<2?pupil:irisColor.clone().multiplyScalar(j===4?.43:.8+.18*Math.sin(i*7.2+seed));ic.push(c.r,c.g,c.b);
     if(j&&i){const k=j*(n+1)+i;ii.push(k-n-1,k-1,k,k-n-1,k-n-2,k-1);}
   }

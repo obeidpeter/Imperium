@@ -1,6 +1,7 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {stagingEdge} from './environment-staging.js';
 import {hash} from './environment-layout.js';
+import {addSiegeLandmark} from './environment-siege.js';
 
 /** Connected precincts sit beyond the rule board. Repeated structural parts
  * use the existing material/geometry batches; nothing is a picking target. */
@@ -63,6 +64,9 @@ export function addEncounterPrecinct({root,e,p,m,profile,height,tileSize,quality
     tiedPosts(g,6.6,3);porch(g,-5.2,2.4,4.3,4.1,'timber');loading(g,-5.4,1.9,staging.form==='quay'?5:2);
     if(staging.form==='refuge')for(const side of [-1,1]){wallBay(g,side*5,4.4,4.1,1.2,m.darkWood);p.banner(g,side*4.5,0,3);}
     else for(const side of [-1,1])p.beam(g,[side*3.4,0,4],[side*3.4,2.8,4],.14,m.darkWood);
+  }else if(profile.chapter===5&&['breach','gate'].includes(staging.form)){
+    const g=solid('Euphrates siege benchmark',atEdge(staging.landmarkEdge,7.2));
+    addSiegeLandmark({parent:g,p,m,quality});
   }else if(['gate','sally','breach','city-gate','imperial-gate'].includes(staging.form)){
     const g=solid(staging.form+' destination portal',atEdge(staging.landmarkEdge,6.8)),h=staging.form==='breach'?4.2:6.4;
     arch(g,h,profile.chapter===12?m.brick:m.stone);

@@ -1,3 +1,4 @@
+import {chapterOpportunity,applyChapterOpportunity,commandAssignment} from './command-campaign.js';
 import {FIELD_THEMES,POLICY_MOTIONS} from '../data/expanded-campaign.js';
 import {alive,clamp,distance,note,result,reachable,pathDistance,faceToward} from './shared.js';
 export {POLICY_MOTIONS};
@@ -57,6 +58,7 @@ export function previewFieldAction(state,id){
   if(distance(hero,o)>1)return result(false,`Move beside ${o.label} at ${coord(o)}. Interaction costs one action.`);
   if(['stores','signal'].includes(o.kind)){
     if(e.field.outcome!=='pending'||e.field.choice||e.turn>e.field.deadline)return result(false,'The competing opportunity has closed.');
+    const authored=chapterOpportunity(e,id);if(authored)return result(true,`${authored.description} One commander action. The other opportunity closes; the main mission still applies.`);
     return result(true,`${o.kind==='stores'?'Recover 2 supplies on victory':'Raise friendly cohesion by 15 now and earn 2 Army Loyalty on victory'}. One action. The other opportunity closes; the main mission still applies.`);
   }
   const action=o.kind==='gate'&&o.state==='closed'?'Open the gate and its side route':o.kind==='bridge'&&o.state==='damaged'?'Repair the footbridge; the tile becomes a ford':o.kind==='barricade'&&o.state==='intact'?'Dismantle the barricade; adjacent units lose its 1-point protection':o.kind==='brazier'&&o.state==='unlit'?'Ignite pitch: smoke blocks sight, and units within one tile take 2 damage at each round end':o.state==='burning'?'Extinguish the pitch fire and clear its smoke':null;
@@ -69,7 +71,8 @@ export function fieldAction(state,id){
   if(o.kind==='stores'||o.kind==='signal'){
     e.field.choice=o.kind;e.field.outcome='secured';o.state='secured';
     for(const other of e.field.objects.filter(x=>['stores','signal'].includes(x.kind)&&x!==o))other.state='forgone';
-    if(o.kind==='stores')e.staged.supplies=(e.staged.supplies??0)+2;
+    if(applyChapterOpportunity(e,id)){}
+    else if(o.kind==='stores')e.staged.supplies=(e.staged.supplies??0)+2;
     else{e.staged.meters.army=(e.staged.meters.army??0)+2;for(const u of friends(e))u.cohesion=clamp((u.cohesion??80)+15);}
   }else if(o.kind==='gate')o.state='open';
   else if(o.kind==='bridge'){o.state='repaired';e.terrain[o.y][o.x]='ford';}
@@ -93,6 +96,7 @@ export function expandedCombat(e,unit,target,ranged){
   return modifiers;
 }
 export function coordinatedAssignment(e,unit){
+  if(e.campaignEdition===34)return commandAssignment(e,unit);
   if(e.featureEdition!==31||unit.side!=='enemy'||e.type==='training'||e.id==='ch1-road')return null;
   const enemy=e.units.filter(u=>u.side==='enemy'&&alive(u)&&!u.hidden).sort((a,b)=>a.id.localeCompare(b.id)),targets=friends(e).filter(u=>!u.hidden);
   const focus=[...targets].sort((a,b)=>a.hp-b.hp||a.id.localeCompare(b.id))[0];if(!focus)return null;
@@ -118,7 +122,7 @@ export function moveProtectedColumn(e,escort,hero){
   // A column does not outrun its commander or walk into an adjacent enemy.
   // This is a public escort rule, shared by every enhanced escort mission.
   const enemies=e.units.filter(u=>u.side==='enemy'&&alive(u)&&!u.hidden);
-  const points=reachable(e,escort,2).filter(p=>distance(p,hero)<=3&&!enemies.some(u=>distance(u,p)<=1));
+  const points=reachable(e,escort,e.campaignEdition===34?e.commandCampaign.escortPace:2).filter(p=>distance(p,hero)<=3&&!enemies.some(u=>distance(u,p)<=1));
   points.sort((a,b)=>pathDistance(e,a,e.goal,escort.id)-pathDistance(e,b,e.goal,escort.id)||a.cost-b.cost);
   const p=points[0];if(p&&pathDistance(e,p,e.goal,escort.id)<pathDistance(e,escort,e.goal,escort.id)){faceToward(escort,p);escort.x=p.x;escort.y=p.y;escort.moved=true;}
 }

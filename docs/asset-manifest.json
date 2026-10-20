@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 50 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -4855,6 +4855,32 @@
         "sha256": "0b32302210a795b27c21604f89af2b67798504f1bc61f888d799267f6be0ed80"
       },
       "license": "Project AI-generated artwork; provenance is not a guarantee of exclusive copyright."
+    },
+    {
+      "id": "roman-surfaces-v034",
+      "path": "assets/textures/roman-surfaces-v034.webp",
+      "subject": "Original linen, oxblood wool, leather and iron material colour atlas",
+      "source": {
+        "method": "OpenAI built-in image_gen",
+        "sourceFile": "exec-884e5354-1e1d-4665-afce-5aef80c1f2d6.png",
+        "sourceSha256": "a5b99c8ff7162be81b03c39557f9d5e2cd3a988f7b364ab1b8bc8af277ba85a0",
+        "sourceSize": [
+          1254,
+          1254
+        ],
+        "atlasColumns": 2,
+        "atlasRows": 2,
+        "instructions": "docs/art-generation-v034.md"
+      },
+      "export": {
+        "format": "WebP",
+        "width": 640,
+        "height": 640,
+        "quality": 65,
+        "bytes": 90816,
+        "sha256": "67d28da483f03cc4835a5cbce5b873a33f5fcabe20e3c552ce55cf54db101314"
+      },
+      "license": "Project AI-generated artwork; provenance is not a guarantee of exclusive copyright."
     }
   ],
   "updatedAt": "2026-10-19T09:50:26.791467+00:00",
@@ -4879,9 +4905,9 @@
     "showcase": 9,
     "audio": 14,
     "models": 3,
-    "textures": 3
+    "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 10510125,
+  "totalBundledAssetBytes": 10600941,
   "totalModelBytes": 465127
 }

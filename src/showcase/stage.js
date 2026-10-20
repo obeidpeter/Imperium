@@ -124,7 +124,7 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
     }else{motion='idle';phase=0;}
     if(motion==='cavalry-move')motion='run';
   }
-  if(motion==='turn')motion=unit.braced?'brace':'idle';
+  if(motion==='turn')motion=unit.braced?'brace':'turn';
   if(['attack','cavalry-attack','throw','speak','order','rally'].includes(motion)){
     const track=timeline?.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),from=o??unit;
     if(track&&Math.hypot(track.target.x-from.x,track.target.y-from.y)>.01)direction=Math.atan2(track.target.x-from.x,track.target.y-from.y);
@@ -139,7 +139,7 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
   }
   const prior=pair?.before??unit;
   const health=motion==='withdrawn'?1:!isAlive(unit)&&o&&o.alpha>0?(prior.resolve??prior.hp??1)/(prior.maxResolve??prior.maxHp??1):(unit.resolve??unit.hp??1)/(unit.maxResolve??unit.maxHp??1);
-  return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,braced:unit.braced||pair?.before.braced,locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
+  return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,movementProgress:o?.progress,turnSign:Math.sign(Math.sin(facingYaw(o?.facing??unit.facing)-facingYaw(o?.previousFacing??unit.facing)))||1,braced:unit.braced||pair?.before.braced,locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
 }
 export class BattleStage{
   constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true}={}){
@@ -162,8 +162,8 @@ export class BattleStage{
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});
-    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z)});this.frameProfile=createFrameProfile();this.profileFrames=0;
-    this.ink=createInkOverlay(this.scene,encounter,this.environment.groundHeight);
+    this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();this.profileFrames=0;
+    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight);
     this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);
     this.battleRemains=battleRemains!==false;this.rebuildRemains();
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
@@ -192,7 +192,7 @@ export class BattleStage{
   }
   // A constructor failure must not strand the overlay, renderer, observer or audio.
   releasePartial(){this.disposed=true;try{this.sound?.dispose?.();}catch{}this.resizeObserver?.disconnect();this.events?.forEach(fn=>fn());this.labelLayer?.remove();try{this.renderer?.dispose();if(this.canvas&&!this.canvas.isConnected)this.renderer?.forceContextLoss?.();}catch{}}
-  world(tile){const p=gridToWorld(tile,this.encounter,2.5);return new T.Vector3(p.x,this.environment.groundHeight(p.x,p.z),p.z);}
+  world(tile){const p=gridToWorld(tile,this.encounter,2.5);return new T.Vector3(p.x,this.surfaceHeight?.(p.x,p.z)??this.environment.groundHeight(p.x,p.z),p.z);}
   unitAt(tile){
     if(!tile)return undefined;
     const matches=u=>u.x===tile.x&&u.y===tile.y,prior=this.animation?.timeline.units;
@@ -203,7 +203,7 @@ export class BattleStage{
   bodyPoint(tile){const unit=this.unitAt(tile);return this.world(tile).add(new T.Vector3(0,['cavalry','heavy'].includes(unit?.role)?2.05:1.2,0));}
   sync(encounter){
     const division=discessioPlan(encounter);if(!division)this.discessio=null;else if(this.discessio?.key!==division.key){const start=performance.now(),span=Math.max(0,...division.moves.map(m=>m.order*220+this.world(m.from).distanceTo(this.world(m.to))/1.35*1000));this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};}
-    this.encounter=encounter;this.fieldFeatures?.sync(encounter);this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
+    this.encounter=encounter;if(this.fieldFeatures?.sync(encounter))this.redrapeGroundOverlays();this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
     for(const [id,a] of this.actors)if(!visible.has(id)){this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);this.poseReset.delete(id);}
     this.labelLayer.dataset.dense=String(visible.size>9);
     for(const u of this.visibleUnits){
@@ -368,7 +368,7 @@ export class BattleStage{
         const pts=link.points.map(p=>this.world(p)),segs=pts.length-1;
         for(let s=0;s<=16;s++){
           const f=(s/16)*segs,idx=Math.min(segs-1,Math.floor(f)),t=f-idx,a=pts[idx],b=pts[idx+1];
-          const x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=(this.environment?.groundHeight?this.environment.groundHeight(x,z):a.y+(b.y-a.y)*t)+.11;
+          const x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=(this.surfaceHeight?.(x,z)??this.environment?.groundHeight?.(x,z)??a.y+(b.y-a.y)*t)+.11;
           pos.setXYZ(s,x,y,z);
         }
       }else{
@@ -404,10 +404,20 @@ export class BattleStage{
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
   setGrid(show){
     // Grid edges drape over plateau banks and lie on river water rather than floating at a cell's centre height.
-    if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
+    if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
     this.grid.visible=!!show;
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
+  rebuildFieldFeatures(){
+    this.fieldFeatures?.dispose();this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality});
+  }
+  redrapeGroundOverlays(){
+    this.ink?.redrape();
+    if(!this.grid)return;
+    const geometry=this.grid.geometry,pos=geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
+    pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
+  }
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
@@ -498,7 +508,7 @@ export class BattleStage{
     const surfaces=[];for(const [id,a]of this.actors)if(a.group.visible&&pickable.has(id))a.group.traverseVisible(o=>{if(o.isMesh)surfaces.push(o);});
     const hits=this.ray.intersectObjects(surfaces,false);
     const hit=hits.find(h=>{for(let o=h.object;o;o=o.parent)if(!o.visible)return false;return true;});if(hit){let obj=hit.object;while(obj&&!obj.userData.unitId)obj=obj.parent;const u=this.encounter.units.find(u=>u.id===obj?.userData.unitId);if(u&&isAlive(u))return {x:u.x,y:u.y,unitId:u.id};}
-    if(!intersectGround(this.ray.ray,this.environment.groundHeight,this.hit))return null;const x=Math.round(this.hit.x/2.5+(this.encounter.width-1)/2),y=Math.round(this.hit.z/2.5+(this.encounter.height-1)/2);return x>=0&&y>=0&&x<this.encounter.width&&y<this.encounter.height?{x,y}:null;
+    if(!intersectGround(this.ray.ray,this.surfaceHeight??this.environment.groundHeight,this.hit))return null;const x=Math.round(this.hit.x/2.5+(this.encounter.width-1)/2),y=Math.round(this.hit.z/2.5+(this.encounter.height-1)/2);return x>=0&&y>=0&&x<this.encounter.width&&y<this.encounter.height?{x,y}:null;
   }
   bind(){this.events=[];const on=(target,type,fn,opts)=>{target.addEventListener(type,fn,opts);this.events.push(()=>target.removeEventListener(type,fn,opts));};
     // Touch has no hover: a finger held still (not orbiting) shows what a tap
@@ -509,7 +519,7 @@ export class BattleStage{
     on(this.canvas,'pointerleave',e=>{if(e.pointerType==='touch')return;this.pendingHover=null;this.hovered=null;this.onHover(null);});
     on(this.canvas,'pointerup',e=>{const held=this.touchHold.consume();this.touchHold.up();if(this.drag&&!this.drag.moved&&!held){if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else if(this.discessio&&!this.discessio.done)this.discessio.start=-Infinity;else this.onPick(this.pick(e));}this.drag=null;});on(this.canvas,'pointercancel',()=>{this.touchHold.up();this.drag=null;});
     on(this.canvas,'wheel',e=>{e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
-    on(this.canvas,'keydown',e=>{this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&e.key.startsWith('Arrow'))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowRight':this.orbit.yaw+=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;default:handled=false;}if(handled)e.preventDefault();});
+    on(this.canvas,'keydown',e=>{this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&(e.key.startsWith('Arrow')||/^[a-z]$/i.test(e.key)))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowRight':this.orbit.yaw+=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;default:handled=false;}if(handled)e.preventDefault();});
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
     on(this.canvas,'webglcontextlost',e=>{e.preventDefault();this.finishMotion();this.contextLost=true;clearTimeout(this.restoreTimer);this.restoreTimer=setTimeout(()=>{if(this.contextLost&&!this.disposed)this.onError?.('The 3D graphics context was interrupted.');},5000);});
     on(this.canvas,'webglcontextrestored',()=>{clearTimeout(this.restoreTimer);this.restoreTimer=null;this.contextLost=false;this.shadowDirty=true;this.labelSizeDirty=true;this.poseReset=new Set(this.actors.keys());this.compositor?.resize();this.cadence?.reset(QUALITY[this.quality].fps);});
@@ -562,7 +572,7 @@ export class BattleStage{
     for(const unit of this.visibleUnits){
       const a=this.actors.get(unit.id),o=frame?.unitOverrides[unit.id],position=o??unit;
       const walk=this.divisionStep(unit,now);
-      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;a.group.position.z+=contact.z;a.group.position.y=this.environment.groundHeight(a.group.position.x,a.group.position.z);a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
+      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z);a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
       const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle';
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
       const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
@@ -578,10 +588,10 @@ export class BattleStage{
       if(a.crowd){
         // Ranks thin when the blow lands, not when the order is given.
         const pair=this.animation?.timeline.units?.[unit.id],pending=pair&&this.animation.timeline.tracks.some(t=>t.unitId===unit.id&&['hit','retreat'].includes(t.pose)&&(frame?.time??Infinity)<t.start),ranks=pending?pair.before:unit;
-        const slots=this.followerSlots(unit);a.crowd.update({slots,visible:followerCount(ranks,Math.min(slots.length,a.crowd.max)),heightAt:this.environment.groundHeight,time:this.elapsed,reset:this.poseReset.has(unit.id),unitId:unit.id,
+        const slots=this.followerSlots(unit);a.crowd.update({slots,visible:followerCount(ranks,Math.min(slots.length,a.crowd.max)),heightAt:this.surfaceHeight,time:this.elapsed,reset:this.poseReset.has(unit.id),unitId:unit.id,
           onFall:this.remains?fall=>this.remains.fall({...this.fallenKind(unit,a),world:fall.world,yaw:fall.yaw+.35*(fall.index%2?1:-1),animate:!this.reducedMotion}):null});
       }
-      a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,groundHeight:this.environment.groundHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
+      a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,groundHeight:this.surfaceHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
       // Marching feet and hooves wear the ground of the board.
       if(this.remains&&!this.reducedMotion&&['walk','run'].includes(pose.motion)){const mounted=!!a.group.userData.actor?.mounted;this.remains.tread(a.group.position.x,a.group.position.z,{mounted,id:unit.id});(a.crowd?.footprints??[]).forEach((f,i)=>this.remains.tread(f.x,f.z,{mounted,id:`${unit.id}:${i}`}));}
       if(!this.reducedMotion)this.combatMotion(unit,a,pose,o,dt);
@@ -592,7 +602,7 @@ export class BattleStage{
     }
     if(this.tacticalArcs)for(const [i,line]of this.tacticalArcs.entries())if(line.visible)line.material.opacity=this.reducedMotion?.85:(line.userData.linkKind==='guard'?.78+.17*Math.sin(this.elapsed*3.2+i):.75+.2*Math.sin(this.elapsed*4.8+i));
     this.pairedContacts=this.reducedMotion?0:applyPairedContacts(this.actors,frame,this.animation?.timeline);
-    this.contactShadows.update(this.actors,this.environment.groundHeight);
+    this.contactShadows.update(this.actors,this.surfaceHeight);
     const selected=this.actors.get(this.selected);this.selectedRing.visible=!!selected?.group.visible&&!this.ceremony;if(selected){this.selectedRing.position.copy(selected.group.position);this.selectedRing.position.y+=.065;this.selectedRing.rotation.y=this.selectedYaw??0;this.selectedRing.scale.setScalar(selected.group.userData.actor?.mounted?1.45:1);}
     this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);let projectileCount=0,sparkCount=0,ringCount=0;const volleyShots=[];
     for(const fx of frame?.effects??[]){const readout=effectReadout(fx);

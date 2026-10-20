@@ -10,9 +10,10 @@ function platform({size=65536,fail=[],amplitude=.3}={}){
   const param=()=>({value:0,events:[],cancelScheduledValues(){},setValueAtTime(value){this.value=value;},linearRampToValueAtTime(value,at){this.value=value;this.events.push({value,at});}});
   const node=()=>({disconnected:false,connect(target){this.target=target;},disconnect(){this.disconnected=true;}});
   class Context{
-    constructor(){this.currentTime=1;this.state='suspended';this.destination=node();this.sources=[];this.decodeCount=0;contexts.push(this);}
+    constructor(){this.currentTime=1;this.state='suspended';this.destination=node();this.sources=[];this.filters=[];this.decodeCount=0;contexts.push(this);}
     createGain(){return {...node(),gain:param()};}
     createStereoPanner(){return {...node(),pan:param()};}
+    createBiquadFilter(){const filter={...node(),frequency:param(),Q:param()};this.filters.push(filter);return filter;}
     createDynamicsCompressor(){return {...node(),threshold:param(),knee:param(),ratio:param()};}
     createBufferSource(){const source={...node(),start(at,offset){this.started=[at,offset];},stop(at){this.stopped=at??0;},end(){this.onended?.();}};this.sources.push(source);return source;}
     async resume(){this.state='running';}
@@ -106,4 +107,28 @@ test('Measured quiet footstep gets bounded playback gain, audible onset and no m
   assert.ok(foleyGain('foley-step',.0115585)>34&&foleyGain('foley-step',.0115585)<35);assert.equal(foleyGain('foley-step',.000001),40);assert.equal(foleyGain('foley-step',0),0);assert.ok(foleyGain('foley-impact',1.0247)<1);
   const p=platform({amplitude:.0115585}),s=p.sound;s.configure({audio:true,audioVolume:.5});await s.unlock();await settle();assert.equal(s.cue('footstep',{intensity:.4}),true);
   const source=p.contexts[0].sources[0],peak=source.buffer.getChannelData(0)[300];assert.ok(Math.abs(peak-.0115585)<1e-8);assert.ok(source.target.gain.value>4&&source.target.gain.value<5);assert.ok(source.started[1]>0,'Quiet recording uses a peak-relative onset threshold.');s.dispose();
+});
+
+test('V034 public battlefield pressure changes existing loop colour and clarity without new voices, downloads or repeated fade restarts',async()=>{
+  const p=platform(),s=p.sound,state=field(5);state.encounter.units=[{id:'hero',side:'player',hp:10,maxHp:10,x:1,y:1}];
+  s.configure({music:true,ambience:true});s.update(state);await s.unlock();await settle();
+  const c=p.contexts[0],music=c.sources.find(x=>x.buffer.id==='music-battle'),ambience=c.sources.find(x=>x.buffer.id==='ambience-dry'),musicFilter=music.target.target,ambientFilter=ambience.target.target;
+  const originalGain=music.target.gain.value,originalCutoff=musicFilter.frequency.value,calls=p.calls.length,sources=c.sources.length;
+  state.encounter.units[0].hp=2;s.update(state);await settle();
+  assert.equal(s.stats().direction.mood,'urgent');assert.ok(music.target.gain.value<originalGain,'The score recedes so commands and contacts stay audible');
+  assert.ok(musicFilter.frequency.value>originalCutoff,'Tension retains brighter musical transients');assert.ok(ambientFilter.frequency.value<5700);
+  const ramps=musicFilter.frequency.events.length;
+  for(let i=0;i<50;i++)s.update(state);await settle();assert.equal(musicFilter.frequency.events.length,ramps,'Stable rendering does not restart envelopes');
+  assert.equal(p.calls.length,calls);assert.equal(c.sources.length,sources);assert.equal(s.stats().loops,2);
+  s.configure({music:false,ambience:false});assert.equal(s.stats().sources,0);assert.ok(c.filters.every(f=>f.disconnected));s.dispose();
+});
+
+test('V034 narration restores the pressure mix and rain transitions retain bounded tails and hidden-page cancellation',async()=>{
+  const p=platform(),s=p.sound,state=field(5);state.encounter.turn=8;state.encounter.turnLimit=9;
+  s.configure({music:true,ambience:true,voices:true});s.update(state);await s.unlock();await settle();
+  const c=p.contexts[0],music=c.sources.find(x=>x.buffer.id==='music-battle'),urgentGain=music.target.gain.value;
+  await s.speak('rally');assert.ok(music.target.gain.value<urgentGain);c.sources.find(x=>x.buffer.id==='voice-rally').end();assert.equal(music.target.gain.value,urgentGain);
+  state.encounter.weather='rain';s.update(state);await settle();assert.ok(c.sources.some(x=>x.buffer.id==='ambience-rain'));assert.ok(s.stats().sources<=4);
+  p.page.hidden=true;p.listeners.get('visibilitychange')();assert.equal(s.stats().sources,0);assert.ok(c.filters.every(f=>f.disconnected));
+  s.update(state);await settle();assert.equal(s.stats().sources,0);s.dispose();
 });

@@ -30,8 +30,8 @@ test('Fitted eyes keep front-facing iris triangles within the almond opening for
   for(const unit of units){const model=catalog.anatomy(identity(unit));for(const side of [-1,1]){
     const eye=actorEye({side,facePoint:model.facePoint}),p=eye.iris.attributes.position,ix=eye.iris.index;
     for(let i=0;i<p.count;i++){
-      const x=p.getX(i)-side*.036,y=p.getY(i)-.094,arch=Math.max(0,1-(x/.0148)**2)**.7;
-      assert.ok(y<=.0045*arch+side*x*.035-.00014&&y>=-.0035*arch+side*x*.035+.00014,'Iris stays behind the actual curved aperture.');
+      const x=p.getX(i)-side*.036,y=p.getY(i)-.094,arch=Math.max(0,1-(x/.0133)**2)**.7;
+      assert.ok(y<=.0036*arch+side*x*.035-.00014&&y>=-.0034*arch+side*x*.035+.00014,'Iris stays behind the actual relaxed curved aperture.');
     }
     const a=new T.Vector3(),b=new T.Vector3(),c=new T.Vector3();let visible=0;
     for(let i=0;i<ix.count;i+=3){a.fromBufferAttribute(p,ix.getX(i));b.fromBufferAttribute(p,ix.getX(i+1));c.fromBufferAttribute(p,ix.getX(i+2));const cross=b.sub(a).cross(c.sub(a));if(cross.lengthSq()<1e-22)continue;assert.ok(cross.z>0);visible++;}
@@ -60,7 +60,7 @@ test('Actual production eyelid vertices close through skinning while the outer r
     actor.update({time:0,motion:'idle',resetPose:true});const open=positions(),peak=4.58-(actorKit(unit).identity%13)*.13;
     actor.update({time:peak,motion:'idle',resetPose:true});const closed=positions();
     for(let i=0;i<entries.length;i++){
-      assert.ok(Math.abs((closed[i].y-open[i].y)+entries[i].weight*.0077)<2e-6,'Rendered vertex follows its authored lid/head blend.');
+      assert.ok(Math.abs((closed[i].y-open[i].y)+entries[i].weight*.0067)<2e-6,'Rendered vertex follows its authored relaxed-lid/head blend.');
       if(entries[i].weight===0)assert.ok(open[i].distanceTo(closed[i])<2e-6);
     }
     actor.update({time:peak,motion:'idle',resetPose:true,reducedMotion:true});positions().forEach((v,i)=>assert.ok(v.distanceTo(open[i])<2e-6));
