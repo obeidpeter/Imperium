@@ -1,8 +1,8 @@
 # IMPERIUM: From Recruit to Emperor
 
-![Version 0.31 painted officer and company in the Chapter V battlefield](docs/images/v031-painted.png)
+![Version 0.32 painted officer and company in the Chapter V battlefield](docs/images/v031-painted.png)
 
-*Actual version 0.31 gameplay, using the Painted figure style at a legally reached Chapter V checkpoint.*
+*Actual gameplay from the 0.32 work (captured as draft 0.31, before click to walk was merged in), using the Painted figure style at a legally reached Chapter V checkpoint.*
 
 A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
 
@@ -12,7 +12,7 @@ The game combines original prose and locally bundled painted artwork with three-
 
 New chronicles gain interactive gates, damaged bridges, barricades, pitch fire and competing supply/signal objectives. Selected chapters expand to 10 × 8 boards. Cohesion, suppression and weather enter the exact combat forecast; enemies coordinate their approach and protected columns stay with the commander. Political Contests add motions, rival amendments and reforms that affect later battles. Existing chronicles can opt in at camp, preserving suspended encounters and exact retries.
 
-Sculpted figures receive fitted equipment details and High-quality cloth sheen; painted Roman figures gain a new four-direction atlas and additional rig responses. Melee contact and shield reactions follow the committed impact. Settings exposes real frame measurements, with reflection refresh adapting to its measured cost. See the [rules](docs/expanded-campaign-v031.md), [art provenance](docs/art-generation-v031.md) and [verification record](docs/release-validation-v031.md) for coverage and limits.
+Sculpted figures receive fitted equipment details and High-quality cloth sheen; painted Roman figures gain a new four-direction atlas and additional rig responses. Melee contact and shield reactions follow the committed impact. Settings exposes real frame measurements, with reflection refresh adapting to its measured cost. Click-to-walk routes go around closed gates and count rain on high ground, so the preview and the walk still match the rules. This work was prepared as draft 0.31 and renumbered 0.32 when it was merged after click to walk; its records keep their `v031` file names. See the [rules](docs/expanded-campaign-v031.md), [art provenance](docs/art-generation-v031.md) and [verification record](docs/release-validation-v031.md) for coverage and limits.
 
 ## Version 0.31 — click to walk
 

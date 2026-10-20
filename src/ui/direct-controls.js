@@ -58,7 +58,7 @@ function walkTo(state,selected,t){return {kind:'move',action:'move',target:t,goa
 export function routeSummary(route){
   if(!route)return '';
   if(route.stop)return route.reachable?`Walk here · ${route.cost} movement`:`Beyond reach · stops at ${tile(route.stop)} this turn`;
-  return {moved:'Movement already spent this turn',blocked:'Impassable ground',unreachable:'No route from here','no-closer':'No nearer ground this turn'}[route.reason]??'';
+  return {moved:'Movement already spent this turn',blocked:'Impassable ground',gate:'Closed gate',unreachable:'No route from here','no-closer':'No nearer ground this turn'}[route.reason]??'';
 }
 
 export function nextReadyUnit(state,selected='hero'){

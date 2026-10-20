@@ -1,5 +1,7 @@
 # Character artwork — 0.31
 
+*Released in 0.32.0. This was prepared as draft 0.31 before click to walk (0.31.0) was merged, so the file names keep `v031`.*
+
 Generated 19 October 2026 with the built-in OpenAI image-generation tool. The reference was the project's own `assets/tactical/units-roman.webp`. No third-party reference image was supplied. The final runtime image is `assets/tactical/units-roman-v031.webp`; its source/export hashes, dimensions and size are in `asset-manifest.json`.
 
 The sheet depicts a recruit, mail-armoured legionary, veteran officer and senior commander, with four authored views per costume. This is a painted atlas used by the 2D renderer and painted 3D figures, not a new sculpted anatomical model. The existing sculpted figures receive code-authored equipment detail and High-quality cloth sheen separately.

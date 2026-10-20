@@ -1,5 +1,7 @@
 # Expanded campaign rules — 0.31
 
+*Released in 0.32.0. This was prepared as draft 0.31 before click to walk (0.31.0) was merged, so the file names keep `v031`.*
+
 New games started through the interface enable edition 31. Existing chronicles retain their rules; **Enable expanded campaign** at a camp checkpoint opts into the new systems for subsequent encounters. A suspended encounter is never silently upgraded. Core `newGame()` callers remain legacy-compatible unless they request `featureEdition:31`.
 
 ## Battlefield choices
@@ -8,7 +10,7 @@ Every non-training battle offers two mutually exclusive opportunities: recover a
 
 Chapter III onward adds a timber barricade and pitch brazier. Intact barricades give adjacent defenders 1 protection. Dismantling removes it. Ignited pitch blocks sight through nearby smoke and deals 2 damage to **either side** within one tile at round end. It burns for three rounds, or one in rain; an adjacent commander can extinguish it.
 
-Chapters V, VIII, IX and XII use selected 10 × 8 battlefields with a side corridor. A closed gate blocks movement and sight; opening it admits passage. Repairing the damaged bridge turns its tile into a passable ford. Units, forecasts, path finding, picking and both renderers share the expanded bounds. Distinct chapter themes place a landmark outside the tactical board.
+Chapters V, VIII, IX and XII use selected 10 × 8 battlefields with a side corridor. A closed gate blocks movement and sight; opening it admits passage. Click-to-walk routes and their previews go around a closed gate and report it as closed. Repairing the damaged bridge turns its tile into a passable ford. Units, forecasts, path finding, picking and both renderers share the expanded bounds. Distinct chapter themes place a landmark outside the tactical board.
 
 ## Cohesion, weather and opposition
 

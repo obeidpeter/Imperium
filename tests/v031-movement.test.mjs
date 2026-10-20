@@ -228,7 +228,7 @@ test('v0.31.0: the board hint and its accessible name describe the move the clic
   assert.match(label(confirm), /Select a friendly unit, opponent or ground to preview\. Select the same target again to confirm\./);
 });
 
-test('v0.31.0: this edition is 0.31.0', async () => {
+test('v0.31.0: the configured edition matches the package', async () => {
   const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.31.0');
+  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).version);
 });
