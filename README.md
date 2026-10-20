@@ -1,5 +1,9 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.36 — the first generated scenery
+
+Chapter V now has a small supply camp beside the battlefield: spoil baskets, mine timbers, mudbrick, storage jars and a leather tent. The models were generated with Tripo from text prompts and refined in Blender, and they sit outside the board, so the battles and their rules are unchanged. They load only with Chapter V, at Balanced and High quality. The [asset pipeline](docs/asset-pipeline.md) describes how generated models are made, checked, recorded and placed.
+
 ## Version 0.35.1 — one battle per approach, and fixes after the 0.35 review
 
 A field approach now covers one battle, like the operational preparation, so a costly approach is not charged again unless you choose it. A rider withdrawn by a braced counter blow shakes nearby companions. Fallen figures on a repaired bridge rest on the deck, a figure-style change keeps figures until their replacements are ready, footstep sounds are shared fairly on busy turns, and the signal flag no longer changes shared materials. A change to the character code no longer fails `npm test` until the handoff GLBs are re-exported; `npm run audit:handoff` reports a stale export. See the [changelog](CHANGELOG.md).

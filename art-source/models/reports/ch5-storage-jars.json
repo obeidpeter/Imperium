@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-storage-jars.glb",
+    "bytes": 17231752,
+    "sha256": "f6f35b47968c1cf7b613e76951f3d07ea9e80dab1b6b461c9f3622334f9c818d",
+    "triangles": 501572
+  },
+  "output": {
+    "path": "assets/models/chapters/05/ch5-storage-jars.glb",
+    "bytes": 161296,
+    "sha256": "8e4ec225a7b2541efc403cc100bae5c4e1928fd7a3da341a6cf43ad278d321d2",
+    "triangles": 3919
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.1,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.7432300456986634,
+  "sizeMetres": {
+    "width": 1.3308,
+    "height": 1.1,
+    "depth": 1.7481
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_a95f1fff-ae87-4967-a352-a6c803227789",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_a95f1fff-ae87-4967-a352-a6c803227789",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_a95f1fff-ae87-4967-a352-a6c803227789",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

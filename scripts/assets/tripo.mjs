@@ -56,8 +56,9 @@ async function finish(file,request){
   const raw=`art-source/models/raw/${request.id}.glb`,bytes=await download(output[field],raw);
   let preview=null;
   if(output.rendered_image){preview=`art-source/models/raw/${request.id}-tripo-render${new URL(output.rendered_image).pathname.match(/\.\w+$/)?.[0]??'.png'}`;await download(output.rendered_image,preview).catch(()=>{preview=null;});}
+  // Exact only when generate runs one task at a time; parallel runs share the balance.
   const spent=request.provenance.balanceBefore===undefined?null:request.provenance.balanceBefore-await balance();
-  Object.assign(request.provenance,{status:task.status,completedAt:new Date().toISOString(),output:field,raw,rawBytes:bytes.length,rawSha256:createHash('sha256').update(bytes).digest('hex'),
+  Object.assign(request.provenance,{status:task.status,generatedAt:new Date().toISOString(),output:field,raw,rawBytes:bytes.length,rawSha256:createHash('sha256').update(bytes).digest('hex'),
     tripoInput:task.input??null,modelVersion:task.input?.model_version??task.model_version??null,creditsSpent:spent,tripoRender:preview});
   request.status='generated: awaiting review';
   await writeFile(file,JSON.stringify(request,null,2)+'\n');

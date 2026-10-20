@@ -74,8 +74,11 @@ assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await re
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
 const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
 for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&build.deferredAssets.includes(path),'Complete deferred inventory retains female resources: '+path);
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path));
+// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone.
+const chapterModel=path=>/^\.\/assets\/models\/chapters\/(\d\d)\//.exec(path)?.[1];
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!chapterModel(path));
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
+for(const path of build.showcaseAssets.filter(chapterModel))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),Number(chapterModel(path))===Number(chapter),'Chapter '+chapter+' and generated scenery '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');

@@ -1,10 +1,10 @@
 {
   "id": "ch5-spoil-baskets",
-  "status": "proposed: awaiting the owner's review and Tripo access",
+  "status": "in the game since 0.36.0",
   "chapters": [
     5
   ],
-  "use": "Off-board scenery beside the Chapter V mine works; decorative, outside the playable board, never a game cell.",
+  "use": "Off-board scenery: spoil baskets from the mine works in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",
@@ -19,10 +19,32 @@
     "maxHeight": 0.9
   },
   "provenance": {
-    "taskId": null,
-    "modelVersion": null,
-    "generatedAt": null,
-    "rawSha256": null,
-    "licence": "Record the terms of the owner's Tripo plan before the model ships."
+    "taskId": "e4a3180a-7bb9-438f-a9c2-15c716734d0a",
+    "modelVersion": "v2.5-20250123",
+    "generatedAt": "2026-10-20T17:23:56.260Z",
+    "rawSha256": "3abd0e12b9daebfc571f3524f02c066e06167065aaac1cafc1f92fd812d36284",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T17:21:36.635Z",
+    "balanceBefore": 4920,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A cluster of three woven palm-fibre baskets heaped with excavated pale earth and broken mudbrick, spoil carried out of a siege mine. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-spoil-baskets.glb",
+    "rawBytes": 18840392,
+    "tripoInput": {
+      "prompt": "A cluster of three woven palm-fibre baskets heaped with excavated pale earth and broken mudbrick, spoil carried out of a siege mine. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements.",
+      "model_version": "v2.5-20250123",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-spoil-baskets-tripo-render.webp",
+    "creditsNote": "Four tasks ran in parallel and the balance fell from 4,980 to 4,900: 20 credits each."
   }
 }

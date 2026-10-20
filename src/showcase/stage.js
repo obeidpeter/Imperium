@@ -11,6 +11,7 @@ import {createActor} from './actors.js';
 import {createPaintedLighting,createPaintedActor,paintedLight} from './painted-actor.js';
 import {FORMATION_LIMIT,formationEligible,formationSlots,formationShape,followerCount,createSkinnedCrowd} from './formation.js';
 import {createBattleRemains,sculptedFallenKind,paintedFallenKind} from './battle-remains.js';
+import {createSceneryModels} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts} from './atmosphere.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
@@ -164,10 +165,10 @@ export class BattleStage{
     this.sun=new T.DirectionalLight(this.profile.sun,this.profile.sunIntensity*(balance.sun??1));this.sun.position.fromArray(this.profile.sunPosition??[-16,24,-12]);this.sun.castShadow=true;Object.assign(this.sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:1,far:80});this.sun.shadow.normalBias=.012;this.sun.shadow.bias=-.00008;this.sun.shadow.radius=3;this.scene.add(this.sun);this.scene.add(this.sun.target);this.sunOffset=this.sun.position.clone();this.shadowFit={x:0,z:0,half:23};
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
-    this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});
+    this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});this.rebuildSceneryModels();
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();this.profileFrames=0;
     this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight);
-    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);
+    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);
     this.battleRemains=battleRemains!==false;this.rebuildRemains();
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
@@ -425,7 +426,7 @@ export class BattleStage{
     for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
     pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
@@ -445,6 +446,15 @@ export class BattleStage{
       t=plan.done?1:clamp((now-plan.start-move.order*220)/Math.max(1,length/1.35*1000),0,1),k=ease(t),at={x:move.from.x+(move.to.x-move.from.x)*k,y:move.from.y+(move.to.y-move.from.y)*k};
     const heading=t<1?Math.atan2(to.x-from.x,to.z-from.z):Math.atan2(this.world(move.face).x-to.x,this.world(move.face).z-to.z);
     return {at,moving:t>0&&t<1,distance:length*k,yaw:Number.isFinite(heading)?heading:0};
+  }
+  // Generated chapter scenery: re-placed on the rebuilt ground, absent at Performance quality.
+  rebuildSceneryModels(){
+    this.sceneryModels?.dispose();
+    const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,{chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z)});
+    this.canvas.dataset.sceneryModels=own.placements.length?'loading':'0';
+    // Models arrive after the camera cutaway is built; rebuild it so they fade like other scenery.
+    own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;
+      if(ids.length&&this.sceneryOcclusion){this.sceneryOcclusion.dispose();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,own.group);}});
   }
   // What the battle leaves on the ground (bodies, spent arrows, trodden earth),
   // rebuilt with the ground it marks. Contests and ceremonies leave none.
@@ -725,7 +735,7 @@ export class BattleStage{
     this.labelStats=counts;this.labelSizeDirty=false;
   }
   stats(){return {device:this.deviceReport,frameProfile:this.frameProfile.stats(),pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
+  dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.sceneryModels?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.
     if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();}

@@ -71,8 +71,9 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // and the original material maps remain in the complete historical pack.
   // Cold chapter restores need only active artwork and anatomy. Aelia's model
   // is deferred until Chapter VIII; the complete inventory retains it always.
-  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
-  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
+  // Generated scenery in assets/models/chapters/NN/ belongs to chapter NN only.
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),own=`./assets/models/chapters/${String(n).padStart(2,'0')}/`;
+  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/chapters/')&&!path.startsWith(own))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
 }
 let chapterRequest=0;

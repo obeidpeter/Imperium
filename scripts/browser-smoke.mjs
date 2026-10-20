@@ -2,7 +2,8 @@
 // Game and the Chapter I drill in 2D (walk by keyboard and pointer, Undo,
 // Confirm moves, an opponent's preview, Help), a keyboard walk in the 3D view,
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
-// (field-object readouts), a field approach chosen at a restored Chapter V camp,
+// (field-object readouts), a field approach chosen at a restored Chapter V camp
+// (with Chapter V's generated scenery loaded in 3D),
 // and touch at phone width (hold to preview, tap to walk). It fails on any page or console error. Development and CI only: it
 // needs Playwright, which is not a project dependency, and a production build.
 //
@@ -158,9 +159,11 @@ async function fieldApproach(){
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'false');
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
+  // The generated supply camp loads in the 3D view through the page's own policy and worker.
+  await page.waitForFunction(()=>document.querySelector('#battle-board')?.dataset.sceneryModels==='5',null,{timeout:300000,polling:500});
   await view(page,'2d');await page.focus('#battle-board');
   await expectAnnouncement(page,/^Grid 9C\. Side gate \(open\)\./,()=>keys(page,['ArrowUp',...Array(8).fill('ArrowRight')]));
-  await page.context().close();console.log('ok - field approach: chosen on a restored Chapter V camp table, and the engineers have opened the gate');
+  await page.context().close();console.log('ok - field approach: chosen on a restored Chapter V camp table, the generated supply camp loads in 3D, and the engineers have opened the gate');
 }
 
 // Touch has no hover: holding a finger still previews, lifting it commits nothing, a tap walks.

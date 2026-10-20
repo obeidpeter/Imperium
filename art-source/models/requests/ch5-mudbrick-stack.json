@@ -1,10 +1,10 @@
 {
   "id": "ch5-mudbrick-stack",
-  "status": "proposed: awaiting the owner's review and Tripo access",
+  "status": "in the game since 0.36.0",
   "chapters": [
     5
   ],
-  "use": "Off-board scenery: repair materials behind the Chapter V curtain wall; decorative, outside the playable board, never a game cell.",
+  "use": "Off-board scenery: wall-repair materials in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",
@@ -19,10 +19,32 @@
     "maxHeight": 1.1
   },
   "provenance": {
-    "taskId": null,
-    "modelVersion": null,
-    "generatedAt": null,
-    "rawSha256": null,
-    "licence": "Record the terms of the owner's Tripo plan before the model ships."
+    "taskId": "48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
+    "modelVersion": "v2.5-20250123",
+    "generatedAt": "2026-10-20T17:23:27.083Z",
+    "rawSha256": "c19290ab0bfb33a5c09ac6f3fa472a9ac40bbc94ea3ce5253f89ddaa6e755d76",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T17:21:34.179Z",
+    "balanceBefore": 4940,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A neat stack of about forty sun-dried mudbricks with straw temper on a low earthen base, a few broken bricks beside it. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-mudbrick-stack.glb",
+    "rawBytes": 17724740,
+    "tripoInput": {
+      "prompt": "A neat stack of about forty sun-dried mudbricks with straw temper on a low earthen base, a few broken bricks beside it. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements.",
+      "model_version": "v2.5-20250123",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-mudbrick-stack-tripo-render.webp",
+    "creditsNote": "Four tasks ran in parallel and the balance fell from 4,980 to 4,900: 20 credits each."
   }
 }

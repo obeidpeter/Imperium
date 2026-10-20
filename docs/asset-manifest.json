@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Five 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -4881,6 +4881,211 @@
         "sha256": "67d28da483f03cc4835a5cbce5b873a33f5fcabe20e3c552ce55cf54db101314"
       },
       "license": "Project AI-generated artwork; provenance is not a guarantee of exclusive copyright."
+    },
+    {
+      "id": "ch5-storage-jars",
+      "path": "assets/models/chapters/05/ch5-storage-jars.glb",
+      "subject": "Generated Chapter V scenery: Terracotta storage jars, two standing and two on their sides",
+      "source": {
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "generator": "Tripo",
+        "modelVersion": "v2.5-20250123",
+        "taskId": "a95f1fff-ae87-4967-a352-a6c803227789",
+        "generatedAt": "2026-10-20T17:14:34.634Z",
+        "prompt": "art-source/models/requests/ch5-storage-jars.json",
+        "rawBytes": 17231752,
+        "rawSha256": "f6f35b47968c1cf7b613e76951f3d07ea9e80dab1b6b461c9f3622334f9c818d",
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.1,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-storage-jars.json"
+      },
+      "usage": "Off-board scenery: terracotta stores in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "export": {
+        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
+        "bytes": 161296,
+        "sha256": "8e4ec225a7b2541efc403cc100bae5c4e1928fd7a3da341a6cf43ad278d321d2",
+        "triangles": 3919,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.3308,
+          "height": 1.1,
+          "depth": 1.7481
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-gallery-timbers",
+      "path": "assets/models/chapters/05/ch5-gallery-timbers.glb",
+      "subject": "Generated Chapter V scenery: Rough timber shoring frame for a siege-mine gallery",
+      "source": {
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "generator": "Tripo",
+        "modelVersion": "v2.5-20250123",
+        "taskId": "ad77a449-ea69-4c32-9ba6-60c45bb6812b",
+        "generatedAt": "2026-10-20T17:22:42.412Z",
+        "prompt": "art-source/models/requests/ch5-gallery-timbers.json",
+        "rawBytes": 17707208,
+        "rawSha256": "0d78cc1044f9f81ee3652452bfda038697b86374335947ce38cafdf4d1928204",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-gallery-timbers.json"
+      },
+      "usage": "Off-board scenery: a spare countermine shoring frame in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "export": {
+        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
+        "bytes": 271412,
+        "sha256": "cd58d67fdb9d29d91fdd2506f31a3f1470709a67e0a3632288576c3466634b8e",
+        "triangles": 4899,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9525,
+          "height": 2.0,
+          "depth": 2.1258
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-leather-tent",
+      "path": "assets/models/chapters/05/ch5-leather-tent.glb",
+      "subject": "Generated Chapter V scenery: Roman eight-man leather tent on a ridge pole",
+      "source": {
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "generator": "Tripo",
+        "modelVersion": "v2.5-20250123",
+        "taskId": "efad6e3f-58d8-4752-a888-b23213a51cf3",
+        "generatedAt": "2026-10-20T17:23:16.673Z",
+        "prompt": "art-source/models/requests/ch5-leather-tent.json",
+        "rawBytes": 17466260,
+        "rawSha256": "2e3e5fda2f03f09e69ca9c12765285d508dd1631f4856074368d8605e4906dcf",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.8,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-leather-tent.json"
+      },
+      "usage": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "export": {
+        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
+        "bytes": 230672,
+        "sha256": "5f62a77089572ace87e6478c9d777986596be7cc20a18758e13eee5f1804192d",
+        "triangles": 4898,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.0852,
+          "height": 1.8,
+          "depth": 2.0639
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-mudbrick-stack",
+      "path": "assets/models/chapters/05/ch5-mudbrick-stack.glb",
+      "subject": "Generated Chapter V scenery: Stack of mudbricks with loose bricks beside it",
+      "source": {
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "generator": "Tripo",
+        "modelVersion": "v2.5-20250123",
+        "taskId": "48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
+        "generatedAt": "2026-10-20T17:23:27.083Z",
+        "prompt": "art-source/models/requests/ch5-mudbrick-stack.json",
+        "rawBytes": 17724740,
+        "rawSha256": "c19290ab0bfb33a5c09ac6f3fa472a9ac40bbc94ea3ce5253f89ddaa6e755d76",
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.8,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-mudbrick-stack.json"
+      },
+      "usage": "Off-board scenery: wall-repair materials in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "export": {
+        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
+        "bytes": 173144,
+        "sha256": "8b6ffc1d772acfd7f0c9605b26b893df5c73f93f023f7482275579621e33162b",
+        "triangles": 2937,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.4632,
+          "height": 0.8,
+          "depth": 1.0826
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-spoil-baskets",
+      "path": "assets/models/chapters/05/ch5-spoil-baskets.glb",
+      "subject": "Generated Chapter V scenery: Woven baskets heaped with mining spoil",
+      "source": {
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "generator": "Tripo",
+        "modelVersion": "v2.5-20250123",
+        "taskId": "e4a3180a-7bb9-438f-a9c2-15c716734d0a",
+        "generatedAt": "2026-10-20T17:23:56.260Z",
+        "prompt": "art-source/models/requests/ch5-spoil-baskets.json",
+        "rawBytes": 18840392,
+        "rawSha256": "3abd0e12b9daebfc571f3524f02c066e06167065aaac1cafc1f92fd812d36284",
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 72,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-spoil-baskets.json"
+      },
+      "usage": "Off-board scenery: spoil baskets from the mine works in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "export": {
+        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
+        "bytes": 188228,
+        "sha256": "5b95258e2b7b0b3f30cd888e56d4712b8e6c1d1d22686f1e80fa259d71e65cad",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.7777,
+          "height": 0.6,
+          "depth": 0.9629
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -4948,7 +5153,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-19T09:50:26.791467+00:00",
+  "updatedAt": "2026-10-20T17:31:36.794608+00:00",
   "totalArtworkBytes": 7385566,
   "budgets": {
     "portraitsBytes": 400000,
@@ -4969,10 +5174,10 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 3,
+    "models": 8,
     "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 10600941,
-  "totalModelBytes": 465127
+  "totalBundledAssetBytes": 11625693,
+  "totalModelBytes": 1489879
 }

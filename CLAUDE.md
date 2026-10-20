@@ -15,7 +15,7 @@ Use Node.js 20 or later. The campaign rules have no runtime dependencies. The ca
 - `npm run preview` — serve `dist/` through a plain static server.
 - `npm run verify` — run the tests, autoplay and production build.
 - `npm run asset:process`, `npm run asset:check`, `npm run asset:preview` — the generated 3D asset pipeline (Tripo → Blender → the game): process a model under Blender (`BLENDER_PYTHON` or `BLENDER`), check it against its budget, and render a review sheet (Playwright). Neither tool is a project dependency. See [the asset pipeline](docs/asset-pipeline.md).
-- `npm run smoke` — drive the production build in headless Chromium (New Game, walking, Confirm moves, a restored expanded field, phone touch). Run `npm run build` first. It needs Playwright, which is not a project dependency: install it separately or set `PLAYWRIGHT_MODULE`. CI runs it on every pull request.
+- `npm run smoke` — drive the production build in headless Chromium (New Game, walking, Confirm moves, a restored expanded field, a field approach with Chapter V's generated scenery loaded in 3D, phone touch). Run `npm run build` first. It needs Playwright, which is not a project dependency: install it separately or set `PLAYWRIGHT_MODULE`. CI runs it on every pull request.
 
 Check `package.json` for the authoritative current scripts. Build configuration, including the site address, belongs in the shared configuration/build boundary rather than hard-coded host URLs scattered through the game. Publishing, DNS and live-phone checks are the owner's next deployment steps.
 

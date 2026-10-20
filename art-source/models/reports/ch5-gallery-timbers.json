@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-gallery-timbers.glb",
+    "bytes": 17707208,
+    "sha256": "0d78cc1044f9f81ee3652452bfda038697b86374335947ce38cafdf4d1928204",
+    "triangles": 490456
+  },
+  "output": {
+    "path": "assets/models/chapters/05/ch5-gallery-timbers.glb",
+    "bytes": 271412,
+    "sha256": "cd58d67fdb9d29d91fdd2506f31a3f1470709a67e0a3632288576c3466634b8e",
+    "triangles": 4899
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.1255963988854476,
+  "sizeMetres": {
+    "width": 0.9525,
+    "height": 2.0,
+    "depth": 2.1258
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_ad77a449-ea69-4c32-9ba6-60c45bb6812b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_ad77a449-ea69-4c32-9ba6-60c45bb6812b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_ad77a449-ea69-4c32-9ba6-60c45bb6812b",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

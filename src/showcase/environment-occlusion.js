@@ -43,11 +43,12 @@ const fragment=`
   if(cutPattern<sceneryCut*cutawayAmount*0.94)discard;
 `;
 
-export function createSceneryOcclusion(group){
+// Covers every mesh in the given groups: the environment and any generated scenery.
+export function createSceneryOcclusion(...groups){
   const entries=[],copies=new Map(),uniforms={cutawayCamera:{value:new T.Vector3()},cutawayTargets:{value:[new T.Vector4(),new T.Vector4()]},cutawayAmount:{value:0}};
   let active=false,disposed=false,targetCount=0;
   const eligible=(object,material)=>material&&!material.transparent&&!object.userData.environmentGround&&material.userData.environmentFinish!=='floor'&&material.userData.environmentFinish!=='ground';
-  group?.traverse(object=>{
+  for(const group of groups)group?.traverse(object=>{
     if(!object.isMesh||object.isSkinnedMesh||object.userData.cameraOcclusion===false)return;
     for(let p=object.parent;p;p=p.parent)if(p.userData.cameraOcclusion===false)return;
     const original=object.material,list=Array.isArray(original)?original:[original];

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-mudbrick-stack.glb",
+    "bytes": 17724740,
+    "sha256": "c19290ab0bfb33a5c09ac6f3fa472a9ac40bbc94ea3ce5253f89ddaa6e755d76",
+    "triangles": 501040
+  },
+  "output": {
+    "path": "assets/models/chapters/05/ch5-mudbrick-stack.glb",
+    "bytes": 173144,
+    "sha256": "8b6ffc1d772acfd7f0c9605b26b893df5c73f93f023f7482275579621e33162b",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.0808821313597627,
+  "sizeMetres": {
+    "width": 0.4632,
+    "height": 0.8,
+    "depth": 1.0826
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-leather-tent.glb",
+    "bytes": 17466260,
+    "sha256": "2e3e5fda2f03f09e69ca9c12765285d508dd1631f4856074368d8605e4906dcf",
+    "triangles": 501250
+  },
+  "output": {
+    "path": "assets/models/chapters/05/ch5-leather-tent.glb",
+    "bytes": 230672,
+    "sha256": "5f62a77089572ace87e6478c9d777986596be7cc20a18758e13eee5f1804192d",
+    "triangles": 4899
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.090769134484533,
+  "sizeMetres": {
+    "width": 3.0852,
+    "height": 1.8,
+    "depth": 2.0639
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_efad6e3f-58d8-4752-a888-b23213a51cf3",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_efad6e3f-58d8-4752-a888-b23213a51cf3",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_efad6e3f-58d8-4752-a888-b23213a51cf3",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

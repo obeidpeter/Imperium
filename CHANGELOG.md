@@ -1,8 +1,27 @@
 # Changelog
 
-## Unreleased
+## 0.36.0 — the first Tripo-generated scenery, in Chapter V
 
-- **Generated 3D asset pipeline (tooling only; the game is unchanged):** `npm run asset:process` turns a generated model into a game-ready GLB under Blender (decimation, scale, WebP textures, a provenance report), `npm run asset:check` checks it against its budget and the game's loader, and `npm run asset:preview` renders a review sheet. See [the asset pipeline](docs/asset-pipeline.md), which also proposes five Chapter V props for Tripo. No Tripo model has been generated yet.
+- **Five generated props in Chapter V.** Spoil baskets, mine timbers, a mudbrick stack, storage jars and a leather tent stand as a supply camp on open ground off the board's west and south sides, in both Chapter V encounters. They were generated with Tripo from text prompts on the owner's paid account and processed in Blender to 2,900–4,900 triangles, 512 px WebP textures and real-world heights (161–271 KB each). They load at Balanced and High quality only, and only Chapter V downloads them. The rules, the board and its units are unchanged. Presentation only: no rules state and no gameplay randomness.
+- **Loader** ([`scenery-models.js`](src/showcase/scenery-models.js)):
+  - stands each model on the lowest ground under it;
+  - never takes a pick;
+  - joins the camera cutaway, so in the horizon, follow and action views a model never hides the selected units;
+  - frees all its resources on dispose;
+  - leaves out a model that fails to load.
+
+  It decodes embedded textures through image elements, so the page's Content Security Policy (no `blob:` fetches) stays as it is.
+- **Placement.** A search of both encounters' built scenes chose ground that is clear of every structure and boulder, in frame and unobstructed for the overview camera, and never drawn over the board. The horizon camera mostly sees them hidden behind the arrival-side buildings.
+- **Downloads.** Models in `assets/models/chapters/NN/` belong to that chapter's offline group alone, which `verify-assets` now checks. Chapter I's download is unchanged apart from the new loader's code.
+- **Records.** Each model's prompt, Tripo task, model version, raw digest, processing settings and licence are in [`art-source/models/requests/`](art-source/models/requests/), [`asset-manifest.json`](docs/asset-manifest.json) and [`art-generation.md`](docs/art-generation.md).
+- **Checks.** New tests cover each model's records, budget and download group, placement off the board from legal Chapter V starts, and the loader. `npm run smoke` now waits for all five models in the production page's 3D view, so a loader fault or a policy error fails it. All checks ran with software rendering; no real device or GPU has run this release.
+- **Generated 3D asset pipeline (tooling):**
+  - `npm run asset:tripo` creates and fetches Tripo tasks through the environment's network secret;
+  - `npm run asset:process` makes a game-ready GLB under Blender;
+  - `npm run asset:check` checks it against its budget and the game's loader;
+  - `npm run asset:preview` renders a review sheet.
+
+  See [the asset pipeline](docs/asset-pipeline.md).
 
 ## 0.35.1 — one battle per approach, a handoff that no longer blocks the tests, and smaller fixes
 

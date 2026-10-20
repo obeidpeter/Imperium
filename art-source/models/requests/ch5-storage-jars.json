@@ -1,10 +1,10 @@
 {
   "id": "ch5-storage-jars",
-  "status": "generated: awaiting review",
+  "status": "in the game since 0.36.0",
   "chapters": [
     5
   ],
-  "use": "Off-board scenery: stores inside the Chapter V fortress; decorative, outside the playable board, never a game cell.",
+  "use": "Off-board scenery: terracotta stores in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",
@@ -21,9 +21,9 @@
   "provenance": {
     "taskId": "a95f1fff-ae87-4967-a352-a6c803227789",
     "modelVersion": "v2.5-20250123",
-    "generatedAt": null,
+    "generatedAt": "2026-10-20T17:14:34.634Z",
     "rawSha256": "f6f35b47968c1cf7b613e76951f3d07ea9e80dab1b6b461c9f3622334f9c818d",
-    "licence": "Record the terms of the owner's Tripo plan before the model ships.",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
     "requestedAt": "2026-10-20T17:09:46.509Z",
     "balanceBefore": 5000,
     "requestBody": {
@@ -31,7 +31,6 @@
       "prompt": "Three large terracotta storage jars, two standing and one cracked and lying on its side, half-sunk in sand, rope slings around one. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
     },
     "status": "success",
-    "completedAt": "2026-10-20T17:14:34.634Z",
     "output": "pbr_model",
     "raw": "art-source/models/raw/ch5-storage-jars.glb",
     "rawBytes": 17231752,

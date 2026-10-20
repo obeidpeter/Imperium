@@ -22,13 +22,16 @@ test('Every chapter can be restored cold with actual renderer, sound, vendor and
   }
 });
 
+// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone.
+const ownModels=chapter=>files.filter(path=>path.startsWith(`./assets/models/chapters/${String(chapter).padStart(2,'0')}/`));
+
 test('Shared dependencies use identical deduplicated URLs across chapters without losing any chapter-specific art',()=>{
-  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path));
+  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path)&&!ownModels(1).includes(path));
   for(let chapter=1;chapter<=12;chapter++){
-    const art=chapterAssets(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
+    const art=chapterAssets(chapter),models=ownModels(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
-    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)),first);
-    for(const path of art)assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
+    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)&&!models.includes(path)),first);
+    for(const path of [...art,...models])assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
 });
 
