@@ -65,7 +65,7 @@ test('v0.33.0: CI drives the production build in a browser with a pinned Playwri
   const workflow = await readFile(new URL('../.github/workflows/verify.yml', import.meta.url), 'utf8');
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
   assert.match(workflow, /npm install --no-save --no-package-lock playwright@1\.56\.1/);
-  assert.match(workflow, /- run: npm run build\n\s+- run: npm run smoke/);
+  assert.match(workflow, /- run: npm run build\r?\n\s+- run: npm run smoke/);
   assert.equal(pkg.scripts.smoke, 'node scripts/browser-smoke.mjs');
   assert.equal(pkg.dependencies, undefined);assert.equal(pkg.devDependencies, undefined, 'Playwright stays outside the project');
 });

@@ -196,14 +196,14 @@ test('v0.31.0: the app walks through the rules API, previews routes on hover and
   const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
   assert.match(app, /const intent=directIntent\(state,\{selected,action,target,point,moveOnClick:!settings\.confirmMoves\}\);/);
   assert.match(app, /if\(intent\.kind==='move'\)\{walk\(intent\);return;\}/);
-  assert.match(app, /async function walk\(intent\)\{\n  action='move';target=intent\.target;/);
+  assert.match(app, /async function walk\(intent\)\{\r?\n  action='move';target=intent\.target;/);
   assert.match(app, /await change\(\(\)=>\{const res=Game\.act\(state,c\);/, 'A walk is committed by the rules, like any command');
   assert.match(app, /Undo Move \(U\) takes it back until you act\./);
   assert.match(app, /battleRemains:true,confirmMoves:false,/, 'One click walks by default');
   assert.match(app, /if\(control\.id==='confirm-moves'\)\{settings\.confirmMoves=control\.checked;saveSettings\(\);render\(\);\}/, 'The board hint follows the setting at once');
   assert.match(app, /confirmMoves:Boolean\(settings\.confirmMoves\),/);
   // Ground no walk can reach says why (impassable, no nearer ground, movement spent) before the selection clears.
-  assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),why=u\?'':routeSummary\(routeAt\(point\)\);\n  action=null;target=null;/);
+  assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),why=u\?'':routeSummary\(routeAt\(point\)\);\r?\n  action=null;target=null;/);
   // A click reports whole pixels; the 2D pick uses the pressed pointer's exact position, as the hover did.
   assert.match(app, /board\.addEventListener\('pointerdown',event=>\{pressed=\{x:event\.clientX,y:event\.clientY\};hold\.down\(event\);\}\);/);
   assert.match(app, /const at=pressed&&Math\.abs\(pressed\.x-event\.clientX\)<1&&Math\.abs\(pressed\.y-event\.clientY\)<1\?pressed:\{x:event\.clientX,y:event\.clientY\};pressed=null;selectPoint\(pickBattlePoint\(board,state\.encounter,at\.x,at\.y\)\);/);
