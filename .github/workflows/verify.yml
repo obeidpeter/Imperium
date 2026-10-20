@@ -1,0 +1,28 @@
+# Runs the project's own release check (tests, legal-command autoplay,
+# expanded campaigns, production build, asset/offline checks and character
+# audit) on every pull request and on main. Node 20 is the oldest version the
+# project supports (package.json "engines"); there are no dependencies to install.
+name: Verify
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm run verify
