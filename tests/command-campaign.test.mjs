@@ -7,6 +7,7 @@ import {playEncounter} from '../scripts/autoplay.mjs';
 import {commandDoctrine,commandAssignment,chapterOpportunity} from '../src/core/command-campaign.js';
 import {clone,distance,pathDistance} from '../src/core/shared.js';
 import {combatBreakdown,planBattleUnit} from '../src/core/battle.js';
+import {BATTLE_BALANCE} from '../src/data/battle-balance.js';
 const camps=new Map();let campaign;
 function baseline(){return campaign??=runCommandCampaign({onCheckpoint:s=>camps.set(G.getChapter(s).encounters[s.encounterIndex].id,clone(s))});}
 function started(id='ch5-mine',plan='balanced'){
@@ -137,6 +138,18 @@ test('frontal mounted charge reaction is exact, once per round and absent on fla
   let hit=combatBreakdown(e,h,enemy);assert.equal(hit.counterDamage,1);const hp=h.hp;
   const command={unitId:'hero',action:'strike',targetId:enemy.id,x:enemy.x,y:enemy.y};assert.match(G.preview(s,command).message,/1 damage to/);assert.ok(G.act(s,command).ok);assert.equal(h.hp,hp-1);assert.equal(enemy.reactionTurn,e.turn);
   assert.equal(combatBreakdown(e,h,enemy).counterDamage,0);delete enemy.reactionTurn;enemy.facing='east';assert.equal(combatBreakdown(e,h,enemy).counterDamage,0);enemy.facing='west';assert.equal(combatBreakdown(e,h,enemy,true).counterDamage,0);
+});
+test('a mounted attacker withdrawn by the counter blow shakes nearby companions like any other loss',()=>{
+  const s=started('ch9-wing'),e=s.encounter,h=e.units.find(u=>u.id==='hero'),enemy=e.units.find(u=>u.role==='cavalry');
+  // Injected mechanic fixture: a one-hit-point mounted attacker, a companion within two tiles and one beyond.
+  const near=e.units.find(u=>u.side==='ally'),far=e.units.filter(u=>u.side==='ally')[1];assert.ok(near&&far);
+  Object.assign(h,{x:2,y:3,role:'cavalry',lastMoveDistance:2,damage:3,hp:1});Object.assign(enemy,{x:3,y:3,facing:'west',braced:true,hp:20,maxHp:20});
+  Object.assign(near,{x:1,y:4,morale:80});Object.assign(far,{x:0,y:0,morale:80});
+  e.units=e.units.filter(u=>[h,enemy,near,far].includes(u));for(const p of [[3,2],[3,3],[4,1],[0,0]])e.terrain[p[0]][p[1]]='grass';
+  const command={unitId:'hero',action:'strike',targetId:enemy.id,x:enemy.x,y:enemy.y},before=G.serialize(s);
+  assert.ok(G.preview(s,command).message.endsWith(`${h.name} would withdraw, shaking companions within 2 tiles.`));assert.equal(G.serialize(s),before,'The forecast changes nothing');
+  assert.ok(G.act(s,command).ok);assert.equal(h.hp,0);
+  assert.equal(near.morale,80-BATTLE_BALANCE.withdrawalShock,'A companion within two tiles is shaken');assert.equal(far.morale,80,'One farther away is not');
 });
 test('earned issue evidence forecasts exact clamped shifts, costs one speech and cannot repeat',()=>{
   const s=started('ch11-accounts'),e=s.encounter,c=G.caseOptions(s).find(c=>c.preview.ok);assert.ok(c);

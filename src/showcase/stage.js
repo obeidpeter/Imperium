@@ -431,7 +431,9 @@ export class BattleStage{
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
   setFigureStyle(style){
     const next=FIGURE_STYLES.includes(style)?style:'sculpted';if(next===this.figureStyle||this.disposed)return;
-    this.figureStyle=next;for(const a of this.actors.values()){this.scene.remove(a.group);a.dispose();}this.actors.clear();
+    // The style is part of each figure's style key, so sync replaces every figure
+    // and keeps the old one until its replacement is ready (as a quality change does).
+    this.figureStyle=next;
     this.compositor?.setStyle?.(figureStyleFinish(next));this.sync(this.encounter);this.shadowDirty=true;
   }
   // Where a delegate stands during the division: walking at an even pace,
@@ -449,7 +451,8 @@ export class BattleStage{
   rebuildRemains(){
     this.remains?.dispose();this.remains=null;if(this.encounter.kind==='contest'||this.ceremony)return;
     const hx=this.encounter.width*1.25+2,hz=this.encounter.height*1.25+2;
-    this.remains=createBattleRemains(this.scene,{quality:this.quality,ground:this.environment.ground,heightAt:this.environment.groundHeight,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},visible:this.battleRemains});
+    // Bodies and spent arrows rest on a repaired bridge deck, like the units who fell there.
+    this.remains=createBattleRemains(this.scene,{quality:this.quality,ground:this.environment.ground,heightAt:(x,z)=>this.surfaceHeight(x,z),bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},visible:this.battleRemains});
   }
   setBattleRemains(value){this.battleRemains=value!==false;this.remains?.setVisible(this.battleRemains);}
   // Weather on the light: cloud shadows (shared uniforms), sun shafts at dawn,

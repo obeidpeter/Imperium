@@ -99,5 +99,15 @@ export function combatCues(timeline,{encounter}={}){
   }
   // Footfalls cannot evict an impact, order or voice cue on a busy enemy turn.
   const step=c=>['footstep','hoof','wade'].includes(c.kind),events=cues.filter(c=>!step(c)).sort((a,b)=>a.time-b.time).slice(0,100);
-  return [...events,...cues.filter(step).slice(0,100-events.length)].sort((a,b)=>a.time-b.time);
+  return [...events,...thinFootfalls(cues.filter(step),100-events.length)].sort((a,b)=>a.time-b.time);
+}
+// When footfalls must be thinned, every mover keeps a fair share of its own,
+// spread evenly along its walk, rather than the first movers keeping them all.
+function thinFootfalls(steps,room){
+  if(steps.length<=room)return steps;
+  const movers=new Map();for(const c of steps){if(!movers.has(c.unitId))movers.set(c.unitId,[]);movers.get(c.unitId).push(c);}
+  const shares=[...movers.values()].map(list=>{const exact=list.length*room/steps.length;return {list,n:Math.floor(exact),rest:exact%1};});
+  let spare=room-shares.reduce((sum,s)=>sum+s.n,0);
+  for(const s of [...shares].sort((a,b)=>b.rest-a.rest))if(spare>0&&s.n<s.list.length){s.n++;spare--;}
+  return shares.flatMap(({list,n})=>Array.from({length:n},(_,i)=>list[Math.floor(i*list.length/n)]));
 }

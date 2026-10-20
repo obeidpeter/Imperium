@@ -1,4 +1,7 @@
 // Legal camp -> real Restore UI -> choose approach -> normal-motion turns.
+// Setup outside the UI: the checkpoint's operational preparation is set to the
+// free direct option with the public chooseOperationalPlan command before the
+// save is restored, so the recorded approach is the only paid choice.
 // Software Chromium correctness/video evidence; never a physical GPU result.
 import http from 'node:http';
 import assert from 'node:assert/strict';
@@ -14,7 +17,7 @@ await mkdir(output,{recursive:true});
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE||'playwright');
 const server=http.createServer((req,res)=>serveRequest(req,res,root));await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const origin=`http://127.0.0.1:${server.address().port}`,browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const report={method:'Public Restore and command UI, normal motion at 1×, software Chromium; video is correctness evidence, not hardware performance.',errors:[],checks:[]};let context;
+const report={method:'Public Restore and command UI, normal motion at 1×, software Chromium; video is correctness evidence, not hardware performance. Before Restore, the legal checkpoint’s preparation is set to the free direct option through the public chooseOperationalPlan command in Node.',errors:[],checks:[]};let context;
 const menu=async(page,cmd)=>{if(!await page.locator(`[data-cmd="${cmd}"]:visible`).count())await page.locator('[data-cmd="menu"]:visible').first().click();const modal=page.locator(`#modal[open] [data-cmd="${cmd}"]`);await (await modal.count()?modal.first():page.locator(`[data-cmd="${cmd}"]:visible`).first()).click();};
 const close=page=>page.locator('#modal [data-cmd="close-modal"]').first().click();
 const decode=code=>{const [prefix,body]=code.trim().split('.'),bytes=Buffer.from(body,'base64'),raw=prefix==='SAC1'?gunzipSync(bytes):bytes,parsed=JSON.parse(raw.toString());return Game.deserialize(parsed.format===1?parsed.payload:raw.toString());};

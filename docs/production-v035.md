@@ -31,7 +31,7 @@ From Chapter III, before a field encounter, a player can combine an operational 
 | Diversion | 1 supply | Pending reinforcements delayed two rounds | Company cohesion −8; one visible enemy investigates the false approach through round 2 |
 | Defensive advance | 0 | Start braced, cohesion +12 | Commander march −1 in rounds 1–2; enemy cavalry and raiders attempt the flank |
 
-Costs include the company package and operational preparation, are checked together before departure, and are paid after the complete camp checkpoint. Retry restores that checkpoint and reapplies costs exactly once. The free approach remains selectable when a previous selection becomes unaffordable. Approaches do not replace political cases in the civic chapters, unlock chapters, or guarantee that one tactic wins every mission.
+Costs include the company package and operational preparation, are checked together before departure, and are paid after the complete camp checkpoint. Retry restores that checkpoint and reapplies costs exactly once. The free approach remains selectable when the others are unaffordable. Like the operational preparation, an approach covers one field encounter: since 0.35.1 the next camp starts from direct deployment, so a costly approach is never charged again without being chosen. Approaches do not replace political cases in the civic chapters, unlock chapters, or guarantee that one tactic wins every mission.
 
 `node scripts/production-autoplay.mjs` runs four legal campaigns through all 25 encounters. It separately completes both Chapter V encounters with each alternative approach and continues each campaign through Chapter XII. This establishes repeatability and solvability of those routes, not human balance approval.
 

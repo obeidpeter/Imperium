@@ -134,7 +134,7 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
    if(action==='order'&&(command.orderAction??'advance')==='attack')messages[action]=`Spend 1 command: ${other.name} will take the strongest legal attack opportunity, considering protection and facing. Normal move/action limits apply.`;
    if(action==='rally'&&e.featureEdition===31)messages.rally+=' Also restore 20 cohesion and clear suppression within three tiles.';
    if(action==='strike'||action==='throw'){const hit=combatBreakdown(e,unit,other,action==='throw');messages[action]=`${action==='throw'?'Throw at':'Strike'} ${other.name}: ${hit.damage} damage (${hit.base} base${hit.modifiers.map(m=>`, ${m.value>0?'+':''}${m.value} ${m.label.toLowerCase()}`).join('')}). ${hit.aspect==='flank'?'Flank':'Front'}; morale −${Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(other.formation==='line'?5:0)-(other.moraleResistance??0))}.${action==='throw'?` One javelin; ${unit.ammo-1} remain.`:''}`;}
-   if((action==='strike'||action==='throw')&&e.campaignEdition===34){const hit=combatBreakdown(e,unit,other,action==='throw');if(hit.counterDamage)messages[action]+=` Surviving braced defender answers the frontal mounted charge: ${hit.counterDamage} damage to ${unit.name}, once this round.`;}
+   if((action==='strike'||action==='throw')&&e.campaignEdition===34){const hit=combatBreakdown(e,unit,other,action==='throw');if(hit.counterDamage)messages[action]+=` Surviving braced defender answers the frontal mounted charge: ${hit.counterDamage} damage to ${unit.name}, once this round.${hit.counterDamage>=unit.hp?` ${unit.name} would withdraw, shaking companions within 2 tiles.`:''}`;}
    if(action==='brace'&&e.campaignEdition===34)messages.brace+=' A surviving braced defender answers one frontal mounted charge for 1 damage this round; ranged and flanking attacks avoid the reaction.';
    if(action==='formation')messages[action]=`Spend 1 command on up to 3 adjacent allies. ${FORMATION_RULES[command.formation??'shield-wall'].summary} Each will ${command.orderAction==='attack'?'take a strong legal attack opportunity':orderEffect}. Normal move/action limits apply.`;
    if(action==='move')messages[action]+=` Terrain: ${e.terrain[command.y][command.x]}. Facing changes with movement; a later attack faces its target.`;
@@ -254,10 +254,11 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
  }return best??idle;
 }
 export function refreshBattleIntents(e){if(e.combatVersion!==2)return;for(const u of e.units)if(alive(u)&&!u.hidden&&['ally','enemy'].includes(u.side))u.intent=planBattleUnit(e,{...u,moved:false,acted:false}).intent;}
+const withdrawalShock=(e,unit)=>{for(const u of companions(e,unit).filter(u=>distance(u,unit)<=2))u.morale=clamp(u.morale-B.withdrawalShock);};
 function resolveHit(e,attacker,target,ranged=false){const hit=combatBreakdown(e,attacker,target,ranged),wasAlive=alive(target);target.hp=Math.max(0,target.hp-hit.damage);expandedHit(e,target,ranged);
- if(hit.counterDamage){attacker.hp=Math.max(0,attacker.hp-hit.counterDamage);target.reactionTurn=e.turn;note(e,`${target.name} answers the frontal mounted charge: ${hit.counterDamage} damage to ${attacker.name}.`);}
+ if(hit.counterDamage){attacker.hp=Math.max(0,attacker.hp-hit.counterDamage);target.reactionTurn=e.turn;note(e,`${target.name} answers the frontal mounted charge: ${hit.counterDamage} damage to ${attacker.name}.`);if(!alive(attacker))withdrawalShock(e,attacker);}
  const loss=Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(target.formation==='line'?FORMATION_RULES.line.morale:0)-(target.moraleResistance??0));target.morale=clamp(target.morale-loss);
- if(wasAlive&&!alive(target))for(const u of companions(e,target).filter(u=>distance(u,target)<=2))u.morale=clamp(u.morale-B.withdrawalShock);
+ if(wasAlive&&!alive(target))withdrawalShock(e,target);
  return hit.damage;
 }
 function executeBattlePlan(e,unit,plan){if(!alive(unit)||unit.moved&&unit.acted)return;

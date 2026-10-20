@@ -1,5 +1,9 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.35.1 — one battle per approach, and fixes after the 0.35 review
+
+A field approach now covers one battle, like the operational preparation, so a costly approach is not charged again unless you choose it. A rider withdrawn by a braced counter blow shakes nearby companions. Fallen figures on a repaired bridge rest on the deck, a figure-style change keeps figures until their replacements are ready, footstep sounds are shared fairly on busy turns, and the signal flag no longer changes shared materials. A change to the character code no longer fails `npm test` until the handoff GLBs are re-exported; `npm run audit:handoff` reports a stale export. See the [changelog](CHANGELOG.md).
+
 ## Version 0.35 — character production and field approaches
 
 Improved skin and equipment materials, formed helmets, tailored clothing, authored combat recovery, distance-based movement timing and contextual labels now use the shared twelve-chapter renderer. New campaigns add engineering, diversion and defensive approaches, with supply costs, opening tradeoffs and visible enemy responses; older saves can opt in at camp.

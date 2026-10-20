@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -4881,6 +4881,71 @@
         "sha256": "67d28da483f03cc4835a5cbce5b873a33f5fcabe20e3c552ce55cf54db101314"
       },
       "license": "Project AI-generated artwork; provenance is not a guarantee of exclusive copyright."
+    }
+  ],
+  "developmentAssets": [
+    {
+      "id": "handoff-marcellus-v035",
+      "path": "art-source/characters/marcellus-v035.glb",
+      "subject": "Full-body rigged character handoff: Aurelius Marcellus as a Chapter V Centurio, Roman infantry kit",
+      "source": {
+        "method": "Deterministic export of the game's own code-authored character: original garments, equipment, material fields, pore map and authored performances over the retained MakeHuman CC0 head/arm anatomy. No AI generation.",
+        "anatomy": "roman-human-v017 (MakeHuman CC0-1.0)",
+        "skin": "complexion-male-v018 (MakeHuman CC0-1.0), embedded as PNG",
+        "exporter": "scripts/build-character-handoff.mjs with scripts/character-glb.mjs",
+        "subjectConfiguration": "art-source/characters/manifest.json"
+      },
+      "usage": "Development and art-review handoff only. Excluded from the website build, service worker and offline download; the game builds its figures from code at runtime.",
+      "export": {
+        "format": "GLB 2.0, self-contained (single embedded buffer)",
+        "units": "metres; +Y up; +Z forward",
+        "contents": "skin joints, face morph targets, embedded PNG PBR maps and sampled idle, walk, attack and block clips",
+        "bytesAndSha256": "art-source/characters/manifest.json, rewritten by each export",
+        "reproducibility": "Repeatable on one machine; a different Node.js or Sharp version can produce different bytes"
+      },
+      "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
+    },
+    {
+      "id": "handoff-lucan-v035",
+      "path": "art-source/characters/lucan-v035.glb",
+      "subject": "Full-body rigged character handoff: Aurelius Lucan, Chapter V veteran, Roman infantry kit",
+      "source": {
+        "method": "Deterministic export of the game's own code-authored character: original garments, equipment, material fields, pore map and authored performances over the retained MakeHuman CC0 head/arm anatomy. No AI generation.",
+        "anatomy": "roman-human-v017 (MakeHuman CC0-1.0)",
+        "skin": "complexion-male-v018 (MakeHuman CC0-1.0), embedded as PNG",
+        "exporter": "scripts/build-character-handoff.mjs with scripts/character-glb.mjs",
+        "subjectConfiguration": "art-source/characters/manifest.json"
+      },
+      "usage": "Development and art-review handoff only. Excluded from the website build, service worker and offline download; the game builds its figures from code at runtime.",
+      "export": {
+        "format": "GLB 2.0, self-contained (single embedded buffer)",
+        "units": "metres; +Y up; +Z forward",
+        "contents": "skin joints, face morph targets, embedded PNG PBR maps and sampled idle, walk, attack and block clips",
+        "bytesAndSha256": "art-source/characters/manifest.json, rewritten by each export",
+        "reproducibility": "Repeatable on one machine; a different Node.js or Sharp version can produce different bytes"
+      },
+      "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
+    },
+    {
+      "id": "handoff-persian-guard-v035",
+      "path": "art-source/characters/persian-guard-v035.glb",
+      "subject": "Full-body rigged character handoff: A Chapter V Persian infantry guard in scale armour",
+      "source": {
+        "method": "Deterministic export of the game's own code-authored character: original garments, equipment, material fields, pore map and authored performances over the retained MakeHuman CC0 head/arm anatomy. No AI generation.",
+        "anatomy": "roman-human-v017 (MakeHuman CC0-1.0)",
+        "skin": "complexion-male-v018 (MakeHuman CC0-1.0), embedded as PNG",
+        "exporter": "scripts/build-character-handoff.mjs with scripts/character-glb.mjs",
+        "subjectConfiguration": "art-source/characters/manifest.json"
+      },
+      "usage": "Development and art-review handoff only. Excluded from the website build, service worker and offline download; the game builds its figures from code at runtime.",
+      "export": {
+        "format": "GLB 2.0, self-contained (single embedded buffer)",
+        "units": "metres; +Y up; +Z forward",
+        "contents": "skin joints, face morph targets, embedded PNG PBR maps and sampled idle, walk, attack and block clips",
+        "bytesAndSha256": "art-source/characters/manifest.json, rewritten by each export",
+        "reproducibility": "Repeatable on one machine; a different Node.js or Sharp version can produce different bytes"
+      },
+      "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
   "updatedAt": "2026-10-19T09:50:26.791467+00:00",

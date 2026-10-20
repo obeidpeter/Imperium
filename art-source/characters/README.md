@@ -12,7 +12,9 @@ Sources:
 - `src/showcase/actor-pose.js` and `paired-contact.js`: contact timing, foot planting and coordinated weapon/shield contact.
 - `scripts/character-glb.mjs`: deterministic glTF writer with embedded PNGs, explicit units, skin weights and clips.
 
-Run `node scripts/build-character-handoff.mjs` from the repository root with Sharp available. Alternatively set `ART_SHARP_MODULE` to an installed Sharp entry point. Sharp is used only to decode the existing WebP complexion images. `manifest.json` records each export's hash, topology inventory and exact subject configuration.
+Run `npm run art:handoff` with Sharp available; it writes here from any working directory. Alternatively set `ART_SHARP_MODULE` to an installed Sharp entry point. Sharp is used only to decode the existing WebP complexion images and is not a project dependency. `manifest.json` records each export's hash, topology inventory, exact subject configuration and a digest of the character source it came from.
+
+`npm test` checks the committed files (hashes, glTF structure, skins, maps and clips) but not whether they match the current character code, so a character change does not fail the tests. `npm run audit:handoff` reports a stale export, and `npm run verify` prints the same notice without failing. Re-export only when the characters actually change: an export is repeatable on one machine, but a different Node.js or Sharp version can produce different bytes.
 
 Import a GLB into a glTF-capable DCC, preserve the named skeleton, UVs and metre scale, and inspect all four clips before proposing a replacement. The exported standard PBR materials do not reproduce the runtime's cloud shadow or warm skin-fill shader; judge those in the running game. Exporting this rig does not turn the existing MakeHuman anatomy into a new specialist sculpt or the authored performances into motion capture.
 

@@ -1,10 +1,12 @@
 # Runs the project's own release check (tests, legal-command autoplay,
-# expanded campaigns, production build, asset/offline checks and character
-# audit) on every pull request and on main: on Node 20, the oldest version the
-# project supports (package.json "engines"), and on Node 22. There are no
-# dependencies to install. A second job drives the production build in
-# headless Chromium (scripts/browser-smoke.mjs); Playwright is installed for
-# that job only and is not a project dependency.
+# expanded, command and production campaigns, production build, asset/offline
+# checks and character audits) on every pull request and on main: on Node 20,
+# the oldest version the project supports (package.json "engines"), and on
+# Node 22. There are no dependencies to install. Two more jobs drive the
+# production build in headless Chromium: the browser smoke test
+# (scripts/browser-smoke.mjs) and the twelve-chapter screenshot benchmark
+# (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact.
+# Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
 on:
