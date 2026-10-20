@@ -19,10 +19,16 @@
     "maxHeight": 1.4
   },
   "provenance": {
-    "taskId": null,
+    "taskId": "a95f1fff-ae87-4967-a352-a6c803227789",
     "modelVersion": null,
     "generatedAt": null,
     "rawSha256": null,
-    "licence": "Record the terms of the owner's Tripo plan before the model ships."
+    "licence": "Record the terms of the owner's Tripo plan before the model ships.",
+    "requestedAt": "2026-10-20T17:09:46.509Z",
+    "balanceBefore": 5000,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Three large terracotta storage jars, two standing and one cracked and lying on its side, half-sunk in sand, rope slings around one. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+    }
   }
 }

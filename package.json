@@ -21,6 +21,7 @@
     "autoplay:production": "node scripts/production-autoplay.mjs",
     "art:handoff": "node scripts/build-character-handoff.mjs",
     "audit:handoff": "node scripts/check-character-handoff.mjs",
+    "asset:tripo": "node scripts/assets/tripo.mjs",
     "asset:process": "node scripts/assets/process-model.mjs",
     "asset:check": "node scripts/assets/check-model.mjs",
     "asset:preview": "node scripts/assets/preview-model.mjs"
