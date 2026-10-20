@@ -154,7 +154,7 @@ test('v0.25.0 Lorica & Paludamentum: physically enriched character/armor shaders
   assert.equal(testMat.userData.actorFinish, 'mail');
   const shader = {uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader};
   testMat.onBeforeCompile(shader);
-  assert.match(testMat.customProgramCacheKey(), /actor-finish-v1:mail/);
+  assert.match(testMat.customProgramCacheKey(), /actor-finish-v035:mail/);
   testMat.dispose();
 
   const leader = createActor({id: 'ally0', name: 'Lucan', side: 'ally', role: 'legionary', specialization: 'leader', hp: 14, maxHp: 14}, {chapter: 6, kind: 'battle'});

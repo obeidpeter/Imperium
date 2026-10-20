@@ -1,4 +1,4 @@
 // Build replaces this one value from SITE_URL. Relative defaults work on any static host.
 // Keep this pre-Imperium storage identity: renaming it would strand existing saves.
-export const CONFIG = Object.freeze({ siteUrl: '', version: '0.34.0', saveKey: 'sacramentum.campaign.v1' });
+export const CONFIG = Object.freeze({ siteUrl: '', version: '0.35.0', saveKey: 'sacramentum.campaign.v1' });
 

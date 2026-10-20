@@ -1,3 +1,4 @@
+import {fieldApproachCost,approachAssignment,fieldApproachSummary} from './field-approaches.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {COMMAND_CHAPTERS,OPERATIONAL_PLANS,ISSUE_CASES} from '../data/command-campaign.js';
 import {alive,clamp,distance,note,result} from './shared.js';
@@ -18,8 +19,8 @@ export function enableCommandCampaign(state){
 export function operationalPlan(state){
   const next=CHAPTERS[state.chapter-1]?.encounters[state.encounterIndex];
   const available=enabled(state)&&state.phase==='camp'&&state.chapter>=3&&next?.kind==='battle'&&next.type!=='training';
-  const packageCost={none:0,recovery:2,rearm:2,support:3}[state.companyOrders?.package??'none']??0;
-  return {enabled:available,edition:enabled(state),encounterId:next?.id??null,selected:state.commandCampaign?.plan??'balanced',description:'Choose the next field deployment. Its supply cost is paid at departure and restored by Retry.',options:OPERATIONAL_PLANS.map(p=>({...p,available:Boolean(available&&(p.id!=='reserve'||state.chapter>=4)&&state.supplies>=p.cost+packageCost),reason:!available?'Operational planning opens in Chapter III before a battle.':p.id==='reserve'&&state.chapter<4?'A command reserve opens with your first command in Chapter IV.':state.supplies<p.cost+packageCost?'The operational plan and company supply package must both be affordable.':''}))};
+  const packageCost=({none:0,recovery:2,rearm:2,support:3}[state.companyOrders?.package??'none']??0)+fieldApproachCost(state);
+  return {enabled:available,edition:enabled(state),encounterId:next?.id??null,selected:state.commandCampaign?.plan??'balanced',description:'Choose the next field deployment. Its supply cost is paid at departure and restored by Retry.',options:OPERATIONAL_PLANS.map(p=>({...p,available:Boolean(available&&(p.id!=='reserve'||state.chapter>=4)&&(state.tacticsEdition===35&&p.id==='balanced'||state.supplies>=p.cost+packageCost)),reason:!available?'Operational planning opens in Chapter III before a battle.':p.id==='reserve'&&state.chapter<4?'A command reserve opens with your first command in Chapter IV.':state.supplies<p.cost+packageCost?'The operational plan and company supply package must both be affordable.':''}))};
 }
 export function chooseOperationalPlan(state,id){
   const view=operationalPlan(state),option=view.options.find(p=>p.id===id);
@@ -103,6 +104,7 @@ export function commandAssignment(e,unit){
   const doctrine=commandDoctrine(e);if(!doctrine||unit.side!=='enemy'||e.type==='training'||e.id==='ch1-road')return null;
   // The authored parley perimeter is a recovery route, not an assault target.
   if(e.mission?.mode==='settlement')return null;
+  const approach=approachAssignment(e,unit);if(approach)return approach;
   const focus=e.units.find(u=>u.id===doctrine.focusId);if(!focus)return null;
   if(unit.id===doctrine.reserveId)return {role:'Reserve',targetId:null,goal:unit.anchor??unit,hold:true};
   if(unit.role==='archer')return {role:'Suppress',targetId:focus.id,goal:focus};
@@ -113,7 +115,7 @@ export function commandAssignment(e,unit){
 export function commandBriefing(state){
   if(!enabled(state))return {enabled:false};
   const chapter=definition(state),e=state.encounter,witness=companionWitness(state);
-  return {enabled:true,chapter:state.chapter,title:chapter.label,purpose:chapter.purpose,doctrine:e?commandDoctrine(e):{id:chapter.doctrine,label:chapter.label,description:chapter.purpose},witness,opportunities:chapter.opportunities.map((o,i)=>({...o,id:i?'signal':'stores'})),records:state.commandCampaign.records.map(r=>({...r})),reaction:'A surviving braced defender answers a frontal mounted charge with 1 damage, once per round. Flanks and ranged attacks avoid the reaction; the attack preview includes it.'};
+  return {enabled:true,chapter:state.chapter,title:chapter.label,purpose:chapter.purpose,approach:fieldApproachSummary(e),doctrine:e?commandDoctrine(e):{id:chapter.doctrine,label:chapter.label,description:chapter.purpose},witness,opportunities:chapter.opportunities.map((o,i)=>({...o,id:i?'signal':'stores'})),records:state.commandCampaign.records.map(r=>({...r})),reaction:'A surviving braced defender answers a frontal mounted charge with 1 damage, once per round. Flanks and ranged attacks avoid the reaction; the attack preview includes it.'};
 }
 
 function availableEvidence(state,requirement){

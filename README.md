@@ -1,5 +1,13 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.35 — character production and field approaches
+
+Improved skin and equipment materials, formed helmets, tailored clothing, authored combat recovery, distance-based movement timing and contextual labels now use the shared twelve-chapter renderer. New campaigns add engineering, diversion and defensive approaches, with supply costs, opening tradeoffs and visible enemy responses; older saves can opt in at camp.
+
+The [production notes](docs/production-v035.md) describe the implementation, evidence and deferred physical-phone/player checks. The [character handoff](art-source/characters/README.md) includes full-body, rigged GLBs with embedded materials and four clips, plus a local browser workshop. These development assets are excluded from player downloads. Four legal campaign runs validate all 25 encounters and each Chapter V approach.
+
+The image below records the preceding 0.34 benchmark.
+
 ![Version 0.34 Chapter V siege battlefield in the Horizon camera](docs/images/v034-ch5-mine-horizon.png)
 
 *Actual version 0.34 gameplay at a legally reached Chapter V checkpoint, using Sculpted figures, Balanced quality and the Horizon camera. Captured in software-rendered Chromium.*

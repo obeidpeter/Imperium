@@ -19,9 +19,9 @@ test('Real legal opening commands keep contact, projectile, move dependencies an
   for(const step of trace){
     const before=structuredClone(state.encounter),result=step.kind==='act'?Game.act(state,step.payload):Game.endTurn(state);assert.ok(result.ok);
     const after=structuredClone(state.encounter),saved=Game.serialize(state),original=freeze(buildEncounterTimeline(before,after,{command:step.kind==='act'?step.payload:{action:'endTurn'}})),encoded=JSON.stringify(original),timeline=retimeStageTimeline(original);
-    assert.equal(JSON.stringify(original),encoded);assert.notEqual(timeline,original);assert.ok(timeline.duration>=0&&timeline.duration<6000);assert.deepEqual(retimeStageTimeline(timeline),timeline,'Repeated presentation mounting must not stretch a timeline twice.');
+    assert.equal(JSON.stringify(original),encoded);assert.notEqual(timeline,original);assert.ok(timeline.duration>=0&&timeline.duration<20000);assert.deepEqual(retimeStageTimeline(timeline),timeline,'Repeated presentation mounting must not stretch a timeline twice.');
     for(const track of timeline.tracks){
-      if(track.path?.length>1){movement++;assert.ok(track.duration>original.tracks.find(t=>t.unitId===track.unitId&&t.path).duration*1.65,'Real travel has time to read.');assert.ok(track.duration<=2400);}
+      if(track.path?.length>1){movement++;assert.ok(track.duration>original.tracks.find(t=>t.unitId===track.unitId&&t.path).duration*1.65,'Real travel has time to read.');assert.ok(track.duration>=(track.path.length-1)*2.5/4.2*1000);}
       if(track.target&&!track.path){const move=timeline.tracks.find(t=>t.unitId===track.unitId&&t.path);if(move)assert.ok(track.start>=move.start+move.duration,'An actor does not attack while its own walk is unfinished.');}
       if(track.pose==='hit'||track.pose==='retreat'){
         const effect=timeline.effects.find(e=>['impact','shield'].includes(e.type)&&e.at.x===timeline.units[track.unitId].after.x&&e.at.y===timeline.units[track.unitId].after.y&&Math.abs(e.start-track.start)<1e-6);assert.ok(effect,'Reaction and committed impact share a clock.');reactions++;
@@ -43,7 +43,7 @@ test('Independent units stay concurrent while an attack waits for a moving targe
   const unit=(id,x,y)=>({id,x,y,hp:10,maxHp:10,side:'enemy',name:id}),units={a:{before:unit('a',0,0),after:unit('a',1,0)},b:{before:unit('b',4,0),after:unit('b',2,0)}};
   const original=freeze({units,tracks:[{unitId:'a',pose:'walk',start:0,duration:330,path:[{x:0,y:0},{x:1,y:0}],from:{x:0,y:0},to:{x:1,y:0}},{unitId:'b',pose:'walk',start:0,duration:480,path:[{x:4,y:0},{x:3,y:0},{x:2,y:0}],from:{x:4,y:0},to:{x:2,y:0}},{unitId:'a',pose:'attack',start:370,duration:620,target:{x:2,y:0}},{unitId:'b',pose:'hit',start:600,duration:360,source:{x:1,y:0}}],effects:[{type:'impact',at:{x:2,y:0},source:{x:1,y:0},start:600,duration:230}],duration:990});
   const t=retimeStageTimeline(original),[a,b,attack,hit]=t.tracks;
-  assert.equal(a.start,b.start);assert.ok(a.duration>1000&&b.duration<=2400);near(hit.start,attack.start+230*1.65);assert.ok(hit.start>=b.start+b.duration);near(t.effects[0].start,hit.start);
+  assert.equal(a.start,b.start);assert.ok(a.duration>1000&&b.duration<12000);near(hit.start,attack.start+230*1.65);assert.ok(hit.start>=b.start+b.duration);near(t.effects[0].start,hit.start);
 });
 
 test('The complete legal New Game route retimes every encounter without early effects or changed saves',async()=>{

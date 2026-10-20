@@ -26,7 +26,7 @@ import {actorWardrobe} from './actor-wardrobe.js';
 import {applyCharacterPresence,performanceTransition,applyPerformance} from './actor-performance.js';
 import {updateActorExpressionMorphs} from './actor-expression-mesh.js';
 import {simplifyActorOverview} from './actor-overview.js';
-import {cheekGuardGeometry} from './actor-helmet.js';
+import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -88,7 +88,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const wardrobe=actorWardrobe(identity,kit),factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
   const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...wardrobe.palette,...options.palette};
   const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-and-v034',wardrobe:wardrobe.heraldry};
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
   const material=(color,extra={})=>{const Constructor=options.quality==='high'&&extra.roughnessMap&&extra.metalness===0?T.MeshPhysicalMaterial:T.MeshStandardMaterial;const m=new Constructor({color,roughness:.84,metalness:0,...extra,...(Constructor===T.MeshPhysicalMaterial?{sheen:.18,sheenRoughness:.85,sheenColor:new T.Color(color).multiplyScalar(.25)}:{})});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
@@ -258,7 +258,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
       mesh(helmetRoot,profile([[-.045,.123,.122,-.016],[.137,.126,.124,-.012]],{segments:24,from:1.05,to:TAU-1.05}),mail);
     }else{
       // The front rim clears the brows; the deeper guard wraps only the rear.
-      const helmet=mesh(helmetRoot,new T.SphereGeometry(1,28,14,0,TAU,0,Math.PI*.5),metal,0,.132,-.012);helmet.scale.set(.128,.140,.130);
+      mesh(helmetRoot,helmetBowlGeometry({detail:Boolean(anatomy)&&detail,seed:kit.identity}),metal);
       strip(helmetRoot,bronze,[[-.12,.14,.047],[0,.146,.12],[.12,.14,.047]],.009);
       strip(helmetRoot,bronze,[[0,.146,.12],[0,.225,.092],[0,.28,-.01],[0,.22,-.118]],.007);
       mesh(helmetRoot,profile([[.078,.132,.133,-.013],[.134,.128,.130,-.012]],{segments:28,from:1.05,to:TAU-1.05}),metal);
@@ -287,6 +287,16 @@ function createActorRig(unit={},options={},reuseGroup=null){
     }
   }
   mountCharacterDetail(unit,kit,{torso,head,cloth,clothDark,leather,bronze,mesh,strip,ellipsoid:faceDetail,profile});
+  if(kit.armored){
+    // Padded neckline separates warm skin, textile and cold armor. It follows
+    // the torso and has its own folded contour, not a dark line on the neck.
+    mesh(torso,profile([[.466,.103,.089],[.477,.107,.091],[.492,.092,.079],[.500,.086,.075]],{segments:anatomy&&detail?32:16,folds:.035}),cloth);
+    if(kit.eastern){
+      for(const side of [-1,1])strip(torso,clothDark,[[side*.11,.45,.10],[side*.13,.38,.168],[side*.10,.29,.193]],.008);
+    }else{
+      for(const side of [-1,1])strip(torso,clothDark,[[side*.065,.49,.065],[side*.075,.471,.079],[side*.098,.473,.067]],.003);
+    }
+  }
   let cloak=null;
   if(kit.cloak){
     cloak=part(torso,'command-cloak');clothRigs.push(createClothRig(cloak,.44,.08,-.42));const red=material(wardrobe.cloak,{...surface('wool'),side:T.DoubleSide});

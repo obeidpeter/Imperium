@@ -138,8 +138,8 @@ export function finishActorMaterial(material,kind){
     previous.call(material,shader,...args);
     let color='',roughness='';
     if(resolved==='skin'){
-      color='diffuseColor.rgb*=vec3(1.03,.97,.95);';
-      roughness='roughnessFactor*=.94;';
+      color='diffuseColor.rgb*=vec3(1.0,.99,.985);';
+      roughness='roughnessFactor=clamp(roughnessFactor,.46,.86);';
     }else if(resolved==='cloth'){
       color='diffuseColor.rgb*=1.04;';
       roughness='roughnessFactor*=.96;';
@@ -150,8 +150,14 @@ export function finishActorMaterial(material,kind){
       roughness='roughnessFactor*=.95;';
     }
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\n${color}`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n${roughness}`);
+    if(resolved==='skin')shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+      // Bounded warm grazing fill, driven by existing indirect illumination.
+      // This is an art-directed approximation, not screen-space subsurface scattering.
+      float skinGrazing=pow(1.0-clamp(dot(normal,geometryViewDir),0.0,1.0),2.0);
+      reflectedLight.indirectDiffuse+=irradiance*diffuseColor.rgb*vec3(.055,.020,.012)*skinGrazing;
+    `);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v1:${resolved}`;
+  material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v035:${resolved}`;
   material.userData.actorFinish=resolved;
   // Figures dim under passing cloud like the ground they stand on.
   installCloudShadows(material);

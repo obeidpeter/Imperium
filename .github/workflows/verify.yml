@@ -61,10 +61,10 @@ jobs:
       - run: npm install --no-save --no-package-lock playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm run benchmark -- --images tests/visual-results/v034 --report tests/visual-results/v034/benchmark.json
+      - run: npm run benchmark -- --images tests/visual-results/v035 --report tests/visual-results/v035/benchmark.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: chapter-benchmark
-          path: tests/visual-results/v034/
+          path: tests/visual-results/v035/
           retention-days: 14

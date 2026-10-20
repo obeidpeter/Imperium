@@ -1,0 +1,93 @@
+{
+  "version": 35,
+  "sourceDigest": "16a673dd68409599eb2dcfe621b5c4770d0fb1b8d552978d109b8c0ed66b60fd",
+  "method": "Code-authored garments and performances over MakeHuman CC0 anatomy; self-contained editable glTF 2.0; no purchased or commissioned assets.",
+  "characters": [
+    {
+      "id": "marcellus",
+      "path": "art-source/characters/marcellus-v035.glb",
+      "bytes": 9210388,
+      "sha256": "d259d79be1cc2568327fda1247fc9e24d99ad170b9d89992b10cb7beba791cd8",
+      "meshes": 22,
+      "skins": 15,
+      "joints": 35,
+      "embeddedMaps": 27,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "block"
+      ],
+      "source": {
+        "id": "marcellus",
+        "unit": {
+          "id": "hero",
+          "name": "Aurelius Marcellus",
+          "side": "player",
+          "role": "infantry"
+        },
+        "options": {
+          "chapter": 5,
+          "rank": "Centurio"
+        }
+      }
+    },
+    {
+      "id": "lucan",
+      "path": "art-source/characters/lucan-v035.glb",
+      "bytes": 8894940,
+      "sha256": "42b027c28b966f3f3fe5c97ba48acadb917036a753c8785a6541d63122846d51",
+      "meshes": 22,
+      "skins": 15,
+      "joints": 34,
+      "embeddedMaps": 27,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "block"
+      ],
+      "source": {
+        "id": "lucan",
+        "unit": {
+          "id": "lucan",
+          "name": "Aurelius Lucan",
+          "veteranId": "lucan",
+          "side": "ally",
+          "role": "infantry"
+        },
+        "options": {
+          "chapter": 5
+        }
+      }
+    },
+    {
+      "id": "persian-guard",
+      "path": "art-source/characters/persian-guard-v035.glb",
+      "bytes": 10983412,
+      "sha256": "5264cdb4424a62d598c20ec07ff53c22ffe4dd2f0728718f1606f70ec721539b",
+      "meshes": 23,
+      "skins": 16,
+      "joints": 31,
+      "embeddedMaps": 24,
+      "animations": [
+        "idle",
+        "walk",
+        "attack",
+        "block"
+      ],
+      "source": {
+        "id": "persian-guard",
+        "unit": {
+          "id": "persian-guard",
+          "name": "Persian guard",
+          "side": "enemy",
+          "role": "guard"
+        },
+        "options": {
+          "chapter": 5
+        }
+      }
+    }
+  ]
+}

@@ -59,10 +59,12 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced',h
   };
   const surface=(y,a)=>{
     const [,rx,rz]=rowAt(base,y),front=Math.max(0,Math.cos(a)),waist=1-smooth((y-.07)/.29);
-    const diagonal=Math.sin(a*5+y*19)*.55+Math.sin(a*9-y*13)*.25;
+    const characterPhase=(identity.age??25)*.13;
+    const diagonal=Math.sin(a*5+y*19+characterPhase)*.55+Math.sin(a*9-y*13)*.25;
     // Tension folds converge toward the belt and armpits. Fine threads belong
     // in the material; these centimeter-scale folds alter the actual contour.
-    const fold=(armor?.0035:.009)*(diagonal*(.35+.65*waist));
+    const compression=Math.exp(-(((y-.055)/.10)**2))*.003*Math.sin(a*11+y*24);
+    const fold=(armor?.0035:.011)*(diagonal*(.35+.65*waist))+(armor?0:compression);
     const chest=armor?.003:.006*Math.exp(-(((y-.31)/.12)**2))*front;
     const scaleStep=kind==='scale'&&y<.285?.0045*Math.pow(.5+.5*Math.cos((y+.13)*TAU/.063),6):0;
     const scallop=armor&&y<-.10?.0035*Math.cos(a*12)*(1-smooth((y+.135)/.035)):0;

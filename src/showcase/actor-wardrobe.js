@@ -23,8 +23,8 @@ export function actorWardrobe(identity={},kit={}){
     palette:hero?{...hero}:{},
     cloak:identity.key==='lucan'?0x465c55:identity.key==='varro'?0x76664b:kit.officer?0x773c42:0x5e5b45,
     armorTint:eastern?0xaaa28b:command&&identity.key==='marcellus'?0xb0b4a7:0x9ba49b,
-    armorRoughness:eastern?.84:identity.key==='varro'?.94:kit.officer?.84:.92,
-    metalRoughness:kit.officer?.80:.94,
+    armorRoughness:eastern?.78:identity.key==='varro'?.96:kit.officer?.80:.90,
+    metalRoughness:kit.officer?.72:.88,
     heraldry:identity.key==='lucan'?'sun':identity.key==='sabinus'?'chevron':identity.key==='varro'?'bars':'wings'
   };
 }
