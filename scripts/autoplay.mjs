@@ -29,6 +29,9 @@ function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.
  if(m.mode==='recover')goal=e.goal;
  if(['capture','supply','surrender'].includes(m.mode)){const point=m.points?.filter(p=>!p.secured).sort((a,b)=>pathDistance(e,hero,a,hero.id)-pathDistance(e,hero,b,hero.id))[0];goal=point??e.goal;}
  if(m.mode==='hold')goal=tactical&&e.units.some(u=>u.side==='ally'&&alive(u)&&distance(u,e.goal)<=1)?{x:0,y:3}:e.goal;
+ // Enhanced enemies contest the marker as a group. Clear its visible blocker
+ // before sheltering; otherwise the policy can brace forever one tile short.
+ if(e.featureEdition===31&&state.chapter<4&&m.mode==='hold')goal=enemies().filter(u=>distance(u,e.goal)<=1).sort((a,b)=>distance(hero,a)-distance(hero,b))[0]??goal;
  if(m.mode==='defection'){goal=enemies().sort((a,b)=>distance(hero,a)-distance(hero,b))[0]??e.goal;if(goal&&distance(hero,goal)>3)move(goal);issue(state,hero,'rally');}
  if(e.type==='training'){
    if(capNeeded(state,'move'))issue(state,hero,'move',closestTo({x:1,y:3}));
@@ -40,6 +43,7 @@ function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.
  if(!unescorted&&m.mode!=='defection'&&getActions(state,hero.id).includes('move')&&distance(hero,goal)>(m.mode==='settlement'&&e.combatVersion===2?0:1)&&(travelling||!getTargets(state,hero.id,'strike').length||!tactical))move(goal,['extract','settlement'].includes(m.mode));
  if(threatenedEscort&&distance(hero,threatenedEscort)<=1)issue(state,hero,'assist',(a,b)=>(a.unitId===threatenedEscort.id?-1:b.unitId===threatenedEscort.id?1:0));
  if(capNeeded(state,'assist'))issue(state,hero,'assist');
+ if(e.featureEdition===31){const finish=getTargets(state,hero.id,'strike').find(p=>{const target=e.units.find(u=>u.id===p.unitId);return target&&damagePreview(e,hero,target)>=target.hp;});if(finish)command(state,hero,'strike',finish);}
  if(tactical&&hero.hp<=8&&enemies().some(u=>distance(u,hero)<=2))issue(state,hero,'brace');
  if(capNeeded(state,'rally')||m.mode==='settlement'||tactical&&(hero.hp<=hero.maxHp-5||e.units.some(u=>u.side==='ally'&&alive(u)&&u.morale<=40&&distance(hero,u)<=3)))issue(state,hero,'rally');
  if(m.mode!=='defection'){

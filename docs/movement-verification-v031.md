@@ -65,6 +65,10 @@ This was a scripted check, not a human playthrough, and only the Chapter I drill
 - Contest chambers and later chapters in the real interface (unit tests only, as above).
 - Human playtesting, including whether one-click moves lead to accidental walks (Undo Move mitigates this until the unit acts), and the 90–150 minute campaign target.
 
+## Since 0.32.0
+
+The expanded campaign merged in 0.32.0 adds closed gates and extra cost for high ground in the rain. The shared route follows both through the rules' own field geometry, and a closed gate reads "Closed gate". The checks are recorded in [Integration into 0.32.0](release-validation-v031.md#integration-into-0320).
+
 ## Known limitations
 
 - A far goal is planned one turn at a time and is not remembered for later turns.

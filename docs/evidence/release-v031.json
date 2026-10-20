@@ -1,0 +1,65 @@
+{
+  "version": "0.31.0",
+  "date": "2026-10-19",
+  "base": "f1612a53775832a1ac9dfa3b67782c31a5a04616",
+  "tests": {
+    "total": 674,
+    "passed": 674,
+    "failed": 0,
+    "finalFocusedTests": 17
+  },
+  "baselineAutoplay": {
+    "chapters": 12,
+    "encounters": 25,
+    "turns": 217,
+    "rank": "Augustus"
+  },
+  "expandedCampaigns": [
+    {
+      "difficulty": "standard",
+      "seed": 275,
+      "alternate": false,
+      "rank": "Augustus",
+      "encounters": 25,
+      "turns": 218,
+      "exactRetries": true
+    },
+    {
+      "difficulty": "standard",
+      "seed": 275,
+      "alternate": true,
+      "rank": "Augustus",
+      "encounters": 25,
+      "turns": 222,
+      "exactRetries": true
+    },
+    {
+      "difficulty": "story",
+      "seed": 137,
+      "alternate": false,
+      "rank": "Augustus",
+      "encounters": 25,
+      "turns": 214,
+      "exactRetries": true
+    },
+    {
+      "difficulty": "veteran",
+      "seed": 831,
+      "alternate": false,
+      "rank": "Augustus",
+      "encounters": 25,
+      "turns": 220,
+      "exactRetries": true
+    }
+  ],
+  "build": {
+    "revision": "441ca51474bb",
+    "files": 251,
+    "initialGzipBytes": 455286,
+    "chapterOneGzipBytes": 7721968,
+    "completeGzipBytes": 11200021
+  },
+  "offline": "Asset hash/size, shell installation, cold chapter restore, failed-fetch retry and cache isolation checks passed.",
+  "browserEvidence": "browser-v031.json",
+  "physicalDevicesTested": []
+}
