@@ -47,6 +47,12 @@ The automated checks cover old-save compatibility, exact Retry, truthful combine
 
 The user approved Windows testing now and will arrange phones and first-time players later. Software Chromium videos and viewport emulation must not be labelled physical-device performance. Desktop measurements should record the actual backend, resolution, quality, adaptive scale and frame intervals with competing test processes stopped.
 
+The observed Windows backend is Intel graphics through ANGLE/D3D11. At a 1032 × 665 render resolution, a quiet Balanced horizon sample averaged 16.66 ms with a 16.9 ms p95. A subsequent normal-motion turn/settlement window averaged 29.58 ms, with a 50 ms p95 and a 383 ms stall. The quiet view reaches 60 fps; combat is not yet certified at a sustained 60 fps. The exact settings, sample sizes and limitations are in `docs/evidence/windows-v035.json`.
+
+The Windows check also exposed an unsafe actor replacement during a live quality change. Replacement now constructs and mounts the candidate before retiring the visible figure. Failure-path tests retain the old actor, and the recording script exercises both Performance and Balanced rebuilds on an already-loaded battle.
+
+Animation snapshots now retain the complete detached encounter, including field objects, operation state and veteran details. Previously the reduced motion-data subset replaced the scene's encounter during playback and could remove gates and bridges after a command. The regression test checks rebuilt field geometry and bridge support, and the browser recording checks field-object counts after every turn.
+
 For the later device/player session:
 
 1. On each physical phone, start a cold session; record model, browser, quality, loading time and thermal state. Play both Chapter V encounters for at least ten minutes, then repeat a civic chapter.

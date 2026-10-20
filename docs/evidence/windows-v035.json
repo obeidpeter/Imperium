@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-20",
+  "method": "Public controls in the Windows Codex in-app browser, Chapter V ch5-wall, during the validation that identified the field-snapshot repair. Read-only canvas diagnostics. Local software Chromium checks stopped and character workshop blanked during the quiet samples. These observations are not a final-build performance certification.",
+  "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "software": false,
+  "sceneCssPixels": [688, 444],
+  "reducedMotion": false,
+  "playbackSpeed": 1,
+  "adaptiveResolution": false,
+  "samples": [
+    {
+      "view": "overview",
+      "quality": "performance",
+      "renderPixels": [688, 443],
+      "windowFrames": 240,
+      "displayMeanMs": 33.3254,
+      "displayP95Ms": 33.6,
+      "displayWorstMs": 35.6,
+      "cpuMeanMs": 7.04,
+      "cpuP95Ms": 13.1,
+      "lastGpuMs": 10.8481
+    },
+    {
+      "view": "horizon",
+      "quality": "balanced",
+      "renderPixels": [1032, 665],
+      "windowFrames": 240,
+      "displayMeanMs": 16.6621,
+      "displayP95Ms": 16.9,
+      "displayWorstMs": 17.8,
+      "cpuMeanMs": 8.4617,
+      "cpuP95Ms": 11,
+      "lastGpuMs": 14.6143
+    },
+    {
+      "view": "horizon, recent normal-motion enemy turn and settlement",
+      "quality": "balanced",
+      "renderPixels": [1032, 665],
+      "windowFrames": 240,
+      "displayMeanMs": 29.5767,
+      "displayP95Ms": 50,
+      "displayWorstMs": 383.1,
+      "cpuMeanMs": 15.3825,
+      "cpuP95Ms": 22.5,
+      "lastGpuMs": 20.1035
+    }
+  ],
+  "interactionChecks": [
+    "Live Performance to Balanced replacement completed and the scene continued rendering",
+    "Two enemy turns completed using normal motion through public controls",
+    "Sky, distant aqueduct, soldiers, ground and contextual labels remained visible"
+  ],
+  "limits": [
+    "The quiet Balanced sample meets a 60 fps cadence at this window size. The combat/settlement sample does not; it includes a 383 ms stall. This is not a sustained 60 fps gameplay certification.",
+    "An earlier load while software-rendered tests were running recorded approximately 38 seconds of blocking work. It is retained as an observation of competing workload, not a clean cold-load timing.",
+    "No full-screen, physical phone, thermal endurance or first-time-player qualification is claimed.",
+    "The user will arrange phone hardware and first-time players later."
+  ]
+}

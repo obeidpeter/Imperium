@@ -3,6 +3,24 @@ import assert from 'node:assert/strict';
 import {drawBattle,drawReignCard,geometry,pickTile} from '../src/ui/renderer.js';
 import {snapshotEncounter,diffEncounterMotion,playEncounterMotion} from '../src/ui/motion.js';
 import {newGame,choose,startEncounter} from '../src/core/game.js';
+import {createBattlefieldFeatures} from '../src/showcase/battlefield-features.js';
+import * as T from '../vendor/three/three.module.js';
+
+test('A committed motion snapshot retains field geometry, walk surfaces and veteran identity',()=>{
+  const e={id:'ch5-wall',kind:'battle',type:'defend',featureEdition:31,width:10,height:8,operation:{index:1},
+    field:{objects:[{id:'bridge',kind:'bridge',state:'repaired',x:3,y:3},{id:'gate',kind:'gate',state:'open',x:4,y:2}]},
+    units:[{id:'hero',veteranId:'marcellus',specialization:'guardian',x:1,y:3,hp:26,side:'player'}]};
+  const scene=new T.Scene(),features=createBattlefieldFeatures(scene);
+  features.sync(e);const initial=features.stats(),after=snapshotEncounter(e);
+  after.turn=2;features.sync(after);
+  assert.equal(features.stats().objects,2);assert.equal(features.stats().triangles,initial.triangles);
+  assert.equal(after.units[0].veteranId,'marcellus');assert.equal(after.units[0].specialization,'guardian');
+  assert.equal(after.operation.index,1);
+  e.field.objects[0].state='broken';e.operation.index=2;e.units[0].specialization='scout';
+  assert.equal(after.field.objects[0].state,'repaired');assert.equal(after.operation.index,1);assert.equal(after.units[0].specialization,'guardian');
+  const bridge=features.group.userData.fieldObjects.find(o=>o.id==='bridge'),x=(bridge.min[0]+bridge.max[0])/2,z=(bridge.min[2]+bridge.max[2])/2;
+  assert.ok(Number.isFinite(features.surfaceHeight(x,z)));features.dispose();
+});
 
 function mockCanvas(width,height){let operations=0;const values={font:'12px Georgia'},gradient={addColorStop(){}};const context=new Proxy(values,{get(object,key){if(key==='measureText')return text=>({width:String(text).length*(parseFloat(object.font)||12)*.56});if(key==='createLinearGradient'||key==='createRadialGradient')return(...args)=>{args.forEach(value=>assert.ok(Number.isFinite(value)));return gradient;};if(key in object)return object[key];return(...args)=>{operations++;if(key==='ellipse'){assert.ok(args[2]>=0,'ellipse radiusX must be nonnegative');assert.ok(args[3]>=0,'ellipse radiusY must be nonnegative');}if(key==='arc')assert.ok(args[2]>=0,'arc radius must be nonnegative');for(const arg of args)if(typeof arg==='number')assert.ok(Number.isFinite(arg),String(key));};},set(object,key,value){object[key]=value;return true;}});return {width,height,getBoundingClientRect:()=>({left:0,top:0,width,height}),getContext:()=>context,operations:()=>operations};}
 test('Painting keeps seeded campaign state unchanged and grid picking matches rendered centers',()=>{const state=newGame();choose(state,'report');startEncounter(state);const before=JSON.stringify(state);for(const[width,height]of[[360,196],[360,320],[720,480],[1280,900]]){const canvas=mockCanvas(width,height),g=geometry(canvas,state.encounter);drawBattle(canvas,state.encounter,'hero',[{x:1,y:3}],{x:2,y:3},1,{action:'move'});assert.ok(canvas.operations()>500);for(let x=0;x<8;x++)for(let y=0;y<8;y++){const picked=pickTile(canvas,state.encounter,g.ox+(x-y)*g.tw/2,g.oy+(x+y)*g.th/2);assert.ok(picked?.x===x&&picked?.y===y);}assert.equal(JSON.stringify(state),before);}});

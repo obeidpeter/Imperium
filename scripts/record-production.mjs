@@ -30,7 +30,7 @@ try{
   await page.waitForSelector('.camp-page');await page.locator('[data-cmd="field-approach"][data-id="diversion"]').click();
   assert.equal((await exported(page)).fieldApproach,'diversion');
   report.checks.push('Camp approach selected and persisted through the real UI');console.log('ok - approach selected through the camp UI');
-  await menu(page,'settings');await page.selectOption('#battle-view','3d');await page.selectOption('#graphics-quality','balanced');await page.uncheck('#motion-setting');await page.uncheck('#adaptive-resolution');await close(page);
+  await menu(page,'settings');await page.selectOption('#battle-view','3d');await page.selectOption('#graphics-quality','balanced');await page.uncheck('#motion-setting');await page.uncheck('#adaptive-resolution');await page.check('#audio-setting');await close(page);
   await page.locator('[data-cmd="start"]').click();
   await page.waitForFunction(()=>{const c=document.querySelector('#battle-board');try{return c.parentElement.dataset.ready==='true'&&c.dataset.actorAssets==='imported'&&JSON.parse(c.dataset.renderStats).samples>=8;}catch{return false;}},null,{timeout:300000});
   await page.locator('[data-cmd="camera-horizon"]').click();
@@ -43,10 +43,23 @@ try{
     // The export gives the authoritative result; transient UI readiness cannot
     // stand in for a completed command or invent a turn.
     const state=await exported(page);assert.equal(state.encounter.turn,turn+1);
+    const features=await page.locator('#battle-board').evaluate(el=>JSON.parse(el.dataset.renderStats).fieldFeatures);
+    assert.equal(features?.objects,state.encounter.field.objects.length,'Field objects must survive the committed animation snapshot');
     report.checks.push(`Normal-motion enemy turn ${turn} completed through public UI`);console.log(`ok - normal-motion turn ${turn}`);
   }
   report.stats=await page.locator('#battle-board').evaluate(el=>JSON.parse(el.dataset.renderStats));
   await page.screenshot({path:resolve(output,'chapter-v-after-combat.png')});
+  // Rebuild already-visible actors twice: changing a saved preference before
+  // entering the battle cannot exercise the replacement ownership path.
+  report.qualitySwitches=[];
+  for(const quality of ['performance','balanced']){
+    await menu(page,'settings');await page.selectOption('#graphics-quality',quality);await close(page);
+    await page.waitForFunction(q=>{try{const c=document.querySelector('#battle-board'),s=JSON.parse(c.dataset.renderStats);return c.parentElement.dataset.ready==='true'&&s.quality===q&&s.samples>=8;}catch{return false;}},quality,{timeout:300000});
+    const state=await exported(page);assert.equal(state.encounter.turn,4);
+    report.qualitySwitches.push(await page.locator('#battle-board').evaluate(el=>JSON.parse(el.dataset.renderStats)));
+    console.log(`ok - live ${quality} quality replacement`);
+  }
+  report.checks.push('Live Performance and Balanced actor rebuilds preserve the turn and continue rendering');
   report.video=await page.video().path();await context.close();context=null;
   assert.deepEqual(report.errors,[]);report.passed=true;
 }catch(error){report.passed=false;report.errors.push(error.stack||String(error));process.exitCode=1;}

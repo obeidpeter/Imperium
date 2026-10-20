@@ -1,6 +1,7 @@
 import {createBattlefieldFeatures} from './battlefield-features.js';
 import {renderDeviceReport} from './device-report.js';
 import {contextualLabelVisible} from './contextual-labels.js';
+import {replaceStageActor} from './actor-replacement.js';
 import {applyPairedContacts} from './paired-contact.js';
 import {createFrameProfile} from './frame-profile.js';
 import * as T from '../../vendor/three/three.module.js';
@@ -212,8 +213,13 @@ export class BattleStage{
       const vComm=this.commendations?.[u.veteranId]??(u.moraleResistance?6:u.specialization?3:0);
       const styleKey=`${u.side}:${u.role}:${u.name}:${vComm}:${this.quality}:${this.figureStyle}`;let actor=this.actors.get(u.id);
       // A committed defection changes the uniform and allegiance together.
-      if(actor&&actor.group.userData.styleKey!==styleKey){this.scene.remove(actor.group);actor.dispose();this.actors.delete(u.id);actor=null;}
-      if(!actor){actor=(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]});if(actor.painted)this.loadPaintedArt();this.attachFormation(u,actor);actor.group.userData.unitId=u.id;actor.group.userData.styleKey=styleKey;this.scene.add(actor.group);this.actors.set(u.id,actor);this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';}});}
+      if(!actor||actor.group.userData.styleKey!==styleKey){
+        actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
+          create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
+          prepare:candidate=>{if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;candidate.group.userData.styleKey=styleKey;}
+        });
+        this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';}});
+      }
       if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-role"></span><span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
       const label=this.labels.get(u.id),readout=actorReadout(u,encounter);
       label.className=`world-unit ${u.side==='enemy'?'enemy':u.side==='neutral'?'neutral':'friendly'} ${readout.tone}${civicActor(u)&&!isAlive(u)?' withdrawn':''}`;label.dataset.type=readout.type;label.dataset.role=labelRole(u);if(u.bloc)label.dataset.bloc=u.bloc;else delete label.dataset.bloc;label.classList.toggle('named',namedFigure(u));

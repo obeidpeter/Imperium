@@ -4,7 +4,7 @@ import {deflateSync} from 'node:zlib';
 import {readFile,readdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 export async function characterSourceDigest(){
-  const root=new URL('../src/showcase/',import.meta.url),names=(await readdir(root)).filter(n=>/^(actor-|actors\.|character-detail|paired-contact|skin-response)/.test(n)&&n.endsWith('.js')).sort(),hash=createHash('sha256');
+  const root=new URL('../src/showcase/',import.meta.url),names=(await readdir(root)).filter(n=>/^(actor-|actors\.|character-detail|paired-contact|skin-response)/.test(n)&&n.endsWith('.js')&&n!=='actor-replacement.js').sort(),hash=createHash('sha256');
   for(const name of names){hash.update(name);hash.update((await readFile(new URL(name,root),'utf8')).replaceAll('\r\n','\n'));}
   return hash.digest('hex');
 }
