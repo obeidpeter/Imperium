@@ -186,7 +186,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const right=arms[0],left=arms[1];
 
   function makeShield(){
-    const s=part(left.hand,'oval-shield',0,-.01,.065),rim=new T.Shape();rim.absellipse(0,0,.265,.40,0,TAU,false,0);
+    const s=part(left.hand,'oval-shield',0,-.082,.065),rim=new T.Shape();rim.absellipse(0,0,.265,.40,0,TAU,false,0);
     const face=mesh(s,new T.ExtrudeGeometry(rim,{depth:.025,bevelEnabled:true,bevelSize:.007,bevelThickness:.008,bevelSegments:2,steps:1,curveSegments:40}),leather,0,.03,-.022);
     // A convex oval face: radial rings bulge forward with a rolled bronze edge.
     const verts=[],uv=[],ind=[];for(let j=0;j<=6;j++){const r=j/6;for(let i=0;i<=40;i++){const a=i/40*TAU;verts.push(Math.sin(a)*.257*r,Math.cos(a)*.392*r+.03,.019+.045*(1-r*r));uv.push(.5+Math.sin(a)*r*.5,.5+Math.cos(a)*r*.5);if(j&&i){const k=j*41+i;ind.push(k,k-1,k-41,k-1,k-42,k-41);}}}
@@ -420,7 +420,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
       if(mounted)legs[i].ankle.rotation.set(-.60,0,0);else {ankleRotation.copy(legs[i].thigh.quaternion).multiply(legs[i].knee.quaternion).invert();footRotation.setFromEuler(footEuler.set(pose.feet[i].roll+(pose.feet[i].pitch??0),0,pose.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(footRotation));}
     }
     right.shoulder.rotation.set(...pose.rightArm);left.shoulder.rotation.set(...pose.leftArm);right.elbow.rotation.x=pose.rightElbow;left.elbow.rotation.x=pose.leftElbow;right.hand.rotation.x=pose.rightWrist;left.hand.rotation.x=pose.leftWrist;
-    if(shield){shield.rotation.x=-(pose.leftArm[0]+pose.leftElbow+pose.leftWrist)+pose.shieldTilt;shield.rotation.z=-pose.leftArm[2];}
+    // Turn the gripping hand with the shield instead of rotating the board
+    // independently through the fingers. Its boss sits over the closed grip.
+    if(shield){left.hand.rotation.set(-(pose.leftArm[0]+pose.leftElbow)+pose.shieldTilt,0,-pose.leftArm[2]);shield.rotation.set(0,0,0);}
     if(weapon&&raider&&!archer){const ready=['attack','strike'].includes(input.motion)?actionEnvelope(input.motion,input.phase).preparation:0;weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow-.18*(1-ready);}
     if(cloak){cloak.rotation.x=pose.skirt*.55+Math.max(0,-pose.bodyX)*.12;cloak.rotation.z=pose.bodyY*-.08;}
     if(signum){

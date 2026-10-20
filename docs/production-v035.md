@@ -16,6 +16,8 @@ Travel duration follows route distance and accounts for the peak speed of the ex
 
 Two additional authored joint clips add strike recovery and unguarded impact weight transfer. The performance source remains `scripts/character-sources/performance-v034.json`; its historical filename is retained, and the compiler checks its current content. Footfalls follow planted steps for longer paths. Impact, voice and command sounds take precedence over footfalls when the cue budget fills.
 
+The shield hand now turns with the board and holds directly behind its boss. Previously the shield rotated independently through the fingers during guard poses. A geometric regression checks every grip vertex against the shield face across idle, walking, strike, guard and hit poses for infantry, guards and cavalry. The corrected alignment is included in the GLB exports.
+
 ## Deployment choices
 
 New games explicitly enable tactics edition 35. Existing command-campaign saves can opt in at camp; active checkpoints and older editions retain their original rules.
