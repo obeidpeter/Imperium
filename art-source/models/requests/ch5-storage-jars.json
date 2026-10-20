@@ -1,6 +1,6 @@
 {
   "id": "ch5-storage-jars",
-  "status": "proposed: awaiting the owner's review and Tripo access",
+  "status": "generated: awaiting review",
   "chapters": [
     5
   ],
@@ -20,15 +20,31 @@
   },
   "provenance": {
     "taskId": "a95f1fff-ae87-4967-a352-a6c803227789",
-    "modelVersion": null,
+    "modelVersion": "v2.5-20250123",
     "generatedAt": null,
-    "rawSha256": null,
+    "rawSha256": "f6f35b47968c1cf7b613e76951f3d07ea9e80dab1b6b461c9f3622334f9c818d",
     "licence": "Record the terms of the owner's Tripo plan before the model ships.",
     "requestedAt": "2026-10-20T17:09:46.509Z",
     "balanceBefore": 5000,
     "requestBody": {
       "type": "text_to_model",
       "prompt": "Three large terracotta storage jars, two standing and one cracked and lying on its side, half-sunk in sand, rope slings around one. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
-    }
+    },
+    "status": "success",
+    "completedAt": "2026-10-20T17:14:34.634Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-storage-jars.glb",
+    "rawBytes": 17231752,
+    "tripoInput": {
+      "prompt": "Three large terracotta storage jars, two standing and one cracked and lying on its side, half-sunk in sand, rope slings around one. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements.",
+      "model_version": "v2.5-20250123",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-storage-jars-tripo-render.webp"
   }
 }
