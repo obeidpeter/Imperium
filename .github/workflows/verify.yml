@@ -1,7 +1,8 @@
 # Runs the project's own release check (tests, legal-command autoplay,
 # expanded campaigns, production build, asset/offline checks and character
-# audit) on every pull request and on main. Node 20 is the oldest version the
-# project supports (package.json "engines"); there are no dependencies to install.
+# audit) on every pull request and on main: on Node 20, the oldest version the
+# project supports (package.json "engines"), and on Node 22. There are no
+# dependencies to install.
 name: Verify
 
 on:
@@ -20,9 +21,14 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    name: verify (Node ${{ matrix.node }})
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
       - run: npm run verify
