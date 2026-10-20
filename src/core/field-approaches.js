@@ -51,6 +51,9 @@ export function initializeFieldApproach(s){
   }
   note(e,`${p.label}: ${p.description}`);
 }
+// Like the operational preparation, an approach covers one field encounter;
+// the next camp starts from the free direct deployment again.
+export function commitFieldApproach(s){if(enabled(s))s.fieldApproach='balanced';}
 export function advanceFieldApproach(e){
   if(!enabled(e)||e.turn<3||!e.approachMarchPenalty)return;
   const hero=e.units.find(u=>u.id==='hero');if(hero)hero.move+=e.approachMarchPenalty;

@@ -2,8 +2,8 @@
 // Game and the Chapter I drill in 2D (walk by keyboard and pointer, Undo,
 // Confirm moves, an opponent's preview, Help), a keyboard walk in the 3D view,
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
-// (field-object readouts), and touch at phone width (hold to preview, tap to
-// walk). It fails on any page or console error. Development and CI only: it
+// (field-object readouts), a field approach chosen at a restored Chapter V camp,
+// and touch at phone width (hold to preview, tap to walk). It fails on any page or console error. Development and CI only: it
 // needs Playwright, which is not a project dependency, and a production build.
 //
 //   npm run build && npm run smoke
@@ -15,6 +15,7 @@ import {fileURLToPath} from 'node:url';
 import {serveRequest} from './serve.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
+import {runCommandCampaign} from './command-autoplay.mjs';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -33,6 +34,16 @@ function chapterFiveCode(){
     if(Game.startEncounter(probe).ok&&probe.encounter.field?.objects?.some(o=>o.kind==='gate'))code=Game.encodeSave(s);
   }});
   assert.ok(code,'A Chapter V checkpoint with a gate');return code;
+}
+// A legal edition-35 command chronicle saved at the Chapter V mine camp, where
+// the engineering approach is affordable. The campaign stops there.
+function approachCampCode(){
+  let code=null;const stop=new Error('saved');
+  try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{
+    if(Game.getChapter(s).encounters[s.encounterIndex]?.id!=='ch5-mine')return;
+    if(Game.fieldApproachView(s).options.find(p=>p.id==='breach')?.available)code=Game.encodeSave(s);throw stop;
+  }});}catch(error){if(error!==stop)throw error;}
+  assert.ok(code,'A Chapter V camp that can afford the engineering approach');return code;
 }
 
 const server=http.createServer((req,res)=>serveRequest(req,res,root));
@@ -136,6 +147,22 @@ async function expandedFieldReadouts(){
   await page.context().close();console.log('ok - expanded Chapter V field: restored legally, field objects named in the cursor, readout, announcement and ground note');
 }
 
+async function fieldApproach(){
+  const page=await open();await page.goto(base);
+  await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',approachCampCode());await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');
+  const card=id=>`[data-cmd="field-approach"][data-id="${id}"]`;
+  assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'true','Each camp starts from direct deployment');
+  await page.click(card('breach'));await page.waitForSelector(`${card('breach')}[aria-pressed="true"]`);
+  assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'false');
+  await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
+  assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
+  await view(page,'2d');await page.focus('#battle-board');
+  await expectAnnouncement(page,/^Grid 9C\. Side gate \(open\)\./,()=>keys(page,['ArrowUp',...Array(8).fill('ArrowRight')]));
+  await page.context().close();console.log('ok - field approach: chosen on a restored Chapter V camp table, and the engineers have opened the gate');
+}
+
 // Touch has no hover: holding a finger still previews, lifting it commits nothing, a tap walks.
 async function touchHold(page,{x,y}){
   await settled(page);const session=await page.context().newCDPSession(page);
@@ -167,7 +194,7 @@ async function phoneTouch(){
 }
 
 let failed=false;
-for(const scenario of [drillDesktop,expandedFieldReadouts,phoneTouch]){
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch]){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

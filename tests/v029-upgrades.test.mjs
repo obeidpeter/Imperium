@@ -356,7 +356,11 @@ test('v0.29.0: switching figure style swaps only the presentation and sets the m
   const stage = Object.create(BattleStage.prototype);
   Object.assign(stage, {figureStyle: 'sculpted', disposed: false, encounter, scene: new T.Scene(), actors: new Map([['hero', {group: new T.Group(), dispose() {disposed++;}}]]), compositor: {setStyle(s) {styles.push(s);}}, sync(e) {synced.push(e);}});
   stage.setFigureStyle('painted');
-  assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 1);assert.equal(stage.actors.size, 0);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
+  // Since 0.35.1 the figures stay until sync replaces each one, whose style key includes the style.
+  assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 0);assert.equal(stage.actors.size, 1);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
+  const source = await (await import('node:fs/promises')).readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
+  assert.match(source, /const styleKey=`\$\{u\.side\}:\$\{u\.role\}:\$\{u\.name\}:\$\{vComm\}:\$\{this\.quality\}:\$\{this\.figureStyle\}`/);
+  assert.match(source, /if\(!actor\|\|actor\.group\.userData\.styleKey!==styleKey\)\{\s+actor=replaceStageActor\(/, 'A changed style key goes through the safe replacement');
   stage.setFigureStyle('painted');assert.equal(synced.length, 1, 'Re-selecting the same style does nothing');
   stage.setFigureStyle('invented');assert.equal(stage.figureStyle, 'sculpted', 'Unknown styles fall back to sculpted');
   assert.equal(JSON.stringify(encounter), frozen, 'The encounter is untouched');

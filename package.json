@@ -1,6 +1,6 @@
 {
   "name": "imperium",
-  "version": "0.35.0",
+  "version": "0.35.1",
   "private": true,
   "type": "module",
   "description": "A complete twelve-chapter Roman tactical chronicle for the browser.",
@@ -11,7 +11,7 @@
     "pretest": "node scripts/prepare-tests.mjs",
     "test": "node --test tests/*.test.mjs",
     "autoplay": "node scripts/autoplay.mjs",
-    "verify": "npm test && npm run autoplay && npm run autoplay:expanded && npm run autoplay:command && npm run autoplay:production && npm run build && node scripts/verify-assets.mjs && npm run audit:characters && npm run audit:production",
+    "verify": "npm test && npm run autoplay && npm run autoplay:expanded && npm run autoplay:command && npm run autoplay:production && npm run build && node scripts/verify-assets.mjs && npm run audit:characters && npm run audit:production && node scripts/check-character-handoff.mjs --warn",
     "audit:characters": "node scripts/audit-character-assets.mjs",
     "autoplay:expanded": "node scripts/expanded-autoplay.mjs",
     "smoke": "node scripts/browser-smoke.mjs",
@@ -19,7 +19,8 @@
     "audit:production": "node scripts/build-character-performance.mjs --check && node scripts/audit-character-production.mjs",
     "benchmark": "node scripts/benchmark-campaign.mjs",
     "autoplay:production": "node scripts/production-autoplay.mjs",
-    "art:handoff": "node scripts/build-character-handoff.mjs"
+    "art:handoff": "node scripts/build-character-handoff.mjs",
+    "audit:handoff": "node scripts/check-character-handoff.mjs"
   },
   "engines": {
     "node": ">=20"

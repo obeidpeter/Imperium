@@ -28,6 +28,8 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     const o=new T.Mesh(g,mat);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;
   }
   const plank=(g,x,y,z,sx,sy,sz,mat=m.wood)=>mesh(g,box,mat,x,y,z,sx,sy,sz);
+  // Cloth seen from both sides: a reversed copy keeps the shared materials single-sided.
+  const reversed=g=>{const r=own(g.clone()),index=r.index.array,n=r.attributes.normal;for(let i=0;i<index.length;i+=3)[index[i+1],index[i+2]]=[index[i+2],index[i+1]];for(let i=0;i<n.count;i++)n.setXYZ(i,-n.getX(i),-n.getY(i),-n.getZ(i));return r;};
   function beam(g,a,b,r,mat=m.wood){
     const start=new T.Vector3(...a),end=new T.Vector3(...b),length=start.distanceTo(end);
     const o=mesh(g,cylinder,mat,...start.clone().add(end).multiplyScalar(.5).toArray(),r,length,r);
@@ -97,7 +99,7 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     beam(g,[-.36,2.05,0],[.36,2.05,0],.025,m.bronze);mesh(g,sphere,m.bronze,0,2.29,0,.065,.10,.065);
     const cloth=own(new T.PlaneGeometry(.65,.66,6,8)),a=cloth.attributes.position;
     for(let i=0;i<a.count;i++){const y=a.getY(i),x=a.getX(i);a.setZ(i,.055*Math.sin(x*11+y*5)*(.34-y));a.setY(i,y-.035*Math.sin(x*9));}cloth.computeVertexNormals();
-    const flag=mesh(g,cloth,state==='secured'?m.bronze:m.accent,0,1.69,.02);flag.material.side=T.DoubleSide;
+    for(const face of [cloth,reversed(cloth)])mesh(g,face,state==='secured'?m.bronze:m.accent,0,1.69,.02);
     for(const x of [-.22,0,.22])plank(g,x,1.31,.02,.075,.13,.035,state==='secured'?m.bronze:m.accent);
     mesh(g,cylinder,m.bronze,0,1.77,.055,.105,.024,.105).rotation.x=Math.PI/2;
   }

@@ -31,7 +31,7 @@ From Chapter III, before a field encounter, a player can combine an operational 
 | Diversion | 1 supply | Pending reinforcements delayed two rounds | Company cohesion −8; one visible enemy investigates the false approach through round 2 |
 | Defensive advance | 0 | Start braced, cohesion +12 | Commander march −1 in rounds 1–2; enemy cavalry and raiders attempt the flank |
 
-Costs include the company package and operational preparation, are checked together before departure, and are paid after the complete camp checkpoint. Retry restores that checkpoint and reapplies costs exactly once. The free approach remains selectable when a previous selection becomes unaffordable. Approaches do not replace political cases in the civic chapters, unlock chapters, or guarantee that one tactic wins every mission.
+Costs include the company package and operational preparation, are checked together before departure, and are paid after the complete camp checkpoint. Retry restores that checkpoint and reapplies costs exactly once. The free approach remains selectable when the others are unaffordable. Like the operational preparation, an approach covers one field encounter: since 0.35.1 the next camp starts from direct deployment, so a costly approach is never charged again without being chosen. Approaches do not replace political cases in the civic chapters, unlock chapters, or guarantee that one tactic wins every mission.
 
 `node scripts/production-autoplay.mjs` runs four legal campaigns through all 25 encounters. It separately completes both Chapter V encounters with each alternative approach and continues each campaign through Chapter XII. This establishes repeatability and solvability of those routes, not human balance approval.
 
@@ -62,3 +62,16 @@ For the later device/player session:
 3. Give first-time players the objective without coaching. Observe whether they understand movement versus action, forecast versus commitment, approach costs, enemy intent, retreat and Retry.
 4. Compare all three siege approaches for completion time, losses, remaining supplies, unused commands and perceived fairness. Capture mistakes and confusion, not just wins.
 5. Watch normal-speed recordings for floating feet, shield/weapon intersections, sliding, stiff stops, unreadable silhouettes, label obstruction and audio lag. File issues with the exact save code, command and camera.
+
+## 0.35.1 follow-up
+
+0.35.1 makes an approach cover one field encounter (the next camp starts from direct deployment), gives a rider withdrawn by the counter blow the usual withdrawal shock, and fixes four presentation details: remains on a repaired deck, the figure-style swap, footstep thinning and the signal flag's shared materials. `npm test` no longer requires the handoff GLBs to match the character code; `npm run audit:handoff` reports a stale export. See the [changelog](../CHANGELOG.md#0351--one-battle-per-approach-a-handoff-that-no-longer-blocks-the-tests-and-smaller-fixes).
+
+Checked, and how:
+
+- **Automated:** `npm run verify` passed on Linux with Node.js 22.22.0. It ran 777 Node tests, the legal-command autoplay, and the expanded, command and production campaigns; the four edition-35 campaigns each reach Augustus with 25 exact Retries. It also ran the production build, the asset and offline checks, the character audits and the handoff notice (current). Download sizes: shell 481,240 bytes, shell plus Chapter I 7,989,151 of 8,000,000 (10,849 left), complete campaign 11,339,391.
+- **Real interface, scripted:** `npm run smoke` drove the production build in headless Chromium with software rendering (SwiftShader, Playwright 1.56.1). It covered the desktop drill, the expanded Chapter V field and touch at phone width, plus a new step: on a legally reached Chapter V camp restored through the Restore dialog, the engineering approach is chosen on the camp table, the field intelligence names it, and the side gate reads open. There were no page or console errors.
+- **Injected or synthetic, and labelled in the tests:** the counter-blow test injects a one-hit-point mounted attacker and companion positions; the approach-reset test marks the battle won to test the commit; the remains test uses a stage without a renderer and fixed heights; the footstep and flag tests use a synthetic timeline and a directly built field kit.
+- **Handoff tooling:** the exporter was run once from another directory, with Sharp 0.34.4 on Node.js 22, to confirm that it writes into `art-source/characters/`. The files it produced had the same sizes as the committed ones but different bytes, so they were not committed.
+
+Not checked: real devices or GPUs, the visual result of the presentation fixes, the footstep sounds by ear, a Windows run of the new tests (their patterns accept CRLF line endings) and human playtesting. One legal probe chose the engineering approach at the Chapter V mine and left the wall on direct deployment; the autoplay then lost the wall at its deadline. The autoplay is not a strong player, so this is a prompt for the planned approach comparison, not a balance finding.
