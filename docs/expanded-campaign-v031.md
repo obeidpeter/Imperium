@@ -10,13 +10,13 @@ Every non-training battle offers two mutually exclusive opportunities: recover a
 
 Chapter III onward adds a timber barricade and pitch brazier. Intact barricades give adjacent defenders 1 protection. Dismantling removes it. Ignited pitch blocks sight through nearby smoke and deals 2 damage to **either side** within one tile at round end. It burns for three rounds, or one in rain; an adjacent commander can extinguish it.
 
-Chapters V, VIII, IX and XII use selected 10 × 8 battlefields with a side corridor. A closed gate blocks movement and sight; opening it admits passage. Click-to-walk routes and their previews go around a closed gate and report it as closed. Repairing the damaged bridge turns its tile into a passable ford. Units, forecasts, path finding, picking and both renderers share the expanded bounds. Distinct chapter themes place a landmark outside the tactical board.
+Chapters V, VIII, IX and XII use selected 10 × 8 battlefields with a side corridor. A closed gate blocks movement and sight; opening it admits passage. Click-to-walk routes and their previews go around a closed gate, and the board readout names it and says there is no passage until it is opened. Repairing the damaged bridge turns its tile into a passable ford. Units, forecasts, path finding, picking and both renderers share the expanded bounds. Distinct chapter themes place a landmark outside the tactical board.
 
 ## Cohesion, weather and opposition
 
 Cohesion starts at 80. Melee hits remove 10; ranged hits remove 6 and add one suppression, capped at 3. Cohesion below 40 and suppression at least 2 each subtract 1 from attack. Brace restores 12 cohesion at round end; adjacent friendly support restores 6. Either reduces suppression by one. Rally restores 20 cohesion and clears suppression in addition to its previous effects. These attack penalties begin after Chapter I.
 
-Rain adds one movement cost for climbing high ground. Rain, mist and dust reduce ranged damage beyond two tiles by 1. The exact attack preview lists each applicable modifier. The opening chapter retains normal visibility and attack rules.
+In rain, each step onto high ground costs one more movement, including a step from one high tile to the next. Rain, mist and dust reduce ranged damage beyond two tiles by 1. The exact attack preview lists each applicable modifier. The opening chapter retains normal visibility and attack rules.
 
 Visible enemy units coordinate around a shared vulnerable friendly target. Archers suppress, flankers seek a side approach and the remaining troops fix the target. Their intentions are visible and recalculate as the field changes. No random draw or hidden information is used to assign roles. Enhanced protected columns choose progress toward the goal while staying within three tiles of the commander and out of adjacency to visible enemies; the commander still needs to screen the route.
 

@@ -1,11 +1,14 @@
 import {alive} from '../core/shared.js';
 import {coalitionWhipForecast} from '../core/contest.js';
+import {fieldAt,fieldMoveCost} from '../core/field-geometry.js';
 import {MISSION_GUIDANCE} from '../data/campaign-guidance.js';
 import {esc,actionNames} from './view-helpers.js';
 
 const tile=u=>`${u.x+1}${String.fromCharCode(65+u.y)}`;
 const terrainNames={grass:'Open ground',sand:'Open sand',marsh:'Marsh',ford:'River ford',high:'High ground',wall:'Defensive wall',road:'Road',stone:'Stone ground',chamber:'Chamber floor',river:'Deep water',rock:'Rock'};
 export function terrainLabel(e,point){return terrainNames[e.terrain?.[point.y]?.[point.x]]||'Ground';}
+// The expanded field's objects on a tile with their state, e.g. "Side gate (closed)"; '' when none.
+export function fieldLabel(e,point){return fieldAt(e,point.x,point.y).map(o=>o.label.toLowerCase().includes(o.state)?o.label:`${o.label} (${o.state})`).join(', ');}
 
 export function missionBrief(e){
   const guide=e.kind==='contest'?['Build a majority that will last',e.issue||'Persuade the chamber before the deadline.']:MISSION_GUIDANCE[e.mission?.mode]||['Follow your orders',e.objective];
@@ -29,9 +32,11 @@ export function fieldIntel(e){
 }
 
 export function selectedGround(e,actor,target){
-  const location=target||actor,terrain=e.terrain?.[location.y]?.[location.x];
+  const location=target||actor,terrain=e.terrain?.[location.y]?.[location.x],field=fieldLabel(e,location);
   const facts={marsh:'Costs 2 movement per tile; line formation crosses at normal cost.',river:'Impassable. Use a ford.',rock:'Impassable; blocks shots.',wall:'Provides cover and blocks shots through the tile.',high:'Offers defensive cover.',ford:'Passable crossing; watch the narrow approach.'};
-  return `<p class="ground-readout"><strong>${target?'Target':'Standing on'}: ${esc(terrainLabel(e,location))}</strong> · ${tile(location)}${facts[terrain]?`<span>${facts[terrain]}</span>`:''}</p>`;
+  // The rain surcharge comes from the movement rule itself (high ground costs 1 otherwise).
+  const note=[facts[terrain],terrain==='high'&&fieldMoveCost(e,actor,location.x,location.y)>1?'In rain, each step onto it costs 1 more movement.':''].filter(Boolean).join(' ');
+  return `<p class="ground-readout"><strong>${target?'Target':'Standing on'}: ${esc(terrainLabel(e,location))}</strong> · ${tile(location)}${field?` · ${esc(field)}`:''}${note?`<span>${note}</span>`:''}</p>`;
 }
 
 export function encounterDebrief(e){

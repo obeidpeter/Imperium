@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.32.1 — field objects named on the board, a player guide to the expanded campaign, and continuous integration
+
+- **Field objects named wherever a tile is described** ([`tactical-intel.js`](src/ui/tactical-intel.js), [`app.js`](src/ui/app.js), [`encounter-view.js`](src/ui/encounter-view.js)): the board readout, the arrow-key cursor's announcement, the announcement for a click that cannot walk, the named target list and the ground note in the command dock now name any field object on a tile and its state, for example "Side gate (closed)" or "Abandoned supply cart (available)". Previously a gate tile read "Open ground", and carts, signal stations, barricades and braziers were not mentioned. A closed gate's route summary now reads "No passage until opened". On high ground in the rain, the ground note says each step onto it costs one more movement.
+- **Player guide** ([PLAYING.md](docs/PLAYING.md)): a new section on the expanded campaign covers field objects and how to use them, cohesion, suppression and weather, coordinated enemies and protected columns, policy debates, and how older chronicles opt in. The controls table lists the field-object and policy buttons.
+- **Rules wording**: the expanded campaign rules said rain adds one movement "for climbing high ground". The rule, and the draft's own test, charges each step onto high ground, including from one high tile to the next, and the text now says so.
+- **Continuous integration** ([`verify.yml`](.github/workflows/verify.yml)): `npm run verify` runs for every pull request and every push to main, on Node 20 (the oldest supported version) and Node 22.
+- **In-game Help** ([`panels.js`](src/ui/panels.js)): **Controls & rules** still described the two-step move from before 0.31. It now covers walking: a first-turn step, the arrow-key and pointer lines, the U key and the Confirm moves setting. It also gains a short section on the expanded campaign.
+- **Checks**:
+  - `npm run verify` passes on Node 20: 692 tests, the standard and four expanded legal-command campaigns to Augustus with unchanged turn counts, the build, the asset and offline checks, and the character audit. `npm test` also passes on Node 22.
+  - A scripted, software-rendered browser run restored a legal Chapter V expanded checkpoint. The cursor, the readout, the ground note and the Move target list all named the cart and the gate. The Help panel was checked at phone width.
+  - Chapter I is 7,727,418 of its 8,000,000 bytes.
+  - No real-device or screen-reader checks.
+
 ## 0.32.0 — interactive battlefields, enduring policies and character refinement
 
 - New UI chronicles use expanded rules; existing games opt in at camp. Saves validate edition, feature state and policy records; previews remain pure and Retry restores the complete transaction.
