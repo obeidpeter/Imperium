@@ -39,7 +39,7 @@ const server=http.createServer((req,res)=>serveRequest(req,res,root));
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
 const {chromium}=await playwright();
-const browser=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const problems=[];
 async function open(options={}){
   const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();

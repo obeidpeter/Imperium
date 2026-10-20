@@ -55,13 +55,13 @@ export function chapterAssets(chapter=1) {
 // only because its consumers decode every entry through the artwork Image loader.
 export function chapterAudioAssets(chapter=1){
   const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),council=[7,8,10,11,12].includes(n);
-  const keys=['music-frontier','foley-step','foley-impact','foley-shield'];
+  const keys=['music-frontier','foley-step','foley-impact','foley-shield','ambience-rain'];
   if(n!==11)keys.push('music-battle',n===2?'ambience-rain':[5,6,9].includes(n)?'ambience-dry':'ambience-frontier');
   else keys.push('ambience-frontier'); // Chapter XI camp precedes its civic encounters.
   if(council)keys.push('music-council','ambience-council','voice-council');
   if(n===1)keys.push('voice-arrival','voice-varro');
   if(n>=4)keys.push('voice-rally');
-  return keys.map(key=>`./assets/audio/${key}.mp3`);
+  return [...new Set(keys)].map(key=>`./assets/audio/${key}.mp3`);
 }
 export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // A restored later chapter may be the first one visited on this device.

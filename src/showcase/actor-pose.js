@@ -1,4 +1,5 @@
 import {applyActorClip,sampleActorClip} from './actor-clips.js';
+import {applyPerformance,applyLocomotionEntry} from './actor-performance.js';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const smooth=n=>{const t=clamp(n,0,1);return t*t*(3-2*t);};
@@ -17,7 +18,7 @@ export function actionEnvelope(motion,phase){
 }
 
 /** Local articulated pose only. No clocks, RNG, unit mutations or world movement. */
-export function actorPose({time=0,motion='idle',phase,direction=0,health=1,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,reducedMotion=false,weapon='sword',mounted=false}={}){
+export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,health=1,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,movementProgress,reducedMotion=false,weapon='sword',mounted=false}={}){
   time=reducedMotion?0:finite(time);direction=finite(direction);health=clamp(finite(health,1),0,1);
   const p=clamp(finite(phase),0,1),breath=Math.sin(time*2.1)*.003;
   const pose={yaw:direction,hipX:0,hipY:.91+breath,hipZ:0,bodyX:0,bodyY:0,bodyZ:0,headX:0,headY:0,
@@ -37,13 +38,17 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     pose.feet.forEach((foot,i)=>{foot.y=mix(.07,foot.y,weight);foot.z=mix(i?-.05:.05,foot.z,weight);foot.roll*=weight;});
     pose.hipY=mix(.91+breath,pose.hipY,weight);pose.hipX*=weight;pose.bodyX*=weight;pose.bodyY*=weight;pose.bodyZ*=weight;pose.skirt*=weight;pose.rightArm[0]=mix(-.1,pose.rightArm[0],weight);pose.leftArm[0]=mix(-.2,pose.leftArm[0],weight);
     applyActorClip(pose,'walk',((cycle%1)+1)%1,weight);
+    applyPerformance(pose,motion==='run'?'run':'walk',((cycle%1)+1)%1,weight);
+    applyLocomotionEntry(pose,{movementProgress,reducedMotion});
   }else if(['attack','strike','throw'].includes(motion)){
     // Clips keep exact230/620 contact and310/620 release poses; foot grounding
     // and held-equipment aiming still solve after sampling.
     applyActorClip(pose,motion==='throw'?'throw':weapon==='spear'?'spearAttack':mounted?'mountedAttack':'attack',p);
+    if(motion!=='throw')applyPerformance(pose,'strike',p);
     if(mounted&&weapon==='spear'){const reach=actionEnvelope(motion,p).reach;pose.bodyZ+=.045*reach;pose.headY-=.04*reach;}
   }else if(['brace','formation'].includes(motion)){
     applyActorClip(pose,'brace',phase===undefined?1:p);
+    if(phase!==undefined)applyPerformance(pose,'guard',p);
   }else if(['hit','hurt','block'].includes(motion)){
     const blocked=braced||defended||motion==='block',hit=sampleActorClip(blocked?'block':'hurt',p).weight,angle=finite(impactDirection),front=Math.cos(angle),side=Math.sin(angle);
     // A quick compression lands with the committed impact, followed by a
@@ -53,9 +58,14 @@ export function actorPose({time=0,motion='idle',phase,direction=0,health=1,brace
     pose.leftArm[0]-=(blocked?.18:.28)*hit;pose.leftElbow-=(blocked?.20:.36)*hit;pose.shieldTilt+=(blocked?.17:.08)*hit;
     pose.rightElbow-=.1*hit;
   }else if(['speak','conversation'].includes(motion)){
-    applyActorClip(pose,motion==='speak'?'speech':'conversation',p);
+    if(motion==='speak')applyPerformance(pose,'speech',p);else applyActorClip(pose,'conversation',p);
   }else if(['rally','order'].includes(motion)){
-    applyActorClip(pose,'speech',p);const reach=sampleActorClip('speech',p);pose.rightArm[0]+=(reach.rightArmX??0)*(motion==='order'?.50:1.15);
+    applyPerformance(pose,motion,p);
+  }else if(motion==='turn'){
+    applyPerformance(pose,'turn',p);
+    const side=Number.isFinite(turnSign)&&turnSign<0?-1:1;pose.bodyY*=side;pose.headY*=side;pose.bodyZ*=side;
+  }else if(motion==='start'||motion==='stop'){
+    applyPerformance(pose,motion,p);
   }else if(motion==='assent'){
     // Support: a nod and an open hand toward the speaker, scaled by commitment.
     const w=smooth(phase===undefined?1:p);pose.headX=.09*w;pose.bodyX=-.025*w;pose.rightArm=[-.1-.42*w,0,.08+.1*w];pose.rightElbow=-.35-.55*w;pose.rightWrist=-.25*w;

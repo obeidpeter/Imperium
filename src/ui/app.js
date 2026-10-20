@@ -7,6 +7,8 @@ import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
 import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint,routeSummary} from './direct-controls.js';
 import {createTouchHold} from './touch-hold.js';
+import {casePreview} from './command-edition-views.js';
+import {CONTROL_DEFAULTS,controlBindings,controlAction,remapControl,holdDelay,controlKeys} from './control-preferences.js';
 import {terrainLabel,fieldLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
@@ -67,6 +69,8 @@ if(!FIGURE_STYLES.includes(settings.figureStyle))settings.figureStyle='sculpted'
 if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory});
 settings.audioVolume=audioLevel(settings.audioVolume);
 settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
+settings.keyBindings=controlBindings(settings.keyBindings);
+settings.holdDelay=holdDelay(settings.holdDelay);
 const soundscape=campaignSoundscape();soundscape.configure(settings);
 function saveSettings(){try{localStorage.setItem('sacramentum.settings',JSON.stringify(settings));}catch{}}
 const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
@@ -83,7 +87,7 @@ function selectedUnit(){return selectedActor(state,selected);}
 function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction,orderDestination});}
 
-function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
+function battle(){selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),keyBindings:settings.keyBindings,coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});}
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span><small>TURN RESOLVED · ${index}/${total}</small>${esc(text)}</span><button class="ghost small" data-cmd="skip-replay">Skip</button>`;announce(text);},
   finish(){const panel=document.querySelector('#turn-replay');if(panel)panel.hidden=true;}
@@ -113,11 +117,13 @@ function render(){
   document.documentElement.dataset.stage=state?.phase==='epilogue'||(state?.chapter===12&&state?.phase==='promotion')?'imperial':'service';
   document.documentElement.dataset.reduced=settings.reducedMotion;
   document.documentElement.dataset.quality=graphics.mode;
+  document.documentElement.dataset.contrast=settings.highContrast?'high':'standard';
+  document.documentElement.dataset.hud=settings.compactHud===false?'full':'compact';
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
-  app.innerHTML=screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp();
+  app.innerHTML=(screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,route:routeAt(hoverTile),reach:walkableReach(),quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,route:routeAt(hoverTile),reach:walkableReach(),quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);if(ceremony3D)ceremony.mount(ceremonyHost,{kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
   mountPainting();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
@@ -176,7 +182,7 @@ function bindBoard(){
   let pressed=null,pointer='mouse';
   // Touch has no hover: a finger held still shows the readout and route for
   // that tile instead, and lifting it commits nothing (touch-hold.js).
-  const hold=createTouchHold(at=>{if(!board.isConnected)return;const p=pickBattlePoint(board,state.encounter,at.clientX,at.clientY),e=state.encounter;if(p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height){boardHover(p);paint(currentAnimation);}});
+  const hold=createTouchHold(at=>{if(!board.isConnected)return;const p=pickBattlePoint(board,state.encounter,at.clientX,at.clientY),e=state.encounter;if(p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height){boardHover(p);paint(currentAnimation);}},{delay:settings.holdDelay});
   board.addEventListener('pointerdown',event=>{pointer=event.pointerType;});
   if(!uses3D())board.addEventListener('pointerdown',event=>{pressed={x:event.clientX,y:event.clientY};hold.down(event);});
   if(!uses3D())for(const type of ['pointerup','pointercancel'])board.addEventListener(type,()=>hold.up());
@@ -216,7 +222,7 @@ async function walk(intent){
   action='move';target=intent.target;orderDestination=null;feedback='';
   const c=command();if(!c||!Game.preview(state,c).ok){action=null;target=null;render();return;}
   const place=p=>`${p.x+1}${String.fromCharCode(65+p.y)}`,short=intent.route&&!intent.route.reachable;
-  await change(()=>{const res=Game.act(state,c);if(res?.ok)res.message=`Walked to ${place(c)} (${intent.target.cost??intent.route?.cost??1} movement).${short?` ${place(intent.goal)} is beyond this turn’s reach.`:''} Undo Move (U) takes it back until you act.`;return res;},{tone:'move',command:c,clearSelection:true});
+  await change(()=>{const res=Game.act(state,c);if(res?.ok)res.message=`Walked to ${place(c)} (${intent.target.cost??intent.route?.cost??1} movement).${short?` ${place(intent.goal)} is beyond this turn’s reach.`:''} Undo Move (${controlKeys(settings.keyBindings).undo}) takes it back until you act.`;return res;},{tone:'move',command:c,clearSelection:true});
 }
 function cancelCommand(){action=null;target=null;orderDestination=null;feedback='';render();announce('Command cancelled. No action was spent.');}
 function selectPoint(point){
@@ -281,6 +287,7 @@ async function replaceCampaign({load,save,message}){
 }
 let modalReturn=null;
 function showModal(title,body){
+
   stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
   modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
@@ -331,7 +338,7 @@ case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offline
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
-  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{featureEdition:31,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
+  const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,{featureEdition:34,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
   if(document.querySelector('#new-soundscape')?.checked){settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Chapter I. You are a Tiro: a recruit in training.'});
   if(result.error?.code==='SAVE_UNAVAILABLE'){
@@ -415,6 +422,11 @@ case 'exit-archive':if(archivePrimaryState){state=archivePrimaryState;archivePri
 case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
 case 'render-report':{const report=battleStage.stage?.stats?.();showModal('Current frame report',report?`<p>Current quality: ${esc(report.quality)}. Measured in this browser; no claim of physical-device testing.</p><pre class="frame-report">${esc(JSON.stringify(report.frameProfile,null,2))}</pre><p>GPU query: ${report.gpu?.supported?'available':'unavailable'} · resolution scale ${report.resolution?.scale??1} · draws ${report.calls}</p>`:'<p>Open a 3D encounter to collect a frame report.</p>');break;}
 case 'expanded-upgrade':await change(()=>Game.enableExpandedCampaign(state));break;
+case 'command-upgrade':await change(()=>Game.enableCommandCampaign(state));break;
+case 'operational-plan':await change(()=>Game.chooseOperationalPlan(state,id));break;
+case 'inspect-case':showModal('Present a documented case',casePreview(state,id));break;
+case 'present-case':await change(()=>Game.presentCase(state,id),{tone:'agreement',afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});break;
+case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();render();showSettings();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;
 case 'policy-motion':await change(()=>Game.tablePolicy(state,id,'original'),{tone:'agreement'});break;
 case 'policy-amend':await change(()=>Game.tablePolicy(state,id,'amended'),{tone:'agreement'});break;
@@ -428,6 +440,9 @@ document.addEventListener('input',event=>{
 });
 document.addEventListener('change',async event=>{
   const control=event.target;
+  if(control.dataset?.binding){const next=remapControl(settings.keyBindings,control.dataset.binding,control.value);if(next){settings.keyBindings=next;saveSettings();render();showSettings();document.getElementById(control.id)?.focus();}return;}
+  if(control.id==='high-contrast'||control.id==='compact-hud'){settings[control.id==='high-contrast'?'highContrast':'compactHud']=control.checked;saveSettings();render();return;}
+  if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
   if(['river','farms','town'].includes(control.id)){const prev=document.querySelector('#allocation-preview');if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),town:Number(document.querySelector('#town')?.value)});}
   if(control.matches('.company-slot')){const ids=[...document.querySelectorAll('.company-slot')].map(node=>node.value);await change(()=>Game.selectCompany(state,ids),{tone:null});}
   if(['music-setting','ambience-setting','voices-setting'].includes(control.id)){settings[control.id.replace('-setting','')]=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();}
@@ -457,9 +472,10 @@ document.addEventListener('change',async event=>{
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
+  const shortcut=controlAction(event.key,settings.keyBindings);
   if(uses3D()){
-    if(event.key.toLowerCase()==='h'){event.preventDefault();if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}return;}
-    if(event.key.toLowerCase()==='f'){event.preventDefault();battleStage.focus();announce('Camera focused on active unit.');return;}
+    if(shortcut==='horizon'){event.preventDefault();if(battleStage.stage){battleStage.horizon();announce('Horizon view. Camera only; your orders are unchanged.');}return;}
+    if(shortcut==='focus'){event.preventDefault();battleStage.focus();announce('Camera focused on active unit.');return;}
     if(event.key==='Home'){event.preventDefault();battleStage.home();announce('Camera reset to default overview.');return;}
     if(event.key==='+'||event.key==='='){event.preventDefault();battleStage.zoom(-3);return;}
     if(event.key==='-'){event.preventDefault();battleStage.zoom(3);return;}
@@ -468,10 +484,10 @@ document.addEventListener('keydown',event=>{
   const next=keyboardAction(event.key,Game.getActions(state,selected));
   if(next){event.preventDefault();chooseAction(next);return;}
   if(event.key==='Escape'){event.preventDefault();cancelCommand();}
-  else if(event.key.toLowerCase()==='u'&&Game.canUndoMove(state,selected).available){event.preventDefault();change(()=>Game.undoMove(state,selected),{tone:'move',clearSelection:true});}
-  else if(event.key.toLowerCase()==='n'){event.preventDefault();selected=nextReadyUnit(state,selected);action=null;target=null;focusTile=null;render();announce(`Selected ${selectedUnit().name}.`);}
-  else if(event.key.toLowerCase()==='e'){event.preventDefault();change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});}
-  else if(event.key.toLowerCase()==='g'){event.preventDefault();showGrid=!showGrid;render();}
+  else if(shortcut==='undo'&&Game.canUndoMove(state,selected).available){event.preventDefault();change(()=>Game.undoMove(state,selected),{tone:'move',clearSelection:true});}
+  else if(shortcut==='next'){event.preventDefault();selected=nextReadyUnit(state,selected);action=null;target=null;focusTile=null;render();announce(`Selected ${selectedUnit().name}.`);}
+  else if(shortcut==='endTurn'){event.preventDefault();change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});}
+  else if(shortcut==='grid'){event.preventDefault();showGrid=!showGrid;render();}
 });
 window.addEventListener('resize',()=>{stopMotion();requestAnimationFrame(()=>{paint();startAtmosphere();});});
 document.addEventListener('visibilitychange',()=>{

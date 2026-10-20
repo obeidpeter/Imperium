@@ -1,0 +1,2633 @@
+{
+  "method": "Legal New Game and public commands only; snapshots restored through the visible Restore dialog; observations through DOM and public Export; no browser state injection.",
+  "build": "production dist",
+  "browser": "Chromium / SwiftShader",
+  "physicalDeviceTest": false,
+  "started": "2026-10-20T10:44:34.205Z",
+  "scenes": [
+    {
+      "chapter": 5,
+      "id": "ch5-mine",
+      "title": "The cracked tower",
+      "kind": "battle",
+      "sourceStateSha256": "18ee2a2c148622c9e588eb715136bbfc6a6a45fc37149214749b70f33e1a35d1",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch5-mine.png",
+      "horizon": "docs/images/v034-ch5-mine-horizon.png",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "balanced",
+      "milliseconds": 164153,
+      "scene": "ch5-battle",
+      "weather": "embers",
+      "timeOfDay": "dusk",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 1280,
+        "height": 567
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 7,
+          "cpuSubmission": {
+            "samples": 7,
+            "meanMs": 1306.1000000004258,
+            "p95Ms": 4796.29999999702,
+            "worstMs": 4796.29999999702
+          },
+          "displayInterval": {
+            "samples": 4,
+            "meanMs": 187.5,
+            "p95Ms": 233.3000000000011,
+            "worstMs": 233.3000000000011
+          },
+          "reflectionSubmission": {
+            "samples": 7,
+            "meanMs": 0.01428571343421936,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 6,
+          "drawBatches": 9,
+          "triangles": 19306,
+          "region": "euphrates-ochre",
+          "batching": {
+            "before": 231,
+            "after": 9,
+            "savedDrawObjects": 222,
+            "mergedSources": 231,
+            "mergedBatches": 9,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1306.1000000004258,
+        "samples": 7,
+        "calls": 146,
+        "callsMean": 219.85714285714286,
+        "callsMax": 442,
+        "shadowUpdates": 3,
+        "labels": {
+          "visible": 12,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 639360,
+        "textures": 87,
+        "geometries": 130,
+        "quality": "balanced",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 60,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 20,
+          "meshes": 33,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": true,
+          "quality": "balanced",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 4,
+          "hazeNear": 54.67413140505503,
+          "directions": 8,
+          "depthSamples": 16,
+          "bloomStrength": 0.24,
+          "casStrength": 0.18,
+          "aerialStrength": 0.16,
+          "vignetteStrength": 0.14,
+          "width": 1280,
+          "height": 567,
+          "drawingWidth": 1280,
+          "drawingHeight": 567,
+          "passes": 2,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": false,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 960,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 12,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 464,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 256,
+          "height": 128,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 8,
+          "stamps": 58,
+          "triangles": 1856
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 960,
+          "textures": 0,
+          "cloudOctaves": 3,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "balanced"
+        },
+        "horizon": {
+          "meshes": 2,
+          "triangles": 8960,
+          "innerEdgeSamples": 640,
+          "outerRadius": 550,
+          "region": "siege",
+          "silhouetteKind": "open eastern escarpments"
+        }
+      }
+    },
+    {
+      "chapter": 5,
+      "id": "ch5-wall",
+      "title": "The red river gate",
+      "kind": "battle",
+      "sourceStateSha256": "69588816d6b68e0ddad79aa68b87623dbf516041599f28d0b120a246607cf8ca",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch5-wall.png",
+      "horizon": "docs/images/v034-ch5-wall-horizon.png",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "balanced",
+      "milliseconds": 124475,
+      "scene": "ch5-battle",
+      "weather": "embers",
+      "timeOfDay": "dusk",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 1280,
+        "height": 567
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 7,
+          "cpuSubmission": {
+            "samples": 7,
+            "meanMs": 1356,
+            "p95Ms": 5693,
+            "worstMs": 5693
+          },
+          "displayInterval": {
+            "samples": 4,
+            "meanMs": 208.32499999999982,
+            "p95Ms": 250.10000000000036,
+            "worstMs": 250.10000000000036
+          },
+          "reflectionSubmission": {
+            "samples": 7,
+            "meanMs": 0.01428571343421936,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 6,
+          "drawBatches": 9,
+          "triangles": 19306,
+          "region": "euphrates-ochre",
+          "batching": {
+            "before": 231,
+            "after": 9,
+            "savedDrawObjects": 222,
+            "mergedSources": 231,
+            "mergedBatches": 9,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1356,
+        "samples": 7,
+        "calls": 151,
+        "callsMean": 224.85714285714286,
+        "callsMax": 447,
+        "shadowUpdates": 3,
+        "labels": {
+          "visible": 11,
+          "occluded": 1,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 634358,
+        "textures": 87,
+        "geometries": 132,
+        "quality": "balanced",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 60,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 20,
+          "meshes": 34,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": true,
+          "quality": "balanced",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 4,
+          "hazeNear": 55.293076341001864,
+          "directions": 8,
+          "depthSamples": 16,
+          "bloomStrength": 0.24,
+          "casStrength": 0.18,
+          "aerialStrength": 0.16,
+          "vignetteStrength": 0.14,
+          "width": 1280,
+          "height": 567,
+          "drawingWidth": 1280,
+          "drawingHeight": 567,
+          "passes": 2,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": false,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 960,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 12,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 464,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 256,
+          "height": 128,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 8,
+          "stamps": 58,
+          "triangles": 1856
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 960,
+          "textures": 0,
+          "cloudOctaves": 3,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "balanced"
+        },
+        "horizon": {
+          "meshes": 2,
+          "triangles": 8960,
+          "innerEdgeSamples": 640,
+          "outerRadius": 550,
+          "region": "siege",
+          "silhouetteKind": "open eastern escarpments"
+        }
+      }
+    },
+    {
+      "chapter": 1,
+      "id": "ch1-road",
+      "title": "Fire on the boundary road",
+      "kind": "battle",
+      "sourceStateSha256": "0c79d8498ebd7c56d3a56249e1994327debb9ffb4d14d09017572e65d0fdcacc",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch1-road.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 18920,
+      "scene": "ch1-battle",
+      "weather": "clear",
+      "timeOfDay": "day",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1178.875,
+            "p95Ms": 3377.1000000089407,
+            "worstMs": 3377.1000000089407
+          },
+          "displayInterval": {
+            "samples": 2,
+            "meanMs": 641.6499999999996,
+            "p95Ms": 833.2999999999993,
+            "worstMs": 833.2999999999993
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 2,
+          "drawBatches": 8,
+          "triangles": 5748,
+          "region": "danube-oak",
+          "batching": {
+            "before": 84,
+            "after": 8,
+            "savedDrawObjects": 76,
+            "mergedSources": 83,
+            "mergedBatches": 7,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1178.875,
+        "samples": 4,
+        "calls": 190,
+        "callsMean": 203.5,
+        "callsMax": 256,
+        "shadowUpdates": 4,
+        "labels": {
+          "visible": 8,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 311346,
+        "textures": 55,
+        "geometries": 89,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 18,
+          "meshes": 49,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 50.13307579038361,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.22,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 4,
+          "stamps": 12,
+          "triangles": 384
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 4,
+          "triangles": 9274,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "frontier",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 2,
+      "id": "ch2-marsh",
+      "title": "The broken causeway",
+      "kind": "battle",
+      "sourceStateSha256": "24cedf997d8b033769fb5c9be05f02b994bcf1a9c58a05d0a9a0cf60f593ed7d",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch2-marsh.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 28419,
+      "scene": "ch2-battle",
+      "weather": "mist",
+      "timeOfDay": "dawn",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1052.8499999977648,
+            "p95Ms": 2942.2000000029802,
+            "worstMs": 2942.2000000029802
+          },
+          "displayInterval": {
+            "samples": 2,
+            "meanMs": 624.9499999999998,
+            "p95Ms": 816.5999999999995,
+            "worstMs": 816.5999999999995
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 2,
+          "drawBatches": 8,
+          "triangles": 5748,
+          "region": "abritus-reed",
+          "batching": {
+            "before": 84,
+            "after": 8,
+            "savedDrawObjects": 76,
+            "mergedSources": 83,
+            "mergedBatches": 7,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1052.8499999977648,
+        "samples": 4,
+        "calls": 171,
+        "callsMean": 191,
+        "callsMax": 263,
+        "shadowUpdates": 4,
+        "labels": {
+          "visible": 8,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 292802,
+        "textures": 64,
+        "geometries": 93,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 16,
+          "meshes": 34,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 51.428068425188684,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.08399999999999999,
+          "shafts": {
+            "shafts": 2,
+            "motes": 0,
+            "interior": false,
+            "strength": 0.075,
+            "disposed": false
+          },
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 5,
+          "stamps": 15,
+          "triangles": 480
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 4,
+          "triangles": 9274,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "wetland",
+          "silhouetteKind": "distant willow wetlands"
+        }
+      }
+    },
+    {
+      "chapter": 3,
+      "id": "ch3-station",
+      "title": "The silent station",
+      "kind": "battle",
+      "sourceStateSha256": "3fba42b82dfc7842feb09a924b575385dd0a50f37c78556a94bcd30b815b4976",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch3-station.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 20817,
+      "scene": "ch3-battle",
+      "weather": "rain",
+      "timeOfDay": "day",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 5,
+          "cpuSubmission": {
+            "samples": 5,
+            "meanMs": 1012.0999999970197,
+            "p95Ms": 3589.2000000029802,
+            "worstMs": 3589.2000000029802
+          },
+          "displayInterval": {
+            "samples": 2,
+            "meanMs": 566.6499999999996,
+            "p95Ms": 633.2999999999993,
+            "worstMs": 633.2999999999993
+          },
+          "reflectionSubmission": {
+            "samples": 5,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 4,
+          "drawBatches": 9,
+          "triangles": 7594,
+          "region": "station-lime",
+          "batching": {
+            "before": 123,
+            "after": 9,
+            "savedDrawObjects": 114,
+            "mergedSources": 122,
+            "mergedBatches": 8,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1012.0999999970197,
+        "samples": 5,
+        "calls": 107,
+        "callsMean": 167,
+        "callsMax": 215,
+        "shadowUpdates": 4,
+        "labels": {
+          "visible": 6,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 207405,
+        "textures": 59,
+        "geometries": 84,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 20,
+          "meshes": 47,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 50.970398209957295,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 3,
+          "stamps": 9,
+          "triangles": 288
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 9052,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "station",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 4,
+      "id": "ch4-gate",
+      "title": "The gate with the broken drum",
+      "kind": "battle",
+      "sourceStateSha256": "1cac6d4b2f757e13972bacf4b42ba59626f882b0521ec640fb15071e0f32aee4",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch4-gate.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 22310,
+      "scene": "ch4-battle",
+      "weather": "dust",
+      "timeOfDay": "day",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1412.0749999955297,
+            "p95Ms": 3809.2999999970198,
+            "worstMs": 3809.2999999970198
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 399.90000000000055,
+            "p95Ms": 399.90000000000055,
+            "worstMs": 399.90000000000055
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 4,
+          "drawBatches": 9,
+          "triangles": 7594,
+          "region": "danube-limestone",
+          "batching": {
+            "before": 123,
+            "after": 9,
+            "savedDrawObjects": 114,
+            "mergedSources": 122,
+            "mergedBatches": 8,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1412.0749999955297,
+        "samples": 4,
+        "calls": 239,
+        "callsMean": 271,
+        "callsMax": 379,
+        "shadowUpdates": 4,
+        "labels": {
+          "visible": 11,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 535702,
+        "textures": 79,
+        "geometries": 123,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 19,
+          "meshes": 38,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 50.74010346037353,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.16,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 7,
+          "stamps": 39,
+          "triangles": 1248
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 4,
+          "triangles": 9274,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "fortress",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 6,
+      "id": "ch6-wells",
+      "title": "The empty wells",
+      "kind": "battle",
+      "sourceStateSha256": "a3ac109c90443a0d6c9e56215a593cc8f87a979a5c58418fddbfb53bbf5e0c39",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch6-wells.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 36028,
+      "scene": "ch6-battle",
+      "weather": "mist",
+      "timeOfDay": "dusk",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1765.8500000014901,
+            "p95Ms": 4126.800000011921,
+            "worstMs": 4126.800000011921
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 416.6999999999989,
+            "p95Ms": 416.6999999999989,
+            "worstMs": 416.6999999999989
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0,
+            "p95Ms": 0,
+            "worstMs": 0
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 4,
+          "drawBatches": 9,
+          "triangles": 7594,
+          "region": "edessa-dust",
+          "batching": {
+            "before": 123,
+            "after": 9,
+            "savedDrawObjects": 114,
+            "mergedSources": 122,
+            "mergedBatches": 8,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1765.8500000014901,
+        "samples": 4,
+        "calls": 152,
+        "callsMean": 287,
+        "callsMax": 464,
+        "shadowUpdates": 3,
+        "labels": {
+          "visible": 10,
+          "occluded": 2,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 329814,
+        "textures": 89,
+        "geometries": 135,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 20,
+          "meshes": 35,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 50.970398209957295,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.08399999999999999,
+          "shafts": {
+            "shafts": 2,
+            "motes": 0,
+            "interior": false,
+            "strength": 0.075,
+            "disposed": false
+          },
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 9,
+          "stamps": 49,
+          "triangles": 1568
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 2,
+          "triangles": 6720,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "desert",
+          "silhouetteKind": "open eastern escarpments"
+        }
+      }
+    },
+    {
+      "chapter": 7,
+      "id": "ch7-council",
+      "title": "The officers’ table",
+      "kind": "contest",
+      "sourceStateSha256": "1ddec350cc04f29cf7a7b100e3571fc5b835ac01dd5e1f2b6af85231c4f83d12",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch7-council.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 23119,
+      "scene": "ch7-civic",
+      "weather": "clear",
+      "timeOfDay": "interior",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 947.7750000022352,
+            "p95Ms": 2084.0999999940395,
+            "worstMs": 2084.0999999940395
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 299.90000000000055,
+            "p95Ms": 299.90000000000055,
+            "worstMs": 299.90000000000055
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02500000223517418,
+            "p95Ms": 0.10000000894069672,
+            "worstMs": 0.10000000894069672
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": null,
+        "cuesPlayed": 0,
+        "renderMs": 947.7750000022352,
+        "samples": 4,
+        "calls": 115,
+        "callsMean": 215.5,
+        "callsMax": 434,
+        "shadowUpdates": 2,
+        "labels": {
+          "visible": 13,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 148171,
+        "textures": 66,
+        "geometries": 107,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 15,
+          "meshes": 25,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 49.94167900024837,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": null,
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": {
+            "shafts": 2,
+            "motes": 0,
+            "interior": true,
+            "strength": 0.1,
+            "disposed": false
+          },
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 13,
+          "stamps": 39,
+          "triangles": 1248
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 9052,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "italy",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 8,
+      "id": "ch8-parley",
+      "title": "Words above the ford",
+      "kind": "contest",
+      "sourceStateSha256": "81508f021af479fc643319f43f70b67043d4c6f681e3f52840b0ead1d3fb8869",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch8-parley.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 23763,
+      "scene": "ch8-civic",
+      "weather": "clear",
+      "timeOfDay": "interior",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 965.8249999992549,
+            "p95Ms": 2243,
+            "worstMs": 2243
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 300,
+            "p95Ms": 300,
+            "worstMs": 300
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": null,
+        "cuesPlayed": 0,
+        "renderMs": 965.8249999992549,
+        "samples": 4,
+        "calls": 115,
+        "callsMean": 214.5,
+        "callsMax": 432,
+        "shadowUpdates": 2,
+        "labels": {
+          "visible": 13,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 149791,
+        "textures": 66,
+        "geometries": 108,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 15,
+          "meshes": 24,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 50.552180288556634,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": null,
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": {
+            "shafts": 2,
+            "motes": 0,
+            "interior": true,
+            "strength": 0.1,
+            "disposed": false
+          },
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 13,
+          "stamps": 39,
+          "triangles": 1248
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 4,
+          "triangles": 9274,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "crossing",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 9,
+      "id": "ch9-wing",
+      "title": "The turning cavalry",
+      "kind": "battle",
+      "sourceStateSha256": "3d28e36bb1892ca18e4a311d6ca2327dd1165aecd71d13e0b41d3418c2d8d81b",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch9-wing.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 44040,
+      "scene": "ch9-battle",
+      "weather": "dust",
+      "timeOfDay": "day",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1840.074999999255,
+            "p95Ms": 4302,
+            "worstMs": 4302
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 416.6999999999989,
+            "p95Ms": 416.6999999999989,
+            "worstMs": 416.6999999999989
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 6,
+          "drawBatches": 9,
+          "triangles": 14686,
+          "region": "palmyra-sandstone",
+          "batching": {
+            "before": 222,
+            "after": 9,
+            "savedDrawObjects": 213,
+            "mergedSources": 222,
+            "mergedBatches": 9,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1840.074999999255,
+        "samples": 4,
+        "calls": 167,
+        "callsMean": 322.5,
+        "callsMax": 533,
+        "shadowUpdates": 3,
+        "labels": {
+          "visible": 14,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 408924,
+        "textures": 99,
+        "geometries": 151,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 20,
+          "meshes": 34,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 51.30746970451928,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 960,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 464,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.16,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 10,
+          "stamps": 59,
+          "triangles": 1888
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 7440,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "palmyra",
+          "silhouetteKind": "Palmyrene rooflines"
+        }
+      }
+    },
+    {
+      "chapter": 10,
+      "id": "ch10-road",
+      "title": "Grain under guard",
+      "kind": "battle",
+      "sourceStateSha256": "09100bc3d84e2d1f626b7d6ef3e2ca31f84388fff56c9625b7f7edce7a1538f6",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch10-road.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 23735,
+      "scene": "ch10-battle",
+      "weather": "rain",
+      "timeOfDay": "day",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1710.800000000745,
+            "p95Ms": 4179.5999999940395,
+            "worstMs": 4179.5999999940395
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 433.3000000000011,
+            "p95Ms": 433.3000000000011,
+            "worstMs": 433.3000000000011
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.05000000074505806,
+            "p95Ms": 0.10000000894069672,
+            "worstMs": 0.10000000894069672
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 4,
+          "drawBatches": 9,
+          "triangles": 7594,
+          "region": "province-harvest",
+          "batching": {
+            "before": 123,
+            "after": 9,
+            "savedDrawObjects": 114,
+            "mergedSources": 122,
+            "mergedBatches": 8,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1710.800000000745,
+        "samples": 4,
+        "calls": 295,
+        "callsMean": 339.5,
+        "callsMax": 489,
+        "shadowUpdates": 4,
+        "labels": {
+          "visible": 14,
+          "occluded": 1,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 733350,
+        "textures": 88,
+        "geometries": 144,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 21,
+          "meshes": 48,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 51.05723593339913,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 384,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 9,
+          "stamps": 51,
+          "triangles": 1632
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 4,
+          "triangles": 9274,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "province",
+          "silhouetteKind": "wooded ridgelines"
+        }
+      }
+    },
+    {
+      "chapter": 11,
+      "id": "ch11-accounts",
+      "title": "The accounts of a soldier",
+      "kind": "contest",
+      "sourceStateSha256": "66f6a14a0d86d46cbdf7403746d93dc00eac0a3bc0994fdbce0cbeb23d6decab",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch11-accounts.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 17886,
+      "scene": "ch11-civic",
+      "weather": "clear",
+      "timeOfDay": "interior",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1000.4749999977648,
+            "p95Ms": 2216.4000000059605,
+            "worstMs": 2216.4000000059605
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 483.39999999999964,
+            "p95Ms": 483.39999999999964,
+            "worstMs": 483.39999999999964
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": null,
+        "cuesPlayed": 0,
+        "renderMs": 1000.4749999977648,
+        "samples": 4,
+        "calls": 207,
+        "callsMean": 239.5,
+        "callsMax": 439,
+        "shadowUpdates": 3,
+        "labels": {
+          "visible": 13,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 268740,
+        "textures": 65,
+        "geometries": 106,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 14,
+          "meshes": 27,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 49.29413254995434,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 768,
+          "height": 768
+        },
+        "remains": null,
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0,
+          "shafts": {
+            "shafts": 2,
+            "motes": 0,
+            "interior": true,
+            "strength": 0.1,
+            "disposed": false
+          },
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 13,
+          "stamps": 39,
+          "triangles": 1248
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 7440,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "rome",
+          "silhouetteKind": "Roman urban rooflines"
+        }
+      }
+    },
+    {
+      "chapter": 12,
+      "id": "ch12-confrontation",
+      "title": "The road to the purple",
+      "kind": "battle",
+      "sourceStateSha256": "570aa68de6e5b1d0e4a70eda8913818c3aedda7f46e3766b6257b21293ee911f",
+      "stateUnchanged": true,
+      "screenshot": "docs/images/v034-ch12-confrontation.png",
+      "horizon": null,
+      "viewport": {
+        "width": 960,
+        "height": 720
+      },
+      "deviceScaleFactor": 1,
+      "requestedQuality": "performance",
+      "milliseconds": 46820,
+      "scene": "ch12-battle",
+      "weather": "clear",
+      "timeOfDay": "dusk",
+      "materials": "atlas",
+      "actorAssets": "imported",
+      "canvas": {
+        "width": 960,
+        "height": 453
+      },
+      "stats": {
+        "frameProfile": {
+          "frames": 4,
+          "cpuSubmission": {
+            "samples": 4,
+            "meanMs": 1950.5249999985099,
+            "p95Ms": 4632.0999999940395,
+            "worstMs": 4632.0999999940395
+          },
+          "displayInterval": {
+            "samples": 1,
+            "meanMs": 316.60000000000036,
+            "p95Ms": 316.60000000000036,
+            "worstMs": 316.60000000000036
+          },
+          "reflectionSubmission": {
+            "samples": 4,
+            "meanMs": 0.02499999850988388,
+            "p95Ms": 0.09999999403953552,
+            "worstMs": 0.09999999403953552
+          },
+          "reflectionStride": 1,
+          "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+        },
+        "pairedContacts": 0,
+        "fieldFeatures": {
+          "objects": 6,
+          "drawBatches": 9,
+          "triangles": 14686,
+          "region": "aurelian-brick",
+          "batching": {
+            "before": 222,
+            "after": 9,
+            "savedDrawObjects": 213,
+            "mergedSources": 222,
+            "mergedBatches": 9,
+            "instancedSources": 0,
+            "instancedBatches": 0,
+            "foldedSources": 0
+          }
+        },
+        "cuesPlayed": 0,
+        "renderMs": 1950.5249999985099,
+        "samples": 4,
+        "calls": 191,
+        "callsMean": 332,
+        "callsMax": 613,
+        "shadowUpdates": 2,
+        "labels": {
+          "visible": 16,
+          "occluded": 0,
+          "offscreen": 0,
+          "overlaps": 0
+        },
+        "triangles": 551444,
+        "textures": 100,
+        "geometries": 168,
+        "quality": "performance",
+        "cameraView": "overview",
+        "actorAssets": {
+          "ready": true,
+          "pending": false,
+          "error": null
+        },
+        "gpu": {
+          "supported": true,
+          "measured": 0,
+          "lastMs": null,
+          "pending": 0,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency"
+        },
+        "resolution": {
+          "enabled": false,
+          "scale": 1,
+          "targetFps": 30,
+          "acceptedGpuSamples": 0,
+          "lastGpuMs": null,
+          "acceptedFrameIntervals": 0,
+          "changes": 0
+        },
+        "occlusion": {
+          "active": false,
+          "targets": 0,
+          "materials": 19,
+          "meshes": 50,
+          "amount": 0,
+          "disposed": false
+        },
+        "compositor": {
+          "enabled": false,
+          "quality": "performance",
+          "method": "linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading",
+          "multisamples": 0,
+          "hazeNear": 54.61803572714718,
+          "directions": 0,
+          "depthSamples": 0,
+          "bloomStrength": 0,
+          "casStrength": 0,
+          "aerialStrength": 0,
+          "vignetteStrength": 0,
+          "width": 0,
+          "height": 0,
+          "drawingWidth": 1,
+          "drawingHeight": 1,
+          "passes": 1,
+          "tiltShift": 0,
+          "ink": 0,
+          "temporalHistory": false,
+          "gradeInToneMapping": true,
+          "fallback": null
+        },
+        "figureStyle": "sculpted",
+        "ink": {
+          "visible": true,
+          "width": 960,
+          "height": 768
+        },
+        "remains": {
+          "visible": true,
+          "bodies": 0,
+          "limit": 6,
+          "kinds": 0,
+          "arrows": 0,
+          "dabs": 0,
+          "wear": {
+            "width": 464,
+            "height": 384
+          },
+          "laid": 0,
+          "disposed": false
+        },
+        "combat": {
+          "trails": 0,
+          "volley": 0,
+          "dust": 0,
+          "disposed": false
+        },
+        "atmosphere": {
+          "clouds": 0.154,
+          "shafts": null,
+          "reflection": null
+        },
+        "lighting": {
+          "type": "locally generated HDR sky reflection",
+          "width": 128,
+          "height": 64,
+          "intensity": 0.46,
+          "perFrameCaptures": 0
+        },
+        "contactShadows": {
+          "draws": 1,
+          "figures": 12,
+          "stamps": 69,
+          "triangles": 2208
+        },
+        "sky": {
+          "draws": 1,
+          "triangles": 528,
+          "textures": 0,
+          "cloudOctaves": 2,
+          "cloudTime": 0,
+          "reducedMotion": true,
+          "quality": "performance"
+        },
+        "horizon": {
+          "meshes": 3,
+          "triangles": 7440,
+          "innerEdgeSamples": 480,
+          "outerRadius": 550,
+          "region": "accession",
+          "silhouetteKind": "Roman urban rooflines"
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "All twelve chapters render; both Chapter V encounters first",
+      "passed": true,
+      "milliseconds": 798829,
+      "chapters": 12,
+      "encounters": 13,
+      "qualityPolicy": "Balanced Chapter V at1280×900; Performance inventory elsewhere at960×720; DPR1; observed quality recorded per scene"
+    },
+    {
+      "name": "Political case preview and commit",
+      "passed": true,
+      "milliseconds": 24922,
+      "encounter": "ch7-council",
+      "case": "company-roll",
+      "stanceChanges": [
+        {
+          "id": "member0",
+          "name": "Gaius Faustus",
+          "from": 2,
+          "to": 4
+        },
+        {
+          "id": "member4",
+          "name": "Publius Rufinus",
+          "from": -1,
+          "to": -2
+        },
+        {
+          "id": "member6",
+          "name": "Aulus Priscus",
+          "from": 2,
+          "to": 1
+        }
+      ],
+      "screenshot": "docs/images/v034-political-case-preview.png",
+      "previewUnchanged": true,
+      "commitMatchesPublicCommand": true
+    },
+    {
+      "name": "320px viewport at 200% text",
+      "passed": true,
+      "milliseconds": 5321,
+      "battlefield": {
+        "viewport": 320,
+        "width": 320,
+        "overflow": []
+      },
+      "modal": {
+        "viewport": 320,
+        "width": 320,
+        "overflow": []
+      },
+      "textScale": 2,
+      "screenshot": "docs/images/v034-320px-200percent-text.png",
+      "settingsShot": "docs/images/v034-320px-200percent-settings.png"
+    },
+    {
+      "name": "Remapped keyboard action and persistence",
+      "passed": true,
+      "milliseconds": 7426,
+      "undo": "z",
+      "walked": true,
+      "returned": true,
+      "persistedAfterReload": true
+    },
+    {
+      "name": "Practice primary-save isolation",
+      "passed": true,
+      "milliseconds": 12363,
+      "primaryStateSha256": "c1a72f6c57e7216b5f17c033c07762c9942f44163af269805d2040bdbe90a1b3",
+      "changedWeather": true,
+      "changedDifficulty": true,
+      "playedTurn": true,
+      "exportUnchanged": true,
+      "exitUnchanged": true,
+      "reloadUnchanged": true,
+      "screenshot": "docs/images/v034-practice-isolation.png"
+    }
+  ],
+  "errors": [],
+  "buildRevision": "c99d253ac52e",
+  "campaign": {
+    "rank": "Augustus",
+    "encounters": 25,
+    "completed": 12,
+    "exactRetries": 25
+  },
+  "browserVersion": "149.0.7827.55",
+  "completed": "2026-10-20T10:58:48.376Z",
+  "passed": true
+}

@@ -12,6 +12,7 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
 import {createPaintedBackdrop} from './environment-backdrop.js';
 import {addFinaleApproach} from './environment-finale.js';
+import {groundArchitecturalFoundations} from './environment-foundations.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
@@ -133,6 +134,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const vegetation=createVegetationFactory({p,m,instance,height,quality});
   const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry};
   addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);addFinaleApproach(campaignContext);addInhabitedEnvironment(campaignContext);
+  groundArchitecturalFoundations(campaignContext);
 
   // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
   // batches. The small geometric leaves below remain a low-growth fallback.

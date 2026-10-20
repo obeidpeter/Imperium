@@ -81,13 +81,15 @@ export function combatBreakdown(e,unit,target,ranged=false){
  add('Veteran protector',-guardProtection(e,target));
  add('Wedge on firm ground',!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)?1:0);add('Wedge exposure',target.formation==='wedge'?1:0);
  const fw=e.fieldworks??[],stakeStop=unit.side==='enemy'&&fw.some(f=>f.type==='stakes'&&(distance(f,target)<=1||distance(f,unit)<=1));
- add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced&&!stakeStop?B.chargeBonus:0);
+ add('Mounted charge',!ranged&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&!ROUGH_TERRAIN.includes(source)&&!ROUGH_TERRAIN.includes(terrain)&&!target.braced&&!stakeStop&&!(e.campaignEdition===34&&unit.side==='enemy'&&e.commandCampaign.cavalryDenied)?B.chargeBonus:0);
  if(fw.length){if(['player','ally','neutral'].includes(target.side)){if(fw.some(f=>f.type==='rampart'&&f.x===target.x&&f.y===target.y))add('Earthwork rampart',-2);if(fw.some(f=>f.type==='stakes'&&distance(f,target)<=1))add('Stake palings',-1);}if(ranged&&['player','ally'].includes(unit.side)&&fw.some(f=>f.type==='brazier'&&distance(f,unit)<=2))add('Signal brazier',1);}
  for(const modifier of expandedCombat(e,unit,target,ranged))add(modifier.label,modifier.value);
  add('Shaken morale',(unit.morale??80)<=B.shakenThreshold?-1:0);
  const aspect=front?'front':'flank',flankBreak=!ranged&&!front&&(target.formation==='shield-wall'||target.braced),wedgeBreak=!ranged&&unit.formation==='wedge'&&!ROUGH_TERRAIN.includes(source)&&target.formation==='shield-wall';
  const formationBreak=Boolean(flankBreak||wedgeBreak),formationBreakLabel=wedgeBreak?'Wedge splits shield wall':flankBreak?'Flank breaks shield line':null;
- return {damage:Math.max(1,base+modifiers.reduce((n,m)=>n+m.value,0)),base,modifiers,aspect,formationBreak,formationBreakLabel};
+ const damage=Math.max(1,base+modifiers.reduce((n,m)=>n+m.value,0));
+ const counterDamage=e.campaignEdition===34&&!ranged&&front&&target.braced&&target.hp>damage&&['cavalry','heavy'].includes(unit.role)&&(unit.lastMoveDistance??0)>=B.chargeDistance&&target.reactionTurn!==e.turn?1:0;
+ return {damage,base,modifiers,aspect,formationBreak,formationBreakLabel,...(e.campaignEdition===34?{counterDamage}: {})};
 }
 export function enemyFormationLinks(e){
  if(!e||e.kind!=='battle')return [];
@@ -131,6 +133,8 @@ export function previewBattle(state,command) {if(!state.encounter.mission)return
    if(action==='order'&&(command.orderAction??'advance')==='attack')messages[action]=`Spend 1 command: ${other.name} will take the strongest legal attack opportunity, considering protection and facing. Normal move/action limits apply.`;
    if(action==='rally'&&e.featureEdition===31)messages.rally+=' Also restore 20 cohesion and clear suppression within three tiles.';
    if(action==='strike'||action==='throw'){const hit=combatBreakdown(e,unit,other,action==='throw');messages[action]=`${action==='throw'?'Throw at':'Strike'} ${other.name}: ${hit.damage} damage (${hit.base} base${hit.modifiers.map(m=>`, ${m.value>0?'+':''}${m.value} ${m.label.toLowerCase()}`).join('')}). ${hit.aspect==='flank'?'Flank':'Front'}; morale −${Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(other.formation==='line'?5:0)-(other.moraleResistance??0))}.${action==='throw'?` One javelin; ${unit.ammo-1} remain.`:''}`;}
+   if((action==='strike'||action==='throw')&&e.campaignEdition===34){const hit=combatBreakdown(e,unit,other,action==='throw');if(hit.counterDamage)messages[action]+=` Surviving braced defender answers the frontal mounted charge: ${hit.counterDamage} damage to ${unit.name}, once this round.`;}
+   if(action==='brace'&&e.campaignEdition===34)messages.brace+=' A surviving braced defender answers one frontal mounted charge for 1 damage this round; ranged and flanking attacks avoid the reaction.';
    if(action==='formation')messages[action]=`Spend 1 command on up to 3 adjacent allies. ${FORMATION_RULES[command.formation??'shield-wall'].summary} Each will ${command.orderAction==='attack'?'take a strong legal attack opportunity':orderEffect}. Normal move/action limits apply.`;
    if(action==='move')messages[action]+=` Terrain: ${e.terrain[command.y][command.x]}. Facing changes with movement; a later attack faces its target.`;
   }
@@ -219,12 +223,13 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
  if(orderAction==='rally')return {...idle,action:'rally',intent:'Restore morale before rejoining the line.'};
  const foes=visibleOpponents(e,unit),friends=companions(e,unit),broken=(unit.morale??80)<=B.brokenThreshold,withdrawing=orderAction==='withdraw'||broken;
  const assignment=coordinatedAssignment(e,unit);
+ if(assignment?.hold&&!withdrawing&&!foes.some(u=>distance(u,unit)<=1))return {...idle,intent:'Hold the reserve through round two; replan if an enemy closes.'};
  const goal=destination??(!withdrawing&&assignment?assignment.goal:objectiveFor(e,unit,withdrawing?'withdraw':orderAction)),path=routeField(e,unit,goal),range=unit.role==='archer'?3:1;
  let positions=[{x:unit.x,y:unit.y,cost:0},...(!unit.moved?reachable(e,unit):[])];if(e.id==='ch1-road'&&unit.side==='ally'){const recruit=e.units.find(u=>u.id==='hero');if(recruit)positions=positions.filter(p=>distance(p,recruit)<=Math.max(2,distance(unit,recruit)-1));}if(destination&&!unit.moved)positions=positions.filter(p=>p.x===destination.x&&p.y===destination.y);if(!positions.length)positions=[unit];
  let best=null;
  for(const p of positions){
   const projected={...unit,x:p.x,y:p.y,lastMoveDistance:p.cost?distance(unit,p):unit.lastMoveDistance??0},terrain=e.terrain[p.y][p.x];
-  const targets=foes.filter(u=>distance(p,u)<=(unit.ammo>0?3:range)&&(distance(p,u)<=1||lineOfSight(e,p,u))),target=targets.map(u=>({unit:u,ranged:range>1||distance(p,u)>1,damage:damagePreview(e,projected,u,range>1||distance(p,u)>1)})).sort((a,b)=>(b.unit.id===assignment?.targetId?3:0)-(a.unit.id===assignment?.targetId?3:0)+b.damage*B.weights.damage+(b.damage>=b.unit.hp?B.weights.finish:0)-a.damage*B.weights.damage-(a.damage>=a.unit.hp?B.weights.finish:0))[0];
+  const targets=foes.filter(u=>distance(p,u)<=(unit.ammo>0?3:range)&&(distance(p,u)<=1||lineOfSight(e,p,u))),target=targets.map(u=>{const ranged=range>1||distance(p,u)>1,hit=combatBreakdown(e,projected,u,ranged);return {unit:u,ranged,damage:hit.damage,counterDamage:hit.counterDamage??0};}).sort((a,b)=>(b.unit.id===assignment?.targetId?3:0)-(a.unit.id===assignment?.targetId?3:0)+b.damage*B.weights.damage+(b.damage>=b.unit.hp?B.weights.finish:0)-b.counterDamage*4-a.damage*B.weights.damage-(a.damage>=a.unit.hp?B.weights.finish:0)+a.counterDamage*4)[0];
   const threat=foes.reduce((n,u)=>{const gap=distance(p,u),reach=(u.move??2)+(u.role==='archer'?3:1);if(gap>reach||u.role==='archer'&&!lineOfSight(e,u,p))return n;return n+damagePreview(e,u,projected,u.role==='archer')*(gap<=(u.role==='archer'?3:1)?1:.4);},0);
   const cover=terrain==='wall'?2:terrain==='high'?1:terrain==='cover'?1:0,support=friends.filter(u=>distance(p,u)===1).length;
   let score=-path(p)*B.weights.progress-(p.cost??0)*.04;
@@ -240,7 +245,7 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
   }
   let action='brace',targetId=null;
   if(withdrawing){score-=threat*2;score+=Math.min(5,...foes.map(u=>distance(p,u)))*2;action=broken?'regroup':'brace';reasons.push(broken?'recover broken morale':'withdraw under shields');}
-  else if(target&&!unit.acted){action=target.ranged?'throw':'strike';targetId=target.unit.id;score+=target.damage*B.weights.damage+(target.damage>=target.unit.hp?B.weights.finish:0);if(unit.role==='raider'&&target.unit.role==='escort')score+=B.weights.convoy;if(style!=='simple'&&combatBreakdown(e,projected,target.unit,target.ranged).aspect==='flank'){score+=B.weights.flank;reasons.push('open flank');}}
+  else if(target&&!unit.acted){action=target.ranged?'throw':'strike';targetId=target.unit.id;score+=target.damage*B.weights.damage+(target.damage>=target.unit.hp?B.weights.finish:0)-target.counterDamage*4-(target.counterDamage>=unit.hp?20:0);if(unit.role==='raider'&&target.unit.role==='escort')score+=B.weights.convoy;if(style!=='simple'&&combatBreakdown(e,projected,target.unit,target.ranged).aspect==='flank'){score+=B.weights.flank;reasons.push('open flank');}}
   if(cover)reasons.push('defensible ground');if(support)reasons.push('near friendly support');
   const name=targetId?e.units.find(u=>u.id===targetId).name:null,travel=p.x!==unit.x||p.y!==unit.y;
   const intent=`${travel?`Move to ${p.x+1}${String.fromCharCode(65+p.y)}; `:''}${name?`${action==='throw'?'fire at':'strike'} ${name}`:action==='regroup'?'regroup under cover':withdrawing?'brace during withdrawal':'guard the approach'}${reasons.length?` (${reasons.join(', ')})`:''}.`;
@@ -249,6 +254,7 @@ export function planBattleUnit(e,unit,{orderAction=null,destination=null,style='
 }
 export function refreshBattleIntents(e){if(e.combatVersion!==2)return;for(const u of e.units)if(alive(u)&&!u.hidden&&['ally','enemy'].includes(u.side))u.intent=planBattleUnit(e,{...u,moved:false,acted:false}).intent;}
 function resolveHit(e,attacker,target,ranged=false){const hit=combatBreakdown(e,attacker,target,ranged),wasAlive=alive(target);target.hp=Math.max(0,target.hp-hit.damage);expandedHit(e,target,ranged);
+ if(hit.counterDamage){attacker.hp=Math.max(0,attacker.hp-hit.counterDamage);target.reactionTurn=e.turn;note(e,`${target.name} answers the frontal mounted charge: ${hit.counterDamage} damage to ${attacker.name}.`);}
  const loss=Math.max(1,B.hitMorale+(hit.aspect==='flank'?B.flankMorale:0)-(target.formation==='line'?FORMATION_RULES.line.morale:0)-(target.moraleResistance??0));target.morale=clamp(target.morale-loss);
  if(wasAlive&&!alive(target))for(const u of companions(e,target).filter(u=>distance(u,target)<=2))u.morale=clamp(u.morale-B.withdrawalShock);
  return hit.damage;

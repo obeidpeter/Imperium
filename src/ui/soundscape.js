@@ -1,4 +1,4 @@
-import {SOUND_FILES,VOICE_LINES,foleyFor,soundscapeFor} from './soundscape-data.js';
+import {SOUND_FILES,VOICE_LINES,foleyFor,soundscapeFor,audioDirection} from './soundscape-data.js';
 
 const level=(value,fallback=.5)=>Number.isFinite(Number(value))?Math.min(1,Math.max(0,Number(value))):fallback;
 const MAX_DECODED_BYTES=24*1024*1024,MAX_EFFECTS=8;
@@ -13,17 +13,19 @@ function foleyPlayback(buffer,id){
 /** A gesture-unlocked, bounded local mixer. Audio never owns campaign state. */
 export function createSoundscape({AudioContext:Context=globalThis.AudioContext??globalThis.webkitAudioContext,fetch:fetchFile=globalThis.fetch,document:page=globalThis.document,onCaption=()=>{},onUnavailable=()=>{},now=()=>globalThis.performance?.now()??Date.now()}={}){
   let context=null,master=null,disposed=false,unlocked=false,generation=0,powerGeneration=0,voice=null,voiceRequest=0,bytes=0,stamp=0,decodeTail=Promise.resolve();
-  let settings={audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45},scene={music:null,ambience:null},sceneKey=null;
+  let settings={audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45},scene={music:null,ambience:null},sceneKey=null,direction=audioDirection(null);
   const cache=new Map(),pending=new Map(),loops=new Map(),retiring=new Map(),effects=new Set(),live=new Set(),requests=new Set(),failures=new Map();
   const active=()=>!disposed&&!page?.hidden&&unlocked&&context?.state==='running';
   const enabled=()=>[settings.audio,settings.music,settings.ambience,settings.voices].some(Boolean);
   function gain(node,value,seconds=.3){const p=node.gain,t=context.currentTime;p.cancelScheduledValues(t);p.setValueAtTime(p.value,t);p.linearRampToValueAtTime(value,t+seconds);}
   function stopNode(entry,fade=0){if(!entry)return;const fading=fade&&active();try{if(fading){gain(entry.gain,0,fade);entry.source.stop(context.currentTime+fade+.02);}else entry.source.stop();}catch{}if(!fading)entry.cleanup();}
   function make(buffer,{id,volume=1,pan=0,loop=false,start=0}={}){
-    const source=context.createBufferSource(),g=context.createGain(),p=context.createStereoPanner?.();
+    const source=context.createBufferSource(),g=context.createGain(),p=context.createStereoPanner?.(),filter=loop?context.createBiquadFilter?.():null;
     source.buffer=buffer;source.loop=loop;g.gain.value=volume;source.connect(g);
-    if(p){p.pan.value=level((pan+1)/2)*2-1;g.connect(p);p.connect(master);}else g.connect(master);
-    const entry={id,source,gain:g,pan:p};let ended=false;entry.cleanup=()=>{if(ended)return;ended=true;source.disconnect();g.disconnect();p?.disconnect();effects.delete(entry);live.delete(entry);for(const [key,item]of retiring)if(item===entry)retiring.delete(key);};
+    if(filter){filter.type='lowpass';filter.Q.value=.45;filter.frequency.value=12000;g.connect(filter);}
+    const output=filter??g;
+    if(p){p.pan.value=level((pan+1)/2)*2-1;output.connect(p);p.connect(master);}else output.connect(master);
+    const entry={id,source,gain:g,pan:p,filter};let ended=false;entry.cleanup=()=>{if(ended)return;ended=true;source.disconnect();g.disconnect();filter?.disconnect();p?.disconnect();effects.delete(entry);live.delete(entry);for(const [key,item]of retiring)if(item===entry)retiring.delete(key);};
     source.onended=entry.cleanup;live.add(entry);try{source.start(0,start);return entry;}catch{entry.cleanup();return null;}
   }
   function evict(required){
@@ -55,18 +57,26 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
       cache.set(id,{buffer:decoded,bytes:size,used:++stamp,...(id.startsWith('foley-')?foleyPlayback(decoded,id):{})});bytes+=size;failures.delete(id);return decoded;
     }catch{if(!disposed){const attempts=(failures.get(id)?.attempts??0)+1;failures.set(id,{attempts,retryAt:now()+Math.min(60000,1000*2**Math.min(6,attempts))});onUnavailable(id);}return null;}finally{pending.delete(id);if(controller)requests.delete(controller);}})();pending.set(id,request);return request;
   }
-  function musicVolume(){return settings.soundtrackVolume*.32*(voice?.35:1);}
-  function stopVoice(){voiceRequest++;if(voice)stopNode(voice);voice=null;onCaption(null);const music=loops.get('music');if(music)gain(music.entry.gain,musicVolume());}
+  function musicVolume(){return settings.soundtrackVolume*.32*direction.musicGain*(voice?.35:1);}
+  function parameter(param,value,seconds){if(!param)return;const t=context.currentTime;param.cancelScheduledValues(t);param.setValueAtTime(param.value,t);param.linearRampToValueAtTime(value,t+seconds);}
+  function mixLoop(channel,entry,seconds=direction.transitionSeconds){
+    const volume=channel==='music'?musicVolume():settings.soundtrackVolume*.52*direction.ambienceGain;
+    const cutoff=channel==='music'?direction.musicHz:direction.ambienceHz,pan=channel==='music'?0:direction.ambiencePan,key=[volume,cutoff,pan].join('|');
+    // Ordinary UI renders must not continuously restart an unfinished fade.
+    if(entry.mixKey===key)return;entry.mixKey=key;
+    gain(entry.gain,volume,seconds);parameter(entry.filter?.frequency,cutoff,seconds);parameter(entry.pan?.pan,pan,seconds);
+  }
+  function stopVoice(){voiceRequest++;if(voice)stopNode(voice);voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.3);}
   function stopEffects(){for(const item of [...effects])stopNode(item);effects.clear();}
   function stopAll(){generation++;powerGeneration++;stopVoice();for(const item of [...live])stopNode(item);loops.clear();retiring.clear();effects.clear();}
   async function syncLoop(channel,id){
     const current=loops.get(channel),enabled=settings[channel]&&id&&active();
-    if(current?.id===id&&enabled){gain(current.entry.gain,channel==='music'?musicVolume():settings.soundtrackVolume*.52);return;}
+    if(current?.id===id&&enabled){mixLoop(channel,current.entry);return;}
     if(!enabled){stopNode(retiring.get(channel));retiring.delete(channel);if(current){stopNode(current.entry);loops.delete(channel);}return;}
     if(current){stopNode(retiring.get(channel));retiring.set(channel,current.entry);stopNode(current.entry,.45);loops.delete(channel);}
     if(!enabled)return;const token=generation,decoded=await buffer(id);
     if(!decoded||token!==generation||!active()||!settings[channel]||scene[channel]!==id||loops.has(channel))return;
-    const entry=make(decoded,{id,volume:0,loop:true});if(!entry)return;loops.set(channel,{id,entry});gain(entry.gain,channel==='music'?musicVolume():settings.soundtrackVolume*.52,.8);
+    const entry=make(decoded,{id,volume:0,loop:true});if(!entry)return;loops.set(channel,{id,entry});mixLoop(channel,entry,.8);
   }
   function sync(){if(!active())return;void syncLoop('music',scene.music);void syncLoop('ambience',scene.ambience);if(settings.audio)for(const id of ['foley-step','foley-shield','foley-impact'])void buffer(id);}
   function configure(next={}){
@@ -83,14 +93,19 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
       await context.resume();if(disposed||page?.hidden||!enabled()||token!==powerGeneration){if(!disposed&&(page?.hidden||!enabled()))void context.suspend().catch(()=>{});return false;}unlocked=true;sync();return true;
     }catch{return false;}
   }
-  function update(state,screen){if(disposed)return;const next=soundscapeFor(state,screen),key=[screen??'game',state?.chapter,state?.phase,state?.encounterIndex,state?.encounter?.id].join('|');if(key!==sceneKey){stopVoice();sceneKey=key;}if(next.music!==scene.music||next.ambience!==scene.ambience){generation++;scene=next;}sync();}
+  function update(state,screen){
+    if(disposed)return;direction=audioDirection(state,screen);
+    const next=soundscapeFor(state,screen),key=[screen??'game',state?.chapter,state?.phase,state?.encounterIndex,state?.encounter?.id].join('|');
+    if(direction.ambienceOverride)next.ambience=direction.ambienceOverride;
+    if(key!==sceneKey){stopVoice();sceneKey=key;}if(next.music!==scene.music||next.ambience!==scene.ambience){generation++;scene=next;}sync();
+  }
   async function speak(id){
     if(!VOICE_LINES[id]||!settings.voices)return false;stopVoice();const request=++voiceRequest;
     if(!await unlock()||request!==voiceRequest)return false;const decoded=await buffer('voice-'+id);
     if(!decoded||request!==voiceRequest||!settings.voices||!active())return false;
     voice=make(decoded,{id:'voice-'+id,volume:settings.soundtrackVolume*.95});if(!voice)return false;const spoken=voice;
-    const cleanup=voice.source.onended;voice.source.onended=()=>{cleanup();if(voice===spoken){voice=null;onCaption(null);const music=loops.get('music');if(music)gain(music.entry.gain,musicVolume(),.6);}};
-    const music=loops.get('music');if(music)gain(music.entry.gain,musicVolume(),.15);onCaption(VOICE_LINES[id]);return true;
+    const cleanup=voice.source.onended;voice.source.onended=()=>{cleanup();if(voice===spoken){voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.6);}};
+    const music=loops.get('music');if(music)mixLoop('music',music.entry,.15);onCaption(VOICE_LINES[id]);return true;
   }
   function cue(kind,{intensity=.7,pan=0}={}){
     if(!settings.audio||!active()||effects.size>=MAX_EFFECTS)return false;
@@ -99,7 +114,7 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     const entry=make(decoded,{id,volume:settings.audioVolume*level(intensity)*.65*record.normalization,pan,start:record.start});if(!entry)return false;effects.add(entry);return true;
   }
   const visibility=()=>{if(page?.hidden){stopAll();void context?.suspend().catch(()=>{});}else if(unlocked)void unlock();};page?.addEventListener('visibilitychange',visibility);
-  return {configure,unlock,update,speak,stopVoice,cue,stopEffects,stop:stopAll,stats:()=>({decodedBytes:bytes,cached:cache.size,pending:pending.size,effects:effects.size,loops:loops.size,fadingLoops:retiring.size,sources:live.size,voice:Boolean(voice),unlocked}),
+  return {configure,unlock,update,speak,stopVoice,cue,stopEffects,stop:stopAll,stats:()=>({decodedBytes:bytes,cached:cache.size,pending:pending.size,effects:effects.size,loops:loops.size,fadingLoops:retiring.size,sources:live.size,voice:Boolean(voice),unlocked,direction}),
     dispose(){if(disposed)return;stopAll();disposed=true;page?.removeEventListener('visibilitychange',visibility);for(const request of requests)request.abort();requests.clear();pending.clear();cache.clear();failures.clear();bytes=0;void context?.close().catch(()=>{});}};
 }
 

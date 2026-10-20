@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.34.0 — Chapter V benchmark and campaign-wide production pass
+
+- Replaced the Chapter V generic siege entrance with fractured mudbrick walls, countermining works, rubble and supported repair equipment. Added twelve regional palettes and grounded architectural footings.
+- Rebuilt interactive field objects with spoked carts, sacks, bound timber, hinged gate states, damaged/repaired bridges, standards and bowl braziers. Batched materials and quality-dependent detail keep their cost bounded.
+- Unified bridge deck height across character feet, selection/picking, movement links, grid and ink overlays; redrape when the committed field state changes.
+- Added continuous tunics, cast and career material identities, an original cloth/leather/metal atlas, restrained facial corrective morphs, eleven reproducible joint-animation clips, horse refinements and lighter overview geometry.
+- Added edition-34 deployment preparations, side-level enemy doctrines, distinct chapter field opportunities, once-per-round frontal cavalry counterplay and issue-specific political evidence. Exact forecasts and camp opt-in preserve earlier campaigns.
+- Added political case inspection before committing a speech, command records, camp practice access, compact battlefield framing, high-contrast settings, configurable touch holds and swappable shortcut bindings.
+- Added chapter-specific audio direction and public-state tension mixing while retaining local recordings, mute/gesture behavior, hidden-tab suspension and bounded resources.
+- Added character source compilation/auditing, legal campaign variants and a public-interface twelve-chapter browser benchmark. Manual art review, real-device measurements and human playtests remain separate qualification gates.
+
 ## 0.33.0 — hold a finger to see the route, and browser smoke tests on every pull request
 
 - **Press and hold on touch screens** ([`touch-hold.js`](src/ui/touch-hold.js), [`app.js`](src/ui/app.js), [`stage.js`](src/showcase/stage.js)):

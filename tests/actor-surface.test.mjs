@@ -83,6 +83,18 @@ test('Late atlas decode changes live diffuse data without replacing normals or r
     const pending=module.warmActorMaterials();assert.equal(images.length,1);images[0].onload();assert.equal(await pending,true);
     assert.equal(mail.normalMap,normal);assert.deepEqual(normal.image.data,original);assert.equal(mail.map.image.width,256);assert.equal(mail.map.userData.source,'character-materials-v016');
     assert.equal(leather.map.image.width,96);assert.equal(releasedNormal,1);module.releaseActorSurface('mail');
-    const renewed=module.acquireActorSurface('mail');assert.equal(renewed.map.image.width,256);assert.notEqual(renewed.normalMap,normal);assert.equal(images.length,1);module.releaseActorSurface('mail');
+    const renewed=module.acquireActorSurface('mail');assert.equal(renewed.map.image.width,256);assert.notEqual(renewed.normalMap,normal);
+    // The second, independent library replaces only cloth/wool/leather/metal
+    // albedo. Mail keeps its authored link pattern and late loads must not
+    // recreate the leather textures whose owner has already been disposed.
+    assert.equal(images.length,2);assert.notEqual(images[0].url,images[1].url);
+    const live=module.acquireActorSurface('cloth'),liveMap=live.map,liveNormal=live.normalMap,liveNormalData=liveNormal.image.data.slice();
+    const premium=module.warmPremiumActorMaterials();assert.equal(module.warmPremiumActorMaterials(),premium);images[1].onload();assert.equal(await premium,true);
+    assert.equal(live.map,liveMap);assert.equal(live.map.userData.source,'roman-surfaces-v034');assert.equal(live.normalMap,liveNormal);assert.deepEqual(liveNormal.image.data,liveNormalData);
+    assert.equal(renewed.map.userData.source,'character-materials-v016');assert.equal(leather.map.image.width,96);assert.equal(releasedNormal,1);
+    const restoredLeather=module.acquireActorSurface('leather');assert.equal(restoredLeather.map.userData.source,'roman-surfaces-v034');assert.notEqual(restoredLeather.normalMap,leather.normalMap);
+    let liveDisposed=0;for(const key of ['map','normalMap','roughnessMap','bumpMap'])live[key].addEventListener('dispose',()=>liveDisposed++);
+    module.releaseActorSurface('cloth');module.releaseActorSurface('cloth');assert.equal(liveDisposed,4);
+    module.releaseActorSurface('leather');module.releaseActorSurface('mail');assert.equal(images.length,2,'Each source is decoded only once.');
   }finally{for(const key of ['Image','document'])if(saved[key]===undefined)delete globalThis[key];else globalThis[key]=saved[key];}
 });

@@ -3,7 +3,7 @@ import * as THREE from '../../vendor/three/three.module.js';
 // Static presentation only. Keep transparent surfaces independently sortable,
 // animated geometry live, and existing foliage instances in their GPU batches.
 // The caller owns all geometries, including the merged buffers returned here.
-export function batchStaticEnvironment(root,{geometries,exclude=new Set()}={}){
+export function batchStaticEnvironment(root,{geometries,exclude=new Set(),instanceThreshold=3}={}){
   root.updateWorldMatrix(true,true);
   const inverse=root.matrixWorld.clone().invert(),groups=new Map();let before=0;
   root.traverse(o=>{
@@ -52,7 +52,7 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set()}={}){
     for(const instances of repeated.values()){
       const mirrored=instances.some(o=>inverse.clone().multiply(o.matrixWorld).determinant()<0),key=`${instances[0].geometry.uuid}:${instances[0].material.uuid}:${flags(instances[0])}`;
       if(!mirrored&&targets.has(key)){targets.set(key,fold(targets.get(key),instances));foldedSources+=instances.length;continue;}
-      if(instances.length<3||mirrored){remaining.push(...instances);continue;}
+      if(instances.length<instanceThreshold||mirrored){remaining.push(...instances);continue;}
       const first=instances[0],batch=new THREE.InstancedMesh(first.geometry,first.material,instances.length);batch.name='static repeated environment';
       for(let i=0;i<instances.length;i++)batch.setMatrixAt(i,inverse.clone().multiply(instances[i].matrixWorld));
       batch.instanceMatrix.needsUpdate=true;batch.computeBoundingBox();batch.computeBoundingSphere();configure(batch,first,instances);

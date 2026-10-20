@@ -1,0 +1,6148 @@
+{
+  "method": "Six legal full-campaign routes, including both documented cases in every hearing; no state injection",
+  "reports": [
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 275,
+      "difficulty": "standard",
+      "alternate": false,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 6,
+          "used": [
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 0,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 18,
+          "used": [
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "brace",
+            "volley",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 10,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 16,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "order"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 1,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 5,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "denounce",
+            "address",
+            "persuade",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 8,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike"
+          ]
+        }
+      ],
+      "turns": 229,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "pursue"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "withdraw"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "records"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "evacuate"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "wells"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "field"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "direct"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "last-ferry"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "streets"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "grain"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "demand"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "pursue",
+          "label": "Recover the stolen stores",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "withdraw",
+          "label": "Save the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "records",
+          "label": "Bring the dispatches out",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "evacuate",
+          "label": "Evacuate the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "engineers",
+          "label": "Protect the engineers",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "wells",
+          "label": "Use the eastern wells",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "field",
+          "label": "Conclude the field action",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "direct",
+          "label": "Protect the direct crossing",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "last-ferry",
+          "label": "Guard the last ferry",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "streets",
+          "label": "Clear the streets",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "grain",
+          "label": "Defend the returning grain",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 0,
+            "broken": 5
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 8,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 9,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 11,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "demand",
+            "pledge": "Fund wounded veterans’ recovery",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "company-roll",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "protected-families",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "shared-tenure",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "veteran-testimony",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "earned-office",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "common-oath",
+          "netVotes": 0
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": false,
+      "caseVariant": 0
+    },
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 275,
+      "difficulty": "standard",
+      "alternate": true,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 2,
+          "losses": 0,
+          "heroHealth": 22,
+          "used": [
+            "move",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 0,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 14,
+          "used": [
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 14,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 1,
+          "heroHealth": 25,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 1,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "brace",
+            "throw",
+            "move"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "volley",
+            "throw",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 17,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "order"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 11,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 14,
+          "losses": 1,
+          "heroHealth": 22,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 5,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "denounce",
+            "address",
+            "persuade",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 8,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike"
+          ]
+        }
+      ],
+      "turns": 237,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "screen"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "counterattack"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "secure"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "hold"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "assault"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "rear-road"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "consolidate"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "southern"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "stores"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "corridor"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "intercept"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "counteroffer"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "counteroffer"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "counteroffer"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "counteroffer"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "counteroffer"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "counteroffer"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "screen",
+          "label": "Cover the cart’s withdrawal",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "counterattack",
+          "label": "Break the pursuit",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "secure",
+          "label": "Hold the station for couriers",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "hold",
+          "label": "Hold for the baggage train",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "assault",
+          "label": "Exploit the breach",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "rear-road",
+          "label": "Withdraw along the rear road",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "consolidate",
+          "label": "Consolidate the two approaches",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "southern",
+          "label": "Use the southern landing",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "stores",
+          "label": "Guard the supply ferry",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "corridor",
+          "label": "Keep a civilian corridor",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "intercept",
+          "label": "Intercept the last raiders",
+          "outcome": "costly",
+          "benefit": "intelligence",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 1,
+            "broken": 4
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "counteroffer",
+            "pledge": "Equip a temporary road patrol",
+            "cost": 1,
+            "due": 8,
+            "trustGain": 1,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "counteroffer",
+            "pledge": "Equip a temporary road patrol",
+            "cost": 1,
+            "due": 9,
+            "trustGain": 1,
+            "status": "honoured",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "counteroffer",
+            "pledge": "Equip a temporary road patrol",
+            "cost": 1,
+            "due": 11,
+            "trustGain": 1,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "counteroffer",
+            "pledge": "Fund a smaller recovery detail",
+            "cost": 1,
+            "due": 12,
+            "trustGain": 1,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "counteroffer",
+            "pledge": "Equip a temporary road patrol",
+            "cost": 1,
+            "due": 12,
+            "trustGain": 1,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "counteroffer",
+            "pledge": "Equip a temporary road patrol",
+            "cost": 1,
+            "due": 12,
+            "trustGain": 1,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −1 supplies, trust +1,  +1 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "recon",
+          "cost": 1
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "company-roll",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "protected-families",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "shared-tenure",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "veteran-testimony",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "earned-office",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "common-oath",
+          "netVotes": 0
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": false,
+      "caseVariant": 0
+    },
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 275,
+      "difficulty": "standard",
+      "alternate": false,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 6,
+          "used": [
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 0,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 18,
+          "used": [
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "brace",
+            "volley",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 10,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 16,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "order"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 1,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 11,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "denounce",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "denounce",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "denounce",
+            "record",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike"
+          ]
+        }
+      ],
+      "turns": 229,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "pursue"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "withdraw"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "records"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "evacuate"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "wells"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "field"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "direct"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "last-ferry"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "streets"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "grain"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "demand"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "pursue",
+          "label": "Recover the stolen stores",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "withdraw",
+          "label": "Save the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "records",
+          "label": "Bring the dispatches out",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "evacuate",
+          "label": "Evacuate the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "engineers",
+          "label": "Protect the engineers",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "wells",
+          "label": "Use the eastern wells",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "field",
+          "label": "Conclude the field action",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "direct",
+          "label": "Protect the direct crossing",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "last-ferry",
+          "label": "Guard the last ferry",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "streets",
+          "label": "Clear the streets",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "grain",
+          "label": "Defend the returning grain",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 0,
+            "broken": 5
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 8,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 9,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 11,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "demand",
+            "pledge": "Fund wounded veterans’ recovery",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "survivor-witness",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "border-record",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "grain-receipts",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "public-accounts",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "provincial-guarantee",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "civilian-record",
+          "netVotes": 2
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": false,
+      "caseVariant": 1
+    },
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 137,
+      "difficulty": "story",
+      "alternate": false,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 6,
+          "used": [
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 0,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "brace",
+            "volley",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 10,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 19,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 0,
+          "heroHealth": 24,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 1,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "denounce",
+            "address",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "denounce",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike"
+          ]
+        }
+      ],
+      "turns": 225,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "pursue"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "withdraw"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "records"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "evacuate"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "wells"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "field"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "direct"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "last-ferry"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "streets"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "grain"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "demand"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "pursue",
+          "label": "Recover the stolen stores",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "withdraw",
+          "label": "Save the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "records",
+          "label": "Bring the dispatches out",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "evacuate",
+          "label": "Evacuate the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "engineers",
+          "label": "Protect the engineers",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "wells",
+          "label": "Use the eastern wells",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "field",
+          "label": "Conclude the field action",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "direct",
+          "label": "Protect the direct crossing",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "last-ferry",
+          "label": "Guard the last ferry",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "streets",
+          "label": "Clear the streets",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "grain",
+          "label": "Defend the returning grain",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 0,
+            "broken": 5
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 8,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 9,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 11,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "demand",
+            "pledge": "Fund wounded veterans’ recovery",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "company-roll",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "protected-families",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "shared-tenure",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "veteran-testimony",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "earned-office",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "common-oath",
+          "netVotes": 0
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": false,
+      "caseVariant": 0
+    },
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 831,
+      "difficulty": "veteran",
+      "alternate": false,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 2,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 16,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 10,
+          "losses": 1,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 14,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 9,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 18,
+          "used": [
+            "formation",
+            "brace",
+            "volley",
+            "throw",
+            "move",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 9,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade",
+            "promise"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 19,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "order"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 10,
+          "losses": 1,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "promise",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "address",
+            "promise",
+            "denounce",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 9,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "promise",
+            "persuade",
+            "rebut",
+            "denounce"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "promise",
+            "denounce",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        }
+      ],
+      "turns": 239,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "pursue"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "withdraw"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "records"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "evacuate"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "wells"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "field"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "direct"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "last-ferry"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "streets"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "grain"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "demand"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "pursue",
+          "label": "Recover the stolen stores",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "withdraw",
+          "label": "Save the rear files",
+          "outcome": "costly",
+          "benefit": "reserve",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "records",
+          "label": "Bring the dispatches out",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "evacuate",
+          "label": "Evacuate the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "engineers",
+          "label": "Protect the engineers",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "wells",
+          "label": "Use the eastern wells",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "field",
+          "label": "Conclude the field action",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "direct",
+          "label": "Protect the direct crossing",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "last-ferry",
+          "label": "Guard the last ferry",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "streets",
+          "label": "Clear the streets",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "grain",
+          "label": "Defend the returning grain",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 0,
+            "broken": 5
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 8,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 9,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 11,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "demand",
+            "pledge": "Fund wounded veterans’ recovery",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "engineers",
+          "cost": 2
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "reserve",
+          "cost": 2
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "company-roll",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "protected-families",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "shared-tenure",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "veteran-testimony",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "earned-office",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "common-oath",
+          "netVotes": 0
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": false,
+      "caseVariant": 0
+    },
+    {
+      "source": "New Game with progression:true; public legal commands only; no debug state injection",
+      "seed": 275,
+      "difficulty": "standard",
+      "alternate": false,
+      "settlement": "honour",
+      "rank": "Augustus",
+      "encounters": [
+        {
+          "id": "ch1-training",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 3,
+          "losses": 0,
+          "heroHealth": 20,
+          "used": [
+            "move",
+            "throw",
+            "strike",
+            "brace"
+          ]
+        },
+        {
+          "id": "ch1-road",
+          "chapter": 1,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 6,
+          "used": [
+            "move",
+            "brace",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-marsh",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 13,
+          "losses": 0,
+          "heroHealth": 13,
+          "used": [
+            "move",
+            "brace",
+            "throw",
+            "assist",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch2-rearguard",
+          "chapter": 2,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 18,
+          "used": [
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-station",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 15,
+          "used": [
+            "scout",
+            "move",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch3-rolls",
+          "chapter": 3,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "move",
+            "brace",
+            "strike",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch4-gate",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "guard",
+            "move",
+            "brace",
+            "order",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch4-wall",
+          "chapter": 4,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 21,
+          "used": [
+            "inspire",
+            "order",
+            "move",
+            "brace",
+            "throw",
+            "strike",
+            "assist"
+          ]
+        },
+        {
+          "id": "ch5-mine",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 7,
+          "losses": 0,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "brace",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch5-wall",
+          "chapter": 5,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "brace",
+            "volley",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch6-wells",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch6-eagle",
+          "chapter": 6,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "assist",
+            "order"
+          ]
+        },
+        {
+          "id": "ch7-council",
+          "chapter": 7,
+          "kind": "contest",
+          "status": "won",
+          "turns": 8,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "persuade",
+            "move"
+          ]
+        },
+        {
+          "id": "ch7-legion",
+          "chapter": 7,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 10,
+          "used": [
+            "deploy",
+            "formation",
+            "rally",
+            "move",
+            "throw"
+          ]
+        },
+        {
+          "id": "ch8-parley",
+          "chapter": 8,
+          "kind": "contest",
+          "status": "won",
+          "turns": 10,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "move",
+            "agreement",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch8-ferry",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 16,
+          "losses": 0,
+          "heroHealth": 19,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "strike",
+            "order"
+          ]
+        },
+        {
+          "id": "ch8-crossing",
+          "chapter": 8,
+          "kind": "battle",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "order"
+          ]
+        },
+        {
+          "id": "ch9-wing",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 6,
+          "losses": 0,
+          "heroHealth": 24,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch9-city",
+          "chapter": 9,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 26,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "rally"
+          ]
+        },
+        {
+          "id": "ch10-road",
+          "chapter": 10,
+          "kind": "battle",
+          "status": "won",
+          "turns": 11,
+          "losses": 1,
+          "heroHealth": 25,
+          "used": [
+            "formation",
+            "move",
+            "rally",
+            "throw",
+            "strike"
+          ]
+        },
+        {
+          "id": "ch10-tribunal",
+          "chapter": 10,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "rebut",
+            "persuade"
+          ]
+        },
+        {
+          "id": "ch11-accounts",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 12,
+          "losses": 0,
+          "heroHealth": 5,
+          "used": [
+            "move",
+            "agreement",
+            "record",
+            "denounce",
+            "address",
+            "persuade",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch11-adlection",
+          "chapter": 11,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 8,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce",
+            "rebut"
+          ]
+        },
+        {
+          "id": "ch12-legitimacy",
+          "chapter": 12,
+          "kind": "contest",
+          "status": "won",
+          "turns": 14,
+          "losses": 0,
+          "heroHealth": 12,
+          "used": [
+            "agreement",
+            "move",
+            "address",
+            "record",
+            "persuade",
+            "denounce"
+          ]
+        },
+        {
+          "id": "ch12-confrontation",
+          "chapter": 12,
+          "kind": "battle",
+          "status": "won",
+          "turns": 5,
+          "losses": 0,
+          "heroHealth": 23,
+          "used": [
+            "formation",
+            "move",
+            "throw",
+            "strike"
+          ]
+        }
+      ],
+      "turns": 225,
+      "checks": [
+        {
+          "id": "ch1-training",
+          "exactRetry": true
+        },
+        {
+          "id": "ch1-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-marsh",
+          "exactRetry": true
+        },
+        {
+          "id": "ch2-rearguard",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-station",
+          "exactRetry": true
+        },
+        {
+          "id": "ch3-rolls",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-gate",
+          "exactRetry": true
+        },
+        {
+          "id": "ch4-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-mine",
+          "exactRetry": true
+        },
+        {
+          "id": "ch5-wall",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-wells",
+          "exactRetry": true
+        },
+        {
+          "id": "ch6-eagle",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-council",
+          "exactRetry": true
+        },
+        {
+          "id": "ch7-legion",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-parley",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-ferry",
+          "exactRetry": true
+        },
+        {
+          "id": "ch8-crossing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-wing",
+          "exactRetry": true
+        },
+        {
+          "id": "ch9-city",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-road",
+          "exactRetry": true
+        },
+        {
+          "id": "ch10-tribunal",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-accounts",
+          "exactRetry": true
+        },
+        {
+          "id": "ch11-adlection",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-legitimacy",
+          "exactRetry": true
+        },
+        {
+          "id": "ch12-confrontation",
+          "exactRetry": true
+        }
+      ],
+      "choices": [
+        {
+          "encounter": "ch1-road",
+          "id": "pursue"
+        },
+        {
+          "encounter": "ch2-rearguard",
+          "id": "withdraw"
+        },
+        {
+          "encounter": "ch3-station",
+          "id": "records"
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "evacuate"
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "engineers"
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "wells"
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "field"
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "direct"
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "last-ferry"
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "streets"
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "grain"
+        }
+      ],
+      "skills": [
+        {
+          "chapter": 3,
+          "id": "lucan",
+          "path": "protector",
+          "service": 3
+        },
+        {
+          "chapter": 4,
+          "id": "naso",
+          "path": "leader",
+          "service": 2
+        },
+        {
+          "chapter": 5,
+          "id": "felix",
+          "path": "ranged",
+          "service": 2
+        },
+        {
+          "chapter": 6,
+          "id": "firmus",
+          "path": "protector",
+          "service": 2
+        },
+        {
+          "chapter": 8,
+          "id": "rufus",
+          "path": "leader",
+          "service": 2
+        }
+      ],
+      "agreements": [
+        {
+          "encounter": "ch7-council",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch8-parley",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-accounts",
+          "personId": "faustus",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch11-adlection",
+          "personId": "valens",
+          "terms": "demand"
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "personId": "valens",
+          "terms": "demand"
+        }
+      ],
+      "specialistActions": [
+        "guard",
+        "inspire",
+        "volley"
+      ],
+      "operationResults": [
+        {
+          "encounterId": "ch1-road",
+          "choice": "pursue",
+          "label": "Recover the stolen stores",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch2-marsh"
+        },
+        {
+          "encounterId": "ch2-rearguard",
+          "choice": "withdraw",
+          "label": "Save the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch3-station"
+        },
+        {
+          "encounterId": "ch3-station",
+          "choice": "records",
+          "label": "Bring the dispatches out",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch3-rolls"
+        },
+        {
+          "encounterId": "ch4-gate",
+          "choice": "evacuate",
+          "label": "Evacuate the rear files",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch4-wall"
+        },
+        {
+          "encounterId": "ch5-mine",
+          "choice": "engineers",
+          "label": "Protect the engineers",
+          "outcome": "clean",
+          "benefit": "intelligence",
+          "consumedBy": "ch5-wall"
+        },
+        {
+          "encounterId": "ch6-wells",
+          "choice": "wells",
+          "label": "Use the eastern wells",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch6-eagle"
+        },
+        {
+          "encounterId": "ch7-legion",
+          "choice": "field",
+          "label": "Conclude the field action",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch8-ferry"
+        },
+        {
+          "encounterId": "ch8-ferry",
+          "choice": "direct",
+          "label": "Protect the direct crossing",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch8-crossing"
+        },
+        {
+          "encounterId": "ch8-crossing",
+          "choice": "last-ferry",
+          "label": "Guard the last ferry",
+          "outcome": "clean",
+          "benefit": "reserve",
+          "consumedBy": "ch9-wing"
+        },
+        {
+          "encounterId": "ch9-city",
+          "choice": "streets",
+          "label": "Clear the streets",
+          "outcome": "clean",
+          "benefit": "stores",
+          "consumedBy": "ch10-road"
+        },
+        {
+          "encounterId": "ch10-road",
+          "choice": "grain",
+          "label": "Defend the returning grain",
+          "outcome": "costly",
+          "benefit": "stores",
+          "consumedBy": "ch12-confrontation"
+        }
+      ],
+      "coalition": {
+        "enabled": true,
+        "members": [
+          {
+            "id": "faustus",
+            "name": "Gaius Faustus",
+            "bloc": "Veterans",
+            "interest": "service",
+            "demand": "Fund wounded veterans’ recovery",
+            "counter": "Fund a smaller recovery detail",
+            "trust": -2,
+            "fulfilled": 0,
+            "broken": 1
+          },
+          {
+            "id": "longinus",
+            "name": "Decimus Longinus",
+            "bloc": "Landholders",
+            "interest": "law",
+            "demand": "Fund a recorded land-boundary hearing",
+            "counter": "Fund a limited boundary survey",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "secunda",
+            "name": "Flavia Secunda",
+            "bloc": "Civic",
+            "interest": "grain",
+            "demand": "Reserve three convoys for civic relief",
+            "counter": "Reserve one emergency relief convoy",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "valens",
+            "name": "Titus Valens",
+            "bloc": "Veterans",
+            "interest": "security",
+            "demand": "Equip a permanent road escort",
+            "counter": "Equip a temporary road patrol",
+            "trust": -3,
+            "fulfilled": 0,
+            "broken": 5
+          },
+          {
+            "id": "rufinus",
+            "name": "Publius Rufinus",
+            "bloc": "Landholders",
+            "interest": "office",
+            "demand": "Fund a provincial accounting office",
+            "counter": "Fund a temporary accounts clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "tertia",
+            "name": "Aurelia Tertia",
+            "bloc": "Civic",
+            "interest": "law",
+            "demand": "Fund public hearings for displaced families",
+            "counter": "Fund one circuit of public hearings",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "priscus",
+            "name": "Aulus Priscus",
+            "bloc": "Veterans",
+            "interest": "office",
+            "demand": "Fund a veterans’ petitions office",
+            "counter": "Fund a veterans’ petition clerk",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "marcellinus",
+            "name": "Sextus Marcellinus",
+            "bloc": "Landholders",
+            "interest": "grain",
+            "demand": "Repair the district grain depots",
+            "counter": "Repair one emergency grain depot",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          },
+          {
+            "id": "menander",
+            "name": "Lucius Menander",
+            "bloc": "Civic",
+            "interest": "security",
+            "demand": "Fund protection for the civilian roads",
+            "counter": "Fund a temporary civilian escort",
+            "trust": 0,
+            "fulfilled": 0,
+            "broken": 0
+          }
+        ],
+        "agreements": [
+          {
+            "id": "ch7-council:valens",
+            "encounterId": "ch7-council",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 8,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch8-parley:valens",
+            "encounterId": "ch8-parley",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 9,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch10-tribunal:valens",
+            "encounterId": "ch10-tribunal",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 11,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-accounts:faustus",
+            "encounterId": "ch11-accounts",
+            "personId": "faustus",
+            "personName": "Gaius Faustus",
+            "kind": "demand",
+            "pledge": "Fund wounded veterans’ recovery",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch11-adlection:valens",
+            "encounterId": "ch11-adlection",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          },
+          {
+            "id": "ch12-legitimacy:valens",
+            "encounterId": "ch12-legitimacy",
+            "personId": "valens",
+            "personName": "Titus Valens",
+            "kind": "demand",
+            "pledge": "Equip a permanent road escort",
+            "cost": 3,
+            "due": 12,
+            "trustGain": 2,
+            "status": "broken",
+            "dueNow": false,
+            "canHonour": false,
+            "consequence": "Honour: −3 supplies, trust +2, +2 Political Backing. Break: trust −2, Public Confidence −3. Trust changes this named representative’s starting stance in every later Contest."
+          }
+        ]
+      },
+      "method": "Legal New Game; public commands only; exact Retry at all25 encounters; no state injection",
+      "plans": [
+        {
+          "encounter": "ch3-station",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch3-rolls",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-gate",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch4-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-mine",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch5-wall",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-wells",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch6-eagle",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch7-legion",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-ferry",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch8-crossing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-wing",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch9-city",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch10-road",
+          "id": "balanced",
+          "cost": 0
+        },
+        {
+          "encounter": "ch12-confrontation",
+          "id": "balanced",
+          "cost": 0
+        }
+      ],
+      "cases": [
+        {
+          "encounter": "ch7-council",
+          "id": "company-roll",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch8-parley",
+          "id": "protected-families",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch10-tribunal",
+          "id": "shared-tenure",
+          "netVotes": 1
+        },
+        {
+          "encounter": "ch11-accounts",
+          "id": "veteran-testimony",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch11-adlection",
+          "id": "earned-office",
+          "netVotes": 0
+        },
+        {
+          "encounter": "ch12-legitimacy",
+          "id": "common-oath",
+          "netVotes": 0
+        }
+      ],
+      "opportunities": [],
+      "minimumSupplies": 0,
+      "lowSupply": true,
+      "caseVariant": 0
+    }
+  ]
+}

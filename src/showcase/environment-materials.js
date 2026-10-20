@@ -64,6 +64,17 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   m.riverWater=make({color:0x3f6e74,roughness:.44,metalness:.04,transparent:true,opacity:.94,depthWrite:false,vertexColors:true});
   m.gravel=make({...maps.stone,color:0xa69a83,roughness:.96,normalScale:new THREE.Vector2(.2,.2)});
   if(profile){m.ground.color.set(profile.vegetation==='reeds'?'#c9ceb9':'#eee5cf');if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);m.riverWater.color.set(profile.waterColor).multiplyScalar(.64);if(profile.setting==='wetland'){m.ground.roughness=.86;m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid'){m.ground.color.set('#ecdbc0');m.road.color.set('#cfb991');}}
+  if(profile?.artDirection){
+    const a=profile.artDirection;
+    // Keep the neutral local texture's luminance while matching fieldwork,
+    // inhabited buildings and civic furnishings to one regional palette.
+    for(const [key,color,weight]of [['wood',a.wood,.24],['darkWood',a.darkWood,.35],['cloth',a.cloth,.35],['plaster',a.stone,.45],['marble',a.stone,.28]]){
+      m[key].color.lerp(new THREE.Color(color),weight);m[key].userData.regionalPalette=a.key;
+    }
+    m.red.color.set(a.accent);
+    if(a.masonry==='mudbrick')m.brick.color.set('#b99a73');
+    if(a.masonry==='brick')m.brick.color.set('#a77962');
+  }
   // One lit surface blends the generated soil image with the fine turf map.
   // Vertex weights describe worn ground; they never encode movement rules.
   const soilUniform={value:maps.earth.map};
