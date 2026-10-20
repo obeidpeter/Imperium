@@ -2,7 +2,9 @@
 # expanded campaigns, production build, asset/offline checks and character
 # audit) on every pull request and on main: on Node 20, the oldest version the
 # project supports (package.json "engines"), and on Node 22. There are no
-# dependencies to install.
+# dependencies to install. A second job drives the production build in
+# headless Chromium (scripts/browser-smoke.mjs); Playwright is installed for
+# that job only and is not a project dependency.
 name: Verify
 
 on:
@@ -32,3 +34,17 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm run verify
+
+  smoke:
+    name: browser smoke (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run smoke

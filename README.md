@@ -8,6 +8,10 @@ A free, browser-first tactical chronicle set in the Roman third-century crisis. 
 
 The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
+## Version 0.33 — hold a finger to see the route
+
+On a touch screen, holding a finger still on the board now shows what a tap there would do, including the route a walk would take, in both 2D and 3D. Lifting the finger after a hold does nothing, and a tap then walks. Every pull request now also drives the production build in headless Chromium (`npm run smoke`): New Game, walking, Confirm moves, a restored expanded field and phone touch. Playwright is installed only for that check and is not a project dependency. See the [changelog](CHANGELOG.md).
+
 ## Version 0.32.1 — field objects named on the board, and a player guide
 
 The board readout, the arrow-key cursor, the target list and the ground note now name field objects and their state, for example "Side gate (closed)". The [player guide](docs/PLAYING.md) and the in-game Help explain the expanded campaign; the Help also describes walking. Every pull request now runs the full `npm run verify` on GitHub. See the [changelog](CHANGELOG.md).
@@ -314,6 +318,7 @@ node scripts/build.mjs
 node scripts/verify-assets.mjs
 # optional, development only (needs Playwright and a browser):
 node scripts/visual-regression.mjs --record   # then later: node scripts/visual-regression.mjs
+npm run build && npm run smoke                 # drive the production build in headless Chromium
 ```
 
 `npm test` automatically runs `scripts/prepare-tests.mjs` first. It sequentially generates the legal campaign checkpoints, graphics scenes, graphics action cases and all-chapter 3D review checkpoints, then starts the tests. Generated `tests/fixtures/` files are excluded from the source archive and repository; their generators and the fixed `tests/compatibility/` inputs are included. For a direct `node --test` invocation on a fresh source copy, run `node scripts/prepare-tests.mjs` first.

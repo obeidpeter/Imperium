@@ -119,7 +119,7 @@ test('v0.32.1: in-game Help explains walking, the U key and the expanded campaig
   assert.match(html, /Expanded campaign.*bring your commander onto or beside it and press its button/s);
 });
 
-test('v0.32.1: this edition is 0.32.1', async () => {
+test('v0.32.1: the configured edition matches the package', async () => {
   const {CONFIG} = await import('../src/config.js');
-  assert.equal(CONFIG.version, '0.32.1');
+  assert.equal(CONFIG.version, JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8')).version);
 });

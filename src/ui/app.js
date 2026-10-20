@@ -6,6 +6,7 @@ import {createPanels} from './panels.js';
 import {createRenderScheduler,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
 import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint,routeSummary} from './direct-controls.js';
+import {createTouchHold} from './touch-hold.js';
 import {terrainLabel,fieldLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
@@ -172,13 +173,19 @@ function bindBoard(){
   // A click reports whole pixels, but the pointer that drew the route preview
   // can sit between them; pick from the pointer's own position so the tile
   // that walks is the tile that was shown.
-  let pressed=null;
-  if(!uses3D())board.addEventListener('pointerdown',event=>{pressed={x:event.clientX,y:event.clientY};});
-  if(!uses3D())board.addEventListener('click',event=>{const at=pressed&&Math.abs(pressed.x-event.clientX)<1&&Math.abs(pressed.y-event.clientY)<1?pressed:{x:event.clientX,y:event.clientY};pressed=null;selectPoint(pickBattlePoint(board,state.encounter,at.x,at.y));});
-  board.addEventListener('contextmenu',event=>{event.preventDefault();cancelCommand();});
+  let pressed=null,pointer='mouse';
+  // Touch has no hover: a finger held still shows the readout and route for
+  // that tile instead, and lifting it commits nothing (touch-hold.js).
+  const hold=createTouchHold(at=>{if(!board.isConnected)return;const p=pickBattlePoint(board,state.encounter,at.clientX,at.clientY),e=state.encounter;if(p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height){boardHover(p);paint(currentAnimation);}});
+  board.addEventListener('pointerdown',event=>{pointer=event.pointerType;});
+  if(!uses3D())board.addEventListener('pointerdown',event=>{pressed={x:event.clientX,y:event.clientY};hold.down(event);});
+  if(!uses3D())for(const type of ['pointerup','pointercancel'])board.addEventListener(type,()=>hold.up());
+  if(!uses3D())board.addEventListener('click',event=>{if(hold.consume())return;const at=pressed&&Math.abs(pressed.x-event.clientX)<1&&Math.abs(pressed.y-event.clientY)<1?pressed:{x:event.clientX,y:event.clientY};pressed=null;selectPoint(pickBattlePoint(board,state.encounter,at.x,at.y));});
+  // A long press on a touch screen raises a context menu; it is not a cancel.
+  board.addEventListener('contextmenu',event=>{event.preventDefault();if(pointer!=='touch')cancelCommand();});
   let queued=false;
   if(!uses3D())board.addEventListener('pointermove',event=>{
-    if(event.pointerType==='touch')return;
+    if(event.pointerType==='touch'){hold.move(event);return;}
     const p=pickBattlePoint(board,state.encounter,event.clientX,event.clientY),e=state.encounter;
     const next=p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height?p:null;
     if(samePoint(hoverTile,next)||(!hoverTile&&!next))return;hoverTile=next;
@@ -188,7 +195,8 @@ function bindBoard(){
       board.style.cursor=hoverTile?'pointer':'default';paint(currentAnimation);
     });}
   });
-  board.addEventListener('pointerleave',()=>{hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
+  // A lifted finger also leaves the board; keep what its hold showed.
+  board.addEventListener('pointerleave',event=>{if(event.pointerType==='touch')return;hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
   board.addEventListener('keydown',event=>{
     const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
     if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();const walk=routeSummary(routeAt(focusTile));announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${placeName(focusTile)}${walk?`. ${walk}`:''}`);}

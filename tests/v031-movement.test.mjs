@@ -205,7 +205,7 @@ test('v0.31.0: the app walks through the rules API, previews routes on hover and
   // Ground no walk can reach says why (impassable, no nearer ground, movement spent) before the selection clears.
   assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),why=u\?'':routeSummary\(routeAt\(point\)\);\n  action=null;target=null;/);
   // A click reports whole pixels; the 2D pick uses the pressed pointer's exact position, as the hover did.
-  assert.match(app, /board\.addEventListener\('pointerdown',event=>\{pressed=\{x:event\.clientX,y:event\.clientY\};\}\);/);
+  assert.match(app, /board\.addEventListener\('pointerdown',event=>\{pressed=\{x:event\.clientX,y:event\.clientY\};hold\.down\(event\);\}\);/);
   assert.match(app, /const at=pressed&&Math\.abs\(pressed\.x-event\.clientX\)<1&&Math\.abs\(pressed\.y-event\.clientY\)<1\?pressed:\{x:event\.clientX,y:event\.clientY\};pressed=null;selectPoint\(pickBattlePoint\(board,state\.encounter,at\.x,at\.y\)\);/);
   assert.match(app, /route:animation\?null:routeAt\(hoverTile\),reach:animation\?\[\]:walkableReach\(\)/, '2D draws the route under the pointer, never during a motion');
   assert.match(app, /grid:showGrid,route:routeAt\(hoverTile\),reach:walkableReach\(\),/);

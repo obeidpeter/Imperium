@@ -14,6 +14,7 @@ Use Node.js 20 or later. The campaign rules have no runtime dependencies. The ca
 - `npm run build` — build the static site into `dist/`.
 - `npm run preview` — serve `dist/` through a plain static server.
 - `npm run verify` — run the tests, autoplay and production build.
+- `npm run smoke` — drive the production build in headless Chromium (New Game, walking, Confirm moves, a restored expanded field, phone touch). Run `npm run build` first. It needs Playwright, which is not a project dependency: install it separately or set `PLAYWRIGHT_MODULE`. CI runs it on every pull request.
 
 Check `package.json` for the authoritative current scripts. Build configuration, including the site address, belongs in the shared configuration/build boundary rather than hard-coded host URLs scattered through the game. Publishing, DNS and live-phone checks are the owner's next deployment steps.
 
