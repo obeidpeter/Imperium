@@ -5,7 +5,7 @@
 // PLAYWRIGHT_MODULE=/absolute/playwright/index.mjs node scripts/benchmark-campaign.mjs
 // Optional installed browser: PLAYWRIGHT_EXECUTABLE_PATH=/absolute/chromium
 // Optional: --base http://127.0.0.1:54934/ --images /absolute/evidence/directory
-// --resume reuses only captures from the same dist revision and legal snapshot.
+// --resume also requires capture-time quality, imported actors and camera evidence.
 // Chapter V: Balanced at 1280x900; other inventory: Performance at 960x720; DPR 1.
 import http from 'node:http';
 import assert from 'node:assert/strict';
@@ -43,6 +43,7 @@ if(process.argv.includes('--resume')){
   for(const scene of previous.scenes??[]){
     const snapshot=captures.find(s=>s.id===scene.id);
     if(!snapshot||scene.sourceStateSha256!==hash(snapshot.serialized)||!scene.stateUnchanged)continue;
+    if(!captureEvidenceMatches(scene,snapshot.chapter))continue;
     if(!await access(resolve(repo,scene.screenshot)).then(()=>true,()=>false))continue;
     if(scene.chapter===5&&(!scene.horizon||!await access(resolve(repo,scene.horizon)).then(()=>true,()=>false)))continue;
     report.scenes.push({...scene,resumedFrom:previous.started});
@@ -112,6 +113,40 @@ async function inventory(page){
     return {scene:canvas.dataset.scene,chapter:Number(canvas.dataset.chapter),kind:canvas.dataset.kind,weather:canvas.dataset.weather,timeOfDay:canvas.dataset.timeOfDay,materials:canvas.dataset.materials,actorAssets:canvas.dataset.actorAssets,canvas:{width:canvas.width,height:canvas.height},stats};
   });
 }
+function assertCaptureObservation(observed,{quality,cameraView},label){
+  assert.equal(observed?.quality,quality,`${label}: requested graphics quality is still active`);
+  assert.equal(observed.renderQuality,quality,`${label}: rendered graphics quality matches`);
+  assert.equal(observed.cameraView,cameraView,`${label}: expected camera view`);
+  assert.equal(observed.ready,true,`${label}: 3D stage is ready`);
+  assert.equal(observed.actorAssets,'imported',`${label}: imported actors are visible`);
+  assert.equal(observed.actorsReady,true,`${label}: imported actor assets are ready`);
+  assert.equal(observed.actorsPending,false,`${label}: no actor assets are pending`);
+  assert.equal(observed.actorsError,null,`${label}: no actor asset error`);
+}
+function captureEvidenceMatches(scene,chapter){
+  const quality=chapter===5?'balanced':'performance';
+  if(scene.requestedQuality!==quality)return false;
+  try{
+    for(const cameraView of chapter===5?['overview','horizon']:['overview']){
+      for(const when of ['before','after'])assertCaptureObservation(scene.captureObservations?.[cameraView]?.[when],{quality,cameraView},`${cameraView} ${when}`);
+    }
+    return true;
+  }catch{return false;}
+}
+async function captureObservation(page){
+  return page.evaluate(()=>{
+    const board=document.querySelector('#battle-board'),stats=JSON.parse(board.dataset.renderStats);
+    return {quality:document.documentElement.dataset.quality,renderQuality:stats.quality,cameraView:stats.cameraView,ready:board.parentElement.dataset.ready==='true',actorAssets:board.dataset.actorAssets,actorsReady:stats.actorAssets?.ready,actorsPending:stats.actorAssets?.pending,actorsError:stats.actorAssets?.error};
+  });
+}
+async function captureScene(page,id,expected){
+  const path=resolve(images,`v034-${id}.png`),clip=await page.locator('.battle-stage').boundingBox();
+  assert.ok(clip?.width&&clip?.height);
+  const before=await captureObservation(page);assertCaptureObservation(before,expected,`${id} before capture`);
+  await page.screenshot({path,clip,timeout:120000});
+  const after=await captureObservation(page);assertCaptureObservation(after,expected,`${id} after capture`);
+  return {screenshot:relative(repo,path).replaceAll('\\','/'),observations:{before,after}};
+}
 async function capture(page,id,{full=false,stage=true}={}){
   const path=resolve(images,`v034-${id}.png`);
   if(stage){const clip=await page.locator('.battle-stage').boundingBox();assert.ok(clip?.width&&clip?.height);await page.screenshot({path,clip,timeout:120000});}
@@ -153,16 +188,17 @@ async function sceneInventory(){
       assert.equal(observed.chapter,snapshot.chapter);assert.equal(observed.kind,snapshot.kind);
       assert.ok(observed.stats.calls>0&&observed.stats.triangles>0,'The scene actually drew geometry');
       assert.equal(observed.actorAssets,'imported');
-      console.log(`  capturing ${snapshot.id}`);const screenshot=await capture(page,snapshot.id);
-      let horizon=null;
+      console.log(`  capturing ${snapshot.id}`);const overviewCapture=await captureScene(page,snapshot.id,{quality:requestedQuality,cameraView:'overview'});
+      const screenshot=overviewCapture.screenshot,captureObservations={overview:overviewCapture.observations};let horizon=null;
       if(snapshot.chapter===5){
         await page.locator('[data-cmd="camera-horizon"]').click();
         await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#battle-board').dataset.renderStats).cameraView==='horizon';}catch{return false;}},null,{polling:300});
-        horizon=await capture(page,`${snapshot.id}-horizon`);
+        const horizonCapture=await captureScene(page,`${snapshot.id}-horizon`,{quality:requestedQuality,cameraView:'horizon'});
+        horizon=horizonCapture.screenshot;captureObservations.horizon=horizonCapture.observations;
       }
       const after=Game.serialize(await exported(page));
       assert.equal(after,snapshot.serialized,'Rendering, camera and settings leave the public save unchanged');
-      report.scenes.push({chapter:snapshot.chapter,id:snapshot.id,title:snapshot.title,kind:snapshot.kind,sourceStateSha256:hash(snapshot.serialized),stateUnchanged:true,screenshot,horizon,viewport,deviceScaleFactor:1,requestedQuality,milliseconds:Date.now()-started,...observed});
+      report.scenes.push({chapter:snapshot.chapter,id:snapshot.id,title:snapshot.title,kind:snapshot.kind,sourceStateSha256:hash(snapshot.serialized),stateUnchanged:true,screenshot,horizon,captureObservations,viewport,deviceScaleFactor:1,requestedQuality,milliseconds:Date.now()-started,...observed});
       console.log(`  captured ${snapshot.id}: ${observed.stats.calls} draws, ${observed.stats.triangles} triangles, ${observed.stats.quality}`);
       await writeFile(reportPath,JSON.stringify(report,null,2)+'\n');
       })();
