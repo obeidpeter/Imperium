@@ -24,7 +24,9 @@ export function createPanels(context){
       `short drill, then swear the oath that will follow you to Rome.</p></div><div class="panel-form"><label for="name-input">Your Roman name</label>`+
       `<input id="name-input" type="text" maxlength="40" value="Aurelius Marcellus" autocomplete="off" aria-describedby="name-hint">`+
       `<p id="name-hint" class="settings-description">Up to 40 characters. This name appears in your chronicle and optional reign card.</p>`+
-      `</div>${difficultyChoices()}<p class="panel-note">New chronicles include operational preparations, chapter-specific field opportunities, coordinated `+
+      `</div>${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
+      `encounters, by quick save or by name; a save code copied mid-encounter carries only its checkpoint. It can be lifted later, never taken up again.</small>`+
+      `</span><input id="iron-discipline" type="checkbox"></label><p class="panel-note">New chronicles include operational preparations, chapter-specific field opportunities, coordinated `+
       `enemy doctrines, documented political cases, mechanical weather, policy debates, branching operations, veteran specializations and recurring political `+
       `agreements. Restored chronicles keep the rules they began with.</p><label class="setting" for="new-soundscape">`+
       `<span>Enable the soundscape<small class="muted">Music, environmental sound and optional voiced briefings. You can adjust each in Settings.</small>`+
@@ -388,7 +390,7 @@ export function createPanels(context){
         `<button class="menu-link" data-cmd="soldier-panel" data-id="${id}"><strong>${label}</strong><span>${text}</span></button>`).join('')}</div>`:'';
     showModal('Your way through the chronicle',`<div class="menu-intro panel-lead">${intro}</div><nav class="menu-links" aria-label="Main navigation">`+
       `${fight}<div class="menu-group">${begin}${item('home','Title & introduction','The game, its world, and how to begin.',screen==='title')}</div>${chronicle}`+
-      `<div class="menu-group">${item('settings','Settings & saves','Display, sound, offline content, and backups.')}`+
+      `<div class="menu-group">${state?item('saves','Saves (F2 quick save)','Quick save, five named saves, and loading them.'):''}${item('settings','Settings & saves','Display, sound, offline content, and backups.')}`+
       `${item('help','Controls & rules','A guide to battles and political Contests.')}`+
       `${item('history','Historical notes','The sources and deliberate adaptations.')}`+
       `${item('credits','Art & credits','How this chronicle was made.')}`+

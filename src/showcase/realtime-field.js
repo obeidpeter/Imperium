@@ -1,10 +1,11 @@
 import {clockText,commandable,missionProgress,queueCommand,roundOf,routePreview,snapshotWorld,step} from '../core/realtime/simulation.js';
 import {advanceClock,clockAlpha,createClock,hurryClock,interruptClock,setPaused,setSlow,setSpeed,stepRound,stepping} from '../core/realtime/clock.js';
-import {abilityKey,blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
+import {abilityKey,autoPauseReason,blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
 import {actorById,distanceBetween,forecast,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME} from '../data/realtime-rules.js';
 import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figures.js';
+import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
 
@@ -83,13 +84,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const nameOf=id=>actorById(world,id)?.name??'Someone';
   function handleEvents(events){
     const mine=world.controlled,party=new Set([world.heroId,...world.party]);
+    let pause=null;
     for(const e of events){
-      if(e.kind==='round'&&options.roundPause&&kind==='field')autoPause(`Round ${e.round} begins.`);
-      if(e.kind==='notice'&&party.has(e.targetId)&&options.pauseSighted&&kind==='field'&&!actorById(world,e.actorId)?.practice)autoPause(`${nameOf(e.actorId)} has seen ${e.targetId===mine?'you':nameOf(e.targetId)}.`);
-      if(e.kind==='hit'&&party.has(e.defenderId)){
-        if(e.defenderId===mine)say(`${nameOf(e.attackerId)} hits you: ${e.damage}${e.critical?', a critical':''}.`,{warning:true,announce:true});
-        const d=actorById(world,e.defenderId);if(options.pauseHurt&&d&&d.hp<d.maxHp*.25&&d.hp+e.damage>=d.maxHp*.25)autoPause(`${d.id===mine?'You are':`${d.name} is`} badly hurt.`);
-      }
+      // Auto-pause: the rule decides (intents.js); the field stops the clock after this tick's news and says why last.
+      if(kind==='field'&&!interrupted&&!pause)pause=autoPauseReason(world,e,options);
+      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId===mine)say(`${nameOf(e.attackerId)} hits you: ${e.damage}${e.critical?', a critical':''}.`,{warning:true,announce:true});
+      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId!==mine)say(`${nameOf(e.attackerId)} hits ${nameOf(e.defenderId)}: ${e.damage}.`,{warning:true,announce:true});
       if(e.kind==='hit'&&e.attackerId===mine)say(`You hit ${nameOf(e.defenderId)}: ${e.damage}${e.critical?e.ambush?', from ambush':', a critical':''}.`);
       if(e.kind==='block'&&e.attackerId===mine)say(`${nameOf(e.defenderId)} blocks your ${e.missile?'missile':'blow'}.`);
       if(e.kind==='stuck')say('The pilum sticks in his shield: it blocks half as often now.');
@@ -98,7 +98,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(e.kind==='heal'&&party.has(e.actorId))say(`${nameOf(e.actorId)} binds ${e.targetId===e.actorId?'his own wounds':`${nameOf(e.targetId)}’s wounds`}: +${e.amount}.`,{announce:true});
       if(e.kind==='revealed')say(`${nameOf(e.actorId)} is revealed.`,{warning:true,announce:true});
       if(e.kind==='reinforcements')say('Enemy reinforcements arrive.',{warning:true,announce:true});
-      if(e.kind==='phase'){say(`New objective: ${e.label}.`,{announce:true});if(options.pauseObjective)autoPause(`New objective: ${e.label}.`);}
+      if(e.kind==='phase')say(`New objective: ${e.label}.`,{announce:true});
       if(e.kind==='capability-needed')say(`Demonstrate: ${e.missing.join(', ')}.`,{warning:true,announce:true});
       if(e.kind==='work-stopped'&&e.actorId===mine)say('Your work is interrupted.',{warning:true});
       if(e.kind==='rejected'&&e.actorId===mine)say(REASONS[e.reason]??'That cannot be done now.',{warning:true});
@@ -112,6 +112,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
         const ending=world;setTimeout(()=>{if(!disposed&&world===ending)callbacks.onEnd?.(ending);},1600);
       }
     }
+    if(pause&&!ended)autoPause(pause);
     if(world.log.length!==logShown||world.log.length&&world.log[world.log.length-1].tick!==Number(dom.log?.firstElementChild?.dataset.tick))renderLog();
   }
   // Conversations and loot windows open after this frame; they pause the world.
@@ -427,7 +428,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function resetPresenter(){
     presenter?.dispose();if(!stage)return;
-    presenter=createLivePresenter(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
+    // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
+    presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
     stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);
   }
   buildParty();buildAbilityBar();renderLog();bind();applyOptions();updateHud(0);

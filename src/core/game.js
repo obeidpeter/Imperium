@@ -38,11 +38,11 @@ export {coalition,agreementOptions,previewAgreement,settleAgreement} from './pro
 export function negotiateAgreement(state,targetId,kind){const response=makeAgreement(state,targetId,kind);if(response.ok){for(const u of state.encounter?.units??[])delete u.moveOrigin;refreshContestIntents(state);}return response;}
 
 const PREPARATIONS=['fortify','rest','drill','march'],STRATAGEMS=['night','feint','flank'];
-const CHAPTER_CAPABILITIES={1:['move','strike','brace','throw','oath'],2:['assist'],3:['scout'],4:['order'],5:['formation'],6:['rally'],7:['prepare','deploy','persuade'],8:['negotiate'],9:['stratagem'],10:['allocate','judge','address','rebut'],11:['record','denounce']};
+export const CHAPTER_CAPABILITIES={1:['move','strike','brace','throw','oath'],2:['assist'],3:['scout'],4:['order'],5:['formation'],6:['rally'],7:['prepare','deploy','persuade'],8:['negotiate'],9:['stratagem'],10:['allocate','judge','address','rebut'],11:['record','denounce']};
 const RANKS=['Tiro','Miles','Immunis','Optio','Centurio','Primus pilus','Praefectus legionis','Praepositus','Acting commander','Praeses','Candidate for the Senate','Senator','Augustus'];
 const mark=(state,ability)=>{state.capabilityUse[ability]=true;const list=state.chapterCapabilities[state.chapter]??=[];if(!list.includes(ability))list.push(ability);};
 const addMilestone=(state,id)=>{if(!state.milestones.includes(id))state.milestones.push(id);};
-export function newGame(name='Aurelius Marcellus',seed=275,options={}){return {version:1,...initialEdition([31,34,35].includes(options.featureEdition)),...initialCommandCampaign([34,35].includes(options.featureEdition)),...initialFieldApproaches(options.featureEdition===35),...initialCampaignOptions(options.difficulty),...initialProgression(options.progression===true),name:String(name).trim().slice(0,40)||'Aurelius Marcellus',seed:seed>>>0,rng:seed>>>0,chapter:1,phase:'camp',rank:'Tiro',completed:[],milestones:[],decisions:{},meters:{army:15,political:5,public:10},relationships:{mentor:10,comrade:10,rival:0,patron:0,settler:0,senator:0},obligations:[],inventory:['Plain tunic','Oval training shield','Three javelins','Spatha'],supplies:12,encounterIndex:0,encounter:null,snapshot:null,log:['A village recruit arrives at the Danube camp, holding neither influence nor command.'],history:[],capabilityUse:{},chapterCapabilities:{},encounterOptions:{},settings:{audio:false,reducedMotion:false},preparation:null,stratagem:null,route:null,allocation:null,judgment:null,negotiation:null,oath:false,company:createCompany(),storyProgress:{},
+export function newGame(name='Aurelius Marcellus',seed=275,options={}){return {version:1,...(options.ironDiscipline===true?{ironDiscipline:true}:{}),...initialEdition([31,34,35].includes(options.featureEdition)),...initialCommandCampaign([34,35].includes(options.featureEdition)),...initialFieldApproaches(options.featureEdition===35),...initialCampaignOptions(options.difficulty),...initialProgression(options.progression===true),name:String(name).trim().slice(0,40)||'Aurelius Marcellus',seed:seed>>>0,rng:seed>>>0,chapter:1,phase:'camp',rank:'Tiro',completed:[],milestones:[],decisions:{},meters:{army:15,political:5,public:10},relationships:{mentor:10,comrade:10,rival:0,patron:0,settler:0,senator:0},obligations:[],inventory:['Plain tunic','Oval training shield','Three javelins','Spatha'],supplies:12,encounterIndex:0,encounter:null,snapshot:null,log:['A village recruit arrives at the Danube camp, holding neither influence nor command.'],history:[],capabilityUse:{},chapterCapabilities:{},encounterOptions:{},settings:{audio:false,reducedMotion:false},preparation:null,stratagem:null,route:null,allocation:null,judgment:null,negotiation:null,oath:false,company:createCompany(),storyProgress:{},
   soldier:createSoldier({path:options.path??'legionary',appearance:options.appearance})};}
 export function getChapter(state){return CHAPTERS[state.chapter-1];}
 export function storyLines(state){const lines=stagedStoryLines(state);if(state.phase==='promotion')lines.push({speaker:'The company roll',text:leadershipSummary(state)});if(state.chapter===10&&state.allocation&&(state.phase==='promotion'||storyStageKey(state).includes(':briefing:')))for(const text of provinceSummary(state))lines.push({speaker:'The provincial record',text});return lines;}
@@ -77,21 +77,47 @@ function initializeRealtime(state){
   const world=createEncounterWorld(state,{seed:state.rng});e.controls='realtime';e.realtime={version:1,scale:world.scale,world:JSON.parse(snapshotWorld(world))};
 }
 export const isRealtime=state=>state?.phase==='encounter'&&state.encounter?.controls==='realtime';
-export function realtimeWorld(state){return isRealtime(state)?restoreWorld(state.encounter.realtime.world):null;}
+// The fight to continue: the resume point if one was kept (a pause, a hidden
+// page), else the encounter as it began (build brief §3.17).
+export function realtimeWorld(state){return isRealtime(state)?restoreWorld(state.encounter.realtime.resume??state.encounter.realtime.world):null;}
+// Keep the fight as a resume point. The encounter's start stays beside it as the checkpoint.
 export function saveRealtime(state,world){
   if(!isRealtime(state)||state.encounter.status!=='active')return result(false,'No real-time encounter is in progress.');
   if(world?.encounterId!==state.encounter.id)return result(false,'That fight belongs to another encounter.');
   try{validateWorld(world,message=>{throw new Error(message);});}catch(error){return result(false,`The fight could not be recorded: ${error.message}`);}
-  state.encounter.realtime.world=JSON.parse(snapshotWorld(world));return result(true,'Fight recorded.');
+  state.encounter.realtime.resume=JSON.parse(snapshotWorld(world));return result(true,'Fight recorded.');
+}
+// Play resumed: the resume point is discarded at once, so it can never be used twice.
+export function clearResume(state){
+  if(!isRealtime(state)||state.encounter.realtime.resume===undefined)return result(false,'There is no resume point.');
+  delete state.encounter.realtime.resume;return result(true,'Resume point discarded.');
 }
 export function resolveRealtime(state,world){
   const saved=saveRealtime(state,world);if(!saved.ok)return saved;
   if(world.status==='active')return result(false,'The fight is still in progress.');
+  // The resolved fight is the record the result is read from.
+  state.encounter.realtime.world=state.encounter.realtime.resume;delete state.encounter.realtime.resume;
   applyRealtimeOutcome(state,world);
   return result(true,state.encounter.status==='won'?'Objective secured. Record the result to keep its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
 // The soldier's kit, training, purse and companions' orders (soldier.js): camp commands, each legal or refused unchanged.
 export function soldierCommand(state,command){if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');return soldierAct(state,command);}
+// ——— Iron discipline (build brief §3.17–§3.18): no manual saves inside encounters, and a
+// save code copied mid-encounter carries only its checkpoint. It can be turned off, never on. ———
+export function manualSaveProblem(state){
+  if(!state)return 'There is no chronicle to save.';
+  if(state.ironDiscipline&&state.phase==='encounter')return 'Iron discipline: no saves inside an encounter.';
+  return null;
+}
+export function endIronDiscipline(state){
+  if(!state.ironDiscipline)return result(false,'Iron discipline is not in force.');
+  delete state.ironDiscipline;return result(true,'Iron discipline is lifted for this chronicle. It cannot be taken up again.');
+}
+// What a save code carries: the chronicle, or under Iron discipline in an encounter the checkpoint it began from.
+export function codeState(state){
+  if(!(state?.ironDiscipline&&state.phase==='encounter'&&state.snapshot))return state;
+  const checkpoint=clone(state.snapshot);checkpoint.phase='camp';checkpoint.encounter=null;checkpoint.snapshot=null;return checkpoint;
+}
 // ——— The walkable camp (build brief §3.12) ———
 export {errandList,createCampWorld,campPlaceAt};
 export const campHasNews=(state,treeId)=>treeId==='table'?!state.decisions[getChapter(state).decision.id]:treeId==='gate'?false:hasNews(state,treeId);
@@ -290,6 +316,7 @@ function validateEncounter(e,fail){
   if(e.controls!==undefined||e.realtime!==undefined){
     if(e.controls!=='realtime'||!e.realtime||e.realtime.version!==1||!(e.realtime.scale>=2&&e.realtime.scale<=4.5)||e.realtime.world?.encounterId!==e.id)fail('real-time encounter.');
     validateWorld(e.realtime.world,fail);
+    if(e.realtime.resume!==undefined){validateWorld(e.realtime.resume,fail);if(e.realtime.resume.encounterId!==e.id)fail('real-time resume point.');}
     // What a real-time result stages for its commit: bounded so a save cannot grant more than a fight could.
     const st=e.staged;
     if((st.killTP!==undefined&&!(Number.isInteger(st.killTP)&&st.killTP>=0&&st.killTP<=240))||(st.commendations!==undefined&&(!Array.isArray(st.commendations)
@@ -304,6 +331,7 @@ function validateCareerFields(state,fail){
   if(state.storyProgress!==undefined){if(!state.storyProgress||typeof state.storyProgress!=='object'||Array.isArray(state.storyProgress)||Object.keys(state.storyProgress).length>128)fail('reading progress.');for(const[key,index]of Object.entries(state.storyProgress))if(!/^ch(?:[1-9]|1[0-2]):[a-z0-9:-]{1,70}$/.test(key)||!bounded(index,80))fail('reading progress entry.');}
 }
 function validateState(state,allowSnapshot=true){const fail=message=>{throw new Error(`Invalid save: ${message}`);};if(!state||typeof state!=='object'||state.version!==1)fail('incompatible format.');if(typeof state.name!=='string'||state.name.length>40)fail('name.');if(!Number.isInteger(state.chapter)||state.chapter<1||state.chapter>12)fail('chapter.');if(!['camp','encounter','promotion','epilogue'].includes(state.phase))fail('phase.');if(!Number.isInteger(state.rng)||state.rng<0||state.rng>4294967295)fail('random generator.');if(!Array.isArray(state.completed)||!state.completed.every((c,i)=>c===i+1)||new Set(state.completed).size!==state.completed.length)fail('chapter history.');if(!Array.isArray(state.milestones)||!state.milestones.every(x=>typeof x==='string')||new Set(state.milestones).size!==state.milestones.length)fail('milestones.');if(!Array.isArray(state.history)||new Set(state.history.map(x=>x.id)).size!==state.history.length)fail('duplicate encounter commits.');if(!state.meters||['army','political','public'].some(k=>!Number.isFinite(state.meters[k])||state.meters[k]<0||state.meters[k]>100))fail('campaign meters.');if(!Number.isFinite(state.supplies)||state.supplies<0||state.supplies>99)fail('supplies.');if(!Array.isArray(state.obligations)||new Set(state.obligations.map(o=>o.id)).size!==state.obligations.length||state.obligations.some(o=>!['open','honoured','broken'].includes(o.status)))fail('obligations.');if(!state.decisions||Array.isArray(state.decisions))fail('decisions.');for(const[id,value]of Object.entries(state.decisions)){const chapter=CHAPTERS.find(c=>c.decision.id===id);if(!chapter||!chapter.decision.options.some(o=>o.id===value))fail('unknown narrative choice.');}if(!state.capabilityUse||!state.chapterCapabilities||!state.relationships||!Array.isArray(state.inventory)||!Array.isArray(state.log))fail('missing campaign data.');if(!canAccess(state,state.chapter))fail('chapter access requirements are unmet.');if(state.completed.length!==(state.phase==='epilogue'?12:state.chapter-1))fail('career sequence.');if(state.phase==='promotion'&&chapterRequirements(state).some(r=>!r.done))fail('unearned chapter capability.');if(state.completed.some(c=>!state.milestones.includes(`chapter:${c}`)))fail('missing completed chapter milestone.');if(state.milestones.includes('dux')&&!state.completed.includes(9))fail('unearned highest command.');if(state.milestones.includes('governorship')&&!state.completed.includes(10))fail('unearned governorship.');if(state.milestones.includes('senator')&&(!state.completed.includes(11)||!state.milestones.includes('senate-challenge')))fail('unearned Senate admission.');if(state.rank!==RANKS[state.chapter-1]&&!(state.phase==='epilogue'&&state.rank==='Augustus'))fail('rank does not match earned career.');if(!Number.isInteger(state.encounterIndex)||state.encounterIndex<0||state.encounterIndex>getChapter(state).encounters.length)fail('encounter index.');
+  if(state.ironDiscipline!==undefined&&state.ironDiscipline!==true)fail('iron discipline.');
   validateCareerFields(state,fail);validateSoldier(state,fail);validateCampaignOptions(state,fail);validateProgression(state,fail);validateExpanded(state,fail);validateCommandCampaign(state,fail);validateFieldApproaches(state,fail);if(state.phase==='encounter'){const e=state.encounter;if(!e||!['battle','contest'].includes(e.kind)||!['active','won','lost'].includes(e.status)||!Array.isArray(e.units)||e.units.length>40)fail('encounter.');if(!state.snapshot)fail('missing transaction checkpoint.');if(state.snapshot.chapter!==state.chapter||state.snapshot.encounterIndex!==state.encounterIndex||state.snapshot.phase!=='camp')fail('mismatched transaction checkpoint.');if(e.id!==getChapter(state).encounters[state.encounterIndex]?.id)fail('encounter identity.');if(!Number.isInteger(e.turn)||e.turn<1||e.turn>30)fail('turn.');if(!Number.isFinite(e.commandsLeft)||e.commandsLeft<0||e.commandsLeft>e.commandCapacity)fail('command budget.');for(const u of e.units)if(!Number.isInteger(u.x)||!Number.isInteger(u.y)||u.x<0||u.y<0||u.x>=e.width||u.y>=e.height||!Number.isFinite(u.hp)||u.hp<0||u.hp>u.maxHp)fail('unit position or health.');validateEncounter(e,fail);if(state.campaignRules===2&&(e.campaignRules!==2||e.difficulty!==state.difficulty||state.snapshot.campaignRules!==2||state.snapshot.difficulty!==state.difficulty))fail('encounter campaign rules.');if(state.campaignRules===undefined&&e.campaignRules!==undefined)fail('legacy encounter campaign rules.');if(allowSnapshot)validateState(state.snapshot,false);else fail('nested transaction.');}
   if(state.phase==='epilogue'&&(!state.completed.includes(12)||!state.milestones.includes('augustus')||!state.milestones.includes('confrontation')))fail('unearned accession.');return state;}
 export function serialize(state){validateState(state);return JSON.stringify(state);}

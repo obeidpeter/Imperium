@@ -33,3 +33,9 @@
   .pack-grid{grid-template-columns:repeat(var(--cols),minmax(1.9rem,1fr))}}
 .chronicle-passage summary{cursor:pointer;font-weight:650;min-block-size:2.75rem;display:flex;align-items:center}
 .chronicle-voice{font-weight:700;margin-inline-end:.3rem}
+.save-slots{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.5rem}
+.save-slot{display:grid;grid-template-columns:160px 1fr auto;gap:.8rem;align-items:center;border-block-end:1px solid var(--line,#e2dccb);padding-block:.4rem}
+.save-slot img,.save-slot-blank{inline-size:160px;block-size:90px;border-radius:.3rem;object-fit:cover;background:#2a2f2a;color:#cfc6b0;display:grid;place-items:center;font-weight:700}
+.save-slot small{display:block;color:var(--muted,#666)}.save-slot input{inline-size:100%;margin-block-start:.3rem}
+.save-slot-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+@media (max-width:760px){.save-slot{grid-template-columns:1fr}.save-slot img,.save-slot-blank{inline-size:100%;block-size:auto;aspect-ratio:16/9}}

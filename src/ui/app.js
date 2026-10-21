@@ -23,6 +23,7 @@ import {ITEMS} from '../data/items.js';
 import {TRAINERS} from '../data/soldier.js';
 import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
 import {practicePanel} from './command-edition-views.js';
+import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
 import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,quartermasterPanel,trainerPanel,
@@ -207,10 +208,9 @@ function mountPainting(){
 // world steps on the page; the chronicle receives it only when it is saved
 // (pause, a hidden page, F2) or resolved. ———
 let field=null;
-const fieldSource=()=>state?.encounter?.realtime?.world??null;
+const fieldSource=()=>state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
-function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter)
-  &&settings.battleView!=='2d'&&!failed3D;}
+function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter);}
 // What the page's field shows now: a real-time fight, a walkable camp, or nothing.
 function fieldTarget(){
   if(screen==='title'||!state)return null;
@@ -259,7 +259,7 @@ function campCallbacks(){
   return {
     onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
     onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
-    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>noteVisit(world)
+    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>noteVisit(world),onQuickSave:()=>quickSave()
   };
 }
 function noteVisit(world){
@@ -320,10 +320,21 @@ function campTravel(place){
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
-  const canvas=field.element.querySelector('canvas'),veil=field.element.querySelector('.rt-veil p');
+  const canvas=field.element.querySelector('canvas');
+  // The 2D view (or no WebGL): the same field drawn flat, with the same commands and lists.
   if(settings.battleView==='2d'||failed3D){
-    if(veil)veil.textContent='This real-time fight needs the 3D view in this build. Choose the 3D view in Settings, or switch the controls to Turns.';return;
+    battleStage.release();
+    if(!field.flat&&!field.flatLoading){
+      const mine=field;mine.flatLoading=true;
+      import('../showcase/flat-stage.js').then(({FlatStage})=>{
+        if(field!==mine||!canvas.isConnected)return;mine.flatLoading=false;
+        mine.flat=new FlatStage(canvas,{onFrame:cost=>{graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open});field?.runtime?.frameDone();}});
+        mine.runtime?.attach(mine.flat);canvas.parentElement.dataset.ready='true';
+      }).catch(error=>{console.error(error);toast(`The 2D view could not start: ${error.message}`);});
+    }
+    return;
   }
+  if(field.flat){field.flat.dispose();field.flat=null;}
   const own=battleStage.mount(canvas,{encounter:runtime.stageView(),chapter:state.chapter,rank:state.rank,commendations:{},live:true,input:false,
     quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,
     adaptiveResolution:settings.adaptiveResolution,motionSpeed:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,
@@ -332,10 +343,46 @@ function mountFieldStage(){
     onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
   if(own&&runtime.stage!==own)runtime.attach(own);
 }
-function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.element?.remove();}
+function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
 // For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
 window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
 // Keep the chronicle's copy of the fight: the resume point after a pause, a hidden page or a quick save.
+// ——— Quick save and the named saves (§3.17). ———
+function savePicture(){
+  // The 2D view's canvas can be read; the 3D view keeps no frame, so its saves show the chapter's painting.
+  try{const c=field?.flat?field.element.querySelector('canvas'):null;if(c){const t=document.createElement('canvas');t.width=160;t.height=90;
+    t.getContext('2d').drawImage(c,0,0,160,90);return t.toDataURL('image/jpeg',.6);}}catch{}
+  return null;
+}
+function slotSummary(){
+  const ch=Game.getChapter(state),e=state.encounter;
+  return `Chapter ${roman(state.chapter)} · ${e&&state.phase==='encounter'?e.title:state.phase==='camp'?'In camp':ch.title}`;
+}
+// Bring the fight in progress into the chronicle first, so the save holds it exactly.
+function syncFieldIntoChronicle(){const w=field?.runtime?.world;if(w&&field.kind==='field'&&Game.isRealtime(state)&&state.encounter.status==='active')Game.saveRealtime(state,w);}
+function quickSave(){saveToSlot('quick','Quick save');}
+function saveToSlot(id,name){
+  const problem=Game.manualSaveProblem(state)??(modal.open&&modal.dataset.conversation?'Saving waits until the conversation ends.':null);
+  if(problem){toast(problem);return false;}
+  syncFieldIntoChronicle();
+  try{writeSlot(id,state,{name,summary:slotSummary(),thumbnail:savePicture()});}catch(error){toast(error.message);return false;}
+  toast(id==='quick'?'Quick saved. Menu → Saves loads it.':`Saved: ${name}.`);if(modal.open&&modal.dataset.panel==='saves')showSaves();return true;
+}
+function showSaves(){
+  const problem=Game.manualSaveProblem(state),slots=listSlots();
+  showModal('Saves',`<p class="panel-note">${problem?esc(problem):'Each save keeps everything, battle time and the random seed included, so a loaded fight continues exactly.'}`+
+    `${state?.ironDiscipline?' <button class="text-link" data-cmd="end-iron">Turn off Iron discipline (it cannot be turned on again)</button>':''}</p>`+
+    `<ul class="save-slots">${slots.map(s=>`<li class="save-slot">${s.thumbnail?`<img src="${esc(s.thumbnail)}" width="160" height="90" alt="">`:
+      `<span class="save-slot-blank" aria-hidden="true">${s.id==='quick'?'F2':s.id}</span>`}<div><strong>${esc(s.id==='quick'?'Quick save':s.empty?`Slot ${s.id}`:s.name)}</strong>`+
+      `<small>${s.empty?'Empty':`${esc(s.summary)} · ${esc(new Date(s.savedAt).toLocaleString())}`}</small>`+
+      `${s.id!=='quick'?`<label class="visually-hidden" for="slot-name-${s.id}">Name for slot ${s.id}</label><input id="slot-name-${s.id}" maxlength="60" value="${esc(s.empty?slotSummary():s.name)}">`:''}</div>`+
+      `<div class="save-slot-actions"><button data-cmd="slot-save" data-id="${s.id}" ${problem?'disabled':''}>Save here</button>`+
+      `<button data-cmd="slot-load" data-id="${s.id}" ${s.empty?'disabled':''}>Load</button></div></li>`).join('')}</ul>`);
+}
+async function loadSlot(id){
+  let candidate;try{candidate=readSlot(id);}catch(error){toast(error.message);return;}
+  disposeField();await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Save loaded.'});
+}
 function saveField(world,{announced=false}={}){
   if(!Game.isRealtime(state)||state.encounter.status!=='active'||state.archiveReplay)return;
   const saved=Game.saveRealtime(state,world);if(!saved.ok)return;if(field)field.source=fieldSource();
@@ -348,7 +395,9 @@ function saveField(world,{announced=false}={}){
 function fieldCallbacks(){
   return {
     onSave:world=>saveField(world),
-    onQuickSave:world=>saveField(world,{announced:true}),
+    // Play resumed: the resume point is discarded on this first tick, so it is never used twice.
+    onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
+    onQuickSave:()=>quickSave(),
     onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
     onMenu:()=>showNavigation(),
     onPanel:name=>fieldPanel(name),
@@ -608,7 +657,7 @@ modal.addEventListener('close',()=>{
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
   battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
-async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
+async function showExport(){showExportCode(await saveCode(Game.codeState(archivePrimaryState??state)));}
 // Settings → Run performance check. The battle is measured where it stands:
 // the panel closes, and until the check ends a status band covers the page so
 // neither pointer nor keys can reach the board (Escape or Cancel stop it).
@@ -693,6 +742,10 @@ case 'conversation':showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
 case 'camp-travel':campTravel(id);break;
 case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
+case 'saves':showSaves();break;
+case 'slot-save':saveToSlot(id,id==='quick'?'Quick save':modal.querySelector(`#slot-name-${id}`)?.value||slotSummary());break;
+case 'slot-load':await loadSlot(id);break;
+case 'end-iron':await change(()=>Game.endIronDiscipline(state));if(modal.open)showSaves();break;
 case 'soldier':{const d=b.dataset;if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
   await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
   if(d.kind==='orders-edit')showSoldierPanel('orders',d.companion);break;}
@@ -714,12 +767,15 @@ case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProg
 case 'new':showNew();break;
 case 'begin':{
   const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,
-    {featureEdition:35,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
+    {featureEdition:35,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
+      ironDiscipline:!!document.querySelector('#iron-discipline')?.checked});
   if(document.querySelector('#new-soundscape')?.checked){
     settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();
   }
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),
     message:'Chapter I. You are a Tiro: a recruit in training.'});
+  // One chronicle per device: the new one replaces the old one's saves too.
+  if(result.ok)clearSlots();
   if(result.error?.code==='SAVE_UNAVAILABLE'){
     pendingNew=candidate;
     showStorageUnavailable();
@@ -1016,6 +1072,7 @@ document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||modal.open||screen==='title'||!state||Game.isRealtime(state)||sessionGate.busy)return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"],canvas'))return;
   const action=actionFor(event,DEFAULT_KEYMAP);if(!action)return;
+  if(action==='quick_save'){event.preventDefault();quickSave();return;}
   const name=action==='help'?'help':action==='map_overlay'?'map':action.startsWith('panel_')?action.slice(6):null;
   if(!name||(state.phase==='encounter'&&!['kit','character','decorations','company','journal','chronicle','options','help'].includes(name)))return;
   event.preventDefault();openPanel(name);
