@@ -1,5 +1,5 @@
 import {ABILITIES,COMBAT,MISSILES,REASONS} from '../../data/realtime-rules.js';
-import {blowForecast,blowSetup,shieldOf} from './combat.js';
+import {blowForecast,blowSetup,derivedValues,shieldOf} from './combat.js';
 import {groundHeight,navGrid,span} from './navigation.js';
 
 // Abilities (§3.6): validate() and forecast() are pure, for the UI and the
@@ -17,20 +17,43 @@ export function missileRange(world,actor,missile,point){
   return MISSILES[missile].range*(drop>=COMBAT.heightStep?1.2:1);
 }
 
+const recovering=(world,actor,id)=>(actor.cooldowns?.[id]??0)>world.tick;
+// A comrade who can be lifted: down, or a wounded man who cannot walk.
+export const liftable=o=>o.alive&&!o.carriedBy&&(o.down||o.escort?.wounded&&!o.escort.escorted);
+
 export function validate(world,actorId,abilityId,target={}){
   const ability=ABILITIES[abilityId],actor=actorById(world,actorId);
   if(!ability)return 'NO_TARGET';
   if(world.status!=='active')return 'BATTLE_OVER';
-  if(!actor?.alive)return 'ACTOR_DOWN';
+  if(!actor?.alive||actor.down)return 'ACTOR_DOWN';
   if(staggered(world,actor))return 'STAGGERED';
+  if(actor.abilities&&!actor.abilities.includes(abilityId))return 'NOT_LEARNT';
   const other=target.actorId?actorById(world,target.actorId):null;
   if(target.actorId&&!other)return 'NO_TARGET';
   if(other&&!other.alive)return 'TARGET_DOWN';
+  if(other?.hidden&&hostile(actor,other))return 'NO_TARGET';
   if(abilityId==='strike'){
-    if(!other)return 'NO_TARGET';if(!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';return null;
+    if(!other)return 'NO_TARGET';if(other.down)return 'TARGET_DOWN';if(!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';return null;
   }
+  if(actor.carrying&&abilityId!=='carry')return 'CARRYING';
   if(abilityId==='brace'){
     if(!shieldOf(actor))return 'NO_SHIELD';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
+  }
+  if(abilityId==='bind_wounds'){
+    const patient=other??actor;
+    if(hostile(actor,patient))return 'NOT_FRIENDLY';if(!patient.down&&patient.hp>=patient.maxHp)return 'NOT_WOUNDED';
+    if((actor.bandages??0)<=0)return 'NO_BANDAGES';if(recovering(world,actor,abilityId))return 'RECOVERING';return null;
+  }
+  if(abilityId==='carry'){
+    if(actor.carrying)return null;
+    if(actor.drawn)return 'NEEDS_SHEATHED';if(!other||hostile(actor,other))return 'NO_TARGET';if(!liftable(other))return 'NOT_FALLEN';return null;
+  }
+  if(abilityId==='scout'){
+    if(recovering(world,actor,abilityId))return 'RECOVERING';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
+  }
+  if(abilityId==='shield_bash'){
+    if(!shieldOf(actor))return 'NO_SHIELD';if(!other)return 'NO_TARGET';if(!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';
+    if(recovering(world,actor,abilityId))return 'RECOVERING';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
   }
   if(ability.effects?.[0]?.type==='missile'){
     const missile=ability.effects[0].missile,kind=ability.cost.ammo;
@@ -50,7 +73,14 @@ export function forecast(world,actorId,abilityId,target={}){
   const ability=ABILITIES[abilityId],actor=actorById(world,actorId),reason=validate(world,actorId,abilityId,target);
   const out={abilityId,name:ability?.name??abilityId,ok:!reason,reason,message:reason?REASONS[reason]:null,cost:ability?.cost??{},range:ability?.range_m??null};
   const other=target.actorId?actorById(world,target.actorId):null;
-  if(!actor||!other||!other.alive||!['strike'].includes(abilityId)&&ability?.effects?.[0]?.type!=='missile')return out;
-  const missile=abilityId==='strike'?null:ability.effects[0].missile;
-  return {...out,distance:distanceBetween(actor,other),blow:blowForecast(blowSetup(world,actor,other,{missile}))};
+  const type=ability?.effects?.[0]?.type;
+  if(abilityId==='bind_wounds'&&actor){
+    const patient=other??actor,heal=Math.max(1,Math.floor(patient.maxHp*(actor.effects?.bindWounds??ability.effects[0].fraction)));
+    return {...out,heal,patientId:patient.id,bandages:actor.bandages??0};
+  }
+  if(!actor||!other||!other.alive||!['strike'].includes(abilityId)&&type!=='missile'&&type!=='bash')return out;
+  const ranged=abilityId==='strike'?derivedValues(actor).weapon.ranged:null;
+  const missile=abilityId==='strike'?ranged&&(ranged.ammo===null||(actor.ammo?.[ranged.ammo]??0)>0)?ranged.missile:null:type==='missile'?ability.effects[0].missile:null;
+  const profile=type==='bash'?ability.effects[0].damage:null;
+  return {...out,distance:distanceBetween(actor,other),blow:blowForecast(blowSetup(world,actor,other,{missile,profile}))};
 }

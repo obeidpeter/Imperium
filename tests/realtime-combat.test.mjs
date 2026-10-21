@@ -10,7 +10,9 @@ import {ARENA,COMBAT,TRAINING_PATHS} from '../src/data/realtime-rules.js';
 
 const map=createShowcaseSession().encounter;
 const legionary={id:'hero',name:'Hero',side:'player',role:'soldier',path:'legionary',kit:ARENA.hero.kit,ammo:{pilum:2}};
-const raider=(over={})=>({id:'r',name:'Raider',side:'enemy',role:'raider',attributes:{str:13,agi:12,con:10,combat:8},kit:['tunic','jerkin','axe'],...over});
+// The raider has seen the hero: these are fights between men aware of each other (no ambush).
+const raider=(over={})=>({id:'r',name:'Raider',side:'enemy',role:'raider',attributes:{str:13,agi:12,con:10,combat:8},kit:['tunic','jerkin','axe'],
+  alert:true,aware:['hero'],...over});
 // Two men on open ground, facing each other unless told otherwise.
 function duel({a=legionary,b=raider(),aAt=[6,16],bAt=[7.5,16],aFace=[1,0],bFace=[-1,0],seed=99}={}){
   return createWorld({map,seed,actors:[{...a,at:aAt,face:aFace},{...b,at:bAt,face:bFace}]});

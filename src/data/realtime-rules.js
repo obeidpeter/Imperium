@@ -18,7 +18,9 @@ export const MOVEMENT=Object.freeze({walk:1.6,run:4,runMin:2.4,runRestriction:20
   radius:.35,cell:.5,
   // Blocked ground is widened by this many cells so a body never clips a rock.
   clearance:1,
-  arrive:.05,repathTicks:10,terrain:Object.freeze({marsh:.6,ford:.5})});
+  arrive:.05,repathTicks:10,terrain:Object.freeze({marsh:.6,ford:.5}),
+  // Close enough to talk to a man or search a body.
+  talkRange:1.8});
 
 // Arcs as cosines of the angle from the defender's facing: inside the 120°
 // front arc, and within 60° of directly behind.
@@ -66,7 +68,7 @@ export const MISSILES=Object.freeze({
   pilum:Object.freeze({name:'Pilum',range:25,speed:22,damage:Object.freeze({pierce:[5,10]}),sticks:true}),
   javelin:Object.freeze({name:'Javelin',range:22,speed:20,damage:Object.freeze({pierce:[3,7]}),sticks:true}),
   dart:Object.freeze({name:'Plumbata',range:35,speed:24,damage:Object.freeze({pierce:[3,6]}),sticks:false}),
-  arrow:Object.freeze({name:'Arrow',range:40,speed:45,damage:Object.freeze({pierce:[3,7]}),sticks:false,shot:true}),
+  arrow:Object.freeze({name:'Arrow',range:40,speed:45,damage:Object.freeze({pierce:[2,6]}),sticks:false,shot:true}),
   bullet:Object.freeze({name:'Sling bullet',range:32,speed:35,damage:Object.freeze({crush:[2,5],stun:[0,1]}),sticks:false,shot:true})});
 export const SHIELDS=Object.freeze({scutum:Object.freeze({name:'Scutum',block:.3}),parma:Object.freeze({name:'Parma',block:.2}),
   round:Object.freeze({name:'Round shield',block:.2})});
@@ -84,16 +86,19 @@ export const ABILITIES=Object.freeze({
   throw_pilum:Object.freeze({id:'throw_pilum',name:'Throw pilum',kind:'technique',unlock:{chapter:1},target:'enemy',groundTarget:true,range_m:25,
     cost:Object.freeze({ammo:'pilum'}),castTime_s:.8,release:.5,recovery_s:.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'pilum'}]),
     summary:'Throw a pilum up to 25 metres; a blocked one sticks in the shield.'}),
-  bind_wounds:Object.freeze({id:'bind_wounds',name:'Bind wounds',kind:'technique',unlock:{chapter:2},target:'ally',selfIfNoTarget:true,range_m:1.6,
+  bind_wounds:Object.freeze({id:'bind_wounds',name:'Bind wounds',kind:'technique',unlock:{chapter:2},target:'ally',selfIfNoTarget:true,range_m:1.6,approach:true,
     cost:Object.freeze({bandage:1}),castTime_s:3,recovery_s:.5,interruptible:true,effects:Object.freeze([{type:'heal',fraction:.25}]),
     summary:'Three seconds’ work restores a quarter of Health; a hit stops it and the bandage is kept.'}),
-  carry:Object.freeze({id:'carry',name:'Carry',kind:'technique',unlock:{chapter:2},target:'ally',range_m:1.6,cost:Object.freeze({}),needsSheathed:true,
+  carry:Object.freeze({id:'carry',name:'Carry',kind:'technique',unlock:{chapter:2},target:'ally',range_m:1.6,approach:true,cost:Object.freeze({}),needsSheathed:true,
     effects:Object.freeze([{type:'carry'}]),summary:'Lift a fallen comrade (weapon sheathed). Walk only; your shield does not block.'}),
   scout:Object.freeze({id:'scout',name:'Scout',kind:'technique',unlock:{chapter:3},target:'self',cost:Object.freeze({stamina:20}),recovery_s:30,
     effects:Object.freeze([{type:'reveal',radius:30,duration_s:20}]),summary:'Reveal hidden enemies and concealed ground within 30 metres for 20 seconds.'}),
-  shield_bash:Object.freeze({id:'shield_bash',name:'Shield bash',kind:'technique',unlock:{course:'shield_bash'},target:'enemy',range_m:1.2,
+  shield_bash:Object.freeze({id:'shield_bash',name:'Shield bash',kind:'technique',unlock:{course:'shield_bash'},target:'enemy',range_m:1.2,approach:true,
     cost:Object.freeze({stamina:10}),castTime_s:.6,release:.5,recovery_s:8,needsShield:true,
     effects:Object.freeze([{type:'bash',damage:Object.freeze({stun:[6,10],crush:[1,3]})}]),summary:'A stunning blow with the shield boss that staggers him.'}),
+  throw_dart:Object.freeze({id:'throw_dart',name:'Throw plumbata',kind:'technique',unlock:{chapter:5},target:'enemy',groundTarget:true,range_m:35,
+    cost:Object.freeze({ammo:'dart'}),castTime_s:.7,release:.5,recovery_s:.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'dart'}]),
+    summary:'Throw a lead-weighted dart up to 35 metres.'}),
   // The raiders' own technique; never on the player's bar.
   throw_javelin:Object.freeze({id:'throw_javelin',name:'Throw javelin',kind:'technique',enemyOnly:true,unlock:{},target:'enemy',range_m:22,
     cost:Object.freeze({ammo:'javelin'}),castTime_s:.8,release:.5,recovery_s:2.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'javelin'}]),
@@ -116,7 +121,10 @@ export const REASONS=Object.freeze({
   OUTSIDE_REACH:'Outside his reach this hour.',ONCE_PER_MEMBER:'Once per member.',NOT_IN_DEPLOYMENT_ZONE:'Outside the deployment zone.',
   CANNOT_SAVE_HERE:'You cannot save here.',
   NO_SHIELD:'Brace needs a shield.',STAGGERED:'Staggered: wait a moment.',NO_TARGET:'Choose a target.',TARGET_DOWN:'He has already fallen.',
-  NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.'});
+  NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',
+  NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',
+  NOT_WOUNDED:'He is not wounded.',NOT_FALLEN:'Only a fallen comrade can be carried.',NOT_IN_CAMP:'Not here in camp.',
+  ALREADY_DONE:'That is already done.',ALREADY_CONTROLLED:'You already control him.'});
 
 // Phase 0 enemy behaviour (§3.10 arrives in Phase 1): notice within a
 // radius, then engage, spreading round the target; skirmishers throw first.
@@ -126,7 +134,25 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   spread:Object.freeze([[1,0],[.3420201433256688,.9396926207859083],[.3420201433256688,-.9396926207859083],
     [-.7660444431189779,.6427876096865395],[-.7660444431189779,-.6427876096865395]]),
   // A skirmisher throws from between these distances, then closes to fight.
-  skirmish:Object.freeze({close:7,far:18})});
+  skirmish:Object.freeze({close:7,far:18}),
+  // A drill partner spars within this of his post; a guard defends this far from his; raiders go for columns this near.
+  practiceRange:6,guardRadius:14,raidRadius:24,
+  // Archers step back this far when a foe comes within archerClose.
+  archerClose:5,archerStep:6,
+  // An engaged enemy keeps his man unless another foe stands this much closer.
+  stickiness:3});
+
+// Perception (§3.10): notice per second = base × visibility × proximity ×
+// (Per / 10) × (1 − Fieldcraft / 100). Proximity is 1 within `near` and falls
+// to 0 at a sight radius of sightBase + Per.
+export const PERCEPTION=Object.freeze({sightBase:25,near:5,run:60,walk:25,quietWalk:10,stand:10,drawn:15,
+  darkness:.5,mist:.6,cover:.4,darkCloak:.8,decay:20,
+  // Seconds between full notice and the first move; a shout rouses his group this far.
+  reaction:.4,shout:30,
+  // An ambushed man traces his attacker with probability min(1, 10 / Fieldcraft); otherwise a noise within ±10 m.
+  traceFieldcraft:10,noiseSpread:10,
+  difficulty:Object.freeze({story:Object.freeze({notice:.7,reaction:.5}),standard:Object.freeze({notice:1,reaction:0}),
+    veteran:Object.freeze({notice:1.3,reaction:-.25})})});
 
 // The Phase 0 arena on the frontier road's map: a Legionary against three
 // raiders. Positions are metres from the map's north-west corner.
@@ -142,3 +168,28 @@ export const ARENA=Object.freeze({
     Object.freeze({id:'raider-skirmisher',name:'Gothic skirmisher',role:'raider',skirmisher:true,
       attributes:Object.freeze({str:11,agi:14,con:10,per:12,combat:7,field:9}),kit:Object.freeze(['tunic','spatha']),ammo:Object.freeze({javelin:2}),
       at:[18.75,9.4],face:[-1,0]})])});
+
+// Standing orders (§3.7): four slots of {action, target}, evaluated at 4 Hz;
+// the first feasible slot wins. Target words are relative to the hero.
+export const STANDING=Object.freeze({
+  actions:Object.freeze({attack:'Attack',guard:'Guard',follow_close:'Follow close',follow_far:'Follow far',stay_hidden:'Stay hidden',withdraw:'Withdraw',
+    bind_wounds:'Bind wounds',throw_pilum:'Throw pilum'}),
+  // Which targets each action takes.
+  enemyActions:Object.freeze(['attack','throw_pilum']),friendActions:Object.freeze(['guard','bind_wounds']),
+  noTarget:Object.freeze(['follow_close','follow_far','stay_hidden','withdraw']),
+  enemyTargets:Object.freeze(['hero_target','hero_attacker','nearest_enemy_to_hero','strongest_enemy','weakest_enemy','enemy_archers','enemy_officer']),
+  friendTargets:Object.freeze(['hero','any_companion','any_ally']),
+  // Leash from the hero; an attack or throw on a named enemy may reach farther.
+  leash:25,leashExplicit:40,
+  follow:Object.freeze({close:Object.freeze([1.5,3]),far:Object.freeze([6,10])}),
+  // Bind wounds only below half Health; Withdraw only below a third of one's own.
+  bindBelow:.5,withdrawBelow:1/3,
+  // A guard keeps within this of whom he guards, and meets threats this near him.
+  guardKeep:4,guardThreat:6,
+  presets:Object.freeze({
+    shieldmate:Object.freeze([['guard','hero'],['attack','hero_attacker'],['attack','hero_target'],['follow_close','hero']]),
+    skirmisher:Object.freeze([['throw_pilum','nearest_enemy_to_hero'],['attack','weakest_enemy'],['follow_far','hero'],['withdraw','hero']]),
+    orderly:Object.freeze([['bind_wounds','any_companion'],['bind_wounds','hero'],['follow_close','hero'],['attack','hero_attacker']]),
+    // The soldier's own orders while the player controls a companion.
+    soldier:Object.freeze([['attack','hero_attacker'],['attack','hero_target'],['stay_hidden','hero'],['withdraw','hero']])}),
+  presetNames:Object.freeze({shieldmate:'Shieldmate',skirmisher:'Skirmisher',orderly:'Orderly',soldier:'Hold and defend'})});

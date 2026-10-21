@@ -62,7 +62,14 @@ export const braced=(world,actor)=>actor.braceUntil>world.tick;
 // thrown weapon; melee uses the attacker's weapon.
 // A missile is judged from where it left the hand (`from`), not from where
 // its thrower stands when it lands.
-export function blowSetup(world,attacker,defender,{missile=null,from=null}={}){
+// Whether a blow is an ambush (§3.5 step 9): the defender has not noticed the
+// attacker (his notice meter for him is below 100), or a hidden attacker
+// strikes a man of the party before anyone has spotted him.
+export function unaware(defender,attacker){
+  if(defender.ai)return (defender.ai.notice?.[attacker.id]??0)<100&&defender.ai.state!=='engage';
+  return !!attacker.hidden;
+}
+export function blowSetup(world,attacker,defender,{missile=null,from=null,profile:override=null}={}){
   const grid=navGrid(world.map),A=derivedValues(attacker),D=derivedValues(defender),mods=[],src=from??attacker;
   const arc=arcOf(defender,src),rise=groundHeight(grid,defender.x,defender.z)-groundHeight(grid,src.x,src.z);
   let attack=missile?A.missile:A.attack,defence=D.defence;
@@ -75,8 +82,12 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null}={}){
     attack-=COMBAT.weatherMissile;
     mods.push({label:`${world.weather[0].toUpperCase()}${world.weather.slice(1)} beyond 20 m`,kind:'attack',value:-COMBAT.weatherMissile});
   }
-  const shield=shieldOf(defender),guard=braced(world,defender);let block=0;
-  if(shield&&arc==='front'){
+  const ambush=!world.practice&&unaware(defender,attacker);
+  if(ambush)mods.push({label:'Ambush: he has not seen you',kind:'attack',value:0});
+  // A man carrying a casualty cannot block (§3.5 step 2).
+  const shield=defender.carrying?null:shieldOf(defender),guard=braced(world,defender);let block=0;
+  if(defender.carrying&&shieldOf(defender))mods.push({label:'Carrying a casualty: no block',kind:'block',value:0});
+  if(shield&&arc==='front'&&!ambush){
     block=Math.min(COMBAT.blockCap,shield.block+(guard?COMBAT.braceBlock:0))*(defender.shieldStuck?COMBAT.stuckPilum:1);
     if(guard)mods.push({label:'Braced shield',kind:'block',value:COMBAT.braceBlock});
     if(defender.shieldStuck)mods.push({label:'Pilum stuck in his shield',kind:'block',value:-.5});
@@ -84,10 +95,10 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null}={}){
   let flat=0;
   if(guard){flat-=COMBAT.braceProtection;mods.push({label:'Braced',kind:'damage',value:-COMBAT.braceProtection});}
   if(weather){flat-=COMBAT.weatherDamage;mods.push({label:'Weather on missiles',kind:'damage',value:-COMBAT.weatherDamage});}
-  const profile=missile?MISSILES[missile].damage:A.weapon.damage,mult=missile?1+(attacker.attributes.str-10)/COMBAT.thrownStrength
+  const profile=override??(missile?MISSILES[missile].damage:A.weapon.damage),mult=missile?1+(attacker.attributes.str-10)/COMBAT.thrownStrength
     :1+(attacker.attributes.str-10)/COMBAT.meleeStrength;
   return {attack,defence,block,arc,flat,mods,profile,mult,protection:protectionOf(defender),maxHealth:defender.maxHp,
-    double:attacker.id===world.controlled,noStagger:guard,missile};
+    double:attacker.id===world.controlled,noStagger:guard,missile,ambush,ambushFactor:attacker.effects?.ambush??1};
 }
 
 // Out of r = 0..39: how many rolls hit (criticals always do, 0 never does).
@@ -96,14 +107,15 @@ export function hitRolls(attack,defence){let hits=0;for(let r=1;r<COMBAT.critica
 const mitigate=(raw,p,critical)=>critical?raw*(1-p.resist):Math.max(0,raw-p.absorb)*(1-p.resist);
 function total(setup,raws,critical){
   let sum=0;for(const t of TYPES)if(raws[t]!==undefined)sum+=mitigate(raws[t],setup.protection[t],critical);
-  let dmg=Math.max(COMBAT.minimumDamage,floor(sum+1e-9)+setup.flat);if(critical&&setup.double)dmg*=COMBAT.criticalFactor;return dmg;
+  let dmg=Math.max(COMBAT.minimumDamage,floor(sum+1e-9)+setup.flat);if(critical&&setup.double)dmg*=COMBAT.criticalFactor;
+  if(critical&&setup.ambush)dmg=floor(dmg*setup.ambushFactor);return dmg;
 }
 const extreme=(setup,end)=>Object.fromEntries(Object.entries(setup.profile).map(([t,range])=>[t,range[end]*setup.mult]));
 
 // The forecast's numbers: chance to hit, to be blocked and to land, and the
 // damage of a landed blow and of a critical, after armour.
 export function blowForecast(setup){
-  const hit=hitRolls(setup.attack,setup.defence)/COMBAT.roll,critical=(COMBAT.roll-COMBAT.critical)/COMBAT.roll;
+  const hit=setup.ambush?1:hitRolls(setup.attack,setup.defence)/COMBAT.roll,critical=setup.ambush?1:(COMBAT.roll-COMBAT.critical)/COMBAT.roll;
   const lo=extreme(setup,0),hi=extreme(setup,1);
   return {hit,critical,block:setup.block,land:hit*(1-setup.block),arc:setup.arc,attack:setup.attack,defence:setup.defence,
     damage:{min:total(setup,lo,false),max:total(setup,hi,false)},criticalDamage:{min:total(setup,lo,true),max:total(setup,hi,true)},
@@ -113,7 +125,8 @@ export function blowForecast(setup){
 // Roll one blow on the combat stream: { roll, hit, critical, blocked, damage, stun, stagger }.
 // The draws always come in the same order: the roll, the block, then each damage type.
 export function rollBlow(world,setup){
-  const roll=randomInt(world.rng,'combat',0,COMBAT.roll-1),critical=roll>=COMBAT.critical,hit=critical||roll>0&&roll+setup.attack>setup.defence;
+  // An ambush always hits and counts as a critical; the roll is still drawn so the stream stays in step.
+  const roll=randomInt(world.rng,'combat',0,COMBAT.roll-1),critical=setup.ambush||roll>=COMBAT.critical,hit=critical||roll>0&&roll+setup.attack>setup.defence;
   if(!hit)return {roll,hit,critical:false,blocked:false,damage:0,stun:0,stagger:false};
   const blocked=setup.block>0&&nextRandom(world.rng,'combat')<setup.block;
   if(blocked)return {roll,hit,critical,blocked,damage:0,stun:0,stagger:false};

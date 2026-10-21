@@ -110,5 +110,5 @@ test('a chronicle from before 0.40 loads untouched; the soldier is adopted by ch
 test('the pack is a 10 × 6 grid of shapes with no overlap',()=>{
   const s=createSoldier();s.pack=[];assert.ok(packFits(s.pack,'scutum',8,2));assert.equal(packFits(s.pack,'scutum',9,0),false);
   assert.equal(PACK.cols*PACK.rows,60);assert.ok(Object.values(ITEMS).every(i=>i.shape.w<=PACK.cols&&i.shape.h<=PACK.rows));
-  assert.deepEqual(wornIds(createSoldier()),['tunic','bracae','caligae','cingulum','spatha','training_shield']);
+  assert.deepEqual(wornIds(createSoldier()),['galea','tunic','subarmalis','bracae','caligae','cingulum','spatha','training_shield']);
 });

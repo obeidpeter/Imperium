@@ -127,7 +127,8 @@ export const ITEMS=freeze(Object.fromEntries([
 
 // The kit a soldier of each kind wears into his first fight.
 export const STARTING_KIT=freeze({
-  recruit:freeze({worn:freeze({'body:0':'tunic','legs:0':'bracae','feet:0':'caligae','belt:0':'cingulum','weapon:0':'spatha','shield:0':'training_shield'}),
+  recruit:freeze({worn:freeze({'body:0':'tunic','body:1':'subarmalis','head:1':'galea','legs:0':'bracae','feet:0':'caligae','belt:0':'cingulum','weapon:0':'spatha',
+    'shield:0':'training_shield'}),
     pack:freeze(['wine_skin']),denarii:20}),
   legionary:freeze({worn:freeze({'body:0':'tunic','body:1':'subarmalis','body:2':'hamata','head:1':'galea','legs:0':'bracae','feet:0':'caligae',
     'belt:0':'cingulum','weapon:0':'spatha','shield:0':'scutum'})})});

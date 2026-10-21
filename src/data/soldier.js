@@ -120,7 +120,7 @@ export const COMPANIONS=freeze({
 export const PAY=freeze({1:20,2:30,3:35,4:45,5:55,6:60,7:80,8:90,9:100,10:120,11:140,12:160});
 export const DONATIVES=freeze({'ch2-rearguard':10,'ch4-wall':20,'ch6-eagle':30,'ch9-city':60});
 // Kit issued with each promotion (the 0.38 rewards, now real pieces).
-export const PROMOTION_ISSUE=freeze({1:freeze(['subarmalis','hamata','galea','scutum']),3:freeze(['manica']),4:freeze(['galea_crest','ocreae']),
+export const PROMOTION_ISSUE=freeze({1:freeze(['hamata','scutum']),3:freeze(['manica']),4:freeze(['galea_crest','ocreae']),
   6:freeze(['calcei']),9:freeze(['squamata'])});
 
 // Recruit appearance choices.
