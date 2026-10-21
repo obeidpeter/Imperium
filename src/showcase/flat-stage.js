@@ -91,10 +91,12 @@ export class FlatStage{
 // for neutrals), the route, the target, ranges, work, missiles and the marks
 // and numbers over people's heads. The field's presenter interface.
 export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{}}={}){
-  let route=null,planned=null,ranges=false,marks={};const floating=new Map();
+  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null;const floating=new Map(),volleys=[];
   const presenter={
     beforeFrame,world:getWorld,alpha:getAlpha,
     setRoute(next){route=next;},setPlanned(next){planned=next;},setRanges(on){ranges=!!on;},setMarks(next){marks={...(next??{})};},
+    // The squads selected on the page, and the keyboard's order marker (squad-control.js).
+    setSelection(ids){selection=[...(ids??[])];},setMarker(point){marker=point?{x:point.x,z:point.z}:null;},
     onEvents(events){
       const now=performance.now();
       for(const e of events){
@@ -102,11 +104,16 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         if(e.kind==='block')floating.set(e.defenderId,{text:'Blocked',color:'#d6e3e8',until:now+FLOAT_MS});
         if(e.kind==='miss')floating.set(e.defenderId,{text:'Miss',color:'#cfd2cc',until:now+FLOAT_MS});
         if(e.kind==='heal')floating.set(e.targetId,{text:`+${e.amount}`,color:'#b8e0a8',until:now+FLOAT_MS});
+        // A squad's volley: a flight of arrows from its ranks to the target squad.
+        if(e.kind==='exchange'&&e.ranged)volleys.push({from:{x:e.fromX,z:e.fromZ},to:{x:e.x,z:e.z},start:now});
+        if(e.kind==='fall'&&e.squadId){const f=floating.get(e.squadId),n=f?.until>now&&f.men?f.men+1:1;
+          floating.set(e.squadId,{text:`−${n} ${n===1?'man':'men'}`,color:'#ffb39a',until:now+FLOAT_MS,men:n});}
       }
     },
     dispose(){},
     draw(c,v,flat,now){
       const w=getWorld(),alpha=getAlpha(),r=w.tick-1+alpha,hero=w.actors.find(a=>a.id===w.controlled);
+      const chosen=new Set(selection),squadsById=new Map((w.squads??[]).map(q=>[q.id,q]));
       const at=a=>flat.screen(v,lerp(a.px??a.x,a.x,alpha),lerp(a.pz??a.z,a.z,alpha));
       const ellipse=(p,rx,stroke,{dash=null,width=2,fill=null}={})=>{c.beginPath();c.ellipse(p.x,p.y,rx,rx/2,0,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}
         if(stroke){c.setLineDash(dash??[]);c.lineWidth=width;c.strokeStyle=stroke;c.stroke();c.setLineDash([]);}};
@@ -130,7 +137,8 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
             c.lineTo(p.x+Math.cos(t)*v.tw*.36,p.y+Math.sin(t)*v.tw*.18);c.strokeStyle=SIDE.enemy;c.stroke();}}
           else ellipse(p,v.tw*.28,SIDE[side]??SIDE.player,{dash:side==='neutral'?[4,4]:null,width:2});
           if(a.id===w.controlled)ellipse(p,v.tw*.36,'#f1d38a',{width:2.5});
-          if(a.braceUntil>r)ellipse(p,v.tw*.42,'#f1d38a',{dash:[2,3],width:2});
+          if(a.squadId&&chosen.has(a.squadId))ellipse(p,v.tw*.36,'#f3d48d',{width:2.5});
+          if(a.braceUntil>r||squadsById.get(a.squadId)?.braced)ellipse(p,v.tw*.42,'#f1d38a',{dash:[2,3],width:2});
         }
         const color=!a.alive?'#4a4038':a.down?'#857868':BODY[side]??BODY.neutral;
         if(lying){c.beginPath();c.ellipse(p.x,p.y-v.th*.15,v.tw*.3,v.th*.22,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
@@ -141,9 +149,9 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           // His facing, and a drawn weapon on that side.
           const f=flat.screen(v,a.x+(a.fx??1)*.9,a.z+(a.fz??0)*.9),fp=flat.screen(v,a.x,a.z),dx=f.x-fp.x,dy=f.y-fp.y;
           c.beginPath();c.moveTo(p.x,p.y-hgt*.45);c.lineTo(p.x+dx,p.y-hgt*.45+dy);c.lineWidth=a.drawn?3:1.5;c.strokeStyle=a.drawn?'#e8e4da':'#00000066';c.stroke();
-          // Health over his head.
-          const bw=v.tw*.5;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw,4);c.fillStyle=side==='enemy'?'#db9e81':'#abc89a';
-          c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw*clamp(a.hp/a.maxHp,0,1),4);
+          // Health over his head (a squad's strength is at its standard).
+          if(!a.squadId){const bw=v.tw*.5;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw,4);c.fillStyle=side==='enemy'?'#db9e81':'#abc89a';
+            c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw*clamp(a.hp/a.maxHp,0,1),4);}
           // Work in hand fills a ring.
           if(a.action?.kind==='work'){const k=clamp((r-a.action.start)/Math.max(1,a.action.end-a.action.start),0,1);c.beginPath();
             c.ellipse(p.x,p.y,v.tw*.46,v.tw*.23,0,-Math.PI/2,-Math.PI/2+k*Math.PI*2);c.strokeStyle='#f1d38a';c.lineWidth=3;c.stroke();}
@@ -155,6 +163,30 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         if(named&&a.alive){c.font=`650 ${Math.max(10,v.th*.4)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3);}
         if(tag){c.font=`800 ${Math.max(12,v.th*.6)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.9);}
       }
+      // Each squad's standard over its foremost man: its name, strength and morale (an amber
+      // ring with a notch when shaken, a crimson ring split in two when broken).
+      for(const q of w.squads??[]){
+        const lead=squadLead(w,q);if(!lead)continue;const p=at(lead),hgt=v.th*2.6,top=p.y-hgt*1.55,mine=q.side!=='enemy';
+        if(q.morale<=40){const rx=v.tw*.62,ry=rx/2;c.lineWidth=3;c.strokeStyle=q.broken?'#c8323f':'#e0a23a';
+          for(const [a0,a1]of q.broken?[[.18,Math.PI-.18],[Math.PI+.18,Math.PI*2-.18]]:[[-Math.PI/2+.3,Math.PI*1.5-.3]]){c.beginPath();c.ellipse(p.x,p.y,rx,ry,0,a0,a1);c.stroke();}}
+        c.beginPath();c.moveTo(p.x+v.tw*.18,p.y-hgt*.2);c.lineTo(p.x+v.tw*.18,top);c.lineWidth=2;c.strokeStyle='#3b2f22';c.stroke();
+        c.fillStyle=mine?'#7a2a1f':'#5b3a2c';c.fillRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);if(chosen.has(q.id)){c.lineWidth=2;c.strokeStyle='#f3d48d';c.strokeRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);}
+        const bw=v.tw*.6;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,top-7,bw,4);c.fillStyle=mine?'#abc89a':'#db9e81';c.fillRect(p.x-bw/2,top-7,bw*clamp(q.strength/q.maxStrength,0,1),4);
+        c.textAlign='center';if(mine||chosen.has(q.id)){c.font=`650 ${Math.max(10,v.th*.38)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(q.name,p.x,top-10);}
+        const tag=(floating.get(q.id)?.until>now&&floating.get(q.id))||(q.morale<=40&&{text:'!',color:q.broken?'#ff8f8f':'#f1c27d'});
+        if(tag){c.font=`800 ${Math.max(12,v.th*.6)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,top-10-Math.max(12,v.th*.5));}
+      }
+      // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
+      if(marker&&chosen.size){const p=flat.screen(v,marker.x,marker.z);ellipse(p,v.tw*.34,'#f3d48d',{width:3});ellipse(p,v.tw*.07,null,{fill:'#f3d48d'});}
+      for(const id of selection){
+        const q=squadsById.get(id),lead=q&&squadLead(w,q);if(!lead)continue;const order=q.pending?.order??q.order;if(!order)continue;
+        let to=null;if(order.kind==='advance'&&Number.isFinite(order.x))to={x:order.x,z:order.z};
+        else if(order.kind==='attack'){const t=squadsById.get(order.targetId),man=t?squadLead(w,t):w.actors.find(a=>a.id===order.targetId&&a.alive);if(man)to={x:man.x,z:man.z};}
+        if(to)line([at(lead),flat.screen(v,to.x,to.z)],order.kind==='attack'?'#ef8f74':'#f1dfa2',{dash:[6,5]});
+      }
+      for(let i=volleys.length-1;i>=0;i--){const k=(now-volleys[i].start)/700;if(k>=1){volleys.splice(i,1);continue;}
+        const a=volleys[i].from,b=volleys[i].to,h=Math.sin(Math.PI*k)*v.th*2.2,q=flat.screen(v,lerp(a.x,b.x,k),lerp(a.z,b.z,k)),q0=flat.screen(v,lerp(a.x,b.x,Math.max(0,k-.1)),lerp(a.z,b.z,Math.max(0,k-.1)));
+        for(let j=-1;j<=1;j++)line([{x:q0.x+j*v.tw*.12,y:q0.y-v.th*1.2-Math.sin(Math.PI*Math.max(0,k-.1))*v.th*2.2},{x:q.x+j*v.tw*.12,y:q.y-v.th*1.2-h}],'#f5e4bc',{width:1.5});}
       // His locked target, his ranges, and missiles in flight.
       const target=hero?.lock?w.actors.find(a=>a.id===hero.lock&&a.alive):null;if(target)ellipse(at(target),v.tw*.4,'#ef8f74',{width:3});
       if(ranges&&hero?.alive){ellipse(at(hero),1.85*unit,'#f1d38a88');ellipse(at(hero),25*unit,'#9fd3d088',{dash:[6,6]});}
@@ -165,9 +197,14 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
   };
   return presenter;
 }
+// A squad's foremost standing man (the lowest slot), where its standard stands.
+function squadLead(w,q){
+  let lead=null;for(const id of q.members){const m=w.actors.find(a=>a.id===id);if(m&&m.alive&&!m.down&&!(m.hidden&&m.side==='enemy')&&(!lead||m.slot<lead.slot))lead=m;}
+  return lead;
+}
 // How far an enemy has noticed the party (the 3D view's quarter-filled circle).
 function noticeMark(w,a){
-  if(a.side!=='enemy'||!a.alive||a.practice)return null;const n=Math.max(0,...[w.heroId,...w.party].map(id=>a.ai?.notice?.[id]??0));
+  if(a.side!=='enemy'||!a.alive||a.practice||a.squadId)return null;const n=Math.max(0,...[w.heroId,...w.party].map(id=>a.ai?.notice?.[id]??0));
   if(n>=100&&a.ai?.state!=='engage')return {text:'!',color:'#ef8f74'};if(n>0&&n<100)return {text:['◔','◑','◕'][Math.min(2,Math.floor(n/34))],color:n>=50?'#f1c27d':'#e6dfc8'};
   return null;
 }

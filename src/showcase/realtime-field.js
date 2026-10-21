@@ -7,6 +7,8 @@ import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME} from '../data/realtime-rul
 import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figures.js';
 import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
+import {createSquadControl} from './squad-control.js';
+import {commandSquads,squadOrderOptions} from '../core/realtime/order-intents.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
@@ -45,6 +47,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   };
   const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
 
+  // Squads (from Chapter IV): the squad bar, Command pips, command card and order marker (squad-control.js).
+  // A fight without squads (Chapters I–III, a camp) shows none of their controls.
+  const makeSquads=()=>{
+    if(world.squads)return createSquadControl({world:()=>world,dom,issue:c=>issue(c),say,presenter:()=>presenter,keymap,canvas});
+    for(const el of [dom.squadBar,dom.clearButton,dom.commandPips,dom.commandCard])if(el)el.hidden=true;if(dom.abilityBar)dom.abilityBar.hidden=false;return null;
+  };
+  let squads=null;
   function issue(command){
     const outcome=queueCommand(world,command);
     if(!outcome.ok)say(REASONS[outcome.reason]??'That cannot be done now.',{warning:true});else{hurryClock(clock);showPlanned();}
@@ -99,6 +108,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(e.kind==='revealed')say(`${nameOf(e.actorId)} is revealed.`,{warning:true,announce:true});
       if(e.kind==='reinforcements')say('Enemy reinforcements arrive.',{warning:true,announce:true});
       if(e.kind==='phase')say(`New objective: ${e.label}.`,{announce:true});
+      if(e.kind==='squad-broken'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} breaks and falls back.`,{warning:q.side!=='enemy',announce:true});}
+      if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')say(`${q.name} stands again.`,{announce:true});}
+      if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true});}
+      if(e.kind==='rally')say(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
       if(e.kind==='capability-needed')say(`Demonstrate: ${e.missing.join(', ')}.`,{warning:true,announce:true});
       if(e.kind==='work-stopped'&&e.actorId===mine)say('Your work is interrupted.',{warning:true});
       if(e.kind==='rejected'&&e.actorId===mine)say(REASONS[e.reason]??'That cannot be done now.',{warning:true});
@@ -139,7 +152,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       const a=actorById(world,id),b=document.createElement('button');b.type='button';b.className='rt-portrait';b.dataset.actor=id;
       b.innerHTML=`<span class="rt-portrait-name">${esc(a?.name??id)}</span><span class="bar health"><i></i></span><span class="bar stamina"><i></i></span>`+
         `<span class="rt-portrait-mark" aria-hidden="true"></span><span class="visually-hidden rt-portrait-state"></span>`;
-      b.addEventListener('click',()=>{takeControl(id);canvas.focus({preventScroll:true});});
+      b.addEventListener('click',()=>{if(id===world.heroId)squads?.clear();takeControl(id);canvas.focus({preventScroll:true});});
       return b;
     }));
   }
@@ -175,6 +188,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4].join('|');
     if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
     if(listOpen&&metrics.frames%10===0)renderList();
+    squads?.update();
     if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
     if(partyIds().join(',')!==partyKey){partyKey=partyIds().join(',');buildParty();}
     for(const b of dom.party?.children??[]){
@@ -208,18 +222,22 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   // ——— The Command list: every action as lists, with Use (guide "Command list"). ———
   function renderList(){
     if(!listOpen||!dom.listOptions||disposed)return;
-    const party=partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down);
-    if(!party.some(a=>a.id===listActor))listActor=world.controlled;
-    const options=commandOptions(world,{actorId:listActor}),key=`${listActor}|${options.map(o=>`${o.group}:${o.label}:${o.reason??''}`).join('|')}`;
+    // Who acts: the party, and (from Chapter IV) each squad, whose orders the soldier gives.
+    const party=partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down),bands=commandSquads(world);
+    if(!party.some(a=>a.id===listActor)&&!bands.some(q=>q.id===listActor))listActor=world.controlled;
+    const band=bands.find(q=>q.id===listActor);
+    const options=band?squadOrderOptions(world,{squadId:band.id}):commandOptions(world,{actorId:listActor}),
+      key=`${listActor}|${bands.map(q=>q.id).join(',')}|${options.map(o=>`${o.group}:${o.label}:${o.reason??''}`).join('|')}`;
     if(key===listKey){
       // Same choices: only the distances and forecasts change, in place.
       dom.listOptions.querySelectorAll('[data-option]').forEach(row=>{const o=options[Number(row.dataset.option)],d=row.querySelector('small');if(o&&d&&d.textContent!==o.detail)d.textContent=o.detail;});
       return;
     }
     listKey=key;const focused=document.activeElement?.closest?.('[data-option]')?.querySelector('span')?.textContent??null;
-    if(dom.listActors)dom.listActors.replaceChildren(...party.map(a=>{
+    if(dom.listActors)dom.listActors.replaceChildren(...[...party,...bands].map(a=>{
       const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='rt-list-actor';input.value=a.id;
-      input.checked=a.id===listActor;input.addEventListener('change',()=>{listActor=a.id;listKey='';renderList();});label.append(input,document.createTextNode(` ${a.name}${a.id===world.controlled?' (controlled)':''}`));return label;}));
+      input.checked=a.id===listActor;input.addEventListener('change',()=>{listActor=a.id;listKey='';renderList();});
+      label.append(input,document.createTextNode(` ${a.name}${a.id===world.controlled?' (controlled)':a.members?' (squad)':''}`));return label;}));
     const groups=[...new Set(options.map(o=>o.group))];
     dom.listOptions.replaceChildren(...groups.map(group=>{
       const section=document.createElement('section'),h=document.createElement('h3'),ul=document.createElement('ul');h.textContent=group;ul.className='rt-list';
@@ -247,7 +265,14 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function pickAt(p){
     if(!p||!stage)return null;const r=stage.pickPoint(p),pick={};
     if(r.unitId)pick.actorId=r.unitId;if(r.ground)Object.assign(pick,simPoint(world,r.ground));
+    // A squad is drawn as one figure and its crowd: the click finds the man of it nearest the point.
+    if(pick.actorId&&world.squads?.some(q=>q.id===pick.actorId)&&Number.isFinite(pick.x)){
+      const q=world.squads.find(x=>x.id===pick.actorId),men=q.members.map(id=>actorById(world,id)).filter(a=>a?.alive);
+      const m=men.sort((a,b)=>Math.hypot(a.x-pick.x,a.z-pick.z)-Math.hypot(b.x-pick.x,b.z-pick.z))[0];if(m)pick.actorId=m.id;
+    }
     if(!pick.actorId&&Number.isFinite(pick.x)){
+      const man=world.squads?world.actors.filter(a=>a.squadId&&a.alive&&Math.hypot(a.x-pick.x,a.z-pick.z)<=.9).sort((a,b)=>Math.hypot(a.x-pick.x,a.z-pick.z)-Math.hypot(b.x-pick.x,b.z-pick.z))[0]:null;
+      if(man){pick.actorId=man.id;return pick;}
       const object=(world.objects??[]).find(o=>Math.hypot(o.x-pick.x,o.z-pick.z)<=1.4);if(object)pick.objectId=object.id;
       const body=world.actors.filter(a=>!a.alive&&a.loot?.length&&Math.hypot(a.x-pick.x,a.z-pick.z)<=1.2)[0];if(body&&!object)pick.actorId=body.id;
     }
@@ -260,12 +285,19 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);}}
   function readPointer(){
     hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
+    if(squads?.active){const it=squads.intent(pickAt(p));if(it){canvas.dataset.cursor=it.cursor;message(`Right-click: ${it.message}`,!!it.reason);presenter?.setRoute(null);return;}}
     const it=intentAt(p,armed?'right':'left',armed??ability);if(!it)return;
     let text=it.message||' ';if(!armed&&ability!=='strike'){const right=intentAt(p,'right',ability);if(right?.message)text+=` · Right-click: ${right.message}`;}
     canvas.dataset.cursor=it.cursor;message(text,!!it.reason&&it.cursor!=='walk');presenter?.setRoute(it.command?.kind==='move'?it.route:null);
   }
   function press(p){
     stage?.sound?.unlock();if(document.activeElement!==canvas)canvas.focus({preventScroll:true});if(!world||world.status!=='active')return;
+    // Squads: a click on one of our men selects his squad (never attacks); with squads selected the right button (a tap) orders them.
+    if(squads){
+      const pick=pickAt(p);
+      if(pick&&squads.pickStandard(pick,{shift:!!p.shift,touch:!!p.touch})){armed=null;force=false;hover(p);return;}
+      if(pick&&squads.active&&(p.button==='right'||p.touch)){squads.order(pick);hover(p);readPointer();return;}
+    }
     const button=p.touch&&armed?'right':p.button,it=intentAt(p,button,armed??ability);if(!it)return;
     if(it.command){
       const h=me(),outcome=issue(it.command);
@@ -341,6 +373,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function act(action){
     const h=me();
+    if(action.startsWith('select_squad_')){if(squads)squads.select({index:Number(action.slice(13))-1});else say('No squads in this fight.');return true;}
+    // While squads are selected the arrows move the order marker, 1–6 are the command card and 7–0 do nothing.
+    if(squads?.active&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
+      squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
+    if(squads?.active&&action.startsWith('ability_')){const n=Number(action.slice(8));if(n<=6)squads.card(n-1);else say('The command card has six orders: 1 to 6. Clear the selection (Esc) for your abilities.');return true;}
+    if(squads?.active&&action==='act_on_target'){squads.sendMarker(keyTarget);return true;}
     if(ARROWS[action]){arrows.add(action);arrowMove();return true;}
     if(action.startsWith('ability_')){
       const id=abilitiesOf(h)[Number(action.slice(8))-1];if(!id){say('No ability in that place.');return true;}
@@ -360,8 +398,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       }
       case 'act_on_target':case 'force_attack_target':actOnTarget(action==='force_attack_target');return true;
       case 'interact_nearest':{const it=nearestUse(world);if(it?.command)issue(it.command);else say(it?.message||'Nothing to use within 3 metres.');return true;}
+      // Esc clears one layer at a time: what is armed, the target, the squads selected; then the Menu.
       case 'cancel_or_menu':
-        if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;say('Target cleared.');}else callbacks.onMenu?.();return true;
+        if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;say('Target cleared.');}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
       case 'camera_follow':follow();say('Following your soldier.');return true;
       case 'camera_overview':if(stage?.cameraView==='overview')follow();else stage?.home();return true;
       case 'camera_horizon':stage?.horizon();return true;
@@ -430,9 +469,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     presenter?.dispose();if(!stage)return;
     // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
     presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
-    stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);
+    stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);presenter.setSelection?.(squads?.selection??[]);presenter.setMarker?.(squads?.marker??null);
   }
-  buildParty();buildAbilityBar();renderLog();bind();applyOptions();updateHud(0);
+  squads=makeSquads();
+  buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();updateHud(0);
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
@@ -442,7 +482,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;
-      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();
+      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();
       if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();follow();}updateHud(performance.now());
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.

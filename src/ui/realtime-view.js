@@ -42,6 +42,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
       ${key('step_round')} plays one round while paused. [ and ] change the companion you control; Home returns to your soldier. Escape opens the Menu.</p>
     <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':'Preparing the battlefield…'}</p></div>
     <header class="rt-top">
+      <div class="rt-squad-area">
+        <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>
+        <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Clear</button>
+      </div>
       <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2>
         <p data-role="objective">${esc(e.objective??'')}</p><p class="rt-progress" data-role="progress"></p></div>
       <div class="rt-time" role="group" aria-label="Time">
@@ -59,11 +63,13 @@ export function fieldMarkup({state,keymap,kind='field'}){
           <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt-clock-track" cx="18" cy="18" r="15"/><circle data-role="clockRing" class="rt-clock-ring" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="0 100"/></svg>
           <p><strong data-role="roundLabel">Round 1</strong><span data-role="clockTime">0:00</span></p>
         </div>
+        <div class="rt-command" data-role="commandPips" role="img" hidden></div>
         <div class="rt-message-lines"><p data-role="messageLine" class="rt-message">Click open ground to move. A far click runs.</p><p data-role="eventLine" class="rt-event"></p></div>
       </div>
       <div class="rt-ability-area">
         <p class="rt-current"><span class="eyebrow">Right button</span><strong data-role="currentAbility">Strike</strong></p>
         <div class="rt-ability-bar" data-role="abilityBar" role="toolbar" aria-label="Abilities"></div>
+        <div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>
         <div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
           <button data-role="swordsButton" class="rt-swords" type="button" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
           <button data-role="walkButton" type="button" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>

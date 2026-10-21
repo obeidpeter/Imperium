@@ -123,15 +123,19 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   for(const id of known.filter(id=>ABILITIES[id].target==='self'||ABILITIES[id].selfIfNoTarget))add('Yourself',ABILITIES[id].name,order('ability',{abilityId:id}));
   if(actor.carrying)add('Yourself','Set him down here',order('ability',{abilityId:'carry'}));
   add('Yourself','Raise the war cry',order('warCry'));
-  // Enemies in sight.
-  for(const e of world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near)){
-    const f=forecast(world,actor.id,'strike',{actorId:e.id});
-    add('Enemies',`Attack ${e.name}`,order('attack',{targetId:e.id}),{subject:e.id,detail:`${m(distanceBetween(actor,e))}. ${f.blow?blowSummary(f):''}`});
-    for(const id of known.filter(id=>id!=='strike'&&ABILITIES[id].target==='enemy'))add('Enemies',`${ABILITIES[id].name}: ${e.name}`,order('ability',{abilityId:id,targetId:e.id}),{subject:e.id});
+  // Enemies in sight: each man alone, and each enemy squad once (its nearest man).
+  const enemies=world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near),seen=new Set();
+  for(const e of enemies.filter(o=>!o.squadId||!seen.has(o.squadId)&&seen.add(o.squadId))){
+    const f=forecast(world,actor.id,'strike',{actorId:e.id}),name=e.squadId?`${e.name} (${world.squads.find(q=>q.id===e.squadId)?.name??'a squad'})`:e.name;
+    add('Enemies',`Attack ${name}`,order('attack',{targetId:e.id}),{subject:e.id,detail:`${m(distanceBetween(actor,e))}. ${f.blow?blowSummary(f):''}`});
+    for(const id of known.filter(id=>id!=='strike'&&ABILITIES[id].target==='enemy'))add('Enemies',`${ABILITIES[id].name}: ${name}`,order('ability',{abilityId:id,targetId:e.id}),{subject:e.id});
   }
-  // Friends and neutrals: tend, lift, talk, take control, or force an attack on a neutral.
-  for(const o of world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)&&!o.carriedBy).sort(near)){
+  // Friends and neutrals: tend, lift, guard, talk, take control, or force an attack on a neutral.
+  // The men of our squads are ordered as squads (the squad's own list), not one by one.
+  for(const o of world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)&&!o.carriedBy&&!o.squadId).sort(near)){
     const where=m(distanceBetween(actor,o));
+    for(const id of known.filter(id=>ABILITIES[id].target==='ally'&&!['bind_wounds','carry'].includes(id)))
+      add('Friends',`${ABILITIES[id].name}: ${o.name}`,order('ability',{abilityId:id,targetId:o.id}),{subject:o.id,detail:where});
     if(known.includes('bind_wounds'))add('Friends',`Bind wounds: ${o.name}`,order('ability',{abilityId:'bind_wounds',targetId:o.id}),{subject:o.id,detail:`${where}, ${o.hp} of ${o.maxHp} Health${o.down?', down':''}.`});
     if(known.includes('carry')&&liftable(o))add('Friends',`Lift ${o.name}`,order('ability',{abilityId:'carry',targetId:o.id}),{subject:o.id,detail:where});
     if(o.talk)add('Friends',`Talk to ${o.name}`,order('talk',{targetId:o.id}),{subject:o.id,detail:where});
@@ -186,5 +190,7 @@ export function autoPauseReason(world,e,options={}){
   if(e.kind==='down'&&options.pauseHurt&&party.has(e.defenderId))return `${name(e.defenderId)} is down.`;
   if(e.kind==='phase'&&options.pauseObjective)return `New objective: ${e.label}.`;
   if(e.kind==='rejected'&&options.pauseOrder&&party.has(e.actorId))return `${name(e.actorId)}: ${REASONS[e.reason]??'the order cannot be carried out.'}`;
+  // One of our squads breaks (from Chapter IV).
+  if(e.kind==='squad-broken'&&options.pauseSquad){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')return `${q.name} breaks.`;}
   return null;
 }

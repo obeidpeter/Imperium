@@ -515,7 +515,7 @@ export class BattleStage{
           rel=Math.atan2(Math.sin(Math.atan2(d.x,d.z)-pose.direction),Math.cos(Math.atan2(d.x,d.z)-pose.direction));
         if(Math.abs(rel)<1.35){gazeYaw=clamp(rel*.45,-.32,.32);gazePitch=clamp(-Math.atan2(d.y,Math.max(.5,Math.hypot(d.x,d.z)))*.35,-.18,.18);}
       }
-      if(a.crowd){
+      if(a.crowd&&!lp){
         // Ranks thin when the blow lands, not when the order is given.
         const pair=this.animation?.timeline.units?.[unit.id],
           pending=pair&&this.animation.timeline.tracks.some(t=>t.unitId===unit.id&&['hit','retreat'].includes(t.pose)&&(frame?.time??Infinity)<t.start),
@@ -528,6 +528,9 @@ export class BattleStage{
       }
       a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,
         groundHeight:this.surfaceHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});
+      // A live squad's men stand where the world puts them (live-figures.js), placed after the figure has turned.
+      if(a.crowd&&lp)a.crowd.update({slots:lp.crowd?.slots??[],visible:lp.crowd?.slots.length??0,heightAt:this.surfaceHeight,time:this.elapsed,
+        reset:this.poseReset.has(unit.id),unitId:unit.id});
       this.poseReset.delete(unit.id);
       // Marching feet and hooves wear the ground of the board.
       if(this.remains&&!this.reducedMotion&&['walk','run'].includes(pose.motion)){
@@ -601,8 +604,8 @@ export class BattleStage{
       sampleImpactParticles(cloud,p,fx.progress,{shield:fx.type==='shield',source:fx.source?this.world(fx.source):undefined});
       if(defender&&fx.delta)this.labelRefs.get(defender.id).effect.textContent=String(fx.delta);
     }}
-    // Live mode draws its own missiles, sparks and markers over the pools just cleared.
-    this.live?.effects?.(this,{dt,now});
+    // Live mode draws its own missiles, sparks and markers over the pools just cleared, and its squads' volleys.
+    const liveEffects=this.live?.effects?.(this,{dt,now});if(liveEffects?.volleys?.length)volleyShots.push(...liveEffects.volleys);
     if(this.chamberStandards)for(const [bloc,std]of this.chamberStandards){
       if(std.group.visible&&std.banner)std.banner.rotation.z=this.reducedMotion?0:Math.sin(this.elapsed*2.1+bloc.length)*.035;
     }

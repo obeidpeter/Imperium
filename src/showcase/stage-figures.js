@@ -69,7 +69,8 @@ export const stageFigures={
   attachFormation(unit,actor){
     const ranks=actor.crowd?.ranks??[];actor.crowd?.dispose();actor.crowd=null;
     if(!formationEligible(unit,{chapter:this.chapter,contest:this.encounter?.kind==='contest'}))return;
-    const max=Math.min(FORMATION_LIMIT[this.quality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
+    // A real-time squad shows every man it has; a turn-based unit as many as the quality allows.
+    const max=Number.isFinite(unit.crowd)?unit.crowd:Math.min(FORMATION_LIMIT[this.quality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
     actor.crowd=actor.painted?actor.createCrowd?.(max)??null:createSkinnedCrowd(actor.group,{max});actor.crowd?.inherit?.(ranks);
     if(actor.crowd&&!actor.crowdOwned){const dispose=actor.dispose.bind(actor);actor.dispose=()=>{actor.crowd?.dispose();dispose();};actor.crowdOwned=true;}
   },
