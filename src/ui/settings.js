@@ -1,6 +1,7 @@
 import {GRAPHICS_MODES,FIGURE_STYLES,defaultGraphicsMode} from './graphics-quality.js';
 import {audioLevel} from './audio.js';
 import {controlBindings,holdDelay} from './control-preferences.js';
+import {ALL_CHAPTERS,normalizeControls} from '../core/controls-model.js';
 
 // The legacy key keeps existing players' preferences.
 export const SETTINGS_KEY='sacramentum.settings';
@@ -15,6 +16,8 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
     coach:true,guide:true,
     adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,
     confirmMoves:false,fastMotion:false,reducedMotion,
+    // The 0.40 conversion's development switch (core/controls-model.js): 0.38 turns until it is changed.
+    controlsModel:'turns',realtimeChapters:[...ALL_CHAPTERS],
     quality:defaultGraphicsMode({saveData,deviceMemory,phone})
   };
 }
@@ -31,6 +34,7 @@ export function loadSettings(stored,device){
   settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
   settings.keyBindings=controlBindings(settings.keyBindings);
   settings.holdDelay=holdDelay(settings.holdDelay);
+  Object.assign(settings,normalizeControls(settings));
   return settings;
 }
 

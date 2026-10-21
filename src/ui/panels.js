@@ -5,6 +5,7 @@ import {difficultyChoices,soundscapeSettings} from './campaign-upgrade-views.js'
 import {CHAPTERS,CAST,HISTORICAL_NOTES,choiceEchoes} from '../data/campaign.js';
 import {heroPortrait,speakerPortrait,journeyMap} from './art.js';
 import {esc,roman,companyPanel} from './view-helpers.js';
+import {ALL_CHAPTERS,REALTIME_READY_CHAPTERS} from '../core/controls-model.js';
 
 const phaseLabel = phase => ({camp:'In camp',encounter:'Encounter in progress',promotion:'Promotion awaiting',epilogue:'Chronicle complete'}[phase] || phase);
 const statusLabel = status => ({open:'Open',honoured:'Honoured',broken:'Broken'}[status] || status);
@@ -124,7 +125,7 @@ export function createPanels(context){
   }
 
   function showSettings(){
-    const {state,settings,offline,currentChapterOffline,offlineProgress,showModal,preservedUnreadable}=context();
+    const {state,settings,offline,currentChapterOffline,offlineProgress,showModal,preservedUnreadable,devMenu}=context();
     const options=(list,current)=>list.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
     const offlineStatus=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} `+
       `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.';
@@ -189,7 +190,21 @@ export function createPanels(context){
       `<h3>Reference & support</h3>${actions(`<button data-cmd="help">Controls & rules</button><button data-cmd="history">Historical notes</button>`+
       `<button data-cmd="credits">Art & credits</button>${state?'<button data-cmd="character">Character & equipment</button>'+
       '<button data-cmd="journal">Mission journal</button>'+
-      '<button data-cmd="map">Campaign</button>':''}`)}</section>${actions('<button class="primary full" data-cmd="close-modal">Close settings</button>')}`);
+      '<button data-cmd="map">Campaign</button>':''}`)}</section>${devMenu?developmentSettings(settings,options):''}`+
+      `${actions('<button class="primary full" data-cmd="close-modal">Close settings</button>')}`);
+  }
+  // The development menu (npm run dev, or ?dev in the address): the 0.40
+  // conversion's controls model and its per-chapter fallback.
+  function developmentSettings(settings,options){
+    const chosen=new Set(settings.realtimeChapters??ALL_CHAPTERS);
+    return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
+      `conversion</h3><p class="settings-description">Turns keep every 0.38 battle and Contest. Real time opens the standalone skirmish as the real-time `+
+      `arena; a chapter switches only when it is listed below and its real-time encounters exist (none yet in Phase 0).</p>`+
+      `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
+      `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
+      `<fieldset class="setting realtime-chapters"><legend>Chapters in real time when ready</legend>${ALL_CHAPTERS.map(c=>`<label><input type="checkbox" `+
+      `class="realtime-chapter" value="${c}" ${chosen.has(c)?'checked':''}> ${roman(c)}${REALTIME_READY_CHAPTERS.includes(c)?'':' <small class="muted">not '+
+      'converted</small>'}</label>`).join('')}</fieldset>${actions('<a class="secondary" href="./showcase/arena.html">Open the real-time arena</a>')}</section>`;
   }
 
   // The performance check's results, the tier it recommends and its file to save.

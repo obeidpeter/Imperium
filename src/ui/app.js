@@ -16,6 +16,7 @@ import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
+import {normalizeControls} from '../core/controls-model.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -69,6 +70,8 @@ let settings=loadSettings(storedSettings(),
 const soundscape=campaignSoundscape();soundscape.configure(settings);
 function storedSettings(){try{return localStorage.getItem(SETTINGS_KEY);}catch{return null;}}
 function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch{}}
+// The development menu: always in the source tree (npm run dev), and in a build with ?dev in the address.
+const devMenu=CONFIG.development!==false||/[?&]dev(?:[=&]|$)/.test(globalThis.location?.search??'');
 const graphics=createGraphicsQuality({mode:settings.quality,
   onChange:({mode,reason})=>{
     battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;
@@ -80,7 +83,7 @@ const {header,footer,titleView,meters,requirements,camp,promotion,ending}=create
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -690,6 +693,11 @@ document.addEventListener('change',async event=>{
   const toggle=SETTING_TOGGLES[control.id];
   if(toggle){settings[toggle.key]=control.checked;saveSettings();if(toggle.stage)battleStage[toggle.stage](control.checked);if(toggle.render)render();return;}
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
+  if(control.id==='controls-model'){Object.assign(settings,normalizeControls({...settings,controlsModel:control.value}));saveSettings();render();return;}
+  if(control.matches?.('.realtime-chapter')){
+    const chapters=[...document.querySelectorAll('.realtime-chapter')].filter(box=>box.checked).map(box=>Number(box.value));
+    Object.assign(settings,normalizeControls({...settings,realtimeChapters:chapters}));saveSettings();return;
+  }
   if(['river','farms','town'].includes(control.id)){
     const prev=document.querySelector('#allocation-preview');
     if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),
