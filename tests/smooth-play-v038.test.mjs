@@ -17,6 +17,7 @@ test('the offline shell carries every module the page loads before it runs, the 
   const build=await readFile(new URL('scripts/build.mjs',root),'utf8');
   assert.match(build,/staticImportClosure\(dist,'src\/ui\/app\.js'\)/);
   assert.match(build,/const initial=assets\.filter\(url=>shellModules\.has\(url\)\|\|/);
+  assert.match(build,/const showcaseAssets=assets\.filter\(url=>!shellModules\.has\(url\)&&/,'a shell module is not counted as 3D-only');
 });
 
 test('one compile unit stands for each material and program shape; instancing is a shape of its own',()=>{

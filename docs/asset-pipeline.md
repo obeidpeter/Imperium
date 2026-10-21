@@ -103,13 +103,15 @@ Limitations:
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 |
-| --- | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 |
-| Shell plus Chapter I | 10,000,000 (8,000,000 until 0.37.0) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) |
-| Complete campaign | 24,000,000 | 11,339,391 | 12,069,291 | 17,918,247 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 |
+| Shell plus Chapter I | 10,000,000 (8,000,000 until 0.37.0) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) |
+| Complete campaign | 24,000,000 | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 |
 
 The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. Generated models therefore go in `assets/models/chapters/<NN>/`, which only chapter NN downloads (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js), since 0.36.0). In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+In 0.38.0 the first load grew by 12,019 bytes: the shell now carries every module the page imports before it runs (the board readout among them) and the performance check. Chapter I shrank by 159,076 bytes because no chapter downloads the pre-0.31 Roman unit atlas any more.
 
 0.37.0 raised the Chapter I limit from 8 MB to 10 MB. Chapter I's figures wear five generated bodies (recruit, trainer, legionary, Gothic warrior and Gothic archer), about 1.66 MB compressed, and the old limit had 8,490 bytes left. The 2 MB first load, the external requirement, is unchanged. A character body belongs to the offline groups of the chapters whose figures wear it, never to all of them.
 

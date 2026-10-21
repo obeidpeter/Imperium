@@ -74,18 +74,31 @@ The "Preparing" veil stays until everything the battle will draw is ready, and t
 
 The two reports were recorded with the same script on the same machine: [0.37.0](evidence/stage-benchmark-v037.json) and [0.38.0](evidence/stage-benchmark-v038.json). "Ready" is the first frame of the battle: for 0.37.0, the first frame after construction; for 0.38.0, the frame behind the veil. "In play" covers the time after the battle is shown: assets arriving (settle), the legal exchange (combat) and the camera tour. Programs, draw calls and triangles are counted from the still overview.
 
-RESULTS_TABLE
+| Battle | Quality | Ready (first frame), ms | Longest task while building, ms | Longest task in play, ms | Programs compiled in play | Programs | Draw calls | Triangles |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| ch1-road | performance | 6,620 → 3,832 | 5,017 → 558 | 5,640 → 0 | 18 → 0 | 58 → 58 | 103 → 103 | 211,447 → 205,974 |
+| ch1-road | balanced | 6,924 → 4,514 | 4,888 → 719 | 8,393 → 0 | 17 → 0 | 62 → 61 | 102 → 102 | 397,924 → 392,451 |
+| ch5-mine | performance | 7,462 → 4,600 | 5,263 → 725 | 6,784 → 0 | 17 → 0 | 72 → 63 | 121 → 121 | 266,251 → 249,934 |
+| ch5-mine | balanced | 8,393 → 4,809 | 5,740 → 814 | 7,727 → 0 | 19 → 0 | 76 → 66 | 125 → 125 | 476,437 → 460,120 |
+| ch7-legion | performance | 8,397 → 4,450 | 6,132 → 622 | 6,233 → 0 | 18 → 0 | 86 → 63 | 137 → 137 | 337,740 → 336,628 |
+| ch7-legion | balanced | 8,812 → 4,923 | 5,492 → 667 | 9,819 → 0 | 19 → 0 | 88 → 66 | 137 → 137 | 577,985 → 576,873 |
+| ch9-wing | performance | 8,106 → 5,505 | 5,756 → 679 | 7,830 → 0 | 18 → 0 | 75 → 63 | 135 → 135 | 302,008 → 286,251 |
+| ch9-wing | balanced | 8,829 → 4,347 | 5,460 → 739 | 10,269 → 0 | 18 → 0 | 76 → 65 | 136 → 136 | 467,199 → 451,442 |
+| ch12-confrontation | performance | 8,604 → 5,130 | 6,175 → 631 | 8,533 → 0 | 15 → 0 | 79 → 64 | 154 → 154 | 419,038 → 404,375 |
+| ch12-confrontation | balanced | 9,245 → 5,684 | 5,537 → 962 | 12,681 → 0 | 17 → 0 | 85 → 68 | 154 → 154 | 771,745 → 757,082 |
+
+The browser reports long tasks of 50 ms or more, so 0 in the in-play column means none. "Programs" counts the still overview's programs; counting the ones 0.37.0 compiled later in play, each battle compiled 76–107 programs in 0.37.0 and 58–68 in 0.38.0, and none of 0.38.0's were compiled by the first frame. The browser did not offer parallel shader compiling, so these runs used the short-task path. The triangle counts fell by 0.2–6.1% because the road lost its transparent cells; draw calls did not change.
 
 ## Targets
 
 | Target (plan) | Status after 0.38 |
 | --- | --- |
-| No freeze over 100 ms (phone) / 50 ms (laptop) in play | In the software benchmark, no task over 50 ms after the battle is shown, and nothing compiled in play, in every scene. Real devices are unmeasured. |
+| No freeze over 100 ms (phone) / 50 ms (laptop) in play | In the software benchmark, no task of 50 ms or more after the battle is shown, and nothing compiled in play, in all ten runs (0.37.0: 15–19 programs compiled in play and tasks of 4.0–12.7 s). Real devices are unmeasured. |
 | All shader programs compiled before the battle shows | Met in every scene: none in the first frame, none after it. |
 | Battle ready in about 3 s (phone) / 2 s (laptop), with a progress veil | The veil shows progress. Software times are not device times; the performance check measures build time on a device. |
-| The build in tasks under 200 ms | Not met. The stage's synchronous build (above all the environment) is still one task: about 0.6–0.8 s of script on this machine, more on a phone. On Balanced, the first frame's geometry upload (up to about 40 MB in Chapter XII, most of it the figures' own surfaces) is also one task: seconds in software; much shorter on a GPU, but unmeasured here. |
-| At most 45 shader programs | Not met: 63–68. The rest are inherent to the current materials: the shadow-pass variants (warmed for every draw order), overlays, and one environment finish per surface kind. |
-| Draw calls down at least 30% | Not met: unchanged from the still overview. An earlier reading was taken while the camera eased home and was not comparable. Culling helps only views that leave figures off screen. |
+| The build in tasks under 200 ms | Not met; the longest build task was 0.56–0.96 s on this machine (0.37.0: 4.9–6.2 s), and phones will take longer. Three kinds of task are still longer than 200 ms. The stage's synchronous build (above all the environment) took 0.56–0.82 s. The first frame behind the veil, which uploads the battle's geometry (up to about 40 MB in Chapter XII, most of it the figures' own surfaces), took 0.05–0.96 s; it is slow in software and much shorter on a GPU, but unmeasured here. Before both, the preloader's procedural figure surfaces and skin tones took about 0.25–0.3 s each in a profile of one battle. |
+| At most 45 shader programs | Not met: 58–68. The rest are inherent to the current materials: the shadow-pass variants (warmed for every draw order), overlays, and one environment finish per surface kind. |
+| Draw calls down at least 30% | Not met: unchanged in the still overview (triangles 0.2–6.1% fewer). An earlier reading was taken while the camera eased home and was not comparable. Culling helps only views that leave figures off screen. |
 | 30 fps on mid-range phones, 60 fps on integrated laptops | Unmeasured: this needs the performance check on real devices. |
 
 ## Not in 0.38

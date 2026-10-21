@@ -1,5 +1,57 @@
 # Changelog
 
+## 0.38.0 — smooth play
+
+The first release of the world-building plan: battles open without long freezes and play without any, before richer worlds add to the load. Details, measurements and what is still open: [performance notes](docs/performance.md).
+
+- **Prepared before shown.** Behind the "Preparing" veil, which now counts the figures in, a battle gets everything it will draw:
+  - its figures, built once and already wearing their bodies;
+  - its ground, stone, timber and foliage images, decoded once per session;
+  - its generated scenery, as session masters;
+  - every shader program, compiled and linked one variant per short task where the browser cannot compile in parallel, including the shadow pass's own depth variants (warmed for every draw order);
+  - its textures, uploaded in short tasks.
+
+  Nothing is compiled, rebuilt or decoded in play.
+- **Off the main thread.** Images inside models decode with `createImageBitmap` from the model's own bytes, which the page's security policy allows ([`model-loader.js`](src/showcase/model-loader.js)); the ground images too ([`decoded-images.js`](src/showcase/decoded-images.js)).
+- **Fewer program variants.** The camera cutaway, the crowds' bone count and the figures' material finish no longer multiply programs, and lighting a brazier no longer recompiles every lit program.
+- **Cheaper frames.**
+  - Figures are culled outside the view and the shadow camera.
+  - Balanced and High multisample once.
+  - A still 60 fps scene draws every other frame.
+  - Shadows refresh on a fixed interval per tier.
+  - Picking prefilters figures by their upright capsule.
+  - Labels skip layout when nothing moved.
+  - The ink overlay uploads at most every 50 ms.
+  - The road has no fully transparent triangles.
+- **Quality per device.**
+  - Phones start on Performance.
+  - A battle that stays slow at its lowest resolution refreshes shadows half as often, and the next battle is built a tier lower, never this one in play.
+  - **Pause → Run performance check** rebuilds the current 3D battle at each quality, turns the camera through three views, shows each quality's frame rates and longest freeze, recommends one and saves the results as JSON. The board takes no commands while it runs, and nothing is sent anywhere ([`performance-check.js`](src/ui/performance-check.js)).
+- **Fixes from the survey.**
+  - The offline shell carries every module the page imports before it runs, the board readout included ([`module-closure.mjs`](scripts/module-closure.mjs)).
+  - Chapters no longer download the pre-0.31 Roman atlas, which nothing draws (178 KB each).
+  - The unused palm-frond geometry is gone.
+  - Procedural surface tiles are generated once per session.
+- **Downloads.** The first load grew by 12 KB to 495,064 bytes (the board readout and the performance check now load with the page). Chapter I fell by 159 KB to 9,495,867 bytes, and the complete campaign is 17,937,412 bytes.
+- **Measured (software rendering, five battles, Performance and Balanced; [0.37.0](docs/evidence/stage-benchmark-v037.json), [0.38.0](docs/evidence/stage-benchmark-v038.json)).** The first frame comes 32–51% sooner (6.6–9.2 s became 3.8–5.7 s; software times are inflated). The longest task while building fell from 4.9–6.2 s to 0.56–0.96 s. After a battle is shown (assets arriving, a legal exchange, a camera tour), 0.37.0 compiled 15–19 shader programs and froze for 4.0–12.7 s; 0.38.0 compiles none and no task reaches 50 ms. Programs per battle fell from 76–107 to 58–68, triangles by 0.2–6.1%.
+- **Not met.** Three targets from the plan:
+  - The stage's synchronous build (above all the environment), the first frame's geometry upload and the preloader's procedural figure surfaces are still single tasks over 200 ms.
+  - There are 58–68 shader programs per battle against a target of 45.
+  - Draw calls in the overview are unchanged. An earlier reading suggested fewer, but it was taken while the camera eased home.
+
+  One renderer per session, a worker pool and partial page updates are not in this release.
+- **Checks.**
+  - New tests cover:
+    - the sliced compile units and texture collection;
+    - session images and scenery masters, and decoding from model bytes with its image-element fallback;
+    - the road trimming, the ink throttle and the pick prefilter;
+    - the offline shell closure;
+    - the performance check, the strain step-down and the phone default.
+  - `npm run benchmark:stage -- --check` fails on any program compiled by the first frame or after a battle is shown. CI runs it on the production build for two battles and uploads the report.
+  - `npm run smoke` now runs the performance check through the real interface.
+
+  All checks ran with software rendering; no real device or GPU has run this release. **Next:** run Pause → Run performance check on a phone and a laptop and send the saved files.
+
 ## 0.37.0 — generated character bodies for every battle figure
 
 - **Sixteen generated character bodies.** Every figure in the battles and both ceremonies now wears a detailed body generated with Tripo from a text prompt and bound in Blender to the game's own skeleton: Roman recruits, their trainer, legionaries, archers, a centurion and a commander; a civilian; and Gothic, Persian and Palmyrene infantry, archers and riders. Each was rigged by Tripo's auto-rig, posed into the game's bind pose with Tripo's weights, folded onto the game's 15 joints, fitted to its proportions and sole plane, welded at its texture seams, and given a near (11,131–11,611 triangles) and an overview level (about 2,500), with a 1,024 px WebP colour map and 512 px normal and roughness maps (418–558 KB each).
