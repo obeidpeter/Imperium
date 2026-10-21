@@ -31,7 +31,7 @@ export function makeActor(spec){
   // A veteran specialist (from Chapter IV): his specialism and, for a ranged specialist, his volleys this battle.
   if(spec.specialist){actor.specialist=spec.specialist;if(spec.volleys)actor.volleys=spec.volleys;}
   if(actor.ai&&spec.alert)actor.ai.notice=Object.fromEntries((spec.aware??[]).map(id=>[id,100]));
-  const d=derivedValues(actor);actor.hp=actor.maxHp=d.health;actor.stamina=actor.maxStamina=d.stamina;actor.pfx=actor.fx;actor.pfz=actor.fz;
+  const d=derivedValues(actor);actor.hp=actor.maxHp=d.health+(spec.extraHp??0);actor.stamina=actor.maxStamina=d.stamina;actor.pfx=actor.fx;actor.pfz=actor.fz;
   if(Number.isFinite(spec.hp))actor.hp=Math.max(1,Math.min(actor.maxHp,spec.hp));
   if(spec.standingPreset&&!actor.standing&&side!=='enemy')actor.standing=STANDING.presets[spec.standingPreset].map(s=>[...s]);
   return actor;

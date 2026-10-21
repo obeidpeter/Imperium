@@ -143,14 +143,16 @@ function lootFor(role,index,chapter){
   if(role==='raider'&&index%2===1)out.push('axe');if(role==='archer')out.push('quiver');
   return out;
 }
+// The 0.38 hero's javelins over or under three (rearmed, or the command reserve's
+// one fewer) are pila more or fewer; Chapter VII's rest adds 4 Health.
 function heroSpec(state,unit,k){
-  return {...soldierSpec(state,{at:pos(unit,k),extraPila:Math.max(0,(unit.ammo??3)-3)}),unitId:'hero'};
+  return {...soldierSpec(state,{at:pos(unit,k),extraPila:(unit.ammo??3)-3}),unitId:'hero',...(state.chapter===7&&state.preparation==='rest'?{extraHp:4}:{})};
 }
 // The soldier as the rules see him in any world (a battle or a camp): his attributes, worn kit, courses and techniques.
 export function soldierSpec(state,{at,face=[1,0],extraPila=0}={}){
   const s=soldierOf(state),belt=wornIds(s).map(id=>ITEMS[id]?.belt).find(Boolean)??{};
   return {id:'hero',name:state.name,side:'player',role:'soldier',path:s.path,attributes:soldierAttributes(s),kit:wornIds(s),effects:courseEffects(s.courses),
-    abilities:knownAbilities(state),ammo:{...Object.fromEntries(Object.entries(belt).map(([kind,n])=>[kind,n+(kind==='pilum'?extraPila:0)]))},bandages:BANDAGES_PER_ENCOUNTER,
+    abilities:knownAbilities(state),ammo:{...Object.fromEntries(Object.entries(belt).map(([kind,n])=>[kind,Math.max(0,n+(kind==='pilum'?extraPila:0))]))},bandages:BANDAGES_PER_ENCOUNTER,
     at,face,standingPreset:'soldier',drawn:false};
 }
 // A veteran's specialism (from Chapter III's training; usable with Command from Chapter IV): its action.
@@ -247,7 +249,8 @@ function fieldFor(e,layout,fine){
 
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
-  const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine};
+  // Rain makes slopes slower to climb (navigation.js reads the map's rain).
+  const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine,...(e.weather==='rain'?{rain:true}:{})};
   const actors=[],party=partyFor(state),hero=e.units.find(u=>u.id==='hero'),squads=squadsFrom(state),squadSpecs=[];
   actors.push(heroSpec(state,hero,k));
   let enemyIndex=0,allyIndex=0;
@@ -283,9 +286,27 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   const world=createWorld({map,seed,actors,controlled:'hero',party,mission,objects,difficulty,weather:e.weather??null,timeOfDay:e.timeOfDay??'day',
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;
+  preparations(state,e,world);
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
   return world;
 }
+// The camp's preparations as the world plays them (0.38 field-approaches.js,
+// the operational plans and Chapter VII and IX): the approach the enemy
+// answers (squad-ai.js, ai.js); Engineering's works, worth 10 Defence to the
+// company's squads' men (never the soldier's own); a march penalty, which in
+// real time means the soldier only walks (rounds one and two after Engineering
+// or a defensive advance, the whole battle with the engineer train); a
+// fortified start braced; and the night march.
+function preparations(state,e,world){
+  const approach=e.tacticsEdition===35&&e.fieldApproach&&e.fieldApproach!=='balanced'?e.fieldApproach:null;
+  if(approach)world.approach=approach;if(approach==='breach')world.engineering=true;
+  const train=e.commandCampaign?.plan==='engineers'&&e.type!=='training';
+  if(train||e.approachMarchPenalty)world.walkUntil=train?WALK_ALL_BATTLE:2*TIME.roundTicks;
+  const hero=world.actors.find(a=>a.id===world.heroId);
+  if(hero&&e.units.find(u=>u.id==='hero')?.braced)hero.braceUntil=TIME.roundTicks;
+  if(state.chapter===9&&state.stratagem==='night')world.timeOfDay='night';
+}
+export const WALK_ALL_BATTLE=1e7;
 function waveSpec(state,role,index){
   const spec=enemySpec(state,null,{id:'wave',role,x:0,y:0},index,layoutFor(1,1,3));delete spec.at;delete spec.unitId;delete spec.hidden;return {...spec,group:'wave'};
 }
@@ -300,7 +321,7 @@ export function applyRealtimeOutcome(state,world){
   const e=state.encounter,k=world.layout,m=world.mission;
   e.turn=clamp(roundOf(world),1,30);
   const mark=a=>{if(!e.usedAbilities.includes(a))e.usedAbilities.push(a);state.capabilityUse[a]=true;const list=state.chapterCapabilities[state.chapter]??=[];if(!list.includes(a))list.push(a);};
-  for(const a of world.used)if(['move','strike','brace','throw','assist','scout'].includes(a))mark(a);
+  for(const a of world.used)if(['move','strike','brace','throw','assist','scout','order','formation','rally','deploy'].includes(a))mark(a);
   if(e.operation)while(e.operation.index<m.phase&&advanceOperation(e));
   // Units: the soldier, the 0.38 ally, the escorts and the enemies by their unit ids.
   const scaled=(actor,unit)=>actor.alive&&!actor.down?Math.max(1,Math.round(actor.hp/actor.maxHp*unit.maxHp)):0;

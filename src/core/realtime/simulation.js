@@ -5,7 +5,7 @@ import {weaponOf} from './combat.js';
 import {actorById,distanceBetween,hostile,liftable,staggered,validate} from './abilities.js';
 import {decideEnemy,decidesThisTick,perceive} from './ai.js';
 import {decideFriend,slotProblem} from './party.js';
-import {engaged,moveActors,objectById,reachOf,setDown,setRoute} from './motion.js';
+import {engaged,moveActors,objectById,reachOf,setDown,setRoute,walksOnly} from './motion.js';
 import {act,cancelAction,used} from './actions.js';
 import {exchangeWound,flyProjectiles,resolveBlows,settleLocks,regenerate} from './damage.js';
 import {missionTick,missionProgress} from './mission.js';
@@ -333,7 +333,8 @@ export function run(world,ticks){for(let i=0;i<ticks;i++)step(world);return worl
 // reasonCode?, gait } with walk or run as the click would choose. Pure.
 export function routePreview(world,actorId,point){
   const actor=actorById(world,actorId);if(!actor)return null;const grid=navGrid(world.map),route=findRoute(grid,actor,clampToMap(grid,point));
-  const wantsRun=route.length>MOVEMENT.runThreshold&&!actor.walkMode&&!actor.carrying,blockedRun=wantsRun&&engaged(world,actor);
-  return {...route,gait:wantsRun&&!blockedRun?'run':'walk',...(blockedRun&&!route.reasonCode?{reasonCode:'ENGAGED_CANNOT_RUN'}:{})};
+  const wantsRun=route.length>MOVEMENT.runThreshold&&!walksOnly(world,actor)&&!actor.carrying,blockedRun=wantsRun&&engaged(world,actor);
+  const marching=route.length>MOVEMENT.runThreshold&&!actor.walkMode&&!actor.carrying&&walksOnly(world,actor);
+  return {...route,gait:wantsRun&&!blockedRun?'run':'walk',...(route.reasonCode?{}:blockedRun?{reasonCode:'ENGAGED_CANNOT_RUN'}:marching?{reasonCode:'MARCH_PENALTY'}:{})};
 }
 export {weaponOf,engaged,reachOf,missionProgress,liftable,staggered};

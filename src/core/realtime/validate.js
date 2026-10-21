@@ -37,6 +37,9 @@ export function validateWorld(world,fail){
   if(world.provoked.some(p=>!p||!str(p.id,40)||!str(p.name)||!int(p.tick,0,1e7)))fail('real-time provocations.');
   if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
   validateSquads(world,fail);validateField(world,fail);
+  // The camp's preparations (campaign-encounter.js preparations()).
+  if(world.approach!==undefined&&!['breach','diversion','advance'].includes(world.approach)||world.engineering!==undefined&&typeof world.engineering!=='boolean'
+    ||world.walkUntil!==undefined&&!int(world.walkUntil,0,1e7))fail('real-time preparations.');
   const mission=world.mission;
   if(mission!==null&&mission!==undefined){
     if(typeof mission!=='object'||!str(mission.mode,20)||!mission.goal||!num(mission.goal.x)||!num(mission.goal.z)||!num(mission.radius)||!int(mission.deadline,1,40)

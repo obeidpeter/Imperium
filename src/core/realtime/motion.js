@@ -2,6 +2,9 @@ import {ABILITIES,MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {clampToMap,findRoute,navGrid,span,speedFactor,walkable} from './navigation.js';
 import {arcOf,braced,derivedValues} from './combat.js';
 import {actorById,distanceBetween,hostile,staggered} from './abilities.js';
+// Walking only: his own choice (W), or the soldier under a march penalty (the engineer
+// train, or the opening of an Engineering approach or a defensive advance).
+export const walksOnly=(world,actor)=>actor.walkMode||actor.id===world.heroId&&world.tick<(world.walkUntil??0);
 
 // System 3 (§3.1): path following, separation and terrain speed, with the
 // shared geometry of facing, reach and engagement. Pure and deterministic.
@@ -27,7 +30,7 @@ export const helpless=actor=>!actor.alive||actor.down||!!actor.carriedBy;
 
 export function setRoute(world,actor,point,{run=null}={}){
   const grid=navGrid(world.map),route=findRoute(grid,actor,point);actor.path=route.points;
-  actor.gait=route.points.length?(run??(route.length>MOVEMENT.runThreshold&&!actor.walkMode))?'run':'walk':null;
+  actor.gait=route.points.length?(run??(route.length>MOVEMENT.runThreshold&&!walksOnly(world,actor)))?'run':'walk':null;
   actor.goal={x:route.stopPoint.x,z:route.stopPoint.z};actor.repathAt=world.tick+MOVEMENT.repathTicks;return route;
 }
 
@@ -67,12 +70,12 @@ export function moveActors(world){
       const close=distanceBetween(actor,target)<=orderRange(world,actor,order,target);
       if(close||actor.action){actor.path=[];actor.gait=null;continue;}
       if(world.tick>=actor.repathAt||!actor.path.length){
-        setRoute(world,actor,order.kind==='attack'?chaseGoal(world,actor,target):{x:target.x,z:target.z},{run:actor.walkMode||actor.carrying?false:null});
+        setRoute(world,actor,order.kind==='attack'?chaseGoal(world,actor,target):{x:target.x,z:target.z},{run:walksOnly(world,actor)||actor.carrying?false:null});
       }
     }else if(order?.kind==='ability'||actor.action&&actor.action.kind!=='work'){actor.path=[];actor.gait=null;continue;}
     if(actor.action?.kind==='work'){actor.path=[];actor.gait=null;continue;}
     if(!actor.path.length){if(order?.kind==='move')actor.order=null;actor.gait=null;continue;}
-    const derived=derivedValues(actor),run=actor.gait==='run'&&!engaged(world,actor)&&!actor.walkMode&&!actor.carrying;
+    const derived=derivedValues(actor),run=actor.gait==='run'&&!engaged(world,actor)&&!walksOnly(world,actor)&&!actor.carrying;
     let budget=(run?derived.run:actor.pace??MOVEMENT.walk)*speedFactor(grid,actor.x,actor.z)*DT,moved=0;
     while(budget>1e-9&&actor.path.length){
       const next=actor.path[0],dx=next.x-actor.x,dz=next.z-actor.z,d=span(dx,dz);

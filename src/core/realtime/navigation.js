@@ -9,7 +9,7 @@ import {MOVEMENT} from '../../data/realtime-rules.js';
 export const TILE=2.5,HIGH_GROUND=1.6;
 // Square roots are exactly rounded in every engine (Math.hypot is not), so the rules use them.
 export const span=(dx,dz)=>Math.sqrt(dx*dx+dz*dz);
-const SOLID=new Set(['rock','river','wall']),SQRT2=Math.SQRT2;
+const SOLID=new Set(['rock','river','wall']),SQRT2=Math.SQRT2,RAIN_SLOPE=.5;
 const grids=new Map();
 
 export const terrainName=t=>typeof t==='string'?t:t?.type||'grass';
@@ -24,13 +24,24 @@ export function terrainAtPoint(map,x,z){
 const byMap=new WeakMap();
 export function navGrid(map){
   const known=byMap.get(map);if(known)return known;
-  const key=`${map.width}x${map.height}:${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
+  const key=`${map.width}x${map.height}:${map.rain?'rain:':''}${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
   if(grids.has(key)){byMap.set(map,grids.get(key));return grids.get(key);}
   const cell=MOVEMENT.cell,per=Math.round(TILE/cell),cols=map.width*per,rows=map.height*per,n=cols*rows;
   const solid=new Uint8Array(n),walk=new Uint8Array(n),speed=new Float64Array(n),height=new Float64Array(n);
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
     const t=terrainName(map.terrain[Math.floor(r/per)][Math.floor(c/per)]),i=r*cols+c;
     solid[i]=SOLID.has(t)?1:0;speed[i]=MOVEMENT.terrain[t]??1;height[i]=t==='high'?HIGH_GROUND:0;
+  }
+  // In rain the slopes are slower to climb (0.38: a step onto high ground costs one more):
+  // the high ground's edge, within a metre of the low, is crossed at half speed.
+  if(map.rain){
+    const edge=Math.round(1/cell),slow=[];
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const i=r*cols+c;if(!height[i])continue;let low=false;
+      for(let dr=-edge;dr<=edge&&!low;dr++)for(let dc=-edge;dc<=edge;dc++){const rr=r+dr,cc=c+dc;if(rr>=0&&cc>=0&&rr<rows&&cc<cols&&!height[rr*cols+cc]&&!solid[rr*cols+cc]){low=true;break;}}
+      if(low)slow.push(i);
+    }
+    for(const i of slow)speed[i]*=RAIN_SLOPE;
   }
   const reach=MOVEMENT.clearance;
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){

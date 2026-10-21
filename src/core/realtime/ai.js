@@ -85,10 +85,13 @@ function rouse(world,actor,target){
 
 function foesOf(world,actor){return world.actors.filter(o=>standing(o)&&hostile(actor,o)&&(actor.ai.notice[o.id]??0)>=100);}
 function nearest(list,p){let best=null,bd=Infinity;for(const o of list){const d=distanceBetween(o,p);if(d<bd){bd=d;best=o;}}return best;}
-// Whom this enemy goes for, by his role.
+// Whom this enemy goes for, by his role. The field approach changes it (0.38
+// approachAssignment): against Engineering the archers shoot the soldier, and
+// against a defensive advance the horse and raiders go for him.
 function chooseTarget(world,actor){
   const foes=foesOf(world,actor);if(!foes.length)return null;
-  const anchor=actor.ai.anchor??actor;
+  const anchor=actor.ai.anchor??actor,hero=actorById(world,world.heroId);
+  if(hero&&foes.includes(hero)&&(world.approach==='breach'&&derivedValues(actor).weapon.ranged||world.approach==='advance'&&['cavalry','raider'].includes(actor.ai.role)))return hero;
   if(actor.practice){const hero=actorById(world,world.heroId);return hero&&foes.includes(hero)&&distanceBetween(hero,anchor)<=ENEMY_AI.practiceRange?hero:null;}
   if(actor.ai.role==='guard'){const near=foes.filter(o=>distanceBetween(o,anchor)<=ENEMY_AI.guardRadius);return nearest(near,actor);}
   if(actor.ai.role==='raider'){const columns=foes.filter(o=>o.escort&&distanceBetween(o,actor)<=ENEMY_AI.raidRadius);if(columns.length)return nearest(columns,actor);}
@@ -114,6 +117,11 @@ export function decideEnemy(world,actor){
   if(ai.state!=='engage'){
     if(ai.anchor&&span(actor.x-ai.anchor.x,actor.z-ai.anchor.z)>2)goTo(world,actor,ai.anchor);
     return;
+  }
+  // A diversion draws the first enemy in sight away to the false approach until the end of round two.
+  if(world.approach==='diversion'&&world.tick<2*TIME.roundTicks&&!actor.practice){
+    const first=world.actors.filter(o=>o.side==='enemy'&&standing(o)&&!o.hidden&&!o.squadId).sort((a,b)=>a.id.localeCompare(b.id))[0],hero=actorById(world,world.heroId);
+    if(first===actor&&hero){const depth=world.map.height*2.5;goTo(world,actor,{x:hero.x+5,z:hero.z<depth/2?depth-4:4});return;}
   }
   const target=chooseTarget(world,actor);
   if(!target){

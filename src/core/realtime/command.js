@@ -134,6 +134,9 @@ export function orderEffects(world,{carryOut}){
     const p=squad.pending;if(!p||p.at>world.tick)continue;squad.pending=null;
     if(!fielded(world,squad))continue;
     emit(world,{kind:'order',squadId:squad.id,order:p.order.kind});carryOut(world,squad,p.order);
+    // The chapter capabilities an order demonstrates (0.38 Order, Formations).
+    if(!world.used.includes('order'))world.used.push('order');
+    if(ORDERS[p.order.kind]?.formation&&!world.used.includes('formation'))world.used.push('formation');
   }
 }
 // The round boundary: refill to capacity (points never accumulate).
