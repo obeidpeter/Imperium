@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {ACTOR_SURFACE_SPEC,actorSurfaceKind,createActorSurfaceData,composeActorAlbedo} from './actor-surface.js';
+import {nextSlice} from './build-steps.js';
 const cached=new Map();
 const paintedTiles=new Map();
 let atlasPromise=null,atlasState='procedural';
@@ -25,19 +26,20 @@ export function normalizeActorAlbedo(source,kind){
   return data;
 }
 function installTile(kind,entry){const tile=paintedTiles.get(kind);if(!tile)return;entry.surface.map.image={data:tile.data,width:tile.size,height:tile.size};entry.surface.map.needsUpdate=true;entry.surface.map.userData.source=tile.source??'character-materials-v016';entry.surface.map.userData.detail='original periodic relief with restrained painted wear';}
-/** One decode feeds four shared 256px maps; no per-person image, texture copy
- * or extra shader sampler. Procedural maps remain if this optional art fails. */
+/** One decode feeds four shared 256px maps (one per task); no per-person image,
+ * texture copy or extra shader sampler. Procedural maps remain if this optional art fails. */
 export function warmPremiumActorMaterials(){
   if(premiumPromise)return premiumPromise;
   if(typeof document==='undefined'||typeof Image==='undefined')return Promise.resolve(false);
   premiumState='loading';premiumPromise=new Promise(resolve=>{
-    const image=new Image();image.onload=()=>{
+    const image=new Image();image.onload=async()=>{
       try{
         const size=256,canvas=document.createElement('canvas');canvas.width=canvas.height=size;
         const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)throw new Error('No material decoder');
         for(const [kind,rect]of Object.entries(premiumActorAtlasRects(image.naturalWidth,image.naturalHeight))){
           context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);
           paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size),source:'roman-surfaces-v034'});
+          await nextSlice();
         }
         for(const [kind,entry]of cached)installTile(kind,entry);premiumState='painted';resolve(true);
       }catch{premiumState='procedural';resolve(false);}
@@ -51,9 +53,12 @@ export function warmActorMaterials(){
   if(typeof document==='undefined'||typeof Image==='undefined')return Promise.resolve(false);
   atlasState='loading';
   atlasPromise=new Promise(resolve=>{
-    const image=new Image();image.onload=()=>{
+    const image=new Image();image.onload=async()=>{
       try{const size=256,canvas=document.createElement('canvas');canvas.width=canvas.height=size;const context=canvas.getContext('2d',{willReadFrequently:true});if(!context)throw new Error('No material decoder');
-        for(const [kind,rect]of Object.entries(actorAtlasRects(image.naturalWidth,image.naturalHeight))){if(paintedTiles.get(kind)?.source==='roman-surfaces-v034')continue;context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size)});}
+        for(const [kind,rect]of Object.entries(actorAtlasRects(image.naturalWidth,image.naturalHeight))){
+          if(paintedTiles.get(kind)?.source==='roman-surfaces-v034')continue;context.clearRect(0,0,size,size);context.drawImage(image,...rect,0,0,size,size);
+          paintedTiles.set(kind,{size,data:composeActorAlbedo(normalizeActorAlbedo(context.getImageData(0,0,size,size).data,kind),kind,size)});await nextSlice();
+        }
         for(const [kind,entry]of cached)installTile(kind,entry);atlasState='painted';void warmPremiumActorMaterials();resolve(true);
       }catch{atlasState='procedural';resolve(false);}
     };image.onerror=()=>{atlasState='procedural';void warmPremiumActorMaterials();resolve(false);};image.src=ACTOR_MATERIAL_ATLAS;

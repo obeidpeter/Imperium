@@ -17,7 +17,8 @@ import {FIGURE_STYLES} from '../ui/graphics-quality.js';
 import {actorAssetStatus} from './actor-assets.js';
 import {warmActorMaterials} from './actor-materials.js';
 import {campaignSoundscape} from '../ui/soundscape.js';
-import {createEnvironment,gridToWorld} from './environment.js';
+import {buildEnvironment,createEnvironment,gridToWorld} from './environment.js';
+import {runSliced,runSteps} from './build-steps.js';
 import {terrainAt} from './environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../ui/animation-timeline.js';
 import {facingYaw,isAlive} from './session.js';
@@ -127,7 +128,21 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
     phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
 }
 export class BattleStage{
-  constructor(canvas,encounter,
+  // A stage made in short steps behind the veil (build-steps.js), so the page
+  // keeps answering while its world is built. Resolves to null when current()
+  // turns false first; whatever was built by then is released.
+  static async create(canvas,encounter,options={},{current=()=>true}={}){
+    const stage=new BattleStage(canvas,encounter,{...options,deferBuild:true});
+    await runSliced(stage.build(canvas,encounter,options),{current});
+    if(!stage.built){stage.releasePartial();return null;}
+    if(!current()){stage.dispose();return null;}
+    return stage;
+  }
+  // Built at once (the standalone study and tests), unless create() builds it.
+  constructor(canvas,encounter,options={}){
+    if(!options.deferBuild)runSteps(this.build(canvas,encounter,options));
+  }
+  *build(canvas,encounter,
     {onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,
       stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
     try{
@@ -147,6 +162,7 @@ export class BattleStage{
     // finish compiling it; programs are compiled ahead instead (prepare). Shader
     // diagnostics stay available for development: ?debug=shaders.
     this.renderer.debug.checkShaderErrors=!!debugShaders||/[?&]debug=shaders(&|$)/.test(globalThis.location?.search??'');
+    yield;
     this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});
     this.cuesPlayed=0;
     this.deviceReport=renderDeviceReport(this.renderer.getContext());this.gpuTimer=createGpuTimer(this.renderer.getContext());
@@ -165,8 +181,8 @@ export class BattleStage{
     this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);
     this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};
     this.lookTarget=new T.Vector3(0,.25,0);this.baseTarget=new T.Vector3(0,.25,0);this.cameraKick=0;this.cameraView='overview';
-    this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});
-    this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});
+    this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});yield;
+    this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});yield;
     this.contactShadows=createContactShadows(this.scene);
     const balance=this.profile.grade??{},
       sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity*.72*(balance.ambient??1));
@@ -178,13 +194,14 @@ export class BattleStage{
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);
     this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
-    this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});this.rebuildSceneryModels();
-    this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);
+    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});yield;
+    this.rebuildSceneryModels();yield;
+    this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
     this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();
     this.profileFrames=0;
-    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});
-    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
-    this.battleRemains=battleRemains!==false;this.rebuildRemains();
+    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});yield;
+    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);yield;
+    this.battleRemains=battleRemains!==false;this.rebuildRemains();yield;
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
     this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide});
@@ -200,7 +217,7 @@ export class BattleStage{
     this.overlay.add(this.hoverRing);
     this.goalMarker=new T.Mesh(new T.RingGeometry(.96,1.02,48),
       new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide}));
-    this.goalMarker.rotation.x=-Math.PI/2;this.overlay.add(this.goalMarker);
+    this.goalMarker.rotation.x=-Math.PI/2;this.overlay.add(this.goalMarker);yield;
     this.effectRings=[];this.missionMarkers=new Map();this.chamberStandards=new Map();this.hovered=null;this.canvas.dataset.scene=this.profile.key;
     this.canvas.dataset.chapter=String(this.chapter);this.canvas.dataset.kind=encounter.kind;this.canvas.dataset.weather=this.profile.weather;
     this.canvas.dataset.timeOfDay=this.profile.timeOfDay;
@@ -213,7 +230,7 @@ export class BattleStage{
     const trail=new T.Mesh(new T.ConeGeometry(.045,1.35,8,1,true),
       new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide}));
     trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);
-    this.projectile.visible=false;
+    this.projectile.visible=false;yield;
     this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();
     this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));
     this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,
@@ -222,15 +239,15 @@ export class BattleStage{
     this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
     this.combat=createCombatEffects(this.scene,{particleMask:this.particleMask,quality});this.dustDebt=new Map();
     this.weatherCloud=createWeatherField(this.particleMask);this.effectGroup.add(this.weatherCloud);
-    sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});
+    sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});yield;
     this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);
     this.effectGroup.add(this.nightLight);
-    this.rebuildAtmosphere();
+    this.rebuildAtmosphere();yield;
     this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});this.compositor.setGrade?.(this.profile.grade??{});
-    this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));
+    this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));yield;
     this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.figureQueue=new Set();
     this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
-    this.ready=this.prepare();
+    this.ready=this.prepare();this.built=true;
     }catch(error){this.releasePartial();throw error;}
   }
   // A constructor failure must not strand the overlay, renderer, observer or audio.

@@ -385,6 +385,7 @@ test('v0.29.0: the compositor offers tilt-shift and ink finishes, clamped, and t
   const {createBattleStageController} = await import('../src/ui/battle-stage-controller.js');
   const calls = [];
   class FakeStage {
+    static create(...args) {return new this(...args);}
     constructor(board) {this.canvas = board;this.labelLayer = {};this.quality = 'balanced';this.figureStyle = 'sculpted';}
     sync() {} setSelection() {} setGrid() {} applyQuality() {} setReducedMotion() {} setPaused() {} setAudio() {} home() {} resize() {} dispose() {}
     setFigureStyle(style) {calls.push(style);this.figureStyle = style;}
@@ -652,7 +653,7 @@ test('v0.29.0: the oath and accession tableaux are presentation-only scenes moun
   assert.ok(accession.palettes.hero.cloth, 'He wears imperial purple');assert.equal(accession.chapter, 12);
   assert.ok(accession.encounter.units.filter(u => accession.poses[u.id] === 'rally').length >= 5, 'The legions acclaim him');
   // The controller mounts a stage over the painting and keeps the painting on failure.
-  const calls = [];class FakeStage {constructor(canvas, encounter, options) {calls.push({encounter, options});this.quality = options.quality;} home() {calls.push('home');} setReducedMotion() {} applyQuality() {} dispose() {calls.push('dispose');}}
+  const calls = [];class FakeStage {static create(...args) {return new this(...args);} constructor(canvas, encounter, options) {calls.push({encounter, options});this.quality = options.quality;} home() {calls.push('home');} setReducedMotion() {} applyQuality() {} dispose() {calls.push('dispose');}}
   const appended = [];const host = {dataset: {}, append(node) {appended.push(node);node.isConnected = true;node.remove = () => {node.isConnected = false;};}};
   const previousDocument = globalThis.document;globalThis.document = {createElement: () => ({setAttribute() {}, className: ''})};
   try {
@@ -660,7 +661,7 @@ test('v0.29.0: the oath and accession tableaux are presentation-only scenes moun
     c.mount(host, {kind: 'accession', name: 'Gaius', quality: 'high'});await new Promise(r => setImmediate(r));
     assert.equal(calls[0].options.ceremony.chapter, 12);assert.equal(calls[0].options.chapter, 12);assert.ok(calls.includes('home'));assert.equal(host.dataset.ceremonyReady, 'true');
     c.release();assert.ok(calls.includes('dispose'));assert.equal(host.dataset.ceremonyReady, undefined, 'Releasing shows the painting again');
-    const failing = createCeremonyController({load: async () => [{BattleStage: class {constructor() {throw new Error('no WebGL');}}}, {ceremonyScene}]});
+    const failing = createCeremonyController({load: async () => [{BattleStage: class {static create() {throw new Error('no WebGL');}}}, {ceremonyScene}]});
     failing.mount(host, {kind: 'oath', name: 'Gaius'});await new Promise(r => setImmediate(r));
     assert.equal(host.dataset.ceremonyReady, undefined, 'A failed stage leaves the painting');
   } finally {globalThis.document = previousDocument;}

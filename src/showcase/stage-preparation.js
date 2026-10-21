@@ -2,14 +2,25 @@ import {figureStyleKey} from './stage-figures.js';
 import * as T from '../../vendor/three/three.module.js';
 import {civicActor} from './stage-readout.js';
 import {drawableShape} from './scene-compositor.js';
+import {FRAME_SLICE_MS,nextSlice} from './build-steps.js';
 
 // Preparing a battle behind the "Preparing" veil: figures built a few at a
 // time, every shader program compiled and every texture uploaded in short
 // tasks, so the battle shows already drawn and plays without a stall.
-// A build slice before the page is given a turn; then the next slice.
-const FRAME_SLICE_MS=8,nextSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
+
 // How long a battle waits for its figures' downloads before it is shown anyway.
 const PREPARE_FIGURES_MS=12000;
+// Geometry goes to the GPU in batches sized to take about this long, judged
+// from the batch before (from 1 MB, between 256 KB and 32 MB).
+const UPLOAD_BATCH_MS=6,UPLOAD_BYTES={start:1<<20,min:1<<18,max:1<<25};
+// What a mesh still has to send: its vertex data, index and instances, each
+// buffer counted once however many meshes share it.
+function unsentBytes(object,sent){
+  let bytes=0;const add=a=>{const buffer=a?.isInterleavedBufferAttribute?a.data:a;if(buffer?.array&&!sent.has(buffer)){sent.add(buffer);bytes+=buffer.array.byteLength;}};
+  for(const attribute of Object.values(object.geometry.attributes))add(attribute);
+  add(object.geometry.index);add(object.instanceMatrix);add(object.instanceColor);
+  return bytes;
+}
 export const stagePreparation={
   // Nothing is drawn until everything the battle will draw is ready: figures
   // wear what they will wear (a slow download is waited on only briefly), the
@@ -34,6 +45,7 @@ export const stagePreparation={
       }
       await this.compositor.compile(this.scene,{current});if(!current())return;
       await this.compositor.upload?.(this.scene,{current});if(!current())return;
+      await this.uploadGeometry(current);if(!current())return;
       await this.warmShadows(current);
     }catch(error){this.prepareError=error?.message??String(error);}
     if(!current())return;
@@ -46,6 +58,8 @@ export const stagePreparation={
   // of work), so the page keeps answering and the veil can count them in.
   async buildQueuedFigures(current=()=>!this.disposed){
     if(!this.figureQueue)return;
+    // The build's last step has just run: the first figure starts a task of its own.
+    await nextSlice();if(!current())return;
     const queue=[...this.figureQueue];let slice=performance.now();
     for(const [index,id]of queue.entries()){
       if(performance.now()-slice>FRAME_SLICE_MS){this.showProgress(index,queue.length);await nextSlice();if(!current())return;slice=performance.now();}
@@ -99,6 +113,45 @@ export const stagePreparation={
       this.camera.position.copy(position);this.camera.quaternion.copy(quaternion);this.camera.updateMatrixWorld();this.shadowDirty=true;
     }
     return probes;
+  },
+  // A mesh's buffers are made the first time it is drawn, so the first frame
+  // would send the whole battle's geometry to the GPU at once. Drawing a batch
+  // at a time instead, through a material that places every vertex outside the
+  // view (nothing is shaded), with the view turned away so nothing else is
+  // drawn, sends it in short tasks; hidden meshes go too, for when they show.
+  async uploadGeometry(current=()=>!this.disposed){
+    if(!this.compositor?.probe)return 0;
+    const pending=[],sent=new Set();
+    this.scene.traverse(o=>{if((o.isMesh||o.isPoints||o.isLine)&&o.geometry){const bytes=unsentBytes(o,sent);if(bytes)pending.push([o,bytes]);}});
+    const clip=new T.ShaderMaterial({name:'geometry upload',vertexShader:'void main(){gl_PointSize=1.0;gl_Position=vec4(2.0,2.0,2.0,1.0);}',
+      fragmentShader:'void main(){gl_FragColor=vec4(0.0);}'});
+    const position=this.camera.position.clone(),quaternion=this.camera.quaternion.clone(),override=this.scene.overrideMaterial,
+      autoUpdate=this.scene.matrixWorldAutoUpdate,shadows=this.renderer.shadowMap.needsUpdate;
+    let batch=[],bytes=0,budget=UPLOAD_BYTES.start,uploaded=0,slice=performance.now();
+    try{
+      // No shadow pass: it would draw every caster with its own material.
+      this.renderer.shadowMap.needsUpdate=false;this.scene.updateMatrixWorld();this.scene.matrixWorldAutoUpdate=false;this.scene.overrideMaterial=clip;
+      this.camera.position.set(0,1e4,0);this.camera.lookAt(0,2e4,0);this.camera.updateMatrixWorld();
+      for(const [index,[object,size]]of pending.entries()){
+        batch.push(object);bytes+=size;if(bytes<budget&&index<pending.length-1)continue;
+        if(!current())break;
+        const started=performance.now();this.drawOnce(batch);uploaded+=bytes;
+        budget=Math.min(UPLOAD_BYTES.max,Math.max(UPLOAD_BYTES.min,bytes*UPLOAD_BATCH_MS/Math.max(.25,performance.now()-started)));
+        batch=[];bytes=0;
+        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
+      }
+    }finally{
+      this.scene.overrideMaterial=override;this.scene.matrixWorldAutoUpdate=autoUpdate;this.renderer.shadowMap.needsUpdate=shadows;clip.dispose();
+      this.camera.position.copy(position);this.camera.quaternion.copy(quaternion);this.camera.updateMatrixWorld();
+    }
+    return uploaded;
+  },
+  // One pixel of a frame in which these meshes, hidden or out of view, are drawn.
+  drawOnce(objects){
+    const culled=objects.map(o=>o.frustumCulled),hidden=[];
+    for(const o of objects){o.frustumCulled=false;for(let p=o;p;p=p.parent)if(!p.visible){hidden.push(p);p.visible=true;}}
+    try{this.compositor.probe(this.scene);}
+    finally{objects.forEach((o,i)=>{o.frustumCulled=culled[i];});for(const p of hidden)p.visible=false;}
   },
   showProgress(done,total){
     const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';

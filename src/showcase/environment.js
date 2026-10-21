@@ -18,6 +18,7 @@ import {createVegetationFactory} from './environment-foliage.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {bakeEnvironmentOcclusion,installBakedOcclusion} from './environment-baked-occlusion.js';
 import {installCloudShadows} from './atmosphere.js';
+import {runSteps} from './build-steps.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -37,7 +38,10 @@ export function dropClearRoadCells(geometry){
   for(const [name,a]of attributes)geometry.setAttribute(name,new THREE.Float32BufferAttribute(out[name],a.itemSize));
   geometry.setIndex(remapped);return dropped;
 }
-export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter}={}){
+export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
+// The same build in steps: it yields wherever a time-sliced build may give the
+// page a turn (build-steps.js); each step is a small part of the world.
+export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
@@ -60,6 +64,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v2`;
   }
   const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
+  yield;
   const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
   const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
   // Rows gather over the board and its margin (0.6 of the even spacing) and
@@ -68,6 +73,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const gather=r=>{if(r<=20)return r*.6;const t=(r-20)/20,t2=t*t,t3=t2*t;return (2*t3-3*t2+1)*12+(t3-2*t2+t)*12+(3*t2-2*t3)*40+(t3-t2)*32;};
   for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),r=Math.max(Math.abs(x),Math.abs(z));if(r>0&&r<40){const s=gather(r)/r;pos.setXYZ(i,x*s,0,z*s);}}
   for(let i=0;i<pos.count;i++){
+    if(i%1024===1023)yield;
     const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,height(x,z));
     const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
@@ -81,21 +87,26 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
   const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,(pos.getX(i)+40)/2,(40-pos.getZ(i))/2);
   groundGeometry.computeVertexNormals();const ground=p.mesh(root,groundGeometry,m.ground);ground.name='continuous ground';ground.castShadow=false;ground.userData.environmentGround=true;
+  yield;
 
   const roadVertices=[],roadUV=[],roadColors=[],roadIndices=[];
   // A single distance-field surface follows the authored road, with rounded
   // joins and a feathered verge. No tile-sized quads or overlapping junctions.
   if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.78,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
-    for(let iz=0;iz<=nz;iz++)for(let ix=0;ix<=nx;ix++){
-      const x=minX+ix*step,z=minZ+iz*step,surface=roadSurface.sample(x,z),tone=surface.tone;
-      // The tread never climbs a plateau bank; there it passes under the ground.
-      roadVertices.push(x,Math.min(height(x,z),level(x,z))+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
-      if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
+    for(let iz=0;iz<=nz;iz++){
+      for(let ix=0;ix<=nx;ix++){
+        const x=minX+ix*step,z=minZ+iz*step,surface=roadSurface.sample(x,z),tone=surface.tone;
+        // The tread never climbs a plateau bank; there it passes under the ground.
+        roadVertices.push(x,Math.min(height(x,z),level(x,z))+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
+        if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
+      }
+      yield;
     }
   }
   const roadGeometry=p.geo(new THREE.BufferGeometry());roadGeometry.setAttribute('position',new THREE.Float32BufferAttribute(roadVertices,3));roadGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(roadUV,2));roadGeometry.setAttribute('color',new THREE.Float32BufferAttribute(roadColors,4));roadGeometry.setIndex(roadIndices);roadGeometry.computeVertexNormals();
   dropClearRoadCells(roadGeometry);
   const road=p.mesh(root,roadGeometry,m.road);road.name='authored boundary road';road.castShadow=false;
+  yield;
 
   // Shared instance batches keep structural detail from becoming thousands of
   // independent draw calls. Matrices use real solid geometry and cast shadows.
@@ -109,6 +120,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   function boulder(x,z,scale=1,seed=0){instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
   for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
   for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41||precinctRoute(x,z)>.12)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
+  yield;
 
   // The gate meets the real west-edge road. Its walls and camp are outside the
   // playable rectangle; nothing here becomes an invented pathfinding blocker.
@@ -146,10 +158,11 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }else {const wagon=p.wagon(root,cartX,height(cartX,cartZ),cartZ,-.2);wagon.name='frontier supply wagon';}
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
+  yield;
   const vegetation=createVegetationFactory({p,m,instance,height,quality});
   const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry};
-  addCampaignTerrain(campaignContext);addCampaignScenery(campaignContext);addEnvironmentDepth(campaignContext);addEncounterPrecinct(campaignContext);addFinaleApproach(campaignContext);addInhabitedEnvironment(campaignContext);
-  groundArchitecturalFoundations(campaignContext);
+  for(const add of [addCampaignTerrain,addCampaignScenery,addEnvironmentDepth,addEncounterPrecinct,addFinaleApproach,addInhabitedEnvironment,
+    groundArchitecturalFoundations]){add(campaignContext);yield;}
 
   // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
   // batches. The small geometric leaves below remain a low-growth fallback.
@@ -171,7 +184,9 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }blade.setAttribute('position',new THREE.Float32BufferAttribute(bladeVertices,3));blade.setIndex(bladeIndices);blade.computeVertexNormals();
   const normals=blade.attributes.normal;for(let i=0;i<normals.count;i++){const n=new THREE.Vector3(normals.getX(i)*.5,Math.abs(normals.getY(i))+.85,normals.getZ(i)*.5).normalize();normals.setXYZ(i,n.x,n.y,n.z);}
   const grassCount=profile.civic?0:Math.round((perf?2400:high?13000:8500)*(profile.vegetation==='arid'?.12:profile.vegetation==='reeds'?.4:1));
+  yield;
   for(let i=0;i<grassCount;i++){
+    if(i%1024===1023)yield;
     const x=(hash(i,31)-.5)*65,z=(hash(i,32)-.5)*55;if(z< -18)continue;
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
@@ -190,10 +205,13 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(let i=0;i<(profile.vegetation==='meadow'?(perf?12:30):0);i++){const x=(hash(i,83)-.5)*42,z=(hash(i,86)-.5)*34;if(isPlayable(x,z,e,tileSize,1)||precinctRoute(x,z)>.12)continue;const base=height(x,z);
     for(let f=0;f<5;f++){const angle=f*1.256+i,dx=Math.cos(angle),dz=Math.sin(angle);for(let j=1;j<8;j++)for(const side of [-1,1]){const t=j/8,reach=t*.85,s=.30*(1-t*.8);instance('fern leaves',leafGeometry,m.leaves,[x+dx*reach+dz*side*s*.2,base+Math.sin(t*2.5)*.47,z+dz*reach-dx*side*s*.2],[s*1.6,s*2,s],[.4,angle+side*.9,.4],new THREE.Color(.50,.70,.42));}}
   }
+  yield;
   for(const [name,batch]of batches){
+    yield;
     const mesh=new THREE.InstancedMesh(batch.geometry,batch.material,batch.items.length);mesh.name=name;mesh.castShadow=!['meadow grass','dry meadow grass','fern leaves'].includes(name)&&!perf;mesh.receiveShadow=true;
     batch.items.forEach((item,i)=>{dummy.position.set(...item.position);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);if(item.color)mesh.setColorAt(i,item.color);});mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh);
   }
+  yield;
 
   // The Danube occupies a shallow channel beyond the legal map. Subtle real
   // surface waves and rough reflections sit below mist supplied by the scene.
@@ -210,19 +228,24 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     if(!perf){const light=new THREE.PointLight(0xe99b53,1.6*scale,6,2);light.position.set(0,.9,0);g.add(light);animated.push(t=>light.intensity=scale*(1.4+Math.sin(t*7+x)*.17+Math.sin(t*11)*.12));}
   }
   if(!training&&profile.architecture==='fort'){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
+  yield;
   // Preserve animated surfaces and authoritative ground objects. Static
   // scenery is instanced where repeated, otherwise merged by exact material
   // and render flags, with all parent transforms baked into root space.
   const batching=batchStaticEnvironment(root,{geometries,exclude:new Set([ground,road,river,root.getObjectByName('continuous civic stone floor'),root.getObjectByName('authored river channel water'),...flames.map(f=>f.mesh)])});
+  yield;
   // Sky and contact occlusion baked from the finished static scene, sampled by
   // every environment surface on every tier (the horizon and panorama follow).
   const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
+  yield;
   const groundSurfaces=new Set([m.ground,m.road,m.floor]),occluded=new Set();
   root.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh)return;for(const material of [o.material].flat())if(material&&!occluded.has(material)){occluded.add(material);installCloudShadows(material);if(material.userData.environmentFinish!=='water')installBakedOcclusion(material,occlusion.uniforms,{ground:groundSurfaces.has(material)||material.userData.environmentFinish==='floor'});}});
+  yield;
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
   const horizon=createEnvironmentHorizon({ground,profile,height,quality});root.add(horizon.group);
+  yield;
   const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,
