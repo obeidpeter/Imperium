@@ -348,11 +348,14 @@ function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.
 window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
 // Keep the chronicle's copy of the fight: the resume point after a pause, a hidden page or a quick save.
 // ——— Quick save and the named saves (§3.17). ———
+// A picture of the moment for a save: the 2D canvas as it stands, or a frame the 3D stage draws for it.
+// Without one the slot shows its number.
 function savePicture(){
-  // The 2D view's canvas can be read; the 3D view keeps no frame, so its saves show the chapter's painting.
-  try{const c=field?.flat?field.element.querySelector('canvas'):null;if(c){const t=document.createElement('canvas');t.width=160;t.height=90;
-    t.getContext('2d').drawImage(c,0,0,160,90);return t.toDataURL('image/jpeg',.6);}}catch{}
-  return null;
+  try{
+    const c=field?.flat?field.element.querySelector('canvas'):null;
+    if(c){const t=document.createElement('canvas');t.width=160;t.height=90;t.getContext('2d').drawImage(c,0,0,160,90);return t.toDataURL('image/jpeg',.6);}
+    return field?.runtime?.stage?.picture?.(160,90)??null;
+  }catch{return null;}
 }
 function slotSummary(){
   const ch=Game.getChapter(state),e=state.encounter;

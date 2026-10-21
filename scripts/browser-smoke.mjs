@@ -6,8 +6,9 @@
 // (field-object readouts), a field approach chosen at a restored Chapter V camp
 // (with Chapter V's generated scenery and character bodies loaded in 3D),
 // touch at phone width (hold to preview, tap to walk), the Settings
-// performance check, the 0.40 real-time arena (click to move, pause, step) and
-// the campaign's drill in real time (the field, pause, keys, result, record).
+// performance check, the 0.40 real-time arena (click to move, pause, step), the
+// walkable camp and the campaign's drill in real time (conversations, the table,
+// the gate, the field, pause, keys, result, record), and the same in 2D.
 // It fails on any page or console error. Development and CI only: it
 // needs Playwright, which is not a project dependency, and a production build.
 //
@@ -249,7 +250,9 @@ async function realtimeArena(){
     return JSON.stringify({tick:w.tick,status:w.status,paused:window.__arena.clock.paused,lock:h.lock,order:h.order,drawn:h.drawn,queue:w.queue,
       message:document.querySelector('#message-line')?.textContent,event:document.querySelector('#event-line')?.textContent});})})`));
   await step('The click moves the soldier',page.waitForFunction(([x,z])=>{const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000}));
-  const frames=await arena(()=>window.__arena.metrics.clickFrames.at(-1));
+  // The click's frame count is recorded when the frame showing the move is drawn (Performance draws every other frame).
+  const frames=await page.waitForFunction(()=>{const n=window.__arena.metrics.clickFrames.at(-1);return Number.isFinite(n)?{n}:null;},null,{timeout:30000})
+    .then(handle=>handle.jsonValue()).then(v=>v.n).catch(()=>assert.fail('The click to first movement is measured'));
   await page.click('#pause-button');const paused=(await hero()).tick;await page.waitForTimeout(800);
   assert.equal((await hero()).tick,paused,'No tick runs while paused');
   await page.focus('#scene');await page.keyboard.press('Space');
@@ -281,12 +284,21 @@ async function realtimeArena(){
 // The campaign's drill in real time (0.40 Phase 1): the field mounts in the page, a
 // click walks, P pauses, T and Enter attack the partner, the ability keys finish
 // the drill, the After-Action Chronicle appears and Record returns to the camp.
+// The walkable camp: through its list path, Varro's conversation (a reply by number) and the decision at the
+// commander's table, then the gate. Returns once the drill's field is ready.
+async function campToDrill(page,view='3d'){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.realtime-camp');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  await page.click('[data-cmd="conversation"][data-id="ch1:varro"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');
+  assert.match(await text(page,'#modal'),/Varro/);await page.keyboard.press('Escape');
+  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
+  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+}
 async function realtimeCampaign(){
-  const page=await open();
-  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance'}));}catch{}});
-  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.camp-page');
-  const choose=page.locator('[data-cmd="choose"]');if(await choose.count())await choose.first().click();
-  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-scene[data-ready="true"]');
+  const page=await open();await campToDrill(page);
   const field=fn=>page.evaluate(fn);
   const state=()=>field(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return {x:h.x,z:h.z,tick:w.tick,used:w.used,status:w.status,paused:window.__realtime.paused()};});
   const running=async()=>{if((await state()).paused)await page.keyboard.press('KeyP');};
@@ -296,6 +308,14 @@ async function realtimeCampaign(){
     .catch(()=>assert.fail('The click in the campaign field moves the soldier'));
   await page.keyboard.press('KeyP');assert.equal((await state()).paused,true,'P pauses the campaign field');
   await page.waitForSelector('[data-role="pausedBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The paused band shows'));
+  // Saves: F2 keeps the moment with a picture the 3D stage draws for it; Menu → Saves lists it, paused under the panel.
+  await page.keyboard.press('F2');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('imperium.slots')??'{}').quick?.thumbnail?.startsWith('data:image/jpeg'),null,{timeout:30000})
+    .catch(()=>assert.fail('F2 quick-saves the fight with a picture'));
+  await page.click('[data-role="menuButton"]');await page.click('#modal [data-cmd="saves"]');await page.waitForSelector('#modal .save-slots');
+  await page.click('#modal [data-cmd="slot-save"][data-id="1"]');
+  await page.waitForSelector('#modal .save-slot:nth-child(2) img',{timeout:30000}).catch(()=>assert.fail('A named save from the panel shows its picture'));
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
   await page.keyboard.press('KeyP');await running();
   await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
   await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack the drill partner'));
@@ -305,15 +325,26 @@ async function realtimeCampaign(){
   await page.waitForSelector('.rt-result',{timeout:120000}).catch(()=>assert.fail('The drill ends in the After-Action Chronicle'));
   assert.match(await text(page,'.rt-result h2'),/The day is yours/);
   await page.click('[data-cmd="commit"]');await page.waitForSelector('.camp-page');
-  assert.equal(await page.$('.rt-field'),null,'The field is gone after the result is recorded');
+  // Back in the walkable camp: its own field, never the battle's.
+  assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"]')),false,'The battle field is gone after the result is recorded');
   await page.context().close();
-  console.log('ok - real-time campaign: the drill plays in the campaign page (click, pause, T and Enter, abilities), ends in the After-Action Chronicle and is recorded');
+  console.log('ok - real-time campaign: the drill plays in the campaign page (click, pause, F2 and a named save with pictures, T and Enter, abilities), ends in the After-Action Chronicle and is recorded');
+}
+
+// The same drill in the 2D view: the camp and the field drawn flat, the same keys and commands.
+async function realtimeFlat(){
+  const page=await open();await campToDrill(page,'2d');
+  assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"] canvas')),true);
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack in the 2D view'));
+  await page.context().close();
+  console.log('ok - real-time 2D view: the walkable camp and the drill are drawn flat; the list path, the table decision, T and Enter all work');
 }
 
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign].filter(s=>!only?.length||only.includes(s.name))){
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

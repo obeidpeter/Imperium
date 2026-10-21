@@ -711,6 +711,16 @@ export class BattleStage{
     if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}
     if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
   }
+  // A small JPEG of the scene as it stands, for a save: drawn now and read in the same task, while
+  // the drawing buffer still holds it, so it works paused under a panel too. Null if it cannot draw.
+  picture(width=160,height=90){
+    if(this.disposed||this.contextLost||!this.isReady)return null;
+    try{
+      if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);
+      const c=document.createElement('canvas');c.width=width;c.height=height;c.getContext('2d').drawImage(this.canvas,0,0,width,height);
+      return c.toDataURL('image/jpeg',.6);
+    }catch{return null;}
+  }
   // Strained for long enough that the next battle should be built a tier lower.
   get strained(){return (this.strainedFrames??0)>=STRAINED_FRAMES;}
   // A log of painted frames (time, CPU cost, interval) and GPU times for the

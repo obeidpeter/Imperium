@@ -201,7 +201,8 @@ export function createPanels(context){
     const chosen=new Set(settings.realtimeChapters??ALL_CHAPTERS);
     return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
       `conversion</h3><p class="settings-description">Turns keep every 0.38 battle and Contest. Real time opens the standalone skirmish as the real-time `+
-      `arena; a chapter switches only when it is listed below and its real-time encounters exist (none yet in Phase 0).</p>`+
+      `arena; a chapter switches only when it is listed below and its real-time encounters exist (so far Chapters `+
+      `${REALTIME_READY_CHAPTERS.map(roman).join(', ')}, with their walkable camps).</p>`+
       `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
       `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
       `<fieldset class="setting realtime-chapters"><legend>Chapters in real time when ready</legend>${ALL_CHAPTERS.map(c=>`<label><input type="checkbox" `+
