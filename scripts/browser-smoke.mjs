@@ -5,8 +5,9 @@
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
 // (field-object readouts), a field approach chosen at a restored Chapter V camp
 // (with Chapter V's generated scenery and character bodies loaded in 3D),
-// touch at phone width (hold to preview, tap to walk), and the Settings
-// performance check. It fails on any page or console error. Development and CI only: it
+// touch at phone width (hold to preview, tap to walk), the Settings
+// performance check and the 0.40 real-time arena (click to move, pause, step).
+// It fails on any page or console error. Development and CI only: it
 // needs Playwright, which is not a project dependency, and a production build.
 //
 //   npm run build && npm run smoke
@@ -225,8 +226,61 @@ async function performanceCheck(){
   await page.context().close();console.log(`ok - performance check: three qualities rebuilt and measured with no first-frame compiles, the board untouched, results saved (recommends ${report.recommendation})`);
 }
 
+// The 0.40 real-time arena (Phase 0): the development menu sends the
+// standalone skirmish there; a click moves the soldier on the frames that
+// follow; pausing stops the clock while commands still queue; clicking a
+// raider starts the auto-fight; N plays exactly one round while paused.
+async function realtimeArena(){
+  const page=await open();
+  await page.goto(`${base}?dev`);await menuButton(page,'settings');await page.waitForSelector('#controls-model');
+  await page.selectOption('#controls-model','realtime');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const skirmishLink=()=>[...document.querySelectorAll('a')].find(a=>/standalone skirmish/i.test(a.textContent))?.getAttribute('href')??'';
+  await page.waitForFunction(`/showcase\\/arena\\.html$/.test((${skirmishLink})())`,null,{timeout:10000})
+    .catch(async()=>assert.fail(`The skirmish opens the arena under real time (its link reads ${await page.evaluate(skirmishLink)})`));
+  await page.addInitScript(()=>{try{localStorage.setItem('imperium.arena',JSON.stringify({quality:'performance'}));}catch{}});
+  await page.goto(`${base}showcase/arena.html`);await page.waitForSelector('#scene[data-ready="true"]');await page.click('#begin-button');
+  const arena=fn=>page.evaluate(fn);
+  const hero=()=>arena(()=>{const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);return {x:h.x,z:h.z,drawn:h.drawn,lock:h.lock,tick:w.tick};});
+  const box=await page.locator('#scene').boundingBox(),start=await hero();
+  await page.mouse.move(box.x+box.width*.6,box.y+box.height*.45);await page.mouse.down();await page.mouse.up();
+  const step=(label,promise)=>promise.catch(async error=>assert.fail(`${label}: ${error.message.split('\n')[0]} (${await page.evaluate(()=>{
+    const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);
+    return JSON.stringify({tick:w.tick,status:w.status,paused:window.__arena.clock.paused,lock:h.lock,order:h.order,drawn:h.drawn,queue:w.queue,
+      message:document.querySelector('#message-line')?.textContent,event:document.querySelector('#event-line')?.textContent});})})`));
+  await step('The click moves the soldier',page.waitForFunction(([x,z])=>{const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000}));
+  const frames=await arena(()=>window.__arena.metrics.clickFrames.at(-1));
+  await page.click('#pause-button');const paused=(await hero()).tick;await page.waitForTimeout(800);
+  assert.equal((await hero()).tick,paused,'No tick runs while paused');
+  await page.focus('#scene');await page.keyboard.press('Space');
+  assert.equal((await hero()).drawn,false,'Space while paused only queues');
+  await page.click('#pause-button');await step('The queued Space draws on resume',page.waitForFunction(()=>{const w=window.__arena.world();return w.actors.find(a=>a.id===w.controlled).drawn;},null,{timeout:60000}));
+  // Paused, the raiders hold still to be clicked; the overview shows every man, and a raider is
+  // chosen whose body is clear of the bars over the scene. The order waits for the resume.
+  await page.click('#pause-button');await page.focus('#scene');await page.keyboard.press('z');
+  await step('The overview camera settles',page.waitForFunction(()=>{const s=window.__arena.stage();return s.cameraView==='overview'&&s.cameraSettled;},null,{timeout:120000}));
+  const enemy=await arena(()=>{
+    const s=window.__arena.stage(),w=window.__arena.world(),r=s.canvas.getBoundingClientRect();
+    for(const e of w.actors.filter(a=>a.side==='enemy'&&a.alive)){
+      const p=s.actors.get(e.id).group.position.clone();p.y+=1.1;p.project(s.camera);const x=r.left+(p.x+1)/2*r.width,y=r.top+(1-p.y)/2*r.height;
+      if(document.elementFromPoint(x,y)===s.canvas)return {id:e.id,x,y};
+    }
+    return null;});
+  assert.ok(enemy,'A raider is in view');
+  await page.mouse.move(enemy.x,enemy.y);await page.mouse.down();await page.mouse.up();
+  assert.equal(await arena(()=>window.__arena.world().queue.at(-1)?.kind),'attack','The click on a raider is an attack, queued while paused');
+  await page.click('#pause-button');
+  await step('Clicking a raider locks him',page.waitForFunction(id=>window.__arena.world().actors.find(a=>a.id==='hero').lock===id,enemy.id,{timeout:60000}));
+  await page.click('#pause-button');const before=(await hero()).tick;await page.click('#step-button');
+  await page.waitForFunction(t=>window.__arena.world().tick>=t+200&&window.__arena.clock.paused&&!window.__arena.clock.stepTicks,before,{timeout:600000});
+  assert.equal((await hero()).tick,before+200,'N plays exactly one round');
+  await page.context().close();
+  console.log(`ok - real-time arena: the dev menu routes the skirmish there; a click moved the soldier (${frames} frame${frames===1?'':'s'} after it); pause stops the clock while Space queues; clicking a raider locks him; N plays 200 ticks`);
+}
+
 let failed=false;
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck]){
+// SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
+const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

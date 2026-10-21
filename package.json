@@ -19,6 +19,7 @@
     "audit:production": "node scripts/build-character-performance.mjs --check && node scripts/audit-character-production.mjs",
     "benchmark": "node scripts/benchmark-campaign.mjs",
     "benchmark:stage": "node scripts/benchmark-stage.mjs",
+    "benchmark:arena": "node scripts/arena-benchmark.mjs",
     "autoplay:production": "node scripts/production-autoplay.mjs",
     "art:handoff": "node scripts/build-character-handoff.mjs",
     "audit:handoff": "node scripts/check-character-handoff.mjs",
