@@ -72,12 +72,12 @@ export function protectCoalition(s,call){
 
 // New Game and public commands throughout. The low-supply profile purchases
 // real deployment packages; it does not inject an empty treasury or a victory.
-export function runCommandCampaign({alternate=false,difficulty='standard',seed=275,lowSupply=false,caseVariant=0,featureEdition=34,onCheckpoint=null,onEncounter=null}={}){
+export function runCommandCampaign({alternate=false,difficulty='standard',seed=275,lowSupply=false,caseVariant=0,featureEdition=34,onCheckpoint=null,onEncounter=null,beforeCamp=null}={}){
   const plans=[],cases=[],opportunities=[];
   let minimumSupplies=99;
   const call=(s,name,...args)=>{const r=G[name](s,...args);assert.ok(r.ok,`${name}: ${r.message}`);G.deserialize(G.serialize(s));return r;};
   const r=runProgressionCampaign({
-    featureEdition,alternate,difficulty,seed,
+    featureEdition,alternate,difficulty,seed,beforeCamp,
     onCheckpoint(s){
       const company=G.companyPlan(s);
       if(lowSupply&&company.enabled){

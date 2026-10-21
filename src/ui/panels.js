@@ -202,7 +202,7 @@ export function createPanels(context){
     return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
       `conversion</h3><p class="settings-description">Turns keep every 0.38 battle and Contest. Real time opens the standalone skirmish as the real-time `+
       `arena; a chapter switches only when it is listed below and its real-time encounters exist (so far Chapters `+
-      `${REALTIME_READY_CHAPTERS.map(roman).join(', ')}, with their walkable camps).</p>`+
+      `${REALTIME_READY_CHAPTERS.map(roman).join(', ')}; Chapters I–III also have walkable camps).</p>`+
       `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
       `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
       `<fieldset class="setting realtime-chapters"><legend>Chapters in real time when ready</legend>${ALL_CHAPTERS.map(c=>`<label><input type="checkbox" `+
@@ -224,7 +224,8 @@ export function createPanels(context){
       `<th scope="col">GPU, slowest 5%</th><th scope="col">Longest freeze</th><th scope="col">Target</th></tr></thead><tbody>${rows}</tbody></table></div>`+
       `<p>Recommended for this device: <strong>${label[recommended]}</strong>${recommended===current?' (your current setting)':''}.</p>`+
       `${report.simulation?`<p class="settings-description">Real-time simulation (0.40, in development): one tick takes ${report.simulation.actors15.p95} ms `+
-        `with 15 men and ${report.simulation.actors82.p95} ms with 82 (slowest 5%; budget ${report.simulation.budgetMs} ms).</p>`:''}`+
+        `with 15 men, ${report.simulation.actors82.p95} ms with 82${report.simulation.squads6?` and ${report.simulation.squads6.p95} ms with six squads and the party`:''} `+
+        `(slowest 5%; budget ${report.simulation.budgetMs} ms).</p>`:''}`+
       `<p class="settings-description">Graphics: ${esc(report.device.renderer??'unknown')}${report.device.software?' (software rendering)':''}. The file `+
       `lists this browser, graphics chip and screen size beside the measurements, and stays on this `+
       `device unless you share it.</p>${actions(`<button class="primary" data-cmd="performance-check-save">Save results `+

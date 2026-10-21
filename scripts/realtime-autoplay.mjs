@@ -1,7 +1,8 @@
 // A simple heuristic player for real-time campaign encounters: it plays the
-// soldier through the same legal Commands a person gives (queueCommand), from
-// New Game, and never touches the world otherwise. Companions follow their
-// standing orders. Used by the tests, the Gate 2 deadline sweep and
+// soldier, and from Chapter IV commands his squads, through the same legal
+// Commands a person gives (queueCommand), from New Game, and never touches the
+// world otherwise. Companions follow their standing orders. Used by the tests,
+// the Gate 2 deadline sweep (realtime-sweep.mjs) and
 // `node scripts/realtime-autoplay.mjs` (development only).
 import {pathToFileURL} from 'node:url';
 import * as G from '../src/core/game.js';
@@ -12,6 +13,11 @@ import {span} from '../src/core/realtime/navigation.js';
 import {playEncounter} from './autoplay.mjs';
 import {controlsFor} from '../src/core/controls-model.js';
 import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
+import {fielded,membersOf,squadCentre} from '../src/core/realtime/squads.js';
+import {formationGroup} from '../src/core/realtime/command.js';
+import {rallyRadius} from '../src/core/realtime/specialists.js';
+import {MORALE} from '../src/data/realtime-squads.js';
+import {ESCORT_RULES} from '../src/data/realtime-rules.js';
 
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
 const nearest=(list,p)=>list.reduce((b,o)=>!b||distanceBetween(o,p)<distanceBetween(b,p)?o:b,null);
@@ -39,14 +45,20 @@ export function heroDecision(world,memo={}){
   if(hero.hp<hero.maxHp*.45&&(hero.bandages??0)>0&&!attacker.length&&!hero.carrying){issue(world,'ability',{abilityId:'bind_wounds'});return;}
   if(attacker.length&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(nearest(attacker,hero));return;}
   if(!m){fight(nearest(enemies,hero));return;}
+  // A protected man who cannot yet walk: bind his wounds, or carry him.
+  const columns=m.escorts.map(id=>actorById(world,id)).filter(Boolean),assist=()=>{
+    const wounded=columns.find(c=>liftable(c)&&!c.escort?.escorted);if(!wounded||hero.carrying)return false;
+    if((hero.bandages??0)>0&&issue(world,'ability',{abilityId:'bind_wounds',targetId:wounded.id}))return true;
+    if(hero.drawn)issue(world,'setDrawn',{drawn:false});return issue(world,'ability',{abilityId:'carry',targetId:wounded.id});
+  };
   switch(m.mode){
     case 'extract':{
-      const columns=m.escorts.map(id=>actorById(world,id)).filter(Boolean),wounded=columns.find(c=>liftable(c)&&!c.escort?.escorted);
-      if(wounded){
-        if((hero.bandages??0)>0&&!hero.carrying){issue(world,'ability',{abilityId:'bind_wounds',targetId:wounded.id});return;}
-        if(!hero.carrying){if(hero.drawn)issue(world,'setDrawn',{drawn:false});issue(world,'ability',{abilityId:'carry',targetId:wounded.id});return;}
-      }
+      if(assist())return;
       if(hero.carrying){go(m.goal);return;}
+      // A column threatened with none of ours beside it halts: stand by it first.
+      const exposed=columns.find(c=>standing(c)&&enemies.some(o=>distanceBetween(o,c)<=ESCORT_RULES.halt)&&
+        !world.actors.some(f=>f!==c&&standing(f)&&(f.side==='player'||f.side==='ally')&&distanceBetween(f,c)<=ESCORT_RULES.cover));
+      if(exposed){go({x:exposed.x,z:exposed.z});return;}
       const close=nearest(enemies.filter(o=>columns.some(c=>distanceBetween(c,o)<8)||distanceBetween(o,hero)<8),hero);
       if(close&&!memo.passive){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(close);return;}
       const lag=columns.filter(c=>standing(c)&&span(c.x-m.goal.x,c.z-m.goal.z)>m.radius*.6).reduce((b,c)=>!b||span(c.x-m.goal.x,c.z-m.goal.z)>span(b.x-m.goal.x,b.z-m.goal.z)?c:b,null);
@@ -64,7 +76,9 @@ export function heroDecision(world,memo={}){
     case 'hold':case 'capture':{
       const target=m.points.find(p=>!p.secured)??m.goal;
       const threat=nearest(enemies.filter(o=>span(o.x-target.x,o.z-target.z)<=m.radius*1.6||distanceBetween(o,hero)<6),hero);
-      if(threat){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(threat);return;}
+      if(threat&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(threat);return;}
+      // A rescue counts once the stranded party can move (0.38 operationQualified).
+      if(m.rescue&&assist())return;
       if(span(hero.x-target.x,hero.z-target.z)>m.radius*.5)go(target);
       return;
     }
@@ -75,6 +89,34 @@ export function heroDecision(world,memo={}){
   }
 }
 
+// The commander (from Chapter IV, where the soldier has squads), by legal orders
+// only: he forms his leading squads in line from Chapter V, steadies a shaken
+// squad with Restore morale, sends a free squad at an enemy band that comes
+// close (except in an evacuation, where they screen the column), and rallies
+// (from Chapter VI) when squads near him waver or the chapter still asks for
+// it. Companions keep their standing orders.
+export function commandDecision(world,memo={}){
+  const hero=actorById(world,world.controlled);if(!world.command||!hero||!standing(hero)||hero.carrying)return;
+  const ours=(world.squads??[]).filter(q=>q.side!=='enemy'&&fielded(world,q));if(!ours.length)return;
+  const order=(squads,o)=>queueCommand(world,{actorId:world.controlled,kind:'order',payload:{squads,order:o}}).ok;
+  const owed=id=>world.mission?.required?.includes(id)&&!world.used.includes(id);
+  // Rally costs no Command, only Stamina.
+  const near=ours.filter(q=>{const c=squadCentre(world,q);return span(c.x-hero.x,c.z-hero.z)<=rallyRadius(hero);});
+  if(near.length&&!hero.action&&(near.some(q=>q.broken||q.morale<MORALE.shaken+20||q.suppression>=2)||owed('rally'))&&issue(world,'ability',{abilityId:'rally'}))return;
+  for(const q of ours)if(q.morale<=MORALE.shaken&&!q.pending&&order([q.id],{kind:'restore'}))return;
+  // Read from the world, not remembered, so a battle reloaded from its save plays on exactly as before.
+  if(world.chapter>=5&&!world.used.includes('formation')&&!ours.some(q=>q.pending)&&(owed('formation')||!ours.some(q=>q.formation))){const group=formationGroup(world,ours.map(q=>q.id)).joins;if(group.length&&order(group,{kind:'line'}))return;}
+  // In an evacuation the squads keep screening the column (their standing orders); elsewhere a free one meets a band that closes.
+  const bands=world.mission?.mode==='extract'?[]:(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q)&&!q.broken&&q.role!=='archer'&&membersOf(world,q).some(m=>!m.hidden));
+  for(const q of ours){
+    if(q.order||q.pending||q.broken)continue;const c=squadCentre(world,q);
+    const band=bands.map(b=>({b,d:span(squadCentre(world,b).x-c.x,squadCentre(world,b).z-c.z)})).filter(x=>x.d<=20).sort((a,b)=>a.d-b.d)[0]?.b;
+    if(band&&order([q.id],{kind:'attack',targetId:band.id}))return;
+  }
+  // The chapter's Order still owed: the leading squad is steadied (an order that changes no plan).
+  if(owed('order'))order([ours[0].id],{kind:'restore'});
+}
+
 // Play the encounter's live world to its end; the chronicle learns the outcome.
 export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null}={}){
   const world=G.realtimeWorld(state),watch=companionWatch();
@@ -83,7 +125,7 @@ export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null}={
   if(deploying(world)){const hero=world.actors.find(a=>a.id===world.heroId);deploy(world,{id:hero.id,x:hero.x,z:hero.z});soundTheAdvance(world);}
   const limit=maxRounds*200;
   for(let t=0;t<limit&&world.status==='active';t++){
-    if(world.tick%every===0)heroDecision(world,memo);
+    if(world.tick%every===0){commandDecision(world,memo);heroDecision(world,memo);}
     step(world);watch(world);onTick?.(world);
   }
   const resolved=G.resolveRealtime(state,world);if(!resolved.ok&&world.status!=='active')throw new Error(resolved.message);
@@ -112,17 +154,21 @@ export function companionWatch(){
 
 // From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere.
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null}={}){
+  ready=undefined,onEncounter=null,play=playRealtime}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
     if(state.phase==='camp'){
       if(!state.decisions[chapter.decision.id]){const r=G.choose(state,choices[chapter.decision.id]??chapter.decision.options[0].id);if(!r.ok)throw new Error(r.message);}
       if(state.chapter===1&&state.encounterIndex>0&&!state.oath)G.swearOath(state);
+      // The camp's choices the 0.38 autoplay makes too: Chapter VII's drill, VIII's safe passage, IX's flank march.
+      if(state.chapter===7&&!state.preparation)G.prepare(state,'drill');
+      if(state.chapter===8&&!state.negotiation)G.negotiate(state,'safe-passage');
+      if(state.chapter===9&&!state.stratagem)G.selectStratagem(state,'flank');
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){
-      const summary=G.isRealtime(state)?playRealtime(state):playEncounter(state);encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+      const summary=G.isRealtime(state)?play(state):playEncounter(state);encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
       if(state.encounter.status!=='won')throw new Error(`Real-time autoplay lost ${state.encounter.id}: ${summary.reason??''}\n${state.encounter.log.slice(-8).join('\n')}`);
       const r=G.commitEncounter(state);if(!r.ok)throw new Error(r.message);
     }else if(state.phase==='promotion'){const r=G.advanceChapter(state);if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);}
