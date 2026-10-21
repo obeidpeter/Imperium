@@ -27,11 +27,12 @@ export function validateWorld(world,fail){
   }
   if(!Array.isArray(world.party)||world.party.length>3||world.party.some(id=>!world.actors.some(a=>a.id===id)))fail('real-time party.');
   if(!world.actors.some(a=>a.id===world.heroId)||!world.actors.some(a=>a.id===world.controlled))fail('real-time soldier.');
-  for(const [key,max]of [['projectiles',400],['queue',400],['objects',60],['log',200],['used',40],['reveals',20],['spoils',60]])
+  for(const [key,max]of [['projectiles',400],['queue',400],['objects',60],['log',200],['used',40],['reveals',20],['spoils',60],['provoked',40]])
     if(!Array.isArray(world[key])||world[key].length>max)fail(`real-time ${key}.`);
   if(world.log.some(l=>!l||!str(l.text,400)||!int(l.tick,0,1e7)))fail('real-time battle log.');
   if(world.queue.some(c=>!c||!str(c.actorId,40)||!str(c.kind,20)||!int(c.tick,0,1e7)))fail('real-time command queue.');
   if(world.spoils.some(s=>!s||!ITEMS[s.itemId]||!str(s.from,40)))fail('real-time spoils.');
+  if(world.provoked.some(p=>!p||!str(p.id,40)||!str(p.name)||!int(p.tick,0,1e7)))fail('real-time provocations.');
   if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
   const mission=world.mission;
   if(mission!==null&&mission!==undefined){

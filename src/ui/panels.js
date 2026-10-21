@@ -374,14 +374,20 @@ export function createPanels(context){
     const intro=state?`<p class="eyebrow">CHAPTER ${roman(state.chapter)} · ${esc(state.rank)}</p><h3>${esc(state.name)}</h3>`+
       `<p>${esc(phaseLabel(state.phase))}. Opening a panel does not advance a turn.</p>`
       :'<p class="eyebrow">IMPERIUM</p><p>A Roman career, from the first oath to the imperial purple.</p>';
+    const fight=state?.phase==='encounter'&&state.encounter?.controls==='realtime'&&state.encounter.status==='active'
+      ?`<div class="menu-group">${item('command-list','Command list','Every action as lists, with Use; it works while paused.')}</div>`:'';
     const begin=state?item('continue','Continue the chronicle','Return to your current orders.',screen==='game')
       :item('new','Begin your chronicle','Start as a recruit in AD 250.');
     const chronicle=state?`<div class="menu-group">${item('map','Campaign','Your current chapter and earned progress.')}`+
       `${item('character','Character & equipment','Your rank, possessions, and company.')}`+
       `${item('journal','Mission journal','Orders, decisions, and the service record.')}`+
-      `${item('ledger','Obligations & alliances','Who is owed what, and when.')}</div>`:'';
+      `${item('ledger','Obligations & alliances','Who is owed what, and when.')}</div>`+
+      `<div class="menu-group">${[['kit','Kit and pack (I)','What you wear and carry, and your coin.'],['character','Your soldier (C)','Attributes, training points and techniques.'],
+        ['decorations','Decorations & titles (A)','Honours and what each gives.'],['company','Company & standing orders (R)','Who marches with you, and how they fight.'],
+        ['chronicle','The chronicle (L)','The story so far, page by page.']].map(([id,label,text])=>
+        `<button class="menu-link" data-cmd="soldier-panel" data-id="${id}"><strong>${label}</strong><span>${text}</span></button>`).join('')}</div>`:'';
     showModal('Your way through the chronicle',`<div class="menu-intro panel-lead">${intro}</div><nav class="menu-links" aria-label="Main navigation">`+
-      `<div class="menu-group">${begin}${item('home','Title & introduction','The game, its world, and how to begin.',screen==='title')}</div>${chronicle}`+
+      `${fight}<div class="menu-group">${begin}${item('home','Title & introduction','The game, its world, and how to begin.',screen==='title')}</div>${chronicle}`+
       `<div class="menu-group">${item('settings','Settings & saves','Display, sound, offline content, and backups.')}`+
       `${item('help','Controls & rules','A guide to battles and political Contests.')}`+
       `${item('history','Historical notes','The sources and deliberate adaptations.')}`+

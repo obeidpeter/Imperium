@@ -165,7 +165,7 @@ test('D19: Brace and Throw pilum validate with reason codes and spend only on su
   // Out of range, not hostile, no ammunition.
   assert.equal(validate(duel({aAt:[1.2,1.2],bAt:[19,19]}),'hero','throw_pilum',{actorId:'r'}),'OUT_OF_RANGE','25.2 m is beyond 25');
   assert.equal(validate(duel({aAt:[1.2,1.2],bAt:[18.5,18.5]}),'hero','throw_pilum',{actorId:'r'}),null,'24.5 m is within it');
-  assert.equal(validate(w,'hero','throw_pilum',{actorId:'hero'}),'NOT_HOSTILE');
+  assert.equal(validate(w,'hero','throw_pilum',{actorId:'hero'}),'FRIENDLY','never at your own side');
   const before=hero.ammo.pilum;assert.ok(queueCommand(w,{actorId:'hero',kind:'ability',payload:{abilityId:'throw_pilum',targetId:'r'}}).ok);
   // Interrupted before release: nothing spent.
   step(w);step(w);assert.equal(hero.action?.kind,'throw');queueCommand(w,{actorId:'hero',kind:'move',payload:{x:3,z:15}});step(w);

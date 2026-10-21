@@ -347,5 +347,6 @@ export function commitSoldierRewards(state,e){
   const decorations=awardDecorations(state,e.id),denarii=donativeFor(e.id);s.denarii+=denarii;
   // What the soldier took from the field goes to his pack, or to the camp ground if it is full.
   const spoils=(e.staged?.spoils??[]).filter(id=>ITEMS[id]);for(const id of spoils)stow(s,id,`camp:${state.chapter}`);
+  for(const line of e.staged?.journal??[])if(typeof line==='string')state.log.push(line.slice(0,240));
   return {tp,decorations,denarii,spoils};
 }

@@ -33,7 +33,7 @@ export function validate(world,actorId,abilityId,target={}){
   if(other&&!other.alive)return 'TARGET_DOWN';
   if(other?.hidden&&hostile(actor,other))return 'NO_TARGET';
   if(abilityId==='strike'){
-    if(!other)return 'NO_TARGET';if(other.down)return 'TARGET_DOWN';if(!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';return null;
+    if(!other)return 'NO_TARGET';if(other.down)return 'TARGET_DOWN';if(!hostile(actor,other))return other.side!=='neutral'?'FRIENDLY':target.forced?null:'NOT_HOSTILE';return null;
   }
   if(actor.carrying&&abilityId!=='carry')return 'CARRYING';
   if(abilityId==='brace'){
@@ -52,14 +52,14 @@ export function validate(world,actorId,abilityId,target={}){
     if(recovering(world,actor,abilityId))return 'RECOVERING';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
   }
   if(abilityId==='shield_bash'){
-    if(!shieldOf(actor))return 'NO_SHIELD';if(!other)return 'NO_TARGET';if(!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';
+    if(!shieldOf(actor))return 'NO_SHIELD';if(!other)return 'NO_TARGET';if(!hostile(actor,other)&&(other.side!=='neutral'||!target.forced))return other.side!=='neutral'?'FRIENDLY':'NOT_HOSTILE';
     if(recovering(world,actor,abilityId))return 'RECOVERING';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
   }
   if(ability.effects?.[0]?.type==='missile'){
     const missile=ability.effects[0].missile,kind=ability.cost.ammo;
     if(!((actor.ammo?.[kind]??0)>0))return 'NO_AMMO';
     const point=other??(Number.isFinite(target.x)&&Number.isFinite(target.z)?target:null);
-    if(!point)return 'NO_TARGET';if(other&&!hostile(actor,other)&&!target.forced)return 'NOT_HOSTILE';
+    if(!point)return 'NO_TARGET';if(other&&!hostile(actor,other)&&(other.side!=='neutral'||!target.forced))return other.side!=='neutral'?'FRIENDLY':'NOT_HOSTILE';
     if((actor.cooldowns?.[abilityId]??0)>world.tick)return 'RECOVERING';
     if(distanceBetween(actor,point)>missileRange(world,actor,missile,point))return 'OUT_OF_RANGE';
     return null;

@@ -240,7 +240,8 @@ function validateEncounter(e,fail){
     const st=e.staged;
     if((st.killTP!==undefined&&!(Number.isInteger(st.killTP)&&st.killTP>=0&&st.killTP<=240))||(st.commendations!==undefined&&(!Array.isArray(st.commendations)
       ||st.commendations.length>3||st.commendations.some(c=>!c||typeof c.id!=='string'||c.id.length>40||!(Number.isInteger(c.tp)&&c.tp>=1&&c.tp<=3))))
-      ||(st.spoils!==undefined&&(!Array.isArray(st.spoils)||st.spoils.length>60||st.spoils.some(id=>!REALTIME_ITEMS[id]))))fail('real-time staged rewards.');
+      ||(st.spoils!==undefined&&(!Array.isArray(st.spoils)||st.spoils.length>60||st.spoils.some(id=>!REALTIME_ITEMS[id])))
+      ||(st.journal!==undefined&&(!Array.isArray(st.journal)||st.journal.length>40||st.journal.some(l=>typeof l!=='string'||l.length>240))))fail('real-time staged rewards.');
   }
 }
 function validateCareerFields(state,fail){

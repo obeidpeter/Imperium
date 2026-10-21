@@ -34,7 +34,7 @@ export function createWorld({map,seed,actors,controlled='hero',options={},weathe
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
-    queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[]};
+    queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[],provoked:[]};
 }
 
 export const roundOf=world=>Math.floor(world.tick/TIME.roundTicks)+1;
@@ -98,10 +98,18 @@ export function queueCommand(world,command){
 const emit=(world,event)=>{world.events.push({tick:world.tick,...event});};
 const endBrace=actor=>{actor.braceUntil=0;};
 
+// Shift+click on a neutral (guide "Fighting"): he turns hostile at once, and the
+// chronicle records it when the result is recorded (Public Confidence pays).
+function provoke(world,actor,targetId){
+  const other=actorById(world,targetId);if(!other||other.side!=='neutral')return;
+  other.side='enemy';other.provokedBy=actor.id;if(other.ai){other.ai.state='engage';other.ai.focus=actor.id;other.ai.notice[actor.id]=100;}
+  world.provoked.push({id:other.id,name:other.name,by:actor.id,tick:world.tick});emit(world,{kind:'provoked',actorId:actor.id,targetId:other.id});
+}
 // System 1: commands become intents.
 function applyCommand(world,command){
   const actor=actorById(world,command.actorId),p=command.payload,reason=commandProblem(world,command);
   if(reason){emit(world,{kind:'rejected',actorId:command.actorId,reason});return;}
+  if(p.forced&&p.targetId&&['attack','ability'].includes(command.kind))provoke(world,actor,p.targetId);
   switch(command.kind){
     case 'move':{
       cancelAction(world,actor);endBrace(actor);actor.lock=null;actor.order={kind:'move',...(actor.carrying?{setDown:true}:{})};
@@ -209,6 +217,7 @@ function logLine(world,e){
     case 'work-stopped':return `${by}'s work is interrupted.`;
     case 'capability-needed':return `The objective is held, but you must still demonstrate: ${e.missing.join(', ')}.`;
     case 'war-cry':return `${by} raises the war cry. The companions answer.`;
+    case 'provoked':return `${by} strikes ${to}, who was no enemy: he turns on the party.`;
     case 'taken':return `${by} takes ${e.items.map(id=>ITEMS[id]?.name.toLowerCase()??id).join(', ')} from ${to}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;

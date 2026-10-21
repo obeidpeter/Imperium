@@ -1,6 +1,6 @@
-import {ABILITIES,REASONS} from '../../data/realtime-rules.js';
+import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,forecast,hostile,liftable,validate} from './abilities.js';
-import {routePreview} from './simulation.js';
+import {commandProblem,commandable,routePreview} from './simulation.js';
 import {objectById} from './motion.js';
 
 // What the pointer would do where it is (§3.14): a cursor state, the message
@@ -100,4 +100,51 @@ export function nearestUse(world,{actorId=world.controlled}={}){
     ...world.actors.filter(o=>o!==actor&&(o.alive&&!hostile(actor,o)&&(o.talk||liftable(o))||!o.alive&&o.loot?.length)).map(o=>({d:distanceBetween(actor,o),pick:{actorId:o.id}}))]
     .filter(t=>t.d<=3).sort((a,b)=>a.d-b.d);
   return things.length?pointerIntent(world,{actorId,pick:things[0].pick,button:'left'}):null;
+}
+
+// The Command list (guide "Command list", build brief §3.16): everything the
+// chosen man can be told to do, grouped by what it acts on — himself, the
+// enemies in sight, friends, objects, the fallen and places — each with the
+// Command a Use gives, or the reason it cannot be given now. It reaches every
+// action the scene's pointer and keys reach, and works while paused. Pure.
+export function commandOptions(world,{actorId=world.controlled}={}){
+  const actor=actorById(world,actorId),out=[];if(!actor||!commandable(world,actor))return out;
+  const known=FIELD_ORDER.filter(id=>(actor.abilities??FIELD_BAR).includes(id)&&!ABILITIES[id].enemyOnly);
+  const add=(group,label,command,{detail='',subject=null}={})=>{
+    const reason=commandProblem(world,command);
+    out.push({group,label,subject,command:reason?null:command,reason,message:reason?REASONS[reason]??'That cannot be done now.':null,detail});
+  };
+  const order=(kind,payload={})=>({actorId:actor.id,kind,payload});
+  const near=(a,b)=>distanceBetween(actor,a)-distanceBetween(actor,b)||(a.id<b.id?-1:1),m=n=>`${Math.round(n)} m`;
+  // Himself.
+  add('Yourself',actor.drawn?'Sheathe weapons':'Draw weapons',order('setDrawn',{drawn:!actor.drawn}));
+  add('Yourself',actor.walkMode?'Run on far orders':'Walk everywhere',order('setWalk',{walk:!actor.walkMode}));
+  add('Yourself','Stop',order('stop'));
+  for(const id of known.filter(id=>ABILITIES[id].target==='self'||ABILITIES[id].selfIfNoTarget))add('Yourself',ABILITIES[id].name,order('ability',{abilityId:id}));
+  if(actor.carrying)add('Yourself','Set him down here',order('ability',{abilityId:'carry'}));
+  add('Yourself','Raise the war cry',order('warCry'));
+  // Enemies in sight.
+  for(const e of world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near)){
+    const f=forecast(world,actor.id,'strike',{actorId:e.id});
+    add('Enemies',`Attack ${e.name}`,order('attack',{targetId:e.id}),{subject:e.id,detail:`${m(distanceBetween(actor,e))}. ${f.blow?blowSummary(f):''}`});
+    for(const id of known.filter(id=>id!=='strike'&&ABILITIES[id].target==='enemy'))add('Enemies',`${ABILITIES[id].name}: ${e.name}`,order('ability',{abilityId:id,targetId:e.id}),{subject:e.id});
+  }
+  // Friends and neutrals: tend, lift, talk, take control, or force an attack on a neutral.
+  for(const o of world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)&&!o.carriedBy).sort(near)){
+    const where=m(distanceBetween(actor,o));
+    if(known.includes('bind_wounds'))add('Friends',`Bind wounds: ${o.name}`,order('ability',{abilityId:'bind_wounds',targetId:o.id}),{subject:o.id,detail:`${where}, ${o.hp} of ${o.maxHp} Health${o.down?', down':''}.`});
+    if(known.includes('carry')&&liftable(o))add('Friends',`Lift ${o.name}`,order('ability',{abilityId:'carry',targetId:o.id}),{subject:o.id,detail:where});
+    if(o.talk)add('Friends',`Talk to ${o.name}`,order('talk',{targetId:o.id}),{subject:o.id,detail:where});
+    if(commandable(world,o)&&o.id!==world.controlled)add('Friends',`Take control of ${o.name}`,{actorId:o.id,kind:'control',payload:{}},{subject:o.id});
+    if(o.side==='neutral')add('Friends',`Force an attack on ${o.name}`,order('attack',{targetId:o.id,forced:true}),{subject:o.id,detail:'He is no enemy: striking him turns him hostile and costs Public Confidence.'});
+  }
+  // Objects, the fallen and places.
+  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near))add('Objects',`Use: ${o.name}`,order('interact',{objectId:o.id}),{subject:o.id,detail:m(distanceBetween(actor,o))});
+  for(const b of world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near))add('The fallen',`Search ${b.name}`,order('loot',{targetId:b.id}),{subject:b.id,detail:m(distanceBetween(actor,b))});
+  const places=[];
+  if(world.mission?.goal)places.push({name:'The objective marker',x:world.mission.goal.x,z:world.mission.goal.z});
+  for(const p of world.mission?.points??[])if(!p.secured)places.push({name:'A position to secure',x:p.x,z:p.z});
+  if(actor.id!==world.heroId){const h=actorById(world,world.heroId);if(h?.alive)places.push({name:`Beside ${h.name}`,x:h.x,z:h.z});}
+  for(const p of places)add('Places',`Move to ${p.name.toLowerCase().startsWith('beside')?p.name:p.name.toLowerCase()}`,order('move',{x:p.x,z:p.z}),{detail:m(distanceBetween(actor,p))});
+  return out;
 }

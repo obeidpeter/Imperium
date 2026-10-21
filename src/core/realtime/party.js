@@ -129,7 +129,9 @@ export function decideFriend(world,actor){
 }
 
 // The company panel's summary sentence for four slots (§3.7).
-const WORDS={hero:n=>n,any_companion:()=>'any companion',any_ally:()=>'any ally',hero_target:n=>`${n}’s target`,hero_attacker:n=>`whoever attacks ${n}`,
+// "you" takes "your"; a name takes "’s".
+const possessive=n=>n==='you'?'your':`${n}’s`;
+const WORDS={hero:n=>n,any_companion:()=>'any companion',any_ally:()=>'any ally',hero_target:n=>`${possessive(n)} target`,hero_attacker:n=>`whoever attacks ${n}`,
   nearest_enemy_to_hero:n=>`the enemy nearest ${n}`,strongest_enemy:()=>'the strongest enemy',weakest_enemy:()=>'the weakest enemy',
   enemy_archers:()=>'the enemy archers',enemy_officer:()=>'an enemy officer or standard-bearer'};
 const word=(w,hero,names={})=>w?.startsWith('companion:')?names[w.slice(10)]??'a companion':(WORDS[w]??(()=>w))(hero);
@@ -139,7 +141,7 @@ export function summarizeOrders(slots,{hero='the soldier',names={}}={}){
       case 'guard':{const who=word(target,hero,names);return `guard ${who} against whoever attacks him`;}
       case 'attack':return target==='hero_target'?`strike ${word(target,hero,names)}`:`attack ${word(target,hero,names)}`;
       case 'throw_pilum':return `throw a pilum at ${word(target,hero,names)}`;
-      case 'bind_wounds':return `bind the wounds of ${word(target,hero,names)} below half Health`;
+      case 'bind_wounds':return target==='hero'&&hero==='you'?'bind your wounds below half Health':`bind the wounds of ${word(target,hero,names)} below half Health`;
       case 'follow_close':return 'follow close';
       case 'follow_far':return 'follow at a distance';
       case 'stay_hidden':return 'stay hidden and never strike first';

@@ -20,6 +20,10 @@ import {normalizeControls,controlsFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
 import {DEFAULT_KEYMAP} from './action-map.js';
 import {ITEMS} from '../data/items.js';
+import {TRAINERS} from '../data/soldier.js';
+import {actionFor} from './action-map.js';
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,quartermasterPanel,trainerPanel,
+  adoptPanel,missionOrdersPanel,chroniclePanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -254,10 +258,35 @@ function fieldCallbacks(){
     onLoot:id=>fieldLoot(id)
   };
 }
-function fieldPanel(name){
-  if(name==='journal'||name==='orders')showJournal();
-  else if(name==='help')showModal('Rules & controls',realtimeHelp());
-  else toast('That panel arrives later in the 0.40 conversion.');
+// The panel keys (guide "Panels"), in the field and in camp.
+function openPanel(name){
+  if(['kit','character','decorations','company','orders'].includes(name))showSoldierPanel(name==='orders'?'mission':name);
+  else if(name==='journal')showJournal();
+  else if(name==='chronicle')showSoldierPanel('chronicle');
+  else if(name==='map'||name==='overlay')showMap();
+  else if(name==='options')showSettings();
+  else if(name==='help')Game.isRealtime(state)?showModal('Rules & controls',realtimeHelp()):showHelp();
+}
+const fieldPanel=name=>openPanel(name);
+// The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
+// and the panel is drawn again with the focus where it was.
+let kitSelected=null,soldierPanel=null;
+function showSoldierPanel(name,arg=null){
+  if(!state)return;
+  soldierPanel={name,arg};const world=field?.runtime?.world??null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
+  const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils})],character:()=>['Your soldier',soldierCharacterPanel(state)],
+    decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],
+    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],adopt:()=>['Your soldier’s training',adoptPanel(state)],
+    mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
+  const [title,body]=(panels[name]??panels.character)();
+  const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
+    .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
+  showModal(title,body);modal.dataset.soldier=name;
+  if(keep){const again=modal.querySelector(keep);if(again&&!again.disabled)again.focus({preventScroll:true});}
+}
+function soldierAct(command){
+  return change(()=>Game.soldierCommand(state,command),{tone:'click',afterRender:()=>{if(soldierPanel)showSoldierPanel(soldierPanel.name,soldierPanel.arg);}});
 }
 function realtimeHelp(){
   return `<p>Click open ground to move; a far click runs. Click an enemy to fight him; right-click uses the current ability. P pauses, and every command still works while paused.</p>`+
@@ -475,7 +504,7 @@ modal.addEventListener('close',()=>{
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;
 });
 async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
 // Settings → Run performance check. The battle is measured where it stands:
@@ -558,6 +587,20 @@ document.addEventListener('click',
       }
 case 'close-modal':modal.close();break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
+case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
+case 'soldier':{const d=b.dataset;if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
+  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path});
+  if(d.kind==='orders-edit')showSoldierPanel('orders',d.companion);break;}
+case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
+case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
+case 'orders-save':{
+  const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
+    .map(([a,t])=>[a,['follow_close','follow_far','stay_hidden','withdraw'].includes(a)?'hero':t]);
+  await soldierAct({kind:'orders',companionId:id,slots});soldierPanel={name:'company'};showSoldierPanel('company');break;}
+case 'soldier-party':{
+  const party=[...modal.querySelectorAll('[data-cmd="soldier-party"]')].filter(x=>x.checked).map(x=>x.dataset.id);
+  if(party.length>3){b.checked=false;toast('Up to three companions march with you.');break;}
+  await soldierAct({kind:'party',party});break;}
 case 'rt-spoils':await change(()=>{const body=state.encounter?.realtime?.world.actors.find(a=>a.id===id);
   return Game.takeSpoils(state,{bodyId:id,items:b.dataset.item==='*'?[...(body?.loot??[])]:[b.dataset.item]});});break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying '+
@@ -863,6 +906,15 @@ document.addEventListener('change',async event=>{
     battleStage.audio(settings.audio,settings.audioVolume);battleStage.reduced(settings.reducedMotion);mountPainting();
     if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();
   }
+});
+// Panel keys away from the field (camp, promotion, the record): I, C, J, Q, L, M, R, A, O and ?.
+document.addEventListener('keydown',event=>{
+  if(event.defaultPrevented||event.repeat||modal.open||screen==='title'||!state||Game.isRealtime(state)||sessionGate.busy)return;
+  if(event.target?.closest?.('input,select,textarea,[contenteditable="true"],canvas'))return;
+  const action=actionFor(event,DEFAULT_KEYMAP);if(!action)return;
+  const name=action==='help'?'help':action==='map_overlay'?'map':action.startsWith('panel_')?action.slice(6):null;
+  if(!name||(state.phase==='encounter'&&!['kit','character','decorations','company','journal','chronicle','options','help'].includes(name)))return;
+  event.preventDefault();openPanel(name);
 });
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;

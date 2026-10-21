@@ -20,6 +20,8 @@ import {CHAPTERS} from '../../data/campaign.js';
 // scale chosen per encounter by travel time; turns become rounds. Pure.
 
 export const FINE=2.5;
+// Public Confidence lost for each neutral the party struck first (guide "Fighting").
+export const PROVOKED_COST=3;
 // Modes the real-time mission runs in Phase 1 (the others arrive with their phase).
 export const REALTIME_MODES=Object.freeze(['training','clear','extract','hold','recover','capture']);
 const LINEAR=new Set(['road','wall','river','ford']);
@@ -240,6 +242,9 @@ export function applyRealtimeOutcome(state,world){
   // TP for the enemies the soldier or a companion struck down, each once, at most ten (§3.5).
   const ours=new Set(['hero',...world.party]),kills=world.actors.filter(a=>a.side==='enemy'&&!a.alive&&ours.has(a.killedBy)).length;
   e.staged.killTP=kills;e.staged.commendations=commendations(world);e.staged.spoils=world.spoils.map(s=>s.itemId);
+  // Neutrals struck without cause: each costs Public Confidence, and the journal names them, when the result is recorded.
+  if(world.provoked.length){e.staged.meters.public=Math.max(-100,(e.staged.meters.public??0)-PROVOKED_COST*world.provoked.length);
+    e.staged.journal=world.provoked.map(p=>`You struck ${p.name}, who was no enemy, in ${e.title}.`);}
   e.status=world.status==='active'?'active':world.status;
   e.log.push(...world.log.slice(-10).map(l=>l.text));if(e.log.length>70)e.log.splice(0,e.log.length-70);
   return e;

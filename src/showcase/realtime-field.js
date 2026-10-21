@@ -1,6 +1,6 @@
 import {clockText,commandable,missionProgress,queueCommand,roundOf,routePreview,snapshotWorld,step} from '../core/realtime/simulation.js';
 import {advanceClock,clockAlpha,createClock,hurryClock,interruptClock,setPaused,setSlow,setSpeed,stepRound,stepping} from '../core/realtime/clock.js';
-import {blowSummary,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
+import {blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
 import {actorById,distanceBetween,forecast,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME} from '../data/realtime-rules.js';
@@ -34,7 +34,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false;
+  let resumePending=false,listOpen=false,listActor=null,listKey='';
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
   const me=()=>actorById(world,world.controlled);
@@ -173,7 +173,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4].join('|');
     if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
-    if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);
+    if(listOpen&&metrics.frames%10===0)renderList();
+    if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
     if(partyIds().join(',')!==partyKey){partyKey=partyIds().join(',');buildParty();}
     for(const b of dom.party?.children??[]){
       const a=actorById(world,b.dataset.actor);if(!a)continue;
@@ -201,6 +202,44 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       const off=state&&state!=='ok'&&state!=='NO_TARGET';b.classList.toggle('unavailable',off);b.title=off?REASONS[state]:ABILITIES[id].summary;
       b.querySelector('small').textContent=abilityNote(id,h);
     }
+  }
+
+  // ——— The Command list: every action as lists, with Use (guide "Command list"). ———
+  function renderList(){
+    if(!listOpen||!dom.listOptions||disposed)return;
+    const party=partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down);
+    if(!party.some(a=>a.id===listActor))listActor=world.controlled;
+    const options=commandOptions(world,{actorId:listActor}),key=`${listActor}|${options.map(o=>`${o.group}:${o.label}:${o.reason??''}`).join('|')}`;
+    if(key===listKey){
+      // Same choices: only the distances and forecasts change, in place.
+      dom.listOptions.querySelectorAll('[data-option]').forEach(row=>{const o=options[Number(row.dataset.option)],d=row.querySelector('small');if(o&&d&&d.textContent!==o.detail)d.textContent=o.detail;});
+      return;
+    }
+    listKey=key;const focused=document.activeElement?.closest?.('[data-option]')?.querySelector('span')?.textContent??null;
+    if(dom.listActors)dom.listActors.replaceChildren(...party.map(a=>{
+      const label=document.createElement('label'),input=document.createElement('input');input.type='radio';input.name='rt-list-actor';input.value=a.id;
+      input.checked=a.id===listActor;input.addEventListener('change',()=>{listActor=a.id;listKey='';renderList();});label.append(input,document.createTextNode(` ${a.name}${a.id===world.controlled?' (controlled)':''}`));return label;}));
+    const groups=[...new Set(options.map(o=>o.group))];
+    dom.listOptions.replaceChildren(...groups.map(group=>{
+      const section=document.createElement('section'),h=document.createElement('h3'),ul=document.createElement('ul');h.textContent=group;ul.className='rt-list';
+      for(const [i,o]of options.entries()){
+        if(o.group!==group)continue;
+        const li=document.createElement('li'),text=document.createElement('span'),detail=document.createElement('small'),use=document.createElement('button');
+        li.dataset.option=i;text.textContent=o.label;detail.textContent=o.reason?o.message:o.detail;use.type='button';use.textContent='Use';use.disabled=!o.command;
+        if(o.command)use.addEventListener('click',()=>useOption(o));else use.title=o.message;
+        li.append(text,detail,use);ul.append(li);
+      }
+      section.append(h,ul);return section;
+    }));
+    if(focused){const row=[...dom.listOptions.querySelectorAll('[data-option]')].find(r=>r.querySelector('span')?.textContent===focused);row?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
+  }
+  function useOption(o){
+    if(o.command.kind==='control'){takeControl(o.command.actorId);return;}
+    const outcome=issue(o.command);if(outcome.ok){say(`${o.label}.`,{announce:true});listKey='';renderList();}
+  }
+  function toggleList(open=!listOpen){
+    listOpen=open;if(dom.commandList)dom.commandList.hidden=!open;dom.listButton?.setAttribute('aria-pressed',String(open));listKey='';
+    if(open){listActor=world.controlled;renderList();dom.listOptions?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
   }
 
   // ——— Pointer: what is under it, and what a click there does. ———
@@ -370,6 +409,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
+    if(dom.listButton)dom.listButton.onclick=()=>toggleList();
     if(dom.menuButton)dom.menuButton.onclick=()=>callbacks.onMenu?.();
     dom.abilityBar?.addEventListener('keydown',e=>{
       if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const list=[...dom.abilityBar.children],i=list.indexOf(document.activeElement);if(i<0)return;
@@ -411,7 +451,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     get paused(){return clock.paused&&!stepping(clock);},
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();},
-    issue,act,say,follow,takeControl,
+    issue,act,say,follow,takeControl,toggleList,
     snapshot:()=>snapshotWorld(world),
     dispose(){
       disposed=true;input?.dispose();presenter?.dispose();stage?.setLive(null);

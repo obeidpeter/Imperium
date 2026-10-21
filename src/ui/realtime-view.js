@@ -66,10 +66,17 @@ export function fieldMarkup({state,keymap}){
           <button data-role="walkButton" type="button" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
           <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force</button>
           <button data-role="rangesButton" type="button" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
+          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every action as a list">List</button>
         </div>
       </div>
     </footer>
   </div>
+  <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
+    <h2 id="rt-list-title">Command list</h2>
+    <p class="rt-log-note">Choose who acts, then Use an order. It works while paused; a paused world carries it out on resume.</p>
+    <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
+    <div data-role="listOptions"></div>
+  </section>
   <section class="rt-log-panel" aria-labelledby="rt-log-title">
     <h2 id="rt-log-title">Battle log</h2><p class="rt-log-note">Select an entry to look at that place; F follows your soldier again.</p>
     <ol data-role="log" class="rt-log"></ol>

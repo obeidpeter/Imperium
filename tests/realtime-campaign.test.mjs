@@ -155,3 +155,18 @@ test('after a won fight the fallen can be searched from the result; the spoils a
   assert.ok(G.commitEncounter(s).ok);items.forEach((id,i)=>assert.ok(count(id)>had[i],`${id} reached the pack or the camp ground`));
   assert.equal(G.commitEncounter(s).ok,false,'recorded once');
 });
+
+test('C18: Shift+click on a neutral makes him hostile at once; the journal records it and Public Confidence pays only when the result is recorded',()=>{
+  // The Chapter III records' column is neutral, and three companions march with the soldier.
+  const s=reach('ch3-rolls'),w=G.realtimeWorld(s),neutral=w.actors.find(a=>a.side==='neutral'&&a.alive);
+  assert.ok(neutral,'a neutral column is on the field');
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'attack',payload:{targetId:neutral.id}}).reason,'NOT_HOSTILE','an unforced click never attacks him');
+  const friend=w.actors.find(a=>a.side==='ally'||w.party.includes(a.id));
+  if(friend)assert.equal(queueCommand(w,{actorId:'hero',kind:'attack',payload:{targetId:friend.id,forced:true}}).reason,'FRIENDLY','your own side is never struck');
+  assert.ok(queueCommand(w,{actorId:'hero',kind:'attack',payload:{targetId:neutral.id,forced:true}}).ok);step(w);
+  assert.equal(neutral.side,'enemy','he turns hostile');assert.equal(w.provoked.length,1);assert.ok(w.log.some(l=>/who was no enemy/.test(l.text)));
+  // Staged with the outcome, applied at commit.
+  const publicBefore=s.meters.public;w.status='won';G.resolveRealtime(s,w);
+  assert.equal(s.meters.public,publicBefore,'nothing changes before the commit');assert.ok(s.encounter.staged.meters.public<0);
+  assert.ok(s.encounter.staged.journal[0].includes(neutral.name));
+});
