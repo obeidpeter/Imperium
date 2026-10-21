@@ -168,3 +168,23 @@ export function abilityKey(world,{actorId=world.controlled,abilityId,current='st
   if(reason)return {current,command:null,message:`${ability.name}: ${REASONS[reason]}`,warning:true};
   return {current,command:{actorId,kind:'ability',payload:{abilityId,...(keyTarget&&!self?{targetId:keyTarget}:{})}},message:`${ability.name}.`,warning:false};
 }
+
+// Auto-pause (guide "Time: pause, slow and step"): whether an event stops the
+// world under the player's choices, and the reason the page announces, or
+// null. An enemy coming into view, the soldier or a companion badly hurt or
+// down, a new objective, an order that cannot be carried out, and (if chosen)
+// every round. A drill partner's glance never pauses. Pure.
+export function autoPauseReason(world,e,options={}){
+  if(world.kind==='camp')return null;
+  const party=new Set([world.heroId,...world.party]),mine=world.controlled,name=id=>actorById(world,id)?.name??'Someone';
+  if(e.kind==='round'&&options.roundPause)return `Round ${e.round} begins.`;
+  if(e.kind==='notice'&&options.pauseSighted&&party.has(e.targetId)&&!actorById(world,e.actorId)?.practice)
+    return `${name(e.actorId)} has seen ${e.targetId===mine?'you':name(e.targetId)}.`;
+  if(e.kind==='hit'&&options.pauseHurt&&party.has(e.defenderId)){
+    const d=actorById(world,e.defenderId);if(d?.alive&&!d.down&&d.hp<d.maxHp*.25&&d.hp+e.damage>=d.maxHp*.25)return `${d.id===mine?'You are':`${d.name} is`} badly hurt.`;
+  }
+  if(e.kind==='down'&&options.pauseHurt&&party.has(e.defenderId))return `${name(e.defenderId)} is down.`;
+  if(e.kind==='phase'&&options.pauseObjective)return `New objective: ${e.label}.`;
+  if(e.kind==='rejected'&&options.pauseOrder&&party.has(e.actorId))return `${name(e.actorId)}: ${REASONS[e.reason]??'the order cannot be carried out.'}`;
+  return null;
+}
