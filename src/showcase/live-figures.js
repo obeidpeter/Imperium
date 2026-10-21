@@ -120,7 +120,7 @@ const VOLLEY_MS=750;
 export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false}={}){
   const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
   const leaders=new Map(),laid=new Set(),volleys=[],orderLines=[];
-  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null;
+  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null,zone=null;
   // One instanced draw each for friends' rings, enemies' rings, guard arcs, the
   // selected squads' rings and the shaken and broken squads' morale rings.
   function footMarks(count){
@@ -233,6 +233,8 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     // The squads selected on the page, and the keyboard's order marker (squad-control.js).
     setSelection(ids){selection=[...(ids??[])];stage.wake();},
     setMarker(point){marker=point?{x:point.x,z:point.z}:null;stage.wake();},
+    // The deployment zone (from Chapter VII), outlined on the ground until the advance sounds.
+    setDeployment(next){zone=next?{...next}:null;stage.wake();},
     // Each tick's events, as the simulation emitted them.
     onEvents(events){
       const now=performance.now(),w=getWorld();
@@ -353,9 +355,15 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         put(q.broken?'broken':'shaken',figure.group.position,figure.group.rotation.y,.07);
       }
       for(const kind of KINDS){feet[kind].count=counts[kind];feet[kind].instanceMatrix.needsUpdate=true;}
+      // The deployment zone's edge, following the ground.
+      marks.zone??=line('#9fd3d0',.9);
+      if(zone){const z={...zone,x1:Math.max(zone.x0+.5,zone.x1-.25),z0:zone.z0+.25,z1:zone.z1-.25},pts=[],side=(a,b,n)=>{for(let i=0;i<n;i++)pts.push({x:a.x+(b.x-a.x)*i/n,z:a.z+(b.z-a.z)*i/n});};
+        const c=[{x:z.x0+.25,z:z.z0},{x:z.x1,z:z.z0},{x:z.x1,z:z.z1},{x:z.x0+.25,z:z.z1}],per=Math.max(4,Math.floor(63/4));
+        for(let i=0;i<4;i++)side(c[i],c[(i+1)%4],per);pts.push(c[0]);lay(marks.zone,pts);}
+      else marks.zone.visible=false;
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
       marks.marker??=[ring(.55,.72,'#f3d48d',.95),ring(0,.16,'#f3d48d',.95)];
-      for(const m of marks.marker){m.visible=!!marker&&chosen.size>0;if(m.visible){m.position.copy(ground(marker.x,marker.z));m.position.y+=.08;}}
+      for(const m of marks.marker){m.visible=!!marker&&(chosen.size>0||!!zone);if(m.visible){m.position.copy(ground(marker.x,marker.z));m.position.y+=.08;}}
       let lines=0;
       for(const id of selection){
         const q=squadOf(w,id);if(!q||q.strength<=0)continue;const order=q.pending?.order??q.order;if(!order)continue;
@@ -402,7 +410,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       return {volleys:shots};
     },
     dispose(){
-      for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,...(marks.ranges??[]),...(marks.marker??[]),
+      for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,marks.zone,...(marks.ranges??[]),...(marks.marker??[]),
         ...orderLines.flatMap(l=>[l.advance,l.attack])])
         if(m){m.removeFromParent();m.geometry.dispose();m.material.dispose();}
       disposeFeet();

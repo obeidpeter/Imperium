@@ -59,6 +59,13 @@
 .rt-field .ability[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--rt-bronze)}
 .rt-field .ability.unavailable{opacity:.6}.rt-field .ability.armed{outline:3px solid var(--rt-friend)}
 .rt-swords{font-size:1.25rem}.rt-swords[aria-pressed="true"]{color:#ffd28a}
+/* Deployment (from Chapter VII): the bar over the scene until the advance sounds (it stands in for the paused banner). */
+.rt-field[data-deploying="true"] .rt-paused{display:none}
+.rt-deploy{position:absolute;inset:auto 0 auto 0;top:5.4rem;margin-inline:auto;inline-size:min(44rem,94%);display:flex;gap:.8rem;align-items:center;
+  background:#24301fee;border:1px solid var(--rt-friend);border-radius:.4rem;padding:.5rem .8rem;z-index:4}
+.rt-deploy p{margin:0;font-size:.9rem;flex:1}.rt-field .rt-advance{flex:none;background:#5d4520;border-color:var(--rt-bronze)}
+.rt-field .rt-advance[data-confirm="true"]{background:#7a2a1f}
+@media (max-width:760px){.rt-deploy{top:auto;bottom:calc(100% - 12rem);flex-direction:column;align-items:stretch}.rt-deploy p{font-size:.82rem}}
 /* Squads (from Chapter IV): the standards, the Clear button, the Command pips and the command card. */
 .rt-squad-area{display:flex;gap:.35rem;align-items:flex-start;flex:none}.rt-squad-area:not(:has(:not([hidden]))){display:none}
 .rt-squads{display:flex;gap:.3rem;flex-wrap:wrap;max-inline-size:32rem}

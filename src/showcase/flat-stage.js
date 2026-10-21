@@ -91,12 +91,13 @@ export class FlatStage{
 // for neutrals), the route, the target, ranges, work, missiles and the marks
 // and numbers over people's heads. The field's presenter interface.
 export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{}}={}){
-  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null;const floating=new Map(),volleys=[];
+  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null;const floating=new Map(),volleys=[];
   const presenter={
     beforeFrame,world:getWorld,alpha:getAlpha,
     setRoute(next){route=next;},setPlanned(next){planned=next;},setRanges(on){ranges=!!on;},setMarks(next){marks={...(next??{})};},
     // The squads selected on the page, and the keyboard's order marker (squad-control.js).
     setSelection(ids){selection=[...(ids??[])];},setMarker(point){marker=point?{x:point.x,z:point.z}:null;},
+    setDeployment(next){zone=next?{...next}:null;},
     onEvents(events){
       const now=performance.now();
       for(const e of events){
@@ -120,6 +121,9 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const line=(points,color,{dash=null,width=2}={})=>{if(points.length<2)return;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));
         c.setLineDash(dash??[]);c.lineWidth=width;c.strokeStyle=color;c.stroke();c.setLineDash([]);};
       const unit=v.tw/TILE;// pixels per metre along the board
+      // The deployment zone, tinted until the advance sounds.
+      if(zone){const q=[flat.screen(v,zone.x0,zone.z0),flat.screen(v,zone.x1,zone.z0),flat.screen(v,zone.x1,zone.z1),flat.screen(v,zone.x0,zone.z1)];
+        c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
       if(w.mission?.goal)ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
       for(const o of w.objects??[]){const p=flat.screen(v,o.x,o.z);c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
@@ -179,7 +183,7 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         if(tag){c.font=`800 ${Math.max(12,v.th*.6)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,top-10-Math.max(12,v.th*.5));}
       }
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
-      if(marker&&chosen.size){const p=flat.screen(v,marker.x,marker.z);ellipse(p,v.tw*.34,'#f3d48d',{width:3});ellipse(p,v.tw*.07,null,{fill:'#f3d48d'});}
+      if(marker&&(chosen.size||zone)){const p=flat.screen(v,marker.x,marker.z);ellipse(p,v.tw*.34,'#f3d48d',{width:3});ellipse(p,v.tw*.07,null,{fill:'#f3d48d'});}
       for(const id of selection){
         const q=squadsById.get(id),lead=q&&squadLead(w,q);if(!lead)continue;const order=q.pending?.order??q.order;if(!order)continue;
         let to=null;if(order.kind==='advance'&&Number.isFinite(order.x))to={x:order.x,z:order.z};

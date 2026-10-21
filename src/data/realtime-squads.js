@@ -78,6 +78,9 @@ export const FORMATIONS=freeze({
 export const SPACING=freeze({line:1.1,'shield-wall':.8,wedge:1.1,column:1.2,loose:1.6});
 // A held order braces its squad after a whole round.
 export const HOLD_BRACE_TICKS=200;
+// Deployment (guide "Deployment"): from Chapter VII a battle opens paused and the
+// company is placed in the zone the 0.38 Deploy allowed (its first four tiles).
+export const DEPLOYMENT=freeze({fromChapter:7,tiles:4});
 
 // Squad standing orders (§3.7 "Squad vocabulary"): four slots like a
 // companion's, with the squad's own actions and targets.

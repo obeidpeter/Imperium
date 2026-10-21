@@ -132,6 +132,7 @@ export const REASONS=Object.freeze({
   MARCH_PENALTY:'He keeps to a walk: the engineers (or a defensive advance) hold him to the column’s pace.',NO_COMMAND:'No Command left this round.',
   NO_SQUAD_SELECTED:'Select a squad first.',SQUADS_TOO_FAR_APART:'Those squads stand too far apart.',ALREADY_SPOKEN_THIS_HOUR:'Already spoken this hour.',
   OUTSIDE_REACH:'Outside his reach this hour.',ONCE_PER_MEMBER:'Once per member.',NOT_IN_DEPLOYMENT_ZONE:'Outside the deployment zone.',
+  DEPLOYING:'Deployment: place your company, then Sound the advance.',NOT_DEPLOYING:'The battle has begun.',
   CANNOT_SAVE_HERE:'You cannot save here.',
   NO_SHIELD:'Brace needs a shield.',STAGGERED:'Staggered: wait a moment.',NO_TARGET:'Choose a target.',TARGET_DOWN:'He has already fallen.',
   NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',FRIENDLY:'He is on your side.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',

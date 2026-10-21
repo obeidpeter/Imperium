@@ -16,6 +16,7 @@ import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
 import {fieldProblem,fieldRound} from './field-objects.js';
+import {deploying} from './deployment.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -75,6 +76,8 @@ export const commandable=(world,actor)=>!!actor&&(actor.id===world.heroId||world
 export function commandProblem(world,command){
   const actor=actorById(world,command?.actorId),p=command?.payload??{};
   if(world.status!=='active')return 'BATTLE_OVER';
+  // While the company deploys nothing is ordered: placing is deployment.js's own call.
+  if(deploying(world))return 'DEPLOYING';
   if(!commandable(world,actor))return 'NO_TARGET';
   if(!actor.alive||actor.down)return 'ACTOR_DOWN';
   if(actor.carriedBy)return 'ACTOR_DOWN';
@@ -298,6 +301,8 @@ function writeLog(world){
 // One tick, systems in the brief's order (§3.1).
 export function step(world){
   world.events=[];
+  // The clock stands still until the advance is sounded (deployment.js).
+  if(deploying(world))return world.events;
   for(const a of world.actors){a.px=a.x;a.pz=a.z;a.pfx=a.fx;a.pfz=a.fz;}
   const due=world.queue.filter(c=>c.tick<=world.tick).sort((a,b)=>a.seq-b.seq);world.queue=world.queue.filter(c=>c.tick>world.tick);
   for(const command of due)applyCommand(world,command);

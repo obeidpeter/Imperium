@@ -11,6 +11,7 @@ import {derivedValues} from '../src/core/realtime/combat.js';
 import {span} from '../src/core/realtime/navigation.js';
 import {playEncounter} from './autoplay.mjs';
 import {controlsFor} from '../src/core/controls-model.js';
+import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
 const nearest=(list,p)=>list.reduce((b,o)=>!b||distanceBetween(o,p)<distanceBetween(b,p)?o:b,null);
@@ -77,6 +78,9 @@ export function heroDecision(world,memo={}){
 // Play the encounter's live world to its end; the chronicle learns the outcome.
 export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null}={}){
   const world=G.realtimeWorld(state),watch=companionWatch();
+  // From Chapter VII the company deploys first: the soldier takes his place (a legal placement, which
+  // demonstrates Deploy), then the advance is sounded.
+  if(deploying(world)){const hero=world.actors.find(a=>a.id===world.heroId);deploy(world,{id:hero.id,x:hero.x,z:hero.z});soundTheAdvance(world);}
   const limit=maxRounds*200;
   for(let t=0;t<limit&&world.status==='active';t++){
     if(world.tick%every===0)heroDecision(world,memo);

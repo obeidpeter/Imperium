@@ -12,7 +12,8 @@ import {createWorld,roundOf} from './simulation.js';
 import {findRoute,navGrid,span,speedFactor,cellCentre,nearestWalkable,walkable} from './navigation.js';
 import {ITEMS} from '../../data/items.js';
 import {CHAPTERS} from '../../data/campaign.js';
-import {ROMAN_SQUADS} from '../../data/realtime-squads.js';
+import {DEPLOYMENT,ROMAN_SQUADS} from '../../data/realtime-squads.js';
+import {deploymentZone} from './deployment.js';
 import {defaultStanding} from './squad-ai.js';
 import {fielded,squadCentre} from './squads.js';
 import {chapterOpportunity} from '../command-campaign.js';
@@ -287,6 +288,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;
   preparations(state,e,world);
+  // From Chapter VII the battle opens with the company to deploy (deployment.js).
+  if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(DEPLOYMENT.tiles,e.width)),done:false,placed:0};
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
   return world;
 }

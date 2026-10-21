@@ -10,6 +10,7 @@ import {squadModifiers} from '../src/core/realtime/squads.js';
 import {TIME} from '../src/data/realtime-rules.js';
 import {applyRealtimeOutcome} from '../src/core/realtime/campaign-encounter.js';
 import {exchangeWound} from '../src/core/realtime/damage.js';
+import {deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 
 // Field objects in real time (guide "Field objects"; build brief §3.10): the
 // 0.38 gate, footbridge, barricade, brazier and the two opportunities, each
@@ -24,7 +25,9 @@ function battle(id){
     try{runCommandCampaign({featureEdition:35,onCheckpoint(s){const data=G.getChapter(s).encounters[s.encounterIndex];
       if(data?.id===id&&!camps.has(id)){camps.set(id,G.serialize(s));throw stop;}}});}catch(error){if(error!==stop)throw error;}
   }
-  const state=G.deserialize(camps.get(id));assert.equal(G.startEncounter(state,{controls:'realtime'}).ok,true);return {state,world:G.realtimeWorld(state)};
+  // From Chapter VII the company deploys first: these tests begin at the advance.
+  const state=G.deserialize(camps.get(id));assert.equal(G.startEncounter(state,{controls:'realtime'}).ok,true);const world=G.realtimeWorld(state);
+  if(deploying(world))soundTheAdvance(world);return {state,world};
 }
 const object=(w,id)=>w.objects.find(o=>o.id===id);
 // Keep a test of an object from becoming a fight: the enemy leaves the field.

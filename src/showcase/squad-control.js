@@ -3,6 +3,7 @@ import {cardButtons,cardOrder,commandPips,commandSquads,describeOrder,formationP
 import {actorById} from '../core/realtime/abilities.js';
 import {squadById,squadCentre} from '../core/realtime/squads.js';
 import {clampToMap,navGrid} from '../core/realtime/navigation.js';
+import {deploying} from '../core/realtime/deployment.js';
 import {actionLabel} from '../ui/action-map.js';
 
 // The squads on the page (guide "Squads", "Command"; build brief §3.8,
@@ -14,8 +15,8 @@ import {actionLabel} from '../ui/action-map.js';
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 
-export function createSquadControl({world:getWorld,dom,issue,say,presenter,keymap,canvas}){
-  let selection=[],marker=null,barKey='',cardKey='',pipsKey='',frameKey='';
+export function createSquadControl({world:getWorld,dom,issue,say,presenter,keymap,canvas,place=null}){
+  let selection=[],marker=null,barKey='',cardKey='',pipsKey='',frameKey='',dragging=null;
   const world=()=>getWorld();
   const active=()=>liveSelection(world(),selection).length>0;
   function setSelection(next,{quiet=false}={}){
@@ -32,8 +33,16 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
         const key=actionLabel(`select_squad_${i+1}`,keymap);if(i<6)b.setAttribute('aria-keyshortcuts',key);
         b.innerHTML=`<span class="rt-standard-flag" aria-hidden="true">${i+1}</span><span class="rt-standard-name">${esc(s.name)}</span>`+
           `<span class="bar strength"><i></i></span><span class="rt-standard-mark" aria-hidden="true"></span><span class="visually-hidden rt-standard-state"></span>`;
-        b.addEventListener('click',event=>{setSelection(selectSquads(world(),selection,{squadId:s.id,shift:event.shiftKey,touch:event.pointerType==='touch'}));
+        b.addEventListener('click',event=>{setSelection(selectSquads(world(),selection,{squadId:s.id,shift:event.shiftKey,touch:event.pointerType==='touch'},{deployment:deploying(world())}));
           canvas.focus({preventScroll:true});});
+        // While deploying, a standard can be dragged onto the field: it is placed where it is let go.
+        b.addEventListener('pointerdown',event=>{
+          if(!deploying(world())||!place)return;dragging={id:s.id,x:event.clientX,y:event.clientY};
+          const up=e=>{window.removeEventListener('pointerup',up);const d=dragging;dragging=null;if(!d||Math.hypot(e.clientX-d.x,e.clientY-d.y)<8)return;
+            const r=canvas.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+            setSelection([d.id],{quiet:true});place({clientX:e.clientX,clientY:e.clientY},d.id);};
+          window.addEventListener('pointerup',up);
+        });
         return b;
       }));
     }
@@ -44,7 +53,7 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
     const w=world();if(!w.squads)return;
     // Selected squads' places count too: whether they can take a formation together depends on them.
     const c=w.command,near=s=>selection.includes(s.id)?`${Math.round(s.x/2)},${Math.round(s.z/2)}`:'';
-    const key=[selection.join(','),c?`${c.capacity}/${c.left}/${c.round}/${w.queue.length}`:'',...w.squads.map(s=>`${s.id}:${s.members.filter(id=>actorById(w,id)?.alive).length}:${near(s)}:`+
+    const key=[selection.join(','),deploying(w),c?`${c.capacity}/${c.left}/${c.round}/${w.queue.length}`:'',...w.squads.map(s=>`${s.id}:${s.members.filter(id=>actorById(w,id)?.alive).length}:${near(s)}:`+
       `${Math.round(s.morale)}:${Math.round(s.cohesion)}:${Math.floor(s.suppression)}:${s.broken}:${s.formation}:${s.braced}:${s.pending?.order.kind??''}:${s.pending?.round??''}`)].join('|');
     if(key===frameKey&&!force)return;frameKey=key;
     const bar=(w.squads??[]).filter(s=>s.side!=='enemy').map(s=>s.id).join(',');if(bar!==barKey){barKey=bar;build();}
@@ -62,7 +71,8 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
         dom.commandPips.innerHTML=`<span class="eyebrow">Command</span>${Array.from({length:pips.capacity},(_,i)=>
           `<i class="${i<pips.left?'full':i<pips.left+pips.reserved?'reserved':'spent'}"></i>`).join('')}`;}
     }
-    const on=active();if(dom.commandCard)dom.commandCard.hidden=!on;if(dom.abilityBar)dom.abilityBar.hidden=on;if(dom.clearButton)dom.clearButton.hidden=!on;
+    // While deploying no order is given: the card stays away.
+    const on=active()&&!deploying(w);if(dom.commandCard)dom.commandCard.hidden=!on;if(dom.abilityBar)dom.abilityBar.hidden=on;if(dom.clearButton)dom.clearButton.hidden=!active();
     if(on&&dom.commandCard){
       const buttons=cardButtons(w,selection),key=buttons.map(b=>`${b.kind}:${b.ok}:${b.note}`).join('|')+`|${selection.join(',')}`;
       if(key!==cardKey||force){
@@ -87,24 +97,29 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
     get active(){return active();},
     get marker(){return marker;},
     build,update,
-    select(choice){setSelection(selectSquads(world(),selection,choice));},
+    select(choice){setSelection(selectSquads(world(),selection,choice,{deployment:deploying(world())}));},
     clear(){if(!active())return false;setSelection([]);return true;},
     // A click on one of our men selects his squad (never attacks); true when it was ours.
     pickStandard(pick,{shift=false,touch=false}={}){
-      const id=friendlyStandard(world(),pick);if(!id)return false;setSelection(selectSquads(world(),selection,{squadId:id,shift,touch}));return true;
+      const id=friendlyStandard(world(),pick);if(!id)return false;setSelection(selectSquads(world(),selection,{squadId:id,shift,touch},{deployment:deploying(world())}));return true;
     },
     // The right button (a tap on touch) while squads are selected: an order.
     order(pick){if(!active())return false;return send(orderIntent(world(),selection,pick));},
     intent(pick){return active()?orderIntent(world(),selection,pick):null;},
     card,
     // The arrow keys move the order marker; Enter sends the squads to it (or against the T target).
+    // While deploying the marker also places the soldier or companion controlled when no standard is chosen.
     moveMarker(dx,dz){
-      const w=world();if(!active())return false;
-      if(!marker){const lead=squadById(w,selection[0]);marker=lead?{...squadCentre(w,lead)}:{x:0,z:0};}
+      const w=world();if(!active()&&!deploying(w))return false;
+      if(!marker){const lead=squadById(w,selection[0]),me=actorById(w,w.controlled);marker=lead?{...squadCentre(w,lead)}:me?{x:me.x,z:me.z}:{x:0,z:0};}
       marker=clampToMap(navGrid(w.map),{x:marker.x+dx,z:marker.z+dz},1);presenter()?.setMarker?.(marker);
       dom.announcer&&(dom.announcer.textContent=`Order marker moved. Enter sends ${selection.length===1?'the squad':'the squads'} there.`);return true;
     },
-    sendMarker(targetId=null){if(!active())return false;return send(markerOrder(world(),selection,{marker,targetId}));},
+    sendMarker(targetId=null){
+      if(deploying(world())){if(!marker||!place)return false;place(null,liveSelection(world(),selection)[0]??world().controlled,marker);return true;}
+      if(!active())return false;return send(markerOrder(world(),selection,{marker,targetId}));
+    },
+    get marking(){return !!marker;},
     preview:()=>formationPreview(world(),selection),
     describe:(order)=>describeOrder(world(),order,selection),
     reset(){selection=[];marker=null;barKey='';cardKey='';pipsKey='';frameKey='';build();update(true);}

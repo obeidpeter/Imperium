@@ -41,6 +41,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
       ${key('combat_toggle')} draws or sheathes. 1 to 7 choose an ability; the same number again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
       ${key('step_round')} plays one round while paused. [ and ] change the companion you control; Home returns to your soldier. Escape opens the Menu.</p>
     <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':'Preparing the battlefield…'}</p></div>
+    <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
+      <p><strong>Deployment.</strong> Choose a standard, your soldier or a companion, then click marked ground in the zone (or drag a standard there; the arrow keys and Enter work too). No Command is spent.</p>
+      <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
+    </div>
     <header class="rt-top">
       <div class="rt-squad-area">
         <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>

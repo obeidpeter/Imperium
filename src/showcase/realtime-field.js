@@ -9,6 +9,8 @@ import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
 import {createSquadControl} from './squad-control.js';
 import {commandSquads,squadOrderOptions} from '../core/realtime/order-intents.js';
+import {deploy,deploying,deploymentProblem,soundTheAdvance} from '../core/realtime/deployment.js';
+import {friendlyStandard} from '../core/realtime/order-intents.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
@@ -51,7 +53,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   // Squads (from Chapter IV): the squad bar, Command pips, command card and order marker (squad-control.js).
   // A fight without squads (Chapters I–III, a camp) shows none of their controls.
   const makeSquads=()=>{
-    if(world.squads)return createSquadControl({world:()=>world,dom,issue:c=>issue(c),say,presenter:()=>presenter,keymap,canvas});
+    if(world.squads)return createSquadControl({world:()=>world,dom,issue:c=>issue(c),say,presenter:()=>presenter,keymap,canvas,place:(pointer,id,at)=>place(pointer,id,at)});
     for(const el of [dom.squadBar,dom.clearButton,dom.commandPips,dom.commandCard])if(el)el.hidden=true;if(dom.abilityBar)dom.abilityBar.hidden=false;return null;
   };
   let squads=null;
@@ -156,7 +158,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       const a=actorById(world,id),b=document.createElement('button');b.type='button';b.className='rt-portrait';b.dataset.actor=id;
       b.innerHTML=`<span class="rt-portrait-name">${esc(a?.name??id)}</span><span class="bar health"><i></i></span><span class="bar stamina"><i></i></span>`+
         `<span class="rt-portrait-mark" aria-hidden="true"></span><span class="visually-hidden rt-portrait-state"></span>`;
-      b.addEventListener('click',()=>{if(id===world.heroId)squads?.clear();takeControl(id);canvas.focus({preventScroll:true});});
+      // His portrait takes control of him (while deploying: chooses him to place) and clears the squads chosen.
+      b.addEventListener('click',()=>{if(id===world.heroId||deploying(world))squads?.clear();takeControl(id);canvas.focus({preventScroll:true});});
       return b;
     }));
   }
@@ -289,13 +292,48 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);}}
   function readPointer(){
     hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
+    // Deploying: a click places what is chosen, if the ground is in the zone.
+    if(deploying(world)){
+      const pick=pickAt(p),who=squads?.selection[0]??world.controlled,name=world.squads?.find(q=>q.id===who)?.name??actorById(world,who)?.name??'him';
+      const friend=pick&&squads?friendlyStandard(world,pick):null,reason=pick&&Number.isFinite(pick.x)?deploymentProblem(world,{id:who,x:pick.x,z:pick.z}):'NO_TARGET';
+      canvas.dataset.cursor=friend?'use':reason?'blocked':'walk';message(friend?'Click: choose this squad to place.':reason?REASONS[reason]:`Click: place ${name} here.`,!friend&&!!reason);
+      presenter?.setRoute(null);return;
+    }
     if(squads?.active){const it=squads.intent(pickAt(p));if(it){canvas.dataset.cursor=it.cursor;message(`Right-click: ${it.message}`,!!it.reason);presenter?.setRoute(null);return;}}
     const it=intentAt(p,armed?'right':'left',armed??ability);if(!it)return;
     let text=it.message||' ';if(!armed&&ability!=='strike'){const right=intentAt(p,'right',ability);if(right?.message)text+=` · Right-click: ${right.message}`;}
     canvas.dataset.cursor=it.cursor;message(text,!!it.reason&&it.cursor!=='walk');presenter?.setRoute(it.command?.kind==='move'?it.route:null);
   }
+  // ——— Deployment (from Chapter VII): the clock waits; one thing is placed at a time. ———
+  // What is placed: the chosen standard, else the soldier or companion controlled.
+  function place(pointer,id=null,at=null){
+    const p=at??(pointer?pickAt(pointer):null);if(!p||!Number.isFinite(p.x))return false;
+    const who=id??squads?.selection[0]??world.controlled,r=deploy(world,{id:who,x:p.x,z:p.z});
+    const name=world.squads?.find(q=>q.id===who)?.name??actorById(world,who)?.name??'He';
+    if(r.ok){say(`${name} stands there.`,{announce:true});stage?.sync(stageEncounter(base,world));hudKey='';}else say(REASONS[r.reason]??'Not there.',{warning:true});
+    return r.ok;
+  }
+  let advanceArmed=0;
+  function showDeployment(){
+    const on=deploying(world);if(dom.deployBar)dom.deployBar.hidden=!on;presenter?.setDeployment?.(on?world.deployment.zone:null);
+    const root=canvas.closest('.rt-field');if(root)root.dataset.deploying=String(on);
+    if(on&&!clock.paused)setPaused(clock,true);
+  }
+  // Sound the advance once it is confirmed (a second press within five seconds).
+  function advance(){
+    if(!deploying(world))return;const now=performance.now();
+    if(now-advanceArmed>5000){advanceArmed=now;if(dom.advanceButton){dom.advanceButton.dataset.confirm='true';dom.advanceButton.textContent='Confirm: sound the advance';}
+      say('Press again to sound the advance and start the battle.',{announce:true});return;}
+    advanceArmed=0;if(dom.advanceButton){delete dom.advanceButton.dataset.confirm;dom.advanceButton.textContent='Sound the advance';}
+    if(soundTheAdvance(world).ok){showDeployment();setPaused(clock,false);say('The advance sounds. The battle begins.',{announce:true});squads?.clear();hoverDirty=true;}
+  }
   function press(p){
     stage?.sound?.unlock();if(document.activeElement!==canvas)canvas.focus({preventScroll:true});if(!world||world.status!=='active')return;
+    if(deploying(world)){
+      const pick=pickAt(p);if(!pick)return;
+      if(squads?.pickStandard(pick,{touch:!!p.touch}))return;
+      place(null,null,pick);return;
+    }
     // Squads: a click on one of our men selects his squad (never attacks); with squads selected the right button (a tap) orders them.
     if(squads){
       const pick=pickAt(p);
@@ -378,6 +416,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function act(action){
     const h=me();
     if(action.startsWith('select_squad_')){if(squads)squads.select({index:Number(action.slice(13))-1});else say('No squads in this fight.');return true;}
+    // While deploying the arrows move the marker and Enter places what is chosen there.
+    if(squads&&deploying(world)&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
+      squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
+    if(squads&&deploying(world)&&action==='act_on_target'){if(!squads.sendMarker())say('Move the marker with the arrow keys first.');return true;}
     // While squads are selected the arrows move the order marker, 1–6 are the command card and 7–0 do nothing.
     if(squads?.active&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
       squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
@@ -392,7 +434,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     switch(action){
       case 'pause':togglePause();return true;
       case 'slow_time':if(kind==='camp')return true;setSlow(clock,!clock.slow);say(clock.slow?'Slow time: half speed.':'Normal time.');return true;
-      case 'step_round':if(kind==='camp')return true;if(clock.paused){stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
+      case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
       case 'combat_toggle':if(h)issue({actorId:h.id,kind:'setDrawn',payload:{drawn:!pendingDrawn()}});return true;
       case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?'Walking everywhere (W).':'Running again on far clicks.');}return true;
       case 'target_next_enemy':case 'target_next_friend':{
@@ -425,6 +467,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function pendingDrawn(){const queued=[...world.queue].reverse().find(c=>c.kind==='setDrawn');return queued?queued.payload.drawn:!!me()?.drawn;}
   function togglePause(){
+    // P does nothing until the advance is sounded.
+    if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return;}
     const pause=!clock.paused||stepping(clock);setPaused(clock,pause);say(pause?'Paused.':'Resumed.',{announce:true});showPlanned();
     if(pause)saveResume('pause');else resumePending=true;
   }
@@ -447,7 +491,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
 
   function bind(){
     const click=(el,fn)=>{if(el)el.onclick=()=>{fn();canvas.focus({preventScroll:true});};};
-    click(dom.pauseButton,togglePause);click(dom.slowButton,()=>act('slow_time'));click(dom.stepButton,()=>act('step_round'));
+    click(dom.pauseButton,togglePause);click(dom.slowButton,()=>act('slow_time'));click(dom.stepButton,()=>act('step_round'));click(dom.advanceButton,advance);
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
@@ -474,9 +518,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
     presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
     stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);presenter.setSelection?.(squads?.selection??[]);presenter.setMarker?.(squads?.marker??null);
+    presenter.setDeployment?.(deploying(world)?world.deployment.zone:null);
   }
   squads=makeSquads();
-  buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();updateHud(0);
+  buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();showDeployment();updateHud(0);
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
@@ -486,12 +531,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;
-      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();
+      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();showDeployment();
       if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();follow();}updateHud(performance.now());
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
-    release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;setPaused(clock,false);resumePending=true;}canvas.focus({preventScroll:true});},
+    release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!deploying(world)){setPaused(clock,false);resumePending=true;}}canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();},
