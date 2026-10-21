@@ -39,11 +39,21 @@ test('v0.33.0: a quick tap, a drag, a mouse and a disposed board never hold', ()
 });
 
 test('v0.33.0: the 3D stage previews on a held touch and keeps it after the finger lifts (the 2D board: board-input.test.mjs)', async () => {
-  const stage = await readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
-  assert.match(stage, /this\.touchHold=createTouchHold\(point=>\{if\(this\.disposed\|\|!this\.drag\|\|this\.drag\.moved\)return;const hover=this\.pick\(point\);/);
-  assert.match(stage, /on\(this\.canvas,'pointerup',e=>\{const held=this\.touchHold\.consume\(\);this\.touchHold\.up\(\);if\(this\.drag&&!this\.drag\.moved&&!held\)/);
-  assert.match(stage, /on\(this\.canvas,'pointerleave',e=>\{if\(e\.pointerType==='touch'\)return;/);
-  assert.match(stage, /dispose\(\)\{if\(this\.disposed\)return;this\.disposed=true;this\.touchHold\?\.dispose\(\);/);
+  const {BattleStage} = await import('../src/showcase/stage.js');
+  const canvas = Object.assign(new EventTarget(), {setPointerCapture() {}}), timers = manualTimers(), hovers = [], picks = [];
+  const stage = Object.assign(Object.create(BattleStage.prototype), {canvas, disposed: false, drag: null, orbit: {yaw: 0, pitch: .6, distance: 20}, figureStyle: 'sculpted', keyboardMode: 'orbit',
+    sound: {unlock() {}}, wake() {}, updateInk() {}, pick: e => ({x: Math.floor(e.clientX / 10), y: Math.floor(e.clientY / 10)}), onHover: p => hovers.push(p), onPick: p => picks.push(p)});
+  stage.bindInput((target, type, fn, options) => target.addEventListener(type, fn, options), {timers});
+  const fire = (type, props) => canvas.dispatchEvent(Object.assign(new Event(type, {cancelable: true}), props));
+  fire('pointerdown', touch(34, 21));assert.deepEqual(timers.fire(), [HOLD_MS]);
+  assert.deepEqual(hovers, [{x: 3, y: 2}], 'A held finger previews its tile');
+  fire('pointerup', touch(34, 21));assert.deepEqual(picks, [], 'The release after a hold picks nothing');
+  fire('pointerleave', touch(34, 21));assert.deepEqual(hovers, [{x: 3, y: 2}], 'A lifted finger keeps the preview');
+  fire('pointerleave', mouse(34, 21));assert.equal(hovers.at(-1), null, 'A mouse leaving clears it');
+  fire('pointerdown', touch(34, 21));fire('pointerup', touch(34, 21));assert.deepEqual(picks, [{x: 3, y: 2}], 'A tap picks');
+  fire('pointerdown', touch(34, 21));fire('pointermove', touch(34, 21 + HOLD_SLOP + 1));fire('pointerup', touch(34, 33));
+  assert.equal(timers.count, 0);assert.equal(picks.length, 1, 'A drag orbits, holds nothing and picks nothing');assert.notEqual(stage.orbit.pitch, .6);
+  fire('pointerdown', touch(34, 21));stage.touchHold.dispose();assert.equal(timers.count, 0, 'Disposing the stage disposes its hold');
 });
 
 test('v0.33.0: Help and the drill lesson mention holding a finger to see the route', async () => {

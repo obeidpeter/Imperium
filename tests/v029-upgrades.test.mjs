@@ -358,10 +358,27 @@ test('v0.29.0: switching figure style swaps only the presentation and sets the m
   stage.setFigureStyle('painted');
   // Since 0.35.1 the figures stay until sync replaces each one, whose style key includes the style.
   assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 0);assert.equal(stage.actors.size, 1);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
-  const source = await (await import('node:fs/promises')).readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
-  assert.match(source, /const styleKey=`\$\{u\.side\}:\$\{u\.role\}:\$\{u\.name\}:\$\{vComm\}:\$\{this\.quality\}:\$\{this\.figureStyle\}`/);
-  assert.match(source, /if\(!actor\|\|actor\.group\.userData\.styleKey!==styleKey\)\{[\s\S]{0,400}?actor=this\.placeFigure\(u,/, 'A changed style key goes through the safe replacement');
-  assert.match(source, /placeFigure\(u,\{styleKey,vComm,encounter=this\.encounter\}\)\{\s+const actor=replaceStageActor\(/);
+  // Sync replaces a figure exactly when its key (allegiance, role, name, standing, quality, style) changes.
+  const {figureStyleKey} = await import('../src/showcase/stage-figures.js');
+  const unit = {id: 'hero', side: 'player', role: 'soldier', name: 'Gaius'}, placed = [], figures = Object.create(BattleStage.prototype);
+  Object.assign(figures, {quality: 'balanced', figureStyle: 'sculpted', commendations: {}, actors: new Map(), figureQueue: null,
+    placeFigure(u, options) {placed.push(options.styleKey);const actor = {group: {userData: {styleKey: options.styleKey}}};this.actors.set(u.id, actor);return actor;}});
+  const first = figures.syncFigure(unit, encounter);
+  assert.equal(figures.syncFigure(unit, encounter), first, 'An unchanged key keeps the figure');assert.equal(placed.length, 1);
+  figures.figureStyle = 'painted';figures.syncFigure(unit, encounter);
+  assert.deepEqual(placed, ['sculpted', 'painted'].map(figureStyle => figureStyleKey(unit, {commendations: 0, quality: 'balanced', figureStyle})));
+  figures.syncFigure({...unit, side: 'enemy'}, encounter);assert.equal(placed.length, 3, 'A committed defection rebuilds the figure');
+  figures.figureQueue = new Set();assert.equal(figures.syncFigure({...unit, id: 'lucan'}, encounter), null, 'While the stage is first built, a new figure waits for prepare()');
+  assert.deepEqual([...figures.figureQueue], ['lucan']);assert.equal(placed.length, 3);
+  // The replacement is safe: a figure that fails to build leaves the old one standing; one that builds takes its place.
+  const old = {group: new T.Group(), disposed: 0, dispose() {this.disposed++;}}, scene = new T.Scene();scene.add(old.group);
+  const swap = Object.create(BattleStage.prototype);
+  Object.assign(swap, {quality: 'performance', figureStyle: 'sculpted', chapter: 1, scene, actors: new Map([['hero', old]]), poseReset: new Set(), canvas: {dataset: {}}, disposed: false, attachFormation() {throw new Error('formation failed');}});
+  assert.throws(() => swap.placeFigure(unit, {styleKey: 'new', vComm: 0}), /formation failed/);
+  assert.equal(swap.actors.get('hero'), old);assert.equal(old.disposed, 0);assert.equal(old.group.parent, scene);
+  swap.attachFormation = () => {};const built = swap.placeFigure(unit, {styleKey: 'new', vComm: 0});
+  assert.equal(swap.actors.get('hero'), built);assert.equal(built.group.userData.styleKey, 'new');assert.equal(built.group.userData.unitId, 'hero');
+  assert.equal(old.disposed, 1);assert.equal(old.group.parent, null);built.dispose();
   stage.setFigureStyle('painted');assert.equal(synced.length, 1, 'Re-selecting the same style does nothing');
   stage.setFigureStyle('invented');assert.equal(stage.figureStyle, 'sculpted', 'Unknown styles fall back to sculpted');
   assert.equal(JSON.stringify(encounter), frozen, 'The encounter is untouched');
