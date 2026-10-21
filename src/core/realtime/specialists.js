@@ -3,6 +3,7 @@ import {COHESION,EXCHANGE,MORALE,RALLY,SPECIALISTS} from '../../data/realtime-sq
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {crossesCover,navGrid,span} from './navigation.js';
 import {alliedSides,fielded,squadCentre,squadOf,squadsOf,squadModifiers} from './squads.js';
+import {sightBlocked} from './sight.js';
 
 // Rally and the specialists' actions (guide "Techniques", "Specialists"; build
 // brief §3.6): what each needs (validate) and what it does (use). A
@@ -35,7 +36,7 @@ export function validateSpecial(world,actor,abilityId,other){
   if(abilityId==='volley'){
     if((actor.volleys??0)<=0)return 'NO_VOLLEYS';if(!other||!standing(other))return 'NO_TARGET';if(!hostile(actor,other))return 'FRIENDLY';
     if(other.hidden)return 'NO_TARGET';if(distanceBetween(actor,other)>SPECIALISTS.volley.range)return 'OUT_OF_RANGE';
-    if(crossesCover(navGrid(world.map),actor,other))return 'NO_LINE_OF_SIGHT';return null;
+    if(sightBlocked(world,actor,other))return 'NO_LINE_OF_SIGHT';return null;
   }
   return 'NO_TARGET';
 }

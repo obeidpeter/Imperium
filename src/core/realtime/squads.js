@@ -4,6 +4,7 @@ import {actorById,distanceBetween,hostile} from './abilities.js';
 import {makeActor} from './actors.js';
 import {derivedValues} from './combat.js';
 import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
+import {sightBlocked} from './sight.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -103,6 +104,20 @@ export function memberFell(world,member,attacker,{arc='front',missile=null}={}){
   squad.strength=Math.max(0,squad.strength-squad.perMan);
   hitSquad(world,squad,{flank:arc!=='front',ranged:!!missile,scale:1});
   afterLoss(world,squad,attacker);
+}
+// The pitch fire scorches a squad (field-objects.js): strength lost as men
+// fall, those nearest the fire first; the 0.38 fire also costs cohesion and
+// adds suppression (as a missile hit does) but no morale.
+export function scorchSquad(world,squad,points,fire){
+  if(!fielded(world,squad))return;const before=menOf(world,squad);
+  squad.strength=Math.max(0,squad.strength-points);squad.cohesion=clamp(squad.cohesion-COHESION.ranged);
+  squad.suppression=Math.min(SUPPRESSION.max,squad.suppression+SUPPRESSION.ranged);
+  const keep=Math.max(0,Math.ceil(squad.strength/squad.perMan-1e-9)),men=membersOf(world,squad).sort((a,b)=>span(a.x-fire.x,a.z-fire.z)-span(b.x-fire.x,b.z-fire.z)||a.slot-b.slot);
+  for(const m of men.slice(0,Math.max(0,before-keep))){
+    m.alive=false;m.diedAt=world.tick;m.killedBy='fire';m.order=null;m.lock=null;m.path=[];m.action=null;
+    emit(world,{kind:'fall',attackerId:null,defenderId:m.id,squadId:squad.id,cause:'fire'});
+  }
+  emit(world,{kind:'scorch',squadId:squad.id,damage:points});afterLoss(world,squad,null);
 }
 // Morale, cohesion and suppression after a hit worth `scale` of a 0.38 hit.
 function hitSquad(world,squad,{flank=false,ranged=false,scale=1}){
@@ -204,7 +219,8 @@ export function squadModifiers(world,attacker,target,{ranged=false}={}){
   add('Veteran protector',target.guard&&target.guard.until>world.tick?-target.guard.reduction:0);
   add('Wedge on firm ground',!ranged&&attacker.formation==='wedge'&&!rough(source)&&!wallBetween(world.map,a,t)?EXCHANGE.wedgeAttack:0);
   add('Wedge exposure',target.formation==='wedge'?EXCHANGE.wedgeExposure:0);
-  add('Mounted charge',!ranged&&chargeReady(world,attacker,target,{rough:rough(source)||rough(ground)})?EXCHANGE.charge:0);
+  // Staked approaches (the Chapter IX opportunity) take the enemy's charge away.
+  add('Mounted charge',!ranged&&!(attacker.side==='enemy'&&world.field?.cavalryDenied)&&chargeReady(world,attacker,target,{rough:rough(source)||rough(ground)})?EXCHANGE.charge:0);
   if(world.chapter!==1){
     add('Disrupted cohesion',attacker.cohesion<COHESION.low?-EXCHANGE.lowCohesion:0);
     add('Suppressed',Math.floor(attacker.suppression)>=SUPPRESSION.penalty?-EXCHANGE.suppressed:0);
@@ -268,9 +284,9 @@ export function exchangeSquads(world,{wound=null}={}){
     if(a.contact||a.broken||!missileRangeOf(a))continue;
     const range=missileRangeOf(a),centre=squadCentre(world,a);
     // A single man the plan names comes first (an escort, the soldier), then the nearest squad in range.
-    const named=singles.find(o=>o.id===a.plan?.targetId&&hostile(a,o)&&span(o.x-centre.x,o.z-centre.z)<=range&&!crossesCover(grid,centre,o));
+    const named=singles.find(o=>o.id===a.plan?.targetId&&hostile(a,o)&&span(o.x-centre.x,o.z-centre.z)<=range&&!sightBlocked(world,centre,o));
     if(named)continue;
-    const target=squads.filter(b=>hostile(a,b)&&!crossesCover(grid,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
+    const target=squads.filter(b=>hostile(a,b)&&!sightBlocked(world,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
       .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
     if(target){a.facing=squadCentre(world,target);hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target)});shotAtSquad.add(a);}
   }
@@ -285,7 +301,7 @@ export function exchangeSquads(world,{wound=null}={}){
     let pick=near?{o:near.o,man:near.man,ranged:false}:null;
     if(!pick&&missileRangeOf(a)&&!a.broken){
       const centre=squadCentre(world,a),range=missileRangeOf(a);
-      const far=foes.filter(o=>span(o.x-centre.x,o.z-centre.z)<=range&&!crossesCover(grid,centre,o))
+      const far=foes.filter(o=>span(o.x-centre.x,o.z-centre.z)<=range&&!sightBlocked(world,centre,o))
         .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
       if(far)pick={o:far,man:nearestMan(world,a,far).man,ranged:true};
     }

@@ -36,7 +36,7 @@ export function validateWorld(world,fail){
   if(world.spoils.some(s=>!s||!ITEMS[s.itemId]||!str(s.from,40)))fail('real-time spoils.');
   if(world.provoked.some(p=>!p||!str(p.id,40)||!str(p.name)||!int(p.tick,0,1e7)))fail('real-time provocations.');
   if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
-  validateSquads(world,fail);
+  validateSquads(world,fail);validateField(world,fail);
   const mission=world.mission;
   if(mission!==null&&mission!==undefined){
     if(typeof mission!=='object'||!str(mission.mode,20)||!mission.goal||!num(mission.goal.x)||!num(mission.goal.z)||!num(mission.radius)||!int(mission.deadline,1,40)
@@ -56,6 +56,17 @@ const SQUAD_TARGETS=new Set([null,'hero','objective','convoy','nearest_enemy_gro
 export function squadSlotProblem(slot){
   if(!Array.isArray(slot)||slot.length!==2||!SQUAD_STANDING.actions[slot[0]])return 'NO_TARGET';
   const t=slot[1];return SQUAD_TARGETS.has(t)||(typeof t==='string'&&/^squad:[\w-]{1,40}$/.test(t))?null:'NO_TARGET';
+}
+// The field objects and the opportunity record (field-objects.js).
+const FIELD_STATES={gate:['closed','open'],bridge:['damaged','repaired'],barricade:['intact','dismantled'],brazier:['unlit','burning','spent'],
+  stores:['available','secured','forgone','missed'],signal:['available','secured','forgone','missed']};
+function validateField(world,fail){
+  const f=world.field,m=world.map;
+  for(const o of world.objects)if(o?.field&&(!FIELD_STATES[o.kind]?.includes(o.state)||!int(o.rounds,0,3)||typeof o.done!=='boolean'||!num(o.x)||!num(o.z)
+    ||o.cells!==undefined&&(!Array.isArray(o.cells)||o.cells.length>16||o.cells.some(c=>!Array.isArray(c)||!int(c[0],0,m.width-1)||!int(c[1],0,m.height-1)))))fail('real-time field object.');
+  if(f===undefined)return;
+  if(!f||typeof f!=='object'||!int(f.deadline,1,30)||![null,'stores','signal'].includes(f.choice)||!['pending','secured','missed'].includes(f.outcome)||![2,3].includes(f.escortPace)
+    ||typeof f.cavalryDenied!=='boolean'||!f.opportunities||['stores','signal'].some(k=>!str(f.opportunities[k]?.effect,20)))fail('real-time field.');
 }
 function validateSquads(world,fail){
   if(world.squads===undefined){if(world.command!==undefined&&world.command!==null)fail('real-time command.');return;}

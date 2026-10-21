@@ -4,6 +4,7 @@ import {derivedValues} from './combat.js';
 import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalkable,cellCentre} from './navigation.js';
 import {helpless,setRoute} from './motion.js';
 import {nextRandom} from './rng-streams.js';
+import {smokeBetween} from './sight.js';
 
 // Enemy AI (§3.10). Each enemy keeps a notice meter for every hostile actor:
 // the eye over his head. It fills with what he sees and hears and drains when
@@ -31,7 +32,7 @@ export function noticeRate(world,watcher,target){
   let visibility=1;
   if(world.timeOfDay==='night')visibility*=PERCEPTION.darkness;
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
-  if(crossesCover(grid,watcher,target))visibility*=PERCEPTION.cover;
+  if(crossesCover(grid,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
   if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
   return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*difficulty(world).notice;
 }

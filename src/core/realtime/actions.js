@@ -4,6 +4,7 @@ import {derivedValues} from './combat.js';
 import {actorById,distanceBetween,hostile,staggered,validate} from './abilities.js';
 import {facingWithin,helpless,inReach,objectById,orderRange,reachOf,turnToward} from './motion.js';
 import {useSpecial} from './specialists.js';
+import {fieldProblem,useFieldObject} from './field-objects.js';
 
 // System 4 (§3.1): swing timers (contact at half the swing), casts, shots and
 // timed work (Bind wounds, objects), with recovery after each. Starting an
@@ -89,6 +90,7 @@ function startAbility(world,actor,order){
 
 function startInteraction(world,actor,order){
   const object=objectById(world,order.targetId);if(!object||object.done&&!object.toggle){actor.order=null;return;}
+  const problem=fieldProblem(world,object);if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
   if(distanceBetween(actor,object)>orderRange(world,actor,order,object))return;
   turnToward(actor,object.x-actor.x,object.z-actor.z);
   actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf(object.work_s??3)};
@@ -132,6 +134,8 @@ function finishWork(world,actor,action){
     return;
   }
   const object=objectById(world,action.objectId);if(!object)return;
+  // A field object changes state and the field with it (field-objects.js).
+  if(object.field){actor.order=null;useFieldObject(world,actor,object);return;}
   actor.order=null;object.done=true;object.by=actor.id;object.at=world.tick;
   emit(world,{kind:'used-object',actorId:actor.id,objectId:object.id,what:object.kind});
 }

@@ -30,7 +30,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 
 export const fieldDom=root=>({canvas:root.querySelector('canvas'),...Object.fromEntries([...root.querySelectorAll('[data-role]')].map(el=>[el.dataset.role,el]))});
 // Who the stage draws: hidden enemies stay off it until they are seen.
-const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',');
+// What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
+const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',');
 
 export function createRealtimeField({dom,world:initial,base:initialBase,options={},keymap=DEFAULT_KEYMAP,holdDelay=()=>450,callbacks={},kind='field'}){
   let world=initial,base=initialBase,stage=null,presenter=null,input=null,disposed=false;
@@ -112,6 +113,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')say(`${q.name} stands again.`,{announce:true});}
       if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true});}
       if(e.kind==='rally')say(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
+      // The field objects (field-objects.js): what changed, as the log says it.
+      if(e.kind==='field'&&e.what!=='brazier-burns'){const line=world.log.findLast?.(l=>l.tick===e.tick&&/gate|bridge|barricade|brazier|pitch|opportunit|secures/i.test(l.text));
+        if(line)say(line.text,{announce:true,warning:e.what==='opportunities-closed'});}
       if(e.kind==='capability-needed')say(`Demonstrate: ${e.missing.join(', ')}.`,{warning:true,announce:true});
       if(e.kind==='work-stopped'&&e.actorId===mine)say('Your work is interrupted.',{warning:true});
       if(e.kind==='rejected'&&e.actorId===mine)say(REASONS[e.reason]??'That cannot be done now.',{warning:true});

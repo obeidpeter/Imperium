@@ -15,6 +15,8 @@ import {CHAPTERS} from '../../data/campaign.js';
 import {ROMAN_SQUADS} from '../../data/realtime-squads.js';
 import {defaultStanding} from './squad-ai.js';
 import {fielded,squadCentre} from './squads.js';
+import {chapterOpportunity} from '../command-campaign.js';
+import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
 
 // A campaign battle in real time (build brief §3.2 "Converting 0.38 data",
 // §3.4). The 0.38 encounter stays the record the campaign commits: its map,
@@ -214,6 +216,35 @@ function squadStanding(state,e,unit,role){
   return custom.map(([a,t])=>[a,typeof t==='string'&&t.startsWith('squad:')?(tokenOf(t.slice(6))?`squad:${tokenOf(t.slice(6))}`:'hero'):t]);
 }
 
+// --- The field objects (0.38 expanded-campaign.js) ------------------------------
+// Each stands at its tile's centre. A side gate is a wall line across its
+// opening while it is shut (one fine tile thick, so the ground beside it is the
+// ground the stage draws); a damaged footbridge's crossing is a strip of the
+// river that becomes a ford once repaired. The opportunities carry the chapter's
+// own versions (edition 34) or the defaults.
+function fieldFor(e,layout,fine){
+  if(!e.field||e.type==='training'||!Array.isArray(e.field.objects)||!e.field.objects.length)return null;
+  const ox=offsets(layout.kx),oy=offsets(layout.ky),objects=[];
+  const passable=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&!['rock','river','wall'].includes(e.terrain[y][x]);
+  for(const o of e.field.objects){
+    const c=tileCentre(o,layout),object={id:o.id,kind:o.kind,name:o.label,x:c.x,z:c.z,work_s:WORK_SECONDS,field:true,state:o.state,rounds:o.rounds??0,tile:{x:o.x,y:o.y}};
+    if(o.kind==='gate'||o.kind==='bridge'){
+      // Its passage runs east-west when the tiles either side can be crossed.
+      const eastWest=passable(o.x-1,o.y)||passable(o.x+1,o.y),column=o.kind==='gate'?eastWest:!eastWest,cells=[];
+      if(column){const fx=ox[o.x]+Math.floor(layout.kx[o.x]/2);for(let fy=oy[o.y];fy<oy[o.y]+layout.ky[o.y];fy++)cells.push([fx,fy]);}
+      else{const fy=oy[o.y]+Math.floor(layout.ky[o.y]/2);for(let fx=ox[o.x];fx<ox[o.x]+layout.kx[o.x];fx++)cells.push([fx,fy]);}
+      object.cells=o.kind==='bridge'?cells.filter(([x,y])=>['river','ford'].includes(fine.terrain[y][x])):cells;
+      if(o.kind==='gate'){object.under=fine.terrain[cells[0][1]][cells[0][0]];if(o.state==='closed')for(const [x,y]of cells)fine.terrain[y][x]='wall';}
+    }
+    object.done=!fieldVerb(object)||['stores','signal'].includes(o.kind)&&e.field.outcome!=='pending';
+    objects.push(object);
+  }
+  const opportunity=id=>{const authored=chapterOpportunity(e,id),label=e.field.objects.find(o=>o.id===id)?.label??id;
+    return authored?{label,effect:authored.effect,description:authored.description}:{label,...DEFAULT_OPPORTUNITIES[id]};};
+  return {objects,field:{landmark:e.field.landmark,deadline:e.field.deadline,choice:e.field.choice,outcome:e.field.outcome,
+    escortPace:e.commandCampaign?.escortPace??2,cavalryDenied:!!e.commandCampaign?.cavalryDenied,opportunities:{stores:opportunity('stores'),signal:opportunity('signal')}}};
+}
+
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
   const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine};
@@ -246,12 +277,12 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     waves:(e.mission.waves??[]).map(wave),escorts:[...(e.mission.escortIds??[])],
     required:(e.requiredAbilities??[]).filter(a=>!CAMP_CAPABILITIES.has(a)),defence:e.defence??100,pressure:difficultyRule(e).pressure,objectId:null,
     waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
-  const objects=[];
+  const objects=[],field=fieldFor(e,layout,fine);if(field)objects.push(...field.objects);
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
   const world=createWorld({map,seed,actors,controlled:'hero',party,mission,objects,difficulty,weather:e.weather??null,timeOfDay:e.timeOfDay??'day',
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
-  world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};
+  world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
   return world;
 }
@@ -298,6 +329,7 @@ export function applyRealtimeOutcome(state,world){
   for(const a of arrivals)if(!e.units.some(u=>u.id===a.id)){const t=metresToTile(a.at,k,e);
     e.units.push({id:a.id,name:a.name,side:'enemy',x:t.x,y:t.y,hp:a.alive?7:0,maxHp:7,role:a.role,moved:false,acted:false,move:2,facing:'west',morale:80,intent:'Reinforce.'});}
   if(e.defence!==undefined)e.defence=Math.max(0,m.defence);
+  writeField(e,world);
   for(const p of m.points)if(p.secured){const t=metresToTile(p,k,e),record=e.mission.points.find(q=>q.x===t.x&&q.y===t.y);if(record)record.secured=true;}
   if(m.mode==='hold'||m.holdRequired)e.mission.holdProgress=Math.min(30,Math.floor(m.heldTicks/TIME.roundTicks));
   // TP for the enemies the soldier or a companion struck down, each once, at most ten (§3.5).
@@ -309,6 +341,25 @@ export function applyRealtimeOutcome(state,world){
   e.status=world.status==='active'?'active':world.status;
   e.log.push(...world.log.slice(-10).map(l=>l.text));if(e.log.length>70)e.log.splice(0,e.log.length-70);
   return e;
+}
+// The field objects as 0.38 records them: their states, the opportunity taken
+// (or missed) and what it pays on victory, the bridge's ford and the edition-34
+// record (commitExpanded and the chronicle read these).
+function writeField(e,world){
+  const f=world.field;if(!f||!e.field)return;
+  for(const o of world.objects??[]){
+    if(!o.field)continue;const record=e.field.objects.find(r=>r.id===o.id);if(!record)continue;
+    record.state=o.state;if(o.state==='burning')record.rounds=Math.max(1,Math.min(3,o.rounds));else delete record.rounds;
+    if(o.kind==='bridge'&&o.state==='repaired')e.terrain[o.tile.y][o.tile.x]='ford';
+  }
+  if(f.choice&&!e.field.choice){
+    const effect=f.opportunities?.[f.choice]?.effect;
+    if(effect==='stores')e.staged.supplies=(e.staged.supplies??0)+2;
+    if(effect==='cohesion')e.staged.meters.army=(e.staged.meters.army??0)+2;
+    if(e.commandCampaign)e.commandCampaign.opportunity=f.choice;
+  }
+  e.field.choice=f.choice;e.field.outcome=f.outcome;
+  if(e.commandCampaign){e.commandCampaign.escortPace=f.escortPace;e.commandCampaign.cavalryDenied=f.cavalryDenied;}
 }
 // Distinguished service the After-Action Chronicle names, each worth 1–3 TP.
 export function commendations(world){

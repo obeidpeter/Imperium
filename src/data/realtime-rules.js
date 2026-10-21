@@ -136,7 +136,7 @@ export const REASONS=Object.freeze({
   NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',FRIENDLY:'He is on your side.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',
   NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',
   NOT_WOUNDED:'He is not wounded.',NOT_FALLEN:'Only a fallen comrade can be carried.',NOT_IN_CAMP:'Not here in camp.',
-  ALREADY_DONE:'That is already done.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
+  ALREADY_DONE:'That is already done.',OPPORTUNITY_CLOSED:'That opportunity has closed: only one could be taken, before the end of round 7.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
   NO_FRIEND_NEAR:'No friend within reach.',NOT_A_SQUAD:'Choose a squad.'});
 
 // Phase 0 enemy behaviour (§3.10 arrives in Phase 1): notice within a

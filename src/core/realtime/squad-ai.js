@@ -4,6 +4,7 @@ import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {cellCentre,clampToMap,crossesCover,navGrid,nearestWalkable,span,walkable} from './navigation.js';
 import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,squadById,squadCentre,squadOf,squadsOf} from './squads.js';
+import {smokeBetween} from './sight.js';
 
 // How squads decide (§3.7, §3.8, §3.10): ours carry out the soldier's order,
 // else the first feasible of their four standing orders; the enemy's war bands
@@ -204,7 +205,7 @@ function enemyDecision(world,squad){
   if(role==='Suppress'||role==='Suppress engineers'||squad.role==='archer'){
     const t=centreOf(world,target),range=missileRangeOf(squad)||20,d=span(t.x-c.x,t.z-c.z),grid=navGrid(world.map);
     if(d<8){const away={x:c.x+(c.x-t.x)/(d||1)*6,z:c.z+(c.z-t.z)/(d||1)*6};goTo(world,squad,away,{run:true});plan(squad,'Step back and keep shooting.',{x:away.x,z:away.z,targetId:target.id});return;}
-    if(d>range*.85||crossesCover(grid,c,t)){goTo(world,squad,t,{stopAt:range*.75});plan(squad,`Close to bow range of ${target.name}.`,{targetId:target.id,x:t.x,z:t.z});return;}
+    if(d>range*.85||crossesCover(grid,c,t)||smokeBetween(world,c,t)){goTo(world,squad,t,{stopAt:range*.75});plan(squad,`Close to bow range of ${target.name}.`,{targetId:target.id,x:t.x,z:t.z});return;}
     halt(squad);plan(squad,`Suppress ${target.name}.`,{targetId:target.id,x:t.x,z:t.z});return;
   }
   if(role==='Flank'||role==='Turn the shield flank'){

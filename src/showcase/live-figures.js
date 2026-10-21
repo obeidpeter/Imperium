@@ -46,13 +46,37 @@ export function squadUnit(world,squad){
     facing:'east',morale:squad.morale,intent:'',hidden:false,trained:squad.side!=='enemy',shield:!!lead?.kit?.some(id=>ITEMS[id]?.shield),
     crowd:Math.max(0,squad.maxMen-1),squad:true};
 }
+// The field objects as the stage's field features draw them (battlefield-features.js), on the
+// fine map's tiles: a shut gate is its gate and timber across the rest of its line; a
+// footbridge is a section on each tile of its crossing.
+function stageField(world){
+  const f=world.field;if(!f)return null;const tile=v=>Math.floor(v/2.5),objects=[];
+  for(const o of world.objects??[]){
+    if(!o.field)continue;const base={kind:o.kind,label:o.name,state:o.state,...(o.state==='burning'?{rounds:Math.max(1,o.rounds)}:{})};
+    if(o.cells?.length){
+      const mid=Math.floor(o.cells.length/2);
+      o.cells.forEach(([x,y],i)=>{
+        if(o.kind==='bridge')objects.push({...base,id:`${o.id}-${i}`,x,y,...(i===mid?{}:{section:true})});
+        else if(i===mid)objects.push({...base,id:o.id,x,y});
+        else if(o.state==='closed')objects.push({id:`${o.id}-timber-${i}`,kind:'barricade',label:o.name,state:'intact',x,y});
+      });
+    }else objects.push({...base,id:o.id,x:tile(o.x),y:tile(o.z)});
+  }
+  return {landmark:f.landmark,objects,choice:f.choice,outcome:f.outcome,deadline:f.deadline};
+}
+// The ground the stage draws: the world's, with a shut gate's line shown as the ground under
+// it (the gate and its timber stand there instead, and open without rebuilding the ground).
+function stageTerrain(world){
+  const gates=(world.objects??[]).filter(o=>o.field&&o.kind==='gate'&&o.cells?.length);if(!gates.length)return world.map.terrain;
+  const terrain=world.map.terrain.map(row=>[...row]);for(const g of gates)for(const [x,y]of g.cells)terrain[y][x]=g.under;return terrain;
+}
 // The stage's encounter: the campaign map with the world's actors, and no turn-based markers.
 // A campaign battle's world walks an upsampled map (2.5 m tiles); the stage builds that one.
 export function stageEncounter(encounter,world){
-  const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:world.map.terrain}:{};
+  const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
-  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(stageUnit),...squads],mission:null,goal:null,field:null,
-    operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(stageUnit),...squads],mission:null,goal:null,
+    field:stageField(world),operation:null,reinforcements:[],status:'active',turn:1,log:[]};
 }
 // The simulation lands a blow at half the swing; the figure's authored clip
 // lands it at ACTOR_TIMING.contact. Map one onto the other.

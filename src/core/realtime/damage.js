@@ -32,7 +32,9 @@ function fall(world,attacker,defender,base){
   defender.action=null;defender.order=null;defender.lock=null;defender.path=[];defender.gait=null;defender.braceUntil=0;
   if(defender.carrying){const carried=actorById(world,defender.carrying);if(carried)carried.carriedBy=null;defender.carrying=null;}
   if(defender.downs){defender.down=true;defender.downAt=world.tick;defender.hp=0;emit(world,{kind:'down',...base});return;}
-  defender.alive=false;defender.diedAt=world.tick;defender.killedBy=attacker.id;attacker.kills++;emit(world,{kind:'fall',...base,...(defender.squadId?{squadId:defender.squadId}:{})});
+  // Fire has no attacker: it is named as the cause.
+  defender.alive=false;defender.diedAt=world.tick;defender.killedBy=attacker?.id??base.cause??null;if(attacker)attacker.kills++;
+  emit(world,{kind:'fall',...base,...(defender.squadId?{squadId:defender.squadId}:{})});
   // A man of a squad: the squad loses his share and takes the 0.38 hit.
   if(defender.squadId)memberFell(world,defender,attacker,{arc:base.arc,missile:base.missile});
 }
@@ -47,6 +49,15 @@ export function exchangeWound(world,attacker,defender,points,{missile=null,arc='
   const floor=defender.practice?1:0;defender.hp=Math.max(floor,defender.hp-points);emit(world,{kind:'hit',...base,damage:points});
   if(defender.action?.kind==='work'){cancelAction(world,defender);defender.order=null;}
   if(defender.hp<=0)fall(world,attacker,defender,base);
+}
+// The pitch fire burns a single man (field-objects.js): no attacker, no roll.
+export function burnActor(world,defender,points){
+  if(!defender.alive||defender.down||points<=0)return;
+  defender.lastHitTick=world.tick;defender.calmSince=world.tick;
+  const base={attackerId:null,defenderId:defender.id,cause:'fire'};
+  defender.hp=Math.max(defender.practice?1:0,defender.hp-points);emit(world,{kind:'burn',...base,damage:points});
+  if(defender.action?.kind==='work'){cancelAction(world,defender);defender.order=null;}
+  if(defender.hp<=0)fall(world,null,defender,base);
 }
 
 export function resolveBlows(world){

@@ -61,7 +61,7 @@ export class FlatStage{
   }
   // The board's ground, drawn once for this tile size and kept.
   terrainImage(world,v){
-    const key=`${world.map.width}x${world.map.height}:${v.tw.toFixed(2)}:${world.map.id}`;if(this.terrain?.key===key)return this.terrain;
+    const key=`${world.map.width}x${world.map.height}:${v.tw.toFixed(2)}:${world.map.id}:${world.map.rev??0}`;if(this.terrain?.key===key)return this.terrain;
     const W=world.map.width,H=world.map.height,pad=v.tw*2,width=(W+H)*v.tw/2+pad*2,height=(W+H)*v.th/2+pad*2+v.th*2;
     const canvas=document.createElement('canvas');canvas.width=Math.ceil(width);canvas.height=Math.ceil(height);const c=canvas.getContext('2d');
     const at=(u,t)=>({x:pad+(u-t+H)*v.tw/2,y:pad+v.th*2+(u+t)*v.th/2});
@@ -122,8 +122,10 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const unit=v.tw/TILE;// pixels per metre along the board
       // Objectives and objects.
       if(w.mission?.goal)ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
-      for(const o of w.objects??[]){const p=flat.screen(v,o.x,o.z);c.fillStyle=o.done&&!o.toggle?'#6b6050':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
-        c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.name,p.x,p.y-v.th*1.3);}
+      for(const o of w.objects??[]){const p=flat.screen(v,o.x,o.z);c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
+        // A lit brazier's smoke, and its reach.
+        if(o.state==='burning'){ellipse(p,2.5*unit*.7,null,{fill:'#9b928355'});ellipse(p,3*unit*.7,'#e07a2c',{dash:[4,4],width:1.5});}
+        c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.field?`${o.name} (${o.state})`:o.name,p.x,p.y-v.th*1.3);}
       // The route a click would walk, and what the soldier will do on resume.
       if(route?.points?.length&&hero?.alive)line([at(hero),...route.points.map(p=>flat.screen(v,p.x,p.z))],'#f1dfa2',{dash:[8,5]});
       if(planned?.points?.length&&hero?.alive)line([at(hero),...planned.points.map(p=>flat.screen(v,p.x,p.z))],'#cfe7e488',{dash:[4,6]});

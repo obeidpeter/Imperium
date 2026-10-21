@@ -2,6 +2,7 @@ import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS} from '../../data/realtime-rules
 import {actorById,distanceBetween,forecast,hostile,liftable,validate} from './abilities.js';
 import {commandProblem,commandable,routePreview} from './simulation.js';
 import {objectById} from './motion.js';
+import {fieldHint,fieldProblem,fieldVerb} from './field-objects.js';
 
 // What the pointer would do where it is (§3.14): a cursor state, the message
 // line's words and the Command a click there gives. Pure: pointing and
@@ -41,7 +42,10 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
   // Objects: walk over and use them (a chest, a gate, a bridge).
   if(object&&button==='left'){
     if(object.done&&!object.toggle)return {...none,cursor:'blocked',message:`${object.name}: done.`};
-    return {cursor:'use',reason:null,message:`Use: ${object.name}. ${object.hint??'Your soldier walks over and works for a few seconds; a blow stops him.'}`,
+    // A field object says what the work does, or why it cannot be done now (field-objects.js).
+    const problem=fieldProblem(world,object);if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
+    const verb=object.field?fieldVerb(object):'Use',hint=object.field?`${fieldHint(world,object)} A blow stops the work.`:object.hint??'Your soldier walks over and works for a few seconds; a blow stops him.';
+    return {cursor:'use',reason:null,message:`${verb}: ${object.name}. ${hint}`,
       command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id}}};
   }
   // A fallen enemy: search him. A fallen comrade: lift him (weapon sheathed).
@@ -143,7 +147,8 @@ export function commandOptions(world,{actorId=world.controlled}={}){
     if(o.side==='neutral')add('Friends',`Force an attack on ${o.name}`,order('attack',{targetId:o.id,forced:true}),{subject:o.id,detail:'He is no enemy: striking him turns him hostile and costs Public Confidence.'});
   }
   // Objects, the fallen and places.
-  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near))add('Objects',`Use: ${o.name}`,order('interact',{objectId:o.id}),{subject:o.id,detail:m(distanceBetween(actor,o))});
+  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near))add('Objects',`${o.field?fieldVerb(o):'Use'}: ${o.name}`,order('interact',{objectId:o.id}),
+    {subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.field?` ${fieldHint(world,o)}`:''}`});
   for(const b of world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near))add('The fallen',`Search ${b.name}`,order('loot',{targetId:b.id}),{subject:b.id,detail:m(distanceBetween(actor,b))});
   const places=[];
   if(world.mission?.goal)places.push({name:'The objective marker',x:world.mission.goal.x,z:world.mission.goal.z});

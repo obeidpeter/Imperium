@@ -44,6 +44,8 @@ export function navGrid(map){
   grids.set(key,grid);byMap.set(map,grid);return grid;
 }
 
+// A map whose terrain has changed (a gate opened, a bridge repaired) is read afresh.
+export function invalidateGrid(map){byMap.delete(map);}
 export const cellIndex=(g,x,z)=>{const c=Math.floor(x/g.cell),r=Math.floor(z/g.cell);return c<0||r<0||c>=g.cols||r>=g.rows?-1:r*g.cols+c;};
 export const cellCentre=(g,i)=>({x:(i%g.cols+.5)*g.cell,z:(Math.floor(i/g.cols)+.5)*g.cell});
 export const walkable=(g,x,z)=>{const i=cellIndex(g,x,z);return i>=0&&g.walk[i]===1;};

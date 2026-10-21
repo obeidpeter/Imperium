@@ -1,6 +1,7 @@
 import {ARCS,BASE_ATTRIBUTES,COMBAT,DAMAGE_TYPES,ITEMS,MISSILES,MOVEMENT,SHIELDS,TIME,TRAINING_PATHS,WEAPONS} from '../../data/realtime-rules.js';
 import {crossesCover,groundHeight,navGrid,span,terrainAtPoint} from './navigation.js';
 import {randomInt,nextRandom} from './rng-streams.js';
+import {smokeBetween} from './sight.js';
 
 // Character values and blow resolution (§3.5). Every division is floored,
 // constants come from the rules data, and one setup serves both the forecast
@@ -76,7 +77,7 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   if(arc==='rear'){attack+=COMBAT.rearAttack;mods.push({label:'From behind',kind:'attack',value:COMBAT.rearAttack});}
   if(rise>=COMBAT.heightStep){defence+=COMBAT.heightDefence;mods.push({label:'He holds higher ground',kind:'defence',value:COMBAT.heightDefence});}
   if(missile&&-rise>=COMBAT.heightStep){attack+=COMBAT.heightDefence;mods.push({label:'Thrown downhill',kind:'attack',value:COMBAT.heightDefence});}
-  if(missile&&crossesCover(grid,src,defender)){attack-=COMBAT.coverMissile;mods.push({label:'Through cover',kind:'attack',value:-COMBAT.coverMissile});}
+  if(missile&&(crossesCover(grid,src,defender)||smokeBetween(world,src,defender))){attack-=COMBAT.coverMissile;mods.push({label:'Through cover',kind:'attack',value:-COMBAT.coverMissile});}
   const far=span(defender.x-src.x,defender.z-src.z)>COMBAT.weatherRange,weather=missile&&far&&['rain','mist','dust'].includes(world.weather);
   if(weather){
     attack-=COMBAT.weatherMissile;

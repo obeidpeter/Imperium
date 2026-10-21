@@ -43,7 +43,8 @@ export function missionReadouts(encounter) {
   // Only the next publicly announced wave is marked, matching the orders panel.
   const wave=mission.waves?.find(item=>!item.arrived);
   if (wave) entries.push({id:'wave',x:wave.x,y:wave.y,label:`Reinforcements · turn ${wave.turn}`,tone:'warning'});
-  for(const o of encounter.field?.objects??[])if(['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
+  // A real-time footbridge is drawn in sections; only its middle one is named.
+  for(const o of encounter.field?.objects??[])if(!o.section&&['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
   return entries;
 }
 

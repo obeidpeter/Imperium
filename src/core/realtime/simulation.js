@@ -15,6 +15,7 @@ import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveO
 import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
+import {fieldProblem,fieldRound} from './field-objects.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -82,7 +83,7 @@ export function commandProblem(world,command){
     case 'attack':return actor.carrying?'CARRYING':validate(world,actor.id,'strike',{actorId:p.targetId,forced:!!p.forced});
     case 'ability':return ABILITIES[p.abilityId]&&!ABILITIES[p.abilityId].enemyOnly
       ?validate(world,actor.id,p.abilityId,{actorId:p.targetId,x:p.x,z:p.z,forced:!!p.forced}):'NO_TARGET';
-    case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':actor.carrying?'CARRYING':null;}
+    case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o)??(actor.carrying?'CARRYING':null);}
     case 'talk':{const o=actorById(world,p.targetId);return o?.alive&&!hostile(actor,o)&&o.talk?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     case 'loot':{const o=actorById(world,p.targetId);return o&&!o.alive&&o.loot?.length?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     // Taking from a body the soldier stands by: the items chosen so far (one queued take carries them all).
@@ -235,7 +236,11 @@ function logLine(world,e){
     case 'block':return `${to} blocks ${by}'s ${what}.`;
     case 'stuck':return `The pilum sticks in ${to}'s shield.`;
     case 'miss':return `${by} misses ${to}.`;
-    case 'fall':return e.squadId?`${to} of ${squadName(world,e.squadId)} falls${e.exchange?'':` to ${by}`}.`:`${to} falls.`;
+    case 'fall':return e.cause==='fire'?`${to}${e.squadId?` of ${squadName(world,e.squadId)}`:''} dies in the pitch fire.`
+      :e.squadId?`${to} of ${squadName(world,e.squadId)} falls${e.exchange||!e.attackerId?'':` to ${by}`}.`:`${to} falls.`;
+    case 'burn':return `${to} is burnt by the pitch fire: ${e.damage}.`;
+    case 'scorch':return `The pitch fire scorches ${squadName(world,e.squadId)}.`;
+    case 'field':return fieldLine(world,e);
     case 'down':return `${to} is down. Bind his wounds or carry him.`;
     case 'stagger':return `${to} staggers.`;
     case 'notice':return actorById(world,e.actorId)?.practice?null:`${by} has seen ${to}.`;
@@ -263,6 +268,21 @@ function logLine(world,e){
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
+    default:return null;
+  }
+}
+// What happened to a field object (field-objects.js), in the log's words.
+function fieldLine(world,e){
+  const o=objectById(world,e.objectId),by=e.actorId?nameOf(world,e.actorId):null,f=world.field;
+  switch(e.what){
+    case 'gate-open':return `${o.name} is open${by?`: ${by} opened it`:''}. The side route is clear.`;
+    case 'bridge-repaired':return `${o.name} is repaired${by?` by ${by}`:''}: its crossing is a ford now.`;
+    case 'barricade-dismantled':return `${by} dismantles ${o.name}.`;
+    case 'brazier-lit':return `${by} lights ${o.name}: smoke blocks sight, and the fire hurts both sides within 3 m.`;
+    case 'brazier-out':return `${o.name} is out.`;
+    case 'brazier-burns':return null;
+    case 'opportunity':{const opp=f?.opportunities?.[o.kind];return `${by} secures ${o.name}. ${opp?.description??''} The other opportunity is gone.`.trim();}
+    case 'opportunities-closed':return 'The spare detachment is recalled: the field opportunities have closed.';
     default:return null;
   }
 }
@@ -299,6 +319,8 @@ export function step(world){
   }else world.projectiles=[];
   // System 8, the round boundary: Command refills, squads recover and regroup, the enemy replans.
   if((world.tick+1)%TIME.roundTicks===0){
+    // The pitch fire burns and burns down, and the opportunities close at the end of round 7 (field-objects.js).
+    if(world.field&&world.status==='active')fieldRound(world);
     if(world.squads&&world.status==='active'){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
     emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
   }
