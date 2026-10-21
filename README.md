@@ -1,5 +1,9 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.38.1 — the rest of smooth play
+
+A battle is now built in short steps behind its "Preparing" veil, so the page keeps answering while it is made: in the software benchmark no task while building reaches 90 ms, where 0.38.0's took up to a second. Each battle compiles 46–56 shader programs instead of 58–68, the figures' geometry is a third of what it was, and the page updates in place instead of being rebuilt, so the board keeps its focus between moves. The codebase is tidier: consistent line endings, archived reports, behavioural tests instead of source-text checks, and the 3D stage split into modules. See the [changelog](CHANGELOG.md) and the [performance notes](docs/performance.md); no device has been measured yet.
+
 ## Version 0.38 — smooth play
 
 Battles now open behind a short "Preparing" veil and then play without freezes. Before a battle is shown, everything it will draw is ready:
@@ -311,6 +315,8 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/data/campaign.js` | Twelve chapters, cast, decisions, dialogue, absence branches, oath, historical notes, epilogue |
 | `src/ui/app.js` | Event routing and persistence; screen views are split into `campaign-views.js`, `encounter-view.js`, and `panels.js` |
 | `src/ui/render-controller.js` / `turn-replay.js` | Tested render scheduling, asynchronous share preparation and cancellable turn summaries |
+| `src/ui/page-update.js` | Applies each render to the live page in place, so the board keeps its focus and listeners, the 3D view its canvas and a field what was typed |
+| `src/ui/board-input.js` / `board-readout.js` / `settings.js` | The board's pointer, touch-hold and keyboard input; its readout and announcements; Settings defaults and repair |
 | `src/core/career.js` / `src/data/story-stages.js` | Persistent company service, recovery and state-aware story scenes |
 | `src/core/progression*.js` / `src/data/progression-operations.js` / `negotiators.js` | Versioned operation branches, veteran specializations, recurring representatives and staged agreements |
 | `src/data/encounters.js` | Authored battlefield layouts, objectives, pressure and route variants |
@@ -327,6 +333,7 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `assets/` | Local portraits, scenes, atlases, materials, audio and the fitted character GLB; provenance in docs/asset-manifest.json |
 | `src/ui/battle-stage-controller.js` / `battle-3d.css` | All-chapter battle/chamber 3D view, view switching and renderer lifecycle |
 | `src/showcase/stage.js` / `actors.js` / `actor-pose.js` | Shared WebGL scene, fitted imported anatomy with original rigs/equipment, and articulated action poses |
+| `src/showcase/stage-*.js` / `build-steps.js` / `shadow-depth.js` | The stage's input, camera, labels, figures, overlays and its preparation behind the veil; building in short steps; the shadow pass's depth variants |
 | `src/showcase/actor-assets.js` / `actor-clips.js` | Local CC0 anatomy loading/fallback, identity fitting and original weapon-specific joint clips |
 | `src/showcase/frame-budget.js` / `environment-occlusion.js` / `stage-label-layout.js` | Asynchronous GPU timing, bounded scene resolution, scenery cutaways and collision-aware labels |
 | `src/showcase/environment*.js` / `combat-presentation.js` / `battle-sound.js` | Procedural scenery/materials, visual event timing and optional synthesized combat sounds |

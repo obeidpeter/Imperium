@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.38.1 — the rest of smooth play, and clean-ups
+
+Most of what 0.38.0 left open, and a tidier codebase. The rules, the campaign and saves are unchanged. Details and measurements: [performance notes](docs/performance.md).
+
+- **Built in short steps.** The 3D stage and its world are built in steps of about a frame's work behind the "Preparing" veil, so the page keeps answering while a battle is made ([`build-steps.js`](src/showcase/build-steps.js)).
+  - The first frame no longer sends the battle's whole geometry to the GPU at once. Preparation draws the meshes a batch at a time through a material that puts every vertex outside the view, so their buffers are made in short tasks.
+  - The preloader makes the procedural figure surfaces one kind per task, the painted material tiles one per task, and a skin tone's colour and roughness in separate tasks.
+  - A build that a newer battle overtakes is discarded, and its failure no longer tears down the newer battle.
+- **Fewer shader programs:** 58–68 per battle became 46–56.
+  - The shadow pass takes a caster's colour map only where an alpha test cuts its outline ([`shadow-depth.js`](src/showcase/shadow-depth.js)). The map changed nothing in the shadow but made every textured caster another depth variant.
+  - Stone, wood, cloth and the other standing surfaces share one environment finish whose grain and roughness are each material's uniforms.
+  - Flat and additive overlays (rings, markers, trails) draw in one pass instead of back faces and front faces with a program each: 6 fewer draw calls per battle.
+- **Lighter figures.** A figure's merged surfaces keep their shared vertices: the same triangles, corner for corner, from 38.6% of the data. Chapter XII's twelve figures hold 12.2 MB of geometry instead of 30.0 MB and are built a third faster.
+- **The page updates in place** ([`page-update.js`](src/ui/page-update.js)). Each render still produces the page's HTML, but only what changed is applied:
+  - the board keeps its focus and listeners, so keys typed straight after an update reach it;
+  - the 3D view keeps its canvas, and open panels and typed text stay;
+  - a focused command button is never reused for another order;
+  - a new screen still starts afresh.
+- **Clean-ups.**
+  - Text files are stored with LF line endings (`.gitattributes`).
+  - The verification reports of 0.2–0.34 moved to [docs/archive](docs/archive/README.md). The player guide says it describes 0.38.
+  - 58 test assertions that matched source text are behavioural tests now. The logic they described lives in small modules (board input, board readout, settings), and a small DOM for Node runs the real app module.
+  - The 923-line stage class is split into six modules by concern. The longest lines in the shell, the panels and the stage (up to 8,036 characters) are at most 178.
+- **Character handoff.** The handoff GLBs are re-exported from the current figure code (21.8 MB instead of 29.1 MB). Their README says what they show: the code-built figure, which the game draws until a figure's generated body arrives or if it fails.
+- **Downloads.** The first load grew by 6.5 KB to 501,565 bytes, Chapter I by 15 KB to 9,510,791 bytes, and the complete campaign is 17,952,336 bytes (the new modules, and the split and re-wrapped code).
+- **Measured (software rendering, five battles, Performance and Balanced; [0.38.0](docs/evidence/stage-benchmark-v038.json), [0.38.1](docs/evidence/stage-benchmark-v0381.json)).**
+  - The longest task while building fell from 0.56–0.96 s to 59–89 ms.
+  - Battles were ready (drawn behind the veil) in 3.6–5.0 s instead of 3.8–5.7 s; software times are inflated and vary from run to run.
+  - Programs fell from 58–68 to 46–56, none compiled by the first frame or in play, and draw calls by 6 in each battle. No task reached 50 ms after a battle was shown, as in 0.38.0.
+- **Still open.**
+  - At most 45 programs per battle: 46–56.
+  - Draw calls down 30%: down 4–6%.
+  - A quality change in Settings still rebuilds the world in one task.
+  - One renderer per session and a worker pool.
+  - No real device has run 0.38.0 or 0.38.1. **Next:** run Pause → Run performance check on a phone and a laptop and send the saved files.
+- **Checks.**
+  - New tests cover the page update rules and the board keeping its focus and bindings in the real app; the stepped environment being exactly the one built at once (three chapters); the geometry upload; a superseded build; the shared standing finish, the shadow pass's maps and the one-pass overlays; and the indexed figure surfaces.
+  - `npm run smoke` checks that the board is the same, still-focused element after a keyboard walk and an undo.
+  - `npm run benchmark:stage -- --check` now also fails on more than 60 programs (it was 90).
+
 ## 0.38.0 — smooth play
 
 The first release of the world-building plan: battles open without long freezes and play without any, before richer worlds add to the load. Details, measurements and what is still open: [performance notes](docs/performance.md).

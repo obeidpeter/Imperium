@@ -26,7 +26,7 @@ const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1];};
 const sceneIds=arg('--scenes','ch1-road,ch5-mine,ch7-legion,ch9-wing,ch12-confrontation').split(',');
 const qualities=arg('--quality','performance,balanced').split(',');
-const reportPath=arg('--report',null),dist=process.argv.includes('--dist'),root=dist?resolve(repo,'dist'):repo,check=process.argv.includes('--check'),maxPrograms=Number(arg('--max-programs',90));
+const reportPath=arg('--report',null),dist=process.argv.includes('--dist'),root=dist?resolve(repo,'dist'):repo,check=process.argv.includes('--check'),maxPrograms=Number(arg('--max-programs',60));
 const VIEWPORT={width:1280,height:720};
 
 // The first exchange of blows, reached by legal commands only: each turn the

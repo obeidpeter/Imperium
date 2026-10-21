@@ -1,8 +1,32 @@
-# 3D performance: smooth play (0.38)
+# 3D performance: smooth play (0.38 and 0.38.1)
 
-0.38 is the first release of the world-building plan. It makes battles open and play without freezes before richer worlds add to the load. This page records what changed, how to measure it, what the software benchmark found, and what is still open. Nothing here was measured on a phone, a laptop GPU or any other physical device; the figures come from headless Chromium with software rendering (SwiftShader).
+0.38 is the first release of the world-building plan. It makes battles open and play without freezes before richer worlds add to the load; 0.38.1 finishes most of what 0.38.0 left open. This page records what changed, how to measure it, what the software benchmark found, and what is still open. Nothing here was measured on a phone, a laptop GPU or any other physical device; the figures come from headless Chromium with software rendering (SwiftShader).
 
-## What changed
+## What 0.38.1 changed
+
+### The build in short steps
+
+- **The stage and its world** are built by generators that yield between their parts ([`build-steps.js`](../src/showcase/build-steps.js)). `BattleStage.create` runs them in slices of about a frame's work (8 ms) and gives the page a turn between slices; `new BattleStage()` still builds at once for the standalone study and the tests. The stepped environment is exactly the one built at once (a test compares every mesh in three chapters). A build that a newer battle or a release overtakes is discarded at its next pause, and a failure in a superseded build no longer tears down the newer battle's stage.
+- **Geometry upload.** A mesh's buffers are made the first time it is drawn, so 0.38.0's first frame sent the whole battle's geometry to the GPU at once (about 1 s in software for Chapter XII). Preparation now draws the meshes a batch at a time ([`stage-preparation.js`](../src/showcase/stage-preparation.js) `uploadGeometry`), hidden ones too, through a material that places every vertex outside the view, with the view turned away and no shadow pass. Their vertex and index buffers are made in short tasks; each batch is sized from how fast the last one went.
+- **The preloader** makes the procedural figure surfaces one kind per task, the painted material tiles one per task, and a skin tone's colour and roughness passes in separate tasks. The first figure starts a task of its own.
+
+### Fewer shader programs
+
+- **Shadow depth.** Three's shadow pass hands a caster's colour map to the shared depth material even where no alpha test cuts the caster's outline. The map changed nothing in the shadow, but each textured caster made another depth variant, and the warm-up compiles every variant for every draw order. The pass now takes a map only from alpha-tested casters (leaves, hair) ([`shadow-depth.js`](../src/showcase/shadow-depth.js)); Chapter XII's 15 depth variants became 9.
+- **One standing finish.** Stone, wood, cloth and the other standing surfaces share one environment finish whose grain and roughness range are each material's uniforms ([`environment-surface-shaders.js`](../src/showcase/environment-surface-shaders.js)); water, ground, foliage and floor keep their own. Chapter XII's 8 such programs became 4.
+- **One-pass overlays.** Three draws a two-sided transparent surface twice, back faces first, with a program for each. The target, selection, hover and goal rings, the markers and the trails are flat or additive, so they draw in one pass: fewer programs and 6 fewer draw calls in every battle.
+
+### Lighter figures
+
+A figure's parts are merged per joint and then into weighted surfaces. Merging copied every triangle's corners out separately, so a smooth part stored, uploaded and skinned each vertex about six times. The merged surfaces now keep each part's shared vertices and join their triangles in an index, in the same order ([`actor-skin.js`](../src/showcase/actor-skin.js) `bindActorSurfaces`, [`actors.js`](../src/showcase/actors.js)). Built with the previous code and the new, 27 figures (nine kinds at three qualities) draw the same triangles corner for corner from 38.6% of the data. Chapter XII's twelve figures hold 12.2 MB of geometry of their own instead of 30.0 MB and are built in 585 ms instead of 878 ms (software rendering); their followers share the indexed overview.
+
+Sharing whole figures between units was considered first, but every one of Chapter XII's twelve figures differs (each bakes its identity, tints and kit into its surfaces), so it would have saved nothing.
+
+### The page updates in place
+
+Every render still produces the page's HTML, but [`page-update.js`](../src/ui/page-update.js) applies it to the live page and keeps each element that is still there. The board keeps its focus and listeners, so keys typed straight after an update reach it; the 3D view keeps its canvas without being re-attached; open panels stay open and typed text stays. Elements are matched by `data-key`, then `id`, then tag in order, and a command button is only reused for the same command, so a focused button never turns into another order. Attributes a script added (the board's binding, the stage's status) and elements a script placed (`data-live`: the 3D labels and the ceremony and story-scene canvases) are left alone. A new screen still starts afresh.
+
+## What 0.38.0 changed
 
 ### A battle is prepared before it is shown
 
@@ -66,11 +90,32 @@ The "Preparing" veil stays until everything the battle will draw is ready, and t
   - records long tasks, the time until the battle is ready and drawn, shader programs, draw calls and triangles;
   - plays that exchange, then tours the follow, horizon and overview cameras.
 
-  `--check` fails on a page error, a program compiled by the first frame (a variant the warm-up missed) or after the battle is shown (a stall in play), figures without their generated bodies, or more programs than `--max-programs`. CI runs it on the production build for the Chapter V mine and Chapter XII confrontation battles and uploads the report.
+  `--check` fails on a page error, a program compiled by the first frame (a variant the warm-up missed) or after the battle is shown (a stall in play), figures without their generated bodies, or more programs than `--max-programs` (60 by default since 0.38.1; it was 90). CI runs it on the production build for the Chapter V mine and Chapter XII confrontation battles and uploads the report.
 - **Software rendering measures main-thread work and counts, not a device's frame rate.** SwiftShader's frames take seconds, and its program links and first texture upload are far slower than a GPU's. Treat its times as relative, and its stalls and counts as real.
 - **Settings → Run performance check** is the measurement on a real device.
 
 ## Results (software rendering)
+
+### 0.38.1
+
+The [0.38.1 report](evidence/stage-benchmark-v0381.json) was recorded with the same script on the same machine as [0.38.0's](evidence/stage-benchmark-v038.json), with the same columns as the table below.
+
+| Battle | Quality | Ready (first frame), ms | Longest task while building, ms | Longest task in play, ms | Programs | Draw calls | Triangles |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ch1-road | performance | 3,832 → 3,725 | 558 → 67 | 0 → 0 | 58 → 46 | 103 → 97 | 205,974 → 205,507 |
+| ch1-road | balanced | 4,514 → 3,971 | 719 → 63 | 0 → 0 | 61 → 49 | 102 → 96 | 392,451 → 391,984 |
+| ch5-mine | performance | 4,600 → 4,540 | 725 → 66 | 0 → 0 | 63 → 51 | 121 → 115 | 249,934 → 249,451 |
+| ch5-mine | balanced | 4,809 → 4,444 | 814 → 89 | 0 → 0 | 66 → 54 | 125 → 119 | 460,120 → 459,637 |
+| ch7-legion | performance | 4,450 → 4,523 | 622 → 70 | 0 → 0 | 63 → 51 | 137 → 131 | 336,628 → 336,145 |
+| ch7-legion | balanced | 4,923 → 3,562 | 667 → 59 | 0 → 0 | 66 → 54 | 137 → 131 | 576,873 → 576,390 |
+| ch9-wing | performance | 5,505 → 5,037 | 679 → 68 | 0 → 0 | 63 → 52 | 135 → 129 | 286,251 → 285,768 |
+| ch9-wing | balanced | 4,347 → 3,837 | 739 → 82 | 0 → 0 | 65 → 54 | 136 → 130 | 451,442 → 450,959 |
+| ch12-confrontation | performance | 5,130 → 4,848 | 631 → 65 | 0 → 0 | 64 → 52 | 154 → 148 | 404,375 → 403,892 |
+| ch12-confrontation | balanced | 5,684 → 4,074 | 962 → 67 | 0 → 0 | 68 → 56 | 154 → 148 | 757,082 → 756,599 |
+
+None of 0.38.1's programs was compiled by the first frame or after the battle was shown. Draw calls fell by 6 in every battle and the triangles by about 480: the overlays that drew twice draw once. Ready times vary by a few hundred milliseconds from run to run in software (in a run of the same build shortly before, Chapter VII on Performance was ready in 4.1 s, not 4.5 s).
+
+### 0.38.0
 
 The two reports were recorded with the same script on the same machine: [0.37.0](evidence/stage-benchmark-v037.json) and [0.38.0](evidence/stage-benchmark-v038.json). "Ready" is the first frame of the battle: for 0.37.0, the first frame after construction; for 0.38.0, the frame behind the veil. "In play" covers the time after the battle is shown: assets arriving (settle), the legal exchange (combat) and the camera tour. Programs, draw calls and triangles are counted from the still overview.
 
@@ -91,22 +136,22 @@ The browser reports long tasks of 50 ms or more, so 0 in the in-play column mean
 
 ## Targets
 
-| Target (plan) | Status after 0.38 |
+| Target (plan) | Status after 0.38.1 |
 | --- | --- |
-| No freeze over 100 ms (phone) / 50 ms (laptop) in play | In the software benchmark, no task of 50 ms or more after the battle is shown, and nothing compiled in play, in all ten runs (0.37.0: 15–19 programs compiled in play and tasks of 4.0–12.7 s). Real devices are unmeasured. |
+| No freeze over 100 ms (phone) / 50 ms (laptop) in play | In the software benchmark, no task of 50 ms or more after the battle is shown, and nothing compiled in play, in all ten runs of 0.38.0 and of 0.38.1 (0.37.0: 15–19 programs compiled in play and tasks of 4.0–12.7 s). Real devices are unmeasured. |
 | All shader programs compiled before the battle shows | Met in every scene: none in the first frame, none after it. |
 | Battle ready in about 3 s (phone) / 2 s (laptop), with a progress veil | The veil shows progress. Software times are not device times; the performance check measures build time on a device. |
-| The build in tasks under 200 ms | Not met; the longest build task was 0.56–0.96 s on this machine (0.37.0: 4.9–6.2 s), and phones will take longer. Three kinds of task are still longer than 200 ms. The stage's synchronous build (above all the environment) took 0.56–0.82 s. The first frame behind the veil, which uploads the battle's geometry (up to about 40 MB in Chapter XII, most of it the figures' own surfaces), took 0.05–0.96 s; it is slow in software and much shorter on a GPU, but unmeasured here. Before both, the preloader's procedural figure surfaces and skin tones took about 0.25–0.3 s each in a profile of one battle. |
-| At most 45 shader programs | Not met: 58–68. The rest are inherent to the current materials: the shadow-pass variants (warmed for every draw order), overlays, and one environment finish per surface kind. |
-| Draw calls down at least 30% | Not met: unchanged in the still overview (triangles 0.2–6.1% fewer). An earlier reading was taken while the camera eased home and was not comparable. Culling helps only views that leave figures off screen. |
+| The build in tasks under 200 ms | Met in software since 0.38.1: the longest task while building is 59–89 ms (0.38.0: 0.56–0.96 s; 0.37.0: 4.9–6.2 s). Phones will take longer per task; the slices are sized by time (8 ms), not by work, but single steps such as the first figure are not split further. |
+| At most 45 shader programs | Not met: 46–56 (0.38.0: 58–68). What remains is mostly three's own variants of the current materials: shadow-depth variants by instancing, instance colour, skinning, side and alpha test (warmed for every draw order), the standing surfaces' variants by texture, instancing and side, and the figures' own finish. |
+| Draw calls down at least 30% | Not met: down 4–6% in the still overview (6 per battle, from the one-pass overlays). Culling helps only views that leave figures off screen. |
 | 30 fps on mid-range phones, 60 fps on integrated laptops | Unmeasured: this needs the performance check on real devices. |
 
-## Not in 0.38
+## Still open after 0.38.1
 
-- Splitting the stage's synchronous build into short tasks, and a worker pool for the pure geometry work.
+- A quality change in Settings (and each step of the performance check) still rebuilds the world in one task; only a battle's first build is stepped.
+- A worker pool for the pure geometry work. With the build in short steps it would mainly shorten the time behind the veil, not remove freezes.
 - One renderer per session (the battle and ceremony controllers still create one per encounter). Disposing a stage frees its programs, so sharing a renderer would also mean keeping programs alive across stages. Browsers keep program caches of their own, so the gain needs measuring on devices before it is worth the change.
 - Moving the river and banner motion into vertex shaders, a cached height grid for feet and contact shadows, and one skinned mesh and skeleton per figure.
-- Partial page updates in [`app.js`](../src/ui/app.js) instead of rebuilding the page on each update. The 3D stage is already kept across updates.
 - KTX2/meshopt compression and smaller downloads for 3D players (0.39).
 
 ## What the owner can do next
