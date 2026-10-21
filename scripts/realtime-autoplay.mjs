@@ -76,14 +76,34 @@ export function heroDecision(world,memo={}){
 
 // Play the encounter's live world to its end; the chronicle learns the outcome.
 export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null}={}){
-  const world=G.realtimeWorld(state);
+  const world=G.realtimeWorld(state),watch=companionWatch();
   const limit=maxRounds*200;
   for(let t=0;t<limit&&world.status==='active';t++){
     if(world.tick%every===0)heroDecision(world,memo);
-    step(world);onTick?.(world);
+    step(world);watch(world);onTick?.(world);
   }
   const resolved=G.resolveRealtime(state,world);if(!resolved.ok&&world.status!=='active')throw new Error(resolved.message);
-  return {id:state.encounter.id,chapter:state.chapter,status:world.status,rounds:roundOf(world),world,reason:world.mission?.reason??null};
+  return {id:state.encounter.id,chapter:state.chapter,status:world.status,rounds:roundOf(world),world,reason:world.mission?.reason??null,incidents:watch.incidents};
+}
+// Gate 1's companion measure, automated (a proxy for the playtest's count, not a substitute):
+// incidents a player would have to rescue a companion from. Stuck: ordered to move but no
+// nearer in ten seconds. Lost: more than 40 m from the soldier for ten seconds. Suicidal:
+// down while more than 25 m from the soldier. Each counts once per companion and kind.
+export function companionWatch(){
+  const seen=new Map(),incidents=[];
+  const watch=world=>{
+    if(world.tick%20)return;const hero=world.actors.find(a=>a.id===world.heroId);if(!hero)return;
+    for(const id of world.party){
+      const a=world.actors.find(x=>x.id===id);if(!a)continue;const m=seen.get(id)??{far:0,still:0,last:null,flags:new Set()};seen.set(id,m);
+      const d=Math.hypot(a.x-hero.x,a.z-hero.z),flag=kind=>{if(!m.flags.has(kind)){m.flags.add(kind);incidents.push({id,kind,tick:world.tick});}};
+      if(a.alive&&!a.down){
+        m.far=d>40?m.far+1:0;if(m.far>=10)flag('lost');
+        const ordered=a.order?.kind==='move'&&a.goal,progress=m.last&&a.goal?Math.hypot(m.last.x-a.goal.x,m.last.z-a.goal.z)-Math.hypot(a.x-a.goal.x,a.z-a.goal.z):1;
+        m.still=ordered&&progress<.2?m.still+1:0;if(m.still>=10)flag('stuck');m.last={x:a.x,z:a.z};
+      }else if(a.down&&d>25)flag('suicidal');
+    }
+  };
+  watch.incidents=incidents;return watch;
 }
 
 // From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere.

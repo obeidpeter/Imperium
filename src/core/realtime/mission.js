@@ -1,4 +1,4 @@
-import {TIME} from '../../data/realtime-rules.js';
+import {ESCORT_RULES,TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {helpless,setRoute} from './motion.js';
 import {spawnActor} from './actors.js';
@@ -39,6 +39,15 @@ function moveEscorts(world){
     if(!e.escort.escorted||m.pauseEscorts){if(e.order){e.order=null;e.path=[];}continue;}
     const near=leaders.some(l=>distanceBetween(l,e)<=m.followRange),there=span(e.x-m.goal.x,e.z-m.goal.z)<=m.radius*.6;
     if(there||!near){if(e.order){e.order=null;e.path=[];e.gait=null;}continue;}
+    // Threatened and uncovered, the column halts and draws back to its nearest protector.
+    const threat=world.actors.some(o=>o.side==='enemy'&&standing(o)&&!o.hidden&&distanceBetween(o,e)<=ESCORT_RULES.halt);
+    if(threat&&!leaders.some(l=>distanceBetween(l,e)<=ESCORT_RULES.cover)){
+      const l=leaders.reduce((b,o)=>!b||distanceBetween(o,e)<distanceBetween(b,e)?o:b,null);
+      if(l&&distanceBetween(l,e)>2){if(e.order?.kind!=='fallback'||!e.path.length){e.order={kind:'fallback'};setRoute(world,e,{x:l.x,z:l.z},{run:false});}}
+      else if(e.order){e.order=null;e.path=[];e.gait=null;}
+      continue;
+    }
+    if(e.order?.kind==='fallback'){e.order=null;e.path=[];}
     if(e.order?.kind!=='move'||!e.path.length){e.order={kind:'move'};setRoute(world,e,m.goal,{run:false});}
   }
 }

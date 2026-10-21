@@ -169,6 +169,11 @@ export const ARENA=Object.freeze({
       attributes:Object.freeze({str:11,agi:14,con:10,per:12,combat:7,field:9}),kit:Object.freeze(['tunic','spatha']),ammo:Object.freeze({javelin:2}),
       at:[18.75,9.4],face:[-1,0]})])});
 
+// A protected column (escorts): it halts when an enemy comes within `halt`
+// metres and no friend stands within `cover` of it, and draws back toward the
+// nearest friend, so it never marches into the raiders on its own.
+export const ESCORT_RULES=Object.freeze({halt:8,cover:4});
+
 // Standing orders (§3.7): four slots of {action, target}, evaluated at 4 Hz;
 // the first feasible slot wins. Target words are relative to the hero.
 export const STANDING=Object.freeze({
