@@ -15,8 +15,8 @@ const friend={id:'f',name:'Felix',side:'player',role:'companion',path:'legionary
 const raider=(id,at,over={})=>({id,name:`Raider ${id}`,side:'enemy',role:'raider',attributes:{str:13,agi:12,con:10,combat:8},kit:['tunic','jerkin','axe'],
   at,face:[-1,0],...over});
 const world=(actors=[hero,friend,raider('r',[30,25])])=>createWorld({map,seed:5,party:['f'],actors});
-const ALL_ON={roundPause:true,pauseSighted:true,pauseHurt:true,pauseObjective:true,pauseOrder:true};
-const ALL_OFF={roundPause:false,pauseSighted:false,pauseHurt:false,pauseObjective:false,pauseOrder:false};
+const ALL_ON={roundPause:true,pauseSighted:true,pauseHurt:true,pauseObjective:true,pauseOrder:true,pauseSquad:true};
+const ALL_OFF={roundPause:false,pauseSighted:false,pauseHurt:false,pauseObjective:false,pauseOrder:false,pauseSquad:false};
 
 test('A5: each auto-pause event gives its reason when its option is on, and nothing when it is off',()=>{
   const w=world(),h=w.actors.find(a=>a.id==='hero'),f=w.actors.find(a=>a.id==='f');
@@ -30,7 +30,10 @@ test('A5: each auto-pause event gives its reason when its option is on, and noth
     [hurt,'pauseHurt','You are badly hurt.'],
     [{kind:'down',attackerId:'r',defenderId:'f'},'pauseHurt','Felix is down.'],
     [{kind:'phase',index:1,label:'Hold the ford'},'pauseObjective','New objective: Hold the ford.'],
-    [{kind:'rejected',actorId:'hero',reason:'NO_BANDAGES'},'pauseOrder',`Hero: ${REASONS.NO_BANDAGES}`]];
+    [{kind:'rejected',actorId:'hero',reason:'NO_BANDAGES'},'pauseOrder',`Hero: ${REASONS.NO_BANDAGES}`],
+    // An enemy comes into view from hiding, or with the reinforcements.
+    [{kind:'revealed',actorId:'r'},'pauseSighted','Raider r is revealed.'],
+    [{kind:'reinforcements'},'pauseSighted','Enemy reinforcements arrive.']];
   for(const [e,option,reason]of cases){
     assert.equal(autoPauseReason(w,e,ALL_ON),reason,`${e.kind} pauses with ${option}`);
     assert.equal(autoPauseReason(w,e,{...ALL_ON,[option]:false}),null,`${e.kind} does not pause without ${option}`);
@@ -45,6 +48,13 @@ test('A5: each auto-pause event gives its reason when its option is on, and noth
   assert.equal(autoPauseReason(w,{kind:'down',attackerId:'hero',defenderId:'r'},ALL_ON),null);
   assert.equal(autoPauseReason(w,{kind:'rejected',actorId:'r',reason:'NO_TARGET'},ALL_ON),null);
   assert.equal(autoPauseReason(w,{kind:'notice',actorId:'hero',targetId:'r'},ALL_ON),null,'only being seen pauses, not seeing');
+});
+
+test('A5: one of our squads breaking pauses the world; an enemy band breaking does not',()=>{
+  const w=world();w.squads=[{id:'ours',name:'First squad',side:'ally',members:[]},{id:'theirs',name:'Gothic warriors',side:'enemy',members:[]}];
+  assert.equal(autoPauseReason(w,{kind:'squad-broken',squadId:'ours'},ALL_ON),'First squad breaks.');
+  assert.equal(autoPauseReason(w,{kind:'squad-broken',squadId:'ours'},{...ALL_ON,pauseSquad:false}),null);
+  assert.equal(autoPauseReason(w,{kind:'squad-broken',squadId:'theirs'},ALL_ON),null);
 });
 
 test('A5: practice partners and camps never pause the world',()=>{

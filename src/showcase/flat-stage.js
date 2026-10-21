@@ -91,13 +91,14 @@ export class FlatStage{
 // for neutrals), the route, the target, ranges, work, missiles and the marks
 // and numbers over people's heads. The field's presenter interface.
 export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{}}={}){
-  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null;const floating=new Map(),volleys=[];
+  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null,shownIntentions=null,threat=null;const floating=new Map(),volleys=[];
   const presenter={
     beforeFrame,world:getWorld,alpha:getAlpha,
     setRoute(next){route=next;},setPlanned(next){planned=next;},setRanges(on){ranges=!!on;},setMarks(next){marks={...(next??{})};},
     // The squads selected on the page, and the keyboard's order marker (squad-control.js).
     setSelection(ids){selection=[...(ids??[])];},setMarker(point){marker=point?{x:point.x,z:point.z}:null;},
     setDeployment(next){zone=next?{...next}:null;},
+    setIntentions(list){shownIntentions=list?list.map(i=>({...i})):null;},setThreat(area){threat=area?{...area}:null;},
     onEvents(events){
       const now=performance.now();
       for(const e of events){
@@ -193,6 +194,14 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       for(let i=volleys.length-1;i>=0;i--){const k=(now-volleys[i].start)/700;if(k>=1){volleys.splice(i,1);continue;}
         const a=volleys[i].from,b=volleys[i].to,h=Math.sin(Math.PI*k)*v.th*2.2,q=flat.screen(v,lerp(a.x,b.x,k),lerp(a.z,b.z,k)),q0=flat.screen(v,lerp(a.x,b.x,Math.max(0,k-.1)),lerp(a.z,b.z,Math.max(0,k-.1)));
         for(let j=-1;j<=1;j++)line([{x:q0.x+j*v.tw*.12,y:q0.y-v.th*1.2-Math.sin(Math.PI*Math.max(0,k-.1))*v.th*2.2},{x:q.x+j*v.tw*.12,y:q.y-v.th*1.2-h}],'#f5e4bc',{width:1.5});}
+      // A threat: the ground he could strike within the next round, hatched in red.
+      if(threat){const p=flat.screen(v,threat.x,threat.z),rx=threat.radius*unit*.7;c.save();c.beginPath();c.ellipse(p.x,p.y,rx,rx/2,0,0,Math.PI*2);c.clip();
+        c.strokeStyle='#e0503c99';c.lineWidth=1.5;for(let k=-rx*2;k<rx*2;k+=10){c.beginPath();c.moveTo(p.x+k-rx,p.y-rx);c.lineTo(p.x+k+rx,p.y+rx);c.stroke();}c.restore();
+        ellipse(p,rx,'#e0503c',{width:2});}
+      // Intentions (hold U while paused): arrows to where each enemy goes or whom he strikes.
+      for(const it of shownIntentions??[]){const a=flat.screen(v,it.from.x,it.from.z),b=flat.screen(v,it.to.x,it.to.z),col=it.strike?'#ef8f74':'#f1c27d';
+        line([{x:a.x,y:a.y-v.th},{x:b.x,y:b.y-v.th}],col,{width:2.5});const ang=Math.atan2(b.y-a.y,b.x-a.x),h=10;
+        line([{x:b.x-Math.cos(ang-.5)*h,y:b.y-v.th-Math.sin(ang-.5)*h},{x:b.x,y:b.y-v.th},{x:b.x-Math.cos(ang+.5)*h,y:b.y-v.th-Math.sin(ang+.5)*h}],col,{width:2.5});}
       // His locked target, his ranges, and missiles in flight.
       const target=hero?.lock?w.actors.find(a=>a.id===hero.lock&&a.alive):null;if(target)ellipse(at(target),v.tw*.4,'#ef8f74',{width:3});
       if(ranges&&hero?.alive){ellipse(at(hero),1.85*unit,'#f1d38a88');ellipse(at(hero),25*unit,'#9fd3d088',{dash:[6,6]});}

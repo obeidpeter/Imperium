@@ -259,7 +259,7 @@ function campCallbacks(){
   return {
     onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
     onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
-    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>noteVisit(world),onQuickSave:()=>quickSave()
+    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
 }
 function noteVisit(world){
@@ -421,6 +421,12 @@ const fieldPanel=name=>openPanel(name);
 // The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
 // and the panel is drawn again with the focus where it was.
 let kitSelected=null,soldierPanel=null;
+// The mission orders panel's field intelligence follows the field while it is open (at most once a second).
+let missionPanelAt=0;
+function refreshMissionPanel(){
+  const now=performance.now();if(!modal.open||soldierPanel?.name!=='mission'||modal.dataset.soldier!=='mission'||now-missionPanelAt<1000)return;
+  missionPanelAt=now;showSoldierPanel('mission');
+}
 function showSoldierPanel(name,arg=null){
   if(!state)return;
   soldierPanel={name,arg};const world=field?.runtime?.world??null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];

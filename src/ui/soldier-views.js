@@ -9,6 +9,7 @@ import {summarizeOrders} from '../core/realtime/party.js';
 import {summarizeSquadOrders} from '../core/realtime/squad-orders.js';
 import {SQUAD_STANDING} from '../data/realtime-squads.js';
 import {missionProgress} from '../core/realtime/mission.js';
+import {alliedPlans,fieldIntelligence} from '../core/realtime/intel.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
 import {TRADER_STOCK} from '../data/camps.js';
@@ -202,8 +203,25 @@ export function missionOrdersPanel(state,{world=null,requirements=''}={}){
   const errands=errandList(state).filter(e=>e.stage!=='done');
   return `<div class="mission-orders"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p>
     <h3>${esc(e?.title??chapter?.title??'')}</h3><p>${esc(objective)}</p>${world?`<p><strong>${esc(missionProgress(world))}</strong></p>`:''}
+    ${world&&world.kind!=='camp'?fieldIntelligencePanel(world):''}
     <h3>To demonstrate this chapter</h3><div class="journal-requirements">${requirements}</div>
     <h3>Errands</h3>${errands.length?`<ul>${errands.map(e=>`<li><strong>${esc(e.title)}</strong> (${esc(e.giver)}): ${esc(e.summary)}</li>`).join('')}</ul>`:'<p>No errands in hand.</p>'}</div>`;
+}
+// The field intelligence (guide "Knowing the enemy") and Allied plans & visible
+// threats, in words (intel.js); the panel is drawn again as the field changes.
+function fieldIntelligencePanel(world){
+  const intel=fieldIntelligence(world),plans=alliedPlans(world),d=intel.doctrine;
+  const state=s=>({available:'open',secured:'secured',forgone:'forgone',missed:'missed',closed:'shut',open:'open',damaged:'damaged',repaired:'repaired',
+    intact:'standing',dismantled:'dismantled',unlit:'unlit',burning:'burning',spent:'burnt out'})[s]??s;
+  const opps=intel.opportunities.length?`<ul>${intel.opportunities.map(o=>`<li><strong>${esc(o.name)}</strong> (${esc(state(o.state))}): ${esc(o.description)}</li>`).join('')}</ul>
+    <p>${intel.closes?`Take one before the end of round ${intel.closes}; the other then closes.`:intel.outcome==='secured'?'One opportunity was taken.':'The opportunities have closed.'}</p>`:'';
+  const objects=intel.objects.length?`<p>${intel.objects.map(o=>`${esc(o.name)}: ${esc(state(o.state))}${o.action?` (${esc(o.action)})`:''}`).join(' · ')}</p>`:'';
+  const threats=plans.threats.length?`<ul>${plans.threats.map(t=>`<li><strong>${esc(t.name)}</strong>${t.role?` · ${esc(t.role)}`:''}: ${esc(t.intent)}${t.target?` Target: ${esc(t.target)}.`:''}${t.distance!==null?` ${t.distance} m away.`:''}</li>`).join('')}</ul>`:'<p>No enemy in sight.</p>';
+  return `<section class="field-intel" aria-label="Field intelligence"><h3>Field intelligence</h3>
+    ${d?`<p><strong>${esc(d.label)}.</strong> ${esc(d.purpose)}${d.focus?` Their focus: ${esc(d.focus)}.`:''}${d.reserve?` Held in reserve: ${esc(d.reserve)}.`:''}</p>`:''}
+    ${intel.approach?`<p><strong>${esc(intel.approach.label)}:</strong> ${esc(intel.approach.description)}</p>`:''}${opps}${objects}</section>
+    <section class="allied-plans" aria-label="Allied plans and visible threats"><h3>Allied plans &amp; visible threats</h3>
+    ${plans.ours.length?`<ul>${plans.ours.map(o=>`<li><strong>${esc(o.name)}:</strong> ${esc(o.plan)}</li>`).join('')}</ul>`:''}${threats}</section>`;
 }
 // L: the story so far, a page for each chapter reached: its painting, the camp's passages (the
 // chapter's opening, and its close once completed), the decision taken and the battles recorded.

@@ -112,6 +112,16 @@ export function realtimeResult(state){
   const rows=[['Battle time',time],['Enemies your party struck down',`${kills.length}`],
     ['Companions',party.length?party.map(a=>`${a.name}: ${!a.alive?'fallen':a.down?'down':`${a.hp} of ${a.maxHp} Health`}`).join(' · '):'none in the field'],
     ['Your soldier',hero?`${hero.alive?`${hero.hp} of ${hero.maxHp} Health`:'fallen'}`:'—']];
+  // From Chapter IV the squads' day: each of ours, and the enemy's bands cut down.
+  if(world.squads?.length){
+    const men=q=>q.members.filter(id=>world.actors.find(a=>a.id===id)?.alive).length,state=q=>!men(q)||q.strength<=0?'cut down':q.broken?'broken':q.morale<=40?'shaken':'steady';
+    const mine=world.squads.filter(q=>q.side!=='enemy'),theirs=world.squads.filter(q=>q.side==='enemy');
+    rows.push(['Your squads',mine.map(q=>`${q.name}: ${men(q)} of ${q.members.length} men, ${state(q)}`).join(' · ')||'none']);
+    rows.push(['Enemy bands cut down',`${theirs.filter(q=>!men(q)||q.strength<=0).length} of ${theirs.length}`]);
+  }
+  // The field's opportunity (guide "Field objects").
+  if(world.field){const f=world.field,taken=f.choice?world.objects.find(o=>o.field&&o.kind===f.choice):null;
+    rows.push(['Field opportunity',taken?`${taken.name}: secured`:f.outcome==='missed'?'Both closed at the end of round '+f.deadline:'None taken']);}
   if(won)rows.push(['Training points when recorded',`${killTP} for the fallen${commendations.length?`, ${commendations.reduce((n,c)=>n+c.tp,0)} for distinguished service`:''}, and the objective’s own`]);
   if(spoils.length)rows.push(['Taken from the field',spoils.join(', ')]);
   const lines=world.log.slice(-6).map(l=>`<li>${esc(l.text)}</li>`).join('');

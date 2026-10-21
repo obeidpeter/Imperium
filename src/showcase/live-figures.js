@@ -5,6 +5,7 @@ import {positionProjectileTip} from './stage.js';
 import {ITEMS} from '../data/realtime-rules.js';
 import {EXCHANGE,MORALE} from '../data/realtime-squads.js';
 import {actorById} from '../core/realtime/abilities.js';
+import {span} from '../core/realtime/navigation.js';
 
 // The real-time world on the 3D stage (BattleStage.setLive): every frame each
 // figure's place and pose come from the simulation, interpolated between its
@@ -120,7 +121,25 @@ const VOLLEY_MS=750;
 export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false}={}){
   const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
   const leaders=new Map(),laid=new Set(),volleys=[],orderLines=[];
-  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null,zone=null;
+  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null,zone=null,
+    shownIntentions=null,threat=null,intentionLines=null,threatLines=null;
+  // Line segments laid on the ground: each pair of points a segment, each segment cut so it follows the slope.
+  function segments(color,capacity,opacity=.85){
+    const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(3*capacity),3));
+    const mesh=new T.LineSegments(geometry,new T.LineBasicMaterial({color,transparent:true,opacity,depthWrite:false,forceSinglePass:true}));
+    mesh.frustumCulled=false;mesh.renderOrder=4;mesh.visible=false;stage.overlay.add(mesh);return mesh;
+  }
+  function draw(mesh,pairs,lift=.09){
+    const attr=mesh.geometry.attributes.position;let n=0;
+    for(const [a,b]of pairs){
+      const steps=Math.max(1,Math.min(16,Math.ceil(span(b.x-a.x,b.z-a.z)/1.5)));
+      for(let i=0;i<steps&&n+2<=attr.count;i++){
+        const p=ground(a.x+(b.x-a.x)*i/steps,a.z+(b.z-a.z)*i/steps),q=ground(a.x+(b.x-a.x)*(i+1)/steps,a.z+(b.z-a.z)*(i+1)/steps);
+        attr.setXYZ(n++,p.x,p.y+lift,p.z);attr.setXYZ(n++,q.x,q.y+lift,q.z);
+      }
+    }
+    mesh.geometry.setDrawRange(0,n);attr.needsUpdate=true;mesh.visible=n>0;
+  }
   // One instanced draw each for friends' rings, enemies' rings, guard arcs, the
   // selected squads' rings and the shaken and broken squads' morale rings.
   function footMarks(count){
@@ -235,6 +254,10 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     setMarker(point){marker=point?{x:point.x,z:point.z}:null;stage.wake();},
     // The deployment zone (from Chapter VII), outlined on the ground until the advance sounds.
     setDeployment(next){zone=next?{...next}:null;stage.wake();},
+    // Each visible enemy's intention (hold U while paused): an arrow to where he goes or whom he strikes (intel.js).
+    setIntentions(list){shownIntentions=list?list.map(i=>({...i})):null;stage.wake();},
+    // The ground an enemy could strike within the next round, hatched in red (intel.js threatArea).
+    setThreat(area){threat=area?{...area}:null;stage.wake();},
     // Each tick's events, as the simulation emitted them.
     onEvents(events){
       const now=performance.now(),w=getWorld();
@@ -361,6 +384,28 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         const c=[{x:z.x0+.25,z:z.z0},{x:z.x1,z:z.z0},{x:z.x1,z:z.z1},{x:z.x0+.25,z:z.z1}],per=Math.max(4,Math.floor(63/4));
         for(let i=0;i<4;i++)side(c[i],c[(i+1)%4],per);pts.push(c[0]);lay(marks.zone,pts);}
       else marks.zone.visible=false;
+      // Intentions: red to a man or squad he means to strike, amber to where he goes; a head at the end.
+      intentionLines??={strike:segments('#ef8f74',2400),move:segments('#f1c27d',2400)};
+      if(shownIntentions?.length){
+        const pairs={strike:[],move:[]};
+        for(const it of shownIntentions){
+          const dx=it.to.x-it.from.x,dz=it.to.z-it.from.z,d=span(dx,dz);if(d<1)continue;const ux=dx/d,uz=dz/d,h=Math.min(1.6,d*.3);
+          const list=pairs[it.strike?'strike':'move'];list.push([it.from,it.to]);
+          for(const s of [1,-1])list.push([it.to,{x:it.to.x-ux*h-uz*h*.55*s,z:it.to.z-uz*h+ux*h*.55*s}]);
+        }
+        draw(intentionLines.strike,pairs.strike,.14);draw(intentionLines.move,pairs.move,.14);
+      }else{intentionLines.strike.visible=false;intentionLines.move.visible=false;}
+      // A threat: his reach's edge, and hatching across it.
+      threatLines??=segments('#e0503c',4000,.75);
+      if(threat){
+        const pairs=[],r=threat.radius,c={x:threat.x,z:threat.z},n=48;
+        for(let i=0;i<n;i++){const a=i/n*Math.PI*2,b=(i+1)/n*Math.PI*2;pairs.push([{x:c.x+Math.cos(a)*r,z:c.z+Math.sin(a)*r},{x:c.x+Math.cos(b)*r,z:c.z+Math.sin(b)*r}]);}
+        const gap=Math.max(1.5,r/14);
+        // Diagonal chords across the circle, k metres apart.
+        for(let k=-r+gap/2;k<r;k+=gap){const mx=c.x+k*Math.SQRT1_2,mz=c.z-k*Math.SQRT1_2,L=Math.sqrt(Math.max(0,r*r-k*k));
+          if(L>0)pairs.push([{x:mx-L*Math.SQRT1_2,z:mz-L*Math.SQRT1_2},{x:mx+L*Math.SQRT1_2,z:mz+L*Math.SQRT1_2}]);}
+        draw(threatLines,pairs,.1);
+      }else threatLines.visible=false;
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
       marks.marker??=[ring(.55,.72,'#f3d48d',.95),ring(0,.16,'#f3d48d',.95)];
       for(const m of marks.marker){m.visible=!!marker&&(chosen.size>0||!!zone);if(m.visible){m.position.copy(ground(marker.x,marker.z));m.position.y+=.08;}}
@@ -410,7 +455,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       return {volleys:shots};
     },
     dispose(){
-      for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,marks.zone,...(marks.ranges??[]),...(marks.marker??[]),
+      for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,marks.zone,intentionLines?.strike,intentionLines?.move,threatLines,...(marks.ranges??[]),...(marks.marker??[]),
         ...orderLines.flatMap(l=>[l.advance,l.attack])])
         if(m){m.removeFromParent();m.geometry.dispose();m.material.dispose();}
       disposeFeet();

@@ -11,6 +11,7 @@ import {createSquadControl} from './squad-control.js';
 import {commandSquads,squadOrderOptions} from '../core/realtime/order-intents.js';
 import {deploy,deploying,deploymentProblem,soundTheAdvance} from '../core/realtime/deployment.js';
 import {friendlyStandard} from '../core/realtime/order-intents.js';
+import {intentions,threatArea} from '../core/realtime/intel.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
@@ -195,7 +196,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4].join('|');
     if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
     if(listOpen&&metrics.frames%10===0)renderList();
-    squads?.update();
+    squads?.update();showThreat();
     if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
     if(partyIds().join(',')!==partyKey){partyKey=partyIds().join(',');buildParty();}
     for(const b of dom.party?.children??[]){
@@ -289,7 +290,16 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const pick=pickAt(p);if(!pick)return null;
     return pointerIntent(world,{pick,button,shift:!!p.shift||force,abilityId:button==='right'?abilityId:'strike'});
   }
-  function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);}}
+  function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);hoverEnemy=null;}}
+  // The enemy whose threat is hatched: the one pointed at, else the one targeted (T, or locked).
+  let hoverEnemy=null,intentionsShown=false,threatKey='';
+  function showThreat(){
+    const h=me(),focus=hoverEnemy??keyTarget??h?.lock??null,foe=focus?actorById(world,focus):null;
+    const area=foe&&foe.side==='enemy'&&foe.alive&&!foe.down&&!foe.hidden&&kind!=='camp'?threatArea(world,foe.id):null;
+    const key=area?`${area.squadId??foe.id}:${Math.round(area.x)}:${Math.round(area.z)}:${Math.round(area.radius)}`:'';
+    if(key!==threatKey){threatKey=key;presenter?.setThreat?.(area);}
+    if(intentionsShown&&!clock.paused){intentionsShown=false;presenter?.setIntentions?.(null);}
+  }
   function readPointer(){
     hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
     // Deploying: a click places what is chosen, if the ground is in the zone.
@@ -300,6 +310,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       presenter?.setRoute(null);return;
     }
     if(squads?.active){const it=squads.intent(pickAt(p));if(it){canvas.dataset.cursor=it.cursor;message(`Right-click: ${it.message}`,!!it.reason);presenter?.setRoute(null);return;}}
+    // Pointing at an enemy hatches the ground he could strike within the next round.
+    const under=pickAt(p),foe=under?.actorId?actorById(world,under.actorId):null;hoverEnemy=foe&&foe.side==='enemy'&&foe.alive&&!foe.down&&!foe.hidden?foe.id:null;
     const it=intentAt(p,armed?'right':'left',armed??ability);if(!it)return;
     let text=it.message||' ';if(!armed&&ability!=='strike'){const right=intentAt(p,'right',ability);if(right?.message)text+=` · Right-click: ${right.message}`;}
     canvas.dataset.cursor=it.cursor;message(text,!!it.reason&&it.cursor!=='walk');presenter?.setRoute(it.command?.kind==='move'?it.route:null);
@@ -453,7 +465,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'camera_rotate_left':case 'camera_rotate_right':if(stage){stage.orbit.yaw+=(action==='camera_rotate_left'?-1:1)*Math.PI/4;stage.wake();}return true;
       case 'zoom_in':stage?.zoom(-2);return true;case 'zoom_out':stage?.zoom(2);return true;
       case 'show_ranges':ranges=!ranges;presenter?.setRanges(ranges);return true;
-      case 'show_usable':document.body.classList.add('labels-full');return true;
+      // U: labels everything usable; while paused, each visible enemy's intention too (intel.js).
+      case 'show_usable':document.body.classList.add('labels-full');if(clock.paused&&kind!=='camp'){intentionsShown=true;presenter?.setIntentions?.(intentions(world));}return true;
       case 'war_cry':if(h)issue({actorId:h.id,kind:'warCry'});return true;
       case 'quick_save':callbacks.onQuickSave?.(world);return true;
       case 'party_prev':cycleParty(-1);return true;case 'party_next':cycleParty(1);return true;
@@ -484,7 +497,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function onKeyUp(e){
     const action=actionFor(e,keymap);
     if(ARROWS[action]){arrows.delete(action);if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
-    if(action==='show_usable')document.body.classList.remove('labels-full');
+    if(action==='show_usable'){document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
   }
   function onBlur(){if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
   function onHidden(){if(document.hidden){if(!clock.paused){setPaused(clock,true);say('Paused while the page was hidden.');}saveResume('hide');}}
