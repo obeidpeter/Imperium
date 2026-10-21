@@ -23,6 +23,20 @@ export {gridToWorld} from './environment-layout.js';
 
 /** Self-contained 3D presentation. The supplied encounter is never modified.
  * time is elapsed seconds; repeated updates cannot advance simulation state. */
+// Most of the road grid's bounding box lies off the road, where every corner
+// of a triangle is fully transparent: drop those triangles (and the vertices
+// only they used) after the normals are computed, so the visible road is
+// unchanged and nothing is blended or uploaded for empty ground.
+export function dropClearRoadCells(geometry){
+  const index=geometry.index?.array,alpha=geometry.attributes.color;if(!index||!alpha||alpha.itemSize!==4)return 0;
+  const kept=[],remap=new Map(),attributes=Object.entries(geometry.attributes),out=Object.fromEntries(attributes.map(([name])=>[name,[]]));
+  for(let i=0;i<index.length;i+=3){if(alpha.getW(index[i])>0||alpha.getW(index[i+1])>0||alpha.getW(index[i+2])>0)kept.push(index[i],index[i+1],index[i+2]);}
+  // A triangle whose three corners are clear draws nothing anywhere inside it.
+  const remapped=kept.map(v=>{if(!remap.has(v)){remap.set(v,remap.size);for(const [name,a]of attributes)for(let k=0;k<a.itemSize;k++)out[name].push(a.array[v*a.itemSize+k]);}return remap.get(v);});
+  const dropped=index.length/3-kept.length/3;
+  for(const [name,a]of attributes)geometry.setAttribute(name,new THREE.Float32BufferAttribute(out[name],a.itemSize));
+  geometry.setIndex(remapped);return dropped;
+}
 export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
@@ -80,6 +94,7 @@ export function createEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     }
   }
   const roadGeometry=p.geo(new THREE.BufferGeometry());roadGeometry.setAttribute('position',new THREE.Float32BufferAttribute(roadVertices,3));roadGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(roadUV,2));roadGeometry.setAttribute('color',new THREE.Float32BufferAttribute(roadColors,4));roadGeometry.setIndex(roadIndices);roadGeometry.computeVertexNormals();
+  dropClearRoadCells(roadGeometry);
   const road=p.mesh(root,roadGeometry,m.road);road.name='authored boundary road';road.castShadow=false;
 
   // Shared instance batches keep structural detail from becoming thousands of

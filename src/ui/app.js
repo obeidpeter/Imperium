@@ -13,7 +13,7 @@ import {terrainLabel,fieldLabel} from './tactical-intel.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
-import {GRAPHICS_MODES,FIGURE_STYLES,createGraphicsQuality,defaultGraphicsMode} from './graphics-quality.js';
+import {GRAPHICS_MODES,FIGURE_STYLES,createGraphicsQuality,defaultGraphicsMode,phoneLike} from './graphics-quality.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -29,6 +29,7 @@ import {setupSiteMedia} from './site-media.js';
 import {createScenePainting} from './scene-parallax.js';
 import {campaignSoundscape} from './soundscape.js';
 import {previewBadge,previewBadges} from '../showcase/stage-readout.js';
+import {runPerformanceCheck} from './performance-check.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
@@ -39,7 +40,10 @@ let cancelAmbient=null,ambientTime=null;
 let renderedLocation='',pendingScroll=false;
 let cleanupSiteMedia=()=>{};
 let hoverTile=null,showGrid=false,failed3D=false,preservedUnreadable=0,lastPersisted='';
-const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; your progress is preserved. '+message);}});
+// A battle that stayed slow at its lowest resolution builds the next one a tier
+// lower, if it was measured at the current tier and adaptive resolution is on.
+const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; your progress is preserved. '+message);},
+  onStrain:quality=>quality===graphics.mode&&settings.adaptiveResolution!==false?graphics.stepDown('measured-cost'):null});
 // The oath and accession may be staged in 3D over their paintings; a failure keeps the painting.
 const ceremony=createCeremonyController({onError:()=>{}});
 // Story paintings drift in 2.5D over their still image; any failure keeps the still image.
@@ -62,11 +66,11 @@ function hoverText(point){
 // What stands on a tile, in words for announcements: the visible unit or the
 // ground, and any field object either way.
 function placeName(point){const e=state.encounter,u=visibleUnitAt(e,point);return [u?.name,fieldLabel(e,point),u?'':terrainLabel(e,point)].filter(Boolean).join('. ');}
-let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,confirmMoves:false,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory})};
+let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,confirmMoves:false,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,phone:phoneLike()})};
 // Preserve the legacy settings key so existing players keep their preferences.
 try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
 if(!FIGURE_STYLES.includes(settings.figureStyle))settings.figureStyle='sculpted';
-if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory});
+if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,phone:phoneLike()});
 settings.audioVolume=audioLevel(settings.audioVolume);
 settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
 settings.keyBindings=controlBindings(settings.keyBindings);
@@ -75,7 +79,7 @@ const soundscape=campaignSoundscape();soundscape.configure(settings);
 function saveSettings(){try{localStorage.setItem('sacramentum.settings',JSON.stringify(settings));}catch{}}
 const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
 const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
-const {showNew,showMap,showLedger,showSettings,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
+const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -106,6 +110,8 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
   if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
 });
 function render(){
+  // A running performance check owns the 3D stage; the page catches up after it.
+  if(performanceCheck){performanceCheck.renderLater=true;return;}
   cleanupSiteMedia();
   stopMotion();
   replay.stop();
@@ -304,6 +310,28 @@ modal.addEventListener('close',()=>{
   battleStage.pause(false);startAtmosphere();
 });
 async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
+// Settings → Run performance check. The battle is measured where it stands:
+// the panel closes, and until the check ends a status band covers the page so
+// neither pointer nor keys can reach the board (Escape or Cancel stop it).
+let performanceCheck=null,performanceReport=null;
+async function startPerformanceCheck(){
+  if(performanceCheck)return;
+  if(!uses3D()||!battleStage.stage?.isReady){showModal('Performance check','<p>Open a battle in the 3D view, then run the check from Settings.</p><div class="panel-actions settings-controls"><button data-cmd="close-modal">Close</button></div>');return;}
+  modal.close();stopMotion();pendingMotion=null;replay.stop();
+  const band=document.createElement('div');band.className='performance-check';band.innerHTML='<p role="status" aria-live="polite">Preparing the performance check…</p><button type="button">Cancel check</button>';
+  const status=band.querySelector('p'),cancelButton=band.querySelector('button'),check=performanceCheck={cancelled:false,renderLater:false};
+  const keys=event=>{if(event.target===cancelButton&&['Enter',' '].includes(event.key))return;event.stopImmediatePropagation();event.preventDefault();if(event.key==='Escape')check.cancelled=true;};
+  cancelButton.addEventListener('click',()=>{check.cancelled=true;status.textContent='Stopping after this step…';});
+  window.addEventListener('keydown',keys,true);document.body.append(band);cancelButton.focus();
+  const names={performance:'Performance',balanced:'Balanced',high:'High quality'};
+  try{
+    performanceReport=await runPerformanceCheck(battleStage,{current:graphics.mode,adaptive:settings.adaptiveResolution!==false,app:{version:CONFIG.version},isCancelled:()=>check.cancelled,
+      onProgress:({tier,index,total,step})=>{status.textContent=`Performance check ${index+1} of ${total}: ${step==='build'?'building':'measuring'} ${names[tier]}. Escape cancels.`;}});
+  }catch(error){performanceReport=null;toast(`The performance check stopped: ${error.message||error}`);}
+  finally{window.removeEventListener('keydown',keys,true);band.remove();performanceCheck=null;if(check.renderLater)render();}
+  if(performanceReport?.tiers.length)showPerformanceCheck(performanceReport);
+  else if(performanceReport)toast('The performance check was cancelled before it measured a quality.');
+}
 async function showShare(selectedTheme='imperial'){
   shareFile=null;
   showSharePreview(selectedTheme);
@@ -420,6 +448,9 @@ case 'download-card':document.querySelector('#reign-card').toBlob(blob=>download
 case 'archive-replay':{const source=archivePrimaryState||state,res=Game.createArchiveReplay(source,id);if(res.ok){archivePrimaryState??=state;state=res.state;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;modal.close();render();toast(res.message);}else toast(res.message);break;}
 case 'exit-archive':if(archivePrimaryState){state=archivePrimaryState;archivePrimaryState=null;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();toast('Returned from the Archive to your active chronicle.');}break;
 case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
+case 'performance-check':await startPerformanceCheck();break;
+case 'performance-check-save':if(performanceReport)download(new Blob([JSON.stringify(performanceReport,null,2)+'\n'],{type:'application/json'}),`imperium-performance-${performanceReport.measuredAt.slice(0,10)}.json`);break;
+case 'performance-check-use':if(performanceReport){modal.close();stopMotion();pendingMotion=null;graphics.setMode(performanceReport.recommendation);settings.quality=graphics.mode;saveSettings();clearBattleCache();render();announce(`Graphics quality set to ${performanceReport.recommendation}.`);}break;
 case 'render-report':{const report=battleStage.stage?.stats?.();showModal('Current frame report',report?`<p>Current quality: ${esc(report.quality)}. Measured in this browser; no claim of physical-device testing.</p><p>Graphics backend: ${esc(report.device?.renderer??'Unavailable')} · ${report.device?.software?'software rendering':'hardware status requires device verification'}</p><pre class="frame-report">${esc(JSON.stringify(report.frameProfile,null,2))}</pre><p>GPU query: ${report.gpu?.supported?'available':'unavailable'} · resolution scale ${report.resolution?.scale??1} · draws ${report.calls}</p>`:'<p>Open a 3D encounter to collect a frame report.</p>');break;}
 case 'expanded-upgrade':await change(()=>Game.enableExpandedCampaign(state));break;
 case 'approach-upgrade':await change(()=>Game.enableFieldApproaches(state));break;

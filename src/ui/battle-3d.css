@@ -80,3 +80,11 @@
 .world-unit[data-bloc=Landholders] .world-short{box-shadow:inset 3px 0 0 #d8ae4c}.world-unit[data-bloc=Landholders] .world-short::before{content:"L"}
 .world-unit[data-bloc=Civic] .world-short{box-shadow:inset 3px 0 0 #6a96dc}.world-unit[data-bloc=Civic] .world-short::before{content:"C"}
 .world-unit[data-bloc=Chamber] .world-short{box-shadow:inset 3px 0 0 #a070b8}.world-unit[data-bloc=Chamber] .world-short::before{content:"Ch"}
+
+/* Settings → Run performance check: the page takes no input until it ends. */
+.performance-check{position:fixed;inset:0;z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding:max(.75rem,env(safe-area-inset-top)) 1rem 0;background:rgba(18,14,10,.12);cursor:progress}
+.performance-check p{margin:0;max-width:34rem;padding:.6rem .9rem;border-radius:.4rem;background:rgba(24,20,15,.88);color:#f4ead6;font-size:var(--font-label,.95rem);line-height:1.4}
+.performance-check button{margin-left:.6rem;align-self:center;cursor:pointer}
+.check-results{overflow-x:auto}
+.check-results table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.check-results th,.check-results td{padding:.35rem .5rem;border-bottom:1px solid rgba(120,100,70,.25);text-align:left;white-space:nowrap}

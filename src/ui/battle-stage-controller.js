@@ -4,8 +4,11 @@ export function chapterHas3D(state){return Number.isInteger(state?.chapter)&&sta
 
 const PRELOAD_MS=15000;
 
-export function createBattleStageController({load=()=>import('../showcase/stage.js'),onError=()=>{}}={}){
-  let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null;
+// onStrain(quality) answers a battle that stayed slow at its lowest resolution
+// with the quality the next battle is built at (the stage itself never rebuilds
+// in play for it).
+export function createBattleStageController({load=()=>import('../showcase/stage.js'),onError=()=>{},onStrain=()=>null}={}){
+  let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null,strained=null;
   const update=()=>{
     if(!stage||!latest)return;
     const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused}=latest;
@@ -17,11 +20,12 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setMotionSpeed?.(latest.motionSpeed??1);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
     if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };
-  function release(){version++;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
+  function release(){version++;if(stage?.strained)strained=stage.quality;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
       const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}`;
       if(key!==nextKey){release();key=nextKey;}
+      if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
       if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
       const ticket=++version;

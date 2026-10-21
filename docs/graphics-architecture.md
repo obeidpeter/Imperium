@@ -30,7 +30,9 @@ The command stage opts into continuous visible atmosphere through `ambient.js`: 
 | Balanced | 1.5 | 6 | 2 | on |
 | High | 2 | 12 | 3 | on |
 
-The default is Balanced. Save-Data or a valid device-memory hint of 2 GB or less starts in Performance. These hints are conservative choices, not measurements of the device. An explicit saved/player choice takes precedence. The controller retains at most 30 draw-cost samples. When at least 18 of 30 active samples exceed 22 ms, it lowers one step and clears that sample window. Hidden, inactive, and invalid samples do not count. It never raises quality automatically; the player can select another mode. These are synchronous drawing costs, not a claim about frame rate or physical-device performance.
+The default is Balanced. Save-Data, a valid device-memory hint of 2 GB or less, or (since 0.38) a phone, meaning a touch-first screen no wider than 820 CSS pixels on its short side (`phoneLike`), starts in Performance. These hints are conservative choices, not measurements of the device. An explicit saved/player choice takes precedence. In the 2D view the controller retains at most 30 draw-cost samples. When at least 18 of 30 active samples exceed 22 ms, it lowers one step and clears that sample window. Hidden, inactive, and invalid samples do not count. It never raises quality automatically; the player can select another mode. These are synchronous drawing costs, not a claim about frame rate or physical-device performance.
+
+In 3D the stage adapts its resolution both ways ([`frame-budget.js`](../src/showcase/frame-budget.js)). Since 0.38 a battle whose frames stay late with the resolution already at its floor ("strained") refreshes its shadow map half as often. The next battle is then built one tier lower, but only if the strain was measured at the current tier and adaptive resolution is on (`onStrain` in [`battle-stage-controller.js`](../src/ui/battle-stage-controller.js), `stepDown` in `graphics-quality.js`). A battle is never rebuilt in play for it. Settings → Run performance check measures each tier on the player's device ([performance notes](performance.md)).
 
 ## Artwork API and bounded retention
 

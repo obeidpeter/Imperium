@@ -12,23 +12,6 @@ export function createMasonryBlockGeometry(bevel=.035){
   geometry.computeBoundingBox();geometry.computeBoundingSphere();return geometry;
 }
 
-// Compound date-palm foliage: paired, folded leaflets along an arched rachis.
-// One geometry is shared by every frond in the environment instance batch.
-export function createPalmFrondGeometry(){
-  const p=[],indices=[];
-  const vertex=(x,y,z)=>{p.push(x,y,z);return p.length/3-1;};
-  const centre=t=>[t*2.9,Math.sin(t*Math.PI)*.72-t*.67,0];
-  for(let j=0;j<15;j++){
-    const t=(j+.4)/15,a=centre(t),b=centre(Math.min(1,t+.07)),width=Math.sin(Math.PI*(t*.88+.06))*.68;
-    const stem=[vertex(a[0],a[1],-.018),vertex(a[0],a[1],.018),vertex(b[0],b[1],.010),vertex(b[0],b[1],-.010)];indices.push(stem[0],stem[1],stem[2],stem[0],stem[2],stem[3]);
-    for(const side of [-1,1]){
-      const root=vertex(a[0],a[1],0),ridge=vertex(a[0]+.16,a[1]-.02,side*width*.48),tip=vertex(a[0]+.37,a[1]-.12-t*.13,side*width),back=vertex(a[0]+.27,a[1]-.045,side*width*.47);
-      indices.push(root,ridge,tip,root,tip,back);
-    }
-  }
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geometry.setIndex(indices);geometry.computeVertexNormals();geometry.computeBoundingSphere();return geometry;
-}
-
 export function createColumnGeometry(){
   const profile=[[.48,0],[.48,.15],[.34,.20],[.29,.40],[.295,1.25],[.278,2.65],[.24,4.05],[.32,4.20],[.43,4.28],[.43,4.45]].map(v=>new THREE.Vector2(...v));
   const geometry=new THREE.LatheGeometry(profile,24),p=geometry.attributes.position;

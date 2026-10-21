@@ -1,5 +1,14 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.38 — smooth play
+
+Battles now open behind a short "Preparing" veil and then play without freezes. Before a battle is shown, everything it will draw is ready:
+- what its figures wear, its ground images and its generated scenery;
+- every shader program, compiled and linked in short steps, including the shadow pass's own;
+- its textures, uploaded ahead.
+
+Model images decode off the main thread. In the software benchmark, nothing compiles after a battle is shown and no long task interrupts the exchange or the camera tour; before, each battle compiled 15–19 shader programs during play and froze for 4–13 seconds. Phones start on Performance, a battle that stays slow builds the next one a tier lower (never mid-battle), and **Pause → Run performance check** measures your own device at each quality and saves the results as a file. See the [performance notes](docs/performance.md), including what is still open: no device has been measured yet.
+
 ## Version 0.37 — generated character bodies
 
 Every soldier, rider and civilian in the battles and ceremonies now wears a detailed body generated with Tripo and bound in Blender to the game's own skeleton: Roman recruits, legionaries, archers, a centurion and a commander, and Gothic, Persian and Palmyrene warriors, archers and riders, sixteen in all. The game's own animation, hands, weapons, shields, cloaks, insignia and horses stay as they were, and the protagonist's armour still changes with his command. Senate figures keep their togas, whose trims name their bloc. Each chapter downloads only the bodies its figures wear; Chapter I's download limit rises to 10 MB. See the [changelog](CHANGELOG.md) and the [asset pipeline](docs/asset-pipeline.md).

@@ -53,7 +53,7 @@ test('ART-07 chapter groups cover earned portraits and every implemented encount
     assert.equal(new Set(assets).size,assets.length);
     assert.ok(assets.includes(heroPortrait(chapter.rank)),`chapter ${chapter.id} rank`);
     assert.ok(assets.includes(heroPortrait(chapter.promotion)),`chapter ${chapter.id} promotion`);
-    for(const encounter of chapter.encounters)assert.ok(assets.includes(`./assets/tactical/units-${encounter.kind==='contest'?'civic':'roman'}.webp`),`chapter ${chapter.id} ${encounter.kind}`);
+    for(const encounter of chapter.encounters)assert.ok(assets.includes(`./assets/tactical/units-${encounter.kind==='contest'?'civic':'roman-v031'}.webp`),`chapter ${chapter.id} ${encounter.kind}`);
     if(chapter.id<12)assert.ok(!assets.includes('./assets/portraits/hero-emperor.webp'));
   }
 });

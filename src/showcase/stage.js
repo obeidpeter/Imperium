@@ -51,6 +51,8 @@ const FRAME_SLICE_MS=8,nextSlice=()=>globalThis.scheduler?.yield?.()??new Promis
 const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:4096,fps:60}};
 // Between motions the shadow map follows breathing and cloth only this often.
 const SHADOW_REFRESH_MS={performance:250,balanced:125,high:70};
+// The resolution budget's floor, and how many late frames there make a battle strained.
+const STRAIN_SCALE=.66,STRAINED_FRAMES=180;
 // Presentation styles for the figures (FIGURE_STYLES). Painted stands the 2D
 // campaign's own figure paintings in the diorama (HD-2D) with a tilt-shift
 // finish; inked keeps sculpted figures with ink outlines and washes.
@@ -474,7 +476,7 @@ export class BattleStage{
     for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
     pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
@@ -740,6 +742,11 @@ export class BattleStage{
     const quiet=!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
     if(quiet&&QUALITY[this.quality].fps>30&&(this.quietSkip=!this.quietSkip))return;
     const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
+    // Strain: frames still late with the resolution already at its floor. The
+    // shadow map then refreshes half as often, and the controller builds the
+    // next battle a tier lower; this one is never rebuilt in play.
+    const floor=this.adaptiveResolution&&(this.resolutionBudget?.scale??1)<=STRAIN_SCALE;
+    if(sincePaint&&!quiet)this.strainedFrames=floor&&sincePaint>this.cadence.expectedMs*1.45?(this.strainedFrames??0)+1:Math.max(0,(this.strainedFrames??0)-1);
     if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
     const renderStart=performance.now();let frame=null;
     if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
@@ -851,13 +858,19 @@ export class BattleStage{
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
     this.sceneryOcclusion?.update(this.camera,{targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),radius:actor.group.userData.actor?.mounted?1.7:1.35})),enabled:this.cameraView!=='overview'||!!this.animation,delta:dt,reducedMotion:this.reducedMotion});
     this.positionLabels();this.ink?.flush?.(now);
-    const shadowInterval=SHADOW_REFRESH_MS[this.quality]??125;
+    const shadowInterval=(SHADOW_REFRESH_MS[this.quality]??125)*(floor?2:1);
     if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){this.renderer.shadowMap.needsUpdate=true;this.shadowDirty=false;this.lastShadow=now;this.shadowUpdates++;}
-    for(const gpuMs of this.gpuTimer?.poll()??[])this.resolutionBudget?.record(gpuMs);
+    for(const gpuMs of this.gpuTimer?.poll()??[]){this.resolutionBudget?.record(gpuMs);this.frameLog?.gpu.push(gpuMs);}
     this.gpuTimer?.begin();
     let reflectionMs=0;try{const start=performance.now();if(this.profileFrames++%this.frameProfile.reflectionStride()===0)this.reflection?.render(this.scene,this.camera);reflectionMs=performance.now()-start;if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);}finally{this.gpuTimer?.end();}
-    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
+    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);this.frameLog?.frames.push([now,cost,sincePaint]);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
   }
+  // Strained for long enough that the next battle should be built a tier lower.
+  get strained(){return (this.strainedFrames??0)>=STRAINED_FRAMES;}
+  // A log of painted frames (time, CPU cost, interval) and GPU times for the
+  // Settings performance check; measurement only, nothing on screen changes.
+  startFrameLog(){this.frameLog={frames:[],gpu:[]};return this.frameLog;}
+  stopFrameLog(){const log=this.frameLog;this.frameLog=null;return log;}
   // Fit the sun's shadow box to what the camera can see: close views gain
   // texel density, the overview keeps the whole board and nearby casters.
   fitShadow(){
