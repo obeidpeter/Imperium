@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Five 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Five 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -5086,6 +5086,758 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-recruit",
+      "path": "assets/models/characters/roman-recruit.glb",
+      "subject": "Generated character body: young Roman army recruit in training in the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "9de4f190-0e52-4686-8687-0c669eef23c5",
+        "generatedAt": "2026-10-20T22:54:09.338Z",
+        "rigTaskId": "e413469b-5f43-46fc-b957-262296db9557",
+        "riggedAt": "2026-10-20T22:55:58.899Z",
+        "prompt": "art-source/models/requests/char-roman-recruit.json",
+        "rawBytes": 21493640,
+        "rawSha256": "0f50c2d5824bdd772392aa6cca51597eda917dd1f6bd18f95b8b3e576d3af760",
+        "riggedBytes": 28321608,
+        "riggedSha256": "f47075826b3844be6cbde2f131f11d66832a33457edf575fc838483f1f37a911",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-recruit.json"
+      },
+      "usage": "Chapter I recruits, the protagonist among them; the game adds the practice kit.",
+      "loading": "Deferred local GLB in the offline groups of Chapter I only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 418392,
+        "sha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07",
+        "triangles": 13685,
+        "nearTriangles": 11186,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6195,
+          "height": 1.7786,
+          "depth": 0.4108
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-trainer",
+      "path": "assets/models/characters/roman-trainer.glb",
+      "subject": "Generated character body: grizzled Roman veteran drill instructor of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "753e26c5-63d2-4df0-ae10-28a450a55866",
+        "generatedAt": "2026-10-20T22:54:20.907Z",
+        "rigTaskId": "6366f165-e003-4beb-8a0b-fdb2e0168838",
+        "riggedAt": "2026-10-20T22:56:04.711Z",
+        "prompt": "art-source/models/requests/char-roman-trainer.json",
+        "rawBytes": 23972464,
+        "rawSha256": "db18b606e705476bfb2095dc456917b8e3c8762d920700a4fb0ae3ff6bb59f57",
+        "riggedBytes": 31597060,
+        "riggedSha256": "eee0862626b9ce5d62d5a3c340ca02c62ac72009d479957d922903e68bec1e5e",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-trainer.json"
+      },
+      "usage": "The Chapter I drill instructor; the game adds the practice sword.",
+      "loading": "Deferred local GLB in the offline groups of Chapter I only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 448620,
+        "sha256": "ed9ca20119b4386ccd69d16615adc1632775a232ab05aef9d979b53178370151",
+        "triangles": 13794,
+        "nearTriangles": 11295,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6113,
+          "height": 1.7577,
+          "depth": 0.431
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-legionary",
+      "path": "assets/models/characters/roman-legionary.glb",
+      "subject": "Generated character body: Roman legionary soldier of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "3d021c57-c89e-4575-bfce-ceae378320c9",
+        "generatedAt": "2026-10-20T22:14:55.658Z",
+        "rigTaskId": "dddddd8f-3829-49f7-9136-512b5c07cd8e",
+        "riggedAt": "2026-10-20T22:17:31.173Z",
+        "prompt": "art-source/models/requests/char-roman-legionary.json",
+        "rawBytes": 25982384,
+        "rawSha256": "7c4be9f81154d671bd0da535ed09336a5277b1718acba261c397967c44a859f6",
+        "riggedBytes": 34099592,
+        "riggedSha256": "d9248d865bade3f593a6c6c4e030696f148045496ca30ca0f57402dbff5d655a",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-legionary.json"
+      },
+      "usage": "Roman line infantry, from Lucan and the oath's recruits to the legions at the accession; the game adds the shield, sword, cloak and crests.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 508428,
+        "sha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b",
+        "triangles": 13931,
+        "nearTriangles": 11432,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.579,
+          "height": 1.773,
+          "depth": 0.4579
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-archer",
+      "path": "assets/models/characters/roman-archer.glb",
+      "subject": "Generated character body: Roman auxiliary archer of the mid-3rd century AD, recruited in the eastern provinces",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "9b6df0c7-2627-4789-b283-0e9a680b1b63",
+        "generatedAt": "2026-10-20T22:53:53.266Z",
+        "rigTaskId": "07a70b13-dae5-4b39-ac8e-4b69691e07c5",
+        "riggedAt": "2026-10-20T22:55:30.920Z",
+        "prompt": "art-source/models/requests/char-roman-archer.json",
+        "rawBytes": 23134468,
+        "rawSha256": "97ea32b989c78a131dbce866d6b6335dc06f3f57e1c0e442a0dccc4f5962c67c",
+        "riggedBytes": 30322084,
+        "riggedSha256": "78729f5d43979b4a58daf0b285b300f2b98d4b9106ce11a94ff1177638b7391f",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-archer.json"
+      },
+      "usage": "Roman archers; the game adds the bow, arrows and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 483852,
+        "sha256": "80584d9e4d5a422fa9df7be06d777a728692699aaa37f35574e8dbb67af72f4c",
+        "triangles": 13630,
+        "nearTriangles": 11131,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5858,
+          "height": 1.7761,
+          "depth": 0.425
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-officer",
+      "path": "assets/models/characters/roman-officer.glb",
+      "subject": "Generated character body: Roman centurion of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "5434c6ae-dcdb-4d6b-9009-68a3c523558b",
+        "generatedAt": "2026-10-20T22:54:00.046Z",
+        "rigTaskId": "3e040ac6-b7d8-4f50-b28b-3912ee775723",
+        "riggedAt": "2026-10-20T22:55:50.635Z",
+        "prompt": "art-source/models/requests/char-roman-officer.json",
+        "rawBytes": 25978312,
+        "rawSha256": "14f126475a1132db6356911d22d0a3b6437860049fa1adea0f2893872ff3852e",
+        "riggedBytes": 33942960,
+        "riggedSha256": "598d436f41b3cc41d5454155ede1951f5f87b738a00a04f96d0c60bf7876e0f3",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-officer.json"
+      },
+      "usage": "The protagonist as a centurion in Chapters IV to VI; the game adds the crest, cloak, shield and sword.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 537496,
+        "sha256": "509bfca7bc38d11ac86523d8e8c7635379228cbc65fa27d920018e1d549aa335",
+        "triangles": 13892,
+        "nearTriangles": 11393,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6074,
+          "height": 1.7856,
+          "depth": 0.4197
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-commander",
+      "path": "assets/models/characters/roman-commander.glb",
+      "subject": "Generated character body: Roman senior army commander of the 260s and 270s AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "b3680837-dcef-4bcd-a98d-c84df9414e34",
+        "generatedAt": "2026-10-20T22:52:15.480Z",
+        "rigTaskId": "34b645af-e32b-48d5-b3f6-fa5e355b4dde",
+        "riggedAt": "2026-10-20T22:54:15.214Z",
+        "prompt": "art-source/models/requests/char-roman-commander.json",
+        "rawBytes": 25632420,
+        "rawSha256": "91565c732d7c5072e9af59e62a8587d7dfa8aab59bdbe06f78c51c68b02fea36",
+        "riggedBytes": 33498748,
+        "riggedSha256": "51c6ab47bfefbfa4eb4e9c9fe7a33d9709f34ac2d99ebe81f827f5826dbd4f45",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-commander.json"
+      },
+      "usage": "The protagonist as a senior commander from Chapter VII, and rival claimants; the game adds the crest, cloak (purple at the accession), shield and sword.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 546208,
+        "sha256": "6256d8490e2f62941f61e44657579887620551665dd863b1517d4f7c13485f75",
+        "triangles": 13797,
+        "nearTriangles": 11298,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5904,
+          "height": 1.8345,
+          "depth": 0.458
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-warrior",
+      "path": "assets/models/characters/gothic-warrior.glb",
+      "subject": "Generated character body: Gothic warrior of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "d4e79b53-deea-4280-8e3f-52643d6b27e1",
+        "generatedAt": "2026-10-20T22:51:13.215Z",
+        "rigTaskId": "1039160f-c2d0-426e-af6d-5b48b27e1a03",
+        "riggedAt": "2026-10-20T22:52:41.803Z",
+        "prompt": "art-source/models/requests/char-gothic-warrior.json",
+        "rawBytes": 22744244,
+        "rawSha256": "0acf96f11b023db181b3e427f4b37119e49e2813694d76e6b1a31cbdc94fa16d",
+        "riggedBytes": 29958152,
+        "riggedSha256": "1f3e48dc1b19a605419968a6cf8db3d432cf3926211f38160bf0143579504839",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-warrior.json"
+      },
+      "usage": "Gothic spearmen; the game adds the spear and shield.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VII, VIII, X only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 432708,
+        "sha256": "d32c073353bea4df189e062d3242c0a4cd9c53349625d5e8a5860a2286c4dc82",
+        "triangles": 13940,
+        "nearTriangles": 11441,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6065,
+          "height": 1.7558,
+          "depth": 0.405
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-archer",
+      "path": "assets/models/characters/gothic-archer.glb",
+      "subject": "Generated character body: Gothic archer of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "3b3595b2-ee0c-4699-9ce8-ae9533b85e98",
+        "generatedAt": "2026-10-20T22:51:02.629Z",
+        "rigTaskId": "77d1f7dd-001d-4219-9094-e89d57f05e5b",
+        "riggedAt": "2026-10-20T22:52:05.704Z",
+        "prompt": "art-source/models/requests/char-gothic-archer.json",
+        "rawBytes": 23848728,
+        "rawSha256": "653f54d69722e90cbd2253a984541919d71d0a6482172fb3aec5913bbe9f786d",
+        "riggedBytes": 31239980,
+        "riggedSha256": "1cc65afbca85505d3a22af37d25fe9062f23411763bc45e7b0b2c6a666d0598a",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-archer.json"
+      },
+      "usage": "Gothic archers; the game adds the bow, arrows and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VII, VIII, X only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 484744,
+        "sha256": "73da129c3a9c9be254e8c3e11e6c752d5b6b56a94dffc7703966d69418348e37",
+        "triangles": 13874,
+        "nearTriangles": 11375,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6096,
+          "height": 1.7656,
+          "depth": 0.4313
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-noble",
+      "path": "assets/models/characters/gothic-noble.glb",
+      "subject": "Generated character body: Gothic chieftain warrior of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "ecb62c9b-603a-4f92-bc7c-b3c618424586",
+        "generatedAt": "2026-10-20T22:51:29.545Z",
+        "rigTaskId": "37c9c297-8092-4480-9315-fce8a08454c5",
+        "riggedAt": "2026-10-20T22:53:08.000Z",
+        "prompt": "art-source/models/requests/char-gothic-noble.json",
+        "rawBytes": 24644500,
+        "rawSha256": "aadbb6d6640ca8166f77c49b0d4ec3198c2a0e7e3e29dabfe0878757f4983d2e",
+        "riggedBytes": 32267852,
+        "riggedSha256": "893bfc654664dfe99d873aba846fd586f2f8631d507ce8dc6c010ce179337224",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-noble.json"
+      },
+      "usage": "Armoured Gothic warriors and riders; the game adds the spear, shield and horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV, VII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 498632,
+        "sha256": "149853a43f34e389ca55b1d203e224760eecdc78cfa18d627cd44d03e4bfb7b2",
+        "triangles": 13980,
+        "nearTriangles": 11480,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6191,
+          "height": 1.7727,
+          "depth": 0.4078
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-persian-infantry",
+      "path": "assets/models/characters/persian-infantry.glb",
+      "subject": "Generated character body: Sasanian Persian infantry spearman of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "19e9cdd2-7155-4311-8b3e-e93ef0e417c3",
+        "generatedAt": "2026-10-20T22:53:29.419Z",
+        "rigTaskId": "05da8b9d-8b08-4289-9b77-a5241c8fb4aa",
+        "riggedAt": "2026-10-20T22:55:13.570Z",
+        "prompt": "art-source/models/requests/char-persian-infantry.json",
+        "rawBytes": 24927808,
+        "rawSha256": "2337832cfee61a873eefc857dd6d7f253b97fe6acfc25c5e1a95a2f58385c7c9",
+        "riggedBytes": 32671384,
+        "riggedSha256": "58c98838bf7356dfd96fd17034b2cc86e14825dd1cc3286173e22273b9394c91",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-persian-infantry.json"
+      },
+      "usage": "Sasanian spearmen; the game adds the spear and shield.",
+      "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 525572,
+        "sha256": "44840ef56103b78189f03b45981d10addf7599e79e21e176886e97bf7949e765",
+        "triangles": 13980,
+        "nearTriangles": 11480,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5934,
+          "height": 1.775,
+          "depth": 0.4203
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-persian-archer",
+      "path": "assets/models/characters/persian-archer.glb",
+      "subject": "Generated character body: Sasanian Persian archer of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "0fe42e69-c07a-4806-81bf-77125cfb87d6",
+        "generatedAt": "2026-10-20T22:51:51.080Z",
+        "rigTaskId": "a358953c-e353-403f-a22a-11537496fd5d",
+        "riggedAt": "2026-10-20T22:54:11.091Z",
+        "prompt": "art-source/models/requests/char-persian-archer.json",
+        "rawBytes": 27530404,
+        "rawSha256": "e9ecea5f3458ea6556cc060f8b57c8ff1a611e519efbaacef173744f72816b07",
+        "riggedBytes": 36111284,
+        "riggedSha256": "d191c3b23572d1f3f83488a5594a63251ce6528c8e8c4c6e9cfa0901f045cc0a",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-persian-archer.json"
+      },
+      "usage": "Sasanian archers; the game adds the bow, arrows and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 512640,
+        "sha256": "f67425174ca64b6a96a1aa553f09e40d793c10324e33796ae166cfec83d3ef22",
+        "triangles": 13965,
+        "nearTriangles": 11465,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5916,
+          "height": 1.7521,
+          "depth": 0.4091
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-persian-cavalry",
+      "path": "assets/models/characters/persian-cavalry.glb",
+      "subject": "Generated character body: Sasanian Persian heavy cavalryman of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "6ea64fb2-7dc9-43d1-a928-90280b523387",
+        "generatedAt": "2026-10-20T22:52:50.868Z",
+        "rigTaskId": "5a8b5e83-6733-4cd3-8db7-133b5851cd4b",
+        "riggedAt": "2026-10-20T22:54:57.044Z",
+        "prompt": "art-source/models/requests/char-persian-cavalry.json",
+        "rawBytes": 26748380,
+        "rawSha256": "0a045602ef65d6f05e686542b81f6065eab42bc711aad39a9a81adf16b547e40",
+        "riggedBytes": 34694620,
+        "riggedSha256": "0c7cfe956bc46bae679772dfc6065d83f258382631f81f7fad4ad5ea4d94d42d",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-persian-cavalry.json"
+      },
+      "usage": "Sasanian heavy cavalry riders; the game adds the spear, shield and horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 549960,
+        "sha256": "0e2823a4b4de4142c1f5ba1e7471f1e23c20cf1787ce0f0a708a1a64a44a180c",
+        "triangles": 14015,
+        "nearTriangles": 11515,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6237,
+          "height": 1.8106,
+          "depth": 0.5089
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-palmyrene-infantry",
+      "path": "assets/models/characters/palmyrene-infantry.glb",
+      "subject": "Generated character body: Palmyrene soldier of the 270s AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "4e6ac7da-0733-4cef-94a7-a849d668c822",
+        "generatedAt": "2026-10-20T22:51:42.945Z",
+        "rigTaskId": "d6ec60f4-7c4f-4f7c-9e50-08e3a3521fc1",
+        "riggedAt": "2026-10-20T22:53:36.946Z",
+        "prompt": "art-source/models/requests/char-palmyrene-infantry.json",
+        "rawBytes": 25198984,
+        "rawSha256": "637c1d91c26f8d06fed39a277e41013ec6c015e5b57d9926d1647a3681ddc1e0",
+        "riggedBytes": 32791312,
+        "riggedSha256": "20bf00ca6b0cec1de091419a9651ad6d1b1d79e5926fabaa5b2074909cda7cad",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-palmyrene-infantry.json"
+      },
+      "usage": "Palmyrene spearmen; the game adds the spear and shield.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 535356,
+        "sha256": "a5202fc69eb8d051cdb2ce4699acc78a2e112af33a2664745fec364d2c6c0289",
+        "triangles": 14021,
+        "nearTriangles": 11521,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5841,
+          "height": 1.7879,
+          "depth": 0.4117
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-palmyrene-archer",
+      "path": "assets/models/characters/palmyrene-archer.glb",
+      "subject": "Generated character body: Palmyrene archer of the 270s AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "5e86017f-e99d-4922-a5ec-3c957af69fcb",
+        "generatedAt": "2026-10-20T22:51:17.961Z",
+        "rigTaskId": "45c7459a-7f4b-4c9e-9e8b-57a24763e8f4",
+        "riggedAt": "2026-10-20T22:52:56.333Z",
+        "prompt": "art-source/models/requests/char-palmyrene-archer.json",
+        "rawBytes": 25723400,
+        "rawSha256": "0f923c4d1b9cf80105616b6d2aa373803d90e8448b52c1a5f7cc72939cdf3b50",
+        "riggedBytes": 33642184,
+        "riggedSha256": "c626a8ed26e6f902d5f6120a75d5ce1616508554ad0e41b10346905f36295877",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-palmyrene-archer.json"
+      },
+      "usage": "Palmyrene archers; the game adds the bow, arrows and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 472440,
+        "sha256": "43c2f9b3bca7407fc99d0ad633d1cd17925e2775cb5fd9c198fcf069a769ba97",
+        "triangles": 13909,
+        "nearTriangles": 11410,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6088,
+          "height": 1.7541,
+          "depth": 0.4117
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-palmyrene-cavalry",
+      "path": "assets/models/characters/palmyrene-cavalry.glb",
+      "subject": "Generated character body: Palmyrene heavy cavalryman of the 270s AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "b61ba77c-f98c-4b3a-b885-77178554817c",
+        "generatedAt": "2026-10-20T22:50:57.112Z",
+        "rigTaskId": "8dfd9a8a-1ee2-4994-8ec0-efe8dabaf72b",
+        "riggedAt": "2026-10-20T22:51:33.145Z",
+        "prompt": "art-source/models/requests/char-palmyrene-cavalry.json",
+        "rawBytes": 24356108,
+        "rawSha256": "4af2ad81b4e29bb66529cd5e29880fd68f20b737bf112373e3270d3fc26b2be2",
+        "riggedBytes": 31578096,
+        "riggedSha256": "ae2f31fc99a891ebda7a070601caaf4071de34360ebf31d234203803bec59a47",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-palmyrene-cavalry.json"
+      },
+      "usage": "Palmyrene heavy cavalry riders; the game adds the spear, shield and horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 557720,
+        "sha256": "c5057f8a3349fbdd85f41b4a56441fdc9fb1b98c188600a559eb84be87a6797e",
+        "triangles": 14110,
+        "nearTriangles": 11611,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5935,
+          "height": 1.8445,
+          "depth": 0.4081
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-civilian-escort",
+      "path": "assets/models/characters/civilian-escort.glb",
+      "subject": "Generated character body: provincial Roman civilian traveller of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.0-20250812",
+        "taskId": "7292c822-f168-4ce9-abd2-2e7ef4893100",
+        "generatedAt": "2026-10-20T22:51:07.322Z",
+        "rigTaskId": "c0277728-1689-4bd3-9d3d-3766ce704ffb",
+        "riggedAt": "2026-10-20T22:52:30.255Z",
+        "prompt": "art-source/models/requests/char-civilian-escort.json",
+        "rawBytes": 22209204,
+        "rawSha256": "c31c1b5e4b4adb7500b5174eb504239096ff7aa3d31872f4d889db0eaca61de8",
+        "riggedBytes": 29179092,
+        "riggedSha256": "58047da11f2b5be907697b27a77c157f4c069938f3a51e3a2a3ffd82cd3ea3bd",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-civilian-escort.json"
+      },
+      "usage": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
+      "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, VI, VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
+        "bytes": 422340,
+        "sha256": "efdb2701c1d3296c28177369a3ad60434395fd3ae30eb08986260293e68e4fc3",
+        "triangles": 13769,
+        "nearTriangles": 11269,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6159,
+          "height": 1.783,
+          "depth": 0.4046
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -5153,13 +5905,13 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-20T17:31:36.794608+00:00",
+  "updatedAt": "2026-10-21T00:36:24.259358+00:00",
   "totalArtworkBytes": 7385566,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
     "compressedInitialBuildBytes": 2000000,
-    "compressedChapterOneBuildBytes": 8000000,
+    "compressedChapterOneBuildBytes": 10000000,
     "compressedCompleteBuildBytes": 24000000
   },
   "assetCounts": {
@@ -5174,10 +5926,10 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 8,
+    "models": 24,
     "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 11625693,
-  "totalModelBytes": 1489879
+  "totalBundledAssetBytes": 19560801,
+  "totalModelBytes": 9424987
 }

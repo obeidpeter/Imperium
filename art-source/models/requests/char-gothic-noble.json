@@ -1,0 +1,83 @@
+{
+  "id": "char-gothic-noble",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    4,
+    7
+  ],
+  "use": "Armoured Gothic warriors and riders; the game adds the spear, shield and horse.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic chieftain warrior of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt over a red-brown patterned wool tunic, a broad belt with silver fittings, wool trousers with leg wraps and leather boots, and a simple iron segmented helmet. Long hair and a full beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "ecb62c9b-603a-4f92-bc7c-b3c618424586",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:29.545Z",
+    "rawSha256": "aadbb6d6640ca8166f77c49b0d4ec3198c2a0e7e3e29dabfe0878757f4983d2e",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.759Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Gothic chieftain warrior of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt over a red-brown patterned wool tunic, a broad belt with silver fittings, wool trousers with leg wraps and leather boots, and a simple iron segmented helmet. Long hair and a full beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-gothic-noble.glb",
+    "rawBytes": 24644500,
+    "tripoInput": {
+      "prompt": "Full-body Gothic chieftain warrior of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt over a red-brown patterned wool tunic, a broad belt with silver fittings, wool trousers with leg wraps and leather boots, and a simple iron segmented helmet. Long hair and a full beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-gothic-noble-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "37c9c297-8092-4480-9315-fce8a08454c5",
+      "requestedAt": "2026-10-20T22:51:36.745Z",
+      "balanceBefore": 4530,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "ecb62c9b-603a-4f92-bc7c-b3c618424586",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:53:08.000Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-gothic-noble-rigged.glb",
+      "rawBytes": 32267852,
+      "rawSha256": "893bfc654664dfe99d873aba846fd586f2f8631d507ce8dc6c010ce179337224",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "ecb62c9b-603a-4f92-bc7c-b3c618424586",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

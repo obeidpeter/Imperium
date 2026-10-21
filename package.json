@@ -1,6 +1,6 @@
 {
   "name": "imperium",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "private": true,
   "type": "module",
   "description": "A complete twelve-chapter Roman tactical chronicle for the browser.",
@@ -23,6 +23,7 @@
     "audit:handoff": "node scripts/check-character-handoff.mjs",
     "asset:tripo": "node scripts/assets/tripo.mjs",
     "asset:process": "node scripts/assets/process-model.mjs",
+    "asset:bind": "node scripts/assets/bind-character.mjs",
     "asset:check": "node scripts/assets/check-model.mjs",
     "asset:preview": "node scripts/assets/preview-model.mjs"
   },

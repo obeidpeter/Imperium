@@ -1,5 +1,9 @@
 # IMPERIUM: From Recruit to Emperor
 
+## Version 0.37 — generated character bodies
+
+Every soldier, rider and civilian in the battles and ceremonies now wears a detailed body generated with Tripo and bound in Blender to the game's own skeleton: Roman recruits, legionaries, archers, a centurion and a commander, and Gothic, Persian and Palmyrene warriors, archers and riders, sixteen in all. The game's own animation, hands, weapons, shields, cloaks, insignia and horses stay as they were, and the protagonist's armour still changes with his command. Senate figures keep their togas, whose trims name their bloc. Each chapter downloads only the bodies its figures wear; Chapter I's download limit rises to 10 MB. See the [changelog](CHANGELOG.md) and the [asset pipeline](docs/asset-pipeline.md).
+
 ## Version 0.36 — the first generated scenery
 
 Chapter V now has a small supply camp beside the battlefield: spoil baskets, mine timbers, mudbrick, storage jars and a leather tent. The models were generated with Tripo from text prompts and refined in Blender, and they sit outside the board, so the battles and their rules are unchanged. They load only with Chapter V, at Balanced and High quality. The [asset pipeline](docs/asset-pipeline.md) describes how generated models are made, checked, recorded and placed.
@@ -249,7 +253,7 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I above 8,000,000, or the complete campaign above 24,000,000. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I above 10,000,000 (8,000,000 before 0.37), or the complete campaign above 24,000,000. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
 
 ## Replit static deployment
 

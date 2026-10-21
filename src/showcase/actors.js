@@ -27,6 +27,8 @@ import {applyCharacterPresence,performanceTransition,applyPerformance} from './a
 import {updateActorExpressionMorphs} from './actor-expression-mesh.js';
 import {simplifyActorOverview} from './actor-overview.js';
 import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
+import {actorBodyId} from '../ui/actor-body-catalog.js';
+import {actorBody,warmActorBody,mountActorBody,BODY_REPLACES} from './actor-bodies.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -59,7 +61,10 @@ export const BLOC_TRIM=Object.freeze(Object.fromEntries(Object.entries(BLOC_STYL
 export function createActor(unit={},options={}){
   let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group;
   const contacts=rig.contacts,source=options.assetLibrary;
-  const identity=actorIdentity(unit,actorKit(unit,options));
+  const kit=actorKit(unit,options),identity=actorIdentity(unit,kit);
+  // A generated body, where one fits the figure's kit, replaces the procedural figure once it loads.
+  const bodyId=actorBodyId(kit),bodies=options.bodyLibrary;
+  const bodyReady=bodyId&&(bodies||typeof window!=='undefined')?(bodies?bodies.warm(bodyId):warmActorBody(bodyId)):Promise.resolve(false);
   const complexion=options.complexionLibrary??defaultComplexion,preloadComplexion=!!options.complexionLibrary||typeof window!=='undefined';
   let pendingComplexion=false;
   const releasePendingComplexion=()=>{if(pendingComplexion){pendingComplexion=false;complexion.release(identity);}};
@@ -68,9 +73,12 @@ export function createActor(unit={},options={}){
   if(preloadComplexion){complexion.acquire(identity);pendingComplexion=true;}
   const assetReady=source?source.warm(identity):typeof window!=='undefined'?warmActorAssets(identity):Promise.resolve(actorAssetStatus(identity).ready);
   const hairReady=!identity.female&&!['bound','long'].includes(identity.hair)?warmActorHair():Promise.resolve(false);
-  const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady]).then(([loaded,,hairLoaded])=>{
-    if(!loaded||disposed)return loaded&&!disposed;
-    if(group.userData.actor.imported&&(!hairLoaded||group.userData.actor.hairImported))return true;
+  const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady,bodyReady]).then(([loaded,,hairLoaded,bodyLoaded])=>{
+    if(disposed)return false;
+    const built=group.userData.actor;
+    if(bodyLoaded){if(built.body)return true;}
+    else if(!loaded)return false;
+    else if(built.imported&&(!hairLoaded||built.hairImported))return true;
     const parent=group.parent;rig.dispose();group.clear();
     rig=createActorRig(unit,options,group);Object.assign(contacts,rig.contacts);
     if(parent)parent.add(group);rig.update({...lastInput,resetPose:true});return true;
@@ -83,12 +91,13 @@ export function createActor(unit={},options={}){
 function createActorRig(unit={},options={},reuseGroup=null){
   const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed,identity=actorIdentity(unit,kit);
   const complexion=options.complexionLibrary??defaultComplexion;
-  const anatomy=options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
+  const bodyId=actorBodyId(kit),body=bodyId?(options.bodyLibrary?options.bodyLibrary.body(bodyId):actorBody(bodyId)):null;
+  const anatomy=body?null:options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
   const detail=options.quality!=='performance',profile=(rings,spec={})=>{const g=garmentGeometry(rings,{...spec,subdivisions:spec.subdivisions??(detail&&(spec.anatomy||spec.folds)?2:1),segments:detail?Math.min(spec.segments??18,20):Math.min(spec.segments??18,12)});return spec.anatomy?sculptActorGeometry(g,spec.anatomy,spec.side?{...identity,side:spec.side}:identity):g;};
   const wardrobe=actorWardrobe(identity,kit),factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
   const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...wardrobe.palette,...options.palette};
   const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
   const material=(color,extra={})=>{const Constructor=options.quality==='high'&&extra.roughnessMap&&extra.metalness===0?T.MeshPhysicalMaterial:T.MeshStandardMaterial;const m=new Constructor({color,roughness:.84,metalness:0,...extra,...(Constructor===T.MeshPhysicalMaterial?{sheen:.18,sheenRoughness:.85,sheenColor:new T.Color(color).multiplyScalar(.25)}:{})});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
@@ -299,7 +308,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
   }
   let cloak=null;
   if(kit.cloak){
-    cloak=part(torso,'command-cloak');clothRigs.push(createClothRig(cloak,.44,.08,-.42));const red=material(wardrobe.cloak,{...surface('wool'),side:T.DoubleSide});
+    // A generated body's clothes are baked, so a scene's cloth colour (the accession's purple) dyes the cloak.
+    cloak=part(torso,'command-cloak');clothRigs.push(createClothRig(cloak,.44,.08,-.42));const red=material(body&&options.palette?.cloth!==undefined?options.palette.cloth:wardrobe.cloak,{...surface('wool'),side:T.DoubleSide});
     mesh(cloak,drape([[.44,0,.37,-.16],[.28,.015,.46,-.20],[.09,.02,.51,-.23],[-.13,.025,.56,-.26],[-.42,.03,.54,-.28]]),red);
     ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
   }
@@ -348,6 +358,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const reduced=/hand|ankle/.test(parent.name)?g:simplifyActorOverview(g,{cell});if(reduced!==g)g.dispose();
     const simple=mesh(parent,reduced,overviewMaterial);simple.name='overview-detail';simple.userData.overview=true;simple.visible=false;farMeshes.push(simple);
   }
+  // A generated body takes the place of every procedural surface on its own joints.
+  if(body){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&BODY_REPLACES.test(o.parent.name))replaced.push(o);});
+    for(const item of replaced){item.removeFromParent();for(const g of [item.geometry,item.userData.overviewGeometry])if(g){geometries.delete(g);g.dispose();}}}
   overview(group);
   if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}
   // Batch rigid details by material within each joint. Faces, folds, fingers
@@ -367,9 +380,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
   group.traverse(o=>{if(o.isMesh&&o.material.isMeshStandardMaterial&&!o.userData.overview)nearMeshes.push(o);});
   nearMeshes=bindActorSurfaces(group,nearMeshes,{geometries,materials,skeletons,clothRigs});
   farMeshes=bindActorSurfaces(group,farMeshes,{geometries,materials,skeletons,clothRigs,overview:true});
-  const costume=mountActorCostume(group,{kit,cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
+  const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
+  if(body){const worn=mountActorBody(group,body,{skeletons});nearMeshes.push(worn.near);farMeshes.push(worn.overview);}
   for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial)finishActorMaterial(m);
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
   let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;

@@ -1,0 +1,82 @@
+{
+  "id": "char-palmyrene-cavalry",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    9
+  ],
+  "use": "Palmyrene heavy cavalry riders; the game adds the spear, shield and horse.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Palmyrene heavy cavalryman of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears full armour of bronze scales with mail sleeves and mail leggings, armoured boots, and a conical helmet with a mail aventail, face visible. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "b61ba77c-f98c-4b3a-b885-77178554817c",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:50:57.112Z",
+    "rawSha256": "4af2ad81b4e29bb66529cd5e29880fd68f20b737bf112373e3270d3fc26b2be2",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.024Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Palmyrene heavy cavalryman of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears full armour of bronze scales with mail sleeves and mail leggings, armoured boots, and a conical helmet with a mail aventail, face visible. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-palmyrene-cavalry.glb",
+    "rawBytes": 24356108,
+    "tripoInput": {
+      "prompt": "Full-body Palmyrene heavy cavalryman of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears full armour of bronze scales with mail sleeves and mail leggings, armoured boots, and a conical helmet with a mail aventail, face visible. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-palmyrene-cavalry-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "8dfd9a8a-1ee2-4994-8ec0-efe8dabaf72b",
+      "requestedAt": "2026-10-20T22:51:04.711Z",
+      "balanceBefore": 4675,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "b61ba77c-f98c-4b3a-b885-77178554817c",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:51:33.145Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-palmyrene-cavalry-rigged.glb",
+      "rawBytes": 31578096,
+      "rawSha256": "ae2f31fc99a891ebda7a070601caaf4071de34360ebf31d234203803bec59a47",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "b61ba77c-f98c-4b3a-b885-77178554817c",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

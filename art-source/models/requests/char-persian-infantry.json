@@ -1,0 +1,83 @@
+{
+  "id": "char-persian-infantry",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    5,
+    6
+  ],
+  "use": "Sasanian spearmen; the game adds the spear and shield.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian infantry spearman of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of iron scale armour over a long-sleeved deep red tunic with patterned trim, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a mail aventail covering the neck. Full black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "19e9cdd2-7155-4311-8b3e-e93ef0e417c3",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:53:29.419Z",
+    "rawSha256": "2337832cfee61a873eefc857dd6d7f253b97fe6acfc25c5e1a95a2f58385c7c9",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:52:08.744Z",
+    "balanceBefore": 4455,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Sasanian Persian infantry spearman of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of iron scale armour over a long-sleeved deep red tunic with patterned trim, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a mail aventail covering the neck. Full black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-persian-infantry.glb",
+    "rawBytes": 24927808,
+    "tripoInput": {
+      "prompt": "Full-body Sasanian Persian infantry spearman of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of iron scale armour over a long-sleeved deep red tunic with patterned trim, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a mail aventail covering the neck. Full black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-persian-infantry-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "05da8b9d-8b08-4289-9b77-a5241c8fb4aa",
+      "requestedAt": "2026-10-20T22:53:36.743Z",
+      "balanceBefore": 4305,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "19e9cdd2-7155-4311-8b3e-e93ef0e417c3",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:55:13.570Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-persian-infantry-rigged.glb",
+      "rawBytes": 32671384,
+      "rawSha256": "58c98838bf7356dfd96fd17034b2cc86e14825dd1cc3286173e22273b9394c91",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "19e9cdd2-7155-4311-8b3e-e93ef0e417c3",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

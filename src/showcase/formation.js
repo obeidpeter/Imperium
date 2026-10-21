@@ -115,6 +115,10 @@ function rigidAsSkinned(group,rigid,skeleton,bindMatrix){
   const bones=skeleton.bones,index=new Map(bones.map((bone,i)=>[bone,i])),inverseGroup=group.matrixWorld.clone().invert(),positions=[],normals=[],colors=[],skinIndex=[],skinWeight=[];
   const matrix=new T.Matrix4(),normalMatrix=new T.Matrix3(),v=new T.Vector3();
   for(const mesh of rigid){
+    // Kit the leader hides (an archer's sword, an unthrown javelin) stays hidden: its joints are
+    // invisible. The part's own flag is only the distance switch, so it is not consulted.
+    let hidden=false;for(let p=mesh.parent;p&&p!==group;p=p.parent)if(!p.visible)hidden=true;
+    if(hidden)continue;
     let bone=mesh.parent;while(bone&&bone!==group&&!bone.isBone)bone=bone.parent;
     if(!bone?.isBone||!index.has(bone))continue;const i=index.get(bone);
     // bind space = bind^-1 x (bone at bind) x (bone now)^-1 x (mesh now), group-local
@@ -145,8 +149,10 @@ export function createSkinnedCrowd(group,{max=8}={}){
     owned.push(mesh.geometry);group.add(mesh);meshes.push(mesh);
   };
   for(const source of skinned)add(source.geometry,source,source.skeleton,source.bindMatrix);
-  const rigidGeometry=rigidAsSkinned(group,rigid,skinned[0].skeleton,skinned[0].bindMatrix);
-  if(rigidGeometry){owned.push(rigidGeometry);add(rigidGeometry,rigid[0],skinned[0].skeleton,skinned[0].bindMatrix);}
+  // Rigid parts ride the skeleton holding every joint; a generated body's own skin holds only the body's.
+  const primary=skinned.reduce((a,b)=>b.skeleton.bones.length>a.skeleton.bones.length?b:a);
+  const rigidGeometry=rigidAsSkinned(group,rigid,primary.skeleton,primary.bindMatrix);
+  if(rigidGeometry){owned.push(rigidGeometry);add(rigidGeometry,rigid[0],primary.skeleton,primary.bindMatrix);}
   const footprints=[],lastAt=new T.Vector3();let count=0,disposed=false,placedBefore=[],anchored=false;
   return {meshes,max,footprints,
     get count(){return count;},

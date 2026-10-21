@@ -1,0 +1,88 @@
+{
+  "id": "char-gothic-archer",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    10
+  ],
+  "use": "Gothic archers; the game adds the bow, arrows and quiver.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short undyed wool tunic under a sheepskin vest, a leather belt, wool trousers with leg wraps and leather shoes, and a fur cap. Braided hair and a beard, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "3b3595b2-ee0c-4699-9ce8-ae9533b85e98",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:02.629Z",
+    "rawSha256": "653f54d69722e90cbd2253a984541919d71d0a6482172fb3aec5913bbe9f786d",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.521Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Gothic archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short undyed wool tunic under a sheepskin vest, a leather belt, wool trousers with leg wraps and leather shoes, and a fur cap. Braided hair and a beard, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-gothic-archer.glb",
+    "rawBytes": 23848728,
+    "tripoInput": {
+      "prompt": "Full-body Gothic archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short undyed wool tunic under a sheepskin vest, a leather belt, wool trousers with leg wraps and leather shoes, and a fur cap. Braided hair and a beard, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-gothic-archer-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "77d1f7dd-001d-4219-9094-e89d57f05e5b",
+      "requestedAt": "2026-10-20T22:51:10.029Z",
+      "balanceBefore": 4650,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "3b3595b2-ee0c-4699-9ce8-ae9533b85e98",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:52:05.704Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-gothic-archer-rigged.glb",
+      "rawBytes": 31239980,
+      "rawSha256": "1cc65afbca85505d3a22af37d25fe9062f23411763bc45e7b0b2c6a666d0598a",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "3b3595b2-ee0c-4699-9ce8-ae9533b85e98",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

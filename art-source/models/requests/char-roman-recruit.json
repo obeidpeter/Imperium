@@ -1,0 +1,82 @@
+{
+  "id": "char-roman-recruit",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    1
+  ],
+  "use": "Chapter I recruits, the protagonist among them; the game adds the practice kit.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body young Roman army recruit in training in the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain undyed off-white long-sleeved wool tunic to the knee, belted with a simple leather belt, dark wool trousers and closed leather boots. Bare head with short dark curly hair, clean-shaven young face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "9de4f190-0e52-4686-8687-0c669eef23c5",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:54:09.338Z",
+    "rawSha256": "0f50c2d5824bdd772392aa6cca51597eda917dd1f6bd18f95b8b3e576d3af760",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:52:58.315Z",
+    "balanceBefore": 4370,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body young Roman army recruit in training in the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain undyed off-white long-sleeved wool tunic to the knee, belted with a simple leather belt, dark wool trousers and closed leather boots. Bare head with short dark curly hair, clean-shaven young face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-roman-recruit.glb",
+    "rawBytes": 21493640,
+    "tripoInput": {
+      "prompt": "Full-body young Roman army recruit in training in the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain undyed off-white long-sleeved wool tunic to the knee, belted with a simple leather belt, dark wool trousers and closed leather boots. Bare head with short dark curly hair, clean-shaven young face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-roman-recruit-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "e413469b-5f43-46fc-b957-262296db9557",
+      "requestedAt": "2026-10-20T22:54:16.892Z",
+      "balanceBefore": 4230,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "9de4f190-0e52-4686-8687-0c669eef23c5",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:55:58.899Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-roman-recruit-rigged.glb",
+      "rawBytes": 28321608,
+      "rawSha256": "f47075826b3844be6cbde2f131f11d66832a33457edf575fc838483f1f37a911",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "9de4f190-0e52-4686-8687-0c669eef23c5",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}
