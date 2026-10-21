@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased — 0.40 Phase 0: the real-time arena
+
+The first phase of the conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Results: [Phase 0 report](docs/realtime-phase-0-report.md). The campaign, its rules and saves are unchanged and still play on turns.
+
+- **Survey:** every module mapped to keep, adapt, replace or delete after Gate 4, and the stack recorded exactly ([realtime-survey.md](docs/realtime-survey.md)).
+- **Simulation core** ([`src/core/realtime/`](src/core/realtime)): a fixed 20 Hz tick, Commands queued for the next tick with the latest order per actor winning, named random streams split from the campaign's seeded generator, a 0.5 m walkability grid with A* and string pulling, the §3.5 blow (d40 roll, criticals, front-arc shields, absorb and resist, staggers), Strike, Brace and Throw pilum with pure forecasts and reason codes, simple enemy AI, a battle log, and an exact snapshot with a world hash. Every rule is data ([`realtime-rules.js`](src/data/realtime-rules.js)).
+- **The arena** ([`showcase/arena.html`](showcase/arena.html)): click to move, walk and run, hold to steer, combat mode, auto-fight, Brace and Throw pilum; forecasts, the message line, cursor states, allegiance rings that show facing, and the battle log; pause, slow time and one round at a time; browser-safe keys bound by physical key, and the scene's browser defaults kept to itself.
+- **The `controlsModel` flag**, its per-chapter fallback and a development menu ([`controls-model.js`](src/core/controls-model.js)).
+- **Simulation timing** in Settings → Run performance check (report version 2) and the arena's own check.
+- **Tests:** A1 (100 replays at 50/75/100% with random pauses), A2 (50 save/load continuations), A3, A4, combat statistics (C13, C17), movement (B6, B8–B10), the shield arc, staggers, abilities, browser-safe input and the Gate 0 auto-fight duels. The browser smoke test plays the arena on the production build.
+
 ## 0.38.1 — the rest of smooth play, and clean-ups
 
 Most of what 0.38.0 left open, and a tidier codebase. The rules, the campaign and saves are unchanged. Details and measurements: [performance notes](docs/performance.md).

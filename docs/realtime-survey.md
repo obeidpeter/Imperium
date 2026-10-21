@@ -40,9 +40,11 @@ The companion specification's TypeScript/Vite/Vitest stack remains an explicit d
 | `src/core/realtime/ai.js` | Phase 0 enemy AI (idle → engage, spreading round the target, skirmisher throws), run at 4 Hz staggered by actor. |
 | `src/core/realtime/intents.js` | Pointer contexts → cursor states, message-line text and the Command a click would give. |
 | `src/core/realtime/arena.js` | The Phase 0 arena (a Legionary against three raiders) on the frontier-road map. |
+| `src/core/realtime/benchmark-worlds.js` | A 15-man skirmish and an 82-man crowd, stepped headless to time the tick for the performance checks. |
 | `src/data/realtime-rules.js` | Every constant and table: tick and round, speeds, weapons, shields, armour, training paths, abilities, reason codes and AI. |
 | `src/ui/action-map.js` | The §7 key map by `KeyboardEvent.code`, with forbidden keys and layout-aware labels. |
 | `src/showcase/live-figures.js`, `src/showcase/realtime-input.js`, `src/showcase/arena.js`, `showcase/arena.html` | The real-time arena page. Figures are posed from the interpolated simulation, and pointer input follows the §2.7 browser rules. |
+| `scripts/arena-benchmark.mjs` | `npm run benchmark:arena`: the arena's start-up, click-to-first-movement, whole fights and its own performance check in headless Chromium. |
 
 ## Rules core: `src/core/`
 

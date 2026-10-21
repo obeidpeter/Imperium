@@ -1,5 +1,16 @@
 # IMPERIUM: From Recruit to Emperor
 
+## In development: 0.40, real time with pause (Phase 0)
+
+Imperium is being converted from turns to real time with pause. The player guide for 0.40 is the specification ([player-guide-0.40.md](docs/player-guide-0.40.md)); the survey of what changes is [realtime-survey.md](docs/realtime-survey.md); Phase 0's results and what is still to be judged are in [realtime-phase-0-report.md](docs/realtime-phase-0-report.md). **The campaign still plays on turns.** Phase 0 adds:
+
+- **The real-time arena** ([`showcase/arena.html`](showcase/arena.html)): your Legionary against three raiders on the frontier road. Click ground to move (a far click runs; hold the button to keep steering), **Space** draws your weapon, a click on an enemy fights him until he falls, **2** braces, **3** throws a pilum, and pointing at an enemy shows the forecast. **P** pauses at any moment and every command still works; **V** slows time; **N** plays one round while paused.
+- **A deterministic simulation** ([`src/core/realtime/`](src/core/realtime)) stepped at 20 Hz, with its rules as data ([`realtime-rules.js`](src/data/realtime-rules.js)). Tests replay fights at every game speed, with pauses, and through save and load, and get the same world each time.
+- **A development switch:** Settings → Development (shown under `npm run dev`, or with `?dev` in the address) sets the controls model and the chapters to play in real time. Under real time, *Try a standalone skirmish* opens the arena.
+- **Simulation timing** in Settings → Run performance check, and in the arena's own Menu → Run performance check (15 fighting men drawn, the tick timed at 15 and 82 men, and how fast a click moves your soldier).
+
+To try the arena, run `npm run dev` and open `http://127.0.0.1:4173/showcase/arena.html`. To measure it on a phone on the same trusted network, run `npm run build`, then `HOST=0.0.0.0 npm run preview` (this serves only the production build), and open the computer's address on port 4173 at `/showcase/arena.html`.
+
 ## Version 0.38.1 — the rest of smooth play
 
 A battle is now built in short steps behind its "Preparing" veil, so the page keeps answering while it is made: in the software benchmark no task while building reaches 90 ms, where 0.38.0's took up to a second. Each battle compiles 46–56 shader programs instead of 58–68, the figures' geometry is a third of what it was, and the page updates in place instead of being rebuilt, so the board keeps its focus between moves. The codebase is tidier: consistent line endings, archived reports, behavioural tests instead of source-text checks, and the 3D stage split into modules. See the [changelog](CHANGELOG.md) and the [performance notes](docs/performance.md); no device has been measured yet.
