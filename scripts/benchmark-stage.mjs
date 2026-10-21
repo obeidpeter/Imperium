@@ -9,8 +9,9 @@
 // device's frame rate: the times are inflated, the stalls and counts are real.
 //   node scripts/benchmark-stage.mjs [--scenes ch1-road,ch5-mine] [--quality performance,balanced] [--report docs/evidence/stage-benchmark.json] [--dist] [--check]
 // --check fails the run on what does not depend on rendering speed: a page
-// error, a shader program first compiled in play (a stall on every device),
-// figures without their generated bodies, or more programs than --max-programs.
+// error, a shader program first compiled in play (a stall on every device) or
+// by the first frame (a variant the warm-up missed), figures without their
+// generated bodies, or more programs than --max-programs.
 //   PLAYWRIGHT_MODULE=/absolute/playwright/index.js node scripts/benchmark-stage.mjs
 import http from 'node:http';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -95,6 +96,9 @@ async function run(browser,base,id,quality){
   try{
     await tab.goto(`${base}probe--${id}--${quality}.html`);
     await phase('build',()=>tab.waitForFunction(()=>bench.marks.firstFrame||bench.error,null,{polling:100}));
+    // Everything compiled from here on was compiled in play: assets that arrive
+    // after the battle is shown (settle) count as much as combat and the tour.
+    const shown=new Set((await programs()).map(p=>p.key));
     // Late assets (bodies, anatomy, models) and whatever they rebuild belong to the start-up.
     await phase('settle',async()=>{await tab.waitForFunction(()=>{const c=document.getElementById('battle-board')??controller.stage?.canvas;return bench.error||c?.dataset.actorAssets&&c?.dataset.sceneryModels!=='loading';},null,{polling:250,timeout:120000}).catch(()=>{});await tab.waitForTimeout(4000);});
     await phase('idle',()=>tab.waitForTimeout(3000));
@@ -103,12 +107,11 @@ async function run(browser,base,id,quality){
     const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames();s.setReducedMotion(true);s.home();
       while(frames()<start+3)await new Promise(done=>setTimeout(done,50));const v=s.stats();s.setReducedMotion(false);
       return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length};});
-    const shown=new Set((await programs()).map(p=>p.key));
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
     await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);}});
     // Programs first compiled after the battle was shown, by name: each is a stall in play.
     const late=(await programs()).filter(p=>!shown.has(p.key)).map(p=>p.name);
-    const raw=await tab.evaluate(()=>({long:bench.long,frames:bench.frames,marks:bench.marks,error:bench.error??null,device:controller.stage?.deviceReport??null,parallelShaderCompile:!!controller.stage?.renderer.extensions.get('KHR_parallel_shader_compile')}));
+    const raw=await tab.evaluate(()=>({long:bench.long,frames:bench.frames,marks:bench.marks,error:bench.error??null,device:controller.stage?.deviceReport??null,firstFramePrograms:controller.stage?.firstFramePrograms??null,parallelShaderCompile:!!controller.stage?.renderer.extensions.get('KHR_parallel_shader_compile')}));
     const within=(list,p)=>list.filter(([t])=>t>=p.start&&t<p.end);
     const frameWindow=p=>{const frames=within(raw.frames,p),intervals=frames.slice(1).map(([t],i)=>t-frames[i][0]);return {cpu:percentiles(frames.map(([,c])=>c)),interval:percentiles(intervals)};};
     const longWindow=p=>{const l=within(raw.long,p).map(([,d])=>d);return {count:l.length,totalMs:Math.round(l.reduce((a,b)=>a+b,0)),maxMs:Math.round(Math.max(0,...l))};};
@@ -119,7 +122,9 @@ async function run(browser,base,id,quality){
         longTasks:{construct:longWindow({start:m.mount,end:m.constructed??m.mount}),prepare:longWindow({start:m.constructed??m.mount,end:m.ready??m.firstFrame??m.mount}),firstFrame:longWindow({start:m.ready??m.mount,end:(m.firstFrame??m.mount)+1})}},
       phases:phases.map(p=>({name:p.name,durationMs:Math.round(p.end-p.start),longTasks:longWindow(p),frames:frameWindow(p),programs:p.programs,calls:p.calls,triangles:p.triangles,cameraView:p.cameraView})),
       overview:{...counted,generatedBodies:phases[2].generatedBodies,actorAssets:phases[2].actorAssets},
-      programsCompiledAfterSettle:(phases.at(-1).programs??0)-(phases[1].programs??0),lateProgramNames:late,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,errors:[...errors,...(raw.error?[raw.error]:[])]};
+      programsCompiledAfterShown:late.length,lateProgramNames:late,
+      // Programs the first frame had to compile itself: variants the warm-up missed.
+      firstFramePrograms:raw.firstFramePrograms,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,errors:[...errors,...(raw.error?[raw.error]:[])]};
   }finally{await context.close();}
 }
 
@@ -138,7 +143,7 @@ try{
   for(const id of sceneIds)for(const quality of qualities){
     const result=await run(browser,base,id,quality);report.runs.push(result);
     const build=result.phases[0].longTasks,settle=result.phases[1].longTasks,combat=result.phases[3].longTasks,tour=result.phases[4].longTasks;
-    console.log(`${id.padEnd(20)} ${quality.padEnd(12)} first frame ${String(result.startup.firstFrameMs).padStart(6)} ms | longest task: build ${build.maxMs}, settle ${settle.maxMs}, combat ${combat.maxMs}, tour ${tour.maxMs} ms | programs ${result.overview.programs} (+${result.programsCompiledAfterSettle} later) | ${result.overview.calls} calls, ${result.overview.triangles} triangles | bodies ${result.overview.generatedBodies}${result.errors.length?` | ${result.errors.length} errors`:''}`);
+    console.log(`${id.padEnd(20)} ${quality.padEnd(12)} first frame ${String(result.startup.firstFrameMs).padStart(6)} ms | longest task: build ${build.maxMs}, settle ${settle.maxMs}, combat ${combat.maxMs}, tour ${tour.maxMs} ms | programs ${result.overview.programs} (+${result.firstFramePrograms??'?'} in first frame, +${result.programsCompiledAfterShown} after shown) | ${result.overview.calls} calls, ${result.overview.triangles} triangles | bodies ${result.overview.generatedBodies}${result.errors.length?` | ${result.errors.length} errors`:''}`);
   }
 }finally{await browser.close();server.close();}
 report.completed=new Date().toISOString();
@@ -146,6 +151,7 @@ if(reportPath){const out=resolve(repo,reportPath);await mkdir(dirname(out),{recu
 const problems=report.runs.flatMap(r=>[
   ...r.errors.map(e=>`page error: ${e}`),
   ...(check&&r.lateProgramNames.length?[`${r.lateProgramNames.length} shader program(s) compiled in play: ${r.lateProgramNames.join(', ')}`]:[]),
+  ...(check&&r.firstFramePrograms>0?[`${r.firstFramePrograms} shader program(s) compiled by the first frame, missed by the warm-up`]:[]),
   ...(check&&!(r.overview.generatedBodies>0)?['no figure wears its generated body']:[]),
   ...(check&&r.overview.programs>maxPrograms?[`${r.overview.programs} shader programs (limit ${maxPrograms})`]:[])
 ].map(problem=>`${r.id} ${r.quality}: ${problem}`));

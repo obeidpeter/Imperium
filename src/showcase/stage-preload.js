@@ -8,6 +8,9 @@ import {warmActorHair} from './actor-hair-asset.js';
 import {acquireActorSurface,warmActorMaterials} from './actor-materials.js';
 import {ACTOR_SURFACE_SPEC} from './actor-surface.js';
 import {loadTacticalArt} from '../ui/unit-sprites.js';
+import {environmentImageUrls} from './environment-materials.js';
+import {decodeImage} from './decoded-images.js';
+import {preloadSceneryModels} from './scenery-models.js';
 
 // The figures' shared textures (skin complexions and the procedural surface
 // tiles) are held for the whole session: the next battle neither downloads nor
@@ -39,10 +42,12 @@ export function battleFigureNeeds(encounter,{chapter,rank,commendations={},figur
   return needs;
 }
 
-/** Fetch and decode everything a battle's figures will wear before its stage is
- * built, so each figure is built once, already complete, and nothing is
- * rebuilt in play. Resolves when all has arrived or failed (a failure leaves
- * that figure's fallback); never rejects. */
+/** Fetch and decode everything a battle's figures will wear, the images its
+ * ground, stone, timber and foliage sample, and its generated scenery, before
+ * its stage is built: each figure is built once, already complete, every
+ * material compiles with its maps, the scenery stands from the start, and
+ * nothing is rebuilt in play. Resolves when all has arrived or failed
+ * (a failure leaves that figure's or surface's fallback); never rejects. */
 export function preloadBattleFigures(encounter,options={}){
   if(typeof window==='undefined'||!encounter)return Promise.resolve({tasks:0,failed:0});
   const run={
@@ -53,6 +58,8 @@ export function preloadBattleFigures(encounter,options={}){
     complexion:need=>{hold(`complexion:${need.id}`,()=>acquireActorComplexion(need.id));return warmActorComplexion(need.id);},
     hair:()=>warmActorHair()
   };
-  const tasks=[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need)).catch(()=>false));
+  const surfaces=environmentImageUrls({civic:encounter.kind==='contest'}).map(url=>decodeImage(url).then(()=>true));
+  const models=preloadSceneryModels(encounter,{chapter:options.chapter,quality:options.quality}).then(loaded=>loaded.every(Boolean));
+  const tasks=[...[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need))),...surfaces,models].map(task=>task.catch(()=>false));
   return Promise.all(tasks).then(results=>({tasks:results.length,failed:results.filter(r=>r===false).length}));
 }

@@ -7,9 +7,10 @@ import * as G from '../src/core/game.js';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {chapterOfflineAssets} from '../src/ui/art.js';
-import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels} from '../src/showcase/scenery-models.js';
+import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels,warmSceneryModel,sceneryMaster,preloadSceneryModels} from '../src/showcase/scenery-models.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
+import {createModelLoader} from '../src/showcase/model-loader.js';
 
 const root=new URL('../',import.meta.url),file=path=>readFile(new URL(path,root));
 const manifest=JSON.parse(await file('docs/asset-manifest.json'));
@@ -94,9 +95,55 @@ test('the camera cutaway covers the generated models like the rest of the scener
   occlusion.dispose();models.dispose();wall.geometry.dispose();wall.material.dispose();
 });
 
+test('preloaded scenery stands as a stage is built, sharing session masters that no stage frees', async () => {
+  const [e]=chapterFiveStarts(),placements=sceneryPlacements(e,{chapter:5});
+  assert.deepEqual(await preloadSceneryModels(e,{chapter:5,quality:'performance'}),[],'Performance quality loads no scenery');
+  const masters=await Promise.all(placements.map(p=>warmSceneryModel(p.url,loadFile)));
+  assert.ok(placements.every((p,i)=>sceneryMaster(p.url)===masters[i]));
+  const meshes=root=>{const list=[];root.traverse(o=>{if(o.isMesh)list.push(o);});return list;};
+  const models=createSceneryModels(new T.Scene(),e,{chapter:5,heightAt:()=>0});
+  assert.equal(models.group.children.length,placements.length,'every model stands as the stage is built');
+  assert.deepEqual([...(await models.ready)].sort(),placements.map(p=>p.id).sort());
+  for(const [i,p]of placements.entries()){
+    const copy=models.group.children.find(m=>m.name===p.id),own=meshes(copy),master=meshes(masters[i]);
+    assert.equal(own.length,master.length);assert.ok(own.every((m,k)=>m.geometry===master[k].geometry&&m.material===master[k].material),'copies share geometry and materials');
+    assert.ok(own.every(m=>m.raycast()===undefined&&m.castShadow),'copies never take picks');assert.notEqual(copy,masters[i]);
+  }
+  let freed=0;for(const master of masters)for(const m of meshes(master))m.geometry.addEventListener('dispose',()=>freed++);
+  models.dispose();assert.equal(freed,0,'a stage never frees the session masters');
+  const next=createSceneryModels(new T.Scene(),e,{chapter:5});assert.equal(next.group.children.length,placements.length,'the next stage reuses them');next.dispose();
+});
+
 test('embedded textures load under the page Content Security Policy', async () => {
   // The policy allows blob: images but not blob: fetches (ImageBitmapLoader fetches).
-  const page=await readFile(new URL('index.html',root),'utf8'),source=await readFile(new URL('src/showcase/scenery-models.js',root),'utf8');
+  const page=await readFile(new URL('index.html',root),'utf8');
   assert.match(page,/img-src 'self' data: blob:;[^"]*connect-src 'self';/);
-  assert.match(source,/loader\.register\(parser=>\{parser\.textureLoader=new T\.TextureLoader\(parser\.options\.manager\);/);
+  for(const path of ['src/showcase/scenery-models.js','src/showcase/actor-bodies.js']){
+    const source=await readFile(new URL(path,root),'utf8');
+    assert.match(source,/createModelLoader\(\)\.loadAsync\(/,`${path} loads through the model loader`);assert.doesNotMatch(source,/new GLTFLoader\(/);
+  }
+});
+
+test('embedded images decode from the model bytes, off the main thread, and fall back to image elements', async () => {
+  const bytes=await file(sceneryModelUrl(5,'ch5-storage-jars')),buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
+  const fetchBefore=globalThis.fetch,fetched=[];globalThis.fetch=async url=>{fetched.push(String(url));throw Error('no fetch');};
+  try{
+    // createImageBitmap receives the GLB's own image bytes, never a URL.
+    const decoded=[],decode=async(blob,options)=>{assert.ok(blob instanceof Blob);assert.ok(blob.size>0);decoded.push({type:blob.type,options});return {width:4,height:4,close(){}};};
+    const scene=(await createModelLoader({decode}).parseAsync(buffer.slice(0),'')).scene,maps=[];
+    scene.traverse(o=>{if(o.isMesh)for(const m of [o.material].flat())if(m.map)maps.push(m.map);});
+    assert.ok(decoded.length>0&&maps.length>0,'the model has embedded images');
+    assert.ok(maps.every(t=>t.userData.decodedOffThread&&t.image.width===4&&t.flipY===false),'glTF textures keep their orientation');
+    assert.ok(decoded.every(d=>/^image\//.test(d.type)&&d.options.premultiplyAlpha==='none'&&d.options.colorSpaceConversion==='none'));
+    // A refused decode falls back to the image-element path for that image.
+    // (Browsers define self, which three's image-element path reads.)
+    const prior=T.TextureLoader.prototype.load,elements=[],hadSelf='self' in globalThis;globalThis.self??=globalThis;
+    T.TextureLoader.prototype.load=function(url,ready){elements.push(url);const t=new T.Texture();queueMicrotask(()=>ready(t));return t;};
+    try{
+      const fallback=(await createModelLoader({decode:async()=>{throw Error('unsupported image');}}).parseAsync(buffer.slice(0),'')).scene;
+      let mapped=0;fallback.traverse(o=>{if(o.isMesh&&[o.material].flat().some(m=>m.map))mapped++;});
+      assert.ok(elements.length>0&&mapped>0,'image elements decode what createImageBitmap refused');
+    }finally{T.TextureLoader.prototype.load=prior;if(!hadSelf)delete globalThis.self;}
+    assert.deepEqual(fetched,[],'nothing is fetched');
+  }finally{globalThis.fetch=fetchBefore;}
 });

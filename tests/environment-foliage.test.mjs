@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
 import {createFoliagePixels,createFoliageSprayGeometry,createNaturalBranchGeometry,FOLIAGE_CELLS} from '../src/showcase/environment-foliage.js';
 import {createRoadSurfaceSampler} from '../src/showcase/environment-road-surface.js';
-import {createEnvironmentMaterials} from '../src/showcase/environment-materials.js';
+import {createEnvironmentMaterials,environmentImageUrls} from '../src/showcase/environment-materials.js';
 import {createEnvironment} from '../src/showcase/environment.js';
 
 test('Procedural fallback atlas has four distinct leafy cutouts with safe transparent cell gutters',()=>{
@@ -52,25 +52,47 @@ test('Cutout leaves remain opaque-depth alpha tested and all fallback resources 
   library.dispose();library.dispose();assert.equal(disposed,owned.size);
 });
 
-test('Images arriving after environment disposal cannot attach or leak a foliage texture',()=>{
-  const prior=T.TextureLoader.prototype.load,descriptor=Object.getOwnPropertyDescriptor(globalThis,'document'),callbacks=[];
+// A stand-in for the session's image decoder: each decode waits for the test,
+// and a "decoded image" is already the texture a stage would make from it.
+function pendingImages(){
+  const callbacks=[];
+  return {callbacks,images:{decoded:()=>null,decode:url=>new Promise(ready=>callbacks.push([url,ready])),texture:image=>image}};
+}
+const settle=()=>new Promise(done=>setTimeout(done,0));
+test('Images arriving after environment disposal cannot attach or leak a foliage texture',async()=>{
+  const descriptor=Object.getOwnPropertyDescriptor(globalThis,'document'),{callbacks,images}=pendingImages();
   try{
-    Object.defineProperty(globalThis,'document',{configurable:true,value:{}});T.TextureLoader.prototype.load=function(url,ready){callbacks.push([url,ready]);return new T.Texture();};
-    const library=createEnvironmentMaterials({loadTextures:true}),original=library.materials.foliage.map;library.dispose();assert.equal(callbacks.length,4);
+    Object.defineProperty(globalThis,'document',{configurable:true,value:{}});
+    const library=createEnvironmentMaterials({loadTextures:true,images}),original=library.materials.foliage.map;library.dispose();assert.equal(callbacks.length,4);
     let disposed=0;for(const [,ready]of callbacks){const image=new T.Texture();image.addEventListener('dispose',()=>disposed++);ready(image);}
-    assert.equal(disposed,callbacks.length);assert.equal(library.materials.foliage.map,original);
-  }finally{T.TextureLoader.prototype.load=prior;if(descriptor)Object.defineProperty(globalThis,'document',descriptor);else delete globalThis.document;}
+    await settle();assert.equal(disposed,callbacks.length);assert.equal(library.materials.foliage.map,original);
+  }finally{if(descriptor)Object.defineProperty(globalThis,'document',descriptor);else delete globalThis.document;}
 });
 
-test('A loaded atlas replaces and releases its procedural map, while civic scenes request no foliage image',()=>{
-  const prior=T.TextureLoader.prototype.load,descriptor=Object.getOwnPropertyDescriptor(globalThis,'document'),callbacks=[];
+test('A loaded atlas replaces and releases its procedural map, while civic scenes request no foliage image',async()=>{
+  const descriptor=Object.getOwnPropertyDescriptor(globalThis,'document'),{callbacks,images}=pendingImages();
   try{
-    Object.defineProperty(globalThis,'document',{configurable:true,value:{}});T.TextureLoader.prototype.load=function(url,ready){callbacks.push([url,ready]);return new T.Texture();};
-    const library=createEnvironmentMaterials({loadTextures:true}),fallback=library.materials.foliage.map;let fallbackDisposals=0,atlasDisposals=0;fallback.addEventListener('dispose',()=>fallbackDisposals++);
-    const atlas=new T.Texture();atlas.addEventListener('dispose',()=>atlasDisposals++);callbacks.find(([url])=>url.endsWith('foliage-v016.webp'))[1](atlas);
+    Object.defineProperty(globalThis,'document',{configurable:true,value:{}});
+    const library=createEnvironmentMaterials({loadTextures:true,images}),fallback=library.materials.foliage.map;let fallbackDisposals=0,atlasDisposals=0;fallback.addEventListener('dispose',()=>fallbackDisposals++);
+    const atlas=new T.Texture();atlas.addEventListener('dispose',()=>atlasDisposals++);callbacks.find(([url])=>url.endsWith('foliage-v016.webp'))[1](atlas);await settle();
     assert.equal(library.materials.foliage.map,atlas);assert.equal(fallbackDisposals,1);assert.equal(library.textures.has(fallback),false);library.dispose();assert.equal(atlasDisposals,1);assert.equal(fallbackDisposals,1);
-    callbacks.length=0;const civic=createEnvironmentMaterials({loadTextures:true,profile:{civic:true}});assert.equal(callbacks.some(([url])=>url.endsWith('foliage-v016.webp')),false);civic.dispose();
-  }finally{T.TextureLoader.prototype.load=prior;if(descriptor)Object.defineProperty(globalThis,'document',descriptor);else delete globalThis.document;}
+    callbacks.length=0;const civic=createEnvironmentMaterials({loadTextures:true,profile:{civic:true},images});assert.equal(callbacks.some(([url])=>url.endsWith('foliage-v016.webp')),false);civic.dispose();
+    assert.deepEqual(environmentImageUrls({civic:true}).map(url=>url.split('/').pop()),['earth-v017.webp','stone-v017.webp','timber-v017.webp']);
+    assert.ok(environmentImageUrls().at(-1).endsWith('foliage-v016.webp'));
+  }finally{if(descriptor)Object.defineProperty(globalThis,'document',descriptor);else delete globalThis.document;}
+});
+
+test('Images decoded before a stage attach as it is built, so its materials never change program in play',()=>{
+  const descriptor=Object.getOwnPropertyDescriptor(globalThis,'document'),made=[];
+  try{
+    Object.defineProperty(globalThis,'document',{configurable:true,value:{}});
+    const images={decoded:url=>({url}),decode:()=>{throw Error('already decoded');},texture:image=>{const t=new T.Texture();t.userData.url=image.url;made.push(t);return t;}};
+    const library=createEnvironmentMaterials({loadTextures:true,images}),m=library.materials;
+    assert.equal(made.length,4,'each image becomes a texture at once');
+    for(const key of ['earth','road','stone','brick','wood','darkWood'])assert.ok(m[key].map?.userData.url,`${key} has its map from the start`);
+    assert.ok(m.foliage.map.userData.url.endsWith('foliage-v016.webp'));
+    let disposed=0;for(const t of made)t.addEventListener('dispose',()=>disposed++);library.dispose();assert.equal(disposed,made.length,'the stage releases its own textures');
+  }finally{if(descriptor)Object.defineProperty(globalThis,'document',descriptor);else delete globalThis.document;}
 });
 
 test('Foliage is instanced and quality bounded across frontier, wetland and palm settings without consuming state',async()=>{

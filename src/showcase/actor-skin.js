@@ -76,9 +76,10 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
     const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new T.Float32BufferAttribute(normals,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));geometries.add(geometry);
     const mat=material.clone();mat.color.set(0xffffff);mat.vertexColors=true;materials.add(mat);
     const skin=new T.SkinnedMesh(geometry,mat);skin.name=overview?'overview-weighted-surface':'weighted-character-surface';skin.userData.overview=overview;skin.castShadow=true;skin.receiveShadow=true;skin.visible=!overview;group.add(skin);skin.bind(skeleton);skin.normalizeSkinWeights();
-    // Conservative local bounds cover all authored poses. Picking still tests
-    // actual deformed triangles; no per-frame full-vertex bounds scan is needed.
-    skin.boundingSphere=new T.Sphere(new T.Vector3(0,1.25,0),3);skin.frustumCulled=false;retained.push(skin);
+    // Conservative local bounds cover all authored poses, so a figure off screen
+    // (or outside the shadow camera) is culled without a per-frame vertex scan.
+    // Picking still tests actual deformed triangles.
+    skin.boundingSphere=new T.Sphere(new T.Vector3(0,1.25,0),3);skin.frustumCulled=true;retained.push(skin);
   }
   return retained;
 }

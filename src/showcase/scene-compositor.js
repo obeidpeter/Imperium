@@ -40,6 +40,41 @@ export function gradeToneMappingChunk(grade=DEFAULT_GRADE){
 	return ACESFilmicToneMapping( max( color, vec3( 0.0 ) ) );
 }`);
 }
+// Where the browser cannot compile in the background (no
+// KHR_parallel_shader_compile), the first use of a program waits for every
+// compile queued before it, so a whole scene compiled at once freezes the page
+// on its first frame. Compiling and first-using one variant at a time spreads
+// that wait over short tasks. One drawable per material and program-relevant
+// shape stands for the rest (three keys a program on both).
+const COMPILE_SLICE_MS=8;
+const nextCompileSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
+// What an object and its geometry add to a program's key. Flags, not types:
+// an InstancedMesh reports the type "Mesh".
+export function drawableShape(o){
+  const g=o.geometry,a=g?.attributes??{},morph=g?.morphAttributes??{};
+  return [o.isSkinnedMesh,o.isInstancedMesh,o.isBatchedMesh,o.isPoints,o.isLine,o.isLineSegments,o.isSprite,!!o.instanceColor,!!o.morphTexture,!!o._colorsTexture,
+    !!a.position,!!a.normal,!!a.tangent,!!a.uv,!!a.uv1,!!a.uv2,!!a.uv3].map(flag=>flag?1:0).join('')+`:${a.color?.itemSize??0}:${morph.position?.length??0}:${morph.normal?.length??0}:${morph.color?.length??0}`;
+}
+export function compileUnits(root){
+  const seen=new Set(),units=[];
+  root?.traverse?.(o=>{
+    if(!(o.isMesh||o.isPoints||o.isLine||o.isSprite)||!o.material)return;
+    const shape=drawableShape(o);let fresh=false;
+    for(const m of Array.isArray(o.material)?o.material:[o.material]){const key=`${m?.uuid}|${shape}`;if(m&&!seen.has(key)){seen.add(key);fresh=true;}}
+    if(fresh)units.push(o);
+  });
+  return units;
+}
+// Every texture a subtree's materials sample, their compiled hooks' included.
+export function sceneTextures(root,properties=null){
+  const textures=new Set(),add=v=>{if(v?.isTexture&&!v.isRenderTargetTexture)textures.add(v);};
+  root?.traverse?.(o=>{for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[]){
+    for(const v of Object.values(m))add(v);
+    for(const u of Object.values(m.uniforms??{}))add(u?.value);
+    for(const u of Object.values(properties?.get?.(m)?.uniforms??{}))add(u?.value);
+  }});
+  return [...textures];
+}
 export function multisampleCount(renderer,tier){
   if(!tier?.enabled||!tier.msaa||renderer?.capabilities?.isWebGL2===false)return 0;
   const limit=Number(renderer?.capabilities?.maxSamples);
@@ -235,6 +270,25 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
   };
   // The renderer's target disposal also disposes its allocated depth texture.
   const release=()=>{if(target){target.dispose();target=null;material.uniforms.sceneColor.value=null;material.uniforms.sceneDepth.value=null;}};
+  const parallel=!!renderer.extensions?.has?.('KHR_parallel_shader_compile'),direct=()=>!supported||!tier.enabled||!!failure;
+  // Three reports a failed shader link through this hook rather than
+  // throwing. Scope it to our pass so a bad finish cannot hide the game.
+  function checked(run){
+    const debug=renderer.debug,priorHook=debug?.onShaderError,priorChecks=debug?.checkShaderErrors;
+    if(debug){debug.checkShaderErrors=true;debug.onShaderError=(gl,program,vertex,fragment)=>{
+      failure=`Scene finish shader failed: ${[gl.getProgramInfoLog?.(program),gl.getShaderInfoLog?.(vertex),gl.getShaderInfoLog?.(fragment)].filter(Boolean).join(' ').slice(0,1200)||'program link failed'}`;
+      if(typeof priorHook==='function')priorHook(gl,program,vertex,fragment);
+    };}
+    try{return run();}finally{if(debug){debug.onShaderError=priorHook;debug.checkShaderErrors=priorChecks;}}
+  }
+  // Runs with the target, tone mapping and output render(scene) draws with, so
+  // a program made here has the key the frame will look for.
+  function bound(run){
+    const plain=direct();directGrade(plain);if(plain)return run();
+    resize();const previousTarget=renderer.getRenderTarget();
+    try{renderer.setRenderTarget(target);return run();}finally{renderer.setRenderTarget(previousTarget);}
+  }
+  const firstUse=()=>{for(const program of renderer.info?.programs??[])program.getUniforms?.();};
   function resize(){
     if(disposed||!supported||!tier.enabled||failure)return;
     renderer.getDrawingBufferSize(drawingSize);
@@ -288,14 +342,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
       renderer.info.autoReset=false;renderer.info.reset();
       try{
         renderer.setRenderTarget(target);renderer.render(scene,camera);renderer.setRenderTarget(previousTarget);
-        // Three reports a failed shader link through this hook rather than
-        // throwing. Scope it to our pass so a bad finish cannot hide the game.
-        const debug=renderer.debug,priorHook=debug?.onShaderError,priorChecks=debug?.checkShaderErrors;
-        if(debug){debug.checkShaderErrors=true;debug.onShaderError=(gl,program,vertex,fragment)=>{
-          failure=`Scene finish shader failed: ${[gl.getProgramInfoLog?.(program),gl.getShaderInfoLog?.(vertex),gl.getShaderInfoLog?.(fragment)].filter(Boolean).join(' ').slice(0,1200)||'program link failed'}`;
-          if(typeof priorHook==='function')priorHook(gl,program,vertex,fragment);
-        };}
-        try{renderer.render(quad,screenCamera);}finally{if(debug){debug.onShaderError=priorHook;debug.checkShaderErrors=priorChecks;}}
+        checked(()=>renderer.render(quad,screenCamera));
       }
       catch(error){
         // A lost context belongs to the stage's existing recovery path. Other
@@ -310,16 +357,46 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
     // Compiles every program render(scene) will use, with the same target,
     // tone mapping and output as render() (a key that differed would compile
     // again on the first frame), plus the finishing pass. Where the browser
-    // compiles in parallel, the main thread never waits on the driver.
-    async compile(scene,{targetScene=null,object=null}={}){
+    // compiles in parallel, the main thread never waits on the driver;
+    // elsewhere each variant is compiled and linked in its own short task.
+    async compile(scene,{targetScene=null,object=null,current=()=>true}={}){
       if(disposed)return;
-      const root=object??scene,lights=targetScene??scene,direct=!supported||!tier.enabled||failure;
-      directGrade(!!direct);
-      if(direct){await renderer.compileAsync(root,camera,lights);return;}
-      resize();const previousTarget=renderer.getRenderTarget();let pending;
-      try{renderer.setRenderTarget(target);pending=renderer.compileAsync(root,camera,lights);}
-      finally{renderer.setRenderTarget(previousTarget);}
-      await Promise.all([pending,object?null:renderer.compileAsync(quad,screenCamera)]);
+      const root=object??scene,lights=targetScene??scene;
+      if(parallel){
+        const pending=bound(()=>renderer.compileAsync(root,camera,lights)),finish=!object&&!direct();
+        await Promise.all([pending,finish?renderer.compileAsync(quad,screenCamera):null]);return;
+      }
+      let slice=performance.now();
+      for(const unit of compileUnits(root)){
+        if(disposed||!current())return;
+        bound(()=>renderer.compile(unit,camera,lights));firstUse();
+        if(performance.now()-slice>COMPILE_SLICE_MS){await nextCompileSlice();slice=performance.now();}
+      }
+      if(object||disposed||!current()||direct())return;
+      directGrade(false);checked(()=>{renderer.compile(quad,screenCamera);renderer.properties?.get(material).currentProgram?.getUniforms?.();});
+    },
+    // Uploads (and decodes) each ready texture in its own short task, which
+    // would otherwise all happen within the first frame that samples them.
+    async upload(root,{current=()=>true}={}){
+      let slice=performance.now(),uploaded=0;
+      for(const texture of sceneTextures(root,renderer.properties)){
+        if(disposed||!current())break;
+        const image=texture.image;if(!(texture.version>0)||!image||image.complete===false||texture.isVideoTexture)continue;
+        renderer.initTexture(texture);uploaded++;
+        if(performance.now()-slice>COMPILE_SLICE_MS){await nextCompileSlice();slice=performance.now();}
+      }
+      return uploaded;
+    },
+    // One pixel of a frame, without the finishing pass: the shadow pass and
+    // the scene make the programs a full frame would, for almost no drawing.
+    probe(scene){
+      if(disposed)return;
+      bound(()=>{
+        const into=renderer.getRenderTarget();
+        if(into){const box=into.scissor.clone(),test=into.scissorTest;into.scissor.set(0,0,1,1);into.scissorTest=true;renderer.setRenderTarget(into);try{renderer.render(scene,camera);}finally{into.scissor.copy(box);into.scissorTest=test;renderer.setRenderTarget(into);}return;}
+        const box=renderer.getScissor(new T.Vector4()),test=renderer.getScissorTest();renderer.setScissor(0,0,1,1);renderer.setScissorTest(true);
+        try{renderer.render(scene,camera);}finally{renderer.setScissor(box);renderer.setScissorTest(test);}
+      });
     },
     stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,tiltShift:enabled?material.uniforms.tiltShift.value:0,ink:enabled?material.uniforms.ink.value:0,temporalHistory:false,gradeInToneMapping:!disposed&&renderer.toneMapping===T.CustomToneMapping,fallback:failure??(supported?null:'float render targets unavailable')};},
     toneMapping:()=>({direct:renderer.toneMapping===T.CustomToneMapping,chunk:gradeChunk}),

@@ -9,6 +9,9 @@ import {RIVER_WATER_LEVEL} from './environment-layout.js';
 // water. Presentation only: it is drawn from what the rules already returned
 // and never decides legality.
 export const INK_PIXELS_PER_TILE=96;
+// A hover sweeping the board repaints the canvas many times a second, and each
+// upload re-sends the whole canvas; a throttled overlay uploads at most this often.
+const UPLOAD_MS=50;
 function makeCanvas(width,height){
   if(typeof OffscreenCanvas==='function')return new OffscreenCanvas(width,height);
   const canvas=globalThis.document?.createElement?.('canvas');if(!canvas)return null;canvas.width=width;canvas.height=height;return canvas;
@@ -25,7 +28,7 @@ export function threatCells(envelope,{width=8,height=8}={}){
   }
   return [...cells.values()];
 }
-export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
+export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5,throttle=false}={}){
   const width=encounter.width*INK_PIXELS_PER_TILE,height=encounter.height*INK_PIXELS_PER_TILE,canvas=makeCanvas(width,height),c=canvas?.getContext?.('2d');if(!c)return null;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;
   // A grid draped a few centimetres above the ground (or the river surface).
@@ -34,7 +37,13 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
   const material=new T.MeshBasicMaterial({name:'Ink ground overlay',map:texture,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2,fog:false});
   const mesh=new T.Mesh(geometry,material);mesh.name='ink tactical overlay';mesh.renderOrder=1;mesh.visible=false;mesh.castShadow=false;mesh.receiveShadow=false;mesh.raycast=()=>{};scene.add(mesh);
   const cell=INK_PIXELS_PER_TILE;
-  let painted='',disposed=false;
+  let painted='',disposed=false,pending=false,uploaded=-Infinity;
+  // Uploads the newest paint unless the last upload was too recent; the stage
+  // calls it every frame so a throttled paint still lands within UPLOAD_MS.
+  function flush(now=performance.now()){
+    if(disposed||!pending||throttle&&now-uploaded<UPLOAD_MS)return false;
+    pending=false;uploaded=now;texture.needsUpdate=true;return true;
+  }
   // A repaired crossing changes the surface without changing legal ink or its
   // texture. Resample only after committed field changes or a quality rebuild.
   function redrape(){
@@ -96,8 +105,9 @@ export function createInkOverlay(scene,encounter,heightAt,{tileSize=2.5}={}){
       if(targets.length)wash(targets,color,.3);
       else if(walkable.length)wash(walkable,'#89cfcb',.13);
       if(walk)trail(walk);
-      mesh.visible=targets.length>0||threatened.length>0||walkable.length>0||!!walk;texture.needsUpdate=true;return true;
+      mesh.visible=targets.length>0||threatened.length>0||walkable.length>0||!!walk;pending=true;flush();return true;
     },
+    flush,
     stats:()=>({visible:mesh.visible,width,height}),
     dispose(){if(disposed)return;disposed=true;mesh.removeFromParent();geometry.dispose();material.dispose();texture.dispose();}
   };

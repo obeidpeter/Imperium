@@ -87,7 +87,7 @@ export function mountActorAnatomy(group,anatomy,{skin,hair,beardHair=hair,geomet
   const bones=anatomy.bones.map(name=>name==='right-elbow'?all.find(b=>b.name==='elbow'&&b.parent.name==='right-shoulder'):name==='left-elbow'?all.find(b=>b.name==='elbow'&&b.parent.name==='left-shoulder'):all.find(b=>b.name===name));
   if(bones.some(b=>!b))throw Error('Missing anatomy bind joint');
   group.updateMatrixWorld(true);const skeleton=new T.Skeleton(bones);skeletons.add(skeleton);const meshes=[];
-  for(const [geometry,material,name]of [[anatomy.geometry,skin,'imported-anatomy'],[anatomy.hair,hair,'fitted-hair'],[anatomy.beard,beardHair,'fitted-beard']]){if(!geometry)continue;geometries.add(geometry);const mat=material.clone();mat.vertexColors=!!geometry.attributes.color;materials.add(mat);const mesh=new T.SkinnedMesh(geometry,mat);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;group.add(mesh);mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);meshes.push(mesh);}
+  for(const [geometry,material,name]of [[anatomy.geometry,skin,'imported-anatomy'],[anatomy.hair,hair,'fitted-hair'],[anatomy.beard,beardHair,'fitted-beard']]){if(!geometry)continue;geometries.add(geometry);const mat=material.clone();mat.vertexColors=!!geometry.attributes.color;materials.add(mat);const mesh=new T.SkinnedMesh(geometry,mat);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=true;group.add(mesh);mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);meshes.push(mesh);}
   return meshes;
 }
 

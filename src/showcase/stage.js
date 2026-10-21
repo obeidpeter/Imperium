@@ -34,7 +34,7 @@ import {layoutStageLabels} from './stage-label-layout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
 import {createSceneLighting} from './scene-lighting.js';
-import {createSceneCompositor} from './scene-compositor.js';
+import {createSceneCompositor,drawableShape} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
 import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,createFlamePlume,sampleFlamePlume} from './stage-particles.js';
 import {createTouchHold} from '../ui/touch-hold.js';
@@ -43,10 +43,14 @@ export {preloadBattleFigures} from './stage-preload.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
 // How long a battle waits for its figures' downloads before it is shown anyway.
 const PREPARE_FIGURES_MS=12000;
+// Quiet (half-rate) drawing begins this long after the last input or change.
+const QUIET_AFTER_MS=1200;
 // A build slice before the page is given a turn; then the next slice.
 const FRAME_SLICE_MS=8,nextSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
 // Frame targets divide common refresh rates; see createFrameCadence.
 const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:4096,fps:60}};
+// Between motions the shadow map follows breathing and cloth only this often.
+const SHADOW_REFRESH_MS={performance:250,balanced:125,high:70};
 // Presentation styles for the figures (FIGURE_STYLES). Painted stands the 2D
 // campaign's own figure paintings in the diorama (HD-2D) with a tilt-shift
 // finish; inked keeps sculpted figures with ink outlines and washes.
@@ -118,6 +122,15 @@ export function intersectGround(ray,height,target=new T.Vector3(),{top=HIGH_GROU
   return null;
 }
 
+// Closest distance between a ray and a figure's upright axis (x, y..y+height, z):
+// a cheap test that decides whether a figure's deformed surfaces are worth the
+// exact, CPU-skinned raycast at all.
+export function rayToUpright(ray,x,y,z,height){
+  const o=ray.origin,d=ray.direction,wx=o.x-x,wy=o.y-y,wz=o.z-z,b=d.y,e=d.x*wx+d.y*wy+d.z*wz,cross=1-b*b;
+  let s=clamp(cross>1e-9?(wy-e*b)/cross:wy,0,height);const t=Math.max(0,s*b-e);s=clamp(wy+t*b,0,height);
+  return Math.hypot(wx+t*d.x,wy+t*d.y-s,wz+t*d.z);
+}
+
 // Interpret the shared 2D presentation timeline without modifying it or the
 // committed unit. Walking progress is distance, action progress is time.
 export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=false}={}){
@@ -155,7 +168,9 @@ export class BattleStage{
   constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
     try{
     this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;this.commendations=commendations??{};this.profile=getSceneProfile(encounter,{chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
-    this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+    // Balanced and High draw into the compositor's multisampled target, so a
+    // multisampled canvas under it would only resolve one full-screen triangle.
+    this.renderer=new T.WebGLRenderer({canvas,antialias:quality==='performance',alpha:false,powerPreference:'high-performance'});
     // Checking each program's link status on first use waits for the driver to
     // finish compiling it; programs are compiled ahead instead (prepare). Shader
     // diagnostics stay available for development: ?debug=shaders.
@@ -177,7 +192,7 @@ export class BattleStage{
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});this.rebuildSceneryModels();
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();this.profileFrames=0;
-    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight);
+    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});
     this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
     this.battleRemains=battleRemains!==false;this.rebuildRemains();
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
@@ -217,6 +232,7 @@ export class BattleStage{
   }
   bodyPoint(tile){const unit=this.unitAt(tile);return this.world(tile).add(new T.Vector3(0,['cavalry','heavy'].includes(unit?.role)?2.05:1.2,0));}
   sync(encounter){
+    this.wake();
     const division=discessioPlan(encounter);if(!division)this.discessio=null;else if(this.discessio?.key!==division.key){const start=performance.now(),span=Math.max(0,...division.moves.map(m=>m.order*220+this.world(m.from).distanceTo(this.world(m.to))/1.35*1000));this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};}
     this.encounter=encounter;if(this.fieldFeatures?.sync(encounter)){this.redrapeGroundOverlays();this.sceneryOcclusion?.add(this.fieldFeatures.group);}this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
     for(const [id,a] of this.actors)if(!visible.has(id)){this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);this.poseReset.delete(id);}
@@ -416,7 +432,8 @@ export class BattleStage{
     const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
     const line=new T.Line(g,new T.LineBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));line.name='tactical-link';line.frustumCulled=false;return line;
   }
-  setSelection(selected,targets=[],target=null){this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
+  wake(){this.wokeAt=performance.now();}
+  setSelection(selected,targets=[],target=null){this.wake();this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
     if(this.targetMaterial)this.targetMaterial.color.set(targetRingColor(this.selectedAction,this.encounter,targets[0]??target));
     const rotation=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),scale=new T.Vector3(1,1,1);this.legalTargets.count=Math.min(targets.length,this.legalTargets.instanceMatrix.count);
     for(let i=0;i<this.legalTargets.count;i++){const point=this.world(targets[i]);point.y+=.055;this.matrix.compose(point,rotation,scale);this.legalTargets.setMatrixAt(i,this.matrix);}this.legalTargets.instanceMatrix.needsUpdate=true;
@@ -435,7 +452,7 @@ export class BattleStage{
     this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null,reach:this.reach??[],route:this.route??null});
   }
   // From the campaign UI (Game.moveRoute and the selected unit's move targets).
-  setRoute(route=null,reach=[]){this.route=route;this.reach=reach;this.updateInk();}
+  setRoute(route=null,reach=[]){this.wake();this.route=route;this.reach=reach;this.updateInk();}
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
@@ -483,6 +500,8 @@ export class BattleStage{
     this.sceneryModels?.dispose();
     const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,{chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
       prepare:model=>{this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
+    // Models placed at once take the cutaway now (a first build's occlusion covers the group).
+    this.sceneryOcclusion?.add(own.group);
     this.canvas.dataset.sceneryModels=own.placements.length?'loading':'0';
     own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;});
   }
@@ -508,9 +527,9 @@ export class BattleStage{
   // Nothing is drawn until everything the battle will draw is ready: figures
   // wear what they will wear (a slow download is waited on only briefly), the
   // batches for fallen men and one hidden example of each overlay, fieldwork
-  // and beacon exist, and every shader program is compiled, off the main
-  // thread where the browser compiles in parallel. The first frame then builds
-  // only the shadow programs and map, still behind the "Preparing" veil.
+  // and beacon exist, and every shader program is compiled and linked (off the
+  // main thread where the browser compiles in parallel, otherwise in short
+  // tasks), shadow-pass variants included. All of it behind the veil.
   async prepare(){
     // A rebuild during preparation starts again; only the latest one reveals.
     const token=this.prepareToken=(this.prepareToken??0)+1,current=()=>!this.disposed&&token===this.prepareToken;
@@ -521,12 +540,20 @@ export class BattleStage{
       await Promise.race([figures,new Promise(done=>setTimeout(done,PREPARE_FIGURES_MS))]);
       if(!current())return;
       this.warmup??=this.createWarmup();
-      this.remains?.prepare(this.fallenKinds());
-      await this.compositor.compile(this.scene);
+      let slice=performance.now();
+      for(const kind of this.fallenKinds()){
+        this.remains?.prepare([kind]);
+        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();if(!current())return;slice=performance.now();}
+      }
+      await this.compositor.compile(this.scene,{current});if(!current())return;
+      await this.compositor.upload?.(this.scene,{current});if(!current())return;
+      await this.warmShadows(current);
     }catch(error){this.prepareError=error?.message??String(error);}
     if(!current())return;
-    this.isReady=true;this.shadowDirty=true;
+    this.isReady=true;this.shadowDirty=true;const programs=this.renderer?.info.programs?.length??0;
     await new Promise(done=>{this.firstFrameDone=done;});
+    // Anything compiled by the first frame itself escaped the warm-up above.
+    this.firstFramePrograms=(this.renderer?.info.programs?.length??0)-programs;
   }
   // The first build places figures a few per frame (each is a sizeable piece
   // of work), so the page keeps answering and the veil can count them in.
@@ -540,6 +567,46 @@ export class BattleStage{
       this.placeFigure(unit,{styleKey:`${unit.side}:${unit.role}:${unit.name}:${vComm}:${this.quality}:${this.figureStyle}`,vComm});
     }
     this.figureQueue=null;this.showProgress(queue.length,queue.length);this.sync(this.encounter);
+  }
+  // The shadow pass makes its depth programs on first use, out of reach of a
+  // compile. One probe render per depth variant, with a single caster and the
+  // view turned away, links each variant in its own short task instead of all
+  // of them in the first frame. Three's shared depth material changes program
+  // only when a caster's instancing or skinning differs from the last one's,
+  // so which variants a frame makes depends on draw order; each probe asks for
+  // its caster's exact variant (needsUpdate), covering every order.
+  async warmShadows(current=()=>!this.disposed){
+    if(!this.renderer?.shadowMap.enabled||!this.compositor?.probe)return 0;
+    const variants=new Map(),casters=[];
+    this.scene.traverse(o=>{if(o.castShadow&&(o.isMesh||o.isPoints||o.isLine))casters.push(o);});
+    // Hidden casters count too: a figure's far-view meshes appear only once
+    // the camera pulls back, and hidden stand-ins wait for later effects.
+    this.scene.traverse(o=>{
+      if(!o.castShadow||!(o.isMesh||o.isPoints||o.isLine)||!o.material)return;
+      // What three's shadow pass copies from each material into its depth material.
+      const depth=m=>[!!m.map,m.map?.channel??0,!!m.alphaMap,m.alphaTest>0||m.alphaToCoverage===true,!!m.displacementMap&&m.displacementScale!==0,m.shadowSide??m.side,m.clippingPlanes?.length??0].join();
+      const key=`${drawableShape(o)}|${o.customDepthMaterial?.uuid??(Array.isArray(o.material)?o.material:[o.material]).map(depth).join('/')}`;
+      if(!variants.has(key))variants.set(key,o);
+    });
+    const position=this.camera.position.clone(),quaternion=this.camera.quaternion.clone();let probes=0;
+    try{
+      for(const o of casters)o.castShadow=false;
+      this.camera.position.set(0,1e4,0);this.camera.lookAt(0,2e4,0);this.camera.updateMatrixWorld();
+      let slice=performance.now();
+      for(const caster of variants.values()){
+        if(!current())break;
+        const culled=caster.frustumCulled,hidden=[],own=Object.hasOwn(caster,'onBeforeShadow'),hook=caster.onBeforeShadow;
+        for(let o=caster;o;o=o.parent)if(!o.visible){hidden.push(o);o.visible=true;}
+        caster.castShadow=true;caster.frustumCulled=false;caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{depthMaterial.needsUpdate=true;};
+        try{this.renderer.shadowMap.needsUpdate=true;this.compositor.probe(this.scene);probes++;}
+        finally{caster.castShadow=false;caster.frustumCulled=culled;for(const o of hidden)o.visible=false;if(own)caster.onBeforeShadow=hook;else delete caster.onBeforeShadow;}
+        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
+      }
+    }finally{
+      for(const o of casters)o.castShadow=true;
+      this.camera.position.copy(position);this.camera.quaternion.copy(quaternion);this.camera.updateMatrixWorld();this.shadowDirty=true;
+    }
+    return probes;
   }
   showProgress(done,total){const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';}
   // One hidden example of each thing drawn only later in a battle, so its
@@ -606,7 +673,8 @@ export class BattleStage{
     const pickable=new Set(this.encounter.units.filter(isAlive).map(u=>u.id));
     // Raycaster does not skip invisible objects. Collect only rendered bodies
     // before intersection so the hidden LOD never CPU-skins every triangle.
-    const surfaces=[];for(const [id,a]of this.actors)if(a.group.visible&&pickable.has(id))a.group.traverseVisible(o=>{if(o.isMesh)surfaces.push(o);});
+    const surfaces=[],ray=this.ray.ray,near=a=>{if(!ray?.origin)return true;const p=a.group.position,kit=a.group.userData.actor??{};return rayToUpright(ray,p.x,p.y,p.z,(kit.height??2.03)+.25)<=(kit.mounted?1.7:.9);};
+    for(const [id,a]of this.actors)if(a.group.visible&&pickable.has(id)&&near(a))a.group.traverseVisible(o=>{if(o.isMesh)surfaces.push(o);});
     const hits=this.ray.intersectObjects(surfaces,false);
     const hit=hits.find(h=>{for(let o=h.object;o;o=o.parent)if(!o.visible)return false;return true;});if(hit){let obj=hit.object;while(obj&&!obj.userData.unitId)obj=obj.parent;const u=this.encounter.units.find(u=>u.id===obj?.userData.unitId);if(u&&isAlive(u))return {x:u.x,y:u.y,unitId:u.id};}
     if(!intersectGround(this.ray.ray,this.surfaceHeight??this.environment.groundHeight,this.hit))return null;const x=Math.round(this.hit.x/2.5+(this.encounter.width-1)/2),y=Math.round(this.hit.z/2.5+(this.encounter.height-1)/2);return x>=0&&y>=0&&x<this.encounter.width&&y<this.encounter.height?{x,y}:null;
@@ -615,17 +683,17 @@ export class BattleStage{
     // Touch has no hover: a finger held still (not orbiting) shows what a tap
     // there would do, and the release that ends the hold picks nothing.
     this.touchHold=createTouchHold(point=>{if(this.disposed||!this.drag||this.drag.moved)return;const hover=this.pick(point);this.hovered=hover?.unitId??null;this.onHover(hover);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}});
-    on(this.canvas,'pointerdown',e=>{this.sound.unlock();campaignSoundscape().unlock();this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};this.canvas.setPointerCapture(e.pointerId);this.touchHold.down(e);});
-    on(this.canvas,'pointermove',e=>{this.touchHold.move(e);if(this.drag){const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=true;if(this.drag.moved){this.orbit.yaw-=dx*.006;this.orbit.pitch=clamp(this.orbit.pitch+dy*.004,.04,1.15);}this.drag.lastX=e.clientX;this.drag.lastY=e.clientY;}else this.pendingHover={clientX:e.clientX,clientY:e.clientY};});
+    on(this.canvas,'pointerdown',e=>{this.wake();this.sound.unlock();campaignSoundscape().unlock();this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};this.canvas.setPointerCapture(e.pointerId);this.touchHold.down(e);});
+    on(this.canvas,'pointermove',e=>{this.wake();this.touchHold.move(e);if(this.drag){const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=true;if(this.drag.moved){this.orbit.yaw-=dx*.006;this.orbit.pitch=clamp(this.orbit.pitch+dy*.004,.04,1.15);}this.drag.lastX=e.clientX;this.drag.lastY=e.clientY;}else this.pendingHover={clientX:e.clientX,clientY:e.clientY};});
     on(this.canvas,'pointerleave',e=>{if(e.pointerType==='touch')return;this.pendingHover=null;this.hovered=null;this.onHover(null);});
     on(this.canvas,'pointerup',e=>{const held=this.touchHold.consume();this.touchHold.up();if(this.drag&&!this.drag.moved&&!held){if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else if(this.discessio&&!this.discessio.done)this.discessio.start=-Infinity;else this.onPick(this.pick(e));}this.drag=null;});on(this.canvas,'pointercancel',()=>{this.touchHold.up();this.drag=null;});
-    on(this.canvas,'wheel',e=>{e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
-    on(this.canvas,'keydown',e=>{this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&(e.key.startsWith('Arrow')||/^[a-z]$/i.test(e.key)))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowRight':this.orbit.yaw+=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;default:handled=false;}if(handled)e.preventDefault();});
+    on(this.canvas,'wheel',e=>{this.wake();e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
+    on(this.canvas,'keydown',e=>{this.wake();this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&(e.key.startsWith('Arrow')||/^[a-z]$/i.test(e.key)))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowRight':this.orbit.yaw+=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;default:handled=false;}if(handled)e.preventDefault();});
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
     on(this.canvas,'webglcontextlost',e=>{e.preventDefault();this.finishMotion();this.contextLost=true;clearTimeout(this.restoreTimer);this.restoreTimer=setTimeout(()=>{if(this.contextLost&&!this.disposed)this.onError?.('The 3D graphics context was interrupted.');},5000);});
     on(this.canvas,'webglcontextrestored',()=>{clearTimeout(this.restoreTimer);this.restoreTimer=null;this.contextLost=false;this.shadowDirty=true;this.labelSizeDirty=true;this.poseReset=new Set(this.actors.keys());this.compositor?.resize();this.cadence?.reset(QUALITY[this.quality].fps);});
   }
-  play(before,after,command){this.finishMotion();this.sync(after);if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();if(this.reducedMotion||this.paused||this.contextLost)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
+  play(before,after,command){this.wake();this.finishMotion();this.sync(after);if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();if(this.reducedMotion||this.paused||this.contextLost)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
     if(this.canvas?.dataset)this.canvas.dataset.motion='playing';this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1/(this.motionSpeed||1),cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map(),marks:timeline.effects.filter(fx=>!fx.political&&(fx.type==='projectile'&&fx.from&&fx.to||['impact','shield'].includes(fx.type)&&fx.at)).map(fx=>({fx,at:fx.type==='projectile'?fx.start+fx.duration:fx.start,done:false,volley:fx.type==='projectile'?this.actors.get(this.unitAt(fx.from)?.id)?.crowd?.count??0:0}))};return new Promise(resolve=>this.animation.resolve=resolve);
   }
   // The timeline's own clock marks the ground, however few frames are drawn:
@@ -665,7 +733,13 @@ export class BattleStage{
     if(mounted)for(const f of actor.crowd?.footprints??[])this.combat.dust(f.x,f.y,f.z,{amount:Math.max(1,puffs-1),seed:`${unit.id}:${f.x.toFixed(1)}`});
   }
   finishMotion(cancelAudio=true){if(!this.animation)return;this.markGround();if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;if(this.canvas?.dataset)this.canvas.dataset.motion=cancelAudio?'cancelled':'complete';this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
-  tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
+  tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;
+    // While nothing moves (no motion, input or camera change for a moment), a
+    // 60 fps target draws every other frame: breathing, cloth, cloud and water
+    // read the same at 30, for half the GPU work, heat and battery.
+    const quiet=!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
+    if(quiet&&QUALITY[this.quality].fps>30&&(this.quietSkip=!this.quietSkip))return;
+    const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
     if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
     const renderStart=performance.now();let frame=null;
     if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
@@ -699,7 +773,8 @@ export class BattleStage{
       const label=this.labels.get(unit.id),refs=this.labelRefs.get(unit.id),key=`${unit.id===this.selected}:${unit.id===this.inspected||unit.id===this.hovered}`;label.hidden=false;
       if(refs.stateKey!==key){refs.stateKey=key;label.classList.toggle('selected',unit.id===this.selected);label.classList.toggle('inspected',unit.id===this.inspected||unit.id===this.hovered);refs.width=0;this.labelSizeDirty=true;}
       const preview=!this.animation&&(this.previewTargets?.[unit.id]??(this.previewTarget?.unitId===unit.id?this.previewTarget:null));
-      if(preview){refs.effect.textContent=preview.text;refs.effect.style.color=preview.color;}else if(refs.effect.textContent)refs.effect.textContent='';
+      // Written only on change: an unchanged label keeps its layout (see positionLabels).
+      if(preview){if(refs.effect.textContent!==preview.text||refs.effectColor!==preview.color){refs.effect.textContent=preview.text;refs.effect.style.color=refs.effectColor=preview.color;this.labelContentDirty=true;}}else if(refs.effect.textContent){refs.effect.textContent='';refs.effectColor=null;this.labelContentDirty=true;}
     }
     if(this.tacticalArcs)for(const [i,line]of this.tacticalArcs.entries())if(line.visible)line.material.opacity=this.reducedMotion?.85:(line.userData.linkKind==='guard'?.78+.17*Math.sin(this.elapsed*3.2+i):.75+.2*Math.sin(this.elapsed*4.8+i));
     this.pairedContacts=this.reducedMotion?0:applyPairedContacts(this.actors,frame,this.animation?.timeline);
@@ -707,7 +782,7 @@ export class BattleStage{
     const selected=this.actors.get(this.selected);this.selectedRing.visible=!!selected?.group.visible&&!this.ceremony;if(selected){this.selectedRing.position.copy(selected.group.position);this.selectedRing.position.y+=.065;this.selectedRing.rotation.y=this.selectedYaw??0;this.selectedRing.scale.setScalar(selected.group.userData.actor?.mounted?1.45:1);}
     this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);let projectileCount=0,sparkCount=0,ringCount=0;const volleyShots=[];
     for(const fx of frame?.effects??[]){const readout=effectReadout(fx);
-      if(fx.at&&readout.text){const unit=this.unitAt(fx.at),label=this.labelRefs.get(unit?.id)?.effect;if(label){label.textContent=readout.text;label.style.color=readout.color;}}
+      if(fx.at&&readout.text){const unit=this.unitAt(fx.at),refs=this.labelRefs.get(unit?.id),label=refs?.effect;if(label){label.textContent=readout.text;label.style.color=refs.effectColor=readout.color;}}
       if(readout.ring&&fx.at&&ringCount<6){
         if(!this.effectRings[ringCount]){const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));ring.rotation.x=-Math.PI/2;this.effectGroup.add(ring);this.effectRings.push(ring);}
         const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;ring.scale.setScalar(.65+fx.progress*(readout.radius??1.2));ring.material.color.set(readout.color);ring.material.opacity=(1-fx.progress)*.75;ring.visible=true;
@@ -761,7 +836,7 @@ export class BattleStage{
     // A landed blow jolts the view a few centimetres and settles in a quarter second.
     if(this.cameraKick>.002&&!this.reducedMotion){const k=this.cameraKick,offset=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(Math.sin(this.elapsed*61)*.07*k).add(new T.Vector3(0,Math.cos(this.elapsed*47)*.045*k,0));this.camera.position.add(offset);this.camera.lookAt(this.lookTarget.clone().add(offset));}
     this.cameraKick=this.reducedMotion?0:(this.cameraKick??0)*Math.exp(-dt*12);
-    this.camera.updateMatrixWorld();this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
+    this.camera.updateMatrixWorld();this.cameraSettled=!!this.lastCamera&&this.lastCamera.distanceToSquared(this.camera.position)<1e-8;(this.lastCamera??=new T.Vector3()).copy(this.camera.position);this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
     // Painted cards face the camera only after it has moved this frame.
     const sunYaw=Math.atan2(this.sunOffset.x,this.sunOffset.z);
     // Painted cards read their shade from a point just sunward of the figure.
@@ -775,8 +850,8 @@ export class BattleStage{
     this.rimDirection.copy(this.lookTarget).sub(this.camera.position).setY(0);if(this.rimDirection.lengthSq()>1e-6){this.rimDirection.normalize();this.rim.position.copy(this.lookTarget).addScaledVector(this.rimDirection,14);this.rim.position.y+=7;this.rim.target.position.copy(this.lookTarget);this.rim.target.updateMatrixWorld();}
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
     this.sceneryOcclusion?.update(this.camera,{targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),radius:actor.group.userData.actor?.mounted?1.7:1.35})),enabled:this.cameraView!=='overview'||!!this.animation,delta:dt,reducedMotion:this.reducedMotion});
-    this.positionLabels();
-    const shadowInterval=this.quality==='high'?70:100;
+    this.positionLabels();this.ink?.flush?.(now);
+    const shadowInterval=SHADOW_REFRESH_MS[this.quality]??125;
     if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){this.renderer.shadowMap.needsUpdate=true;this.shadowDirty=false;this.lastShadow=now;this.shadowUpdates++;}
     for(const gpuMs of this.gpuTimer?.poll()??[])this.resolutionBudget?.record(gpuMs);
     this.gpuTimer?.begin();
@@ -791,8 +866,17 @@ export class BattleStage{
     fit.half=half;fit.x=x;fit.z=z;const camera=this.sun.shadow.camera;Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});camera.updateProjectionMatrix();
     this.sun.target.position.set(x,0,z);this.sun.position.set(x+this.sunOffset.x,this.sunOffset.y,z+this.sunOffset.z);this.sun.target.updateMatrixWorld();this.shadowDirty=true;
   }
+  // Nothing to lay out again while the camera, the figures and the labels'
+  // contents all hold still (most frames while the player is deciding).
+  labelsUnchanged(){
+    const e=this.camera.matrixWorld.elements,list=[this.viewportWidth,this.viewportHeight,...e],state=`${this.cameraView}|${this.selected}|${this.inspected}|${this.hovered}`;
+    for(const a of this.actors.values()){const p=a.group.position;list.push(a.group.visible?1:0,p.x,p.y,p.z);}
+    const last=this.labelSignature,same=!!last&&last.state===state&&last.list.length===list.length&&list.every((v,i)=>Math.abs(v-last.list[i])<1e-6);
+    this.labelSignature={state,list};return same;
+  }
   positionLabels(){
     const width=this.viewportWidth,height=this.viewportHeight,items=[],elements=new Map();if(!width||!height)return;
+    const unchanged=this.labelsUnchanged();if(unchanged&&!this.animation&&!this.labelSizeDirty&&!this.labelContentDirty)return;this.labelContentDirty=false;
     for(const [id,actor]of this.actors){
       const label=this.labels.get(id),refs=this.labelRefs.get(id);if(!actor.group.visible){label.dataset.layout='offscreen';continue;}
       const screen=this.screenPoint.copy(actor.group.position);screen.y+=(actor.group.userData.actor?.height??2.03)+.12;screen.project(this.camera);
@@ -818,7 +902,7 @@ export class BattleStage{
     }
     this.labelStats=counts;this.labelSizeDirty=false;
   }
-  stats(){return {device:this.deviceReport,frameProfile:this.frameProfile.stats(),pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
+  stats(){return {device:this.deviceReport,firstFramePrograms:this.firstFramePrograms??null,frameProfile:this.frameProfile.stats(),pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
   dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.

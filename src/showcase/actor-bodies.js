@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {GLTFLoader} from '../../vendor/three/addons/loaders/GLTFLoader.js';
+import {createModelLoader} from './model-loader.js';
 import {installCloudShadows} from './atmosphere.js';
 import {actorBodyUrl} from '../ui/actor-body-catalog.js';
 
@@ -11,13 +11,9 @@ export const BODY_JOINTS=Object.freeze(['hips','torso','head','right-shoulder','
 // standards hang from other joints and stay.
 export const BODY_REPLACES=/^(hips|torso|tunic-hem(-fold|-edge)?|head|(right|left)-(brow|eyelid|thigh|shoulder)|facial-jaw|(ridge|conical|segmented)-helmet|knee|ankle|elbow)$/;
 
-// The page's Content Security Policy allows blob: images but not blob: fetches,
-// so embedded textures decode through image elements (as in scenery-models.js).
-const loadBody=id=>{
-  const loader=new GLTFLoader();
-  loader.register(parser=>{parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:'IMPERIUM_IMAGE_ELEMENTS'};});
-  return loader.loadAsync(new URL(`../../${actorBodyUrl(id)}`,import.meta.url).href);
-};
+// Embedded textures decode off the main thread, within the page's Content
+// Security Policy (model-loader.js).
+const loadBody=id=>createModelLoader().loadAsync(new URL(`../../${actorBodyUrl(id)}`,import.meta.url).href);
 
 /** One immutable master per body. Its geometry and materials are shared by every
  * figure wearing it and never disposed by them. A body that fails to load is
@@ -73,7 +69,7 @@ export function mountActorBody(group,body,{skeletons}){
   const skeleton=new T.Skeleton(bones);skeletons.add(skeleton);
   const skin=(part,name,overview)=>{
     const mesh=new T.SkinnedMesh(part.geometry,part.material);mesh.name=name;mesh.userData.overview=overview;mesh.userData.generatedBody=body.id;
-    mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;mesh.visible=!overview;group.add(mesh);
+    mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=true;mesh.visible=!overview;group.add(mesh);
     // Both levels share one skin; the overview is exported with the same joint order.
     mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);return mesh;
   };

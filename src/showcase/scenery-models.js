@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {GLTFLoader} from '../../vendor/three/addons/loaders/GLTFLoader.js';
+import {createModelLoader} from './model-loader.js';
 
 /** Generated scenery (docs/asset-pipeline.md): Tripo models processed in
  * Blender, set outside the playable board in chosen encounters. Positions
@@ -29,15 +29,33 @@ export function sceneryPlacements(e,{chapter}={}){
   return set.models.map(m=>({id:m.id,url:sceneryModelUrl(chapter,m.id),x:m.x,z:m.z,yaw:m.yaw}));
 }
 
-const loadScene=url=>{
-  const loader=new GLTFLoader();
-  loader.register(parser=>{parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:'IMPERIUM_IMAGE_ELEMENTS'};});
-  return loader.loadAsync(url).then(gltf=>gltf.scene);
-};
+const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>gltf.scene);
 const TEXTURES=['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap'];
 
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=loadScene,prepare=null}={}){
-  const group=new T.Group(),owned=new Set();group.name='generated scenery';scene.add(group);
+// One immutable master per model and session, as for the generated bodies. The
+// battle preloader loads a battle's masters before its stage is built; a stage
+// then places its own copies at once, sharing the masters' geometry, materials
+// and textures, so they compile and upload behind the veil with everything else.
+const masters=new Map();
+export function warmSceneryModel(url,load=loadScene){
+  let entry=masters.get(url);
+  if(!entry){
+    entry={scene:null};
+    entry.promise=Promise.resolve().then(()=>load(url)).then(scene=>(entry.scene=scene),error=>{masters.delete(url);throw error;});
+    masters.set(url,entry);
+  }
+  return entry.promise;
+}
+export const sceneryMaster=url=>masters.get(url)?.scene??null;
+export function preloadSceneryModels(e,{chapter,quality='balanced'}={}){
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter});
+  return Promise.all(placements.map(p=>warmSceneryModel(p.url).then(()=>true,()=>false)));
+}
+
+// Without a load function a stage uses the session's masters and never frees
+// them; a given load function's models belong to the stage and are freed with it.
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null}={}){
+  const group=new T.Group(),owned=new Set(),shared=!load;group.name='generated scenery';scene.add(group);
   let disposed=false;
   // Resources are owned until dispose; a model that arrives after dispose is freed at once.
   const track=model=>{
@@ -51,18 +69,25 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     model.position.y=samples.length?Math.min(...samples):0;
   };
   const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter});
-  const ready=Promise.all(placements.map(async p=>{
-    let model;
-    try{model=await load(p.url);}catch{return null;}
-    track(model);
-    if(disposed)return null;
+  const place=(p,source)=>{
+    const model=shared?source.clone():source;
     model.name=p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw;model.updateMatrixWorld(true);
     model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.raycast=()=>{};}});
-    ground(model);
-    // The stage readies a model (its cutaway and shaders) before it is ever drawn.
+    ground(model);return model;
+  };
+  // Masters already loaded stand at once (the stage readies them with the rest).
+  const placed=[],pending=[];
+  for(const p of placements){const master=shared?sceneryMaster(p.url):null;if(master){group.add(place(p,master));placed.push(p.id);}else pending.push(p);}
+  const ready=Promise.all(pending.map(async p=>{
+    let source;
+    try{source=shared?await warmSceneryModel(p.url):await load(p.url);}catch{return null;}
+    if(!shared)track(source);
+    if(disposed)return null;
+    const model=place(p,source);
+    // The stage readies a late model (its cutaway and shaders) before it is ever drawn.
     if(prepare){try{await prepare(model);}catch{}if(disposed)return null;}
     group.add(model);return p.id;
-  })).then(ids=>ids.filter(Boolean));
+  })).then(ids=>[...placed,...ids.filter(Boolean)]);
   return {group,placements,ready,
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const r of owned)r.dispose?.();owned.clear();}};
 }
