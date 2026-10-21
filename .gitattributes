@@ -1,0 +1,19 @@
+# Text files are stored with LF line endings and checked out with LF on every
+# system, so an edit never has to preserve a file's own line endings. The build
+# also hashes and serves LF text. Binary assets are never converted.
+* text=auto eol=lf
+
+*.glb binary
+*.bin binary
+*.webp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.mp3 binary
+*.ogg binary
+*.wav binary
+*.woff2 binary
+*.ktx2 binary
+*.wasm binary
+*.blend binary
+*.pdf binary
