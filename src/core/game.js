@@ -308,6 +308,8 @@ function validateEncounter(e,fail){
     if(typeof e.issue!=='string'||!e.issue||e.issue.length>1000||!['lobby','broker','prosecutor'].includes(e.rivalStyle))fail('chamber issue.');
     if(!Array.isArray(e.recordUses)||e.recordUses.length>40||new Set(e.recordUses).size!==e.recordUses.length||e.recordUses.some(id=>typeof id!=='string'||!e.units.some(u=>u.id===id&&u.role==='voter')))fail('service record arguments.');
     if(e.units.some(u=>u.role==='voter'&&!['service','security','law','grain','office'].includes(u.interest)))fail('member interest.');
+    // The soldier's speaker profile (contest.js), present only when it adds to 0.38's values.
+    if(e.profile!==undefined){const p=e.profile;if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).length!==5||!bounded(p.resolve,0,60)||!bounded(p.denounce,0,10)||!bounded(p.rebut,0,10)||![0,1].includes(p.record)||!bounded(p.addressRecovery,1,3))fail('speaker profile.');}
   }
   if(!Array.isArray(e.usedAbilities)||!Array.isArray(e.log)||!Array.isArray(e.requiredAbilities)||!e.staged||!e.staged.meters||!Array.isArray(e.staged.obligations)||!bounded(e.staged.supplies,-99,99)||Object.values(e.staged.meters).some(n=>!bounded(n,-100,100)))fail('staged transaction.');
   if(e.kind==='contest'&&(!Array.isArray(e.promises)||e.promises.length>2||!Array.isArray(e.hardened)||!e.cooldowns||!bounded(e.electorate,1,40)||!bounded(e.majority,1,40)||(e.precedentUsed!==undefined&&!['frontier-roll','provincial-charter','fiscal-audit','consular-privilege'].includes(e.precedentUsed))||(e.precedentShield!==undefined&&typeof e.precedentShield!=='boolean')))fail('Contest data.');

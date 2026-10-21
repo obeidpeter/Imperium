@@ -7,12 +7,32 @@ import {difficultyRule} from './campaign-options.js';
 import {applyCoalition} from './progression-politics.js';
 export {INTEREST_EFFECTS} from '../data/contest-balance.js';
 import {alive, clamp, distance, faceToward, makeUnit, note, reachable, result, stepToward, unitAt, withMoveCredit} from './shared.js';
+import {courseEffects,soldierAttributes} from './soldier.js';
 
 export const CONTEST_RULES={stanceMin:-6,stanceMax:6,commitment:3,addressCooldown:3,denounce:4,rebut:4,promiseLimit:2,recordPerRecipient:1};
+// The 0.40 speaker profile (build brief §3.11): the soldier's Eloquence and
+// Authority add to his Resolve (half and a quarter of each point above 10) and
+// to his Denounce and Rebut (a tenth of his Eloquence above 10); three
+// decorations add one to his Invoke Record; the Rhetor's courses add 5 Resolve
+// (Practised delivery) and bring Address back after 2 hours (The long period).
+// Every value only adds to 0.38's, and the allied speaker keeps 0.38's. With
+// Eloquence and Authority at 10 or below, no decorations and no courses the
+// profile is neutral: the encounter carries none and is 0.38's exactly.
+export const NEUTRAL_PROFILE=Object.freeze({resolve:0,denounce:0,rebut:0,record:0,addressRecovery:CONTEST_RULES.addressCooldown});
+export function speakerProfile(state){
+  const s=state.soldier;if(!s)return {...NEUTRAL_PROFILE};
+  const a=soldierAttributes(s),fx=courseEffects(s.courses),above=v=>Math.max(0,(Number(v)||0)-10);
+  return {resolve:Math.floor(above(a.elo)/2)+Math.floor(above(a.auth)/4)+(fx.resolve??0),denounce:Math.floor(above(a.elo)/10),rebut:Math.floor(above(a.elo)/10),
+    record:(s.decorations?.length??0)>=3?1:0,addressRecovery:Math.min(CONTEST_RULES.addressCooldown,fx.addressRecovery??CONTEST_RULES.addressCooldown)};
+}
+const neutral=p=>Object.keys(NEUTRAL_PROFILE).every(k=>p[k]===NEUTRAL_PROFILE[k]);
+// The profile a speaker speaks with: the soldier's own, everyone else 0.38's.
+export const profileOf=(e,unit)=>unit?.id==='hero'&&e?.profile?e.profile:NEUTRAL_PROFILE;
 export function createContest(state,data,options={}) {
   const c=state.chapter,scenario=CHAMBER_SCENARIOS[data.id]??CHAMBER_SCENARIOS['ch7-council'],e={issue:scenario.issue,rivalStyle:scenario.rival,recordUses:[],id:data.id,kind:'contest',title:data.title,objective:data.objective,type:data.type,width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('chamber')),units:[],turn:1,turnLimit:data.turnLimit??(c===7?8:10),status:'active',commandsLeft:0,commandCapacity:0,log:[],usedAbilities:[],goal:{x:4,y:3},requiredAbility:data.requiredAbility,promises:[],hardened:[],cooldowns:{},staged:{meters:{army:0,political:0,public:0},supplies:0,obligations:[]},fallback:options.fallback??false};
   if(options.politicsVersion!==1)e.politicsVersion=2;if(state.campaignRules===2){e.campaignRules=2;e.difficulty=state.difficulty;}
-  e.units.push(makeUnit('hero',state.name,'player',...scenario.hero,{hp:12,resolve:12,maxResolve:12,move:3,role:'speaker',vote:'for'}));
+  const profile=e.politicsVersion===2?speakerProfile(state):NEUTRAL_PROFILE;if(!neutral(profile))e.profile=profile;const resolve=12+profile.resolve;
+  e.units.push(makeUnit('hero',state.name,'player',...scenario.hero,{hp:resolve,resolve,maxResolve:resolve,move:3,role:'speaker',vote:'for'}));
   e.units.push(makeUnit('speaker-ally',c===7?'Veteran quartermaster':state.decisions.ch8==='families'?'Dacian delegate':'Provincial advocate','ally',...scenario.ally,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'for'}));
   e.units.push(makeUnit('rival-speaker',c>=11?'Crispus’s advocate':'Court opposition speaker','enemy',7,3,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'against',intent:scenario.rival==='lobby'?'Lobby wavering members; attack speakers every third turn.':scenario.rival==='broker'?'Challenge promised votes; attack nearby speakers on even turns.':'Attack nearby speakers on even turns; otherwise lobby wavering members.'}));
   e.units.push(makeUnit('elder-speaker','Old-order spokesman','enemy',5,7,{hp:10,resolve:10,maxResolve:10,move:3,role:'speaker',vote:'against',intent:'Defend the old order and its wavering votes.'}));
@@ -45,7 +65,8 @@ export function politicalPosition(state,unitId){
 export function speechStrength(state,action,target,speaker=state.encounter.units.find(u=>u.id==='hero')){if(!state.encounter.issue)return Legacy.speechStrength(state,action,target);const e=state.encounter,interest=target?.interest??'security',effects=INTEREST_EFFECTS[interest];let strength=effects?.[action]??2;
   if(e.politicsVersion===2){strength+=BLOC_AFFINITIES[target?.bloc]?.[action]??0;if(action==='persuade')strength+=politicalPosition(state,speaker?.id).persuadeBonus;}
   else if(action==='promise'&&['grain','office'].includes(interest))strength=6;
-  if(action==='record'&&interest==='service'&&(state.company??[]).reduce((n,v)=>n+(v.commendations??0),0)>=12)strength++;if(action==='threaten'&&e.hardened.includes(target?.bloc))strength--;return Math.max(1,strength);}
+  if(action==='record'&&interest==='service'&&(state.company??[]).reduce((n,v)=>n+(v.commendations??0),0)>=12)strength++;if(action==='record')strength+=profileOf(e,speaker).record;
+  if(action==='threaten'&&e.hardened.includes(target?.bloc))strength--;return Math.max(1,strength);}
 
 function promiseTerms(e,target){const material=['grain','office'].includes(target.interest),cost=e.politicsVersion===2&&material?BALANCE.materialPromiseCost:BALANCE.ordinaryPromiseCost;
   return {id:`${e.id}:${target.id}`,to:target.bloc,promise:target.interest==='office'?'Endow a civic office for this delegation.':target.interest==='law'?'Fund a legal guarantee for this delegation.':'Provide two grain convoys for this bloc at accession.',due:12,cost,consequence:`Honour: −${cost} supplies. Break: −8 Public Confidence, −4 Political Backing.`,status:'open'};
@@ -55,8 +76,8 @@ export function argumentForecast(state,unit,action,target){
   const change=(member,delta)=>forecast.stanceChanges.push({id:member.id,name:member.name,bloc:member.bloc,interest:member.interest,from:member.stance,to:shiftedStance(member,delta),baseDelta:delta});
   if(action==='address')for(const member of e.units.filter(u=>u.role==='voter'&&distance(u,unit)<=3))change(member,speechStrength(state,action,member,unit));
   else if(['persuade','promise','threaten','record'].includes(action)){change(target,speechStrength(state,action,target,unit));if(action==='threaten')for(const member of e.units.filter(u=>u.role==='voter'&&u.bloc===target.bloc&&u.id!==target.id))change(member,-1);}
-  else if(action==='denounce')forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.max(0,target.resolve-CONTEST_RULES.denounce)});
-  else if(action==='rebut'){if(target.side==='enemy')forecast.bluntedIds.push(target.id);else forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.min(target.maxResolve,target.resolve+CONTEST_RULES.rebut)});}
+  else if(action==='denounce')forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.max(0,target.resolve-CONTEST_RULES.denounce-profileOf(e,unit).denounce)});
+  else if(action==='rebut'){if(target.side==='enemy')forecast.bluntedIds.push(target.id);else forecast.resolveChanges.push({id:target.id,name:target.name,from:target.resolve,to:Math.min(target.maxResolve,target.resolve+CONTEST_RULES.rebut+profileOf(e,unit).rebut)});}
   forecast.votesAfter=forecast.votesBefore+forecast.stanceChanges.reduce((n,c)=>n+Number(c.to>=1)-Number(c.from>=1),0);
   return forecast;
 }
@@ -65,7 +86,7 @@ function forecastPreview(state,unit,action,target){
   let message=`${changes||resolve||`Blunt ${target.name}’s next speech to at most 1 stance or Resolve loss`}. One speech. Support ${f.votesBefore} → ${f.votesAfter}/${e.electorate}; ${e.majority} needed at turn ${e.turnLimit}.`;
   if(action==='promise')message+=` ${f.promise.promise} Due at accession (chapter 12). Honour: ${f.promise.cost} supplies; each missing supply costs 1 Public. Break: −8 Public, −4 Backing. Promise ${e.promises.length+1}/2; once per recipient. Brokers prioritize pledged supporters.`;
   if(action==='threaten')message+=' Costs 3 Public Confidence; shown bloc backlash applies now. Later threats against this bloc lose 1 strength.';
-  if(action==='address')message+=` Available again on turn ${e.turn+CONTEST_RULES.addressCooldown}.`;
+  if(action==='address')message+=` Available again on turn ${e.turn+profileOf(e,unit).addressRecovery}.`;
   if(action==='record')message+=' This member can hear your Record once per Contest.';
   if(action==='denounce')message+=' Withdrawing a speaker stops future speeches but preserves their vote.';
   if(target?.role==='voter')message+=` ${target.bloc}; interest: ${target.interest}.`;
@@ -90,7 +111,7 @@ export function applyContest(state,command){if(!state.encounter.issue)return Leg
     for(const change of f.stanceChanges)e.units.find(u=>u.id===change.id).stance=change.to;
     for(const change of f.resolveChanges){const member=e.units.find(u=>u.id===change.id);member.resolve=change.to;member.hp=change.to;}
     for(const id of f.bluntedIds)e.units.find(u=>u.id===id).blunted=true;
-    if(action==='address')e.cooldowns[`${unit.id}:address`]=e.turn+CONTEST_RULES.addressCooldown;
+    if(action==='address')e.cooldowns[`${unit.id}:address`]=e.turn+profileOf(e,unit).addressRecovery;
     if(action==='record')e.recordUses.push(target.id);
     if(f.promise){e.promises.push(target.id);e.staged.obligations.push({...f.promise});}
     if(action==='threaten'){e.staged.meters.public-=f.publicCost;if(!e.hardened.includes(target.bloc))e.hardened.push(target.bloc);}
