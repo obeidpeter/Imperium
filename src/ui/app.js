@@ -26,7 +26,7 @@ import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
-import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,quartermasterPanel,trainerPanel,
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,
   adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
@@ -426,7 +426,7 @@ function showSoldierPanel(name,arg=null){
   soldierPanel={name,arg};const world=field?.runtime?.world??null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
   const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils})],character:()=>['Your soldier',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
-    orders:()=>['Standing orders',ordersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
     trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],adopt:()=>['Your soldier’s training',adoptPanel(state)],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
@@ -749,15 +749,23 @@ case 'saves':showSaves();break;
 case 'slot-save':saveToSlot(id,id==='quick'?'Quick save':modal.querySelector(`#slot-name-${id}`)?.value||slotSummary());break;
 case 'slot-load':await loadSlot(id);break;
 case 'end-iron':await change(()=>Game.endIronDiscipline(state));if(modal.open)showSaves();break;
-case 'soldier':{const d=b.dataset;if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
+case 'soldier':{const d=b.dataset;
+  // The editors open; they change nothing until saved.
+  if(d.kind==='orders-edit'||d.kind==='squad-orders-edit'){showSoldierPanel(d.kind==='orders-edit'?'orders':'squad-orders',d.companion);break;}
+  if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
   await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
-  if(d.kind==='orders-edit')showSoldierPanel('orders',d.companion);break;}
+  break;}
 case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
 case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
 case 'orders-save':{
   const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
     .map(([a,t])=>[a,['follow_close','follow_far','stay_hidden','withdraw'].includes(a)?'hero':t]);
   await soldierAct({kind:'orders',companionId:id,slots});soldierPanel={name:'company'};showSoldierPanel('company');break;}
+case 'squad-orders-save':{
+  // Hold the line takes no target; the rest keep the one chosen (or the soldier).
+  const slots=[0,1,2,3].map(i=>[modal.querySelector(`#squad-orders-action-${i}`)?.value,modal.querySelector(`#squad-orders-target-${i}`)?.value||null]).filter(([a])=>a)
+    .map(([a,t])=>[a,a==='hold_line'?null:t??'hero']);
+  await soldierAct({kind:'squad-orders',companionId:id,slots});soldierPanel={name:'company'};showSoldierPanel('company');break;}
 case 'soldier-party':{
   const party=[...modal.querySelectorAll('[data-cmd="soldier-party"]')].filter(x=>x.checked).map(x=>x.dataset.id);
   if(party.length>3){b.checked=false;toast('Up to three companions march with you.');break;}

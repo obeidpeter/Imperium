@@ -6,6 +6,8 @@ import {soldierAttributes,courseEffects,attributeCost,courseOptions,knownAbiliti
   companionAttributes,areaOf} from '../core/soldier.js';
 import {derivedValues,protectionOf} from '../core/realtime/combat.js';
 import {summarizeOrders} from '../core/realtime/party.js';
+import {summarizeSquadOrders} from '../core/realtime/squad-orders.js';
+import {SQUAD_STANDING} from '../data/realtime-squads.js';
 import {missionProgress} from '../core/realtime/mission.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
@@ -107,7 +109,7 @@ export function decorationsPanel(state){
 export function companyPanel(state,{world=null}={}){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const roll=(state.company??[]).filter(v=>COMPANIONS[v.id]),camp=inCamp(state),party=world?world.party:(s.party??null);
-  const chosen=new Set(party??[]);
+  const chosen=new Set(party??[]),names=Object.fromEntries(roll.map(v=>[v.id,(v.name??COMPANIONS[v.id].name).split(' ').at(-1)]));
   const rows=roll.map(v=>{const profile=COMPANIONS[v.id],rank=companionRank(v),a=companionAttributes(state,v.id),slots=s.orders?.[v.id]??STANDING.presets[profile.preset];
     const fit=(v.recovery??0)===0;
     return `<article class="companion-card"><h4>${esc(v.name??profile.name)} <small>${esc(rank.name)}</small></h4>
@@ -116,10 +118,35 @@ export function companyPanel(state,{world=null}={}){
       ${camp?`<div class="orders-presets" role="group" aria-label="Presets for ${esc(profile.name)}">${Object.entries(STANDING.presetNames).filter(([id])=>id!=='soldier')
         .map(([id,name])=>button('orders',name,{companion:v.id,preset:id})).join('')}${button('orders-edit','Edit the four orders…',{companion:v.id})}</div>`:''}
       ${camp&&state.chapter>=3?`<label class="party-choice"><input type="checkbox" data-cmd="soldier-party" data-id="${esc(v.id)}" ${chosen.has(v.id)?'checked':''} ${fit?'':'disabled'}> Marches with you</label>`:''}
+      ${state.chapter>=4?squadOrdersBlock(state,v,{camp,names}):''}
     </article>`;}).join('');
   return `<div class="company-panel">${rows||'<p>No companions yet.</p>'}
     ${state.chapter<3?'<p class="panel-note">From Chapter III up to three companions march with you.</p>':''}
     ${camp?'':'<p class="panel-note">Standing orders are set in camp; in the field, choose a portrait (or [ and ]) to take direct control.</p>'}</div>`;
+}
+// From Chapter IV each deployed veteran's men fight as a squad: its standing
+// orders, kept by another officer while he marches with the soldier.
+function squadOrdersBlock(state,v,{camp,names}){
+  const custom=state.soldier.squadOrders?.[v.id],name=names[v.id];
+  return `<div class="squad-orders"><p class="orders-summary"><strong>${esc(name)}’s squad:</strong> ${custom?esc(summarizeSquadOrders(custom,{names}))
+    :'the battle’s own orders (hold marked ground in a defence, guard a column, otherwise advance with you and strike what comes near).'}</p>
+    ${camp?`<div class="orders-presets" role="group" aria-label="Presets for ${esc(name)}’s squad">${button('squad-orders','The battle’s own',{companion:v.id,preset:'battle'})}`+
+      `${Object.entries(SQUAD_STANDING.presetNames).map(([id,label])=>button('squad-orders',label,{companion:v.id,preset:id})).join('')}`+
+      `${button('squad-orders-edit','Edit the squad’s orders…',{companion:v.id})}</div>`:''}</div>`;
+}
+// The four-slot editor for a veteran's squad's standing orders.
+export function squadOrdersEditor(state,id){
+  const roll=(state.company??[]).filter(v=>COMPANIONS[v.id]),names=Object.fromEntries(roll.map(v=>[v.id,(v.name??COMPANIONS[v.id].name).split(' ').at(-1)]));
+  const slots=state.soldier.squadOrders?.[id]??SQUAD_STANDING.presets.line_of_battle;
+  const option=(value,label,chosen)=>`<option value="${esc(value??'')}" ${(value??'')===(chosen??'')?'selected':''}>${esc(label)}</option>`;
+  const targets=[['hero','you'],['nearest_enemy_group','the nearest enemy group'],['enemy_cavalry','enemy cavalry'],['enemy_archers','enemy archers'],
+    ...roll.filter(v=>v.id!==id).map(v=>[`squad:${v.id}`,`${names[v.id]}’s squad`])];
+  const row=i=>{const [a,t]=slots[i]??['',null];
+    return `<div class="orders-slot"><label>Order ${i+1}<select id="squad-orders-action-${i}"><option value="">None</option>${Object.entries(SQUAD_STANDING.actions).map(([v,l])=>option(v,l,a)).join('')}</select></label>`+
+      `<label>Target<select id="squad-orders-target-${i}">${option('','(none)',t)}${targets.map(([v,l])=>option(v,l,t)).join('')}</select></label></div>`;};
+  return `<div class="orders-editor" data-squad="${esc(id)}"><p>The first order the squad can carry out wins; the others wait their turn. Advance and Attack follow you; Hold the line takes no target; Screen a flank faces you, enemy cavalry, archers or the nearest group; Guard the standard guards you or another squad.</p>
+    ${[0,1,2,3].map(row).join('')}<p class="orders-summary">${esc(summarizeSquadOrders(slots,{names}))}</p>
+    <div class="panel-actions"><button class="primary" data-cmd="squad-orders-save" data-id="${esc(id)}">Save the squad’s orders</button></div></div>`;
 }
 // The four-slot editor for one companion's standing orders.
 export function ordersEditor(state,id){

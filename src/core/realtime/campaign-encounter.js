@@ -203,7 +203,15 @@ function squadSpec(state,e,unit,k,{party=[],index=0}={}){
   return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
     damage:unit.damage??null,morale:unit.morale??80,cohesion:unit.cohesion??80,braced:!!unit.braced,formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,
     moraleResistance:unit.moraleResistance??0,at:pos(unit,k),face:enemy?[-1,0]:[1,0],anchor:enemy?pos(unit,k):null,member:memberOf(state,role,faction),
-    standing:enemy?null:defaultStanding(e.mission?.mode,role)};
+    standing:enemy?null:squadStanding(state,e,unit,role)};
+}
+// The squad's standing orders: those set in camp for its veteran's squad (a
+// named squad found among this battle's, or the soldier if it is not here), or
+// the battle's own defaults.
+function squadStanding(state,e,unit,role){
+  const custom=unit.veteranId?state.soldier?.squadOrders?.[unit.veteranId]:null;if(!custom)return defaultStanding(e.mission?.mode,role);
+  const tokenOf=id=>e.units.find(u=>u.side==='ally'&&u.veteranId===id)?.id;
+  return custom.map(([a,t])=>[a,typeof t==='string'&&t.startsWith('squad:')?(tokenOf(t.slice(6))?`squad:${tokenOf(t.slice(6))}`:'hero'):t]);
 }
 
 export function createEncounterWorld(state,{seed=state.rng}={}){

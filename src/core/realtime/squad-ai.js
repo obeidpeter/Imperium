@@ -116,7 +116,8 @@ export function squadSlotPlan(world,squad,[action,target]){
     }
     case 'screen_flank':{
       if(!hero||!standingActor(hero))return null;
-      const threat=target==='enemy_cavalry'?foeNear(world,squad,hero,st.screen*2,g=>['cavalry','heavy'].includes(g.role)):foeNear(world,squad,hero,st.screen*2);
+      const threat=target==='enemy_cavalry'?foeNear(world,squad,hero,st.screen*2,g=>['cavalry','heavy'].includes(g.role))
+        :target==='enemy_archers'?foeNear(world,squad,hero,st.screen*2,g=>g.role==='archer'):foeNear(world,squad,hero,st.screen*2);
       if(!threat)return null;const t=squadCentre(world,threat),d=span(t.x-hero.x,t.z-hero.z)||1;
       if(span(t.x-c.x,t.z-c.z)<=st.keep*2)return {kind:'engage',target:threat,intent:`Screen your flank against ${threat.name}.`};
       return {kind:'station',to:{x:hero.x+(t.x-hero.x)/d*6,z:hero.z+(t.z-hero.z)/d*6},intent:`Screen your flank toward ${threat.name}.`};

@@ -5,6 +5,8 @@ import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS
 import {STANDING} from '../data/realtime-rules.js';
 import {TRADER_STOCK} from '../data/camps.js';
 import {slotProblem} from './realtime/party.js';
+import {squadOrderProblem} from './realtime/squad-orders.js';
+import {SQUAD_STANDING} from '../data/realtime-squads.js';
 import {clone,result} from './shared.js';
 
 // The soldier (build brief §3.5, §3.12–§3.13): his training path and
@@ -275,6 +277,9 @@ export function validateSoldier(state,fail){
   if(s.orders!==undefined&&(!s.orders||typeof s.orders!=='object'||Object.entries(s.orders).some(([id,slots])=>!COMPANIONS[id]||!Array.isArray(slots)||slots.length>4
     ||slots.some(slot=>!Array.isArray(slot)||slot.length!==2||slotProblem(slot)))))fail('standing orders.');
   if(s.party!==undefined&&(!Array.isArray(s.party)||s.party.length>3||new Set(s.party).size!==s.party.length||s.party.some(id=>!COMPANIONS[id])))fail('chosen party.');
+  if(s.squadOrders!==undefined&&(!s.squadOrders||typeof s.squadOrders!=='object'||Object.entries(s.squadOrders).some(([id,slots])=>!COMPANIONS[id]||!Array.isArray(slots)
+    ||!slots.length||slots.length>4||slots.some(slot=>squadOrderProblem(slot)||typeof slot[1]==='string'&&slot[1].startsWith('squad:')&&!COMPANIONS[slot[1].slice(6)]))))
+    fail('squad standing orders.');
 }
 // The soldier's own commands, from the kit, character, trainer and company
 // panels: one entry point, each refusal leaving the chronicle unchanged. Kit,
@@ -302,6 +307,7 @@ export function soldierCommand(state,command={}){
     case 'sell':return sell(state,command.uid);
     case 'pay':return collectPay(state);
     case 'orders':return setStandingOrders(state,command.companionId,command.preset?STANDING.presets[command.preset]:command.slots);
+    case 'squad-orders':return setSquadOrders(state,command.companionId,command.preset==='battle'?null:command.preset?SQUAD_STANDING.presets[command.preset]??[]:command.slots);
     case 'party':return chooseParty(state,command.party);
     default:return result(false,'Unknown command.');
   }
@@ -312,6 +318,18 @@ export function setStandingOrders(state,id,slots){
   if(!Array.isArray(slots)||slots.length>4)return result(false,'Choose up to four orders.');
   const problem=slots.map(slot=>Array.isArray(slot)&&slot.length===2?slotProblem(slot):'Choose an action.').find(Boolean);if(problem)return result(false,problem);
   (state.soldier.orders??={})[id]=slots.map(([a,t])=>[a,t]);return result(true,`${COMPANIONS[id].name}’s standing orders are set.`);
+}
+// A veteran's squad's standing orders (from Chapter IV), or null for the battle's own:
+// he need not lead it; another officer keeps them while he marches with the soldier.
+export function setSquadOrders(state,id,slots){
+  const v=(state.company??[]).find(x=>x.id===id);if(!COMPANIONS[id]||!v)return result(false,'Choose a veteran of the company.');
+  const name=v.name??COMPANIONS[id].name;
+  if(slots===null){if(state.soldier.squadOrders){delete state.soldier.squadOrders[id];if(!Object.keys(state.soldier.squadOrders).length)delete state.soldier.squadOrders;}
+    return result(true,`${name}’s squad will keep each battle’s own orders.`);}
+  if(!Array.isArray(slots)||!slots.length||slots.length>4)return result(false,'Choose one to four orders.');
+  const problem=slots.map(slot=>squadOrderProblem(slot)).find(Boolean);if(problem)return result(false,problem);
+  if(slots.some(([,t])=>typeof t==='string'&&t.startsWith('squad:')&&(t.slice(6)===id||!COMPANIONS[t.slice(6)])))return result(false,'Choose another veteran’s squad to guard.');
+  (state.soldier.squadOrders??={})[id]=slots.map(([a,t])=>[a,t]);return result(true,`${name}’s squad’s standing orders are set.`);
 }
 // Who marches with the soldier (from Chapter III): up to three fit veterans of the company roll.
 export function chooseParty(state,party){

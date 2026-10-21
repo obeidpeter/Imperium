@@ -87,7 +87,7 @@ export const SQUAD_STANDING=freeze({
   targets:freeze({hero:'you',nearest_enemy_group:'the nearest enemy group',enemy_cavalry:'enemy cavalry',enemy_archers:'enemy archers'}),
   // Which actions take a target, and which targets they take.
   targetsFor:freeze({advance_with_hero:freeze(['hero']),hold_line:freeze([]),attack_hero_target:freeze(['hero']),
-    screen_flank:freeze(['hero','enemy_cavalry','nearest_enemy_group']),guard_standard:freeze(['hero','squad']),withdraw_when_broken:freeze(['hero'])}),
+    screen_flank:freeze(['hero','enemy_cavalry','enemy_archers','nearest_enemy_group']),guard_standard:freeze(['hero','squad']),withdraw_when_broken:freeze(['hero'])}),
   // How far a squad keeps from the soldier it marches with, and engages from its station.
   station:freeze({front:6,flank:9,keep:4,engage:12,screen:14,guard:8,leash:40}),
   presets:freeze({
