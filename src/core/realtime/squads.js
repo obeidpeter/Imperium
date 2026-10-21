@@ -8,14 +8,15 @@ import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,neares
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
 // standing orders; its men are ordinary actors that it drives (`squadId`).
-// They hold their places in its formation, turn to fight any single man who
-// comes within reach, and fall one by one. Against another squad nobody
-// trades single blows: once a second the two exchange a tenth of a 0.38
-// turn's exchange (the 0.38 formula, its modifiers in metres), and the men
-// nearest the front fall as strength drops. Pure and deterministic: no
-// randomness is drawn here, and every number is the rules data's.
+// They hold their places in its formation and fall one by one. A squad fights
+// as one body (guide "Formations"): against another squad, or a single man (the
+// soldier, a companion, a protected column), nobody trades single blows; once a
+// second it deals a tenth of a 0.38 turn's exchange (the 0.38 formula, its
+// modifiers in metres), and the men nearest the front fall as strength drops.
+// A single man's own blows strike its men one at a time. Pure and
+// deterministic: no randomness is drawn here, and every number is the rules data's.
 
-const R=TIME.roundTicks,DT=1/TIME.ticksPerSecond,ARCHER_CLOSE=12;
+const R=TIME.roundTicks,DT=1/TIME.ticksPerSecond;
 const emit=(world,event)=>world.events.push({tick:world.tick,...event});
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
 const clamp=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
@@ -235,15 +236,27 @@ export function closest(world,a,b){
 export const missileRangeOf=squad=>EXCHANGE.missileRange[squad.role]??0;
 export function inContact(world,a,b){return closest(world,a,b).distance<=EXCHANGE.contact;}
 
+// A single man as the exchange's target: his place and facing, his brace, a
+// protector's guard and the cover at his feet count as they would for a squad.
+function asTarget(world,actor){
+  return {id:actor.id,side:actor.side,role:actor.role,x:actor.x,z:actor.z,fx:actor.fx??1,fz:actor.fz??0,formation:null,braced:actor.braceUntil>world.tick,
+    guard:actor.guardedBy&&actor.guardedBy.until>world.tick?{until:actor.guardedBy.until,reduction:actor.guardedBy.reduction}:null,members:[actor.id]};
+}
+// The man of a squad nearest a point, and how far he stands from it.
+function nearestMan(world,squad,p){
+  let best=null,d=Infinity;for(const m of membersOf(world,squad)){const e=span(m.x-p.x,m.z-p.z);if(e<d){d=e;best=m;}}return {man:best,distance:d};
+}
 // Once a second: every pair of hostile squads in contact exchange blows, and
-// archers (out of melee) loose at a squad in range with a clear line. Damage is
-// applied all at once, so neither side strikes first.
-export function exchangeSquads(world){
+// archers (out of melee) loose at a squad in range with a clear line. A squad
+// that meets no squad fights a single man within reach, or looses at one (the
+// one its plan names first). Damage is applied all at once, so neither side
+// strikes first; a single man's wounds go to `wound` (damage.js).
+export function exchangeSquads(world,{wound=null}={}){
   if(world.tick%EXCHANGE.everyTicks!==0)return;
   // Contact and facing are judged once a second, with the exchange, and hold until the next.
   const squads=squadsOf(world).filter(s=>fielded(world,s));for(const s of squadsOf(world)){s.contact=null;s.facing=null;}
-  if(squads.length<2)return;
-  const grid=navGrid(world.map),hits=[];
+  if(!squads.length)return;
+  const grid=navGrid(world.map),hits=[],singles=world.actors.filter(o=>standing(o)&&!o.squadId&&!o.hidden),shotAtSquad=new Set();
   for(let i=0;i<squads.length;i++)for(let j=i+1;j<squads.length;j++){
     const a=squads[i],b=squads[j];if(!hostile(a,b))continue;
     const near=closest(world,a,b);if(near.distance>EXCHANGE.contact)continue;
@@ -254,9 +267,30 @@ export function exchangeSquads(world){
   for(const a of squads){
     if(a.contact||a.broken||!missileRangeOf(a))continue;
     const range=missileRangeOf(a),centre=squadCentre(world,a);
+    // A single man the plan names comes first (an escort, the soldier), then the nearest squad in range.
+    const named=singles.find(o=>o.id===a.plan?.targetId&&hostile(a,o)&&span(o.x-centre.x,o.z-centre.z)<=range&&!crossesCover(grid,centre,o));
+    if(named)continue;
     const target=squads.filter(b=>hostile(a,b)&&!crossesCover(grid,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
       .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
-    if(target){a.facing=squadCentre(world,target);hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target)});}
+    if(target){a.facing=squadCentre(world,target);hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target)});shotAtSquad.add(a);}
+  }
+  // A squad that meets no squad, against a single man: one within reach of its
+  // men (the plan's first), else (archers) one in range with a clear line.
+  const struck=[];
+  for(const a of squads){
+    if(a.contact||shotAtSquad.has(a)||a.broken&&a.role==='archer')continue;
+    const foes=singles.filter(o=>hostile(a,o));if(!foes.length)continue;
+    const near=foes.map(o=>({o,...nearestMan(world,a,o)})).filter(x=>x.man&&x.distance<=EXCHANGE.contact)
+      .sort((x,y)=>(x.o.id===a.plan?.targetId?-1:0)-(y.o.id===a.plan?.targetId?-1:0)||x.distance-y.distance)[0];
+    let pick=near?{o:near.o,man:near.man,ranged:false}:null;
+    if(!pick&&missileRangeOf(a)&&!a.broken){
+      const centre=squadCentre(world,a),range=missileRangeOf(a);
+      const far=foes.filter(o=>span(o.x-centre.x,o.z-centre.z)<=range&&!crossesCover(grid,centre,o))
+        .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
+      if(far)pick={o:far,man:nearestMan(world,a,far).man,ranged:true};
+    }
+    if(!pick)continue;
+    a.facing={x:pick.o.x,z:pick.o.z};struck.push({from:a,to:pick.o,man:pick.man,ranged:pick.ranged,setup:squadModifiers(world,a,asTarget(world,pick.o),{ranged:pick.ranged})});
   }
   for(const hit of hits){
     const {from,to,setup}=hit,before=menOf(world,to),damage=setup.damage*EXCHANGE.scale;
@@ -273,6 +307,13 @@ export function exchangeSquads(world){
     }
     afterLoss(world,to,null);
   }
+  // The single men's wounds mount up in tenths of a 0.38 hit; whole points of Health come off.
+  for(const hit of struck){
+    const {from,to,man,setup,ranged}=hit,amount=setup.damage*EXCHANGE.scale;
+    emit(world,{kind:'exchange',squadId:from.id,targetId:to.id,damage:amount,ranged,x:to.x,z:to.z,fromX:man.x,fromZ:man.z});
+    to.wear=(to.wear??0)+amount;const whole=Math.floor(to.wear+1e-9);if(!whole)continue;
+    to.wear=Math.max(0,to.wear-whole);wound?.(world,man,to,whole,{missile:ranged?(from.role==='raider'?'javelin':'arrow'):null,arc:setup.aspect,squadId:from.id});
+  }
   // A braced front that survives a frontal mounted charge strikes back once a round.
   for(const hit of hits){
     const {from,to,setup}=hit;if(setup.ranged||!['cavalry','heavy'].includes(from.role)||!fielded(world,to)||!to.braced||setup.aspect!=='front')continue;
@@ -284,7 +325,7 @@ export function exchangeSquads(world){
     afterLoss(world,from,null);
   }
   // A charge spends its run-up.
-  for(const hit of hits)if(!hit.setup.ranged&&['cavalry','heavy'].includes(hit.from.role))hit.from.runUp=0;
+  for(const hit of [...hits,...struck])if(!hit.setup.ranged&&['cavalry','heavy'].includes(hit.from.role))hit.from.runUp=0;
 }
 
 // --- The round boundary (§3.1 system 8, after Command's refill) ---------------------
@@ -307,22 +348,14 @@ export function squadsRound(world){
   }
 }
 
-// --- The men against single foes ------------------------------------------------------
-// At each decision a man turns on any single foe (the soldier, a companion, a
-// lone enemy) within a step of his place, and goes back to his place when there
-// is none. Squads never trade single blows with squads: the exchange does that.
+// --- The men ------------------------------------------------------------------------
+// A squad fights as one body (the exchange above): its men hold their places,
+// weapons drawn while it is engaged, and give no orders of their own.
 export function memberDecisions(world,squad){
-  if(!fielded(world,squad))return;
-  const foes=world.actors.filter(o=>standing(o)&&!o.squadId&&!o.hidden&&hostile(squad,o));
+  if(!fielded(world,squad))return;const engaged=!!(squad.contact||squad.facing);
   for(const m of membersOf(world,squad)){
-    if(m.action)continue;
-    // Bowmen shoot the single man their squad means to strike, or one who comes close; otherwise they loose with the squad.
-    const weapon=derivedValues(m).weapon,ranged=weapon.ranged&&(weapon.ranged.ammo===null||(m.ammo?.[weapon.ranged.ammo]??0)>0)&&!squad.contact;
-    const reach=ranged?Math.min(weapon.ranged.range,missileRangeOf(squad)||weapon.ranged.range):derivedValues(m).reach+MOVEMENT.radius+1.2;
-    let best=null,bd=Infinity;
-    for(const o of foes){const d=span(o.x-m.x,o.z-m.z);if(d<bd&&d<=reach&&(!ranged||o.id===squad.plan?.targetId||d<=ARCHER_CLOSE)){bd=d;best=o;}}
-    if(best&&!squad.broken){if(m.lock!==best.id||m.order?.kind!=='attack'){m.lock=best.id;m.order={kind:'attack',targetId:best.id};m.drawn=true;}}
-    else if(m.order){m.order=null;m.lock=null;m.path=[];m.gait=null;}
+    if(m.order||m.lock||m.action?.kind==='swing'){m.order=null;m.lock=null;m.path=[];m.gait=null;}
+    if(engaged&&!m.drawn)m.drawn=true;
   }
 }
 export const squadOfMember=squadOf;

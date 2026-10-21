@@ -108,3 +108,14 @@ test('T cycles visible enemies nearest first; Shift+T cycles friends',()=>{
   assert.equal(nextTarget(w),'near');assert.equal(nextTarget(w,{current:'near'}),'far');assert.equal(nextTarget(w,{current:'far'}),'near');
   assert.equal(nextTarget(w,{friends:true}),'ally');
 });
+
+test('a goal beyond a body\'s reach becomes the nearest reachable cell, found without exhausting the map, and searches repeat exactly',async()=>{
+  const {findRoute,navGrid,walkable}=await import('../src/core/realtime/navigation.js');
+  // A walled pen in the middle of open ground: its inside cannot be reached from outside.
+  const rows=Array.from({length:16},(_,r)=>Array.from({length:16},(_,c)=>(r===5||r===10)&&c>=5&&c<=10||(c===5||c===10)&&r>=5&&r<=10?'rock':'grass'));
+  const map={id:'pen',width:16,height:16,terrain:rows},g=navGrid(map),inside={x:20,z:20},outside={x:2,z:2};
+  const route=findRoute(g,outside,inside);assert.equal(route.reasonCode,'PATH_BLOCKED');assert.ok(walkable(g,route.stopPoint.x,route.stopPoint.z));
+  assert.ok(Math.hypot(route.stopPoint.x-inside.x,route.stopPoint.z-inside.z)<=9,'it stops outside the pen wall, as near the goal as the ground allows');
+  assert.deepEqual(findRoute(g,outside,inside),route,'the same search, the same route');
+  const open=findRoute(g,outside,{x:38,z:3});assert.equal(open.reasonCode,undefined);assert.deepEqual(findRoute(g,outside,{x:38,z:3}),open);
+});

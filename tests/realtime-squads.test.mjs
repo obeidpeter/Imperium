@@ -139,3 +139,27 @@ test('a squad fight is deterministic and its snapshot restores it exactly',()=>{
   const again=restoreWorld(mid);run(again,R*2);assert.equal(worldHash(again),end,'save and load mid-fight');
   const w2=make();order(w2,['a','b'],{kind:'attack',targetId:'g'});run(w2,R*4);assert.equal(worldHash(w2),end,'same seed and orders, same fight');
 });
+
+test('a squad fights a single man as one body: a tenth of the 0.38 exchange a second, his brace counted, and its men strike no blows of their own',()=>{
+  // The soldier walks into a Gothic shield guard's ground; nothing else is near.
+  const w=world([gothic('g',[22,30],{role:'guard'}),roman('far',[90,10])],{actors:[hero({at:[20,30],face:[1,0]})]});
+  const band=squadById(w,'g'),soldier=w.actors.find(a=>a.id==='hero'),start=soldier.hp;
+  const expected=squadModifiers(w,band,{id:'hero',side:'player',x:soldier.x,z:soldier.z,fx:1,fz:0,formation:null,braced:false,guard:null,members:['hero']}).damage*.1;
+  run(w,R*3);
+  const hits=w.log.filter(l=>/hits Hero/.test(l.text)).length,lost=start-soldier.hp;
+  assert.ok(lost>0,'the band wounds him');
+  // 30 exchanges of a tenth of a 0.38 hit each (the frontal shield counted): whole points only, never more than they add up to.
+  assert.ok(lost<=Math.floor(expected*30+1e-9)&&lost>=Math.floor(expected*30)-1,`${lost} Health for ${expected.toFixed(2)} a second`);
+  assert.ok(!w.actors.some(a=>a.squadId==='g'&&(a.order||a.lock)),'its men give no orders of their own');assert.ok(hits>0);
+});
+
+test('archers loose at the single man their plan names (a protected column) through the exchange, not man by man',()=>{
+  const escort={id:'carts',name:'Carts',side:'ally',role:'escort',kit:[],at:[30,30],face:[-1,0],downs:false};
+  const archers=gothic('bows',[60,30],{role:'archer',member:{name:'Gothic archer',...ARCHETYPES.gothic.archer[0]}});
+  const w=world([archers,roman('far',[8,8])],{actors:[hero({at:[6,44]}),escort]});
+  const band=squadById(w,'bows');band.plan={kind:'engage',targetId:'carts'};
+  for(let i=0;i<R*2;i++){band.plan={kind:'engage',targetId:'carts'};step(w);}
+  assert.equal(w.projectiles.filter(p=>p.ownerId?.startsWith('bows')).length,0,'no single arrows in the air');
+  const carts=w.actors.find(a=>a.id==='carts');assert.ok(carts.hp<carts.maxHp,'the column is wounded by the volley exchange');
+  assert.ok(w.log.some(l=>/hits Carts with an arrow/.test(l.text)),'the log names the volley that wounds it');
+});

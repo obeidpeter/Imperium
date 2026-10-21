@@ -37,6 +37,18 @@ function fall(world,attacker,defender,base){
   if(defender.squadId)memberFell(world,defender,attacker,{arc:base.arc,missile:base.missile});
 }
 
+// A squad's exchange wounds a single man (squads.js): whole points of Health,
+// with no roll (the exchange already counted his shield, brace and cover).
+export function exchangeWound(world,attacker,defender,points,{missile=null,arc='front',squadId=null}={}){
+  if(!defender.alive||defender.down||points<=0)return;
+  defender.lastHitTick=world.tick;defender.lastHitBy=attacker.id;defender.calmSince=world.tick;
+  if(defender.ai)struck(world,defender,attacker,false);
+  const base={attackerId:attacker.id,defenderId:defender.id,missile,arc,roll:null,critical:false,ambush:false,projectileId:null,bash:false,exchange:true,squadId};
+  const floor=defender.practice?1:0;defender.hp=Math.max(floor,defender.hp-points);emit(world,{kind:'hit',...base,damage:points});
+  if(defender.action?.kind==='work'){cancelAction(world,defender);defender.order=null;}
+  if(defender.hp<=0)fall(world,attacker,defender,base);
+}
+
 export function resolveBlows(world){
   for(const blow of world.blows){
     const attacker=actorById(world,blow.attackerId),defender=actorById(world,blow.defenderId);if(!defender?.alive||defender.down)continue;

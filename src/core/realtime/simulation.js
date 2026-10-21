@@ -7,7 +7,7 @@ import {decideEnemy,decidesThisTick,perceive} from './ai.js';
 import {decideFriend,slotProblem} from './party.js';
 import {engaged,moveActors,objectById,reachOf,setDown,setRoute} from './motion.js';
 import {act,cancelAction,used} from './actions.js';
-import {flyProjectiles,resolveBlows,settleLocks,regenerate} from './damage.js';
+import {exchangeWound,flyProjectiles,resolveBlows,settleLocks,regenerate} from './damage.js';
 import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
 import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
@@ -291,7 +291,7 @@ export function step(world){
     squadsOf(world).forEach((s,i)=>{if(decidesThisTick(world,i+1))decideSquad(world,s);});
     if(world.squads)moveSquads(world);
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
-    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world);
+    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
     settleLocks(world);regenerate(world);perceive(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
