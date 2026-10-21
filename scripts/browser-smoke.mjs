@@ -1,6 +1,7 @@
 // Browser smoke test of the production build through the real interface: New
-// Game and the Chapter I drill in 2D (walk by keyboard and pointer, Undo,
-// Confirm moves, an opponent's preview, Help), a keyboard walk in the 3D view,
+// Game and the Chapter I drill in 2D (walk by keyboard and pointer, Undo, the
+// board surviving page updates with its focus, Confirm moves, an opponent's
+// preview, Help), a keyboard walk in the 3D view,
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
 // (field-object readouts), a field approach chosen at a restored Chapter V camp
 // (with Chapter V's generated scenery and character bodies loaded in 3D),
@@ -105,10 +106,12 @@ async function drillDesktop(){
   const page=await open();await newGameDrill(page);await view(page,'2d');
   assert.match(await text(page,'#command-hint'),/Select open ground to walk there/);
   assert.match(await page.getAttribute('#battle-board','aria-label'),/Select open ground to walk there; Undo Move takes it back until you act\./);
-  await page.focus('#battle-board');
+  await page.focus('#battle-board');const board=await page.$('#battle-board');
   await expectAnnouncement(page,/^Grid 1A\. Open ground\. Beyond reach · stops at 1B this turn$/,()=>keys(page,['ArrowUp','ArrowUp','ArrowUp']));
   await expectAnnouncement(page,/^Walked to 1B \(2 movement\)\. 1A is beyond this turn’s reach\. Undo Move \(U\) takes it back until you act\.$/,()=>page.keyboard.press('Enter'));
   await expectAnnouncement(page,/returned to 1D; movement restored/,()=>page.keyboard.press('u'));
+  assert.ok(await board.evaluate(node=>node===document.querySelector('#battle-board')&&node===document.activeElement),
+    'The page updates around the same board, which keeps the focus');
   const near=await findTile(page,label=>label.includes('Walk here'));
   await expectAnnouncement(page,/^Walked to \d+[A-H] \(\d movement\)\. Undo Move/,()=>page.mouse.click(near.x,near.y));
   await expectAnnouncement(page,/movement restored/,()=>page.keyboard.press('u'));

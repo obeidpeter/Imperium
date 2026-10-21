@@ -242,7 +242,7 @@ export function createScenePainting({load=decodeImage,createContext=defaultConte
         stop();schedule(c);return c.canvas;
       }
       release();
-      const canvas=doc.createElement('canvas');canvas.className='scene-depth-canvas';canvas.setAttribute('aria-hidden','true');host.append(canvas);
+      const canvas=doc.createElement('canvas');canvas.className='scene-depth-canvas';canvas.setAttribute('aria-hidden','true');canvas.setAttribute('data-live','');host.append(canvas);
       const c={src,depth,host,img,canvas,doc,win,quality,position,weather,style:paintingWeatherStyle(weather,chapter),focus:SCENE_PAINTINGS[scenePaintingName(src)].focus,
         gl:null,program:null,buffer:null,textures:[],uniforms:{},corner:0,image:null,ready:false,raf:0,last:-Infinity,clock:null,arrival:0,arrivalAt:0,frames:0,visible:true,observer:null,lost:null};
       c.visibility=()=>{if(c.doc.hidden)stop();else schedule(c);};doc.addEventListener('visibilitychange',c.visibility);

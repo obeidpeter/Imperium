@@ -27,7 +27,12 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
       if(key!==nextKey){release();key=nextKey;}
       if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
-      if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
+      if(stage){
+        if(canvas!==stage.canvas)canvas.replaceWith(stage.canvas);
+        if(stage.labelLayer.parentElement!==stage.canvas.parentElement)stage.canvas.parentElement.append(stage.labelLayer);
+        if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';
+        stage.resize();update();return stage;
+      }
       const ticket=++version;
       load().then(async({BattleStage,preloadBattleFigures})=>{
         if(ticket!==version||!canvas.isConnected||!latest)return;

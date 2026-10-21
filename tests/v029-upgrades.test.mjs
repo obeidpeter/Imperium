@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
+import {bootApp} from './inert-app.mjs';
 
 const clone = x => JSON.parse(JSON.stringify(x));
 const checkpoints = new Map();
@@ -79,37 +80,20 @@ test('v0.29.0: an Archive replay cannot be restored as if it were the chronicle'
 });
 
 test('v0.29.0: the real app saves routes through the rules API and a hidden tab writes only unsaved changes', async t => {
-  // Inert DOM integration harness (as in campaign-upgrade-ui): the actual app
-  // module and storage run; there is no browser layout, canvas or audio device.
-  const {CONFIG} = await import('../src/config.js');
-  const originals = new Map(), set = (key, value) => { originals.set(key, Object.getOwnPropertyDescriptor(globalThis, key)); Object.defineProperty(globalThis, key, {value, writable: true, configurable: true}); };
-  const callbacks = new Map(), values = new Map(), writes = [], nodes = new Map();
-  const node = (id = '') => ({id, innerHTML: '', textContent: '', hidden: false, open: false, dataset: {}, style: {setProperty() {}}, isConnected: true, querySelectorAll: () => [], querySelector: selector => nodes.get(selector) ?? null, setAttribute() {}, removeAttribute() {}, focus() {}, scrollIntoView() {}, addEventListener() {}, prepend() {}, after() {}, close() { this.open = false; }, showModal() { this.open = true; }});
-  for (const id of ['#app', '#modal', '#announcement', '.system-feedback', '.save-status', '.modal-feedback', '#panel-title', '#action-feedback']) nodes.set(id, node(id));
-  const doc = {hidden: false, activeElement: null, documentElement: node(), addEventListener(name, fn) { if (!callbacks.has(name)) callbacks.set(name, []); callbacks.get(name).push(fn); }, removeEventListener() {}, querySelector: selector => nodes.get(selector) ?? null, querySelectorAll: () => [], getElementById: () => null, createElement: () => node()};
-  set('document', doc); set('window', {addEventListener() {}, scrollTo() {}}); set('navigator', {connection: {saveData: true}, locks: {request: async (name, fn) => fn()}}); set('matchMedia', () => ({matches: true}));
-  set('requestAnimationFrame', () => 1); set('cancelAnimationFrame', () => {});
-  set('localStorage', {getItem: k => values.get(k) ?? null, setItem(k, v) { values.set(k, v); writes.push(k); }, removeItem: k => values.delete(k)}); set('BroadcastChannel', class { postMessage() {} close() {} });
-  const nativeTimeout = globalThis.setTimeout; set('setTimeout', (fn, delay, ...args) => delay === 6500 ? 0 : nativeTimeout(fn, delay, ...args));
-  t.after(() => { for (const [key, descriptor] of originals) descriptor ? Object.defineProperty(globalThis, key, descriptor) : delete globalThis[key]; });
-  const storage = await import('../src/ui/storage.js?v029-app'), start = camp('ch12-confrontation');
-  await storage.saveLocal(start, {replace: true});
-  await import('../src/ui/app.js?v029-app');
-  const saved = () => Game.deserialize(JSON.parse(values.get(CONFIG.saveKey)).payload), campaignWrites = () => writes.filter(k => k === CONFIG.saveKey).length;
-  const settle = async () => { for (let i = 0; i < 6; i++) await new Promise(resolve => nativeTimeout(resolve, 0)); };
-  const click = async (cmd, id) => { const button = {dataset: {cmd, id}, disabled: false}; for (const fn of callbacks.get('click') ?? []) await fn({target: {closest: () => button}}); await settle(); };
-  const hide = async () => { doc.hidden = true; for (const fn of callbacks.get('visibilitychange') ?? []) fn(); await settle(); doc.hidden = false; };
-  await click('continue');
+  const {CONFIG} = await import('../src/config.js'), start = camp('ch12-confrontation');
+  const app = await bootApp(t, {name: 'v029-app', save: start});
+  const campaignWrites = () => app.storage.keys.filter(k => k === CONFIG.saveKey).length;
+  await app.click('continue');
   let count = campaignWrites();
-  await hide();
+  await app.hide();
   assert.equal(campaignWrites(), count, 'Hiding an unchanged chronicle does not write or broadcast a new revision');
-  await click('route', 'invented');
+  await app.command('route', 'invented');
   assert.equal(campaignWrites(), count, 'An invalid approach is rejected by the rules API before storage');
-  assert.equal(saved().route, start.route);
-  await click('route', 'battle');
-  assert.equal(saved().route, 'battle');
+  assert.equal(app.saved().route, start.route);
+  await app.click('route', 'battle');
+  assert.equal(app.saved().route, 'battle');
   count = campaignWrites();
-  await hide();
+  await app.hide();
   assert.equal(campaignWrites(), count, 'The route was already saved; hiding writes nothing new');
 });
 

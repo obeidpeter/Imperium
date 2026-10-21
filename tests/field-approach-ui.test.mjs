@@ -61,6 +61,6 @@ test('v0.35.1: the camp buttons issue the public approach commands', async t => 
   await app.click('field-approach',choice.id);
   assert.ok(G.chooseFieldApproach(upgraded,choice.id).ok);assert.equal(G.serialize(app.saved()),G.serialize(upgraded));
   assert.equal(G.fieldApproachView(app.saved()).selected,choice.id);
-  // An approach the rules refuse saves nothing.
-  const kept=G.serialize(app.saved());await app.click('field-approach','invented');assert.equal(G.serialize(app.saved()),kept);
+  // An approach the rules refuse (sent by a tampered page) saves nothing.
+  const kept=G.serialize(app.saved());await app.command('field-approach','invented');assert.equal(G.serialize(app.saved()),kept);
 });

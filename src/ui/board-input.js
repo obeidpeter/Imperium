@@ -18,6 +18,7 @@ const ARROWS={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
 //   inside(point) → whether the point is on the grid
 //   current() → the tile the readout shows now (the keyboard and a held finger move it too)
 //   hover(point|null), select(point), cancel(), step([dx,dy]), activate()
+// The board outlives page updates, so configure({holdDelay}) takes a changed setting.
 export function bindBoardInput(board,{threeD=false,pick,inside,current,hover,select,cancel,step,activate,holdDelay,frame=fn=>requestAnimationFrame(fn),timers}={}){
   const bound=[],on=(type,fn)=>{board.addEventListener(type,fn);bound.push([type,fn]);};
   const hovered=(x,y)=>{const point=pick(x,y);return inside(point)?point:null;};
@@ -45,6 +46,6 @@ export function bindBoardInput(board,{threeD=false,pick,inside,current,hover,sel
     });
     on('pointerleave',event=>{if(event.pointerType==='touch')return;next=null;hover(null);});
   }
-  return {dispose(){hold.dispose();for(const [type,fn] of bound)board.removeEventListener(type,fn);}};
+  return {configure({holdDelay:delay}={}){hold.configure({delay});},dispose(){hold.dispose();for(const [type,fn] of bound)board.removeEventListener(type,fn);}};
 }
 const samePoint=(a,b)=>(!a&&!b)||Boolean(a&&b&&a.x===b.x&&a.y===b.y);

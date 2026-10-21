@@ -39,13 +39,16 @@ test('every Settings checkbox in the toggle table is on the panel and shows its 
 test('the app stores each toggle as the player sets it, and a redrawing toggle changes the page at once', async t => {
   const drill = G.newGame('Settings');G.choose(drill, G.getChapter(drill).decision.options[0].id);G.startEncounter(drill);
   const app = await bootApp(t, {name: 'settings-toggles', save: drill});
-  await app.click('continue');await app.change({id: 'battle-view', value: '2d'});
+  await app.click('continue');
+  if (!app.doc.querySelector('[data-cmd="settings"]')) await app.click('menu');
+  await app.click('settings');assert.equal(app.modal().open, true);
+  await app.change('#battle-view', {value: '2d'});
   assert.match(app.page(), /Select open ground to walk there\./);
-  await app.change({id: 'confirm-moves', checked: true});
+  await app.change('#confirm-moves', {checked: true});
   assert.equal(app.settings().confirmMoves, true);assert.match(app.page(), /Select open ground to preview a walk there, then select it again to go\./);
   for (const [id, {key}] of Object.entries(SETTING_TOGGLES)) {
-    await app.change({id, checked: false});assert.equal(app.settings()[key], false, id);
-    await app.change({id, checked: true});assert.equal(app.settings()[key], true, id);
+    await app.change(`#${id}`, {checked: false});assert.equal(app.settings()[key], false, id);
+    await app.change(`#${id}`, {checked: true});assert.equal(app.settings()[key], true, id);
   }
   assert.equal(G.serialize(app.saved()), G.serialize(drill), 'Settings never touch the chronicle');
 });

@@ -7,9 +7,9 @@ export function createCeremonyController({load=()=>Promise.all([import('../showc
   return {
     mount(target,{kind,name,quality='balanced',reducedMotion=false,figureStyle='sculpted'}={}){
       const next=`${kind}:${name}`;
-      if(stage&&key===next&&host===target&&canvas?.isConnected){stage.setReducedMotion(reducedMotion);if(stage.quality!==quality)stage.applyQuality(quality);return stage;}
+      if(key===next&&host===target&&canvas?.isConnected){if(stage){stage.setReducedMotion(reducedMotion);if(stage.quality!==quality)stage.applyQuality(quality);}return stage;}
       release();key=next;host=target;const ticket=++version;
-      canvas=document.createElement('canvas');canvas.className='ceremony-canvas';canvas.setAttribute('aria-hidden','true');target.append(canvas);
+      canvas=document.createElement('canvas');canvas.className='ceremony-canvas';canvas.setAttribute('aria-hidden','true');canvas.setAttribute('data-live','');target.append(canvas);
       load().then(async([{BattleStage,preloadBattleFigures},{ceremonyScene}])=>{
         if(ticket!==version||!canvas?.isConnected)return;
         const scene=ceremonyScene(kind,{name});if(!scene){release();return;}

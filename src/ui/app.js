@@ -4,6 +4,7 @@ import {esc,roman} from './view-helpers.js';
 import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,createRenderHold,prepareShareCard} from './render-controller.js';
+import {updatePage} from './page-update.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
 import {directIntent,nextReadyUnit,keyboardAction,samePoint,clickRoute,walkableReach} from './direct-controls.js';
 import {bindBoardInput} from './board-input.js';
@@ -143,8 +144,8 @@ function render(){
   stopMotion();
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
-  const openPanels=viewKey===renderedLocation?[...app.querySelectorAll('.command-stage details[id][open]')].map(node=>node.id):[];
-  if(viewKey!==renderedLocation){pendingScroll=true;renderedLocation=viewKey;}
+  const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('.command-stage details[id][open]')].map(node=>node.id);
+  if(newView){pendingScroll=true;renderedLocation=viewKey;}
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
   document.documentElement.dataset.stage=state?.phase==='epilogue'||(state?.chapter===12&&state?.phase==='promotion')?'imperial':'service';
@@ -154,7 +155,10 @@ function render(){
   document.documentElement.dataset.hud=settings.compactHud===false?'full':'compact';
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
-  app.innerHTML=(screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
+  // A new screen starts afresh; within one, the page is updated in place, so the
+  // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
+  if(newView)app.replaceChildren();
+  updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
   soundscape.update(state,screen);
   if(uses3D()){
     const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,
@@ -238,10 +242,12 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
   }
   requestCurrentChapter({allowTitle});updateLoadingStatus();
 }
+let boardInput=null; // {board,binding}: the board keeps its bindings through page updates
 function bindBoard(){
   const board=document.querySelector('#battle-board');if(!board||!state.encounter)return;
-  if(board.dataset.bound)return;board.dataset.bound='true';
-  bindBoardInput(board,{threeD:uses3D(),holdDelay:settings.holdDelay,current:()=>hoverTile,
+  if(boardInput?.board===board){boardInput.binding.configure({holdDelay:settings.holdDelay});return;}
+  boardInput?.binding.dispose();
+  boardInput={board,binding:bindBoardInput(board,{threeD:uses3D(),holdDelay:settings.holdDelay,current:()=>hoverTile,
     pick:(x,y)=>pickBattlePoint(board,state.encounter,x,y),
     inside:p=>{const e=state.encounter;return p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height;},
     hover:point=>{boardHover(point);board.style.cursor=point?'pointer':'default';paint(currentAnimation);},
@@ -251,7 +257,8 @@ function bindBoard(){
       focusTile={x:Math.max(0,Math.min(e.width-1,from.x+dx)),y:Math.max(0,Math.min(e.height-1,from.y+dy))};
       boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();
       announce(cursorAnnouncement(state.encounter,focusTile,routeAt(focusTile)));
-    }});
+    }})};
+  board.dataset.bound='true';
 }
 async function confirmCommand(){
   const c=command();

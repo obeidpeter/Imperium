@@ -6,16 +6,16 @@ import {HOLD_MS} from '../src/ui/touch-hold.js';
 // A board of 10 px tiles, 8 by 8, driven by real events through Node's EventTarget.
 function harness({threeD=false}={}) {
   const board = new EventTarget();board.isConnected = true;
-  const log = {hover: [], select: [], cancel: 0, step: [], activate: 0}, frames = [], timers = new Map();let next = 0, shown = null;
+  const log = {hover: [], select: [], cancel: 0, step: [], activate: 0}, frames = [], timers = new Map(), delays = [];let next = 0, shown = null;
   const input = bindBoardInput(board, {
     threeD, holdDelay: HOLD_MS, current: () => shown,
     pick: (x, y) => ({x: Math.floor(x / 10), y: Math.floor(y / 10)}), inside: p => p.x >= 0 && p.y >= 0 && p.x < 8 && p.y < 8,
     hover: point => {shown = point;log.hover.push(point);}, select: point => log.select.push(point), cancel: () => log.cancel++,
     step: delta => log.step.push(delta), activate: () => log.activate++,
-    frame: fn => frames.push(fn), timers: {setTimeout(fn) {timers.set(++next, fn);return next;}, clearTimeout(id) {timers.delete(id);}},
+    frame: fn => frames.push(fn), timers: {setTimeout(fn, delay) {delays.push(delay);timers.set(++next, fn);return next;}, clearTimeout(id) {timers.delete(id);}},
   });
   const fire = (type, props = {}) => {const event = Object.assign(new Event(type, {cancelable: true}), props);board.dispatchEvent(event);return event;};
-  return {board, input, log, fire, frames: () => {const all = frames.splice(0);for (const fn of all) fn();return all.length;},
+  return {board, input, log, fire, delays, frames: () => {const all = frames.splice(0);for (const fn of all) fn();return all.length;},
     hold: () => {const all = [...timers.values()];timers.clear();for (const fn of all) fn();return all.length;}, setShown: p => {shown = p;}};
 }
 const mouse = (x, y) => ({pointerType: 'mouse', clientX: x, clientY: y}), touch = (x, y) => ({pointerType: 'touch', clientX: x, clientY: y});
@@ -95,4 +95,12 @@ test('a disposed or detached board hears nothing more', () => {
   board.isConnected = true;fire('pointerdown', touch(34, 21));input.dispose();
   assert.equal(hold(), 0, 'Disposing clears a pending hold');
   fire('click', mouse(34, 21));fire('keydown', {key: 'Enter'});assert.deepEqual(log.select, []);assert.equal(log.activate, 0);
+});
+
+test('the board keeps its bindings through page updates and takes a changed touch preview delay', () => {
+  const {fire, input, delays} = harness();
+  fire('pointerdown', touch(5, 5));assert.deepEqual(delays, [HOLD_MS]);
+  input.configure({holdDelay: 900});fire('pointerdown', touch(5, 5));
+  assert.deepEqual(delays, [HOLD_MS, 900], 'The next hold waits for the new delay');
+  input.configure({});fire('pointerdown', touch(5, 5));assert.equal(delays.at(-1), 900, 'No setting leaves the delay as it is');
 });
