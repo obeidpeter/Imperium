@@ -55,7 +55,7 @@ const NOTICE_GLYPHS=['◔','◑','◕'];
 
 export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false}={}){
   const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
-  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null;
+  let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={};
   // One instanced draw each for friends' rings, enemies' rings and guard arcs.
   function footMarks(count){
     const material=color=>new T.MeshBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
@@ -94,6 +94,8 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     // While paused: what the soldier will do on resume, as a fainter line.
     setPlanned(next){planned=next;stage.wake();},
     setRanges(on){showRanges=!!on;stage.wake();},
+    // Marks over people's heads that the page decides (a camp's speech marks): {id: {text, color}}.
+    setMarks(next){marksOver={...(next??{})};stage.wake();},
     // Each tick's events, as the simulation emitted them.
     onEvents(events){
       const now=performance.now(),w=getWorld();
@@ -177,6 +179,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       });
       // Floating numbers ride the figures' labels.
       const shown={};for(const [id,f]of floating){if(now>f.until)floating.delete(id);else shown[id]={text:f.text,color:f.color};}
+      for(const [id,mark]of Object.entries(marksOver))if(!shown[id])shown[id]=mark;
       // An enemy's notice of the party: filling quarters while he wonders, ! once he knows (presentation of ai.notice only).
       const party=[w.heroId,...w.party];
       for(const a of w.actors){

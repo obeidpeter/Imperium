@@ -10,6 +10,7 @@ import {heroPortrait,speakerPortrait,chapterScene,promotionScene} from './art.js
 import {esc,roman,actionNames,companyPanel} from './view-helpers.js';
 import {skirmishControls} from '../core/controls-model.js';
 import {soldierCampCard} from './soldier-views.js';
+import {campFor,PLACE_NAMES,PLACE_HINTS,CAMP_PLACES} from '../data/camps.js';
 
 export function allocationDraftPreview(allocation={river:2,farms:2,town:2}){
   const river=Number(allocation?.river)||0,farms=Number(allocation?.farms)||0,town=Number(allocation?.town)||0,total=river+farms+town;
@@ -85,6 +86,36 @@ function camp(){
   const {state}=context(),ch=Game.getChapter(state),next=ch.encounters[state.encounterIndex];
   return `${header()}<main id="main" class="frame camp-page">${chapterHeading()}<div class="camp-grid"><div class="camp-primary"><figure class="camp-mural cinematic-mural"><img src="${chapterScene(state.chapter)}" width="768" height="430" decoding="async" alt="Painted impression of ${esc(ch.location)}"><figcaption class="mural-overlay"><p>${esc(ch.description)}</p></figcaption></figure><div class="camp-story">${careerBrief(state)}${story()}${voicedBriefing(state)}${warCouncilPanel(state)}${decisions()}${preparations()}${operationPlanning(state)}${deploymentPlanning(state)}${companyPreparation(state)}${veteranAcademy(state)}${relationshipLedger(state,{compact:true})}${practicePanel(state)}</div><section class="leadership-note"><p class="eyebrow">THE PEOPLE IN YOUR KEEPING</p><h3>The condition of your command</h3><p>${esc(Game.leadershipSummary(state))}</p>${state.chapter===10?Game.provinceSummary(state).map(line=>`<p>${esc(line)}</p>`).join(''):''}</section></div><aside class="camp-side camp-sidebar"><section class="sidebar-card orders-card"><div class="orders-heading"><p class="eyebrow">YOUR NEXT ENCOUNTER</p><h2>${esc(next?.title||'Advancement')}</h2></div><p>${esc(next?.objective||ch.objective)}</p><div class="start-block"><button class="primary full" data-cmd="start">${next?.kind==='contest'?'Enter the chamber':'Enter the field'} <span aria-hidden="true">→</span></button><p class="muted">Autosave before entering. Retry restores the complete encounter-start checkpoint.</p></div><div class="orders-requirements"><p class="eyebrow">EARN YOUR NEXT APPOINTMENT</p>${requirements()}<div class="objective-item"><span class="check" aria-hidden="true">${state.encounterIndex===ch.encounters.length?'✓':'○'}</span><span>Complete ${ch.encounters.length} encounters (${state.encounterIndex}/${ch.encounters.length})</span></div></div></section>${soldierCampCard(state)}${profile()}${commandRecord(state)}${reformLedger(state)}${quartermasterPanel(state)}${companyPanel(Game.companyRoster(state),state.progression?.specializations)}<section class="sidebar-card appointment-card"><p class="eyebrow">THE NEXT APPOINTMENT</p><h3>${esc(ch.promotion)}</h3><p class="briefing">${esc(ch.promotionMeaning)}</p><p>${esc(ch.reward)}</p><button class="text-link full" data-cmd="ledger">Obligations & relationships <span aria-hidden="true">→</span></button></section></aside></div></main>${footer()}`;
 }
+// The walkable camp (0.40, build brief §3.12): the camp scene, where the soldier
+// walks up to people and things, beside the list path to every one of them
+// (talk, the commander's table, the gate, the places), so nothing needs the scene.
+function realtimeCamp(){
+  const {state}=context(),ch=Game.getChapter(state),next=ch.encounters[state.encounterIndex],c=campFor(state.chapter),problem=Game.departureCheck(state);
+  const decided=state.decisions[ch.decision.id],visited=new Set(Game.campVisited(state));
+  const present=p=>(!p.requires||state.decisions?.[p.requires[0]]===p.requires[1])&&!(p.absentAfter&&state.decisions?.[p.absentAfter[0]]===p.absentAfter[1]);
+  const people=c.people.filter(present),talk=(tree,label)=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}">${esc(label)}</button>`;
+  return `${header()}<main id="main" class="frame camp-page realtime-camp" data-key="rt-camp:${state.chapter}">${chapterHeading()}
+    <div class="rt-camp-grid">
+      <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div>
+        <p class="rt-camp-note">Click a person to walk over and talk, a table or a gate to use it; M shows the camp’s places. The list beside the scene reaches everyone too.</p></div>
+      <aside class="camp-side camp-sidebar">
+        <section class="sidebar-card orders-card"><div class="orders-heading"><p class="eyebrow">YOUR NEXT ENCOUNTER</p><h2>${esc(next?.title||'Advancement')}</h2></div>
+          <p>${esc(next?.objective||ch.objective)}</p>
+          ${decided?'':`<p class="notice">The chapter’s decision waits at the commander’s table in the principia.</p>`}
+          ${state.chapter===1&&state.encounterIndex>=1&&!state.oath?`<p class="notice">Swear the oath at the standards before the field. `+
+            `<button class="text-link" data-cmd="conversation" data-id="ch1:signifer">Go to the signifer</button></p>`:''}
+          <div class="start-block"><button class="primary full" data-cmd="start" ${problem?'aria-describedby="rt-camp-problem"':''}>March out through the gate <span aria-hidden="true">→</span></button>
+          ${problem?`<p id="rt-camp-problem" class="muted">${esc(problem)}</p>`:'<p class="muted">Autosave before marching. Retry restores the complete encounter-start checkpoint.</p>'}</div>
+          <div class="orders-requirements"><p class="eyebrow">EARN YOUR NEXT APPOINTMENT</p>${requirements()}</div></section>
+        <section class="sidebar-card"><p class="eyebrow">IN CAMP</p><h3>${esc(c.title)}</h3>
+          <ul class="rt-camp-people">${people.map(p=>`<li><span><strong>${esc(p.name)}</strong> <small>${esc(PLACE_NAMES[p.place])}</small></span>${talk(p.talk,'Talk')}</li>`).join('')}
+            <li><span><strong>The commander’s table</strong> <small>Principia</small></span>${talk('table',decided?'Consult':'Decide')}</li></ul>
+          <h4>Places</h4><ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(PLACE_NAMES[id])} <small>${esc(PLACE_HINTS[id])}</small></span>`+
+            `<button class="text-link" data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>Go</button></li>`).join('')}</ul></section>
+        ${soldierCampCard(state)}${practicePanel(state)}
+      </aside>
+    </div></main>${footer()}`;
+}
 function promotion(){
   const {state}=context(),ch=Game.getChapter(state),missing=Game.chapterRequirements(state).filter(r=>!r.done);
   const tier=ch.id<=3?'field':ch.id<=6?'legion':ch.id<=9?'command':ch.id===10?'civil':ch.id===11?'senate':'threshold';
@@ -101,5 +132,5 @@ function ending(){
   return `${header()}<main id="main" class="cinematic-page"><section class="promotion cinematic-promotion ceremony-imperial" aria-labelledby="accession-title"><div class="ceremony-scene accession-scene" data-ceremony="accession" aria-hidden="true"><img src="./assets/scenes/accession.webp" alt="" width="768" height="432"></div><div class="accession-heading"><p class="eyebrow">THE OATH RETURNS · AD CCLXXVI</p><p class="ceremony-kicker">IMPERATOR CAESAR</p><h1 id="accession-title">${esc(state.name)}</h1><p class="caps">Augustus · Emperor of the Romans</p></div><div class="accession-oath"><img class="promotion-art" src="${heroPortrait('Augustus')}" width="400" height="400" alt="${esc(state.name)} in imperial purple"><div><img class="ceremony-seal" src="./assets/portraits/oath-seal.webp" width="256" height="256" alt="The same lead seal, carried from the first oath"><blockquote>“${esc(OATH)}”</blockquote><p>The same words you spoke as a recruit now rise from a thousand throats. Beneath the purple, the lead seal rests against your heart.</p><p class="mentor-lesson"><em>${esc(MENTOR_LESSON)}</em></p></div></div><div class="ceremony-advance"><button data-cmd="share">Create your reign card →</button></div></section><section class="epilogue cinematic-epilogue" aria-label="Your reign and legacy">${parts.map(p=>`<article><div class="eyebrow">THE LEGACY OF YOUR CHOICES</div><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p></article>`).join('')}</section><section class="frame epilogue-service-record" aria-label="Imperial service and company record"><article class="sidebar-card"><div class="eyebrow">IMPERIAL ARCHIVE · SERVICE SUMMARY</div><h3>Twelve chapters from the Danube to the Palatine</h3><p>${history.length} challenges completed in ${turns} total turns (${battles} field battles · ${contests} political chambers). Final standing: Army Loyalty ${state.meters.army}, Political Backing ${state.meters.political}, Public Confidence ${state.meters.public}${honoured?` · ${honoured} pledges & agreements honoured`:''}.</p><p>${esc(Game.leadershipSummary(state))}</p></article>${companyPanel(Game.companyRoster(state),state.progression?.specializations)}${archivePanel}</section><div class="frame legacy-actions"><button data-cmd="journal">Read the full chronicle</button><button data-cmd="export">Keep a save code</button></div></main>${footer()}`;
 }
 
-return {header,footer,titleView,campaignStrip,chapterHeading,meters,requirements,profile,getLines,story,camp,promotion,ending};
+return {header,footer,titleView,campaignStrip,chapterHeading,meters,requirements,profile,getLines,story,camp,realtimeCamp,promotion,ending};
 }

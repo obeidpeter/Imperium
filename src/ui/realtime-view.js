@@ -4,6 +4,8 @@ import {ITEMS} from '../data/items.js';
 import {TP} from '../data/soldier.js';
 import {TIME} from '../data/realtime-rules.js';
 import {actionLabel} from './action-map.js';
+import {campFor} from '../data/camps.js';
+import {DEFEAT_PAGES} from '../data/dialogue.js';
 
 // The page around a real-time encounter (build brief §3.14–§3.16). The field
 // itself (the scene, its HUD and the battle log) is placed by the page's
@@ -28,16 +30,17 @@ export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveCo
 
 // The live field's own DOM: built once per fight by the page, then owned by
 // the field runtime (src/showcase/realtime-field.js) through its data-role names.
-export function fieldMarkup({state,keymap}){
-  const e=state.encounter,chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
-  return `<section class="rt-field" data-live data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, in real time">
+export function fieldMarkup({state,keymap,kind='field'}){
+  const camp=kind==='camp',chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
+  const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:'Talk to people, use what you find, and march out through the gate.'}:state.encounter;
+  return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, in real time">
   <div class="rt-scene">
     <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys"
       aria-label="${esc(e.title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses."></canvas>
     <p id="rt-keys" class="visually-hidden">Arrow keys move your soldier. ${key('target_next_enemy')} chooses the next enemy or thing to use, Enter acts on it, E uses what is nearest.
       ${key('combat_toggle')} draws or sheathes. 1 to 7 choose an ability; the same number again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
       ${key('step_round')} plays one round while paused. [ and ] change the companion you control; Home returns to your soldier. Escape opens the Menu.</p>
-    <div class="rt-veil" role="status" aria-live="polite"><p>Preparing the battlefield…</p></div>
+    <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':'Preparing the battlefield…'}</p></div>
     <header class="rt-top">
       <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2>
         <p data-role="objective">${esc(e.objective??'')}</p><p class="rt-progress" data-role="progress"></p></div>
@@ -110,7 +113,8 @@ export function realtimeResult(state){
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
     <span class="eyebrow">${won?'OBJECTIVE ACHIEVED · AFTER-ACTION CHRONICLE':'A CHANCE TO REGROUP'}</span>
     <h2 id="rt-result-title">${won?'The day is yours.':'The field is lost.'}</h2>
-    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><p class="rt-defeat-help">${esc(defeatHelp(world))}</p>`}
+    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p>${DEFEAT_PAGES[e.id]?`<blockquote class="rt-defeat-page"><span class="eyebrow">How history remembers the day</span>`+
+      `<p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote>`:''}<p class="rt-defeat-help">${esc(defeatHelp(world))}</p>`}
     <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
     ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
     ${search}

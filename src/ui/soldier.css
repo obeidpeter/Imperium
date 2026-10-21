@@ -31,3 +31,5 @@
 .soldier-card kbd{font:600 .7rem system-ui;border:1px solid currentColor;border-radius:.2rem;padding:0 .25rem;opacity:.7}
 @media (max-width:760px){.kit-panel,.chronicle-page{grid-template-columns:1fr}.kit-place{grid-template-columns:1fr auto}.kit-place-name{grid-column:1/-1}
   .pack-grid{grid-template-columns:repeat(var(--cols),minmax(1.9rem,1fr))}}
+.chronicle-passage summary{cursor:pointer;font-weight:650;min-block-size:2.75rem;display:flex;align-items:center}
+.chronicle-voice{font-weight:700;margin-inline-end:.3rem}

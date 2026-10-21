@@ -1,6 +1,6 @@
 import {ABILITIES,ITEMS,MISSILES,MOVEMENT,REASONS,TIME} from '../../data/realtime-rules.js';
 import {splitStreams} from './rng-streams.js';
-import {clampToMap,findRoute,navGrid} from './navigation.js';
+import {cellCentre,clampToMap,findRoute,navGrid,nearestWalkable} from './navigation.js';
 import {weaponOf} from './combat.js';
 import {actorById,distanceBetween,hostile,liftable,staggered,validate} from './abilities.js';
 import {decideEnemy,decidesThisTick,perceive} from './ai.js';
@@ -80,6 +80,8 @@ export function commandProblem(world,command){
     case 'control':return actor.id===world.controlled?'ALREADY_CONTROLLED':null;
     case 'setStanding':return Array.isArray(p.slots)&&p.slots.length<=4&&p.slots.every(s=>!slotProblem(s))?null:'NO_TARGET';
     case 'setKit':return Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
+    // Camps only: the map's travel to a place already walked to (no fight, no clock).
+    case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     case 'stop':case 'setDrawn':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
     default:return 'NO_TARGET';
@@ -162,6 +164,11 @@ function applyCommand(world,command){
     case 'setStanding':actor.standing=p.slots.map(s=>[...s]);actor.standingSlot=-1;break;
     case 'setKit':actor.kit=[...p.kit];if(p.effects)actor.effects={...p.effects};break;
     case 'warCry':emit(world,{kind:'war-cry',actorId:actor.id});break;
+    case 'travel':{
+      const grid=navGrid(world.map),c=clampToMap(grid,p),i=nearestWalkable(grid,c.x,c.z),at=i>=0?cellCentre(grid,i):c;
+      cancelAction(world,actor);actor.order=null;actor.lock=null;actor.path=[];actor.gait=null;actor.moving=false;
+      actor.x=actor.px=at.x;actor.z=actor.pz=at.z;emit(world,{kind:'travel',actorId:actor.id});break;
+    }
     // Spoils are staged with the fight; the soldier's pack receives them only when the result is recorded.
     case 'take':{
       const body=actorById(world,p.targetId);
@@ -248,7 +255,8 @@ export function step(world){
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
     act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);settleLocks(world);regenerate(world);perceive(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
-    if(world.mission)missionTick(world);else checkObjectives(world);
+    // A camp has no objective and never ends.
+    if(world.mission)missionTick(world);else if(world.kind!=='camp')checkObjectives(world);
   }else world.projectiles=[];
   if((world.tick+1)%TIME.roundTicks===0)emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
   writeLog(world);world.tick++;

@@ -34,7 +34,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='';
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={};
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
   const me=()=>actorById(world,world.controlled);
@@ -428,7 +428,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function resetPresenter(){
     presenter?.dispose();if(!stage)return;
     presenter=createLivePresenter(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
-    stage.setLive(presenter);presenter.setRanges(ranges);
+    stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);
   }
   buildParty();buildAbilityBar();renderLog();bind();applyOptions();updateHud(0);
   return {
@@ -450,6 +450,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();},
     issue,act,say,follow,takeControl,toggleList,
+    setMarks(next){marks=next??{};presenter?.setMarks(marks);},
     snapshot:()=>snapshotWorld(world),
     dispose(){
       disposed=true;input?.dispose();presenter?.dispose();stage?.setLive(null);

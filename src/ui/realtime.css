@@ -10,7 +10,7 @@
 .rt-veil{position:absolute;inset:0;display:grid;place-items:center;background:#141a17;font-size:1.05rem;z-index:5;transition:opacity .4s;padding:1rem;text-align:center}
 .rt-scene[data-ready="true"] .rt-veil{opacity:0;pointer-events:none}
 /* The field shares the arena's markup: its hidden text and its dark controls over the scene. */
-.realtime-frame .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.realtime-frame .visually-hidden,.rt-field .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .rt-field button{min-block-size:2.75rem;min-inline-size:2.75rem;padding:.45rem .8rem;border:1px solid var(--rt-line);border-radius:.4rem;background:#29312a;color:#f4ead5;
   font:inherit;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:none;text-transform:none;letter-spacing:normal}
 .rt-field button:hover:not(:disabled){background:#354032;border-color:var(--rt-bronze)}
@@ -86,3 +86,22 @@
 .rt-list li{display:grid;grid-template-columns:minmax(10rem,1fr) 2fr auto;gap:.6rem;align-items:center;border-block-end:1px solid #ffffff14;padding-block:.15rem}
 .rt-list small{color:var(--rt-muted);font-size:.82rem}
 @media (max-width:760px){.rt-list li{grid-template-columns:1fr auto}.rt-list small{grid-column:1/-1;grid-row:2}}
+/* The walkable camp: the scene beside its list path. Camps have no clock and nothing to fight. */
+.rt-camp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(17rem,22rem);gap:1rem;align-items:start}
+.rt-camp-scene .rt-scene{block-size:min(72vh,46rem);block-size:min(72dvh,46rem)}
+.rt-camp-note{color:var(--muted,#666);font-size:.9rem;margin:.4rem .2rem}
+.rt-field[data-kind="camp"] .rt-clock,.rt-field[data-kind="camp"] .rt-time [data-role="slowButton"],.rt-field[data-kind="camp"] .rt-time [data-role="stepButton"],
+.rt-field[data-kind="camp"] .rt-ability-bar,.rt-field[data-kind="camp"] .rt-current,.rt-field[data-kind="camp"] [data-role="swordsButton"],
+.rt-field[data-kind="camp"] [data-role="forceButton"],.rt-field[data-kind="camp"] [data-role="rangesButton"],.rt-field[data-kind="camp"] .rt-log-panel{display:none}
+.rt-camp-people,.rt-camp-places{list-style:none;margin:0;padding:0;display:grid;gap:.2rem}
+.rt-camp-people li,.rt-camp-places li{display:flex;justify-content:space-between;align-items:center;gap:.6rem;min-block-size:2.75rem;border-block-end:1px solid var(--line,#e2dccb)}
+.rt-camp-people small,.rt-camp-places small{display:block;color:var(--muted,#666);font-size:.8rem}
+/* Conversations: replies by number; one that needs more is dimmed with what it needs. */
+.dialogue-text{font-size:1.05rem;line-height:1.6}
+.dialogue-options{list-style:none;margin:.8rem 0 0;padding:0;display:grid;gap:.35rem}
+.dialogue-option{inline-size:100%;justify-content:flex-start;text-align:start;display:flex;flex-wrap:wrap;gap:.4rem;align-items:baseline}
+.dialogue-option kbd{font:600 .75rem system-ui;border:1px solid currentColor;border-radius:.2rem;padding:0 .3rem;opacity:.8}
+.dialogue-option small{flex-basis:100%;color:var(--muted,#666)}
+.dialogue-option.is-dimmed{opacity:.6}.dialogue-needs{font-weight:700}
+@media (max-width:900px){.rt-camp-grid{grid-template-columns:1fr}}
+.rt-defeat-page{margin:.6rem 0;padding:.6rem .9rem;border-inline-start:3px solid var(--bronze,#b08a3c);background:#00000008}.rt-defeat-page p{margin:.2rem 0 0;font-style:italic}

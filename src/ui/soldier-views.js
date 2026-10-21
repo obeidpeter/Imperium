@@ -9,6 +9,8 @@ import {summarizeOrders} from '../core/realtime/party.js';
 import {missionProgress} from '../core/realtime/mission.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
+import {TRADER_STOCK} from '../data/camps.js';
+import {errandList} from '../core/dialogue.js';
 
 // The soldier's panels (guide "Your soldier", build brief §3.12–§3.13): kit
 // (I), character (C), decorations and titles (A), company and standing orders
@@ -170,22 +172,30 @@ export function adoptPanel(state){
 export function missionOrdersPanel(state,{world=null,requirements=''}={}){
   const chapter=CHAPTERS.find(c=>c.id===state.chapter),e=state.encounter,m=world?.mission;
   const objective=m?.objective??m?.label??e?.objective??chapter?.objective??'';
-  const errands=Object.entries(state.soldier?.errands??{}).filter(([,v])=>v&&v!=='done');
+  const errands=errandList(state).filter(e=>e.stage!=='done');
   return `<div class="mission-orders"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p>
     <h3>${esc(e?.title??chapter?.title??'')}</h3><p>${esc(objective)}</p>${world?`<p><strong>${esc(missionProgress(world))}</strong></p>`:''}
     <h3>To demonstrate this chapter</h3><div class="journal-requirements">${requirements}</div>
-    <h3>Errands</h3>${errands.length?`<ul>${errands.map(([id,stage])=>`<li>${esc(id.replace(/[-_]/g,' '))}: ${esc(String(stage))}</li>`).join('')}</ul>`:'<p>No errands in hand.</p>'}</div>`;
+    <h3>Errands</h3>${errands.length?`<ul>${errands.map(e=>`<li><strong>${esc(e.title)}</strong> (${esc(e.giver)}): ${esc(e.summary)}</li>`).join('')}</ul>`:'<p>No errands in hand.</p>'}</div>`;
 }
-// L: the story so far, a page for each chapter reached: its painting, the decision taken and the battles recorded.
+// L: the story so far, a page for each chapter reached: its painting, the camp's passages (the
+// chapter's opening, and its close once completed), the decision taken and the battles recorded.
+// Lines that taught the 0.38 turn controls are left out: the pages are the story, not instructions.
+const TURN_LESSON=/\b(tiles?|turns?|tokens?|select an action|then confirm|command capacity)\b/i;
+const present=(state,line)=>!line.when||(line.when==='comradeAlive'?state.decisions?.ch2!=='leave':line.when==='comradeAbsent'?state.decisions?.ch2==='leave':true);
 export function chroniclePanel(state){
-  const reached=CHAPTERS.filter(c=>c.id<=state.chapter);
+  const reached=CHAPTERS.filter(c=>c.id<=state.chapter),lines=(c,list)=>(list??[]).filter(l=>present(state,l)&&!TURN_LESSON.test(l.text));
   return `<div class="chronicle-pages">${reached.map(c=>{
     const choice=c.decision?c.decision.options.find(o=>o.id===state.decisions?.[c.decision.id]):null;
-    const fought=(state.history??[]).filter(h=>h.chapter===c.id);
+    const fought=(state.history??[]).filter(h=>h.chapter===c.id),done=(state.completed??[]).includes(c.id);
+    const passage=list=>list.map(l=>`<p><span class="chronicle-voice">${esc(l.speaker)}</span> ${esc(l.text)}</p>`).join('');
     return `<article class="chronicle-page"><img src="${esc(chapterScene(c.id))}" alt="" width="320" height="180" loading="lazy">
       <div><p class="eyebrow">Chapter ${roman(c.id)} · ${esc(c.year)} · ${esc(c.location??'')}</p><h3>${esc(c.title)}</h3>
-      ${choice?`<p><strong>Your choice:</strong> ${esc(choice.label)}</p>`:''}
-      ${fought.length?`<ul>${fought.map(h=>`<li>${esc(h.title??h.id)}</li>`).join('')}</ul>`:c.id===state.chapter?'<p>This page is still being written.</p>':''}</div></article>`;
+      <details class="chronicle-passage" ${c.id===state.chapter&&!done?'open':''}><summary>The chapter opens</summary>${passage(lines(c,c.intro))}</details>
+      ${choice?`<p><strong>Your choice:</strong> ${esc(choice.label)}. ${esc(choice.consequence??'')}</p>`:''}
+      ${fought.length?`<ul>${fought.map(h=>`<li>${esc(h.title??h.id)}</li>`).join('')}</ul>`:''}
+      ${done?`<details class="chronicle-passage"><summary>The chapter closes</summary>${passage(lines(c,c.aftermath))}</details>`:c.id===state.chapter?'<p>This page is still being written.</p>':''}
+      </div></article>`;
   }).join('')}</div>`;
 }
 
@@ -203,4 +213,16 @@ export function soldierCampCard(state){
     ${link('kit','Kit and pack','I')}${link('character','Character and training','C')}${link('decorations','Decorations and titles','A')}
     ${link('company','Company and standing orders','R')}${link('quartermaster','The quartermaster','')}
     ${trainers.map(t=>link('trainer',`${t.name}, ${t.title.replace(/ \(.*\)$/,'')}`,'',t.id)).join('')}</section>`;
+}
+
+// The canabae's sutler: her goods for coin, and she buys what you took from the field.
+export function traderPanel(state){
+  const s=state.soldier;if(!s)return adoptPanel(state);
+  const elo=soldierAttributes(s).elo,stock=TRADER_STOCK[state.chapter]??[];
+  const goods=stock.map(id=>{const price=priceOf(id,elo);return `<li><span><strong>${esc(ITEMS[id].name)}</strong> <small>${esc(itemSummary(id))}</small></span>`+
+    `${button('buy',`Buy (${price} d)`,{item:id,from:'trader'},{disabled:s.denarii<price,title:s.denarii<price?`Needs ${price} denarii.`:''})}</li>`;}).join('');
+  const sell=s.pack.filter(e=>!ITEMS[e.id].keep&&ITEMS[e.id].kind!=='quest').map(e=>`<li><span>${esc(ITEMS[e.id].name)}</span>`+
+    `${button('sell',`Sell (${priceOf(e.id,elo,{selling:true})} d)`,{uid:e.uid})}</li>`).join('');
+  return `<div class="quartermaster-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>.</p><h3>Her goods</h3><ul class="shop-list">${goods||'<li>Nothing for sale.</li>'}</ul>
+    <h3>Sell to her</h3>${sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>'}</div>`;
 }

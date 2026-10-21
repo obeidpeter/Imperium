@@ -20,6 +20,8 @@ export function makeActor(spec){
     hidden:!!spec.hidden,practice:!!spec.practice,officer:!!spec.officer,mounted:!!spec.mounted,faction:spec.faction??null,
     veteranId:spec.veteranId??null,unitId:spec.unitId??null,loot:spec.loot?[...spec.loot]:[],pace:spec.pace??null,
     escort:spec.escort?{escorted:!!spec.escort.escorted,wounded:!!spec.escort.wounded}:null,
+    // Someone to talk to: the conversation the page opens when the soldier reaches him.
+    talk:spec.talk?{tree:String(spec.talk.tree)}:null,
     standing:side!=='enemy'&&spec.standing?spec.standing.map(s=>[...s]):null,standingSlot:-1,
     // Enemies think for themselves (§3.10); a friend does only when his spec asks (a test or a benchmark).
     ai:(spec.ai??side==='enemy')?{state:spec.alert?'engage':'idle',slot:-1,dx:0,dz:0,notice:{},group:spec.group??'band',role:spec.role??'infantry',

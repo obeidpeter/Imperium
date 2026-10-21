@@ -139,10 +139,14 @@ function lootFor(role,index,chapter){
   return out;
 }
 function heroSpec(state,unit,k){
-  const s=soldierOf(state),extra=Math.max(0,(unit.ammo??3)-3),belt=wornIds(s).map(id=>ITEMS[id]?.belt).find(Boolean)??{};
+  return {...soldierSpec(state,{at:pos(unit,k),extraPila:Math.max(0,(unit.ammo??3)-3)}),unitId:'hero'};
+}
+// The soldier as the rules see him in any world (a battle or a camp): his attributes, worn kit, courses and techniques.
+export function soldierSpec(state,{at,face=[1,0],extraPila=0}={}){
+  const s=soldierOf(state),belt=wornIds(s).map(id=>ITEMS[id]?.belt).find(Boolean)??{};
   return {id:'hero',name:state.name,side:'player',role:'soldier',path:s.path,attributes:soldierAttributes(s),kit:wornIds(s),effects:courseEffects(s.courses),
-    abilities:knownAbilities(state),ammo:{...Object.fromEntries(Object.entries(belt).map(([kind,n])=>[kind,n+(kind==='pilum'?extra:0)]))},bandages:BANDAGES_PER_ENCOUNTER,
-    at:pos(unit,k),face:[1,0],unitId:'hero',standingPreset:'soldier',drawn:false};
+    abilities:knownAbilities(state),ammo:{...Object.fromEntries(Object.entries(belt).map(([kind,n])=>[kind,n+(kind==='pilum'?extraPila:0)]))},bandages:BANDAGES_PER_ENCOUNTER,
+    at,face,standingPreset:'soldier',drawn:false};
 }
 function companionSpec(state,id,at,{side='ally',unitId=null,preset=null}={}){
   const profile=COMPANIONS[id],worn=companionWorn(state,id),kit=Object.keys(worn).sort().map(p=>worn[p]),belt=kit.map(i=>ITEMS[i]?.belt).find(Boolean)??{};

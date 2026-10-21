@@ -26,6 +26,9 @@ import {createEncounterWorld,applyRealtimeOutcome,realtimeMissionSupported} from
 import {snapshotWorld,restoreWorld} from './realtime/simulation.js';
 import {validateWorld} from './realtime/validate.js';
 import {ITEMS as REALTIME_ITEMS} from '../data/items.js';
+import {dialogueNode,reply as dialogueReply,errandList,hasNews} from './dialogue.js';
+import {campFor,CAMP_PLACES} from '../data/camps.js';
+import {createCampWorld,placeAt as campPlaceAt} from './realtime/camp-world.js';
 import {commitOperationResult} from './progression-operations.js';
 import {commitAgreements,negotiateAgreement as makeAgreement} from './progression-politics.js';
 export {veteranTraining,specializeVeteran,veteranRank,companionCallout,VETERAN_RANKS} from './progression-veterans.js';
@@ -89,6 +92,57 @@ export function resolveRealtime(state,world){
 }
 // The soldier's kit, training, purse and companions' orders (soldier.js): camp commands, each legal or refused unchanged.
 export function soldierCommand(state,command){if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');return soldierAct(state,command);}
+// ——— The walkable camp (build brief §3.12) ———
+export {errandList,createCampWorld,campPlaceAt};
+export const campHasNews=(state,treeId)=>treeId==='table'?!state.decisions[getChapter(state).decision.id]:treeId==='gate'?false:hasNews(state,treeId);
+// Why the column cannot march out now, or null (the 0.38 departure rules, unchanged).
+export function departureCheck(state){
+  if(state.phase!=='camp')return 'Return to camp first.';const chapter=getChapter(state),data=chapter.encounters[state.encounterIndex];
+  if(!data)return 'No encounter remains. Complete the promotion requirements.';
+  return unmetPreparation(state,data,{})||departureProblem(state)||operationalDepartureProblem(state)||fieldApproachProblem(state)||null;
+}
+// A conversation node: the data trees (core/dialogue.js), and the two the chapter builds — the commander's table and the gate.
+export function campConversation(state,treeId,nodeId=null){
+  if(treeId==='table')return tableConversation(state);
+  if(treeId==='gate')return gateConversation(state);
+  return dialogueNode(state,treeId,nodeId);
+}
+function tableConversation(state){
+  const d=getChapter(state).decision,picked=state.decisions[d.id],council={text:'Consult the War Council.',next:null,needs:[],preview:[],open:'council'};
+  if(picked){const o=d.options.find(x=>x.id===picked);
+    return {treeId:'table',nodeId:'decided',speaker:'The commander’s table',text:`${d.prompt} Your decision is recorded: ${o.label}. ${o.consequence??o.description}`,
+      options:[{index:0,...council},{index:1,text:'Leave the table.',next:null,needs:[],preview:[]}]};}
+  const meters=e=>Object.entries({army:'Army Loyalty',political:'Political Backing',public:'Public Confidence',supplies:'supplies'}).filter(([k])=>e?.[k])
+    .map(([k,name])=>`${e[k]>0?'+':''}${e[k]} ${name}`);
+  return {treeId:'table',nodeId:'decide',speaker:'The commander’s table',text:d.prompt,options:[
+    ...d.options.map((o,index)=>({index,text:`${o.label}: ${o.description}`,next:null,needs:[],decision:o.id,
+      preview:[...meters(o.effects),...(o.obligation?[`owed to ${o.obligation.to}, due Chapter ${o.obligation.due}`]:[])]})),
+    {index:d.options.length,...council},{index:d.options.length+1,text:'Not yet.',next:null,needs:[],preview:[]}]};
+}
+function gateConversation(state){
+  const data=getChapter(state).encounters[state.encounterIndex],problem=departureCheck(state);
+  return {treeId:'gate',nodeId:'gate',speaker:'The camp gate',text:data?`${data.title}. ${data.objective}`:'The column waits for your promotion.',
+    options:[...(data?[{index:0,text:`March out: ${data.title}`,next:null,needs:problem?[problem]:[],preview:[],open:'march'}]:[]),{index:1,text:'Not yet.',next:null,needs:[],preview:[]}]};
+}
+// Choose a reply in camp: { ok, message, next, open }. Refused replies change nothing.
+export function campReply(state,{treeId,nodeId=null,index}={}){
+  if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');
+  if(state.phase!=='camp')return result(false,'Conversations in camp wait until you are back in camp.');
+  if(treeId==='table'||treeId==='gate'){
+    const o=campConversation(state,treeId).options.find(x=>x.index===index);if(!o)return result(false,'That reply is not open now.');
+    if(o.needs.length)return result(false,o.needs.join(' '));
+    if(o.decision){const r=choose(state,o.decision);return r.ok?{...r,next:null,open:null}:r;}
+    return {ok:true,message:'',next:null,open:o.open??null};
+  }
+  return dialogueReply(state,{treeId,nodeId,index},{choose,swearOath});
+}
+// The places of this chapter's camp the soldier has walked to (the map fast-travels to them).
+export function campVisit(state,place){
+  if(state.phase!=='camp'||!state.soldier||!campFor(state.chapter)||!CAMP_PLACES.includes(place))return result(false,'No such place in this camp.');
+  const key=`visited:${state.chapter}:${place}`;if(state.soldier.flags[key])return result(false,'Already visited.');
+  state.soldier.flags[key]=true;return result(true,`${place} visited.`);
+}
+export const campVisited=state=>CAMP_PLACES.filter(p=>state.soldier?.flags?.[`visited:${state.chapter}:${p}`]);
 // After a won fight the field can still be searched: what the fallen carried
 // joins the staged spoils, which the pack receives only when the result is recorded.
 export function takeSpoils(state,{bodyId,items}={}){

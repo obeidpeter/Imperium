@@ -21,9 +21,12 @@ import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
 import {DEFAULT_KEYMAP} from './action-map.js';
 import {ITEMS} from '../data/items.js';
 import {TRAINERS} from '../data/soldier.js';
+import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
+import {practicePanel} from './command-edition-views.js';
+import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
 import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,quartermasterPanel,trainerPanel,
-  adoptPanel,missionOrdersPanel,chroniclePanel} from './soldier-views.js';
+  adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -86,7 +89,7 @@ const graphics=createGraphicsQuality({mode:settings.quality,
     if(reason==='measured-cost')announce(`Graphics `+
   `changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);
   }});
-const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
+const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
@@ -169,9 +172,11 @@ function render(){
   // A new screen starts afresh; within one, the page is updated in place, so the
   // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
   if(newView)app.replaceChildren();
-  updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
+  updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
+    :campMode()?realtimeCamp():camp());
   soundscape.update(state,screen);
-  if(screen!=='title'&&Game.isRealtime(state))mountField();
+  const target=fieldTarget();
+  if(target)mountField(target);
   else if(uses3D()){
     const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,
       commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));
@@ -184,7 +189,7 @@ function render(){
         holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,
         onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});
   }else battleStage.release();
-  if(field&&!(screen!=='title'&&Game.isRealtime(state)))disposeField();
+  if(field&&!target)disposeField();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
   if(ceremony3D)ceremony.mount(ceremonyHost,
     {kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
@@ -203,22 +208,115 @@ function mountPainting(){
 // (pause, a hidden page, F2) or resolved. ———
 let field=null;
 const fieldSource=()=>state?.encounter?.realtime?.world??null;
-function mountField(){
-  const host=document.querySelector('#rt-host'),e=state.encounter;if(!host)return;
-  if(field&&(field.encounterId!==e.id||!field.element.isConnected))disposeField();
+// A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
+function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter)
+  &&settings.battleView!=='2d'&&!failed3D;}
+// What the page's field shows now: a real-time fight, a walkable camp, or nothing.
+function fieldTarget(){
+  if(screen==='title'||!state)return null;
+  if(Game.isRealtime(state))return {kind:'field',key:`fight:${state.encounter.id}`};
+  if(campMode())return {kind:'camp',key:`camp:${state.chapter}:${state.encounterIndex}:${state.decisions[Game.getChapter(state).decision.id]??''}`};
+  return null;
+}
+// The stage's encounter for a camp: its fine map, nothing to fight.
+function campBase(world){
+  const c=campFor(state.chapter);
+  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:'Walk the camp: talk to people, then march out through the gate.',
+    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day'};
+}
+function mountField(target){
+  const host=document.querySelector('#rt-host');if(!host)return;
+  if(field&&(field.kind!==target.kind||!field.element.isConnected||(target.kind==='field'&&field.key!==target.key)))disposeField();
   if(field){
-    // A retry or a load brings another fight here: the same field plays it.
-    if(field.runtime&&field.source!==fieldSource()){field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),e);}
+    if(field.runtime&&target.kind==='field'&&field.source!==fieldSource()){
+      // A retry or a load brings another fight here: the same field plays it.
+      field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),state.encounter);
+    }else if(field.runtime&&target.kind==='camp'&&field.key!==target.key){
+      // The camp changed (a decision, another encounter ahead): the same field walks the new one, from where the soldier stands.
+      const was=field.runtime.world.actors.find(a=>a.id==='hero'),next=Game.createCampWorld(state),hero=next.actors.find(a=>a.id==='hero');
+      if(was&&field.chapter===state.chapter)Object.assign(hero,{x:was.x,z:was.z,px:was.x,pz:was.z,fx:was.fx,fz:was.fz});
+      field.key=target.key;field.chapter=state.chapter;field.runtime.load(next,campBase(next));refreshCampMarks();
+    }
     mountFieldStage();return;
   }
-  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap:DEFAULT_KEYMAP}));
-  const element=host.querySelector('.rt-field'),ticket={};field={ticket,encounterId:e.id,source:fieldSource(),element,runtime:null};
+  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap:DEFAULT_KEYMAP,kind:target.kind}));
+  const element=host.querySelector('.rt-field'),ticket={};
+  field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
   import('../showcase/realtime-field.js').then(({createRealtimeField,fieldDom})=>{
     if(field?.ticket!==ticket||!element.isConnected)return;
-    field.runtime=createRealtimeField({dom:fieldDom(element),world:Game.realtimeWorld(state),base:state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
-      holdDelay:()=>settings.holdDelay??450,callbacks:fieldCallbacks()});
-    mountFieldStage();element.querySelector('canvas')?.focus({preventScroll:true});
+    const camp=target.kind==='camp',world=camp?Game.createCampWorld(state):Game.realtimeWorld(state);
+    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
+      holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():fieldCallbacks(),kind:camp?'camp':'field'});
+    mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
+}
+function startCampaignEncounter(){
+  return change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
+    ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});
+}
+// ——— Camp: conversations, places and the people with something new to say. ———
+function campCallbacks(){
+  return {
+    onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
+    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
+    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>noteVisit(world)
+  };
+}
+function noteVisit(world){
+  const place=Game.campPlaceAt(world);if(!place||!state.soldier||Game.campVisited(state).includes(place)||sessionGate.busy)return;
+  change(()=>Game.campVisit(state,place),{tone:null,silent:true});
+}
+// A speech mark over everyone whose conversation offers something new: an errand, a decision, the oath or a reward.
+function refreshCampMarks(){
+  const world=field?.runtime?.world;if(!world||field.kind!=='camp')return;const marks={};
+  for(const a of world.actors.filter(x=>x.talk))if(Game.campHasNews(state,a.talk.tree))marks[a.id]={text:'“',color:'#f1d38a'};
+  field.runtime.setMarks(marks);
+}
+let conversation=null;
+function showConversation(treeId,nodeId=null){
+  const view=Game.campConversation(state,treeId,nodeId);if(!view){toast('No one answers.');return;}
+  conversation={treeId,nodeId:view.nodeId};
+  showModal(view.speaker,`<p class="dialogue-text">${esc(view.text)}</p><ol class="dialogue-options" aria-label="Replies: press a number">`+
+    view.options.map((o,i)=>`<li><button class="dialogue-option ${o.needs.length?'is-dimmed':''}" data-cmd="reply" data-id="${o.index}" ${o.needs.length?'aria-disabled="true"':''}>`+
+      `<kbd>${i+1}</kbd> ${o.needs.length?`<span class="dialogue-needs">[${esc(o.needs.join(', '))}]</span> `:''}<span>${esc(o.text)}</span>`+
+      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>');
+  modal.dataset.conversation=treeId;
+}
+async function replyConversation(index){
+  if(!conversation)return;const {treeId,nodeId}=conversation;
+  const view=Game.campConversation(state,treeId,nodeId),option=view?.options.find(o=>o.index===index);
+  if(option?.needs.length){toast(`Needs ${option.needs.join(', ')}.`);return;}
+  let outcome=null;
+  await change(()=>{outcome=Game.campReply(state,{treeId,nodeId,index});return outcome;},{tone:'click',silent:true,afterRender:()=>{
+    if(!outcome?.ok)return;refreshCampMarks();
+    if(outcome.open){modal.close();followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    if(outcome.message)toast(outcome.message);
+  }});
+}
+// What a reply opens next: a panel, the War Council, the practice post, or the march.
+function followUp(open){
+  if(open==='march'){startCampaignEncounter();return;}
+  if(open==='council'){showCouncil();return;}
+  if(open==='practice'){showModal('Practice completed encounters',practicePanel(state)||'<p>No completed encounter to practise yet.</p>');return;}
+  if(open.startsWith('trainer:')){showSoldierPanel('trainer',open.slice(8));return;}
+  showSoldierPanel(open);
+}
+function showCouncil(){
+  const voices=warCouncilAdvisories(state);
+  showModal('The War Council',(voices.length?voices.map(a=>`<article class="war-council-card"><div><span class="eyebrow">${esc(a.role)} · ${esc(a.focus)}</span>`+
+    `<h4>${esc(a.name)}</h4><blockquote>“${esc(a.quote)}”</blockquote></div></article>`).join(''):'<p>No officers are present to advise you.</p>')+
+    '<div class="panel-actions"><button data-cmd="conversation" data-id="table">Back to the table</button></div>');
+}
+// The camp's map (M): its places, and travel to those already walked to.
+function showCampMap(){
+  const visited=new Set(Game.campVisited(state));
+  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(PLACE_NAMES[id])}</strong> <small>${esc(PLACE_HINTS[id])}</small></span>`+
+    `<button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>${visited.has(id)||id==='gate'?'Go there':'Not yet visited'}</button></li>`).join('')}</ul>`);
+}
+function campTravel(place){
+  const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}
+  if(modal.open)modal.close();const outcome=runtime.issue({actorId:runtime.world.heroId,kind:'travel',payload:{x:p.x,z:p.z+2}});
+  if(outcome.ok){runtime.follow();announce(`${PLACE_NAMES[place]}.`);}
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
@@ -263,7 +361,7 @@ function openPanel(name){
   if(['kit','character','decorations','company','orders'].includes(name))showSoldierPanel(name==='orders'?'mission':name);
   else if(name==='journal')showJournal();
   else if(name==='chronicle')showSoldierPanel('chronicle');
-  else if(name==='map'||name==='overlay')showMap();
+  else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
   else if(name==='options')showSettings();
   else if(name==='help')Game.isRealtime(state)?showModal('Rules & controls',realtimeHelp()):showHelp();
 }
@@ -276,7 +374,7 @@ function showSoldierPanel(name,arg=null){
   soldierPanel={name,arg};const world=field?.runtime?.world??null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
   const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils})],character:()=>['Your soldier',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
-    orders:()=>['Standing orders',ordersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
     trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],adopt:()=>['Your soldier’s training',adoptPanel(state)],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
@@ -499,12 +597,16 @@ function showModal(title,body){
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
 }
+modal.addEventListener('keydown',event=>{
+  if(!modal.dataset.conversation||event.altKey||event.ctrlKey||event.metaKey)return;const n=Number(event.key);
+  if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
+});
 modal.addEventListener('close',()=>{
   const prior=modalReturn;modalReturn=null;
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
 async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
 // Settings → Run performance check. The battle is measured where it stands:
@@ -587,9 +689,12 @@ document.addEventListener('click',
       }
 case 'close-modal':modal.close();break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
+case 'conversation':showConversation(id);break;
+case 'reply':await replyConversation(Number(id));break;
+case 'camp-travel':campTravel(id);break;
 case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
 case 'soldier':{const d=b.dataset;if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
-  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path});
+  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
   if(d.kind==='orders-edit')showSoldierPanel('orders',d.companion);break;}
 case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
 case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
@@ -682,8 +787,7 @@ case 'allocate':await change(()=>Game.allocate(state,
   {river:Number(document.querySelector('#river').value),farms:Number(document.querySelector('#farms').value),town:Number(document.querySelector('#town').value)}));
   break;
 case 'route':await change(()=>Game.chooseRoute(state,id));break;
-case 'start':await change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
-  ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});break;
+case 'start':await startCampaignEncounter();break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
 case 'inspect-delegate':{
   const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');

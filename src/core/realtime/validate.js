@@ -23,7 +23,8 @@ export function validateWorld(world,fail){
   for(const a of world.actors){
     if(!a||!str(a.id,40)||!str(a.name)||!SIDES.has(a.side)||![a.x,a.z,a.px,a.pz,a.fx,a.fz,a.hp,a.maxHp,a.stamina,a.maxStamina].every(num)
       ||a.x<0||a.z<0||a.x>m.width*2.5||a.z>m.height*2.5||a.hp<0||a.hp>a.maxHp||a.maxHp<1||a.maxHp>400||typeof a.alive!=='boolean'
-      ||!Array.isArray(a.kit)||a.kit.length>16||!a.attributes||typeof a.attributes!=='object'||!Array.isArray(a.path)||a.path.length>400)fail('real-time actor.');
+      ||!Array.isArray(a.kit)||a.kit.length>16||!a.attributes||typeof a.attributes!=='object'||!Array.isArray(a.path)||a.path.length>400
+      ||(a.talk!==undefined&&a.talk!==null&&!(typeof a.talk==='object'&&str(a.talk.tree,60))))fail('real-time actor.');
   }
   if(!Array.isArray(world.party)||world.party.length>3||world.party.some(id=>!world.actors.some(a=>a.id===id)))fail('real-time party.');
   if(!world.actors.some(a=>a.id===world.heroId)||!world.actors.some(a=>a.id===world.controlled))fail('real-time soldier.');
