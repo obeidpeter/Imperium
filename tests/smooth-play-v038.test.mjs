@@ -93,10 +93,12 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   const controller={stage,quality(q){stage.applyQuality(q);},adaptive(v){adaptive.push(v);}};
   const nextFrame=async()=>{const step=interval[stage.quality];clock+=step;stage.log?.frames.push([clock,5,step]);stage.log?.gpu.push(step*.6);};
   const progress=[];
-  const report=await runPerformanceCheck(controller,{current:'balanced',adaptive:true,app:{version:'test'},now:()=>clock,nextFrame,longTasks:{entries:[],supported:true,dispose(){}},facts:()=>({hardwareConcurrency:8}),onProgress:p=>progress.push(`${p.step}:${p.tier}`)});
+  const simulation=async()=>({actors15:{ticks:10,p50:.1,p95:.2,max:.3},actors82:{ticks:10,p50:.4,p95:.6,max:.9},budgetMs:4});
+  const report=await runPerformanceCheck(controller,{current:'balanced',adaptive:true,app:{version:'test'},now:()=>clock,nextFrame,longTasks:{entries:[],supported:true,dispose(){}},facts:()=>({hardwareConcurrency:8}),onProgress:p=>progress.push(`${p.step}:${p.tier}`),simulation});
   assert.deepEqual(report.tiers.map(t=>t.tier),['performance','high','balanced']);
   assert.ok(report.tiers.every(t=>t.rebuilt&&Number.isFinite(t.buildMs)),'every tier is a fresh build');
-  assert.deepEqual(progress,['build:performance','tour:performance','build:high','tour:high','build:balanced','tour:balanced']);
+  assert.deepEqual(progress,['build:performance','tour:performance','build:high','tour:high','build:balanced','tour:balanced','simulation:undefined']);
+  assert.equal(report.simulation.actors82.p95,.6,'the real-time tick is timed after the tiers');
   assert.equal(stage.quality,'balanced','the player\'s tier is in place at the end');assert.deepEqual(adaptive,[false,true],'adaptive resolution is off while measuring, then restored');
   assert.ok(stage.orbit.yaw>Math.PI*2*2,'the camera turned throughout');
   assert.deepEqual(stage.views.filter(v=>v!=='home').slice(0,2),CHECK_TOUR.filter(([v])=>v!=='home').map(([v])=>v));
@@ -109,8 +111,8 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   JSON.parse(JSON.stringify(report));
   // Cancelling stops at the next step and still restores everything.
   let calls=0;stage.quality='performance';adaptive=[];
-  const partial=await runPerformanceCheck(controller,{current:'performance',adaptive:false,now:()=>clock,nextFrame,isCancelled:()=>++calls>40,longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({})});
-  assert.equal(partial.complete,false);assert.equal(stage.quality,'performance');assert.deepEqual(adaptive,[false,false]);
+  const partial=await runPerformanceCheck(controller,{current:'performance',adaptive:false,now:()=>clock,nextFrame,isCancelled:()=>++calls>40,longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({}),simulation});
+  assert.equal(partial.complete,false);assert.equal(partial.simulation,null,'a cancelled check skips the tick timing');assert.equal(stage.quality,'performance');assert.deepEqual(adaptive,[false,false]);
   // A battle that goes away ends the check with an error.
   await assert.rejects(runPerformanceCheck({stage:null,quality(){},adaptive(){}}),/Open a 3D battle/);
 });

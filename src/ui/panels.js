@@ -220,6 +220,8 @@ export function createPanels(context){
       `<th scope="col">Quality</th><th scope="col">Build</th><th scope="col">Typical rate</th><th scope="col">Slowest 5% of frames</th>`+
       `<th scope="col">GPU, slowest 5%</th><th scope="col">Longest freeze</th><th scope="col">Target</th></tr></thead><tbody>${rows}</tbody></table></div>`+
       `<p>Recommended for this device: <strong>${label[recommended]}</strong>${recommended===current?' (your current setting)':''}.</p>`+
+      `${report.simulation?`<p class="settings-description">Real-time simulation (0.40, in development): one tick takes ${report.simulation.actors15.p95} ms `+
+        `with 15 men and ${report.simulation.actors82.p95} ms with 82 (slowest 5%; budget ${report.simulation.budgetMs} ms).</p>`:''}`+
       `<p class="settings-description">Graphics: ${esc(report.device.renderer??'unknown')}${report.device.software?' (software rendering)':''}. The file `+
       `lists this browser, graphics chip and screen size beside the measurements, and stays on this `+
       `device unless you share it.</p>${actions(`<button class="primary" data-cmd="performance-check-save">Save results `+
