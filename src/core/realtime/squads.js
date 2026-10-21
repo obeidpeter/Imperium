@@ -308,6 +308,8 @@ export function exchangeSquads(world,{wound=null}={}){
     if(!pick)continue;
     a.facing={x:pick.o.x,z:pick.o.z};struck.push({from:a,to:pick.o,man:pick.man,ranged:pick.ranged,setup:squadModifiers(world,a,asTarget(world,pick.o),{ranged:pick.ranged})});
   }
+  // A squad that strikes from hiding is seen at once, as a single man is (damage.js).
+  for(const {from}of [...hits,...struck])for(const m of membersOf(world,from))if(m.hidden){m.hidden=false;emit(world,{kind:'revealed',actorId:m.id});}
   for(const hit of hits){
     const {from,to,setup}=hit,before=menOf(world,to),damage=setup.damage*EXCHANGE.scale;
     to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:EXCHANGE.scale});

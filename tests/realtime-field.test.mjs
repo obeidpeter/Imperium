@@ -27,10 +27,15 @@ function battle(id){
   const state=G.deserialize(camps.get(id));assert.equal(G.startEncounter(state,{controls:'realtime'}).ok,true);return {state,world:G.realtimeWorld(state)};
 }
 const object=(w,id)=>w.objects.find(o=>o.id===id);
+// Keep a test of an object from becoming a fight: the enemy leaves the field.
+function clearEnemies(w){
+  const gone=new Set(w.actors.filter(a=>a.side==='enemy').map(a=>a.id));
+  w.actors=w.actors.filter(a=>!gone.has(a.id));if(w.squads)w.squads=w.squads.filter(q=>q.side!=='enemy');
+}
 // The soldier works at an object: walk there and finish (no enemy near enough to interrupt in these tests).
 function work(w,id,{limit=1200}={}){
   const hero=w.actors.find(a=>a.id==='hero'),o=object(w,id);
-  for(const a of w.actors)if(a.side==='enemy')a.hidden=true;// keep this a test of the object, not of the fight
+  clearEnemies(w);
   hero.x=o.x-1.5;hero.z=o.z;hero.px=hero.x;hero.pz=hero.z;
   assert.equal(queueCommand(w,{actorId:'hero',kind:'interact',payload:{objectId:id}}).ok,true);
   for(let i=0;i<limit&&!w.events.some(e=>e.kind==='used-object'&&e.objectId===id);i++)step(w);
@@ -50,7 +55,7 @@ test('a battle offers two opportunities and only one: securing one forgoes the o
   assert.deepEqual(e.field.objects.filter(o=>['stores','signal'].includes(o.kind)).map(o=>o.state),['forgone','secured']);
   assert.doesNotThrow(()=>G.deserialize(G.serialize(state)));
   // A second battle: nobody takes either, and they close at the end of round 7.
-  const {world:w2}=battle('ch3-station');for(const a of w2.actors)if(a.side==='enemy')a.hidden=true;
+  const {world:w2}=battle('ch3-station');clearEnemies(w2);
   while(w2.tick<R*7-1)step(w2);assert.equal(w2.field.outcome,'pending','still open in round 7');
   step(w2);assert.equal(w2.field.outcome,'missed');assert.deepEqual(w2.objects.filter(o=>['stores','signal'].includes(o.kind)).map(o=>o.state),['missed','missed']);
   assert.equal(pointerIntent(w2,{pick:{objectId:'stores'},button:'left'}).cursor,'blocked');
@@ -99,4 +104,15 @@ test('an opportunity that pays on victory is staged once, however often the outc
   const before=state.encounter.staged.supplies??0;
   work(world,'stores');applyRealtimeOutcome(state,world);const once=state.encounter.staged.supplies??0;applyRealtimeOutcome(state,world);
   assert.equal(once,before+2,'two supplies on victory');assert.equal(state.encounter.staged.supplies??0,once,'not twice');
+});
+
+test('Shift+click forces an attack on a gate: he breaks it open, taking twice as long as opening it',()=>{
+  const {world}=battle('ch8-ferry'),gate=object(world,'gate'),hero=world.actors.find(a=>a.id==='hero');
+  const forced=pointerIntent(world,{pick:{objectId:'gate'},button:'left',shift:true});
+  assert.equal(forced.cursor,'attack');assert.match(forced.message,/^Break open: Side gate\./);assert.equal(forced.command.payload.force,true);
+  clearEnemies(world);
+  hero.x=gate.x-1.5;hero.z=gate.z;hero.px=hero.x;hero.pz=hero.z;queueCommand(world,forced.command);
+  for(let i=0;i<10&&hero.action?.kind!=='work';i++)step(world);
+  assert.equal(hero.action.end-hero.action.start,6*TIME.ticksPerSecond,'six seconds');
+  for(let i=0;i<200&&gate.state==='closed';i++)step(world);assert.equal(gate.state,'open');
 });

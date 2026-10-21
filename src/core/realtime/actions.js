@@ -93,7 +93,7 @@ function startInteraction(world,actor,order){
   const problem=fieldProblem(world,object);if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
   if(distanceBetween(actor,object)>orderRange(world,actor,order,object))return;
   turnToward(actor,object.x-actor.x,object.z-actor.z);
-  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf(object.work_s??3)};
+  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf((object.work_s??3)*(order.force?2:1))};
   emit(world,{kind:'work',actorId:actor.id,objectId:object.id,what:object.kind});
 }
 

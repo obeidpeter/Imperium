@@ -44,6 +44,10 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
     if(object.done&&!object.toggle)return {...none,cursor:'blocked',message:`${object.name}: done.`};
     // A field object says what the work does, or why it cannot be done now (field-objects.js).
     const problem=fieldProblem(world,object);if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
+    // Shift forces an attack on a gate or a barricade: he hacks it open or apart, taking twice as long.
+    if(shift&&object.field&&['gate','barricade'].includes(object.kind))return {cursor:'attack',reason:null,
+      message:`Break ${object.kind==='gate'?'open':'down'}: ${object.name}. Twice as long as using it; a blow stops the work.`,
+      command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id,force:true}}};
     const verb=object.field?fieldVerb(object):'Use',hint=object.field?`${fieldHint(world,object)} A blow stops the work.`:object.hint??'Your soldier walks over and works for a few seconds; a blow stops him.';
     return {cursor:'use',reason:null,message:`${verb}: ${object.name}. ${hint}`,
       command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id}}};

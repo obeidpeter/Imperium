@@ -166,7 +166,7 @@ function applyCommand(world,command){
       actor.order={kind:'ability',abilityId:p.abilityId,targetId:p.targetId??null,x:p.x??null,z:p.z??null};actor.path=[];actor.gait=null;endBrace(actor);
       actor.repathAt=world.tick;if(actor.action?.kind==='swing'||actor.action?.kind==='work')cancelAction(world,actor);break;
     }
-    case 'interact':cancelAction(world,actor);endBrace(actor);actor.lock=null;actor.order={kind:'interact',targetId:p.objectId};actor.path=[];actor.repathAt=world.tick;break;
+    case 'interact':cancelAction(world,actor);endBrace(actor);actor.lock=null;actor.order={kind:'interact',targetId:p.objectId,...(p.force?{force:true}:{})};actor.path=[];actor.repathAt=world.tick;break;
     case 'talk':case 'loot':
       cancelAction(world,actor);endBrace(actor);actor.lock=null;actor.order={kind:command.kind,targetId:p.targetId,allowFallen:command.kind==='loot'};
       actor.path=[];actor.repathAt=world.tick;break;
