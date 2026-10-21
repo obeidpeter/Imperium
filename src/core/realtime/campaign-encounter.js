@@ -239,7 +239,7 @@ export function applyRealtimeOutcome(state,world){
   if(m.mode==='hold'||m.holdRequired)e.mission.holdProgress=Math.min(30,Math.floor(m.heldTicks/TIME.roundTicks));
   // TP for the enemies the soldier or a companion struck down, each once, at most ten (§3.5).
   const ours=new Set(['hero',...world.party]),kills=world.actors.filter(a=>a.side==='enemy'&&!a.alive&&ours.has(a.killedBy)).length;
-  e.staged.killTP=kills;e.staged.commendations=commendations(world);
+  e.staged.killTP=kills;e.staged.commendations=commendations(world);e.staged.spoils=world.spoils.map(s=>s.itemId);
   e.status=world.status==='active'?'active':world.status;
   e.log.push(...world.log.slice(-10).map(l=>l.text));if(e.log.length>70)e.log.splice(0,e.log.length-70);
   return e;

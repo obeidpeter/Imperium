@@ -18,6 +18,9 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
     confirmMoves:false,fastMotion:false,reducedMotion,
     // The 0.40 conversion's development switch (core/controls-model.js): 0.38 turns until it is changed.
     controlsModel:'turns',realtimeChapters:[...ALL_CHAPTERS],
+    // Real time (the guide's Time and pace, and Controls): game speed, the auto-pause events and the pointer's habits.
+    gameSpeed:1,pauseSighted:true,pauseHurt:true,pauseObjective:true,pauseSquad:true,pauseOrder:false,roundPause:false,panelPause:true,
+    drawToAttack:true,keepFighting:false,quickCast:false,holdToMove:true,swapButtons:false,
     quality:defaultGraphicsMode({saveData,deviceMemory,phone})
   };
 }
@@ -35,8 +38,13 @@ export function loadSettings(stored,device){
   settings.keyBindings=controlBindings(settings.keyBindings);
   settings.holdDelay=holdDelay(settings.holdDelay);
   Object.assign(settings,normalizeControls(settings));
+  if(![.5,.75,1].includes(settings.gameSpeed))settings.gameSpeed=defaults.gameSpeed;
+  for(const key of REALTIME_FLAGS)if(typeof settings[key]!=='boolean')settings[key]=defaults[key];
   return settings;
 }
+
+const REALTIME_FLAGS=['pauseSighted','pauseHurt','pauseObjective','pauseSquad','pauseOrder','roundPause','panelPause','drawToAttack','keepFighting','quickCast',
+  'holdToMove','swapButtons'];
 
 // Settings checkboxes that only store their setting, then redraw the page or
 // tell the 3D stage (a method of the battle-stage controller).

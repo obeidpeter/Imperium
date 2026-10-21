@@ -16,7 +16,10 @@ import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
-import {normalizeControls} from '../core/controls-model.js';
+import {normalizeControls,controlsFor} from '../core/controls-model.js';
+import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
+import {DEFAULT_KEYMAP} from './action-map.js';
+import {ITEMS} from '../data/items.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -107,6 +110,7 @@ function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction,orderDestination});}
 
 function battle(){
+  if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict});
   selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}
   return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
     keyBindings:settings.keyBindings,coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,
@@ -163,7 +167,8 @@ function render(){
   if(newView)app.replaceChildren();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
   soundscape.update(state,screen);
-  if(uses3D()){
+  if(screen!=='title'&&Game.isRealtime(state))mountField();
+  else if(uses3D()){
     const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,
       commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));
     pendingMotion=null;
@@ -175,6 +180,7 @@ function render(){
         holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,
         onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});
   }else battleStage.release();
+  if(field&&!(screen!=='title'&&Game.isRealtime(state)))disposeField();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
   if(ceremony3D)ceremony.mount(ceremonyHost,
     {kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
@@ -187,6 +193,104 @@ function render(){
 function mountPainting(){
   const host=paintingHost(app,{title:screen==='title',ceremony3D:settings.battleView!=='2d'&&!failed3D});
   if(host)scenePainting.mount(host,{chapter:state?.chapter,quality:graphics.mode,reducedMotion:settings.reducedMotion});else scenePainting.release();
+}
+// ——— The real-time field (0.40): one per fight, kept between renders. The
+// world steps on the page; the chronicle receives it only when it is saved
+// (pause, a hidden page, F2) or resolved. ———
+let field=null;
+const fieldSource=()=>state?.encounter?.realtime?.world??null;
+function mountField(){
+  const host=document.querySelector('#rt-host'),e=state.encounter;if(!host)return;
+  if(field&&(field.encounterId!==e.id||!field.element.isConnected))disposeField();
+  if(field){
+    // A retry or a load brings another fight here: the same field plays it.
+    if(field.runtime&&field.source!==fieldSource()){field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),e);}
+    mountFieldStage();return;
+  }
+  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap:DEFAULT_KEYMAP}));
+  const element=host.querySelector('.rt-field'),ticket={};field={ticket,encounterId:e.id,source:fieldSource(),element,runtime:null};
+  import('../showcase/realtime-field.js').then(({createRealtimeField,fieldDom})=>{
+    if(field?.ticket!==ticket||!element.isConnected)return;
+    field.runtime=createRealtimeField({dom:fieldDom(element),world:Game.realtimeWorld(state),base:state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
+      holdDelay:()=>settings.holdDelay??450,callbacks:fieldCallbacks()});
+    mountFieldStage();element.querySelector('canvas')?.focus({preventScroll:true});
+  }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
+}
+function mountFieldStage(){
+  const runtime=field?.runtime;if(!runtime)return;
+  const canvas=field.element.querySelector('canvas'),veil=field.element.querySelector('.rt-veil p');
+  if(settings.battleView==='2d'||failed3D){
+    if(veil)veil.textContent='This real-time fight needs the 3D view in this build. Choose the 3D view in Settings, or switch the controls to Turns.';return;
+  }
+  const own=battleStage.mount(canvas,{encounter:runtime.stageView(),chapter:state.chapter,rank:state.rank,commendations:{},live:true,input:false,
+    quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,
+    adaptiveResolution:settings.adaptiveResolution,motionSpeed:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,
+    audioVolume:settings.audioVolume,paused:modal.open,
+    onFrame:cost=>{graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open});field?.runtime?.frameDone();},
+    onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
+  if(own&&runtime.stage!==own)runtime.attach(own);
+}
+function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.element?.remove();}
+// For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
+window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
+// Keep the chronicle's copy of the fight: the resume point after a pause, a hidden page or a quick save.
+function saveField(world,{announced=false}={}){
+  if(!Game.isRealtime(state)||state.encounter.status!=='active'||state.archiveReplay)return;
+  const saved=Game.saveRealtime(state,world);if(!saved.ok)return;if(field)field.source=fieldSource();
+  if(sessionGate.busy||saveConflict){if(announced)toast(saveConflict?saveProblem:'Saving… try again in a moment.');return;}
+  sessionGate.run(()=>persist()).then(result=>{
+    const label=document.querySelector('.save-status');if(label)label.textContent=result?.ok?'Saved':'';
+    if(announced)toast(result?.ok?'Saved. The fight continues from here after a reload.':saveProblem);
+  }).catch(error=>{if(error.code!=='SESSION_BUSY')console.error(error);});
+}
+function fieldCallbacks(){
+  return {
+    onSave:world=>saveField(world),
+    onQuickSave:world=>saveField(world,{announced:true}),
+    onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
+    onMenu:()=>showNavigation(),
+    onPanel:name=>fieldPanel(name),
+    onTalk:id=>fieldTalk(id),
+    onLoot:id=>fieldLoot(id)
+  };
+}
+function fieldPanel(name){
+  if(name==='journal'||name==='orders')showJournal();
+  else if(name==='help')showModal('Rules & controls',realtimeHelp());
+  else toast('That panel arrives later in the 0.40 conversion.');
+}
+function realtimeHelp(){
+  return `<p>Click open ground to move; a far click runs. Click an enemy to fight him; right-click uses the current ability. P pauses, and every command still works while paused.</p>`+
+    `<p>Point at anything for its forecast. Arrow keys move; T chooses the next enemy or thing to use, Enter acts on it, E uses what is nearest. [ and ] change the companion you control; Home returns to your soldier.</p>`;
+}
+function fieldTalk(id){
+  const world=field?.runtime?.world,person=world?.actors.find(a=>a.id===id);if(!person)return;
+  showModal(person.name,`<p>${esc(person.talk?.line??`${person.name} nods. “Keep your shield up.”`)}</p>`);
+}
+function fieldLoot(id){
+  const world=field?.runtime?.world,body=world?.actors.find(a=>a.id===id);if(!body)return;
+  showLoot(body);
+}
+const itemName=id=>ITEMS[id]?.name??id;
+// The items already chosen from this body in the take waiting for the next tick (while paused, the window's choices wait there).
+function pendingTake(world,bodyId){return [...world.queue].reverse().find(c=>c.kind==='take'&&c.actorId===world.controlled&&c.payload.targetId===bodyId)?.payload.items??[];}
+function showLoot(body){
+  const world=field?.runtime?.world;if(!world)return;
+  const left=[...(body.loot??[])],pending=[...pendingTake(world,body.id)];
+  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
+    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take" data-id="${esc(body.id)}" data-item="${esc(item)}" data-key="take:${i}">Take</button>`}</li>`;});
+  showModal(`Search ${body.name}`,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
+    `<div class="panel-actions"><button class="primary" data-cmd="rt-take" data-id="${esc(body.id)}" data-item="*">Take all</button></div>`+
+    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>Nothing left worth taking.</p>');
+}
+function takeLoot(bodyId,itemId){
+  const runtime=field?.runtime,world=runtime?.world,body=world?.actors.find(a=>a.id===bodyId);if(!body)return;
+  const pending=pendingTake(world,bodyId),left=[...body.loot];for(const id of pending)left.splice(left.indexOf(id),1);
+  const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
+  if(!runtime.issue({actorId:world.controlled,kind:'take',payload:{targetId:bodyId,items}}).ok)return;
+  showLoot(body);
+  // Running, the take happens on the next tick: show what is left once it has.
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&modal.dataset.panel?.startsWith('search'))showLoot(body);}));
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;
@@ -357,7 +461,7 @@ async function replaceCampaign({load,save,message}){
 let modalReturn=null;
 function showModal(title,body){
 
-  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);
+  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(settings.panelPause!==false)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
   modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
   modal.setAttribute('aria-labelledby','panel-title');modal.removeAttribute('aria-label');
@@ -371,7 +475,7 @@ modal.addEventListener('close',()=>{
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');
 });
 async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
 // Settings → Run performance check. The battle is measured where it stands:
@@ -453,6 +557,9 @@ document.addEventListener('click',
         }else toast('Offline content is available from the production build.');break;
       }
 case 'close-modal':modal.close();break;
+case 'rt-take':takeLoot(id,b.dataset.item);break;
+case 'rt-spoils':await change(()=>{const body=state.encounter?.realtime?.world.actors.find(a=>a.id===id);
+  return Game.takeSpoils(state,{bodyId:id,items:b.dataset.item==='*'?[...(body?.loot??[])]:[b.dataset.item]});});break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying '+
   'this chapter’s artwork. Other chapters are optional.');}break;
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
@@ -532,7 +639,8 @@ case 'allocate':await change(()=>Game.allocate(state,
   {river:Number(document.querySelector('#river').value),farms:Number(document.querySelector('#farms').value),town:Number(document.querySelector('#town').value)}));
   break;
 case 'route':await change(()=>Game.chooseRoute(state,id));break;
-case 'start':await change(()=>Game.startEncounter(state,state.chapter===12?{route:state.route||'backer'}:{}),{reset:true});break;
+case 'start':await change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
+  ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
 case 'inspect-delegate':{
   const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');
@@ -758,6 +866,8 @@ document.addEventListener('change',async event=>{
 });
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
+  // A real-time field takes its keys on its own scene (realtime-field.js).
+  if(Game.isRealtime(state))return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
   const shortcut=controlAction(event.key,settings.keyBindings);
   if(uses3D()){

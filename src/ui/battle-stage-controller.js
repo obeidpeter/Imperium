@@ -11,19 +11,20 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
   let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null,strained=null;
   const update=()=>{
     if(!stage||!latest)return;
-    const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused}=latest;
-    stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setRoute?.(latest.route??null,latest.reach??[]);stage.setGrid(grid);
+    const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused,live}=latest;
+    // A real-time field draws its world live (setLive): the page never re-syncs its figures.
+    if(!live){stage.sync(encounter);stage.setSelection(selected,targets,target);stage.setRoute?.(latest.route??null,latest.reach??[]);stage.setGrid(grid);}
     if(stage.quality!==quality)stage.applyQuality(quality);
     if((stage.figureStyle??'sculpted')!==(latest.figureStyle??'sculpted'))stage.setFigureStyle?.(latest.figureStyle);
     stage.actionCamera=latest.actionCamera!==false;stage.setBattleRemains?.(latest.battleRemains!==false);
     stage.touchHold?.configure?.({delay:latest.holdDelay??450});
     stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setMotionSpeed?.(latest.motionSpeed??1);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
-    if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
+    if(pending&&!live){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };
   function release(){version++;if(stage?.strained)strained=stage.quality;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
-      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}`;
+      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}:${options.live?'live':'turns'}`;
       if(key!==nextKey){release();key=nextKey;}
       if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
@@ -48,7 +49,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
           const own=await BattleStage.create(canvas,latest.encounter,{...latest,keyboardMode:'grid'},
             {current:()=>ticket===version&&canvas.isConnected&&Boolean(latest)});
           if(!own)return;
-          stage=own;stage.onError=error=>{release();onError(error);};stage.home();update();
+          stage=own;stage.onError=error=>{release();onError(error);};stage.home();update();latest.onReady?.(own);
           // The "Preparing" veil stays until the battle is prepared and drawn once.
           Promise.resolve(own.ready).then(()=>{if(stage!==own)return;own.revealed=true;if(own.canvas.parentElement)own.canvas.parentElement.dataset.ready='true';});
         }catch(error){if(ticket===version){release();onError(error.message||String(error));}}

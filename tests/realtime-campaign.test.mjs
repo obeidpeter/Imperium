@@ -119,3 +119,39 @@ test('the real-time world of each Chapter I–III battle holds its 0.38 people: 
   const station=reach('ch3-station'),st=G.realtimeWorld(station);assert.equal(st.party.length,3,'three companions march from Chapter III');
   assert.ok(st.objects.some(o=>o.kind==='chest'));
 });
+
+test('loot: a fallen enemy is searched with the weapon sheathed; what is taken is staged with the fight and reaches the pack only when recorded',()=>{
+  const s=reach('ch1-road'),w=G.realtimeWorld(s),hero=actorById(w,'hero');
+  // Fight with the harness until a man who carried something falls (legal commands only).
+  let body=null;for(let i=0;i<4000&&!body&&w.status==='active';i++){if(w.tick%10===0)heroDecision(w);step(w);body=w.actors.find(a=>a.side==='enemy'&&!a.alive&&a.loot?.length);}
+  assert.ok(body,'someone fell with loot');assert.equal(w.status,'active');
+  // Injected copy for the range rule: the same world with the soldier ten metres off.
+  const far=JSON.parse(JSON.stringify(w)),farHero=actorById(far,'hero');farHero.x=body.x+10;farHero.z=body.z;farHero.px=farHero.x;farHero.pz=farHero.z;
+  assert.equal(queueCommand(far,{actorId:'hero',kind:'take',payload:{targetId:body.id,items:[body.loot[0]]}}).reason,'OUT_OF_RANGE','only from beside the body');
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'take',payload:{targetId:body.id,items:['galea_crest']}}).reason,'NO_TARGET','only what he carried');
+  if(hero.drawn){assert.equal(queueCommand(w,{actorId:'hero',kind:'loot',payload:{targetId:body.id}}).reason,'NEEDS_SHEATHED');queueCommand(w,{actorId:'hero',kind:'setDrawn',payload:{drawn:false}});step(w);}
+  assert.ok(queueCommand(w,{actorId:'hero',kind:'loot',payload:{targetId:body.id}}).ok);
+  let arrived=false;for(let i=0;i<600&&!arrived;i++){step(w);arrived=w.events.some(e=>e.kind==='loot');}
+  assert.ok(arrived,'the soldier walked to the body and the loot window opens');
+  const items=[...body.loot];assert.ok(queueCommand(w,{actorId:'hero',kind:'take',payload:{targetId:body.id,items}}).ok);step(w);
+  assert.deepEqual(w.spoils.map(x=>x.itemId),items);assert.equal(body.loot.length,0);assert.ok(w.log.some(l=>/ takes /.test(l.text)));
+  // Staged with the fight: saved into the chronicle, not yet in the pack.
+  const packBefore=s.soldier.pack.length;assert.ok(G.saveRealtime(s,w).ok);assert.equal(s.soldier.pack.length,packBefore);
+  assert.doesNotThrow(()=>G.deserialize(G.serialize(s)));
+  // A retry forgets them.
+  const retried=G.deserialize(G.serialize(s));assert.ok(G.retry(retried).ok);assert.equal(G.realtimeWorld(retried).spoils.length,0);
+});
+
+test('after a won fight the fallen can be searched from the result; the spoils are granted once, at the commit',()=>{
+  const s=reach('ch1-road'),result=playRealtime(s);assert.equal(result.status,'won');
+  const world=s.encounter.realtime.world,body=world.actors.find(a=>a.side==='enemy'&&!a.alive&&a.loot?.length);assert.ok(body,'a fallen enemy carried something');
+  const before=JSON.stringify(s);
+  assert.equal(G.takeSpoils(s,{bodyId:body.id,items:['galea_crest']}).ok,false);assert.equal(JSON.stringify(s),before,'an illegal take changes nothing');
+  assert.equal(G.takeSpoils(s,{bodyId:'hero',items:['tunic']}).ok,false);
+  const items=[...body.loot];assert.ok(G.takeSpoils(s,{bodyId:body.id,items}).ok);assert.deepEqual(s.encounter.staged.spoils.slice(-items.length),items);
+  assert.equal(G.takeSpoils(s,{bodyId:body.id,items}).ok,false,'nothing left on him');
+  const tampered=JSON.parse(G.serialize(s));tampered.encounter.staged.spoils.push('no_such_item');assert.throws(()=>G.deserialize(JSON.stringify(tampered)),/staged rewards/);
+  const count=id=>[...s.soldier.pack,...Object.values(s.soldier.ground).flat()].filter(e=>e.id===id).length,had=items.map(count);
+  assert.ok(G.commitEncounter(s).ok);items.forEach((id,i)=>assert.ok(count(id)>had[i],`${id} reached the pack or the camp ground`));
+  assert.equal(G.commitEncounter(s).ok,false,'recorded once');
+});

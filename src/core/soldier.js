@@ -1,7 +1,9 @@
 import {ATTRIBUTES,ATTRIBUTE_NAMES,BASE_ATTRIBUTES,TRAINING_PATHS,ABILITIES,FIELD_ORDER} from '../data/realtime-rules.js';
 import {ITEMS,SLOTS,WORN_PLACES,PACK,STARTING_KIT} from '../data/items.js';
-import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS,COMPANIONS,PAY,DONATIVES,PROMOTION_ISSUE,APPEARANCE,PATHS}
+import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS,COMPANIONS,PAY,DONATIVES,PROMOTION_ISSUE,APPEARANCE,PATHS,quartermasterStock}
   from '../data/soldier.js';
+import {STANDING} from '../data/realtime-rules.js';
+import {slotProblem} from './realtime/party.js';
 import {clone,result} from './shared.js';
 
 // The soldier (build brief §3.5, §3.12–§3.13): his training path and
@@ -268,6 +270,54 @@ export function validateSoldier(state,fail){
   if(!s.companions||typeof s.companions!=='object'||Object.entries(s.companions).some(([id,c])=>!COMPANIONS[id]||!c?.worn
     ||Object.entries(c.worn).some(([place,item])=>!WORN_PLACES.includes(place)||!ITEMS[item]||!placeMatches(place,item))))fail('companion kit.');
   if(!s.flags||typeof s.flags!=='object'||Object.keys(s.flags).length>400||!s.errands||typeof s.errands!=='object'||Object.keys(s.errands).length>80)fail('soldier story record.');
+  if(s.orders!==undefined&&(!s.orders||typeof s.orders!=='object'||Object.entries(s.orders).some(([id,slots])=>!COMPANIONS[id]||!Array.isArray(slots)||slots.length>4
+    ||slots.some(slot=>!Array.isArray(slot)||slot.length!==2||slotProblem(slot)))))fail('standing orders.');
+  if(s.party!==undefined&&(!Array.isArray(s.party)||s.party.length>3||new Set(s.party).size!==s.party.length||s.party.some(id=>!COMPANIONS[id])))fail('chosen party.');
+}
+// The soldier's own commands, from the kit, character, trainer and company
+// panels: one entry point, each refusal leaving the chronicle unchanged. Kit,
+// training and orders change in camp; an encounter keeps the soldier it began with.
+export function soldierCommand(state,command={}){
+  const k=command.kind;
+  if(k==='adopt')return adoptSoldier(state,command);
+  if(!state.soldier)return result(false,'Choose your soldier’s training first.');
+  if(state.phase==='encounter')return result(false,'Change kit, training and standing orders in camp.');
+  switch(k){
+    case 'raise':return raiseAttribute(state,command.attribute);
+    case 'course':return takeCourse(state,command.courseId);
+    case 'wear':return wear(state,command.uid);
+    case 'takeOff':return typeof command.place==='string'&&state.soldier.worn[command.place]?takeOff(state,command.place):result(false,'Nothing is worn there.');
+    case 'drop':return drop(state,command.uid);
+    case 'pickUp':return pickUp(state,command.uid);
+    case 'move':return Number.isInteger(command.x)&&Number.isInteger(command.y)?moveInPack(state,command.uid,command.x,command.y):result(false,'Choose a place in the pack.');
+    case 'sort':{
+      const trial=clone(state.soldier),left=sortPack(trial);
+      if(left.length)return result(false,'Sorting would not fit everything; move pieces by hand.');
+      state.soldier.pack=trial.pack;return result(true,'Pack sorted: the largest pieces first.');
+    }
+    case 'give':return give(state,command.uid,command.companionId);
+    case 'buy':return buy(state,command.itemId,{stock:quartermasterStock(state.chapter)});
+    case 'sell':return sell(state,command.uid);
+    case 'pay':return collectPay(state);
+    case 'orders':return setStandingOrders(state,command.companionId,command.preset?STANDING.presets[command.preset]:command.slots);
+    case 'party':return chooseParty(state,command.party);
+    default:return result(false,'Unknown command.');
+  }
+}
+// A companion's standing orders for the fights to come: a preset or four slots.
+export function setStandingOrders(state,id,slots){
+  if(!COMPANIONS[id])return result(false,'Choose a companion.');
+  if(!Array.isArray(slots)||slots.length>4)return result(false,'Choose up to four orders.');
+  const problem=slots.map(slot=>Array.isArray(slot)&&slot.length===2?slotProblem(slot):'Choose an action.').find(Boolean);if(problem)return result(false,problem);
+  (state.soldier.orders??={})[id]=slots.map(([a,t])=>[a,t]);return result(true,`${COMPANIONS[id].name}’s standing orders are set.`);
+}
+// Who marches with the soldier (from Chapter III): up to three fit veterans of the company roll.
+export function chooseParty(state,party){
+  if(!Array.isArray(party)||party.length>3||new Set(party).size!==party.length)return result(false,'Choose up to three companions.');
+  const roll=state.company??[];
+  for(const id of party){const v=roll.find(x=>x.id===id);if(!v||!COMPANIONS[id])return result(false,'Choose companions from the company roll.');
+    if((v.recovery??0)>0)return result(false,`${v.name??COMPANIONS[id].name} is still recovering.`);}
+  state.soldier.party=[...party];return result(true,party.length?`${party.length} ${party.length===1?'companion marches':'companions march'} with you.`:'You march alone.');
 }
 function placeMatches(place,id){const [slot,layer]=place.split(':'),item=ITEMS[id];return item.slot===slot&&(slot==='charm'||item.layer===Number(layer));}
 export {SLOTS,PACK,ITEMS,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS};
@@ -295,5 +345,7 @@ export function commitSoldierRewards(state,e){
     s.rewarded.commendations.push(`${e.id}:${c.id}`);tp+=grantTP(state,Math.max(TP.commendation.min,Math.min(TP.commendation.max,c.tp??1)));
   }
   const decorations=awardDecorations(state,e.id),denarii=donativeFor(e.id);s.denarii+=denarii;
-  return {tp,decorations,denarii};
+  // What the soldier took from the field goes to his pack, or to the camp ground if it is full.
+  const spoils=(e.staged?.spoils??[]).filter(id=>ITEMS[id]);for(const id of spoils)stow(s,id,`camp:${state.chapter}`);
+  return {tp,decorations,denarii,spoils};
 }

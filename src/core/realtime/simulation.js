@@ -34,7 +34,7 @@ export function createWorld({map,seed,actors,controlled='hero',options={},weathe
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
-    queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{}};
+    queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[]};
 }
 
 export const roundOf=world=>Math.floor(world.tick/TIME.roundTicks)+1;
@@ -71,6 +71,12 @@ export function commandProblem(world,command){
     case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':actor.carrying?'CARRYING':null;}
     case 'talk':{const o=actorById(world,p.targetId);return o?.alive&&!hostile(actor,o)&&o.talk?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     case 'loot':{const o=actorById(world,p.targetId);return o&&!o.alive&&o.loot?.length?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
+    // Taking from a body the soldier stands by: the items chosen so far (one queued take carries them all).
+    case 'take':{
+      const o=actorById(world,p.targetId);if(!o||o.alive||!Array.isArray(p.items)||!p.items.length||p.items.length>12)return 'NO_TARGET';
+      const left=[...(o.loot??[])];for(const id of p.items){const i=left.indexOf(id);if(i<0)return 'NO_TARGET';left.splice(i,1);}
+      return distanceBetween(actor,o)>MOVEMENT.talkRange+.5?'OUT_OF_RANGE':null;
+    }
     case 'control':return actor.id===world.controlled?'ALREADY_CONTROLLED':null;
     case 'setStanding':return Array.isArray(p.slots)&&p.slots.length<=4&&p.slots.every(s=>!slotProblem(s))?null:'NO_TARGET';
     case 'setKit':return Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
@@ -85,7 +91,7 @@ export function queueCommand(world,command){
   const reason=commandProblem(world,command);if(reason)return {ok:false,reason,message:REASONS[reason]};
   const order=ORDER_KINDS.has(command.kind);
   world.queue=world.queue.filter(q=>q.actorId!==command.actorId||(order?!ORDER_KINDS.has(q.kind):q.kind!==command.kind));
-  world.queue.push({tick:world.tick,actorId:command.actorId,kind:command.kind,payload:{...(command.payload??{})},seq:world.seq++});
+  world.queue.push({tick:world.tick,actorId:command.actorId,kind:command.kind,payload:JSON.parse(JSON.stringify(command.payload??{})),seq:world.seq++});
   return {ok:true,reason:null};
 }
 
@@ -148,6 +154,12 @@ function applyCommand(world,command){
     case 'setStanding':actor.standing=p.slots.map(s=>[...s]);actor.standingSlot=-1;break;
     case 'setKit':actor.kit=[...p.kit];if(p.effects)actor.effects={...p.effects};break;
     case 'warCry':emit(world,{kind:'war-cry',actorId:actor.id});break;
+    // Spoils are staged with the fight; the soldier's pack receives them only when the result is recorded.
+    case 'take':{
+      const body=actorById(world,p.targetId);
+      for(const itemId of p.items){body.loot.splice(body.loot.indexOf(itemId),1);world.spoils.push({itemId,from:body.id});}
+      emit(world,{kind:'taken',actorId:actor.id,targetId:body.id,items:[...p.items]});break;
+    }
   }
 }
 
@@ -182,7 +194,7 @@ function logLine(world,e){
     case 'fall':return `${to} falls.`;
     case 'down':return `${to} is down. Bind his wounds or carry him.`;
     case 'stagger':return `${to} staggers.`;
-    case 'notice':return `${by} has seen ${to}.`;
+    case 'notice':return actorById(world,e.actorId)?.practice?null:`${by} has seen ${to}.`;
     case 'brace':return `${by} braces behind his shield.`;
     case 'throw':return `${by} ${MISSILES[e.missile]?.shot?'shoots':'throws'} ${a} ${what}.`;
     case 'heal':return `${by} binds ${e.targetId===e.actorId?'his own wounds':`${to}’s wounds`}: +${e.amount}${e.raised?'; he is on his feet':''}.`;
@@ -197,6 +209,7 @@ function logLine(world,e){
     case 'work-stopped':return `${by}'s work is interrupted.`;
     case 'capability-needed':return `The objective is held, but you must still demonstrate: ${e.missing.join(', ')}.`;
     case 'war-cry':return `${by} raises the war cry. The companions answer.`;
+    case 'taken':return `${by} takes ${e.items.map(id=>ITEMS[id]?.name.toLowerCase()??id).join(', ')} from ${to}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
     default:return null;

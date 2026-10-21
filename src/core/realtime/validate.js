@@ -1,5 +1,6 @@
 import {WORLD_VERSION} from './simulation.js';
 import {STREAMS} from './rng-streams.js';
+import {ITEMS} from '../../data/realtime-rules.js';
 
 // A saved real-time world must be well formed before the simulation runs it:
 // a save code can come from anywhere. These checks bound every list and type
@@ -26,10 +27,12 @@ export function validateWorld(world,fail){
   }
   if(!Array.isArray(world.party)||world.party.length>3||world.party.some(id=>!world.actors.some(a=>a.id===id)))fail('real-time party.');
   if(!world.actors.some(a=>a.id===world.heroId)||!world.actors.some(a=>a.id===world.controlled))fail('real-time soldier.');
-  for(const [key,max]of [['projectiles',400],['queue',400],['objects',60],['log',200],['used',40],['reveals',20]])
+  for(const [key,max]of [['projectiles',400],['queue',400],['objects',60],['log',200],['used',40],['reveals',20],['spoils',60]])
     if(!Array.isArray(world[key])||world[key].length>max)fail(`real-time ${key}.`);
   if(world.log.some(l=>!l||!str(l.text,400)||!int(l.tick,0,1e7)))fail('real-time battle log.');
   if(world.queue.some(c=>!c||!str(c.actorId,40)||!str(c.kind,20)||!int(c.tick,0,1e7)))fail('real-time command queue.');
+  if(world.spoils.some(s=>!s||!ITEMS[s.itemId]||!str(s.from,40)))fail('real-time spoils.');
+  if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
   const mission=world.mission;
   if(mission!==null&&mission!==undefined){
     if(typeof mission!=='object'||!str(mission.mode,20)||!mission.goal||!num(mission.goal.x)||!num(mission.goal.z)||!num(mission.radius)||!int(mission.deadline,1,40)

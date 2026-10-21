@@ -494,7 +494,7 @@ export class BattleStage{
       const a=this.actors.get(unit.id),o=lp?null:frame?.unitOverrides[unit.id],position=lp?.at??o??unit;
       const walk=lp?null:this.divisionStep(unit,now);
       a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;
-      a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z);
+      a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z)+(lp?.lift??0);
       a.group.visible=lp?lp.visible:actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
       const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle'||!!lp?.active;
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=lp?null:attack&&this.unitAt(attack.target);

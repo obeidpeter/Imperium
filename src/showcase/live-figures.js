@@ -22,8 +22,11 @@ export function stageUnit(actor){
     intent:'',hidden:false,trained:actor.side==='player',shield:actor.kit.some(id=>ITEMS[id]?.shield)};
 }
 // The stage's encounter: the campaign map with the world's actors, and no turn-based markers.
+// A campaign battle's world walks an upsampled map (2.5 m tiles); the stage builds that one.
 export function stageEncounter(encounter,world){
-  return {...encounter,units:world.actors.map(stageUnit),mission:null,goal:null,field:null,operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+  const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:world.map.terrain}:{};
+  return {...encounter,...fine,units:world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(stageUnit),mission:null,goal:null,field:null,operation:null,reinforcements:[],
+    status:'active',turn:1,log:[]};
 }
 // The simulation lands a blow at half the swing; the figure's authored clip
 // lands it at ACTOR_TIMING.contact. Map one onto the other.
@@ -39,16 +42,25 @@ function footGeometry(spiked){
   if(spiked)for(let i=0;i<8;i++){const a=(i+.5)/8*Math.PI*2,c=Math.cos(a),s=Math.sin(a),w=.055;tri(c*.5-s*w,s*.5+c*w,c*.5+s*w,s*.5-c*w,c*.63,s*.63);}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
 }
+// Neutrals: a dashed ring, so allegiance never rests on colour alone.
+function dashedGeometry(){
+  const pos=[];for(let i=0;i<12;i++){const a0=i/12*Math.PI*2,a1=a0+Math.PI/12;
+    for(let k=0;k<4;k++){const t0=a0+(a1-a0)*k/4,t1=a0+(a1-a0)*(k+1)/4,p=(r,t)=>[Math.cos(t)*r,Math.sin(t)*r,0];
+      pos.push(...p(.44,t0),...p(.5,t0),...p(.5,t1),...p(.44,t0),...p(.5,t1),...p(.44,t1));}}
+  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
+}
 const FLAT=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),UP=new T.Vector3(0,1,0);
+// How far an enemy has noticed the party, as a quarter-filled circle over his head (the guide's eye).
+const NOTICE_GLYPHS=['◔','◑','◕'];
 
 export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false}={}){
-  const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null};
+  const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
   let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null;
   // One instanced draw each for friends' rings, enemies' rings and guard arcs.
   function footMarks(count){
     const material=color=>new T.MeshBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
     const make=(geometry,color)=>{const m=new T.InstancedMesh(geometry,material(color),count);m.count=0;m.frustumCulled=false;m.renderOrder=3;stage.overlay.add(m);return m;};
-    return {friend:make(footGeometry(false),'#9fd3d0'),enemy:make(footGeometry(true),'#ef8f74'),
+    return {friend:make(footGeometry(false),'#9fd3d0'),enemy:make(footGeometry(true),'#ef8f74'),neutral:make(dashedGeometry(),'#e6dfc8'),
       guard:make(new T.RingGeometry(.56,.68,24,1,-Math.PI*5/6,Math.PI*2/3),'#f1d38a'),matrix:new T.Matrix4(),q:new T.Quaternion(),one:new T.Vector3(1,1,1)};
   }
   const rendered=()=>{const w=getWorld();return w.tick-1+getAlpha();};
@@ -65,6 +77,11 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     mesh.rotation.x=-Math.PI/2;mesh.renderOrder=3;mesh.visible=false;stage.overlay.add(mesh);return mesh;
   }
   // A polyline laid on the ground, a few centimetres up.
+  function workRing(){
+    const mesh=new T.Mesh(new T.RingGeometry(.62,.74,48).toNonIndexed(),new T.MeshBasicMaterial({color:'#f1d38a',transparent:true,opacity:.9,depthWrite:false,
+      side:T.DoubleSide,forceSinglePass:true}));
+    mesh.rotation.x=-Math.PI/2;mesh.renderOrder=4;mesh.visible=false;stage.overlay.add(mesh);return mesh;
+  }
   function lay(mesh,points){
     const attr=mesh.geometry.attributes.position,n=Math.min(points.length,attr.count);
     for(let i=0;i<n;i++){const p=ground(points[i].x,points[i].z);attr.setXYZ(i,p.x,p.y+.07,p.z);}
@@ -112,8 +129,14 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       // A presentation odometer: stride follows the distance the figure is drawn to cover.
       const before=last.get(a.id);let walked=odometer.get(a.id)??0;if(before)walked+=Math.hypot(x-before.x,z-before.z);
       last.set(a.id,{x,z});odometer.set(a.id,walked);
-      let motion='idle',phase,locomotionWeight=1,impactDirection=0,visible=true,aimHeight,focusId=a.lock??a.action?.targetId??null;
-      if(!a.alive){
+      let motion='idle',phase,locomotionWeight=1,impactDirection=0,visible=true,aimHeight,focusId=a.lock??a.action?.targetId??null,lift=0,direction=yaw;
+      const carrier=a.carriedBy?actorOf(w,a.carriedBy):null;
+      if(carrier){
+        // Carried across the shoulders: he lies at the carrier's side, a metre up, along the carrier's way.
+        const cx=lerp(carrier.px,carrier.x,alpha),cz=lerp(carrier.pz,carrier.z,alpha),cy=Math.atan2(lerp(carrier.pfx,carrier.fx,alpha),lerp(carrier.pfz,carrier.fz,alpha));
+        unit.x=(cx+Math.cos(cy)*.32)/TILE-.5;unit.y=(cz-Math.sin(cy)*.32)/TILE-.5;motion='dead';phase=1;lift=1.05;direction=cy+Math.PI/2;focusId=null;
+      }else if(a.alive&&a.down){motion='dead';phase=1;focusId=null;}
+      else if(!a.alive){
         const p=(r-a.diedAt)/FALL_TICKS;motion='dead';phase=clamp(p,0,1);visible=r-a.diedAt<FALL_TICKS+LIE_TICKS;focusId=null;
       }else if(a.staggerUntil>r){
         motion='hit';phase=clamp((r-a.staggerStart)/Math.max(1,a.staggerUntil-a.staggerStart),0,1);
@@ -130,8 +153,8 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         motion='block';phase=clamp((r-reaction.start)/REACTION_TICKS,0,1);
       }
       if(!['walk','run'].includes(motion))locomotionWeight=1;
-      return {at:{x:unit.x,y:unit.y},visible,active:motion!=='idle'||a.id===w.controlled,aimHeight,focusId,
-        pose:{time:reducedMotion?0:time,dt,motion,phase,direction:yaw,locomotionDistance:walked,locomotionWeight,movementProgress:undefined,
+      return {at:{x:unit.x,y:unit.y},visible,active:motion!=='idle'||a.id===w.controlled,aimHeight,focusId,lift,
+        pose:{time:reducedMotion?0:time,dt,motion,phase,direction,locomotionDistance:walked,locomotionWeight,movementProgress:undefined,
           braced:a.braceUntil>r,health:a.alive?a.hp/a.maxHp:1,impactDirection,turnSign:1,reducedMotion,selected:false}};
     },
     effects(stage,{now}){
@@ -154,6 +177,14 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       });
       // Floating numbers ride the figures' labels.
       const shown={};for(const [id,f]of floating){if(now>f.until)floating.delete(id);else shown[id]={text:f.text,color:f.color};}
+      // An enemy's notice of the party: filling quarters while he wonders, ! once he knows (presentation of ai.notice only).
+      const party=[w.heroId,...w.party];
+      for(const a of w.actors){
+        if(a.side!=='enemy'||!a.alive||a.hidden||shown[a.id]||a.practice)continue;
+        const n=Math.max(0,...party.map(id=>a.ai?.notice?.[id]??0));
+        if(n>=100&&a.ai?.state!=='engage')shown[a.id]={text:'!',color:'#ef8f74'};
+        else if(n>0&&n<100)shown[a.id]={text:NOTICE_GLYPHS[Math.min(2,Math.floor(n/34))],color:n>=50?'#f1c27d':'#e6dfc8'};
+      }
       stage.previewTargets=Object.keys(shown).length?shown:null;
       // The route a click would walk, the soldier's destination, his locked target and his ranges.
       marks.route??=line('#f1dfa2');marks.goal??=ring(.46,.54,'#f1dfa2',.75);marks.target??=ring(.66,.76,'#ef8f74',.85);
@@ -161,17 +192,23 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const hero=actorOf(w,w.controlled);marks.planned??=line('#cfe7e4',.5);
       if(route?.points?.length&&hero?.alive)lay(marks.route,[{x:hero.x,z:hero.z},...route.points]);else marks.route.visible=false;
       if(planned?.points?.length&&hero?.alive)lay(marks.planned,[{x:hero.x,z:hero.z},...planned.points]);else marks.planned.visible=false;
-      feet??=footMarks(Math.max(16,w.actors.length));const counts={friend:0,enemy:0,guard:0};
+      feet??=footMarks(Math.max(16,w.actors.length));const counts={friend:0,enemy:0,neutral:0,guard:0};
       for(const a of w.actors){
-        const figure=stage.actors.get(a.id);if(!a.alive||!figure?.group.visible)continue;
-        const kind=a.side==='enemy'?'enemy':'friend',mesh=feet[kind];if(counts[kind]>=mesh.instanceMatrix.count)continue;
+        const figure=stage.actors.get(a.id);if(!a.alive||a.carriedBy||!figure?.group.visible)continue;
+        const kind=a.side==='enemy'?'enemy':a.side==='neutral'?'neutral':'friend',mesh=feet[kind];if(counts[kind]>=mesh.instanceMatrix.count)continue;
         const at=figure.group.position;feet.q.setFromAxisAngle(UP,figure.group.rotation.y).multiply(FLAT);
         feet.matrix.compose(new T.Vector3(at.x,at.y+.05,at.z),feet.q,feet.one);mesh.setMatrixAt(counts[kind]++,feet.matrix);
         if(a.braceUntil>r&&counts.guard<feet.guard.instanceMatrix.count){
           feet.matrix.compose(new T.Vector3(at.x,at.y+.06,at.z),feet.q,feet.one);feet.guard.setMatrixAt(counts.guard++,feet.matrix);
         }
       }
-      for(const kind of ['friend','enemy','guard']){feet[kind].count=counts[kind];feet[kind].instanceMatrix.needsUpdate=true;}
+      for(const kind of ['friend','enemy','neutral','guard']){feet[kind].count=counts[kind];feet[kind].instanceMatrix.needsUpdate=true;}
+      // Work that takes time (binding wounds, using an object) fills a ring at the worker's feet.
+      marks.work??=workRing();const worker=w.actors.find(a=>a.alive&&a.action?.kind==='work'&&(a.id===w.controlled||w.party.includes(a.id)||a.id===w.heroId));
+      if(worker&&stage.actors.get(worker.id)?.group.visible){
+        const k=clamp((r-worker.action.start)/Math.max(1,worker.action.end-worker.action.start),0,1),at=stage.actors.get(worker.id).group.position;
+        marks.work.position.set(at.x,at.y+.09,at.z);marks.work.geometry.setDrawRange(0,Math.max(6,Math.floor(k*48)*6));marks.work.visible=true;
+      }else marks.work.visible=false;
       const goal=hero?.alive&&hero.path?.length?hero.path[hero.path.length-1]:null;
       marks.goal.visible=!!goal;if(goal){marks.goal.position.copy(ground(goal.x,goal.z));marks.goal.position.y+=.06;}
       const target=hero?.lock?actorOf(w,hero.lock):null,shownTarget=target?.alive?target:null;marks.target.visible=!!shownTarget;
@@ -188,7 +225,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       }
     },
     dispose(){
-      for(const m of [marks.route,marks.planned,marks.goal,marks.target,...(marks.ranges??[]),feet?.friend,feet?.enemy,feet?.guard])
+      for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,...(marks.ranges??[]),feet?.friend,feet?.enemy,feet?.neutral,feet?.guard])
         if(m){m.removeFromParent();m.geometry.dispose();m.material.dispose();}
     },
     stats:()=>({floating:floating.size,sparks:sparks.length})

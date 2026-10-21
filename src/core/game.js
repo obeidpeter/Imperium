@@ -21,10 +21,11 @@ import {validateOperation} from './operations.js';
 export {difficultyOptions,companyPlan,selectCompany,prepareCompany,tacticalAdvice} from './campaign-options.js';
 export {operationPhase} from './operations.js';
 import {initialProgression,validateProgression} from './progression.js';
-import {createSoldier,validateSoldier,commitSoldierRewards,issuePromotions,rewardCapabilities} from './soldier.js';
+import {createSoldier,validateSoldier,commitSoldierRewards,issuePromotions,rewardCapabilities,soldierCommand as soldierAct} from './soldier.js';
 import {createEncounterWorld,applyRealtimeOutcome,realtimeMissionSupported} from './realtime/campaign-encounter.js';
 import {snapshotWorld,restoreWorld} from './realtime/simulation.js';
 import {validateWorld} from './realtime/validate.js';
+import {ITEMS as REALTIME_ITEMS} from '../data/items.js';
 import {commitOperationResult} from './progression-operations.js';
 import {commitAgreements,negotiateAgreement as makeAgreement} from './progression-politics.js';
 export {veteranTraining,specializeVeteran,veteranRank,companionCallout,VETERAN_RANKS} from './progression-veterans.js';
@@ -85,6 +86,19 @@ export function resolveRealtime(state,world){
   if(world.status==='active')return result(false,'The fight is still in progress.');
   applyRealtimeOutcome(state,world);
   return result(true,state.encounter.status==='won'?'Objective secured. Record the result to keep its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
+}
+// The soldier's kit, training, purse and companions' orders (soldier.js): camp commands, each legal or refused unchanged.
+export function soldierCommand(state,command){if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');return soldierAct(state,command);}
+// After a won fight the field can still be searched: what the fallen carried
+// joins the staged spoils, which the pack receives only when the result is recorded.
+export function takeSpoils(state,{bodyId,items}={}){
+  const e=state.encounter;if(!isRealtime(state)||e.status!=='won'||state.archiveReplay)return result(false,'Only a won field can be searched.');
+  const world=e.realtime.world,body=world.actors.find(a=>a.id===bodyId);
+  if(!body||body.alive||!Array.isArray(items)||!items.length||items.length>12)return result(false,'Nothing to take there.');
+  const left=[...(body.loot??[])];for(const id of items){const i=left.indexOf(id);if(i<0)return result(false,'That is not there to take.');left.splice(i,1);}
+  if(world.spoils.length+items.length>60)return result(false,'You cannot carry more from this field.');
+  body.loot=left;for(const itemId of items)world.spoils.push({itemId,from:body.id});e.staged.spoils=world.spoils.map(s=>s.itemId);
+  return result(true,`You take ${items.map(id=>REALTIME_ITEMS[id].name.toLowerCase()).join(', ')} from ${body.name}. It is yours when the result is recorded.`);
 }
 export function getActions(state,unitId){if(state.phase!=='encounter'||!state.encounter||state.encounter.controls==='realtime')return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestActions(state,unit):battleActions(state,unit);}
 export function getTargets(state,unitId,action){if(!getActions(state,unitId).includes(action))return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestTargets(state,unit,action):battleTargets(state,unit,action);}
@@ -222,6 +236,11 @@ function validateEncounter(e,fail){
   if(e.controls!==undefined||e.realtime!==undefined){
     if(e.controls!=='realtime'||!e.realtime||e.realtime.version!==1||!(e.realtime.scale>=2&&e.realtime.scale<=4.5)||e.realtime.world?.encounterId!==e.id)fail('real-time encounter.');
     validateWorld(e.realtime.world,fail);
+    // What a real-time result stages for its commit: bounded so a save cannot grant more than a fight could.
+    const st=e.staged;
+    if((st.killTP!==undefined&&!(Number.isInteger(st.killTP)&&st.killTP>=0&&st.killTP<=240))||(st.commendations!==undefined&&(!Array.isArray(st.commendations)
+      ||st.commendations.length>3||st.commendations.some(c=>!c||typeof c.id!=='string'||c.id.length>40||!(Number.isInteger(c.tp)&&c.tp>=1&&c.tp<=3))))
+      ||(st.spoils!==undefined&&(!Array.isArray(st.spoils)||st.spoils.length>60||st.spoils.some(id=>!REALTIME_ITEMS[id]))))fail('real-time staged rewards.');
   }
 }
 function validateCareerFields(state,fail){

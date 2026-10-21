@@ -123,6 +123,17 @@ export const DONATIVES=freeze({'ch2-rearguard':10,'ch4-wall':20,'ch6-eagle':30,'
 export const PROMOTION_ISSUE=freeze({1:freeze(['hamata','scutum']),3:freeze(['manica']),4:freeze(['galea_crest','ocreae']),
   6:freeze(['calcei']),9:freeze(['squamata'])});
 
+// What the quartermaster has on his shelves, from each chapter on (the
+// canabae's traders add their own goods). Prices follow priceOf.
+export const QUARTERMASTER=freeze([
+  freeze({chapter:1,items:freeze(['tunic','linen_tunic','subarmalis','arming_cap','bracae','caligae','sagum','knife','spatha','training_shield','wine_skin'])}),
+  freeze({chapter:2,items:freeze(['paenula','parma','spear','medicine_box','phylactery'])}),
+  freeze({chapter:3,items:freeze(['jerkin','sling','quiver','bow','hasta','amulet_mars'])}),
+  freeze({chapter:4,items:freeze(['manica','ocreae','galea','scutum','calcei','gladius'])}),
+  freeze({chapter:5,items:freeze(['hamata','dart_belt','conical_helmet','round_shield','scale_eastern'])}),
+  freeze({chapter:7,items:freeze(['squamata','segmented_helmet'])})]);
+export const quartermasterStock=chapter=>QUARTERMASTER.filter(q=>q.chapter<=chapter).flatMap(q=>q.items);
+
 // Recruit appearance choices.
 export const APPEARANCE=freeze({
   hair:freeze(['Cropped','Curled','Shaved','Long']),beard:freeze(['Clean-shaven','Short beard','Full beard']),
