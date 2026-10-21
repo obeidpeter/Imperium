@@ -2,8 +2,10 @@
 // Game and the Chapter I drill in 2D (walk by keyboard and pointer, Undo,
 // Confirm moves, an opponent's preview, Help), a keyboard walk in the 3D view,
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
-// (field-object readouts), a field approach chosen at a restored Chapter V camp,
-// and touch at phone width (hold to preview, tap to walk). It fails on any page or console error. Development and CI only: it
+// (field-object readouts), a field approach chosen at a restored Chapter V camp
+// (with Chapter V's generated scenery and character bodies loaded in 3D),
+// touch at phone width (hold to preview, tap to walk), and the Settings
+// performance check. It fails on any page or console error. Development and CI only: it
 // needs Playwright, which is not a project dependency, and a production build.
 //
 //   npm run build && npm run smoke
@@ -158,9 +160,13 @@ async function fieldApproach(){
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'false');
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
+  // The generated supply camp loads in the 3D view through the page's own policy and worker.
+  await page.waitForFunction(()=>document.querySelector('#battle-board')?.dataset.sceneryModels==='5',null,{timeout:300000,polling:500});
+  // Generated character bodies replace the procedural figures in the same view.
+  await page.waitForFunction(()=>Number(document.querySelector('#battle-board')?.dataset.generatedBodies)>0,null,{timeout:300000,polling:500});
   await view(page,'2d');await page.focus('#battle-board');
   await expectAnnouncement(page,/^Grid 9C\. Side gate \(open\)\./,()=>keys(page,['ArrowUp',...Array(8).fill('ArrowRight')]));
-  await page.context().close();console.log('ok - field approach: chosen on a restored Chapter V camp table, and the engineers have opened the gate');
+  await page.context().close();console.log('ok - field approach: chosen on a restored Chapter V camp table, the generated supply camp and character bodies load in 3D, and the engineers have opened the gate');
 }
 
 // Touch has no hover: holding a finger still previews, lifting it commits nothing, a tap walks.
@@ -193,8 +199,31 @@ async function phoneTouch(){
   await page.context().close();console.log('ok - phone touch: hold previews in 2D and 3D without walking, a tap walks');
 }
 
+// Settings → Run performance check in the 3D drill: the band blocks the board
+// (End turn and Enter do nothing), every quality is rebuilt and measured with
+// nothing compiled by its first frame, the player's quality comes back, and
+// the results save as JSON through the page's own download.
+async function performanceCheck(){
+  const page=await open({acceptDownloads:true});await newGameDrill(page);await view(page,'3d');
+  const hint=await text(page,'#command-hint'),quality=await page.evaluate(()=>document.documentElement.dataset.quality??'');
+  await menuButton(page,'settings');await page.click('[data-cmd="performance-check"]');await page.waitForSelector('.performance-check');
+  await page.keyboard.press('e');await page.keyboard.press('Enter');
+  await page.waitForSelector('#modal[open][data-panel="performance-check"]',{timeout:900000});
+  assert.equal(await page.locator('.performance-check').count(),0,'The status band is gone');
+  const [download]=await Promise.all([page.waitForEvent('download'),page.click('[data-cmd="performance-check-save"]')]);
+  const report=JSON.parse(await (await import('node:fs/promises')).readFile(await download.path(),'utf8'));
+  assert.equal(report.tool,'imperium-performance-check');assert.equal(report.complete,true);
+  assert.deepEqual(report.tiers.map(t=>t.tier).sort(),['balanced','high','performance']);
+  for(const tier of report.tiers){assert.ok(tier.rebuilt&&tier.tour.frames>0,`${tier.tier} was built and measured`);assert.equal(tier.firstFramePrograms,0,`${tier.tier}: nothing compiled by the first frame`);}
+  assert.ok(['performance','balanced','high'].includes(report.recommendation));
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  assert.equal(await text(page,'#command-hint'),hint,'No command reached the board during the check');
+  if(quality)assert.equal(await page.evaluate(()=>document.documentElement.dataset.quality??''),quality,'The player\'s quality is back');
+  await page.context().close();console.log(`ok - performance check: three qualities rebuilt and measured with no first-frame compiles, the board untouched, results saved (recommends ${report.recommendation})`);
+}
+
 let failed=false;
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch]){
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck]){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

@@ -2,11 +2,22 @@ import * as THREE from '../../vendor/three/three.module.js';
 import {noise,hash,clamp} from './environment-layout.js';
 import {finishEnvironmentMaterial} from './environment-surface-shaders.js';
 import {createFoliagePixels,FOLIAGE_ATLAS_URL} from './environment-foliage.js';
+import {IMAGE_DECODER} from './decoded-images.js';
 
-export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
+// Local neutral colour maps by surface kind, and the images a scene samples
+// (the battle preloader decodes them before the stage is built).
+const SURFACE_IMAGES=Object.freeze([['earth','earth'],['stone','stone'],['wood','timber']].map(([kind,file])=>[kind,new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href]));
+export function environmentImageUrls(profile=null){return [...SURFACE_IMAGES.map(([,url])=>url),...(profile?.civic?[]:[FOLIAGE_ATLAS_URL.href])];}
+
+// The procedural surface tiles depend only on their kind and size: generated
+// once per session and shared (read-only) by every stage's own textures.
+const SURFACE_PIXELS=new Map();
+
+export function createEnvironmentMaterials({loadTextures=true,profile=null,images=IMAGE_DECODER}={}){
   const textures=new Set(),materials=new Set();let disposed=false;
   const texture=(data,size,color=true)=>{const t=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.colorSpace=color?THREE.SRGBColorSpace:THREE.NoColorSpace;t.anisotropy=4;t.needsUpdate=true;textures.add(t);return t;};
   function surface(kind,size=128){
+    const cached=SURFACE_PIXELS.get(`${kind}:${size}`);if(cached)return {map:texture(cached.bytes,size),normalMap:texture(cached.normal,size,false)};
     const bytes=new Uint8Array(size*size*4),normal=new Uint8Array(size*size*4),height=new Float32Array(size*size);
     for(let y=0;y<size;y++)for(let x=0;x<size;x++){
       const fine=hash(x,y,2),grain=noise(x*.14,y*.14,4),broad=noise(x*.039,y*.039,8);
@@ -18,7 +29,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
       for(let c=0;c<3;c++)bytes[i*4+c]=clamp((value+weave)*base[c],0,255);bytes[i*4+3]=255;
       const dx=height[y*size+(x+1)%size]-height[y*size+(x+size-1)%size],dy=height[((y+1)%size)*size+x]-height[((y+size-1)%size)*size+x],v=new THREE.Vector3(-dx*.7,-dy*.7,1).normalize();
       normal.set([Math.round((v.x*.5+.5)*255),Math.round((v.y*.5+.5)*255),Math.round((v.z*.5+.5)*255),255],i*4);
-    }return {map:texture(bytes,size),normalMap:texture(normal,size,false)};
+    }SURFACE_PIXELS.set(`${kind}:${size}`,{bytes,normal});return {map:texture(bytes,size),normalMap:texture(normal,size,false)};
   }
   const make=(props)=>{const m=new THREE.MeshStandardMaterial(props);materials.add(m);return m;};
   const maps=Object.fromEntries(['earth','grass','stone','wood','bark','cloth'].map(k=>[k,surface(k)]));
@@ -105,15 +116,21 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null}={}){
   finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.gravel,'stone',finish);
-  // Local neutral colour maps; procedural surfaces remain usable on failure.
-  if(loadTextures&&typeof document!=='undefined')for(const [kind,file]of [['earth','earth'],['stone','stone'],['wood','timber']])new THREE.TextureLoader().load(new URL(`../../assets/showcase/${file}-v017.webp`,import.meta.url).href,t=>{
-    if(disposed){t.dispose();return;}t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
+  // Decoded images attach at once (the battle preloader decodes them first, so
+  // materials compile with their maps); one still decoding attaches on arrival.
+  // Procedural surfaces remain usable on failure.
+  const attach=(url,apply)=>{
+    const ready=images.decoded(url);if(ready){apply(images.texture(ready));return;}
+    images.decode(url).then(image=>{const t=images.texture(image);if(disposed){t.dispose();return;}apply(t);},()=>{});
+  };
+  if(loadTextures&&typeof document!=='undefined')for(const [kind,url]of SURFACE_IMAGES)attach(url,t=>{
+    t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
     for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone','gravel']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
-  },undefined,()=>{});
-  if(loadTextures&&!profile?.civic&&typeof document!=='undefined')new THREE.TextureLoader().load(FOLIAGE_ATLAS_URL.href,t=>{
-    if(disposed){t.dispose();return;}t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;textures.add(t);const fallback=m.foliage.map;m.foliage.map=t;m.foliage.needsUpdate=true;
+  });
+  if(loadTextures&&!profile?.civic&&typeof document!=='undefined')attach(FOLIAGE_ATLAS_URL.href,t=>{
+    t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;textures.add(t);const fallback=m.foliage.map;m.foliage.map=t;m.foliage.needsUpdate=true;
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
-  },undefined,()=>{});
+  });
   return {materials:m,textures,waterTime,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
 }

@@ -47,6 +47,11 @@ test('V034 detailed fieldwork remains within a fixed draw budget, with exact sta
     const old=meshes(view.group),tracked=new Set(old.flatMap(o=>[o.geometry,o.material]));let disposed=0;for(const r of tracked)r.addEventListener('dispose',()=>disposed++);
     view.update(7,false);view.update(99,true);view.sync(e);assert.deepEqual(meshes(view.group),old);assert.equal(JSON.stringify(e),before);
     e.field.objects[2].state='dismantled';e.field.objects[3].state='secured';e.field.objects[5].state='spent';view.sync(e);
+    const geometries=old.map(o=>o.geometry).filter((g,i,list)=>list.indexOf(g)===i).length;
+    assert.equal(disposed,geometries,'Rebuild releases every previously rendered buffer at once');
+    // Old materials outlive the rebuild until the new set has drawn, so the
+    // programs they share pass to the new materials instead of compiling again.
+    view.update(1,false);view.update(2,false);assert.equal(disposed,geometries);view.update(3,false);
     assert.equal(disposed,tracked.size,'Rebuild releases every previously rendered buffer and material');
     const barricade=view.group.userData.fieldObjects.find(o=>o.kind==='barricade');assert.ok(barricade.max[1]<.3,'Dismantled wood lies on the ground');
     view.dispose();view.dispose();assert.equal(scene.children.length,0);

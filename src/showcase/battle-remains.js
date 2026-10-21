@@ -150,6 +150,9 @@ export function createBattleRemains(scene,{quality='balanced',ground=null,height
       return this.fall({key,make,world:new T.Vector3(x,Number.isFinite(y)?y:world.y,z),yaw,animate});
     },
     hasLaid(id){return laid.has(id);},
+    // The batch for each kind of figure on the field exists (empty) before the
+    // battle is shown, so the first fall draws without compiling a shader.
+    prepare(list=[]){if(disposed)return 0;let made=0;for(const {key,make}of list)if(!kinds.has(key)&&kindFor(key,make))made++;return made;},
     // count spent arrows (or javelins, at size) around the mark `to`, loosed from `from`.
     arrows({from,to,count=1,seed='',size=1}){
       if(disposed||!from||!to)return 0;let placed=0;

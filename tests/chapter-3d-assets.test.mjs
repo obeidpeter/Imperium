@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile} from 'node:fs/promises';
 import {chapterAssets,chapterAudioAssets,chapterOfflineAssets} from '../src/ui/art.js';
+import {chapterBodies,actorBodyUrl} from '../src/ui/actor-body-catalog.js';
 import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
@@ -22,13 +23,17 @@ test('Every chapter can be restored cold with actual renderer, sound, vendor and
   }
 });
 
+// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone; a
+// generated character body, to the chapters whose figures wear it.
+const ownModels=chapter=>files.filter(path=>path.startsWith(`./assets/models/chapters/${String(chapter).padStart(2,'0')}/`)||chapterBodies(chapter).some(id=>path==='./'+actorBodyUrl(id)));
+
 test('Shared dependencies use identical deduplicated URLs across chapters without losing any chapter-specific art',()=>{
-  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path));
+  const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path)&&!ownModels(1).includes(path));
   for(let chapter=1;chapter<=12;chapter++){
-    const art=chapterAssets(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
+    const art=chapterAssets(chapter),models=ownModels(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
-    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)),first);
-    for(const path of art)assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
+    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)&&!models.includes(path)),first);
+    for(const path of [...art,...models])assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
 });
 

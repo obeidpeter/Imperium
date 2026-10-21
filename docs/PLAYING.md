@@ -63,7 +63,9 @@ These are the default letter shortcuts. **Pause → Controls & readability** let
 
 ### Graphics and readability
 
-In **Pause → Graphics quality**, choose **Performance**, **Balanced**, or **High quality**. These change optional atmosphere, particles, shadows and rendering resolution. Essential figures, legal targets, labels and rules stay the same. Repeated slow rendering can lower the setting automatically; the game announces that change, and you can choose another setting in Pause.
+In **Pause → Graphics quality**, choose **Performance**, **Balanced**, or **High quality**. These change optional atmosphere, particles, shadows and rendering resolution. Essential figures, legal targets, labels and rules stay the same. Phones start on Performance until you choose. Repeated slow rendering can lower the setting automatically, from the next battle on, never in the middle of one; the game announces that change, and you can choose another setting in Pause.
+
+**Pause → Run performance check** measures your device in the current 3D battle, in about a minute: it rebuilds the battle at each quality and turns the camera through the overview, follow and horizon views, then shows the frame rates it reached, recommends a quality and can save the results as a file. Nothing is sent anywhere, and the board takes no commands while the check runs (Escape or Cancel stops it).
 
 **3D figure style** chooses *Sculpted* figures, *Painted (HD-2D)*, the campaign's painted unit art standing in the 3D scene, or *Ink and wash* outlines. The painted style settles the overview on diagonal views and adds a tilt-shift; both finishes need Balanced or High quality. **Action camera** (on by default) briefly closes in on each committed attack and then returns; it never moves with reduced motion or while you follow a figure. **Battle remains** (on by default) leaves the fallen, spent arrows and trodden ground on the 3D field until the encounter ends; turn it off for a clean board. The rules never see them.
 

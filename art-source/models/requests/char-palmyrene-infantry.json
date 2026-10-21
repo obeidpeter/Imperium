@@ -1,0 +1,82 @@
+{
+  "id": "char-palmyrene-infantry",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    9
+  ],
+  "use": "Palmyrene spearmen; the game adds the spear and shield.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Palmyrene soldier of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of bronze scale armour over a long-sleeved patterned tunic in red and gold, baggy trousers, soft leather boots, and a conical bronze helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "4e6ac7da-0733-4cef-94a7-a849d668c822",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:42.945Z",
+    "rawSha256": "637c1d91c26f8d06fed39a277e41013ec6c015e5b57d9926d1647a3681ddc1e0",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.522Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Palmyrene soldier of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of bronze scale armour over a long-sleeved patterned tunic in red and gold, baggy trousers, soft leather boots, and a conical bronze helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-palmyrene-infantry.glb",
+    "rawBytes": 25198984,
+    "tripoInput": {
+      "prompt": "Full-body Palmyrene soldier of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of bronze scale armour over a long-sleeved patterned tunic in red and gold, baggy trousers, soft leather boots, and a conical bronze helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-palmyrene-infantry-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "d6ec60f4-7c4f-4f7c-9e50-08e3a3521fc1",
+      "requestedAt": "2026-10-20T22:51:50.224Z",
+      "balanceBefore": 4505,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "4e6ac7da-0733-4cef-94a7-a849d668c822",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:53:36.946Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-palmyrene-infantry-rigged.glb",
+      "rawBytes": 32791312,
+      "rawSha256": "20bf00ca6b0cec1de091419a9651ad6d1b1d79e5926fabaa5b2074909cda7cad",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "4e6ac7da-0733-4cef-94a7-a849d668c822",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

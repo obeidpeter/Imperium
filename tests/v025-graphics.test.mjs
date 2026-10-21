@@ -154,8 +154,15 @@ test('v0.25.0 Lorica & Paludamentum: physically enriched character/armor shaders
   assert.equal(testMat.userData.actorFinish, 'mail');
   const shader = {uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader};
   testMat.onBeforeCompile(shader);
-  assert.match(testMat.customProgramCacheKey(), /actor-finish-v035:mail/);
-  testMat.dispose();
+  // v0.38: one program for every kind; the kind's finish rides in uniforms.
+  assert.match(testMat.customProgramCacheKey(), /actor-finish-v038:cloud-shadow-v1$/);
+  assert.deepEqual(shader.uniforms.actorFinishRoughness.value.toArray(), [.9, 0, 1]);assert.equal(shader.uniforms.actorFinishGrazing.value, 0);
+  assert.match(shader.fragmentShader, /diffuseColor\.rgb\*=actorFinishTint;/);assert.match(shader.fragmentShader, /skinGrazing\*actorFinishGrazing/);
+  const skin = new THREE.MeshStandardMaterial(), skinShader = {uniforms: {}, vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader};
+  finishActorMaterial(skin, 'skin');skin.onBeforeCompile(skinShader);
+  assert.equal(skin.customProgramCacheKey(), testMat.customProgramCacheKey(), 'Skin and mail share one program');
+  assert.deepEqual(skinShader.uniforms.actorFinishRoughness.value.toArray(), [1, .46, .86]);assert.equal(skinShader.uniforms.actorFinishGrazing.value, 1);
+  testMat.dispose();skin.dispose();
 
   const leader = createActor({id: 'ally0', name: 'Lucan', side: 'ally', role: 'legionary', specialization: 'leader', hp: 14, maxHp: 14}, {chapter: 6, kind: 'battle'});
   const signum = leader.group.getObjectByName('actor-signum');
@@ -192,7 +199,9 @@ test('v0.25.0 Ignis & Ferrum: volumetric brazier flame plumes, projectile trails
   };
   stage.updateFieldworks(encounter);
   const brazier = stage.fieldworkMeshes.get('brazier:2,3');
-  assert.ok(brazier?.userData.brazierLight?.isPointLight, 'Brazier fieldwork mounts a dynamic warm PointLight');
+  // v0.38: the brazier borrows the stage's one point light (its warm flicker is set in tick);
+  // a light of its own would recompile every lit shader in the middle of a battle.
+  assert.ok(brazier?.userData.brazierLightAt?.isVector3 && !brazier.getObjectByProperty('isPointLight', true), 'Brazier fieldwork borrows the pooled warm PointLight');
   assert.ok(brazier?.userData.flamePlume?.isPoints, 'Brazier fieldwork mounts a volumetric flame plume');
 
   stage.updateBattleDecals(encounter, [{x: 5, y: 1, kind: 'clash'}]);

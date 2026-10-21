@@ -44,25 +44,28 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
     for(const item of items){
       const bone=item.parent,bind=new T.Matrix4().multiplyMatrices(inverse,item.matrixWorld),source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone(),p=source.attributes.position,n=source.attributes.normal,color=source.attributes.color,uv=source.attributes.uv;
       normalMatrix.getNormalMatrix(bind);
-      const cloth=clothRigs.find(r=>r.parent===bone),base=boneIndex.get(bone),up=boneIndex.get(bone.parent);
+      const cloth=clothRigs.find(r=>r.parent===bone),base=boneIndex.get(bone),up=boneIndex.get(bone.parent),tint=item.material.color;
+      // How this joint's vertices blend toward its parent, decided once per part.
+      const name=bone.name,lid=source.attributes.lidWeight,brow=source.attributes.browWeight;
+      const bend=up===undefined?'':/eyelid$/.test(name)&&lid?'lid':/brow$/.test(name)&&brow?'brow':/shoulder$/.test(name)?'shoulder':name==='elbow'||name==='knee'||name==='horse-knee'?'joint':/thigh$/.test(name)?'thigh':name==='torso'?'torso':name==='horse-neck'?'neck':'';
+      const hoof=/^(fore|hind)-.*-leg$/.test(name)&&horseBody?boneIndex.get(horseBody):undefined;
       for(let i=0;i<p.count;i++){
-        const localY=p.getY(i),localX=p.getX(i);point.fromBufferAttribute(p,i).applyMatrix4(bind);positions.push(...point.toArray());
-        const worldY=point.y;point.fromBufferAttribute(n,i).applyNormalMatrix(normalMatrix);normals.push(...point.toArray());uvs.push(uv?.getX(i)??0,uv?.getY(i)??0);
+        const localY=p.getY(i),localX=p.getX(i);point.fromBufferAttribute(p,i).applyMatrix4(bind);positions.push(point.x,point.y,point.z);
+        const worldY=point.y;point.fromBufferAttribute(n,i).applyNormalMatrix(normalMatrix);normals.push(point.x,point.y,point.z);uvs.push(uv?.getX(i)??0,uv?.getY(i)??0);
         let a=base,b=base,w=0;
         if(cloth){if(localY>=cloth.middle){a=base;b=boneIndex.get(cloth.mid);w=smooth((cloth.top-localY)/(cloth.top-cloth.middle));}else{a=boneIndex.get(cloth.mid);b=boneIndex.get(cloth.hem);w=smooth((cloth.middle-localY)/(cloth.middle-cloth.bottom));}}
         else if(up!==undefined){
-          if(/eyelid$/.test(bone.name)&&source.attributes.lidWeight)w=1-source.attributes.lidWeight.getX(i);
-          else if(/brow$/.test(bone.name)&&source.attributes.browWeight)w=1-source.attributes.browWeight.getX(i);
-          else if(/shoulder$/.test(bone.name))w=1-smooth((.065-localY)/.18);
-          else if(bone.name==='elbow'||bone.name==='knee'||bone.name==='horse-knee')w=1-smooth((.045-localY)/.10);
-          else if(/thigh$/.test(bone.name))w=1-smooth((.055-localY)/.15);
-          else if(bone.name==='torso')w=1-smooth((localY+.025)/.20);
-          else if(bone.name==='horse-neck')w=1-smooth((localY+.06)/.28);
+          if(bend==='lid')w=1-lid.getX(i);
+          else if(bend==='brow')w=1-brow.getX(i);
+          else if(bend==='shoulder')w=1-smooth((.065-localY)/.18);
+          else if(bend==='joint')w=1-smooth((.045-localY)/.10);
+          else if(bend==='thigh')w=1-smooth((.055-localY)/.15);
+          else if(bend==='torso')w=1-smooth((localY+.025)/.20);
+          else if(bend==='neck')w=1-smooth((localY+.06)/.28);
           b=up;
-          if(/^(fore|hind)-.*-leg$/.test(bone.name)&&horseBody){b=boneIndex.get(horseBody);w=1-smooth((.075-localY)/.24);}
+          if(hoof!==undefined){b=hoof;w=1-smooth((.075-localY)/.24);}
         }
         indices.push(a,b,0,0);weights.push(1-w,w,0,0);
-        const tint=item.material.color;
         let r=tint.r*(color?.getX(i)??1),g=tint.g*(color?.getY(i)??1),blue=tint.b*(color?.getZ(i)??1);
         // Broad seam/hem wear survives the overview; microtexture alone did not.
         if(material.map&&!overview){const shade=.93+.06*Math.sin(localX*17+localY*8),dust=clamp((.78-worldY)*.19,0,.09);r=r*shade*(1-dust)+.29*dust;g=g*shade*(1-dust)+.22*dust;blue=blue*shade*(1-dust)+.13*dust;}
@@ -73,9 +76,10 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
     const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new T.Float32BufferAttribute(normals,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));geometries.add(geometry);
     const mat=material.clone();mat.color.set(0xffffff);mat.vertexColors=true;materials.add(mat);
     const skin=new T.SkinnedMesh(geometry,mat);skin.name=overview?'overview-weighted-surface':'weighted-character-surface';skin.userData.overview=overview;skin.castShadow=true;skin.receiveShadow=true;skin.visible=!overview;group.add(skin);skin.bind(skeleton);skin.normalizeSkinWeights();
-    // Conservative local bounds cover all authored poses. Picking still tests
-    // actual deformed triangles; no per-frame full-vertex bounds scan is needed.
-    skin.boundingSphere=new T.Sphere(new T.Vector3(0,1.25,0),3);skin.frustumCulled=false;retained.push(skin);
+    // Conservative local bounds cover all authored poses, so a figure off screen
+    // (or outside the shadow camera) is culled without a per-frame vertex scan.
+    // Picking still tests actual deformed triangles.
+    skin.boundingSphere=new T.Sphere(new T.Vector3(0,1.25,0),3);skin.frustumCulled=true;retained.push(skin);
   }
   return retained;
 }

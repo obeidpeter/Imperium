@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {chapterAudioAssets} from '../src/ui/art.js';
+import {chapterBodies} from '../src/ui/actor-body-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -74,8 +75,14 @@ assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await re
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
 const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
 for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&build.deferredAssets.includes(path),'Complete deferred inventory retains female resources: '+path);
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path));
+// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone.
+const chapterModel=path=>/^\.\/assets\/models\/chapters\/(\d\d)\//.exec(path)?.[1];
+// A generated character body belongs to the chapters whose figures wear it.
+const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!chapterModel(path)&&!characterBody(path));
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
+for(const path of build.showcaseAssets.filter(chapterModel))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),Number(chapterModel(path))===Number(chapter),'Chapter '+chapter+' and generated scenery '+path);
+for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');

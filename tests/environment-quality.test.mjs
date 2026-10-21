@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../vendor/three/three.module.js';
-import {createMasonryBlockGeometry,createPalmFrondGeometry,createColumnGeometry,smoothCoincidentNormals} from '../src/showcase/environment-primitives.js';
+import {createMasonryBlockGeometry,createColumnGeometry,smoothCoincidentNormals} from '../src/showcase/environment-primitives.js';
 import {createEnvironmentMaterials} from '../src/showcase/environment-materials.js';
 import {createEnvironment} from '../src/showcase/environment.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
@@ -18,12 +18,13 @@ test('Masonry bevels stay within the original collision envelope and expose fini
   assert.deepEqual(g.boundingBox.min.toArray(),[-.5,-.5,-.5]);assert.deepEqual(g.boundingBox.max.toArray(),[.5,.5,.5]);g.dispose();
 });
 
-test('Compound palms and fluted columns use real bounded geometry, with leaf gaps and taper preserved',()=>{
-  const palm=createPalmFrondGeometry(),column=createColumnGeometry();
-  for(const g of [palm,column]){for(const a of Object.values(g.attributes))for(const v of a.array)assert.ok(Number.isFinite(v));for(const i of g.index.array)assert.ok(i>=0&&i<g.attributes.position.count);}
-  palm.computeBoundingBox();assert.ok(palm.boundingBox.max.x<3.2);assert.ok(palm.boundingBox.min.y<-.5);assert.ok(palm.boundingBox.max.y>.3);assert.ok(palm.index.count/3<150,'Compound frond remains a small instanced primitive');
+// (Date palms are drawn by the foliage factory's leaf sprays; the unused
+// stand-alone frond geometry was removed in 0.38.)
+test('Fluted columns use real bounded geometry, with taper preserved',()=>{
+  const column=createColumnGeometry();
+  for(const g of [column]){for(const a of Object.values(g.attributes))for(const v of a.array)assert.ok(Number.isFinite(v));for(const i of g.index.array)assert.ok(i>=0&&i<g.attributes.position.count);}
   const p=column.attributes.position,atHeight=y=>Array.from({length:p.count},(_,i)=>i).filter(i=>Math.abs(p.getY(i)-y)<.0001).map(i=>Math.hypot(p.getX(i),p.getZ(i)));
-  const lower=atHeight(1.25),upper=atHeight(4.05);assert.ok(Math.max(...lower)-Math.min(...lower)>.01,'Shaft has actual shallow fluting');assert.ok(Math.min(...lower)>Math.max(...upper),'Entasis still tapers toward the capital');palm.dispose();column.dispose();
+  const lower=atHeight(1.25),upper=atHeight(4.05);assert.ok(Math.max(...lower)-Math.min(...lower)>.01,'Shaft has actual shallow fluting');assert.ok(Math.min(...lower)>Math.max(...upper),'Entasis still tapers toward the capital');column.dispose();
 });
 
 test('Material finishes preserve the existing soil texture and three quality tiers compose leaf wind without losing surface treatment',()=>{

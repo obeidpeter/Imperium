@@ -1,0 +1,82 @@
+{
+  "id": "char-palmyrene-archer",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    9
+  ],
+  "use": "Palmyrene archers; the game adds the bow, arrows and quiver.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Palmyrene archer of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a richly embroidered long-sleeved tunic with a decorated hem and belt, baggy embroidered trousers, soft leather boots, and a cloth headband, no helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "5e86017f-e99d-4922-a5ec-3c957af69fcb",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:17.961Z",
+    "rawSha256": "0f923c4d1b9cf80105616b6d2aa373803d90e8448b52c1a5f7cc72939cdf3b50",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.728Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Palmyrene archer of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a richly embroidered long-sleeved tunic with a decorated hem and belt, baggy embroidered trousers, soft leather boots, and a cloth headband, no helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-palmyrene-archer.glb",
+    "rawBytes": 25723400,
+    "tripoInput": {
+      "prompt": "Full-body Palmyrene archer of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a richly embroidered long-sleeved tunic with a decorated hem and belt, baggy embroidered trousers, soft leather boots, and a cloth headband, no helmet. Short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-palmyrene-archer-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "45c7459a-7f4b-4c9e-9e8b-57a24763e8f4",
+      "requestedAt": "2026-10-20T22:51:25.209Z",
+      "balanceBefore": 4575,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "5e86017f-e99d-4922-a5ec-3c957af69fcb",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:52:56.333Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-palmyrene-archer-rigged.glb",
+      "rawBytes": 33642184,
+      "rawSha256": "c626a8ed26e6f902d5f6120a75d5ce1616508554ad0e41b10346905f36295877",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "5e86017f-e99d-4922-a5ec-3c957af69fcb",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

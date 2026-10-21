@@ -2,6 +2,7 @@ import {createAssetLoader,constrainedConnection,prefetchFiles} from './asset-loa
 import {paintedJourneyMap} from './campaign-map.js';
 import {PRESENTATION_BUDGET} from './presentation-budget.js';
 import {animationAssets} from './sprite-frames.js';
+import {chapterBodies,actorBodyUrl} from './actor-body-catalog.js';
 // Presentation assets never infer or award campaign milestones.
 const artLoader=createAssetLoader({maxEntries:PRESENTATION_BUDGET.decodedEntries,maxBytes:PRESENTATION_BUDGET.decodedBytes});
 export function heroPortrait(rank='Tiro') {
@@ -44,7 +45,9 @@ export function chapterAssets(chapter=1) {
   // Depth maps for this chapter's paintings, and for the oath's (its painting is in the opening shell).
   files.push(...files.map(sceneDepth));
   if(n===1||n===12)files.push(sceneDepth('./assets/scenes/frontier-oath.webp'));
-  if(n!==11)files.push('./assets/tactical/units-roman-v031.webp','./assets/tactical/units-roman.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
+  // The pre-0.31 Roman atlas (units-roman.webp) is drawn by nothing; it stays in
+  // the complete historical pack only.
+  if(n!==11)files.push('./assets/tactical/units-roman-v031.webp','./assets/tactical/units-frontier.webp','./assets/tactical/units-specialists.webp');
   if([2,3,4,6,7,8,10,11,12].includes(n))files.push('./assets/tactical/units-civic.webp');
   files.push('./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp');
   if(n!==11)files.push(...animationAssets(n,false));
@@ -71,8 +74,10 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // and the original material maps remain in the complete historical pack.
   // Cold chapter restores need only active artwork and anatomy. Aelia's model
   // is deferred until Chapter VIII; the complete inventory retains it always.
-  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1));
-  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
+  // Generated scenery in assets/models/chapters/NN/ belongs to chapter NN only;
+  // a generated character body, to the chapters whose figures wear it.
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),own=`./assets/models/chapters/${String(n).padStart(2,'0')}/`,bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id));
+  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/chapters/')&&!path.startsWith(own))&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
 }
 let chapterRequest=0;

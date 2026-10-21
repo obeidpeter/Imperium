@@ -8,3 +8,7 @@ coverage/
 tests/fixtures/
 tests/visual-baselines/
 tests/visual-results/
+
+# Raw generator downloads (for example Tripo GLBs): provenance, digests and
+# processed models are committed; the raw files stay local. docs/asset-pipeline.md
+art-source/models/raw/

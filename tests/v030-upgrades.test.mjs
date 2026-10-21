@@ -211,10 +211,12 @@ test('v0.30.0: followers play the leader’s own pose a moment late, never in un
   assert.deepEqual([0, 1, 2].map(i => banks.getX(i)), [0, 1, 2].map(i => poseBank(unit.id, i)));
   const material = crowd.meshes[0].material, shader = {uniforms: {}, vertexShader: T.ShaderLib.physical.vertexShader, fragmentShader: T.ShaderLib.physical.fragmentShader};
   material.onBeforeCompile(shader, null);
-  assert.ok(Number.isInteger(material.defines.CROWD_BONES) && material.defines.CROWD_BONES > 10);
+  const crowdBones = material.userData.crowdBones;
+  assert.ok(Number.isInteger(crowdBones) && crowdBones > 10 && material.defines?.CROWD_BONES === undefined, 'v0.38: the bone count is a uniform, so kits share one program');
+  assert.match(shader.vertexShader, /uniform float crowdBones;/);assert.equal(shader.uniforms.crowdBones.value, crowdBones);
   assert.match(shader.vertexShader, /attribute float crowdBank;/);
   assert.match(shader.vertexShader, /getBoneMatrix\(skinIndex\.x\+crowdBoneBase\)/);
-  assert.ok(crowd.meshes.every(m => m.skeleton.boneTexture && m.skeleton.boneMatrices.length >= m.material.defines.CROWD_BONES * 16 * POSE_BANK_DELAYS.length), 'Each surface’s bone texture holds every bank of its own skeleton');
+  assert.ok(crowd.meshes.every(m => m.skeleton.boneTexture && m.skeleton.boneMatrices.length >= m.material.userData.crowdBones * 16 * POSE_BANK_DELAYS.length), 'Each surface’s bone texture holds every bank of its own skeleton');
   crowd.dispose();actor.dispose();
 });
 
@@ -237,6 +239,11 @@ test('v0.30.0: the fallen lie low and stay; spent arrows stand clear of their ma
   const scene = new T.Scene(), remains = createBattleRemains(scene, {quality: 'balanced', heightAt: () => 0});
   const actor = createActor({id: 'enemy1', role: 'infantry', side: 'enemy', hp: 5, maxHp: 10}, {chapter: 7});
   const kind = {key: 'sculpted:infantry:enemy', make: sculptedFallenKind(actor)};
+  // v0.38: each kind's batch exists, empty, before the battle is shown, so the
+  // first fall compiles no shader in play; preparing it twice makes nothing new.
+  assert.equal(remains.prepare([kind, kind]), 1);assert.equal(remains.prepare([kind]), 0);
+  const prepared = remains.group.children.find(c => c.isInstancedMesh && c.name.startsWith('fallen'));
+  assert.ok(prepared && prepared.count === 0 && remains.stats().kinds === 1 && remains.stats().bodies === 0);
   for (let i = 0; i < REMAINS_LIMIT.balanced + 3; i++) remains.fall({...kind, world: new T.Vector3(i * .5, 0, 0), yaw: i, animate: false});
   assert.equal(remains.stats().bodies, REMAINS_LIMIT.balanced, 'Bodies are capped, oldest first');
   assert.equal(remains.stats().kinds, 1, 'One baked body serves every man of that kind');

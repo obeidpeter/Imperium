@@ -1,0 +1,82 @@
+{
+  "id": "char-roman-trainer",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    1
+  ],
+  "use": "The Chapter I drill instructor; the game adds the practice sword.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body grizzled Roman veteran drill instructor of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved brown wool tunic to the knee, a studded military belt, dark wool trousers, closed leather boots and a leather neck scarf. Bare head with short cropped grey hair and a short grey beard, weathered older face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "753e26c5-63d2-4df0-ae10-28a450a55866",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:54:20.907Z",
+    "rawSha256": "db18b606e705476bfb2095dc456917b8e3c8762d920700a4fb0ae3ff6bb59f57",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:53:09.999Z",
+    "balanceBefore": 4325,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body grizzled Roman veteran drill instructor of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved brown wool tunic to the knee, a studded military belt, dark wool trousers, closed leather boots and a leather neck scarf. Bare head with short cropped grey hair and a short grey beard, weathered older face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-roman-trainer.glb",
+    "rawBytes": 23972464,
+    "tripoInput": {
+      "prompt": "Full-body grizzled Roman veteran drill instructor of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved brown wool tunic to the knee, a studded military belt, dark wool trousers, closed leather boots and a leather neck scarf. Bare head with short cropped grey hair and a short grey beard, weathered older face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-roman-trainer-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "6366f165-e003-4beb-8a0b-fdb2e0168838",
+      "requestedAt": "2026-10-20T22:54:28.045Z",
+      "balanceBefore": 4205,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "753e26c5-63d2-4df0-ae10-28a450a55866",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:56:04.711Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-roman-trainer-rigged.glb",
+      "rawBytes": 31597060,
+      "rawSha256": "eee0862626b9ce5d62d5a3c340ca02c62ac72009d479957d922903e68bec1e5e",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "753e26c5-63d2-4df0-ae10-28a450a55866",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

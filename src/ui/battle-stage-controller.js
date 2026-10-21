@@ -2,8 +2,13 @@
 // continues to belong to the campaign and its normal save transaction.
 export function chapterHas3D(state){return Number.isInteger(state?.chapter)&&state.chapter>=1&&state.chapter<=12&&state.phase==='encounter'&&['battle','contest'].includes(state.encounter?.kind);}
 
-export function createBattleStageController({load=()=>import('../showcase/stage.js'),onError=()=>{}}={}){
-  let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null;
+const PRELOAD_MS=15000;
+
+// onStrain(quality) answers a battle that stayed slow at its lowest resolution
+// with the quality the next battle is built at (the stage itself never rebuilds
+// in play for it).
+export function createBattleStageController({load=()=>import('../showcase/stage.js'),onError=()=>{},onStrain=()=>null}={}){
+  let stage=null,key=null,version=0,latest=null,pending=null,lastMotion=null,strained=null;
   const update=()=>{
     if(!stage||!latest)return;
     const {encounter,selected,targets,target,grid,quality,reducedMotion,audio,audioVolume,paused}=latest;
@@ -15,20 +20,28 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     stage.setAdaptiveResolution?.(latest.adaptiveResolution!==false);stage.setMotionSpeed?.(latest.motionSpeed??1);stage.setReducedMotion(reducedMotion);stage.setPaused(paused);stage.setAudio(audio,audioVolume);
     if(pending){const motion=pending;pending=null;stage.play(motion.before,motion.after,motion.command);}
   };
-  function release(){version++;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
+  function release(){version++;if(stage?.strained)strained=stage.quality;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
       const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}`;
       if(key!==nextKey){release();key=nextKey;}
+      if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
-      if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
+      if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
       const ticket=++version;
-      load().then(({BattleStage})=>{
+      load().then(async({BattleStage,preloadBattleFigures})=>{
+        if(ticket!==version||!canvas.isConnected||!latest)return;
+        // What the figures wear, the ground's images and the scenery arrive
+        // first, so nothing is built twice or changes in play; a slow download
+        // holds the battle back only so long.
+        const {encounter,chapter,rank,commendations,figureStyle,quality}=latest;
+        await Promise.race([preloadBattleFigures?.(encounter,{chapter,rank,commendations,figureStyle,quality}),new Promise(done=>setTimeout(done,PRELOAD_MS))]);
         if(ticket!==version||!canvas.isConnected||!latest)return;
         try{
-          stage=new BattleStage(canvas,latest.encounter,{...latest,keyboardMode:'grid'});
+          const own=stage=new BattleStage(canvas,latest.encounter,{...latest,keyboardMode:'grid'});
           stage.onError=error=>{release();onError(error);};stage.home();update();
-          canvas.parentElement.dataset.ready='true';
+          // The "Preparing" veil stays until the battle is prepared and drawn once.
+          Promise.resolve(own.ready).then(()=>{if(stage!==own)return;own.revealed=true;if(own.canvas.parentElement)own.canvas.parentElement.dataset.ready='true';});
         }catch(error){release();onError(error.message||String(error));}
       }).catch(error=>{if(ticket===version){release();onError(error.message||String(error));}});
       return null;

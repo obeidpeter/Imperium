@@ -5,6 +5,7 @@ import {gzipSync} from 'node:zlib';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
+import {staticImportClosure} from './module-closure.mjs';
 
 const root=resolve('.'),dist=resolve(root,'dist');
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
@@ -38,9 +39,14 @@ const revision=hash.digest('hex').slice(0,12),assets=records.map(r=>r.url);
 // Install only the title/recruit shell. Current chapters are requested separately;
 // downloading the complete campaign always requires the user's explicit request.
 const openingArt=new Set(['./assets/scenes/frontier-oath.webp','./assets/portraits/hero-recruit.webp','./assets/portraits/varro.webp']);
-const showcaseAssets=assets.filter(url=>['./showcase/','./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/'].some(prefix=>url.startsWith(prefix)));
+// The shell carries whatever the page's entry module loads statically, or it
+// would not start offline: that includes the board readout, which lives beside
+// the 3D code but is shared with the 2D view, so it belongs to the shell.
+const shellModules=new Set(await staticImportClosure(dist,'src/ui/app.js'));
+for(const url of shellModules)if(!assets.includes(url))throw new Error(`The shell imports missing module ${url}`);
+const showcaseAssets=assets.filter(url=>!shellModules.has(url)&&['./showcase/','./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/'].some(prefix=>url.startsWith(prefix)));
 const showcaseSet=new Set(showcaseAssets);
-const initial=assets.filter(url=>!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
+const initial=assets.filter(url=>shellModules.has(url)||!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
 for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));

@@ -1,3 +1,4 @@
+import * as T from '../../vendor/three/three.module.js';
 import {installCloudShadows} from './atmosphere.js';
 // Original, periodic material fields. No browser state, image decoder, clock or
 // gameplay randomness: identical inputs produce identical bounded texels.
@@ -130,34 +131,36 @@ export function evaluateActorShading(input,ndotl=0.5,ndotv=0.5){
   return {kind,subsurface:0.02*(1-l),sheen:Math.pow(1-v,2.8)*0.14,anisotropy:0,roughnessScale:0.95};
 }
 
+// Each surface kind's finish (tint, roughness, the skin's warm grazing fill)
+// is uniforms in one shared program: figures of every kit compile it once,
+// rather than once per kind. The arithmetic is the per-kind finish exactly.
+const FINISH={
+  skin:{tint:[1,.99,.985],roughness:[1,.46,.86],grazing:1},
+  cloth:{tint:[1.04,1.04,1.04],roughness:[.96,0,1],grazing:0},
+  mail:{tint:[1.03,1.03,1.03],roughness:[.9,0,1],grazing:0},
+  scale:{tint:[1.03,1.03,1.03],roughness:[.9,0,1],grazing:0},
+  metal:{tint:[1.03,1.03,1.03],roughness:[.86,0,1],grazing:0},
+  other:{tint:[1,1,1],roughness:[.95,0,1],grazing:0}
+};
+export const actorFinish=kind=>FINISH[kind]??FINISH.other;
 export function finishActorMaterial(material,kind){
   if(!material?.isMeshStandardMaterial)return material;
   const resolved=actorSurfaceKind(kind??material.normalMap?.userData?.actorSurface??material.map?.userData?.actorSurface??material.userData?.actorFinish);
-  const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
+  const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey(),finish=actorFinish(resolved);
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);
-    let color='',roughness='';
-    if(resolved==='skin'){
-      color='diffuseColor.rgb*=vec3(1.0,.99,.985);';
-      roughness='roughnessFactor=clamp(roughnessFactor,.46,.86);';
-    }else if(resolved==='cloth'){
-      color='diffuseColor.rgb*=1.04;';
-      roughness='roughnessFactor*=.96;';
-    }else if(['mail','scale','metal'].includes(resolved)){
-      color='diffuseColor.rgb*=1.03;';
-      roughness=`roughnessFactor*=${resolved==='metal'?'.86':'.90'};`;
-    }else{
-      roughness='roughnessFactor*=.95;';
-    }
-    shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\n${color}`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n${roughness}`);
-    if(resolved==='skin')shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
-      // Bounded warm grazing fill, driven by existing indirect illumination.
-      // This is an art-directed approximation, not screen-space subsurface scattering.
+    Object.assign(shader.uniforms,{actorFinishTint:{value:new T.Vector3(...finish.tint)},actorFinishRoughness:{value:new T.Vector3(...finish.roughness)},actorFinishGrazing:{value:finish.grazing}});
+    shader.fragmentShader='uniform vec3 actorFinishTint; uniform vec3 actorFinishRoughness; uniform float actorFinishGrazing;\n'+shader.fragmentShader
+      .replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb*=actorFinishTint;')
+      .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor=clamp(roughnessFactor*actorFinishRoughness.x,actorFinishRoughness.y,actorFinishRoughness.z);')
+      .replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+      // Skin only (actorFinishGrazing): a bounded warm grazing fill, driven by existing
+      // indirect illumination. An art-directed approximation, not subsurface scattering.
       float skinGrazing=pow(1.0-clamp(dot(normal,geometryViewDir),0.0,1.0),2.0);
-      reflectedLight.indirectDiffuse+=irradiance*diffuseColor.rgb*vec3(.055,.020,.012)*skinGrazing;
+      reflectedLight.indirectDiffuse+=irradiance*diffuseColor.rgb*vec3(.055,.020,.012)*skinGrazing*actorFinishGrazing;
     `);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v035:${resolved}`;
+  material.customProgramCacheKey=()=>`${oldKey}:actor-finish-v038`;
   material.userData.actorFinish=resolved;
   // Figures dim under passing cloud like the ground they stand on.
   installCloudShadows(material);

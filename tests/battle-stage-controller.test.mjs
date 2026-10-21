@@ -90,3 +90,17 @@ test('Settings and modal changes during the first module import reach the eventu
   assert.deepEqual(stage.calls.filter(call=>call[0]==='reduced').at(-1),['reduced',false]);
   c.release();
 });
+
+test('a battle that stayed slow at its lowest resolution builds the next battle a tier lower, never itself',async()=>{
+  const {FakeStage,instances}=fakeClass(),asked=[];
+  const c=createBattleStageController({load:async()=>({BattleStage:FakeStage}),onStrain:quality=>{asked.push(quality);return 'performance';}});
+  c.mount(canvas(),options('ch1-road',{quality:'balanced'}));await settle();const first=c.stage;
+  first.strained=true;c.mount(canvas(),options('ch1-road',{quality:'balanced',selected:'lucan'}));
+  assert.equal(c.stage,first,'the same battle carries on at its quality');assert.deepEqual(asked,[]);
+  c.mount(canvas(),options('ch1-patrol',{quality:'balanced'}));await settle();
+  assert.deepEqual(asked,['balanced'],'the strain is reported once the battle is left');assert.equal(instances.at(-1).quality,'performance','the next battle is built a tier lower');
+  c.mount(canvas(),options('ch1-ridge',{quality:'performance'}));await settle();assert.equal(asked.length,1,'reported once');
+  const quiet=createBattleStageController({load:async()=>({BattleStage:FakeStage}),onStrain:()=>null});
+  quiet.mount(canvas(),options('ch1-road',{quality:'high'}));await settle();quiet.stage.strained=true;quiet.mount(canvas(),options('ch1-patrol',{quality:'high'}));await settle();
+  assert.equal(quiet.stage.quality,'high','declining the step keeps the chosen quality');
+});

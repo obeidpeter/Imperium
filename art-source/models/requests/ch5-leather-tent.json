@@ -1,0 +1,50 @@
+{
+  "id": "ch5-leather-tent",
+  "status": "in the game since 0.36.0",
+  "chapters": [
+    5
+  ],
+  "use": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army eight-man tent of stitched goatskin leather panels over a wooden ridge pole, with guy ropes and wooden pegs, patched and dusty. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 1.8,
+    "minHeight": 1.4,
+    "maxHeight": 2.2
+  },
+  "provenance": {
+    "taskId": "efad6e3f-58d8-4752-a888-b23213a51cf3",
+    "modelVersion": "v2.5-20250123",
+    "generatedAt": "2026-10-20T17:23:16.673Z",
+    "rawSha256": "2e3e5fda2f03f09e69ca9c12765285d508dd1631f4856074368d8605e4906dcf",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T17:21:32.763Z",
+    "balanceBefore": 4960,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman army eight-man tent of stitched goatskin leather panels over a wooden ridge pole, with guy ropes and wooden pegs, patched and dusty. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-leather-tent.glb",
+    "rawBytes": 17466260,
+    "tripoInput": {
+      "prompt": "A Roman army eight-man tent of stitched goatskin leather panels over a wooden ridge pole, with guy ropes and wooden pegs, patched and dusty. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements.",
+      "model_version": "v2.5-20250123",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-leather-tent-tripo-render.webp",
+    "creditsNote": "Four tasks ran in parallel and the balance fell from 4,980 to 4,900: 20 credits each."
+  }
+}

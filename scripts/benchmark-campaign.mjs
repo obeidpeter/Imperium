@@ -254,7 +254,9 @@ async function remappedKeyboard(){
   try{
     await config(page,{view:'2d'});await restore(page,snapshot);
     await settings(page,()=>page.selectOption('#binding-undo','z'));
-    await page.focus('#battle-board');await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');
+    // Closing Settings re-renders the board; keys sent before the new one is
+    // bound are lost (on slow CI this timed out waiting for the walk).
+    await settled(page);await page.focus('#battle-board');await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');
     await page.waitForFunction(()=>/^Walked/.test(document.querySelector('#announcement').textContent));
     const moved=await exported(page),origin=Game.deserialize(snapshot.serialized).encounter.units.find(u=>u.id==='hero'),walked=moved.encounter.units.find(u=>u.id==='hero');
     assert.notEqual(`${walked.x},${walked.y}`,`${origin.x},${origin.y}`);

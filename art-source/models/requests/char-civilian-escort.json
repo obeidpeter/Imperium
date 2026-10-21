@@ -1,0 +1,86 @@
+{
+  "id": "char-civilian-escort",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    2,
+    3,
+    4,
+    6,
+    8
+  ],
+  "use": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body provincial Roman civilian traveller of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved faded blue-grey wool tunic to the knee with a rope belt, wool leggings and worn leather shoes. Short brown hair and a short beard, tired face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "7292c822-f168-4ce9-abd2-2e7ef4893100",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:07.322Z",
+    "rawSha256": "c31c1b5e4b4adb7500b5174eb504239096ff7aa3d31872f4d889db0eaca61de8",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:31.569Z",
+    "balanceBefore": 4855,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body provincial Roman civilian traveller of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved faded blue-grey wool tunic to the knee with a rope belt, wool leggings and worn leather shoes. Short brown hair and a short beard, tired face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-civilian-escort.glb",
+    "rawBytes": 22209204,
+    "tripoInput": {
+      "prompt": "Full-body provincial Roman civilian traveller of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved faded blue-grey wool tunic to the knee with a rope belt, wool leggings and worn leather shoes. Short brown hair and a short beard, tired face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-civilian-escort-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "c0277728-1689-4bd3-9d3d-3766ce704ffb",
+      "requestedAt": "2026-10-20T22:51:15.029Z",
+      "balanceBefore": 4625,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "7292c822-f168-4ce9-abd2-2e7ef4893100",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:52:30.255Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-civilian-escort-rigged.glb",
+      "rawBytes": 29179092,
+      "rawSha256": "58047da11f2b5be907697b27a77c157f4c069938f3a51e3a2a3ffd82cd3ea3bd",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "7292c822-f168-4ce9-abd2-2e7ef4893100",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

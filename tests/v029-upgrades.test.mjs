@@ -360,7 +360,8 @@ test('v0.29.0: switching figure style swaps only the presentation and sets the m
   assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 0);assert.equal(stage.actors.size, 1);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
   const source = await (await import('node:fs/promises')).readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
   assert.match(source, /const styleKey=`\$\{u\.side\}:\$\{u\.role\}:\$\{u\.name\}:\$\{vComm\}:\$\{this\.quality\}:\$\{this\.figureStyle\}`/);
-  assert.match(source, /if\(!actor\|\|actor\.group\.userData\.styleKey!==styleKey\)\{\s+actor=replaceStageActor\(/, 'A changed style key goes through the safe replacement');
+  assert.match(source, /if\(!actor\|\|actor\.group\.userData\.styleKey!==styleKey\)\{[\s\S]{0,400}?actor=this\.placeFigure\(u,/, 'A changed style key goes through the safe replacement');
+  assert.match(source, /placeFigure\(u,\{styleKey,vComm,encounter=this\.encounter\}\)\{\s+const actor=replaceStageActor\(/);
   stage.setFigureStyle('painted');assert.equal(synced.length, 1, 'Re-selecting the same style does nothing');
   stage.setFigureStyle('invented');assert.equal(stage.figureStyle, 'sculpted', 'Unknown styles fall back to sculpted');
   assert.equal(JSON.stringify(encounter), frozen, 'The encounter is untouched');

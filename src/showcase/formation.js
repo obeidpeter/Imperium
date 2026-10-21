@@ -54,15 +54,18 @@ export function placeFollowers(group,{slots=[],visible=0,heightAt=null,max=8}={}
 // rank. Banks are chosen per man from his unit and slot, never at random.
 export const POSE_BANK_DELAYS=Object.freeze([0,.11,.23,.36]);
 export function poseBank(id,index){let h=2166136261;for(const c of `${id}:bank:${index}`)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)%POSE_BANK_DELAYS.length;}
-const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
+const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nuniform float crowdBones;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
 const CROWD_SKIN_BASE=`#ifdef USE_SKINNING
-  float crowdBoneBase=crowdBank*float(CROWD_BONES);
+  float crowdBoneBase=crowdBank*crowdBones;
   mat4 boneMatX=getBoneMatrix(skinIndex.x+crowdBoneBase);
   mat4 boneMatY=getBoneMatrix(skinIndex.y+crowdBoneBase);
   mat4 boneMatZ=getBoneMatrix(skinIndex.z+crowdBoneBase);
   mat4 boneMatW=getBoneMatrix(skinIndex.w+crowdBoneBase);
 #endif`;
-function crowdShader(shader){
+// The skeleton's bone count is a uniform, not a define, so followers of every
+// kit share one program (and one shadow program) instead of one per skeleton.
+function crowdShader(shader,bones){
+  shader.uniforms.crowdBones={value:bones};
   shader.vertexShader=CROWD_VERTEX_HEAD+shader.vertexShader
     .replace('#include <skinbase_vertex>',CROWD_SKIN_BASE)
     .replace('#include <skinnormal_vertex>','#include <skinnormal_vertex>\n  objectNormal=crowdTurn(objectNormal);')
@@ -70,14 +73,14 @@ function crowdShader(shader){
 }
 function crowdMaterial(source,bones){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
-  material.defines={...material.defines,CROWD_BONES:bones};
-  material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader);};
-  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v2`;
+  material.userData.crowdBones=bones;
+  material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader,bones);};
+  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v3`;
   return material;
 }
 function crowdDepthMaterial(bones){
-  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.defines={CROWD_BONES:bones};
-  material.onBeforeCompile=crowdShader;material.customProgramCacheKey=()=>'formation-crowd-depth-v2';return material;
+  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.userData.crowdBones=bones;
+  material.onBeforeCompile=shader=>crowdShader(shader,bones);material.customProgramCacheKey=()=>'formation-crowd-depth-v3';return material;
 }
 function instanced(source,max,offsets,banks){
   const geometry=new T.InstancedBufferGeometry();
@@ -115,6 +118,10 @@ function rigidAsSkinned(group,rigid,skeleton,bindMatrix){
   const bones=skeleton.bones,index=new Map(bones.map((bone,i)=>[bone,i])),inverseGroup=group.matrixWorld.clone().invert(),positions=[],normals=[],colors=[],skinIndex=[],skinWeight=[];
   const matrix=new T.Matrix4(),normalMatrix=new T.Matrix3(),v=new T.Vector3();
   for(const mesh of rigid){
+    // Kit the leader hides (an archer's sword, an unthrown javelin) stays hidden: its joints are
+    // invisible. The part's own flag is only the distance switch, so it is not consulted.
+    let hidden=false;for(let p=mesh.parent;p&&p!==group;p=p.parent)if(!p.visible)hidden=true;
+    if(hidden)continue;
     let bone=mesh.parent;while(bone&&bone!==group&&!bone.isBone)bone=bone.parent;
     if(!bone?.isBone||!index.has(bone))continue;const i=index.get(bone);
     // bind space = bind^-1 x (bone at bind) x (bone now)^-1 x (mesh now), group-local
@@ -145,8 +152,10 @@ export function createSkinnedCrowd(group,{max=8}={}){
     owned.push(mesh.geometry);group.add(mesh);meshes.push(mesh);
   };
   for(const source of skinned)add(source.geometry,source,source.skeleton,source.bindMatrix);
-  const rigidGeometry=rigidAsSkinned(group,rigid,skinned[0].skeleton,skinned[0].bindMatrix);
-  if(rigidGeometry){owned.push(rigidGeometry);add(rigidGeometry,rigid[0],skinned[0].skeleton,skinned[0].bindMatrix);}
+  // Rigid parts ride the skeleton holding every joint; a generated body's own skin holds only the body's.
+  const primary=skinned.reduce((a,b)=>b.skeleton.bones.length>a.skeleton.bones.length?b:a);
+  const rigidGeometry=rigidAsSkinned(group,rigid,primary.skeleton,primary.bindMatrix);
+  if(rigidGeometry){owned.push(rigidGeometry);add(rigidGeometry,rigid[0],primary.skeleton,primary.bindMatrix);}
   const footprints=[],lastAt=new T.Vector3();let count=0,disposed=false,placedBefore=[],anchored=false;
   return {meshes,max,footprints,
     get count(){return count;},

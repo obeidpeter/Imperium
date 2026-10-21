@@ -11,17 +11,23 @@ export const FIGURE_STYLES=Object.freeze(['sculpted','painted','inked']);
 const ORDER=['performance','balanced','high'];
 const WINDOW=30,OVER_BUDGET_MS=22,OVER_BUDGET_COUNT=18;
 
-/** These are conservative initial hints, not measured device capability. */
-export function defaultGraphicsMode({saveData=false,deviceMemory}={}) {
-  return saveData||(Number.isFinite(deviceMemory)&&deviceMemory>0&&deviceMemory<=2)?'performance':'balanced';
+/** These are conservative initial hints, not measured device capability: a
+ * phone (a touch-first screen no wider than 820 CSS px on its short side),
+ * a data saver or 2 GB of memory or less starts on Performance. The player's
+ * choice, once saved, always wins; Settings → Run performance check measures. */
+export function defaultGraphicsMode({saveData=false,deviceMemory,phone=false}={}) {
+  return saveData||phone||(Number.isFinite(deviceMemory)&&deviceMemory>0&&deviceMemory<=2)?'performance':'balanced';
+}
+export function phoneLike(win=globalThis){
+  try{return !!win.matchMedia?.('(pointer: coarse)').matches&&Math.min(win.screen?.width??Infinity,win.screen?.height??Infinity)<=820;}catch{return false;}
 }
 
 /** Feed actual rendering costs, not elapsed time while idle or hidden.
  * Thirty active samples and a majority over budget are needed for each step.
  * A faster run never raises quality automatically; the player can choose it.
  */
-export function createGraphicsQuality({mode,saveData=false,deviceMemory,onChange}={}) {
-  let current=mode??defaultGraphicsMode({saveData,deviceMemory});
+export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=false,onChange}={}) {
+  let current=mode??defaultGraphicsMode({saveData,deviceMemory,phone});
   if(!Object.hasOwn(GRAPHICS_MODES,current))throw new TypeError('Unknown graphics mode.');
   let samples=[],totalSamples=0,downgrades=0,lastReason='initial';
   function setMode(next) {
@@ -40,6 +46,13 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,onChange
     }
     return {mode:current,changed:false,accepted:true};
   }
+  // A 3D battle that stayed slow at its lowest resolution: the next one is
+  // built a tier lower (never rebuilt mid-battle). Returns the new mode.
+  function stepDown(reason='measured-cost') {
+    if(current==='performance')return current;
+    current=ORDER[ORDER.indexOf(current)-1];samples=[];downgrades++;lastReason=reason;
+    onChange?.({mode:current,reason});return current;
+  }
   function stats() {
     const sorted=[...samples].sort((a,b)=>a-b);
     return {mode:current,samples:samples.length,maxSamples:WINDOW,totalSamples,downgrades,
@@ -47,5 +60,5 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,onChange
       meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
       p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};
   }
-  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stats};
+  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,stats};
 }

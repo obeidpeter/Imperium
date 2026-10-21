@@ -1,0 +1,50 @@
+{
+  "id": "ch5-gallery-timbers",
+  "status": "in the game since 0.36.0",
+  "chapters": [
+    5
+  ],
+  "use": "Off-board scenery: a spare countermine shoring frame in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A timber shoring frame at the mouth of a mine gallery: two rough-hewn upright posts and a lintel of unpainted split poplar and palm wood, packed earth around their feet. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 2,
+    "minHeight": 1.6,
+    "maxHeight": 2.4
+  },
+  "provenance": {
+    "taskId": "ad77a449-ea69-4c32-9ba6-60c45bb6812b",
+    "modelVersion": "v2.5-20250123",
+    "generatedAt": "2026-10-20T17:22:42.412Z",
+    "rawSha256": "0d78cc1044f9f81ee3652452bfda038697b86374335947ce38cafdf4d1928204",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T17:21:30.667Z",
+    "balanceBefore": 4980,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A timber shoring frame at the mouth of a mine gallery: two rough-hewn upright posts and a lintel of unpainted split poplar and palm wood, packed earth around their feet. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements."
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-gallery-timbers.glb",
+    "rawBytes": 17707208,
+    "tripoInput": {
+      "prompt": "A timber shoring frame at the mouth of a mine gallery: two rough-hewn upright posts and a lintel of unpainted split poplar and palm wood, packed earth around their feet. Mid-3rd-century Roman Euphrates frontier fortress during a siege, c. AD 256. Realistic, weathered, practical, earthy colours; a single object on bare ground. No people, no animals, no text or inscriptions, no modern objects or materials, no fantasy elements.",
+      "model_version": "v2.5-20250123",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-gallery-timbers-tripo-render.webp",
+    "creditsNote": "Four tasks ran in parallel and the balance fell from 4,980 to 4,900: 20 credits each."
+  }
+}

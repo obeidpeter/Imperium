@@ -15,8 +15,10 @@ test('v0.35.1: a stale character handoff is reported by its own audit, not by np
   assert.equal(pkg.scripts['audit:handoff'],'node scripts/check-character-handoff.mjs');
   assert.match(pkg.scripts.verify,/ && node scripts\/check-character-handoff\.mjs --warn$/,'verify prints the notice without failing');
   assert.doesNotMatch(await readFile(new URL('tests/character-handoff.test.mjs',root),'utf8'),/characterSourceDigest/,'The test suite checks the committed files only');
-  const audit=spawnSync(process.execPath,[fileURLToPath(new URL('scripts/check-character-handoff.mjs',root))],{encoding:'utf8'});
-  assert.equal(audit.status,0,audit.stdout+audit.stderr);assert.match(audit.stdout,/^Character handoff: /);
+  // Whether the export is current or stale, only the audit says so: it fails exactly when stale, and --warn never fails.
+  const script=fileURLToPath(new URL('scripts/check-character-handoff.mjs',root)),audit=spawnSync(process.execPath,[script],{encoding:'utf8'});
+  assert.match(audit.stdout,/^Character handoff: /);assert.equal(audit.status===0,/match the current character source/.test(audit.stdout),audit.stdout+audit.stderr);
+  assert.equal(spawnSync(process.execPath,[script,'--warn'],{encoding:'utf8'}).status,0);
 });
 
 test('v0.35.1: thinned footfalls leave every mover an even share of its own steps', () => {

@@ -5,12 +5,13 @@ import {regionalEnvironment} from './environment-regions.js';
 
 /** Original small fieldwork. Opaque detail merges by material and never
  * participates in picking. World-space grain survives transformed batching. */
-export function createFieldworkKit({chapter=1,quality='balanced',geometries=new Set(),materials=new Set()}={}){
+export function createFieldworkKit({chapter=1,quality='balanced',geometries=new Set(),materials=new Set(),finish=null}={}){
   const region=regionalEnvironment(chapter),segments=quality==='performance'?8:12;
   const own=g=>(geometries.add(g),g);
-  const material=(name,color,finish,metalness=0)=>{
+  // finish: the stage lights field objects as it lights the scenery around them.
+  const material=(name,color,surface,metalness=0)=>{
     const m=new T.MeshStandardMaterial({color,roughness:metalness?.61:.88,metalness});
-    m.name=`fieldwork ${name}`;finishEnvironmentMaterial(m,finish,{arid:[5,6,9].includes(chapter),wet:[2,8].includes(chapter)});materials.add(m);return m;
+    m.name=`fieldwork ${name}`;finishEnvironmentMaterial(m,surface,{arid:[5,6,9].includes(chapter),wet:[2,8].includes(chapter)});finish?.(m);materials.add(m);return m;
   };
   const m={
     wood:material('wood',region.wood,'wood'),dark:material('end grain',region.darkWood,'wood'),

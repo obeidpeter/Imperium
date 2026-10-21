@@ -1,0 +1,86 @@
+{
+  "id": "char-roman-commander",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The protagonist as a senior commander from Chapter VII, and rival claimants; the game adds the crest, cloak (purple at the accession), shield and sword.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman senior army commander of the 260s and 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a bronze muscled cuirass with leather strap pteruges at the shoulders and hips over a long-sleeved white wool tunic, a red sash knotted around the waist, dark wool trousers, closed leather boots and bronze greaves, and a gilded iron helmet with cheek guards, without a crest. Mature face with a short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "b3680837-dcef-4bcd-a98d-c84df9414e34",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:52:15.480Z",
+    "rawSha256": "91565c732d7c5072e9af59e62a8587d7dfa8aab59bdbe06f78c51c68b02fea36",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:50:33.410Z",
+    "balanceBefore": 4695,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman senior army commander of the 260s and 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a bronze muscled cuirass with leather strap pteruges at the shoulders and hips over a long-sleeved white wool tunic, a red sash knotted around the waist, dark wool trousers, closed leather boots and bronze greaves, and a gilded iron helmet with cheek guards, without a crest. Mature face with a short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-roman-commander.glb",
+    "rawBytes": 25632420,
+    "tripoInput": {
+      "prompt": "Full-body Roman senior army commander of the 260s and 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a bronze muscled cuirass with leather strap pteruges at the shoulders and hips over a long-sleeved white wool tunic, a red sash knotted around the waist, dark wool trousers, closed leather boots and bronze greaves, and a gilded iron helmet with cheek guards, without a crest. Mature face with a short dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-roman-commander-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "34b645af-e32b-48d5-b3f6-fa5e355b4dde",
+      "requestedAt": "2026-10-20T22:52:22.710Z",
+      "balanceBefore": 4435,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "b3680837-dcef-4bcd-a98d-c84df9414e34",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:54:15.214Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-roman-commander-rigged.glb",
+      "rawBytes": 33498748,
+      "rawSha256": "51c6ab47bfefbfa4eb4e9c9fe7a33d9709f34ac2d99ebe81f827f5826dbd4f45",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "b3680837-dcef-4bcd-a98d-c84df9414e34",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

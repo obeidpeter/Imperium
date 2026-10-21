@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-spoil-baskets.glb",
+    "bytes": 18840392,
+    "sha256": "3abd0e12b9daebfc571f3524f02c066e06167065aaac1cafc1f92fd812d36284",
+    "triangles": 501886
+  },
+  "output": {
+    "path": "assets/models/chapters/05/ch5-spoil-baskets.glb",
+    "bytes": 188228,
+    "sha256": "5b95258e2b7b0b3f30cd888e56d4712b8e6c1d1d22686f1e80fa259d71e65cad",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 72,
+    "height": 0.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 0.9701972975116786,
+  "sizeMetres": {
+    "width": 0.7777,
+    "height": 0.6,
+    "depth": 0.9629
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e4a3180a-7bb9-438f-a9c2-15c716734d0a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e4a3180a-7bb9-438f-a9c2-15c716734d0a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e4a3180a-7bb9-438f-a9c2-15c716734d0a",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

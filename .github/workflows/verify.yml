@@ -2,10 +2,12 @@
 # expanded, command and production campaigns, production build, asset/offline
 # checks and character audits) on every pull request and on main: on Node 20,
 # the oldest version the project supports (package.json "engines"), and on
-# Node 22. There are no dependencies to install. Two more jobs drive the
+# Node 22. There are no dependencies to install. Three more jobs drive the
 # production build in headless Chromium: the browser smoke test
-# (scripts/browser-smoke.mjs) and the twelve-chapter screenshot benchmark
-# (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact.
+# (scripts/browser-smoke.mjs), the twelve-chapter screenshot benchmark
+# (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
+# and the 3D stage benchmark (scripts/benchmark-stage.mjs), which fails on a
+# shader compiled in the first frame or in play, and whose report is uploaded.
 # Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
@@ -69,4 +71,24 @@ jobs:
         with:
           name: chapter-benchmark
           path: tests/visual-results/v035/
+          retention-days: 14
+
+  stage-benchmark:
+    name: 3D stage benchmark (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run benchmark:stage -- --dist --scenes ch5-mine,ch12-confrontation --check --report tests/visual-results/stage-benchmark.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: stage-benchmark
+          path: tests/visual-results/stage-benchmark.json
           retention-days: 14

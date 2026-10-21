@@ -1,0 +1,83 @@
+{
+  "id": "char-persian-archer",
+  "status": "in the game since 0.37.0",
+  "chapters": [
+    5,
+    6
+  ],
+  "use": "Sasanian archers; the game adds the bow, arrows and quiver.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long quilted kaftan in ochre and dark blue with patterned borders over a short mail shirt, a leather belt, baggy trousers, soft leather boots, and a rounded felt cap with ear flaps. Black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.0-20250812"
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "taskId": "0fe42e69-c07a-4806-81bf-77125cfb87d6",
+    "modelVersion": "v3.0-20250812",
+    "generatedAt": "2026-10-20T22:51:51.080Z",
+    "rawSha256": "e9ecea5f3458ea6556cc060f8b57c8ff1a611e519efbaacef173744f72816b07",
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "requestedAt": "2026-10-20T22:49:38.678Z",
+    "balanceBefore": 4715,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Sasanian Persian archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long quilted kaftan in ochre and dark blue with patterned borders over a short mail shirt, a leather belt, baggy trousers, soft leather boots, and a rounded felt cap with ear flaps. Black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812"
+    },
+    "status": "success",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-persian-archer.glb",
+    "rawBytes": 27530404,
+    "tripoInput": {
+      "prompt": "Full-body Sasanian Persian archer of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long quilted kaftan in ochre and dark blue with patterned borders over a short mail shirt, a leather belt, baggy trousers, soft leather boots, and a rounded felt cap with ear flaps. Black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.0-20250812",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/char-persian-archer-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "a358953c-e353-403f-a22a-11537496fd5d",
+      "requestedAt": "2026-10-20T22:51:58.317Z",
+      "balanceBefore": 4480,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "0fe42e69-c07a-4806-81bf-77125cfb87d6",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-20T22:54:11.091Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-persian-archer-rigged.glb",
+      "rawBytes": 36111284,
+      "rawSha256": "d191c3b23572d1f3f83488a5594a63251ce6528c8e8c4c6e9cfa0901f045cc0a",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "0fe42e69-c07a-4806-81bf-77125cfb87d6",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "tool": "scripts/assets/bind-character.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/char-roman-legionary-rigged.glb",
+    "bytes": 34099592,
+    "sha256": "d9248d865bade3f593a6c6c4e030696f148045496ca30ca0f57402dbff5d655a",
+    "triangles": 780927
+  },
+  "output": {
+    "path": "assets/models/characters/roman-legionary.glb",
+    "bytes": 508428,
+    "sha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b",
+    "triangles": 11432,
+    "overviewTriangles": 2499,
+    "unquantizedBytes": 755188,
+    "quantized": {
+      "tool": "scripts/assets/quantize-model.mjs",
+      "extension": "KHR_mesh_quantization",
+      "vertices": {
+        "NORMAL": 10293,
+        "TEXCOORD_0": 10293,
+        "WEIGHTS_0": 10293
+      }
+    }
+  },
+  "settings": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "detailTexture": 512,
+    "webpQuality": 80,
+    "clavicleDegrees": 10,
+    "sharpAngle": 60
+  },
+  "fit": {
+    "turnDegrees": -89.32,
+    "scale": 1.67263,
+    "posedJoints": {
+      "hips": [
+        0,
+        0.87637,
+        0
+      ],
+      "torso": [
+        0,
+        0.87637,
+        0
+      ],
+      "head": [
+        -0.00054,
+        1.41167,
+        -0.04522
+      ],
+      "right-shoulder": [
+        -0.19638,
+        1.33158,
+        -0.0411
+      ],
+      "right-elbow": [
+        -0.19638,
+        1.10665,
+        -0.0411
+      ],
+      "right-hand": [
+        -0.19638,
+        0.89905,
+        -0.0411
+      ],
+      "left-shoulder": [
+        0.19608,
+        1.33532,
+        -0.04112
+      ],
+      "left-elbow": [
+        0.19608,
+        1.09879,
+        -0.04112
+      ],
+      "left-hand": [
+        0.19608,
+        0.90596,
+        -0.04112
+      ],
+      "right-thigh": [
+        -0.09237,
+        0.86644,
+        0.01094
+      ],
+      "right-knee": [
+        -0.09237,
+        0.41405,
+        0.01094
+      ],
+      "right-ankle": [
+        -0.09237,
+        0.03238,
+        0.01094
+      ],
+      "left-thigh": [
+        0.09236,
+        0.88539,
+        -0.01103
+      ],
+      "left-knee": [
+        0.09236,
+        0.41706,
+        -0.01103
+      ],
+      "left-ankle": [
+        0.09236,
+        0.04318,
+        -0.01103
+      ]
+    },
+    "gameJoints": {
+      "hips": [
+        0,
+        0.91,
+        0
+      ],
+      "torso": [
+        0,
+        0.91,
+        0
+      ],
+      "head": [
+        0,
+        1.485,
+        0
+      ],
+      "right-shoulder": [
+        -0.24,
+        1.329,
+        0
+      ],
+      "right-elbow": [
+        -0.24,
+        1.029,
+        0
+      ],
+      "right-hand": [
+        -0.24,
+        0.771,
+        0
+      ],
+      "left-shoulder": [
+        0.24,
+        1.329,
+        0
+      ],
+      "left-elbow": [
+        0.24,
+        1.029,
+        0
+      ],
+      "left-hand": [
+        0.24,
+        0.771,
+        0
+      ],
+      "right-thigh": [
+        -0.104,
+        0.91,
+        0
+      ],
+      "right-knee": [
+        -0.104,
+        0.48,
+        0
+      ],
+      "right-ankle": [
+        -0.104,
+        0.05,
+        0
+      ],
+      "left-thigh": [
+        0.104,
+        0.91,
+        0
+      ],
+      "left-knee": [
+        0.104,
+        0.48,
+        0
+      ],
+      "left-ankle": [
+        0.104,
+        0.05,
+        0
+      ]
+    },
+    "soleDrop": {
+      "left-ankle": 0.0151,
+      "right-ankle": 0.0143
+    },
+    "handVerticesRemoved": 274,
+    "heelVerticesToAnkles": 186,
+    "overviewVertexColours": true
+  },
+  "bounds": {
+    "min": [
+      -0.28967,
+      -0.02,
+      -0.23311
+    ],
+    "max": [
+      0.28474,
+      1.75015,
+      0.22476
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_3d021c57-c89e-4575-bfce-ceae378320c9",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "NormalGL_3d021c57-c89e-4575-bfce-ceae378320c9",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_3d021c57-c89e-4575-bfce-ceae378320c9",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
