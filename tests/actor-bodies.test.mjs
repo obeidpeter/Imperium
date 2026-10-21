@@ -109,7 +109,7 @@ test('followers march in the generated overview and fallen bodies keep its colou
   assert.ok(crowd.meshes.some(m=>m.geometry.attributes.position===overview.geometry.attributes.position),'Followers share the body\'s overview buffers');
   // Rigid kit (weapons, boots) rides the skeleton holding every joint, not the body's own fifteen.
   const rigid=crowd.meshes.find(m=>m.material.vertexColors&&!m.material.map&&m.geometry.attributes.skinIndex.getY(0)===0&&m.geometry.attributes.skinWeight.getX(0)===1);
-  assert.ok(rigid,'Rigid kit marches with the followers');assert.ok(rigid.material.defines.CROWD_BONES>BODY_JOINTS.length);
+  assert.ok(rigid,'Rigid kit marches with the followers');assert.ok(rigid.material.userData.crowdBones>BODY_JOINTS.length);
   const fallen=a.bakeFallen(),colours=fallen.attributes.color,tones=new Set();for(let i=0;i<colours.count;i+=53)tones.add(colours.getX(i).toFixed(2));
   assert.ok(tones.size>5,'The baked fallen body keeps the overview\'s colours');
   crowd.dispose();fallen.dispose();a.dispose();

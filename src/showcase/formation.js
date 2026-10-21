@@ -54,15 +54,18 @@ export function placeFollowers(group,{slots=[],visible=0,heightAt=null,max=8}={}
 // rank. Banks are chosen per man from his unit and slot, never at random.
 export const POSE_BANK_DELAYS=Object.freeze([0,.11,.23,.36]);
 export function poseBank(id,index){let h=2166136261;for(const c of `${id}:bank:${index}`)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)%POSE_BANK_DELAYS.length;}
-const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
+const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nuniform float crowdBones;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
 const CROWD_SKIN_BASE=`#ifdef USE_SKINNING
-  float crowdBoneBase=crowdBank*float(CROWD_BONES);
+  float crowdBoneBase=crowdBank*crowdBones;
   mat4 boneMatX=getBoneMatrix(skinIndex.x+crowdBoneBase);
   mat4 boneMatY=getBoneMatrix(skinIndex.y+crowdBoneBase);
   mat4 boneMatZ=getBoneMatrix(skinIndex.z+crowdBoneBase);
   mat4 boneMatW=getBoneMatrix(skinIndex.w+crowdBoneBase);
 #endif`;
-function crowdShader(shader){
+// The skeleton's bone count is a uniform, not a define, so followers of every
+// kit share one program (and one shadow program) instead of one per skeleton.
+function crowdShader(shader,bones){
+  shader.uniforms.crowdBones={value:bones};
   shader.vertexShader=CROWD_VERTEX_HEAD+shader.vertexShader
     .replace('#include <skinbase_vertex>',CROWD_SKIN_BASE)
     .replace('#include <skinnormal_vertex>','#include <skinnormal_vertex>\n  objectNormal=crowdTurn(objectNormal);')
@@ -70,14 +73,14 @@ function crowdShader(shader){
 }
 function crowdMaterial(source,bones){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
-  material.defines={...material.defines,CROWD_BONES:bones};
-  material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader);};
-  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v2`;
+  material.userData.crowdBones=bones;
+  material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader,bones);};
+  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v3`;
   return material;
 }
 function crowdDepthMaterial(bones){
-  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.defines={CROWD_BONES:bones};
-  material.onBeforeCompile=crowdShader;material.customProgramCacheKey=()=>'formation-crowd-depth-v2';return material;
+  const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.userData.crowdBones=bones;
+  material.onBeforeCompile=shader=>crowdShader(shader,bones);material.customProgramCacheKey=()=>'formation-crowd-depth-v3';return material;
 }
 function instanced(source,max,offsets,banks){
   const geometry=new T.InstancedBufferGeometry();

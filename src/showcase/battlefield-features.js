@@ -5,7 +5,7 @@ import {batchStaticEnvironment} from './environment-batching.js';
 
 // Only committed field state drives these presentation meshes. Decorative
 // detail merges by material and never becomes a picking or rule obstacle.
-export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced'}={}){
+export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced',finish=null}={}){
   const group=new T.Group();group.name='interactive-battlefield';scene.add(group);
   let signature='',fires=[],walkSurfaces=[],bounds=null,disposed=false,retired=[];
   const geometries=new Set(),materials=new Set();
@@ -23,7 +23,7 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
     const next=JSON.stringify([e?.id,e?.width,e?.height,e?.featureEdition,e?.kind,e?.type,e?.field]);
     if(next===signature)return false;signature=next;clear();
     if(e?.featureEdition!==31||e.kind!=='battle'||e.type==='training'||!Array.isArray(e.field?.objects))return true;
-    const chapter=Number(/^ch(\d+)/.exec(e.id??'')?.[1]??1),kit=createFieldworkKit({chapter,quality,geometries,materials}),records=[];
+    const chapter=Number(/^ch(\d+)/.exec(e.id??'')?.[1]??1),kit=createFieldworkKit({chapter,quality,geometries,materials,finish}),records=[];
     for(const o of e.field.objects){
       if(!Number.isInteger(o.x)||!Number.isInteger(o.y)||o.x<0||o.y<0||o.x>=e.width||o.y>=e.height)continue;
       const p=gridToWorld(o,e,2.5),left=ground(p.x-1.35,p.z),right=ground(p.x+1.35,p.z);

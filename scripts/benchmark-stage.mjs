@@ -98,21 +98,28 @@ async function run(browser,base,id,quality){
     // Late assets (bodies, anatomy, models) and whatever they rebuild belong to the start-up.
     await phase('settle',async()=>{await tab.waitForFunction(()=>{const c=document.getElementById('battle-board')??controller.stage?.canvas;return bench.error||c?.dataset.actorAssets&&c?.dataset.sceneryModels!=='loading';},null,{polling:250,timeout:120000}).catch(()=>{});await tab.waitForTimeout(4000);});
     await phase('idle',()=>tab.waitForTimeout(3000));
+    // Counts from a still overview: with reduced motion the camera snaps home
+    // instead of easing there over slow software frames.
+    const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames();s.setReducedMotion(true);s.home();
+      while(frames()<start+3)await new Promise(done=>setTimeout(done,50));const v=s.stats();s.setReducedMotion(false);
+      return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length};});
     const shown=new Set((await programs()).map(p=>p.key));
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
     await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);}});
     // Programs first compiled after the battle was shown, by name: each is a stall in play.
     const late=(await programs()).filter(p=>!shown.has(p.key)).map(p=>p.name);
-    const raw=await tab.evaluate(()=>({long:bench.long,frames:bench.frames,marks:bench.marks,error:bench.error??null,device:controller.stage?.deviceReport??null}));
+    const raw=await tab.evaluate(()=>({long:bench.long,frames:bench.frames,marks:bench.marks,error:bench.error??null,device:controller.stage?.deviceReport??null,parallelShaderCompile:!!controller.stage?.renderer.extensions.get('KHR_parallel_shader_compile')}));
     const within=(list,p)=>list.filter(([t])=>t>=p.start&&t<p.end);
     const frameWindow=p=>{const frames=within(raw.frames,p),intervals=frames.slice(1).map(([t],i)=>t-frames[i][0]);return {cpu:percentiles(frames.map(([,c])=>c)),interval:percentiles(intervals)};};
     const longWindow=p=>{const l=within(raw.long,p).map(([,d])=>d);return {count:l.length,totalMs:Math.round(l.reduce((a,b)=>a+b,0)),maxMs:Math.round(Math.max(0,...l))};};
     const m=raw.marks,since=t=>Number.isFinite(t)?Math.round(t-m.mount):null;
     return {id,quality,chapter:exchanges.get(id).chapter,turnPlayed:exchanges.get(id).turn,enemyBlows:exchanges.get(id).blows,
-      startup:{constructedMs:since(m.constructed),readyMs:since(m.ready),firstFrameMs:since(m.firstFrame),settledMs:Math.round(phases[1].end-m.mount)},
+      startup:{constructedMs:since(m.constructed),readyMs:since(m.ready),firstFrameMs:since(m.firstFrame),settledMs:Math.round(phases[1].end-m.mount),
+        // Where the start-up's long tasks fall: preload and construction, preparing (figures, compiles), the first draw.
+        longTasks:{construct:longWindow({start:m.mount,end:m.constructed??m.mount}),prepare:longWindow({start:m.constructed??m.mount,end:m.ready??m.firstFrame??m.mount}),firstFrame:longWindow({start:m.ready??m.mount,end:(m.firstFrame??m.mount)+1})}},
       phases:phases.map(p=>({name:p.name,durationMs:Math.round(p.end-p.start),longTasks:longWindow(p),frames:frameWindow(p),programs:p.programs,calls:p.calls,triangles:p.triangles,cameraView:p.cameraView})),
-      overview:{programs:phases[2].programs,calls:phases[2].calls,triangles:phases[2].triangles,textures:phases[2].textures,geometries:phases[2].geometries,generatedBodies:phases[2].generatedBodies,actorAssets:phases[2].actorAssets},
-      programsCompiledAfterSettle:(phases.at(-1).programs??0)-(phases[1].programs??0),lateProgramNames:late,device:raw.device,errors:[...errors,...(raw.error?[raw.error]:[])]};
+      overview:{...counted,generatedBodies:phases[2].generatedBodies,actorAssets:phases[2].actorAssets},
+      programsCompiledAfterSettle:(phases.at(-1).programs??0)-(phases[1].programs??0),lateProgramNames:late,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,errors:[...errors,...(raw.error?[raw.error]:[])]};
   }finally{await context.close();}
 }
 

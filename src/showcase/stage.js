@@ -13,7 +13,8 @@ import {FORMATION_LIMIT,formationEligible,formationSlots,formationShape,follower
 import {createBattleRemains,sculptedFallenKind,paintedFallenKind} from './battle-remains.js';
 import {createSceneryModels} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
-import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts} from './atmosphere.js';
+import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows} from './atmosphere.js';
+import {installBakedOcclusion} from './environment-baked-occlusion.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
 import {loadTacticalArt} from '../ui/unit-sprites.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
@@ -177,7 +178,7 @@ export class BattleStage{
     this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});this.rebuildSceneryModels();
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();this.profileFrames=0;
     this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight);
-    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);
+    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
     this.battleRemains=battleRemains!==false;this.rebuildRemains();
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
@@ -217,7 +218,7 @@ export class BattleStage{
   bodyPoint(tile){const unit=this.unitAt(tile);return this.world(tile).add(new T.Vector3(0,['cavalry','heavy'].includes(unit?.role)?2.05:1.2,0));}
   sync(encounter){
     const division=discessioPlan(encounter);if(!division)this.discessio=null;else if(this.discessio?.key!==division.key){const start=performance.now(),span=Math.max(0,...division.moves.map(m=>m.order*220+this.world(m.from).distanceTo(this.world(m.to))/1.35*1000));this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};}
-    this.encounter=encounter;if(this.fieldFeatures?.sync(encounter))this.redrapeGroundOverlays();this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
+    this.encounter=encounter;if(this.fieldFeatures?.sync(encounter)){this.redrapeGroundOverlays();this.sceneryOcclusion?.add(this.fieldFeatures.group);}this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
     for(const [id,a] of this.actors)if(!visible.has(id)){this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);this.poseReset.delete(id);}
     this.labelLayer.dataset.dense=String(visible.size>9);
     for(const u of this.visibleUnits){
@@ -444,7 +445,10 @@ export class BattleStage{
     this.grid.visible=!!show;
   }
   rebuildFieldFeatures(){
-    this.fieldFeatures?.dispose();this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality});
+    // Field objects stand in the scenery's light: cloud shadows and its baked
+    // occlusion, and (sync) its camera cutaway. They then share its shaders.
+    const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
+    this.fieldFeatures?.dispose();this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality,finish});
   }
   redrapeGroundOverlays(){
     this.ink?.redrape();
@@ -453,7 +457,7 @@ export class BattleStage{
     for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
     pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
