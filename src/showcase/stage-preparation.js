@@ -3,6 +3,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {civicActor} from './stage-readout.js';
 import {drawableShape} from './scene-compositor.js';
 import {FRAME_SLICE_MS,nextSlice} from './build-steps.js';
+import {plainShadowDepth} from './shadow-depth.js';
 
 // Preparing a battle behind the "Preparing" veil: figures built a few at a
 // time, every shader program compiled and every texture uploaded in short
@@ -75,7 +76,8 @@ export const stagePreparation={
   // of them in the first frame. Three's shared depth material changes program
   // only when a caster's instancing or skinning differs from the last one's,
   // so which variants a frame makes depends on draw order; each probe asks for
-  // its caster's exact variant (needsUpdate), covering every order.
+  // its caster's exact variant (needsUpdate), covering every order. A caster's
+  // colour map reaches the pass only where an alpha test cuts it (shadow-depth.js).
   async warmShadows(current=()=>!this.disposed){
     if(!this.renderer?.shadowMap.enabled||!this.compositor?.probe)return 0;
     const variants=new Map(),casters=[];
@@ -84,9 +86,9 @@ export const stagePreparation={
     // the camera pulls back, and hidden stand-ins wait for later effects.
     this.scene.traverse(o=>{
       if(!o.castShadow||!(o.isMesh||o.isPoints||o.isLine)||!o.material)return;
-      // What three's shadow pass copies from each material into its depth material.
-      const depth=m=>[!!m.map,m.map?.channel??0,!!m.alphaMap,m.alphaTest>0||m.alphaToCoverage===true,!!m.displacementMap&&m.displacementScale!==0,
-        m.shadowSide??m.side,m.clippingPlanes?.length??0].join();
+      // What three's shadow pass takes from each material into its depth material.
+      const depth=m=>{const cut=m.alphaTest>0||m.alphaToCoverage===true;
+        return [cut&&!!m.map,cut?m.map?.channel??0:0,cut&&!!m.alphaMap,cut,!!m.displacementMap&&m.displacementScale!==0,m.shadowSide??m.side,m.clippingPlanes?.length??0].join();};
       const key=`${drawableShape(o)}|${o.customDepthMaterial?.uuid??(Array.isArray(o.material)?o.material:[o.material]).map(depth).join('/')}`;
       if(!variants.has(key))variants.set(key,o);
     });
@@ -100,7 +102,7 @@ export const stagePreparation={
         const culled=caster.frustumCulled,hidden=[],own=Object.hasOwn(caster,'onBeforeShadow'),hook=caster.onBeforeShadow;
         for(let o=caster;o;o=o.parent)if(!o.visible){hidden.push(o);o.visible=true;}
         caster.castShadow=true;caster.frustumCulled=false;
-        caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{depthMaterial.needsUpdate=true;};
+        caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{plainShadowDepth(depthMaterial);depthMaterial.needsUpdate=true;};
         try{this.renderer.shadowMap.needsUpdate=true;this.compositor.probe(this.scene);probes++;}
         finally{
           caster.castShadow=false;caster.frustumCulled=culled;for(const o of hidden)o.visible=false;

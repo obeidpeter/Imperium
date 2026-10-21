@@ -204,11 +204,13 @@ export class BattleStage{
     this.battleRemains=battleRemains!==false;this.rebuildRemains();yield;
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
-    this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide});
+    // Overlays are flat (or additive) and draw in one pass: three otherwise draws
+    // a two-sided transparent surface twice, back faces first, with a program for each.
+    this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
     this.legalTargets=new T.InstancedMesh(this.targetGeometry,this.targetMaterial,Math.max(64,encounter.width*encounter.height));this.legalTargets.count=0;
     this.legalTargets.frustumCulled=false;this.overlay.add(this.legalTargets);
-    this.selectionMaterial=new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.95,depthWrite:false,side:T.DoubleSide});
-    this.hoverMaterial=new T.MeshBasicMaterial({color:'#fff2c1',transparent:true,opacity:.9,depthWrite:false,side:T.DoubleSide});
+    this.selectionMaterial=new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.95,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
+    this.hoverMaterial=new T.MeshBasicMaterial({color:'#fff2c1',transparent:true,opacity:.9,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
     this.selectedRing=new T.Mesh(this.ringGeometry,this.selectionMaterial);this.selectedRing.rotation.order='YXZ';this.selectedRing.rotation.x=-Math.PI/2;
     this.facingChevron=new T.Mesh(new T.CircleGeometry(.13,3),this.selectionMaterial);this.facingChevron.position.set(0,-.92,0);
     this.facingChevron.rotation.z=-Math.PI/2;this.selectedRing.add(this.facingChevron);
@@ -216,7 +218,7 @@ export class BattleStage{
     this.hoverRing=new T.Mesh(this.targetGeometry,this.hoverMaterial);this.hoverRing.rotation.x=-Math.PI/2;this.hoverRing.visible=false;
     this.overlay.add(this.hoverRing);
     this.goalMarker=new T.Mesh(new T.RingGeometry(.96,1.02,48),
-      new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide}));
+      new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
     this.goalMarker.rotation.x=-Math.PI/2;this.overlay.add(this.goalMarker);yield;
     this.effectRings=[];this.missionMarkers=new Map();this.chamberStandards=new Map();this.hovered=null;this.canvas.dataset.scene=this.profile.key;
     this.canvas.dataset.chapter=String(this.chapter);this.canvas.dataset.kind=encounter.kind;this.canvas.dataset.weather=this.profile.weather;
@@ -228,7 +230,7 @@ export class BattleStage{
     shaft.rotation.x=Math.PI/2;const tip=new T.Mesh(new T.ConeGeometry(.075,.32,6),new T.MeshStandardMaterial({color:'#afb3b1',metalness:.8,roughness:.35}));
     tip.rotation.x=Math.PI/2;tip.position.z=.85;
     const trail=new T.Mesh(new T.ConeGeometry(.045,1.35,8,1,true),
-      new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide}));
+      new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
     trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);
     this.projectile.visible=false;yield;
     this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();
@@ -557,7 +559,7 @@ export class BattleStage{
       }
       if(readout.ring&&fx.at&&ringCount<6){
         if(!this.effectRings[ringCount]){
-          const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));
+          const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
           ring.rotation.x=-Math.PI/2;this.effectGroup.add(ring);this.effectRings.push(ring);
         }
         const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;

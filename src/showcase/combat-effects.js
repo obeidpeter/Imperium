@@ -28,7 +28,7 @@ export function createCombatEffects(scene,{particleMask=null,quality='balanced'}
   const group=new T.Group();group.name='combat effects';group.userData.cameraOcclusion=false;scene.add(group);
   const owned=[];let disposed=false,now=0;
   // Trails: a pool of ribbons, each the last few tip and inner-blade points.
-  const trailMaterial=new T.MeshBasicMaterial({name:'blade trail',vertexColors:true,transparent:true,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending,fog:false,toneMapped:false});owned.push(trailMaterial);
+  const trailMaterial=new T.MeshBasicMaterial({name:'blade trail',vertexColors:true,transparent:true,depthWrite:false,side:T.DoubleSide,forceSinglePass:true,blending:T.AdditiveBlending,fog:false,toneMapped:false});owned.push(trailMaterial);
   const trails=[];
   for(let k=0;k<4;k++){
     const geometry=new T.BufferGeometry(),positions=new Float32Array(TRAIL_SAMPLES*2*3),colors=new Float32Array(TRAIL_SAMPLES*2*4),index=[];

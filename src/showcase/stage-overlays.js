@@ -22,7 +22,7 @@ export const stageOverlays={
     for(const [id,mesh]of this.moraleRings)if(!wanted.has(id)){this.overlay.remove(mesh);mesh.material.dispose();this.moraleRings.delete(id);}
     for(const u of units){
       if(!this.moraleRings.has(u.id)){
-        const mesh=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.78,depthWrite:false,side:T.DoubleSide}));
+        const mesh=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.78,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
         mesh.name='unit-morale-ring';mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);this.moraleRings.set(u.id,mesh);
       }
       const mesh=this.moraleRings.get(u.id),broken=(u.morale??80)<=20,shaken=(u.morale??80)<=40;
@@ -52,7 +52,7 @@ export const stageOverlays={
   },
   beaconGroup(){
     const group=new T.Group();group.name='reinforcement-beacon';
-    const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide}));
+    const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
     ring.rotation.x=-Math.PI/2;
     const spire=new T.Mesh(new T.ConeGeometry(.16,.55,4),new T.MeshBasicMaterial({color:'#df9d85',transparent:true,opacity:.82}));
     spire.position.set(0,.32,0);spire.rotation.x=Math.PI;
@@ -137,10 +137,10 @@ export const stageOverlays={
       if(!this.battleDecals.has(key)){
         const group=new T.Group();group.name='battle-decal';group.userData.decal=tile;
         const ring=new T.Mesh(new T.RingGeometry(.28,.54,24),
-          new T.MeshBasicMaterial({color:tile.kind==='fallen'?'#4a2822':'#3d3328',transparent:true,opacity:.36,depthWrite:false,side:T.DoubleSide}));
+          new T.MeshBasicMaterial({color:tile.kind==='fallen'?'#4a2822':'#3d3328',transparent:true,opacity:.36,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
         ring.rotation.x=-Math.PI/2;
         const slash=new T.Mesh(new T.PlaneGeometry(.62,.07),
-          new T.MeshBasicMaterial({color:'#2a231c',transparent:true,opacity:.32,depthWrite:false,side:T.DoubleSide}));
+          new T.MeshBasicMaterial({color:'#2a231c',transparent:true,opacity:.32,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
         slash.rotation.x=-Math.PI/2;slash.rotation.z=((tile.x*3+tile.y*5)%7)*.45;
         group.add(ring,slash);this.overlay.add(group);this.battleDecals.set(key,group);
       }
