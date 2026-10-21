@@ -71,7 +71,8 @@ export const stagePreparation={
     this.scene.traverse(o=>{
       if(!o.castShadow||!(o.isMesh||o.isPoints||o.isLine)||!o.material)return;
       // What three's shadow pass copies from each material into its depth material.
-      const depth=m=>[!!m.map,m.map?.channel??0,!!m.alphaMap,m.alphaTest>0||m.alphaToCoverage===true,!!m.displacementMap&&m.displacementScale!==0,m.shadowSide??m.side,m.clippingPlanes?.length??0].join();
+      const depth=m=>[!!m.map,m.map?.channel??0,!!m.alphaMap,m.alphaTest>0||m.alphaToCoverage===true,!!m.displacementMap&&m.displacementScale!==0,
+        m.shadowSide??m.side,m.clippingPlanes?.length??0].join();
       const key=`${drawableShape(o)}|${o.customDepthMaterial?.uuid??(Array.isArray(o.material)?o.material:[o.material]).map(depth).join('/')}`;
       if(!variants.has(key))variants.set(key,o);
     });
@@ -84,9 +85,13 @@ export const stagePreparation={
         if(!current())break;
         const culled=caster.frustumCulled,hidden=[],own=Object.hasOwn(caster,'onBeforeShadow'),hook=caster.onBeforeShadow;
         for(let o=caster;o;o=o.parent)if(!o.visible){hidden.push(o);o.visible=true;}
-        caster.castShadow=true;caster.frustumCulled=false;caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{depthMaterial.needsUpdate=true;};
+        caster.castShadow=true;caster.frustumCulled=false;
+        caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{depthMaterial.needsUpdate=true;};
         try{this.renderer.shadowMap.needsUpdate=true;this.compositor.probe(this.scene);probes++;}
-        finally{caster.castShadow=false;caster.frustumCulled=culled;for(const o of hidden)o.visible=false;if(own)caster.onBeforeShadow=hook;else delete caster.onBeforeShadow;}
+        finally{
+          caster.castShadow=false;caster.frustumCulled=culled;for(const o of hidden)o.visible=false;
+          if(own)caster.onBeforeShadow=hook;else delete caster.onBeforeShadow;
+        }
         if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
       }
     }finally{
@@ -95,7 +100,9 @@ export const stagePreparation={
     }
     return probes;
   },
-  showProgress(done,total){const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';},
+  showProgress(done,total){
+    const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';
+  },
   // One hidden example of each thing drawn only later in a battle, so its
   // program compiles with the rest and stays alive until the stage goes.
   createWarmup(){
@@ -106,7 +113,10 @@ export const stagePreparation={
   },
   fallenKinds(){
     const kinds=new Map();
-    for(const unit of this.visibleUnits){const actor=this.actors.get(unit.id);if(!actor||civicActor(unit))continue;const kind=this.fallenKind(unit,actor);if(!kinds.has(kind.key))kinds.set(kind.key,kind);}
+    for(const unit of this.visibleUnits){
+      const actor=this.actors.get(unit.id);if(!actor||civicActor(unit))continue;const kind=this.fallenKind(unit,actor);
+      if(!kinds.has(kind.key))kinds.set(kind.key,kind);
+    }
     return [...kinds.values()];
   }
 };

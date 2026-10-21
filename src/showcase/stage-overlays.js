@@ -7,7 +7,13 @@ import {createFlamePlume} from './stage-particles.js';
 // route ink, morale rings, reinforcement beacons, chamber standards,
 // fieldworks, battle marks on the ground, tactical links and the grid.
 export const stageOverlays={
-  releaseOverlay(group){this.overlay?.remove(group);group.traverse(o=>{if(o.geometry&&o.geometry!==this.targetGeometry&&o.geometry!==this.ringGeometry)o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])m.dispose();if(o.isLight)o.dispose?.();});},
+  releaseOverlay(group){
+    this.overlay?.remove(group);
+    group.traverse(o=>{
+      if(o.geometry&&o.geometry!==this.targetGeometry&&o.geometry!==this.ringGeometry)o.geometry.dispose();
+      for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])m.dispose();if(o.isLight)o.dispose?.();
+    });
+  },
   updateMoraleRings(encounter=this.encounter){
     if(!this.overlay)return;
     this.moraleRings=this.moraleRings??new Map();
@@ -59,7 +65,8 @@ export const stageOverlays={
       if(!isContest){const existing=this.chamberStandards.get(bloc);if(existing)existing.group.visible=false;continue;}
       if(!this.chamberStandards.has(bloc)){
         const group=new T.Group();group.name=`bloc-standard:${bloc}`;group.position.set(x,0,-11.2);
-        const pole=new T.Mesh(new T.CylinderGeometry(.045,.055,3.2,8),new T.MeshStandardMaterial({color:'#a98c55',metalness:.65,roughness:.38}));pole.position.y=1.6;
+        const pole=new T.Mesh(new T.CylinderGeometry(.045,.055,3.2,8),new T.MeshStandardMaterial({color:'#a98c55',metalness:.65,roughness:.38}));
+        pole.position.y=1.6;
         const bar=new T.Mesh(new T.CylinderGeometry(.035,.035,1.25,8),pole.material);bar.rotation.z=Math.PI/2;bar.position.y=2.95;
         const bannerMat=new T.MeshStandardMaterial({color:'#9b8e74',roughness:.78,side:T.DoubleSide});
         const banner=new T.Mesh(new T.PlaneGeometry(1.08,1.55),bannerMat);banner.name='bloc-banner';banner.position.set(0,2.12,.04);
@@ -98,11 +105,15 @@ export const stageOverlays={
     const group=new T.Group();group.name=`fieldwork:${type}`;
     if(type==='stakes'){
       const wood=new T.MeshStandardMaterial({color:'#6e5034',roughness:.85});
-      for(const x of [-.45,0,.45]){const stake=new T.Mesh(new T.ConeGeometry(.08,.85,6),wood);stake.position.set(x,.38,0);stake.rotation.z=-.38;group.add(stake);}
+      for(const x of [-.45,0,.45]){
+        const stake=new T.Mesh(new T.ConeGeometry(.08,.85,6),wood);stake.position.set(x,.38,0);stake.rotation.z=-.38;group.add(stake);
+      }
     }else if(type==='rampart'){
-      const turf=new T.Mesh(new T.BoxGeometry(1.55,.48,.58),new T.MeshStandardMaterial({color:'#6b5a42',roughness:.9}));turf.position.set(0,.24,.55);group.add(turf);
+      const turf=new T.Mesh(new T.BoxGeometry(1.55,.48,.58),new T.MeshStandardMaterial({color:'#6b5a42',roughness:.9}));turf.position.set(0,.24,.55);
+      group.add(turf);
     }else if(type==='brazier'){
-      const stand=new T.Mesh(new T.CylinderGeometry(.24,.15,.52,8),new T.MeshStandardMaterial({color:'#46423d',metalness:.7,roughness:.45}));stand.position.set(.52,.26,.45);
+      const stand=new T.Mesh(new T.CylinderGeometry(.24,.15,.52,8),new T.MeshStandardMaterial({color:'#46423d',metalness:.7,roughness:.45}));
+      stand.position.set(.52,.26,.45);
       const fire=new T.Mesh(new T.SphereGeometry(.2,8,6),new T.MeshBasicMaterial({color:'#ff9b3d'}));fire.position.set(.52,.56,.45);
       const plume=createFlamePlume(this.particleMask??null);plume.position.set(.52,.56,.45);
       group.userData.brazierLightAt=new T.Vector3(.52,.88,.45);group.userData.flamePlume=plume;
@@ -116,7 +127,8 @@ export const stageOverlays={
     if(encounter?.kind!=='battle'){for(const decal of this.battleDecals.values())decal.visible=false;return;}
     const tiles=[];
     for(const u of encounter.units??[])if(!u.hidden&&(u.hp??1)<=0&&Number.isFinite(u.x)&&Number.isFinite(u.y))tiles.push({x:u.x,y:u.y,kind:'fallen'});
-    for(const ev of encounter.turnEvents??[])if(['strike','shot','focus','volley','charge'].includes(ev.kind)&&Number.isFinite(ev.x)&&Number.isFinite(ev.y))tiles.push({x:ev.x,y:ev.y,kind:'clash'});
+    for(const ev of encounter.turnEvents??[])if(['strike','shot','focus','volley','charge'].includes(ev.kind)&&Number.isFinite(ev.x)&&Number.isFinite(ev.y))tiles.push({x:ev.x,
+      y:ev.y,kind:'clash'});
     for(const extra of extraTiles)if(extra&&Number.isFinite(extra.x)&&Number.isFinite(extra.y))tiles.push({x:extra.x,y:extra.y,kind:extra.kind??'clash'});
     const wanted=new Set(tiles.map(t=>`${t.x},${t.y}`));
     for(const [key,group]of this.battleDecals)if(!wanted.has(key))group.visible=false;
@@ -124,9 +136,11 @@ export const stageOverlays={
       const key=`${tile.x},${tile.y}`;
       if(!this.battleDecals.has(key)){
         const group=new T.Group();group.name='battle-decal';group.userData.decal=tile;
-        const ring=new T.Mesh(new T.RingGeometry(.28,.54,24),new T.MeshBasicMaterial({color:tile.kind==='fallen'?'#4a2822':'#3d3328',transparent:true,opacity:.36,depthWrite:false,side:T.DoubleSide}));
+        const ring=new T.Mesh(new T.RingGeometry(.28,.54,24),
+          new T.MeshBasicMaterial({color:tile.kind==='fallen'?'#4a2822':'#3d3328',transparent:true,opacity:.36,depthWrite:false,side:T.DoubleSide}));
         ring.rotation.x=-Math.PI/2;
-        const slash=new T.Mesh(new T.PlaneGeometry(.62,.07),new T.MeshBasicMaterial({color:'#2a231c',transparent:true,opacity:.32,depthWrite:false,side:T.DoubleSide}));
+        const slash=new T.Mesh(new T.PlaneGeometry(.62,.07),
+          new T.MeshBasicMaterial({color:'#2a231c',transparent:true,opacity:.32,depthWrite:false,side:T.DoubleSide}));
         slash.rotation.x=-Math.PI/2;slash.rotation.z=((tile.x*3+tile.y*5)%7)*.45;
         group.add(ring,slash);this.overlay.add(group);this.battleDecals.set(key,group);
       }
@@ -141,9 +155,13 @@ export const stageOverlays={
     for(const mark of this.animation?.marks??[]){
       if(mark.done||mark.at>time)continue;mark.done=true;const fx=mark.fx;
       // A blow that lands holds the motion for a beat and jolts the camera.
-      if(live&&fx.type!=='projectile'){const hold=Math.min(70,220-(this.animation.hitStop??0));if(hold>0){this.animation.start+=hold;this.animation.hitStop=(this.animation.hitStop??0)+hold;}if(this.actionCamera!==false)this.cameraKick=Math.min(1,(this.cameraKick??0)+.75);}
+      if(live&&fx.type!=='projectile'){
+        const hold=Math.min(70,220-(this.animation.hitStop??0));if(hold>0){this.animation.start+=hold;this.animation.hitStop=(this.animation.hitStop??0)+hold;}
+        if(this.actionCamera!==false)this.cameraKick=Math.min(1,(this.cameraKick??0)+.75);
+      }
       if(!this.remains)continue;
-      if(fx.type==='projectile')this.remains.arrows({from:this.world(fx.from).add(new T.Vector3(0,1.4,0)),to:this.world(fx.to),count:Math.min(9,1+(mark.volley??0)),seed:`${fx.start}:${fx.from.x}:${fx.from.y}`,size:fx.projectile==='arrow'?1:2.1});
+      if(fx.type==='projectile')this.remains.arrows({from:this.world(fx.from).add(new T.Vector3(0,1.4,0)),to:this.world(fx.to),
+        count:Math.min(9,1+(mark.volley??0)),seed:`${fx.start}:${fx.from.x}:${fx.from.y}`,size:fx.projectile==='arrow'?1:2.1});
       else if(fx.at){const at=this.world(fx.at);this.remains.churn(at.x,at.z);}
     }
   },
@@ -174,12 +192,18 @@ export const stageOverlays={
   },
   tacticalLine(color){
     const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
-    const line=new T.Line(g,new T.LineBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));line.name='tactical-link';line.frustumCulled=false;return line;
+    const line=new T.Line(g,new T.LineBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));line.name='tactical-link';line.frustumCulled=false;
+    return line;
   },
-  setSelection(selected,targets=[],target=null){this.wake();this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
+  setSelection(selected,targets=[],target=null){
+    this.wake();this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
     if(this.targetMaterial)this.targetMaterial.color.set(targetRingColor(this.selectedAction,this.encounter,targets[0]??target));
-    const rotation=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),scale=new T.Vector3(1,1,1);this.legalTargets.count=Math.min(targets.length,this.legalTargets.instanceMatrix.count);
-    for(let i=0;i<this.legalTargets.count;i++){const point=this.world(targets[i]);point.y+=.055;this.matrix.compose(point,rotation,scale);this.legalTargets.setMatrixAt(i,this.matrix);}this.legalTargets.instanceMatrix.needsUpdate=true;
+    const rotation=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),scale=new T.Vector3(1,1,1);
+    this.legalTargets.count=Math.min(targets.length,this.legalTargets.instanceMatrix.count);
+    for(let i=0;i<this.legalTargets.count;i++){
+      const point=this.world(targets[i]);point.y+=.055;this.matrix.compose(point,rotation,scale);this.legalTargets.setMatrixAt(i,this.matrix);
+    }
+    this.legalTargets.instanceMatrix.needsUpdate=true;
     this.inspected=target&&(target.unitId??this.unitAt(target)?.id);
     this.previewTarget=target?.previewBadge&&this.inspected?{unitId:this.inspected,...target.previewBadge}:null;
     this.previewTargets=target?.previewBadges??(this.previewTarget?{[this.previewTarget.unitId]:this.previewTarget}:null);
@@ -192,20 +216,33 @@ export const stageOverlays={
   // next turn.
   updateInk(){
     if(!this.ink||!this.encounter)return;const enemy=[this.inspected,this.hovered].find(id=>id&&this.encounter.units?.find(u=>u.id===id)?.side==='enemy');
-    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null,reach:this.reach??[],route:this.route??null});
+    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,
+      threat:enemy?threatEnvelope(this.encounter,enemy):null,reach:this.reach??[],route:this.route??null});
   },
   // From the campaign UI (Game.moveRoute and the selected unit's move targets).
   setRoute(route=null,reach=[]){this.wake();this.route=route;this.reach=reach;this.updateInk();},
   setGrid(show){
     // Grid edges drape over plateau banks and lie on river water rather than floating at a cell's centre height.
-    if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
+    if(!this.grid){
+      const lines=[],h=(x,z)=>Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;
+      for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){
+        const p=this.world({x,y});
+        for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){
+          const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);
+        }
+      }
+      const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));
+      this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);
+    }
     this.grid.visible=!!show;
   },
   redrapeGroundOverlays(){
     this.ink?.redrape();
     if(!this.grid)return;
     const geometry=this.grid.geometry,pos=geometry.attributes.position;
-    for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);
+    }
     pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
 };

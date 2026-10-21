@@ -12,11 +12,16 @@ import {replaceStageActor} from './actor-replacement.js';
 // followers, and how the defeated lie.
 // A figure is rebuilt when its key changes: a committed defection changes the
 // uniform and allegiance together, and quality and figure style change how it is built.
-export function figureStyleKey(unit,{commendations,quality,figureStyle}){return `${unit.side}:${unit.role}:${unit.name}:${commendations}:${quality}:${figureStyle}`;}
+export function figureStyleKey(unit,{commendations,quality,figureStyle}){
+  return `${unit.side}:${unit.role}:${unit.name}:${commendations}:${quality}:${figureStyle}`;
+}
 // The finish the scene adds for each figure style: painted figures a tilt-shift, inked ones outlines and washes.
 export const figureStyleFinish=style=>({tiltShift:style==='painted'?1:0,ink:style==='inked'?1:0});
 // Delegates show their stance in posture: assent leans in, dissent folds its arms.
-export function voterPosture(unit){const stance=Number(unit?.stance)||0;return stance>=1?{motion:'assent',phase:Math.min(1,stance/3)}:stance<=-1?{motion:'dissent',phase:Math.min(1,-stance/3)}:null;}
+export function voterPosture(unit){
+  const stance=Number(unit?.stance)||0;
+  return stance>=1?{motion:'assent',phase:Math.min(1,stance/3)}:stance<=-1?{motion:'dissent',phase:Math.min(1,-stance/3)}:null;
+}
 export const stageFigures={
   // A veteran's commendations, or the standing a unit's training gives it.
   commendationsOf(u){return this.commendations?.[u.veteranId]??(u.moraleResistance?6:u.specialization?3:0);},
@@ -30,21 +35,35 @@ export const stageFigures={
   },
   placeFigure(u,{styleKey,vComm,encounter=this.encounter}){
     const actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
-      create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
-      prepare:candidate=>{if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;candidate.group.userData.styleKey=styleKey;}
+      create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,
+        {chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,
+          {quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
+      prepare:candidate=>{
+        if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;
+        candidate.group.userData.styleKey=styleKey;
+      }
     });
-    this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted&&actor.rebuilt!==false)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';this.canvas.dataset.generatedBodies=String([...this.actors.values()].filter(a=>a.group.userData.actor?.body).length);}});
+    this.poseReset.add(u.id);
+    actor.ready?.then(()=>{
+      if(!this.disposed&&this.actors.get(u.id)===actor){
+        this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted&&actor.rebuilt!==false)this.attachFormation(u,actor);
+        this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';
+        this.canvas.dataset.generatedBodies=String([...this.actors.values()].filter(a=>a.group.userData.actor?.body).length);
+      }
+    });
     return actor;
   },
   // A defeated unit is laid down once its fall has played (at once on a rebuilt stage).
   layFallen(unit,actor){
     if(!this.remains||civicActor(unit)||actorVisible(unit)||this.remains.hasLaid(unit.id))return;
-    this.remains.layUnit(unit,{...this.fallenKind(unit,actor),world:actor.group.position.clone(),yaw:actor.group.rotation.y+.4,animate:!!this.animation&&!this.reducedMotion});
+    this.remains.layUnit(unit,
+      {...this.fallenKind(unit,actor),world:actor.group.position.clone(),yaw:actor.group.rotation.y+.4,animate:!!this.animation&&!this.reducedMotion});
   },
   // One appearance per fallen batch: a painted unit's own painting, or a sculpted kind of man.
   fallenKind(unit,actor){
     if(actor.painted)return {key:`painted:${unit.id}`,make:paintedFallenKind(actor)};
-    const kit=actor.group.userData.actor??{};return {key:`sculpted:${unit.role}:${unit.side}:${kit.faction??''}:${kit.mounted?'mounted':'foot'}`,make:sculptedFallenKind(actor,{label:unit.role})};
+    const kit=actor.group.userData.actor??{};
+    return {key:`sculpted:${unit.role}:${unit.side}:${kit.faction??''}:${kit.mounted?'mounted':'foot'}`,make:sculptedFallenKind(actor,{label:unit.role})};
   },
   // Military units from Chapter IV stand as formations; a rebuilt rig gets a new crowd.
   attachFormation(unit,actor){
@@ -61,7 +80,9 @@ export const stageFigures={
   // The painted atlases are the 2D view's own; repaint the cards once decoded.
   loadPaintedArt(){
     if(this.paintedArt)return;
-    this.paintedArt=loadTacticalArt(this.encounter).then(()=>{if(this.disposed)return;for(const a of this.actors.values())a.repaint?.();this.shadowDirty=true;}).catch(()=>{});
+    this.paintedArt=loadTacticalArt(this.encounter).then(()=>{
+      if(this.disposed)return;for(const a of this.actors.values())a.repaint?.();this.shadowDirty=true;
+    }).catch(()=>{});
   },
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
   setFigureStyle(style){
