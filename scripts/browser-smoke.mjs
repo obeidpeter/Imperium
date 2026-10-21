@@ -52,6 +52,14 @@ function approachCampCode(){
   assert.ok(code,'A Chapter V camp that can afford the engineering approach');return code;
 }
 
+// A legal edition-35 command chronicle saved at a battle's camp (the campaign stops there).
+function battleCampCode(id){
+  let code=null;const stop=new Error('saved');
+  try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{if(Game.getChapter(s).encounters[s.encounterIndex]?.id!==id)return;code=Game.encodeSave(s);throw stop;}});}
+  catch(error){if(error!==stop)throw error;}
+  assert.ok(code,`A legal camp before ${id}`);return code;
+}
+
 const server=http.createServer((req,res)=>serveRequest(req,res,root));
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
@@ -341,10 +349,46 @@ async function realtimeFlat(){
   console.log('ok - real-time 2D view: the walkable camp and the drill are drawn flat; the list path, the table decision, T and Enter all work');
 }
 
+// Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
+async function restoreRealtime(page,code){
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+}
+async function realtimeSquads(){
+  const page=await open();await restoreRealtime(page,battleCampCode('ch5-mine'));
+  const standards=await page.locator('[data-role="squadBar"] .rt-standard').count();assert.ok(standards>=3,`The squad bar has a standard for each squad (${standards})`);
+  await page.waitForSelector('[data-role="commandPips"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The Command pips show beside the clock'));
+  await page.locator('#rt-board').focus();await page.keyboard.press('Shift+Digit1');
+  await page.waitForSelector('[data-role="squadBar"] .rt-standard[aria-pressed="true"]',{timeout:30000}).catch(()=>assert.fail('Shift+1 selects the first squad'));
+  await page.waitForSelector('[data-role="commandCard"]:not([hidden]) .rt-card-order[data-order="line"]',{timeout:30000}).catch(()=>assert.fail('The command card replaces the ability bar'));
+  await page.keyboard.press('Digit4');
+  if(await page.evaluate(()=>window.__realtime.paused()))await page.keyboard.press('KeyP');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('formation'),null,{timeout:120000}).catch(()=>assert.fail('4 orders the selected squad into line'));
+  await page.keyboard.press('KeyQ');await page.waitForSelector('#modal[open] .field-intel',{timeout:30000}).catch(()=>assert.fail('Q shows the field intelligence'));
+  assert.match(await text(page,'#modal .field-intel'),/Field intelligence/);assert.match(await text(page,'#modal'),/Allied plans/);
+  await page.context().close();
+  console.log('ok - real-time squads: a restored Chapter V battle plays in real time with its squad bar, Command pips and command card; Shift+1 and 4 form a line; Q shows the field intelligence and Allied plans');
+}
+async function realtimeDeployment(){
+  const page=await open();await restoreRealtime(page,battleCampCode('ch7-legion'));
+  await page.waitForSelector('[data-role="deployBar"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter VII opens in deployment'));
+  assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'The clock stands still while deploying');
+  await page.click('[data-role="advanceButton"]');await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]');
+  assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'One press only asks to confirm');
+  await page.click('[data-role="advanceButton"]');
+  await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The second press sounds the advance and the battle runs'));
+  assert.equal(await page.isVisible('[data-role="deployBar"]'),false,'The deployment bar is gone');
+  await page.context().close();
+  console.log('ok - real-time deployment: a restored Chapter VII battle opens with the clock stopped, and Sound the advance (pressed twice) starts it');
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat].filter(s=>!only?.length||only.includes(s.name))){
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}
