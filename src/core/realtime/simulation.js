@@ -10,6 +10,11 @@ import {act,cancelAction,used} from './actions.js';
 import {flyProjectiles,resolveBlows,settleLocks,regenerate} from './damage.js';
 import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
+import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
+import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
+import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
+import {specialistStanding} from './specialists.js';
+import {specialistTarget} from './party.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -27,14 +32,23 @@ const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','l
 
 // map: the encounter's {id, width, height, terrain}. seed: the campaign
 // generator's state. actors: specs with metres positions.
+// squads (from Chapter IV): specs for squads.js spawnSquad; command: the
+// chapter's Command capacity when the soldier commands squads.
 export function createWorld({map,seed,actors,controlled='hero',options={},weather=null,timeOfDay='day',party=[],mission=null,objects=[],difficulty='standard',
-  practice=false,kind='field',scale=null}){
+  practice=false,kind='field',scale=null,squads=null,command=null,chapter=null}){
   if(!map?.terrain||!Number.isInteger(map.width)||!Number.isInteger(map.height))throw new Error('A real-time world needs a tile map.');
-  return {version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:splitStreams(seed>>>0),
+  const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:splitStreams(seed>>>0),
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
     queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[],provoked:[]};
+  if(squads?.length){
+    if(chapter!==null)world.chapter=chapter;
+    world.squads=[];for(const spec of squads)spawnSquad(world,spec);world.doctrine=null;
+    if(world.squads.some(s=>s.side!=='enemy'))world.command=createCommand(command??0);
+    planDoctrine(world);world.events=[];
+  }
+  return world;
 }
 
 export const roundOf=world=>Math.floor(world.tick/TIME.roundTicks)+1;
@@ -82,6 +96,8 @@ export function commandProblem(world,command){
     case 'setKit':return Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
     // Camps only: the map's travel to a place already walked to (no fight, no clock).
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
+    // Orders to squads (command.js): the soldier gives them while he stands.
+    case 'order':return actor.id===world.heroId?orderProblem(world,p):'NO_TARGET';
     case 'stop':case 'setDrawn':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
     default:return 'NO_TARGET';
@@ -91,9 +107,12 @@ export function commandProblem(world,command){
 // changes nothing. A newer order to the same actor replaces a queued one.
 export function queueCommand(world,command){
   const reason=commandProblem(world,command);if(reason)return {ok:false,reason,message:REASONS[reason]};
+  const queued={tick:world.tick,actorId:command.actorId,kind:command.kind,payload:JSON.parse(JSON.stringify(command.payload??{})),seq:world.seq++};
+  // A squad order sets its Command aside now and replaces any order queued for the same squads.
+  if(command.kind==='order'){reserveOrder(world,queued);world.queue.push(queued);return {ok:true,reason:null};}
   const order=ORDER_KINDS.has(command.kind);
   world.queue=world.queue.filter(q=>q.actorId!==command.actorId||(order?!ORDER_KINDS.has(q.kind):q.kind!==command.kind));
-  world.queue.push({tick:world.tick,actorId:command.actorId,kind:command.kind,payload:JSON.parse(JSON.stringify(command.payload??{})),seq:world.seq++});
+  world.queue.push(queued);
   return {ok:true,reason:null};
 }
 
@@ -109,7 +128,14 @@ function provoke(world,actor,targetId){
 }
 // System 1: commands become intents.
 function applyCommand(world,command){
-  const actor=actorById(world,command.actorId),p=command.payload,reason=commandProblem(world,command);
+  const actor=actorById(world,command.actorId),p=command.payload;
+  // An order's Command was set aside when it was given; it reaches its squads now.
+  if(command.kind==='order'){
+    if(world.status!=='active'||!actor?.alive||actor.down){if(p.reserved?.round===Math.floor(world.tick/TIME.roundTicks)+1)world.command.left+=Object.values(p.costs).reduce((a,b)=>a+b,0);
+      emit(world,{kind:'rejected',actorId:command.actorId,reason:'ACTOR_DOWN'});return;}
+    giveOrder(world,command);return;
+  }
+  const reason=commandProblem(world,command);
   if(reason){emit(world,{kind:'rejected',actorId:command.actorId,reason});return;}
   if(p.forced&&p.targetId&&['attack','ability'].includes(command.kind))provoke(world,actor,p.targetId);
   switch(command.kind){
@@ -196,6 +222,9 @@ function checkObjectives(world){
 
 // The battle log: the events worth reading, with their battle time and place.
 const nameOf=(world,id)=>actorById(world,id)?.name??objectById(world,id)?.name??'Someone';
+const squadName=(world,id)=>squadById(world,id)?.name??'A squad';
+const ORDER_WORDS={advance:'advance',attack:'attack',hold:'hold fast',restore:'steady the men',withdraw:'withdraw and brace',line:'form line',
+  'shield-wall':'form shield wall',wedge:'form wedge'};
 function logLine(world,e){
   const by=nameOf(world,e.attackerId??e.actorId),to=nameOf(world,e.defenderId??e.targetId),what=e.missile?MISSILES[e.missile].name.toLowerCase():'blow';
   const a=/^[aeiou]/.test(what)?'an':'a';
@@ -206,7 +235,7 @@ function logLine(world,e){
     case 'block':return `${to} blocks ${by}'s ${what}.`;
     case 'stuck':return `The pilum sticks in ${to}'s shield.`;
     case 'miss':return `${by} misses ${to}.`;
-    case 'fall':return `${to} falls.`;
+    case 'fall':return e.squadId?`${to} of ${squadName(world,e.squadId)} falls${e.exchange?'':` to ${by}`}.`:`${to} falls.`;
     case 'down':return `${to} is down. Bind his wounds or carry him.`;
     case 'stagger':return `${to} staggers.`;
     case 'notice':return actorById(world,e.actorId)?.practice?null:`${by} has seen ${to}.`;
@@ -226,6 +255,12 @@ function logLine(world,e){
     case 'war-cry':return `${by} raises the war cry. The companions answer.`;
     case 'provoked':return `${by} strikes ${to}, who was no enemy: he turns on the party.`;
     case 'taken':return `${by} takes ${e.items.map(id=>ITEMS[id]?.name.toLowerCase()??id).join(', ')} from ${to}.`;
+    case 'squad-broken':return `${squadName(world,e.squadId)} breaks and falls back to regroup.`;
+    case 'squad-rallied':return `${squadName(world,e.squadId)} stands again.`;
+    case 'squad-destroyed':return `${squadName(world,e.squadId)} is cut down.`;
+    case 'squad-braced':return `${squadName(world,e.squadId)} is braced.`;
+    case 'order':return `${squadName(world,e.squadId)}: ${ORDER_WORDS[e.order]??e.order}.`;
+    case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
     default:return null;
@@ -234,7 +269,7 @@ function logLine(world,e){
 function writeLog(world){
   for(const e of world.events){
     const text=logLine(world,e);if(!text)continue;
-    const where=actorById(world,e.defenderId??e.actorId);
+    const where=actorById(world,e.defenderId??e.actorId)??squadById(world,e.squadId);
     world.log.push({tick:e.tick,kind:e.kind,text,x:where?.x??e.x??null,z:where?.z??e.z??null});
   }
   if(world.log.length>LOG_LIMIT)world.log.splice(0,world.log.length-LOG_LIMIT);
@@ -246,19 +281,27 @@ export function step(world){
   for(const a of world.actors){a.px=a.x;a.pz=a.z;a.pfx=a.fx;a.pfz=a.fz;}
   const due=world.queue.filter(c=>c.tick<=world.tick).sort((a,b)=>a.seq-b.seq);world.queue=world.queue.filter(c=>c.tick>world.tick);
   for(const command of due)applyCommand(world,command);
+  if(world.squads)orderEffects(world,{carryOut});
   if(world.status==='active'){
-    // System 2: decisions at 4 Hz, staggered by actor: the party's standing orders, then enemy AI.
+    // System 2: decisions at 4 Hz, staggered by actor: the party's standing orders, then enemy AI; squads decide for their men.
     world.actors.forEach((a,i)=>{
       if(!decidesThisTick(world,i))return;
       if(a.ai)decideEnemy(world,a);else if(a.standing&&a.id!==world.controlled)decideFriend(world,a);
     });
+    squadsOf(world).forEach((s,i)=>{if(decidesThisTick(world,i+1))decideSquad(world,s);});
+    if(world.squads)moveSquads(world);
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
-    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);settleLocks(world);regenerate(world);perceive(world);
+    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world);
+    settleLocks(world);regenerate(world);perceive(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
     if(world.mission)missionTick(world);else if(world.kind!=='camp')checkObjectives(world);
   }else world.projectiles=[];
-  if((world.tick+1)%TIME.roundTicks===0)emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
+  // System 8, the round boundary: Command refills, squads recover and regroup, the enemy replans.
+  if((world.tick+1)%TIME.roundTicks===0){
+    if(world.squads&&world.status==='active'){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
+    emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
+  }
   writeLog(world);world.tick++;
   return world.events;
 }

@@ -12,6 +12,9 @@ import {createWorld,roundOf} from './simulation.js';
 import {findRoute,navGrid,span,speedFactor,cellCentre,nearestWalkable,walkable} from './navigation.js';
 import {ITEMS} from '../../data/items.js';
 import {CHAPTERS} from '../../data/campaign.js';
+import {ROMAN_SQUADS} from '../../data/realtime-squads.js';
+import {defaultStanding} from './squad-ai.js';
+import {fielded,squadCentre} from './squads.js';
 
 // A campaign battle in real time (build brief §3.2 "Converting 0.38 data",
 // §3.4). The 0.38 encounter stays the record the campaign commits: its map,
@@ -148,12 +151,16 @@ export function soldierSpec(state,{at,face=[1,0],extraPila=0}={}){
     abilities:knownAbilities(state),ammo:{...Object.fromEntries(Object.entries(belt).map(([kind,n])=>[kind,n+(kind==='pilum'?extraPila:0)]))},bandages:BANDAGES_PER_ENCOUNTER,
     at,face,standingPreset:'soldier',drawn:false};
 }
+// A veteran's specialism (from Chapter III's training; usable with Command from Chapter IV): its action.
+const SPECIAL_ACTIONS={protector:'guard',leader:'inspire',ranged:'volley'};
 function companionSpec(state,id,at,{side='ally',unitId=null,preset=null}={}){
   const profile=COMPANIONS[id],worn=companionWorn(state,id),kit=Object.keys(worn).sort().map(p=>worn[p]),belt=kit.map(i=>ITEMS[i]?.belt).find(Boolean)??{};
   const veteran=state.company?.find(v=>v.id===id),orders=state.soldier?.orders?.[id];
+  const specialist=state.chapter>=4?state.progression?.specializations?.[id]??null:null;
   return {id,name:veteran?.name??profile.name,side,role:'companion',attributes:companionAttributes(state,id),kit,ammo:{...belt},bandages:id==='firmus'?3:1,
     at,face:[1,0],downs:true,veteranId:id,unitId,standing:orders??null,standingPreset:orders?null:preset??profile.preset,drawn:false,
-    abilities:['strike','brace','throw_pilum','bind_wounds']};
+    abilities:['strike','brace','throw_pilum','bind_wounds',...(specialist?[SPECIAL_ACTIONS[specialist]]:[])],
+    ...(specialist?{specialist,...(specialist==='ranged'?{volleys:2}:{})}:{})};
 }
 // The companions who march with the soldier (from Chapter III): his chosen
 // party, or the first three fit veterans of the company roll.
@@ -174,14 +181,40 @@ function phaseMission(e,phase,layout,{escortPoint=null}={}){
 }
 const CAMP_CAPABILITIES=new Set(['oath','prepare','persuade','negotiate','stratagem','allocate','judge','address','rebut','record','denounce']);
 
+// --- Squads (from Chapter IV, §3.4) ----------------------------------------------
+// Each 0.38 military unit becomes a squad: its Health the squad's strength, its
+// morale, cohesion, damage, bracing and formation carried over, its men drawn
+// from the faction's archetype (ours: legionaries, or Felix's archers). A
+// veteran who marches with the soldier leaves his squad to another officer.
+export const squadsFrom=state=>state.chapter>=4&&state.encounter?.type!=='training';
+const ORDINALS=['First','Second','Third','Fourth','Fifth','Sixth'];
+const ENEMY_SQUAD_NAMES={infantry:'warriors',guard:'shield guard',archer:'archers',raider:'raiders',cavalry:'horse',heavy:'horse'};
+function memberOf(state,role,faction){
+  if(faction==='roman'){const r=ROMAN_SQUADS[role==='archer'?'archer':'infantry'];return {name:r.name==='legionary'?'Legionary':'Auxiliary archer',attributes:{...r.attributes},kit:[...r.kit],ammo:{...r.ammo}};}
+  const tier=tierFor(state.chapter),a=ARCHETYPES[faction][ARCHETYPES[faction][role]?role:'infantry'][0],attrs={...a.attributes};
+  for(const [k,v]of Object.entries(tier.mods))attrs[k]=Math.max(k==='combat'?1:4,(attrs[k]??10)+v);
+  return {name:`${FACTION_NAMES[faction]} ${a.name}`,attributes:attrs,kit:[...a.kit],ammo:{...(a.ammo??{})},mounted:!!a.mounted};
+}
+function squadSpec(state,e,unit,k,{party=[],index=0}={}){
+  const enemy=unit.side==='enemy',faction=enemy?factionFor(state.chapter):'roman',role=unit.role==='heavy'?'heavy':unit.role;
+  const led=!enemy&&unit.veteranId&&!party.includes(unit.veteranId),veteran=led?state.company?.find(v=>v.id===unit.veteranId):null;
+  const name=enemy?`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${role==='archer'?'archers':'squad'}`
+    :`${ORDINALS[index]??'Reserve'} ${role==='archer'?'archers':'squad'}`;
+  return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
+    damage:unit.damage??null,morale:unit.morale??80,cohesion:unit.cohesion??80,braced:!!unit.braced,formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,
+    moraleResistance:unit.moraleResistance??0,at:pos(unit,k),face:enemy?[-1,0]:[1,0],anchor:enemy?pos(unit,k):null,member:memberOf(state,role,faction),
+    standing:enemy?null:defaultStanding(e.mission?.mode,role)};
+}
+
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
   const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine};
-  const actors=[],party=partyFor(state),hero=e.units.find(u=>u.id==='hero');
+  const actors=[],party=partyFor(state),hero=e.units.find(u=>u.id==='hero'),squads=squadsFrom(state),squadSpecs=[];
   actors.push(heroSpec(state,hero,k));
-  let enemyIndex=0;
+  let enemyIndex=0,allyIndex=0;
   for(const u of e.units){
     if(u.id==='hero'||u.hp<=0)continue;
+    if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0}));continue;}
     if(u.side==='enemy')actors.push(enemySpec(state,e,u,enemyIndex++,k));
     else if(u.side==='ally'&&state.chapter<3&&u.veteranId&&COMPANIONS[u.veteranId])actors.push(companionSpec(state,u.veteranId,pos(u,k),{unitId:u.id,preset:'shieldmate'}));
     else if(u.side==='neutral'&&u.role==='escort'){
@@ -195,17 +228,21 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   const op=operationOf(e),index=e.operation?.index??0,escortUnit=e.units.find(u=>e.mission?.escortIds?.includes(u.id));
   const phases=op?op.phases.map(p=>phaseMission(e,p,k,{escortPoint:escortUnit?{x:escortUnit.x,y:escortUnit.y}:null})):[phaseMission(e,{mode:e.mission.mode,goal:[e.goal.x,e.goal.y],
     points:e.mission.points.map(p=>[p.x,p.y]),hold:e.mission.holdRequired},k)];
-  const current=phases[index],wave=w=>({round:w.turn,...tileCentre(w,k),arrived:!!w.arrived,spec:waveSpec(state,w.role,enemyIndex++)});
+  // Reinforcements: a single man before Chapter IV, after it a squad of the 0.38 reinforcement's strength (7, damage 3).
+  const templates=squads?Object.fromEntries(['infantry','guard','archer','raider','cavalry'].map(role=>{
+    const t=squadSpec(state,e,{id:'wave',side:'enemy',role,hp:7,maxHp:7,damage:3,x:0,y:0},k);delete t.at;delete t.anchor;delete t.unitId;return [role,t];})):null;
+  const current=phases[index],wave=w=>({round:w.turn,...tileCentre(w,k),arrived:!!w.arrived,
+    ...(squads?{squad:templates[w.role]??templates.infantry}:{spec:waveSpec(state,w.role,enemyIndex++)})});
   const mission={...current,phase:index,phases:op?op.phases.map(p=>({id:p.id,label:p.label,escort:p.escort??null,wave:p.wave??null})):null,phaseMissions:phases,
     radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.turnLimit,
     waves:(e.mission.waves??[]).map(wave),escorts:[...(e.mission.escortIds??[])],
     required:(e.requiredAbilities??[]).filter(a=>!CAMP_CAPABILITIES.has(a)),defence:e.defence??100,pressure:difficultyRule(e).pressure,objectId:null,
-    waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])]};
+    waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
   const objects=[];
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
   const world=createWorld({map,seed,actors,controlled:'hero',party,mission,objects,difficulty,weather:e.weather??null,timeOfDay:e.timeOfDay??'day',
-    practice:e.type==='training',scale:cal.k});
+    practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
   return world;
@@ -232,13 +269,25 @@ export function applyRealtimeOutcome(state,world){
     const actor=world.actors.find(a=>a.unitId===unit.id);if(!actor)continue;
     unit.hp=scaled(actor,unit);const t=metresToTile(actor,k,e);unit.x=t.x;unit.y=t.y;if(unit.escorted!==undefined)unit.escorted=!!actor.escort?.escorted||!!actor.carriedBy;
   }
-  // The party marches as the company's deployed veterans.
-  const partyUnits=world.party.map((id,i)=>{const a=world.actors.find(x=>x.id===id),t=metresToTile(a,k,e),maxHp=16;
-    return {id:`party${i}`,name:a.name,side:'ally',x:t.x,y:t.y,hp:a.alive&&!a.down?Math.max(1,Math.round(a.hp/a.maxHp*maxHp)):0,maxHp,role:'infantry',moved:false,acted:false,
-      move:2,facing:'east',morale:80,intent:'Standing orders.',veteranId:id};});
-  if(partyUnits.length)e.units=[...e.units.filter(u=>u.side!=='ally'),...partyUnits];
+  // Squads (from Chapter IV): each 0.38 unit learns its squad's strength, place, morale, cohesion and suppression.
+  for(const squad of world.squads??[]){
+    const unit=e.units.find(u=>u.id===squad.unitId);if(!unit)continue;
+    const t=metresToTile(squadCentre(world,squad,true),k,e);
+    Object.assign(unit,{hp:fielded(world,squad)?clamp(Math.round(squad.strength),1,unit.maxHp):0,x:t.x,y:t.y,morale:clamp(Math.round(squad.morale),0,100),
+      cohesion:clamp(Math.round(squad.cohesion),0,100),suppression:clamp(Math.floor(squad.suppression),0,3)});
+  }
+  // The party marches as the company's deployed veterans: a veteran's own unit, if he has one, records his fate.
+  const fate=(a,maxHp)=>a.alive&&!a.down?Math.max(1,Math.round(a.hp/a.maxHp*maxHp)):0;
+  const partyUnits=world.party.flatMap((id,i)=>{
+    const a=world.actors.find(x=>x.id===id),t=metresToTile(a,k,e),own=world.squads?e.units.find(u=>u.side==='ally'&&u.veteranId===id):null;
+    if(own){own.hp=fate(a,own.maxHp);own.x=t.x;own.y=t.y;return [];}
+    return [{id:`party${i}`,name:a.name,side:'ally',x:t.x,y:t.y,hp:fate(a,16),maxHp:16,role:'infantry',moved:false,acted:false,
+      move:2,facing:'east',morale:80,intent:'Standing orders.',veteranId:id}];});
+  if(world.squads)e.units.push(...partyUnits);else if(partyUnits.length)e.units=[...e.units.filter(u=>u.side!=='ally'),...partyUnits];
   m.waves.forEach((w,i)=>{const record=e.mission.waves[i];if(record&&w.arrived)record.arrived=true;});
-  for(const a of world.actors)if(a.id.startsWith('reinforce')&&!e.units.some(u=>u.id===a.id)){const t=metresToTile(a,k,e);
+  const arrivals=world.squads?world.squads.filter(q=>q.id.startsWith('reinforce')).map(q=>({id:q.id,name:q.name,role:q.role,at:squadCentre(world,q,true),alive:fielded(world,q)}))
+    :world.actors.filter(a=>a.id.startsWith('reinforce')).map(a=>({id:a.id,name:a.name,role:a.role,at:a,alive:a.alive}));
+  for(const a of arrivals)if(!e.units.some(u=>u.id===a.id)){const t=metresToTile(a.at,k,e);
     e.units.push({id:a.id,name:a.name,side:'enemy',x:t.x,y:t.y,hp:a.alive?7:0,maxHp:7,role:a.role,moved:false,acted:false,move:2,facing:'west',morale:80,intent:'Reinforce.'});}
   if(e.defence!==undefined)e.defence=Math.max(0,m.defence);
   for(const p of m.points)if(p.secured){const t=metresToTile(p,k,e),record=e.mission.points.find(q=>q.x===t.x&&q.y===t.y);if(record)record.secured=true;}

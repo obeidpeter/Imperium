@@ -87,6 +87,7 @@ export function slotPlan(world,actor,[action,word],hero=actorById(world,world.he
       return span(actor.x-p.x,actor.z-p.z)<=slack?{kind:'hold'}:{kind:'move',x:p.x,z:p.z,run:span(actor.x-p.x,actor.z-p.z)>6};
     }
     case 'stay_hidden':return {kind:'hold',hidden:true};
+    // Specialists' actions run at the round's end with leftover Command (specialists.js), not at each decision.
     default:return null;
   }
 }
@@ -146,6 +147,9 @@ export function summarizeOrders(slots,{hero='the soldier',names={}}={}){
       case 'follow_far':return 'follow at a distance';
       case 'stay_hidden':return 'stay hidden and never strike first';
       case 'withdraw':return `withdraw to ${hero} when badly hurt`;
+      case 'protect':return `with Command left at a round's end, guard ${word(target,hero,names)} (2 less from every blow)`;
+      case 'inspire':return `with Command left at a round's end, inspire the friends near him`;
+      case 'volley':return `with Command left at a round's end, loose a volley at ${word(target,hero,names)}`;
       default:return action;
     }
   });
@@ -161,3 +165,13 @@ export function slotProblem([action,target]=[]){
   return null;
 }
 export {ABILITIES};
+
+// The target a specialist's standing slot names, at the round's end: undefined
+// when it has none (the slot is passed over).
+export function specialistTarget(world,actor,[action,word]){
+  const hero=actorById(world,world.heroId);
+  if(action==='inspire')return null;
+  if(action==='volley')return enemyFor(world,actor,word,hero)??undefined;
+  if(action==='protect'){const f=friendFor(world,actor,word,'guard',hero);return f&&f!==actor&&distanceBetween(actor,f)<=2.6?f:undefined;}
+  return undefined;
+}

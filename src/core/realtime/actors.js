@@ -26,6 +26,10 @@ export function makeActor(spec){
     // Enemies think for themselves (§3.10); a friend does only when his spec asks (a test or a benchmark).
     ai:(spec.ai??side==='enemy')?{state:spec.alert?'engage':'idle',slot:-1,dx:0,dz:0,notice:{},group:spec.group??'band',role:spec.role??'infantry',
       anchor:spec.anchor?{x:spec.anchor[0],z:spec.anchor[1]}:spec.guard||spec.practice?{x:spec.at[0],z:spec.at[1]}:null,focus:null,look:null,alertAt:0}:null};
+  // A man of a squad (squads.js): his squad drives him, and his place in its formation.
+  if(spec.squadId){actor.squadId=spec.squadId;actor.slot=spec.slot??0;}
+  // A veteran specialist (from Chapter IV): his specialism and, for a ranged specialist, his volleys this battle.
+  if(spec.specialist){actor.specialist=spec.specialist;if(spec.volleys)actor.volleys=spec.volleys;}
   if(actor.ai&&spec.alert)actor.ai.notice=Object.fromEntries((spec.aware??[]).map(id=>[id,100]));
   const d=derivedValues(actor);actor.hp=actor.maxHp=d.health;actor.stamina=actor.maxStamina=d.stamina;actor.pfx=actor.fx;actor.pfz=actor.fz;
   if(Number.isFinite(spec.hp))actor.hp=Math.max(1,Math.min(actor.maxHp,spec.hp));

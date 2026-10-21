@@ -2,6 +2,7 @@ import {ESCORT_RULES,TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {helpless,setRoute} from './motion.js';
 import {spawnActor} from './actors.js';
+import {spawnSquad} from './squads.js';
 import {span} from './navigation.js';
 
 // A campaign encounter's objective in real time (§3.2 "Converting 0.38
@@ -53,7 +54,14 @@ function moveEscorts(world){
 }
 
 function arrive(world,wave,index){
-  wave.arrived=true;const actor=spawnActor(world,wave.spec,{x:wave.x,z:wave.z},`reinforce${index}`);
+  wave.arrived=true;
+  // From Chapter IV a reinforcement is a squad (squads.js); before, a single man.
+  if(wave.squad){
+    const squad=spawnSquad(world,{...wave.squad,id:`reinforce${index}`,unitId:`reinforce${index}`,at:[wave.x,wave.z],anchor:[wave.x,wave.z]});
+    if(squad)squad.anchor={x:wave.x,z:wave.z};
+    emit(world,{kind:'reinforcements',x:wave.x,z:wave.z,role:wave.squad.role,squadId:squad?.id??null});return;
+  }
+  const actor=spawnActor(world,wave.spec,{x:wave.x,z:wave.z},`reinforce${index}`);
   if(actor){actor.ai.state='engage';for(const o of world.actors)if(o.side!=='enemy'&&o.alive)actor.ai.notice[o.id]=100;}
   emit(world,{kind:'reinforcements',x:wave.x,z:wave.z,role:wave.spec.role,actorId:actor?.id??null});
 }
@@ -88,8 +96,10 @@ function advancePhase(world){
       escort:{escorted:true,wounded:false},pace:1.6,drawn:false},at,spec.escort.id);
     if(actor)m.escorts.push(actor.id);
   }
-  if(spec.wave){const w=spec.wave,at=tilePoint(world,{x:w.x,y:w.y});m.waves.push({round:Math.min(30,round+Math.max(1,w.delay+m.waveDelay)),x:at.x,z:at.z,arrived:false,
-    spec:{...m.waves[0]?.spec??{name:'Raider',side:'enemy',role:w.role,attributes:{str:12,agi:12,con:10,per:10,combat:6,field:6},kit:['tunic','jerkin','axe']},role:w.role}});}
+  if(spec.wave){const w=spec.wave,at=tilePoint(world,{x:w.x,y:w.y}),template=m.squadTemplates?.[w.role]??m.squadTemplates?.infantry;
+    m.waves.push({round:Math.min(30,round+Math.max(1,w.delay+m.waveDelay)),x:at.x,z:at.z,arrived:false,
+      ...(template?{squad:template}:{spec:{...m.waves[0]?.spec??{name:'Raider',side:'enemy',role:w.role,attributes:{str:12,agi:12,con:10,per:10,combat:6,field:6},
+        kit:['tunic','jerkin','axe']},role:w.role}})});}
   emit(world,{kind:'phase',index:m.phase,label:m.label});return true;
 }
 

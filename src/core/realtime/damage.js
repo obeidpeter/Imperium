@@ -4,6 +4,7 @@ import {blowSetup,derivedValues,rollBlow,staggerTicks} from './combat.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {cancelAction} from './actions.js';
 import {struck} from './ai.js';
+import {memberFell,squadOf,membersOf} from './squads.js';
 
 // Systems 5 and 6 (§3.1): missiles land, then every blow released this tick
 // resolves in the order released: hits, blocks, staggers, downs and deaths.
@@ -31,7 +32,9 @@ function fall(world,attacker,defender,base){
   defender.action=null;defender.order=null;defender.lock=null;defender.path=[];defender.gait=null;defender.braceUntil=0;
   if(defender.carrying){const carried=actorById(world,defender.carrying);if(carried)carried.carriedBy=null;defender.carrying=null;}
   if(defender.downs){defender.down=true;defender.downAt=world.tick;defender.hp=0;emit(world,{kind:'down',...base});return;}
-  defender.alive=false;defender.diedAt=world.tick;defender.killedBy=attacker.id;attacker.kills++;emit(world,{kind:'fall',...base});
+  defender.alive=false;defender.diedAt=world.tick;defender.killedBy=attacker.id;attacker.kills++;emit(world,{kind:'fall',...base,...(defender.squadId?{squadId:defender.squadId}:{})});
+  // A man of a squad: the squad loses his share and takes the 0.38 hit.
+  if(defender.squadId)memberFell(world,defender,attacker,{arc:base.arc,missile:base.missile});
 }
 
 export function resolveBlows(world){
@@ -69,6 +72,10 @@ export function resolveBlows(world){
 export function settleLocks(world){
   for(const actor of world.actors){
     if(!actor.alive||actor.down||actor.side==='enemy'||!actor.lock)continue;const target=actorById(world,actor.lock);if(target?.alive&&!target.down)continue;
+    // A man of a squad falls: the fight goes on against the next of his squad standing near.
+    const squad=target?.squadId&&actor.order?.kind==='attack'?squadOf(world,target):null;
+    const next=squad?membersOf(world,squad).filter(m=>distanceBetween(actor,m)<=6).sort((a,b)=>distanceBetween(actor,a)-distanceBetween(actor,b)||a.slot-b.slot)[0]:null;
+    if(next){actor.lock=next.id;actor.order={...actor.order,targetId:next.id};continue;}
     actor.lock=null;if(actor.order?.kind==='attack')actor.order=null;
     if(world.options.keepFighting&&actor.id===world.controlled){
       const attacker=world.actors.filter(o=>o.alive&&!o.down&&hostile(actor,o)&&(o.order?.targetId===actor.id||o.action?.targetId===actor.id))

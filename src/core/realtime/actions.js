@@ -3,6 +3,7 @@ import {clampToMap,navGrid,span} from './navigation.js';
 import {derivedValues} from './combat.js';
 import {actorById,distanceBetween,hostile,staggered,validate} from './abilities.js';
 import {facingWithin,helpless,inReach,objectById,orderRange,reachOf,turnToward} from './motion.js';
+import {useSpecial} from './specialists.js';
 
 // System 4 (§3.1): swing timers (contact at half the swing), casts, shots and
 // timed work (Bind wounds, objects), with recovery after each. Starting an
@@ -57,6 +58,7 @@ function startAbility(world,actor,order){
   if(target!==actor&&point!==actor){turnToward(actor,point.x-actor.x,point.z-actor.z);if(!facingWithin(actor,point,.7))return;}
   const effect=ability.effects[0];
   switch(effect.type){
+    case 'rally':case 'guard':case 'inspire':case 'volley':useSpecial(world,actor,ability.id,target);break;
     case 'missile':{
       const cast=ticksOf(ability.castTime_s);
       actor.action={kind:'throw',abilityId:ability.id,missile:effect.missile,targetId:target?.id??null,x:point.x,z:point.z,

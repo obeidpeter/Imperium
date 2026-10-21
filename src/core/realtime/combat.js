@@ -1,5 +1,5 @@
 import {ARCS,BASE_ATTRIBUTES,COMBAT,DAMAGE_TYPES,ITEMS,MISSILES,MOVEMENT,SHIELDS,TIME,TRAINING_PATHS,WEAPONS} from '../../data/realtime-rules.js';
-import {crossesCover,groundHeight,navGrid,span} from './navigation.js';
+import {crossesCover,groundHeight,navGrid,span,terrainAtPoint} from './navigation.js';
 import {randomInt,nextRandom} from './rng-streams.js';
 
 // Character values and blow resolution (§3.5). Every division is floored,
@@ -84,8 +84,11 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   }
   const ambush=!world.practice&&unaware(defender,attacker);
   if(ambush)mods.push({label:'Ambush: he has not seen you',kind:'attack',value:0});
+  // A man of a squad fights with his squad's state (squads.js): its bracing, formation, cohesion and heart.
+  const squadOf=id=>id&&world.squads?world.squads.find(q=>q.id===id)??null:null,As=squadOf(attacker.squadId),Ds=squadOf(defender.squadId);
+  if(Ds&&world.engineering&&Ds.side!=='enemy'){defence+=COMBAT.engineersDefence;mods.push({label:'Engineers’ works',kind:'defence',value:COMBAT.engineersDefence});}
   // A man carrying a casualty cannot block (§3.5 step 2).
-  const shield=defender.carrying?null:shieldOf(defender),guard=braced(world,defender);let block=0;
+  const shield=defender.carrying?null:shieldOf(defender),guard=braced(world,defender)||!!Ds?.braced;let block=0;
   if(defender.carrying&&shieldOf(defender))mods.push({label:'Carrying a casualty: no block',kind:'block',value:0});
   if(shield&&arc==='front'&&!ambush){
     block=Math.min(COMBAT.blockCap,shield.block+(guard?COMBAT.braceBlock:0))*(defender.shieldStuck?COMBAT.stuckPilum:1);
@@ -95,6 +98,13 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   let flat=0;
   if(guard){flat-=COMBAT.braceProtection;mods.push({label:'Braced',kind:'damage',value:-COMBAT.braceProtection});}
   if(weather){flat-=COMBAT.weatherDamage;mods.push({label:'Weather on missiles',kind:'damage',value:-COMBAT.weatherDamage});}
+  const squadMod=(label,value)=>{flat+=value;mods.push({label,kind:'damage',value});};
+  if(Ds?.formation==='shield-wall'&&arc==='front'&&!missile)squadMod('Shield wall',-COMBAT.shieldWall);
+  if(As?.formation==='wedge'&&!missile&&!['marsh','ford'].includes(terrainAtPoint(world.map,src.x,src.z)))squadMod('Wedge',1);
+  if(Ds?.formation==='wedge')squadMod('Wedge exposure',1);
+  if(As&&world.chapter!==1){if(As.cohesion<40)squadMod('Disrupted cohesion',-1);if(Math.floor(As.suppression)>=2)squadMod('Suppressed',-1);if(As.morale<=40)squadMod('Shaken morale',-1);}
+  if((defender.guardedBy?.until??0)>world.tick)squadMod('Guarded by a protector',-defender.guardedBy.reduction);
+  if(world.objects?.some(o=>o.kind==='barricade'&&!o.done&&span(o.x-defender.x,o.z-defender.z)<=2))squadMod('Timber cover',-1);
   const profile=override??(missile?MISSILES[missile].damage:A.weapon.damage),mult=missile?1+(attacker.attributes.str-10)/COMBAT.thrownStrength
     :1+(attacker.attributes.str-10)/COMBAT.meleeStrength;
   return {attack,defence,block,arc,flat,mods,profile,mult,protection:protectionOf(defender),maxHealth:defender.maxHp,

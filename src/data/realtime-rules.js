@@ -39,6 +39,8 @@ export const COMBAT=Object.freeze({
   staggerFraction:5,stagger:Object.freeze({base:.8,con:40,min:.2,max:.8,stun:.1,stunMax:1}),
   // Melee damage × (1 + (Str − 10) / meleeStrength); thrown × (1 + (Str − 10) / thrownStrength).
   meleeStrength:25,thrownStrength:50,resistCap:.8,
+  // A man of a squad in shield wall takes this much less from a frontal blow; the Engineering approach adds this Defence to our squads' men.
+  shieldWall:2,engineersDefence:10,
   // A thrown missile still strikes a man this far from its aim point.
   missileSlack:.9,
   regen:Object.freeze({healthBase:.004,healthCon:5000,calmSeconds:10,calmRange:30,stamina:4,staminaCon:20,staminaFloor:.25})});
@@ -99,6 +101,16 @@ export const ABILITIES=Object.freeze({
   throw_dart:Object.freeze({id:'throw_dart',name:'Throw plumbata',kind:'technique',unlock:{chapter:5},target:'enemy',groundTarget:true,range_m:35,
     cost:Object.freeze({ammo:'dart'}),castTime_s:.7,release:.5,recovery_s:.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'dart'}]),
     summary:'Throw a lead-weighted dart up to 35 metres.'}),
+  // Chapter VI: the soldier's voice steadies every friendly squad near him (realtime-squads.js RALLY).
+  rally:Object.freeze({id:'rally',name:'Rally',kind:'technique',unlock:{chapter:6},target:'self',cost:Object.freeze({stamina:30}),recovery_s:45,
+    effects:Object.freeze([{type:'rally'}]),summary:'Friendly squads within 20 metres regain 20 morale and lose all suppression.'}),
+  // Specialists (a veteran companion's action for one Command; guide "Specialists").
+  guard:Object.freeze({id:'guard',name:'Guard',kind:'specialist',specialist:'protector',target:'ally',range_m:2,approach:true,cost:Object.freeze({command:1}),
+    effects:Object.freeze([{type:'guard'}]),summary:'A friend within 2 m takes 2 less from every blow for a round; he braces and stands.'}),
+  inspire:Object.freeze({id:'inspire',name:'Inspire',kind:'specialist',specialist:'leader',target:'self',cost:Object.freeze({command:1}),
+    effects:Object.freeze([{type:'inspire'}]),summary:'Friends within 15 m regain 15 morale and brace.'}),
+  volley:Object.freeze({id:'volley',name:'Volley',kind:'specialist',specialist:'ranged',target:'enemy',range_m:60,cost:Object.freeze({command:1}),perBattle:2,
+    effects:Object.freeze([{type:'volley'}]),summary:'An aimed volley at a visible enemy within 60 m with a clear line; two a battle.'}),
   // The raiders' own technique; never on the player's bar.
   throw_javelin:Object.freeze({id:'throw_javelin',name:'Throw javelin',kind:'technique',enemyOnly:true,unlock:{},target:'enemy',range_m:22,
     cost:Object.freeze({ammo:'javelin'}),castTime_s:.8,release:.5,recovery_s:2.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'javelin'}]),
@@ -106,7 +118,7 @@ export const ABILITIES=Object.freeze({
 // The field bar's default places: 1 Strike, 2 Brace, 3 Throw pilum; new
 // techniques take the next free place as they are learnt.
 export const FIELD_BAR=Object.freeze(['strike','brace','throw_pilum']);
-export const FIELD_ORDER=Object.freeze(['strike','brace','throw_pilum','bind_wounds','carry','scout','shield_bash']);
+export const FIELD_ORDER=Object.freeze(['strike','brace','throw_pilum','bind_wounds','carry','scout','shield_bash','rally','guard','inspire','volley']);
 // Bandages a soldier carries into each encounter.
 export const BANDAGES_PER_ENCOUNTER=3;
 
@@ -124,7 +136,8 @@ export const REASONS=Object.freeze({
   NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',FRIENDLY:'He is on your side.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',
   NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',
   NOT_WOUNDED:'He is not wounded.',NOT_FALLEN:'Only a fallen comrade can be carried.',NOT_IN_CAMP:'Not here in camp.',
-  ALREADY_DONE:'That is already done.',ALREADY_CONTROLLED:'You already control him.'});
+  ALREADY_DONE:'That is already done.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
+  NO_FRIEND_NEAR:'No friend within reach.',NOT_A_SQUAD:'Choose a squad.'});
 
 // Phase 0 enemy behaviour (§3.10 arrives in Phase 1): notice within a
 // radius, then engage, spreading round the target; skirmishers throw first.
@@ -178,10 +191,14 @@ export const ESCORT_RULES=Object.freeze({halt:8,cover:4});
 // the first feasible slot wins. Target words are relative to the hero.
 export const STANDING=Object.freeze({
   actions:Object.freeze({attack:'Attack',guard:'Guard',follow_close:'Follow close',follow_far:'Follow far',stay_hidden:'Stay hidden',withdraw:'Withdraw',
-    bind_wounds:'Bind wounds',throw_pilum:'Throw pilum'}),
+    bind_wounds:'Bind wounds',throw_pilum:'Throw pilum',
+    // Specialists' actions (from Chapter IV): with Command left unspent at a round's end.
+    protect:'Guard (Protector)',inspire:'Inspire (Formation leader)',volley:'Volley (Ranged specialist)'}),
   // Which targets each action takes.
-  enemyActions:Object.freeze(['attack','throw_pilum']),friendActions:Object.freeze(['guard','bind_wounds']),
-  noTarget:Object.freeze(['follow_close','follow_far','stay_hidden','withdraw']),
+  enemyActions:Object.freeze(['attack','throw_pilum','volley']),friendActions:Object.freeze(['guard','bind_wounds','protect']),
+  noTarget:Object.freeze(['follow_close','follow_far','stay_hidden','withdraw','inspire']),
+  // The specialist action each standing-order word uses, and which specialism knows it.
+  specialistActions:Object.freeze({protect:'guard',inspire:'inspire',volley:'volley'}),
   enemyTargets:Object.freeze(['hero_target','hero_attacker','nearest_enemy_to_hero','strongest_enemy','weakest_enemy','enemy_archers','enemy_officer']),
   friendTargets:Object.freeze(['hero','any_companion','any_ally']),
   // Leash from the hero; an attack or throw on a named enemy may reach farther.

@@ -1,12 +1,19 @@
 import {ABILITIES,COMBAT,MISSILES,REASONS} from '../../data/realtime-rules.js';
 import {blowForecast,blowSetup,derivedValues,shieldOf} from './combat.js';
 import {groundHeight,navGrid,span} from './navigation.js';
+import {SPECIAL,validateSpecial} from './specialists.js';
 
 // Abilities (§3.6): validate() and forecast() are pure, for the UI and the
 // simulation alike; neither ever changes the world or draws a random number.
 // A target is {actorId} for a person, {x, z} for ground, or {} for none.
 
-export const actorById=(world,id)=>world.actors.find(a=>a.id===id)??null;
+// Actors by id, indexed once per actor list (rebuilt when a man joins; the dead stay listed).
+const byId=new WeakMap();
+export function actorById(world,id){
+  const list=world.actors;let index=byId.get(list);
+  if(!index||index.size!==list.length||index.get(list[list.length-1]?.id)!==list[list.length-1]){index=new Map(list.map(a=>[a.id,a]));byId.set(list,index);}
+  return index.get(id)??null;
+}
 export const hostile=(a,b)=>!!a&&!!b&&a.side!==b.side&&(a.side==='enemy'||b.side==='enemy');
 export const staggered=(world,a)=>a.staggerUntil>world.tick;
 export const busy=(world,a)=>!!a.action||a.readyAt>world.tick;
@@ -36,6 +43,7 @@ export function validate(world,actorId,abilityId,target={}){
     if(!other)return 'NO_TARGET';if(other.down)return 'TARGET_DOWN';if(!hostile(actor,other))return other.side!=='neutral'?'FRIENDLY':target.forced?null:'NOT_HOSTILE';return null;
   }
   if(actor.carrying&&abilityId!=='carry')return 'CARRYING';
+  if(SPECIAL.has(abilityId))return validateSpecial(world,actor,abilityId,other);
   if(abilityId==='brace'){
     if(!shieldOf(actor))return 'NO_SHIELD';if(actor.stamina<(ability.cost.stamina??0))return 'NOT_ENOUGH_STAMINA';return null;
   }

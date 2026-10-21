@@ -57,6 +57,8 @@ export const approaches=order=>order?.kind==='interact'||order?.kind==='ability'
 export function moveActors(world){
   const grid=navGrid(world.map);
   for(const actor of world.actors){
+    // A man of a squad keeps his place in its formation (squads.js) unless he is fighting.
+    if(actor.squadId&&!actor.order)continue;
     actor.moving=false;if(helpless(actor)||staggered(world,actor)||braced(world,actor))continue;
     const order=actor.order,target=order?.targetId?actorById(world,order.targetId)??objectById(world,order.targetId):null;
     if(order&&(['attack','approach','advance','guard','talk','loot'].includes(order.kind)||approaches(order))){

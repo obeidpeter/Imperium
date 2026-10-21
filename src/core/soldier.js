@@ -101,7 +101,8 @@ export function takeCourse(state,courseId){
 // Techniques the soldier can use now, in the field bar's order.
 export function knownAbilities(state){
   const s=state.soldier;
-  return FIELD_ORDER.filter(id=>{const u=ABILITIES[id]?.unlock??{};return u.course?s.courses.includes(u.course):(u.chapter??1)<=state.chapter;});
+  // Specialists' actions belong to veteran companions, never to the soldier himself.
+  return FIELD_ORDER.filter(id=>{const a=ABILITIES[id],u=a?.unlock??{};return a?.kind!=='specialist'&&(u.course?s.courses.includes(u.course):(u.chapter??1)<=state.chapter);});
 }
 
 // Kit. Worn places are "slot:layer"; the rules' kit list is the worn ids in paperdoll order.
