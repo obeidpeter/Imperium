@@ -104,3 +104,14 @@ test('a battle that stayed slow at its lowest resolution builds the next battle 
   quiet.mount(canvas(),options('ch1-road',{quality:'high'}));await settle();quiet.stage.strained=true;quiet.mount(canvas(),options('ch1-patrol',{quality:'high'}));await settle();
   assert.equal(quiet.stage.quality,'high','declining the step keeps the chosen quality');
 });
+
+test('Each mount hands the stage the route under the pointer and the walkable ground, and clears them when the page has none',async()=>{
+  const {FakeStage}=fakeClass();class RouteStage extends FakeStage{setRoute(...a){this.calls.push(['route',...a]);}}
+  const c=createBattleStageController({load:async()=>({BattleStage:RouteStage})}),route={stop:{x:1,y:3},reachable:true},reach=[{x:1,y:3}];
+  const routes=()=>c.stage.calls.filter(v=>v[0]==='route');
+  c.mount(canvas(),options('ch1-road',{route,reach}));await settle();
+  assert.deepEqual(routes().at(-1),['route',route,reach],'The stage inks what the page computed');
+  c.mount(canvas(),options('ch1-road',{selected:'lucan'}));
+  assert.deepEqual(routes().at(-1),['route',null,[]],'A render without a route clears it');
+  c.release();
+});

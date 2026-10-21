@@ -45,6 +45,24 @@ export function createLongTaskLog(Observer=globalThis.PerformanceObserver){
   return {entries,supported:!!observer,dispose(){observer?.disconnect();}};
 }
 
+// While the check runs a status band covers the page. Keys are held back
+// before the board sees them: Escape cancels, and Enter or Space still press
+// Cancel, which stops the check after its current step.
+export function createCheckBand({document:doc=globalThis.document,window:win=globalThis.window}={}){
+  const band=doc.createElement('div'),status=doc.createElement('p'),cancel=doc.createElement('button');
+  band.className='performance-check';
+  status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent='Preparing the performance check…';
+  cancel.setAttribute('type','button');cancel.textContent='Cancel check';band.append(status,cancel);
+  const check={cancelled:false,show(text){status.textContent=text;},close(){win.removeEventListener('keydown',keys,{capture:true});band.remove();}};
+  const keys=event=>{
+    if(event.target===cancel&&['Enter',' '].includes(event.key))return;
+    event.stopImmediatePropagation();event.preventDefault();if(event.key==='Escape')check.cancelled=true;
+  };
+  cancel.addEventListener('click',()=>{check.cancelled=true;status.textContent='Stopping after this step…';});
+  win.addEventListener('keydown',keys,{capture:true});doc.body.append(band);cancel.focus();
+  return check;
+}
+
 function browserFacts(win=globalThis){
   const nav=win.navigator??{},data=nav.userAgentData;
   return {userAgent:data?{brands:(data.brands??[]).map(b=>`${b.brand} ${b.version}`),mobile:!!data.mobile,platform:data.platform??null}:nav.userAgent??null,

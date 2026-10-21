@@ -114,14 +114,24 @@ test('preloaded scenery stands as a stage is built, sharing session masters that
   const next=createSceneryModels(new T.Scene(),e,{chapter:5});assert.equal(next.group.children.length,placements.length,'the next stage reuses them');next.dispose();
 });
 
-test('embedded textures load under the page Content Security Policy', async () => {
-  // The policy allows blob: images but not blob: fetches (ImageBitmapLoader fetches).
+test('embedded textures load under the page Content Security Policy', async t => {
+  // The policy allows blob: images but not blob: fetches, which three's ImageBitmapLoader would make.
   const page=await readFile(new URL('index.html',root),'utf8');
-  assert.match(page,/img-src 'self' data: blob:;[^"]*connect-src 'self';/);
-  for(const path of ['src/showcase/scenery-models.js','src/showcase/actor-bodies.js']){
-    const source=await readFile(new URL(path,root),'utf8');
-    assert.match(source,/createModelLoader\(\)\.loadAsync\(/,`${path} loads through the model loader`);assert.doesNotMatch(source,/new GLTFLoader\(/);
-  }
+  const policy=Object.fromEntries(/http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)[1].split(';').map(d=>d.trim().split(/\s+/)).map(([name,...values])=>[name,values]));
+  assert.deepEqual(policy['img-src'],["'self'",'data:','blob:']);assert.deepEqual(policy['connect-src'],["'self'"]);
+  // So the default loaders of generated scenery and bodies request only the model itself, and decode its images from its own bytes.
+  const requests=[],decoded=[],saved={fetch:globalThis.fetch,createImageBitmap:globalThis.createImageBitmap,ProgressEvent:globalThis.ProgressEvent};
+  globalThis.ProgressEvent??=class extends Event{constructor(type,init={}){super(type);Object.assign(this,init);}}; // Node has none; three reports download progress with it.
+  globalThis.fetch=async input=>{const url=String(input?.url??input);requests.push(url);if(!url.startsWith('file:'))throw new TypeError(`connect-src refuses ${url}`);return new Response(await readFile(new URL(url)));};
+  globalThis.createImageBitmap=async(blob,options)=>{decoded.push({type:blob.type,options});return {width:4,height:4,close(){}};};
+  t.after(()=>Object.assign(globalThis,saved));
+  const prop=new URL(generated[0].path,root).href,scene=await warmSceneryModel(prop),textures=new Set();
+  scene.traverse(o=>{for(const value of Object.values(o.material??{}))if(value?.isTexture)textures.add(value);});
+  assert.deepEqual(requests,[prop]);assert.ok(textures.size>0&&[...textures].every(texture=>texture.userData.decodedOffThread),'every texture came from the model\'s bytes');
+  const {createActorBodyLibrary}=await import('../src/showcase/actor-bodies.js'),{BITMAP_OPTIONS}=await import('../src/showcase/model-loader.js');
+  assert.equal(await createActorBodyLibrary().warm('roman-recruit'),true);
+  assert.equal(requests.length,2);assert.match(requests[1],/^file:.*\/assets\/models\/characters\/roman-recruit\.glb$/);
+  assert.ok(decoded.length>=textures.size&&decoded.every(d=>/^image\//.test(d.type)&&d.options===BITMAP_OPTIONS),'decoded with createImageBitmap, as stored');
 });
 
 test('embedded images decode from the model bytes, off the main thread, and fall back to image elements', async () => {

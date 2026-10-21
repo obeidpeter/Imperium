@@ -5,7 +5,7 @@ import {gzipSync} from 'node:zlib';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
-import {staticImportClosure} from './module-closure.mjs';
+import {staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
 
 const root=resolve('.'),dist=resolve(root,'dist');
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
@@ -44,9 +44,8 @@ const openingArt=new Set(['./assets/scenes/frontier-oath.webp','./assets/portrai
 // the 3D code but is shared with the 2D view, so it belongs to the shell.
 const shellModules=new Set(await staticImportClosure(dist,'src/ui/app.js'));
 for(const url of shellModules)if(!assets.includes(url))throw new Error(`The shell imports missing module ${url}`);
-const showcaseAssets=assets.filter(url=>!shellModules.has(url)&&['./showcase/','./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/'].some(prefix=>url.startsWith(prefix)));
-const showcaseSet=new Set(showcaseAssets);
-const initial=assets.filter(url=>shellModules.has(url)||!showcaseSet.has(url)&&(!url.startsWith('./assets/')||openingArt.has(url)));
+const showcaseAssets=studyAssets(assets,{shellModules}),showcaseSet=new Set(showcaseAssets);
+const initial=initialAssets(assets,{shellModules,openingArt});
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
 for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));

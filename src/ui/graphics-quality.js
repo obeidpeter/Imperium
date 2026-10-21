@@ -53,6 +53,11 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=fa
     current=ORDER[ORDER.indexOf(current)-1];samples=[];downgrades++;lastReason=reason;
     onChange?.({mode:current,reason});return current;
   }
+  // Strain a battle reported (battle-stage-controller.js onStrain). It counts
+  // only if measured at the current tier with adaptive resolution on.
+  function strained(measured,{adaptive=true}={}) {
+    return measured===current&&adaptive!==false?stepDown('measured-cost'):null;
+  }
   function stats() {
     const sorted=[...samples].sort((a,b)=>a-b);
     return {mode:current,samples:samples.length,maxSamples:WINDOW,totalSamples,downgrades,
@@ -60,5 +65,5 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=fa
       meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
       p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};
   }
-  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,stats};
+  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,strained,stats};
 }

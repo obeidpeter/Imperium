@@ -15,3 +15,17 @@ export async function staticImportClosure(root,entry){
   }
   return [...seen].map(file=>'./'+relative(root,file).replaceAll('\\','/')).sort();
 }
+
+// The first download: the shell (everything the entry loads statically, the
+// board readout included), the other page files and the opening art. The 3D
+// study, the 3D modules, models, textures and vendor files wait for a chapter,
+// unless the shell itself imports them.
+const STUDY=['./showcase/','./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/'];
+export function studyAssets(assets,{shellModules}){
+  const shell=new Set(shellModules);
+  return assets.filter(url=>!shell.has(url)&&STUDY.some(prefix=>url.startsWith(prefix)));
+}
+export function initialAssets(assets,{shellModules,openingArt}){
+  const shell=new Set(shellModules),study=new Set(studyAssets(assets,{shellModules})),opening=new Set(openingArt);
+  return assets.filter(url=>shell.has(url)||!study.has(url)&&(!url.startsWith('./assets/')||opening.has(url)));
+}

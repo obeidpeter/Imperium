@@ -192,29 +192,38 @@ test('v0.31.0: in 3D the route and the walkable ground are inked on the ground, 
   stage.setRoute();assert.equal(painted.at(-1).route, null);assert.deepEqual(painted.at(-1).reach, []);
 });
 
-test('v0.31.0: the app walks through the rules API, previews routes on hover and keeps a Confirm moves setting', async () => {
-  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
-  assert.match(app, /const intent=directIntent\(state,\{selected,action,target,point,moveOnClick:!settings\.confirmMoves\}\);/);
-  assert.match(app, /if\(intent\.kind==='move'\)\{walk\(intent\);return;\}/);
-  assert.match(app, /async function walk\(intent\)\{\r?\n  action='move';target=intent\.target;/);
-  assert.match(app, /await change\(\(\)=>\{const res=Game\.act\(state,c\);/, 'A walk is committed by the rules, like any command');
-  assert.match(app, /Undo Move \(\$\{controlKeys\(settings\.keyBindings\)\.undo\}\) takes it back until you act\./);
-  assert.match(app, /battleRemains:true,confirmMoves:false,/, 'One click walks by default');
-  assert.match(app, /if\(control\.id==='confirm-moves'\)\{settings\.confirmMoves=control\.checked;saveSettings\(\);render\(\);\}/, 'The board hint follows the setting at once');
-  assert.match(app, /confirmMoves:Boolean\(settings\.confirmMoves\),/);
-  // Ground no walk can reach says why (impassable, no nearer ground, movement spent) before the selection clears.
-  assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),why=u\?'':routeSummary\(routeAt\(point\)\);\r?\n  action=null;target=null;/);
-  // A click reports whole pixels; the 2D pick uses the pressed pointer's exact position, as the hover did.
-  assert.match(app, /board\.addEventListener\('pointerdown',event=>\{pressed=\{x:event\.clientX,y:event\.clientY\};hold\.down\(event\);\}\);/);
-  assert.match(app, /const at=pressed&&Math\.abs\(pressed\.x-event\.clientX\)<1&&Math\.abs\(pressed\.y-event\.clientY\)<1\?pressed:\{x:event\.clientX,y:event\.clientY\};pressed=null;selectPoint\(pickBattlePoint\(board,state\.encounter,at\.x,at\.y\)\);/);
-  assert.match(app, /route:animation\?null:routeAt\(hoverTile\),reach:animation\?\[\]:walkableReach\(\)/, '2D draws the route under the pointer, never during a motion');
-  assert.match(app, /grid:showGrid,route:routeAt\(hoverTile\),reach:walkableReach\(\),/);
-  assert.match(app, /if\(uses3D\(\)\)battleStage\.stage\?\.setRoute\?\.\(routeAt\(point\),walkableReach\(\)\);/, '3D re-inks the route as the pointer moves');
-  assert.match(app, /if\(!point\|\|screen==='title'\|\|state\?\.encounter\?\.status!=='active'\|\|action&&action!=='move'\|\|visibleUnitAt\(state\.encounter,point\)\)return null;/);
-  const controller = await readFile(new URL('../src/ui/battle-stage-controller.js', import.meta.url), 'utf8');
-  assert.match(controller, /stage\.setSelection\(selected,targets,target\);stage\.setRoute\?\.\(latest\.route\?\?null,latest\.reach\?\?\[\]\);/);
-  const panels = await readFile(new URL('../src/ui/panels.js', import.meta.url), 'utf8');
-  assert.match(panels, /<input id="confirm-moves" type="checkbox" \$\{settings\.confirmMoves\?'checked':''\}>/);
+test('v0.31.0: a click walks through the rules API, the readout previews its route, and Confirm moves is a setting', async () => {
+  const {clickRoute, walkableReach, directIntent} = await import('../src/ui/direct-controls.js');
+  const {walkMessage} = await import('../src/ui/board-readout.js');
+  const {selectedCommand} = await import('../src/ui/encounter-view.js');
+  const {loadSettings, SETTING_TOGGLES} = await import('../src/ui/settings.js');
+  const {createPanels} = await import('../src/ui/panels.js');
+  const s = drill(), before = Game.serialize(s), hero = s.encounter.units.find(u => u.id === 'hero'), near = {x: 1, y: 3}, far = {x: 7, y: 0};
+  // The route under the pointer is the rules' own, over open ground, for the selected unit, while no other command is chosen.
+  assert.deepEqual(clickRoute(s, {selected: 'hero'}, near), Game.moveRoute(s, 'hero', near));
+  assert.equal(clickRoute(s, {selected: 'hero'}, far).reachable, false, 'Far ground shows where the walk stops');
+  assert.equal(clickRoute(s, {selected: 'hero'}, hero), null, 'A unit is not ground to walk to');
+  assert.equal(clickRoute(s, {selected: 'hero', action: 'strike'}, near), null, 'Another chosen command draws no route');
+  assert.deepEqual(clickRoute(s, {selected: 'hero', action: 'move'}, near), Game.moveRoute(s, 'hero', near));
+  assert.equal(clickRoute(s, {selected: 'hero'}, null), null);
+  assert.deepEqual(walkableReach(s, {selected: 'hero'}), Game.getTargets(s, 'hero', 'move'), 'The walkable wash is the legal move list');
+  assert.deepEqual(walkableReach(s, {selected: 'hero', action: 'move'}), [], 'and is withdrawn once a command is chosen');
+  assert.equal(Game.serialize(s), before, 'Routes and reach are read-only');
+  // One click walks by default; with Confirm moves the same click previews first.
+  assert.equal(loadSettings(null).confirmMoves, false);
+  assert.equal(directIntent(s, {point: near, moveOnClick: true}).kind, 'move');
+  assert.equal(directIntent(s, {point: near, moveOnClick: false}).kind, 'preview');
+  // A walk is the ordinary legal move command: the rules check it, and Undo Move takes it back.
+  const intent = directIntent(s, {point: far}), c = selectedCommand({selected: 'hero', action: 'move', target: intent.target});
+  assert.equal(Game.preview(s, c).ok, true);assert.equal(Game.act(s, c).ok, true);
+  assert.match(walkMessage(c, intent, 'U'), /^Walked to 2C \(\d movement\)\. 8A is beyond this turn’s reach\. Undo Move \(U\) takes it back until you act\.$/);
+  assert.equal(walkMessage(c, {...intent, route: {...intent.route, reachable: true}}, 'Z'), `Walked to 2C (${intent.target.cost} movement). Undo Move (Z) takes it back until you act.`);
+  assert.equal(Game.canUndoMove(s, 'hero').available, true);assert.equal(Game.undoMove(s, 'hero').ok, true);
+  assert.deepEqual(s.encounter.units.find(u => u.id === 'hero'), JSON.parse(before).encounter.units.find(u => u.id === 'hero'), 'Undo Move restores the unit and its movement');
+  // The setting is a Settings checkbox that redraws the board hint at once.
+  assert.deepEqual(SETTING_TOGGLES['confirm-moves'], {key: 'confirmMoves', render: true});
+  const settings = on => {let html = '';createPanels(() => ({settings: {...loadSettings(null), confirmMoves: on}, showModal: (_, body) => {html = body;}})).showSettings();return html;};
+  assert.match(settings(true), /<input id="confirm-moves" type="checkbox" checked>/);assert.match(settings(false), /<input id="confirm-moves" type="checkbox" >/);
 });
 
 test('v0.31.0: the board hint and its accessible name describe the move the click will make', async () => {

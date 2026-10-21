@@ -11,6 +11,18 @@ export function createRenderScheduler(requestFrame, commit) {
   };
 }
 
+// Holds page renders while something else owns the page (the performance
+// check owns the 3D stage): a render asked for meanwhile happens once, after.
+export function createRenderHold(render) {
+  let held = false, asked = false;
+  return {
+    get held() { return held; },
+    defer() { if (held) asked = true; return held; },
+    hold() { held = true; asked = false; },
+    release() { held = false; if (asked) { asked = false; render(); } }
+  };
+}
+
 // Accepts an immutable campaign summary; delayed art cannot target a newer modal.
 export async function prepareShareCard({canvas,summary,loadPortrait,loadScene,draw,downloadButton,shareButton,makeFile}) {
   downloadButton.disabled = true;

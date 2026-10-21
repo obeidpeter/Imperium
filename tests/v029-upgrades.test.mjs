@@ -504,9 +504,10 @@ test('v0.29.0: labels are compact by default; named figures, the selection and t
   for (const unit of [{id: 'enemy1', name: 'Gothic raider', role: 'raider'}, {id: 'ally6', name: 'Relief cohort 7', role: 'archer'}]) assert.equal(namedFigure(unit), false);
   assert.deepEqual(voterPosture({stance: 3}), {motion: 'assent', phase: 1});assert.deepEqual(voterPosture({stance: -1}), {motion: 'dissent', phase: 1 / 3});assert.equal(voterPosture({stance: 0}), null);
   const css = await readFile(new URL('../src/ui/battle-3d.css', import.meta.url), 'utf8');
-  for (const role of ['infantry', 'archer', 'cavalry', 'guard', 'raider', 'commander']) assert.match(css, new RegExp(`\\[data-role=${role}\\] \\.world-role\\{background-image:url\\("data:image/svg\\+xml`), `${role} has a glyph`);
-  assert.match(css, /:not\(\.named\)[^{]*\.world-name\{display:none\}/, 'Rank-and-file names hide by default');
-  for (const bloc of ['Veterans', 'Landholders', 'Civic', 'Chamber']) assert.match(css, new RegExp(`\\[data-bloc=${bloc}\\]`));
+  const {declared, cssRules} = await import('./css-rules.mjs');
+  for (const role of ['infantry', 'archer', 'cavalry', 'guard', 'raider', 'commander']) assert.match(declared(css, selector => selector.endsWith(`[data-role=${role}] .world-role`))['background-image'] ?? '', /^url\("data:image\/svg\+xml/, `${role} has a glyph`);
+  assert.equal(declared(css, selector => selector.includes(':not(.named)') && selector.endsWith(' .world-name')).display, 'none', 'Rank-and-file names hide by default');
+  for (const bloc of ['Veterans', 'Landholders', 'Civic', 'Chamber']) assert.ok(cssRules(css).some(rule => rule.selectors.some(selector => selector.includes(`[data-bloc=${bloc}]`))), `${bloc} is styled`);
 });
 
 test('v0.29.0: Senate delegates wear their bloc on the toga trim and show their stance in posture', async () => {
@@ -573,7 +574,8 @@ test('v0.29.0: the painted Tabula inks the career route by chapter and keeps the
   assert.equal((svg.match(/career-leg done/g) ?? []).length, 5);assert.equal((svg.match(/career-leg ahead/g) ?? []).length, 2);
   assert.match(svg, /style="--len:\d+px"/);assert.match(svg, /<filter id="tabula-ink"/);
   const css = await (await import('node:fs/promises')).readFile(new URL('../src/ui/styles.css', import.meta.url), 'utf8');
-  assert.match(css, /\.career-leg\.current \{[^}]*stroke-dashoffset:0;[^}]*animation:tabula-draw/, 'Reduced motion (no animation) leaves the leg fully drawn');
+  const leg = (await import('./css-rules.mjs')).declared(css, selector => selector.endsWith(' .career-leg.current'));
+  assert.equal(leg['stroke-dashoffset'], '0', 'Reduced motion (no animation) leaves the leg fully drawn');assert.match(leg.animation, /^tabula-draw\b/);
 });
 
 test('v0.29.0: the finale stands before the rising Aurelian Walls with massed legions, all outside the board', async () => {
@@ -661,6 +663,14 @@ test('v0.29.0: the oath and accession tableaux are presentation-only scenes moun
     failing.mount(host, {kind: 'oath', name: 'Gaius'});await new Promise(r => setImmediate(r));
     assert.equal(host.dataset.ceremonyReady, undefined, 'A failed stage leaves the painting');
   } finally {globalThis.document = previousDocument;}
-  const views = await readFile(new URL('../src/ui/campaign-views.js', import.meta.url), 'utf8');
-  assert.match(views, /data-ceremony="accession"/);assert.match(views, /line\.text===OATH\?'<figure class="ceremony-scene oath-scene" data-ceremony="oath"/, 'The oath scene keys on the one shared OATH entry');
+  // The views stage both ends of the campaign: the oath where its one shared entry is read, and the accession.
+  const G = await import('../src/core/game.js'), {OATH} = await import('../src/data/campaign.js'), {createCampaignViews} = await import('../src/ui/campaign-views.js');
+  const {playEncounter, runCampaign} = await import('../scripts/autoplay.mjs');
+  const s = G.newGame('Ceremony'), views = state => createCampaignViews(() => ({state, screen: 'game', settings: {}, saving: false, offline: false}));
+  G.choose(s, G.getChapter(s).decision.options[0].id);G.startEncounter(s);playEncounter(s);assert.ok(G.commitEncounter(s).ok);assert.ok(G.swearOath(s).ok);
+  const oathLine = G.storyLines(s).findIndex(line => line.text === OATH);assert.ok(oathLine >= 0);
+  assert.ok(G.setStoryProgress(s, oathLine).ok);assert.match(views(s).camp(), /<figure class="ceremony-scene oath-scene" data-ceremony="oath"/);
+  assert.ok(G.setStoryProgress(s, oathLine + 1).ok);assert.doesNotMatch(views(s).camp(), /data-ceremony/, 'Only the oath line stages the oath');
+  const {state: reign} = await runCampaign();assert.equal(reign.phase, 'epilogue');
+  assert.match(views(reign).ending(), /<div class="ceremony-scene accession-scene" data-ceremony="accession"/);
 });

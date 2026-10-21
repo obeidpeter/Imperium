@@ -30,6 +30,14 @@ export function scenePaintingName(src=''){
   return match&&Object.hasOwn(SCENE_PAINTINGS,match[1])?match[1]:null;
 }
 export function paintingWanted({quality='balanced',reducedMotion=false}={}){return quality!=='performance'&&!reducedMotion;}
+// One painting drifts at a time: an oath or accession painting staged in 2D
+// first (one staged in 3D is not a painting), else the camp mural, else a
+// promotion scene. The title page has none.
+export function paintingHost(page,{title=false,ceremony3D=false}={}){
+  if(title)return null;
+  const ceremony=page.querySelector('[data-ceremony]');
+  return (!ceremony3D&&ceremony)||page.querySelector('.cinematic-mural')||page.querySelector('.ceremony-scene:not([data-ceremony])');
+}
 export function paintingWeather(src,chapter=1){
   const name=scenePaintingName(src);
   return name?SCENE_PAINTINGS[name].weather??chapterWeather(chapter):'clear';

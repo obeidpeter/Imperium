@@ -3,17 +3,18 @@ import {createCeremonyController} from './ceremony-controller.js';
 import {esc,roman} from './view-helpers.js';
 import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
-import {createRenderScheduler,prepareShareCard} from './render-controller.js';
+import {createRenderScheduler,createRenderHold,prepareShareCard} from './render-controller.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
-import {directIntent,nextReadyUnit,keyboardAction,visibleUnitAt,samePoint,routeSummary} from './direct-controls.js';
-import {createTouchHold} from './touch-hold.js';
+import {directIntent,nextReadyUnit,keyboardAction,samePoint,clickRoute,walkableReach} from './direct-controls.js';
+import {bindBoardInput} from './board-input.js';
+import {hoverText,cursorAnnouncement,pointAnnouncement,walkMessage} from './board-readout.js';
 import {casePreview} from './command-edition-views.js';
-import {CONTROL_DEFAULTS,controlBindings,controlAction,remapControl,holdDelay,controlKeys} from './control-preferences.js';
-import {terrainLabel,fieldLabel} from './tactical-intel.js';
+import {CONTROL_DEFAULTS,controlAction,remapControl,holdDelay,controlKeys} from './control-preferences.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
-import {GRAPHICS_MODES,FIGURE_STYLES,createGraphicsQuality,defaultGraphicsMode,phoneLike} from './graphics-quality.js';
+import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
+import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -26,10 +27,10 @@ import {heroPortrait,chapterScene,loadArt,prefetchChapter,TACTICAL_2D_ONLY} from
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
 import {setupSiteMedia} from './site-media.js';
-import {createScenePainting} from './scene-parallax.js';
+import {createScenePainting,paintingHost} from './scene-parallax.js';
 import {campaignSoundscape} from './soundscape.js';
 import {previewBadge,previewBadges} from '../showcase/stage-readout.js';
-import {runPerformanceCheck} from './performance-check.js';
+import {runPerformanceCheck,createCheckBand} from './performance-check.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
@@ -43,40 +44,20 @@ let hoverTile=null,showGrid=false,failed3D=false,preservedUnreadable=0,lastPersi
 // A battle that stayed slow at its lowest resolution builds the next one a tier
 // lower, if it was measured at the current tier and adaptive resolution is on.
 const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; your progress is preserved. '+message);},
-  onStrain:quality=>quality===graphics.mode&&settings.adaptiveResolution!==false?graphics.stepDown('measured-cost'):null});
+  onStrain:quality=>graphics.strained(quality,{adaptive:settings.adaptiveResolution})});
 // The oath and accession may be staged in 3D over their paintings; a failure keeps the painting.
 const ceremony=createCeremonyController({onError:()=>{}});
 // Story paintings drift in 2.5D over their still image; any failure keeps the still image.
 const scenePainting=createScenePainting({load:src=>loadArt(src)});
 function uses3D(){return screen!=='title'&&chapterHas3D(state)&&settings.battleView!=='2d'&&!failed3D;}
-function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover');if(label)label.textContent=hoverText(point);if(uses3D())battleStage.stage?.setRoute?.(routeAt(point),walkableReach());}
-// The route a click on this ground would walk: only over open ground, for the
-// selected unit, while no other command is chosen. Read-only (Game.moveRoute).
-function routeAt(point){
-  if(!point||screen==='title'||state?.encounter?.status!=='active'||action&&action!=='move'||visibleUnitAt(state.encounter,point))return null;
-  return Game.moveRoute(state,selected,point);
-}
-// The selected unit's walkable ground, washed faintly while no command is chosen.
-function walkableReach(){return !action&&state?.encounter?.status==='active'?Game.getTargets(state,selected,'move'):[];}
-function hoverText(point){
-  if(!point||!state?.encounter)return '';
-  const u=visibleUnitAt(state.encounter,point),field=fieldLabel(state.encounter,point),walk=routeSummary(routeAt(point));
-  return `${u?u.name+' · ':''}${field?field+' · ':''}${terrainLabel(state.encounter,point)} · ${point.x+1}${String.fromCharCode(65+point.y)}${walk?` · ${walk}`:''}`;
-}
-// What stands on a tile, in words for announcements: the visible unit or the
-// ground, and any field object either way.
-function placeName(point){const e=state.encounter,u=visibleUnitAt(e,point);return [u?.name,fieldLabel(e,point),u?'':terrainLabel(e,point)].filter(Boolean).join('. ');}
-let settings={battleView:'3d',textScale:1,audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,coach:true,guide:true,adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,confirmMoves:false,fastMotion:false,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,quality:defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,phone:phoneLike()})};
-// Preserve the legacy settings key so existing players keep their preferences.
-try{settings={...settings,...JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')};}catch{}
-if(!FIGURE_STYLES.includes(settings.figureStyle))settings.figureStyle='sculpted';
-if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaultGraphicsMode({saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,phone:phoneLike()});
-settings.audioVolume=audioLevel(settings.audioVolume);
-settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
-settings.keyBindings=controlBindings(settings.keyBindings);
-settings.holdDelay=holdDelay(settings.holdDelay);
+function boardHover(point){hoverTile=point;const label=document.querySelector('#board-hover');if(label)label.textContent=hoverText(state?.encounter,point,routeAt(point));if(uses3D())battleStage.stage?.setRoute?.(routeAt(point),reach());}
+// What a click on open ground would walk, and the ground the selected unit can reach (direct-controls.js).
+function routeAt(point){return screen==='title'?null:clickRoute(state,{selected,action},point);}
+function reach(){return walkableReach(state,{selected,action});}
+let settings=loadSettings(storedSettings(),{reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,phone:phoneLike()});
 const soundscape=campaignSoundscape();soundscape.configure(settings);
-function saveSettings(){try{localStorage.setItem('sacramentum.settings',JSON.stringify(settings));}catch{}}
+function storedSettings(){try{return localStorage.getItem(SETTINGS_KEY);}catch{return null;}}
+function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch{}}
 const graphics=createGraphicsQuality({mode:settings.quality,onChange:({mode,reason})=>{battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;const control=document.querySelector('#graphics-quality');if(control)control.value=mode;if(reason==='measured-cost')announce(`Graphics changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);}});
 const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
@@ -96,6 +77,7 @@ const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span><small>TURN RESOLVED · ${index}/${total}</small>${esc(text)}</span><button class="ghost small" data-cmd="skip-replay">Skip</button>`;announce(text);},
   finish(){const panel=document.querySelector('#turn-replay');if(panel)panel.hidden=true;}
 });
+const renderHold=createRenderHold(()=>render());
 const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>{
   if(pendingScroll){window.scrollTo({top:0,behavior:'instant'});pendingScroll=false;}paint();bindBoard();
   const canvas=document.querySelector('#battle-board'),encounter=state?.encounter;
@@ -111,7 +93,7 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
 });
 function render(){
   // A running performance check owns the 3D stage; the page catches up after it.
-  if(performanceCheck){performanceCheck.renderLater=true;return;}
+  if(renderHold.defer())return;
   cleanupSiteMedia();
   stopMotion();
   replay.stop();
@@ -129,7 +111,7 @@ function render(){
   const activeId=document.activeElement?.id;
   app.innerHTML=(screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
   soundscape.update(state,screen);
-  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,route:routeAt(hoverTile),reach:walkableReach(),quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
+  if(uses3D()){const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));pendingMotion=null;battleStage.mount(document.querySelector('#battle-board'),{encounter:state.encounter,chapter:state.chapter,rank:state.rank,stratagem:state.stratagem,commendations,selected,targets:targets(),target:target?{...target,action,previewBadge:previewBadge(checked,action),previewBadges:previewBadges(state,cmd,checked)}:focusTile?{...focusTile,action}:null,grid:showGrid,route:routeAt(hoverTile),reach:reach(),quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,adaptiveResolution:settings.adaptiveResolution,motionSpeed:settings.fastMotion?2:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});}else battleStage.release();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);if(ceremony3D)ceremony.mount(ceremonyHost,{kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
   mountPainting();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
@@ -137,10 +119,8 @@ function render(){
   prepareChapterArt();
   renderScheduler.schedule({activeId});
 }
-// One painting drifts at a time: a 2D-staged oath or accession first, else the camp mural or the promotion scene.
 function mountPainting(){
-  const ceremonyHost=app.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
-  const host=screen==='title'?null:(!ceremony3D&&ceremonyHost)||app.querySelector('.cinematic-mural')||app.querySelector('.ceremony-scene:not([data-ceremony])');
+  const host=paintingHost(app,{title:screen==='title',ceremony3D:settings.battleView!=='2d'&&!failed3D});
   if(host)scenePainting.mount(host,{chapter:state?.chapter,quality:graphics.mode,reducedMotion:settings.reducedMotion});else scenePainting.release();
 }
 function stopMotion(){battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;if(stopAmbient)stopAmbient();ambientTime=null;}
@@ -156,7 +136,7 @@ function paint(animation=null){
   const canvas=document.querySelector('#battle-board');if(!canvas?.isConnected)return;
   if(uses3D())return;
   const started=performance.now();
-  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,hover:hoverTile,route:animation?null:routeAt(hoverTile),reach:animation?[]:walkableReach(),grid:showGrid,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
+  drawBattle(canvas,state.encounter,selected,targets(),focusTile,state.chapter,{action,target,hover:hoverTile,route:animation?null:routeAt(hoverTile),reach:animation?[]:reach(),grid:showGrid,animation,ambientTime,quality:graphics.mode,maxPixelRatio:graphics.profile.maxPixelRatio});
   graphics.recordFrame(performance.now()-started,{hidden:document.hidden,active:true});
 }
 function updateLoadingStatus(){
@@ -182,38 +162,17 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
 function bindBoard(){
   const board=document.querySelector('#battle-board');if(!board||!state.encounter)return;
   if(board.dataset.bound)return;board.dataset.bound='true';
-  // A click reports whole pixels, but the pointer that drew the route preview
-  // can sit between them; pick from the pointer's own position so the tile
-  // that walks is the tile that was shown.
-  let pressed=null,pointer='mouse';
-  // Touch has no hover: a finger held still shows the readout and route for
-  // that tile instead, and lifting it commits nothing (touch-hold.js).
-  const hold=createTouchHold(at=>{if(!board.isConnected)return;const p=pickBattlePoint(board,state.encounter,at.clientX,at.clientY),e=state.encounter;if(p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height){boardHover(p);paint(currentAnimation);}},{delay:settings.holdDelay});
-  board.addEventListener('pointerdown',event=>{pointer=event.pointerType;});
-  if(!uses3D())board.addEventListener('pointerdown',event=>{pressed={x:event.clientX,y:event.clientY};hold.down(event);});
-  if(!uses3D())for(const type of ['pointerup','pointercancel'])board.addEventListener(type,()=>hold.up());
-  if(!uses3D())board.addEventListener('click',event=>{if(hold.consume())return;const at=pressed&&Math.abs(pressed.x-event.clientX)<1&&Math.abs(pressed.y-event.clientY)<1?pressed:{x:event.clientX,y:event.clientY};pressed=null;selectPoint(pickBattlePoint(board,state.encounter,at.x,at.y));});
-  // A long press on a touch screen raises a context menu; it is not a cancel.
-  board.addEventListener('contextmenu',event=>{event.preventDefault();if(pointer!=='touch')cancelCommand();});
-  let queued=false;
-  if(!uses3D())board.addEventListener('pointermove',event=>{
-    if(event.pointerType==='touch'){hold.move(event);return;}
-    const p=pickBattlePoint(board,state.encounter,event.clientX,event.clientY),e=state.encounter;
-    const next=p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height?p:null;
-    if(samePoint(hoverTile,next)||(!hoverTile&&!next))return;hoverTile=next;
-    if(!queued){queued=true;requestAnimationFrame(()=>{queued=false;if(!board.isConnected)return;
-      const label=document.querySelector('#board-hover');
-      if(label)label.textContent=hoverText(hoverTile);
-      board.style.cursor=hoverTile?'pointer':'default';paint(currentAnimation);
-    });}
-  });
-  // A lifted finger also leaves the board; keep what its hold showed.
-  board.addEventListener('pointerleave',event=>{if(event.pointerType==='touch')return;hoverTile=null;const label=document.querySelector('#board-hover');if(label)label.textContent='';paint(currentAnimation);});
-  board.addEventListener('keydown',event=>{
-    const delta={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[event.key];
-    if(delta){event.preventDefault();focusTile??={x:selectedUnit().x,y:selectedUnit().y};focusTile={x:Math.max(0,Math.min(state.encounter.width-1,focusTile.x+delta[0])),y:Math.max(0,Math.min(state.encounter.height-1,focusTile.y+delta[1]))};boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();const walk=routeSummary(routeAt(focusTile));announce(`Grid ${focusTile.x+1}${String.fromCharCode(65+focusTile.y)}. ${placeName(focusTile)}${walk?`. ${walk}`:''}`);}
-    if(event.key==='Enter'||event.key===' '){event.preventDefault();selectPoint(focusTile||selectedUnit());}
-  });
+  bindBoardInput(board,{threeD:uses3D(),holdDelay:settings.holdDelay,current:()=>hoverTile,
+    pick:(x,y)=>pickBattlePoint(board,state.encounter,x,y),
+    inside:p=>{const e=state.encounter;return p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height;},
+    hover:point=>{boardHover(point);board.style.cursor=point?'pointer':'default';paint(currentAnimation);},
+    select:selectPoint,cancel:cancelCommand,activate:()=>selectPoint(focusTile||selectedUnit()),
+    step:([dx,dy])=>{
+      const e=state.encounter,from=focusTile??selectedUnit();
+      focusTile={x:Math.max(0,Math.min(e.width-1,from.x+dx)),y:Math.max(0,Math.min(e.height-1,from.y+dy))};
+      boardHover(focusTile);if(uses3D())battleStage.stage?.setSelection(selected,targets(),focusTile);paint();
+      announce(cursorAnnouncement(state.encounter,focusTile,routeAt(focusTile)));
+    }});
 }
 async function confirmCommand(){const c=command();if(c&&Game.preview(state,c).ok){const callout=Game.companionCallout(state.encounter,c)||Game.delegateCallout(state.encounter,c);await change(()=>{const res=Game.act(state,c);if(res?.ok&&callout)res.message=`${res.message} · ${callout.speaker} (${callout.rankTitle||callout.bloc}): “${callout.text}”`;return res;},{tone:action,command:c,clearSelection:true});}}
 function chooseAction(next){
@@ -227,8 +186,7 @@ function chooseAction(next){
 async function walk(intent){
   action='move';target=intent.target;orderDestination=null;feedback='';
   const c=command();if(!c||!Game.preview(state,c).ok){action=null;target=null;render();return;}
-  const place=p=>`${p.x+1}${String.fromCharCode(65+p.y)}`,short=intent.route&&!intent.route.reachable;
-  await change(()=>{const res=Game.act(state,c);if(res?.ok)res.message=`Walked to ${place(c)} (${intent.target.cost??intent.route?.cost??1} movement).${short?` ${place(intent.goal)} is beyond this turn’s reach.`:''} Undo Move (${controlKeys(settings.keyBindings).undo}) takes it back until you act.`;return res;},{tone:'move',command:c,clearSelection:true});
+  await change(()=>{const res=Game.act(state,c);if(res?.ok)res.message=walkMessage(c,intent,controlKeys(settings.keyBindings).undo);return res;},{tone:'move',command:c,clearSelection:true});
 }
 function cancelCommand(){action=null;target=null;orderDestination=null;feedback='';render();announce('Command cancelled. No action was spent.');}
 function selectPoint(point){
@@ -239,9 +197,8 @@ function selectPoint(point){
   if(intent.kind==='confirm'){confirmCommand();return;}
   if(intent.kind==='select'){selected=intent.unitId;action=null;target=null;orderDestination=null;feedback='';render();return;}
   if(intent.kind==='preview'){action=intent.action;target=intent.target;orderDestination=null;feedback='';render();announce(Game.preview(state,command()).message+' Activate the target again, or use Confirm.');return;}
-  const u=visibleUnitAt(state.encounter,point),why=u?'':routeSummary(routeAt(point));
-  action=null;target=null;orderDestination=null;render();
-  announce(u?`${u.name}. ${u.intent||'Choose an action or move closer.'}`:`${placeName(point)}. ${why?`${why}.`:'Outside this unit’s movement range.'}`);
+  const said=pointAnnouncement(state.encounter,point,routeAt(point));
+  action=null;target=null;orderDestination=null;render();announce(said);
 }
 async function persist(){
   if(memoryOnly||state?.archiveReplay)return {ok:true};
@@ -318,17 +275,13 @@ async function startPerformanceCheck(){
   if(performanceCheck)return;
   if(!uses3D()||!battleStage.stage?.isReady){showModal('Performance check','<p>Open a battle in the 3D view, then run the check from Settings.</p><div class="panel-actions settings-controls"><button data-cmd="close-modal">Close</button></div>');return;}
   modal.close();stopMotion();pendingMotion=null;replay.stop();
-  const band=document.createElement('div');band.className='performance-check';band.innerHTML='<p role="status" aria-live="polite">Preparing the performance check…</p><button type="button">Cancel check</button>';
-  const status=band.querySelector('p'),cancelButton=band.querySelector('button'),check=performanceCheck={cancelled:false,renderLater:false};
-  const keys=event=>{if(event.target===cancelButton&&['Enter',' '].includes(event.key))return;event.stopImmediatePropagation();event.preventDefault();if(event.key==='Escape')check.cancelled=true;};
-  cancelButton.addEventListener('click',()=>{check.cancelled=true;status.textContent='Stopping after this step…';});
-  window.addEventListener('keydown',keys,true);document.body.append(band);cancelButton.focus();
+  const check=performanceCheck=createCheckBand();renderHold.hold();
   const names={performance:'Performance',balanced:'Balanced',high:'High quality'};
   try{
     performanceReport=await runPerformanceCheck(battleStage,{current:graphics.mode,adaptive:settings.adaptiveResolution!==false,app:{version:CONFIG.version},isCancelled:()=>check.cancelled,
-      onProgress:({tier,index,total,step})=>{status.textContent=`Performance check ${index+1} of ${total}: ${step==='build'?'building':'measuring'} ${names[tier]}. Escape cancels.`;}});
+      onProgress:({tier,index,total,step})=>{check.show(`Performance check ${index+1} of ${total}: ${step==='build'?'building':'measuring'} ${names[tier]}. Escape cancels.`);}});
   }catch(error){performanceReport=null;toast(`The performance check stopped: ${error.message||error}`);}
-  finally{window.removeEventListener('keydown',keys,true);band.remove();performanceCheck=null;if(check.renderLater)render();}
+  finally{check.close();performanceCheck=null;renderHold.release();}
   if(performanceReport?.tiers.length)showPerformanceCheck(performanceReport);
   else if(performanceReport)toast('The performance check was cancelled before it measured a quality.');
 }
@@ -474,19 +427,14 @@ document.addEventListener('input',event=>{
 document.addEventListener('change',async event=>{
   const control=event.target;
   if(control.dataset?.binding){const next=remapControl(settings.keyBindings,control.dataset.binding,control.value);if(next){settings.keyBindings=next;saveSettings();render();showSettings();document.getElementById(control.id)?.focus();}return;}
-  if(control.id==='high-contrast'||control.id==='compact-hud'){settings[control.id==='high-contrast'?'highContrast':'compactHud']=control.checked;saveSettings();render();return;}
+  const toggle=SETTING_TOGGLES[control.id];
+  if(toggle){settings[toggle.key]=control.checked;saveSettings();if(toggle.stage)battleStage[toggle.stage](control.checked);if(toggle.render)render();return;}
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
   if(['river','farms','town'].includes(control.id)){const prev=document.querySelector('#allocation-preview');if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),town:Number(document.querySelector('#town')?.value)});}
   if(control.matches('.company-slot')){const ids=[...document.querySelectorAll('.company-slot')].map(node=>node.value);await change(()=>Game.selectCompany(state,ids),{tone:null});}
   if(['music-setting','ambience-setting','voices-setting'].includes(control.id)){settings[control.id.replace('-setting','')]=control.checked;saveSettings();soundscape.configure(settings);soundscape.unlock();}
   if(control.id==='soundtrack-volume'){settings.soundtrackVolume=audioLevel(Number(control.value)/100);saveSettings();soundscape.configure(settings);soundscape.unlock();const label=document.querySelector('#soundtrack-volume-value');if(label)label.textContent=Math.round(settings.soundtrackVolume*100)+'%';}
-  if(control.id==='guide-setting'){settings.guide=control.checked;saveSettings();render();}
-  if(control.id==='adaptive-resolution'){settings.adaptiveResolution=control.checked;saveSettings();battleStage.adaptive(control.checked);}
-  if(control.id==='action-camera'){settings.actionCamera=control.checked;saveSettings();battleStage.actionCamera(control.checked);}
-  if(control.id==='battle-remains'){settings.battleRemains=control.checked;saveSettings();battleStage.remains(control.checked);}
-  if(control.id==='confirm-moves'){settings.confirmMoves=control.checked;saveSettings();render();}
   if(control.id==='figure-style'){settings.figureStyle=FIGURE_STYLES.includes(control.value)?control.value:'sculpted';saveSettings();battleStage.figures(settings.figureStyle);}
-  if(control.id==='coach-setting'){settings.coach=control.checked;saveSettings();render();}
   if(control.id==='delegate-inspect'){const unit=state.encounter.units.find(u=>u.id===control.value&&!u.hidden&&u.role==='voter');if(unit){focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();announce('Considering an agreement with '+unit.name+'. No speech has been spent.');}}
   if(control.id==='unit-select'){selected=control.value;action=null;target=null;orderDestination=null;render();}
   if(control.id==='action-select')chooseAction(control.value||null);

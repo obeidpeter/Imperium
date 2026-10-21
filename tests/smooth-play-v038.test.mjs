@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
-import {staticImportClosure} from '../scripts/module-closure.mjs';
+import {staticImportClosure,studyAssets,initialAssets} from '../scripts/module-closure.mjs';
 import {compileUnits,drawableShape,sceneTextures} from '../src/showcase/scene-compositor.js';
 import {createInkOverlay} from '../src/showcase/ink-overlay.js';
 import {rayToUpright} from '../src/showcase/stage.js';
@@ -14,10 +14,12 @@ test('the offline shell carries every module the page loads before it runs, the 
   assert.ok(closure.includes('./src/ui/app.js')&&closure.includes('./src/showcase/stage-readout.js'));
   assert.ok(closure.every(path=>/^\.\/src\//.test(path)),'the shell needs no vendor or asset files');
   assert.ok(!closure.includes('./src/showcase/stage.js'),'the 3D stage arrives with a chapter, through a dynamic import');
-  const build=await readFile(new URL('scripts/build.mjs',root),'utf8');
-  assert.match(build,/staticImportClosure\(dist,'src\/ui\/app\.js'\)/);
-  assert.match(build,/const initial=assets\.filter\(url=>shellModules\.has\(url\)\|\|/);
-  assert.match(build,/const showcaseAssets=assets\.filter\(url=>!shellModules\.has\(url\)&&/,'a shell module is not counted as 3D-only');
+  // The first download is the shell, the other page files and the opening art; 3D files wait for a chapter.
+  const assets=[...closure,'./index.html','./src/showcase/stage.js','./vendor/three/three.module.js','./assets/models/props/basket.glb','./assets/scenes/frontier-oath.webp','./assets/scenes/marsh.webp','./showcase/index.html'];
+  const initial=initialAssets(assets,{shellModules:closure,openingArt:['./assets/scenes/frontier-oath.webp']});
+  assert.ok(closure.every(path=>initial.includes(path)),'every shell module, the 3D board readout included');
+  assert.deepEqual(initial.filter(path=>!closure.includes(path)),['./index.html','./assets/scenes/frontier-oath.webp']);
+  assert.deepEqual(studyAssets(assets,{shellModules:closure}),['./src/showcase/stage.js','./vendor/three/three.module.js','./assets/models/props/basket.glb','./showcase/index.html'],'a shell module is not counted as 3D-only');
 });
 
 test('one compile unit stands for each material and program shape; instancing is a shape of its own',()=>{
@@ -114,12 +116,30 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
 });
 
 test('Settings offers the performance check, and the page takes no game input while it runs',async()=>{
-  const panels=await readFile(new URL('src/ui/panels.js',root),'utf8'),app=await readFile(new URL('src/ui/app.js',root),'utf8');
-  assert.match(panels,/data-cmd="performance-check">Run performance check<\/button>/);
-  assert.match(panels,/data-cmd="performance-check-save">Save results \(JSON\)/);
-  assert.match(app,/if\(performanceCheck\)\{performanceCheck\.renderLater=true;return;\}/,'no page render remounts the stage mid-check');
-  assert.match(app,/window\.addEventListener\('keydown',keys,true\)/,'keys are captured before the board sees them');
-  assert.match(app,/finally\{window\.removeEventListener\('keydown',keys,true\);band\.remove\(\);performanceCheck=null;if\(check\.renderLater\)render\(\);\}/);
+  const {createPanels}=await import('../src/ui/panels.js'),{createCheckBand}=await import('../src/ui/performance-check.js'),{createRenderHold}=await import('../src/ui/render-controller.js');
+  const shown=[],panels=createPanels(()=>({settings:{},showModal:(title,body)=>shown.push(body)}));
+  panels.showSettings();assert.match(shown[0],/<button data-cmd="performance-check">Run performance check<\/button>/);
+  panels.showPerformanceCheck({tiers:[],recommendation:'balanced',current:'balanced',complete:false,device:{renderer:null,software:false}});assert.match(shown[1],/data-cmd="performance-check-save">Save results \(JSON\)/);
+  // The band holds keys back before the board sees them: Escape cancels, Enter and Space still press Cancel.
+  const element=()=>Object.assign(new EventTarget(),{children:[],attributes:{},textContent:'',setAttribute(k,v){this.attributes[k]=v;},append(...nodes){this.children.push(...nodes);},remove(){this.removed=true;},focus(){focused=this;}});
+  let focused=null;const win=new EventTarget(),body=element(),doc={body,createElement:element};
+  const band=createCheckBand({document:doc,window:win}),[node]=body.children,[status,cancel]=node.children;
+  assert.equal(node.className,'performance-check');assert.equal(status.attributes.role,'status');assert.equal(focused,cancel,'Cancel takes the focus');
+  const key=(key,target=null)=>{const event=Object.defineProperties(new Event('keydown',{cancelable:true}),{key:{value:key},target:{value:target}});let reached=true;win.addEventListener('keydown',()=>{},{once:true});
+    const stop=event.stopImmediatePropagation.bind(event);event.stopImmediatePropagation=()=>{reached=false;stop();};win.dispatchEvent(event);return {held:!reached&&event.defaultPrevented};};
+  assert.equal(key('e').held,true,'End turn never reaches the page');assert.equal(key('Enter').held,true);assert.equal(band.cancelled,false);
+  assert.equal(key('Enter',cancel).held,false,'Enter on Cancel presses it');assert.equal(key(' ',cancel).held,false);
+  assert.equal(key('Escape').held,true);assert.equal(band.cancelled,true,'Escape cancels');
+  const again=createCheckBand({document:doc,window:win}),button=body.children[1].children[1];
+  button.dispatchEvent(new Event('click'));assert.equal(again.cancelled,true);assert.equal(body.children[1].children[0].textContent,'Stopping after this step…');
+  band.show('Performance check 1 of 3: building Balanced. Escape cancels.');assert.match(status.textContent,/1 of 3/);
+  band.close();again.close();assert.equal(node.removed,true);assert.equal(key('e').held,false,'Closed, the band holds nothing back');
+  // No page render remounts the stage mid-check: one asked for meanwhile happens once, after.
+  let renders=0;const hold=createRenderHold(()=>renders++);
+  assert.equal(hold.defer(),false,'Without a check, the page renders');hold.hold();
+  assert.equal(hold.defer(),true);assert.equal(hold.defer(),true);assert.equal(renders,0);
+  hold.release();assert.equal(renders,1);assert.equal(hold.defer(),false);
+  hold.hold();hold.release();assert.equal(renders,1,'Nothing asked, nothing rendered');
 });
 
 test('phones start on Performance until the player chooses; a strained battle steps the tier down once at a time',async()=>{
@@ -130,16 +150,23 @@ test('phones start on Performance until the player chooses; a strained battle st
   const changes=[],quality=createGraphicsQuality({mode:'high',onChange:change=>changes.push(change)});
   assert.equal(quality.stepDown(),'balanced');assert.equal(quality.stepDown(),'performance');assert.equal(quality.stepDown(),'performance');
   assert.deepEqual(changes,[{mode:'balanced',reason:'measured-cost'},{mode:'performance',reason:'measured-cost'}]);
-  const app=await readFile(new URL('src/ui/app.js',root),'utf8');
-  assert.match(app,/onStrain:quality=>quality===graphics\.mode&&settings\.adaptiveResolution!==false\?graphics\.stepDown\('measured-cost'\):null/);
-  assert.equal((app.match(/phone:phoneLike\(\)/g)??[]).length,2,'the first-launch default knows phones');
+  // Strain counts only when measured at the current tier with adaptive resolution on.
+  const strained=createGraphicsQuality({mode:'high'});
+  assert.equal(strained.strained('balanced'),null,'measured at another tier');assert.equal(strained.strained('high',{adaptive:false}),null);
+  assert.equal(strained.strained('high',{adaptive:true}),'balanced');assert.equal(strained.strained('balanced'),'performance');assert.equal(strained.strained('performance'),'performance');
+  // The first-launch default knows phones; a stored choice stands, and an unknown one falls back to the device's default.
+  const {loadSettings}=await import('../src/ui/settings.js');
+  assert.equal(loadSettings(null,{phone:true}).quality,'performance');assert.equal(loadSettings(null,{}).quality,'balanced');
+  assert.equal(loadSettings('{"quality":"high"}',{phone:true}).quality,'high');assert.equal(loadSettings('{"quality":"ultra"}',{phone:true}).quality,'performance');
 });
 
 test('no chapter downloads the superseded Roman atlas, which only the complete historical pack keeps',async()=>{
   const {chapterAssets}=await import('../src/ui/art.js');
   for(let n=1;n<=12;n++){const files=chapterAssets(n);assert.ok(!files.includes('./assets/tactical/units-roman.webp'),`Chapter ${n}`);if(n!==11)assert.ok(files.includes('./assets/tactical/units-roman-v031.webp'));}
-  const sources=await Promise.all(['src/ui/unit-sprites.js','src/ui/roman-atlas.js','src/ui/renderer.js'].map(path=>readFile(new URL(path,root),'utf8')));
-  assert.ok(sources.every(source=>!/units-roman\.webp/.test(source)),'nothing draws it');
+  // Nothing draws it: the 2D board loads only the current atlases, in every legally reached battle and chamber.
+  const {tacticalAssets}=await import('../src/ui/unit-sprites.js');
+  const scenes=JSON.parse(await readFile(new URL('tests/fixtures/campaign-3d.json',root),'utf8')).scenes;assert.ok(scenes.length>=25);
+  for(const scene of scenes){const atlases=tacticalAssets(scene.state.encounter);assert.ok(!atlases.includes('./assets/tactical/units-roman.webp'),scene.id);if(scene.state.encounter.kind==='battle')assert.ok(atlases.includes('./assets/tactical/units-roman-v031.webp'),scene.id);}
 });
 
 test('the road keeps every triangle that shows and the exact normals, and drops only clear ones',async()=>{

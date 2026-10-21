@@ -53,6 +53,17 @@ export function directIntent(state,{selected='hero',action=null,target=null,poin
 }
 function walkTo(state,selected,t){return {kind:'move',action:'move',target:t,goal:{x:t.x,y:t.y},route:Game.moveRoute(state,selected,t)};}
 
+// The route a click on this ground would walk: only over open ground, for the
+// selected unit, while no other command is chosen. Read-only (Game.moveRoute).
+export function clickRoute(state,{selected='hero',action=null}={},point){
+  if(!point||state?.encounter?.status!=='active'||action&&action!=='move'||visibleUnitAt(state.encounter,point))return null;
+  return Game.moveRoute(state,selected,point);
+}
+// The selected unit's walkable ground, washed faintly while no command is chosen.
+export function walkableReach(state,{selected='hero',action=null}={}){
+  return !action&&state?.encounter?.status==='active'?Game.getTargets(state,selected,'move'):[];
+}
+
 // What walking to `point` would do, in words for the board readout and screen
 // readers ('' when there is nothing to say, such as over a unit).
 export function routeSummary(route){
