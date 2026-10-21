@@ -2,7 +2,7 @@ import {MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
 import {COMMAND_CHAPTERS} from '../../data/command-campaign.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
-import {cellCentre,clampToMap,crossesCover,navGrid,nearestWalkable,span,walkable} from './navigation.js';
+import {cellCentre,clampToMap,clearLine,crossesCover,navGrid,nearestWalkable,span,walkable} from './navigation.js';
 import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,squadById,squadCentre,squadOf,squadsOf} from './squads.js';
 import {smokeBetween} from './sight.js';
 
@@ -27,7 +27,13 @@ function goTo(world,squad,point,{run=false,stopAt=0}={}){
   if(!walkable(grid,p.x,p.z)){const i=nearestWalkable(grid,p.x,p.z);if(i<0)return;p=cellCentre(grid,i);}
   if(stopAt>0){const c=squadCentre(world,squad),d=span(p.x-c.x,p.z-c.z);if(d<=stopAt){squad.path=[];return;}
     const k=(d-stopAt)/d;p={x:c.x+(p.x-c.x)*k,z:c.z+(p.z-c.z)*k};if(!walkable(grid,p.x,p.z)){const i=nearestWalkable(grid,p.x,p.z);if(i>=0)p=cellCentre(grid,i);}}
-  if(squad.goal&&squad.path.length&&span(squad.goal.x-p.x,squad.goal.z-p.z)<1)return;
+  if(squad.goal&&squad.path.length){
+    const moved=span(squad.goal.x-p.x,squad.goal.z-p.z);if(moved<1)return;
+    // A goal that has moved a little (a target walking on): the last leg is re-aimed while it stays
+    // clear, rather than the whole route searched again; a goal gone farther, or round a corner, is.
+    const from=squad.path.length>1?squad.path[squad.path.length-2]:squad;
+    if(moved<4&&span(squad.x-p.x,squad.z-p.z)>=.75&&clearLine(grid,from,p)){squad.path[squad.path.length-1]={x:p.x,z:p.z};squad.goal={x:p.x,z:p.z};return;}
+  }
   if(span(squad.x-p.x,squad.z-p.z)<.75){squad.path=[];return;}
   routeSquad(world,squad,p,{run});
 }

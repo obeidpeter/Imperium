@@ -103,18 +103,20 @@ export function crossesCover(g,a,b){
   return false;
 }
 
-// A binary heap of cell indices by f-score.
+// A binary heap of cell indices by f-score. Sifting moves a hole rather than
+// swapping pairs (the same order, and nothing allocated).
 function heap(capacity){
   const items=new Int32Array(capacity),keys=new Float64Array(capacity);let size=0;
   return {get size(){return size;},clear(){size=0;},
-    push(i,f){let k=size++;items[k]=i;keys[k]=f;while(k>0){const p=(k-1)>>1;if(keys[p]<=keys[k])break;
-      [items[p],items[k]]=[items[k],items[p]];[keys[p],keys[k]]=[keys[k],keys[p]];k=p;}},
-    pop(){const top=items[0];size--;if(size>0){items[0]=items[size];keys[0]=keys[size];let k=0;
-      for(;;){const l=k*2+1,r=l+1;let m=k;if(l<size&&keys[l]<keys[m])m=l;if(r<size&&keys[r]<keys[m])m=r;if(m===k)break;
-        [items[m],items[k]]=[items[k],items[m]];[keys[m],keys[k]]=[keys[k],keys[m]];k=m;}}
+    push(i,f){let k=size++;while(k>0){const p=(k-1)>>1;if(keys[p]<=f)break;items[k]=items[p];keys[k]=keys[p];k=p;}items[k]=i;keys[k]=f;},
+    pop(){const top=items[0];size--;if(size>0){const item=items[size],key=keys[size];let k=0;
+      for(;;){const l=k*2+1,r=l+1;let m=k,mk=key;if(l<size&&keys[l]<mk){m=l;mk=keys[l];}if(r<size&&keys[r]<mk)m=r;if(m===k)break;
+        items[k]=items[m];keys[k]=keys[m];k=m;}
+      items[k]=item;keys[k]=key;}
       return top;}};
 }
 const NEIGHBOURS=[[1,0,1],[-1,0,1],[0,1,1],[0,-1,1],[1,1,SQRT2],[1,-1,SQRT2],[-1,1,SQRT2],[-1,-1,SQRT2]];
+const DC=Int8Array.from(NEIGHBOURS,n=>n[0]),DR=Int8Array.from(NEIGHBOURS,n=>n[1]),STEP=Float64Array.from(NEIGHBOURS,n=>n[2]);
 // The grid's walkable regions, each one a body can cross (the search's own
 // moves: eight ways, no corner cutting), labelled once per grid.
 function regions(g){
@@ -171,18 +173,20 @@ export function findRoute(g,from,to){
     return {points:[goalPoint],stopPoint:goalPoint,length:span(goalPoint.x-from.x,goalPoint.z-from.z)};
   const w=scratch(g),{gScore,parent,closed,seen,open}=w;w.stamp=(w.stamp+1)>>>0||1;const stamp=w.stamp;open.clear();
   const touch=i=>{if(seen[i]!==stamp){seen[i]=stamp;gScore[i]=Infinity;parent[i]=-1;closed[i]=0;}};
-  const target=reachable?goalPoint:cellCentre(g,goalIndex),gc=target.x/g.cell-.5,gr=target.z/g.cell-.5,h=i=>{const dx=Math.abs(i%g.cols-gc),dz=Math.abs(Math.floor(i/g.cols)-gr);
-    return (Math.max(dx,dz)+(SQRT2-1)*Math.min(dx,dz))*g.cell;};
-  touch(start);gScore[start]=0;open.push(start,h(start));let found=false;
+  // The octile distance to the goal, in metres.
+  const target=reachable?goalPoint:cellCentre(g,goalIndex),gc=target.x/g.cell-.5,gr=target.z/g.cell-.5,cols=g.cols,rows=g.rows,walk=g.walk,speed=g.speed,cell=g.cell,
+    h=(c,r)=>{const dx=Math.abs(c-gc),dz=Math.abs(r-gr);return (Math.max(dx,dz)+(SQRT2-1)*Math.min(dx,dz))*cell;};
+  touch(start);gScore[start]=0;open.push(start,h(start%cols,(start-start%cols)/cols));let found=false;
   while(open.size){
     const i=open.pop();if(closed[i])continue;closed[i]=1;
     if(i===goalIndex){found=true;break;}
-    const c=i%g.cols,r=(i-c)/g.cols;
-    for(const [dc,dr,step]of NEIGHBOURS){
-      const cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=g.cols||rr>=g.rows)continue;const j=rr*g.cols+cc;if(!g.walk[j])continue;touch(j);if(closed[j])continue;
+    const c=i%cols,r=(i-c)/cols,gi=gScore[i];
+    for(let n=0;n<8;n++){
+      const dc=DC[n],dr=DR[n],cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=cols||rr>=rows)continue;const j=rr*cols+cc;if(!walk[j])continue;
+      if(seen[j]!==stamp){seen[j]=stamp;gScore[j]=Infinity;parent[j]=-1;closed[j]=0;}else if(closed[j])continue;
       // No corner cutting: a diagonal needs both its orthogonal cells open.
-      if(dc&&dr&&(!g.walk[r*g.cols+cc]||!g.walk[rr*g.cols+c]))continue;
-      const cost=gScore[i]+step*g.cell/g.speed[j];if(cost<gScore[j]){gScore[j]=cost;parent[j]=i;open.push(j,cost+h(j));}
+      if(n>3&&(!walk[r*cols+cc]||!walk[rr*cols+c]))continue;
+      const cost=gi+STEP[n]*cell/speed[j];if(cost<gScore[j]){gScore[j]=cost;parent[j]=i;open.push(j,cost+h(cc,rr));}
     }
   }
   const end=found?goalIndex:start,cells=[];for(let i=end;i>=0;i=parent[i]){cells.push(i);if(i===start)break;}cells.reverse();
