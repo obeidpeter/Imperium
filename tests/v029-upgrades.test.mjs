@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
+import {bootApp} from './inert-app.mjs';
 
 const clone = x => JSON.parse(JSON.stringify(x));
 const checkpoints = new Map();
@@ -79,37 +80,20 @@ test('v0.29.0: an Archive replay cannot be restored as if it were the chronicle'
 });
 
 test('v0.29.0: the real app saves routes through the rules API and a hidden tab writes only unsaved changes', async t => {
-  // Inert DOM integration harness (as in campaign-upgrade-ui): the actual app
-  // module and storage run; there is no browser layout, canvas or audio device.
-  const {CONFIG} = await import('../src/config.js');
-  const originals = new Map(), set = (key, value) => { originals.set(key, Object.getOwnPropertyDescriptor(globalThis, key)); Object.defineProperty(globalThis, key, {value, writable: true, configurable: true}); };
-  const callbacks = new Map(), values = new Map(), writes = [], nodes = new Map();
-  const node = (id = '') => ({id, innerHTML: '', textContent: '', hidden: false, open: false, dataset: {}, style: {setProperty() {}}, isConnected: true, querySelectorAll: () => [], querySelector: selector => nodes.get(selector) ?? null, setAttribute() {}, removeAttribute() {}, focus() {}, scrollIntoView() {}, addEventListener() {}, prepend() {}, after() {}, close() { this.open = false; }, showModal() { this.open = true; }});
-  for (const id of ['#app', '#modal', '#announcement', '.system-feedback', '.save-status', '.modal-feedback', '#panel-title', '#action-feedback']) nodes.set(id, node(id));
-  const doc = {hidden: false, activeElement: null, documentElement: node(), addEventListener(name, fn) { if (!callbacks.has(name)) callbacks.set(name, []); callbacks.get(name).push(fn); }, removeEventListener() {}, querySelector: selector => nodes.get(selector) ?? null, querySelectorAll: () => [], getElementById: () => null, createElement: () => node()};
-  set('document', doc); set('window', {addEventListener() {}, scrollTo() {}}); set('navigator', {connection: {saveData: true}, locks: {request: async (name, fn) => fn()}}); set('matchMedia', () => ({matches: true}));
-  set('requestAnimationFrame', () => 1); set('cancelAnimationFrame', () => {});
-  set('localStorage', {getItem: k => values.get(k) ?? null, setItem(k, v) { values.set(k, v); writes.push(k); }, removeItem: k => values.delete(k)}); set('BroadcastChannel', class { postMessage() {} close() {} });
-  const nativeTimeout = globalThis.setTimeout; set('setTimeout', (fn, delay, ...args) => delay === 6500 ? 0 : nativeTimeout(fn, delay, ...args));
-  t.after(() => { for (const [key, descriptor] of originals) descriptor ? Object.defineProperty(globalThis, key, descriptor) : delete globalThis[key]; });
-  const storage = await import('../src/ui/storage.js?v029-app'), start = camp('ch12-confrontation');
-  await storage.saveLocal(start, {replace: true});
-  await import('../src/ui/app.js?v029-app');
-  const saved = () => Game.deserialize(JSON.parse(values.get(CONFIG.saveKey)).payload), campaignWrites = () => writes.filter(k => k === CONFIG.saveKey).length;
-  const settle = async () => { for (let i = 0; i < 6; i++) await new Promise(resolve => nativeTimeout(resolve, 0)); };
-  const click = async (cmd, id) => { const button = {dataset: {cmd, id}, disabled: false}; for (const fn of callbacks.get('click') ?? []) await fn({target: {closest: () => button}}); await settle(); };
-  const hide = async () => { doc.hidden = true; for (const fn of callbacks.get('visibilitychange') ?? []) fn(); await settle(); doc.hidden = false; };
-  await click('continue');
+  const {CONFIG} = await import('../src/config.js'), start = camp('ch12-confrontation');
+  const app = await bootApp(t, {name: 'v029-app', save: start});
+  const campaignWrites = () => app.storage.keys.filter(k => k === CONFIG.saveKey).length;
+  await app.click('continue');
   let count = campaignWrites();
-  await hide();
+  await app.hide();
   assert.equal(campaignWrites(), count, 'Hiding an unchanged chronicle does not write or broadcast a new revision');
-  await click('route', 'invented');
+  await app.command('route', 'invented');
   assert.equal(campaignWrites(), count, 'An invalid approach is rejected by the rules API before storage');
-  assert.equal(saved().route, start.route);
-  await click('route', 'battle');
-  assert.equal(saved().route, 'battle');
+  assert.equal(app.saved().route, start.route);
+  await app.click('route', 'battle');
+  assert.equal(app.saved().route, 'battle');
   count = campaignWrites();
-  await hide();
+  await app.hide();
   assert.equal(campaignWrites(), count, 'The route was already saved; hiding writes nothing new');
 });
 
@@ -358,10 +342,27 @@ test('v0.29.0: switching figure style swaps only the presentation and sets the m
   stage.setFigureStyle('painted');
   // Since 0.35.1 the figures stay until sync replaces each one, whose style key includes the style.
   assert.equal(stage.figureStyle, 'painted');assert.equal(disposed, 0);assert.equal(stage.actors.size, 1);assert.deepEqual(styles, [{tiltShift: 1, ink: 0}]);assert.equal(synced[0], encounter);
-  const source = await (await import('node:fs/promises')).readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
-  assert.match(source, /const styleKey=`\$\{u\.side\}:\$\{u\.role\}:\$\{u\.name\}:\$\{vComm\}:\$\{this\.quality\}:\$\{this\.figureStyle\}`/);
-  assert.match(source, /if\(!actor\|\|actor\.group\.userData\.styleKey!==styleKey\)\{[\s\S]{0,400}?actor=this\.placeFigure\(u,/, 'A changed style key goes through the safe replacement');
-  assert.match(source, /placeFigure\(u,\{styleKey,vComm,encounter=this\.encounter\}\)\{\s+const actor=replaceStageActor\(/);
+  // Sync replaces a figure exactly when its key (allegiance, role, name, standing, quality, style) changes.
+  const {figureStyleKey} = await import('../src/showcase/stage-figures.js');
+  const unit = {id: 'hero', side: 'player', role: 'soldier', name: 'Gaius'}, placed = [], figures = Object.create(BattleStage.prototype);
+  Object.assign(figures, {quality: 'balanced', figureStyle: 'sculpted', commendations: {}, actors: new Map(), figureQueue: null,
+    placeFigure(u, options) {placed.push(options.styleKey);const actor = {group: {userData: {styleKey: options.styleKey}}};this.actors.set(u.id, actor);return actor;}});
+  const first = figures.syncFigure(unit, encounter);
+  assert.equal(figures.syncFigure(unit, encounter), first, 'An unchanged key keeps the figure');assert.equal(placed.length, 1);
+  figures.figureStyle = 'painted';figures.syncFigure(unit, encounter);
+  assert.deepEqual(placed, ['sculpted', 'painted'].map(figureStyle => figureStyleKey(unit, {commendations: 0, quality: 'balanced', figureStyle})));
+  figures.syncFigure({...unit, side: 'enemy'}, encounter);assert.equal(placed.length, 3, 'A committed defection rebuilds the figure');
+  figures.figureQueue = new Set();assert.equal(figures.syncFigure({...unit, id: 'lucan'}, encounter), null, 'While the stage is first built, a new figure waits for prepare()');
+  assert.deepEqual([...figures.figureQueue], ['lucan']);assert.equal(placed.length, 3);
+  // The replacement is safe: a figure that fails to build leaves the old one standing; one that builds takes its place.
+  const old = {group: new T.Group(), disposed: 0, dispose() {this.disposed++;}}, scene = new T.Scene();scene.add(old.group);
+  const swap = Object.create(BattleStage.prototype);
+  Object.assign(swap, {quality: 'performance', figureStyle: 'sculpted', chapter: 1, scene, actors: new Map([['hero', old]]), poseReset: new Set(), canvas: {dataset: {}}, disposed: false, attachFormation() {throw new Error('formation failed');}});
+  assert.throws(() => swap.placeFigure(unit, {styleKey: 'new', vComm: 0}), /formation failed/);
+  assert.equal(swap.actors.get('hero'), old);assert.equal(old.disposed, 0);assert.equal(old.group.parent, scene);
+  swap.attachFormation = () => {};const built = swap.placeFigure(unit, {styleKey: 'new', vComm: 0});
+  assert.equal(swap.actors.get('hero'), built);assert.equal(built.group.userData.styleKey, 'new');assert.equal(built.group.userData.unitId, 'hero');
+  assert.equal(old.disposed, 1);assert.equal(old.group.parent, null);built.dispose();
   stage.setFigureStyle('painted');assert.equal(synced.length, 1, 'Re-selecting the same style does nothing');
   stage.setFigureStyle('invented');assert.equal(stage.figureStyle, 'sculpted', 'Unknown styles fall back to sculpted');
   assert.equal(JSON.stringify(encounter), frozen, 'The encounter is untouched');
@@ -384,6 +385,7 @@ test('v0.29.0: the compositor offers tilt-shift and ink finishes, clamped, and t
   const {createBattleStageController} = await import('../src/ui/battle-stage-controller.js');
   const calls = [];
   class FakeStage {
+    static create(...args) {return new this(...args);}
     constructor(board) {this.canvas = board;this.labelLayer = {};this.quality = 'balanced';this.figureStyle = 'sculpted';}
     sync() {} setSelection() {} setGrid() {} applyQuality() {} setReducedMotion() {} setPaused() {} setAudio() {} home() {} resize() {} dispose() {}
     setFigureStyle(style) {calls.push(style);this.figureStyle = style;}
@@ -504,9 +506,10 @@ test('v0.29.0: labels are compact by default; named figures, the selection and t
   for (const unit of [{id: 'enemy1', name: 'Gothic raider', role: 'raider'}, {id: 'ally6', name: 'Relief cohort 7', role: 'archer'}]) assert.equal(namedFigure(unit), false);
   assert.deepEqual(voterPosture({stance: 3}), {motion: 'assent', phase: 1});assert.deepEqual(voterPosture({stance: -1}), {motion: 'dissent', phase: 1 / 3});assert.equal(voterPosture({stance: 0}), null);
   const css = await readFile(new URL('../src/ui/battle-3d.css', import.meta.url), 'utf8');
-  for (const role of ['infantry', 'archer', 'cavalry', 'guard', 'raider', 'commander']) assert.match(css, new RegExp(`\\[data-role=${role}\\] \\.world-role\\{background-image:url\\("data:image/svg\\+xml`), `${role} has a glyph`);
-  assert.match(css, /:not\(\.named\)[^{]*\.world-name\{display:none\}/, 'Rank-and-file names hide by default');
-  for (const bloc of ['Veterans', 'Landholders', 'Civic', 'Chamber']) assert.match(css, new RegExp(`\\[data-bloc=${bloc}\\]`));
+  const {declared, cssRules} = await import('./css-rules.mjs');
+  for (const role of ['infantry', 'archer', 'cavalry', 'guard', 'raider', 'commander']) assert.match(declared(css, selector => selector.endsWith(`[data-role=${role}] .world-role`))['background-image'] ?? '', /^url\("data:image\/svg\+xml/, `${role} has a glyph`);
+  assert.equal(declared(css, selector => selector.includes(':not(.named)') && selector.endsWith(' .world-name')).display, 'none', 'Rank-and-file names hide by default');
+  for (const bloc of ['Veterans', 'Landholders', 'Civic', 'Chamber']) assert.ok(cssRules(css).some(rule => rule.selectors.some(selector => selector.includes(`[data-bloc=${bloc}]`))), `${bloc} is styled`);
 });
 
 test('v0.29.0: Senate delegates wear their bloc on the toga trim and show their stance in posture', async () => {
@@ -573,7 +576,8 @@ test('v0.29.0: the painted Tabula inks the career route by chapter and keeps the
   assert.equal((svg.match(/career-leg done/g) ?? []).length, 5);assert.equal((svg.match(/career-leg ahead/g) ?? []).length, 2);
   assert.match(svg, /style="--len:\d+px"/);assert.match(svg, /<filter id="tabula-ink"/);
   const css = await (await import('node:fs/promises')).readFile(new URL('../src/ui/styles.css', import.meta.url), 'utf8');
-  assert.match(css, /\.career-leg\.current \{[^}]*stroke-dashoffset:0;[^}]*animation:tabula-draw/, 'Reduced motion (no animation) leaves the leg fully drawn');
+  const leg = (await import('./css-rules.mjs')).declared(css, selector => selector.endsWith(' .career-leg.current'));
+  assert.equal(leg['stroke-dashoffset'], '0', 'Reduced motion (no animation) leaves the leg fully drawn');assert.match(leg.animation, /^tabula-draw\b/);
 });
 
 test('v0.29.0: the finale stands before the rising Aurelian Walls with massed legions, all outside the board', async () => {
@@ -649,7 +653,7 @@ test('v0.29.0: the oath and accession tableaux are presentation-only scenes moun
   assert.ok(accession.palettes.hero.cloth, 'He wears imperial purple');assert.equal(accession.chapter, 12);
   assert.ok(accession.encounter.units.filter(u => accession.poses[u.id] === 'rally').length >= 5, 'The legions acclaim him');
   // The controller mounts a stage over the painting and keeps the painting on failure.
-  const calls = [];class FakeStage {constructor(canvas, encounter, options) {calls.push({encounter, options});this.quality = options.quality;} home() {calls.push('home');} setReducedMotion() {} applyQuality() {} dispose() {calls.push('dispose');}}
+  const calls = [];class FakeStage {static create(...args) {return new this(...args);} constructor(canvas, encounter, options) {calls.push({encounter, options});this.quality = options.quality;} home() {calls.push('home');} setReducedMotion() {} applyQuality() {} dispose() {calls.push('dispose');}}
   const appended = [];const host = {dataset: {}, append(node) {appended.push(node);node.isConnected = true;node.remove = () => {node.isConnected = false;};}};
   const previousDocument = globalThis.document;globalThis.document = {createElement: () => ({setAttribute() {}, className: ''})};
   try {
@@ -657,10 +661,18 @@ test('v0.29.0: the oath and accession tableaux are presentation-only scenes moun
     c.mount(host, {kind: 'accession', name: 'Gaius', quality: 'high'});await new Promise(r => setImmediate(r));
     assert.equal(calls[0].options.ceremony.chapter, 12);assert.equal(calls[0].options.chapter, 12);assert.ok(calls.includes('home'));assert.equal(host.dataset.ceremonyReady, 'true');
     c.release();assert.ok(calls.includes('dispose'));assert.equal(host.dataset.ceremonyReady, undefined, 'Releasing shows the painting again');
-    const failing = createCeremonyController({load: async () => [{BattleStage: class {constructor() {throw new Error('no WebGL');}}}, {ceremonyScene}]});
+    const failing = createCeremonyController({load: async () => [{BattleStage: class {static create() {throw new Error('no WebGL');}}}, {ceremonyScene}]});
     failing.mount(host, {kind: 'oath', name: 'Gaius'});await new Promise(r => setImmediate(r));
     assert.equal(host.dataset.ceremonyReady, undefined, 'A failed stage leaves the painting');
   } finally {globalThis.document = previousDocument;}
-  const views = await readFile(new URL('../src/ui/campaign-views.js', import.meta.url), 'utf8');
-  assert.match(views, /data-ceremony="accession"/);assert.match(views, /line\.text===OATH\?'<figure class="ceremony-scene oath-scene" data-ceremony="oath"/, 'The oath scene keys on the one shared OATH entry');
+  // The views stage both ends of the campaign: the oath where its one shared entry is read, and the accession.
+  const G = await import('../src/core/game.js'), {OATH} = await import('../src/data/campaign.js'), {createCampaignViews} = await import('../src/ui/campaign-views.js');
+  const {playEncounter, runCampaign} = await import('../scripts/autoplay.mjs');
+  const s = G.newGame('Ceremony'), views = state => createCampaignViews(() => ({state, screen: 'game', settings: {}, saving: false, offline: false}));
+  G.choose(s, G.getChapter(s).decision.options[0].id);G.startEncounter(s);playEncounter(s);assert.ok(G.commitEncounter(s).ok);assert.ok(G.swearOath(s).ok);
+  const oathLine = G.storyLines(s).findIndex(line => line.text === OATH);assert.ok(oathLine >= 0);
+  assert.ok(G.setStoryProgress(s, oathLine).ok);assert.match(views(s).camp(), /<figure class="ceremony-scene oath-scene" data-ceremony="oath"/);
+  assert.ok(G.setStoryProgress(s, oathLine + 1).ok);assert.doesNotMatch(views(s).camp(), /data-ceremony/, 'Only the oath line stages the oath');
+  const {state: reign} = await runCampaign();assert.equal(reign.phase, 'epilogue');
+  assert.match(views(reign).ending(), /<div class="ceremony-scene accession-scene" data-ceremony="accession"/);
 });

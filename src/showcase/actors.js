@@ -340,7 +340,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     else mesh(signum,shapeGeometry([[0,1.28],[-.035,1.17],[0,1.14],[.035,1.17]],.009),bronze);
   }
   const horse=mounted?createHorse(root,kit,{part,mesh,profile:(rings,spec={})=>profile(rings,{...spec,subdivisions:1}),ellipsoid,strip,material,surface,leather,metal,hair,cloth}):null;
-  const ring=mesh(group,new T.RingGeometry(mounted?.72:.32,mounted?.75:.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
+  const ring=mesh(group,new T.RingGeometry(mounted?.72:.32,mounted?.75:.343,48),new T.MeshBasicMaterial({color:0xe6bc6c,transparent:true,opacity:.85,side:T.DoubleSide,forceSinglePass:true}),0,.009,0);materials.add(ring.material);ring.rotation.x=-Math.PI/2;ring.visible=false;ring.castShadow=false;ring.receiveShadow=false;
   // Build overview geometry once, before near-detail batching. One colored
   // draw per rigid joint keeps the real role silhouette while dropping tiny
   // rivets, fingers and surface sampling that cannot be read at this distance.
@@ -372,10 +372,13 @@ function createActorRig(unit={},options={},reuseGroup=null){
   function batch(parent){
     for(const child of [...parent.children])if(child.isGroup||child.isBone)batch(child);
     const buckets=new Map();for(const child of parent.children)if(child.isMesh&&!child.userData.overview){const key=batchKey(child.material),bucket=buckets.get(key)??[];bucket.push(child);buckets.set(key,bucket);}
-    for(const [key,items]of buckets){if(items.length<2)continue;const positions=[],normals=[],uv=[],colors=[],mixed=items.some(item=>item.material!==items[0].material||item.geometry.attributes.color);let mat=items[0].material;
+    for(const [key,items]of buckets){if(items.length<2)continue;const positions=[],normals=[],uv=[],colors=[],triangles=[],mixed=items.some(item=>item.material!==items[0].material||item.geometry.attributes.color);let mat=items[0].material;
       if(mixed){if(!tintedMaterials.has(key)){const merged=mat.clone();merged.color.set(0xffffff);merged.vertexColors=true;materials.add(merged);tintedMaterials.set(key,merged);}mat=tintedMaterials.get(key);}
-      for(const item of items){item.updateMatrix();const source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone();source.applyMatrix4(item.matrix);positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);uv.push(...(source.attributes.uv?.array??new Float32Array(source.attributes.position.count*2)));if(mixed)for(let i=0;i<source.attributes.position.count;i++){const c=source.attributes.color;colors.push(item.material.color.r*(c?.getX(i)??1),item.material.color.g*(c?.getY(i)??1),item.material.color.b*(c?.getZ(i)??1));}source.dispose();parent.remove(item);geometries.delete(item.geometry);item.geometry.dispose();}
-      const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));if(mixed)g.setAttribute('color',new T.Float32BufferAttribute(colors,3));mesh(parent,g,mat);
+      // Each detail keeps its shared vertices; its triangles join the batch's index.
+      for(const item of items){item.updateMatrix();const source=item.geometry.clone().applyMatrix4(item.matrix),first=positions.length/3;positions.push(...source.attributes.position.array);normals.push(...source.attributes.normal.array);uv.push(...(source.attributes.uv?.array??new Float32Array(source.attributes.position.count*2)));if(mixed)for(let i=0;i<source.attributes.position.count;i++){const c=source.attributes.color;colors.push(item.material.color.r*(c?.getX(i)??1),item.material.color.g*(c?.getY(i)??1),item.material.color.b*(c?.getZ(i)??1));}
+        if(source.index)for(let k=0;k<source.index.count;k++)triangles.push(first+source.index.getX(k));else for(let i=0;i<source.attributes.position.count;i++)triangles.push(first+i);
+        source.dispose();parent.remove(item);geometries.delete(item.geometry);item.geometry.dispose();}
+      const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('normal',new T.Float32BufferAttribute(normals,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));if(mixed)g.setAttribute('color',new T.Float32BufferAttribute(colors,3));g.setIndex(triangles);mesh(parent,g,mat);
     }
   }
   batch(group);

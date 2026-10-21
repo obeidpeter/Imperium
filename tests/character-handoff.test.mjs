@@ -13,7 +13,7 @@ test('Formed helmet normals face outward and the lip stays inside a human head s
 });
 // The committed GLBs are checked as files. Whether they still match the
 // character source is reported by `npm run audit:handoff`, not here: a code
-// change to the characters must not fail the test suite until 29 MB of
+// change to the characters must not fail the test suite until 22 MB of
 // development assets are re-exported.
 test('Complete GLBs carry valid embedded maps, skins, morphs and four playable animation clips',async()=>{
   const manifest=JSON.parse(await readFile(new URL('art-source/characters/manifest.json',root),'utf8'));

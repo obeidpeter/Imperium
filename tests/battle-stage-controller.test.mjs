@@ -7,6 +7,7 @@ const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function parent(){return {dataset:{},children:[],append(node){if(node.parentElement)node.parentElement.children=node.parentElement.children.filter(n=>n!==node);this.children.push(node);node.parentElement=this;node.isConnected=true;}};}
 function canvas(){const p=parent(),c={parentElement:null,isConnected:true,replaceWith(node){if(node===this)return;const host=this.parentElement;host.children=host.children.filter(n=>n!==this);this.parentElement=null;this.isConnected=false;host.append(node);}};p.append(c);return c;}
 function fakeClass({fail=false}={}){const instances=[];class FakeStage{
+  static create(...args){return new this(...args);}
   constructor(board,encounter,options){if(fail)throw new Error('WebGL unavailable');this.canvas=board;this.labelLayer={parentElement:null,isConnected:false};board.parentElement.append(this.labelLayer);this.quality=options.quality;this.orbit={distance:20};this.calls=[];this.disposals=0;this.sound={stop:()=>this.calls.push(['sound.stop']),unlock:()=>{this.calls.push(['sound.unlock']);return true;}};this.initial={encounter,options};instances.push(this);}
   sync(...a){this.calls.push(['sync',...a]);} setSelection(...a){this.calls.push(['selection',...a]);} setGrid(...a){this.calls.push(['grid',...a]);}
   applyQuality(q){this.quality=q;this.calls.push(['quality',q]);} setReducedMotion(...a){this.calls.push(['reduced',...a]);} setPaused(...a){this.calls.push(['paused',...a]);} setAudio(...a){this.calls.push(['audio',...a]);}
@@ -48,6 +49,24 @@ test('Switching while modules load ignores stale success and stale failure',asyn
   const {FakeStage,instances}=fakeClass(),jobs=[deferred(),deferred(),deferred()],errors=[];let count=0;const c=createBattleStageController({load:()=>jobs[count++].promise,onError:e=>errors.push(e)});
   c.mount(canvas(),options('ch1-training'));c.mount(canvas(),options('ch1-road'));jobs[1].resolve({BattleStage:FakeStage});await settle();const road=c.stage;jobs[0].resolve({BattleStage:FakeStage});await settle();assert.equal(c.stage,road);assert.equal(instances.length,1);
   c.release();c.mount(canvas(),options('ch1-training'));c.release();jobs[2].reject(new Error('Stale import failure'));await settle();assert.deepEqual(errors,[]);assert.equal(road.disposals,1);assert.equal(c.stage,null);
+});
+
+test('A stage still being built is discarded when the battle changes, and a late failure leaves the newer battle alone',async()=>{
+  // Each build waits for the test, as the real one waits between its steps; it asks current() as the real one does at each pause.
+  const {FakeStage,instances}=fakeClass(),builds=[],errors=[];
+  class SlowStage extends FakeStage{static create(...args){const build=deferred();builds.push({args,build});return build.promise.then(fail=>{if(fail)throw new Error(fail);return args[3].current()?new this(...args):null;});}}
+  const c=createBattleStageController({load:async()=>({BattleStage:SlowStage}),onError:e=>errors.push(e)});
+  c.mount(canvas(),options('ch1-training'));await settle();assert.equal(builds.length,1);assert.equal(c.stage,null,'Nothing is shown while the world is built');
+  c.mount(canvas(),options('ch1-road'));await settle();assert.equal(builds.length,2);
+  builds[0].build.resolve();await settle();assert.equal(c.stage,null);assert.equal(instances.length,0,'The superseded build is discarded');
+  builds[1].build.resolve();await settle();const road=c.stage;assert.ok(road);assert.equal(road.initial.encounter.id,'ch1-road');
+  c.mount(canvas(),options('ch1-training'));await settle();
+  builds[2].build.resolve('WebGL context lost');await settle();assert.deepEqual(errors,['WebGL context lost']);
+  c.release();assert.equal(road.disposals,1);
+  c.mount(canvas(),options('ch1-road'));await settle();c.mount(canvas(),options('ch1-training'));await settle();
+  builds[3].build.resolve('Stale failure');builds[4].build.resolve();await settle();
+  assert.deepEqual(errors,['WebGL context lost'],'A failure in a superseded build reports nothing');assert.equal(c.stage?.initial.encounter.id,'ch1-training','and the newer battle stands');
+  c.release();
 });
 
 test('Import and constructor failures request fallback and allow a later successful initialization',async()=>{
@@ -103,4 +122,15 @@ test('a battle that stayed slow at its lowest resolution builds the next battle 
   const quiet=createBattleStageController({load:async()=>({BattleStage:FakeStage}),onStrain:()=>null});
   quiet.mount(canvas(),options('ch1-road',{quality:'high'}));await settle();quiet.stage.strained=true;quiet.mount(canvas(),options('ch1-patrol',{quality:'high'}));await settle();
   assert.equal(quiet.stage.quality,'high','declining the step keeps the chosen quality');
+});
+
+test('Each mount hands the stage the route under the pointer and the walkable ground, and clears them when the page has none',async()=>{
+  const {FakeStage}=fakeClass();class RouteStage extends FakeStage{setRoute(...a){this.calls.push(['route',...a]);}}
+  const c=createBattleStageController({load:async()=>({BattleStage:RouteStage})}),route={stop:{x:1,y:3},reachable:true},reach=[{x:1,y:3}];
+  const routes=()=>c.stage.calls.filter(v=>v[0]==='route');
+  c.mount(canvas(),options('ch1-road',{route,reach}));await settle();
+  assert.deepEqual(routes().at(-1),['route',route,reach],'The stage inks what the page computed');
+  c.mount(canvas(),options('ch1-road',{selected:'lucan'}));
+  assert.deepEqual(routes().at(-1),['route',null,[]],'A render without a route clears it');
+  c.release();
 });

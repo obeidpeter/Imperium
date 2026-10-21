@@ -30,6 +30,14 @@ export function scenePaintingName(src=''){
   return match&&Object.hasOwn(SCENE_PAINTINGS,match[1])?match[1]:null;
 }
 export function paintingWanted({quality='balanced',reducedMotion=false}={}){return quality!=='performance'&&!reducedMotion;}
+// One painting drifts at a time: an oath or accession painting staged in 2D
+// first (one staged in 3D is not a painting), else the camp mural, else a
+// promotion scene. The title page has none.
+export function paintingHost(page,{title=false,ceremony3D=false}={}){
+  if(title)return null;
+  const ceremony=page.querySelector('[data-ceremony]');
+  return (!ceremony3D&&ceremony)||page.querySelector('.cinematic-mural')||page.querySelector('.ceremony-scene:not([data-ceremony])');
+}
 export function paintingWeather(src,chapter=1){
   const name=scenePaintingName(src);
   return name?SCENE_PAINTINGS[name].weather??chapterWeather(chapter):'clear';
@@ -234,7 +242,7 @@ export function createScenePainting({load=decodeImage,createContext=defaultConte
         stop();schedule(c);return c.canvas;
       }
       release();
-      const canvas=doc.createElement('canvas');canvas.className='scene-depth-canvas';canvas.setAttribute('aria-hidden','true');host.append(canvas);
+      const canvas=doc.createElement('canvas');canvas.className='scene-depth-canvas';canvas.setAttribute('aria-hidden','true');canvas.setAttribute('data-live','');host.append(canvas);
       const c={src,depth,host,img,canvas,doc,win,quality,position,weather,style:paintingWeatherStyle(weather,chapter),focus:SCENE_PAINTINGS[scenePaintingName(src)].focus,
         gl:null,program:null,buffer:null,textures:[],uniforms:{},corner:0,image:null,ready:false,raf:0,last:-Infinity,clock:null,arrival:0,arrivalAt:0,frames:0,visible:true,observer:null,lost:null};
       c.visibility=()=>{if(c.doc.hidden)stop();else schedule(c);};doc.addEventListener('visibilitychange',c.visibility);

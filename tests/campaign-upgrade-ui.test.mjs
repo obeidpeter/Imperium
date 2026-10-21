@@ -59,26 +59,24 @@ test('Difficulty choices, coaching and audio controls expose their actual defaul
 });
 
 test('Actual app event hooks reject invalid company edits before storage, commit valid plans, and save settings separately',async t=>{
-  // This is an inert DOM event integration harness: no canvas, browser layout,
-  // audio device or production storage. The actual app module and save code run.
-  const originals=new Map(),set=(key,value)=>{originals.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{value,writable:true,configurable:true});};
-  const callbacks=new Map(),values=new Map(),writes=[],nodes=new Map(),frames=[];
-  const node=(id='')=>({id,innerHTML:'',textContent:'',hidden:false,open:false,dataset:{},style:{setProperty(){}},isConnected:true,querySelectorAll:()=>[],querySelector:selector=>nodes.get(selector)??null,setAttribute(){},removeAttribute(){},focus(){},scrollIntoView(){},addEventListener(){},prepend(){},after(){},close(){this.open=false;},showModal(){this.open=true;}});
-  for(const id of ['#app','#modal','#announcement','.system-feedback','.save-status','.modal-feedback','#panel-title','#action-feedback'])nodes.set(id,node(id));
-  const controls=[];const doc={hidden:false,activeElement:null,documentElement:node(),addEventListener(name,fn){if(!callbacks.has(name))callbacks.set(name,[]);callbacks.get(name).push(fn);},removeEventListener(){},querySelector:selector=>nodes.get(selector)??null,querySelectorAll:selector=>selector==='.company-slot'?controls:[],getElementById:()=>null,createElement:()=>node()};
-  set('document',doc);set('window',{addEventListener(){},scrollTo(){}});set('navigator',{connection:{saveData:true},locks:{request:async(name,fn)=>fn()}});set('matchMedia',()=>({matches:true}));set('requestAnimationFrame',fn=>(frames.push(fn),frames.length));set('cancelAnimationFrame',()=>{});set('localStorage',{getItem:k=>values.get(k)??null,setItem(k,v){values.set(k,v);writes.push(k);},removeItem:k=>values.delete(k)});set('BroadcastChannel',class{postMessage(){}close(){}});
-  const nativeTimeout=globalThis.setTimeout;set('setTimeout',(fn,delay,...args)=>delay===6500?0:nativeTimeout(fn,delay,...args));
-  t.after(()=>{for(const [key,descriptor]of originals)descriptor?Object.defineProperty(globalThis,key,descriptor):delete globalThis[key];});
-  const storage=await import('../src/ui/storage.js');await storage.saveLocal(clone(openingRoad),{replace:true});await import('../src/ui/app.js?campaign-upgrade-ui');
-  const saved=()=>JSON.parse(values.get(CONFIG.saveKey)),state=()=>G.deserialize(saved().payload);
-  const click=async(cmd,id)=>{const button={dataset:{cmd,id},disabled:false};for(const fn of callbacks.get('click')??[])await fn({target:{closest:()=>button}});};
-  const change=async control=>{for(const fn of callbacks.get('change')??[])await fn({target:{matches:selector=>selector==='.company-slot'&&control.className==='company-slot',...control}});};
-  await click('continue');const original=saved(),count=writes.length;
-  controls.push({value:'absent'});await change({className:'company-slot'});assert.equal(writes.length,count);assert.deepEqual(saved(),original,'Rejected choice does not persist, mutate or charge');
-  controls[0].value='naso';await change({className:'company-slot'});assert.equal(state().companyOrders.priority[0],'naso');assert.equal(state().supplies,openingRoad.supplies);
-  const expected=clone(openingRoad);assert.ok(G.selectCompany(expected,['naso']).ok);assert.equal(G.serialize(state()),G.serialize(expected),'A later valid save exposes no hidden mutation from the rejected selection');
-  await click('company-package','rearm');assert.equal(state().companyOrders.package,'rearm');assert.equal(state().supplies,openingRoad.supplies);
-  const good=saved(),validWrites=writes.length;await click('company-package','invented');assert.equal(writes.length,validWrites);assert.deepEqual(saved(),good);
-  await change({id:'music-setting',checked:true});await change({id:'coach-setting',checked:false});await change({id:'soundtrack-volume',value:'70'});const preferences=JSON.parse(values.get('sacramentum.settings'));assert.equal(preferences.music,true);assert.equal(preferences.coach,false);assert.equal(preferences.soundtrackVolume,.7);assert.deepEqual(saved(),good,'Presentation preferences never change the campaign checkpoint');
-  nodes.set('#name-input',{value:'Veteran <new>'});nodes.set('input[name="campaign-difficulty"]:checked',{value:'veteran'});nodes.set('#new-soundscape',{checked:false});await click('begin');assert.equal(state().difficulty,'veteran');assert.equal(state().phase,'camp');assert.equal(state().chapter,1);assert.equal(state().name,'Veteran <new>');
+  // The actual app module and save code, on the page skeleton (inert-app.mjs): no canvas, layout, audio device or production storage.
+  const {bootApp}=await import('./inert-app.mjs');
+  const app=await bootApp(t,{name:'campaign-upgrade-ui',save:clone(openingRoad)});
+  const saved=()=>JSON.parse(app.raw()),state=()=>app.saved(),open=async cmd=>{if(!app.doc.querySelector(`[data-cmd="${cmd}"]`))await app.click('menu');await app.click(cmd);};
+  await app.click('continue');const original=saved(),count=app.storage.writes;
+  // A tampered page offers a veteran the company does not have: the rules refuse it before storage.
+  const slot=app.find('.company-slot'),forged=app.doc.createElement('option');forged.setAttribute('value','absent');slot.append(forged);
+  await app.change('.company-slot',{value:'absent'});assert.equal(app.storage.writes,count);assert.deepEqual(saved(),original,'Rejected choice does not persist, mutate or charge');
+  await app.change('.company-slot',{value:'naso'});assert.equal(state().companyOrders.priority[0],'naso');assert.equal(state().supplies,openingRoad.supplies);
+  const chosen=app.doc.querySelectorAll('.company-slot').map(node=>node.value),expected=clone(openingRoad);assert.ok(G.selectCompany(expected,chosen).ok);
+  assert.equal(G.serialize(state()),G.serialize(expected),'A later valid save exposes no hidden mutation from the rejected selection');
+  await app.click('company-package','rearm');assert.equal(state().companyOrders.package,'rearm');assert.equal(state().supplies,openingRoad.supplies);
+  const good=saved(),validWrites=app.storage.writes;await app.command('company-package','invented');assert.equal(app.storage.writes,validWrites);assert.deepEqual(saved(),good);
+  await open('settings');
+  await app.change('#music-setting',{checked:true});await app.change('#coach-setting',{checked:false});await app.change('#soundtrack-volume',{value:'70'});
+  const preferences=app.settings();assert.equal(preferences.music,true);assert.equal(preferences.coach,false);assert.equal(preferences.soundtrackVolume,.7);
+  assert.deepEqual(saved(),good,'Presentation preferences never change the campaign checkpoint');
+  await app.click('close-modal');await app.click('home');await app.click('new');
+  app.find('#name-input').value='Veteran <new>';app.find('input[name="campaign-difficulty"][value="veteran"]').checked=true;app.find('#new-soundscape').checked=false;
+  await app.click('begin');assert.equal(state().difficulty,'veteran');assert.equal(state().phase,'camp');assert.equal(state().chapter,1);assert.equal(state().name,'Veteran <new>');
 });

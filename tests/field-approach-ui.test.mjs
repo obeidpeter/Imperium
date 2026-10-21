@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
 import * as G from '../src/core/game.js';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
@@ -50,8 +49,18 @@ test('v0.35.1: unaffordable approaches are disabled with the reason, and no appr
   assert.equal(approachPlanning(camp(35,'ch7-council')),'','A hearing has no field approach');
 });
 
-test('v0.35.1: the camp buttons issue the public approach commands', async () => {
-  const app=await readFile(new URL('../src/ui/app.js',import.meta.url),'utf8');
-  assert.match(app,/case 'approach-upgrade':await change\(\(\)=>Game\.enableFieldApproaches\(state\)\);break;/);
-  assert.match(app,/case 'field-approach':await change\(\(\)=>Game\.chooseFieldApproach\(state,id\)\);break;/);
+test('v0.35.1: the camp buttons issue the public approach commands', async t => {
+  // The real app module, from a saved older camp: its buttons take the same public commands, which save.
+  const {bootApp}=await import('./inert-app.mjs');
+  const s=camp(34,'ch5-mine'),app=await bootApp(t,{name:'field-approach-ui',save:s});
+  await app.click('continue');assert.match(app.page(),/data-cmd="approach-upgrade"/);
+  await app.click('approach-upgrade');
+  const upgraded=clone(s);assert.ok(G.enableFieldApproaches(upgraded).ok);assert.equal(G.serialize(app.saved()),G.serialize(upgraded));
+  assert.match(app.page(),/data-cmd="field-approach" data-id="breach"/);assert.doesNotMatch(app.page(),/data-cmd="approach-upgrade"/,'The upgrade is spent');
+  const choice=G.fieldApproachView(upgraded).options.find(p=>p.id!=='balanced'&&p.available);assert.ok(choice);
+  await app.click('field-approach',choice.id);
+  assert.ok(G.chooseFieldApproach(upgraded,choice.id).ok);assert.equal(G.serialize(app.saved()),G.serialize(upgraded));
+  assert.equal(G.fieldApproachView(app.saved()).selected,choice.id);
+  // An approach the rules refuse (sent by a tampered page) saves nothing.
+  const kept=G.serialize(app.saved());await app.command('field-approach','invented');assert.equal(G.serialize(app.saved()),kept);
 });

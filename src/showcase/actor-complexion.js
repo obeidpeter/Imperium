@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {skinMicroNormal,skinRoughness} from './skin-response.js';
+import {nextSlice} from './build-steps.js';
 
 export const ACTOR_COMPLEXION_ASSETS=Object.freeze({male:'assets/textures/complexion-male-v018.webp',female:'assets/textures/complexion-female-v018.webp'});
 const reference=Object.freeze({male:Object.freeze([234.176,187.514,156.912]),female:Object.freeze([216.698,178.544,150.852])});
@@ -53,12 +54,14 @@ export function createActorComplexionLibrary(load=decodeBrowserTexture){
     if(disposed)return Promise.resolve(false);
     const kind=kindOf(value),entry=record(kind);if(entry.ready)return Promise.resolve(true);if(entry.error)return Promise.resolve(false);
     if(requests.has(kind))return requests.get(kind);
-    const request=Promise.resolve().then(()=>load(new URL(`../../${ACTOR_COMPLEXION_ASSETS[kind]}`,import.meta.url).href,kind)).then(image=>{
+    const request=Promise.resolve().then(()=>load(new URL(`../../${ACTOR_COMPLEXION_ASSETS[kind]}`,import.meta.url).href,kind)).then(async image=>{
       if(!image)return false; // Node construction never attempts browser work.
       const {width,height,data}=image;
       if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>1024||height>1024||data?.length!==width*height*4)throw Error('Invalid complexion pixels');
+      // The colour and the roughness are each a pass over every pixel: one task each.
+      const colour=normalizeActorComplexion(data,kind);await nextSlice();
       const current=records.get(kind);if(disposed||!current)return false;
-      current.surface.map.image={width,height,data:normalizeActorComplexion(data,kind)};
+      current.surface.map.image={width,height,data:colour};
       current.surface.roughnessMap.image={width,height,data:skinRoughness(data)};current.surface.roughnessMap.needsUpdate=true;
       current.surface.map.userData.state='ready';current.surface.map.needsUpdate=true;current.ready=true;return true;
     }).catch(error=>{const current=records.get(kind);if(current&&!disposed){current.error=String(error?.message??error);current.surface.map.userData.state='fallback';}return false;}).finally(()=>{if(requests.get(kind)===request)requests.delete(kind);});

@@ -38,18 +38,22 @@ test('v0.33.0: a quick tap, a drag, a mouse and a disposed board never hold', ()
   hold.down(touch(5, 5));timers.fire();hold.down(touch(6, 6));hold.up();assert.equal(hold.consume(), false);
 });
 
-test('v0.33.0: the 2D board and the 3D stage both preview on a held touch and keep it after the finger lifts', async () => {
-  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
-  assert.match(app, /const hold=createTouchHold\(at=>\{if\(!board\.isConnected\)return;const p=pickBattlePoint\(board,state\.encounter,at\.clientX,at\.clientY\),e=state\.encounter;if\(p\.x>=0&&p\.y>=0&&p\.x<e\.width&&p\.y<e\.height\)\{boardHover\(p\);paint\(currentAnimation\);\}\},\{delay:settings\.holdDelay\}\);/);
-  assert.match(app, /board\.addEventListener\('click',event=>\{if\(hold\.consume\(\)\)return;/, 'The release after a hold does not walk');
-  assert.match(app, /if\(event\.pointerType==='touch'\)\{hold\.move\(event\);return;\}/);
-  assert.match(app, /board\.addEventListener\('pointerleave',event=>\{if\(event\.pointerType==='touch'\)return;/, 'A lifted finger keeps the preview');
-  assert.match(app, /board\.addEventListener\('contextmenu',event=>\{event\.preventDefault\(\);if\(pointer!=='touch'\)cancelCommand\(\);\}\);/, 'A long-press menu is not a cancel');
-  const stage = await readFile(new URL('../src/showcase/stage.js', import.meta.url), 'utf8');
-  assert.match(stage, /this\.touchHold=createTouchHold\(point=>\{if\(this\.disposed\|\|!this\.drag\|\|this\.drag\.moved\)return;const hover=this\.pick\(point\);/);
-  assert.match(stage, /on\(this\.canvas,'pointerup',e=>\{const held=this\.touchHold\.consume\(\);this\.touchHold\.up\(\);if\(this\.drag&&!this\.drag\.moved&&!held\)/);
-  assert.match(stage, /on\(this\.canvas,'pointerleave',e=>\{if\(e\.pointerType==='touch'\)return;/);
-  assert.match(stage, /dispose\(\)\{if\(this\.disposed\)return;this\.disposed=true;this\.touchHold\?\.dispose\(\);/);
+test('v0.33.0: the 3D stage previews on a held touch and keeps it after the finger lifts (the 2D board: board-input.test.mjs)', async () => {
+  const {BattleStage} = await import('../src/showcase/stage.js');
+  const canvas = Object.assign(new EventTarget(), {setPointerCapture() {}}), timers = manualTimers(), hovers = [], picks = [];
+  const stage = Object.assign(Object.create(BattleStage.prototype), {canvas, disposed: false, drag: null, orbit: {yaw: 0, pitch: .6, distance: 20}, figureStyle: 'sculpted', keyboardMode: 'orbit',
+    sound: {unlock() {}}, wake() {}, updateInk() {}, pick: e => ({x: Math.floor(e.clientX / 10), y: Math.floor(e.clientY / 10)}), onHover: p => hovers.push(p), onPick: p => picks.push(p)});
+  stage.bindInput((target, type, fn, options) => target.addEventListener(type, fn, options), {timers});
+  const fire = (type, props) => canvas.dispatchEvent(Object.assign(new Event(type, {cancelable: true}), props));
+  fire('pointerdown', touch(34, 21));assert.deepEqual(timers.fire(), [HOLD_MS]);
+  assert.deepEqual(hovers, [{x: 3, y: 2}], 'A held finger previews its tile');
+  fire('pointerup', touch(34, 21));assert.deepEqual(picks, [], 'The release after a hold picks nothing');
+  fire('pointerleave', touch(34, 21));assert.deepEqual(hovers, [{x: 3, y: 2}], 'A lifted finger keeps the preview');
+  fire('pointerleave', mouse(34, 21));assert.equal(hovers.at(-1), null, 'A mouse leaving clears it');
+  fire('pointerdown', touch(34, 21));fire('pointerup', touch(34, 21));assert.deepEqual(picks, [{x: 3, y: 2}], 'A tap picks');
+  fire('pointerdown', touch(34, 21));fire('pointermove', touch(34, 21 + HOLD_SLOP + 1));fire('pointerup', touch(34, 33));
+  assert.equal(timers.count, 0);assert.equal(picks.length, 1, 'A drag orbits, holds nothing and picks nothing');assert.notEqual(stage.orbit.pitch, .6);
+  fire('pointerdown', touch(34, 21));stage.touchHold.dispose();assert.equal(timers.count, 0, 'Disposing the stage disposes its hold');
 });
 
 test('v0.33.0: Help and the drill lesson mention holding a finger to see the route', async () => {
@@ -57,15 +61,17 @@ test('v0.33.0: Help and the drill lesson mention holding a finger to see the rou
   let html = '';
   createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp();
   assert.match(html, /On a touch screen, hold a finger on the board to see the route first; lifting it after a hold does nothing\./);
-  const guide = await readFile(new URL('../src/ui/field-guide.js', import.meta.url), 'utf8');
-  assert.match(guide, /Pointing at it, holding a finger on it, or moving the cursor onto it shows the route first\./);
+  const Game = await import('../src/core/game.js'), {fieldLesson} = await import('../src/ui/field-guide.js');
+  const drill = Game.newGame('Touch');Game.choose(drill, Game.getChapter(drill).decision.options[0].id);Game.startEncounter(drill);
+  assert.match(fieldLesson(drill).body, /Pointing at it, holding a finger on it, or moving the cursor onto it shows the route first\./);
 });
 
 test('v0.33.0: CI drives the production build in a browser with a pinned Playwright that is not a project dependency', async () => {
   const workflow = await readFile(new URL('../.github/workflows/verify.yml', import.meta.url), 'utf8');
   const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.match(workflow, /npm install --no-save --no-package-lock playwright@1\.56\.1/);
-  assert.match(workflow, /- run: npm run build\r?\n\s+- run: npm run smoke/);
+  const steps = [...workflow.matchAll(/^\s*(?:-\s+)?run:\s*(.+?)\s*$/gm)].map(m => m[1]), at = command => steps.findIndex(step => step.startsWith(command));
+  assert.ok(steps.includes('npm install --no-save --no-package-lock playwright@1.56.1'), 'Playwright is installed, pinned, for CI only');
+  assert.ok(at('npm run build') >= 0 && at('npm run build') < at('npm run smoke'), 'The smoke test drives the production build');
   assert.equal(pkg.scripts.smoke, 'node scripts/browser-smoke.mjs');
   assert.equal(pkg.dependencies, undefined);assert.equal(pkg.devDependencies, undefined, 'Playwright stays outside the project');
 });

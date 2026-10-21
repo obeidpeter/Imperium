@@ -1,52 +1,50 @@
 import {createBattlefieldFeatures} from './battlefield-features.js';
 import {renderDeviceReport} from './device-report.js';
-import {contextualLabelVisible} from './contextual-labels.js';
-import {replaceStageActor} from './actor-replacement.js';
 import {applyPairedContacts} from './paired-contact.js';
 import {createFrameProfile} from './frame-profile.js';
 import * as T from '../../vendor/three/three.module.js';
 import {createSceneryOcclusion} from './environment-occlusion.js';
 import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-budget.js';
-import {createActor} from './actors.js';
-import {createPaintedLighting,createPaintedActor,paintedLight} from './painted-actor.js';
-import {FORMATION_LIMIT,formationEligible,formationSlots,formationShape,followerCount,createSkinnedCrowd} from './formation.js';
-import {createBattleRemains,sculptedFallenKind,paintedFallenKind} from './battle-remains.js';
+import {createPaintedLighting,paintedLight} from './painted-actor.js';
+import {followerCount} from './formation.js';
+import {createBattleRemains} from './battle-remains.js';
 import {createSceneryModels} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows} from './atmosphere.js';
 import {installBakedOcclusion} from './environment-baked-occlusion.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
-import {loadTacticalArt} from '../ui/unit-sprites.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
 import {actorAssetStatus} from './actor-assets.js';
 import {warmActorMaterials} from './actor-materials.js';
 import {campaignSoundscape} from '../ui/soundscape.js';
-import {createEnvironment,gridToWorld} from './environment.js';
-import {HIGH_GROUND_HEIGHT,RIVER_BED,RIVER_WATER_LEVEL,terrainAt} from './environment-layout.js';
+import {buildEnvironment,createEnvironment,gridToWorld} from './environment.js';
+import {runSliced,runSteps} from './build-steps.js';
+import {terrainAt} from './environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../ui/animation-timeline.js';
 import {facingYaw,isAlive} from './session.js';
 import {createBattleSound} from './battle-sound.js';
 import {meleeOffset,combatCues,retimeStageTimeline,locomotionPhase,combatReaction} from './combat-presentation.js';
 import {getSceneProfile} from './campaign-scene-profile.js';
-import {actorVisible,civicActor,actorReadout,effectReadout,missionReadouts,reinforcementBeacons,tacticalLinks,targetRingColor,threatEnvelope} from './stage-readout.js';
+import {actorVisible,civicActor,effectReadout,missionReadouts} from './stage-readout.js';
 import {createInkOverlay} from './ink-overlay.js';
-import {layoutStageLabels} from './stage-label-layout.js';
-import {findFocusCamera} from './stage-focus-camera.js';
 import {createSky} from './sky.js';
 import {createSceneLighting} from './scene-lighting.js';
-import {createSceneCompositor,drawableShape} from './scene-compositor.js';
+import {createSceneCompositor} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
-import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,createFlamePlume,sampleFlamePlume} from './stage-particles.js';
-import {createTouchHold} from '../ui/touch-hold.js';
+import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,sampleFlamePlume} from './stage-particles.js';
 export {preloadBattleFigures} from './stage-preload.js';
+import {stageInput} from './stage-input.js';
+export {intersectGround,rayToUpright} from './stage-input.js';
+import {stageCamera,sideOnYaw,actionFraming,diagonalYaw} from './stage-camera.js';
+import {stageLabels,labelRole,namedFigure} from './stage-labels.js';
+import {stageFigures,figureStyleFinish,voterPosture} from './stage-figures.js';
+import {stagePreparation} from './stage-preparation.js';
+import {stageOverlays} from './stage-overlays.js';
+export {sideOnYaw,actionFraming,diagonalYaw,labelRole,namedFigure,figureStyleFinish,voterPosture};
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
-// How long a battle waits for its figures' downloads before it is shown anyway.
-const PREPARE_FIGURES_MS=12000;
 // Quiet (half-rate) drawing begins this long after the last input or change.
 const QUIET_AFTER_MS=1200;
-// A build slice before the page is given a turn; then the next slice.
-const FRAME_SLICE_MS=8,nextSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
 // Frame targets divide common refresh rates; see createFrameCadence.
 const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:4096,fps:60}};
 // Between motions the shadow map follows breathing and cloth only this often.
@@ -57,27 +55,8 @@ const STRAIN_SCALE=.66,STRAINED_FRAMES=180;
 // campaign's own figure paintings in the diorama (HD-2D) with a tilt-shift
 // finish; inked keeps sculpted figures with ink outlines and washes.
 export {FIGURE_STYLES};
-export const figureStyleFinish=style=>({tiltShift:style==='painted'?1:0,ink:style==='inked'?1:0});
-// Painted figures were authored for diagonal views; the overview settles there.
-// Compact by default: a role glyph and strength bar; names for the people the
-// story follows, the selection and whatever is under the pointer.
-export function labelRole(unit){const r=unit?.role;return ['voter','speaker','commander','archer','guard','raider','trainer','escort'].includes(r)?r:['cavalry','heavy'].includes(r)?'cavalry':'infantry';}
-export function namedFigure(unit){return unit?.id==='hero'||!!unit?.veteranId||['escort','trainer','commander','speaker'].includes(unit?.role)||/claimant/i.test(unit?.name??'');}
-// Delegates show their stance in posture: assent leans in, dissent folds its arms.
-export function voterPosture(unit){const stance=Number(unit?.stance)||0;return stance>=1?{motion:'assent',phase:Math.min(1,stance/3)}:stance<=-1?{motion:'dissent',phase:Math.min(1,-stance/3)}:null;}
-// Action camera: during a committed attack the overview closes in on the
-// exchange and turns a little side-on, then eases back. Reduced motion, focus
-// mode or the setting being off leave the camera where the player put it.
+// The poses whose exchange the action camera frames (actionFraming).
 const ACTION_POSES=new Set(['attack','cavalry-attack','throw']);
-export function sideOnYaw(from,to,currentYaw=0){
-  const dir=Math.atan2(to.x-from.x,to.z-from.z),wrap=a=>Math.atan2(Math.sin(a),Math.cos(a)),a=dir+Math.PI/2,b=dir-Math.PI/2;
-  return Math.abs(wrap(a-currentYaw))<=Math.abs(wrap(b-currentYaw))?a:b;
-}
-export function actionFraming(orbit,{weight=0,sideYaw=null,painted=false}={}){
-  const w=Math.max(0,Math.min(1,Number.isFinite(weight)?weight:0));if(w<=0)return {yaw:orbit.yaw,pitch:orbit.pitch,distance:orbit.distance};
-  let yaw=orbit.yaw;if(!painted&&Number.isFinite(sideYaw))yaw+=Math.atan2(Math.sin(sideYaw-yaw),Math.cos(sideYaw-yaw))*.35*w;
-  return {yaw,pitch:Math.max(.3,orbit.pitch-.1*w),distance:Math.max(9,orbit.distance*(1-.42*w))};
-}
 // The division (discessio): once the rules have decided a Senate vote, each
 // delegate walks to stand behind the champion of the side the rules counted
 // him on, as the Senate voted. Deterministic arcs, clamped to the chamber.
@@ -85,7 +64,8 @@ export function discessioPlan(encounter){
   if(encounter?.kind!=='contest'||!['won','lost'].includes(encounter.status))return null;
   const units=(encounter.units??[]).filter(u=>!u.hidden),voters=units.filter(u=>u.role==='voter'),w=encounter.width??8,h=encounter.height??8;
   const aye=u=>u.vote==='for'||u.vote!=='against'&&(Number(u.stance)||0)>=1;
-  const champions={for:units.find(u=>u.id==='hero')??units.find(u=>['player','ally'].includes(u.side)&&u.role==='speaker'),against:units.find(u=>u.side==='enemy'&&u.role==='speaker')};
+  const champions={for:units.find(u=>u.id==='hero')??units.find(u=>['player','ally'].includes(u.side)&&u.role==='speaker'),
+    against:units.find(u=>u.side==='enemy'&&u.role==='speaker')};
   const moves=[],centre={x:(w-1)/2,y:(h-1)/2};
   for(const side of ['for','against']){
     const c=champions[side]??{x:side==='for'?1:w-2,y:centre.y},away=Math.atan2(c.y-centre.y,c.x-centre.x)||(side==='for'?Math.PI:0);
@@ -96,42 +76,18 @@ export function discessioPlan(encounter){
   }
   return {key:`${encounter.id}:${encounter.turn}:${encounter.status}`,moves};
 }
-export const diagonalYaw=yaw=>Math.round((yaw-Math.PI/4)/(Math.PI/2))*(Math.PI/2)+Math.PI/4;
 const blendYaw=(from,to,t)=>from+Math.atan2(Math.sin(to-from),Math.cos(to-from))*ease(clamp(t,0,1));
 const pathYaw=(a,b)=>Math.atan2(b.x-a.x,b.y-a.y);
 
 // The authored release anchor and impact point describe the missile tip, not
 // its mesh origin. Preserve those endpoints through either projectile scale.
 export function positionProjectileTip(projectile,from,to,progress){
-  const t=clamp(progress,0,1),tip=from.clone().lerp(to,t),direction=to.clone().sub(from);tip.y+=Math.sin(t*Math.PI)*1.8;direction.y+=Math.cos(t*Math.PI)*Math.PI*1.8;direction.normalize();
+  const t=clamp(progress,0,1),tip=from.clone().lerp(to,t),direction=to.clone().sub(from);tip.y+=Math.sin(t*Math.PI)*1.8;
+  direction.y+=Math.cos(t*Math.PI)*Math.PI*1.8;direction.normalize();
   projectile.position.copy(tip);projectile.lookAt(tip.clone().add(direction));projectile.position.addScaledVector(direction,-1.01*projectile.scale.z);
 }
 
-// Picking follows the visible relief: march the ray through the band between
-// the river bed and the plateau tops, then bisect the crossing. Refining a flat
-// plane alone would slide past a 1.6m rise to the ground behind it.
-export function intersectGround(ray,height,target=new T.Vector3(),{top=HIGH_GROUND_HEIGHT+.5,bottom=RIVER_BED-.5,maxDistance=900,step=.2}={}){
-  const o=ray.origin,d=ray.direction,above=t=>o.y+d.y*t-height(o.x+d.x*t,o.z+d.z*t);
-  if(d.y>=0&&o.y>top)return null;
-  const start=d.y<0?Math.max(0,(top-o.y)/d.y):0,end=d.y<0?Math.min(maxDistance,(bottom-o.y)/d.y):maxDistance;
-  if(!(end>=start))return null;
-  if(above(start)<=0)return ray.at(start,target);
-  for(let previous=start,t=start+step;previous<end;previous=t,t+=step){
-    const next=Math.min(t,end);if(above(next)>0)continue;
-    let lo=previous,hi=next;for(let i=0;i<24;i++){const mid=(lo+hi)/2;if(above(mid)>0)lo=mid;else hi=mid;}
-    return ray.at(hi,target);
-  }
-  return null;
-}
 
-// Closest distance between a ray and a figure's upright axis (x, y..y+height, z):
-// a cheap test that decides whether a figure's deformed surfaces are worth the
-// exact, CPU-skinned raycast at all.
-export function rayToUpright(ray,x,y,z,height){
-  const o=ray.origin,d=ray.direction,wx=o.x-x,wy=o.y-y,wz=o.z-z,b=d.y,e=d.x*wx+d.y*wy+d.z*wz,cross=1-b*b;
-  let s=clamp(cross>1e-9?(wy-e*b)/cross:wy,0,height);const t=Math.max(0,s*b-e);s=clamp(wy+t*b,0,height);
-  return Math.hypot(wx+t*d.x,wy+t*d.y-s,wz+t*d.z);
-}
 
 // Interpret the shared 2D presentation timeline without modifying it or the
 // committed unit. Walking progress is distance, action progress is time.
@@ -163,67 +119,144 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
     else if(!o||o.alpha<=0){motion='yield';phase=1;}
   }
   const prior=pair?.before??unit;
-  const health=motion==='withdrawn'?1:!isAlive(unit)&&o&&o.alpha>0?(prior.resolve??prior.hp??1)/(prior.maxResolve??prior.maxHp??1):(unit.resolve??unit.hp??1)/(unit.maxResolve??unit.maxHp??1);
-  return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,movementProgress:o?.progress,turnSign:Math.sign(Math.sin(facingYaw(o?.facing??unit.facing)-facingYaw(o?.previousFacing??unit.facing)))||1,braced:unit.braced||pair?.before.braced,locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
+  const health=motion==='withdrawn'?1
+    :!isAlive(unit)&&o&&o.alpha>0?(prior.resolve??prior.hp??1)/(prior.maxResolve??prior.maxHp??1)
+    :(unit.resolve??unit.hp??1)/(unit.maxResolve??unit.maxHp??1);
+  return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,movementProgress:o?.progress,
+    turnSign:Math.sign(Math.sin(facingYaw(o?.facing??unit.facing)-facingYaw(o?.previousFacing??unit.facing)))||1,braced:unit.braced||pair?.before.braced,
+    locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,
+    phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
 }
 export class BattleStage{
-  constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
+  // A stage made in short steps behind the veil (build-steps.js), so the page
+  // keeps answering while its world is built. Resolves to null when current()
+  // turns false first; whatever was built by then is released.
+  static async create(canvas,encounter,options={},{current=()=>true}={}){
+    const stage=new BattleStage(canvas,encounter,{...options,deferBuild:true});
+    await runSliced(stage.build(canvas,encounter,options),{current});
+    if(!stage.built){stage.releasePartial();return null;}
+    if(!current()){stage.dispose();return null;}
+    return stage;
+  }
+  // Built at once (the standalone study and tests), unless create() builds it.
+  constructor(canvas,encounter,options={}){
+    if(!options.deferBuild)runSteps(this.build(canvas,encounter,options));
+  }
+  *build(canvas,encounter,
+    {onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,
+      stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
     try{
-    this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;this.commendations=commendations??{};this.profile=getSceneProfile(encounter,{chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
+    this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;
+    this.commendations=commendations??{};
+    this.profile=getSceneProfile(encounter,
+      {chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});
+    this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;
+    this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
+    this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);
+    this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;
+    this.elapsed=0;this.disposed=false;
     // Balanced and High draw into the compositor's multisampled target, so a
     // multisampled canvas under it would only resolve one full-screen triangle.
     this.renderer=new T.WebGLRenderer({canvas,antialias:quality==='performance',alpha:false,powerPreference:'high-performance'});
     // Checking each program's link status on first use waits for the driver to
     // finish compiling it; programs are compiled ahead instead (prepare). Shader
     // diagnostics stay available for development: ?debug=shaders.
-    this.renderer.debug.checkShaderErrors=!!debugShaders||/[?&]debug=shaders(&|$)/.test(globalThis.location?.search??'');this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});this.cuesPlayed=0;
-    this.deviceReport=renderDeviceReport(this.renderer.getContext());this.gpuTimer=createGpuTimer(this.renderer.getContext());this.adaptiveResolution=adaptiveResolution;
-    this.resolutionBudget=createResolutionBudget({fps:QUALITY[quality]?.fps??60,enabled:adaptiveResolution,onChange:()=>this.updatePixelRatio()});this.cadence=createFrameCadence({fps:QUALITY[quality]?.fps??60});
-    this.materialReady=warmActorMaterials().then(ready=>{if(!this.disposed){this.shadowDirty=true;this.canvas.dataset.materials=ready?'atlas':'fallback';}return ready;});
-    this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=this.profile.exposure??1.05;
-    this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;this.shadowDirty=true;this.shadowUpdates=0;this.lastShadow=-Infinity;this.renderCounts=[];
-    this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0};this.poseReset=new Set();this.visibleUnits=[];this.labelSizeDirty=true;this.screenPoint=new T.Vector3();this.matrix=new T.Matrix4();
+    this.renderer.debug.checkShaderErrors=!!debugShaders||/[?&]debug=shaders(&|$)/.test(globalThis.location?.search??'');
+    yield;
+    this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});
+    this.cuesPlayed=0;
+    this.deviceReport=renderDeviceReport(this.renderer.getContext());this.gpuTimer=createGpuTimer(this.renderer.getContext());
+    this.adaptiveResolution=adaptiveResolution;
+    this.resolutionBudget=createResolutionBudget({fps:QUALITY[quality]?.fps??60,enabled:adaptiveResolution,onChange:()=>this.updatePixelRatio()});
+    this.cadence=createFrameCadence({fps:QUALITY[quality]?.fps??60});
+    this.materialReady=warmActorMaterials().then(ready=>{
+      if(!this.disposed){this.shadowDirty=true;this.canvas.dataset.materials=ready?'atlas':'fallback';}return ready;
+    });
+    this.renderer.outputColorSpace=T.SRGBColorSpace;this.renderer.toneMapping=T.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure=this.profile.exposure??1.05;
+    this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;this.shadowDirty=true;
+    this.shadowUpdates=0;this.lastShadow=-Infinity;this.renderCounts=[];
+    this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0};this.poseReset=new Set();this.visibleUnits=[];
+    this.labelSizeDirty=true;this.screenPoint=new T.Vector3();this.matrix=new T.Matrix4();
     this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);
-    this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};this.lookTarget=new T.Vector3(0,.25,0);this.baseTarget=new T.Vector3(0,.25,0);this.cameraKick=0;this.cameraView='overview';
-    this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});
-    this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});
+    this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};
+    this.lookTarget=new T.Vector3(0,.25,0);this.baseTarget=new T.Vector3(0,.25,0);this.cameraKick=0;this.cameraView='overview';
+    this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});yield;
+    this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});yield;
     this.contactShadows=createContactShadows(this.scene);
-    const balance=this.profile.grade??{},sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity*.72*(balance.ambient??1));this.scene.add(sky);
-    this.sun=new T.DirectionalLight(this.profile.sun,this.profile.sunIntensity*(balance.sun??1));this.sun.position.fromArray(this.profile.sunPosition??[-16,24,-12]);this.sun.castShadow=true;Object.assign(this.sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:1,far:80});this.sun.shadow.normalBias=.012;this.sun.shadow.bias=-.00008;this.sun.shadow.radius=3;this.scene.add(this.sun);this.scene.add(this.sun.target);this.sunOffset=this.sun.position.clone();this.shadowFit={x:0,z:0,half:23};
+    const balance=this.profile.grade??{},
+      sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity*.72*(balance.ambient??1));
+    this.scene.add(sky);
+    this.sun=new T.DirectionalLight(this.profile.sun,this.profile.sunIntensity*(balance.sun??1));
+    this.sun.position.fromArray(this.profile.sunPosition??[-16,24,-12]);this.sun.castShadow=true;
+    Object.assign(this.sun.shadow.camera,{left:-23,right:23,top:23,bottom:-23,near:1,far:80});this.sun.shadow.normalBias=.012;this.sun.shadow.bias=-.00008;
+    this.sun.shadow.radius=3;this.scene.add(this.sun);this.scene.add(this.sun.target);this.sunOffset=this.sun.position.clone();this.shadowFit={x:0,z:0,half:23};
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
-    this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
-    this.environment=createEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});this.rebuildSceneryModels();
-    this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();this.profileFrames=0;
-    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});
-    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
-    this.battleRemains=battleRemains!==false;this.rebuildRemains();
+    this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);
+    this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
+    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});yield;
+    this.rebuildSceneryModels();yield;
+    this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
+    this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();
+    this.profileFrames=0;
+    this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});yield;
+    this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);yield;
+    this.battleRemains=battleRemains!==false;this.rebuildRemains();yield;
     this.overlay=new T.Group();this.scene.add(this.overlay);this.effectGroup=new T.Group();this.scene.add(this.effectGroup);
     this.ringGeometry=new T.RingGeometry(.78,.83,48);this.targetGeometry=new T.RingGeometry(.63,.7,40);
-    this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide});
-    this.legalTargets=new T.InstancedMesh(this.targetGeometry,this.targetMaterial,Math.max(64,encounter.width*encounter.height));this.legalTargets.count=0;this.legalTargets.frustumCulled=false;this.overlay.add(this.legalTargets);
-    this.selectionMaterial=new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.95,depthWrite:false,side:T.DoubleSide});
-    this.hoverMaterial=new T.MeshBasicMaterial({color:'#fff2c1',transparent:true,opacity:.9,depthWrite:false,side:T.DoubleSide});
+    // Overlays are flat (or additive) and draw in one pass: three otherwise draws
+    // a two-sided transparent surface twice, back faces first, with a program for each.
+    this.targetMaterial=new T.MeshBasicMaterial({color:'#89cfcb',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
+    this.legalTargets=new T.InstancedMesh(this.targetGeometry,this.targetMaterial,Math.max(64,encounter.width*encounter.height));this.legalTargets.count=0;
+    this.legalTargets.frustumCulled=false;this.overlay.add(this.legalTargets);
+    this.selectionMaterial=new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.95,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
+    this.hoverMaterial=new T.MeshBasicMaterial({color:'#fff2c1',transparent:true,opacity:.9,depthWrite:false,side:T.DoubleSide,forceSinglePass:true});
     this.selectedRing=new T.Mesh(this.ringGeometry,this.selectionMaterial);this.selectedRing.rotation.order='YXZ';this.selectedRing.rotation.x=-Math.PI/2;
-    this.facingChevron=new T.Mesh(new T.CircleGeometry(.13,3),this.selectionMaterial);this.facingChevron.position.set(0,-.92,0);this.facingChevron.rotation.z=-Math.PI/2;this.selectedRing.add(this.facingChevron);
+    this.facingChevron=new T.Mesh(new T.CircleGeometry(.13,3),this.selectionMaterial);this.facingChevron.position.set(0,-.92,0);
+    this.facingChevron.rotation.z=-Math.PI/2;this.selectedRing.add(this.facingChevron);
     this.overlay.add(this.selectedRing);
-    this.hoverRing=new T.Mesh(this.targetGeometry,this.hoverMaterial);this.hoverRing.rotation.x=-Math.PI/2;this.hoverRing.visible=false;this.overlay.add(this.hoverRing);
-    this.goalMarker=new T.Mesh(new T.RingGeometry(.96,1.02,48),new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide}));this.goalMarker.rotation.x=-Math.PI/2;this.overlay.add(this.goalMarker);
-    this.effectRings=[];this.missionMarkers=new Map();this.chamberStandards=new Map();this.hovered=null;this.canvas.dataset.scene=this.profile.key;this.canvas.dataset.chapter=String(this.chapter);this.canvas.dataset.kind=encounter.kind;this.canvas.dataset.weather=this.profile.weather;this.canvas.dataset.timeOfDay=this.profile.timeOfDay;
+    this.hoverRing=new T.Mesh(this.targetGeometry,this.hoverMaterial);this.hoverRing.rotation.x=-Math.PI/2;this.hoverRing.visible=false;
+    this.overlay.add(this.hoverRing);
+    this.goalMarker=new T.Mesh(new T.RingGeometry(.96,1.02,48),
+      new T.MeshBasicMaterial({color:'#edcf7c',transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
+    this.goalMarker.rotation.x=-Math.PI/2;this.overlay.add(this.goalMarker);yield;
+    this.effectRings=[];this.missionMarkers=new Map();this.chamberStandards=new Map();this.hovered=null;this.canvas.dataset.scene=this.profile.key;
+    this.canvas.dataset.chapter=String(this.chapter);this.canvas.dataset.kind=encounter.kind;this.canvas.dataset.weather=this.profile.weather;
+    this.canvas.dataset.timeOfDay=this.profile.timeOfDay;
     this.ray=new T.Raycaster();this.ndc=new T.Vector2();this.plane=new T.Plane(new T.Vector3(0,1,0),0);this.hit=new T.Vector3();
-    this.labelLayer=document.createElement('div');this.labelLayer.className='world-labels';this.labelLayer.setAttribute('aria-hidden','true');canvas.parentElement.append(this.labelLayer);if(this.ceremony)this.labelLayer.hidden=true;
-    this.projectile=new T.Group();const shaft=new T.Mesh(new T.CylinderGeometry(.025,.025,1.45,8),new T.MeshStandardMaterial({color:'#7d4e24',roughness:.85}));shaft.rotation.x=Math.PI/2;const tip=new T.Mesh(new T.ConeGeometry(.075,.32,6),new T.MeshStandardMaterial({color:'#afb3b1',metalness:.8,roughness:.35}));tip.rotation.x=Math.PI/2;tip.position.z=.85;const trail=new T.Mesh(new T.ConeGeometry(.045,1.35,8,1,true),new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide}));trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);this.projectile.visible=false;
-    this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,blending:T.AdditiveBlending});this.sparks=new T.Points(this.sparkGeometry,this.sparkMaterial);this.sparks.frustumCulled=false;this.effectGroup.add(this.sparks);this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
+    this.labelLayer=document.createElement('div');this.labelLayer.className='world-labels';this.labelLayer.setAttribute('aria-hidden','true');this.labelLayer.setAttribute('data-live','');
+    canvas.parentElement.append(this.labelLayer);if(this.ceremony)this.labelLayer.hidden=true;
+    this.projectile=new T.Group();const shaft=new T.Mesh(new T.CylinderGeometry(.025,.025,1.45,8),new T.MeshStandardMaterial({color:'#7d4e24',roughness:.85}));
+    shaft.rotation.x=Math.PI/2;const tip=new T.Mesh(new T.ConeGeometry(.075,.32,6),new T.MeshStandardMaterial({color:'#afb3b1',metalness:.8,roughness:.35}));
+    tip.rotation.x=Math.PI/2;tip.position.z=.85;
+    const trail=new T.Mesh(new T.ConeGeometry(.045,1.35,8,1,true),
+      new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
+    trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);
+    this.projectile.visible=false;yield;
+    this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();
+    this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));
+    this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,
+      blending:T.AdditiveBlending});
+    this.sparks=new T.Points(this.sparkGeometry,this.sparkMaterial);this.sparks.frustumCulled=false;this.effectGroup.add(this.sparks);
+    this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
     this.combat=createCombatEffects(this.scene,{particleMask:this.particleMask,quality});this.dustDebt=new Map();
-    this.weatherCloud=createWeatherField(this.particleMask);this.effectGroup.add(this.weatherCloud);sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});
-    this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);this.effectGroup.add(this.nightLight);
-    this.rebuildAtmosphere();
-    this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});this.compositor.setGrade?.(this.profile.grade??{});this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));
-    this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.figureQueue=new Set();this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
-    this.ready=this.prepare();
+    this.weatherCloud=createWeatherField(this.particleMask);this.effectGroup.add(this.weatherCloud);
+    sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});yield;
+    this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);
+    this.effectGroup.add(this.nightLight);
+    this.rebuildAtmosphere();yield;
+    this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});this.compositor.setGrade?.(this.profile.grade??{});
+    this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));yield;
+    this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.figureQueue=new Set();
+    this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
+    this.ready=this.prepare();this.built=true;
     }catch(error){this.releasePartial();throw error;}
   }
   // A constructor failure must not strand the overlay, renderer, observer or audio.
-  releasePartial(){this.disposed=true;try{this.sound?.dispose?.();}catch{}this.resizeObserver?.disconnect();this.events?.forEach(fn=>fn());this.labelLayer?.remove();try{this.renderer?.dispose();if(this.canvas&&!this.canvas.isConnected)this.renderer?.forceContextLoss?.();}catch{}}
+  releasePartial(){
+    this.disposed=true;try{this.sound?.dispose?.();}catch{}this.resizeObserver?.disconnect();this.events?.forEach(fn=>fn());this.labelLayer?.remove();
+    try{this.renderer?.dispose();if(this.canvas&&!this.canvas.isConnected)this.renderer?.forceContextLoss?.();}catch{}
+  }
   world(tile){const p=gridToWorld(tile,this.encounter,2.5);return new T.Vector3(p.x,this.surfaceHeight?.(p.x,p.z)??this.environment.groundHeight(p.x,p.z),p.z);}
   unitAt(tile){
     if(!tile)return undefined;
@@ -235,33 +268,40 @@ export class BattleStage{
   bodyPoint(tile){const unit=this.unitAt(tile);return this.world(tile).add(new T.Vector3(0,['cavalry','heavy'].includes(unit?.role)?2.05:1.2,0));}
   sync(encounter){
     this.wake();
-    const division=discessioPlan(encounter);if(!division)this.discessio=null;else if(this.discessio?.key!==division.key){const start=performance.now(),span=Math.max(0,...division.moves.map(m=>m.order*220+this.world(m.from).distanceTo(this.world(m.to))/1.35*1000));this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};}
-    this.encounter=encounter;if(this.fieldFeatures?.sync(encounter)){this.redrapeGroundOverlays();this.sceneryOcclusion?.add(this.fieldFeatures.group);}this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
-    for(const [id,a] of this.actors)if(!visible.has(id)){this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);this.poseReset.delete(id);}
+    const division=discessioPlan(encounter);
+    if(!division)this.discessio=null;else if(this.discessio?.key!==division.key){
+      const start=performance.now(),span=Math.max(0,...division.moves.map(m=>m.order*220+this.world(m.from).distanceTo(this.world(m.to))/1.35*1000));
+      this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};
+    }
+    this.encounter=encounter;if(this.fieldFeatures?.sync(encounter)){this.redrapeGroundOverlays();this.sceneryOcclusion?.add(this.fieldFeatures.group);}
+    this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
+    for(const [id,a] of this.actors)if(!visible.has(id)){
+      this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);
+      this.poseReset.delete(id);
+    }
     this.labelLayer.dataset.dense=String(visible.size>9);
     for(const u of this.visibleUnits){
-      const vComm=this.commendations?.[u.veteranId]??(u.moraleResistance?6:u.specialization?3:0);
-      const styleKey=`${u.side}:${u.role}:${u.name}:${vComm}:${this.quality}:${this.figureStyle}`;let actor=this.actors.get(u.id);
-      // A committed defection changes the uniform and allegiance together.
-      if(!actor||actor.group.userData.styleKey!==styleKey){
-        // While the stage is first built, new figures wait for prepare(), which
-        // builds them a few at a time; the rest of this unit's sync waits too.
-        if(!actor&&this.figureQueue){this.figureQueue.add(u.id);continue;}
-        actor=this.placeFigure(u,{styleKey,vComm,encounter});
-      }
-      if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-role"></span><span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
-      const label=this.labels.get(u.id),readout=actorReadout(u,encounter);
-      label.className=`world-unit ${u.side==='enemy'?'enemy':u.side==='neutral'?'neutral':'friendly'} ${readout.tone}${civicActor(u)&&!isAlive(u)?' withdrawn':''}`;label.dataset.type=readout.type;label.dataset.role=labelRole(u);if(u.bloc)label.dataset.bloc=u.bloc;else delete label.dataset.bloc;label.classList.toggle('named',namedFigure(u));
-      const refs=this.labelRefs.get(u.id);refs.name.textContent=u.name||u.id;refs.signal.textContent=readout.signal;refs.detail.textContent=readout.detail;refs.short.textContent=readout.type==='vote'?`${readout.value>0?'+':''}${readout.value}`:readout.type==='resolve'?`${readout.value} R`:'';refs.short.title=readout.signal;
-      refs.health.style.width=`${readout.ratio*100}%`;label.hidden=!actorVisible(u);refs.stateKey=null;
-      const point=this.world(u);if(actor.group.position.distanceTo(point)>.25)this.poseReset.add(u.id);actor.group.position.copy(point);actor.group.visible=actorVisible(u);
+      // While the stage is first built, new figures wait for prepare(); the rest of their sync waits too.
+      const actor=this.syncFigure(u,encounter);if(!actor)continue;
+      this.syncLabel(u,encounter);
+      const point=this.world(u);if(actor.group.position.distanceTo(point)>.25)this.poseReset.add(u.id);actor.group.position.copy(point);
+      actor.group.visible=actorVisible(u);
     }
     this.goalMarker.visible=false;
     const marks=missionReadouts(encounter),wanted=new Set(marks.map(mark=>mark.id));
-    for(const [id,marker] of this.missionMarkers)if(!wanted.has(id)){this.overlay.remove(marker.mesh);marker.mesh.material.dispose();marker.label.remove();this.missionMarkers.delete(id);}
+    for(const [id,marker] of this.missionMarkers)if(!wanted.has(id)){
+      this.overlay.remove(marker.mesh);marker.mesh.material.dispose();marker.label.remove();this.missionMarkers.delete(id);
+    }
     for(const mark of marks){
-      if(!this.missionMarkers.has(mark.id)){const mesh=new T.Mesh(this.goalMarker.geometry,this.goalMarker.material.clone());mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);const label=document.createElement('span');label.className='world-objective';this.labelLayer.append(label);this.missionMarkers.set(mark.id,{mesh,label});}
-      const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;marker.mesh.scale.setScalar(['high','hill'].includes(terrainAt(encounter,mark.x,mark.y))?.85:1);marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;marker.label.dataset.tone=mark.tone;
+      if(!this.missionMarkers.has(mark.id)){
+        const mesh=new T.Mesh(this.goalMarker.geometry,this.goalMarker.material.clone());mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);
+        const label=document.createElement('span');label.className='world-objective';this.labelLayer.append(label);
+        this.missionMarkers.set(mark.id,{mesh,label});
+      }
+      const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;
+      marker.mesh.scale.setScalar(['high','hill'].includes(terrainAt(encounter,mark.x,mark.y))?.85:1);
+      marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;
+      marker.label.dataset.tone=mark.tone;
     }
     this.updateChamberStandards(encounter);
     this.updateFieldworks(encounter);
@@ -271,236 +311,51 @@ export class BattleStage{
     this.updateReinforcementBeacons(encounter);
     this.updateTacticalLinks();
   }
-  placeFigure(u,{styleKey,vComm,encounter=this.encounter}){
-    const actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
-      create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
-      prepare:candidate=>{if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;candidate.group.userData.styleKey=styleKey;}
-    });
-    this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted&&actor.rebuilt!==false)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';this.canvas.dataset.generatedBodies=String([...this.actors.values()].filter(a=>a.group.userData.actor?.body).length);}});
-    return actor;
-  }
-  releaseOverlay(group){this.overlay?.remove(group);group.traverse(o=>{if(o.geometry&&o.geometry!==this.targetGeometry&&o.geometry!==this.ringGeometry)o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])m.dispose();if(o.isLight)o.dispose?.();});}
-  updateMoraleRings(encounter=this.encounter){
-    if(!this.overlay)return;
-    this.moraleRings=this.moraleRings??new Map();
-    const units=encounter?.kind==='battle'?(encounter.units??[]).filter(u=>actorVisible(u)&&((u.morale??80)<=40||u.name==='Pledged cohort')):[];
-    const wanted=new Set(units.map(u=>u.id));
-    for(const [id,mesh]of this.moraleRings)if(!wanted.has(id)){this.overlay.remove(mesh);mesh.material.dispose();this.moraleRings.delete(id);}
-    for(const u of units){
-      if(!this.moraleRings.has(u.id)){
-        const mesh=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.78,depthWrite:false,side:T.DoubleSide}));
-        mesh.name='unit-morale-ring';mesh.rotation.x=-Math.PI/2;this.overlay.add(mesh);this.moraleRings.set(u.id,mesh);
-      }
-      const mesh=this.moraleRings.get(u.id),broken=(u.morale??80)<=20,shaken=(u.morale??80)<=40;
-      mesh.position.copy(this.world(u));mesh.position.y+=.048;
-      mesh.material.color.set(broken?'#c44d3f':shaken?'#d89b3c':'#e8c86b');
-      mesh.userData.moraleState=broken?'broken':shaken?'shaken':'pledged';
-      mesh.visible=true;
-    }
-  }
-  updateReinforcementBeacons(encounter=this.encounter){
-    if(!this.overlay)return;
-    this.reinforcementBeacons=this.reinforcementBeacons??new Map();
-    const waves=reinforcementBeacons(encounter);
-    const wanted=new Set(waves.map(w=>w.id));
-    for(const [id,group]of this.reinforcementBeacons)if(!wanted.has(id)){this.releaseOverlay(group);this.reinforcementBeacons.delete(id);}
-    for(const w of waves){
-      if(!this.reinforcementBeacons.has(w.id)){
-        const group=this.beaconGroup();this.overlay.add(group);this.reinforcementBeacons.set(w.id,group);
-      }
-      const group=this.reinforcementBeacons.get(w.id),color=w.imminent?'#c44d3f':'#d89b3c';
-      group.position.copy(this.world(w));group.position.y+=.06;
-      group.children[0]?.material?.color?.set(color);
-      group.children[1]?.material?.color?.set(color);
-      group.userData.wave=w;
-      group.visible=true;
-    }
-  }
-  beaconGroup(){
-    const group=new T.Group();group.name='reinforcement-beacon';
-    const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide}));
-    ring.rotation.x=-Math.PI/2;
-    const spire=new T.Mesh(new T.ConeGeometry(.16,.55,4),new T.MeshBasicMaterial({color:'#df9d85',transparent:true,opacity:.82}));
-    spire.position.set(0,.32,0);spire.rotation.x=Math.PI;
-    group.add(ring,spire);return group;
-  }
-  updateChamberStandards(encounter=this.encounter){
-    if(!this.overlay)return;
-    const isContest=encounter?.kind==='contest';
-    for(const [bloc,x]of [['Veterans',-5.2],['Landholders',0],['Civic',5.2]]){
-      if(!isContest){const existing=this.chamberStandards.get(bloc);if(existing)existing.group.visible=false;continue;}
-      if(!this.chamberStandards.has(bloc)){
-        const group=new T.Group();group.name=`bloc-standard:${bloc}`;group.position.set(x,0,-11.2);
-        const pole=new T.Mesh(new T.CylinderGeometry(.045,.055,3.2,8),new T.MeshStandardMaterial({color:'#a98c55',metalness:.65,roughness:.38}));pole.position.y=1.6;
-        const bar=new T.Mesh(new T.CylinderGeometry(.035,.035,1.25,8),pole.material);bar.rotation.z=Math.PI/2;bar.position.y=2.95;
-        const bannerMat=new T.MeshStandardMaterial({color:'#9b8e74',roughness:.78,side:T.DoubleSide});
-        const banner=new T.Mesh(new T.PlaneGeometry(1.08,1.55),bannerMat);banner.name='bloc-banner';banner.position.set(0,2.12,.04);
-        group.add(pole,bar,banner);this.overlay.add(group);
-        this.chamberStandards.set(bloc,{group,banner,bannerMat});
-      }
-      const std=this.chamberStandards.get(bloc),voters=encounter.units.filter(u=>u.role==='voter'&&u.bloc===bloc),support=voters.filter(u=>u.stance>=1).length;
-      const state=support>=2?'support':support===1?'split':'opposed';
-      std.group.visible=true;std.banner.userData.bloc=bloc;std.banner.userData.support=support;std.banner.userData.blocState=state;
-      std.bannerMat.color.set(state==='support'?'#cfa855':state==='split'?'#9b8e74':'#8c443c');
-    }
-    if(isContest&&!this.chamberRostra){
-      const rostra=new T.Mesh(new T.BoxGeometry(2.6,.42,1.3),new T.MeshStandardMaterial({color:'#d8d0be',roughness:.72}));
-      rostra.name='chamber-rostra';rostra.position.set(0,.21,-9.8);this.overlay.add(rostra);this.chamberRostra=rostra;
-    }
-    if(this.chamberRostra)this.chamberRostra.visible=isContest;
-  }
-  updateFieldworks(encounter=this.encounter){
-    if(!this.overlay)return;
-    this.fieldworkMeshes=this.fieldworkMeshes??new Map();
-    const list=encounter?.kind==='battle'?(encounter.fieldworks??[]):[];
-    const wanted=new Set(list.map(f=>`${f.type}:${f.x},${f.y}`));
-    for(const [key,group]of this.fieldworkMeshes)if(!wanted.has(key)){this.releaseOverlay(group);this.fieldworkMeshes.delete(key);}
-    for(const fw of list){
-      const key=`${fw.type}:${fw.x},${fw.y}`;
-      if(!this.fieldworkMeshes.has(key)){
-        const group=this.fieldworkGroup(fw.type);group.userData.fieldwork=fw;
-        this.overlay.add(group);this.fieldworkMeshes.set(key,group);
-      }
-      const group=this.fieldworkMeshes.get(key);group.position.copy(this.world(fw));group.visible=true;
-    }
-  }
-  // A player-built fieldwork. A brazier borrows the stage's one point light
-  // (tick): adding a light would recompile every lit program mid-battle.
-  fieldworkGroup(type){
-    const group=new T.Group();group.name=`fieldwork:${type}`;
-    if(type==='stakes'){
-      const wood=new T.MeshStandardMaterial({color:'#6e5034',roughness:.85});
-      for(const x of [-.45,0,.45]){const stake=new T.Mesh(new T.ConeGeometry(.08,.85,6),wood);stake.position.set(x,.38,0);stake.rotation.z=-.38;group.add(stake);}
-    }else if(type==='rampart'){
-      const turf=new T.Mesh(new T.BoxGeometry(1.55,.48,.58),new T.MeshStandardMaterial({color:'#6b5a42',roughness:.9}));turf.position.set(0,.24,.55);group.add(turf);
-    }else if(type==='brazier'){
-      const stand=new T.Mesh(new T.CylinderGeometry(.24,.15,.52,8),new T.MeshStandardMaterial({color:'#46423d',metalness:.7,roughness:.45}));stand.position.set(.52,.26,.45);
-      const fire=new T.Mesh(new T.SphereGeometry(.2,8,6),new T.MeshBasicMaterial({color:'#ff9b3d'}));fire.position.set(.52,.56,.45);
-      const plume=createFlamePlume(this.particleMask??null);plume.position.set(.52,.56,.45);
-      group.userData.brazierLightAt=new T.Vector3(.52,.88,.45);group.userData.flamePlume=plume;
-      group.add(stand,fire,plume);
-    }
-    return group;
-  }
-  updateBattleDecals(encounter=this.encounter,extraTiles=[]){
-    if(!this.overlay)return;
-    this.battleDecals=this.battleDecals??new Map();
-    if(encounter?.kind!=='battle'){for(const decal of this.battleDecals.values())decal.visible=false;return;}
-    const tiles=[];
-    for(const u of encounter.units??[])if(!u.hidden&&(u.hp??1)<=0&&Number.isFinite(u.x)&&Number.isFinite(u.y))tiles.push({x:u.x,y:u.y,kind:'fallen'});
-    for(const ev of encounter.turnEvents??[])if(['strike','shot','focus','volley','charge'].includes(ev.kind)&&Number.isFinite(ev.x)&&Number.isFinite(ev.y))tiles.push({x:ev.x,y:ev.y,kind:'clash'});
-    for(const extra of extraTiles)if(extra&&Number.isFinite(extra.x)&&Number.isFinite(extra.y))tiles.push({x:extra.x,y:extra.y,kind:extra.kind??'clash'});
-    const wanted=new Set(tiles.map(t=>`${t.x},${t.y}`));
-    for(const [key,group]of this.battleDecals)if(!wanted.has(key))group.visible=false;
-    for(const tile of tiles){
-      const key=`${tile.x},${tile.y}`;
-      if(!this.battleDecals.has(key)){
-        const group=new T.Group();group.name='battle-decal';group.userData.decal=tile;
-        const ring=new T.Mesh(new T.RingGeometry(.28,.54,24),new T.MeshBasicMaterial({color:tile.kind==='fallen'?'#4a2822':'#3d3328',transparent:true,opacity:.36,depthWrite:false,side:T.DoubleSide}));
-        ring.rotation.x=-Math.PI/2;
-        const slash=new T.Mesh(new T.PlaneGeometry(.62,.07),new T.MeshBasicMaterial({color:'#2a231c',transparent:true,opacity:.32,depthWrite:false,side:T.DoubleSide}));
-        slash.rotation.x=-Math.PI/2;slash.rotation.z=((tile.x*3+tile.y*5)%7)*.45;
-        group.add(ring,slash);this.overlay.add(group);this.battleDecals.set(key,group);
-      }
-      const group=this.battleDecals.get(key);group.position.copy(this.world(tile));group.position.y+=.026;group.visible=true;
-    }
-  }
-  updateTacticalLinks(target=null,action=this.selectedAction){
-    if(!this.overlay)return;
-    this.tacticalArcs=this.tacticalArcs??[];
-    const links=tacticalLinks(this.encounter,{selected:this.selected,target,action});
-    this.tacticalArcs.forEach(line=>line.visible=false);
-    for(const [i,link]of links.entries()){
-      if(!this.tacticalArcs[i]){
-        const line=this.tacticalLine(link.color);this.overlay.add(line);this.tacticalArcs.push(line);
-      }
-      const line=this.tacticalArcs[i],pos=line.geometry.attributes.position;
-      if(link.kind==='path'&&link.points?.length>=2){
-        const pts=link.points.map(p=>this.world(p)),segs=pts.length-1;
-        for(let s=0;s<=16;s++){
-          const f=(s/16)*segs,idx=Math.min(segs-1,Math.floor(f)),t=f-idx,a=pts[idx],b=pts[idx+1];
-          const x=a.x+(b.x-a.x)*t,z=a.z+(b.z-a.z)*t,y=(this.surfaceHeight?.(x,z)??this.environment?.groundHeight?.(x,z)??a.y+(b.y-a.y)*t)+.11;
-          pos.setXYZ(s,x,y,z);
-        }
-      }else{
-        const from=this.world(link.from),to=this.world(link.to);
-        const elevated=['aim','intent'].includes(link.kind),baseY=elevated?1.15:.22,peak=elevated?1.35:.36;
-        for(let s=0;s<=16;s++){const t=s/16;pos.setXYZ(s,from.x+(to.x-from.x)*t,from.y+(to.y-from.y)*t+baseY+Math.sin(t*Math.PI)*peak,from.z+(to.z-from.z)*t);}
-      }
-      pos.needsUpdate=true;line.material.color.set(link.color);line.userData.linkKind=link.kind;line.visible=true;
-    }
-  }
-  tacticalLine(color){
-    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
-    const line=new T.Line(g,new T.LineBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));line.name='tactical-link';line.frustumCulled=false;return line;
-  }
   wake(){this.wokeAt=performance.now();}
-  setSelection(selected,targets=[],target=null){this.wake();this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
-    if(this.targetMaterial)this.targetMaterial.color.set(targetRingColor(this.selectedAction,this.encounter,targets[0]??target));
-    const rotation=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),scale=new T.Vector3(1,1,1);this.legalTargets.count=Math.min(targets.length,this.legalTargets.instanceMatrix.count);
-    for(let i=0;i<this.legalTargets.count;i++){const point=this.world(targets[i]);point.y+=.055;this.matrix.compose(point,rotation,scale);this.legalTargets.setMatrixAt(i,this.matrix);}this.legalTargets.instanceMatrix.needsUpdate=true;
-    this.inspected=target&&(target.unitId??this.unitAt(target)?.id);
-    this.previewTarget=target?.previewBadge&&this.inspected?{unitId:this.inspected,...target.previewBadge}:null;
-    this.previewTargets=target?.previewBadges??(this.previewTarget?{[this.previewTarget.unitId]:this.previewTarget}:null);
-    this.hoverRing.visible=!!target;if(target){this.hoverRing.position.copy(this.world(target));this.hoverRing.position.y+=.08;}
-    this.updateTacticalLinks(target,this.selectedAction);this.updateInk();
-  }
-  // The ink shows the chosen action's reach (or, with nothing chosen, the
-  // ground the unit can walk to), the route a click there would walk and,
-  // for an enemy under the pointer or inspected, everything it could strike
-  // next turn.
-  updateInk(){
-    if(!this.ink||!this.encounter)return;const enemy=[this.inspected,this.hovered].find(id=>id&&this.encounter.units?.find(u=>u.id===id)?.side==='enemy');
-    this.ink.paint({targets:this.targets??[],color:`#${this.targetMaterial?.color.getHexString()??'89cfcb'}`,threat:enemy?threatEnvelope(this.encounter,enemy):null,reach:this.reach??[],route:this.route??null});
-  }
-  // From the campaign UI (Game.moveRoute and the selected unit's move targets).
-  setRoute(route=null,reach=[]){this.wake();this.route=route;this.reach=reach;this.updateInk();}
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
-  setGrid(show){
-    // Grid edges drape over plateau banks and lie on river water rather than floating at a cell's centre height.
-    if(!this.grid){const lines=[],h=(x,z)=>Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04;for(let x=0;x<this.encounter.width;x++)for(let y=0;y<this.encounter.height;y++){const p=this.world({x,y});for(const [a,b,c,d]of [[-1.25,-1.25,1.25,-1.25],[-1.25,-1.25,-1.25,1.25]])for(let k=0;k<8;k++){const x0=p.x+a+(c-a)*k/8,z0=p.z+b+(d-b)*k/8,x1=p.x+a+(c-a)*(k+1)/8,z1=p.z+b+(d-b)*(k+1)/8;lines.push(x0,h(x0,z0),z0,x1,h(x1,z1),z1);}}const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(lines,3));this.grid=new T.LineSegments(geometry,new T.LineBasicMaterial({color:'#dfd6b3',transparent:true,opacity:.32,depthWrite:false}));this.scene.add(this.grid);}
-    this.grid.visible=!!show;
-  }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked
     // occlusion, and (sync) its camera cutaway. They then share its shaders.
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
-    this.fieldFeatures?.dispose();this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality,finish});
+    this.fieldFeatures?.dispose();
+    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality,finish});
   }
-  redrapeGroundOverlays(){
-    this.ink?.redrape();
-    if(!this.grid)return;
-    const geometry=this.grid.geometry,pos=geometry.attributes.position;
-    for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
-    pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
+  applyQuality(quality){
+    const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];
+    this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));
+    if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}
+    if(previous!==this.quality&&this.environment){
+      this.sceneryOcclusion?.dispose();this.environment.dispose();
+      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();
+      this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
+      this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();
+      this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();
+      this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);
+      this.compositor?.setQuality(this.quality);this.ready=this.prepare();
+    }
+    this.compositor?.setQuality(this.quality);this.resize();
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
-  // Swapping style rebuilds only the figure presentation; the encounter is untouched.
-  setFigureStyle(style){
-    const next=FIGURE_STYLES.includes(style)?style:'sculpted';if(next===this.figureStyle||this.disposed)return;
-    // The style is part of each figure's style key, so sync replaces every figure
-    // and keeps the old one until its replacement is ready (as a quality change does).
-    this.figureStyle=next;
-    this.compositor?.setStyle?.(figureStyleFinish(next));this.sync(this.encounter);this.shadowDirty=true;this.ready=this.prepare();
-  }
   // Where a delegate stands during the division: walking at an even pace,
   // one after another, then facing the champion. Reduced motion skips ahead.
   divisionStep(unit,now){
     const plan=this.discessio,move=plan?.byUnit.get(unit.id);if(!move)return null;
     plan.done=this.reducedMotion||!Number.isFinite(plan.start)||now>=plan.end;
     const from=this.world(move.from),to=this.world(move.to),length=from.distanceTo(to),
-      t=plan.done?1:clamp((now-plan.start-move.order*220)/Math.max(1,length/1.35*1000),0,1),k=ease(t),at={x:move.from.x+(move.to.x-move.from.x)*k,y:move.from.y+(move.to.y-move.from.y)*k};
+      t=plan.done?1:clamp((now-plan.start-move.order*220)/Math.max(1,length/1.35*1000),0,1),k=ease(t),
+      at={x:move.from.x+(move.to.x-move.from.x)*k,y:move.from.y+(move.to.y-move.from.y)*k};
     const heading=t<1?Math.atan2(to.x-from.x,to.z-from.z):Math.atan2(this.world(move.face).x-to.x,this.world(move.face).z-to.z);
     return {at,moving:t>0&&t<1,distance:length*k,yaw:Number.isFinite(heading)?heading:0};
   }
   // Generated chapter scenery: re-placed on the rebuilt ground, absent at Performance quality.
   rebuildSceneryModels(){
     this.sceneryModels?.dispose();
-    const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,{chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
+    const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,
+      {chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
       prepare:model=>{this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
     // Models placed at once take the cutaway now (a first build's occlusion covers the group).
     this.sceneryOcclusion?.add(own.group);
@@ -513,7 +368,9 @@ export class BattleStage{
     this.remains?.dispose();this.remains=null;if(this.encounter.kind==='contest'||this.ceremony)return;
     const hx=this.encounter.width*1.25+2,hz=this.encounter.height*1.25+2;
     // Bodies and spent arrows rest on a repaired bridge deck, like the units who fell there.
-    this.remains=createBattleRemains(this.scene,{quality:this.quality,ground:this.environment.ground,heightAt:(x,z)=>this.surfaceHeight(x,z),bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},visible:this.battleRemains});
+    this.remains=createBattleRemains(this.scene,
+      {quality:this.quality,ground:this.environment.ground,heightAt:(x,z)=>this.surfaceHeight(x,z),bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},
+        visible:this.battleRemains});
   }
   setBattleRemains(value){this.battleRemains=value!==false;this.remains?.setVisible(this.battleRemains);}
   // Weather on the light: cloud shadows (shared uniforms), sun shafts at dawn,
@@ -522,195 +379,48 @@ export class BattleStage{
     this.shafts?.dispose();this.reflection?.dispose();this.shafts=null;this.reflection=null;
     this.cloudLevel=this.ceremony?0:cloudStrength(this.profile);const [wx,wz]=cloudWind(this.chapter);CLOUD_UNIFORMS.cloudShape.value.set(1/22,wx,wz);
     const hx=this.encounter.width*1.25,hz=this.encounter.height*1.25;
-    this.shafts=createLightShafts(this.scene,this.profile,{quality:this.quality,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},sunDirection:this.sunOffset.clone().normalize(),seed:this.chapter});
+    this.shafts=createLightShafts(this.scene,this.profile,
+      {quality:this.quality,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},sunDirection:this.sunOffset.clone().normalize(),seed:this.chapter});
     const level=this.environment.reflectionLevel;
-    if(!this.ceremony&&level!==null&&reflectionAvailable(this.renderer,this.quality))this.reflection=createWaterReflection(this.renderer,this.environment.waterReflection,{level,hide:()=>[...this.environment.waterMeshes,this.ink?.mesh,this.overlay,this.grid,this.sky?.group,this.shafts?.group]});
+    if(!this.ceremony&&level!==null&&reflectionAvailable(this.renderer,this.quality))this.reflection=createWaterReflection(this.renderer,
+      this.environment.waterReflection,
+      {level,hide:()=>[...this.environment.waterMeshes,this.ink?.mesh,this.overlay,this.grid,this.sky?.group,this.shafts?.group]});
   }
-  // Nothing is drawn until everything the battle will draw is ready: figures
-  // wear what they will wear (a slow download is waited on only briefly), the
-  // batches for fallen men and one hidden example of each overlay, fieldwork
-  // and beacon exist, and every shader program is compiled and linked (off the
-  // main thread where the browser compiles in parallel, otherwise in short
-  // tasks), shadow-pass variants included. All of it behind the veil.
-  async prepare(){
-    // A rebuild during preparation starts again; only the latest one reveals.
-    const token=this.prepareToken=(this.prepareToken??0)+1,current=()=>!this.disposed&&token===this.prepareToken;
-    this.isReady=false;
-    try{
-      await this.buildQueuedFigures(current);if(!current())return;
-      const figures=Promise.all([...this.actors.values()].map(a=>a.ready).filter(Boolean));
-      await Promise.race([figures,new Promise(done=>setTimeout(done,PREPARE_FIGURES_MS))]);
-      if(!current())return;
-      this.warmup??=this.createWarmup();
-      let slice=performance.now();
-      for(const kind of this.fallenKinds()){
-        this.remains?.prepare([kind]);
-        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();if(!current())return;slice=performance.now();}
-      }
-      await this.compositor.compile(this.scene,{current});if(!current())return;
-      await this.compositor.upload?.(this.scene,{current});if(!current())return;
-      await this.warmShadows(current);
-    }catch(error){this.prepareError=error?.message??String(error);}
-    if(!current())return;
-    this.isReady=true;this.shadowDirty=true;const programs=this.renderer?.info.programs?.length??0;
-    await new Promise(done=>{this.firstFrameDone=done;});
-    // Anything compiled by the first frame itself escaped the warm-up above.
-    this.firstFramePrograms=(this.renderer?.info.programs?.length??0)-programs;
+  setReducedMotion(value){
+    if(this.reducedMotion!==value){this.shadowDirty=true;this.poseReset=new Set(this.actors.keys());}this.reducedMotion=value;if(value)this.finishMotion();
   }
-  // The first build places figures a few per frame (each is a sizeable piece
-  // of work), so the page keeps answering and the veil can count them in.
-  async buildQueuedFigures(current=()=>!this.disposed){
-    if(!this.figureQueue)return;
-    const queue=[...this.figureQueue];let slice=performance.now();
-    for(const [index,id]of queue.entries()){
-      if(performance.now()-slice>FRAME_SLICE_MS){this.showProgress(index,queue.length);await nextSlice();if(!current())return;slice=performance.now();}
-      const unit=this.visibleUnits.find(u=>u.id===id);if(!unit||this.actors.has(id))continue;
-      const vComm=this.commendations?.[unit.veteranId]??(unit.moraleResistance?6:unit.specialization?3:0);
-      this.placeFigure(unit,{styleKey:`${unit.side}:${unit.role}:${unit.name}:${vComm}:${this.quality}:${this.figureStyle}`,vComm});
-    }
-    this.figureQueue=null;this.showProgress(queue.length,queue.length);this.sync(this.encounter);
-  }
-  // The shadow pass makes its depth programs on first use, out of reach of a
-  // compile. One probe render per depth variant, with a single caster and the
-  // view turned away, links each variant in its own short task instead of all
-  // of them in the first frame. Three's shared depth material changes program
-  // only when a caster's instancing or skinning differs from the last one's,
-  // so which variants a frame makes depends on draw order; each probe asks for
-  // its caster's exact variant (needsUpdate), covering every order.
-  async warmShadows(current=()=>!this.disposed){
-    if(!this.renderer?.shadowMap.enabled||!this.compositor?.probe)return 0;
-    const variants=new Map(),casters=[];
-    this.scene.traverse(o=>{if(o.castShadow&&(o.isMesh||o.isPoints||o.isLine))casters.push(o);});
-    // Hidden casters count too: a figure's far-view meshes appear only once
-    // the camera pulls back, and hidden stand-ins wait for later effects.
-    this.scene.traverse(o=>{
-      if(!o.castShadow||!(o.isMesh||o.isPoints||o.isLine)||!o.material)return;
-      // What three's shadow pass copies from each material into its depth material.
-      const depth=m=>[!!m.map,m.map?.channel??0,!!m.alphaMap,m.alphaTest>0||m.alphaToCoverage===true,!!m.displacementMap&&m.displacementScale!==0,m.shadowSide??m.side,m.clippingPlanes?.length??0].join();
-      const key=`${drawableShape(o)}|${o.customDepthMaterial?.uuid??(Array.isArray(o.material)?o.material:[o.material]).map(depth).join('/')}`;
-      if(!variants.has(key))variants.set(key,o);
-    });
-    const position=this.camera.position.clone(),quaternion=this.camera.quaternion.clone();let probes=0;
-    try{
-      for(const o of casters)o.castShadow=false;
-      this.camera.position.set(0,1e4,0);this.camera.lookAt(0,2e4,0);this.camera.updateMatrixWorld();
-      let slice=performance.now();
-      for(const caster of variants.values()){
-        if(!current())break;
-        const culled=caster.frustumCulled,hidden=[],own=Object.hasOwn(caster,'onBeforeShadow'),hook=caster.onBeforeShadow;
-        for(let o=caster;o;o=o.parent)if(!o.visible){hidden.push(o);o.visible=true;}
-        caster.castShadow=true;caster.frustumCulled=false;caster.onBeforeShadow=(renderer,object,camera,shadowCamera,geometry,depthMaterial)=>{depthMaterial.needsUpdate=true;};
-        try{this.renderer.shadowMap.needsUpdate=true;this.compositor.probe(this.scene);probes++;}
-        finally{caster.castShadow=false;caster.frustumCulled=culled;for(const o of hidden)o.visible=false;if(own)caster.onBeforeShadow=hook;else delete caster.onBeforeShadow;}
-        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
-      }
-    }finally{
-      for(const o of casters)o.castShadow=true;
-      this.camera.position.copy(position);this.camera.quaternion.copy(quaternion);this.camera.updateMatrixWorld();this.shadowDirty=true;
-    }
-    return probes;
-  }
-  showProgress(done,total){const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';}
-  // One hidden example of each thing drawn only later in a battle, so its
-  // program compiles with the rest and stays alive until the stage goes.
-  createWarmup(){
-    const group=new T.Group();group.name='shader warm-up';group.visible=false;
-    for(const type of ['stakes','rampart','brazier'])group.add(this.fieldworkGroup(type));
-    group.add(this.beaconGroup(),this.tacticalLine('#ffffff'));
-    this.scene.add(group);return group;
-  }
-  fallenKinds(){
-    const kinds=new Map();
-    for(const unit of this.visibleUnits){const actor=this.actors.get(unit.id);if(!actor||civicActor(unit))continue;const kind=this.fallenKind(unit,actor);if(!kinds.has(kind.key))kinds.set(kind.key,kind);}
-    return [...kinds.values()];
-  }
-  // One appearance per fallen batch: a painted unit's own painting, or a sculpted kind of man.
-  fallenKind(unit,actor){
-    if(actor.painted)return {key:`painted:${unit.id}`,make:paintedFallenKind(actor)};
-    const kit=actor.group.userData.actor??{};return {key:`sculpted:${unit.role}:${unit.side}:${kit.faction??''}:${kit.mounted?'mounted':'foot'}`,make:sculptedFallenKind(actor,{label:unit.role})};
-  }
-  // A defeated unit is laid down once its fall has played (at once on a rebuilt stage).
-  layFallen(unit,actor){
-    if(!this.remains||civicActor(unit)||actorVisible(unit)||this.remains.hasLaid(unit.id))return;
-    this.remains.layUnit(unit,{...this.fallenKind(unit,actor),world:actor.group.position.clone(),yaw:actor.group.rotation.y+.4,animate:!!this.animation&&!this.reducedMotion});
-  }
-  // Military units from Chapter IV stand as formations; a rebuilt rig gets a new crowd.
-  attachFormation(unit,actor){
-    const ranks=actor.crowd?.ranks??[];actor.crowd?.dispose();actor.crowd=null;
-    if(!formationEligible(unit,{chapter:this.chapter,contest:this.encounter?.kind==='contest'}))return;
-    const max=Math.min(FORMATION_LIMIT[this.quality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
-    actor.crowd=actor.painted?actor.createCrowd?.(max)??null:createSkinnedCrowd(actor.group,{max});actor.crowd?.inherit?.(ranks);
-    if(actor.crowd&&!actor.crowdOwned){const dispose=actor.dispose.bind(actor);actor.dispose=()=>{actor.crowd?.dispose();dispose();};actor.crowdOwned=true;}
-  }
-  followerSlots(unit){
-    this.slotCache??=new Map();const key=`${unit.id}:${formationShape(unit)}`;
-    if(!this.slotCache.has(key))this.slotCache.set(key,formationSlots(unit));return this.slotCache.get(key);
-  }
-  // The painted atlases are the 2D view's own; repaint the cards once decoded.
-  loadPaintedArt(){
-    if(this.paintedArt)return;
-    this.paintedArt=loadTacticalArt(this.encounter).then(()=>{if(this.disposed)return;for(const a of this.actors.values())a.repaint?.();this.shadowDirty=true;}).catch(()=>{});
-  }
-  setReducedMotion(value){if(this.reducedMotion!==value){this.shadowDirty=true;this.poseReset=new Set(this.actors.keys());}this.reducedMotion=value;if(value)this.finishMotion();}
-  overviewDistance(){
-    const drill=this.encounter.id==='ch1-training',yaw=this.orbit.yaw??-.55,pitch=this.orbit.pitch??.64;
-    const right=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)),up=new T.Vector3(-Math.sin(yaw)*Math.sin(pitch),Math.cos(pitch),-Math.cos(yaw)*Math.sin(pitch)),out=new T.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch));
-    const tangent=Math.tan(this.camera.fov*Math.PI/360)*.86,points=this.encounter.units.filter(actorVisible).flatMap(unit=>[this.world(unit),this.world(unit).add(new T.Vector3(0,['cavalry','heavy'].includes(unit.role)?3.1:2.55,0))]);
-    if(!drill)for(const x of [-.18,this.encounter.width-.82])for(const y of [-.18,this.encounter.height-.82])points.push(this.world({x,y}));
-    return Math.max(drill?13:20,...points.map(point=>{const p=point.clone().sub(this.baseTarget);return p.dot(out)+Math.max(Math.abs(p.dot(right))/(tangent*this.camera.aspect),Math.abs(p.dot(up))/tangent);}));
-  }
-  resize(){const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();this.compositor?.resize();if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode&&!this.ceremony)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,this.overviewDistance());}
-  home(){if(this.ceremony){const focus=this.world(this.ceremony.focus??{x:3.5,y:3.5});this.focusMode=false;this.cameraView='ceremony';this.orbit.yaw=this.ceremony.yaw??-.62;this.orbit.pitch=this.ceremony.pitch??.3;this.orbit.distance=this.ceremony.distance??17;this.baseTarget.set(focus.x,focus.y+1.1,focus.z);return;}
-    this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.profile?.staging?.camera.yaw??(this.encounter.kind==='contest'?-.28:-.55);this.orbit.pitch=this.profile?.staging?.camera.pitch??(this.encounter.kind==='contest'?.76:.67);this.baseTarget.set(0,.7,0);if(this.encounter.id==='ch1-training'){const alive=this.encounter.units.filter(isAlive);if(alive.length){const center=alive.reduce((v,u)=>v.add(this.world(u)),new T.Vector3()).divideScalar(alive.length);this.baseTarget.copy(center);this.baseTarget.y+=.5;this.orbit.pitch=.58;}}this.orbit.distance=this.overviewDistance();}
-  horizon(){
-    // Lift the point of interest, rather than merely flattening an orbit aimed
-    // at the ground. The sky occupies the upper third while units remain framed.
-    this.focusMode=false;this.cameraView='horizon';this.orbit.yaw=-.55;this.orbit.pitch=.105;
-    this.baseTarget.set(0,2.7,0);this.orbit.distance=Math.max(28,this.overviewDistance());
-  }
-  focusSelected(){const u=this.encounter.units.find(u=>u.id===this.selected);if(u){const position=this.world(u),mounted=['cavalry','heavy'].includes(u.role),view=findFocusCamera(this.environment,{position,mounted});if(!view){this.home();return;}this.focusMode=true;this.cameraView='follow';this.baseTarget.copy(position);this.baseTarget.y+=mounted?1.2:.85;Object.assign(this.orbit,view);}}
-  focusPoint(tile){if(!tile||!Number.isFinite(tile.x)||!Number.isFinite(tile.y)){this.home();return;}const pos=this.world(tile);this.focusMode=false;this.baseTarget.set(pos.x,pos.y+.85,pos.z);this.hoverRing.visible=true;this.hoverRing.position.copy(pos);this.hoverRing.position.y+=.08;}
-  zoom(delta){this.orbit.distance=clamp(this.orbit.distance+delta,5.5,Math.max(85,this.orbit.distance,this.overviewDistance()));}
-  pick(event){const r=this.canvas.getBoundingClientRect();this.ndc.set((event.clientX-r.left)/r.width*2-1,-(event.clientY-r.top)/r.height*2+1);this.ray.setFromCamera(this.ndc,this.camera);
-    const pickable=new Set(this.encounter.units.filter(isAlive).map(u=>u.id));
-    // Raycaster does not skip invisible objects. Collect only rendered bodies
-    // before intersection so the hidden LOD never CPU-skins every triangle.
-    const surfaces=[],ray=this.ray.ray,near=a=>{if(!ray?.origin)return true;const p=a.group.position,kit=a.group.userData.actor??{};return rayToUpright(ray,p.x,p.y,p.z,(kit.height??2.03)+.25)<=(kit.mounted?1.7:.9);};
-    for(const [id,a]of this.actors)if(a.group.visible&&pickable.has(id)&&near(a))a.group.traverseVisible(o=>{if(o.isMesh)surfaces.push(o);});
-    const hits=this.ray.intersectObjects(surfaces,false);
-    const hit=hits.find(h=>{for(let o=h.object;o;o=o.parent)if(!o.visible)return false;return true;});if(hit){let obj=hit.object;while(obj&&!obj.userData.unitId)obj=obj.parent;const u=this.encounter.units.find(u=>u.id===obj?.userData.unitId);if(u&&isAlive(u))return {x:u.x,y:u.y,unitId:u.id};}
-    if(!intersectGround(this.ray.ray,this.surfaceHeight??this.environment.groundHeight,this.hit))return null;const x=Math.round(this.hit.x/2.5+(this.encounter.width-1)/2),y=Math.round(this.hit.z/2.5+(this.encounter.height-1)/2);return x>=0&&y>=0&&x<this.encounter.width&&y<this.encounter.height?{x,y}:null;
+  resize(){
+    const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;
+    const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();
+    this.compositor?.resize();
+    if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode&&!this.ceremony)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,
+      this.overviewDistance());
   }
   bind(){this.events=[];const on=(target,type,fn,opts)=>{target.addEventListener(type,fn,opts);this.events.push(()=>target.removeEventListener(type,fn,opts));};
-    // Touch has no hover: a finger held still (not orbiting) shows what a tap
-    // there would do, and the release that ends the hold picks nothing.
-    this.touchHold=createTouchHold(point=>{if(this.disposed||!this.drag||this.drag.moved)return;const hover=this.pick(point);this.hovered=hover?.unitId??null;this.onHover(hover);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}});
-    on(this.canvas,'pointerdown',e=>{this.wake();this.sound.unlock();campaignSoundscape().unlock();this.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};this.canvas.setPointerCapture(e.pointerId);this.touchHold.down(e);});
-    on(this.canvas,'pointermove',e=>{this.wake();this.touchHold.move(e);if(this.drag){const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=true;if(this.drag.moved){this.orbit.yaw-=dx*.006;this.orbit.pitch=clamp(this.orbit.pitch+dy*.004,.04,1.15);}this.drag.lastX=e.clientX;this.drag.lastY=e.clientY;}else this.pendingHover={clientX:e.clientX,clientY:e.clientY};});
-    on(this.canvas,'pointerleave',e=>{if(e.pointerType==='touch')return;this.pendingHover=null;this.hovered=null;this.onHover(null);});
-    on(this.canvas,'pointerup',e=>{const held=this.touchHold.consume();this.touchHold.up();if(this.drag&&!this.drag.moved&&!held){if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else if(this.discessio&&!this.discessio.done)this.discessio.start=-Infinity;else this.onPick(this.pick(e));}this.drag=null;});on(this.canvas,'pointercancel',()=>{this.touchHold.up();this.drag=null;});
-    on(this.canvas,'wheel',e=>{this.wake();e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
-    on(this.canvas,'keydown',e=>{this.wake();this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&(e.key.startsWith('Arrow')||/^[a-z]$/i.test(e.key)))return;let handled=true;switch(e.key){case'ArrowLeft':this.orbit.yaw-=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowRight':this.orbit.yaw+=this.figureStyle==='painted'?Math.PI/2:.12;break;case'ArrowUp':this.orbit.pitch=clamp(this.orbit.pitch+.08,.04,1.15);break;case'ArrowDown':this.orbit.pitch=clamp(this.orbit.pitch-.08,.04,1.15);break;case'+':case'=':this.zoom(-2);break;case'-':this.zoom(2);break;case'Home':this.home();break;case'h':case'H':this.horizon();break;case'f':case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;default:handled=false;}if(handled)e.preventDefault();});
+    this.bindInput(on);
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
-    on(this.canvas,'webglcontextlost',e=>{e.preventDefault();this.finishMotion();this.contextLost=true;clearTimeout(this.restoreTimer);this.restoreTimer=setTimeout(()=>{if(this.contextLost&&!this.disposed)this.onError?.('The 3D graphics context was interrupted.');},5000);});
-    on(this.canvas,'webglcontextrestored',()=>{clearTimeout(this.restoreTimer);this.restoreTimer=null;this.contextLost=false;this.shadowDirty=true;this.labelSizeDirty=true;this.poseReset=new Set(this.actors.keys());this.compositor?.resize();this.cadence?.reset(QUALITY[this.quality].fps);});
+    on(this.canvas,'webglcontextlost',
+      e=>{
+        e.preventDefault();this.finishMotion();this.contextLost=true;clearTimeout(this.restoreTimer);
+        this.restoreTimer=setTimeout(()=>{if(this.contextLost&&!this.disposed)this.onError?.('The 3D graphics context was interrupted.');},5000);
+      });
+    on(this.canvas,'webglcontextrestored',
+      ()=>{
+        clearTimeout(this.restoreTimer);this.restoreTimer=null;this.contextLost=false;this.shadowDirty=true;this.labelSizeDirty=true;
+        this.poseReset=new Set(this.actors.keys());this.compositor?.resize();this.cadence?.reset(QUALITY[this.quality].fps);
+      });
   }
-  play(before,after,command){this.wake();this.finishMotion();this.sync(after);if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();if(this.reducedMotion||this.paused||this.contextLost)return Promise.resolve();this.sound.unlock();const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
-    if(this.canvas?.dataset)this.canvas.dataset.motion='playing';this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;this.animation={timeline,start:performance.now(),scale:1/(this.motionSpeed||1),cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map(),marks:timeline.effects.filter(fx=>!fx.political&&(fx.type==='projectile'&&fx.from&&fx.to||['impact','shield'].includes(fx.type)&&fx.at)).map(fx=>({fx,at:fx.type==='projectile'?fx.start+fx.duration:fx.start,done:false,volley:fx.type==='projectile'?this.actors.get(this.unitAt(fx.from)?.id)?.crowd?.count??0:0}))};return new Promise(resolve=>this.animation.resolve=resolve);
-  }
-  // The timeline's own clock marks the ground, however few frames are drawn:
-  // a shot leaves a spent arrow or javelin when its flight ends, a blow churns
-  // the earth when it lands. Ending or skipping the motion marks the rest.
-  markGround(time=Infinity){
-    const live=Number.isFinite(time)&&!this.reducedMotion;
-    for(const mark of this.animation?.marks??[]){
-      if(mark.done||mark.at>time)continue;mark.done=true;const fx=mark.fx;
-      // A blow that lands holds the motion for a beat and jolts the camera.
-      if(live&&fx.type!=='projectile'){const hold=Math.min(70,220-(this.animation.hitStop??0));if(hold>0){this.animation.start+=hold;this.animation.hitStop=(this.animation.hitStop??0)+hold;}if(this.actionCamera!==false)this.cameraKick=Math.min(1,(this.cameraKick??0)+.75);}
-      if(!this.remains)continue;
-      if(fx.type==='projectile')this.remains.arrows({from:this.world(fx.from).add(new T.Vector3(0,1.4,0)),to:this.world(fx.to),count:Math.min(9,1+(mark.volley??0)),seed:`${fx.start}:${fx.from.x}:${fx.from.y}`,size:fx.projectile==='arrow'?1:2.1});
-      else if(fx.at){const at=this.world(fx.at);this.remains.churn(at.x,at.z);}
-    }
+  play(before,after,command){
+    this.wake();this.finishMotion();this.sync(after);
+    if((before?.operation?.index??0)<(after?.operation?.index??0)&&!this.focusMode&&this.cameraView==='overview')this.home?.();
+    if(this.reducedMotion||this.paused||this.contextLost)return Promise.resolve();this.sound.unlock();
+    const timeline=retimeStageTimeline(buildEncounterTimeline(before,after,{command,quality:this.quality}));if(!timeline.duration)return Promise.resolve();
+    if(this.canvas?.dataset)this.canvas.dataset.motion='playing';this.poseReset=new Set(this.actors.keys());this.shadowDirty=true;
+    this.animation={timeline,start:performance.now(),scale:1/(this.motionSpeed||1),cues:combatCues(timeline,{encounter:after}),nextCue:0,releasePoints:new Map(),
+      marks:timeline.effects.filter(fx=>!fx.political&&(fx.type==='projectile'&&fx.from&&fx.to||['impact','shield'].includes(fx.type)&&fx.at)).map(fx=>({fx,
+        at:fx.type==='projectile'?fx.start+fx.duration:fx.start,done:false,
+        volley:fx.type==='projectile'?this.actors.get(this.unitAt(fx.from)?.id)?.crowd?.count??0:0}))};
+    return new Promise(resolve=>this.animation.resolve=resolve);
   }
   // Per figure and frame: a ribbon behind the swung blade (a brushed arc for
   // painted figures) and dust under running men and horses on dry ground.
@@ -718,7 +428,8 @@ export class BattleStage{
     if(!this.combat)return;const motion=pose.motion,phase=Number.isFinite(pose.phase)?pose.phase:0;
     if(['attack','strike'].includes(motion)&&phase>=.18&&phase<=.62){
       if(actor.painted){
-        const facing=actor.puppet?.puppetFacing.value??1,right=new T.Vector3().setFromMatrixColumn(this.camera.matrixWorld,0).setY(0).normalize(),center=actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.7:1.15,0));
+        const facing=actor.puppet?.puppetFacing.value??1,right=new T.Vector3().setFromMatrixColumn(this.camera.matrixWorld,0).setY(0).normalize(),
+          center=actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.7:1.15,0));
         const angle=2.2-(phase-.18)/.44*2.7,tip=center.clone().addScaledVector(right,Math.cos(angle)*.85*facing).add(new T.Vector3(0,Math.sin(angle)*.85,0));
         this.combat.trail(unit.id,tip,center.clone().lerp(tip,.45));
       }else{
@@ -729,92 +440,168 @@ export class BattleStage{
     const mounted=!!actor.group.userData.actor?.mounted,running=motion==='run'||mounted&&motion==='walk';
     if(!running)return;
     const tile=override??unit,ground=this.encounter.terrain?.[Math.round(tile.y)]?.[Math.round(tile.x)];
-    if(['rain','mist'].includes(this.profile.weather)&&!mounted||['marsh','ford','river'].includes(typeof ground==='string'?ground:ground?.type)||this.profile.weather==='rain')return;
+    if(['rain','mist'].includes(this.profile.weather)&&!mounted||this.profile.weather==='rain'
+      ||['marsh','ford','river'].includes(typeof ground==='string'?ground:ground?.type))return;
     const debt=(this.dustDebt.get(unit.id)??0)+dt*(mounted?14:6),puffs=Math.floor(debt);this.dustDebt.set(unit.id,debt-puffs);
     if(!puffs)return;const p=actor.group.position;this.combat.dust(p.x,p.y,p.z,{amount:puffs,seed:unit.id});
     if(mounted)for(const f of actor.crowd?.footprints??[])this.combat.dust(f.x,f.y,f.z,{amount:Math.max(1,puffs-1),seed:`${unit.id}:${f.x.toFixed(1)}`});
   }
-  finishMotion(cancelAudio=true){if(!this.animation)return;this.markGround();if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;if(this.canvas?.dataset)this.canvas.dataset.motion=cancelAudio?'cancelled':'complete';this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
-  tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;
+  finishMotion(cancelAudio=true){
+    if(!this.animation)return;this.markGround();if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;
+    if(this.canvas?.dataset)this.canvas.dataset.motion=cancelAudio?'cancelled':'complete';this.animation=null;this.projectiles.forEach(p=>p.visible=false);
+    this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);
+    this.poseReset=new Set(this.actors.keys());resolve?.();
+  }
+  tick(now){
+    if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));
+    if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;
     // While nothing moves (no motion, input or camera change for a moment), a
     // 60 fps target draws every other frame: breathing, cloth, cloud and water
     // read the same at 30, for half the GPU work, heat and battery.
     const quiet=!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
     if(quiet&&QUALITY[this.quality].fps>30&&(this.quietSkip=!this.quietSkip))return;
-    const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
+    const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;
+    if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
     // Strain: frames still late with the resolution already at its floor. The
     // shadow map then refreshes half as often, and the controller builds the
     // next battle a tier lower; this one is never rebuilt in play.
     const floor=this.adaptiveResolution&&(this.resolutionBudget?.scale??1)<=STRAIN_SCALE;
     if(sincePaint&&!quiet)this.strainedFrames=floor&&sincePaint>this.cadence.expectedMs*1.45?(this.strainedFrames??0)+1:Math.max(0,(this.strainedFrames??0)-1);
-    if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
+    if(this.pendingHover&&!this.drag){
+      const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);
+      if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}
+    }
     const renderStart=performance.now();let frame=null;
-    if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
+    if(this.animation){
+      const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);
+      while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){
+        const cue=a.cues[a.nextCue++];
+        const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;
+        if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;
+      }
+      if(frame.complete){this.finishMotion(false);frame=null;}
+    }
     this.environment.update(this.reducedMotion?0:this.elapsed);this.fieldFeatures?.update(this.elapsed,this.reducedMotion);
     for(const unit of this.visibleUnits){
       const a=this.actors.get(unit.id),o=frame?.unitOverrides[unit.id],position=o??unit;
       const walk=this.divisionStep(unit,now);
-      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z);a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
+      a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;
+      a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z);
+      a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
       const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle';
       const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
       const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
       const pose=stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
-      if(walk)Object.assign(pose,walk.moving?{motion:'walk',locomotionDistance:walk.distance,locomotionWeight:1,phase:undefined,direction:walk.yaw}:{motion:'idle',direction:walk.yaw});
+      if(walk)Object.assign(pose,
+        walk.moving?{motion:'walk',locomotionDistance:walk.distance,locomotionWeight:1,phase:undefined,direction:walk.yaw}:{motion:'idle',direction:walk.yaw});
       else if(unit.role==='voter'&&pose.motion==='idle')Object.assign(pose,voterPosture(unit)??{});
       // Ceremony gestures loop gently, each figure a little out of step.
-      const gesture=this.ceremony?.poses?.[unit.id];if(gesture&&!walk&&pose.motion==='idle'){pose.motion=gesture;pose.phase=this.reducedMotion?.55:(this.elapsed*.28+(unit.x*.37+unit.y*.61))%1;}
+      const gesture=this.ceremony?.poses?.[unit.id];
+      if(gesture&&!walk&&pose.motion==='idle'){pose.motion=gesture;pose.phase=this.reducedMotion?.55:(this.elapsed*.28+(unit.x*.37+unit.y*.61))%1;}
       if(unit.id===this.selected)this.selectedYaw=pose.direction;
       const focusUnit=victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
       let gazeYaw=0,gazePitch=0;
-      if(focusUnit){const d=this.world(focusUnit).sub(a.group.position),rel=Math.atan2(Math.sin(Math.atan2(d.x,d.z)-pose.direction),Math.cos(Math.atan2(d.x,d.z)-pose.direction));if(Math.abs(rel)<1.35){gazeYaw=clamp(rel*.45,-.32,.32);gazePitch=clamp(-Math.atan2(d.y,Math.max(.5,Math.hypot(d.x,d.z)))*.35,-.18,.18);}}
+      if(focusUnit){
+        const d=this.world(focusUnit).sub(a.group.position),
+          rel=Math.atan2(Math.sin(Math.atan2(d.x,d.z)-pose.direction),Math.cos(Math.atan2(d.x,d.z)-pose.direction));
+        if(Math.abs(rel)<1.35){gazeYaw=clamp(rel*.45,-.32,.32);gazePitch=clamp(-Math.atan2(d.y,Math.max(.5,Math.hypot(d.x,d.z)))*.35,-.18,.18);}
+      }
       if(a.crowd){
         // Ranks thin when the blow lands, not when the order is given.
-        const pair=this.animation?.timeline.units?.[unit.id],pending=pair&&this.animation.timeline.tracks.some(t=>t.unitId===unit.id&&['hit','retreat'].includes(t.pose)&&(frame?.time??Infinity)<t.start),ranks=pending?pair.before:unit;
-        const slots=this.followerSlots(unit);a.crowd.update({slots,visible:followerCount(ranks,Math.min(slots.length,a.crowd.max)),heightAt:this.surfaceHeight,time:this.elapsed,reset:this.poseReset.has(unit.id),unitId:unit.id,
-          onFall:this.remains?fall=>this.remains.fall({...this.fallenKind(unit,a),world:fall.world,yaw:fall.yaw+.35*(fall.index%2?1:-1),animate:!this.reducedMotion}):null});
+        const pair=this.animation?.timeline.units?.[unit.id],
+          pending=pair&&this.animation.timeline.tracks.some(t=>t.unitId===unit.id&&['hit','retreat'].includes(t.pose)&&(frame?.time??Infinity)<t.start),
+          ranks=pending?pair.before:unit;
+        const slots=this.followerSlots(unit);
+        a.crowd.update({slots,visible:followerCount(ranks,Math.min(slots.length,a.crowd.max)),heightAt:this.surfaceHeight,time:this.elapsed,
+          reset:this.poseReset.has(unit.id),unitId:unit.id,
+          onFall:this.remains?fall=>this.remains.fall({...this.fallenKind(unit,a),world:fall.world,yaw:fall.yaw+.35*(fall.index%2?1:-1),
+            animate:!this.reducedMotion}):null});
       }
-      a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,groundHeight:this.surfaceHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});this.poseReset.delete(unit.id);
+      a.update({...pose,unit,override:o??(walk?.moving?{pose:'walk',progress:.5,stridePhase:walk.distance*2.4}:null),gazeYaw,gazePitch,
+        groundHeight:this.surfaceHeight,aimHeight,detailDistance:this.camera.position.distanceTo(a.group.position),active,resetPose:this.poseReset.has(unit.id)});
+      this.poseReset.delete(unit.id);
       // Marching feet and hooves wear the ground of the board.
-      if(this.remains&&!this.reducedMotion&&['walk','run'].includes(pose.motion)){const mounted=!!a.group.userData.actor?.mounted;this.remains.tread(a.group.position.x,a.group.position.z,{mounted,id:unit.id});(a.crowd?.footprints??[]).forEach((f,i)=>this.remains.tread(f.x,f.z,{mounted,id:`${unit.id}:${i}`}));}
+      if(this.remains&&!this.reducedMotion&&['walk','run'].includes(pose.motion)){
+        const mounted=!!a.group.userData.actor?.mounted;this.remains.tread(a.group.position.x,a.group.position.z,{mounted,id:unit.id});
+        (a.crowd?.footprints??[]).forEach((f,i)=>this.remains.tread(f.x,f.z,{mounted,id:`${unit.id}:${i}`}));
+      }
       if(!this.reducedMotion)this.combatMotion(unit,a,pose,o,dt);
-      const label=this.labels.get(unit.id),refs=this.labelRefs.get(unit.id),key=`${unit.id===this.selected}:${unit.id===this.inspected||unit.id===this.hovered}`;label.hidden=false;
-      if(refs.stateKey!==key){refs.stateKey=key;label.classList.toggle('selected',unit.id===this.selected);label.classList.toggle('inspected',unit.id===this.inspected||unit.id===this.hovered);refs.width=0;this.labelSizeDirty=true;}
+      const label=this.labels.get(unit.id),refs=this.labelRefs.get(unit.id),key=`${unit.id===this.selected}:${unit.id===this.inspected||unit.id===this.hovered}`;
+      label.hidden=false;
+      if(refs.stateKey!==key){
+        refs.stateKey=key;label.classList.toggle('selected',unit.id===this.selected);
+        label.classList.toggle('inspected',unit.id===this.inspected||unit.id===this.hovered);refs.width=0;this.labelSizeDirty=true;
+      }
       const preview=!this.animation&&(this.previewTargets?.[unit.id]??(this.previewTarget?.unitId===unit.id?this.previewTarget:null));
       // Written only on change: an unchanged label keeps its layout (see positionLabels).
-      if(preview){if(refs.effect.textContent!==preview.text||refs.effectColor!==preview.color){refs.effect.textContent=preview.text;refs.effect.style.color=refs.effectColor=preview.color;this.labelContentDirty=true;}}else if(refs.effect.textContent){refs.effect.textContent='';refs.effectColor=null;this.labelContentDirty=true;}
+      if(preview){
+        if(refs.effect.textContent!==preview.text||refs.effectColor!==preview.color){
+          refs.effect.textContent=preview.text;refs.effect.style.color=refs.effectColor=preview.color;this.labelContentDirty=true;
+        }
+      }else if(refs.effect.textContent){refs.effect.textContent='';refs.effectColor=null;this.labelContentDirty=true;}
     }
-    if(this.tacticalArcs)for(const [i,line]of this.tacticalArcs.entries())if(line.visible)line.material.opacity=this.reducedMotion?.85:(line.userData.linkKind==='guard'?.78+.17*Math.sin(this.elapsed*3.2+i):.75+.2*Math.sin(this.elapsed*4.8+i));
+    if(this.tacticalArcs)for(const [i,line]of this.tacticalArcs.entries())if(line.visible){
+      line.material.opacity=this.reducedMotion?.85:(line.userData.linkKind==='guard'?.78+.17*Math.sin(this.elapsed*3.2+i):.75+.2*Math.sin(this.elapsed*4.8+i));
+    }
     this.pairedContacts=this.reducedMotion?0:applyPairedContacts(this.actors,frame,this.animation?.timeline);
     this.contactShadows.update(this.actors,this.surfaceHeight);
-    const selected=this.actors.get(this.selected);this.selectedRing.visible=!!selected?.group.visible&&!this.ceremony;if(selected){this.selectedRing.position.copy(selected.group.position);this.selectedRing.position.y+=.065;this.selectedRing.rotation.y=this.selectedYaw??0;this.selectedRing.scale.setScalar(selected.group.userData.actor?.mounted?1.45:1);}
-    this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);let projectileCount=0,sparkCount=0,ringCount=0;const volleyShots=[];
+    const selected=this.actors.get(this.selected);this.selectedRing.visible=!!selected?.group.visible&&!this.ceremony;
+    if(selected){
+      this.selectedRing.position.copy(selected.group.position);this.selectedRing.position.y+=.065;this.selectedRing.rotation.y=this.selectedYaw??0;
+      this.selectedRing.scale.setScalar(selected.group.userData.actor?.mounted?1.45:1);
+    }
+    this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);
+    let projectileCount=0,sparkCount=0,ringCount=0;const volleyShots=[];
     for(const fx of frame?.effects??[]){const readout=effectReadout(fx);
-      if(fx.at&&readout.text){const unit=this.unitAt(fx.at),refs=this.labelRefs.get(unit?.id),label=refs?.effect;if(label){label.textContent=readout.text;label.style.color=refs.effectColor=readout.color;}}
+      if(fx.at&&readout.text){
+        const unit=this.unitAt(fx.at),refs=this.labelRefs.get(unit?.id),label=refs?.effect;
+        if(label){label.textContent=readout.text;label.style.color=refs.effectColor=readout.color;}
+      }
       if(readout.ring&&fx.at&&ringCount<6){
-        if(!this.effectRings[ringCount]){const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide}));ring.rotation.x=-Math.PI/2;this.effectGroup.add(ring);this.effectRings.push(ring);}
-        const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;ring.scale.setScalar(.65+fx.progress*(readout.radius??1.2));ring.material.color.set(readout.color);ring.material.opacity=(1-fx.progress)*.75;ring.visible=true;
+        if(!this.effectRings[ringCount]){
+          const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:readout.color,transparent:true,opacity:0,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
+          ring.rotation.x=-Math.PI/2;this.effectGroup.add(ring);this.effectRings.push(ring);
+        }
+        const ring=this.effectRings[ringCount++];ring.position.copy(this.world(fx.at));ring.position.y+=.09;
+        ring.scale.setScalar(.65+fx.progress*(readout.radius??1.2));ring.material.color.set(readout.color);ring.material.opacity=(1-fx.progress)*.75;
+        ring.visible=true;
       }
       if(fx.type==='projectile'&&projectileCount<4){
-      if(!this.projectiles[projectileCount]){const p=this.projectile.clone();this.effectGroup.add(p);this.projectiles.push(p);}const projectile=this.projectiles[projectileCount++];projectile.scale.setScalar(fx.projectile==='arrow'?.52:1);
+      if(!this.projectiles[projectileCount]){const p=this.projectile.clone();this.effectGroup.add(p);this.projectiles.push(p);}
+      const projectile=this.projectiles[projectileCount++];projectile.scale.setScalar(fx.projectile==='arrow'?.52:1);
       const key=`${fx.start}:${fx.from.x}:${fx.from.y}`,origins=this.animation.releasePoints;
-      if(!origins.has(key)){const source=this.unitAt(fx.from),actor=this.actors.get(source?.id);origins.set(key,actor?.getReleasePoint(new T.Vector3())??this.world(fx.from).add(new T.Vector3(0,1.4,0)));}
+      if(!origins.has(key)){
+        const source=this.unitAt(fx.from),actor=this.actors.get(source?.id);
+        origins.set(key,actor?.getReleasePoint(new T.Vector3())??this.world(fx.from).add(new T.Vector3(0,1.4,0)));
+      }
       positionProjectileTip(projectile,origins.get(key),this.bodyPoint(fx.to),fx.progress);projectile.visible=true;
       // The shooter's whole rank looses with him.
-      const rank=this.actors.get(this.unitAt(fx.from)?.id)?.crowd;if(rank?.count)rank.footprints.forEach((f,i)=>volleyShots.push({from:f.clone().add(new T.Vector3(0,1.35,0)),to:this.world(fx.to),progress:fx.progress,index:i,seed:key,size:fx.projectile==='arrow'?1:2.1}));
+      const rank=this.actors.get(this.unitAt(fx.from)?.id)?.crowd;
+      if(rank?.count)rank.footprints.forEach((f,i)=>volleyShots.push({from:f.clone().add(new T.Vector3(0,1.35,0)),to:this.world(fx.to),progress:fx.progress,
+        index:i,seed:key,size:fx.projectile==='arrow'?1:2.1}));
     }else if(['impact','shield'].includes(fx.type)&&!fx.political){
       if(fx.at)this.updateBattleDecals(this.encounter,[fx.at]);
-      if(sparkCount>=8)continue;if(!this.sparkClouds[sparkCount]){const cloud=new T.Points(this.sparkGeometry.clone(),this.sparkMaterial.clone());cloud.frustumCulled=false;this.effectGroup.add(cloud);this.sparkClouds.push(cloud);}const cloud=this.sparkClouds[sparkCount++];
+      if(sparkCount>=8)continue;
+      if(!this.sparkClouds[sparkCount]){
+        const cloud=new T.Points(this.sparkGeometry.clone(),this.sparkMaterial.clone());cloud.frustumCulled=false;this.effectGroup.add(cloud);
+        this.sparkClouds.push(cloud);
+      }
+      const cloud=this.sparkClouds[sparkCount++];
       const defender=this.unitAt(fx.at),actor=this.actors.get(defender?.id),anchor=fx.type==='shield'?actor?.contacts.shield:null;
-      const p=anchor?.getWorldPosition(new T.Vector3())??actor?.contacts.body?.localToWorld(new T.Vector3(0,.27,.10))??this.bodyPoint(fx.at);sampleImpactParticles(cloud,p,fx.progress,{shield:fx.type==='shield',source:fx.source?this.world(fx.source):undefined});
+      const p=anchor?.getWorldPosition(new T.Vector3())??actor?.contacts.body?.localToWorld(new T.Vector3(0,.27,.10))??this.bodyPoint(fx.at);
+      sampleImpactParticles(cloud,p,fx.progress,{shield:fx.type==='shield',source:fx.source?this.world(fx.source):undefined});
       if(defender&&fx.delta)this.labelRefs.get(defender.id).effect.textContent=String(fx.delta);
     }}
-    if(this.chamberStandards)for(const [bloc,std]of this.chamberStandards)if(std.group.visible&&std.banner)std.banner.rotation.z=this.reducedMotion?0:Math.sin(this.elapsed*2.1+bloc.length)*.035;
+    if(this.chamberStandards)for(const [bloc,std]of this.chamberStandards){
+      if(std.group.visible&&std.banner)std.banner.rotation.z=this.reducedMotion?0:Math.sin(this.elapsed*2.1+bloc.length)*.035;
+    }
     let brazier=null;
     if(this.fieldworkMeshes)for(const group of this.fieldworkMeshes.values())if(group.visible&&group.userData.flamePlume){
       sampleFlamePlume(group.userData.flamePlume,this.elapsed,{reducedMotion:this.reducedMotion});brazier??=group;
     }
     sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed,{reducedMotion:this.reducedMotion});
-    CLOUD_UNIFORMS.cloudStrength.value=this.cloudLevel??0;CLOUD_UNIFORMS.cloudTime.value=this.reducedMotion?0:this.elapsed%3600;this.shafts?.update(this.elapsed,{reducedMotion:this.reducedMotion});
+    CLOUD_UNIFORMS.cloudStrength.value=this.cloudLevel??0;CLOUD_UNIFORMS.cloudTime.value=this.reducedMotion?0:this.elapsed%3600;
+    this.shafts?.update(this.elapsed,{reducedMotion:this.reducedMotion});
     this.combat?.volley(volleyShots);
     if(this.animation&&frame)this.markGround(frame.time);
     // Combat effects run on the motion's own clock (faster at double speed).
@@ -822,48 +609,96 @@ export class BattleStage{
     this.remains?.update(this.elapsed);this.combat?.update(this.combatClock);
     // One point light serves the night torch or, by day, the first burning brazier.
     if(this.nightLight){const light=this.nightLight;
-      if(this.profile.torchlight){light.color.set('#ffad5c');light.distance=16;light.decay=1.6;light.intensity=this.reducedMotion?2.35:2.35+.22*Math.sin(this.elapsed*7.5);if(selected)light.position.set(selected.group.position.x,selected.group.position.y+2.8,selected.group.position.z);}
-      else if(brazier){light.color.set('#ff9a3c');light.distance=8;light.decay=1.8;light.intensity=this.reducedMotion?1.85:1.85+.28*Math.sin(this.elapsed*8.5+brazier.position.x);light.position.copy(brazier.userData.brazierLightAt).add(brazier.position);}
+      if(this.profile.torchlight){
+        light.color.set('#ffad5c');light.distance=16;light.decay=1.6;light.intensity=this.reducedMotion?2.35:2.35+.22*Math.sin(this.elapsed*7.5);
+        if(selected)light.position.set(selected.group.position.x,selected.group.position.y+2.8,selected.group.position.z);
+      }
+      else if(brazier){
+        light.color.set('#ff9a3c');light.distance=8;light.decay=1.8;
+        light.intensity=this.reducedMotion?1.85:1.85+.28*Math.sin(this.elapsed*8.5+brazier.position.x);
+        light.position.copy(brazier.userData.brazierLightAt).add(brazier.position);
+      }
       else light.intensity=0;}
     const target=this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone();
     let actionGoal=0;
     if(this.animation&&!this.focusMode&&this.cameraView==='overview'&&!this.reducedMotion){const elapsed=(now-this.animation.start)/this.animation.scale;
-      const strike=this.actionCamera!==false?this.animation.timeline.tracks.find(t=>ACTION_POSES.has(t.pose)&&t.target&&elapsed>=t.start-200&&elapsed<=(t.end??t.start+t.duration)+350):null;
+      const strike=this.actionCamera!==false
+        ?this.animation.timeline.tracks.find(t=>ACTION_POSES.has(t.pose)&&t.target&&elapsed>=t.start-200&&elapsed<=(t.end??t.start+t.duration)+350):null;
       if(strike){
         const end=strike.end??strike.start+strike.duration,ease=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
         actionGoal=ease(strike.start-200,strike.start+120,elapsed)*(1-ease(end+50,end+350,elapsed));
-        const from=this.actors.get(strike.unitId)?.group.position??this.world(strike.target),to=this.world(strike.target),mid=from.clone().add(to).multiplyScalar(.5);mid.y+=1;
+        const from=this.actors.get(strike.unitId)?.group.position??this.world(strike.target),to=this.world(strike.target),
+          mid=from.clone().add(to).multiplyScalar(.5);
+        mid.y+=1;
         target.lerp(mid,.75*actionGoal);this.actionSideYaw=sideOnYaw(from,to,this.orbit.yaw);
-      }else{const activeTrack=this.animation.timeline.tracks.find(t=>elapsed>=t.start&&elapsed<=t.end&&(t.target||t.from));if(activeTrack){const focusTile=activeTrack.target??activeTrack.from;if(focusTile)target.lerp(this.world(focusTile).add(new T.Vector3(0,.85,0)),.18);}}
+      }else{
+        const activeTrack=this.animation.timeline.tracks.find(t=>elapsed>=t.start&&elapsed<=t.end&&(t.target||t.from));
+        if(activeTrack){const focusTile=activeTrack.target??activeTrack.from;if(focusTile)target.lerp(this.world(focusTile).add(new T.Vector3(0,.85,0)),.18);}
+      }
     }
-    this.actionBlend=(this.actionBlend??0)+(actionGoal-(this.actionBlend??0))*Math.min(1,dt*4);if(this.reducedMotion||!this.animation&&this.actionBlend<.002)this.actionBlend=0;
+    this.actionBlend=(this.actionBlend??0)+(actionGoal-(this.actionBlend??0))*Math.min(1,dt*4);
+    if(this.reducedMotion||!this.animation&&this.actionBlend<.002)this.actionBlend=0;
     if(this.ceremony&&!this.reducedMotion&&!this.drag)this.orbit.yaw+=dt*.045; // a slow, steady circuit of the tableau
-    if(this.figureStyle==='painted'&&!this.drag&&this.cameraView==='overview'){const goal=diagonalYaw(this.orbit.yaw);this.orbit.yaw+=(goal-this.orbit.yaw)*(this.reducedMotion?1:Math.min(1,dt*5));}
-    this.lookTarget.lerp(target,this.reducedMotion?1:Math.min(1,dt*3));const {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);this.camera.lookAt(this.lookTarget);
+    if(this.figureStyle==='painted'&&!this.drag&&this.cameraView==='overview'){
+      const goal=diagonalYaw(this.orbit.yaw);this.orbit.yaw+=(goal-this.orbit.yaw)*(this.reducedMotion?1:Math.min(1,dt*5));
+    }
+    this.lookTarget.lerp(target,this.reducedMotion?1:Math.min(1,dt*3));
+    const {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});
+    this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,
+      this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);
+    this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);
+    this.camera.lookAt(this.lookTarget);
     // A landed blow jolts the view a few centimetres and settles in a quarter second.
-    if(this.cameraKick>.002&&!this.reducedMotion){const k=this.cameraKick,offset=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(Math.sin(this.elapsed*61)*.07*k).add(new T.Vector3(0,Math.cos(this.elapsed*47)*.045*k,0));this.camera.position.add(offset);this.camera.lookAt(this.lookTarget.clone().add(offset));}
+    if(this.cameraKick>.002&&!this.reducedMotion){
+      const k=this.cameraKick,
+        offset=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(Math.sin(this.elapsed*61)*.07*k).add(new T.Vector3(0,
+          Math.cos(this.elapsed*47)*.045*k,0));
+      this.camera.position.add(offset);this.camera.lookAt(this.lookTarget.clone().add(offset));
+    }
     this.cameraKick=this.reducedMotion?0:(this.cameraKick??0)*Math.exp(-dt*12);
-    this.camera.updateMatrixWorld();this.cameraSettled=!!this.lastCamera&&this.lastCamera.distanceToSquared(this.camera.position)<1e-8;(this.lastCamera??=new T.Vector3()).copy(this.camera.position);this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
+    this.camera.updateMatrixWorld();this.cameraSettled=!!this.lastCamera&&this.lastCamera.distanceToSquared(this.camera.position)<1e-8;
+    (this.lastCamera??=new T.Vector3()).copy(this.camera.position);this.sky.update(this.elapsed,this.camera,this.reducedMotion);this.fitShadow();
     // Painted cards face the camera only after it has moved this frame.
     const sunYaw=Math.atan2(this.sunOffset.x,this.sunOffset.z);
     // Painted cards read their shade from a point just sunward of the figure.
-    const sunReach=Math.hypot(this.sunOffset.x,this.sunOffset.z)||1;this.paintedLighting.paintedSunShift.value.set(this.sunOffset.x/sunReach*.55,0,this.sunOffset.z/sunReach*.55);
-    for(const a of this.actors.values())if(a.group.visible)a.faceCamera?.(this.camera,{sunYaw});this.compositor?.setFocus?.(this.camera.position.distanceTo(this.lookTarget));
+    const sunReach=Math.hypot(this.sunOffset.x,this.sunOffset.z)||1;
+    this.paintedLighting.paintedSunShift.value.set(this.sunOffset.x/sunReach*.55,0,this.sunOffset.z/sunReach*.55);
+    for(const a of this.actors.values())if(a.group.visible)a.faceCamera?.(this.camera,{sunYaw});
+    this.compositor?.setFocus?.(this.camera.position.distanceTo(this.lookTarget));
     // Aerial haze starts past the board's far corner from this camera (half-diagonal ~14m).
-    const focusDistance=this.camera.position.distanceTo(this.lookTarget);this.compositor?.setHaze?.({near:focusDistance+14,far:focusDistance+140,color:this.profile.grade?.haze});
+    const focusDistance=this.camera.position.distanceTo(this.lookTarget);
+    this.compositor?.setHaze?.({near:focusDistance+14,far:focusDistance+140,color:this.profile.grade?.haze});
     // Scene fog likewise begins past the board (sooner in mist and rain), so the
     // playable ground keeps its contrast while the surrounding land recedes.
-    const misty=['mist','rain'].includes(this.profile.weather),fog=this.scene.fog;fog.near=focusDistance+(misty?6:12);fog.far=fog.near+(misty?1.4:2)/(this.profile.fogDensity??.017);
-    this.rimDirection.copy(this.lookTarget).sub(this.camera.position).setY(0);if(this.rimDirection.lengthSq()>1e-6){this.rimDirection.normalize();this.rim.position.copy(this.lookTarget).addScaledVector(this.rimDirection,14);this.rim.position.y+=7;this.rim.target.position.copy(this.lookTarget);this.rim.target.updateMatrixWorld();}
+    const misty=['mist','rain'].includes(this.profile.weather),fog=this.scene.fog;
+    fog.near=focusDistance+(misty?6:12);fog.far=fog.near+(misty?1.4:2)/(this.profile.fogDensity??.017);
+    this.rimDirection.copy(this.lookTarget).sub(this.camera.position).setY(0);
+    if(this.rimDirection.lengthSq()>1e-6){
+      this.rimDirection.normalize();this.rim.position.copy(this.lookTarget).addScaledVector(this.rimDirection,14);this.rim.position.y+=7;
+      this.rim.target.position.copy(this.lookTarget);this.rim.target.updateMatrixWorld();
+    }
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
-    this.sceneryOcclusion?.update(this.camera,{targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),radius:actor.group.userData.actor?.mounted?1.7:1.35})),enabled:this.cameraView!=='overview'||!!this.animation,delta:dt,reducedMotion:this.reducedMotion});
+    this.sceneryOcclusion?.update(this.camera,
+      {targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),
+        radius:actor.group.userData.actor?.mounted?1.7:1.35})),
+        enabled:this.cameraView!=='overview'||!!this.animation,delta:dt,reducedMotion:this.reducedMotion});
     this.positionLabels();this.ink?.flush?.(now);
     const shadowInterval=(SHADOW_REFRESH_MS[this.quality]??125)*(floor?2:1);
-    if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){this.renderer.shadowMap.needsUpdate=true;this.shadowDirty=false;this.lastShadow=now;this.shadowUpdates++;}
+    if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){
+      this.renderer.shadowMap.needsUpdate=true;this.shadowDirty=false;this.lastShadow=now;this.shadowUpdates++;
+    }
     for(const gpuMs of this.gpuTimer?.poll()??[]){this.resolutionBudget?.record(gpuMs);this.frameLog?.gpu.push(gpuMs);}
     this.gpuTimer?.begin();
-    let reflectionMs=0;try{const start=performance.now();if(this.profileFrames++%this.frameProfile.reflectionStride()===0)this.reflection?.render(this.scene,this.camera);reflectionMs=performance.now()-start;if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);}finally{this.gpuTimer?.end();}
-    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);this.frameLog?.frames.push([now,cost,sincePaint]);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
+    let reflectionMs=0;
+    try{
+      const start=performance.now();if(this.profileFrames++%this.frameProfile.reflectionStride()===0)this.reflection?.render(this.scene,this.camera);
+      reflectionMs=performance.now()-start;if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);
+    }finally{this.gpuTimer?.end();}
+    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);
+    this.frameLog?.frames.push([now,cost,sincePaint]);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();
+    if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);
+    if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}
+    if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
   }
   // Strained for long enough that the next battle should be built a tier lower.
   get strained(){return (this.strainedFrames??0)>=STRAINED_FRAMES;}
@@ -876,48 +711,40 @@ export class BattleStage{
   fitShadow(){
     const half=Math.round(clamp(this.orbit.distance*.55+3,9,23)),x=Math.round(this.lookTarget.x*2)/2,z=Math.round(this.lookTarget.z*2)/2,fit=this.shadowFit;
     if(Math.abs(fit.half-half)<1&&Math.hypot(fit.x-x,fit.z-z)<1.5)return;
-    fit.half=half;fit.x=x;fit.z=z;const camera=this.sun.shadow.camera;Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});camera.updateProjectionMatrix();
-    this.sun.target.position.set(x,0,z);this.sun.position.set(x+this.sunOffset.x,this.sunOffset.y,z+this.sunOffset.z);this.sun.target.updateMatrixWorld();this.shadowDirty=true;
+    fit.half=half;fit.x=x;fit.z=z;const camera=this.sun.shadow.camera;Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});
+    camera.updateProjectionMatrix();
+    this.sun.target.position.set(x,0,z);this.sun.position.set(x+this.sunOffset.x,this.sunOffset.y,z+this.sunOffset.z);this.sun.target.updateMatrixWorld();
+    this.shadowDirty=true;
   }
-  // Nothing to lay out again while the camera, the figures and the labels'
-  // contents all hold still (most frames while the player is deciding).
-  labelsUnchanged(){
-    const e=this.camera.matrixWorld.elements,list=[this.viewportWidth,this.viewportHeight,...e],state=`${this.cameraView}|${this.selected}|${this.inspected}|${this.hovered}`;
-    for(const a of this.actors.values()){const p=a.group.position;list.push(a.group.visible?1:0,p.x,p.y,p.z);}
-    const last=this.labelSignature,same=!!last&&last.state===state&&last.list.length===list.length&&list.every((v,i)=>Math.abs(v-last.list[i])<1e-6);
-    this.labelSignature={state,list};return same;
+  stats(){
+    return {device:this.deviceReport,firstFramePrograms:this.firstFramePrograms??null,frameProfile:this.frameProfile.stats(),
+      pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,
+      renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,
+      callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),
+      shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,
+      geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),
+      resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,
+      ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,
+      atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),
+      contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};
   }
-  positionLabels(){
-    const width=this.viewportWidth,height=this.viewportHeight,items=[],elements=new Map();if(!width||!height)return;
-    const unchanged=this.labelsUnchanged();if(unchanged&&!this.animation&&!this.labelSizeDirty&&!this.labelContentDirty)return;this.labelContentDirty=false;
-    for(const [id,actor]of this.actors){
-      const label=this.labels.get(id),refs=this.labelRefs.get(id);if(!actor.group.visible){label.dataset.layout='offscreen';continue;}
-      const screen=this.screenPoint.copy(actor.group.position);screen.y+=(actor.group.userData.actor?.height??2.03)+.12;screen.project(this.camera);
-      if(this.labelSizeDirty||!refs.width||refs.effectText!==refs.effect.textContent){refs.width=label.offsetWidth;refs.height=label.offsetHeight;refs.effectText=refs.effect.textContent;}
-      const effect=!!refs.effect.textContent,priority=id===this.inspected||id===this.hovered?110:id===this.selected?100:effect?80:label.dataset.type==='vote'?40:30;
-      const selectedActor=this.actors.get(this.selected),relevant=contextualLabelVisible({view:this.cameraView,selected:id===this.selected,focused:id===this.inspected||id===this.hovered,effect,vote:label.dataset.type==='vote',enemy:label.classList.contains('enemy'),distance:selectedActor?actor.group.position.distanceTo(selectedActor.group.position):Infinity});
-      if(!relevant){label.style.visibility='hidden';label.dataset.layout='context';continue;}
-      items.push({id,x:(screen.x*.5+.5)*width,y:(-screen.y*.5+.5)*height,width:refs.width,height:refs.height,priority,visible:Math.abs(screen.z)<=1});elements.set(id,{label,leader:refs.leader});
-    }
-    for(const [id,marker]of this.missionMarkers){const key=`objective:${id}`,point=this.screenPoint.copy(marker.mesh.position);point.y+=.2;point.project(this.camera);if(this.labelSizeDirty||!marker.width){marker.width=marker.label.offsetWidth;marker.height=marker.label.offsetHeight;}
-      items.push({id:key,x:(point.x*.5+.5)*width,y:(-point.y*.5+.5)*height,width:marker.width,height:marker.height,priority:60,visible:Math.abs(point.z)<=1});elements.set(key,{label:marker.label});
-    }
-    const obstacles=[],body=this.actors.get(this.selected);
-    if(body?.group.visible&&(this.cameraView!=='overview'||this.animation)){
-      const base=body.group.position,radius=body.group.userData.actor?.mounted?.72:.38,bodyHeight=body.group.userData.actor?.height??2.03,points=[];
-      for(const x of [-radius,radius])for(const z of [-radius,radius])for(const y of [.05,bodyHeight]){const p=this.screenPoint.copy(base).add(new T.Vector3(x,y,z)).project(this.camera);if(p.z>=-1&&p.z<=1)points.push({x:(p.x*.5+.5)*width,y:(-p.y*.5+.5)*height});}
-      if(points.length===8){const x=Math.min(...points.map(p=>p.x)),y=Math.min(...points.map(p=>p.y));obstacles.push({id:this.selected,x,y,width:Math.max(...points.map(p=>p.x))-x,height:Math.max(...points.map(p=>p.y))-y});}
-    }
-    const layout=layoutStageLabels(items,{width,height,top:this.canvas.parentElement.classList.contains('world-stage')?92:8,obstacles}),counts={visible:0,occluded:0,offscreen:0,overlaps:0};
-    for(const [id,r]of layout){const {label,leader}=elements.get(id);label.dataset.layout=r.reason;counts[r.reason]++;label.style.visibility=r.visible?'visible':'hidden';
-      if(!r.visible)continue;label.style.transform=`translate(${r.x}px,${r.y}px)`;
-      if(leader){const dx=r.anchorX-(r.x+r.width/2),dy=r.anchorY-(r.y+r.height),length=Math.hypot(dx,dy);leader.style.width=`${length}px`;leader.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;leader.style.display=length>15?'block':'none';}
-    }
-    this.labelStats=counts;this.labelSizeDirty=false;
-  }
-  stats(){return {device:this.deviceReport,firstFramePrograms:this.firstFramePrograms??null,frameProfile:this.frameProfile.stats(),pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
+  dispose(){
+    if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();
+    this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());
+    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();
+    this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();
+    this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();
+    this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();
+    this.scene.traverse(o=>{
+      if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);
+    });
+    geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.
-    if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();}
+    if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();
+  }
 }
+// The stage's methods are grouped by concern in the stage-*.js modules
+// above; they join the class here, as ordinary (non-enumerable) methods.
+for(const methods of [stageInput,stageCamera,stageLabels,stageFigures,stagePreparation,stageOverlays])Object.defineProperties(BattleStage.prototype,
+  Object.fromEntries(Object.entries(Object.getOwnPropertyDescriptors(methods)).map(([name,d])=>[name,{...d,enumerable:false}])));

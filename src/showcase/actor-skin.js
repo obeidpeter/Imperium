@@ -25,6 +25,8 @@ const materialKey=actorMaterialKey;
 
 /** Consolidate articulated surfaces into real weighted SkinnedMeshes. Equipment
  * with its own visibility and the named sole geometry stay on their old joints.
+ * Each part keeps its shared vertices (its index): the same triangles, in the same
+ * order, from a fraction of the vertices to store, upload and skin.
  * This is local authored linear-blend skinning, not an imported character asset. */
 export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,clothRigs=[],overview=false}={}){
   group.updateMatrixWorld(true);
@@ -40,9 +42,10 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
   if(!buckets.size)return retained;
   const skeleton=new T.Skeleton(bones);skeletons.add(skeleton);
   for(const {items,material} of buckets.values()){
-    const positions=[],normals=[],uvs=[],colors=[],indices=[],weights=[];
+    const positions=[],normals=[],uvs=[],colors=[],indices=[],weights=[],triangles=[];
     for(const item of items){
-      const bone=item.parent,bind=new T.Matrix4().multiplyMatrices(inverse,item.matrixWorld),source=item.geometry.index?item.geometry.toNonIndexed():item.geometry.clone(),p=source.attributes.position,n=source.attributes.normal,color=source.attributes.color,uv=source.attributes.uv;
+      const bone=item.parent,bind=new T.Matrix4().multiplyMatrices(inverse,item.matrixWorld),source=item.geometry,p=source.attributes.position,n=source.attributes.normal,color=source.attributes.color,uv=source.attributes.uv;
+      const first=positions.length/3;
       normalMatrix.getNormalMatrix(bind);
       const cloth=clothRigs.find(r=>r.parent===bone),base=boneIndex.get(bone),up=boneIndex.get(bone.parent),tint=item.material.color;
       // How this joint's vertices blend toward its parent, decided once per part.
@@ -71,9 +74,10 @@ export function bindActorSurfaces(group,sources,{geometries,materials,skeletons,
         if(material.map&&!overview){const shade=.93+.06*Math.sin(localX*17+localY*8),dust=clamp((.78-worldY)*.19,0,.09);r=r*shade*(1-dust)+.29*dust;g=g*shade*(1-dust)+.22*dust;blue=blue*shade*(1-dust)+.13*dust;}
         colors.push(r,g,blue);
       }
-      source.dispose();item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();
+      if(source.index)for(let k=0;k<source.index.count;k++)triangles.push(first+source.index.getX(k));else for(let i=0;i<p.count;i++)triangles.push(first+i);
+      item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();
     }
-    const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new T.Float32BufferAttribute(normals,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));geometries.add(geometry);
+    const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new T.Float32BufferAttribute(normals,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('skinIndex',new T.Uint16BufferAttribute(indices,4));geometry.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));geometry.setIndex(triangles);geometries.add(geometry);
     const mat=material.clone();mat.color.set(0xffffff);mat.vertexColors=true;materials.add(mat);
     const skin=new T.SkinnedMesh(geometry,mat);skin.name=overview?'overview-weighted-surface':'weighted-character-surface';skin.userData.overview=overview;skin.castShadow=true;skin.receiveShadow=true;skin.visible=!overview;group.add(skin);skin.bind(skeleton);skin.normalizeSkinWeights();
     // Conservative local bounds cover all authored poses, so a figure off screen

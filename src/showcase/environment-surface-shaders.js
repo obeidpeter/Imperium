@@ -49,13 +49,19 @@ export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false}={}){
   return {wave,foam,ripple,roughness,tint};
 }
 
+// Water, ground, foliage and floor each have a finish of their own. Every other
+// surface (stone, wood, cloth...) shares one standing finish whose grain and
+// roughness range are the material's own uniforms, so they share one program.
+const OWN_FINISH=new Set(['water','ground','foliage','floor']);
 export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waterTime=null,reflection=null}={}){
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
-  const timeUniform=waterTime??{value:0};
+  const timeUniform=waterTime??{value:0},standing=!OWN_FINISH.has(kind);
+  const grain={value:kind==='wood'?[7,.8]:[2.7,3.4]},roughnessRange={value:kind==='stone'&&(wet||rain)?[.58,.92]:[.91,1]};
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);
     shader.uniforms=shader.uniforms||{};
     if(kind==='water')shader.uniforms.environmentWaterTime=timeUniform;
+    if(standing)Object.assign(shader.uniforms,{environmentGrain:grain,environmentRoughness:roughnessRange});
     const mirror=kind==='water'&&reflection;if(mirror)Object.assign(shader.uniforms,reflection);
     shader.vertexShader='varying vec3 vEnvironmentSurface;\n'+shader.vertexShader;
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
@@ -64,7 +70,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         environmentPosition=instanceMatrix*environmentPosition;
       #endif
       vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;`);
-    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
+    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+(standing?'uniform vec2 environmentGrain;uniform vec2 environmentRoughness;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
     let color='',roughness='';
     if(kind==='water'){
       // Foam belongs to shores and current, not to fixed bands: open water keeps
@@ -115,8 +121,8 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.78,.66,.44),envBronze*.32);`;
       roughness='roughnessFactor*=mix(.54,.94,envStone*(1.0-envVein*.25));';
     }else{
-      color=`float envLarge=envNoise(vEnvironmentSurface.xz*.71+vec2(vEnvironmentSurface.y*.18)),envGrain=envNoise(vec2(vEnvironmentSurface.x+vEnvironmentSurface.z,vEnvironmentSurface.y)*${kind==='wood'?'vec2(7.0,.8)':'vec2(2.7,3.4)'});float envDamp=(1.0-smoothstep(.03,1.6,vEnvironmentSurface.y))*(.04+envLarge*.13);diffuseColor.rgb*=((.88+envLarge*.15)*(.96+envGrain*.07)-envDamp);`;
-      roughness=kind==='stone'&&(wet||rain)?'roughnessFactor*=mix(.58,.92,envGrain);':'roughnessFactor*=mix(.91,1.0,envGrain);';
+      color=`float envLarge=envNoise(vEnvironmentSurface.xz*.71+vec2(vEnvironmentSurface.y*.18)),envGrain=envNoise(vec2(vEnvironmentSurface.x+vEnvironmentSurface.z,vEnvironmentSurface.y)*environmentGrain);float envDamp=(1.0-smoothstep(.03,1.6,vEnvironmentSurface.y))*(.04+envLarge*.13);diffuseColor.rgb*=((.88+envLarge*.15)*(.96+envGrain*.07)-envDamp);`;
+      roughness='roughnessFactor*=mix(environmentRoughness.x,environmentRoughness.y,envGrain);';
     }
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>\n${color}`).replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\n${roughness}`);
     // A smooth water plane turns the sun into one saturated sheet, and its
@@ -142,7 +148,8 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         reflectedLight.indirectSpecular=mix(reflectedLight.indirectSpecular,min(mirrored.rgb,vec3(.6))*.8,waterReflectionStrength*mirrorFresnel*clamp(mirrored.a,0.0,1.0));
       }`:''}`);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:environment-finish-v4:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}`;
+  material.customProgramCacheKey=standing?()=>`${oldKey}:environment-finish-v5:standing`
+    :()=>`${oldKey}:environment-finish-v5:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}`;
   material.userData.environmentFinish=kind;
   material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh),shore:Boolean(shore)};
   if(kind==='water')material.userData.waterTime=timeUniform;

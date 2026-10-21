@@ -100,11 +100,21 @@ test('v0.32.1: the readout, announcements, target list and ground note name fiel
   const high = {x: 9, y: 0};assert.equal(e.terrain[high.y][high.x], 'high');
   assert.doesNotMatch(selectedGround(e, hero, high), /In rain/);
   assert.match(selectedGround({...e, weather: 'rain'}, hero, high), /Offers defensive cover\. In rain, each step onto it costs 1 more movement\./);
-  const app = await readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
-  assert.match(app, /const u=visibleUnitAt\(state\.encounter,point\),field=fieldLabel\(state\.encounter,point\),walk=routeSummary\(routeAt\(point\)\);/, 'The hover readout names field objects');
-  assert.match(app, /function placeName\(point\)\{const e=state\.encounter,u=visibleUnitAt\(e,point\);return \[u\?\.name,fieldLabel\(e,point\),u\?'':terrainLabel\(e,point\)\]\.filter\(Boolean\)\.join\('\. '\);\}/);
-  assert.match(app, /announce\(`Grid \$\{focusTile\.x\+1\}\$\{String\.fromCharCode\(65\+focusTile\.y\)\}\. \$\{placeName\(focusTile\)\}/, 'The arrow-key cursor names them');
-  assert.match(app, /:`\$\{placeName\(point\)\}\. \$\{why\?/, 'So does a click that cannot walk');
+  // The hover readout, the arrow-key cursor and a selection that cannot walk all name them.
+  const {hoverText, cursorAnnouncement, pointAnnouncement, placeName} = await import('../src/ui/board-readout.js');
+  const {clickRoute} = await import('../src/ui/direct-controls.js');
+  const route = p => clickRoute(s, {selected: 'hero'}, p), gateTile = {x: gate.x, y: gate.y};
+  assert.equal(placeName(e, gateTile), 'Side gate (closed). Open ground');
+  assert.equal(route(gateTile).reason, 'gate');
+  assert.equal(hoverText(e, gateTile, route(gateTile)), 'Side gate (closed) · Open ground · 9C · No passage until opened');
+  assert.equal(cursorAnnouncement(e, gateTile, route(gateTile)), 'Grid 9C. Side gate (closed). Open ground. No passage until opened');
+  assert.equal(pointAnnouncement(e, gateTile, route(gateTile)), 'Side gate (closed). Open ground. No passage until opened.');
+  assert.match(hoverText(e, cart, route(cart)), /^Abandoned supply cart \(available\) · [^·]+ · \d+[A-H] · (Walk here · \d movement|Beyond reach · stops at \d+[A-H] this turn)$/);
+  const {terrainLabel} = await import('../src/ui/tactical-intel.js');
+  assert.equal(placeName(e, hero), hero.name, 'A unit is named instead of its ground');
+  assert.equal(hoverText(e, hero, route(hero)), `${hero.name} · ${terrainLabel(e, hero)} · ${hero.x + 1}${String.fromCharCode(65 + hero.y)}`, 'Over a unit: its name, the ground and the tile, no walk');
+  assert.equal(pointAnnouncement(e, hero, null), `${hero.name}. ${hero.intent || 'Choose an action or move closer.'}`);
+  assert.equal(hoverText(e, null, null), '');
 });
 
 test('v0.32.1: in-game Help explains walking, the U key and the expanded campaign', async () => {

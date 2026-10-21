@@ -62,7 +62,8 @@ test('v0.30.0: Senate blocs share one palette in both views and never rest on co
   // The 3D trim and the 2D board draw the same colour; the 3D marker leads with the 2D letter.
   for (const bloc of Object.keys(BLOC_STYLE)) assert.equal(BLOC_TRIM[bloc], parseInt(BLOC_STYLE[bloc].color.slice(1), 16));
   const css = await readFile(new URL('../src/ui/battle-3d.css', import.meta.url), 'utf8');
-  for (const bloc of DELEGATE_BLOCS) assert.match(css, new RegExp(`\\[data-bloc=${bloc}\\] \\.world-short::before\\{content:"${BLOC_STYLE[bloc].letter}"\\}`), `${bloc} letter on the 3D stance marker`);
+  const {declared, keyframes} = await import('./css-rules.mjs');
+  for (const bloc of DELEGATE_BLOCS) assert.equal(declared(css, selector => selector.endsWith(`[data-bloc=${bloc}] .world-short::before`)).content, `"${BLOC_STYLE[bloc].letter}"`, `${bloc} letter on the 3D stance marker`);
   const s = started('ch11-adlection'), voters = s.encounter.units.filter(u => DELEGATE_BLOCS.includes(u.bloc));
   assert.ok(new Set(voters.map(u => u.bloc)).size === 3, 'The Senate fixture seats all three blocs');
   const {ctx, strokes, texts} = recordingContext();
@@ -540,8 +541,13 @@ test('v0.30.0: every story painting has a depth map in its chapter’s group, an
     assert.equal(assets.includes('./assets/scenes/depth/frontier-oath.webp'), chapter === 1 || chapter === 12, 'The oath painting’s depth travels with the oath');
   }
   assert.equal(Art.promotionScene(9), './assets/scenes/province.webp');assert.equal(Art.promotionScene(11), './assets/scenes/rome.webp');assert.equal(Art.promotionScene(4), Art.chapterScene(4));
-  const views = await readFile(new URL('../src/ui/campaign-views.js', import.meta.url), 'utf8');
-  assert.match(views, /const scene=promotionScene\(ch\.id\);/, 'The promotion view and the chapter group name the same painting');
+  // The promotion view shows the painting its chapter group downloads (a legally reached promotion).
+  const G = await import('../src/core/game.js'), {createCampaignViews} = await import('../src/ui/campaign-views.js'), {playEncounter} = await import('../scripts/autoplay.mjs');
+  const s = G.newGame('Promotion');G.choose(s, G.getChapter(s).decision.options[0].id);
+  for (let i = 0; i < 2; i++) {if (s.encounterIndex > 0 && !s.oath) G.swearOath(s);assert.ok(G.startEncounter(s).ok);playEncounter(s);assert.ok(G.commitEncounter(s).ok);}
+  assert.equal(s.phase, 'promotion');
+  const promotion = createCampaignViews(() => ({state: s, screen: 'game', settings: {}, saving: false, offline: false})).promotion();
+  assert.match(promotion, new RegExp(`<div class="ceremony-scene" aria-hidden="true"><img src="${Art.promotionScene(1).replaceAll('.', '\\.')}"`), 'The promotion view and the chapter group name the same painting');
   // The chapter's weather outdoors (the same as its 3D battle); motes in the Curia and the accession's evening light.
   const {chapterWeather} = await import('../src/ui/chapter-weather.js'), {getSceneProfile} = await import('../src/showcase/campaign-scene-profile.js');
   for (let chapter = 1; chapter <= 12; chapter++) {
@@ -576,9 +582,10 @@ test('v0.30.0: the painting takes over from its still image without a jump and d
   assert.ok(largest > .008 && largest <= .0125 && deepest <= .035, `A small drift (${largest.toFixed(4)}) and dolly (${deepest.toFixed(4)})`);
   assert.equal(P.paintingMotion(5, {arrival: 4.5}).arrival, 1);assert.equal(P.paintingMotion(4, {arrival: 0}).arrival, 1, 'No arrival without the CSS animation');
   const css = await (await import('node:fs/promises')).readFile(new URL('../src/ui/cinematic.css', import.meta.url), 'utf8');
-  assert.match(css, /\.scene-depth-canvas\{position:absolute;inset:0;[^}]*pointer-events:none;opacity:0;transition:opacity \.8s ease-out\}/);
-  assert.match(css, /\.scene-depth-canvas\[data-ready="true"\]\{opacity:1\}/);
-  assert.match(css, /@keyframes scene-arrival\{from\{transform:scale\(1\.035\)\}to\{transform:scale\(1\)\}\}/, 'The canvas repeats this arrival');
+  const {declared, keyframes} = await import('./css-rules.mjs'), canvas = declared(css, '.scene-depth-canvas');
+  assert.deepEqual([canvas.position, canvas.inset, canvas['pointer-events'], canvas.opacity, canvas.transition], ['absolute', '0', 'none', '0', 'opacity .8s ease-out'], 'A decorative layer over the still painting, faded in when ready');
+  assert.equal(declared(css, '.scene-depth-canvas[data-ready="true"]').opacity, '1');
+  assert.deepEqual(keyframes(css, 'scene-arrival'), {from: {transform: 'scale(1.035)'}, to: {transform: 'scale(1)'}}, 'The canvas repeats this arrival');
 });
 
 test('v0.30.0: one painting canvas at a time; it pauses unseen, survives re-renders and falls back to the still image', async () => {
@@ -629,10 +636,14 @@ test('v0.30.0: one painting canvas at a time; it pauses unseen, survives re-rend
     headless.mount(province, {chapter: 10});await settle();assert.equal(province.children.length, 0);
     assert.equal(createScenePainting({load: page.load, createContext: page.createContext}).mount(page.host('./assets/portraits/varro.webp')), null, 'Only scene paintings drift');
   } finally {Math.random = random;}
-  // The app mounts one painting per render: a 2D-staged oath or accession first, else the mural or the promotion scene.
-  const app = await (await import('node:fs/promises')).readFile(new URL('../src/ui/app.js', import.meta.url), 'utf8');
-  assert.match(app, /const scenePainting=createScenePainting\(\{load:src=>loadArt\(src\)\}\);/);
-  assert.match(app, /const host=screen==='title'\?null:\(!ceremony3D&&ceremonyHost\)\|\|app\.querySelector\('\.cinematic-mural'\)\|\|app\.querySelector\('\.ceremony-scene:not\(\[data-ceremony\]\)'\);/);
-  assert.match(app, /if\(host\)scenePainting\.mount\(host,\{chapter:state\?\.chapter,quality:graphics\.mode,reducedMotion:settings\.reducedMotion\}\);else scenePainting\.release\(\);/);
-  assert.equal(app.match(/mountPainting\(\);/g).length, 3, 'Every render, the reduced-motion switch and a quality change re-mount or release it');
+  // The page mounts one painting per render: a 2D-staged oath or accession first, else the mural or the promotion scene.
+  const {paintingHost} = await import('../src/ui/scene-parallax.js');
+  const page = found => ({querySelector: selector => found[selector] ?? null});
+  const oath = {id: 'oath'}, mural = {id: 'mural'}, promotion = {id: 'promotion'};
+  const all = page({'[data-ceremony]': oath, '.cinematic-mural': mural, '.ceremony-scene:not([data-ceremony])': promotion});
+  assert.equal(paintingHost(all), oath, 'An oath shown as a painting drifts first');
+  assert.equal(paintingHost(all, {ceremony3D: true}), mural, 'An oath staged in 3D is not a painting');
+  assert.equal(paintingHost(page({'.ceremony-scene:not([data-ceremony])': promotion})), promotion);
+  assert.equal(paintingHost(all, {title: true}), null, 'The title page has none');
+  assert.equal(paintingHost(page({})), null);
 });

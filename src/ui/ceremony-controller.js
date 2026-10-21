@@ -7,9 +7,9 @@ export function createCeremonyController({load=()=>Promise.all([import('../showc
   return {
     mount(target,{kind,name,quality='balanced',reducedMotion=false,figureStyle='sculpted'}={}){
       const next=`${kind}:${name}`;
-      if(stage&&key===next&&host===target&&canvas?.isConnected){stage.setReducedMotion(reducedMotion);if(stage.quality!==quality)stage.applyQuality(quality);return stage;}
+      if(key===next&&host===target&&canvas?.isConnected){if(stage){stage.setReducedMotion(reducedMotion);if(stage.quality!==quality)stage.applyQuality(quality);}return stage;}
       release();key=next;host=target;const ticket=++version;
-      canvas=document.createElement('canvas');canvas.className='ceremony-canvas';canvas.setAttribute('aria-hidden','true');target.append(canvas);
+      canvas=document.createElement('canvas');canvas.className='ceremony-canvas';canvas.setAttribute('aria-hidden','true');canvas.setAttribute('data-live','');target.append(canvas);
       load().then(async([{BattleStage,preloadBattleFigures},{ceremonyScene}])=>{
         if(ticket!==version||!canvas?.isConnected)return;
         const scene=ceremonyScene(kind,{name});if(!scene){release();return;}
@@ -17,11 +17,14 @@ export function createCeremonyController({load=()=>Promise.all([import('../showc
         await Promise.race([preloadBattleFigures?.(scene.encounter,{chapter:scene.chapter,rank:scene.rank,figureStyle}),new Promise(done=>setTimeout(done,15000))]);
         if(ticket!==version||!canvas?.isConnected)return;
         try{
-          stage=new BattleStage(canvas,scene.encounter,{quality,reducedMotion,chapter:scene.chapter,rank:scene.rank,figureStyle,ceremony:scene,onPick:()=>{},onHover:()=>{}});
-          const own=stage;stage.onError=error=>{release();onError(error);};stage.home();
+          const own=await BattleStage.create(canvas,scene.encounter,
+            {quality,reducedMotion,chapter:scene.chapter,rank:scene.rank,figureStyle,ceremony:scene,onPick:()=>{},onHover:()=>{}},
+            {current:()=>ticket===version&&Boolean(canvas?.isConnected)});
+          if(!own)return;
+          stage=own;stage.onError=error=>{release();onError(error);};stage.home();
           // The painting stays until the tableau is prepared and drawn once.
           Promise.resolve(own.ready).then(()=>{if(stage===own&&host===target)target.dataset.ceremonyReady='true';});
-        }catch(error){release();onError(error?.message||String(error));}
+        }catch(error){if(ticket===version){release();onError(error?.message||String(error));}}
       }).catch(error=>{if(ticket===version){release();onError(error?.message||String(error));}});
       return null;
     },

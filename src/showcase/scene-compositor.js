@@ -1,4 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
+import {FRAME_SLICE_MS,nextSlice} from './build-steps.js';
 
 // Linear HDR scene color and camera depth stay together. Tone mapping and the
 // display transfer happen exactly once, in the last pass through Three's chunks.
@@ -46,8 +47,7 @@ export function gradeToneMappingChunk(grade=DEFAULT_GRADE){
 // on its first frame. Compiling and first-using one variant at a time spreads
 // that wait over short tasks. One drawable per material and program-relevant
 // shape stands for the rest (three keys a program on both).
-const COMPILE_SLICE_MS=8;
-const nextCompileSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
+
 // What an object and its geometry add to a program's key. Flags, not types:
 // an InstancedMesh reports the type "Mesh".
 export function drawableShape(o){
@@ -370,7 +370,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
       for(const unit of compileUnits(root)){
         if(disposed||!current())return;
         bound(()=>renderer.compile(unit,camera,lights));firstUse();
-        if(performance.now()-slice>COMPILE_SLICE_MS){await nextCompileSlice();slice=performance.now();}
+        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
       }
       if(object||disposed||!current()||direct())return;
       directGrade(false);checked(()=>{renderer.compile(quad,screenCamera);renderer.properties?.get(material).currentProgram?.getUniforms?.();});
@@ -383,7 +383,7 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
         if(disposed||!current())break;
         const image=texture.image;if(!(texture.version>0)||!image||image.complete===false||texture.isVideoTexture)continue;
         renderer.initTexture(texture);uploaded++;
-        if(performance.now()-slice>COMPILE_SLICE_MS){await nextCompileSlice();slice=performance.now();}
+        if(performance.now()-slice>FRAME_SLICE_MS){await nextSlice();slice=performance.now();}
       }
       return uploaded;
     },

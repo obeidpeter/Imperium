@@ -11,6 +11,7 @@ import {loadTacticalArt} from '../ui/unit-sprites.js';
 import {environmentImageUrls} from './environment-materials.js';
 import {decodeImage} from './decoded-images.js';
 import {preloadSceneryModels} from './scenery-models.js';
+import {nextSlice} from './build-steps.js';
 
 // The figures' shared textures (skin complexions and the procedural surface
 // tiles) are held for the whole session: the next battle neither downloads nor
@@ -52,7 +53,8 @@ export function preloadBattleFigures(encounter,options={}){
   if(typeof window==='undefined'||!encounter)return Promise.resolve({tasks:0,failed:0});
   const run={
     painted:()=>loadTacticalArt(encounter).then(()=>true),
-    materials:()=>{for(const kind of Object.keys(ACTOR_SURFACE_SPEC))hold(`surface:${kind}`,()=>acquireActorSurface(kind));return warmActorMaterials();},
+    // One surface kind per task: each is a sizeable piece of pixel work.
+    materials:async()=>{for(const kind of Object.keys(ACTOR_SURFACE_SPEC)){hold(`surface:${kind}`,()=>acquireActorSurface(kind));await nextSlice();}return warmActorMaterials();},
     body:need=>warmActorBody(need.id),
     anatomy:need=>warmActorAssets(need.identity),
     complexion:need=>{hold(`complexion:${need.id}`,()=>acquireActorComplexion(need.id));return warmActorComplexion(need.id);},

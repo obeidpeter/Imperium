@@ -27,7 +27,12 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
       if(key!==nextKey){release();key=nextKey;}
       if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}
-      if(stage){canvas.replaceWith(stage.canvas);stage.canvas.parentElement.append(stage.labelLayer);if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';stage.resize();update();return stage;}
+      if(stage){
+        if(canvas!==stage.canvas)canvas.replaceWith(stage.canvas);
+        if(stage.labelLayer.parentElement!==stage.canvas.parentElement)stage.canvas.parentElement.append(stage.labelLayer);
+        if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';
+        stage.resize();update();return stage;
+      }
       const ticket=++version;
       load().then(async({BattleStage,preloadBattleFigures})=>{
         if(ticket!==version||!canvas.isConnected||!latest)return;
@@ -38,11 +43,15 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
         await Promise.race([preloadBattleFigures?.(encounter,{chapter,rank,commendations,figureStyle,quality}),new Promise(done=>setTimeout(done,PRELOAD_MS))]);
         if(ticket!==version||!canvas.isConnected||!latest)return;
         try{
-          const own=stage=new BattleStage(canvas,latest.encounter,{...latest,keyboardMode:'grid'});
-          stage.onError=error=>{release();onError(error);};stage.home();update();
+          // The world is built in short steps behind the veil; a release or a
+          // newer battle while it builds discards it.
+          const own=await BattleStage.create(canvas,latest.encounter,{...latest,keyboardMode:'grid'},
+            {current:()=>ticket===version&&canvas.isConnected&&Boolean(latest)});
+          if(!own)return;
+          stage=own;stage.onError=error=>{release();onError(error);};stage.home();update();
           // The "Preparing" veil stays until the battle is prepared and drawn once.
           Promise.resolve(own.ready).then(()=>{if(stage!==own)return;own.revealed=true;if(own.canvas.parentElement)own.canvas.parentElement.dataset.ready='true';});
-        }catch(error){release();onError(error.message||String(error));}
+        }catch(error){if(ticket===version){release();onError(error.message||String(error));}}
       }).catch(error=>{if(ticket===version){release();onError(error.message||String(error));}});
       return null;
     },
