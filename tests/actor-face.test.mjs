@@ -55,7 +55,7 @@ test('Eyelid UVs follow the front skin and corner weights keep the lid anchored 
 test('Actual production eyelid vertices close through skinning while the outer rim stays fixed; seeking and reduced motion reset exactly',()=>{
   for(const unit of units){const actor=createActor(unit,{assetLibrary:catalog}),head=actor.group.getObjectByName('head'),entries=[];
     actor.group.traverse(mesh=>{if(!mesh.isSkinnedMesh||mesh.userData.overview)return;const ids=mesh.geometry.attributes.skinIndex,w=mesh.geometry.attributes.skinWeight;for(let i=0;i<ids.count;i++)if(mesh.skeleton.bones[ids.getX(i)].name==='left-eyelid')entries.push({mesh,i,weight:w.getX(i)});});
-    assert.ok(entries.length>300);assert.ok(entries.some(v=>v.weight===0)&&entries.some(v=>v.weight===1));
+    assert.ok(entries.length>120,'The lid is a real surface (its shared vertices)');assert.ok(entries.some(v=>v.weight===0)&&entries.some(v=>v.weight===1));
     const positions=()=>entries.map(({mesh,i})=>mesh.getVertexPosition(i,new T.Vector3()).applyMatrix4(mesh.matrixWorld).applyMatrix4(head.matrixWorld.clone().invert()));
     actor.update({time:0,motion:'idle',resetPose:true});const open=positions(),peak=4.58-(actorKit(unit).identity%13)*.13;
     actor.update({time:peak,motion:'idle',resetPose:true});const closed=positions();

@@ -93,8 +93,10 @@ test('Material batching merges tint-only differences but preserves maps, roughne
   const geometries=new Set(),materials=new Set([base,tint,eye]),skeletons=new Set(),sources=[base,tint,eye].map((material,i)=>{const geometry=new T.PlaneGeometry(.02,.02);geometries.add(geometry);const mesh=new T.Mesh(geometry,material);mesh.position.x=i*.03;bone.add(mesh);return mesh;});
   const skins=bindActorSurfaces(group,sources,{geometries,materials,skeletons});assert.equal(skins.length,2);
   const painted=skins.find(m=>!m.material.isMeshPhysicalMaterial),physical=skins.find(m=>m.material.isMeshPhysicalMaterial);
-  assert.equal(painted.geometry.attributes.position.count,12);assert.equal(physical.geometry.attributes.position.count,6);assert.equal(physical.material.roughness,.27);assert.equal(physical.material.clearcoat,.8);
-  const colors=painted.geometry.attributes.color;assert.ok(colors.getX(0)>.99&&colors.getY(0)<.01);assert.ok(colors.getY(6)>.99&&colors.getX(6)<.01);
+  // Two quads and one, each keeping its four shared corners: 4 and 2 triangles.
+  assert.equal(painted.geometry.index.count,12);assert.equal(painted.geometry.attributes.position.count,8);
+  assert.equal(physical.geometry.index.count,6);assert.equal(physical.geometry.attributes.position.count,4);assert.equal(physical.material.roughness,.27);assert.equal(physical.material.clearcoat,.8);
+  const colors=painted.geometry.attributes.color;assert.ok(colors.getX(0)>.99&&colors.getY(0)<.01);assert.ok(colors.getY(4)>.99&&colors.getX(4)<.01);
   for(const s of skeletons)s.dispose();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();for(const m of [rough,mapped,lessCoated])m.dispose();mapped.map.dispose();
 });
 
@@ -103,10 +105,10 @@ test('Final production actors retain two forward-facing physical irises through 
   for(const unit of [{id:'hero'},{id:'aelia',name:'Aelia',role:'voter'}]){
     const actor=createActor(unit,{assetLibrary:catalog,quality:'balanced'}),eyes=[];actor.group.traverse(o=>{if(o.isSkinnedMesh&&o.material?.isMeshPhysicalMaterial&&o.material.clearcoat===.8)eyes.push(o);});
     assert.equal(eyes.length,1,'Both irises share one physical material draw after batching.');const mesh=eyes[0],p=mesh.geometry.attributes.position,n=mesh.geometry.attributes.normal;
-    assert.equal(p.count,1920);assert.equal(mesh.material.roughness,.27);assert.equal(mesh.material.clearcoatRoughness,.15);assert.equal(mesh.material.vertexColors,true);
+    const ix=mesh.geometry.index;assert.equal(ix.count,1920);assert.ok(p.count<ix.count,'The irises keep their shared vertices');assert.equal(mesh.material.roughness,.27);assert.equal(mesh.material.clearcoatRoughness,.15);assert.equal(mesh.material.vertexColors,true);
     // The center ring repeats its point; aperture-clipped outer rings also meet
     // at the eyelid boundary. Both legitimately create zero-area triangles.
-    let nondegenerate=0;for(let i=0;i<p.count;i+=3){a.fromBufferAttribute(p,i);b.fromBufferAttribute(p,i+1);c.fromBufferAttribute(p,i+2);normal.subVectors(b,a).cross(c.sub(a));if(normal.lengthSq()<1e-22)continue;assert.ok(normal.z>0);for(let j=0;j<3;j++)assert.ok(n.getZ(i+j)>0,'Every rendered eye triangle shades forward.');nondegenerate++;}assert.ok(nondegenerate>400);
+    let nondegenerate=0;for(let i=0;i<ix.count;i+=3){a.fromBufferAttribute(p,ix.getX(i));b.fromBufferAttribute(p,ix.getX(i+1));c.fromBufferAttribute(p,ix.getX(i+2));normal.subVectors(b,a).cross(c.sub(a));if(normal.lengthSq()<1e-22)continue;assert.ok(normal.z>0);for(let j=0;j<3;j++)assert.ok(n.getZ(ix.getX(i+j))>0,'Every rendered eye triangle shades forward.');nondegenerate++;}assert.ok(nondegenerate>400);
     actor.dispose();
   }
 });
