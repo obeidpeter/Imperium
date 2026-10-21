@@ -37,8 +37,13 @@ import {createSceneCompositor} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
 import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,createFlamePlume,sampleFlamePlume} from './stage-particles.js';
 import {createTouchHold} from '../ui/touch-hold.js';
+export {preloadBattleFigures} from './stage-preload.js';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
+// How long a battle waits for its figures' downloads before it is shown anyway.
+const PREPARE_FIGURES_MS=12000;
+// A build slice before the page is given a turn; then the next slice.
+const FRAME_SLICE_MS=8,nextSlice=()=>globalThis.scheduler?.yield?.()??new Promise(done=>setTimeout(done,0));
 // Frame targets divide common refresh rates; see createFrameCadence.
 const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:4096,fps:60}};
 // Presentation styles for the figures (FIGURE_STYLES). Painted stands the 2D
@@ -146,10 +151,14 @@ export function stageActorPose(unit,frame,timeline,{time=0,dt=0,reducedMotion=fa
   return {time:reducedMotion?0:time,dt,motion,reducedMotion,locomotionDistance,movementProgress:o?.progress,turnSign:Math.sign(Math.sin(facingYaw(o?.facing??unit.facing)-facingYaw(o?.previousFacing??unit.facing)))||1,braced:unit.braced||pair?.before.braced,locomotionWeight:['walk','run'].includes(motion)?Math.min(1,(o?.progress??1)/.12,(1-(o?.progress??0))/.12):1,phase:motion==='brace'&&o?.pose!=='brace'?.45:phase,direction,health,selected:false,...combatReaction(unit,frame,timeline,direction)};
 }
 export class BattleStage{
-  constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true}={}){
+  constructor(canvas,encounter,{onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
     try{
     this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;this.commendations=commendations??{};this.profile=getSceneProfile(encounter,{chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;this.elapsed=0;this.disposed=false;
-    this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});this.cuesPlayed=0;
+    this.renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+    // Checking each program's link status on first use waits for the driver to
+    // finish compiling it; programs are compiled ahead instead (prepare). Shader
+    // diagnostics stay available for development: ?debug=shaders.
+    this.renderer.debug.checkShaderErrors=!!debugShaders||/[?&]debug=shaders(&|$)/.test(globalThis.location?.search??'');this.sound=createBattleSound({recordedCue:(kind,options)=>campaignSoundscape().cue(kind,options),stopRecordings:()=>campaignSoundscape().stopEffects()});this.cuesPlayed=0;
     this.deviceReport=renderDeviceReport(this.renderer.getContext());this.gpuTimer=createGpuTimer(this.renderer.getContext());this.adaptiveResolution=adaptiveResolution;
     this.resolutionBudget=createResolutionBudget({fps:QUALITY[quality]?.fps??60,enabled:adaptiveResolution,onChange:()=>this.updatePixelRatio()});this.cadence=createFrameCadence({fps:QUALITY[quality]?.fps??60});
     this.materialReady=warmActorMaterials().then(ready=>{if(!this.disposed){this.shadowDirty=true;this.canvas.dataset.materials=ready?'atlas':'fallback';}return ready;});
@@ -191,7 +200,8 @@ export class BattleStage{
     this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);this.effectGroup.add(this.nightLight);
     this.rebuildAtmosphere();
     this.compositor=createSceneCompositor(this.renderer,this.camera,{quality});this.compositor.setGrade?.(this.profile.grade??{});this.compositor.setStyle?.(figureStyleFinish(this.figureStyle));
-    this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
+    this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(canvas);this.applyQuality(quality);this.figureQueue=new Set();this.sync(encounter);this.bind();this.resize();this.frame=requestAnimationFrame(t=>this.tick(t));
+    this.ready=this.prepare();
     }catch(error){this.releasePartial();throw error;}
   }
   // A constructor failure must not strand the overlay, renderer, observer or audio.
@@ -215,11 +225,10 @@ export class BattleStage{
       const styleKey=`${u.side}:${u.role}:${u.name}:${vComm}:${this.quality}:${this.figureStyle}`;let actor=this.actors.get(u.id);
       // A committed defection changes the uniform and allegiance together.
       if(!actor||actor.group.userData.styleKey!==styleKey){
-        actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
-          create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
-          prepare:candidate=>{if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;candidate.group.userData.styleKey=styleKey;}
-        });
-        this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';this.canvas.dataset.generatedBodies=String([...this.actors.values()].filter(a=>a.group.userData.actor?.body).length);}});
+        // While the stage is first built, new figures wait for prepare(), which
+        // builds them a few at a time; the rest of this unit's sync waits too.
+        if(!actor&&this.figureQueue){this.figureQueue.add(u.id);continue;}
+        actor=this.placeFigure(u,{styleKey,vComm,encounter});
       }
       if(!this.labels.has(u.id)){const label=document.createElement('div');label.dataset.unitId=u.id;label.innerHTML='<span class="world-role"></span><span class="world-name"></span><span class="world-signal"></span><span class="world-short"></span><span class="world-health"><i></i></span><span class="world-detail"></span><strong></strong><span class="world-leader"></span>';this.labelLayer.append(label);this.labels.set(u.id,label);this.labelRefs.set(u.id,{name:label.querySelector('.world-name'),signal:label.querySelector('.world-signal'),short:label.querySelector('.world-short'),health:label.querySelector('i'),detail:label.querySelector('.world-detail'),effect:label.querySelector('strong'),leader:label.querySelector('.world-leader')});}
       const label=this.labels.get(u.id),readout=actorReadout(u,encounter);
@@ -242,6 +251,14 @@ export class BattleStage{
     this.updateMoraleRings(encounter);
     this.updateReinforcementBeacons(encounter);
     this.updateTacticalLinks();
+  }
+  placeFigure(u,{styleKey,vComm,encounter=this.encounter}){
+    const actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
+      create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,{chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,{quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
+      prepare:candidate=>{if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;candidate.group.userData.styleKey=styleKey;}
+    });
+    this.poseReset.add(u.id);actor.ready?.then(()=>{if(!this.disposed&&this.actors.get(u.id)===actor){this.shadowDirty=true;this.poseReset.add(u.id);if(!actor.painted&&actor.rebuilt!==false)this.attachFormation(u,actor);this.canvas.dataset.actorAssets=actorAssetStatus().ready?'imported':'fallback';this.canvas.dataset.generatedBodies=String([...this.actors.values()].filter(a=>a.group.userData.actor?.body).length);}});
+    return actor;
   }
   releaseOverlay(group){this.overlay?.remove(group);group.traverse(o=>{if(o.geometry&&o.geometry!==this.targetGeometry&&o.geometry!==this.ringGeometry)o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])m.dispose();if(o.isLight)o.dispose?.();});}
   updateMoraleRings(encounter=this.encounter){
@@ -270,12 +287,7 @@ export class BattleStage{
     for(const [id,group]of this.reinforcementBeacons)if(!wanted.has(id)){this.releaseOverlay(group);this.reinforcementBeacons.delete(id);}
     for(const w of waves){
       if(!this.reinforcementBeacons.has(w.id)){
-        const group=new T.Group();group.name='reinforcement-beacon';
-        const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide}));
-        ring.rotation.x=-Math.PI/2;
-        const spire=new T.Mesh(new T.ConeGeometry(.16,.55,4),new T.MeshBasicMaterial({color:'#df9d85',transparent:true,opacity:.82}));
-        spire.position.set(0,.32,0);spire.rotation.x=Math.PI;
-        group.add(ring,spire);this.overlay.add(group);this.reinforcementBeacons.set(w.id,group);
+        const group=this.beaconGroup();this.overlay.add(group);this.reinforcementBeacons.set(w.id,group);
       }
       const group=this.reinforcementBeacons.get(w.id),color=w.imminent?'#c44d3f':'#d89b3c';
       group.position.copy(this.world(w));group.position.y+=.06;
@@ -284,6 +296,14 @@ export class BattleStage{
       group.userData.wave=w;
       group.visible=true;
     }
+  }
+  beaconGroup(){
+    const group=new T.Group();group.name='reinforcement-beacon';
+    const ring=new T.Mesh(this.targetGeometry,new T.MeshBasicMaterial({color:'#d89b3c',transparent:true,opacity:.85,depthWrite:false,side:T.DoubleSide}));
+    ring.rotation.x=-Math.PI/2;
+    const spire=new T.Mesh(new T.ConeGeometry(.16,.55,4),new T.MeshBasicMaterial({color:'#df9d85',transparent:true,opacity:.82}));
+    spire.position.set(0,.32,0);spire.rotation.x=Math.PI;
+    group.add(ring,spire);return group;
   }
   updateChamberStandards(encounter=this.encounter){
     if(!this.overlay)return;
@@ -319,24 +339,29 @@ export class BattleStage{
     for(const fw of list){
       const key=`${fw.type}:${fw.x},${fw.y}`;
       if(!this.fieldworkMeshes.has(key)){
-        const group=new T.Group();group.name=`fieldwork:${fw.type}`;group.userData.fieldwork=fw;
-        if(fw.type==='stakes'){
-          const wood=new T.MeshStandardMaterial({color:'#6e5034',roughness:.85});
-          for(const x of [-.45,0,.45]){const stake=new T.Mesh(new T.ConeGeometry(.08,.85,6),wood);stake.position.set(x,.38,0);stake.rotation.z=-.38;group.add(stake);}
-        }else if(fw.type==='rampart'){
-          const turf=new T.Mesh(new T.BoxGeometry(1.55,.48,.58),new T.MeshStandardMaterial({color:'#6b5a42',roughness:.9}));turf.position.set(0,.24,.55);group.add(turf);
-        }else if(fw.type==='brazier'){
-          const stand=new T.Mesh(new T.CylinderGeometry(.24,.15,.52,8),new T.MeshStandardMaterial({color:'#46423d',metalness:.7,roughness:.45}));stand.position.set(.52,.26,.45);
-          const fire=new T.Mesh(new T.SphereGeometry(.2,8,6),new T.MeshBasicMaterial({color:'#ff9b3d'}));fire.position.set(.52,.56,.45);
-          const light=new T.PointLight('#ff9a3c',1.85,8,1.8);light.name='brazier-light';light.position.set(.52,.88,.45);
-          const plume=createFlamePlume(this.particleMask??null);plume.position.set(.52,.56,.45);
-          group.userData.brazierLight=light;group.userData.flamePlume=plume;
-          group.add(stand,fire,light,plume);
-        }
+        const group=this.fieldworkGroup(fw.type);group.userData.fieldwork=fw;
         this.overlay.add(group);this.fieldworkMeshes.set(key,group);
       }
       const group=this.fieldworkMeshes.get(key);group.position.copy(this.world(fw));group.visible=true;
     }
+  }
+  // A player-built fieldwork. A brazier borrows the stage's one point light
+  // (tick): adding a light would recompile every lit program mid-battle.
+  fieldworkGroup(type){
+    const group=new T.Group();group.name=`fieldwork:${type}`;
+    if(type==='stakes'){
+      const wood=new T.MeshStandardMaterial({color:'#6e5034',roughness:.85});
+      for(const x of [-.45,0,.45]){const stake=new T.Mesh(new T.ConeGeometry(.08,.85,6),wood);stake.position.set(x,.38,0);stake.rotation.z=-.38;group.add(stake);}
+    }else if(type==='rampart'){
+      const turf=new T.Mesh(new T.BoxGeometry(1.55,.48,.58),new T.MeshStandardMaterial({color:'#6b5a42',roughness:.9}));turf.position.set(0,.24,.55);group.add(turf);
+    }else if(type==='brazier'){
+      const stand=new T.Mesh(new T.CylinderGeometry(.24,.15,.52,8),new T.MeshStandardMaterial({color:'#46423d',metalness:.7,roughness:.45}));stand.position.set(.52,.26,.45);
+      const fire=new T.Mesh(new T.SphereGeometry(.2,8,6),new T.MeshBasicMaterial({color:'#ff9b3d'}));fire.position.set(.52,.56,.45);
+      const plume=createFlamePlume(this.particleMask??null);plume.position.set(.52,.56,.45);
+      group.userData.brazierLightAt=new T.Vector3(.52,.88,.45);group.userData.flamePlume=plume;
+      group.add(stand,fire,plume);
+    }
+    return group;
   }
   updateBattleDecals(encounter=this.encounter,extraTiles=[]){
     if(!this.overlay)return;
@@ -368,9 +393,7 @@ export class BattleStage{
     this.tacticalArcs.forEach(line=>line.visible=false);
     for(const [i,link]of links.entries()){
       if(!this.tacticalArcs[i]){
-        const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
-        const m=new T.LineBasicMaterial({color:link.color,transparent:true,opacity:.85,depthWrite:false});
-        const line=new T.Line(g,m);line.name='tactical-link';line.frustumCulled=false;this.overlay.add(line);this.tacticalArcs.push(line);
+        const line=this.tacticalLine(link.color);this.overlay.add(line);this.tacticalArcs.push(line);
       }
       const line=this.tacticalArcs[i],pos=line.geometry.attributes.position;
       if(link.kind==='path'&&link.points?.length>=2){
@@ -387,6 +410,10 @@ export class BattleStage{
       }
       pos.needsUpdate=true;line.material.color.set(link.color);line.userData.linkKind=link.kind;line.visible=true;
     }
+  }
+  tacticalLine(color){
+    const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(new Float32Array(17*3),3));
+    const line=new T.Line(g,new T.LineBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));line.name='tactical-link';line.frustumCulled=false;return line;
   }
   setSelection(selected,targets=[],target=null){this.selected=selected;this.targets=targets;this.selectedAction=target?.action??null;this.labelSizeDirty=true;
     if(this.targetMaterial)this.targetMaterial.color.set(targetRingColor(this.selectedAction,this.encounter,targets[0]??target));
@@ -426,7 +453,7 @@ export class BattleStage{
     for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,Math.max(this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),RIVER_WATER_LEVEL)+.04);}
     pos.needsUpdate=true;geometry.computeBoundingBox();geometry.computeBoundingSphere();
   }
-  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);}this.compositor?.setQuality(this.quality);this.resize();}
+  applyQuality(quality){const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';const q=QUALITY[this.quality];this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}if(previous!==this.quality&&this.environment){this.sceneryOcclusion?.dispose();this.environment.dispose();this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group);this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);this.compositor?.setQuality(this.quality);this.ready=this.prepare();}this.compositor?.setQuality(this.quality);this.resize();}
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Swapping style rebuilds only the figure presentation; the encounter is untouched.
@@ -435,7 +462,7 @@ export class BattleStage{
     // The style is part of each figure's style key, so sync replaces every figure
     // and keeps the old one until its replacement is ready (as a quality change does).
     this.figureStyle=next;
-    this.compositor?.setStyle?.(figureStyleFinish(next));this.sync(this.encounter);this.shadowDirty=true;
+    this.compositor?.setStyle?.(figureStyleFinish(next));this.sync(this.encounter);this.shadowDirty=true;this.ready=this.prepare();
   }
   // Where a delegate stands during the division: walking at an even pace,
   // one after another, then facing the champion. Reduced motion skips ahead.
@@ -450,11 +477,10 @@ export class BattleStage{
   // Generated chapter scenery: re-placed on the rebuilt ground, absent at Performance quality.
   rebuildSceneryModels(){
     this.sceneryModels?.dispose();
-    const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,{chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z)});
+    const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,{chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
+      prepare:model=>{this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
     this.canvas.dataset.sceneryModels=own.placements.length?'loading':'0';
-    // Models arrive after the camera cutaway is built; rebuild it so they fade like other scenery.
-    own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;
-      if(ids.length&&this.sceneryOcclusion){this.sceneryOcclusion.dispose();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,own.group);}});
+    own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;});
   }
   // What the battle leaves on the ground (bodies, spent arrows, trodden earth),
   // rebuilt with the ground it marks. Contests and ceremonies leave none.
@@ -474,6 +500,56 @@ export class BattleStage{
     this.shafts=createLightShafts(this.scene,this.profile,{quality:this.quality,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},sunDirection:this.sunOffset.clone().normalize(),seed:this.chapter});
     const level=this.environment.reflectionLevel;
     if(!this.ceremony&&level!==null&&reflectionAvailable(this.renderer,this.quality))this.reflection=createWaterReflection(this.renderer,this.environment.waterReflection,{level,hide:()=>[...this.environment.waterMeshes,this.ink?.mesh,this.overlay,this.grid,this.sky?.group,this.shafts?.group]});
+  }
+  // Nothing is drawn until everything the battle will draw is ready: figures
+  // wear what they will wear (a slow download is waited on only briefly), the
+  // batches for fallen men and one hidden example of each overlay, fieldwork
+  // and beacon exist, and every shader program is compiled, off the main
+  // thread where the browser compiles in parallel. The first frame then builds
+  // only the shadow programs and map, still behind the "Preparing" veil.
+  async prepare(){
+    // A rebuild during preparation starts again; only the latest one reveals.
+    const token=this.prepareToken=(this.prepareToken??0)+1,current=()=>!this.disposed&&token===this.prepareToken;
+    this.isReady=false;
+    try{
+      await this.buildQueuedFigures(current);if(!current())return;
+      const figures=Promise.all([...this.actors.values()].map(a=>a.ready).filter(Boolean));
+      await Promise.race([figures,new Promise(done=>setTimeout(done,PREPARE_FIGURES_MS))]);
+      if(!current())return;
+      this.warmup??=this.createWarmup();
+      this.remains?.prepare(this.fallenKinds());
+      await this.compositor.compile(this.scene);
+    }catch(error){this.prepareError=error?.message??String(error);}
+    if(!current())return;
+    this.isReady=true;this.shadowDirty=true;
+    await new Promise(done=>{this.firstFrameDone=done;});
+  }
+  // The first build places figures a few per frame (each is a sizeable piece
+  // of work), so the page keeps answering and the veil can count them in.
+  async buildQueuedFigures(current=()=>!this.disposed){
+    if(!this.figureQueue)return;
+    const queue=[...this.figureQueue];let slice=performance.now();
+    for(const [index,id]of queue.entries()){
+      if(performance.now()-slice>FRAME_SLICE_MS){this.showProgress(index,queue.length);await nextSlice();if(!current())return;slice=performance.now();}
+      const unit=this.visibleUnits.find(u=>u.id===id);if(!unit||this.actors.has(id))continue;
+      const vComm=this.commendations?.[unit.veteranId]??(unit.moraleResistance?6:unit.specialization?3:0);
+      this.placeFigure(unit,{styleKey:`${unit.side}:${unit.role}:${unit.name}:${vComm}:${this.quality}:${this.figureStyle}`,vComm});
+    }
+    this.figureQueue=null;this.showProgress(queue.length,queue.length);this.sync(this.encounter);
+  }
+  showProgress(done,total){const veil=this.canvas?.parentElement?.querySelector('.battle-loading');if(veil)veil.dataset.progress=total?`${done} of ${total} figures`:'';}
+  // One hidden example of each thing drawn only later in a battle, so its
+  // program compiles with the rest and stays alive until the stage goes.
+  createWarmup(){
+    const group=new T.Group();group.name='shader warm-up';group.visible=false;
+    for(const type of ['stakes','rampart','brazier'])group.add(this.fieldworkGroup(type));
+    group.add(this.beaconGroup(),this.tacticalLine('#ffffff'));
+    this.scene.add(group);return group;
+  }
+  fallenKinds(){
+    const kinds=new Map();
+    for(const unit of this.visibleUnits){const actor=this.actors.get(unit.id);if(!actor||civicActor(unit))continue;const kind=this.fallenKind(unit,actor);if(!kinds.has(kind.key))kinds.set(kind.key,kind);}
+    return [...kinds.values()];
   }
   // One appearance per fallen batch: a painted unit's own painting, or a sculpted kind of man.
   fallenKind(unit,actor){
@@ -585,7 +661,7 @@ export class BattleStage{
     if(mounted)for(const f of actor.crowd?.footprints??[])this.combat.dust(f.x,f.y,f.z,{amount:Math.max(1,puffs-1),seed:`${unit.id}:${f.x.toFixed(1)}`});
   }
   finishMotion(cancelAudio=true){if(!this.animation)return;this.markGround();if(cancelAudio)this.sound?.stop?.();const resolve=this.animation.resolve;if(this.canvas?.dataset)this.canvas.dataset.motion=cancelAudio?'cancelled':'complete';this.animation=null;this.projectiles.forEach(p=>p.visible=false);this.sparkClouds.forEach(p=>p.material.opacity=0);this.effectRings.forEach(p=>p.visible=false);this.sync(this.encounter);this.poseReset=new Set(this.actors.keys());resolve?.();}
-  tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
+  tick(now){if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;if(sincePaint&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
     if(this.pendingHover&&!this.drag){const point=this.pick(this.pendingHover);this.pendingHover=null;this.hovered=point?.unitId??null;this.onHover(point);if(this.hovered!==this.inkHover){this.inkHover=this.hovered;this.updateInk();}}
     const renderStart=performance.now();let frame=null;
     if(this.animation){const a=this.animation;const elapsed=(now-a.start)/a.scale;frame=sampleEncounterTimeline(a.timeline,elapsed);while(a.nextCue<a.cues.length&&a.cues[a.nextCue].time<=elapsed){const cue=a.cues[a.nextCue++];const tile=cue.at??this.encounter.units.find(u=>u.id===cue.unitId),pan=tile?clamp(this.world(tile).project(this.camera).x,-1,1):0;if(elapsed-cue.time<150&&this.sound.cue(cue.kind,{...cue,pan}))this.cuesPlayed++;}if(frame.complete){this.finishMotion(false);frame=null;}}
@@ -647,9 +723,9 @@ export class BattleStage{
       if(defender&&fx.delta)this.labelRefs.get(defender.id).effect.textContent=String(fx.delta);
     }}
     if(this.chamberStandards)for(const [bloc,std]of this.chamberStandards)if(std.group.visible&&std.banner)std.banner.rotation.z=this.reducedMotion?0:Math.sin(this.elapsed*2.1+bloc.length)*.035;
+    let brazier=null;
     if(this.fieldworkMeshes)for(const group of this.fieldworkMeshes.values())if(group.visible&&group.userData.flamePlume){
-      sampleFlamePlume(group.userData.flamePlume,this.elapsed,{reducedMotion:this.reducedMotion});
-      if(group.userData.brazierLight)group.userData.brazierLight.intensity=this.reducedMotion?1.85:1.85+.28*Math.sin(this.elapsed*8.5+group.position.x);
+      sampleFlamePlume(group.userData.flamePlume,this.elapsed,{reducedMotion:this.reducedMotion});brazier??=group;
     }
     sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed,{reducedMotion:this.reducedMotion});
     CLOUD_UNIFORMS.cloudStrength.value=this.cloudLevel??0;CLOUD_UNIFORMS.cloudTime.value=this.reducedMotion?0:this.elapsed%3600;this.shafts?.update(this.elapsed,{reducedMotion:this.reducedMotion});
@@ -658,7 +734,11 @@ export class BattleStage{
     // Combat effects run on the motion's own clock (faster at double speed).
     this.combatClock=(this.combatClock??0)+dt*(this.animation?1/this.animation.scale:1);
     this.remains?.update(this.elapsed);this.combat?.update(this.combatClock);
-    if(this.nightLight){this.nightLight.intensity=this.profile.torchlight?(this.reducedMotion?2.35:2.35+.22*Math.sin(this.elapsed*7.5)):0;if(selected)this.nightLight.position.set(selected.group.position.x,selected.group.position.y+2.8,selected.group.position.z);}
+    // One point light serves the night torch or, by day, the first burning brazier.
+    if(this.nightLight){const light=this.nightLight;
+      if(this.profile.torchlight){light.color.set('#ffad5c');light.distance=16;light.decay=1.6;light.intensity=this.reducedMotion?2.35:2.35+.22*Math.sin(this.elapsed*7.5);if(selected)light.position.set(selected.group.position.x,selected.group.position.y+2.8,selected.group.position.z);}
+      else if(brazier){light.color.set('#ff9a3c');light.distance=8;light.decay=1.8;light.intensity=this.reducedMotion?1.85:1.85+.28*Math.sin(this.elapsed*8.5+brazier.position.x);light.position.copy(brazier.userData.brazierLightAt).add(brazier.position);}
+      else light.intensity=0;}
     const target=this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone();
     let actionGoal=0;
     if(this.animation&&!this.focusMode&&this.cameraView==='overview'&&!this.reducedMotion){const elapsed=(now-this.animation.start)/this.animation.scale;
@@ -697,7 +777,7 @@ export class BattleStage{
     for(const gpuMs of this.gpuTimer?.poll()??[])this.resolutionBudget?.record(gpuMs);
     this.gpuTimer?.begin();
     let reflectionMs=0;try{const start=performance.now();if(this.profileFrames++%this.frameProfile.reflectionStride()===0)this.reflection?.render(this.scene,this.camera);reflectionMs=performance.now()-start;if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);}finally{this.gpuTimer?.end();}
-    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
+    const cost=performance.now()-renderStart;this.frameProfile.record({cpuMs:cost,intervalMs:sincePaint,reflectionMs});this.samples.push(cost);this.renderCounts.push(this.renderer.info.render.calls);if(this.samples.length>120)this.samples.shift();if(this.renderCounts.length>120)this.renderCounts.shift();this.onFrame(cost);if(this.firstFrameDone){const done=this.firstFrameDone;this.firstFrameDone=null;done();}if(now-(this.lastStats||0)>1000){this.lastStats=now;this.canvas.dataset.renderStats=JSON.stringify(this.stats());}
   }
   // Fit the sun's shadow box to what the camera can see: close views gain
   // texel density, the overview keeps the whole board and nearby casters.
@@ -735,7 +815,7 @@ export class BattleStage{
     this.labelStats=counts;this.labelSizeDirty=false;
   }
   stats(){return {device:this.deviceReport,frameProfile:this.frameProfile.stats(),pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};}
-  dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.sceneryModels?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
+  dispose(){if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();this.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])materials.add(m);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());this.sun.shadow?.dispose?.();this.renderer.dispose();
     // A discarded canvas releases its context now instead of waiting for GC; a
     // canvas that stays in the page (a reused host) keeps its context.
     if(!this.canvas.isConnected)this.renderer.forceContextLoss?.();}

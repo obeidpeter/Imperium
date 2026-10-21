@@ -59,7 +59,7 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
 // (bloc-style.js) and in a trim shape of its own.
 export const BLOC_TRIM=Object.freeze(Object.fromEntries(Object.entries(BLOC_STYLE).map(([bloc,style])=>[bloc,parseInt(style.color.slice(1),16)])));
 export function createActor(unit={},options={}){
-  let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group;
+  let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group,rebuilt=false;
   const contacts=rig.contacts,source=options.assetLibrary;
   const kit=actorKit(unit,options),identity=actorIdentity(unit,kit);
   // A generated body, where one fits the figure's kit, replaces the procedural figure once it loads.
@@ -79,11 +79,13 @@ export function createActor(unit={},options={}){
     if(bodyLoaded){if(built.body)return true;}
     else if(!loaded)return false;
     else if(built.imported&&(!hairLoaded||built.hairImported))return true;
-    const parent=group.parent;rig.dispose();group.clear();
+    const parent=group.parent;rig.dispose();group.clear();rebuilt=true;
     rig=createActorRig(unit,options,group);Object.assign(contacts,rig.contacts);
     if(parent)parent.add(group);rig.update({...lastInput,resetPose:true});return true;
   }).finally(releasePendingComplexion);
-  return {group,contacts,ready,update(input={}){if(!disposed){lastInput={...input};rig.update(input);}},
+  // rebuilt: whether arriving assets replaced the first build (the stage then
+  // re-forms the figure's followers; a figure built complete keeps them).
+  return {group,contacts,ready,get rebuilt(){return rebuilt;},update(input={}){if(!disposed){lastInput={...input};rig.update(input);}},
     // The figure's overview surfaces held in its collapse and laid on the
     // ground, for the battle's remains; its own pose is restored at once.
     bakeFallen(){if(disposed)return null;const mounted=!!group.userData.actor?.mounted;rig.update({...(mounted?MOUNTED_FALLEN_POSE:FALLEN_POSE),unit:lastInput.unit});const geometry=bakeFallenGeometry(group,{mounted});rig.update({...lastInput,resetPose:true});return geometry;},getReleasePoint(target){return rig.getReleasePoint(target);},dispose(){if(disposed)return;disposed=true;releasePendingComplexion();rig.dispose();}};

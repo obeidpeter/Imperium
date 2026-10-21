@@ -36,7 +36,7 @@ const loadScene=url=>{
 };
 const TEXTURES=['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap'];
 
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=loadScene}={}){
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=loadScene,prepare=null}={}){
   const group=new T.Group(),owned=new Set();group.name='generated scenery';scene.add(group);
   let disposed=false;
   // Resources are owned until dispose; a model that arrives after dispose is freed at once.
@@ -58,7 +58,10 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     if(disposed)return null;
     model.name=p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw;model.updateMatrixWorld(true);
     model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.raycast=()=>{};}});
-    ground(model);group.add(model);return p.id;
+    ground(model);
+    // The stage readies a model (its cutaway and shaders) before it is ever drawn.
+    if(prepare){try{await prepare(model);}catch{}if(disposed)return null;}
+    group.add(model);return p.id;
   })).then(ids=>ids.filter(Boolean));
   return {group,placements,ready,
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const r of owned)r.dispose?.();owned.clear();}};

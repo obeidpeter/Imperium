@@ -192,7 +192,9 @@ test('v0.25.0 Ignis & Ferrum: volumetric brazier flame plumes, projectile trails
   };
   stage.updateFieldworks(encounter);
   const brazier = stage.fieldworkMeshes.get('brazier:2,3');
-  assert.ok(brazier?.userData.brazierLight?.isPointLight, 'Brazier fieldwork mounts a dynamic warm PointLight');
+  // v0.38: the brazier borrows the stage's one point light (its warm flicker is set in tick);
+  // a light of its own would recompile every lit shader in the middle of a battle.
+  assert.ok(brazier?.userData.brazierLightAt?.isVector3 && !brazier.getObjectByProperty('isPointLight', true), 'Brazier fieldwork borrows the pooled warm PointLight');
   assert.ok(brazier?.userData.flamePlume?.isPoints, 'Brazier fieldwork mounts a volumetric flame plume');
 
   stage.updateBattleDecals(encounter, [{x: 5, y: 1, kind: 'clash'}]);

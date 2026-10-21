@@ -7,12 +7,16 @@ import {batchStaticEnvironment} from './environment-batching.js';
 // detail merges by material and never becomes a picking or rule obstacle.
 export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced'}={}){
   const group=new T.Group();group.name='interactive-battlefield';scene.add(group);
-  let signature='',fires=[],walkSurfaces=[],bounds=null,disposed=false;
+  let signature='',fires=[],walkSurfaces=[],bounds=null,disposed=false,retired=[];
   const geometries=new Set(),materials=new Set();
+  // A state change rebuilds the set with materials like the old ones. The old
+  // ones are disposed only after the new set has drawn, so their shader
+  // programs pass straight to the new materials instead of compiling again.
   function clear(){
-    for(const g of geometries)g.dispose();for(const m of materials)m.dispose();
+    for(const g of geometries)g.dispose();if(materials.size)retired.push({materials:[...materials],frames:0});
     geometries.clear();materials.clear();group.clear();group.userData.fieldObjects=[];fires=[];walkSurfaces=[];bounds=null;
   }
+  function release(force=false){retired=retired.filter(r=>{if(!force&&++r.frames<3)return true;r.materials.forEach(m=>m.dispose());return false;});}
   const ground=(x,z)=>{const y=heightAt(x,z);return Number.isFinite(y)?y:0;};
   function sync(e){
     if(disposed)return false;
@@ -50,8 +54,8 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
       for(const s of walkSurfaces)if(Math.abs(x-s.x)<=s.halfLength&&Math.abs(z-s.z)<=s.halfWidth)return s.left+(s.right-s.left)*(x-s.x+s.halfLength)/(s.halfLength*2)+.13;
       return null;
     },
-    update(time,reduced){if(!Number.isFinite(time))return;for(const f of fires){const a=reduced?0:Math.sin(time*(f.index<2?7:1.2)+f.index);f.mesh.scale.set(f.scale[0]*(1+a*.05),f.scale[1]*(1+a*(f.index<2?.15:.06)),f.scale[2]*(1+a*.05));}},
+    update(time,reduced){release();if(!Number.isFinite(time))return;for(const f of fires){const a=reduced?0:Math.sin(time*(f.index<2?7:1.2)+f.index);f.mesh.scale.set(f.scale[0]*(1+a*.05),f.scale[1]*(1+a*(f.index<2?.15:.06)),f.scale[2]*(1+a*.05));}},
     stats:()=>bounds,
-    dispose(){if(disposed)return;disposed=true;clear();group.removeFromParent();}
+    dispose(){if(disposed)return;disposed=true;clear();release(true);group.removeFromParent();}
   };
 }

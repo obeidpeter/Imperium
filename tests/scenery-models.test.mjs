@@ -85,13 +85,13 @@ test('the loader grounds each model on its lowest sample, never takes picks, ski
 
 test('the camera cutaway covers the generated models like the rest of the scenery', async () => {
   const [e]=chapterFiveStarts(),environment=new T.Group(),wall=new T.Mesh(new T.BoxGeometry(),new T.MeshStandardMaterial());environment.add(wall);
-  const models=createSceneryModels(new T.Scene(),e,{chapter:5,load:loadFile});await models.ready;
-  const meshes=[];models.group.traverse(o=>{if(o.isMesh)meshes.push(o);});const originals=meshes.map(m=>m.material);
-  const occlusion=createSceneryOcclusion(environment,models.group);assert.equal(occlusion.stats().meshes,meshes.length+1);
-  occlusion.update(new T.PerspectiveCamera(),{targets:[{position:{x:0,y:1,z:0}}]});
-  assert.ok(meshes.every((m,i)=>m.material!==originals[i]),'Every opaque model mesh takes the cutaway shader');
-  occlusion.dispose();assert.ok(meshes.every((m,i)=>m.material===originals[i]));
-  models.dispose();wall.geometry.dispose();wall.material.dispose();
+  const occlusion=createSceneryOcclusion(environment),prepared=[];
+  // Each model is readied (cutaway, shaders) before it joins the drawn scene.
+  const models=createSceneryModels(new T.Scene(),e,{chapter:5,load:loadFile,prepare:async model=>{assert.equal(model.parent,null,'prepared before it is drawn');prepared.push(model.name);occlusion.add(model);}});await models.ready;
+  const meshes=[];models.group.traverse(o=>{if(o.isMesh)meshes.push(o);});
+  assert.equal(prepared.length,5);assert.equal(occlusion.stats().meshes,meshes.length+1);
+  assert.ok(meshes.every(m=>[m.material].flat().every(material=>material.userData.sceneryCutaway)),'Every opaque model mesh takes the cutaway shader');
+  occlusion.dispose();models.dispose();wall.geometry.dispose();wall.material.dispose();
 });
 
 test('embedded textures load under the page Content Security Policy', async () => {

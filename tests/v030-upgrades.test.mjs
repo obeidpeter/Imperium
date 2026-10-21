@@ -237,6 +237,11 @@ test('v0.30.0: the fallen lie low and stay; spent arrows stand clear of their ma
   const scene = new T.Scene(), remains = createBattleRemains(scene, {quality: 'balanced', heightAt: () => 0});
   const actor = createActor({id: 'enemy1', role: 'infantry', side: 'enemy', hp: 5, maxHp: 10}, {chapter: 7});
   const kind = {key: 'sculpted:infantry:enemy', make: sculptedFallenKind(actor)};
+  // v0.38: each kind's batch exists, empty, before the battle is shown, so the
+  // first fall compiles no shader in play; preparing it twice makes nothing new.
+  assert.equal(remains.prepare([kind, kind]), 1);assert.equal(remains.prepare([kind]), 0);
+  const prepared = remains.group.children.find(c => c.isInstancedMesh && c.name.startsWith('fallen'));
+  assert.ok(prepared && prepared.count === 0 && remains.stats().kinds === 1 && remains.stats().bodies === 0);
   for (let i = 0; i < REMAINS_LIMIT.balanced + 3; i++) remains.fall({...kind, world: new T.Vector3(i * .5, 0, 0), yaw: i, animate: false});
   assert.equal(remains.stats().bodies, REMAINS_LIMIT.balanced, 'Bodies are capped, oldest first');
   assert.equal(remains.stats().kinds, 1, 'One baked body serves every man of that kind');

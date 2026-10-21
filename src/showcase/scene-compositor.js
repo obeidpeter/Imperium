@@ -307,6 +307,20 @@ export function createSceneCompositor(renderer,camera,{quality='balanced'}={}){
       finally{renderer.setRenderTarget(previousTarget);renderer.info.autoReset=autoReset;}
       if(failure){release();renderer.info.reset();directGrade(true);renderer.render(scene,camera);}
     },
+    // Compiles every program render(scene) will use, with the same target,
+    // tone mapping and output as render() (a key that differed would compile
+    // again on the first frame), plus the finishing pass. Where the browser
+    // compiles in parallel, the main thread never waits on the driver.
+    async compile(scene,{targetScene=null,object=null}={}){
+      if(disposed)return;
+      const root=object??scene,lights=targetScene??scene,direct=!supported||!tier.enabled||failure;
+      directGrade(!!direct);
+      if(direct){await renderer.compileAsync(root,camera,lights);return;}
+      resize();const previousTarget=renderer.getRenderTarget();let pending;
+      try{renderer.setRenderTarget(target);pending=renderer.compileAsync(root,camera,lights);}
+      finally{renderer.setRenderTarget(previousTarget);}
+      await Promise.all([pending,object?null:renderer.compileAsync(quad,screenCamera)]);
+    },
     stats:()=>{const enabled=supported&&tier.enabled&&!disposed&&!failure;return {enabled,quality,method:'linear HDR + depth contact shading + edge antialiasing + bloom & aerial grading',multisamples:enabled?target?.samples??0:0,hazeNear:material.uniforms.hazeRange.value.x,directions:enabled?tier.samples:0,depthSamples:enabled?tier.samples*2:0,bloomStrength:enabled?tier.bloomStrength:0,casStrength:enabled?tier.casStrength:0,aerialStrength:enabled?tier.aerialStrength:0,vignetteStrength:enabled?tier.vignetteStrength:0,width:target?.width??0,height:target?.height??0,drawingWidth:drawingSize.x,drawingHeight:drawingSize.y,passes:disposed?0:enabled?2:1,tiltShift:enabled?material.uniforms.tiltShift.value:0,ink:enabled?material.uniforms.ink.value:0,temporalHistory:false,gradeInToneMapping:!disposed&&renderer.toneMapping===T.CustomToneMapping,fallback:failure??(supported?null:'float render targets unavailable')};},
     toneMapping:()=>({direct:renderer.toneMapping===T.CustomToneMapping,chunk:gradeChunk}),
     dispose(){if(disposed)return;disposed=true;release();geometry.dispose();material.dispose();if(T.ShaderChunk.tonemapping_pars_fragment===gradeChunk)T.ShaderChunk.tonemapping_pars_fragment=BASE_TONEMAPPING_CHUNK;}
