@@ -1,6 +1,6 @@
 import {clockText,commandable,missionProgress,queueCommand,roundOf,routePreview,snapshotWorld,step} from '../core/realtime/simulation.js';
 import {advanceClock,clockAlpha,createClock,hurryClock,interruptClock,setPaused,setSlow,setSpeed,stepRound,stepping} from '../core/realtime/clock.js';
-import {blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
+import {abilityKey,blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
 import {actorById,distanceBetween,forecast,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME} from '../data/realtime-rules.js';
@@ -277,17 +277,17 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(!pressMove||options.holdToMove===false||!world)return;const pick=pickAt(p);
     if(pick&&Number.isFinite(pick.x)&&!pick.actorId&&!pick.objectId)queueCommand(world,{actorId:world.controlled,kind:'move',payload:{x:pick.x,z:pick.z}});
   }
+  // The ability buttons and number keys follow one rule (intents.js abilityKey).
   function chooseAbility(id,{touch=false}={}){
-    if(touch){if(armed===id){armed=null;useAbility(id,{});return;}armed=id;ability=id;say(`${ABILITIES[id].name}: tap the target.`);return;}
-    if(ability===id){useAbility(id,keyTarget?{actorId:keyTarget}:{});return;}
-    ability=id;say(`${ABILITIES[id].name} is ready: right-click the target, or press its number again.`);
+    if(touch){
+      // Touch: a tap arms the ability for the next tap on the scene; tapping it again uses it on yourself.
+      if(armed===id){armed=null;pressAbility(id,{again:true,target:null});return;}armed=id;ability=id;say(`${ABILITIES[id].name}: tap the target.`);return;
+    }
+    pressAbility(id);
   }
-  function useAbility(id,target){
-    if(id==='strike'){if(target.actorId)issue({actorId:world.controlled,kind:'attack',payload:{targetId:target.actorId}});else say(REASONS.NO_TARGET,{warning:true});return;}
-    const self=ABILITIES[id].target==='self'||ABILITIES[id].selfIfNoTarget&&!target.actorId;
-    const reason=validate(world,world.controlled,id,self?{}:target);
-    if(reason){say(`${ABILITIES[id].name}: ${REASONS[reason]}`,{warning:true});return;}
-    issue({actorId:world.controlled,kind:'ability',payload:{abilityId:id,...(target.actorId&&!self?{targetId:target.actorId}:{})}});
+  function pressAbility(id,{again=false,target=keyTarget,pointer=null}={}){
+    const r=abilityKey(world,{abilityId:id,current:again?id:ability,keyTarget:target,pointer,quickCast:!!pointer});ability=r.current;
+    if(r.command)issue(r.command);else say(r.message,{warning:r.warning});
   }
 
   // ——— The party: a portrait, [ ] or Home takes direct control; the man left
@@ -343,9 +343,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(ARROWS[action]){arrows.add(action);arrowMove();return true;}
     if(action.startsWith('ability_')){
       const id=abilitiesOf(h)[Number(action.slice(8))-1];if(!id){say('No ability in that place.');return true;}
-      if(options.quickCast&&hoverPoint&&id!=='strike'){
-        ability=id;const it=intentAt(hoverPoint,'right',id);if(it?.command)issue(it.command);else say(it?.message||REASONS.NO_TARGET,{warning:true});return true;
-      }
+      if(options.quickCast&&hoverPoint&&id!=='strike'){const pick=pickAt(hoverPoint);if(pick){pressAbility(id,{pointer:pick});return true;}}
       chooseAbility(id);return true;
     }
     switch(action){

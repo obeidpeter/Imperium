@@ -64,7 +64,7 @@ function startAbility(world,actor,order){
       emit(world,{kind:'cast',actorId:actor.id,abilityId:ability.id,targetId:target?.id??null});break;
     }
     case 'bash':{
-      const cast=ticksOf(ability.castTime_s);actor.stamina-=ability.cost.stamina??0;
+      const cast=ticksOf(ability.castTime_s);
       actor.action={kind:'bash',abilityId:ability.id,targetId:target.id,start:world.tick,contact:world.tick+Math.round(cast*ability.release),end:world.tick+cast};
       emit(world,{kind:'bash',actorId:actor.id,targetId:target.id});break;
     }
@@ -98,6 +98,8 @@ function progress(world,actor,action){
   if(target?.alive&&target!==actor&&action.kind!=='work')turnToward(actor,target.x-actor.x,target.z-actor.z);
   else if(action.kind==='throw'&&Number.isFinite(action.x))turnToward(actor,action.x-actor.x,action.z-actor.z);
   if((action.kind==='swing'||action.kind==='bash')&&world.tick===action.contact){
+    // The bash spends its Stamina when it is delivered: one stopped before contact costs nothing.
+    if(action.kind==='bash')actor.stamina=Math.max(0,actor.stamina-(ABILITIES.shield_bash.cost.stamina??0));
     const reach=action.kind==='bash'?ABILITIES.shield_bash.range_m+.35:reachOf(actor);
     if(target?.alive&&distanceBetween(actor,target)<=reach+COMBAT.reachSlack)
       world.blows.push({attackerId:actor.id,defenderId:target.id,...(action.kind==='bash'?{profile:ABILITIES.shield_bash.effects[0].damage,bash:true}:{})});

@@ -148,3 +148,23 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   for(const p of places)add('Places',`Move to ${p.name.toLowerCase().startsWith('beside')?p.name:p.name.toLowerCase()}`,order('move',{x:p.x,z:p.z}),{detail:m(distanceBetween(actor,p))});
   return out;
 }
+
+// A number key (guide "Abilities"): the first press chooses the ability for
+// the right button; a second press uses it on the chosen target (T), or on
+// yourself when there is none and the ability allows it. With quick-cast on,
+// one press uses it at the pointer at once. Returns the ability now chosen,
+// the Command to give (or null) and what to tell the player. Pure.
+export function abilityKey(world,{actorId=world.controlled,abilityId,current='strike',keyTarget=null,pointer=null,quickCast=false}={}){
+  const ability=ABILITIES[abilityId];if(!ability)return {current,command:null,message:'No ability in that place.',warning:false};
+  if(quickCast&&pointer&&abilityId!=='strike'){
+    const it=pointerIntent(world,{actorId,pick:pointer,button:'right',abilityId});
+    return {current:abilityId,command:it.command,message:it.command?`${ability.name}.`:it.message||REASONS.NO_TARGET,warning:!it.command};
+  }
+  if(current!==abilityId)return {current:abilityId,command:null,message:`${ability.name} is ready: right-click the target, or press its number again.`,warning:false};
+  if(abilityId==='strike')return keyTarget?{current,command:{actorId,kind:'attack',payload:{targetId:keyTarget}},message:'Strike.',warning:false}
+    :{current,command:null,message:REASONS.NO_TARGET,warning:true};
+  const self=ability.target==='self'||ability.selfIfNoTarget&&!keyTarget;
+  const reason=validate(world,actorId,abilityId,self?{}:{actorId:keyTarget});
+  if(reason)return {current,command:null,message:`${ability.name}: ${REASONS[reason]}`,warning:true};
+  return {current,command:{actorId,kind:'ability',payload:{abilityId,...(keyTarget&&!self?{targetId:keyTarget}:{})}},message:`${ability.name}.`,warning:false};
+}
