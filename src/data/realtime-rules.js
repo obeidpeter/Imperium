@@ -188,6 +188,11 @@ export const ARENA=Object.freeze({
 // metres and no friend stands within `cover` of it, and draws back toward the
 // nearest friend, so it never marches into the raiders on its own.
 export const ESCORT_RULES=Object.freeze({halt:8,cover:4});
+// What showing each chapter capability takes, in the field's words (the camp
+// lists them by name): the last battle of a chapter is won only once they are shown.
+export const CAPABILITY_TASKS=Object.freeze({move:'move',strike:'strike',brace:'brace',throw:'throw a pilum',assist:'bind a comrade’s wounds or carry him',
+  scout:'scout',order:'give a squad an order',formation:'order squads into a formation',rally:'rally your squads',deploy:'place your company before the advance'});
+export const capabilityTasks=ids=>ids.map(id=>CAPABILITY_TASKS[id]??id).join(' and ');
 
 // Standing orders (§3.7): four slots of {action, target}, evaluated at 4 Hz;
 // the first feasible slot wins. Target words are relative to the hero.

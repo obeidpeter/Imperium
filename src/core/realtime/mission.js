@@ -1,4 +1,4 @@
-import {ESCORT_RULES,TIME} from '../../data/realtime-rules.js';
+import {ESCORT_RULES,TIME,capabilityTasks} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {helpless,setRoute} from './motion.js';
 import {spawnActor} from './actors.js';
@@ -32,9 +32,12 @@ const atGoal=(world,o)=>span(o.x-world.mission.goal.x,o.z-world.mission.goal.z)<
 const capable=world=>world.mission.required.every(a=>world.used.includes(a));
 
 // Escorted columns walk toward the goal while the hero (or a companion) is
-// near them; a wounded man waits for Bind wounds or to be carried.
+// near them; a wounded man waits for Bind wounds or to be carried. Threatened,
+// a column is covered by any of ours beside it: the soldier, a companion, or a
+// man of a squad screening it.
 function moveEscorts(world){
   const m=world.mission,leaders=world.actors.filter(o=>standing(o)&&(o.id===world.heroId||world.party.includes(o.id)));
+  const guards=world.actors.filter(o=>standing(o)&&o.squadId&&friendly(o));
   for(const e of escortsOf(world)){
     if(!standing(e)||e.action)continue;
     if(!e.escort.escorted||m.pauseEscorts){if(e.order){e.order=null;e.path=[];}continue;}
@@ -42,7 +45,7 @@ function moveEscorts(world){
     if(there||!near){if(e.order){e.order=null;e.path=[];e.gait=null;}continue;}
     // Threatened and uncovered, the column halts and draws back to its nearest protector.
     const threat=world.actors.some(o=>o.side==='enemy'&&standing(o)&&!o.hidden&&distanceBetween(o,e)<=ESCORT_RULES.halt);
-    if(threat&&!leaders.some(l=>distanceBetween(l,e)<=ESCORT_RULES.cover)){
+    if(threat&&!leaders.some(l=>distanceBetween(l,e)<=ESCORT_RULES.cover)&&!guards.some(g=>distanceBetween(g,e)<=ESCORT_RULES.cover)){
       const l=leaders.reduce((b,o)=>!b||distanceBetween(o,e)<distanceBetween(b,e)?o:b,null);
       if(l&&distanceBetween(l,e)>2){if(e.order?.kind!=='fallback'||!e.path.length){e.order={kind:'fallback'};setRoute(world,e,{x:l.x,z:l.z},{run:false});}}
       else if(e.order){e.order=null;e.path=[];e.gait=null;}
@@ -143,7 +146,7 @@ export function missionTick(world){
     if(!m.toldMissing){m.toldMissing=true;emit(world,{kind:'capability-needed',missing:m.required.filter(a=>!world.used.includes(a))});}
   }
   if(roundEnd(world)&&(world.tick+1)/R>=m.deadline){
-    world.status='lost';m.reason=!capable(world)?`Deadline: demonstrate ${m.required.filter(a=>!world.used.includes(a)).join(', ')}.`:'The deadline has passed.';
+    world.status='lost';m.reason=!capable(world)?`The deadline passed before you could ${capabilityTasks(m.required.filter(a=>!world.used.includes(a)))}.`:'The deadline has passed.';
     emit(world,{kind:'defeat'});
   }
 }

@@ -162,12 +162,15 @@ export function routeSquad(world,squad,point,{run=false}={}){
   return route;
 }
 const turn=(squad,dx,dz)=>{const d=span(dx,dz);if(d>1e-6){squad.fx=dx/d;squad.fz=dz/d;}};
+// A standard waits for its men: it does not march on while most of them are
+// this far from their places (held up behind a wall, or still catching up).
+const STRAGGLE=12;
 export function moveSquads(world){
   const grid=navGrid(world.map);
   for(const squad of squadsOf(world)){
     if(!fielded(world,squad)){squad.moving=false;continue;}
     let moved=0;
-    if(squad.path.length){
+    if(squad.path.length&&!straggling(world,squad)){
       let budget=squadSpeed(world,squad)*DT;
       while(budget>1e-9&&squad.path.length){
         const next=squad.path[0],dx=next.x-squad.x,dz=next.z-squad.z,d=span(dx,dz);
@@ -190,14 +193,31 @@ export function moveSquads(world){
     men.forEach((m,i)=>{
       m.slotIndex=i;
       if(m.action||m.order||m.staggerUntil>world.tick)return;
-      const target=slotPoint(squad,slots[i]),dx=target.x-m.x,dz=target.z-m.z,d=span(dx,dz);
-      if(d<.05){m.moving=false;m.gait=null;turnToward(m,squad.fx,squad.fz);return;}
-      const run=d>2.5,pace=(run?derivedValues(m).run:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(d,pace);
-      const nx=m.x+dx/d*step,nz=m.z+dz/d*step;
+      const target=slotPoint(squad,slots[i]),d=span(target.x-m.x,target.z-m.z);
+      if(d<.05){m.moving=false;m.gait=null;m.slotPath=null;turnToward(m,squad.fx,squad.fz);return;}
+      // Ground between a man and his place (a wall, a rock): he goes round by a route, found when the
+      // straight way is blocked and dropped once his place has moved on from its end.
+      let aim=target;
+      if(m.slotPath){
+        const end=m.slotPath[m.slotPath.length-1];
+        if(span(end.x-target.x,end.z-target.z)>2.5)m.slotPath=null;
+        else{while(m.slotPath.length>1&&span(m.slotPath[0].x-m.x,m.slotPath[0].z-m.z)<.3)m.slotPath.shift();aim=m.slotPath.length>1?m.slotPath[0]:target;}
+      }
+      const dx=aim.x-m.x,dz=aim.z-m.z,da=span(dx,dz)||1;
+      const run=d>2.5,pace=(run?derivedValues(m).run:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
+      const nx=m.x+dx/da*step,nz=m.z+dz/da*step;
       if(walkable(grid,nx,nz)){m.x=nx;m.z=nz;m.moving=step>1e-6;m.gait=run?'run':'walk';m.walked+=step;turnToward(m,dx,dz);}
-      else{m.moving=false;m.gait=null;}
+      else{m.moving=false;m.gait=null;if(!m.slotPath){const route=findRoute(grid,m,target);m.slotPath=route.points.length?route.points:null;}}
     });
   }
+}
+// Most of the squad's men far from their places: the standard waits for them.
+function straggling(world,squad){
+  const men=membersOf(world,squad);if(men.length<2)return false;
+  const marching=squad.path.length>0&&span(squad.goal.x-squad.x,squad.goal.z-squad.z)>12&&!squad.contact;
+  const slots=formationSlots(shapeOf(squad,{marching}),men.length);let far=0;
+  [...men].sort((a,b)=>a.slot-b.slot).forEach((m,i)=>{const p=slotPoint(squad,slots[i]);if(span(p.x-m.x,p.z-m.z)>STRAGGLE)far++;});
+  return far*2>men.length;
 }
 function turnToward(actor,dx,dz){const d=span(dx,dz);if(d<1e-6)return;actor.fx=dx/d;actor.fz=dz/d;}
 

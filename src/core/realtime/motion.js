@@ -1,5 +1,5 @@
 import {ABILITIES,MOVEMENT,TIME} from '../../data/realtime-rules.js';
-import {clampToMap,findRoute,navGrid,span,speedFactor,walkable} from './navigation.js';
+import {clampToMap,clearLine,findRoute,navGrid,span,speedFactor,walkable} from './navigation.js';
 import {arcOf,braced,derivedValues} from './combat.js';
 import {actorById,distanceBetween,hostile,staggered} from './abilities.js';
 // Walking only: his own choice (W), or the soldier under a march penalty (the engineer
@@ -56,6 +56,15 @@ export function orderRange(world,actor,order,target){
 }
 // Abilities used where the soldier stands walk him to their target first.
 export const approaches=order=>order?.kind==='interact'||order?.kind==='ability'&&ABILITIES[order.abilityId]?.approach;
+// A waypoint another body stands on is reached as near as he lets you come: the
+// walker goes on (to the next, if the way there is clear), so two men never wait on
+// each other's ground and a squad guarding a column never blocks its road.
+const taken=(world,actor,p)=>world.actors.some(o=>o!==actor&&o.alive&&!o.down&&!o.carriedBy&&span(o.x-p.x,o.z-p.z)<MOVEMENT.radius*2);
+function passTaken(world,grid,actor){
+  const next=actor.path[0];if(span(next.x-actor.x,next.z-actor.z)>=MOVEMENT.radius*2||!taken(world,actor,next))return false;
+  if(actor.path.length>1&&!clearLine(grid,actor,actor.path[1],{fromBlocked:!walkable(grid,actor.x,actor.z)}))return false;
+  actor.path.shift();return true;
+}
 
 export function moveActors(world){
   const grid=navGrid(world.map);
@@ -78,6 +87,7 @@ export function moveActors(world){
     const derived=derivedValues(actor),run=actor.gait==='run'&&!engaged(world,actor)&&!walksOnly(world,actor)&&!actor.carrying;
     let budget=(run?derived.run:actor.pace??MOVEMENT.walk)*speedFactor(grid,actor.x,actor.z)*DT,moved=0;
     while(budget>1e-9&&actor.path.length){
+      if(passTaken(world,grid,actor))continue;
       const next=actor.path[0],dx=next.x-actor.x,dz=next.z-actor.z,d=span(dx,dz);
       if(d<=budget+MOVEMENT.arrive){actor.x=next.x;actor.z=next.z;budget-=d;moved+=d;actor.path.shift();if(d>1e-6)turnToward(actor,dx,dz);}
       else{actor.x+=dx/d*budget;actor.z+=dz/d*budget;moved+=budget;turnToward(actor,dx,dz);budget=0;}

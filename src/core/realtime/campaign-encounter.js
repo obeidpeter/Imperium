@@ -59,8 +59,13 @@ export function upsampleTerrain(coarse,layout,ground='grass'){
       if(!LINEAR.has(t)){row.push(t);continue;}
       const link=(dx,dy)=>{const n=at(cx+dx,cy+dy);return n===null?EDGE_LINKS.has(t):LINKS[t].includes(n)||t==='ford'&&n==='road';};
       const n=link(0,-1),s=link(0,1),w=link(-1,0),e=link(1,0);
-      if(!n&&!s&&!w&&!e){row.push(t);continue;}
       const c=Math.floor((kx[cx]-1)/2),r=Math.floor((ky[cy]-1)/2);
+      if(!n&&!s&&!w&&!e){
+        // A lone wall is 0.38's standable cover (Varro's shelter, Chapter VII's fortification): a
+        // breastwork around its block, open at the rear (west), so the men inside fight from behind it.
+        if(t==='wall'){const edge=lx===0||ly===0||lx===kx[cx]-1||ly===ky[cy]-1,gap=lx===0&&ly>=r&&ly<r+thick;row.push(edge&&!gap?'wall':ground);continue;}
+        row.push(t);continue;
+      }
       const onV=lx>=c&&lx<c+thick,onH=ly>=r&&ly<r+thick,centre=onV&&onH;
       const vertical=onV&&(centre||ly<r&&n||ly>=r+thick&&s),horizontal=onH&&(centre||lx<c&&w||lx>=c+thick&&e);
       if(t==='ford'){

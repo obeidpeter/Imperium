@@ -1,4 +1,4 @@
-import {ABILITIES,ITEMS,MISSILES,MOVEMENT,REASONS,TIME} from '../../data/realtime-rules.js';
+import {ABILITIES,ITEMS,MISSILES,MOVEMENT,REASONS,TIME,capabilityTasks} from '../../data/realtime-rules.js';
 import {splitStreams} from './rng-streams.js';
 import {cellCentre,clampToMap,findRoute,navGrid,nearestWalkable} from './navigation.js';
 import {weaponOf} from './combat.js';
@@ -259,7 +259,7 @@ function logLine(world,e){
     case 'pressure':return `Enemies hold the objective: the line weakens to ${e.defence}.`;
     case 'used-object':return `${by} finishes: ${nameOf(world,e.objectId)}.`;
     case 'work-stopped':return `${by}'s work is interrupted.`;
-    case 'capability-needed':return `The objective is held, but you must still demonstrate: ${e.missing.join(', ')}.`;
+    case 'capability-needed':return `The objective is held, but you must still ${capabilityTasks(e.missing)}.`;
     case 'war-cry':return `${by} raises the war cry. The companions answer.`;
     case 'provoked':return `${by} strikes ${to}, who was no enemy: he turns on the party.`;
     case 'taken':return `${by} takes ${e.items.map(id=>ITEMS[id]?.name.toLowerCase()??id).join(', ')} from ${to}.`;

@@ -3,7 +3,7 @@ import {advanceClock,clockAlpha,createClock,hurryClock,interruptClock,setPaused,
 import {abilityKey,autoPauseReason,blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
 import {actorById,distanceBetween,forecast,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
-import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME} from '../data/realtime-rules.js';
+import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME,capabilityTasks} from '../data/realtime-rules.js';
 import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figures.js';
 import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
@@ -119,7 +119,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       // The field objects (field-objects.js): what changed, as the log says it.
       if(e.kind==='field'&&e.what!=='brazier-burns'){const line=world.log.findLast?.(l=>l.tick===e.tick&&/gate|bridge|barricade|brazier|pitch|opportunit|secures/i.test(l.text));
         if(line)say(line.text,{announce:true,warning:e.what==='opportunities-closed'});}
-      if(e.kind==='capability-needed')say(`Demonstrate: ${e.missing.join(', ')}.`,{warning:true,announce:true});
+      if(e.kind==='capability-needed')say(`The objective is held: now ${capabilityTasks(e.missing)}.`,{warning:true,announce:true});
       if(e.kind==='work-stopped'&&e.actorId===mine)say('Your work is interrupted.',{warning:true});
       if(e.kind==='rejected'&&e.actorId===mine)say(REASONS[e.reason]??'That cannot be done now.',{warning:true});
       if(e.kind==='blocked'&&e.actorId===mine)say(REASONS[e.reason],{warning:true});
