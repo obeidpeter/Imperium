@@ -10,7 +10,7 @@ The [compact evidence record](presentation-verification-v017.json) contains scen
 
 Male figures can load a locally bundled, skinned GLB derived from official MakeHuman **CC0** anatomy. Its scope is the **head, neck and exposed arms**, fitted to the existing six-joint anatomical rig. Age, facial proportions, surface color, hair and beard variants retain character identities. The original procedural anatomy remains available while the asset loads or if loading fails.
 
-This is a mixed character pipeline, not a replacement with complete imported production characters. Female anatomy, clothing, armor, hands, legs, equipment and the horse remain project-authored models. Existing weapon contacts, planted feet, role equipment and lower-detail rendering remain part of that rig. The [asset manifest](asset-manifest.json) and the bundled [MakeHuman license](../vendor/makehuman/LICENSE.CC0.md) record the imported asset's scope and source; no motion-capture or scanned-actor claim is made.
+This is a mixed character pipeline, not a replacement with complete imported production characters. Female anatomy, clothing, armor, hands, legs, equipment and the horse remain project-authored models. Existing weapon contacts, planted feet, role equipment and lower-detail rendering remain part of that rig. The [asset manifest](../asset-manifest.json) and the bundled [MakeHuman license](../../vendor/makehuman/LICENSE.CC0.md) record the imported asset's scope and source; no motion-capture or scanned-actor claim is made.
 
 ## 2. Coordinated weapon-specific animation
 
@@ -96,7 +96,7 @@ The Chapter I pursue choice persisted through reload and departure. The guide co
 
 At the final local production origin, the restored Chapter I road save matched the source export. Follow and zoom preserved it exactly. After the origin's server process was stopped, the cached title reloaded and Continue returned to **Chapter I road, turn 1**. The imported anatomy was ready, the Balanced finishing pass remained enabled, Chapter I was reported available offline, and the exported save remained exact. The app did not claim the complete campaign was offline. This tests the local desktop browser's cache with its server unavailable, not a physical phone, disconnection of all network traffic, an operating-system crash or a full offline campaign.
 
-The [release preview](images/imperium-v017-preview.png) is an actual full-page production capture in a close **Follow** view, showing the imported recruit anatomy, field guide and command dock. It is not a Horizon capture or illustrative key art.
+The [release preview](../images/imperium-v017-preview.png) is an actual full-page production capture in a close **Follow** view, showing the imported recruit anatomy, field guide and command dock. It is not a Horizon capture or illustrative key art.
 
 ## Download scope
 

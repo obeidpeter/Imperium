@@ -8,12 +8,12 @@ This records what was checked for click-to-walk in 0.31 and how. It does not cla
 - Ground beyond this turn's reach walks the unit as far toward it as the rules allow: to the reachable tile that leaves the shortest way on, measured over the ground the player can see. Ties go to the straighter line, then the cheaper move, then by row and column. If no reachable tile is closer, nothing moves and the readout says why.
 - Pointing at ground, or moving the board cursor onto it, draws the route in 2D and 3D (solid to the stop, dashed beyond) over a faint wash of the ground the unit can reach. The board readout and the cursor announcement give the same summary in words.
 - **Pause → Confirm moves** (off by default) restores preview-then-confirm for moves, including far ground, where the preview is the stop.
-- The rules are unchanged. The new core module [`movement.js`](../src/core/movement.js) and the query `Game.moveRoute` only read state. They change nothing, use no clock and use no randomness. The module also replaces the two separate route reconstructions (the 2D preview path and the walking animation), so the preview, the drawn route and the walk share one route.
+- The rules are unchanged. The new core module [`movement.js`](../../src/core/movement.js) and the query `Game.moveRoute` only read state. They change nothing, use no clock and use no randomness. The module also replaces the two separate route reconstructions (the 2D preview path and the walking animation), so the preview, the drawn route and the walk share one route.
 
 ## Automated checks
 
 - `npm run verify` passed: 668 Node tests, the legal-command campaign autoplay (New Game to Augustus, all 12 chapters), the production build and the asset/offline checks. Chapter I is 7,283,366 bytes compressed of its 8,000,000-byte budget, first load 446,964 of 2,000,000 and the complete campaign 10,761,419 of 24,000,000.
-- [`tests/v031-movement.test.mjs`](../tests/v031-movement.test.mjs) checks the following:
+- [`tests/v031-movement.test.mjs`](../../tests/v031-movement.test.mjs) checks the following:
   - For every legal move at legally reached checkpoints in Chapters I, II (marsh), VIII (the crossing) and XI (the chamber), the route is a chain of orthogonal steps over open ground whose cost equals the rules' cost, and asking for it leaves the state unchanged.
   - Beyond reach, the stop is a legal tile that leaves the least way on. Impassable ground, no route, spent movement, the unit's own tile, off-board points and the camp return no stop.
   - A hidden unit does not change the plan.
@@ -21,7 +21,7 @@ This records what was checked for click-to-walk in 0.31 and how. It does not cla
   - The readout wording, the 2D route strokes and the 3D ink trail (and its caching).
   - The app wiring: walks go through `Game.act` inside the normal change path, the setting defaults to off, routes reach both views, and 2D clicks pick from the pressed pointer's position.
   - The board hint and the board's accessible name follow the setting.
-- [`tests/direct-controls.test.mjs`](../tests/direct-controls.test.mjs) covers the click contract: one click walks (near or far), choosing Move first behaves the same, and a chosen attack never turns a ground click into a walk. With Confirm moves on, the first click previews (far ground previews its stop) and the same target again confirms. No intention changes the serialized state.
+- [`tests/direct-controls.test.mjs`](../../tests/direct-controls.test.mjs) covers the click contract: one click walks (near or far), choosing Move first behaves the same, and a chosen attack never turns a ground click into a walk. With Confirm moves on, the first click previews (far ground previews its stop) and the same target again confirms. No intention changes the serialized state.
 
 ## Injected and synthetic scenarios
 
@@ -48,7 +48,7 @@ A scripted headless Chromium session (SwiftShader) ran the actual app from the d
 
 This was a scripted check, not a human playthrough, and only the Chapter I drill was played through the interface. Later chapters are covered by the unit tests above.
 
-![The route preview in 2D and 3D: solid to this turn's stop, dashed beyond](images/v031-route-preview.jpg)
+![The route preview in 2D and 3D: solid to this turn's stop, dashed beyond](../images/v031-route-preview.jpg)
 
 *Pointing at far ground in the Chapter I drill, 2D (left) and 3D (right), software-rendered. The route runs solid from the recruit to the stop, 1B, then dashed to the goal, 1A. The walkable ground is washed faintly (most visible in 3D).*
 

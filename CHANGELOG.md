@@ -164,12 +164,12 @@ The first release of the world-building plan: battles open without long freezes 
 - Three policy motions offer original and amended terms, rival counterproposals, precise delegate forecasts, staged costs and permanent consequences shown in the camp ledger.
 - Sculpted kit gains scabbards, straps, fittings, stitch and role details; High cloth gains sheen. A new Roman atlas supplies four painted directions per costume. Additional procedural poses cover block, assent, dissent and yielding.
 - Weapon correction targets the committed recipient; shield anticipation and painted attack contact follow the impact clock. Frame reports separate CPU submission, display cadence and GPU observations; reflection refresh responds to measured cost.
-- An asset audit distinguishes authored bitmap sequences from procedural responses and checks bundled model budgets. Verification and limitations are recorded in [release-validation-v031.md](docs/release-validation-v031.md).
-- **Merged after click to walk (0.31.0)**: the shared route in [`movement.js`](src/core/movement.js), which draws the walk preview and the walking animation in both views, now uses the rules' own field geometry. Routes go around a closed gate, each step onto high ground in the rain costs one more, and hovering a closed gate reads "Closed gate". Across all 25 encounters of a legal expanded campaign, every one of 3,241 legal moves walks a route that costs exactly what the rules charge. This work was prepared and validated as draft 0.31 and renumbered 0.32.0 when merged, so its records and images keep `v031` in their names; the integration checks are in [release-validation-v031.md](docs/release-validation-v031.md#integration-into-0320).
+- An asset audit distinguishes authored bitmap sequences from procedural responses and checks bundled model budgets. Verification and limitations are recorded in [release-validation-v031.md](docs/archive/release-validation-v031.md).
+- **Merged after click to walk (0.31.0)**: the shared route in [`movement.js`](src/core/movement.js), which draws the walk preview and the walking animation in both views, now uses the rules' own field geometry. Routes go around a closed gate, each step onto high ground in the rain costs one more, and hovering a closed gate reads "Closed gate". Across all 25 encounters of a legal expanded campaign, every one of 3,241 legal moves walks a route that costs exactly what the rules charge. This work was prepared and validated as draft 0.31 and renumbered 0.32.0 when merged, so its records and images keep `v031` in their names; the integration checks are in [release-validation-v031.md](docs/archive/release-validation-v031.md#integration-into-0320).
 
 ## 0.31.0 — click to walk: one selection moves the unit, far ground walks as far as the turn allows, and the route shows before you commit
 
-The rules are unchanged: a walk is the ordinary legal move command, checked, saved and taken back by Undo Move as before, with no new random-number use and no save format change. Checked with automated tests and scripted runs of the real interface in software rendering (2D and 3D, desktop and phone width); see [movement verification for 0.31](docs/movement-verification-v031.md) for what was and was not checked.
+The rules are unchanged: a walk is the ordinary legal move command, checked, saved and taken back by Undo Move as before, with no new random-number use and no save format change. Checked with automated tests and scripted runs of the real interface in software rendering (2D and 3D, desktop and phone width); see [movement verification for 0.31](docs/archive/movement-verification-v031.md) for what was and was not checked.
 
 - **Click to walk** ([`direct-controls.js`](src/ui/direct-controls.js), [`app.js`](src/ui/app.js)): with no other action chosen, selecting open ground walks the selected unit there at once, through `Game.act` like any other command. **Undo Move** (`U`) takes it back until the unit acts. Attacks, speeches, orders and every other command still preview first and need a second selection or Confirm.
 - **Far ground**: selecting ground beyond this turn's reach walks as far toward it as the rules allow: to the reachable tile that leaves the shortest way on over the ground you can see (ties go to the straighter line, then the cheaper move, then by row and column). If no tile gets closer, nothing moves and the readout and announcement say why: impassable ground, no nearer ground this turn, no route, or movement already spent.
@@ -181,7 +181,7 @@ The rules are unchanged: a walk is the ordinary legal move command, checked, sav
 
 ## 0.30.0 — graphics refinement: Senate blocs beyond colour, a graded Performance tier with baked occlusion, living formations and battle remains, lit painted figures, weightier combat, weather on the light and story paintings in 2.5D
 
-Presentation only: no rule, legal command, random-number use or save format changes. Checked with automated tests, software-rendered screenshots (some of injected, presentation-only scenarios, labelled as such) and one scripted run of the real interface; see [graphics verification for 0.30](docs/graphics-verification-v030.md) for what was and was not checked.
+Presentation only: no rule, legal command, random-number use or save format changes. Checked with automated tests, software-rendered screenshots (some of injected, presentation-only scenarios, labelled as such) and one scripted run of the real interface; see [graphics verification for 0.30](docs/archive/graphics-verification-v030.md) for what was and was not checked.
 
 - **Senate blocs beyond colour** ([`bloc-style.js`](src/ui/bloc-style.js)): the 2D board and the 3D chamber now share one palette. Landholders are wheat ochre instead of green, so every pair of delegate blocs stays apart under simulated protanopia, deuteranopia and tritanopia. The 3D stance marker leads with the bloc's letter (V, L, C, Ch), and toga trims differ in shape: a broad band (Veterans), a double band (Landholders), a band broken into three lengths (Civic) or a band with a gilt line (Chamber).
 - **Performance quality keeps the chapter's look**: without the finishing pass, each chapter's grade (saturation, contrast, split tone) is applied in the tone-mapping step at no extra cost ([`scene-compositor.js`](src/showcase/scene-compositor.js)). Every scene also bakes, once, how much sky each patch of ground sees past its relief and standing scenery ([`environment-baked-occlusion.js`](src/showcase/environment-baked-occlusion.js)), so ground darkens beside walls, tents and rocks on every tier; the bake is lighter where the screen-space pass also runs. AgX and Neutral tone mapping were compared with ACES at High on four chapters: the chapter grades read flatter under AgX and darker and over-saturated under Neutral, so ACES stays.
@@ -196,7 +196,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 
 ## 0.29.0 — graphics overhaul: readable diorama terrain, painted (HD-2D) and ink-and-wash figures, formations, inked tactical ground, chapter colour script and signature moments
 
-Presentation only: no rule, legal command, random-number use or save format changes except the bug fixes listed below. Everything was checked with automated tests and software-rendered screenshots; see [graphics verification for 0.29](docs/graphics-verification-v029.md) for what was and was not checked.
+Presentation only: no rule, legal command, random-number use or save format changes except the bug fixes listed below. Everything was checked with automated tests and software-rendered screenshots; see [graphics verification for 0.29](docs/archive/graphics-verification-v029.md) for what was and was not checked.
 
 - **Readable diorama terrain**: high ground is a 1.6 m flat-topped plateau ([`environment-layout.js`](src/showcase/environment-layout.js)) whose bank stays inside its own cell; adjoining high cells join, banks show earth and rock outcrops, and plateaus beside paving, roads or water are faced as squared-stone terraces. Rivers sit in a channel under one water surface with depth in its vertex alpha; fords are gravel bars with stepping stones; wall cells join into faced runs (stone, mudbrick or timber); paving is irregular flagstones; marshes carry reed beds; roads gain kerb stones ([`environment-campaign-terrain.js`](src/showcase/environment-campaign-terrain.js)). The ground grid is denser over the board without moving its 80 m edge, and static batching folds repeated parts into matching instance batches so every scene stays inside its draw-object budget.
 - **Painted regional backdrop**: a code-painted panorama ([`environment-backdrop.js`](src/showcase/environment-backdrop.js)) with layered ranges and regional landmarks (temples and aqueducts, Palmyrene colonnades, Alpine snow, forest, farmland) stands beyond the modelled ridges. It adds no download.
@@ -235,7 +235,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Adds [`formationRosterPreview`](src/ui/direct-controls.js) to `Formation` order previews in Chapters V+, explicitly naming up to 3 adjacent allies who will join (`Joining shield-wall (N/3): …`) and any nearby allies excluded (`already ordered this turn`, `more than 1 tile from anchor unit`, or `3-unit formation cap reached`).
 - Clarifies political Contest rules in [`coalitionPanel`](src/ui/tactical-intel.js) and [`encounterView`](src/ui/encounter-view.js): defines **Resolve** (*"speaking stamina; 0 withdraws from speaking, vote remains"*), states that votes are counted at the deadline (`end of turn X`; an early majority does not end the debate), displays [`delegateAppealSummary`](src/ui/direct-controls.js) (`Strongest appeals: …`) for each delegate's interest and bloc, and adds `Inspect` (`data-cmd="inspect-delegate"`) buttons to the chamber delegate roster.
 - Adds [`allocationDraftPreview`](src/ui/campaign-views.js) and four preset buttons (`Balanced 2·2·2`, `River focus 4·1·1`, `Farms focus 1·4·1`, `Town focus 1·1·4`) to Chapter X camp preparation, showing live `N / 6` validation and exact Supplies, Army/Public/Political meter, road morale, store integrity, and Landholder tribunal stance effects before dispatching.
-- Updates keyboard arrow-key navigation on `#battle-board` to visibly update `#board-hover` alongside screen-reader announcements, and binds 3D camera shortcuts (`F`, `Home`, `+`, `-`, `H`) in campaign encounters. See [controls overhaul verification](docs/controls-overhaul-verification.md).
+- Updates keyboard arrow-key navigation on `#battle-board` to visibly update `#board-hover` alongside screen-reader announcements, and binds 3D camera shortcuts (`F`, `Home`, `+`, `-`, `H`) in campaign encounters. See [controls overhaul verification](docs/archive/controls-overhaul-verification.md).
 
 ## 0.25.0 — Lux Imperii HDR post-processing, dynamic 3D water, subsurface foliage, physical armor shaders, volumetric fire and 2D Tabula Picta
 
@@ -289,7 +289,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Fits almond eye openings to imported anatomy and clips irises without folded triangles. Upper eyelids blend between the moving lid and fixed head; eye corners remain anchored during blinks.
 - Replaces raised eyebrow tubes with tapered hairs, preserves skin highlight contrast, and adds restrained mature cheek and facial-fold shaping.
 - Feathers beard and scalp boundaries, adds fuller moustache coverage, and retains finer strands in the imported short-hair cutout.
-- Adds seven regression checks and a closed-eyelid control to the development inspector. The full 569-test regression and 13 asset/worker checks pass; legal autoplay completes 25 encounters in 217 turns. See [final validation](docs/release-validation-v019.md).
+- Adds seven regression checks and a closed-eyelid control to the development inspector. The full 569-test regression and 13 asset/worker checks pass; legal autoplay completes 25 encounters in 217 turns. See [final validation](docs/archive/release-validation-v019.md).
 
 ## 0.18.0 — fitted characters and wearable equipment
 
@@ -298,7 +298,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Gives cloth, leather, mail, scale and metal distinct normal and roughness response. Preserves the eyes' physical-material settings through batching so their highlights remain controlled.
 - Replaces separate sleeve caps with a connected, weighted tunic or armor shell, including shaped folds and turned collar/cuff edges. Rebuilds hands with shaped palms, tapered fingers, opposing thumbs and subtle nails, and boots with fitted insteps, toe boxes, sewn panels and separate soles.
 - Adds small overview hand/boot meshes that retain the same silhouette, weapon-grip space and foot-contact plane. Temporary geometry, shared textures and skeletons have explicit ownership and disposal; construction does not consume gameplay randomness.
-- Leaves gameplay rules, campaign content, saves and committed action timing unchanged. The [v0.18 release record](docs/release-validation-v018.md) records 562 full-regression tests, 78 final actor checks, 6 final surface checks, 25 browser scenes / 518 assertions, 63 targeted browser assertions and 13 asset checks. Production revision `a0dbf383f33b` passes the download budgets. A server-stopped Chapter VI reload and normal Continue action preserved the exact portable save code after the full offline download. Physical-device and independent human testing remain unperformed; geometry counts do not establish performance.
+- Leaves gameplay rules, campaign content, saves and committed action timing unchanged. The [v0.18 release record](docs/archive/release-validation-v018.md) records 562 full-regression tests, 78 final actor checks, 6 final surface checks, 25 browser scenes / 518 assertions, 63 targeted browser assertions and 13 asset checks. Production revision `a0dbf383f33b` passes the download budgets. A server-stopped Chapter VI reload and normal Continue action preserved the exact portable save code after the full offline download. Physical-device and independent human testing remain unperformed; geometry counts do not establish performance.
 
 ## Historical 0.17.0 — veteran paths, recurring negotiators and fitted anatomy
 
@@ -309,7 +309,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Fits locally bundled MakeHuman CC0 male head, neck and exposed-arm anatomy to the existing skinned identity rig, with the original procedural fallback. Female figures, clothing, armor, hands, legs, equipment and horses remain original project models. Weapon-specific authored joint clips coordinate sword, spear, mounted, throw and reaction poses; no motion capture is introduced.
 - Adds inhabited frontier/wetland/eastern settlements and civic architecture, plus private-material scenery cutaways for Follow, Horizon and action framing. Unit and objective labels avoid the selected body's projected rectangle. Authoritative terrain and movement remain unchanged.
 - Defers the imported model with shared chapter 3D assets, compresses active terrain materials without repainting, and adds optional bounded drawing-buffer adaptation from asynchronous GPU elapsed queries. Interface text remains at normal resolution. Existing audio recordings are unchanged.
-- The [v0.17 validation record](docs/release-validation-v017.md) records 510 passing Node tests, 25 browser scenes / 518 assertions, 63 targeted assertions, 21 dedicated GPU checks, 13 asset/offline checks, 11 isolated browser progression checks, two legal 25-win routes and exact previous-version command/retry compatibility. Production revision `9faf31555b45` meets the declared download budgets. Normal progression controls and server-stopped Chapter I continuation preserved their stated transactions/save; physical-device and independent human testing remain unperformed.
+- The [v0.17 validation record](docs/archive/release-validation-v017.md) records 510 passing Node tests, 25 browser scenes / 518 assertions, 63 targeted assertions, 21 dedicated GPU checks, 13 asset/offline checks, 11 isolated browser progression checks, two legal 25-win routes and exact previous-version command/retry compatibility. Production revision `9faf31555b45` meets the declared download budgets. Normal progression controls and server-stopped Chapter I continuation preserved their stated transactions/save; physical-device and independent human testing remain unperformed.
 
 ## 0.16.0 — foliage, character form and depth lighting
 
@@ -317,7 +317,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Rebuilds facial contours, connected shoulder/limb profiles and fitted armor; welds sculpted seam normals and opens helmet/coif guards around the face. Existing skeleton, equipment, foot contacts, legal positions and animation remain authoritative.
 - Adds a bounded linear HDR color/depth target and fullscreen contact-shading/edge-smoothing pass for Balanced/High. Reduces broad fill lighting. Handles failed shader linking with a visible direct-render fallback, restores renderer state and releases target resources. Performance remains direct.
 - Adds an original foliage atlas and a mechanically optimized character atlas with provenance. Retains the previous atlas in historical assets/full download but excludes it from active chapter downloads; the existing 2/8/24 MB compressed delivery gates remain unchanged.
-- See [v0.16 validation](docs/release-validation-v016.md) for automated, GPU, campaign browser, offline/save and measured desktop evidence. No gameplay core files change in this release.
+- See [v0.16 validation](docs/archive/release-validation-v016.md) for automated, GPU, campaign browser, offline/save and measured desktop evidence. No gameplay core files change in this release.
 
 ## 0.14.1 — Imperium
 
@@ -331,13 +331,13 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Prevents withdrawn figures or reused troop names from receiving another unit's animation, prefers the current living tile occupant for effects, and limits skinned picking to actually visible surfaces.
 - Generates sky-aligned HDR reflection lighting locally once per scene or quality change. Pooled soft ground/sole contacts and deterministic pose-anchored impact particles complement existing directional shadows and action effects; no new texture download or external service is introduced.
 - Refines shared scenery with smooth boulder normals, compound palms, tapered branches, low verge plants, fluted columns, jointed arches and material weathering. Balanced/High masonry gains beveled edges while Performance retains simpler blocks. Authoritative terrain, camera clearance and horizon/river joins remain the presentation boundaries.
-- The [version 0.14 verification record](docs/character-quality-verification.md) documents 401 passing tests, legal 25-encounter completion, eleven asset/offline protocol checks and 25 browser scenes / 518 assertions in two batches. Ordinary production play completed the drill and retained exact save equality through camera/view changes and reload. It records actual timing, the vendor precision warning and unperformed device, human and fresh browser-offline checks.
+- The [version 0.14 verification record](docs/archive/character-quality-verification.md) documents 401 passing tests, legal 25-encounter completion, eleven asset/offline protocol checks and 25 browser scenes / 518 assertions in two batches. Ordinary production play completed the drill and retained exact save equality through camera/view changes and reload. It records actual timing, the vendor precision warning and unperformed device, human and fresh browser-offline checks.
 
 ## 0.13.0 — sky and horizon
 
 - Adds an original procedural sky and regional distant landscape around the existing playable terrain, with an explicit **Horizon / H** camera view in the campaign and standalone skirmish. **Overview / Home** restores tactical framing; startup retains Overview.
 - Camera controls preserve the legal encounter, turn, commands and saved state. The 2D alternative remains available. This release adds no bitmap sky download, external art service or gameplay rule change.
-- A dedicated browser-harness diagnostic records sky/landscape metadata, camera settings, skyward projection and exact save equality without changing the existing all-scene checks. The [version 0.13 verification record](docs/sky-horizon-verification.md) distinguishes 375 passing tests, the earlier all-scene sweep, final targeted visual checks and normal-interface save equality. Narrow browser and landscape scene-container observations remain separate from physical-device claims.
+- A dedicated browser-harness diagnostic records sky/landscape metadata, camera settings, skyward projection and exact save equality without changing the existing all-scene checks. The [version 0.13 verification record](docs/archive/sky-horizon-verification.md) distinguishes 375 passing tests, the earlier all-scene sweep, final targeted visual checks and normal-interface save equality. Narrow browser and landscape scene-container observations remain separate from physical-device claims.
 
 ## 0.12.0 — presentation refinement
 
@@ -346,14 +346,14 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Static scenery is batched without changing authored terrain, transparent surfaces or moving cloth. Cached shadow updates, label measurements and instanced target markers reduce repeated rendering work; actual measured costs belong in the verification record rather than a guaranteed speed claim.
 - Extends the legal-checkpoint browser review harness with specific-figure inspection, camera overview/follow controls, exact action occurrences and autonomous-turn samples that actually move the inspected figure. Enemy inspection never grants control or modifies campaign saves.
 - Records settled visible-label bounds/overlap, camera settings, actual draw workload and separate 120-frame CPU, stage-interval and RAF measurements. Comparisons require equivalent scenes/cameras and recorded conditions; no speed or device-quality claim follows from adding measurement tools.
-- The [version 0.12 verification report](docs/campaign-3d-refinement-verification.md) records 360 passing tests, the strict 25-scene browser sweep, three complete normal-interface encounter routes, a server-stopped Senate victory/reload and measured rendering costs with explicit limits. The version 0.11 report remains historical evidence.
+- The [version 0.12 verification report](docs/archive/campaign-3d-refinement-verification.md) records 360 passing tests, the strict 25-scene browser sweep, three complete normal-interface encounter routes, a server-stopped Senate victory/reload and measured rendering costs with explicit limits. The version 0.11 report remains historical evidence.
 
 ## 0.11.0 — all-chapter 3D presentation
 
 - Extends the shared scene to all nineteen battles and six political Contests, retaining the same campaign state, legal commands, saved encounters and optional 2D view. Chapter-specific scenery and original procedural military/civilian figures cover marshes, fortifications, eastern campaigns, crossings, the province and chambers.
 - Political labels distinguish delegate stance/commitment from speaker Resolve. Compact labels reveal names on hover/selection, and withdrawn speakers retain their votes. Argument gestures, objectives, escort markers and role/faction changes follow the actual encounter state.
 - Every chapter cache group includes shared renderer, material and Three.js dependencies, supporting a cold restored later chapter without visiting Chapter I. Shared URLs are reused; initial shell and standalone study page/style boundaries remain separate.
-- A legal-command fixture generator covers every encounter start and its real action sequence. A development browser harness exposes explicit scene, action, lifecycle and timing checks. The [current verification record](docs/campaign-3d-verification.md) reports only checks performed, with no inferred device/performance or human-playtest claim.
+- A legal-command fixture generator covers every encounter start and its real action sequence. A development browser harness exposes explicit scene, action, lifecycle and timing checks. The [current verification record](docs/archive/campaign-3d-verification.md) reports only checks performed, with no inferred device/performance or human-playtest claim.
 
 ## 0.10.0 — Chapter I integrated 3D presentation
 
@@ -361,7 +361,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Orbit, zoom, overview and follow-unit camera controls coexist with the campaign's keyboard tile cursor, named selectors, preview/confirm commands and optional grid. Quality and reduced-motion settings affect presentation only.
 - Original procedural figures gain shaped anatomy/clothing, role-specific training and field equipment, material microtextures and articulated action poses. The training yard, terrain and frontier scenery remain locally constructed meshes and materials. No third-party character model, motion-capture clip or new bitmap artwork is introduced.
 - Optional effects remain off by default. Local Web Audio synthesis adds event-timed footsteps, shield/weapon contact, throws, cloth and impacts with adjustable volume, bounded voices and hidden-page stopping. No external recording or audio dependency is used.
-- Shared 3D modules, local Three.js and material textures now join Chapter I's offline group while remaining excluded from the initial shell. The standalone study page/style remain part of the explicit complete download. Verification and remaining browser/device work are recorded in [3D presentation verification](docs/showcase-verification.md).
+- Shared 3D modules, local Three.js and material textures now join Chapter I's offline group while remaining excluded from the initial shell. The standalone study page/style remain part of the explicit complete download. Verification and remaining browser/device work are recorded in [3D presentation verification](docs/archive/showcase-verification.md).
 
 ## 0.9.0 — optional 3D frontier study
 
@@ -377,7 +377,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Five local sheets add 156 generated animation frames. Verified costume/action/facing combinations use authored sequences; uncovered roles and directions retain the original facing art and procedural poses. Visible atmosphere is continuous at capped quality-dependent rates and disabled by Performance/reduced-motion settings.
 - Early companion readiness and political target inspection reflect actual command availability. Tactical disclosures retain their open state across commands. Narrow and landscape layouts keep the order flow usable.
 - The presentation budgets retain a 2 MB compressed initial cap and raise the limits to 8 MB for shell plus chapter I and 24 MB for the explicit full-campaign download. Decoded artwork retention is capped at 40 entries / 64 MiB estimated RGBA bytes; future-chapter warming does not decode additional images.
-- The [production verification report](docs/production-verification.md) records automated tests, legal campaign completion, actual browser flows, motion measurements, provenance and remaining device/human tests. These are 2D presentation improvements, not a complete animation library or full 3D engine.
+- The [production verification report](docs/archive/production-verification.md) records automated tests, legal campaign completion, actual browser flows, motion measurements, provenance and remaining device/human tests. These are 2D presentation improvements, not a complete animation library or full 3D engine.
 
 ## 0.7.0 — tactical and political overhaul
 
@@ -394,7 +394,7 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - Directional contact shadows, projectile arcs and differentiated shield/impact effects improve grounding and action feedback. Four authored facings remain; this is not a 3D character system or a new frame-by-frame bitmap animation library.
 - Connected shorelines, road wear and material transitions follow authored terrain. Regional groundcover and exterior camp, crossing, provincial and chamber props add context without changing passability or obscuring legal target overlays.
 - Ground detail is cached. Quality modes limit scenery and effects; presentation remains deterministic, cancellable and reduced-motion-aware.
-- Development-only legal-action filmstrips, pose/facing diagnostics and comparable browser measurements extend graphics review. Their scope and limitations are recorded in the [graphics refinement verification report](docs/graphics-refinement-verification.md).
+- Development-only legal-action filmstrips, pose/facing diagnostics and comparable browser measurements extend graphics review. Their scope and limitations are recorded in the [graphics refinement verification report](docs/archive/graphics-refinement-verification.md).
 - Gameplay, campaign content, earned progression and local save behavior are preserved. No runtime dependency or additional bitmap artwork was introduced for this refinement.
 
 ## 0.5.0 — historical website and interface release
@@ -402,14 +402,14 @@ Presentation only: no rule, legal command, random-number use or save format chan
 - A cinematic title page with immediate Play/Continue actions, campaign/world sections, an early choice example and actual gameplay previews.
 - Shared ivory, charcoal and Pompeian-red presentation across navigation, camp, campaign progression, character equipment, journal, obligations, settings, recovery and reference panels.
 - Responsive tactical controls, touch-sized actions, readable dialog surfaces and keyboard focus management retain the existing gameplay and save commands.
-- Development helpers record actual loading requests and interface milestones. The [interface verification report](docs/interface-verification.md) and [design system](docs/interface-design-system.md) describe this historical release.
+- Development helpers record actual loading requests and interface milestones. The [interface verification report](docs/archive/interface-verification.md) and [design system](docs/interface-design-system.md) describe this historical release.
 
 ## 0.4.0 — historical graphics release
 
 - Locally bundled directional unit and prop atlases, layered regional battlefields and political chambers, faction equipment and clearer depth ordering.
 - Bounded action motion and scene atmosphere, presentation quality controls and reduced-motion handling.
 - Chapter-specific portraits, recurring-cast expressions, staged campaign scenes and rank-specific ceremonies retain the complete campaign.
-- Chapter-aware artwork loading, explicit full-campaign offline caching and documented asset provenance. The [graphics verification report](docs/graphics-verification.md) records the checks and limits of this historical release.
+- Chapter-aware artwork loading, explicit full-campaign offline caching and documented asset provenance. The [graphics verification report](docs/archive/graphics-verification.md) records the checks and limits of this historical release.
 
 ## 0.3.0 — 2026-10-11
 
@@ -431,7 +431,7 @@ Complete aesthetic upgrade of the existing campaign.
 - Clearer Canvas terrain, figures, faction markings and political chambers; bounded, reduced-motion-aware feedback that does not mutate game state.
 - Deferred artwork caching, truthful offline progress, retry after interruption and revision-isolated service-worker updates. Both existing compressed size gates remain unchanged.
 - Inline error feedback, predictable mobile control order, coalesced render bindings and protection against asynchronous reign-card races.
-- Fifty tests pass; the legal route still completes twelve chapters and twenty-five encounters in 231 player turns. Core rules, campaign data and storage modules are byte-identical to 0.1.0. Detailed measurements and test limits appear in `docs/aesthetic-verification.md`.
+- Fifty tests pass; the legal route still completes twelve chapters and twenty-five encounters in 231 player turns. Core rules, campaign data and storage modules are byte-identical to 0.1.0. Detailed measurements and test limits appear in `docs/archive/aesthetic-verification.md`.
 
 ## 0.1.0 — 2026-10-11
 

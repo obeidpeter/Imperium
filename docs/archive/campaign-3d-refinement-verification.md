@@ -87,7 +87,7 @@ The production cavalry encounter was checked at **360 × 800** with a **345 px d
 
 Switching **2D ↔ 3D** retained the won turn-5 encounter and **3/6 orders**. The normal text/motion preferences and desktop viewport were restored after checking. The final production console captured **no errors or warnings**. The preview was then reset through the validated Chapter IX save to turn 1; `cavalry-gameplay-final.png` is the actual final production capture.
 
-A [compact evidence summary](evidence/campaign-3d-refinement-verification.json) includes the verified counts, measured workload, normal-interface scope and SHA-256 references to raw review files. Large browser reports remain in `work/campaign-3d-refinement-review/`, outside the source repository.
+A [compact evidence summary](../evidence/campaign-3d-refinement-verification.json) includes the verified counts, measured workload, normal-interface scope and SHA-256 references to raw review files. Large browser reports remain in `work/campaign-3d-refinement-review/`, outside the source repository.
 
 ## Remaining limits
 

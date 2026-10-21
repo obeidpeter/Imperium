@@ -1,6 +1,6 @@
 # Sky and horizon — version 0.13
 
-Production **757b8ea235d2**, version **0.13.0**, checked 12 October 2026. This record separates final automated checks from an earlier browser sweep and representative visual observations. The [portable evidence summary](evidence/sky-horizon-verification.json) includes hashes of local evidence files. The completed [version 0.12 record](campaign-3d-refinement-verification.md) remains historical evidence.
+Production **757b8ea235d2**, version **0.13.0**, checked 12 October 2026. This record separates final automated checks from an earlier browser sweep and representative visual observations. The [portable evidence summary](../evidence/sky-horizon-verification.json) includes hashes of local evidence files. The completed [version 0.12 record](campaign-3d-refinement-verification.md) remains historical evidence.
 
 ## Scope
 

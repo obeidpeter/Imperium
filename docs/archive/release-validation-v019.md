@@ -2,7 +2,7 @@
 
 Version **0.19.0**, production revision **`650e10882696`**, refines faces and hair in the shared campaign and skirmish actor renderer.
 
-![Actual recruit face in the neutral-light character inspector](images/imperium-v019-face.png)
+![Actual recruit face in the neutral-light character inspector](../images/imperium-v019-face.png)
 
 This is a cropped capture of the actual production actor in the development inspection scene. It is not separate concept art or a battlefield screenshot.
 
@@ -10,7 +10,7 @@ This is a cropped capture of the actual production actor in the development insp
 
 Fitted almond openings and clipped irises replace the prominent round eye surfaces. Upper eyelids blend between the moving lid and fixed head, keeping the corners and outer rim anchored. Their UVs sample the existing skin texture. Fine tapered brow hairs follow the face instead of raised tubes. Skin normalization leaves more highlight headroom and preserves local contrast. Age affects cheek hollows and facial folds by less than three millimetres.
 
-Fuller moustaches join the beard coverage; beard and procedural scalp edges feather into the skin using bounded vertex alpha and opaque-pass alpha hashing. Imported short hair retains finer cutout strands. These edges may show grain at extreme close distances. Existing anatomy, runtime texture bytes and licenses are unchanged; see [v0.18 provenance](character-surfaces-v018.md).
+Fuller moustaches join the beard coverage; beard and procedural scalp edges feather into the skin using bounded vertex alpha and opaque-pass alpha hashing. Imported short hair retains finer cutout strands. These edges may show grain at extreme close distances. Existing anatomy, runtime texture bytes and licenses are unchanged; see [v0.18 provenance](../character-surfaces-v018.md).
 
 Facial fitting uses a local XY triangle index. An exhaustive comparison at **800 male/female sample coordinates** confirms identical frontmost depth and UV results, including missing-surface fallback. This reduces repeated triangle scans during character construction; it is not an FPS or physical-device performance claim.
 

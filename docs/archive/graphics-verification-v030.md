@@ -42,39 +42,39 @@ These are labelled because they are not ordinary play:
 
 Captured with headless Chromium using SwiftShader (software WebGL) from the development harnesses `tests/campaign-3d-browser.html` (legally reached checkpoints from `scripts/campaign-3d-fixtures.mjs`) and `tests/scene-parallax-browser.html`, except the palette figure, which is computed. They show composition and readability only; colours and anti-aliasing will differ on real GPUs.
 
-![Bloc swatches under typical vision and three simulated dichromacies, 0.29 against 0.30](images/v030-bloc-palette.jpg)
+![Bloc swatches under typical vision and three simulated dichromacies, 0.29 against 0.30](../images/v030-bloc-palette.jpg)
 
 *Delegate bloc colours under simulated colour-vision deficiency. In 0.29 the 3D Veterans and Landholders trims fell within ΔE 9 of each other under deuteranopia; in 0.30 the closest pair stays at ΔE 31 or more, and the letter and trim shape carry the bloc as well.*
 
-![The Chapter XI chamber with stance markers showing V, L and C](images/v030-senate.jpg)
+![The Chapter XI chamber with stance markers showing V, L and C](../images/v030-senate.jpg)
 
 *Chapter XI chamber at High: each stance marker leads with its bloc's letter (V, L, C) before the stance.*
 
-![Chapter I road at Performance quality in 0.29 and 0.30](images/v030-performance.jpg)
+![Chapter I road at Performance quality in 0.29 and 0.30](../images/v030-performance.jpg)
 
 *Performance quality, the same Chapter I view in 0.29 and 0.30: the chapter grade now applies without the finishing pass, and the ground darkens beside the palisade, tents and rocks.*
 
-![Painted figures in 0.29 and 0.30](images/v030-painted-figures.jpg)
+![Painted figures in 0.29 and 0.30](../images/v030-painted-figures.jpg)
 
 *Painted (HD-2D) figures, the same Chapter VIII view in 0.29 (the image from that release's record) and 0.30, now lit by the scene.*
 
-![A blade trail and a whole-rank volley](images/v030-combat.jpg)
+![A blade trail and a whole-rank volley](../images/v030-combat.jpg)
 
 *Injected, presentation-only replays: a blade trail at the blow, and an archer rank loosing with its leader.*
 
-![Sun shafts at dawn in Chapter VIII; Chapter II rain with dull puddles](images/v030-atmosphere.jpg)
+![Sun shafts at dawn in Chapter VIII; Chapter II rain with dull puddles](../images/v030-atmosphere.jpg)
 
 *Weather on the light at High: sun shafts slanting across the Chapter VIII crossing at dawn, and Chapter II's rain-soaked ground, whose puddles now hold a dull sheen.*
 
-![The reflected scene held by the water mirror's render target](images/v030-mirror-target.jpg)
+![The reflected scene held by the water mirror's render target](../images/v030-mirror-target.jpg)
 
 *What the water mirror holds, read back from its half-resolution target in the software-rendered browser at the Chapter VIII horizon view: the formations, banks, buildings and far panorama, mirrored. Open sky is left transparent (purple here) so the water keeps its own sky reflection. On screen the mirror is subtle by design (a Fresnel-weighted, capped share of the water's highlight), which is why the read-back, not a screenshot, is the evidence that it renders.*
 
-![ACES, AgX and Neutral tone mapping in four chapters](images/v030-tone-mapping.jpg)
+![ACES, AgX and Neutral tone mapping in four chapters](../images/v030-tone-mapping.jpg)
 
 *Tone mapping at High in Chapters II, V, IX and XII: ACES (kept), AgX and Neutral, each with the chapter grades tuned for ACES. Rendered from the commit that moved the grade into tone mapping, so the Chapter II puddles predate their fix.*
 
-![A story painting with its rain layer and depth map, and crops of rain, embers, dust and motes](images/v030-story-paintings.jpg)
+![A story painting with its rain layer and depth map, and crops of rain, embers, dust and motes](../images/v030-story-paintings.jpg)
 
 *Story paintings, frames from the development harness on its manual clock: the Chapter II camp painting with its rain layer and depth map (inset), then rain behind the near reeds, embers over the burning fort, dust, and motes in the Curia's light.*
 

@@ -14,7 +14,7 @@ The scene generates a small HDR radiance field from its sky palette and sun bear
 
 Shared environment work adds tapered branches, compound palm leaves, low verge plants, smooth boulder normals, fluted columns and masonry arches with separate joints. Balanced and High add beveled masonry; Performance uses simpler blocks. Locally computed broad ground variation, damp bands, grain and surface roughness complement the existing material images. This does not add playable terrain, alter tile costs or change the authoritative picking surface. The separate visible-terrain camera clearance and horizon/river continuity remain in use.
 
-There are **zero new downloadable texture files**. HDR data, particle masks and surface variation are generated locally from original code. Existing image and vendor provenance remains in [3D art provenance](3d-art-provenance.md) and [license notices](LICENSE-NOTICES.md).
+There are **zero new downloadable texture files**. HDR data, particle masks and surface variation are generated locally from original code. Existing image and vendor provenance remains in [3D art provenance](../3d-art-provenance.md) and [license notices](../LICENSE-NOTICES.md).
 
 ## Performed automated checks
 
@@ -49,7 +49,7 @@ Production revision **`c1dfd852cc93`** contains 144 runtime files, split into 64
 
 The complete uncompressed runtime plus worker is 8,964,183 bytes. These are build measurements from separately gzipped files, not a browser network trace or ZIP size. All **11 asset/offline protocol checks** passed, including chapter dependency coverage, failed-fetch recovery, truthful partial/full status and worker lifecycle behavior. These automated checks are separate from an actual browser offline play session.
 
-The [compact evidence record](evidence/character-quality-verification.json) contains these measurements, geometry comparisons, browser results, production observations and SHA-256 hashes of the retained raw reports and screenshots.
+The [compact evidence record](../evidence/character-quality-verification.json) contains these measurements, geometry comparisons, browser results, production observations and SHA-256 hashes of the retained raw reports and screenshots.
 
 ## Actual browser verification
 

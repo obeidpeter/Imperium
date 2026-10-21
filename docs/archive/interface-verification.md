@@ -2,7 +2,7 @@
 
 The website and game interface redesign is implemented in the existing application. This report records verification on 12 October 2026 for final production revision **c246f03a6e79**. It separates actual browser interaction, automated regression checks, and isolated component previews.
 
-The self-contained [browser evidence summary](evidence/interface-browser.json) includes final measurements, manual-check scope, all 11 component cases and SHA-256 hashes of the full raw reports. Those raw reports and screenshots remain in the separate review deliverable.
+The self-contained [browser evidence summary](../evidence/interface-browser.json) includes final measurements, manual-check scope, all 11 component cases and SHA-256 hashes of the full raw reports. Those raw reports and screenshots remain in the separate review deliverable.
 
 ## Actual application checks
 
@@ -27,7 +27,7 @@ The separate `interface-review` gallery contains before/after landing, camp, cam
 
 ## Regression and package checks
 
-[The machine-readable regression record](evidence/interface-regression.json) reports **190/190 Node tests passed** at revision **a93ffede353d**, with none failed, skipped or cancelled. Afterward, one production CSS rule corrected the enlarged-text dialog's maximum width, and the development-only stress name was bounded to the existing 40-character limit. No production JavaScript, rules or storage changed. The full suite was not repeated for these changes; the final build and nine asset/offline checks were rerun. The legal deterministic New Game route completed all twelve chapters and all **25 encounters in 204 turns**, ending as Augustus. It is a rules regression route, not a human playtime or enjoyment measurement.
+[The machine-readable regression record](../evidence/interface-regression.json) reports **190/190 Node tests passed** at revision **a93ffede353d**, with none failed, skipped or cancelled. Afterward, one production CSS rule corrected the enlarged-text dialog's maximum width, and the development-only stress name was bounded to the existing 40-character limit. No production JavaScript, rules or storage changed. The full suite was not repeated for these changes; the final build and nine asset/offline checks were rerun. The legal deterministic New Game route completed all twelve chapters and all **25 encounters in 204 turns**, ending as Augustus. It is a rules regression route, not a human playtime or enjoyment measurement.
 
 Nine asset/offline checks passed on final revision **c246f03a6e79**: manifest integrity, portrait/title and package budgets, initial/chapter caching, truthful partial readiness, version-scoped lookup, deferred-fetch failure, retry completion, server-unavailable cached navigation and activation cleanup. These are automated checks; they do not establish an installed-device update experience for this release.
 
@@ -41,7 +41,7 @@ The final production build is **c246f03a6e79**, version **0.5.0**. These figures
 | Initial plus Chapter I content | 1,278,153 | 2,000,000 |
 | Complete production content | 1,982,904 | 2,000,000 |
 
-No cap was raised. Existing art was reused; two local gameplay crops add 9,830 raw bytes. Palette optimization of the three original app icons saves 22,711 raw bytes. No character, scene or tactical atlas was recompressed for this interface work. Details and provenance are in [interface-assets.md](interface-assets.md) and the integrated manifest.
+No cap was raised. Existing art was reused; two local gameplay crops add 9,830 raw bytes. Palette optimization of the three original app icons saves 22,711 raw bytes. No character, scene or tactical atlas was recompressed for this interface work. Details and provenance are in [interface-assets.md](../interface-assets.md) and the integrated manifest.
 
 ## Observed cold-entry samples
 
@@ -72,4 +72,4 @@ This is a layout/reflow result, not a blanket touch-target pass. Native checkbox
 
 Physical touch and devices, iOS/Android installed-app behavior, screen-reader operation and genuine 200% browser zoom remain unverified in this interface pass. The attempted browser zoom shortcut did not change the in-app browser viewport and is not counted as a pass. No formal contrast audit, exhaustive keyboard/action matrix, production-host test, slow-network/device benchmark, new full-campaign manual playthrough, or installed offline-update test is claimed. Prior release evidence remains separately scoped in its original reports.
 
-The shared components and constraints are documented in [interface-design-system.md](interface-design-system.md). The measurement procedure and source audit are in [interface-audit.md](interface-audit.md).
+The shared components and constraints are documented in [interface-design-system.md](../interface-design-system.md). The measurement procedure and source audit are in [interface-audit.md](../interface-audit.md).

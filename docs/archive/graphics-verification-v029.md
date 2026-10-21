@@ -40,31 +40,31 @@ These are labelled because they are not ordinary play:
 
 Captured with headless Chromium using SwiftShader (software WebGL) at High quality from the development harnesses `tests/campaign-3d-browser.html` (legally reached checkpoints from `scripts/campaign-3d-fixtures.mjs`) and `tests/ceremony-browser.html`. They show composition and readability only; software rendering says nothing about speed, and colours and anti-aliasing will differ on real GPUs.
 
-![Ferry crossing before (left) and after (right): the river now sits in a channel with stepping-stone ford and the fog no longer washes the board](images/v029-terrain-before-after.jpg)
+![Ferry crossing before (left) and after (right): the river now sits in a channel with stepping-stone ford and the fog no longer washes the board](../images/v029-terrain-before-after.jpg)
 
 *Chapter VIII ferry crossing, the same overview before and after this release.*
 
-![Painted HD-2D figures with silhouette shadows on the Chapter VIII field](images/v029-painted-figures.jpg)
+![Painted HD-2D figures with silhouette shadows on the Chapter VIII field](../images/v029-painted-figures.jpg)
 
 *Painted (HD-2D) figure style: the 2D campaign's own unit paintings standing in the 3D scene, each casting its silhouette.*
 
-![Chapter VII battle with legion blocks, cavalry trios and Gothic warbands as formations](images/v029-formations.jpg)
+![Chapter VII battle with legion blocks, cavalry trios and Gothic warbands as formations](../images/v029-formations.jpg)
 
 *Formations from Chapter IV, with compact role glyphs above the rank and file.*
 
-![The hero's legal move cells washed in ink on the ground](images/v029-ink-reach.jpg)
+![The hero's legal move cells washed in ink on the ground](../images/v029-ink-reach.jpg)
 
 *Move reach inked on the ground, from the targets the rules returned.*
 
-![The finale before the half-built Aurelian Walls with massed legions behind the western edge](images/v029-finale.jpg)
+![The finale before the half-built Aurelian Walls with massed legions behind the western edge](../images/v029-finale.jpg)
 
 *Chapter XII: the commander's legions drawn up off the board; the brick curtain rises beyond the gate.*
 
-![The new Augustus on a terraced tribunal acclaimed by legions](images/v029-accession.jpg)
+![The new Augustus on a terraced tribunal acclaimed by legions](../images/v029-accession.jpg)
 
 *The accession tableau (synthetic board, presentation only).*
 
-![The painted Imperial Tabula with the career route inked to Chapter IX](images/v029-tabula.jpg)
+![The painted Imperial Tabula with the career route inked to Chapter IX](../images/v029-tabula.jpg)
 
 *The painted Tabula, rendered statically after its draw animation.*
 

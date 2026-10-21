@@ -25,11 +25,11 @@ At Chapter X, the accounts audit displayed delegate changes and its staged suppl
 
 | Actual gameplay evidence | File |
 | --- | --- |
-| Sculpted officer and company | [Screenshot](images/v031-sculpted.png) |
-| New painted Roman officer | [Screenshot](images/v031-painted.png) |
-| Expanded 2D battlefield | [Screenshot](images/v031-tactical.png) |
-| Secured cart / forgone signal | [Screenshot](images/v031-field-choice.png) |
-| Accepted policy amendment | [Screenshot](images/v031-policy.png) |
+| Sculpted officer and company | [Screenshot](../images/v031-sculpted.png) |
+| New painted Roman officer | [Screenshot](../images/v031-painted.png) |
+| Expanded 2D battlefield | [Screenshot](../images/v031-tactical.png) |
+| Secured cart / forgone signal | [Screenshot](../images/v031-field-choice.png) |
+| Accepted policy amendment | [Screenshot](../images/v031-policy.png) |
 
 ## Performance and limits
 
@@ -37,7 +37,7 @@ The stored Chapter X observation used **performance** quality: CPU submission p9
 
 This was a short scripted browser check, not a controlled before/after performance benchmark, a full human campaign playthrough, or a physical phone/tablet/device matrix. High quality remains device-dependent. The 90–150 minute human-play target, browser accessibility audit and live-host deployment remain unverified. Source code and the static package require no runtime AI service or remote media CDN.
 
-Reproduction: run node scripts/prepare-tests.mjs; node --test tests/*.test.mjs; node scripts/autoplay.mjs; node scripts/expanded-autoplay.mjs; node scripts/audit-character-assets.mjs; node scripts/build.mjs; node scripts/verify-assets.mjs. Expanded legal-route evidence is in [expanded-campaign-v031.json](evidence/expanded-campaign-v031.json), the browser observation in [browser-v031.json](evidence/browser-v031.json), and the concise result in [release-v031.json](evidence/release-v031.json).
+Reproduction: run node scripts/prepare-tests.mjs; node --test tests/*.test.mjs; node scripts/autoplay.mjs; node scripts/expanded-autoplay.mjs; node scripts/audit-character-assets.mjs; node scripts/build.mjs; node scripts/verify-assets.mjs. Expanded legal-route evidence is in [expanded-campaign-v031.json](../evidence/expanded-campaign-v031.json), the browser observation in [browser-v031.json](../evidence/browser-v031.json), and the concise result in [release-v031.json](../evidence/release-v031.json).
 
 ## Integration into 0.32.0
 

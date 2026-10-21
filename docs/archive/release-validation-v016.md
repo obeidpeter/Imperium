@@ -6,7 +6,7 @@ The [compact evidence record](presentation-verification-v016.json) contains aggr
 
 ## What changed
 
-The shared procedural characters have revised proportions, face and clothing surfaces, and locally bundled material detail. Vegetation uses shaped branches and curved, alpha-tested leaf sprays; roads have connected surfaces and blended verges. [Texture provenance](presentation-assets-v016.md) documents the new foliage atlas and smaller export of the existing character-material atlas. These remain stylized project models and illustrations, not scans or motion-captured characters.
+The shared procedural characters have revised proportions, face and clothing surfaces, and locally bundled material detail. Vegetation uses shaped branches and curved, alpha-tested leaf sprays; roads have connected surfaces and blended verges. [Texture provenance](../presentation-assets-v016.md) documents the new foliage atlas and smaller export of the existing character-material atlas. These remain stylized project models and illustrations, not scans or motion-captured characters.
 
 Balanced and High now render the visible scene into a linear HDR/depth target, then apply bounded screen-space contact shading, a small spatial edge filter and a restrained color adjustment. Tone mapping and display conversion happen once. Reduced ambient/environment/rim fill gives the directional light more separation. Shadows still use Three's supported **PCF** algorithm; this release does not introduce a new soft-shadow algorithm. Performance quality uses direct rendering, and a failed finishing shader retains a visible direct-render fallback.
 

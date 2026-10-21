@@ -1,6 +1,6 @@
 # Version 0.3 evidence snapshot
 
-Copied on 11 October 2026. These files retain the observed gameplay/storage results used by [the playability report](../../playability-verification.md). They ship with documentation even when generated `tests/fixtures/` files are excluded from an archive.
+Copied on 11 October 2026. These files retain the observed gameplay/storage results used by [the playability report](../../archive/playability-verification.md). They ship with documentation even when generated `tests/fixtures/` files are excluded from an archive.
 
 | File | Original source | Scope |
 | --- | --- | --- |

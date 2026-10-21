@@ -2,7 +2,7 @@
 
 Final package revision **9968c5977d0c**, recorded 2026-10-12. This release refines rendering and animation while preserving the deterministic campaign and save boundary. The frozen comparison is v0.5. Evidence types remain separate: exact legal-action replays, isolated sprite diagnostics, synchronous draw measurements, actual animation callbacks, and production smoke checks.
 
-The [browser summary](evidence/graphics-refinement-browser.json) includes per-case results, capture hashes, raw-report hashes and limitations. The [regression record](evidence/graphics-refinement-regression.json) contains test, autoplay, package and protected-file evidence. Full raw reports and paired JPEG captures are in the separate graphics-refinement-review deliverable. The paired figures use the lab's capture mode to hide controls and report tables.
+The [browser summary](../evidence/graphics-refinement-browser.json) includes per-case results, capture hashes, raw-report hashes and limitations. The [regression record](../evidence/graphics-refinement-regression.json) contains test, autoplay, package and protected-file evidence. Full raw reports and paired JPEG captures are in the separate graphics-refinement-review deliverable. The paired figures use the lab's capture mode to hide controls and report tables.
 
 ## What was observed
 

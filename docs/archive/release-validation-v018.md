@@ -2,7 +2,7 @@
 
 Version **0.18.0**, production revision **`a0dbf383f33b`**, improves character anatomy, clothing, surface response and hair. Completed evidence is summarized in [presentation-verification-v018.json](presentation-verification-v018.json), including exact hashes of the raw local reports. Verification and limitations are separated below; archive validation and publication are separate delivery steps.
 
-![Actual final production interface, Chapter VI](images/imperium-v018-preview.png)
+![Actual final production interface, Chapter VI](../images/imperium-v018-preview.png)
 
 The image above is an actual ordinary-interface capture of the final revision after restoring the legally reached Chapter VI save, not a separate character mockup.
 
@@ -12,7 +12,7 @@ Male and female imported anatomy now use fitted complexion maps with their origi
 
 Tunic and armor bodies share indexed seams with their sleeves. Their weighted shells have shaped folds, turned neck/cuff edges and thicker armor outlines. Hands have shaped palms, fingers, opposing thumbs and nail detail; boots distinguish heel, instep, toe box and sole. Dedicated overview meshes reduce this geometry while preserving contact frames. Original periodic normal and roughness fields distinguish cloth, leather, mail, scale and metal. The final mail adjustment reduces metalness and increases roughness to moderate close-up highlights.
 
-One locally bundled MakeHuman CC0 short-hair mesh and cutout texture serve eligible male figures. It is one shared hairstyle with identity fitting and tinting, not a separately authored groom for every character. Female bound hair retains project geometry. Pending actor construction holds explicit complexion ownership, and disposal releases it even before loading finishes; late completion cannot revive the abandoned map. See [character surface provenance](character-surfaces-v018.md) and the [asset manifest](asset-manifest.json) for sources, hashes, conversions and rights limitations.
+One locally bundled MakeHuman CC0 short-hair mesh and cutout texture serve eligible male figures. It is one shared hairstyle with identity fitting and tinting, not a separately authored groom for every character. Female bound hair retains project geometry. Pending actor construction holds explicit complexion ownership, and disposal releases it even before loading finishes; late completion cannot revive the abandoned map. See [character surface provenance](../character-surfaces-v018.md) and the [asset manifest](../asset-manifest.json) for sources, hashes, conversions and rights limitations.
 
 ## Automated verification
 
