@@ -4,6 +4,7 @@
 // a camera that follows, zoom, the overview, live drawing every frame — so
 // every command, key, list and readout works the same in both views.
 // Presentation only: the world is read, never written.
+import {BLOC_STYLE} from '../ui/bloc-style.js';
 
 const TILE=2.5,FALL_TICKS=16,FLOAT_MS=1300;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
@@ -91,7 +92,7 @@ export class FlatStage{
 // for neutrals), the route, the target, ranges, work, missiles and the marks
 // and numbers over people's heads. The field's presenter interface.
 export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{}}={}){
-  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null,shownIntentions=null,threat=null;const floating=new Map(),volleys=[];
+  let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null,shownIntentions=null,threat=null,reach=null;const floating=new Map(),volleys=[];
   const presenter={
     beforeFrame,world:getWorld,alpha:getAlpha,
     setRoute(next){route=next;},setPlanned(next){planned=next;},setRanges(on){ranges=!!on;},setMarks(next){marks={...(next??{})};},
@@ -99,6 +100,9 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     setSelection(ids){selection=[...(ids??[])];},setMarker(point){marker=point?{x:point.x,z:point.z}:null;},
     setDeployment(next){zone=next?{...next}:null;},
     setIntentions(list){shownIntentions=list?list.map(i=>({...i})):null;},setThreat(area){threat=area?{...area}:null;},
+    // A chamber (chamber-control.js): the places the speaker may walk to this hour, and a member's new stance for a moment.
+    setReach(points){reach=points?.length?points.map(p=>({x:p.x,z:p.z})):null;},gesture(){},
+    note(id,text,color='#f1dfa2'){floating.set(id,{text,color,until:performance.now()+FLOAT_MS*1.6});},
     onEvents(events){
       const now=performance.now();
       for(const e of events){
@@ -134,6 +138,7 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       // The route a click would walk, and what the soldier will do on resume.
       if(route?.points?.length&&hero?.alive)line([at(hero),...route.points.map(p=>flat.screen(v,p.x,p.z))],'#f1dfa2',{dash:[8,5]});
       if(planned?.points?.length&&hero?.alive)line([at(hero),...planned.points.map(p=>flat.screen(v,p.x,p.z))],'#cfe7e488',{dash:[4,6]});
+      for(const p of reach??[])ellipse(flat.screen(v,p.x,p.z),v.tw*.4,null,{fill:'#5fb3ad4d'});
       // Figures, back to front.
       const shown=[...w.actors].filter(a=>!(a.hidden&&a.side==='enemy')&&(a.alive||r-a.diedAt<FALL_TICKS*6||a.loot?.length)).sort((a,b)=>(a.x+a.z)-(b.x+b.z));
       for(const a of shown){
@@ -147,7 +152,7 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           if(a.squadId&&chosen.has(a.squadId))ellipse(p,v.tw*.36,'#f3d48d',{width:2.5});
           if(a.braceUntil>r||squadsById.get(a.squadId)?.braced)ellipse(p,v.tw*.42,'#f1d38a',{dash:[2,3],width:2});
         }
-        const color=!a.alive?'#4a4038':a.down?'#857868':BODY[side]??BODY.neutral;
+        const civic=a.civic,color=!a.alive?'#4a4038':a.down||civic?.withdrawn?'#857868':civic?.bloc?BLOC_STYLE[civic.bloc]?.color??BODY.neutral:BODY[side]??BODY.neutral;
         if(lying){c.beginPath();c.ellipse(p.x,p.y-v.th*.15,v.tw*.3,v.th*.22,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
         else{
           const hgt=v.th*2.6,body=v.tw*.14;c.fillStyle='#00000040';c.beginPath();c.ellipse(p.x,p.y,body*1.6,body*.7,0,0,Math.PI*2);c.fill();
@@ -156,19 +161,26 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           // His facing, and a drawn weapon on that side.
           const f=flat.screen(v,a.x+(a.fx??1)*.9,a.z+(a.fz??0)*.9),fp=flat.screen(v,a.x,a.z),dx=f.x-fp.x,dy=f.y-fp.y;
           c.beginPath();c.moveTo(p.x,p.y-hgt*.45);c.lineTo(p.x+dx,p.y-hgt*.45+dy);c.lineWidth=a.drawn?3:1.5;c.strokeStyle=a.drawn?'#e8e4da':'#00000066';c.stroke();
+          // In a chamber: a member's bloc letter and stance, a speaker's Resolve.
+          if(civic?.role==='voter'){const t=`${BLOC_STYLE[civic.bloc]?.letter??''} ${civic.stance>0?'+':''}${civic.stance}`,size=clamp(v.th*.42,10,15);c.font=`700 ${size}px system-ui`;
+            const tw=c.measureText(t).width+8;c.fillStyle=civic.stance>=1?'#33452ccc':'#4a2c26cc';c.fillRect(p.x-tw/2,p.y-hgt*1.12,tw,size+5);
+            c.fillStyle='#f6efdb';c.textAlign='center';c.fillText(t,p.x,p.y-hgt*1.12+size+1);}
+          else if(civic){const bw=v.tw*.5;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw,4);c.fillStyle='#8fb7d9';
+            c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw*clamp((civic.resolve??0)/Math.max(1,civic.maxResolve??1),0,1),4);}
           // Health over his head (a squad's strength is at its standard).
-          if(!a.squadId){const bw=v.tw*.5;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw,4);c.fillStyle=side==='enemy'?'#db9e81':'#abc89a';
+          else if(!a.squadId){const bw=v.tw*.5;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw,4);c.fillStyle=side==='enemy'?'#db9e81':'#abc89a';
             c.fillRect(p.x-bw/2,p.y-hgt*1.18,bw*clamp(a.hp/a.maxHp,0,1),4);}
           // Work in hand fills a ring.
           if(a.action?.kind==='work'){const k=clamp((r-a.action.start)/Math.max(1,a.action.end-a.action.start),0,1);c.beginPath();
             c.ellipse(p.x,p.y,v.tw*.46,v.tw*.23,0,-Math.PI/2,-Math.PI/2+k*Math.PI*2);c.strokeStyle='#f1d38a';c.lineWidth=3;c.stroke();}
         }
         // Names: his own, the target's, and everyone's in camp.
-        const named=a.id===w.controlled||a.id===hero?.lock||w.kind==='camp'||w.party?.includes(a.id);
+        const named=a.id===w.controlled||a.id===hero?.lock||w.kind==='camp'||w.party?.includes(a.id)||civic?.role==='speaker';
         const tag=(floating.get(a.id)?.until>now&&floating.get(a.id))||marks[a.id]||noticeMark(w,a);
         c.textAlign='center';
-        if(named&&a.alive){c.font=`650 ${Math.max(10,v.th*.4)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3);}
-        if(tag){c.font=`800 ${Math.max(12,v.th*.6)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.9);}
+        // Close in (a chamber's few tiles fill the view) the names and marks stay text-sized.
+        if(named&&a.alive){c.font=`650 ${clamp(v.th*.4,10,16)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3);}
+        if(tag){c.font=`800 ${clamp(v.th*.6,12,22)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.6);}
       }
       // Each squad's standard over its foremost man: its name, strength and morale (an amber
       // ring with a notch when shaken, a crimson ring split in two when broken).

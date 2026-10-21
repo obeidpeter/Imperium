@@ -146,7 +146,7 @@ function formationControls(state, action, formation, orderAction, target, orderD
   </div>`;
 }
 
-function precedentPanel(state) {
+export function precedentPanel(state) {
   const plan = Game.precedentOptions(state);
   if (!plan.motions.length) return '';
   return `<details id="chamber-precedents" class="progression-panel chamber-precedents"><summary>Career precedent motions · ${plan.used ? `Invoked (${esc(plan.used)})` : '1 per Contest'}</summary><p>Invoke your earned military, provincial, or fiscal record once per Contest using your commander’s speech.</p><div class="precedent-list">${plan.motions.map(m => `<article class="precedent-card ${m.unlocked ? 'unlocked' : 'locked'}"><div><strong>${esc(m.label)}</strong> <span class="status-pill">${esc(m.bloc)}</span><p>${esc(m.summary)}</p></div><button data-cmd="invoke-precedent" data-id="${esc(m.id)}" ${m.available ? '' : 'disabled'}>${plan.used === m.id ? 'Invoked' : m.unlocked ? 'Invoke precedent' : 'Locked'}</button></article>`).join('')}</div></details>`;

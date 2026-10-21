@@ -21,9 +21,13 @@ export const simPoint=(world,ground)=>ground&&{x:ground.x+world.map.width*TILE/2
 export const worldPoint=(world,p)=>({x:p.x-world.map.width*TILE/2,z:p.z-world.map.height*TILE/2});
 // The figure shows what the rules use: a trained soldier's kit, and a shield only for a man who carries one.
 // A man outside a squad stands alone (no formation crowd).
+// In a chamber (chamber-world.js) each figure carries the Contest's own readings: his
+// bloc (the toga trim and letter), a member's stance (his posture and marker) and a speaker's Resolve.
 export function stageUnit(actor){
-  return {id:actor.id,name:actor.name,side:actor.side,role:actor.role,...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
+  const unit={id:actor.id,name:actor.name,side:actor.side,role:actor.role,...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
     intent:'',hidden:false,trained:actor.side==='player',shield:actor.kit.some(id=>ITEMS[id]?.shield),crowd:false};
+  const c=actor.civic;if(!c)return unit;
+  return {...unit,trained:false,shield:false,bloc:c.bloc,interest:c.interest,vote:c.vote,...(c.role==='voter'?{stance:c.stance}:{resolve:c.resolve,maxResolve:c.maxResolve,blunted:c.blunted})};
 }
 // A squad (from Chapter IV) is drawn as one figure, its foremost standing man,
 // with his comrades as that figure's crowd (formation.js), each where the world
@@ -100,7 +104,7 @@ function dashedGeometry(){
       pos.push(...p(.44,t0),...p(.5,t0),...p(.5,t1),...p(.44,t0),...p(.5,t1),...p(.44,t1));}}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
 }
-const FLAT=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),UP=new T.Vector3(0,1,0);
+const FLAT=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),UP=new T.Vector3(0,1,0),DISC=new T.Matrix4(),ONE=new T.Vector3(1,1,1);
 // How far an enemy has noticed the party, as a quarter-filled circle over his head (the guide's eye).
 const NOTICE_GLYPHS=['◔','◑','◕'];
 // Morale at a squad's standard (guide "Morale, cohesion and suppression"): an
@@ -122,7 +126,8 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
   const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
   const leaders=new Map(),laid=new Set(),volleys=[],orderLines=[];
   let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null,zone=null,
-    shownIntentions=null,threat=null,intentionLines=null,threatLines=null;
+    shownIntentions=null,threat=null,intentionLines=null,threatLines=null,places=null,reachMesh=null;
+  const gestures=new Map();
   // Line segments laid on the ground: each pair of points a segment, each segment cut so it follows the slope.
   function segments(color,capacity,opacity=.85){
     const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(new Float32Array(3*capacity),3));
@@ -207,6 +212,9 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       motion='throw';phase=clamp((r-a.action.start)/Math.max(1,a.action.end-a.action.start),0,1);
     }else if(a.braceUntil>r){motion='brace';phase=undefined;}
     else if(a.moving){motion=a.gait==='run'?'run':'walk';phase=locomotionPhase(walked,motion);}
+    // A chamber's speakers: a speech is spoken with the hands; a speaker at 0 Resolve stands aside.
+    else if(a.civic?.withdrawn){motion='withdrawn';phase=1;}
+    else if(gestures.get(a.id)?.until>performance.now()){const g=gestures.get(a.id);motion=g.motion;phase=clamp(1-(g.until-performance.now())/g.span,0,1);focusId=g.toward??focusId;}
     const reaction=reactions.get(a.id);
     if(reaction&&r-reaction.start<REACTION_TICKS&&['idle','brace'].includes(motion)&&reaction.kind==='block'){
       motion='block';phase=clamp((r-reaction.start)/REACTION_TICKS,0,1);
@@ -258,6 +266,12 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     setIntentions(list){shownIntentions=list?list.map(i=>({...i})):null;stage.wake();},
     // The ground an enemy could strike within the next round, hatched in red (intel.js threatArea).
     setThreat(area){threat=area?{...area}:null;stage.wake();},
+    // A chamber: where the speaker may walk this hour, a pale disc on each place ({x, z} in metres).
+    setReach(points){places=points?.length?points.map(p=>({x:p.x,z:p.z})):null;stage.wake();},
+    // A gesture for a moment (a speaker's speech), facing whom it is for.
+    gesture(id,motion,{ms=1600,toward=null}={}){gestures.set(id,{motion,until:performance.now()+ms,span:ms,toward});stage.wake();},
+    // A number over a head for a moment (a member's new stance).
+    note(id,text,color='#f1dfa2'){floating.set(id,{text,color,until:performance.now()+FLOAT_MS*1.6});stage.wake();},
     // Each tick's events, as the simulation emitted them.
     onEvents(events){
       const now=performance.now(),w=getWorld();
@@ -378,6 +392,15 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         put(q.broken?'broken':'shaken',figure.group.position,figure.group.rotation.y,.07);
       }
       for(const kind of KINDS){feet[kind].count=counts[kind];feet[kind].instanceMatrix.needsUpdate=true;}
+      // A chamber speaker's reach: a pale disc on each place he may walk to this hour.
+      if(places&&(!reachMesh||reachMesh.instanceMatrix.count<places.length)){reachMesh?.removeFromParent();reachMesh?.geometry.dispose();reachMesh?.material.dispose();
+        reachMesh=new T.InstancedMesh(new T.CircleGeometry(1.02,28),new T.MeshBasicMaterial({color:'#5fb3ad',transparent:true,opacity:.3,depthWrite:false,
+          side:T.DoubleSide,forceSinglePass:true}),Math.max(32,places.length));reachMesh.frustumCulled=false;reachMesh.renderOrder=2;stage.overlay.add(reachMesh);}
+      if(reachMesh){
+        reachMesh.count=places?.length??0;
+        (places??[]).forEach((p,i)=>{const at=ground(p.x,p.z);DISC.compose(at.setY(at.y+.035),FLAT,ONE);reachMesh.setMatrixAt(i,DISC);});
+        reachMesh.instanceMatrix.needsUpdate=true;reachMesh.visible=!!places;
+      }
       // The deployment zone's edge, following the ground.
       marks.zone??=line('#9fd3d0',.9);
       if(zone){const z={...zone,x1:Math.max(zone.x0+.5,zone.x1-.25),z0:zone.z0+.25,z1:zone.z1-.25},pts=[],side=(a,b,n)=>{for(let i=0;i<n;i++)pts.push({x:a.x+(b.x-a.x)*i/n,z:a.z+(b.z-a.z)*i/n});};
@@ -458,6 +481,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.work,marks.zone,intentionLines?.strike,intentionLines?.move,threatLines,...(marks.ranges??[]),...(marks.marker??[]),
         ...orderLines.flatMap(l=>[l.advance,l.attack])])
         if(m){m.removeFromParent();m.geometry.dispose();m.material.dispose();}
+      if(reachMesh){reachMesh.removeFromParent();reachMesh.geometry.dispose();reachMesh.material.dispose();reachMesh=null;}
       disposeFeet();
     },
     stats:()=>({floating:floating.size,sparks:sparks.length,volleys:volleys.length})

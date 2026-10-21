@@ -22,6 +22,7 @@ import {serveRequest} from './serve.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
+import {playEncounter} from './autoplay.mjs';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -385,10 +386,96 @@ async function realtimeDeployment(){
   console.log('ok - real-time deployment: a restored Chapter VII battle opens with the clock stopped, and Sound the advance (pressed twice) starts it');
 }
 
+// Phase 3 in the page: a restored camp's Contest walked as the Curia.
+async function restoreChamber(page,code,view='3d'){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+}
+// Every chamber command is recorded through the page's save transaction: wait for it before the next.
+const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
+const chamberHour=page=>page.evaluate(()=>window.__chamber.hour());
+// Chapter VII's council in 3D, by pointer and keys: a seat in the coalition strip opens the
+// conversation, asking his interest is free, Walk beside him and Persuade change his stance,
+// Y yields and the rivals' hour plays until Space skips it, U names the rivals' next walks, a
+// click on a member's figure talks to him, and yielding to the deadline ends in the division and the result.
+async function chamberCouncil(){
+  const page=await open();await restoreChamber(page,battleCampCode('ch7-council'));
+  assert.match(await text(page,'[data-role="roundLabel"]'),/^Hour 1 of \d+$/,'The clepsydra counts hours');
+  assert.equal(await page.locator('[data-role="abilityBar"] [data-speech]').count(),1,'Chapter VII has taught Persuade alone');
+  assert.match(await text(page,'[data-role="coalition"]'),/of 13 for · 7 needed/,'The coalition strip counts the vote');
+  let member=null;
+  for(let i=0;i<await page.locator('[data-role="coalition"] [data-person]').count()&&!member;i++){
+    await page.locator('[data-role="coalition"] [data-person]').nth(i).click();await page.waitForSelector('[data-role="conversation"]:not([hidden])');
+    if(await page.locator('[data-role="conversation"] [data-walk]').count())member=await page.evaluate(()=>window.__chamber.talking());
+  }
+  assert.ok(member,'A member the soldier can walk beside this hour');
+  const hour=JSON.stringify(await chamberHour(page));await page.click('[data-role="conversation"] [data-ask]');
+  await page.waitForSelector('[data-role="conversation"] .rt-talk-interest');assert.equal(JSON.stringify(await chamberHour(page)),hour,'Asking takes no time and changes nothing');
+  const stance=await page.evaluate(id=>window.__chamber.unit(id).stance,member);
+  await page.click('[data-role="conversation"] [data-walk]');await chamberIdle(page);assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').moved),true,'He walks beside him');
+  await page.waitForSelector('[data-role="conversation"] [data-speak="persuade"]');await page.click('[data-role="conversation"] [data-speak="persuade"]');await chamberIdle(page);
+  assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').acted),true,'Persuade spends his speech');
+  assert.ok(await page.evaluate(id=>window.__chamber.unit(id).stance,member)>stance,'Persuade moves the member');
+  await page.locator('#rt-board').focus();await page.keyboard.press('Escape');assert.equal(await page.isHidden('[data-role="conversation"]'),true,'Escape closes the conversation');
+  await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Y yields and the rivals take their hour'));
+  await page.keyboard.press('Space');await page.waitForSelector('[data-role="rivalsBand"]',{state:'hidden',timeout:30000}).catch(()=>assert.fail('Space skips the rivals’ hour'));
+  assert.equal((await chamberHour(page)).hour,2);assert.match(await text(page,'[data-role="roundLabel"]'),/^Hour 2 of/);
+  await page.keyboard.down('KeyU');await page.waitForFunction(()=>/challenges|attacks|no plan/.test(document.querySelector('[data-role="messageLine"]').textContent),null,{timeout:10000})
+    .catch(()=>assert.fail('U names where each rival means to walk next'));await page.keyboard.up('KeyU');
+  // The pointer: a click on a member's figure opens his conversation.
+  const figure=await page.evaluate(()=>{const s=window.__chamber.stage(),w=window.__realtime.world(),r=s.canvas.getBoundingClientRect();
+    for(const a of w.actors.filter(x=>x.civic?.role==='voter')){const g=s.actors.get(a.id).group.position.clone();g.y+=1.1;g.project(s.camera);
+      const x=r.left+(g.x+1)/2*r.width,y=r.top+(1-g.y)/2*r.height;if(document.elementFromPoint(x,y)===s.canvas)return {id:a.id,x,y};}return null;});
+  assert.ok(figure,'A member is in view');await page.mouse.move(figure.x,figure.y);await page.mouse.down();await page.mouse.up();
+  await page.waitForFunction(id=>window.__chamber.talking()===id,figure.id,{timeout:30000}).catch(()=>assert.fail('A click on a member talks to him'));
+  for(let guard=0;(await chamberHour(page)).status==='active'&&guard<20;guard++){
+    await page.locator('#rt-board').focus();await page.keyboard.press('KeyY');await chamberIdle(page);
+    await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000});await page.keyboard.press('Space');
+  }
+  await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The members divide at the vote'));
+  assert.match(await text(page,'[data-role="rivalsBand"]'),/The division/);
+  await page.waitForSelector('.chamber-result',{timeout:30000}).catch(()=>assert.fail('The vote’s result is shown'));
+  assert.match(await text(page,'.chamber-result'),/The motion (carries|is defeated)\./);
+  await page.context().close();
+  console.log('ok - chamber: Chapter VII’s council in 3D: a seat opens the conversation, asking is free, Walk beside him and Persuade move a member, Y and Space play and skip the rivals’ hour, U names their next walks, a click on a figure talks to him, and the vote ends in the division and its result');
+}
+// Gate 3: every chamber Contest (VII, VIII, X and both of XI) played through in full in the page, in
+// the 2D view: a winning 0.38 log recorded from the same camp, replayed through the Command list's
+// own path (walks, speeches and yields as a player gives them), to the vote and Record the result.
+async function chamberContests(){
+  const played=[];
+  for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection']){
+    const code=battleCampCode(id),probe=Game.decodeSave(code);assert.ok(Game.startEncounter(probe).ok);
+    const trace=[],summary=playEncounter(probe,{approach:'record',trace});assert.equal(summary.status,'won',`${id}: the recorded log wins`);
+    const page=await open();await restoreChamber(page,code,'2d');
+    const start=await page.evaluate(()=>['hero','member0','member8','rival-speaker'].map(id=>window.__chamber.unit(id)).map(u=>[u.x,u.y,u.stance??u.resolve]));
+    const fresh=Game.decodeSave(code);Game.startEncounter(fresh);
+    assert.deepEqual(start,['hero','member0','member8','rival-speaker'].map(i=>fresh.encounter.units.find(u=>u.id===i)).map(u=>[u.x,u.y,u.stance??u.resolve]),`${id}: the page starts the same chamber`);
+    let ended=false,commands=0;
+    for(const t of trace){
+      if(t.kind==='endTurn'){if(ended){ended=false;continue;}await page.evaluate(()=>window.__chamber.use({kind:'yield'}));await chamberIdle(page);continue;}
+      const c=t.payload,before=await chamberHour(page);
+      await page.evaluate(op=>window.__chamber.use(op),c.action==='move'?{kind:'walk',unitId:c.unitId,tile:{x:c.x,y:c.y}}:{kind:'speak',command:c});await chamberIdle(page);
+      const after=await chamberHour(page);commands++;ended=after.hour!==before.hour||after.status!==before.status;
+    }
+    const result=await chamberHour(page);assert.equal(result.status,'won',`${id}: won in the page`);assert.deepEqual(result.votes,Game.voteCount(probe),`${id}: the same vote`);
+    const members=probe.encounter.units.filter(u=>u.role==='voter');
+    assert.deepEqual(await page.evaluate(ids=>ids.map(i=>window.__chamber.unit(i).stance),members.map(u=>u.id)),members.map(u=>u.stance),`${id}: every member’s stance as the rules played it`);
+    await page.waitForSelector('.chamber-result [data-cmd="commit"]',{timeout:30000});await page.click('.chamber-result [data-cmd="commit"]');
+    await page.waitForFunction(()=>!document.querySelector('.chamber-frame'),null,{timeout:60000}).catch(()=>assert.fail(`${id}: Record the result leaves the chamber`));
+    played.push(`${id} (${commands} commands, ${result.votes.for} of ${result.votes.total})`);await page.context().close();
+  }
+  console.log(`ok - chamber Contests: every walk-and-talk Contest played through in full in the 2D page, won and recorded: ${played.join(', ')}`);
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment].filter(s=>!only?.length||only.includes(s.name))){
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
+  chamberCouncil,chamberContests].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

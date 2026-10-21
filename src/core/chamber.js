@@ -1,5 +1,6 @@
 import * as G from './game.js';
-import {contestIntents,profileOf} from './contest.js';
+import {INTEREST_EFFECTS,contestActions,contestIntents,profileOf} from './contest.js';
+import {BLOC_AFFINITIES} from '../data/contest-balance.js';
 import {alive,distance,reachable,result,unitAt} from './shared.js';
 
 // The walk-and-talk Curia (build brief §3.11; guide "Political Contests"): the
@@ -24,6 +25,7 @@ export const SPEECHES=Object.freeze(['persuade','promise','threaten','address','
 export const SPEECH_NAMES=Object.freeze({persuade:'Persuade',promise:'Promise',threaten:'Threaten',address:'Address the Chamber',rebut:'Rebut',record:'Invoke Record',denounce:'Denounce'});
 // How far each speech reaches (0.38 tiles; Address takes every member within 3 of the speaker).
 const RANGE=Object.freeze({persuade:1,promise:2,threaten:2,record:3,denounce:3,rebut:3,address:3});
+export const SPEECH_REACH=RANGE;
 
 const contest=state=>state?.phase==='encounter'&&state.encounter?.kind==='contest'?state.encounter:null;
 const ours=u=>u?.role==='speaker'&&['player','ally'].includes(u.side);
@@ -116,10 +118,10 @@ export function conversation(state,speakerId,personId,{known=false}={}){
   const who={id:p.id,name:p.name,role:p.role,side:p.side,bloc:p.bloc??null,letter:p.bloc?BLOC_LETTER[p.bloc]??null:null,stance:p.stance??null,
     interest:p.role==='voter'&&known?p.interest:null,resolve:p.role==='speaker'?p.resolve:null,maxResolve:p.role==='speaker'?p.maxResolve:null,
     distance:distance(sp,p),metres:distance(sp,p)*SEAT};
-  const kinds=p.role==='voter'?['persuade','promise','threaten','record']:p.side==='enemy'?['denounce','rebut']:['rebut'];
+  const taught=knownSpeeches(state,speakerId),kinds=(p.role==='voter'?['persuade','promise','threaten','record']:p.side==='enemy'?['denounce','rebut']:['rebut']).filter(a=>taught.includes(a));
   const actions=G.getActions(state,speakerId),out=[];
   for(const action of kinds){
-    if(!actions.includes(action)){out.push({action,name:SPEECH_NAMES[action],ok:false,message:sp.acted?`${sp.name} has spoken this hour.`:`Not yet in this chamber’s speeches.`});continue;}
+    if(!actions.includes(action)){out.push({action,name:SPEECH_NAMES[action],ok:false,message:sp.acted?`${sp.name} has spoken this hour.`:alive(sp)?'Not now.':`${sp.name} has withdrawn.`});continue;}
     const command={unitId:sp.id,action,x:p.x,y:p.y,targetId:p.id},here=G.preview(state,command);
     if(here.ok){out.push({action,name:SPEECH_NAMES[action],ok:true,command,message:here.message,forecast:here.forecast??null});continue;}
     const place=distance(sp,p)>RANGE[action]?walkBeside(state,sp.id,action,p):null,there=place?forecastFrom(state,command,place):null;
@@ -127,6 +129,15 @@ export function conversation(state,speakerId,personId,{known=false}={}){
       :{action,name:SPEECH_NAMES[action],ok:false,message:here.message});
   }
   return {speaker:{id:sp.id,name:sp.name,spoken:!!sp.acted},person:who,speeches:out,profile:profileOf(e,sp)};
+}
+// What moves a member, once his interest is known: of the speeches the speaker
+// knows, those his interest and bloc favour most and least.
+export function interestNote(interest,bloc,known=SPEECHES){
+  const effects=INTEREST_EFFECTS[interest];if(!effects)return '';
+  const score=a=>(effects[a]??2)+(BLOC_AFFINITIES[bloc]?.[a]??0),list=Object.keys(effects).filter(a=>known.includes(a)).sort((a,b)=>score(b)-score(a)||SPEECHES.indexOf(a)-SPEECHES.indexOf(b));
+  if(list.length<2||score(list[0])===score(list.at(-1)))return '';
+  const names=xs=>xs.length<2?SPEECH_NAMES[xs[0]]:`${xs.slice(0,-1).map(a=>SPEECH_NAMES[a]).join(', ')} and ${SPEECH_NAMES[xs.at(-1)]}`;
+  return `Moved most by ${names(list.filter(a=>score(a)===score(list[0])))}; least by ${names(list.filter(a=>score(a)===score(list.at(-1))))}.`;
 }
 // Ask about his interests: free, takes no time and changes nothing (0.38 Inspect).
 export function askInterests(state,personId){
@@ -140,6 +151,58 @@ export function rivalWalks(state){
   return contestIntents(state).map(plan=>{const r=e.units.find(u=>u.id===plan.unitId);
     return {id:plan.unitId,name:r?.name??plan.unitId,action:plan.action,targetId:plan.targetId,from:r?{x:r.x,y:r.y}:plan.destination,to:plan.destination,message:plan.message};});
 }
+// The speeches the chamber has taught a speaker, spoken this hour or not (0.38
+// contestActions for a fresh hour): Persuade; Promise and Threaten from Chapter
+// VIII; Address and Rebut from X; Invoke Record and Denounce from XI. The bar's order.
+export function knownSpeeches(state,unitId){
+  const e=contest(state),u=unitOf(state,unitId);if(!e||!ours(u))return [];
+  const fresh={...state,encounter:{...e,status:'active',cooldowns:{}}},probe={...u,acted:false,moved:true,resolve:Math.max(1,u.resolve??1),hp:Math.max(1,u.hp??1)};
+  return SPEECHES.filter(a=>contestActions(fresh,probe).includes(a));
+}
+// T in a chamber: the members and the rival speakers, nearest first; Shift+T the speakers on your side.
+export function chamberTargets(state,fromId,{friends=false}={}){
+  const e=contest(state),from=unitOf(state,fromId);if(!e||!from)return [];
+  return e.units.filter(u=>u.id!==fromId&&(friends?ours(u):u.role==='voter'||u.side==='enemy'&&u.role==='speaker'))
+    .sort((a,b)=>distance(a,from)-distance(b,from)||a.y-b.y||a.x-b.x).map(u=>u.id);
+}
+const signed=n=>`${n>0?'+':''}${n}`;
+// A forecast in one line: the votes, then each stance and Resolve it changes.
+export function forecastLine(preview){
+  const f=preview?.forecast;if(!f)return preview?.message??'';
+  const changes=[...f.stanceChanges.map(c=>`${c.name} ${signed(c.from)} → ${signed(c.to)}`),...f.resolveChanges.map(c=>`${c.name} ${c.from} → ${c.to} Resolve`)];
+  return `Support ${f.votesBefore} → ${f.votesAfter}${changes.length?` · ${changes.join(', ')}`:' · blunts his next speech'}${f.publicCost?` · −${f.publicCost} Public Confidence`:''}`;
+}
+// Every chamber action as lists, for the Command list (guide "Accessibility"):
+// each speech the speaker can give now, with its forecast; the walks that bring
+// a member into reach; talking to each person; and yielding the hour. Each
+// option's command is one the page applies through the chamber's rules.
+export function chamberOptions(state,speakerId){
+  const e=contest(state),sp=unitOf(state,speakerId);if(!e||!ours(sp)||!active(state))return [];
+  const out=[],actions=G.getActions(state,speakerId),name=id=>unitOf(state,id)?.name??id;
+  if(!alive(sp))return [{group:'The hour',label:`${sp.name} has withdrawn`,detail:'',reason:'WITHDRAWN',message:'At 0 Resolve a speaker cannot speak; his vote still counts.'},yieldOption()];
+  for(const action of knownSpeeches(state,speakerId)){
+    if(!actions.includes(action)){out.push({group:'Speeches',label:SPEECH_NAMES[action],detail:'',reason:'SPENT',
+      message:sp.acted?`${sp.name} has spoken this hour.`:action==='address'?`Address recovers on hour ${e.cooldowns[`${sp.id}:address`]}.`:'Not now.'});continue;}
+    const targets=G.getTargets(state,speakerId,action);
+    if(!targets.length){out.push({group:'Speeches',label:SPEECH_NAMES[action],detail:'',reason:'NO_TARGET',message:'No one in reach: walk closer first.'});continue;}
+    for(const t of targets){
+      const command={unitId:speakerId,action,x:t.x,y:t.y,...(action==='address'?{}:{targetId:t.unitId})},p=G.preview(state,command);
+      out.push({group:'Speeches',label:action==='address'?SPEECH_NAMES.address:`${SPEECH_NAMES[action]} ${name(t.unitId)}`,detail:forecastLine(p),
+        ...(p.ok?{command:{kind:'speak',command}}:{reason:'REFUSED',message:p.message})});
+    }
+  }
+  // Walks that bring a member within Persuade's reach (or a rival within Denounce's).
+  if(!sp.acted)for(const u of e.units.filter(u=>u.role==='voter'||u.side==='enemy'&&u.role==='speaker'&&alive(u))){
+    const action=u.role==='voter'?'persuade':'denounce';if(!knownSpeeches(state,speakerId).includes(action)||distance(sp,u)<=RANGE[action])continue;
+    const place=walkBeside(state,speakerId,action,u);if(!place)continue;
+    out.push({group:'Walk',label:`Walk beside ${u.name}`,detail:`For ${SPEECH_NAMES[action]}: ${place.cost} ${place.cost===1?'place':'places'} along the aisle`,command:{kind:'walk',unitId:speakerId,tile:{x:place.x,y:place.y}}});
+  }
+  for(const id of chamberTargets(state,speakerId))out.push({group:'Talk',label:`Talk to ${name(id)}`,detail:`${distance(sp,unitOf(state,id))*SEAT} m`,command:{kind:'talk',personId:id}});
+  out.push(yieldOption());
+  return out;
+}
+const yieldOption=()=>({group:'The hour',label:'Yield the floor',detail:'The hour ends now; a speech not yet given is lost',command:{kind:'yield'}});
+
 // The coalition panel: who is committed, who wavers, who is against, and the promises left; with the Chamber Whip Forecast.
 export function coalitionView(state){
   const e=contest(state);if(!e)return null;const members=e.units.filter(u=>u.role==='voter');

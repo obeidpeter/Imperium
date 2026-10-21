@@ -320,7 +320,7 @@ export function step(world){
     settleLocks(world);regenerate(world);perceive(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
-    if(world.mission)missionTick(world);else if(world.kind!=='camp')checkObjectives(world);
+    if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);
   }else world.projectiles=[];
   // System 8, the round boundary: Command refills, squads recover and regroup, the enemy replans.
   if((world.tick+1)%TIME.roundTicks===0){

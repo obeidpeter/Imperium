@@ -16,8 +16,10 @@ import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
-import {normalizeControls,controlsFor} from '../core/controls-model.js';
+import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
+import {chamberEncounterView} from './chamber-view.js';
+import * as Chamber from '../core/chamber.js';
 import {DEFAULT_KEYMAP} from './action-map.js';
 import {ITEMS} from '../data/items.js';
 import {TRAINERS} from '../data/soldier.js';
@@ -119,6 +121,7 @@ function command(){return selectedCommand({selected,action,target,formation,orde
 
 function battle(){
   if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict});
+  if(chamberMode())return chamberEncounterView({state,saving,lastSaved,saveProblem,saveConflict,known:chamberKnown()});
   selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}
   return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
     keyBindings:settings.keyBindings,coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,
@@ -208,13 +211,18 @@ function mountPainting(){
 // world steps on the page; the chronicle receives it only when it is saved
 // (pause, a hidden page, F2) or resolved. ———
 let field=null;
-const fieldSource=()=>state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
+// What the field plays: a fight's saved world, or (a chamber) the Contest itself, which a retry or a load replaces.
+const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
 function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter);}
-// What the page's field shows now: a real-time fight, a walkable camp, or nothing.
+// A Contest is walked as a chamber once its chapter's chamber exists (chamberFor); the
+// archive's sandbox replays keep the 0.38 board with its mutators.
+function chamberMode(){return !!state&&screen!=='title'&&state.phase==='encounter'&&state.encounter?.kind==='contest'&&!state.archiveReplay&&chamberFor(settings,state.chapter);}
+// What the page's field shows now: a real-time fight, a walkable camp, a chamber, or nothing.
 function fieldTarget(){
   if(screen==='title'||!state)return null;
   if(Game.isRealtime(state))return {kind:'field',key:`fight:${state.encounter.id}`};
+  if(chamberMode())return {kind:'chamber',key:`chamber:${state.encounter.id}`};
   if(campMode())return {kind:'camp',key:`camp:${state.chapter}:${state.encounterIndex}:${state.decisions[Game.getChapter(state).decision.id]??''}`};
   return null;
 }
@@ -231,6 +239,9 @@ function mountField(target){
     if(field.runtime&&target.kind==='field'&&field.source!==fieldSource()){
       // A retry or a load brings another fight here: the same field plays it.
       field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),state.encounter);
+    }else if(field.runtime&&target.kind==='chamber'){
+      // A retry, a patron's re-run or a load brings another session of the chamber; otherwise the chamber follows the Contest.
+      if(field.source!==fieldSource()){field.source=fieldSource();field.runtime.load(field.makeWorld(state),state.encounter);}else field.runtime.chamberSync();
     }else if(field.runtime&&target.kind==='camp'&&field.key!==target.key){
       // The camp changed (a decision, another encounter ahead): the same field walks the new one, from where the soldier stands.
       const was=field.runtime.world.actors.find(a=>a.id==='hero'),next=Game.createCampWorld(state),hero=next.actors.find(a=>a.id==='hero');
@@ -242,14 +253,40 @@ function mountField(target){
   host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap:DEFAULT_KEYMAP,kind:target.kind}));
   const element=host.querySelector('.rt-field'),ticket={};
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
-  import('../showcase/realtime-field.js').then(({createRealtimeField,fieldDom})=>{
+  Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
     if(field?.ticket!==ticket||!element.isConnected)return;
-    const camp=target.kind==='camp',world=camp?Game.createCampWorld(state):Game.realtimeWorld(state);
+    const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=createChamberWorld;
+    const world=camp?Game.createCampWorld(state):chamber?createChamberWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
-      holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():fieldCallbacks(),kind:camp?'camp':'field'});
+      holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
 }
+// ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
+// chronicle like any Contest command (chamber.js checks them); the field animates what they did. ———
+function chamberCallbacks(){
+  return {
+    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}}}
+  };
+}
+function chamberApply(op){
+  return new Promise(resolve=>{
+    let outcome=null;
+    const run=()=>{outcome=op.kind==='walk'?Chamber.walk(state,op.unitId,op.tile):op.kind==='speak'?Chamber.speak(state,op.command):op.kind==='yield'?Chamber.yieldFloor(state)
+      :{ok:false,message:'That is not a chamber command.'};return outcome;};
+    const action=op.command?.action??op.command?.kind,tone=op.kind==='walk'?null:op.kind==='yield'?'turn':['threaten','denounce'].includes(action)?'threaten':['promise','agreement'].includes(action)?'agreement':'click';
+    Promise.resolve(change(run,{tone,silent:true,afterRender:()=>resolve(outcome)})).then(()=>resolve(outcome));
+  });
+}
+// A speech from the page's own panels (a case, the policy motion, a precedent, an agreement): through the chamber, so its hour can end.
+async function chamberSpeech(command,{afterRender=null,tone='agreement'}={}){
+  let outcome=null;
+  await change(()=>{outcome=Chamber.speak(state,command);return outcome;},{tone,afterRender:()=>{if(outcome?.ok)field?.runtime?.chamberSync(outcome);afterRender?.();}});
+}
+// The interests asked about in this chamber: free knowledge, kept for the session and not in the save.
+let chamberAsked={key:null,ids:new Set()};
+function chamberKnown(){const key=state?.encounter?.id??null;if(chamberAsked.key!==key)chamberAsked={key,ids:new Set()};return chamberAsked.ids;}
 function startCampaignEncounter(){
   return change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
     ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});
@@ -346,6 +383,13 @@ function mountFieldStage(){
 function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
 // For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
 window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
+// The same for a chamber: what the rules hold (read-only) and whether the field is playing the rivals' hour or the division.
+window.__chamber={active:()=>chamberMode()&&!!field?.runtime?.chamber,hour:()=>chamberMode()?Chamber.hourView(state):null,
+  coalition:()=>chamberMode()?Chamber.coalitionView(state):null,reach:id=>chamberMode()?Chamber.reach(state,id):[],
+  unit:id=>chamberMode()?structuredClone(state.encounter.units.find(u=>u.id===id)??null):null,busy:()=>field?.runtime?.chamber?.busy??null,
+  talking:()=>field?.runtime?.chamber?.talking??null,pending:()=>field?.runtime?.chamber?.pending??null,stage:()=>field?.runtime?.stage??null,
+  // The Command list's own path (chamber-control.js use): a walk, a speech, a conversation or a yield, as a player gives them.
+  use:command=>field?.runtime?.chamber?.use(command)??false};
 // Keep the chronicle's copy of the fight: the resume point after a pause, a hidden page or a quick save.
 // ——— Quick save and the named saves (§3.17). ———
 // A picture of the moment for a save: the 2D canvas as it stands, or a frame the 3D stage draws for it.
@@ -415,7 +459,7 @@ function openPanel(name){
   else if(name==='chronicle')showSoldierPanel('chronicle');
   else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
   else if(name==='options')showSettings();
-  else if(name==='help')Game.isRealtime(state)?showModal('Rules & controls',realtimeHelp()):showHelp();
+  else if(name==='help')chamberMode()?showModal('Rules & controls',chamberHelp()):Game.isRealtime(state)?showModal('Rules & controls',realtimeHelp()):showHelp();
 }
 const fieldPanel=name=>openPanel(name);
 // The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
@@ -447,6 +491,15 @@ function soldierAct(command){
 function realtimeHelp(){
   return `<p>Click open ground to move; a far click runs. Click an enemy to fight him; right-click uses the current ability. P pauses, and every command still works while paused.</p>`+
     `<p>Point at anything for its forecast. Arrow keys move; T chooses the next enemy or thing to use, Enter acts on it, E uses what is nearest. [ and ] change the companion you control; Home returns to your soldier.</p>`;
+}
+// The chamber's controls and rules in brief (guide "Political Contests").
+function chamberHelp(){
+  return `<p>The session runs by the hour of the clepsydra. In each hour each of your speakers may walk inside the pale circles that show his reach and give one speech. `+
+    `The hour ends when every speaker still standing has spoken, or when you yield the floor (Y); the rival speakers then take their hour.</p>`+
+    `<p>Click a member to talk to him: the conversation opens where you stand and shows each speech with its forecast; asking about his interests is free. `+
+    `Choose a speech on the bar (1 to 7) and right-click a member, a rival, your ally or (Address the Chamber) the floor. [ and ] change the speaker you control.</p>`+
+    `<p>T chooses the next member or rival and Enter talks to him; hold U to see where each rival means to walk next. Only the vote at the deadline counts, and a tie rejects the motion. `+
+    `At 0 Resolve a speaker withdraws, but his vote still counts.</p>`;
 }
 function fieldTalk(id){
   const world=field?.runtime?.world,person=world?.actors.find(a=>a.id===id);if(!person)return;
@@ -828,7 +881,8 @@ case 'specialize-veteran':{
   const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;
 }
 case 'agreement-demand':
-      case 'agreement-counter':await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'),
+      case 'agreement-counter':if(chamberMode()){await chamberSpeech({kind:'agreement',targetId:id,terms:cmd==='agreement-demand'?'demand':'counteroffer'});break;}
+        await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'),
         {tone:'agreement',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('agreement',{intensity:.7});}});
         break;
 case 'agreement-honour':
@@ -862,7 +916,7 @@ case 'allocate':await change(()=>Game.allocate(state,
 case 'route':await change(()=>Game.chooseRoute(state,id));break;
 case 'start':await startCampaignEncounter();break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
-case 'inspect-delegate':{
+case 'inspect-delegate':if(chamberMode()){if(modal.open)modal.close();field?.runtime?.chamber?.talk(id);break;}{
   const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');
   if(unit){
     focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();if(uses3D())battleStage.focusPoint(focusTile);
@@ -943,7 +997,7 @@ case 'exit-archive':if(archivePrimaryState){
   toast('Returned from the Archive to your active chronicle.');
 }
   break;
-case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
+case 'invoke-precedent':if(chamberMode()){await chamberSpeech({kind:'precedent',id});break;}await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
 case 'performance-check':await startPerformanceCheck();break;
 case 'performance-check-save':if(performanceReport)download(new Blob([JSON.stringify(performanceReport,null,2)+'\n'],{type:'application/json'}),
   `imperium-performance-${performanceReport.measuredAt.slice(0,10)}.json`);
@@ -967,13 +1021,14 @@ case 'field-approach':await change(()=>Game.chooseFieldApproach(state,id));break
 case 'command-upgrade':await change(()=>Game.enableCommandCampaign(state));break;
 case 'operational-plan':await change(()=>Game.chooseOperationalPlan(state,id));break;
 case 'inspect-case':showModal('Present a documented case',casePreview(state,id));break;
-case 'present-case':await change(()=>Game.presentCase(state,id),
+case 'present-case':if(chamberMode()){await chamberSpeech({kind:'case',id},{afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});break;}
+  await change(()=>Game.presentCase(state,id),
   {tone:'agreement',afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});
   break;
 case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();render();showSettings();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;
-case 'policy-motion':await change(()=>Game.tablePolicy(state,id,'original'),{tone:'agreement'});break;
-case 'policy-amend':await change(()=>Game.tablePolicy(state,id,'amended'),{tone:'agreement'});break;
+case 'policy-motion':case 'policy-amend':{const terms=cmd==='policy-motion'?'original':'amended';
+  if(chamberMode()){await chamberSpeech({kind:'policy',id,terms});break;}await change(()=>Game.tablePolicy(state,id,terms),{tone:'agreement'});break;}
 case 'invoke-fieldwork':await change(()=>Game.invokeFieldwork(state,id),
   {tone:'brace',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('fieldwork',{intensity:.75});}});
   break;
@@ -1096,8 +1151,8 @@ document.addEventListener('keydown',event=>{
 });
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
-  // A real-time field takes its keys on its own scene (realtime-field.js).
-  if(Game.isRealtime(state))return;
+  // A real-time field or a chamber takes its keys on its own scene (realtime-field.js).
+  if(Game.isRealtime(state)||chamberMode())return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
   const shortcut=controlAction(event.key,settings.keyBindings);
   if(uses3D()){

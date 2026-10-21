@@ -183,3 +183,56 @@ test('F32: inspecting a documented case is free and changes nothing; presenting 
   assert.equal(G.previewCase(s,cases.at(-1).id).ok,false);assert.ok(C.yieldFloor(s).ok);
   assert.equal(C.speak(s,{kind:'case',id:cases.at(-1).id}).ok,false,'one case a hearing');
 });
+
+// The chamber on the page (§3.11): what the bar, T and the Command list offer, and the world that walks it.
+import {CHAMBER_READY_CHAPTERS,chamberFor} from '../src/core/controls-model.js';
+import {createChamberWorld,discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePoint} from '../src/core/realtime/chamber-world.js';
+import {step} from '../src/core/realtime/simulation.js';
+
+test('the chamber’s bar, T and Command list: the speeches each chapter has taught, members and rivals nearest first, and every option a rule the page applies',()=>{
+  const taught={'ch7-council':['persuade'],'ch8-parley':['persuade','promise','threaten'],'ch10-tribunal':['persuade','promise','threaten','address','rebut'],
+    'ch11-accounts':C.SPEECHES,'ch11-adlection':C.SPEECHES};
+  for(const [id,want]of Object.entries(taught)){
+    const s=G.deserialize(neutralCampaignStarts().get(id)),e=s.encounter,hero=e.units.find(u=>u.id==='hero');
+    assert.deepEqual(C.knownSpeeches(s,'hero'),[...want],`${id}: the bar`);
+    const t=C.chamberTargets(s,'hero'),d=x=>Math.abs(x.x-hero.x)+Math.abs(x.y-hero.y),of=i=>e.units.find(u=>u.id===i);
+    assert.equal(t.length,e.units.filter(u=>u.role==='voter'||u.side==='enemy'&&u.role==='speaker').length);assert.ok(t.every((x,i)=>!i||d(of(t[i-1]))<=d(of(x))),`${id}: nearest first`);
+    assert.deepEqual(C.chamberTargets(s,'hero',{friends:true}),['speaker-ally']);
+    const before=G.serialize(s),options=C.chamberOptions(s,'hero');assert.equal(G.serialize(s),before,'listing changes nothing');
+    assert.ok(options.some(o=>o.group==='The hour'&&o.command?.kind==='yield'));
+    for(const o of options.filter(o=>o.command?.kind==='speak')){const c=G.deserialize(before);assert.ok(C.speak(c,o.command.command).ok,`${id}: ${o.label}`);}
+    for(const o of options.filter(o=>o.command?.kind==='walk')){const c=G.deserialize(before);assert.ok(C.walk(c,o.command.unitId,o.command.tile).ok,`${id}: ${o.label}`);}
+    // Spent, the speeches say so; withdrawn, the speaker has only the hour to yield.
+    const spoken=G.deserialize(before);spoken.encounter.units.find(u=>u.id==='hero').acted=true;
+    assert.ok(C.chamberOptions(spoken,'hero').filter(o=>o.group==='Speeches').every(o=>o.reason==='SPENT'));
+    const out=G.deserialize(before),h=out.encounter.units.find(u=>u.id==='hero');h.resolve=0;h.hp=0;
+    assert.deepEqual(C.chamberOptions(out,'hero').filter(o=>o.command).map(o=>o.command.kind),['yield']);
+  }
+  assert.match(C.interestNote('grain','Landholders'),/^Moved most by Promise; least by/);assert.equal(C.interestNote('grain','Veterans',['persuade']),'','one speech known: nothing to compare');
+});
+
+test('the chamber world: everyone where the Contest puts him; a walk, the rivals’ hour and the division walk there, and a skip places them at once',()=>{
+  const s=G.deserialize(neutralCampaignStarts().get('ch10-tribunal')),e=s.encounter,world=createChamberWorld(s);
+  assert.equal(world.kind,'chamber');assert.equal(world.actors.length,e.units.length);
+  for(const u of e.units){const a=world.actors.find(x=>x.id===u.id);assert.deepEqual(pointTile(a),{x:u.x,y:u.y});assert.equal(a.civic.role,u.role);assert.equal(a.civic.stance,u.stance??null);}
+  const settle=()=>{for(let i=0;i<400&&world.actors.some(a=>a.path?.length);i++)step(world);};
+  // The soldier walks to a place in his reach: his figure walks there.
+  const place=C.reach(s,'hero').find(p=>p.cost===2);assert.ok(C.walk(s,'hero',place).ok);
+  assert.deepEqual(syncChamberWorld(world,s),['hero']);settle();assert.deepEqual(pointTile(world.actors.find(a=>a.id==='hero')),{x:place.x,y:place.y});
+  // The rivals' hour: whoever the rules moved walks there.
+  const moved=new Set(C.rivalWalks(s).filter(r=>r.from.x!==r.to.x||r.from.y!==r.to.y).map(r=>r.id));assert.ok(C.yieldFloor(s).ok);
+  assert.deepEqual(new Set(syncChamberWorld(world,s)),moved);settle();
+  for(const u of e.units){const a=world.actors.find(x=>x.id===u.id);assert.deepEqual(pointTile(a),{x:u.x,y:u.y},u.id);}
+  // A skip puts everyone in place at once; the vote's division walks the members behind the speakers they back.
+  const at=tilePoint(e.units.find(u=>u.role==='voter'));placeChamberWorld(world,s);assert.equal(world.actors.find(a=>a.civic.role==='voter').x,at.x);
+  while(s.encounter.status==='active')assert.ok(C.yieldFloor(s).ok);syncChamberWorld(world,s);settle();discessio(world,s);
+  const hero=tilePoint(e.units.find(u=>u.id==='hero')),rival=tilePoint(e.units.find(u=>u.side==='enemy'&&u.role==='speaker'));
+  for(const u of e.units.filter(u=>u.role==='voter')){const goal=world.actors.find(a=>a.id===u.id).goal,lead=u.stance>=1?hero:rival;assert.ok(Math.hypot(goal.x-lead.x,goal.z-lead.z)<4.5,`${u.id} stands behind his side`);}
+});
+
+test('the chamber is offered where it exists, and a chapter taken out of real time keeps the 0.38 Contest board',()=>{
+  assert.deepEqual([...CHAMBER_READY_CHAPTERS],[7,8,10,11]);
+  for(const c of [7,8,10,11])assert.equal(chamberFor({controlsModel:'realtime'},c),true);
+  for(const c of [1,9,12])assert.equal(chamberFor({controlsModel:'realtime'},c),false);
+  assert.equal(chamberFor({controlsModel:'turns'},7),false);assert.equal(chamberFor({controlsModel:'realtime',realtimeChapters:[8]},7),false,'kill criterion K3');
+});

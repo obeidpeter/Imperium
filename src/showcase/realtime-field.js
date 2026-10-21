@@ -8,6 +8,7 @@ import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figu
 import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
 import {createSquadControl} from './squad-control.js';
+import {createChamberControl} from './chamber-control.js';
 import {commandSquads,squadOrderOptions} from '../core/realtime/order-intents.js';
 import {deploy,deploying,deploymentProblem,soundTheAdvance} from '../core/realtime/deployment.js';
 import {friendlyStandard} from '../core/realtime/order-intents.js';
@@ -15,7 +16,7 @@ import {intentions,threatArea} from '../core/realtime/intel.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
-// campaign's battles (and later its camps) and by the standalone arena. It owns the
+// campaign's battles, camps and chambers and by the standalone arena. It owns the
 // clock, turns pointer and keys into Commands for the controlled man, keeps
 // the HUD (party portraits, message line, battle clock, ability bar) and the
 // battle log, and raises auto-pauses. The simulation decides everything; the
@@ -58,6 +59,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     for(const el of [dom.squadBar,dom.clearButton,dom.commandPips,dom.commandCard])if(el)el.hidden=true;if(dom.abilityBar)dom.abilityBar.hidden=false;return null;
   };
   let squads=null;
+  // A chamber (from Chapter VII): the Curia's hours, speeches and conversations (chamber-control.js) take
+  // the pointer, the keys and the HUD; the battle's controls are not shown.
+  const makeChamber=()=>kind==='chamber'?createChamberControl({world:()=>world,dom,say,message,presenter:()=>presenter,canvas,keymap,rules:callbacks.chamber,
+    takeControl:id=>takeControl(id),paused:()=>clock.paused&&!stepping(clock),announce:text=>{if(dom.announcer)dom.announcer.textContent=text;}}):null;
+  let chamber=null;
   function issue(command){
     const outcome=queueCommand(world,command);
     if(!outcome.ok)say(REASONS[outcome.reason]??'That cannot be done now.',{warning:true});else{hurryClock(clock);showPlanned();}
@@ -139,7 +145,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function openSoon(open){setTimeout(()=>{if(!disposed)open();},0);}
   function autoPause(reason){interruptClock(clock);interrupted=true;say(`Paused: ${reason}`,{announce:true});saveResume('pause');}
   function renderLog(){
-    if(!dom.log)return;
+    if(!dom.log||chamber||kind==='chamber')return;
     dom.log.replaceChildren(...[...world.log].reverse().slice(0,30).map(entry=>{
       const li=document.createElement('li'),b=document.createElement('button'),t=document.createElement('time');li.dataset.tick=entry.tick;
       b.type='button';t.textContent=clockText(entry.tick);b.append(t,document.createTextNode(entry.text));
@@ -154,7 +160,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const known=actor?.abilities??FIELD_BAR;return FIELD_ORDER.filter(id=>known.includes(id)&&!ABILITIES[id].enemyOnly);
   }
   function buildParty(){
-    if(!dom.party)return;
+    if(!dom.party||kind==='chamber')return;
     dom.party.replaceChildren(...partyIds().map(id=>{
       const a=actorById(world,id),b=document.createElement('button');b.type='button';b.className='rt-portrait';b.dataset.actor=id;
       b.innerHTML=`<span class="rt-portrait-name">${esc(a?.name??id)}</span><span class="bar health"><i></i></span><span class="bar stamina"><i></i></span>`+
@@ -165,7 +171,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     }));
   }
   function buildAbilityBar(){
-    if(!dom.abilityBar)return;const list=abilitiesOf(me());barKey=list.join(',');
+    if(!dom.abilityBar||kind==='chamber')return;const list=abilitiesOf(me());barKey=list.join(',');
     dom.abilityBar.replaceChildren(...list.map((id,i)=>{
       const b=document.createElement('button');b.type='button';b.className='ability';b.dataset.ability=id;b.tabIndex=i===0?0:-1;
       const key=actionLabel(`ability_${i+1}`,keymap);b.setAttribute('aria-keyshortcuts',key);
@@ -187,6 +193,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function updateHud(now){
     if(disposed)return;
+    if(chamber){
+      // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
+      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
+      chamber.update(now);if(dom.pauseButton){dom.pauseButton.textContent=paused?'Resume':'Pause';dom.pauseButton.setAttribute('aria-pressed',String(paused));}
+      if(dom.pausedBand)dom.pausedBand.hidden=!paused;if(listOpen&&metrics.frames%30===0)renderList();return;
+    }
     const h=me(),paused=clock.paused&&!stepping(clock),round=roundOf(world),progress=world.tick%TIME.roundTicks/TIME.roundTicks;
     if(abilitiesOf(h).join(',')!==barKey)buildAbilityBar();
     const bar=abilitiesOf(h),abilityState=bar.map(id=>{const target=ABILITIES[id].target==='self'?{}:keyTarget?{actorId:keyTarget}:null;
@@ -231,10 +243,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function renderList(){
     if(!listOpen||!dom.listOptions||disposed)return;
     // Who acts: the party, and (from Chapter IV) each squad, whose orders the soldier gives.
-    const party=partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down),bands=commandSquads(world);
+    const party=chamber?chamber.speakers():partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down),bands=chamber?[]:commandSquads(world);
     if(!party.some(a=>a.id===listActor)&&!bands.some(q=>q.id===listActor))listActor=world.controlled;
     const band=bands.find(q=>q.id===listActor);
-    const options=band?squadOrderOptions(world,{squadId:band.id}):commandOptions(world,{actorId:listActor}),
+    const options=chamber?chamber.options(listActor):band?squadOrderOptions(world,{squadId:band.id}):commandOptions(world,{actorId:listActor}),
       key=`${listActor}|${bands.map(q=>q.id).join(',')}|${options.map(o=>`${o.group}:${o.label}:${o.reason??''}`).join('|')}`;
     if(key===listKey){
       // Same choices: only the distances and forecasts change, in place.
@@ -261,6 +273,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(focused){const row=[...dom.listOptions.querySelectorAll('[data-option]')].find(r=>r.querySelector('span')?.textContent===focused);row?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
   }
   function useOption(o){
+    if(chamber){if(chamber.use(o.command)){listKey='';}return;}
     if(o.command.kind==='control'){takeControl(o.command.actorId);return;}
     const outcome=issue(o.command);if(outcome.ok){say(`${o.label}.`,{announce:true});listKey='';renderList();}
   }
@@ -290,10 +303,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const pick=pickAt(p);if(!pick)return null;
     return pointerIntent(world,{pick,button,shift:!!p.shift||force,abilityId:button==='right'?abilityId:'strike'});
   }
-  function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);hoverEnemy=null;}}
+  function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);hoverEnemy=null;chamber?.hover(null);}}
   // The enemy whose threat is hatched: the one pointed at, else the one targeted (T, or locked).
   let hoverEnemy=null,intentionsShown=false,threatKey='';
   function showThreat(){
+    if(chamber)return;
     const h=me(),focus=hoverEnemy??keyTarget??h?.lock??null,foe=focus?actorById(world,focus):null;
     const area=foe&&foe.side==='enemy'&&foe.alive&&!foe.down&&!foe.hidden&&kind!=='camp'?threatArea(world,foe.id):null;
     const key=area?`${area.squadId??foe.id}:${Math.round(area.x)}:${Math.round(area.z)}:${Math.round(area.radius)}`:'';
@@ -302,6 +316,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function readPointer(){
     hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
+    if(chamber){chamber.hover(pickAt(p));return;}
     // Deploying: a click places what is chosen, if the ground is in the zone.
     if(deploying(world)){
       const pick=pickAt(p),who=squads?.selection[0]??world.controlled,name=world.squads?.find(q=>q.id===who)?.name??actorById(world,who)?.name??'him';
@@ -341,6 +356,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function press(p){
     stage?.sound?.unlock();if(document.activeElement!==canvas)canvas.focus({preventScroll:true});if(!world||world.status!=='active')return;
+    if(chamber){chamber.press(pickAt(p),{button:p.button,touch:!!p.touch});hover(p);return;}
     if(deploying(world)){
       const pick=pickAt(p);if(!pick)return;
       if(squads?.pickStandard(pick,{touch:!!p.touch}))return;
@@ -361,7 +377,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     armed=null;force=false;hover(p);readPointer();
   }
   function hold(p){
-    if(!pressMove||options.holdToMove===false||!world)return;const pick=pickAt(p);
+    if(chamber||!pressMove||options.holdToMove===false||!world)return;const pick=pickAt(p);
     if(pick&&Number.isFinite(pick.x)&&!pick.actorId&&!pick.objectId)queueCommand(world,{actorId:world.controlled,kind:'move',payload:{x:pick.x,z:pick.z}});
   }
   // The ability buttons and number keys follow one rule (intents.js abilityKey).
@@ -382,6 +398,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function takeControl(id){
     const a=actorById(world,id);if(!a||!commandable(world,a))return;
     if(a.down||!a.alive){say(`${a.name} is down.`,{warning:true});return;}
+    if(chamber&&!chamber.canControl(id)){say(`${a.name} has withdrawn: at 0 Resolve he cannot speak, but his vote still counts.`,{warning:true});return;}
     if(id===world.controlled){keyTarget=null;follow();say(`${a.name}. The view follows him.`);return;}
     const outcome=queueCommand(world,{actorId:id,kind:'control'});
     if(outcome.ok){hurryClock(clock);step0(()=>{follow();buildAbilityBar();});say(`You control ${a.name}.`,{announce:true});}
@@ -427,6 +444,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function act(action){
     const h=me();
+    if(chamber&&chamber.act(action))return true;
     if(action.startsWith('select_squad_')){if(squads)squads.select({index:Number(action.slice(13))-1});else say('No squads in this fight.');return true;}
     // While deploying the arrows move the marker and Enter places what is chosen there.
     if(squads&&deploying(world)&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
@@ -466,7 +484,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'zoom_in':stage?.zoom(-2);return true;case 'zoom_out':stage?.zoom(2);return true;
       case 'show_ranges':ranges=!ranges;presenter?.setRanges(ranges);return true;
       // U: labels everything usable; while paused, each visible enemy's intention too (intel.js).
-      case 'show_usable':document.body.classList.add('labels-full');if(clock.paused&&kind!=='camp'){intentionsShown=true;presenter?.setIntentions?.(intentions(world));}return true;
+      case 'show_usable':document.body.classList.add('labels-full');
+        // In a chamber: where each rival means to walk next, and whom he means to speak to.
+        if(chamber){intentionsShown=true;presenter?.setIntentions?.(chamber.rivalArrows());}
+        else if(clock.paused&&kind!=='camp'){intentionsShown=true;presenter?.setIntentions?.(intentions(world));}return true;
       case 'war_cry':if(h)issue({actorId:h.id,kind:'warCry'});return true;
       case 'quick_save':callbacks.onQuickSave?.(world);return true;
       case 'party_prev':cycleParty(-1);return true;case 'party_next':cycleParty(1);return true;
@@ -488,15 +509,19 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function saveResume(reason){if(world.status==='active')callbacks.onSave?.(world,reason);}
   function follow(){
     if(!stage)return;stage.selected=world.controlled;stage.focusMode=true;stage.cameraView='follow';
-    Object.assign(stage.orbit,{pitch:.87,distance:Math.min(Math.max(stage.orbit.distance,9),16)});stage.wake();
+    // A chamber is seen from higher and further back: the speaker, his reach and the benches around him.
+    Object.assign(stage.orbit,kind==='chamber'?{pitch:.98,distance:Math.min(Math.max(stage.orbit.distance,13),19)}:{pitch:.87,distance:Math.min(Math.max(stage.orbit.distance,9),16)});stage.wake();
   }
+  // A chamber opens on the whole floor (F follows the speaker); a field follows the soldier.
+  function firstView(){if(kind!=='chamber'){follow();return;}if(!stage)return;stage.selected=world.controlled;stage.home();stage.wake?.();}
   function onKey(e){
-    learnKey(e);if(e.repeat&&!e.key.startsWith('Arrow'))return;const action=actionFor(e,keymap);if(!action||!world||!stage)return;
+    // A held arrow walks a soldier on; in a chamber each press is one step to the next place.
+    learnKey(e);if(e.repeat&&(!e.key.startsWith('Arrow')||chamber))return;const action=actionFor(e,keymap);if(!action||!world||!stage)return;
     if(act(action))e.preventDefault();
   }
   function onKeyUp(e){
     const action=actionFor(e,keymap);
-    if(ARROWS[action]){arrows.delete(action);if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
+    if(ARROWS[action]&&!chamber){arrows.delete(action);if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
     if(action==='show_usable'){document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
   }
   function onBlur(){if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
@@ -531,21 +556,21 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
     presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
     stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);presenter.setSelection?.(squads?.selection??[]);presenter.setMarker?.(squads?.marker??null);
-    presenter.setDeployment?.(deploying(world)?world.deployment.zone:null);
+    presenter.setDeployment?.(deploying(world)?world.deployment.zone:null);chamber?.invalidate();
   }
-  squads=makeSquads();
+  squads=makeSquads();chamber=makeChamber();
   buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();showDeployment();updateHud(0);
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
-    attach(next){const again=stage===next;stage=next;stage.sync(stageEncounter(base,world));if(again)stage.rebuildRemains?.();resetPresenter();follow();},
+    attach(next){const again=stage===next;stage=next;stage.sync(stageEncounter(base,world));if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
     // The stage's encounter for this world (the page builds the stage from it).
     stageView:()=>stageEncounter(base,world),
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;
-      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();showDeployment();
-      if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();follow();}updateHud(performance.now());
+      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();showDeployment();
+      if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
@@ -554,10 +579,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();},
     issue,act,say,follow,takeControl,toggleList,
+    // The page changed a chamber's Contest (a panel's speech): its world and HUD follow, and an hour's end plays out.
+    chamberSync:outcome=>{if(!chamber)return;chamber.sync(outcome);stage?.sync(stageEncounter(base,world));},get chamber(){return chamber;},
     setMarks(next){marks=next??{};presenter?.setMarks(marks);},
     snapshot:()=>snapshotWorld(world),
     dispose(){
-      disposed=true;input?.dispose();presenter?.dispose();stage?.setLive(null);
+      disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
       canvas.removeEventListener('keydown',onKey);canvas.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
       document.removeEventListener('visibilitychange',onHidden);removeEventListener('pagehide',onHidden);
     }

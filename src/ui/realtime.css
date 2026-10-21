@@ -139,3 +139,46 @@
 .dialogue-option.is-dimmed{opacity:.6}.dialogue-needs{font-weight:700}
 @media (max-width:900px){.rt-camp-grid{grid-template-columns:1fr}}
 .rt-defeat-page{margin:.6rem 0;padding:.6rem .9rem;border-inline-start:3px solid var(--bronze,#b08a3c);background:#00000008}.rt-defeat-page p{margin:.2rem 0 0;font-style:italic}
+/* The chamber (from Chapter VII; guide "Political Contests"): the coalition strip under the motion, the speakers'
+   Resolve, the conversation beside the scene and the rivals' hour over it. Blocs read by letter as well as colour. */
+.rt-field[data-kind="chamber"]{--rt-veterans:#d0564a;--rt-landholders:#d8ae4c;--rt-civic:#6a96dc;--rt-chamber:#a070b8}
+.rt-field[data-kind="chamber"] .rt-top{background:linear-gradient(#0b0f0df0,#0b0f0dc0 70%,#0b0f0d00)}
+.rt-coalition{display:grid;gap:.25rem;margin-block-start:.35rem}
+.rt-coalition p{margin:0}.rt-vote{color:#f4ead5!important;font-size:.9rem}.rt-vote strong{color:var(--rt-focus)}
+.rt-seats{display:flex;flex-wrap:wrap;gap:.25rem .7rem;align-items:center}
+.rt-seat-group{display:flex;gap:.2rem;align-items:center}.rt-seat-group small{color:var(--rt-muted);font-size:.72rem;margin-inline-end:.15rem}
+.rt-field .rt-seat{min-inline-size:2.2rem;min-block-size:2.2rem;padding:.1rem .25rem;gap:.1rem;font-size:.72rem;border-width:2px;position:relative;flex-direction:column;line-height:1}
+.rt-field .rt-seat b{font-size:.9rem}
+.rt-field .rt-seat.committed{background:#5a4a22;border-color:var(--rt-bronze)}
+.rt-field .rt-seat.wavering{background:#2f3a2c;border-style:dashed;border-color:var(--rt-bronze)}
+.rt-field .rt-seat.against{background:#2a2623;color:#d9cfc0}
+.rt-seat[data-bloc="Veterans"]{box-shadow:inset 0 -3px 0 var(--rt-veterans)}.rt-seat[data-bloc="Landholders"]{box-shadow:inset 0 -3px 0 var(--rt-landholders)}
+.rt-seat[data-bloc="Civic"]{box-shadow:inset 0 -3px 0 var(--rt-civic)}.rt-seat[data-bloc="Chamber"]{box-shadow:inset 0 -3px 0 var(--rt-chamber)}
+.rt-field .rt-seat.at-risk{outline:2px solid #e0a23a;outline-offset:1px}.rt-seat.at-risk::after{content:"!";position:absolute;top:-.45rem;right:-.3rem;font-weight:900;color:#ffcf6e}
+.rt-whip{display:flex;flex-wrap:wrap;gap:.2rem .9rem;font-size:.82rem}.rt-whip .is-warning{color:#ffcf6e}
+.rt-field .rt-yield{border-color:var(--rt-bronze)}
+.rt-portrait.rt-speaker .bar.resolve i{background:#8fb7d9}
+.rt-speaker-state{font-size:.7rem;color:var(--rt-muted);font-weight:500}
+.rt-portrait.spoken .rt-speaker-state::before{content:"✓ "}.rt-portrait.withdrawn{filter:grayscale(1);opacity:.75}
+.rt-rivals{position:absolute;inset:auto 0 8.2rem;margin-inline:auto;inline-size:min(42rem,94%);display:flex;gap:.8rem;align-items:center;
+  background:#3a2a24ee;border:1px solid #c98d6b;border-radius:.4rem;padding:.45rem .8rem;z-index:4}
+.rt-rivals p{margin:0;flex:1;font-size:.92rem}.rt-rivals kbd{font:600 .7rem system-ui;color:var(--rt-muted)}
+.rt-talk{position:absolute;inset-block-start:6.6rem;inset-inline-end:.9rem;inline-size:min(25rem,94%);max-block-size:calc(100% - 15rem);overflow:auto;
+  background:var(--rt-panel);border:1px solid var(--rt-bronze);border-radius:.5rem;padding:.7rem .8rem;z-index:4;display:grid;gap:.45rem;align-content:start}
+.rt-talk-head{display:grid;grid-template-columns:auto 1fr auto;gap:.6rem;align-items:start}
+.rt-talk-head h3{margin:0;font-size:1.1rem}.rt-talk-head p{margin:0;font-size:.85rem;color:var(--rt-muted)}.rt-talk-head p strong{color:#f4ead5}
+.rt-talk-seal{display:grid;place-items:center;inline-size:2.3rem;block-size:2.3rem;border-radius:50%;font:700 .95rem Georgia,serif;background:#2b2f2a;border:2px solid var(--rt-bronze)}
+.rt-talk-seal[data-bloc="Veterans"]{border-color:var(--rt-veterans)}.rt-talk-seal[data-bloc="Landholders"]{border-color:var(--rt-landholders)}
+.rt-talk-seal[data-bloc="Civic"]{border-color:var(--rt-civic)}.rt-talk-seal[data-bloc="Chamber"]{border-color:var(--rt-chamber)}
+.rt-talk p{margin:0}.rt-talk-interest,.rt-talk-where{font-size:.85rem}.rt-talk-where{color:var(--rt-muted)}
+.rt-talk-speeches,.rt-talk-deals ul{list-style:none;margin:0;padding:0;display:grid;gap:.3rem}
+.rt-field .rt-talk-speeches button,.rt-field .rt-talk-deals button,.rt-field .rt-talk-ask{inline-size:100%;flex-direction:column;align-items:flex-start;gap:.1rem;text-align:start}
+.rt-talk-speeches small,.rt-talk-deals small,.rt-talk-ask small,.rt-talk-off small{display:block;font-weight:400;font-size:.78rem;color:var(--rt-muted)}
+.rt-talk-off{padding:.35rem .8rem;border:1px dashed var(--rt-line);border-radius:.4rem;opacity:.8}
+.rt-talk-deals h4{margin:.2rem 0;font-size:.9rem;color:var(--rt-bronze)}
+.chamber-records{display:grid;gap:.6rem;padding-inline:.9rem}
+@media (max-width:760px){
+  .rt-coalition .rt-whip,.rt-seat-group small{display:none}.rt-field .rt-seat{min-inline-size:1.9rem;min-block-size:1.9rem}
+  .rt-talk{inset:auto .5rem 11rem .5rem;inline-size:auto;max-block-size:46%}
+  .rt-rivals{inset-block-end:13.5rem}
+}
