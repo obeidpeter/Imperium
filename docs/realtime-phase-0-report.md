@@ -23,7 +23,7 @@ Phase 0 of the 0.40 conversion is built and **stops at Gate 0**. The brief puts 
   - 991 of 1,000 seeds won, with 13.5 of 26 Health left on average after about 24 s of battle time. The test requires at least 97% of 200 seeds.
   - Opening with both pila first: 995 of 1,000.
   - Of the first ten seeds, the second is lost. The losses are runs of the axe man's criticals from the flank, not a stuck lock or a pathing failure; the traced logs show it.
-  - In headless Chromium, three whole fights were played through the page's own command queue, one click per raider. All three were won: 35.6 s with 8 Health left, 18.7 s with 7, and 22.5 s with 17.
+  - In headless Chromium, three whole fights were played through the page's own command queue, one click per raider. All three were won: in 33.8 s of battle time with 9 Health left, 16.8 s with 10, and 22.6 s with 17.
 - **The decision for Peter:** if "10 of 10 fights" means arena fights, the raiders can be tuned a little weaker in data (`ARENA` and `WEAPONS` in `src/data/realtime-rules.js`). I left the fight dangerous on purpose so its feel can be judged.
 
 ### Click to first movement
@@ -37,7 +37,7 @@ Phase 0 of the 0.40 conversion is built and **stops at Gate 0**. The brief puts 
 - **Expected on a 60 Hz desktop:** between one and two frames, about 17–35 ms, plus the browser's input delay. This is an estimate, not a measurement.
 - **Automated measurement (software rendering):**
   - The smoke test and benchmark record the movement 1 frame after the click (2 animation frames at Performance quality, which draws every other frame).
-  - In milliseconds it is about 1.9 s, because SwiftShader draws this scene at about 1 frame per second.
+  - In milliseconds it ranged from 20 ms to 3.2 s (median 97 ms over five clicks), following SwiftShader's uneven frame times. That is not a desktop measurement.
 - **On a real desktop:** the arena's Menu → Run performance check reports this visit's clicks ("Click to first movement").
 
 ## What was done
@@ -106,11 +106,13 @@ The **renderer** column says where each figure came from. None was taken on a re
 | --- | --- | --- |
 | Simulation tick, 15 men fighting (p50 / p95) | 0.05 / 0.31 ms | Node 22, this container |
 | Simulation tick, 82 men fighting (Phase 2's budget is about 70 figures plus 12) | 0.12 / 0.71 ms, max 1.9 ms | Node 22, this container |
-| Simulation tick in the page, 15 / 82 men (p95) | 0.3 / 0.6 ms | Headless Chromium |
-| Arena ready (built, programs compiled) | 4.3 s | SwiftShader, Performance, 1280×800 |
-| 15 fighting men drawn | About 1 fps | SwiftShader. Software rendering of this scene; meaningless for the phone gate. 0.38.1's four-figure battle drew at about 3 fps in the same renderer. |
-| Click to first movement | 1 frame (about 1.9 s at about 1 fps) | SwiftShader |
+| Simulation tick in the page, 15 / 82 men (p95) | 0.2 / 0.5 ms | Headless Chromium |
+| Arena ready (built, programs compiled) | 4.0 s | SwiftShader, Performance, 1280×800 |
+| 15 fighting men drawn | 11 frames in 12 s; median frame interval 217 ms (about 5 fps) | SwiftShader. Software rendering of this scene; meaningless for the phone gate. |
+| Click to first movement | 1 frame after every click (5 of 5); 20 ms to 3.2 s, median 97 ms | SwiftShader |
 | First download | 1.39 MB of the 2 MB budget | Build report |
+
+The full record of the last benchmark run is [arena-phase0.json](evidence/arena-phase0.json) (`npm run benchmark:arena -- --dist --write`).
 
 Profiling the tick found the navigation grid's key rebuilt on every lookup and each man's derived values recomputed several times per tick. Both are cached now, which halved the 82-man tick.
 
