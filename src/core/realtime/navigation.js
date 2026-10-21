@@ -21,9 +21,11 @@ export function terrainAtPoint(map,x,z){
 // The grid for a map: `solid` where terrain stops a body or a missile, `walk`
 // where a body's centre may stand (solid ground widened by the clearance),
 // each cell's speed factor and the rules' ground height (high ground 1.6 m).
+const byMap=new WeakMap();
 export function navGrid(map){
+  const known=byMap.get(map);if(known)return known;
   const key=`${map.width}x${map.height}:${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
-  if(grids.has(key))return grids.get(key);
+  if(grids.has(key)){byMap.set(map,grids.get(key));return grids.get(key);}
   const cell=MOVEMENT.cell,per=Math.round(TILE/cell),cols=map.width*per,rows=map.height*per,n=cols*rows;
   const solid=new Uint8Array(n),walk=new Uint8Array(n),speed=new Float64Array(n),height=new Float64Array(n);
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
@@ -39,7 +41,7 @@ export function navGrid(map){
     walk[r*cols+c]=open;
   }
   const grid={cell,cols,rows,width:cols*cell,depth:rows*cell,solid,walk,speed,height};
-  grids.set(key,grid);return grid;
+  grids.set(key,grid);byMap.set(map,grid);return grid;
 }
 
 export const cellIndex=(g,x,z)=>{const c=Math.floor(x/g.cell),r=Math.floor(z/g.cell);return c<0||r<0||c>=g.cols||r>=g.rows?-1:r*g.cols+c;};

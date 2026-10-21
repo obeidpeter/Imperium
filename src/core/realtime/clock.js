@@ -7,7 +7,7 @@ import {TIME} from '../../data/realtime-rules.js';
 // round at the current pace, then the clock is paused again.
 
 export function createClock({speed=1,paused=false}={}){
-  return {accumulator:0,paused:!!paused,speed:TIME.speeds.includes(speed)?speed:1,slow:false,stepTicks:0};
+  return {accumulator:0,paused:!!paused,speed:TIME.speeds.includes(speed)?speed:1,slow:false,stepTicks:0,debt:0};
 }
 export function setSpeed(clock,speed){if(TIME.speeds.includes(speed))clock.speed=speed;return clock.speed;}
 // Resuming runs the next tick on the next frame: what was ordered while
@@ -29,12 +29,23 @@ export function clockRate(clock){return clock.paused&&!clock.stepTicks?0:clock.s
 // capped, and a step never runs past its round.
 export function advanceClock(clock,realMs){
   const rate=clockRate(clock);if(!rate)return 0;
-  clock.accumulator+=Math.min(Math.max(0,Number(realMs)||0),TIME.maxFrameMs)*rate;
+  let gained=Math.min(Math.max(0,Number(realMs)||0),TIME.maxFrameMs)*rate;
+  // Time borrowed by hurryClock is repaid first.
+  const repay=Math.min(clock.debt??0,gained);clock.debt=(clock.debt??0)-repay;gained-=repay;
+  clock.accumulator+=gained;
   let ticks=Math.floor(clock.accumulator/TIME.tickMs);clock.accumulator-=ticks*TIME.tickMs;
   if(clock.stepTicks>0){
     if(ticks>=clock.stepTicks){ticks=clock.stepTicks;clock.stepTicks=0;clock.accumulator=0;}else clock.stepTicks-=ticks;
   }
   return ticks;
+}
+// A command given while the world runs is carried out on the very next frame:
+// the time its tick waits for is borrowed from the frames that follow, so the
+// world's pace over any second is unchanged. At most one tick is ever owed.
+export function hurryClock(clock){
+  if(!clockRate(clock)||(clock.debt??0)>0)return false;
+  const need=TIME.tickMs-clock.accumulator;if(need<=0)return false;
+  clock.accumulator=TIME.tickMs;clock.debt=need;return true;
 }
 // Stop at once mid-frame (auto-pause): the caller drops the frame's remaining ticks.
 export function interruptClock(clock){clock.paused=true;clock.stepTicks=0;}

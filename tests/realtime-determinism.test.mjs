@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createShowcaseSession} from '../src/showcase/session.js';
 import {createArenaWorld} from '../src/core/realtime/arena.js';
 import {queueCommand,restoreWorld,snapshotWorld,step,worldHash} from '../src/core/realtime/simulation.js';
-import {advanceClock,createClock,setPaused,setSlow,setSpeed,stepRound} from '../src/core/realtime/clock.js';
+import {advanceClock,createClock,hurryClock,setPaused,setSlow,setSpeed,stepRound} from '../src/core/realtime/clock.js';
 import {TIME} from '../src/data/realtime-rules.js';
 
 // Brief §5 A1–A4: time and determinism. The arena is the Phase 0 world; its
@@ -125,4 +125,13 @@ test('invalid commands change nothing, the random streams included',()=>{
     const r=queueCommand(world,command);assert.equal(r.ok,false,JSON.stringify(command));assert.ok(r.reason);
   }
   assert.equal(worldHash(world),hash);
+});
+
+test('a command hurries its tick to the next frame without changing the pace over time',()=>{
+  const c=createClock();assert.equal(advanceClock(c,10),0);assert.equal(hurryClock(c),true);assert.equal(advanceClock(c,1),1,'the next frame runs the tick');
+  assert.equal(hurryClock(c),false,'one tick at most is owed');
+  const steady=createClock(),hurried=createClock();let a=0,b=0;
+  for(let frame=0;frame<6000;frame++){a+=advanceClock(steady,1000/60);if(frame%7===0)hurryClock(hurried);b+=advanceClock(hurried,1000/60);}
+  assert.ok(Math.abs(a-b)<=1,`${a} ticks steady, ${b} hurried`);assert.equal(a,2000);
+  const paused=createClock({paused:true});assert.equal(hurryClock(paused),false,'a paused world is never hurried');
 });

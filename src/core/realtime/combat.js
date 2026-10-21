@@ -28,7 +28,14 @@ export function protectionOf(actor){
   }
   return out;
 }
+// Derived values depend only on the attributes and the kit, which are replaced
+// (never edited in place) when they change; each set is computed once.
+const derivedCache=new WeakMap();
 export function derivedValues(actor){
+  const known=derivedCache.get(actor);if(known&&known.attributes===actor.attributes&&known.kit===actor.kit)return known.values;
+  const values=computeDerived(actor);derivedCache.set(actor,{attributes:actor.attributes,kit:actor.kit,values});return values;
+}
+function computeDerived(actor){
   const a=actor.attributes,r=restrictionOf(actor),weapon=weaponOf(actor),s=COMBAT.stagger;
   const attack=floor(a.str/5)+floor(a.agi/2)+a.combat-floor(r/10);
   return {health:20+floor(a.con/2),stamina:30+floor(a.con/2),restriction:r,attack,defence:10+floor(a.agi/2)+a.combat-floor(r/10),
@@ -60,7 +67,10 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null}={}){
   if(missile&&-rise>=COMBAT.heightStep){attack+=COMBAT.heightDefence;mods.push({label:'Thrown downhill',kind:'attack',value:COMBAT.heightDefence});}
   if(missile&&crossesCover(grid,src,defender)){attack-=COMBAT.coverMissile;mods.push({label:'Through cover',kind:'attack',value:-COMBAT.coverMissile});}
   const far=span(defender.x-src.x,defender.z-src.z)>COMBAT.weatherRange,weather=missile&&far&&['rain','mist','dust'].includes(world.weather);
-  if(weather){attack-=COMBAT.weatherMissile;mods.push({label:`${world.weather[0].toUpperCase()}${world.weather.slice(1)} beyond 20 m`,kind:'attack',value:-COMBAT.weatherMissile});}
+  if(weather){
+    attack-=COMBAT.weatherMissile;
+    mods.push({label:`${world.weather[0].toUpperCase()}${world.weather.slice(1)} beyond 20 m`,kind:'attack',value:-COMBAT.weatherMissile});
+  }
   const shield=shieldOf(defender),guard=braced(world,defender);let block=0;
   if(shield&&arc==='front'){
     block=Math.min(COMBAT.blockCap,shield.block+(guard?COMBAT.braceBlock:0))*(defender.shieldStuck?COMBAT.stuckPilum:1);

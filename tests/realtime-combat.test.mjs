@@ -20,7 +20,9 @@ const by=(w,id)=>w.actors.find(a=>a.id===id);
 test('derived values follow §3.5 with every division floored',()=>{
   const a=startingAttributes({path:'legionary'});
   assert.deepEqual(a,{str:15,agi:12,con:13,per:7,elo:7,auth:7,combat:15,field:5});
-  for(const [path,{mods}]of Object.entries(TRAINING_PATHS)){const s=startingAttributes({path});for(const [k,v]of Object.entries(mods))assert.equal(s[k],(k==='combat'||k==='field'?5:10)+v,path+k);}
+  for(const [path,{mods}]of Object.entries(TRAINING_PATHS)){
+    const s=startingAttributes({path});for(const [k,v]of Object.entries(mods))assert.equal(s[k],(k==='combat'||k==='field'?5:10)+v,path+k);
+  }
   const w=duel(),hero=by(w,'hero'),d=derivedValues(hero);
   assert.equal(d.restriction,19);assert.equal(d.health,26);assert.equal(d.stamina,36);
   assert.equal(d.attack,3+6+15-1);assert.equal(d.defence,10+6+15-1);assert.equal(d.missile,d.attack+6+3-1);
@@ -46,7 +48,8 @@ test('criticals ignore armour absorb, and are doubled only for the actor the pla
   const p=blowSetup(w,hero,r).protection,mult=1+(15-10)/25,raw=t=>[...{pierce:[4,8],cut:[1,3]}[t]];
   const crit=end=>Math.floor(raw('pierce')[end]*mult*(1-p.pierce.resist)+raw('cut')[end]*mult*(1-p.cut.resist)+1e-9)*2;
   assert.deepEqual(mine.criticalDamage,{min:crit(0),max:crit(1)});
-  const normal=end=>Math.max(1,Math.floor(Math.max(0,raw('pierce')[end]*mult-p.pierce.absorb)*(1-p.pierce.resist)+Math.max(0,raw('cut')[end]*mult-p.cut.absorb)*(1-p.cut.resist)+1e-9));
+  const part=(type,end)=>Math.max(0,raw(type)[end]*mult-p[type].absorb)*(1-p[type].resist);
+  const normal=end=>Math.max(1,Math.floor(part('pierce',end)+part('cut',end)+1e-9));
   assert.deepEqual(mine.damage,{min:normal(0),max:normal(1)});
   assert.ok(mine.criticalDamage.min>mine.damage.min);
   // The raider's critical is not doubled (he is not the controlled actor).
@@ -84,7 +87,11 @@ test('C15: the shield blocks only inside the front 120°, gains 0.30 braced and 
 test('C14: a blow above maxHealth/5 or any stun staggers and interrupts; a braced man is never staggered',()=>{
   const w=duel(),r=by(w,'r'),setup={...blowSetup(w,by(w,'hero'),r),attack:100,block:0};
   let staggered=0,heavy=0;
-  for(let i=0;i<500;i++){const roll=rollBlow(w,setup);if(roll.damage>r.maxHp/5){heavy++;assert.equal(roll.stagger,true);}else if(roll.hit)assert.equal(roll.stagger,false);if(roll.stagger)staggered++;}
+  for(let i=0;i<500;i++){
+    const roll=rollBlow(w,setup);
+    if(roll.damage>r.maxHp/5){heavy++;assert.equal(roll.stagger,true);}else if(roll.hit)assert.equal(roll.stagger,false);
+    if(roll.stagger)staggered++;
+  }
   assert.ok(heavy>0&&staggered===heavy);
   const stunned=rollBlow(w,{...setup,profile:{stun:[3,3]}});assert.ok(stunned.stun>0);assert.equal(stunned.stagger,true);
   assert.equal(rollBlow(w,{...setup,profile:{stun:[3,3]},noStagger:true}).stagger,false);

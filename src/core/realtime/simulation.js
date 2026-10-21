@@ -27,7 +27,8 @@ function makeActor(spec){
     drawn:(spec.side??'enemy')==='enemy',walkMode:false,order:null,lock:null,path:[],
     gait:null,moving:false,walked:0,repathAt:0,action:null,readyAt:0,staggerUntil:0,staggerStart:-1,braceUntil:0,shieldStuck:false,
     lastHitTick:-1,lastHitBy:null,calmSince:0,cooldowns:{},kills:0,goal:null,
-    ai:spec.side==='enemy'?{state:'idle',slot:-1,dx:0,dz:0}:null};
+    // Enemies think for themselves; a friend does only when his spec asks (a test or the performance check's skirmish).
+    ai:(spec.ai??spec.side==='enemy')?{state:spec.alert?'engage':'idle',slot:-1,dx:0,dz:0}:null};
   const d=derivedValues(actor);actor.hp=actor.maxHp=d.health;actor.stamina=actor.maxStamina=d.stamina;actor.pfx=actor.fx;actor.pfz=actor.fz;
   return actor;
 }
@@ -340,7 +341,8 @@ const nameOf=(world,id)=>actorById(world,id)?.name??'Someone';
 function logLine(world,e){
   const by=nameOf(world,e.attackerId??e.actorId),to=nameOf(world,e.defenderId??e.targetId),what=e.missile?MISSILES[e.missile].name.toLowerCase():'blow';
   switch(e.kind){
-    case 'hit':return `${by} hits ${to}${e.missile?` with a ${what}`:''}: ${e.damage}${e.critical?' (critical)':''}${e.arc!=='front'?` from the ${e.arc==='rear'?'rear':'flank'}`:''}.`;
+    case 'hit':
+      return `${by} hits ${to}${e.missile?` with a ${what}`:''}: ${e.damage}${e.critical?' (critical)':''}${e.arc!=='front'?` from the ${e.arc==='rear'?'rear':'flank'}`:''}.`;
     case 'block':return `${to} blocks ${by}'s ${what}.`;
     case 'stuck':return `The pilum sticks in ${to}'s shield.`;
     case 'miss':return `${by} misses ${to}.`;

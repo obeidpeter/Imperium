@@ -37,5 +37,6 @@ export function decideEnemy(world,actor,emit){
     }
     actor.order={kind:'advance',targetId:target.id,stopAt:far-2};return;
   }
+  actor.drawn=true;
   if(actor.order?.kind!=='attack'||actor.order.targetId!==target.id)actor.order={kind:'attack',targetId:target.id,slot:true};
 }
