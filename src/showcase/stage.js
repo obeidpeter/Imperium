@@ -144,13 +144,15 @@ export class BattleStage{
   }
   *build(canvas,encounter,
     {onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,
-      stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false}={}){
+      stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false,input=true}={}){
     try{
     this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;
     this.commendations=commendations??{};
     this.profile=getSceneProfile(encounter,
       {chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});
-    this.keyboardMode=keyboardMode;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;this.encounter=encounter;this.onPick=onPick;
+    // input:false leaves the pointer and keys to the page (the real-time arena binds its own).
+    this.keyboardMode=keyboardMode;this.inputEnabled=input!==false;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;
+    this.encounter=encounter;this.onPick=onPick;
     this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
     this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);
     this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;
@@ -312,6 +314,8 @@ export class BattleStage{
     this.updateTacticalLinks();
   }
   wake(){this.wokeAt=performance.now();}
+  // Real time: `source` steps the world before each frame and poses every figure from it (live-figures.js).
+  setLive(source){this.live=source??null;this.wake();}
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
@@ -397,7 +401,7 @@ export class BattleStage{
       this.overviewDistance());
   }
   bind(){this.events=[];const on=(target,type,fn,opts)=>{target.addEventListener(type,fn,opts);this.events.push(()=>target.removeEventListener(type,fn,opts));};
-    this.bindInput(on);
+    if(this.inputEnabled)this.bindInput(on);
     on(document,'visibilitychange',()=>{if(document.hidden)this.finishMotion();});
     on(this.canvas,'webglcontextlost',
       e=>{
@@ -454,11 +458,13 @@ export class BattleStage{
   }
   tick(now){
     if(this.disposed)return;this.frame=requestAnimationFrame(t=>this.tick(t));
-    if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}if(!this.cadence.shouldRender(now))return;
+    if(document.hidden||this.contextLost||this.paused||!this.isReady){this.lastPaint=0;return;}
+    // Live mode: the real-time world steps before the frame that draws it.
+    this.live?.beforeFrame?.(now);if(!this.cadence.shouldRender(now))return;
     // While nothing moves (no motion, input or camera change for a moment), a
     // 60 fps target draws every other frame: breathing, cloth, cloud and water
     // read the same at 30, for half the GPU work, heat and battery.
-    const quiet=!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
+    const quiet=!this.live&&!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
     if(quiet&&QUALITY[this.quality].fps>30&&(this.quietSkip=!this.quietSkip))return;
     const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;
     if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;
@@ -483,15 +489,17 @@ export class BattleStage{
     }
     this.environment.update(this.reducedMotion?0:this.elapsed);this.fieldFeatures?.update(this.elapsed,this.reducedMotion);
     for(const unit of this.visibleUnits){
-      const a=this.actors.get(unit.id),o=frame?.unitOverrides[unit.id],position=o??unit;
-      const walk=this.divisionStep(unit,now);
+      // A live figure's place and pose come from the real-time world (live-figures.js), not a turn's timeline.
+      const lp=this.live?.pose(unit,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
+      const a=this.actors.get(unit.id),o=lp?null:frame?.unitOverrides[unit.id],position=lp?.at??o??unit;
+      const walk=lp?null:this.divisionStep(unit,now);
       a.group.position.copy(this.world(walk?.at??position));const contact=meleeOffset(unit,o,this.animation?.timeline);a.group.position.x+=contact.x;
       a.group.position.z+=contact.z;a.group.position.y=this.surfaceHeight(a.group.position.x,a.group.position.z);
-      a.group.visible=actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
-      const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle';
-      const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=attack&&this.unitAt(attack.target);
-      const aimHeight=victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
-      const pose=stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
+      a.group.visible=lp?lp.visible:actorVisible(unit)||!!o&&o.alpha>0;if(!a.group.visible){this.labels.get(unit.id).hidden=true;this.layFallen(unit,a);continue;}
+      const active=unit.id===this.selected||unit.id===this.inspected||unit.id===this.hovered||!!o&&o.pose!=='idle'||!!lp?.active;
+      const attack=this.animation?.timeline.tracks.find(t=>t.unitId===unit.id&&t.pose===o?.pose&&t.target),victim=lp?null:attack&&this.unitAt(attack.target);
+      const aimHeight=lp?lp.aimHeight:victim?this.world(victim).y+(['cavalry','heavy'].includes(victim.role)?2.05:1.2):undefined;
+      const pose=lp?.pose??stageActorPose(unit,frame,this.animation?.timeline,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
       if(walk)Object.assign(pose,
         walk.moving?{motion:'walk',locomotionDistance:walk.distance,locomotionWeight:1,phase:undefined,direction:walk.yaw}:{motion:'idle',direction:walk.yaw});
       else if(unit.role==='voter'&&pose.motion==='idle')Object.assign(pose,voterPosture(unit)??{});
@@ -499,7 +507,8 @@ export class BattleStage{
       const gesture=this.ceremony?.poses?.[unit.id];
       if(gesture&&!walk&&pose.motion==='idle'){pose.motion=gesture;pose.phase=this.reducedMotion?.55:(this.elapsed*.28+(unit.x*.37+unit.y*.61))%1;}
       if(unit.id===this.selected)this.selectedYaw=pose.direction;
-      const focusUnit=victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
+      const focusUnit=lp?.focusId?this.encounter.units.find(u=>u.id===lp.focusId)
+        :victim??(unit.id===this.selected&&this.inspected&&this.inspected!==unit.id?this.encounter.units.find(u=>u.id===this.inspected):null);
       let gazeYaw=0,gazePitch=0;
       if(focusUnit){
         const d=this.world(focusUnit).sub(a.group.position),
@@ -592,6 +601,8 @@ export class BattleStage{
       sampleImpactParticles(cloud,p,fx.progress,{shield:fx.type==='shield',source:fx.source?this.world(fx.source):undefined});
       if(defender&&fx.delta)this.labelRefs.get(defender.id).effect.textContent=String(fx.delta);
     }}
+    // Live mode draws its own missiles, sparks and markers over the pools just cleared.
+    this.live?.effects?.(this,{dt,now});
     if(this.chamberStandards)for(const [bloc,std]of this.chamberStandards){
       if(std.group.visible&&std.banner)std.banner.rotation.z=this.reducedMotion?0:Math.sin(this.elapsed*2.1+bloc.length)*.035;
     }

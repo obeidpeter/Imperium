@@ -84,6 +84,18 @@ export const stageInput={
         if(handled)e.preventDefault();
       });
   },
+  // Real time: the person nearest the pointer's ray (a forgiving upright test,
+  // for men on the move) and the ground point under it, in world metres.
+  pickPoint(event){
+    const r=this.canvas.getBoundingClientRect();this.ndc.set((event.clientX-r.left)/r.width*2-1,-(event.clientY-r.top)/r.height*2+1);
+    this.ray.setFromCamera(this.ndc,this.camera);const ray=this.ray.ray;let unitId=null,best=Infinity;
+    for(const [id,a]of this.actors){
+      if(!a.group.visible)continue;const p=a.group.position,kit=a.group.userData.actor??{},miss=rayToUpright(ray,p.x,p.y,p.z,(kit.height??2.03)+.2);
+      if(miss>(kit.mounted?1.2:.55))continue;const along=ray.origin.distanceTo(p);if(along<best){best=along;unitId=id;}
+    }
+    const ground=intersectGround(ray,this.surfaceHeight??this.environment.groundHeight,this.hit)?{x:this.hit.x,z:this.hit.z}:null;
+    return {unitId,ground};
+  },
   pick(event){
     const r=this.canvas.getBoundingClientRect();this.ndc.set((event.clientX-r.left)/r.width*2-1,-(event.clientY-r.top)/r.height*2+1);
     this.ray.setFromCamera(this.ndc,this.camera);
