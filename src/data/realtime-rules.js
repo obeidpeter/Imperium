@@ -57,35 +57,22 @@ export const WEAPONS=Object.freeze({
   spatha:Object.freeze({name:'Spatha',swing:1.3,reach:1.8,damage:Object.freeze({cut:[3,7],pierce:[1,2]})}),
   spear:Object.freeze({name:'Spear',swing:1.4,reach:2.5,damage:Object.freeze({pierce:[2,6]})}),
   axe:Object.freeze({name:'Axe',swing:1.6,reach:1.6,damage:Object.freeze({cut:[4,8],crush:[0,2]})}),
-  unarmed:Object.freeze({name:'Unarmed',swing:.9,reach:1,damage:Object.freeze({crush:[1,2]})})});
+  unarmed:Object.freeze({name:'Unarmed',swing:.9,reach:1,damage:Object.freeze({crush:[1,2]})}),
+  knife:Object.freeze({name:'Knife',swing:.9,reach:1.1,damage:Object.freeze({pierce:[1,4]})}),
+  // Missile weapons: a "swing" draws and looses; `ranged` names the missile and its range.
+  bow:Object.freeze({name:'Bow',swing:1.8,reach:1,damage:Object.freeze({crush:[1,2]}),ranged:Object.freeze({missile:'arrow',ammo:'arrow',range:40})}),
+  sling:Object.freeze({name:'Sling',swing:1.6,reach:1,damage:Object.freeze({crush:[1,2]}),ranged:Object.freeze({missile:'bullet',ammo:null,range:32})})});
 export const MISSILES=Object.freeze({
   pilum:Object.freeze({name:'Pilum',range:25,speed:22,damage:Object.freeze({pierce:[5,10]}),sticks:true}),
-  javelin:Object.freeze({name:'Javelin',range:22,speed:20,damage:Object.freeze({pierce:[3,7]}),sticks:true})});
+  javelin:Object.freeze({name:'Javelin',range:22,speed:20,damage:Object.freeze({pierce:[3,7]}),sticks:true}),
+  dart:Object.freeze({name:'Plumbata',range:35,speed:24,damage:Object.freeze({pierce:[3,6]}),sticks:false}),
+  arrow:Object.freeze({name:'Arrow',range:40,speed:45,damage:Object.freeze({pierce:[3,7]}),sticks:false,shot:true}),
+  bullet:Object.freeze({name:'Sling bullet',range:32,speed:35,damage:Object.freeze({crush:[2,5],stun:[0,1]}),sticks:false,shot:true})});
 export const SHIELDS=Object.freeze({scutum:Object.freeze({name:'Scutum',block:.3}),parma:Object.freeze({name:'Parma',block:.2}),
   round:Object.freeze({name:'Round shield',block:.2})});
 
-// Items follow the §3.13 schema (protection per type as {absorb, resist}).
-// Phase 0 carries only what the arena wears; the full kit arrives in Phase 1.
-const p=(absorb,resist)=>Object.freeze({absorb,resist});
-const item=data=>Object.freeze({layer:0,protection:Object.freeze({}),restriction:0,value:0,shape:Object.freeze({w:1,h:1}),...data});
-export const ITEMS=Object.freeze({
-  tunic:item({name:'Wool tunic',slot:'body',protection:Object.freeze({cut:p(0,.05),pierce:p(0,.05),crush:p(0,.05)}),value:4,shape:{w:2,h:2}}),
-  subarmalis:item({name:'Subarmalis',slot:'body',layer:1,restriction:2,protection:Object.freeze({cut:p(1,.1),pierce:p(1,.1),crush:p(2,.2),stun:p(1,.1)}),
-    value:12,shape:{w:2,h:2}}),
-  hamata:item({name:'Lorica hamata',slot:'body',layer:2,restriction:8,protection:Object.freeze({cut:p(3,.3),pierce:p(1,.2),crush:p(1,.1)}),value:60,
-    shape:{w:2,h:3}}),
-  galea:item({name:'Galea',slot:'head',layer:1,restriction:2,protection:Object.freeze({cut:p(1,.1),pierce:p(1,.1),crush:p(1,.1),stun:p(2,.2)}),value:25,
-    shape:{w:2,h:2}}),
-  caligae:item({name:'Caligae',slot:'feet',value:6,shape:{w:2,h:1}}),
-  cingulum:item({name:'Cingulum',slot:'belt',belt:Object.freeze({pila:2}),value:10,shape:{w:2,h:1}}),
-  scutum:item({name:'Scutum',slot:'shield',restriction:6,shield:'scutum',value:20,shape:{w:2,h:4}}),
-  gladius:item({name:'Gladius',slot:'weapon',restriction:1,weapon:'gladius',value:18,shape:{w:1,h:3}}),
-  jerkin:item({name:'Leather jerkin',slot:'body',layer:1,restriction:3,protection:Object.freeze({cut:p(1,.15),pierce:p(1,.1),crush:p(1,.1)}),value:9,
-    shape:{w:2,h:2}}),
-  round_shield:item({name:'Round shield',slot:'shield',restriction:3,shield:'round',value:8,shape:{w:3,h:3}}),
-  axe:item({name:'Axe',slot:'weapon',restriction:2,weapon:'axe',value:7,shape:{w:1,h:3}}),
-  spear:item({name:'Spear',slot:'weapon',restriction:2,weapon:'spear',value:6,shape:{w:1,h:4}}),
-  spatha:item({name:'Spatha',slot:'weapon',restriction:1,weapon:'spatha',value:15,shape:{w:1,h:3}})});
+// Kit lives in items.js (§3.13); the rules read it from there.
+export {ITEMS} from './items.js';
 
 // Abilities (§3.6). Phase 0 implements Strike, Brace and Throw pilum; the
 // rest of the initial set arrives with its phase.
@@ -97,12 +84,26 @@ export const ABILITIES=Object.freeze({
   throw_pilum:Object.freeze({id:'throw_pilum',name:'Throw pilum',kind:'technique',unlock:{chapter:1},target:'enemy',groundTarget:true,range_m:25,
     cost:Object.freeze({ammo:'pilum'}),castTime_s:.8,release:.5,recovery_s:.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'pilum'}]),
     summary:'Throw a pilum up to 25 metres; a blocked one sticks in the shield.'}),
+  bind_wounds:Object.freeze({id:'bind_wounds',name:'Bind wounds',kind:'technique',unlock:{chapter:2},target:'ally',selfIfNoTarget:true,range_m:1.6,
+    cost:Object.freeze({bandage:1}),castTime_s:3,recovery_s:.5,interruptible:true,effects:Object.freeze([{type:'heal',fraction:.25}]),
+    summary:'Three seconds’ work restores a quarter of Health; a hit stops it and the bandage is kept.'}),
+  carry:Object.freeze({id:'carry',name:'Carry',kind:'technique',unlock:{chapter:2},target:'ally',range_m:1.6,cost:Object.freeze({}),needsSheathed:true,
+    effects:Object.freeze([{type:'carry'}]),summary:'Lift a fallen comrade (weapon sheathed). Walk only; your shield does not block.'}),
+  scout:Object.freeze({id:'scout',name:'Scout',kind:'technique',unlock:{chapter:3},target:'self',cost:Object.freeze({stamina:20}),recovery_s:30,
+    effects:Object.freeze([{type:'reveal',radius:30,duration_s:20}]),summary:'Reveal hidden enemies and concealed ground within 30 metres for 20 seconds.'}),
+  shield_bash:Object.freeze({id:'shield_bash',name:'Shield bash',kind:'technique',unlock:{course:'shield_bash'},target:'enemy',range_m:1.2,
+    cost:Object.freeze({stamina:10}),castTime_s:.6,release:.5,recovery_s:8,needsShield:true,
+    effects:Object.freeze([{type:'bash',damage:Object.freeze({stun:[6,10],crush:[1,3]})}]),summary:'A stunning blow with the shield boss that staggers him.'}),
   // The raiders' own technique; never on the player's bar.
   throw_javelin:Object.freeze({id:'throw_javelin',name:'Throw javelin',kind:'technique',enemyOnly:true,unlock:{},target:'enemy',range_m:22,
     cost:Object.freeze({ammo:'javelin'}),castTime_s:.8,release:.5,recovery_s:2.4,interruptible:true,effects:Object.freeze([{type:'missile',missile:'javelin'}]),
     summary:'A raider’s javelin.'})});
-// The field bar's default places: 1 Strike, 2 Brace, 3 Throw pilum.
+// The field bar's default places: 1 Strike, 2 Brace, 3 Throw pilum; new
+// techniques take the next free place as they are learnt.
 export const FIELD_BAR=Object.freeze(['strike','brace','throw_pilum']);
+export const FIELD_ORDER=Object.freeze(['strike','brace','throw_pilum','bind_wounds','carry','scout','shield_bash']);
+// Bandages a soldier carries into each encounter.
+export const BANDAGES_PER_ENCOUNTER=3;
 
 // Reason codes as message-line data (§3.6). The last group is added in Phase 0
 // for cases the brief's list does not name; the phase report records them.

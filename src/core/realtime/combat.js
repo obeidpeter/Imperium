@@ -32,18 +32,22 @@ export function protectionOf(actor){
 // (never edited in place) when they change; each set is computed once.
 const derivedCache=new WeakMap();
 export function derivedValues(actor){
-  const known=derivedCache.get(actor);if(known&&known.attributes===actor.attributes&&known.kit===actor.kit)return known.values;
-  const values=computeDerived(actor);derivedCache.set(actor,{attributes:actor.attributes,kit:actor.kit,values});return values;
+  const known=derivedCache.get(actor);
+  if(known&&known.attributes===actor.attributes&&known.kit===actor.kit&&known.effects===actor.effects)return known.values;
+  const values=computeDerived(actor);derivedCache.set(actor,{attributes:actor.attributes,kit:actor.kit,effects:actor.effects,values});return values;
 }
+const NO_EFFECTS=Object.freeze({});
+// Courses add their stated effects (soldier.js courseEffects): Long march takes
+// 5 from Restriction, Work at the post adds 2 Attack, Hardening a tenth of Health.
 function computeDerived(actor){
-  const a=actor.attributes,r=restrictionOf(actor),weapon=weaponOf(actor),s=COMBAT.stagger;
-  const attack=floor(a.str/5)+floor(a.agi/2)+a.combat-floor(r/10);
-  return {health:20+floor(a.con/2),stamina:30+floor(a.con/2),restriction:r,attack,defence:10+floor(a.agi/2)+a.combat-floor(r/10),
+  const a=actor.attributes,fx=actor.effects??NO_EFFECTS,r=Math.max(0,restrictionOf(actor)+(fx.restriction??0)),weapon=weaponOf(actor),s=COMBAT.stagger;
+  const attack=floor(a.str/5)+floor(a.agi/2)+a.combat-floor(r/10)+(fx.attack??0);
+  return {health:floor((20+floor(a.con/2))*(1+(fx.health??0))),stamina:30+floor(a.con/2),restriction:r,attack,defence:10+floor(a.agi/2)+a.combat-floor(r/10),
     missile:attack+floor(a.agi/2)+floor(a.per/2)-floor(r/10),weapon,reach:weapon.reach,swingTicks:ticks(weapon.swing),
     recoveryTicks:ticks(clamp(.6-(a.agi+a.str)/100+r/100,0,1)),staggerBase:clamp(s.base-a.con/s.con,s.min,s.max),
     run:Math.max(MOVEMENT.runMin,MOVEMENT.run*(1-r/MOVEMENT.runRestriction)),
     staminaPerSecond:COMBAT.regen.stamina*(1+Math.max(0,a.con-10)/COMBAT.regen.staminaCon)*Math.max(COMBAT.regen.staminaFloor,1-r/100),
-    healthPerSecond:(20+floor(a.con/2))*(COMBAT.regen.healthBase+a.con/COMBAT.regen.healthCon)};
+    healthPerSecond:floor((20+floor(a.con/2))*(1+(fx.health??0)))*(COMBAT.regen.healthBase+a.con/COMBAT.regen.healthCon)};
 }
 export const staggerTicks=(actor,stun=0)=>ticks(derivedValues(actor).staggerBase+Math.min(stun*COMBAT.stagger.stun,COMBAT.stagger.stunMax));
 
