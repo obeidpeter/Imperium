@@ -72,7 +72,7 @@ export function keymapFrom(changes){
 // What a map changes from the defaults: what the settings keep.
 export const keymapChanges=map=>Object.fromEntries(Object.entries(map).filter(([action,keys])=>keys.join(' ')!==DEFAULT_KEYMAP[action]?.join(' '))
   .map(([action,keys])=>[action,[...keys]]));
-// The remappable actions as Menu → Controls & readability lists them (guide "Keyboard" and "Panels").
+// The remappable actions as Settings → Controls lists them (guide "Keyboard" and "Panels").
 export const KEY_GROUPS=Object.freeze([
   ['Acting',[['combat_toggle','Draw or sheathe'],['target_next_enemy','Next target'],['target_next_friend','Next friend'],['interact_nearest','Talk to or use the nearest'],
     ['ability_bar','Open the ability bar'],['walk_toggle','Walk everywhere, or run'],['show_usable','Label what you can use (hold)'],['war_cry','War cry']]],

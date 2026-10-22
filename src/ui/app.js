@@ -774,7 +774,7 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
 }
-// ——— Remapping a key (Menu → Controls & readability): Change listens for the next key pressed. ———
+// ——— Remapping a key (Settings → Controls): Change listens for the next key pressed. ———
 let rebinding=null;
 const actionName=action=>KEY_GROUPS.flatMap(([,rows])=>rows).find(([a])=>a===action)?.[1]??action;
 function startRebind(action){

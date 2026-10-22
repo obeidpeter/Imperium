@@ -12,6 +12,7 @@ The conversion to real time with pause, following the real-time build brief (sup
 - Camp prioritizes departure and unmet requirements. Equipment, training, company orders and campaign records reveal supporting detail when requested.
 - Loading or replacing a named save requires confirmation; cancelled changes preserve progress.
 - Correct high-contrast colors on light and dark surfaces, reliable action-bar focus shortcuts, and clean dialog transitions after conversations or mission orders.
+- The player guide, and the in-game help generated from it, name every setting as the game does, under its five categories.
 
 ### Windows playtest improvements ([report](docs/realtime-playtest-polish.md))
 
@@ -21,6 +22,7 @@ The conversion to real time with pause, following the real-time build brief (sup
 - Rotatable equipped-character previews, item comparisons and exact next-training-point effects; clearer lighting, combat timing cues, target markers, terrain continuity and horizon framing.
 - Clearer political movement/speech restrictions, persistent vote projections, delegate medallions, bloc costumes and reactions. Lower High-quality shadow and occlusion costs.
 - A dedicated Chromium playtest-regression runner is included in CI, alongside the existing full smoke test. See the report for completed checks and remaining device/player qualification.
+- Gate 4's sweeps were run again after the crowd-separation change, which changes outcomes: every battle and finale route is still won on Standard and on Story. The simulation's tick costs more, about 2 ms at p95 in the finale on the development container against 4 ms budgeted for a phone; no phone has been measured ([Phase 4 report](docs/realtime-phase-4-report.md#after-the-report)).
 
 ### Phase 4: the finale and finishing work ([report](docs/realtime-phase-4-report.md))
 

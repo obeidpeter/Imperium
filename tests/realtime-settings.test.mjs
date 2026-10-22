@@ -36,7 +36,7 @@ test('41: remapping swaps a key already in use, refuses the browser’s keys and
   assert.equal(eventBinding({code:'KeyK',shiftKey:true}),'Shift+KeyK');
 });
 
-test('the Controls & readability menu lists every remappable action once with Change, the pointer settings and labels',()=>{
+test('Settings → Controls lists every remappable action once with Change, the pointer settings and labels',()=>{
   const listed=KEY_GROUPS.flatMap(([,rows])=>rows.map(([a])=>a));
   assert.equal(new Set(listed).size,listed.length,'each action once');
   assert.deepEqual([...listed].sort(),Object.keys(DEFAULT_KEYMAP).filter(a=>!FIXED_ACTIONS.includes(a)).sort(),'every remappable action, none fixed');
