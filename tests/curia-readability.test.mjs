@@ -70,6 +70,14 @@ test('retry reset closes stale conversation DOM even when its selected person is
   assert.equal(c.messages.at(-1),'');c.control.dispose();
 });
 
+test('the ability-bar focus shortcut falls through without being mistaken for a numbered speech',()=>{
+  const s=council(),c=controller(s),before=G.serialize(s);
+  assert.equal(c.control.act('ability_bar'),false,'the field runtime owns toolbar focus');
+  assert.equal(c.control.act('ability_2'),true,'numbered speech selection is still handled');
+  assert.equal(G.serialize(s),before,'choosing focus or a speech without a target spends nothing');
+  c.control.dispose();
+});
+
 test('the coalition strip shows both the current and conditional next-rival vote count',()=>{
   const s=council(),before=G.serialize(s),c=controller(s),v=C.coalitionView(s);
   assert.match(c.coalition.innerHTML,new RegExp(`<strong>${v.votes.for} of ${v.votes.total}</strong> for`));

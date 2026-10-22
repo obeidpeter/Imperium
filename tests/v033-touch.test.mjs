@@ -59,7 +59,7 @@ test('v0.33.0: the 3D stage previews on a held touch and keeps it after the fing
 test('v0.33.0: Help and the drill lesson mention holding a finger to see the route', async () => {
   const {createPanels} = await import('../src/ui/panels.js');
   let html = '';
-  createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp();
+  createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp('full-rules');
   assert.match(html, /On a touch screen, hold a finger on the board to see the route first; lifting it after a hold does nothing\./);
   const Game = await import('../src/core/game.js'), {fieldLesson} = await import('../src/ui/field-guide.js');
   const drill = Game.newGame('Touch');Game.choose(drill, Game.getChapter(drill).decision.options[0].id);Game.startEncounter(drill);

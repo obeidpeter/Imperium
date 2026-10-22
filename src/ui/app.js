@@ -49,6 +49,8 @@ import {createScenePainting,paintingHost} from './scene-parallax.js';
 import {campaignSoundscape} from './soundscape.js';
 import {previewBadge,previewBadges} from '../showcase/stage-readout.js';
 import {runPerformanceCheck,createCheckBand} from './performance-check.js';
+import {helpSearchResults} from './guide-help-view.js';
+import {GUIDE_HELP} from '../data/guide-help.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
@@ -173,7 +175,7 @@ function render(){
   stopMotion();
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
-  const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('.command-stage details[id][open]')].map(node=>node.id);
+  const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('details[id][open]')].map(node=>node.id);
   if(newView){pendingScroll=true;renderedLocation=viewKey;}
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
@@ -340,12 +342,11 @@ function refreshCampMarks(){
 let conversation=null;
 function showConversation(treeId,nodeId=null){
   const view=Game.campConversation(state,treeId,nodeId);if(!view){toast('No one answers.');return;}
-  conversation={treeId,nodeId:view.nodeId};
   showModal(view.speaker,`<p class="dialogue-text">${esc(view.text)}</p><ol class="dialogue-options" aria-label="Replies: press a number">`+
     view.options.map((o,i)=>`<li><button class="dialogue-option ${o.needs.length?'is-dimmed':''}" data-cmd="reply" data-id="${o.index}" ${o.needs.length?'aria-disabled="true"':''}>`+
       `<kbd>${i+1}</kbd> ${o.needs.length?`<span class="dialogue-needs">[${esc(o.needs.join(', '))}]</span> `:''}<span>${esc(o.text)}</span>`+
       `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>');
-  modal.dataset.conversation=treeId;
+  conversation={treeId,nodeId:view.nodeId};modal.dataset.conversation=treeId;
 }
 async function replyConversation(index){
   if(!conversation)return;const {treeId,nodeId}=conversation;
@@ -403,7 +404,7 @@ function mountFieldStage(){
   const own=battleStage.mount(canvas,{encounter:runtime.stageView(),chapter:state.chapter,rank:state.rank,commendations:{},live:true,input:false,
     quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,
     adaptiveResolution:settings.adaptiveResolution,motionSpeed:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,
-    audioVolume:settings.audioVolume,paused:modal.open,
+    audioVolume:settings.audioVolume,paused:modal.open&&modal.dataset.stagePause!=='false',
     onFrame:cost=>{graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open});field?.runtime?.frameDone();},
     onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
   if(own&&runtime.stage!==own)runtime.attach(own);
@@ -443,9 +444,21 @@ function saveToSlot(id,name){
   try{writeSlot(id,state,{name,summary:slotSummary(),thumbnail:savePicture()});}catch(error){toast(error.message);return false;}
   toast(id==='quick'?'Quick saved. Menu → Saves loads it.':`Saved: ${name}.`);if(modal.open&&modal.dataset.panel==='saves')showSaves();return true;
 }
+let pendingSlot=null;
+function confirmSlot(kind,id){
+  const slot=listSlots().find(s=>s.id===id);if(!slot)return;
+  const name=id==='quick'?'Quick save':modal.querySelector(`#slot-name-${id}`)?.value||slotSummary();
+  if(kind==='save'&&(slot.empty||id==='quick')){saveToSlot(id,name);return;}
+  if(kind==='load'&&slot.empty)return;
+  pendingSlot={kind,id,name};
+  showModal(kind==='load'?'Load this save?':'Replace this save?',`<p><strong>${esc(slot.name||'Quick save')}</strong></p><p>${esc(slot.summary||'')}</p>`+
+    `<p>${kind==='load'?'Your current session will be replaced. Save it first if you want to keep it.':'The previous save in this slot will be overwritten.'}</p>`+
+    `<div class="panel-actions"><button class="primary" data-cmd="confirm-slot">${kind==='load'?'Load save':'Replace save'}</button><button data-cmd="saves">Cancel</button></div>`);
+}
 function showSaves(){
+  pendingSlot=null;
   const problem=Game.manualSaveProblem(state),slots=listSlots();
-  showModal('Saves',`<p class="panel-note">${problem?esc(problem):'Each save keeps everything, battle time and the random seed included, so a loaded fight continues exactly.'}`+
+  showModal('Saves',`<p class="panel-note">${problem?esc(problem):'Save your place or continue an earlier game.'}`+
     `${state?.ironDiscipline?' <button class="text-link" data-cmd="end-iron">Turn off Iron discipline (it cannot be turned on again)</button>':''}</p>`+
     `<ul class="save-slots">${slots.map(s=>`<li class="save-slot">${s.thumbnail?`<img src="${esc(s.thumbnail)}" width="160" height="90" alt="">`:
       `<span class="save-slot-blank" aria-hidden="true">${s.id==='quick'?'F2':s.id}</span>`}<div><strong>${esc(s.id==='quick'?'Quick save':s.empty?`Slot ${s.id}`:s.name)}</strong>`+
@@ -522,8 +535,9 @@ async function showSoldierPreview(){
 function showSoldierPanel(name,arg=null){
   if(!state)return;
   // A chamber's world is its people, not a fight: the panels read the chronicle there.
-  soldierPanel={name,arg};const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
-  const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Your soldier',soldierCharacterPanel(state)],
+  const samePanel=modal.open&&modal.dataset.soldier===name,openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[],scroll=samePanel?modal.scrollTop:0;
+  const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
+  const panels={kit:()=>['Equipment',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
     trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],
@@ -532,7 +546,10 @@ function showSoldierPanel(name,arg=null){
   const [title,body]=(panels[name]??panels.character)();
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
-  showModal(title,body);modal.dataset.soldier=name;void showSoldierPreview();
+  const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
+  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu'});soldierPanel={name,arg};modal.dataset.soldier=name;void showSoldierPreview();
+  for(const id of openDetails){const el=document.getElementById(id);if(el)el.open=true;}
+  if(samePanel)modal.scrollTop=scroll;
   if(keep){const again=modal.querySelector(keep);if(again&&!again.disabled)again.focus({preventScroll:true});}
 }
 function soldierAct(command){
@@ -734,15 +751,26 @@ async function replaceCampaign({load,save,message}){
   });
 }
 let modalReturn=null;
-function showModal(title,body,{menu=false}={}){
+function showModal(title,body,{menu=false,back='menu'}={}){
+  const panelId=title.toLowerCase().replace(/[^a-z]+/g,'-');
+  const samePanel=modal.open&&modal.dataset.panel===panelId;
+  const openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[];
+  // Replacing a dialog ends its local interaction. A Menu exit must not keep a
+  // hidden conversation's save restriction or a mission panel's refresh hook.
+  if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;}
   disposeSoldierPreview();
-  // The Menu always pauses the world; other panels as Pause in panels says.
-  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(menu||settings.panelPause!==false)field?.runtime?.pauseFor('panel');
+  // The Menu always pauses the world; other panels follow Pause in panels.
+  // A live 3D world advances with its renderer, so both must follow this choice.
+  const pauseWorld=menu||settings.panelPause!==false,stagePause=!field?.runtime||pauseWorld;
+  modal.dataset.stagePause=String(stagePause);
+  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(stagePause);if(pauseWorld)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
-  modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
+  modal.dataset.panel=panelId;
   modal.setAttribute('aria-labelledby','panel-title');modal.removeAttribute('aria-label');
-  modal.innerHTML=`<div class="modal-head"><div><span class="eyebrow">IMPERIUM · YOUR CHRONICLE</span><h2 id="panel-title" tabindex="-1">${esc(title)}</h2>`+
-    `</div><button class="ghost" data-cmd="close-modal" aria-label="Close panel">×</button></div><div class="modal-body">${body}</div>`;
+  const returnButton=back?`<button class="text-link modal-back" ${back==='company'?'data-cmd="soldier-panel" data-id="company"':'data-cmd="menu"'}>← ${back==='company'?'Company':'Menu'}</button>`:'';
+  modal.innerHTML=`<div class="modal-head"><div>${returnButton}<h2 id="panel-title" tabindex="-1">${esc(title)}</h2>`+
+    `</div><button class="ghost modal-close" data-cmd="close-modal" aria-label="Close panel">Close <kbd>Esc</kbd></button></div><div class="modal-body">${body}</div>`;
+  for(const id of openDetails){const detail=document.getElementById(id);if(detail?.tagName==='DETAILS')detail.open=true;}
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
 }
@@ -755,7 +783,8 @@ function startRebind(action){
   const status=modal.querySelector('#rebind-status');if(status)status.textContent=`Press the new key for ${actionName(action)}, or Esc to cancel.`;
 }
 function finishRebind(message,{problem=false}={}){
-  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings();keysOpen();modal.scrollTop=top;
+  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings('controls');keysOpen();
+  const row=modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"]`);const group=row?.closest('details');if(group)group.open=true;modal.scrollTop=top;
   const status=modal.querySelector('#rebind-status');if(status){status.textContent=message;status.classList.toggle('warning',problem);}
   announce(message);modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"] [data-cmd="rebind"]`)?.focus({preventScroll:true});
 }
@@ -789,7 +818,7 @@ modal.addEventListener('close',()=>{
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;conversation=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
 async function showExport(){showExportCode(await saveCode(Game.codeState(archivePrimaryState??state)));}
 // Settings → Run performance check. The battle is measured where it stands:
@@ -849,6 +878,12 @@ function useRestoredState(restored){
 function download(blob,name){
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
+document.addEventListener('input',event=>{
+  if(event.target.id!=='help-search')return;
+  const query=event.target.value.trim(),results=modal.querySelector('#help-search-results'),browse=modal.querySelector('#help-browse');
+  if(!results||!browse)return;
+  results.hidden=!query;browse.hidden=!!query;results.innerHTML=query?helpSearchResults(GUIDE_HELP,query):'';
+});
 document.addEventListener('pointerdown',()=>{soundscape.unlock();if(settings.audio)battleStage.unlock();},{passive:true});
 document.addEventListener('keydown',()=>{soundscape.unlock();if(settings.audio)battleStage.unlock();});
 document.addEventListener('click',
@@ -877,8 +912,9 @@ case 'reply':await replyConversation(Number(id));break;
 case 'camp-travel':campTravel(id);break;
 case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
 case 'saves':showSaves();break;
-case 'slot-save':saveToSlot(id,id==='quick'?'Quick save':modal.querySelector(`#slot-name-${id}`)?.value||slotSummary());break;
-case 'slot-load':await loadSlot(id);break;
+case 'slot-save':confirmSlot('save',id);break;
+case 'slot-load':confirmSlot('load',id);break;
+case 'confirm-slot':if(pendingSlot){const pending=pendingSlot;pendingSlot=null;if(pending.kind==='load')await loadSlot(pending.id);else if(saveToSlot(pending.id,pending.name))showSaves();}break;
 case 'end-iron':await change(()=>Game.endIronDiscipline(state));if(modal.open)showSaves();break;
 case 'soldier':{const d=b.dataset;
   // The editors open; they change nothing until saved.
@@ -935,6 +971,7 @@ case 'map':showMap();break;
 case 'chapter-info':showMap(Number(id));break;
 case 'history':showHistory();break;
 case 'settings':showSettings();break;
+case 'settings-section':showSettings(id);modal.querySelector(`[data-settings-page="${CSS.escape(id)}"] .settings-page-title`)?.focus({preventScroll:true});break;
 case 'help':showHelp();break;
 case 'ledger':showLedger();break;
 case 'journal':showJournal();break;
@@ -942,13 +979,14 @@ case 'character':showCharacter();break;
 case 'privacy':showPrivacy();break;
 case 'credits':showCredits();break;
 case 'menu':showNavigation();break;
+case 'menu-section':showNavigation(id);break;
 case 'next-story':await change(()=>Game.setStoryProgress(state,Math.min(Game.storyProgress(state)+1,Game.storyLines(state).length-1)),{tone:null,silent:true});
   break;
 case 'previous-story':await change(()=>Game.setStoryProgress(state,Math.max(0,Game.storyProgress(state)-1)),{tone:null,silent:true});break;
 case 'choose':await change(()=>Game.choose(state,id));break;
 case 'oath':await change(()=>Game.swearOath(state));break;
 case 'prepare':await change(()=>Game.prepare(state,id));break;
-case 'dismiss-guide':settings.guide=false;saveSettings();render();announce('Field guide hidden. Reopen it in Settings.');break;
+case 'dismiss-guide':settings.guide=false;saveSettings();render();announce('Tips hidden. Turn on Learning tips in Settings → Readability.');break;
 case 'operation-choice':await change(()=>Game.chooseOperation(state,id),{tone:null});break;
 case 'specialize-veteran':{
   const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;

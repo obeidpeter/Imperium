@@ -120,7 +120,7 @@ test('v0.32.1: the readout, announcements, target list and ground note name fiel
 test('v0.32.1: in-game Help explains walking, the U key and the expanded campaign', async () => {
   const {createPanels} = await import('../src/ui/panels.js');
   let html = '';
-  createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp();
+  createPanels(() => ({showModal: (title, body) => {html = body;}})).showHelp('full-rules');
   assert.match(html, /<strong>Walk\.<\/strong> Select open ground to walk there/);
   assert.match(html, /Enter selects a unit, walks to open ground, or previews a target and then confirms that same target/);
   assert.match(html, /U takes back a move until the unit acts/);

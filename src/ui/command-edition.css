@@ -40,12 +40,15 @@ html[data-hud="compact"] .command-stage .command-field-status { padding-block:.2
 html[data-hud="compact"] .command-stage .battle-3d canvas { block-size:clamp(25rem,63dvh,52rem); aspect-ratio:auto; }
 html[data-hud="compact"] .command-stage .command-board-caption { padding-block:.2rem; }
 .command-stage .command-canvas { box-shadow:inset 0 0 0 1px #b7a17425,0 .7rem 2rem #0005; }
-html[data-contrast="high"] { --ink:#fff9eb; --muted:#e1e6da; --line:#aeb6a0; }
+/* The page and dialogs use light parchment; only the play surfaces are dark. */
+html[data-contrast="high"] { --ink:#121910; --muted:#343c30; --line:#616c55; }
+html[data-contrast="high"] :is(.command-stage,.rt-field,.site-header,.modal-head) { --ink:#fff9eb; --muted:#e1e6da; --line:#aeb6a0; --selection:#ffe8a6; }
 html[data-contrast="high"] .command-stage { --command-muted:#e1e6da; color:#fff9eb; }
+html[data-contrast="high"] .rt-field { --rt-line:#b1bba7; --rt-muted:#e1e6da; }
 html[data-contrast="high"] .command-stage :is(button,select,summary),html[data-contrast="high"] :is(.deployment-card,.sidebar-card,.progression-panel) { border-color:#c9d2b8; }
-html[data-contrast="high"] :is(.muted,.command-kicker,.command-readiness,.command-board-key,.command-clock span,.command-roster small,.save-status) { color:#e0e6d7; }
+html[data-contrast="high"] :is(.muted,.command-kicker,.command-readiness,.command-board-key,.command-clock span,.command-roster small,.save-status) { color:var(--muted); }
 html[data-contrast="high"] .command-stage button[aria-pressed="true"] { background:#f4deb0; color:#111b15; border-color:white; }
-html[data-contrast="high"] :focus-visible { outline:3px solid #ffe8a6; outline-offset:3px; }
+html[data-contrast="high"] :focus-visible { outline:3px solid var(--selection); outline-offset:3px; }
 @media(max-width:700px) {
   .deployment-options,.case-options,.control-binding-grid { grid-template-columns:1fr; }
   .command-intelligence { margin:.4rem .65rem; }

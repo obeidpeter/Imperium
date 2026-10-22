@@ -23,6 +23,7 @@ import assert from 'node:assert/strict';
 import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {serveRequest} from './serve.mjs';
+import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
@@ -94,16 +95,16 @@ async function expectAnnouncement(page,pattern,step){
   return text(page,'#announcement');
 }
 const keys=async(page,list)=>{for(const key of list)await page.keyboard.press(key);};
-async function menuButton(page,cmd){if(!await page.locator(`[data-cmd="${cmd}"]:visible`).count())await page.click('[data-cmd="menu"]:visible >> nth=0');await page.click(`[data-cmd="${cmd}"]:visible >> nth=0`);}
-async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#modal[open] #battle-view');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
+const menuButton=menuCommand;
+async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
 async function view(page,mode){
-  await settings(page,()=>page.selectOption('#battle-view',mode));
+  await settings(page,async()=>(await revealControl(page,'#battle-view')).selectOption(mode));
   if(mode==='3d')await page.waitForFunction(()=>document.querySelector('#battle-board')?.parentElement?.dataset.ready==='true',null,{timeout:300000,polling:500});
   await page.locator('#battle-board').scrollIntoViewIfNeeded();
 }
 async function newGameDrill(page){
   await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.camp-page');
-  const choose=page.locator('[data-cmd="choose"]');if(await choose.count())await choose.first().click();
+  const choose=page.locator('[data-cmd="choose"]');if(await choose.count())await (await revealControl(page,'[data-cmd="choose"]')).click();
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
 }
 // Sweep the pointer over the board until the readout passes `test`.
@@ -132,17 +133,17 @@ async function drillDesktop(){
   const near=await findTile(page,label=>label.includes('Walk here'));
   await expectAnnouncement(page,/^Walked to \d+[A-H] \(\d movement\)\. Undo Move/,()=>page.mouse.click(near.x,near.y));
   await expectAnnouncement(page,/movement restored/,()=>page.keyboard.press('u'));
-  await settings(page,()=>page.check('#confirm-moves'));
+  await settings(page,async()=>(await revealControl(page,'#confirm-moves')).check());
   assert.match(await text(page,'#command-hint'),/Select open ground to preview a walk there, then select it again to go\./);
   const again=await findTile(page,label=>label.includes('Walk here'));
   await expectAnnouncement(page,/^Move to \d+[A-H]\. .*Activate the target again, or use Confirm\.$/,()=>page.mouse.click(again.x,again.y));
   await expectAnnouncement(page,/^Move to \d+[A-H]\. Costs this unit’s movement\.(?!.*Activate)/,()=>page.mouse.click(again.x,again.y));
   await expectAnnouncement(page,/movement restored/,()=>page.keyboard.press('u'));
-  await settings(page,()=>page.uncheck('#confirm-moves'));
+  await settings(page,async()=>(await revealControl(page,'#confirm-moves')).uncheck());
   const partner=await findTile(page,label=>label.startsWith('Training partner'));
   await expectAnnouncement(page,/^Throw at Training partner.*Activate the target again, or use Confirm\.$/,()=>page.mouse.click(partner.x,partner.y));
   await expectAnnouncement(page,/^Command cancelled\. No action was spent\.$/,()=>page.keyboard.press('Escape'));
-  await menuButton(page,'help');await page.waitForSelector('#modal[open]');
+  await menuButton(page,'help');await page.waitForSelector('#modal[open]');await page.click('#modal [data-cmd="help-section"][data-id="full-rules"]');
   const help=await page.evaluate(()=>document.querySelector('#modal').innerText);
   for(const words of ['Select open ground to walk there','U takes back a move until the unit acts','Expanded campaign'])assert.ok(help.includes(words),`Help mentions "${words}"`);
   await page.click('#modal [data-cmd="close-modal"] >> nth=0');
@@ -156,7 +157,7 @@ async function drillDesktop(){
 
 async function expandedFieldReadouts(){
   const page=await open();await page.goto(base);
-  await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await settingsCommand(page,'restore');
   await page.fill('#restore-code',chapterFiveCode());await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   await view(page,'2d');await page.focus('#battle-board');
@@ -171,12 +172,12 @@ async function expandedFieldReadouts(){
 
 async function fieldApproach(){
   const page=await open();await page.goto(base);
-  await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await settingsCommand(page,'restore');
   await page.fill('#restore-code',approachCampCode());await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');
   const card=id=>`[data-cmd="field-approach"][data-id="${id}"]`;
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'true','Each camp starts from direct deployment');
-  await page.click(card('breach'));await page.waitForSelector(`${card('breach')}[aria-pressed="true"]`);
+  await (await revealControl(page,card('breach'))).click();await page.waitForSelector(`${card('breach')}[aria-pressed="true"]`);
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'false');
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
@@ -226,7 +227,7 @@ async function phoneTouch(){
 async function performanceCheck(){
   const page=await open({acceptDownloads:true});await newGameDrill(page);await view(page,'3d');
   const hint=await text(page,'#command-hint'),quality=await page.evaluate(()=>document.documentElement.dataset.quality??'');
-  await menuButton(page,'settings');await page.click('[data-cmd="performance-check"]');await page.waitForSelector('.performance-check');
+  await settingsCommand(page,'performance-check');await page.waitForSelector('.performance-check');
   await page.keyboard.press('e');await page.keyboard.press('Enter');
   await page.waitForSelector('#modal[open][data-panel="performance-check"]',{timeout:900000});
   assert.equal(await page.locator('.performance-check').count(),0,'The status band is gone');
@@ -248,7 +249,7 @@ async function performanceCheck(){
 // raider starts the auto-fight; N plays exactly one round while paused.
 async function realtimeArena(){
   const page=await open();
-  await page.goto(`${base}?dev`);await menuButton(page,'settings');await page.waitForSelector('#controls-model');
+  await page.goto(`${base}?dev`);await menuButton(page,'settings');await revealControl(page,'#controls-model');
   await page.selectOption('#controls-model','realtime');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
   const skirmishLink=()=>[...document.querySelectorAll('a')].find(a=>/standalone skirmish/i.test(a.textContent))?.getAttribute('href')??'';
   await page.waitForFunction(`/showcase\\/arena\\.html$/.test((${skirmishLink})())`,null,{timeout:10000})
@@ -305,8 +306,9 @@ async function campToDrill(page,view='3d'){
   await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.realtime-camp');
   await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
   if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
-  await page.click('[data-cmd="conversation"][data-id="ch1:varro"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');
-  assert.match(await text(page,'#modal'),/Varro/);await page.keyboard.press('Escape');
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="ch1:varro"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');
+  assert.match(await text(page,'#modal'),/Varro/);
+  await verifyCampPanelTransitions(page);
   await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
   await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
@@ -346,7 +348,7 @@ async function realtimeCampaign(){
   await page.waitForFunction(()=>window.__realtime.world().used.includes('brace'),null,{timeout:60000}).catch(()=>assert.fail('2 twice braces'));
   await running();await page.keyboard.press('KeyT');await page.keyboard.press('Digit3');await page.keyboard.press('Digit3');
   await page.waitForSelector('.rt-result',{timeout:120000}).catch(()=>assert.fail('The drill ends in the After-Action Chronicle'));
-  assert.match(await text(page,'.rt-result h2'),/The day is yours/);
+  assert.match(await text(page,'.rt-result h2'),/Objective complete/);assert.equal((await state()).status,'won','The compact result reports the won drill');
   await page.click('[data-cmd="commit"]');await page.waitForSelector('.camp-page');
   // Back in the walkable camp: its own field, never the battle's.
   assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"]')),false,'The battle field is gone after the result is recorded');
@@ -367,7 +369,7 @@ async function realtimeFlat(){
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
 async function restoreRealtime(page,code){
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
-  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
@@ -382,7 +384,7 @@ async function realtimeSquads(){
   await page.keyboard.press('Digit4');
   if(await page.evaluate(()=>window.__realtime.paused()))await page.keyboard.press('KeyP');
   await page.waitForFunction(()=>window.__realtime.world().used.includes('formation'),null,{timeout:120000}).catch(()=>assert.fail('4 orders the selected squad into line'));
-  await page.keyboard.press('KeyQ');await page.waitForSelector('#modal[open] .field-intel',{timeout:30000}).catch(()=>assert.fail('Q shows the field intelligence'));
+  await page.keyboard.press('KeyQ');await revealControl(page,'#modal .field-intel');await page.waitForSelector('#modal[open] .field-intel',{timeout:30000}).catch(()=>assert.fail('Q shows the field intelligence'));
   assert.match(await text(page,'#modal .field-intel'),/Field intelligence/);assert.match(await text(page,'#modal'),/Allied plans/);
   await page.context().close();
   console.log('ok - real-time squads: a restored Chapter V battle plays in real time with its squad bar, Command pips and command card; Shift+1 and 4 form a line; Q shows the field intelligence and Allied plans');
@@ -404,7 +406,7 @@ async function realtimeDeployment(){
 // Phase 3 in the page: a restored camp's Contest walked as the Curia.
 async function restoreChamber(page,code,view='3d'){
   await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
-  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
@@ -420,6 +422,7 @@ async function chamberCouncil(){
   const page=await open();await restoreChamber(page,battleCampCode('ch7-council'));
   assert.match(await text(page,'[data-role="roundLabel"]'),/^Hour 1 of \d+$/,'The clepsydra counts hours');
   assert.equal(await page.locator('[data-role="abilityBar"] [data-speech]').count(),1,'Chapter VII has taught Persuade alone');
+  await revealControl(page,'[data-role="coalition"] [data-person]');
   assert.match(await text(page,'[data-role="coalition"]'),/of 13 for · 7 needed/,'The coalition strip counts the vote');
   let member=null;
   for(let i=0;i<await page.locator('[data-role="coalition"] [data-person]').count()&&!member;i++){
@@ -527,9 +530,9 @@ async function chamberHearing(){
 async function realtimeFinale(){
   const page=await open();
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
-  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await page.click('[data-cmd="route"][data-id="defection"]');
+  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
   await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
@@ -571,20 +574,20 @@ async function realtimeFinale(){
 async function settingsAndHelp(){
   const page=await open();
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
-  await page.goto(base);await page.click('[data-cmd="new"]');await page.check('input[name="campaign-difficulty"][value="story"]');await page.click('[data-cmd="begin"]');
+  await page.goto(base);await page.click('[data-cmd="new"]');await (await revealControl(page,'input[name="campaign-difficulty"][value="story"]')).check();await page.click('[data-cmd="begin"]');
   await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
   if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
-  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  await menuButton(page,'settings');await settingsPage(page,'controls');await revealControl(page,'#pause-sighted');
   assert.equal(await page.inputValue('#game-speed'),'0.75','Story starts at 75%');assert.equal(await page.isChecked('#pause-sighted'),true,'and pauses when an enemy comes into view');
   assert.equal(await page.isChecked('#pause-hurt'),false);
   const status=()=>text(page,'#rebind-status');await page.click('#modal details.key-map > summary');
-  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Tab');
+  await (await revealControl(page,'.key-row[data-action="war_cry"] [data-cmd="rebind"]')).click();await page.keyboard.press('Tab');
   await page.waitForFunction(()=>/belongs to the browser/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
     .catch(async()=>assert.fail(`Tab is refused: ${await status()}`));
-  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Escape');
+  await (await revealControl(page,'.key-row[data-action="war_cry"] [data-cmd="rebind"]')).click();await page.keyboard.press('Escape');
   await page.waitForFunction(()=>/unchanged/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000});
   assert.equal(await page.evaluate(()=>document.querySelector('#modal')?.open),true,'Esc cancels the change, not the Menu');
-  await page.click('.key-row[data-action="pause"] [data-cmd="rebind"]');await page.keyboard.press('KeyK');
+  await (await revealControl(page,'.key-row[data-action="pause"] [data-cmd="rebind"]')).click();await page.keyboard.press('KeyK');
   await page.waitForFunction(()=>/Pause and resume is now K\./.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
     .catch(async()=>assert.fail(`K is taken for Pause: ${await status()}`));
   assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'K or Pause');
@@ -597,16 +600,16 @@ async function settingsAndHelp(){
   // The Menu pauses while it is open. Its close event can come hundreds of milliseconds after it closes, and keys
   // pressed before then are the player's: resumed and paused again, the world stays paused when the event comes.
   await page.keyboard.press('KeyK');await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});
-  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  await menuButton(page,'settings');await settingsPage(page,'controls');await revealControl(page,'#pause-sighted');
   await page.evaluate(()=>new Promise(done=>{
     const modal=document.querySelector('#modal'),c=document.querySelector('#rt-board'),k=()=>c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyK',key:'k',bubbles:true,cancelable:true}));
     // The page's own close handler runs first; then this one.
     modal.addEventListener('close',()=>setTimeout(done),{once:true});modal.close();k();k();}));
   assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'A pause chosen as the Menu closes stands');await page.locator('#rt-board').focus();
   await page.keyboard.press('Shift+Slash');await page.waitForSelector('#modal[open] .guide-help',{timeout:30000}).catch(()=>assert.fail('? opens the guide'));
-  await page.click('#modal [data-cmd="help-section"][data-id="controls"]');await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
+  await (await revealControl(page,'#modal .guide-index [data-cmd="help-section"][data-id="controls"]')).click();await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
   assert.match(await text(page,'#modal .help-keys.changed[data-actions="pause"]'),/K or Pause \(by default P or Pause\)/);
-  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await page.click('#modal details.key-map > summary');
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await settingsPage(page,'controls');await page.click('#modal details.key-map > summary');
   await page.click('#modal [data-cmd="reset-keys"]');
   assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'P or Pause','Restore default keys');
   await page.context().close();
@@ -619,11 +622,11 @@ async function settingsAndHelp(){
 async function legacyChronicle(){
   const page=await open(),old=Game.decodeSave(battleCampCode('ch5-mine'));delete old.soldier;
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
-  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
   const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
-  await page.check('#modal input[name="recruit-path"][value="explorator"]');await page.selectOption('#recruit-beard','2');await page.click('#modal [data-cmd="adopt-soldier"]');
+  await page.check('#modal input[name="recruit-path"][value="explorator"]');await (await revealControl(page,'#recruit-beard')).selectOption('2');await page.click('#modal [data-cmd="adopt-soldier"]');
   await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
     .catch(()=>assert.fail('The soldier is adopted and shown'));
   await page.context().close();
@@ -631,7 +634,7 @@ async function legacyChronicle(){
   const turns=Game.decodeSave(battleCampCode('ch5-mine'));assert.ok(Game.startEncounter(turns,{}).ok);
   const second=await open();
   await second.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
-  await second.goto(base);await menuButton(second,'settings');await second.click('#modal [data-cmd="restore"]');
+  await second.goto(base);await settingsCommand(second,'restore');
   await second.fill('#restore-code',Game.encodeSave(turns));await second.click('[data-cmd="import-code"]');await second.click('[data-cmd="confirm-import"]');
   await second.waitForSelector('.legacy-battle [data-cmd="restart-realtime"]',{timeout:60000}).catch(()=>assert.fail('The 0.38 battle offers a real-time restart'));
   await second.click('.legacy-battle [data-cmd="restart-realtime"]');

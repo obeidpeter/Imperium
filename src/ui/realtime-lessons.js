@@ -1,5 +1,4 @@
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
-import {missionProgress} from '../core/realtime/simulation.js';
 import {missionReadout} from './realtime-mission-readout.js';
 import {TIME} from '../data/realtime-rules.js';
 
@@ -10,13 +9,13 @@ import {TIME} from '../data/realtime-rules.js';
 // memory of a pause and a slowing, never the world's). Pure: reading or hiding a
 // lesson changes nothing.
 const DRILL=[
-  {id:'move',done:(w)=>w.used.includes('move'),title:'Find your footing',body:k=>`Click open ground to walk there; a far click runs. The arrow keys walk too.`},
-  {id:'pause',done:(w,seen)=>seen.paused,title:'Pause to think',body:k=>`Press ${k('pause')}, or the Pause button. While paused, point at anything for its forecast: every command still works. Press ${k('pause')} again to go on.`},
-  {id:'slow',done:(w,seen)=>seen.slowed,title:'Slow time',body:k=>`${k('slow_time')} halves the pace of the fight; press it again for full speed. While paused, ${k('step_round')} plays one round.`},
-  {id:'draw',done:(w,seen,hero)=>!!hero?.drawn||w.used.includes('strike'),title:'Draw your weapon',body:k=>`${k('combat_toggle')}, or the crossed swords, draws it: your weapon’s numbers count only while it is drawn.`},
-  {id:'strike',done:w=>w.used.includes('strike'),title:'Strike the drill partner',body:k=>`Click him, or ${k('target_next_enemy')} and then Enter: your soldier closes in and keeps striking until you choose otherwise.`},
-  {id:'brace',done:w=>w.used.includes('brace'),title:'Brace behind your shield',body:k=>`Choose Brace on the ability bar (or its number key), then press the same key again to brace where you stand.`},
-  {id:'throw',done:w=>w.used.includes('throw'),title:'Throw a pilum',body:k=>`Choose Throw pilum, then right-click the partner, or press its number twice with him as your target.`}];
+  {id:'move',done:(w)=>w.used.includes('move'),title:'Find your footing',body:()=>`Click the ground to move. Far clicks run; arrow keys walk.`},
+  {id:'pause',done:(w,seen)=>seen.paused,title:'Pause to think',body:k=>`Press ${k('pause')}, or select Pause. You can still choose actions. Press it again to resume.`},
+  {id:'slow',done:(w,seen)=>seen.slowed,title:'Slow time',body:k=>`${k('slow_time')} toggles half speed. Options → Time controls has the same button. While paused, ${k('step_round')} plays one round.`},
+  {id:'draw',done:(w,seen,hero)=>!!hero?.drawn||w.used.includes('strike'),title:'Draw your weapon',body:k=>`Press ${k('combat_toggle')}, or choose Options → Draw weapon, to use your weapon’s full strength.`},
+  {id:'strike',done:w=>w.used.includes('strike'),title:'Strike the drill partner',body:k=>`Click him to approach and attack. Keyboard: ${k('target_next_enemy')}, then Enter. Fighting continues until you give another order.`},
+  {id:'brace',done:w=>w.used.includes('brace'),title:'Brace behind your shield',body:()=>`Select Brace, then right-click your soldier. Keyboard: press Brace’s number twice.`},
+  {id:'throw',done:w=>w.used.includes('throw'),title:'Throw a pilum',body:()=>`Select Throw pilum, then right-click the partner. Keyboard: target him and press Throw pilum’s number twice.`}];
 
 export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_KEYMAP}){
   // Each action by its first key, as the player has set it.
@@ -24,8 +23,8 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
   if(kind==='chamber'){
     // The opening chamber hours: the first Contest walked as a chamber.
     const e=state.encounter;if(!e||e.status!=='active'||state.chapter!==7)return null;
-    if(e.turn===1)return {step:'1 / 2',title:'Talk before you speak',body:'Click a member to talk where you stand: asking about his interests is free. Walk beside him, choose a speech and read its forecast before you give it.'};
-    if(e.turn===2)return {step:'2 / 2',title:'The rivals answer each hour',body:`Hold ${k('show_usable')} to see where each rival means to walk next. ${k('yield_floor')} yields the floor; only the vote at the deadline counts.`};
+    if(e.turn===1)return {step:'1 / 2',title:'Talk before you speak',body:'Click a member. Asking about interests is free. Move closer if needed, then check the speech’s forecast before using it.'};
+    if(e.turn===2)return {step:'2 / 2',title:'The rivals answer each hour',body:`Hold ${k('show_usable')} to see rival plans. ${k('yield_floor')} ends the hour. Only the final vote counts.`};
     return null;
   }
   if(kind!=='field'||world.status!=='active')return null;
@@ -47,10 +46,10 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
   const hero=world.actors.find(a=>a.id===world.heroId);
   if(world.mission?.mode==='training'){
     const i=DRILL.findIndex(l=>!l.done(world,seen,hero));
-    if(i<0)return {step:`${DRILL.length} / ${DRILL.length}`,title:'The drill is complete',body:'Varro gives his assessment when the drill ends; record the result to march on with the first patrol.'};
+    if(i<0)return {step:`${DRILL.length} / ${DRILL.length}`,title:'The drill is complete',body:'Record the result after Varro’s assessment to continue to the patrol.'};
     return {step:`${i+1} / ${DRILL.length}`,title:DRILL[i].title,body:DRILL[i].body(k)};
   }
   // The first patrol: the objective first, then reading a fight before joining it.
-  if(!seen.paused)return {step:'1 / 2',title:'Keep the objective in view',body:`${missionProgress(world)} Press ${k('pause')} whenever the fight gets busy.`};
-  return {step:'2 / 2',title:'Read before you strike',body:`Point at an enemy for the forecast: your chance to hit and the damage after his armour. ${k('show_ranges')} shows your ranges; ${k('panel_orders')} holds the orders.`};
+  if(!seen.paused)return {step:'1 / 2',title:'Keep the objective in view',body:`Follow the objective above the scene. Press ${k('pause')} whenever you need time to choose.`};
+  return {step:'2 / 2',title:'Read before you strike',body:`Point at an enemy to see hit chance and damage. ${k('show_ranges')} shows ranges; Mission details explains the objective.`};
 }

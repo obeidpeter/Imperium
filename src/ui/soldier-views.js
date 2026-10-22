@@ -27,6 +27,7 @@ const button=(kind,label,data={},{primary=false,disabled=false,title=''}={})=>`<
 const signed=n=>n>0?`+${n}`:`${n}`;
 const percent=n=>`${Math.round(n*100)}%`;
 const inCamp=state=>state.phase!=='encounter';
+const disclosure=(id,label,body)=>`<details id="${esc(id)}" class="soldier-details"><summary>${esc(label)}</summary>${body}</details>`;
 const figurePreview=()=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
   `<figcaption><strong>Current equipped kit</strong><span data-preview-status>Preparing the model…</span></figcaption>`+
   `<div class="soldier-model-controls"><button type="button" data-preview-turn="-1" aria-label="Turn model left">←</button><button type="button" data-preview-reset>Front</button><button type="button" data-preview-turn="1" aria-label="Turn model right">→</button></div></figure>`;
@@ -55,7 +56,7 @@ function itemSummary(id){
 export function kitPanel(state,{selected=null,spoils=[],documents=[]}={}){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const camp=inCamp(state),attrs=soldierAttributes(s),values=soldierValues(state),area=areaOf(state),ground=s.ground[area]??[];
-  const worn=WORN_PLACES.map(place=>{
+  const worn=WORN_PLACES.filter(place=>s.worn[place]).map(place=>{
     const [slot,layer]=place.split(':'),id=s.worn[place],label=`${SLOTS[slot].name}: ${SLOTS[slot].layers[Number(layer)]}`;
     return `<li class="kit-place"><span class="kit-place-name">${esc(label)}</span>${id?`<strong title="${esc(itemSummary(id))}">${esc(ITEMS[id].name)}</strong>`+
       (camp?button('takeOff','Take off',{place},{title:`Take off the ${ITEMS[id].name}`}):''):'<span class="muted">—</span>'}</li>`;
@@ -65,16 +66,20 @@ export function kitPanel(state,{selected=null,spoils=[],documents=[]}={}){
       ` style="grid-column:${e.x+1}/span ${item.shape.w};grid-row:${e.y+1}/span ${item.shape.h}" aria-pressed="${selected===e.uid}"`+
       ` aria-label="${esc(`${item.name}${problem?`, ${problem}`:''}`)}" title="${esc(itemSummary(e.id))}">${esc(item.name)}</button>`;}).join('');
   const chosen=s.pack.find(e=>e.uid===selected),item=chosen&&ITEMS[chosen.id];
-  const actions=chosen?comparisonView(equipmentComparison(s,chosen.id))+`<div class="kit-actions" role="group" aria-label="${esc(item.name)}"><p><strong>${esc(item.name)}</strong> · ${esc(itemSummary(chosen.id))}</p>`+
-    (camp?[item.slot?button('wear','Wear',{uid:chosen.uid},{primary:true,disabled:!!wearProblem(state,chosen.id,attrs),title:wearProblem(state,chosen.id,attrs)??''}):'',
+  const wearReason=chosen&&item.slot?wearProblem(state,chosen.id,attrs):null;
+  const actions=chosen?comparisonView(equipmentComparison(s,chosen.id))+`<div class="kit-actions" role="group" aria-label="${esc(item.name)}"><p><strong>${esc(item.name)}</strong> · ${esc(item.description)}</p>`+
+    (camp?(item.slot?button('wear','Wear',{uid:chosen.uid},{primary:true,disabled:!!wearReason,title:wearReason??''}):'')+
+      (wearReason?`<p class="panel-note">${esc(wearReason)}</p>`:'')+disclosure('kit-item-actions','Give or leave this item',[
       button('drop','Leave on the ground',{uid:chosen.uid}),
       ...(item.slot&&item.slot!=='charm'?Object.keys(COMPANIONS).filter(id=>(state.company??[]).some(v=>v.id===id)).map(id=>
-        button('give',`Give to ${COMPANIONS[id].name}`,{uid:chosen.uid,companion:id})):[])].join(''):'<p class="panel-note">Change your kit in camp.</p>')+'</div>':'';
+        button('give',`Give to ${COMPANIONS[id].name}`,{uid:chosen.uid,companion:id})):[])].join('')):'<p class="panel-note">Change your kit in camp.</p>')+
+    disclosure('kit-item-details','Item details',`<p>${esc(itemSummary(chosen.id))}</p>`)+'</div>':'';
   return `<div class="kit-panel">
-    <section aria-labelledby="kit-worn">${figurePreview()}<h3 id="kit-worn">Worn</h3><ul class="kit-places">${worn}</ul>
-      <table class="kit-protection"><caption>Protection (flat / share)</caption><tbody>${protectionRows(wornIds(s))}</tbody></table>
+    <section aria-labelledby="kit-worn">${figurePreview()}<h3 id="kit-worn">Equipped</h3><ul class="kit-places">${worn}</ul>
       <p>Restriction <strong>${values.restriction}</strong>${values.restriction>=10?`: ${Math.floor(values.restriction/10)} off Attack and Defence`:''} · `+
-      `Weapon <strong>${esc(values.weapon.name??'')}</strong> · Coin <strong>${s.denarii} denarii</strong></p></section>
+      `Weapon <strong>${esc(values.weapon.name??'')}</strong> · Coin <strong>${s.denarii} denarii</strong></p>`+
+      disclosure('kit-protection-details','Protection by damage type',`<table class="kit-protection"><caption>Protection (flat / share)</caption><tbody>${protectionRows(wornIds(s))}</tbody></table>`)+
+      disclosure('kit-empty-slots','Unused equipment slots',`<ul>${WORN_PLACES.filter(place=>!s.worn[place]).map(place=>{const [slot,layer]=place.split(':');return `<li>${esc(SLOTS[slot].name)}: ${esc(SLOTS[slot].layers[Number(layer)])}</li>`;}).join('')||'<li>All slots are occupied.</li>'}</ul>`)+`</section>
     ${documents.length?`<section aria-labelledby="kit-documents"><h3 id="kit-documents">Documents for this hearing</h3>
       <p class="panel-note">Your earlier service, choices and witnesses give you these. Inspecting one costs nothing; the presiding magistrate receives one, for your soldier’s speech, once a hearing.</p>
       <ul class="kit-documents">${documents.map(d=>`<li><strong>${esc(d.label)}</strong> <small>${esc(d.description)}</small>`+
@@ -92,22 +97,22 @@ export function characterPanel(state){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const attrs=soldierAttributes(s),v=soldierValues(state),camp=inCamp(state);
   const rows=ATTRIBUTES.map(k=>{const cost=attributeCost(s.base[k]),bonus=attrs[k]-s.base[k];
-    const delta=attributeImprovement(state,k),effect=delta.length?delta.map(r=>`${r.label} ${r.before} → ${r.after}`).join(' · '):'No immediate change to the displayed totals; some effects rise at thresholds.';
+    const delta=attributeImprovement(state,k),effect=delta.length?delta.map(r=>`${r.label} ${r.before} → ${r.after}`).join(' · '):'No displayed total changes at this step.';
     return `<tr><th scope="row">${esc(ATTRIBUTE_NAMES[k])}</th><td>${attrs[k]}${bonus?` <small>(${s.base[k]} ${signed(bonus)})</small>`:''}</td>`+
-      `<td class="attribute-impact"><small>${esc(ATTRIBUTE_EFFECTS[k])}</small><strong>Next point: ${esc(effect)}</strong></td>`+
+      `<td class="attribute-impact"><strong>Next point: ${esc(effect)}</strong>${disclosure(`attribute-help-${k}`,'What this affects',`<p>${esc(ATTRIBUTE_EFFECTS[k])}</p>`)}</td>`+
       `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost||s.base[k]>=60,title:s.base[k]>=60?'Maximum reached.':s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
   const derived=[['Health',v.health],['Stamina',v.stamina],['Attack',v.attack],['Defence',v.defence],['Missile attack',v.missile],['Restriction',v.restriction],
     ['Running speed',`${v.run.toFixed(1)} m/s`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
   const abilities=knownAbilities(state).map(id=>`<li><strong>${esc(ABILITIES[id].name)}</strong>: ${esc(ABILITIES[id].summary??'')}</li>`).join('');
   return `<div class="character-panel">
-    ${figurePreview()}
-    <p><strong>${esc(state.name)}</strong> · ${esc(TRAINING_PATHS[s.path].name)} training · <strong>${s.tp}</strong> training points to spend (${s.tpEarned} earned)</p>
-    <table class="attribute-table"><thead><tr><th>Attribute</th><th>Value</th><th>What improves</th><th></th></tr></thead><tbody>${rows}</tbody></table>
-    <p class="panel-note">Raising an attribute costs ${TP.below20} TP below 20, ${TP.from20} from 20, then one more for every ten. ${camp?'':'Training points are spent in camp.'}</p>
+    <p class="soldier-balance"><strong>${s.tp} training points</strong> available · ${esc(TRAINING_PATHS[s.path].name)}${camp?'':' · Spend points in camp'}</p>
     <dl class="derived-values">${derived}</dl>
-    <h3>Techniques</h3><ul>${abilities}</ul>
-    <h3>Courses</h3>${s.courses.length?`<ul>${s.courses.map(id=>`<li><strong>${esc(COURSES[id].name)}</strong>: ${esc(COURSES[id].summary)}</li>`).join('')}</ul>`:
-      '<p>None yet. Trainers in camp teach them for training points and sometimes coin.</p>'}
+    <h3>Improve an attribute</h3>
+    <table class="attribute-table"><thead><tr><th>Attribute</th><th>Value</th><th>What improves</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    ${disclosure('training-costs','How training costs work',`<p>Raising an attribute costs ${TP.below20} TP below 20, ${TP.from20} from 20, then one more for every ten. You have earned ${s.tpEarned} TP in total.</p>`)}
+    ${disclosure('known-techniques',`Known techniques (${knownAbilities(state).length})`,`<ul>${abilities}</ul>`)}
+    ${disclosure('completed-courses',`Completed courses (${s.courses.length})`,s.courses.length?`<ul>${s.courses.map(id=>`<li><strong>${esc(COURSES[id].name)}</strong>: ${esc(COURSES[id].summary)}</li>`).join('')}</ul>`:
+      '<p>None yet. Visit a trainer in camp to learn a course.</p>')}
   </div>`;
 }
 
@@ -127,12 +132,13 @@ export function companyPanel(state,{world=null}={}){
   const rows=roll.map(v=>{const profile=COMPANIONS[v.id],rank=companionRank(v),a=companionAttributes(state,v.id),slots=s.orders?.[v.id]??STANDING.presets[profile.preset];
     const fit=(v.recovery??0)===0;
     return `<article class="companion-card"><h4>${esc(v.name??profile.name)} <small>${esc(rank.name)}</small></h4>
-      <p>${fit?'Fit for duty':`Recovering (${v.recovery} more ${v.recovery===1?'battle':'battles'})`} · Combat ${a.combat}, Constitution ${a.con}, Agility ${a.agi}</p>
-      <p class="orders-summary"><strong>Standing orders:</strong> ${esc(summarizeOrders(slots,{hero:'you'}))}</p>
-      ${camp?`<div class="orders-presets" role="group" aria-label="Presets for ${esc(profile.name)}">${Object.entries(STANDING.presetNames).filter(([id])=>id!=='soldier')
-        .map(([id,name])=>button('orders',name,{companion:v.id,preset:id})).join('')}${button('orders-edit','Edit the four orders…',{companion:v.id})}</div>`:''}
+      <p>${fit?'Fit for duty':`Recovering (${v.recovery} more ${v.recovery===1?'battle':'battles'})`}</p>
       ${camp&&state.chapter>=3?`<label class="party-choice"><input type="checkbox" data-cmd="soldier-party" data-id="${esc(v.id)}" ${chosen.has(v.id)?'checked':''} ${fit?'':'disabled'}> Marches with you</label>`:''}
-      ${state.chapter>=4?squadOrdersBlock(state,v,{camp,names}):''}
+      <p class="orders-summary"><strong>Standing orders:</strong> ${esc(summarizeOrders(slots,{hero:'you'}))}</p>
+      ${disclosure(`companion-orders-${v.id}`,camp?'Change orders & view attributes':'View squad orders & attributes',`<p>Combat ${a.combat} · Constitution ${a.con} · Agility ${a.agi}</p>`+
+        (camp?`<div class="orders-presets" role="group" aria-label="Presets for ${esc(profile.name)}">${Object.entries(STANDING.presetNames).filter(([id])=>id!=='soldier')
+        .map(([id,name])=>button('orders',name,{companion:v.id,preset:id})).join('')}${button('orders-edit','Edit the four orders…',{companion:v.id})}</div>`:'')+
+        (state.chapter>=4?squadOrdersBlock(state,v,{camp,names}):''))}
     </article>`;}).join('');
   return `<div class="company-panel">${rows||'<p>No companions yet.</p>'}
     ${state.chapter<3?'<p class="panel-note">From Chapter III up to three companions march with you.</p>':''}
@@ -182,14 +188,14 @@ export function quartermasterPanel(state){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const elo=soldierAttributes(s).elo,paid=s.paid.includes(state.chapter);
   const stock=quartermasterStock(state.chapter).map(id=>{const price=priceOf(id,elo),fits=!!s.pack;
-    return `<li><span><strong>${esc(ITEMS[id].name)}</strong> <small>${esc(itemSummary(id))}</small></span>${button('buy',`Buy (${price} d)`,{item:id},{disabled:s.denarii<price||!fits,
+    return `<li><div><strong>${esc(ITEMS[id].name)}</strong>${s.denarii<price?`<small>Needs ${price} denarii; you have ${s.denarii}.</small>`:''}${disclosure(`shop-item-${id}`,'Item details',`<p>${esc(itemSummary(id))}</p>`)}</div>${button('buy',`Buy (${price} d)`,{item:id},{disabled:s.denarii<price||!fits,
       title:s.denarii<price?`Needs ${price} denarii.`:''})}</li>`;}).join('');
   const sell=s.pack.filter(e=>!ITEMS[e.id].keep&&ITEMS[e.id].kind!=='quest').map(e=>`<li><span>${esc(ITEMS[e.id].name)}</span>`+
     `${button('sell',`Sell (${priceOf(e.id,elo,{selling:true})} d)`,{uid:e.uid})}</li>`).join('');
   return `<div class="quartermaster-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>. ${paid?'This chapter’s pay is drawn.':
     button('pay',`Draw this chapter’s pay (${PAY[state.chapter]??0} d)`,{},{primary:true})}</p>
-    <h3>For sale</h3><ul class="shop-list">${stock}</ul><h3>Sell from your pack</h3>${sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>'}
-    <p class="panel-note">Prices fall with Eloquence above 10, by up to a fifth. Traders buy at half value.</p></div>`;
+    <h3>Buy equipment</h3><ul class="shop-list">${stock}</ul>${disclosure('quartermaster-sell','Sell from your pack',sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>')}
+    ${disclosure('quartermaster-prices','How prices work','<p>Prices fall with Eloquence above 10, by up to a fifth. Traders buy at half value.</p>')}</div>`;
 }
 
 // A trainer's courses (Campidoctor, Capsarius, Explorator, and later Signifer and Rhetor).
@@ -198,7 +204,7 @@ export function trainerPanel(state,trainerId){
   const t=TRAINERS[trainerId],options=courseOptions(state,trainerId);
   return `<div class="trainer-panel"><p><strong>${esc(t.name)}</strong>, ${esc(t.title)}. You have <strong>${s.tp}</strong> training points and ${s.denarii} denarii.</p>
     <ul class="shop-list">${options.map(c=>`<li><span><strong>${esc(c.name)}</strong> · ${esc(c.summary)} <small>${c.tp} TP${c.denarii?`, ${c.denarii} denarii`:''}</small></span>`+
-      `${c.taken?'<span class="status-pill">Learnt</span>':button('course','Learn',{course:c.id},{disabled:!c.available,title:c.reason??''})}</li>`).join('')}</ul></div>`;
+      `${c.taken?'<span class="status-pill">Learnt</span>':`<div>${button('course','Learn',{course:c.id},{disabled:!c.available,title:c.reason??''})}${!c.available&&c.reason?`<small>${esc(c.reason)}</small>`:''}</div>`}</li>`).join('')}</ul></div>`;
 }
 
 // The one-time choice of training and appearance (a chronicle begun before 0.40 makes it here).
@@ -228,7 +234,7 @@ export function missionOrdersPanel(state,{world=null,requirements=''}={}){
   const errands=errandList(state).filter(e=>e.stage!=='done');
   return `<div class="mission-orders"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p>
     <h3>${esc(e?.title??chapter?.title??'')}</h3><p>${esc(objective)}</p>${world?`<p><strong>${esc(missionProgress(world))}</strong></p>`:''}
-    ${world&&world.kind!=='camp'?fieldIntelligencePanel(world):''}
+    ${world&&world.kind!=='camp'?disclosure('mission-intelligence','Enemy intelligence & allied plans',fieldIntelligencePanel(world)):''}
     <h3>To demonstrate this chapter</h3><div class="journal-requirements">${requirements}</div>
     <h3>Errands</h3>${errands.length?`<ul>${errands.map(e=>`<li><strong>${esc(e.title)}</strong> (${esc(e.giver)}): ${esc(e.summary)}</li>`).join('')}</ul>`:'<p>No errands in hand.</p>'}</div>`;
 }
@@ -279,20 +285,21 @@ export function soldierCampCard(state){
   const link=(id,label,key,arg='')=>`<button class="text-link full" data-cmd="soldier-panel" data-id="${esc(id)}"${arg?` data-arg="${esc(arg)}"`:''}>`+
     `${esc(label)}${key?` <kbd>${esc(key)}</kbd>`:''} <span aria-hidden="true">→</span></button>`;
   return `<section class="sidebar-card soldier-card"><p class="eyebrow">YOUR SOLDIER</p>
-    <h3>${s.tp} training points · ${s.denarii} denarii</h3>
-    ${link('kit','Kit and pack','I')}${link('character','Character and training','C')}${link('decorations','Decorations and titles','A')}
-    ${link('company','Company and standing orders','R')}${link('quartermaster','The quartermaster','')}
-    ${trainers.map(t=>link('trainer',`${t.name}, ${t.title.replace(/ \(.*\)$/,'')}`,'',t.id)).join('')}</section>`;
+    <p class="soldier-balance"><strong>${s.tp} training points</strong> · ${s.denarii} denarii</p>
+    <div class="camp-task-links">${link('kit','Equipment','I')}${link('character','Training','C')}
+    ${link('company','Company','R')}${link('quartermaster','Trade & pay','')}</div>
+    ${disclosure('camp-trainers',`Courses & trainers (${trainers.length})`,trainers.map(t=>link('trainer',`${t.name} · ${t.title.match(/\(([^)]+)\)/)?.[1]??t.title}`,'',t.id)).join(''))}
+    ${disclosure('camp-honours','Service honours',link('decorations','Decorations and titles','A'))}</section>`;
 }
 
 // The canabae's sutler: her goods for coin, and she buys what you took from the field.
 export function traderPanel(state){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const elo=soldierAttributes(s).elo,stock=TRADER_STOCK[state.chapter]??[];
-  const goods=stock.map(id=>{const price=priceOf(id,elo);return `<li><span><strong>${esc(ITEMS[id].name)}</strong> <small>${esc(itemSummary(id))}</small></span>`+
+  const goods=stock.map(id=>{const price=priceOf(id,elo);return `<li><div><strong>${esc(ITEMS[id].name)}</strong>${s.denarii<price?`<small>Needs ${price} denarii; you have ${s.denarii}.</small>`:''}${disclosure(`trader-item-${id}`,'Item details',`<p>${esc(itemSummary(id))}</p>`)}</div>`+
     `${button('buy',`Buy (${price} d)`,{item:id,from:'trader'},{disabled:s.denarii<price,title:s.denarii<price?`Needs ${price} denarii.`:''})}</li>`;}).join('');
   const sell=s.pack.filter(e=>!ITEMS[e.id].keep&&ITEMS[e.id].kind!=='quest').map(e=>`<li><span>${esc(ITEMS[e.id].name)}</span>`+
     `${button('sell',`Sell (${priceOf(e.id,elo,{selling:true})} d)`,{uid:e.uid})}</li>`).join('');
-  return `<div class="quartermaster-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>.</p><h3>Her goods</h3><ul class="shop-list">${goods||'<li>Nothing for sale.</li>'}</ul>
-    <h3>Sell to her</h3>${sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>'}</div>`;
+  return `<div class="quartermaster-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>.</p><h3>Buy supplies</h3><ul class="shop-list">${goods||'<li>Nothing for sale.</li>'}</ul>
+    ${disclosure('trader-sell','Sell from your pack',sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>')}</div>`;
 }

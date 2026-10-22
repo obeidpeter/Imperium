@@ -20,12 +20,12 @@ test('Operation choices show actual resources, conditional next-field benefits a
   assert.ok(G.startEncounter(s).ok);assert.equal(operationPlanning(s),'','Operation choice must disappear after departure');
 });
 
-test('Earned training controls expose permanent specialization, auto-open when eligible, and escape companion names',()=>{
+test('Earned training controls report eligible veterans without expanding optional training, and escape companion names',()=>{
   const s=start('ch2-rearguard');assert.equal(playEncounter(s).status,'won');assert.ok(G.commitEncounter(s).ok);assert.ok(G.advanceChapter(s).ok);
   const veteran=G.veteranTraining(s).veterans.find(v=>v.eligible);assert.ok(veteran);
   // Isolated display-string fixture; progression is earned by legal commands.
   s.company.find(v=>v.id===veteran.id).name='<img src=x onerror=alert(1)>';
-  const html=pure(s,()=>veteranAcademy(s));assert.match(html,/<details id="veteran-academy" class="progression-panel" open><summary>Veteran training · shape your company · \d+ ready<\/summary>/);assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);assert.doesNotMatch(html,/<img src=x/);assert.ok(html.includes(`for="veteran-path-${veteran.id}"`));assert.match(html,/Train permanently/);
+  const html=pure(s,()=>veteranAcademy(s));assert.match(html,/<details id="veteran-academy" class="progression-panel"><summary>Veteran training · \d+ ready<\/summary>/);assert.match(html,/&lt;img src=x onerror=alert\(1\)&gt;/);assert.doesNotMatch(html,/<img src=x/);assert.ok(html.includes(`for="veteran-path-${veteran.id}"`));assert.match(html,/Train permanently/);
   assert.ok(G.specializeVeteran(s,veteran.id,'protector').ok);const trained=pure(s,()=>veteranAcademy(s));assert.ok(!trained.includes(`data-cmd="specialize-veteran" data-id="${veteran.id}"`));assert.match(trained,/Protector/);
 });
 
@@ -65,7 +65,7 @@ test('Pending ledger promises become a single committed entry only after recordi
 });
 
 test('Help describes earned Chapter III specializations and their command requirement',()=>{
-  let body='';createPanels(()=>({showModal:(_title,html)=>{body=html;}})).showHelp();
+  let body='';createPanels(()=>({showModal:(_title,html)=>{body=html;}})).showHelp('full-rules');
   assert.match(body,/two completed deployments to specialize from Chapter III/);assert.match(body,/Specialist actions require available command capacity/);assert.match(body,/formation leader adds one command per round/);assert.match(body,/Ordinary Order unlocks in IV/);assert.doesNotMatch(body,/I–III you control only yourself/);
 });
 

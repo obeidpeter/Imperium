@@ -10,6 +10,7 @@ import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {serveRequest} from './serve.mjs';
+import {menuCommand,revealControl} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runCommandCampaign} from './command-autoplay.mjs';
 
@@ -45,15 +46,15 @@ async function restore(viewport,id){
   const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
   page.on('pageerror',e=>problems.push(e.message));page.on('console',m=>{if(m.type()==='error')problems.push(m.text());});
   await page.goto(`${base}?dev`);
-  await page.locator('[data-cmd="settings"]:visible').first().click();
-  await page.selectOption('#controls-model','realtime');
+  await menuCommand(page,'settings');
+  await (await revealControl(page,'#controls-model')).selectOption('realtime');
   await page.locator('#modal [data-cmd="close-modal"]').first().click();
-  await page.locator('[data-cmd="settings"]:visible').first().click();
-  await page.waitForSelector('#pause-sighted');
-  await page.selectOption('#battle-view','2d');
-  await page.selectOption('#graphics-quality','performance');
-  for(const id of ['pause-sighted','pause-hurt','pause-squad','pause-objective','pause-order'])await page.locator(`#${id}`).uncheck();
-  await page.click('#modal [data-cmd="restore"]');
+  await menuCommand(page,'settings');
+  await revealControl(page,'#pause-sighted');
+  await (await revealControl(page,'#battle-view')).selectOption('2d');
+  await (await revealControl(page,'#graphics-quality')).selectOption('performance');
+  for(const id of ['pause-sighted','pause-hurt','pause-squad','pause-objective','pause-order'])await (await revealControl(page,`#${id}`)).uncheck();
+  await (await revealControl(page,'#modal [data-cmd="restore"]')).click();
   await page.fill('#restore-code',codes.get(id));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');await page.locator('[data-cmd="start"]:visible').first().click();
   await page.waitForSelector(`.rt-field[data-kind="${id==='ch7-council'?'chamber':'field'}"] .rt-scene[data-ready="true"]`);
@@ -122,6 +123,7 @@ try{
   await layout(road,'road-target-narrow');await road.context().close();
 
   const rescue=await restore({width:580,height:700},'ch2-marsh');
+  await revealControl(rescue,'[data-role="objective"]');
   assert.match(await text(rescue,'[data-role="objective"]'),/every survivor/i);
   assert.match(await text(rescue,'[data-role="missionNext"]'),/Bind wounds/);
   assert.ok(!/\bAssist\b/.test(await text(rescue,'.rt-status-strip')),'Mission instructions use the available action vocabulary');
@@ -132,9 +134,10 @@ try{
     await field.locator('[data-role="squadBar"] button').first().click();
     await field.waitForSelector('[data-role="commandCard"]:not([hidden])');
     await layout(field,`chapter-v-command-${suffix}`);
+    await revealControl(field,'[data-role="deadlineLine"]');
     assert.match(await text(field,'[data-role="deadlineLine"]'),/Optional|opportunit/i,'Optional field opportunities remain visible');
-    await field.locator('.rt-toolbox summary').click();await layout(field,`chapter-v-controls-${suffix}`);
-    await field.locator('.rt-toolbox summary').click();
+    await field.locator('.rt-toolbox > summary').click();await layout(field,`chapter-v-controls-${suffix}`);
+    await field.locator('.rt-toolbox > summary').click();
     await field.locator('#rt-board').focus();await field.keyboard.press('KeyH');await layout(field,`chapter-v-horizon-${suffix}`);
     if(suffix==='desktop'){
       const stopped=await tick(field);await field.locator('#rt-board').focus();await field.keyboard.press('KeyI');
@@ -152,7 +155,7 @@ try{
     }
     await field.context().close();
     const council=await restore(viewport,'ch7-council');
-    await council.locator('[data-role="coalition"] [data-person]').first().click();
+    await (await revealControl(council,'[data-role="coalition"] [data-person]')).click();
     await council.waitForSelector('[data-role="conversation"]:not([hidden])');
     await layout(council,`council-conversation-${suffix}`);
     assert.match(await text(council,'[data-role="coalition"]'),/needed/);

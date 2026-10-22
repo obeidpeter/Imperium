@@ -4,6 +4,15 @@
 
 The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. The original phase reports retain their validation limits; the later Windows assessment and improvements are recorded separately below. Physical phone and first-time player checks remain open.
 
+### In-game usability ([report](docs/usability-overhaul.md))
+
+- Short, grouped menus with a consistent Menu return and Close action; equipment, training, company and honours share local navigation.
+- Five settings categories, six initial readability preferences, optional advanced controls, and a searchable help overview before the full guide.
+- Common combat actions first, remaining actions on demand with their keyboard shortcuts preserved; compact objectives and visible warnings, optional mission detail, tips and logs.
+- Camp prioritizes departure and unmet requirements. Equipment, training, company orders and campaign records reveal supporting detail when requested.
+- Loading or replacing a named save requires confirmation; cancelled changes preserve progress.
+- Correct high-contrast colors on light and dark surfaces, reliable action-bar focus shortcuts, and clean dialog transitions after conversations or mission orders.
+
 ### Windows playtest improvements ([report](docs/realtime-playtest-polish.md))
 
 - Live keyboard target health, distance and current-ability forecasts; Pause works from the command list and HUD; retry clears the previous encounter's messages and input state.

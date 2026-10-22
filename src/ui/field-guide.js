@@ -28,5 +28,5 @@ export function fieldLesson(state,{selected='hero',action,target}={}){
 export function fieldGuide(state,options={}){
   if(options.enabled===false)return '';
   const lesson=fieldLesson(state,options);if(!lesson)return '';
-  return `<aside class="field-guide" aria-label="Guided learning"><div><p class="eyebrow">FIELD GUIDE · ${esc(lesson.step)}</p><h2>${esc(lesson.title)}</h2><p>${esc(lesson.body)}</p><small>${esc(lesson.detail)}</small></div><div class="field-guide-controls">${lesson.action?`<button data-cmd="action" data-id="${lesson.action}">Choose ${esc(actionNames[lesson.action])}</button>`:''}<button class="ghost small" data-cmd="dismiss-guide">Hide guide</button></div></aside>`;
+  return `<aside class="field-guide" aria-label="Guided learning"><div><p class="eyebrow">TIP · ${esc(lesson.step)}</p><h2>${esc(lesson.title)}</h2><details id="command-lesson-detail"><summary>How to do it</summary><p>${esc(lesson.body)}</p><small>${esc(lesson.detail)}</small></details></div><div class="field-guide-controls">${lesson.action?`<button data-cmd="action" data-id="${lesson.action}">Choose ${esc(actionNames[lesson.action])}</button>`:''}<button class="ghost small" data-cmd="dismiss-guide">Hide tips</button></div></aside>`;
 }
