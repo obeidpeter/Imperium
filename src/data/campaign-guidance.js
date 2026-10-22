@@ -18,7 +18,7 @@ export const CAREER_GUIDANCE = Object.freeze({
 export const MISSION_GUIDANCE = Object.freeze({
   training:['Learn by doing','Demonstrate Move, Strike, Brace and Throw. You have time to read every preview.'],
   clear:['Break the field force','Account for announced reinforcements. Protect the commander while concentrating attacks.'],
-  extract:['Protect the withdrawal','Assist anyone awaiting rescue. Escort every column to the marker; keep the commander within four tiles.'],
+  extract:['Protect the withdrawal','Help anyone awaiting rescue before leading the column. Keep a protector beside threatened survivors; bring every column and the commander into the rally marker.'],
   hold:['Hold the approach','Keep the marked ground clear of adjacent enemies. A chase can cost control of the objective.'],
   recover:['Recover the records','Scout the hidden threat and reach the chest. Clearing the entire field is not required.'],
   capture:['Secure the positions','Bring a friendly unit beside each marker and clear enemies from its immediate approach.'],

@@ -84,7 +84,7 @@ export const stageLabels={
         obstacles.push({id:this.selected,x,y,width:Math.max(...points.map(p=>p.x))-x,height:Math.max(...points.map(p=>p.y))-y});
       }
     }
-    const layout=layoutStageLabels(items,{width,height,top:this.canvas.parentElement.classList.contains('world-stage')?92:8,obstacles}),
+    const layout=layoutStageLabels(items,{width,height,top:!this.live&&this.canvas.parentElement.classList.contains('world-stage')?92:8,obstacles}),
       counts={visible:0,occluded:0,offscreen:0,overlaps:0};
     for(const [id,r]of layout){
       const {label,leader}=elements.get(id);label.dataset.layout=r.reason;counts[r.reason]++;label.style.visibility=r.visible?'visible':'hidden';

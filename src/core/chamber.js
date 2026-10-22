@@ -110,6 +110,33 @@ export function walkBeside(state,unitId,action,target){
   return places.sort((a,b)=>a.cost-b.cost||distance(a,u)-distance(b,u)||a.y-b.y||a.x-b.x)[0]??null;
 }
 
+// A refusal that says what the player can change. The same read-only wording
+// serves conversations, pointer forecasts and keyboard targets; none of them
+// spends a speech or silently walks the speaker.
+export function speechProblem(state,speakerId,action,personId,preview=null){
+  const e=contest(state),sp=unitOf(state,speakerId),p=typeof personId==='string'?unitOf(state,personId):personId;
+  if(!e||!sp)return 'Choose one of your speakers.';
+  if(!active(state))return 'The session is over.';
+  if(!alive(sp))return `${sp.name} has withdrawn. His vote still counts; choose another standing speaker.`;
+  if(sp.acted)return `${sp.name} has spoken this hour. Switch to a speaker who has not spoken, or yield the floor. No extra speech is spent.`;
+  if(p&&['persuade','promise','threaten','record'].includes(action)&&p.role!=='voter')return `${SPEECH_NAMES[action]} needs a voting member. ${p.name} is a speaker. No speech is spent.`;
+  if(p&&action==='denounce'&&(p.role!=='speaker'||p.side!=='enemy'))return 'Denounce needs an opposition speaker. Choose a rival; no speech is spent.';
+  if(p&&action==='rebut'&&p.role!=='speaker')return 'Rebut needs a speaker: restore a friend’s Resolve or blunt a rival’s reply. No speech is spent.';
+  if(p?.role==='speaker'&&!alive(p))return `${p.name} has withdrawn. Choose a standing speaker; no speech is spent.`;
+  if(action==='promise'&&e.promises?.includes(p?.id))return `${p.name} already has your promise. Choose another argument; no speech is spent.`;
+  if(action==='promise'&&e.promises?.length>=2)return 'Both promises have been used in this Contest. Choose another argument; no speech is spent.';
+  if(action==='record'&&e.recordUses?.includes(p?.id))return `${p.name} has already heard your Record in this Contest. Choose another argument; no speech is spent.`;
+  if(action==='address'&&e.cooldowns?.[`${sp.id}:address`]>e.turn)return `Address the Chamber recovers on hour ${e.cooldowns[`${sp.id}:address`]}. Choose another speech.`;
+  if(p&&RANGE[action]&&distance(sp,p)>RANGE[action]){
+    const metres=distance(sp,p)*SEAT,range=RANGE[action]*SEAT,place=walkBeside(state,sp.id,action,p);
+    return `${p.name} is ${metres} m away; ${SPEECH_NAMES[action]} reaches ${range} m. `+
+      (place?`Walk ${place.cost*SEAT} m along the aisle first using Walk beside him. `
+        :`${sp.name} cannot reach speaking distance this hour. Move closer within the highlighted area and speak next hour, or choose a nearer delegate. `)+
+      'No speech is spent.';
+  }
+  return preview?.message??'Choose a legal recipient for this speech. No speech is spent.';
+}
+
 // Talking to someone (left-click): who he is, and each speech the speaker can make
 // to him with the 0.38 forecast, from where he stands, or after walking beside him
 // when he is in reach. Opens where the speaker stands: nothing here moves anyone.
@@ -121,12 +148,12 @@ export function conversation(state,speakerId,personId,{known=false}={}){
   const taught=knownSpeeches(state,speakerId),kinds=(p.role==='voter'?['persuade','promise','threaten','record']:p.side==='enemy'?['denounce','rebut']:['rebut']).filter(a=>taught.includes(a));
   const actions=G.getActions(state,speakerId),out=[];
   for(const action of kinds){
-    if(!actions.includes(action)){out.push({action,name:SPEECH_NAMES[action],ok:false,message:sp.acted?`${sp.name} has spoken this hour.`:alive(sp)?'Not now.':`${sp.name} has withdrawn.`});continue;}
+    if(!actions.includes(action)){out.push({action,name:SPEECH_NAMES[action],ok:false,message:speechProblem(state,sp.id,action,p)});continue;}
     const command={unitId:sp.id,action,x:p.x,y:p.y,targetId:p.id},here=G.preview(state,command);
     if(here.ok){out.push({action,name:SPEECH_NAMES[action],ok:true,command,message:here.message,forecast:here.forecast??null});continue;}
     const place=distance(sp,p)>RANGE[action]?walkBeside(state,sp.id,action,p):null,there=place?forecastFrom(state,command,place):null;
     out.push(there?.ok?{action,name:SPEECH_NAMES[action],ok:false,walk:place,command,message:there.message,forecast:there.forecast??null}
-      :{action,name:SPEECH_NAMES[action],ok:false,message:here.message});
+      :{action,name:SPEECH_NAMES[action],ok:false,message:speechProblem(state,sp.id,action,p,here)});
   }
   return {speaker:{id:sp.id,name:sp.name,spoken:!!sp.acted},person:who,speeches:out,profile:profileOf(e,sp)};
 }

@@ -1,13 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import * as T from '../vendor/three/three.module.js';
 import {staticImportClosure,studyAssets,initialAssets} from '../scripts/module-closure.mjs';
 import {compileUnits,drawableShape,sceneTextures} from '../src/showcase/scene-compositor.js';
 import {createInkOverlay} from '../src/showcase/ink-overlay.js';
 import {rayToUpright} from '../src/showcase/stage.js';
 
-const root=new URL('../',import.meta.url),rootPath=root.pathname;
+const root=new URL('../',import.meta.url),rootPath=fileURLToPath(root);
 
 test('the offline shell carries every module the page loads before it runs, the board readout included',async()=>{
   const closure=await staticImportClosure(rootPath,'src/ui/app.js');

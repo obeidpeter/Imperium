@@ -8,8 +8,8 @@ import {FRAME_SLICE_MS,nextSlice} from './build-steps.js';
 // softens what multisampling misses, and sharpening still runs on flat areas.
 export const COMPOSITOR_TIERS=Object.freeze({
   performance:Object.freeze({enabled:false,samples:0,msaa:0,radius:0,strength:0,bloomStrength:0,casStrength:0,aerialStrength:0,vignetteStrength:0}),
-  balanced:Object.freeze({enabled:true,samples:8,msaa:4,radius:1.05,strength:1.55,bloomStrength:0.24,casStrength:0.18,aerialStrength:0.16,vignetteStrength:0.14}),
-  high:Object.freeze({enabled:true,samples:12,msaa:4,radius:1.15,strength:1.65,bloomStrength:0.32,casStrength:0.26,aerialStrength:0.22,vignetteStrength:0.18})
+  balanced:Object.freeze({enabled:true,samples:8,msaa:4,radius:1.05,strength:1.28,bloomStrength:0.24,casStrength:0.18,aerialStrength:0.16,vignetteStrength:0.10}),
+  high:Object.freeze({enabled:true,samples:10,msaa:4,radius:1.15,strength:1.40,bloomStrength:0.32,casStrength:0.26,aerialStrength:0.22,vignetteStrength:0.12})
 });
 // Default haze begins 14m from the camera. The stage moves it beyond the playable
 // board each frame, so figures and terrain keep their contrast at any zoom.

@@ -7,6 +7,7 @@ import {expandedPanel} from './expanded-views.js';
 import {precedentPanel} from './encounter-view.js';
 import {delegateAppealSummary} from './direct-controls.js';
 import {hearingDocuments} from '../core/chamber.js';
+import {delegatePortrait} from './delegate-portrait.js';
 
 // The page around a walk-and-talk chamber (build brief §3.11). The chamber itself
 // (the scene, the speakers, the speeches, the conversation and the coalition
@@ -34,7 +35,7 @@ export function chamberEncounterView({state,saving,lastSaved,saveProblem,saveCon
       ${e.status==='active'?`${commandIntelligence(state)}${expandedPanel(state)}${e.politicsVersion===2?precedentPanel(state):''}`:''}
       <details id="chamber-members" class="command-mission-record"><summary>Motion, members & obligations</summary>
         ${missionBrief(e)}<p>${esc(e.objective)}</p>${coalitionPanel(e,vote,state)}
-        <h2>The members</h2><div class="delegate-list">${members.map(u=>`<article><div><strong>${esc(u.name)}</strong>`+
+        <h2>The members</h2><div class="delegate-list">${members.map(u=>`<article>${delegatePortrait(u,{decorative:true})}<div><strong>${esc(u.name)}</strong>`+
           `<span>${esc(u.bloc)} · ${u.stance>=1?'For':'Against'} (${signed(u.stance)})${e.promises?.includes(u.id)?' · promised':''}</span>`+
           `<small>${known.has(u.id)?`Interest: ${esc(u.interest)} · ${esc(delegateAppealSummary(u,e.politicsVersion))}`:'Interest: talk to him and ask'}</small></div>`+
           `<button class="ghost small" data-cmd="inspect-delegate" data-id="${esc(u.id)}" aria-label="Talk to ${esc(u.name)}" ${e.status==='active'?'':'disabled'}>Talk</button></article>`).join('')}</div>

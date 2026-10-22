@@ -65,13 +65,17 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }
   const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
   yield;
-  const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(80,80,rows,rows));groundGeometry.rotateX(-Math.PI/2);
+  // Real-time maps expand beyond the original 80 m terrain. Their playable
+  // edge must remain on detailed ground, with a generous verge before the
+  // distant ridge shader begins. Keep mesh counts bounded on every quality.
+  const groundRadius=Math.max(40,halfX+20,halfZ+20);
+  const rows=perf?120:high?200:160,groundGeometry=p.geo(new THREE.PlaneGeometry(groundRadius*2,groundRadius*2,rows,rows));groundGeometry.rotateX(-Math.PI/2);
   const pos=groundGeometry.attributes.position,colors=[],soilWeights=[];
   // Rows gather over the board and its margin (0.6 of the even spacing) and
   // spread toward the 80 m edge, which stays exactly where the outer bridge
   // meets it, so plateau banks and river cuts resolve without adding rows.
   const gather=r=>{if(r<=20)return r*.6;const t=(r-20)/20,t2=t*t,t3=t2*t;return (2*t3-3*t2+1)*12+(t3-2*t2+t)*12+(3*t2-2*t3)*40+(t3-t2)*32;};
-  for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),r=Math.max(Math.abs(x),Math.abs(z));if(r>0&&r<40){const s=gather(r)/r;pos.setXYZ(i,x*s,0,z*s);}}
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),r=Math.max(Math.abs(x),Math.abs(z));if(groundRadius===40&&r>0&&r<40){const s=gather(r)/r;pos.setXYZ(i,x*s,0,z*s);}}
   for(let i=0;i<pos.count;i++){
     if(i%1024===1023)yield;
     const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,height(x,z));
@@ -187,7 +191,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   yield;
   for(let i=0;i<grassCount;i++){
     if(i%1024===1023)yield;
-    const x=(hash(i,31)-.5)*65,z=(hash(i,32)-.5)*55;if(z< -18)continue;
+    const x=(hash(i,31)-.5)*Math.max(65,halfX*2+24),z=(hash(i,32)-.5)*Math.max(55,halfZ*2+24);
+    if(profile.distantWater&&z< -18&&z> -40)continue;
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
     if(['rock','wall','river','ford','stone','chamber','marsh'].includes(type)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||(profile.architecture==='fort'&&Math.abs(x-fortX)<1))continue;
@@ -244,7 +249,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
-  const horizon=createEnvironmentHorizon({ground,profile,height,quality});root.add(horizon.group);
+  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius});root.add(horizon.group);
   yield;
   const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;

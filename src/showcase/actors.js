@@ -72,7 +72,7 @@ export function createActor(unit={},options={}){
   // its map. An abandoned fallback must not leave a warm-only GPU texture.
   if(preloadComplexion){complexion.acquire(identity);pendingComplexion=true;}
   const assetReady=source?source.warm(identity):typeof window!=='undefined'?warmActorAssets(identity):Promise.resolve(actorAssetStatus(identity).ready);
-  const hairReady=!identity.female&&!['bound','long'].includes(identity.hair)?warmActorHair():Promise.resolve(false);
+  const hairReady=!identity.female&&!['bound','long','shaved'].includes(identity.hair)?warmActorHair():Promise.resolve(false);
   const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady,bodyReady]).then(([loaded,,hairLoaded,bodyLoaded])=>{
     if(disposed)return false;
     const built=group.userData.actor;
@@ -92,14 +92,18 @@ export function createActor(unit={},options={}){
 }
 function createActorRig(unit={},options={},reuseGroup=null){
   const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed,identity=actorIdentity(unit,kit);
+  const spear=kit.equipped?kit.weapon==='spear':raider,bladeLength=kit.weapon==='knife'?.24:kit.weapon==='gladius'?.48:kit.weapon==='spatha'?.74:.59;
   const complexion=options.complexionLibrary??defaultComplexion;
   const bodyId=actorBodyId(kit),body=bodyId?(options.bodyLibrary?options.bodyLibrary.body(bodyId):actorBody(bodyId)):null;
   const anatomy=body?null:options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
   const detail=options.quality!=='performance',profile=(rings,spec={})=>{const g=garmentGeometry(rings,{...spec,subdivisions:spec.subdivisions??(detail&&(spec.anatomy||spec.folds)?2:1),segments:detail?Math.min(spec.segments??18,20):Math.min(spec.segments??18,12)});return spec.anatomy?sculptActorGeometry(g,spec.anatomy,spec.side?{...identity,side:spec.side}:identity):g;};
   const wardrobe=actorWardrobe(identity,kit),factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
-  const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:unit.bloc==='Army'?0xa9997a:unit.bloc==='Landholders'?0xd2c3a5:0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...wardrobe.palette,...options.palette};
+  const civicCloth={Veterans:0xc6aa98,Landholders:0xd8c39a,Civic:0xb8c9d7,Army:0xa9997a,Chamber:0xc4b3cf,People:0xb6c5b2};
+  const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:civicCloth[unit.bloc]??0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...wardrobe.palette,...(kit.linen?{cloth:0xe1d8bc}:{}),...options.palette};
+  if(kit.appearance&&!civic){p.cloth=[0xd1c6a8,0x994b42,0x456c88,0xbc9750][kit.appearance.tunic]??p.cloth;
+    wardrobe.cloak=[0x665442,0x45494a,0x813c37,0x4b624a][kit.appearance.cloak]??wardrobe.cloak;}
   const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,equipment:kit.equipment??null,weapon:kit.weapon??(spear?'spear':'spatha'),identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
   const material=(color,extra={})=>{const Constructor=options.quality==='high'&&extra.roughnessMap&&extra.metalness===0?T.MeshPhysicalMaterial:T.MeshStandardMaterial;const m=new Constructor({color,roughness:.84,metalness:0,...extra,...(Constructor===T.MeshPhysicalMaterial?{sheen:.18,sheenRoughness:.85,sheenColor:new T.Color(color).multiplyScalar(.25)}:{})});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
@@ -163,7 +167,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   strip(mouth,lip,lipPoints.map(([x,y])=>{const v=facePoint(x,y,identity,.002);return [v[0],v[1]-.001,v[2]-mouthZ];}),.0023);
   strip(mouth,skin,[[-.021,-.002],[0,-.005],[.021,-.002]].map(([x,y])=>{const v=facePoint(x,y,identity,.003);return [v[0],v[1]-.001,v[2]-mouthZ];}),.003);
   if(identity.scar)strip(head,skin,[[.063,.077],[.061,.065],[.058,.049]].map(([x,y])=>facePoint(x,y,identity,.001)),.0014);
-  mesh(head,createHairGeometry(identity,{detail}),hair);
+  if(identity.hair!=='shaved')mesh(head,createHairGeometry(identity,{detail}),hair);
   if(identity.beard>.3)mesh(head,createHairGeometry(identity,{detail,beard:true}),hair);
   if(identity.hair==='bound'){replacingAnatomy=false;ellipsoid(head,hair,0,.09,-.105,.058,.048,.038);}
   replacingAnatomy=false;
@@ -171,12 +175,13 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const legs=[];
   for(const side of [-1,1]){
     const thigh=part(hips,side<0?'right-thigh':'left-thigh',side*.104,0,0);
-    mesh(thigh,profile([[.03,.092,.102],[-.055,.105,.115],[-.14,.099,.110],[-.24,.083,.089],[-.34,.067,.071],[-.40,.058,.062],[-.44,.057,.060]],{folds:.045,foldCount:5,anatomy:'thigh'}),clothDark);
+    mesh(thigh,profile([[.03,.092,.102],[-.055,.105,.115],[-.14,.099,.110],[-.24,.083,.089],[-.34,.067,.071],[-.40,.058,.062],[-.44,.057,.060]],{folds:.045,foldCount:5,anatomy:'thigh'}),kit.equipped&&!kit.trousers?skin:clothDark);
     const knee=part(thigh,'knee',0,-.43,0);
-    mesh(knee,profile([[.035,.059,.063],[-.025,.065,.072],[-.085,.077,.090],[-.15,.079,.093],[-.23,.064,.074],[-.31,.049,.059],[-.38,.041,.048],[-.43,.041,.045]],{folds:.03,foldCount:5,anatomy:'calf'}),clothDark);
+    mesh(knee,profile([[.035,.059,.063],[-.025,.065,.072],[-.085,.077,.090],[-.15,.079,.093],[-.23,.064,.074],[-.31,.049,.059],[-.38,.041,.048],[-.43,.041,.045]],{folds:.03,foldCount:5,anatomy:'calf'}),kit.equipped&&!kit.trousers?skin:clothDark);
     const ankle=part(knee,'ankle',0,-.43,0);
     const boot=bootGeometry({side,quality:options.quality}),overviewBoot=bootGeometry({side,detail:'overview'});
-    for(const [piece,mat]of [['upper',leather],['sole',black]]){const item=mesh(ankle,boot[piece],mat);item.userData.overviewGeometry=overviewBoot[piece];geometries.add(overviewBoot[piece]);}
+    for(const [piece,mat]of [['upper',kit.equipped&&!kit.boots?skin:leather],['sole',kit.equipped&&!kit.boots?skin:black]]){const item=mesh(ankle,boot[piece],mat);item.userData.overviewGeometry=overviewBoot[piece];geometries.add(overviewBoot[piece]);}
+    if(kit.greaves){const guard=part(knee,'equipped-greave');mesh(guard,profile([[-.035,.072,.080],[-.10,.083,.099],[-.24,.069,.083],[-.33,.054,.063]],{segments:16,from:-1.35,to:1.35}),bronze);}
     if(raider)for(let i=0;i<4;i++)mesh(knee,profile([[-.27+i*.04,.044,.048],[-.255+i*.04,.045,.049]],{segments:16}),cloth);
     legs.push({thigh,knee,ankle});
   }
@@ -189,6 +194,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     mesh(elbow,profile([[.037,.039,.043],[-.015,.048,.051],[-.055,.052,.054],[-.105,.046,.049],[-.18,.033,.037],[-.24,.026,.031],[-.266,.026,.029]],{segments:18,anatomy:'forearm'}),skin);
     replacingAnatomy=false;
     if(veteran)mesh(elbow,profile([[-.145,.038,.041],[-.20,.034,.037]],{segments:18}),leather);
+    if(kit.manica&&side<0){const guard=part(elbow,'equipped-manica');for(let j=0;j<6;j++)mesh(guard,profile([[.025-j*.038,.052-j*.002,.060-j*.003],[.003-j*.038,.054-j*.002,.062-j*.003]],{segments:16}),metal);}
     const hand=part(elbow,'hand',0,-.258,0);
     const handOptions={side,open:!armed&&side<0,quality:options.quality},handMesh=mesh(hand,handGeometry(handOptions),skin),overviewHand=handGeometry({...handOptions,detail:'overview'});
     handMesh.userData.overviewGeometry=overviewHand;geometries.add(overviewHand);
@@ -218,22 +224,29 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const shieldContact=shield?part(shield,'shield-contact',0,.03,.13):null;
   if(shield&&mounted)shield.scale.setScalar(.82);
   if(shield&&kit.eastern)shield.scale.set(.85,.84,1);
-  const weapon=armed?part(right.hand,trainer?'practice-sword':raider?'spear':'sword',0,-.052,.018):null;
+  if(shield&&kit.shieldShape==='round')shield.scale.set(1.03,.68,1);
+  const weapon=armed?part(right.hand,trainer?'practice-sword':kit.weapon??(spear?'spear':'sword'),0,-.052,.018):null;
   if(weapon){weapon.rotation.x=Math.PI;
   mesh(weapon,new T.CylinderGeometry(.012,.012,.095,10),leather,0,-.006,0);
-  if(raider&&!archer){
+  if(spear&&!archer){
     mesh(weapon,new T.CylinderGeometry(.011,.015,1.65,10),leather,0,.42,0);
     mesh(weapon,shapeGeometry([[0,.19],[-.036,.035],[-.012,0],[.012,0],[.036,.035]],.009),metal,0,1.24,0);
     mesh(weapon,new T.CylinderGeometry(.016,.013,.07,10),bronze,0,1.24,0);
+  }else if(kit.weapon==='axe'){
+    mesh(weapon,new T.CylinderGeometry(.014,.018,.65,10),leather,0,.24,0);
+    mesh(weapon,shapeGeometry([[0,.42],[.13,.40],[.18,.56],[.13,.65],[0,.59]],.028),metal);
+  }else if(kit.weapon==='sling'){
+    strip(weapon,leather,[[0,0,0],[-.06,.22,.01],[0,.38,0],[.06,.22,-.01],[0,0,0]],.009);
+    ellipsoid(weapon,leather,0,.38,0,.043,.06,.013);
   }else{
     mesh(weapon,new T.CylinderGeometry(.016,.023,.035,12),bronze,0,-.07,0);
     const guard=ellipsoid(weapon,trainer?practiceWood:bronze,0,.056,0,.062,.018,.022);
     // Ridged diamond-section blade, individually modeled faces catch light.
     const blade=new T.BufferGeometry(),v=[-.027,.073,0, .027,.073,0, 0,.073,.009, 0,.073,-.009, -.022,.47,0, .022,.47,0, 0,.47,.006, 0,.47,-.006, 0,.59,0];
-    blade.setAttribute('position',new T.Float32BufferAttribute(v,3));blade.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap((_,i)=>i%3===0?[(v[i]+.027)/.054,v[i+1]/.59]:[]),2));blade.setIndex([0,4,6,0,6,2,2,6,5,2,5,1,1,5,7,1,7,3,3,7,4,3,4,0,4,8,6,6,8,5,5,8,7,7,8,4]);blade.computeVertexNormals();mesh(weapon,blade,trainer?practiceWood:metal);
+    blade.setAttribute('position',new T.Float32BufferAttribute(v,3));blade.setAttribute('uv',new T.Float32BufferAttribute(v.flatMap((_,i)=>i%3===0?[(v[i]+.027)/.054,v[i+1]/.59]:[]),2));blade.setIndex([0,4,6,0,6,2,2,6,5,2,5,1,1,5,7,1,7,3,3,7,4,3,4,0,4,8,6,6,8,5,5,8,7,7,8,4]);blade.computeVertexNormals();mesh(weapon,blade,trainer?practiceWood:metal).scale.y=bladeLength/.59;
   }
   weapon.visible=!archer;}
-  const weaponContact=weapon?part(weapon,'weapon-contact',0,raider&&!archer?1.43:.59,0):null;
+  const weaponContact=weapon?part(weapon,'weapon-contact',0,spear&&!archer?1.43:kit.weapon==='axe'?.6:bladeLength,0):null;
   const javelin=archer||!armed?null:part(right.hand,'held-javelin',0,-.052,.018);
   if(javelin){javelin.rotation.x=Math.PI;mesh(javelin,new T.CylinderGeometry(.009,.013,1.25,8),leather,0,.30,0);mesh(javelin,new T.ConeGeometry(.024,.19,4),trainer?practiceWood:metal,0,1.02,0);javelin.visible=false;}
   const javelinRelease=javelin?part(javelin,'javelin-release',0,1.115,0):null;
@@ -261,12 +274,18 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const mail=material(wardrobe.armorTint,{...surface(kit.armor),roughness:wardrobe.armorRoughness});mail.name=kit.armor==='scale'?'overlapping scale armor':'interlinked mail';
     armorMaterial=mail;
     for(const side of [-1,1])strip(torso,leather,[[side*.10,.10,.142],[side*.13,.31,.155],[side*.15,.44,.102]],.019);
-    const helmetRoot=part(head,`${kit.helmet}-helmet`);
-    if(kit.eastern){
+  }
+  if(kit.helmet){
+    const mail=armorMaterial??metal,helmetRoot=part(head,`${kit.helmet}-helmet`);
+    if(kit.helmet==='conical'){
       mesh(helmetRoot,profile([[.135,.127,.127,-.012],[.19,.120,.121,-.012],[.28,.070,.075,-.018],[.345,.008,.01,-.024]],{segments:24}),metal);
       for(const side of [-1,1])strip(helmetRoot,bronze,[[side*.12,.14,.025],[side*.088,.24,.025],[0,.345,-.024]],.005);
       // Coif and neck guard wrap around the head, leaving the actual face open.
       mesh(helmetRoot,profile([[-.045,.123,.122,-.016],[.137,.126,.124,-.012]],{segments:24,from:1.05,to:TAU-1.05}),mail);
+    }else if(kit.helmet==='segmented'){
+      mesh(helmetRoot,helmetBowlGeometry({detail:false,seed:kit.identity}),leather);
+      for(const a of [0,Math.PI/2]){const band=mesh(helmetRoot,profile([[.14,.132,.132,-.012],[.165,.130,.130,-.012]],{segments:20}),metal);band.rotation.y=a;}
+      strip(helmetRoot,metal,[[0,.14,.125],[0,.225,.092],[0,.28,-.01],[0,.22,-.118]],.014);
     }else{
       // The front rim clears the brows; the deeper guard wraps only the rear.
       mesh(helmetRoot,helmetBowlGeometry({detail:Boolean(anatomy)&&detail,seed:kit.identity}),metal);
@@ -278,7 +297,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
         if(anatomy)faceDetail(helmetRoot,bronze,side*.106,.126,.047,.008,.005,.005);
       }
     }
-    if(kit.officer){
+    if(kit.equipped?kit.crest:kit.officer){
       const crest=part(helmetRoot,'officer-horsehair-crest');
       const crestMat=material(0x742e31,clothSurface);
       strip(crest,bronze,[[-.11,.257,-.008],[0,.288,-.008],[.11,.257,-.008]],.012);
@@ -297,6 +316,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
       for(const [px,py]of [[-.068,.315],[0,.325],[.068,.315],[-.042,.235],[.042,.235]])faceDetail(phalerae,bronze,px,py,.164,.018,.018,.006);
     }
   }
+  if(kit.cap&&!kit.helmet){const cap=part(head,'equipped-arming-cap');mesh(cap,helmetBowlGeometry({detail:false,seed:kit.identity}),clothDark);}
   mountCharacterDetail(unit,kit,{torso,head,cloth,clothDark,leather,bronze,mesh,strip,ellipsoid:faceDetail,profile});
   if(kit.armored){
     // Padded neckline separates warm skin, textile and cold armor. It follows
@@ -313,6 +333,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     // A generated body's clothes are baked, so a scene's cloth colour (the accession's purple) dyes the cloak.
     cloak=part(torso,'command-cloak');clothRigs.push(createClothRig(cloak,.44,.08,-.42));const red=material(body&&options.palette?.cloth!==undefined?options.palette.cloth:wardrobe.cloak,{...surface('wool'),side:T.DoubleSide});
     mesh(cloak,drape([[.44,0,.37,-.16],[.28,.015,.46,-.20],[.09,.02,.51,-.23],[-.13,.025,.56,-.26],[-.42,.03,.54,-.28]]),red);
+    if(kit.cloakKind==='paenula')mesh(cloak,profile([[.43,.19,.145],[.51,.16,.12],[.62,.09,.07]],{segments:16,from:1.1,to:TAU-1.1}),red,0,0,-.13);
     ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
   }
   if(civic){
@@ -385,7 +406,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   group.traverse(o=>{if(o.isMesh&&o.material.isMeshStandardMaterial&&!o.userData.overview)nearMeshes.push(o);});
   nearMeshes=bindActorSurfaces(group,nearMeshes,{geometries,materials,skeletons,clothRigs});
   farMeshes=bindActorSurfaces(group,farMeshes,{geometries,materials,skeletons,clothRigs,overview:true});
-  const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
+  const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth:kit.equipped&&kit.padding&&!kit.armored?(kit.equipment.includes('jerkin')?leather:clothDark):cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
   if(body){const worn=mountActorBody(group,body,{skeletons});nearMeshes.push(worn.near);farMeshes.push(worn.overview);}
@@ -403,14 +424,14 @@ function createActorRig(unit={},options={},reuseGroup=null){
     if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;previousYaw=null;}
     if(!(Number.isFinite(input.dt)&&input.dt>0))transition=null;
     const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
-    let pose=actorPose({...mapped,weapon:raider?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
+    let pose=actorPose({...mapped,weapon:spear?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
     applyCharacterPresence(pose,identity,kit,mapped);
     if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0,duration:performanceTransition(lastMotion,motion),settle:motion==='idle'&&['walk','run'].includes(lastMotion)};
     if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/transition.duration);if(transition.settle)applyPerformance(pose,'stop',transition.elapsed/transition.duration);if(transition.elapsed>=transition.duration)transition=null;}
     lastMotion=motion;
     if(previousYaw!==null&&!input.reducedMotion&&['walk','run','retreat'].includes(motion)&&input.dt>0){const turn=Math.atan2(Math.sin(pose.yaw-previousYaw),Math.cos(pose.yaw-previousYaw)),lean=Math.max(-.18,Math.min(.18,turn/Math.max(.008,input.dt)*.028));pose.bodyY-=lean;pose.headY+=lean*.6;pose.bodyZ-=lean*.22;}
     previousYaw=pose.yaw;
-    if(civic){if(!['yield','speak','rally','order'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
+    if(civic){if(!['yield','speak','rally','order','assent','dissent'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
     if(kit.wounded){pose.leftArm[0]=-.60;pose.leftElbow=-1.3;pose.bodyZ-=.035;}
     const throwing=armed&&!archer&&input.motion==='throw';if(weapon)weapon.visible=!archer&&!throwing;if(javelin)javelin.visible=throwing&&(input.phase??0)<.5;
     if(archer){const firing=['throw','attack','strike'].includes(input.motion),p=Number.isFinite(input.phase)?Math.max(0,Math.min(1,input.phase)):0,draw=firing?(p<.5?Math.sin(p*Math.PI):Math.max(0,1-(p-.5)*8)):0;
@@ -442,7 +463,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     // Turn the gripping hand with the shield instead of rotating the board
     // independently through the fingers. Its boss sits over the closed grip.
     if(shield){left.hand.rotation.set(-(pose.leftArm[0]+pose.leftElbow)+pose.shieldTilt,0,-pose.leftArm[2]);shield.rotation.set(0,0,0);}
-    if(weapon&&raider&&!archer){const ready=['attack','strike'].includes(input.motion)?actionEnvelope(input.motion,input.phase).preparation:0;weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow-.18*(1-ready);}
+    if(weapon&&spear&&!archer){const ready=['attack','strike'].includes(input.motion)?actionEnvelope(input.motion,input.phase).preparation:0;weapon.rotation.x=Math.PI/2-pose.rightArm[0]-pose.rightElbow-.18*(1-ready);}
     if(cloak){cloak.rotation.x=pose.skirt*.55+Math.max(0,-pose.bodyX)*.12;cloak.rotation.z=pose.bodyY*-.08;}
     if(signum){
       if(input.reducedMotion||!Number.isFinite(input.time)){signum.rotation.set(0,0,0);}

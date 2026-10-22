@@ -50,25 +50,25 @@ export const CHAPTERS = [
   {
     id: 2, title: 'First Blood', year: 'AD 251', location: 'The marshes after Abritus',
     rank: 'Miles', rankMeaning: 'Legionary', promotion: 'Immunis', promotionMeaning: 'Trusted specialist, excused from routine labour',
-    capability: 'Assist · carry or shield a wounded soldier', description: 'The emperor is dead. The marsh has swallowed the road. Survival is a kind of command.',
-    objective: 'Use Assist, survive the marsh patrol, and bring the survivors to the rally point.',
+    capability: 'Rescue · help a wounded soldier and protect his escape', description: 'The emperor is dead. The marsh has swallowed the road. Survival is a kind of command.',
+    objective: 'Help a wounded comrade move, survive the marsh patrol, and bring every survivor to the rally point.',
     intro: [
       L('Narrator', 'You do not see the emperor die. You see a horse return without a rider, reeds shivering where men should be, and a standard sink until only its bright tip remains. Later, someone will call this Abritus. For now it is mud that grips your ankles and shouting that gives no direction.'),
       L('Varro', 'Decius is dead. That is news, not an order to die beside him. We find the rally point. Keep to firm ground. A charging warband will follow your noise; let the marsh break its run before you stand.'),
       L('Narrator', 'Lucan lies beside a broken wagon, his leg caught beneath the axle. The wound will kill him if he is abandoned here. Carrying him will slow the retreat and consume supplies. This is a decision about his life; no random blow from an ally’s automatic turn will decide it for you.'),
       L('Lucan', 'My mother will ask whether I was afraid. You can lie about that. Just do not tell her the marsh was beautiful. I always hated this place, even before I saw it.'),
-      L('Narrator', 'Other wounded men gather under a torn cloak. Even if you cannot save Lucan, one of them still needs your shield. Assist a casualty before reaching the rally marker. Watch the raiders’ announced intentions, brace where the path narrows, and spend your javelin where it opens an escape.'),
+      L('Narrator', 'Other wounded men gather under a torn cloak. Even if you cannot save Lucan, one of them still needs your shield. Help a casualty move before reaching the rally marker. Healing alone will not protect him: watch the raiders’ intentions, screen the narrow path, and leave together instead of chasing the enemy.'),
       L('Varro', 'The army has proclaimed Trebonianus Gallus. Tomorrow clerks will change the names on their tablets. Today you keep the people whose names you know. I can show you the causeway; I cannot choose what you carry across it.'),
     ],
     decision: { id: 'ch2', prompt: 'Lucan cannot walk. The patrol must move.', options: [
       O('carry', 'Carry Lucan out', 'Lucan survives; the rescue costs supplies and makes the march harder.', 8, 0, 4, -5, 'Lucan survives to rise through the ranks. He can command the loyal legion in the succession crisis.'),
-      O('leave', 'Save the mobile survivors', 'Lucan dies in the marsh. An unnamed wounded soldier still needs Assist.', -5, 2, -3, 4, 'Lucan is permanently absent. Sabinus, another survivor of the retreat, eventually takes command of his would-be legion.'),
+      O('leave', 'Save the mobile survivors', 'Lucan dies in the marsh. An unnamed wounded soldier still needs help and protection.', -5, 2, -3, 4, 'Lucan is permanently absent. Sabinus, another survivor of the retreat, eventually takes command of his would-be legion.'),
     ] },
     encounters: [
       E('ch2-marsh', 'battle', 'The broken causeway', 'Use Assist on a wounded soldier, then lead the survivors to the rally marker.', 'rescue', 'marsh', 14, 'assist'),
       E('ch2-rearguard', 'battle', 'Torches in the reeds', 'Hold the rally ground until the last survivors can assemble.', 'defend', 'marsh', 12),
     ],
-    requirements: ['Use Assist on a casualty', 'Survive the marsh', 'Secure the rally point'],
+    requirements: ['Help a casualty move', 'Survive the marsh', 'Bring every survivor and the commander to safety'],
     reward: 'Immunis: your care with wounded men and route records earns specialist duties.',
     aftermath: [
       L('Lucan', 'I owe you a walk home. A long one. When I can stand again, I will start practising.', 'comradeAlive'),

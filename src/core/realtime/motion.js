@@ -95,19 +95,32 @@ export function moveActors(world){
     actor.gait=run?'run':'walk';actor.moving=moved>0;actor.walked+=moved;
     if(!actor.path.length&&order?.kind==='move'){if(order.setDown)setDown(world,actor);actor.order=null;actor.gait=null;}
   }
-  // A carried man goes where his bearer goes.
-  for(const actor of world.actors)if(actor.carriedBy){const b=actorById(world,actor.carriedBy);if(b){actor.x=b.x-b.fx*.3;actor.z=b.z-b.fz*.3;actor.fx=b.fx;actor.fz=b.fz;}}
-  // Separation: bodies never overlap; each of a close pair steps back half the
-  // overlap, unless that would put him on blocked ground. The fallen and the
-  // carried take no room.
+  // Resolve crowded bodies after every formation has moved. A later pair can
+  // push an earlier one together again, so use a bounded relaxation rather than
+  // a single sweep. Alternating the sweep reduces the bias of actor list order;
+  // the fixed budget and ordering keep save/replay results deterministic.
   const min=MOVEMENT.radius*2,list=world.actors.filter(a=>a.alive&&!a.down&&!a.carriedBy);
-  for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
-    const a=list[i],b=list[j],dx=b.x-a.x,dz=b.z-a.z,d=span(dx,dz);if(d>=min)continue;
-    const nx=d>1e-6?dx/d:1,nz=d>1e-6?dz/d:0,push=(min-d)/2;
-    for(const [who,sign]of [[a,-1],[b,1]]){
-      const p=clampToMap(grid,{x:who.x+nx*push*sign,z:who.z+nz*push*sign});if(walkable(grid,p.x,p.z)){who.x=p.x;who.z=p.z;}
+  const push=(actor,nx,nz,amount)=>{
+    const p=clampToMap(grid,{x:actor.x+nx*amount,z:actor.z+nz*amount});
+    if(!walkable(grid,p.x,p.z))return 0;
+    const moved=Math.max(0,(p.x-actor.x)*nx+(p.z-actor.z)*nz);actor.x=p.x;actor.z=p.z;return moved;
+  };
+  for(let pass=0;pass<4;pass++){
+    let crowded=false;
+    for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
+      const a=list[pass%2?list.length-1-i:i],b=list[pass%2?list.length-1-j:j];
+      const dx=b.x-a.x,dz=b.z-a.z,d2=dx*dx+dz*dz;if(d2>=min*min)continue;
+      const d=Math.sqrt(d2),overlap=min-d;if(overlap<1e-4)continue;crowded=true;
+      const nx=d>1e-6?dx/d:1,nz=d>1e-6?dz/d:0,half=overlap/2;
+      const am=push(a,-nx,-nz,half),bm=push(b,nx,nz,half),left=overlap-am-bm;
+      // At a wall or map edge the free body takes the blocked body's share.
+      // Never move either centre onto blocked ground to satisfy separation.
+      if(left>1e-4){if(am<half-1e-4)push(b,nx,nz,left);else if(bm<half-1e-4)push(a,-nx,-nz,left);}
     }
+    if(!crowded)break;
   }
+  // Follow the bearer's final position, including any crowd correction this tick.
+  for(const actor of world.actors)if(actor.carriedBy){const b=actorById(world,actor.carriedBy);if(b){actor.x=b.x-b.fx*.3;actor.z=b.z-b.fz*.3;actor.fx=b.fx;actor.fz=b.fz;}}
 }
 export const objectById=(world,id)=>world.objects?.find(o=>o.id===id)??null;
 // Set a carried comrade down at the bearer's feet.

@@ -28,7 +28,7 @@ import {getSceneProfile} from './campaign-scene-profile.js';
 import {actorVisible,civicActor,effectReadout,missionReadouts} from './stage-readout.js';
 import {createInkOverlay} from './ink-overlay.js';
 import {createSky} from './sky.js';
-import {createSceneLighting} from './scene-lighting.js';
+import {createSceneLighting,readableLighting} from './scene-lighting.js';
 import {createSceneCompositor} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
 import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,sampleFlamePlume} from './stage-particles.js';
@@ -46,9 +46,10 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
 // Quiet (half-rate) drawing begins this long after the last input or change.
 const QUIET_AFTER_MS=1200;
 // Frame targets divide common refresh rates; see createFrameCadence.
-const QUALITY={performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:4096,fps:60}};
+export const STAGE_QUALITY=Object.freeze({performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:2048,fps:60}});
+const QUALITY=STAGE_QUALITY;
 // Between motions the shadow map follows breathing and cloth only this often.
-const SHADOW_REFRESH_MS={performance:250,balanced:125,high:70};
+const SHADOW_REFRESH_MS={performance:250,balanced:125,high:100};
 // The resolution budget's floor, and how many late frames there make a battle strained.
 const STRAIN_SCALE=.66,STRAINED_FRAMES=180;
 // Presentation styles for the figures (FIGURE_STYLES). Painted stands the 2D
@@ -186,8 +187,8 @@ export class BattleStage{
     this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});yield;
     this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});yield;
     this.contactShadows=createContactShadows(this.scene);
-    const balance=this.profile.grade??{},
-      sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',this.profile.ambientIntensity*.72*(balance.ambient??1));
+    const balance=this.profile.grade??{},readability=readableLighting(this.profile),
+      sky=new T.HemisphereLight(this.profile.ambient,this.profile.ambientGround??'#61533b',readability.ambient);
     this.scene.add(sky);
     this.sun=new T.DirectionalLight(this.profile.sun,this.profile.sunIntensity*(balance.sun??1));
     this.sun.position.fromArray(this.profile.sunPosition??[-16,24,-12]);this.sun.castShadow=true;
@@ -196,6 +197,8 @@ export class BattleStage{
     // A back light kept behind the subject, facing the camera, separates figures from the ground.
     this.rim=new T.DirectionalLight(balance.rim??'#b9d8e9',balance.rimIntensity??.38);
     this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
+    this.fill=new T.DirectionalLight(readability.fillColor,readability.fill);this.fill.castShadow=false;
+    this.fill.position.set(0,8,12);this.scene.add(this.fill,this.fill.target);
     this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});yield;
     this.rebuildSceneryModels();yield;
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
@@ -398,6 +401,7 @@ export class BattleStage{
     const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;
     const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();
     this.compositor?.resize();
+    if(Math.abs(previous-this.camera.aspect)>.01&&this.live&&this.cameraView==='horizon')this.orbit.distance=this.liveHorizonDistance();
     if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode&&!this.ceremony)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,
       this.overviewDistance());
   }
@@ -634,7 +638,8 @@ export class BattleStage{
         light.position.copy(brazier.userData.brazierLightAt).add(brazier.position);
       }
       else light.intensity=0;}
-    const target=this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone();
+    const conversation=this.conversationFrame(),target=conversation?.target??(this.live&&this.cameraView==='horizon'?this.live.cameraTarget?.()??this.baseTarget.clone():
+      this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone());
     let actionGoal=0;
     if(this.animation&&!this.focusMode&&this.cameraView==='overview'&&!this.reducedMotion){const elapsed=(now-this.animation.start)/this.animation.scale;
       const strike=this.actionCamera!==false
@@ -658,7 +663,11 @@ export class BattleStage{
       const goal=diagonalYaw(this.orbit.yaw);this.orbit.yaw+=(goal-this.orbit.yaw)*(this.reducedMotion?1:Math.min(1,dt*5));
     }
     this.lookTarget.lerp(target,this.reducedMotion?1:Math.min(1,dt*3));
-    const {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});
+    let {yaw,pitch,distance}=actionFraming(this.orbit,{weight:this.actionBlend,sideYaw:this.actionSideYaw,painted:this.figureStyle==='painted'});
+    const extra=conversation?Math.max(0,conversation.distance-distance):0;
+    this.conversationExtra=(this.conversationExtra??0)+(extra-(this.conversationExtra??0))*Math.min(1,dt*4);
+    if(this.reducedMotion||this.drag||this.cameraView==='overview'||this.actionCamera===false)this.conversationExtra=0;
+    distance+=this.conversationExtra;
     this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,
       this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);
     this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);
@@ -691,6 +700,10 @@ export class BattleStage{
     if(this.rimDirection.lengthSq()>1e-6){
       this.rimDirection.normalize();this.rim.position.copy(this.lookTarget).addScaledVector(this.rimDirection,14);this.rim.position.y+=7;
       this.rim.target.position.copy(this.lookTarget);this.rim.target.updateMatrixWorld();
+      // Front-quarter bounce follows the camera; neither an orbit nor a
+      // chapter's backlight can turn the controlled soldier into a silhouette.
+      this.fill.position.copy(this.lookTarget).addScaledVector(this.rimDirection,-12);this.fill.position.y+=8;
+      this.fill.target.position.copy(this.lookTarget);this.fill.target.updateMatrixWorld();
     }
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
     this.sceneryOcclusion?.update(this.camera,

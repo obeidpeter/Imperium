@@ -1,15 +1,18 @@
-/* The campaign's real-time field (0.40): the scene fills the view; the HUD sits over it (as in the arena). */
+/* Real-time command desk: the canvas owns an unobstructed rectangle. All text,
+   controls, tutorials and conversations have their own layout space. The stage
+   measures .rt-scene, so no fragile camera/HUD pixel offsets are needed. */
 .realtime-frame{display:grid;gap:.5rem;padding-block-end:2rem}
 .rt-chronicle-bar{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.4rem .9rem 0}
 .rt-host{display:block}
-.rt-field{--rt-panel:rgba(20,26,22,.86);--rt-line:#596052;--rt-bronze:#c8aa70;--rt-muted:#c0bba9;--rt-health:#c2523f;--rt-stamina:#d6b25b;
-  --rt-friend:#9fd3d0;--rt-enemy:#ef8f74;--rt-focus:#f3d48d;color:#f4ead5;background:#171c1a;border-radius:.5rem;overflow:hidden;padding-block-end:.8rem}
-.rt-scene{position:relative;block-size:min(78vh,52rem);block-size:min(78dvh,52rem);min-block-size:440px;overflow:hidden;background:#141a17;border-radius:.4rem}
+.rt-field{--rt-panel:#202922;--rt-line:#596052;--rt-bronze:#d8b778;--rt-muted:#c0bba9;--rt-health:#dc7765;--rt-stamina:#e0c574;
+  --rt-friend:#9fd3d0;--rt-enemy:#ef8f74;--rt-focus:#f3d48d;--rt-scene-height:clamp(20rem,56dvh,45rem);color:#f4ead5;background:#171c1a;border-radius:.5rem;overflow:hidden;padding-block-end:.8rem;container-type:inline-size}
+.rt-workspace{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;min-inline-size:0}
+.rt-scene{position:relative;block-size:var(--rt-scene-height);min-block-size:20rem;min-inline-size:0;overflow:hidden;background:#141a17;border-block:1px solid #a6aa8d42;isolation:isolate}
 .rt-canvas{display:block;inline-size:100%;block-size:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;outline:none}
 .rt-canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--rt-focus)}
 .rt-veil{position:absolute;inset:0;display:grid;place-items:center;background:#141a17;font-size:1.05rem;z-index:5;transition:opacity .4s;padding:1rem;text-align:center}
 .rt-scene[data-ready="true"] .rt-veil{opacity:0;pointer-events:none}
-/* The field shares the arena's markup: its hidden text and its dark controls over the scene. */
+/* Hidden text stays available; controls have solid backing for predictable contrast. */
 .realtime-frame .visually-hidden,.rt-field .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .rt-field button{min-block-size:2.75rem;min-inline-size:2.75rem;padding:.45rem .8rem;border:1px solid var(--rt-line);border-radius:.4rem;background:#29312a;color:#f4ead5;
   font:inherit;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:none;text-transform:none;letter-spacing:normal}
@@ -20,18 +23,19 @@
 .rt-field .eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--rt-bronze)}
 .rt-log-panel{color:inherit}
 .rt-log button{color:inherit}
-.rt-top{position:absolute;inset:0 0 auto 0;display:flex;align-items:flex-start;gap:.75rem;padding:.7rem .9rem .5rem;background:linear-gradient(#0b0f0dcc,#0b0f0d00);
-  pointer-events:none;z-index:3}
-.rt-top>*{pointer-events:auto}
+.rt-top{display:flex;align-items:center;gap:.6rem;padding:.55rem .8rem;background:#18211b;border-block-end:1px solid #ffffff12}
 .rt-mission{flex:1 1 0;min-inline-size:0}.rt-mission h2{font-size:1.35rem;margin:0}.rt-mission p{margin:0;color:var(--rt-muted);font-size:.9rem}
-.rt-progress:empty{display:none}
-.rt-time{display:flex;gap:.4rem;flex:none}.rt-pause{min-inline-size:6.5rem}
-.rt-paused{position:absolute;inset:5.2rem 0 auto;margin-inline:auto;inline-size:max-content;max-inline-size:92%;background:#4a3f25ee;border:1px solid var(--rt-bronze);
-  border-radius:.4rem;padding:.35rem .9rem;font-weight:650;z-index:3;text-align:center;pointer-events:none}
-.rt-hud{position:absolute;inset:auto 0 0 0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem;align-items:end;padding:.6rem .9rem .7rem;
-  background:linear-gradient(#0b0f0d00,#0b0f0dd9 40%);z-index:3;pointer-events:none}
-.rt-hud>*{pointer-events:auto}
-.rt-party{display:flex;gap:.4rem;align-items:flex-end}
+.rt-status-strip{display:grid;grid-template-columns:minmax(0,1fr);gap:.15rem;padding:.4rem .8rem;background:#20271f;font-size:.83rem;line-height:1.35}
+.rt-status-strip p{margin:0;overflow-wrap:anywhere}.rt-objective{font-weight:650;color:#eee7ce}.rt-progress{color:var(--rt-muted)}
+.rt-progress:empty,.rt-status-facts:not(:has(p:not([hidden]))){display:none}
+.rt-next{color:#dceccc}.rt-status-facts{display:flex;flex-wrap:wrap;gap:.1rem 1rem;color:#d0d9cb;font-size:.78rem}
+.rt-deadline{color:#f3d48d;font-variant-numeric:tabular-nums}.rt-deadline.urgent,.rt-deadline[data-urgent="true"]{color:#ffbb99;font-weight:700}
+.rt-mission-warning{border-inline-start:3px solid #ef9e7b;padding-inline-start:.45rem;color:#ffd4bb;font-weight:650}
+.rt-time{display:flex;align-items:center;gap:.35rem;flex:none}.rt-field .rt-pause{min-inline-size:4.6rem}
+.rt-paused{background:#4a3f25;border:1px solid var(--rt-bronze);border-radius:1rem;padding:.15rem .45rem;font-size:.72rem;font-weight:700;white-space:nowrap}
+.rt-hud{display:grid;grid-template-columns:minmax(12rem,1fr) minmax(0,2fr);gap:.45rem .8rem;align-items:center;padding:.5rem .8rem .4rem;background:#18211b;border-block-start:1px solid #ffffff12}
+.rt-unit-dock{grid-row:2;display:flex;align-items:center;gap:.6rem;min-inline-size:0;overflow-x:auto;scroll-padding:.25rem;padding:.15rem;overscroll-behavior-x:contain}
+.rt-party{display:flex;gap:.35rem;align-items:center;flex:none}
 .rt-field .rt-portrait{display:grid;gap:.2rem;inline-size:6.6rem;padding:.35rem .4rem;background:var(--rt-panel);border:2px solid var(--rt-friend);border-radius:.4rem;text-align:start;
   position:relative;font-weight:600;justify-content:stretch;align-items:stretch}
 .rt-field .rt-portrait.controlled{border-color:#f1d38a;box-shadow:0 0 0 2px #f1d38a66}
@@ -42,33 +46,37 @@
 .rt-portrait .bar{position:relative;block-size:.45rem;background:#2b2f2a;border-radius:.2rem;overflow:hidden}
 .rt-portrait .bar i{position:absolute;inset:0 auto 0 0;inline-size:100%;transition:inline-size .15s}
 .rt-portrait .bar.health i{background:var(--rt-health)}.rt-portrait .bar.stamina i{background:var(--rt-stamina)}
-.rt-message-area{align-self:end;min-inline-size:0;display:flex;flex-wrap:wrap;align-items:center;gap:.45rem .7rem;background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.45rem .7rem}
+.rt-message-area{grid-column:1/-1;grid-row:1;min-inline-size:0;display:flex;align-items:center;gap:.45rem .7rem;background:var(--rt-panel);border:1px solid #72796266;border-radius:.4rem;padding:.4rem .6rem}
 .rt-clock{display:flex;align-items:center;gap:.45rem;flex:none;padding-inline-end:.6rem;border-inline-end:1px solid var(--rt-line)}
 .rt-clock svg{inline-size:2.1rem;block-size:2.1rem;transform:rotate(-90deg)}.rt-clock circle{fill:none;stroke-width:4}
 .rt-clock-track{stroke:#3a4339}.rt-clock-ring{stroke:var(--rt-bronze);stroke-linecap:round}
 .rt-clock p{display:grid;line-height:1.15;margin:0}.rt-clock span{color:var(--rt-muted);font-size:.85rem;font-variant-numeric:tabular-nums}
-.rt-message-lines{min-inline-size:0;flex:1 1 12rem}.rt-message-lines p{margin:0}
-.rt-message{font-size:.95rem;min-block-size:1.4em;overflow-wrap:anywhere}.rt-message.warning{color:#ffc4b5}
-.rt-event{color:var(--rt-muted);font-size:.85rem;min-block-size:1.2em}.rt-event.warning{color:#ffc4b5}
-.rt-ability-area{display:grid;gap:.35rem;justify-items:end}
-.rt-current{display:flex;align-items:baseline;gap:.4rem;font-size:.95rem;margin:0}
-.rt-ability-bar,.rt-toggles{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end}.rt-ability-bar{max-inline-size:min(34rem,40vw)}
+.rt-message-lines{min-inline-size:0;flex:1 1 12rem}.rt-message-lines p{margin:0;overflow-wrap:anywhere}
+.rt-message{font-size:.83rem;min-block-size:1.3em}.rt-message.warning{color:#ffc4b5}
+.rt-target-line{font-size:.86rem;color:#f5dfa5;border-inline-start:2px solid var(--rt-bronze);padding-inline-start:.45rem;margin-block-end:.2rem!important}
+.rt-event{color:var(--rt-muted);font-size:.8rem;min-block-size:1.2em}.rt-event:empty{display:none}.rt-event.warning{color:#ffc4b5}
+.rt-ability-area{grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.25rem .4rem;min-inline-size:0;align-items:center}
+.rt-current{grid-column:1/-1;display:flex;align-items:baseline;gap:.4rem;font-size:.8rem;margin:0}
+.rt-ability-bar,.rt-toggles{display:flex;gap:.3rem;flex-wrap:wrap;justify-content:flex-start}.rt-ability-bar{min-inline-size:0;max-inline-size:none}
+.rt-tools{display:flex;gap:.3rem;align-items:start;flex-wrap:wrap}.rt-toolbox>summary{cursor:pointer;list-style:none;display:flex;align-items:center;min-block-size:2.75rem;padding:.4rem .6rem;border:1px solid var(--rt-line);border-radius:.4rem;font-size:.82rem;font-weight:650;background:#29312a}
+.rt-toolbox>summary::after{content:"⌄";margin-inline-start:.35rem}.rt-toolbox[open]>summary::after{content:"⌃"}.rt-toolbox>summary:focus-visible{outline:3px solid var(--rt-focus);outline-offset:2px}
+.rt-toolbox[open]{grid-column:1/-1}.rt-toolbox .rt-toggles{margin-block-start:.35rem;max-inline-size:24rem}
+.rt-input-context{grid-column:1/-1;margin:0;color:#bac8b6;font-size:.7rem;line-height:1.3}
 .rt-field .ability{flex-direction:column;gap:0;min-inline-size:4.6rem;line-height:1.1;font-size:.82rem;position:relative;display:inline-flex;align-items:center}
 .rt-field .ability kbd{position:absolute;left:.3rem;top:.15rem;font:600 .68rem system-ui;color:var(--rt-muted)}
 .rt-field .ability small{font-weight:400;color:var(--rt-muted);font-size:.72rem}
 .rt-field .ability[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--rt-bronze)}
 .rt-field .ability.unavailable{opacity:.6}.rt-field .ability.armed{outline:3px solid var(--rt-friend)}
 .rt-swords{font-size:1.25rem}.rt-swords[aria-pressed="true"]{color:#ffd28a}
-/* Deployment (from Chapter VII): the bar over the scene until the advance sounds (it stands in for the paused banner). */
+/* Deployment and rival narration reserve their own rows, never the action region. */
 .rt-field[data-deploying="true"] .rt-paused{display:none}
-.rt-deploy{position:absolute;inset:auto 0 auto 0;top:5.4rem;margin-inline:auto;inline-size:min(44rem,94%);display:flex;gap:.8rem;align-items:center;
-  background:#24301fee;border:1px solid var(--rt-friend);border-radius:.4rem;padding:.5rem .8rem;z-index:4}
+.rt-deploy{display:flex;gap:.8rem;align-items:center;background:#24301f;border-block:1px solid #9fd3d066;padding:.5rem .8rem}
 .rt-deploy p{margin:0;font-size:.9rem;flex:1}.rt-field .rt-advance{flex:none;background:#5d4520;border-color:var(--rt-bronze)}
 .rt-field .rt-advance[data-confirm="true"]{background:#7a2a1f}
-@media (max-width:760px){.rt-deploy{top:auto;bottom:calc(100% - 12rem);flex-direction:column;align-items:stretch}.rt-deploy p{font-size:.82rem}}
+@container (max-width:600px){.rt-deploy{align-items:stretch;flex-wrap:wrap}.rt-deploy p{font-size:.8rem;flex-basis:14rem}.rt-field .rt-advance{font-size:.8rem;flex:1}}
 /* Squads (from Chapter IV): the standards, the Clear button, the Command pips and the command card. */
-.rt-squad-area{display:flex;gap:.35rem;align-items:flex-start;flex:none}.rt-squad-area:not(:has(:not([hidden]))){display:none}
-.rt-squads{display:flex;gap:.3rem;flex-wrap:wrap;max-inline-size:32rem}
+.rt-squad-area{display:flex;gap:.35rem;align-items:center;flex:none}.rt-squad-area:not(:has(:not([hidden]))){display:none}
+.rt-squads{display:flex;gap:.3rem;flex-wrap:nowrap;max-inline-size:none}
 .rt-field .rt-standard{display:grid;grid-template-columns:auto 1fr;gap:.1rem .35rem;inline-size:7.4rem;padding:.3rem .4rem;background:var(--rt-panel);
   border:2px solid var(--rt-line);border-radius:.4rem;text-align:start;position:relative;font-weight:600;justify-content:stretch;align-items:center}
 .rt-field .rt-standard.selected{border-color:var(--rt-friend);box-shadow:0 0 0 2px #9fd3d066}
@@ -99,18 +107,30 @@
 .rt-canvas[data-cursor="blocked"],.rt-canvas[data-cursor="ability_invalid"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%23141a17' stroke-width='5'/%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%23e06b5a' stroke-width='3'/%3E%3Cpath d='M7 7l14 14' stroke='%23e06b5a' stroke-width='3'/%3E%3C/svg%3E") 14 14,not-allowed}
 .rt-canvas[data-cursor="ability_valid"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='9' fill='none' stroke='%239fd3d0' stroke-width='3'/%3E%3Cpath d='M14 1v8M14 19v8M1 14h8M19 14h8' stroke='%239fd3d0' stroke-width='2'/%3E%3C/svg%3E") 14 14,crosshair}
 .rt-canvas[data-cursor="use"],.rt-canvas[data-cursor="talk"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M8 13V6a2 2 0 0 1 4 0v6V4a2 2 0 0 1 4 0v8V6a2 2 0 0 1 4 0v10c0 5-3 8-7 8s-6-2-8-6l-2-4a2 2 0 0 1 3-2z' fill='%23f4ead5' stroke='%23141a17' stroke-width='1.5'/%3E%3C/svg%3E") 12 4,pointer}
-@media (max-width:760px){
-  .rt-top{flex-wrap:wrap;gap:.45rem}.rt-mission{flex-basis:100%}.rt-mission .eyebrow,.rt-mission p{display:none}.rt-mission h2{font-size:1.05rem}
-  .rt-paused{inset-block-start:7.2rem}
-  .rt-hud{grid-template-columns:1fr;gap:.45rem}.rt-ability-area{justify-items:stretch}.rt-ability-bar,.rt-toggles{justify-content:flex-start}.rt-ability-bar{max-inline-size:none}.rt-current{display:none}
-  .rt-portrait{inline-size:5.4rem}
-  /* Squads on a phone: one row of numbered standards (the name stays in each one's label), a compact card in two rows of three. */
-  .rt-squad-area{order:3;flex-basis:100%}.rt-squads{max-inline-size:none;flex-wrap:nowrap;overflow-x:auto}
-  .rt-field .rt-standard{inline-size:3.4rem;grid-template-columns:1fr;justify-items:center;padding:.25rem}.rt-standard-name{display:none}
-  .rt-standard-flag{grid-row:auto}.rt-standard .bar{inline-size:100%}.rt-field .rt-clear{white-space:nowrap}.rt-command .eyebrow{display:none}
-  .rt-field .rt-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.rt-field .rt-card .ability{min-inline-size:0;font-size:.78rem}
-  .rt-field .rt-card .ability small{display:none}
-  .rt-field .rt-time button,.rt-field .rt-menu{padding:.35rem .55rem;font-size:.88rem}
+@container (max-width:900px){
+  .rt-top{gap:.35rem;padding:.45rem .55rem}.rt-mission .eyebrow{display:none}.rt-mission h2{font-size:1rem;line-height:1.2}
+  .rt-scene{block-size:clamp(20rem,46dvh,34rem)}
+  .rt-hud{grid-template-columns:minmax(0,1fr);gap:.35rem;padding:.35rem .55rem}.rt-message-area{grid-row:1}
+  .rt-unit-dock{grid-row:2}.rt-ability-area{grid-row:3;grid-template-columns:minmax(0,1fr) auto}.rt-current{display:none}
+  .rt-field .rt-portrait{inline-size:6.2rem;padding:.25rem .35rem;gap:.16rem;min-block-size:2.75rem}
+  .rt-field .rt-portrait .bar{block-size:.3rem}
+  .rt-ability-bar{flex-wrap:nowrap;overflow-x:auto;padding:.15rem;scroll-padding:.25rem;overscroll-behavior-x:contain}
+  .rt-field .ability{flex:none;min-inline-size:4.5rem;min-block-size:2.9rem;padding:.65rem .35rem .25rem;font-size:.77rem}
+  .rt-field .ability small{font-size:.66rem}.rt-field .ability kbd{font-size:.6rem}
+  .rt-field .rt-standard{inline-size:3.4rem;min-block-size:2.75rem;grid-template-columns:1fr;justify-items:center;padding:.2rem}.rt-standard-name{display:none}
+  .rt-standard-flag{grid-row:auto;block-size:1.3rem}.rt-standard .bar{inline-size:100%;block-size:.3rem}.rt-field .rt-clear{white-space:nowrap}.rt-command .eyebrow{display:none}
+  .rt-field .rt-card .ability{min-inline-size:5rem}.rt-field .rt-card .ability small{display:none}
+  .rt-field .rt-time button,.rt-field .rt-menu,.rt-tools>button,.rt-tools .rt-toggles>button{padding:.35rem .45rem;font-size:.8rem}
+  .rt-clock svg{inline-size:1.65rem;block-size:1.65rem}.rt-clock p{font-size:.8rem}.rt-clock span{font-size:.72rem}
+  .rt-message-area{gap:.4rem;padding:.35rem .45rem}.rt-target-line,.rt-message{font-size:.8rem}.rt-event{font-size:.75rem}
+  .rt-status-strip{padding:.35rem .55rem;font-size:.78rem}.rt-status-facts{font-size:.73rem}
+  .rt-input-context{font-size:.65rem}
+}
+@container (max-width:480px){
+  .rt-top{flex-wrap:wrap}.rt-mission{flex-basis:100%}.rt-time{flex:1}.rt-time .rt-paused{margin-inline-end:auto}
+  .rt-status-facts{display:grid;gap:.15rem}.rt-field .rt-pause{min-inline-size:4rem}
+  .rt-ability-area{grid-template-columns:minmax(0,1fr)}.rt-tools{justify-content:flex-end}.rt-tools .rt-toggles{flex-wrap:wrap}
+  .rt-scene{block-size:clamp(20rem,48dvh,30rem)}
 }
 @media (prefers-reduced-motion:reduce){.rt-veil,.rt-portrait .bar i,.rt-standard .bar i{transition:none}}
 /* The Command list: every action as lists (guide "Command list"). */
@@ -122,7 +142,7 @@
 @media (max-width:760px){.rt-list li{grid-template-columns:1fr auto}.rt-list small{grid-column:1/-1;grid-row:2}}
 /* The walkable camp: the scene beside its list path. Camps have no clock and nothing to fight. */
 .rt-camp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(17rem,22rem);gap:1rem;align-items:start}
-.rt-camp-scene .rt-scene{block-size:min(72vh,46rem);block-size:min(72dvh,46rem)}
+.rt-camp-scene .rt-scene{block-size:clamp(20rem,56dvh,40rem)}
 .rt-camp-note{color:var(--muted,#666);font-size:.9rem;margin:.4rem .2rem}
 .rt-field[data-kind="camp"] .rt-clock,.rt-field[data-kind="camp"] .rt-time [data-role="slowButton"],.rt-field[data-kind="camp"] .rt-time [data-role="stepButton"],
 .rt-field[data-kind="camp"] .rt-ability-bar,.rt-field[data-kind="camp"] .rt-current,.rt-field[data-kind="camp"] [data-role="swordsButton"],
@@ -138,16 +158,18 @@
 .dialogue-option small{flex-basis:100%;color:var(--muted,#666)}
 .dialogue-option.is-dimmed{opacity:.6}.dialogue-needs{font-weight:700}
 @media (max-width:900px){.rt-camp-grid{grid-template-columns:1fr}}
+/* Short Windows panes keep the action region useful while leaving room for
+   the live target readout and essential controls immediately beneath it. */
+@media (max-height:800px){.rt-field{--rt-scene-height:clamp(20rem,44dvh,30rem)}.rt-field .rt-scene{block-size:var(--rt-scene-height)}}
 .rt-defeat-page{margin:.6rem 0;padding:.6rem .9rem;border-inline-start:3px solid var(--bronze,#b08a3c);background:#00000008}.rt-defeat-page p{margin:.2rem 0 0;font-style:italic}
 /* The chamber (from Chapter VII; guide "Political Contests"): the coalition strip under the motion, the speakers'
-   Resolve, the conversation beside the scene and the rivals' hour over it. Blocs read by letter as well as colour. */
+   Resolve, a conversation beside/below the scene and a separate rivals' narration row. Blocs also read by letter. */
 .rt-field[data-kind="chamber"]{--rt-veterans:#d0564a;--rt-landholders:#d8ae4c;--rt-civic:#6a96dc;--rt-chamber:#a070b8}
-.rt-field[data-kind="chamber"] .rt-top{background:linear-gradient(#0b0f0df0,#0b0f0dc0 70%,#0b0f0d00)}
-/* The tribunal stands at the chamber's north edge, under the header: the pointer reaches it through the header's text. */
-.rt-field[data-kind="chamber"] .rt-mission{pointer-events:none}.rt-field[data-kind="chamber"] .rt-mission button{pointer-events:auto}
-.rt-coalition{display:grid;gap:.25rem;margin-block-start:.35rem}
+.rt-field[data-kind="chamber"] .rt-top{background:#201f25}
+.rt-coalition{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.3rem .7rem;padding:.45rem .8rem;background:#25262a;border-block-end:1px solid #ffffff18}
+.rt-coalition:empty{display:none}
 .rt-coalition p{margin:0}.rt-vote{color:#f4ead5!important;font-size:.9rem}.rt-vote strong{color:var(--rt-focus)}
-.rt-seats{display:flex;flex-wrap:wrap;gap:.25rem .7rem;align-items:center}
+.rt-vote{align-self:center}.rt-seats{display:flex;flex-wrap:wrap;gap:.25rem .7rem;align-items:center;justify-content:flex-end}
 .rt-seat-group{display:flex;gap:.2rem;align-items:center}.rt-seat-group small{color:var(--rt-muted);font-size:.72rem;margin-inline-end:.15rem}
 .rt-field .rt-seat{min-inline-size:2.2rem;min-block-size:2.2rem;padding:.1rem .25rem;gap:.1rem;font-size:.72rem;border-width:2px;position:relative;flex-direction:column;line-height:1}
 .rt-field .rt-seat b{font-size:.9rem}
@@ -157,18 +179,22 @@
 .rt-seat[data-bloc="Veterans"]{box-shadow:inset 0 -3px 0 var(--rt-veterans)}.rt-seat[data-bloc="Landholders"]{box-shadow:inset 0 -3px 0 var(--rt-landholders)}
 .rt-seat[data-bloc="Civic"]{box-shadow:inset 0 -3px 0 var(--rt-civic)}.rt-seat[data-bloc="Chamber"]{box-shadow:inset 0 -3px 0 var(--rt-chamber)}
 .rt-field .rt-seat.at-risk{outline:2px solid #e0a23a;outline-offset:1px}.rt-seat.at-risk::after{content:"!";position:absolute;top:-.45rem;right:-.3rem;font-weight:900;color:#ffcf6e}
-.rt-whip{display:flex;flex-wrap:wrap;gap:.2rem .9rem;font-size:.82rem}.rt-whip .is-warning{color:#ffcf6e}
+.rt-whip{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.2rem .9rem;font-size:.78rem}.rt-whip .is-warning{color:#ffcf6e}
+.rt-vote-projection{display:block;color:#e8cfa0;font-size:.8rem;font-weight:600;margin-block-start:.15rem}
 .rt-field .rt-yield{border-color:var(--rt-bronze)}
 .rt-portrait.rt-speaker .bar.resolve i{background:#8fb7d9}
 .rt-speaker-state{font-size:.7rem;color:var(--rt-muted);font-weight:500}
 .rt-portrait.spoken .rt-speaker-state::before{content:"✓ "}.rt-portrait.withdrawn{filter:grayscale(1);opacity:.75}
-.rt-rivals{position:absolute;inset:auto 0 8.2rem;margin-inline:auto;inline-size:min(42rem,94%);display:flex;gap:.8rem;align-items:center;
-  background:#3a2a24ee;border:1px solid #c98d6b;border-radius:.4rem;padding:.45rem .8rem;z-index:4}
+.rt-rivals{display:flex;gap:.8rem;align-items:center;background:#3a2a24;border-block:1px solid #c98d6b88;padding:.45rem .8rem}
 .rt-rivals p{margin:0;flex:1;font-size:.92rem}.rt-rivals kbd{font:600 .7rem system-ui;color:var(--rt-muted)}
-.rt-talk{position:absolute;inset-block-start:6.6rem;inset-inline-end:.9rem;inline-size:min(25rem,94%);max-block-size:calc(100% - 17.5rem);overflow:auto;
-  background:var(--rt-panel);border:1px solid var(--rt-bronze);border-radius:.5rem;padding:.7rem .8rem;z-index:4;display:grid;gap:.45rem;align-content:start}
+.rt-talk{min-inline-size:0;max-block-size:var(--rt-scene-height);overflow:auto;overscroll-behavior:contain;background:var(--rt-panel);border-block-end:1px solid var(--rt-bronze);padding:.7rem .8rem;display:grid;gap:.45rem;align-content:start;scroll-padding:1rem}
+.rt-talk-head{position:sticky;top:-.7rem;background:var(--rt-panel);z-index:1;padding-block:.2rem .45rem;border-block-end:1px solid #ffffff1a}
+@container (min-width:1000px){.rt-workspace:has(.rt-talk:not([hidden])){grid-template-columns:minmax(0,1fr) minmax(19rem,25rem)}.rt-talk{border-inline-start:1px solid #c8aa7066;border-block-end:0;block-size:var(--rt-scene-height)}}
 .rt-talk-head{display:grid;grid-template-columns:auto 1fr auto;gap:.6rem;align-items:start}
 .rt-talk-head h3{margin:0;font-size:1.1rem}.rt-talk-head p{margin:0;font-size:.85rem;color:var(--rt-muted)}.rt-talk-head p strong{color:#f4ead5}
+.delegate-portrait{flex:none;display:block;inline-size:3.5rem;block-size:3.9375rem;border-radius:1rem;filter:drop-shadow(0 2px 2px #0003)}
+.delegate-list article>div{flex:1;min-inline-size:0}.rt-talk-head .delegate-portrait{align-self:start}
+.rt-bloc-letter{display:inline-block;min-inline-size:1.2em;text-align:center;font-weight:800;border:1px solid currentColor;border-radius:.2rem;margin-inline-end:.35rem;line-height:1.35}
 .rt-talk-seal{display:grid;place-items:center;inline-size:2.3rem;block-size:2.3rem;border-radius:50%;font:700 .95rem Georgia,serif;background:#2b2f2a;border:2px solid var(--rt-bronze)}
 .rt-talk-seal[data-bloc="Veterans"]{border-color:var(--rt-veterans)}.rt-talk-seal[data-bloc="Landholders"]{border-color:var(--rt-landholders)}
 .rt-talk-seal[data-bloc="Civic"]{border-color:var(--rt-civic)}.rt-talk-seal[data-bloc="Chamber"]{border-color:var(--rt-chamber)}
@@ -179,10 +205,11 @@
 .rt-talk-off{padding:.35rem .8rem;border:1px dashed var(--rt-line);border-radius:.4rem;opacity:.8}
 .rt-talk-deals h4{margin:.2rem 0;font-size:.9rem;color:var(--rt-bronze)}
 .chamber-records{display:grid;gap:.6rem;padding-inline:.9rem}
-@media (max-width:760px){
-  .rt-coalition .rt-whip,.rt-seat-group small{display:none}.rt-field .rt-seat{min-inline-size:1.9rem;min-block-size:1.9rem}
-  .rt-talk{inset:auto .5rem 11rem .5rem;inline-size:auto;max-block-size:46%}
-  .rt-rivals{inset-block-end:13.5rem}
+@container (max-width:900px){
+  .rt-coalition{grid-template-columns:minmax(0,1fr);padding:.35rem .55rem}.rt-seats{justify-content:flex-start;gap:.2rem .45rem;flex-wrap:nowrap;overflow-x:auto;padding:.1rem;scroll-padding:.25rem}
+  .rt-seat-group small{display:none}.rt-field .rt-seat{min-inline-size:2.75rem;min-block-size:2.75rem;flex-direction:row;gap:.2rem}
+  .rt-vote{font-size:.8rem}.rt-whip{font-size:.72rem}.rt-whip>span{flex-basis:100%}
+  .rt-talk{max-block-size:min(25rem,60dvh)}.rt-talk-head h3{font-size:1rem}.rt-rivals p{font-size:.8rem}
 }
 /* The tribunal's documents (a hearing) and the Motion panel. A document can be dragged onto the tribunal. */
 .rt-talk h4{margin:.3rem 0 .2rem;font-size:.92rem;color:var(--rt-bronze)}.rt-talk section{display:grid;gap:.3rem}
@@ -221,11 +248,9 @@
 .guide-page .help-keys.changed small{opacity:.8}
 @media (max-width:760px){.guide-help{grid-template-columns:1fr}.guide-toc ol{grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))}}
 
-/* The guided opening in real time (realtime-lessons.js): one lesson at a time, beside the scene. */
-.rt-lesson{position:absolute;inset-block-start:6.6rem;inset-inline-start:.9rem;inline-size:min(21rem,60%);background:var(--rt-panel);
-  border:1px solid var(--rt-bronze);border-radius:.5rem;padding:.55rem .75rem;z-index:3;display:grid;gap:.25rem}
+/* The guide stays below the dock; reading it can never hide the soldier or a target. */
+.rt-lesson{margin:.25rem .8rem 0;background:#293025;border-inline-start:3px solid var(--rt-bronze);border-radius:.25rem;padding:.55rem .75rem;display:flex;align-items:center;gap:1rem}
+.rt-lesson>div{flex:1;min-inline-size:0}
 .rt-lesson h2{font-size:1rem;margin:0}.rt-lesson p{margin:0;font-size:.86rem}.rt-lesson .eyebrow{color:var(--rt-muted);font-size:.7rem}
-.rt-lesson button{justify-self:start;font-size:.8rem}
-.rt-field[data-kind="chamber"] .rt-lesson{inset-block-start:auto;inset-block-end:9.5rem}
-@media (max-width:700px){.rt-lesson,.rt-field[data-kind="chamber"] .rt-lesson{inset-block-start:8.2rem;inset-block-end:auto;inline-size:auto;inset-inline-end:.9rem}
-  .rt-field[data-kind="chamber"] .rt-lesson{inset-block-start:12rem}.rt-lesson p{font-size:.8rem}}
+.rt-lesson button{flex:none;font-size:.75rem}
+@container (max-width:700px){.rt-lesson{margin-inline:.55rem;gap:.45rem;align-items:start}.rt-lesson p{font-size:.8rem}.rt-lesson button{max-inline-size:5rem;padding:.3rem}}

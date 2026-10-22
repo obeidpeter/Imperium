@@ -1,6 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 export const ACTOR_HAIR_MODEL='assets/models/short-hair-v018.bin',ACTOR_HAIR_TEXTURE='assets/textures/short-hair-v018.webp';
-const eligible=id=>!id?.female&&!['bound','long'].includes(id?.hair);
+const eligible=id=>!id?.female&&!['bound','long','shaved'].includes(id?.hair)&&!(id?.customAppearance&&id.hair==='curly');
 
 /** Strict local IHR1 parser. Dequantization happens once, outside animation. */
 export function parseActorHair(input){

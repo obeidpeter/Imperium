@@ -52,6 +52,14 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - run: npm run smoke
+      - name: Real-time controls and unobstructed layouts
+        run: node scripts/realtime-polish-smoke.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: realtime-polish-smoke
+          path: tests/visual-results/realtime-polish/
+          retention-days: 14
 
   benchmark:
     name: twelve-chapter benchmark (Chromium)

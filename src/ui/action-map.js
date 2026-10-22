@@ -95,12 +95,12 @@ export const keymapProblems=keymap=>Object.entries(keymap).flatMap(([action,keys
 const learnt=new Map();let layout=null;
 export async function loadKeyLabels(nav=globalThis.navigator){try{layout=await nav?.keyboard?.getLayoutMap?.()??null;}catch{layout=null;}return !!layout;}
 // Without a layout map (Firefox, Safari), learn each key's label as it is pressed.
-export function learnKey(event){if(event?.code&&event.key&&event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey)learnt.set(event.code,event.key);}
+export function learnKey(event){if(event?.code&&event.key?.trim()&&event.key.length===1&&!event.ctrlKey&&!event.metaKey&&!event.altKey)learnt.set(event.code,event.key);}
 const NAMES={Space:'Space',Enter:'Enter',Escape:'Esc',Comma:',',Period:'.',Equal:'+',Minus:'−',NumpadAdd:'Num +',NumpadSubtract:'Num −',BracketLeft:'[',
   BracketRight:']',Slash:'/',Home:'Home',Pause:'Pause',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→'};
 export function keyLabel(binding){
   const parts=String(binding).split('+'),code=parts.pop();
-  const own=layout?.get?.(code)??learnt.get(code),base=own?(own.length===1?own.toUpperCase():own):NAMES[code]??code.replace(/^Key|^Digit/,'');
+  const own=layout?.get?.(code)??learnt.get(code),base=own?.trim()?(own.length===1?own.toUpperCase():own):NAMES[code]??code.replace(/^Key|^Digit/,'');
   return [...parts,base].join('+');
 }
 export const actionLabel=(action,keymap=DEFAULT_KEYMAP)=>keymap[action]?.map(keyLabel).join(' or ')??'';

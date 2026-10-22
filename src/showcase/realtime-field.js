@@ -1,7 +1,7 @@
-import {clockText,commandable,missionProgress,queueCommand,roundOf,routePreview,snapshotWorld,step} from '../core/realtime/simulation.js';
+import {clockText,commandable,queueCommand,roundOf,routePreview,snapshotWorld,step} from '../core/realtime/simulation.js';
 import {advanceClock,clockAlpha,createClock,hurryClock,interruptClock,setPaused,setSlow,setSpeed,stepRound,stepping} from '../core/realtime/clock.js';
-import {abilityKey,autoPauseReason,blowSummary,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
-import {actorById,distanceBetween,forecast,liftable,validate} from '../core/realtime/abilities.js';
+import {abilityKey,autoPauseReason,commandOptions,nearestUse,nextTarget,pointerIntent} from '../core/realtime/intents.js';
+import {actorById,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME,capabilityTasks} from '../data/realtime-rules.js';
 import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figures.js';
@@ -14,6 +14,9 @@ import {deploy,deploying,deploymentProblem,soundTheAdvance} from '../core/realti
 import {friendlyStandard} from '../core/realtime/order-intents.js';
 import {intentions,threatArea} from '../core/realtime/intel.js';
 import {DEFAULT_KEYMAP,actionFor,actionLabel,firstKeyLabel,learnKey} from '../ui/action-map.js';
+import {targetReadout} from '../ui/realtime-target-readout.js';
+import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
+import {missionReadout} from '../ui/realtime-mission-readout.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -40,22 +43,47 @@ const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=
   // The objective's markers: the positions secured, the phase and the next wave.
   '|'+(world.mission?`${world.mission.phase??0}:${(world.mission.points??[]).map(p=>p.secured?1:0).join('')}:${(world.mission.waves??[]).filter(w=>w.arrived).length}`:'');
 
-export function createRealtimeField({dom,world:initial,base:initialBase,options={},keymap=DEFAULT_KEYMAP,holdDelay=()=>450,callbacks={},kind='field'}){
+export function createRealtimeField({dom,world:initial,base:initialBase,options={},keymap=DEFAULT_KEYMAP,holdDelay=()=>450,callbacks={},kind='field',appearance=()=>null}){
   let world=initial,base=initialBase,stage=null,presenter=null,input=null,disposed=false;
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
   let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null,lessonKey=null;
+  let readoutAt=-Infinity,targetState='',missionWarningKey='';
+  const warnedAt=new Map();
   // The guided opening's memory of what the world does not record: a pause and a slowing (callbacks.lesson).
   const seen={paused:false,slowed:false};
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
   const me=()=>actorById(world,world.controlled);
+  const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance()});
   const say=(text,{warning=false,announce=false}={})=>{
     eventMessage={text,until:performance.now()+2600,warning};if(dom.eventLine){dom.eventLine.textContent=text;dom.eventLine.classList.toggle('warning',warning);}
     if(announce&&dom.announcer)dom.announcer.textContent=text;
   };
   const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
+  const write=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text;};
+  function refreshReadouts(now,{announceTarget=false}={}){
+    if(chamber||now-readoutAt<200&&!announceTarget)return;readoutAt=now;
+    if(keyTarget){
+      const r=targetReadout(world,keyTarget,{abilityId:ability,keymap}),state=`${keyTarget}:${r.state}`;
+      write(dom.targetLine,r.text);if(dom.targetLine)dom.targetLine.hidden=false;
+      if(announceTarget||targetState&&state!==targetState){write(dom.announcer,r.text);}
+      targetState=state;
+      if(!r.valid){keyTarget=null;targetState='cleared';}
+    }else if(!targetState){write(dom.targetLine,'');if(dom.targetLine)dom.targetLine.hidden=true;}
+    const r=missionReadout(world,{keymap,objective:base?.objective});
+    for(const [role,text]of Object.entries({objective:r.objective,progress:r.progress,missionNext:r.next,missionWarning:r.warning,deadlineLine:r.opportunity,orderStatus:r.orderStatus})){
+      write(dom[role],text??'');if(dom[role]&&['missionNext','missionWarning','deadlineLine','orderStatus'].includes(role))dom[role].hidden=!text;
+    }
+    if(r.warningKey&&r.warningKey!==missionWarningKey&&now-(warnedAt.get(r.warningKey)??-Infinity)>=6000){say(r.warning,{warning:true,announce:true});warnedAt.set(r.warningKey,now);}missionWarningKey=r.warningKey??'';
+    write(dom.inputContext,`${firstKeyLabel('pause',keymap)} pauses from the scene or controls · Enter uses a focused button · click the scene for movement keys.`);
+  }
+  function rescueBriefing(){
+    if(kind==='field'&&world.tick===0&&(world.mission?.rescue||world.mission?.mode==='extract')&&world.status==='active'){
+      setPaused(clock,true);say(`Rescue plan: protect the wounded, bind wounds or carry them, then escort everyone to the marker. Press ${firstKeyLabel('pause',keymap)} or Resume when ready.`,{announce:true});
+    }
+  }
 
   // Squads (from Chapter IV): the squad bar, Command pips, command card and order marker (squad-control.js).
   // A fight without squads (Chapters I–III, a camp) shows none of their controls.
@@ -95,7 +123,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       // An auto-pause stops the world at once: this frame's other ticks are dropped.
       if(interrupted)break;
     }
-    const nowShown=shownKey(world);if(nowShown!==shown){shown=nowShown;stage?.sync(stageEncounter(base,world));}
+    const nowShown=shownKey(world);if(nowShown!==shown){shown=nowShown;stage?.sync(sceneEncounter());}
     if(metrics.pending){const h=me();if(h&&(h.x!==metrics.pending.x||h.z!==metrics.pending.z)){metrics.moved=metrics.pending;metrics.pending=null;}}
     if(ticks)showPlanned();
     if(hoverPoint&&(hoverDirty||metrics.frames%6===0))readPointer();
@@ -209,18 +237,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(c.ammo)return `${a?.ammo?.[c.ammo]??0} ${c.ammo==='pilum'?'pila':c.ammo+'s'}`;if(c.bandage)return `${a?.bandages??0} bandages`;
     if(c.stamina)return `${c.stamina} Stamina`;return id==='carry'&&a?.carrying?'set down':'free';
   }
-  // The mission's words; a 0.38 objective's turn limit reads as the fight's rounds.
-  function objectiveText(){
-    const text=world.mission?.objective??world.mission?.label??base?.objective??'';
-    return world.mission?.deadline?text.replace(/\b(finish|hold|survive|secure)( [^.]*?)? by turn \d+/i,(m,verb,rest)=>`${verb}${rest??''} by round ${world.mission.deadline}`):text;
-  }
   function showLesson(){
     if(!dom.lesson||metrics.frames%10)return;const l=callbacks.lesson?.(world,seen)??null,key=l?`${l.step}|${l.title}|${l.body}`:'';if(key===lessonKey)return;
     lessonKey=key;dom.lesson.hidden=!l;if(!l)return;
     for(const [role,text]of [['lessonStep',l.step],['lessonTitle',l.title],['lessonBody',l.body]]){const el=dom.lesson.querySelector(`[data-role="${role}"]`);if(el)el.textContent=text;}
   }
   function updateHud(now){
-    if(disposed)return;showLesson();
+    if(disposed)return;showLesson();refreshReadouts(now);
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
       const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
@@ -257,8 +280,6 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(dom.clockTime)dom.clockTime.textContent=clockText(world.tick);dom.clockRing?.setAttribute('stroke-dasharray',`${Math.round(progress*100)} 100`);
     if(dom.currentAbility)dom.currentAbility.textContent=ABILITIES[ability]?.name??'Strike';dom.forceButton?.setAttribute('aria-pressed',String(force));
     dom.rangesButton?.setAttribute('aria-pressed',String(ranges));
-    if(dom.objective)dom.objective.textContent=objectiveText();
-    if(dom.progress&&world.mission)dom.progress.textContent=missionProgress(world);
     const states=Object.fromEntries(abilityState.split(',').filter(Boolean).map(s=>s.split(':')));
     for(const b of dom.abilityBar?.children??[]){
       const id=b.dataset.ability,state=states[id];b.setAttribute('aria-pressed',String(id===ability));b.classList.toggle('armed',id===armed);
@@ -343,8 +364,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(intentionsShown&&!clock.paused){intentionsShown=false;presenter?.setIntentions?.(null);}
   }
   function readPointer(){
-    hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
-    if(chamber){chamber.hover(pickAt(p));return;}
+    const pointerMoved=hoverDirty;hoverDirty=false;const p=hoverPoint;if(!p||!world||!stage)return;
+    if(chamber){chamber.hover(pickAt(p),{refresh:!pointerMoved});return;}
     // Deploying: a click places what is chosen, if the ground is in the zone.
     if(deploying(world)){
       const pick=pickAt(p),who=squads?.selection[0]??world.controlled,name=world.squads?.find(q=>q.id===who)?.name??actorById(world,who)?.name??'him';
@@ -365,7 +386,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const p=at??(pointer?pickAt(pointer):null);if(!p||!Number.isFinite(p.x))return false;
     const who=id??squads?.selection[0]??world.controlled,r=deploy(world,{id:who,x:p.x,z:p.z});
     const name=world.squads?.find(q=>q.id===who)?.name??actorById(world,who)?.name??'He';
-    if(r.ok){say(`${name} stands there.`,{announce:true});stage?.sync(stageEncounter(base,world));hudKey='';}else say(REASONS[r.reason]??'Not there.',{warning:true});
+    if(r.ok){say(`${name} stands there.`,{announce:true});stage?.sync(sceneEncounter());hudKey='';}else say(REASONS[r.reason]??'Not there.',{warning:true});
     return r.ok;
   }
   // When the first press was made (null: not armed). A page loaded under five seconds ago is no confirmation.
@@ -429,7 +450,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const a=actorById(world,id);if(!a||!commandable(world,a))return;
     if(a.down||!a.alive){say(`${a.name} is down.`,{warning:true});return;}
     if(chamber&&!chamber.canControl(id)){say(`${a.name} has withdrawn: at 0 Resolve he cannot speak, but his vote still counts.`,{warning:true});return;}
-    if(id===world.controlled){keyTarget=null;follow();say(`${a.name}. The view follows him.`);return;}
+    if(id===world.controlled){keyTarget=null;targetState='';readoutAt=-Infinity;refreshReadouts(performance.now());follow();say(`${a.name}. The view follows him.`);return;}
     const outcome=queueCommand(world,{actorId:id,kind:'control'});
     if(outcome.ok){hurryClock(clock);step0(()=>{follow();buildAbilityBar();});say(`You control ${a.name}.`,{announce:true});}
   }
@@ -453,20 +474,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const near=[...world.actors.filter(a=>a.alive&&a!==h&&!a.hidden),...(world.objects??[])].map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((p,q)=>p.d-q.d)[0];
     if(dom.announcer)dom.announcer.textContent=`Stopped${near?`, ${Math.round(near.d)} metres from ${near.a.name}`:''}.`;
   }
-  function describeTarget(id){
-    const h=me(),t=actorById(world,id)??objectById(world,id);if(!t||!h)return '';
-    const d=Math.round(Math.hypot(t.x-h.x,t.z-h.z));
-    if(objectById(world,id))return `${t.name}, ${d} metres. E or Enter uses it.`;
-    if(!t.alive)return `The body of ${t.name}, ${d} metres. Enter searches it.`;
-    if(liftable(t))return `${t.name} is down, ${d} metres. Enter lifts him (weapon sheathed); the ability Bind wounds tends him.`;
-    if(t.side==='enemy'){const f=forecast(world,world.controlled,'strike',{actorId:t.id});return `${t.name}, ${d} metres. ${f.blow?blowSummary(f):''}`;}
-    return `${t.name}, ${d} metres.${t.talk?' Enter talks to him.':''}`;
-  }
   function actOnTarget(forced){
     if(!keyTarget){say(`Choose a target first (${firstKeyLabel('target_next_enemy',keymap)}).`);return;}
     const object=objectById(world,keyTarget),t=actorById(world,keyTarget),h=me();
     if(object){issue({actorId:world.controlled,kind:'interact',payload:{objectId:object.id}});return;}
-    if(!t){keyTarget=null;return;}
+    if(!t){keyTarget=null;targetState='';readoutAt=-Infinity;refreshReadouts(performance.now());return;}
     if(!t.alive){issue({actorId:world.controlled,kind:'loot',payload:{targetId:t.id}});return;}
     if(!forced&&liftable(t)&&t.side!=='enemy'){issue({actorId:world.controlled,kind:'ability',payload:{abilityId:'carry',targetId:t.id}});return;}
     if(!forced&&t.side!=='enemy'&&t.talk&&!h?.drawn){issue({actorId:world.controlled,kind:'talk',payload:{targetId:t.id}});return;}
@@ -499,14 +511,14 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?`Walking everywhere (${firstKeyLabel('walk_toggle',keymap)}).`:'Running again on far clicks.');}return true;
       case 'target_next_enemy':case 'target_next_friend':{
         keyTarget=nextTarget(world,{current:keyTarget,friends:action==='target_next_friend'});
-        if(!keyTarget){say('No one to choose.');return true;}const text=describeTarget(keyTarget);
-        if(dom.announcer)dom.announcer.textContent=text;message(text);return true;
+        if(!keyTarget){targetState='';say('No one to choose.');return true;}
+        refreshReadouts(performance.now(),{announceTarget:true});return true;
       }
       case 'act_on_target':case 'force_attack_target':actOnTarget(action==='force_attack_target');return true;
       case 'interact_nearest':{const it=nearestUse(world);if(it?.command)issue(it.command);else say(it?.message||'Nothing to use within 3 metres.');return true;}
       // Esc clears one layer at a time: what is armed, the target, the squads selected; then the Menu.
       case 'cancel_or_menu':
-        if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;say('Target cleared.');}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
+        if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;targetState='';say('Target cleared.');}else if(listOpen){toggleList(false);canvas.focus({preventScroll:true});}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
       case 'camera_follow':follow();say('Following your soldier.');return true;
       case 'camera_overview':if(stage?.cameraView==='overview')follow();else stage?.home();return true;
       case 'camera_horizon':stage?.horizon();return true;
@@ -548,14 +560,18 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   // A chamber opens on the whole floor (F follows the speaker); a field follows the soldier.
   function firstView(){if(kind!=='chamber'){follow();return;}if(!stage)return;stage.selected=world.controlled;stage.home();stage.wake?.();}
   function onKey(e){
+    if(!fieldShortcutAllowed(e,{canvas,root:canvas.closest('.rt-field'),modalOpen:!!document.querySelector('dialog[open],[aria-modal="true"]')}))return;
     // A held arrow walks a soldier on; in a chamber each press is one step to the next place.
     learnKey(e);if(e.repeat&&(!e.key.startsWith('Arrow')||chamber))return;const action=actionFor(e,keymap);if(!action||!world||!stage)return;
     if(act(action))e.preventDefault();
   }
   function onKeyUp(e){
     const action=actionFor(e,keymap);
-    if(ARROWS[action]&&!chamber){arrows.delete(action);if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
-    if(action==='show_usable'){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
+    // Releasing an arrow stops it even if Ctrl/Alt/Shift was pressed while it
+    // was held. Those modifiers must not strand a movement order.
+    const move=Object.keys(ARROWS).find(a=>keymap[a]?.includes(e.code));
+    if(move&&!chamber&&arrows.delete(move)){if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
+    if(action==='show_usable'||keymap.show_usable?.some(binding=>binding.split('+').at(-1)===e.code)){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
   }
   function onBlur(){if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
   function onLeave(){edge=null;}
@@ -573,7 +589,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const list=[...dom.abilityBar.children],i=list.indexOf(document.activeElement);if(i<0)return;
       e.preventDefault();const next=list[(i+(e.key==='ArrowRight'?1:list.length-1))%list.length];list.forEach(b=>b.tabIndex=b===next?0:-1);next.focus();
     });
-    canvas.addEventListener('keydown',onKey);canvas.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);
+    document.addEventListener('keydown',onKey);document.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);
     canvas.addEventListener('pointermove',onEdge);canvas.addEventListener('pointerleave',onLeave);
     // Labels always (a setting): every figure keeps its name, as while U is held.
     document.body.classList.toggle('labels-full',!!options.labelsAlways);
@@ -593,24 +609,28 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
     presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock),
       // Floating numbers and objective markers are the player's to turn off (presentation only).
-      view:()=>({numbers:options.floatingNumbers!==false,markers:options.objectiveMarkers!==false})});
+      view:()=>({numbers:options.floatingNumbers!==false,markers:options.objectiveMarkers!==false,targetId:chamber?.target??keyTarget,selectedAbility:ability})});
     stage.objectiveMarkers=options.objectiveMarkers!==false;
     stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);presenter.setSelection?.(squads?.selection??[]);presenter.setMarker?.(squads?.marker??null);
     presenter.setDeployment?.(deploying(world)?world.deployment.zone:null);chamber?.invalidate();
   }
   squads=makeSquads();chamber=makeChamber();
-  buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();showDeployment();updateHud(0);
+  buildParty();buildAbilityBar();renderLog();bind();applyOptions();squads?.reset();showDeployment();rescueBriefing();updateHud(0);
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
-    attach(next){const again=stage===next;stage=next;stage.sync(stageEncounter(base,world));if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
+    attach(next){const again=stage===next;stage=next;stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
     // The stage's encounter for this world (the page builds the stage from it).
-    stageView:()=>stageEncounter(base,world),
+    stageView:sceneEncounter,
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;
-      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();
-      if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());
+      eventMessage=null;hoverPoint=null;hoverDirty=false;hoverEnemy=null;pressMove=false;edge=null;arrows.clear();ability='strike';targetState='';readoutAt=-Infinity;missionWarningKey='';warnedAt.clear();
+      pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};seen.paused=false;seen.slowed=false;
+      Object.assign(clock,createClock({speed:clock.speed}));toggleList(false);
+      for(const role of ['eventLine','messageLine','targetLine','announcer','missionWarning','deadlineLine','orderStatus']){write(dom[role],'');dom[role]?.classList.remove('warning');}
+      canvas.dataset.cursor='walk';applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();rescueBriefing();
+      if(stage){stage.sync(sceneEncounter());stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
@@ -619,17 +639,17 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();
       if(key==='labelsAlways')document.body.classList.toggle('labels-full',!!value);
-      if(key==='objectiveMarkers'&&stage){stage.objectiveMarkers=value!==false;stage.sync(stageEncounter(base,world));}},
+      if(key==='objectiveMarkers'&&stage){stage.objectiveMarkers=value!==false;stage.sync(sceneEncounter());}},
     // The keys were remapped (the page changed the shared map in place): the bars show the new keys.
     relabel(){barKey='';buildAbilityBar();squads?.build();chamber?.invalidate();updateHud(performance.now());},
     issue,act,say,follow,takeControl,toggleList,
     // The page changed a chamber's Contest (a panel's speech): its world and HUD follow, and an hour's end plays out.
-    chamberSync:outcome=>{if(!chamber)return;chamber.sync(outcome);stage?.sync(stageEncounter(base,world));},get chamber(){return chamber;},
+    chamberSync:outcome=>{if(!chamber)return;chamber.sync(outcome);stage?.sync(sceneEncounter());},get chamber(){return chamber;},
     setMarks(next){marks=next??{};presenter?.setMarks(marks);},
     snapshot:()=>snapshotWorld(world),
     dispose(){
       disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
-      canvas.removeEventListener('keydown',onKey);canvas.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
+      document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
       canvas.removeEventListener('pointermove',onEdge);canvas.removeEventListener('pointerleave',onLeave);document.body.classList.remove('labels-full');
       document.removeEventListener('visibilitychange',onHidden);removeEventListener('pagehide',onHidden);
     }
