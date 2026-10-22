@@ -26,7 +26,7 @@ test('the drill teaches in order, pause and slow time among its lessons, in the 
   assert.equal(G.serialize(state),before,'lessons read the world and never write the chronicle');
 });
 
-test('the first patrol and the opening chamber hours have their lessons; later chapters none',()=>{
+test('patrol and chamber lessons give way to a short squad-combination lesson in later chapters',()=>{
   const camps=new Map(),stop=new Error('reached');
   try{runCommandCampaign({featureEdition:35,onCheckpoint(s){const id=G.getChapter(s).encounters[s.encounterIndex]?.id;if(!camps.has(id))camps.set(id,G.serialize(s));if(id==='ch8-ferry')throw stop;}});}
   catch(error){if(error!==stop)throw error;}
@@ -38,5 +38,21 @@ test('the first patrol and the opening chamber hours have their lessons; later c
   council.encounter.turn=2;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber'}).title,'The rivals answer each hour');
   council.encounter.turn=3;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber'}),null);
   const ferry=G.deserialize(camps.get('ch8-ferry'));assert.ok(G.startEncounter(ferry,{controls:'realtime'}).ok);
-  assert.equal(realtimeLesson({state:ferry,world:G.realtimeWorld(ferry),seen:{}}),null);
+  const fw=G.realtimeWorld(ferry),before=JSON.stringify(fw);
+  assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Screen, then flank');
+  assert.equal(JSON.stringify(fw),before,'the squad lesson only reads the world');
+  fw.tick=200;assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}),null,'later command coaching yields to the live order strip after the first round');
+});
+
+test('rescue teaching follows treatment, carrying and extraction instead of stopping after the heal',()=>{
+  // Presentation-only fixture: these explicit states exercise the explanation,
+  // not a claim to have completed the rescue with injected progress.
+  const state={chapter:2},hero={id:'hero',name:'Marcellus',alive:true,x:0,z:0},lucan={id:'lucan',name:'Lucan',alive:true,x:1,z:0,hp:4,maxHp:18,escort:{escorted:false,wounded:true}};
+  const world={status:'active',heroId:'hero',actors:[hero,lucan],used:[],tick:0,log:[],objects:[],mission:{mode:'extract',escorts:['lucan'],goal:{x:20,z:20},radius:4,followRange:15,deadline:8}};
+  const lesson=()=>{const before=JSON.stringify(world),l=realtimeLesson({state,world,keymap:keymapFrom({pause:['KeyK','Pause']})});assert.equal(JSON.stringify(world),before);return l;};
+  assert.equal(lesson().title,'Protect before you treat');assert.match(lesson().body,/Bind wounds/);assert.match(lesson().body,/K pauses/);
+  hero.action={what:'bind_wounds',targetId:'lucan',end:60};assert.equal(lesson().title,'Cover the treatment');assert.match(lesson().body,/hit interrupts/);
+  delete hero.action;lucan.carriedBy='hero';assert.equal(lesson().title,'Clear the carrying route');assert.match(lesson().body,/cannot block/);
+  delete lucan.carriedBy;lucan.escort.escorted=true;assert.equal(lesson().title,'Leave together');assert.match(lesson().body,/Escort Lucan/);
+  lucan.x=20;lucan.z=20;assert.match(lesson().body,/your soldier inside it too/);
 });

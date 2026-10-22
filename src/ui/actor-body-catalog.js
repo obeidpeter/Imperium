@@ -33,6 +33,14 @@ export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 /** The generated body for a kit (actor-kit.js), or null to keep the procedural figure. */
 export function actorBodyId(kit={}){
   if(kit.civic)return null;
+  // The baked bodies cannot take off a helmet or change mail into scale.
+  // Exact player loadouts use the matching legionary body only when its baked
+  // surfaces fit; other combinations keep the existing articulated rig.
+  if(kit.appearance)return null;
+  if(kit.equipped){
+    if(kit.faction==='Roman'&&kit.armor==='mail'&&kit.helmet==='ridge'&&kit.trousers&&kit.boots)return 'roman-legionary';
+    return null;
+  }
   const traits={...kit,armored:!!kit.armored,command:!!kit.officer&&kit.chapter>=7};
   for(const [id,{fits}]of Object.entries(ACTOR_BODIES))if(fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
   return null;

@@ -282,7 +282,7 @@ function mountField(target){
     // A hearing's chamber has its presiding magistrate at the tribunal.
     const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
-    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,
+    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
@@ -500,6 +500,25 @@ function refreshMissionPanel(){
   const now=performance.now();if(!modal.open||soldierPanel?.name!=='mission'||modal.dataset.soldier!=='mission'||now-missionPanelAt<1000)return;
   missionPanelAt=now;showSoldierPanel('mission');
 }
+let soldierPreview=null,soldierPreviewGeneration=0;
+function disposeSoldierPreview(){soldierPreviewGeneration++;soldierPreview?.dispose();soldierPreview=null;}
+async function showSoldierPreview(){
+  const canvas=modal.querySelector('[data-soldier-preview]'),status=modal.querySelector('[data-preview-status]');
+  if(!canvas)return;const generation=soldierPreviewGeneration;
+  if(typeof canvas.getContext!=='function'||typeof globalThis.WebGLRenderingContext==='undefined'){
+    if(status)status.textContent='Your equipped items are listed below.';return;
+  }
+  try{
+    const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
+    if(generation!==soldierPreviewGeneration||!modal.open||!canvas.isConnected)return;
+    const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:state.soldier,name:state.name,chapter:state.chapter,rank:state.rank,
+      reducedMotion:settings.reducedMotion,onError:text=>{if(status)status.textContent=text;}});
+    for(const button of modal.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
+    const reset=modal.querySelector('[data-preview-reset]');if(reset)reset.onclick=()=>preview.reset();
+    await preview.ready;
+    if(generation===soldierPreviewGeneration&&canvas.dataset.preview!=='unavailable'&&status)status.textContent='Drag or use the arrows to inspect your equipped outfit.';
+  }catch{if(generation===soldierPreviewGeneration&&status)status.textContent='Model unavailable. Your equipped items are listed below.';}
+}
 function showSoldierPanel(name,arg=null){
   if(!state)return;
   // A chamber's world is its people, not a fight: the panels read the chronicle there.
@@ -513,7 +532,7 @@ function showSoldierPanel(name,arg=null){
   const [title,body]=(panels[name]??panels.character)();
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
-  showModal(title,body);modal.dataset.soldier=name;
+  showModal(title,body);modal.dataset.soldier=name;void showSoldierPreview();
   if(keep){const again=modal.querySelector(keep);if(again&&!again.disabled)again.focus({preventScroll:true});}
 }
 function soldierAct(command){
@@ -716,6 +735,7 @@ async function replaceCampaign({load,save,message}){
 }
 let modalReturn=null;
 function showModal(title,body,{menu=false}={}){
+  disposeSoldierPreview();
   // The Menu always pauses the world; other panels as Pause in panels says.
   stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(menu||settings.panelPause!==false)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
@@ -764,6 +784,7 @@ modal.addEventListener('keydown',event=>{
   if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
 });
 modal.addEventListener('close',()=>{
+  disposeSoldierPreview();
   rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});

@@ -394,6 +394,11 @@ the right mouse button uses it.
   forecast, open every panel, choose abilities, pick targets and give
   orders.
 
+  Pause also works while a command-list or HUD button has focus. Text
+  fields and modal panels keep their own keyboard controls. Rescue
+  encounters begin paused so you can identify the casualty and plan the
+  approach before pressing **Resume**.
+
 - Commands given while paused are carried out when you resume. Each
   person keeps only the latest command you gave him, and a faint line
   shows what he is about to do.
@@ -538,9 +543,10 @@ panels**. Conversations, the chronicle and the Menu always pause it.
   squads (tap more to add them, **Clear** to finish). With a squad
   selected, a tap on ground or on an enemy gives the order.
 
-- On a narrow screen the scene, portraits, ability bar, Pause and the
-  message line are grouped together, and supporting mission details open
-  below.
+- The mission strip, lesson and controls sit outside the scene. On a
+  narrow screen, swipe the party and ability rows sideways to reach
+  additional choices. **Controls** opens the weapon, walk, force and
+  range buttons. **List** offers every action without pointing at a figure.
 
 - The hold delay can be changed in **Menu → Controls & readability**.
 
@@ -548,6 +554,11 @@ panels**. Conversations, the chronicle and the Menu always pause it.
 
 **Tab** and **Shift+Tab** move between on-screen controls and **Enter**
 activates them. When the scene has focus:
+
+The selected target's separate readout stays current as people move,
+take damage, become aware of you or recover. It shows the selected
+ability's forecast. A fallen target becomes a searchable body if it
+has loot; otherwise it is cleared. No new enemy is chosen automatically.
 
 | **Key**                 | **What it does**                                                                                                                                                                                                                                            |
 |-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -632,8 +643,9 @@ layout. **Menu → Time and pace** sets the **game speed**, the
 ## Attributes
 
 Your soldier has eight attributes. The character panel (**C**) shows
-them with the numbers they produce; point at any entry for its
-explanation. Every recruit starts with 10 in each of the first six and 5
+them with the numbers they produce, an explanation and the change from
+the next point before you spend training points. Some totals improve
+only at thresholds. Every recruit starts with 10 in each of the first six and 5
 in Combat and Fieldcraft, before his training.
 
 | **Attribute**    | **What it does**                                                                                                                                         |
@@ -715,11 +727,13 @@ in Combat and Fieldcraft, before his training.
 
 ## Kit
 
-The kit panel (**I**) shows your pack on the left and your soldier on
-the right. Drag a piece onto him to wear it, or select it and choose
-**Wear** (**Enter**); the places it fits light up. Each item's menu also
-offers **Inspect**, **Give** and **Drop**. Everything you wear shows on
-your soldier in the scene.
+The kit panel (**I**) shows your equipped soldier, worn layers and pack.
+Drag the model or use its arrow buttons to turn it. Select a packed
+piece to compare protection, Restriction and derived combat totals
+against the piece it would replace, then choose **Wear** in camp.
+The comparison spends nothing. **Give** and **Leave on the ground**
+are available beside the selected item. If 3D is unavailable the list
+and all equipment commands still work.
 
 Armour is worn in **layers**, and each layer adds its protection: a
 tunic, then padding, then mail or scale; trousers under greaves; an

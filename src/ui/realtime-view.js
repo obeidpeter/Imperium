@@ -3,9 +3,12 @@ import {CHAPTERS} from '../data/campaign.js';
 import {ITEMS} from '../data/items.js';
 import {TP} from '../data/soldier.js';
 import {TIME} from '../data/realtime-rules.js';
-import {actionLabel,firstKeyLabel} from './action-map.js';
+import {actionLabel} from './action-map.js';
 import {campFor} from '../data/camps.js';
 import {DEFEAT_PAGES} from '../data/dialogue.js';
+import {missionDefeatCause as defeatCause,missionDefeatHelp as defeatHelp} from './realtime-mission-readout.js';
+
+export {defeatCause,defeatHelp};
 
 // The page around a real-time encounter (build brief §3.14–§3.16). The field
 // itself (the scene, its HUD and the battle log) is placed by the page's
@@ -56,28 +59,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
   const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:'Talk to people, use what you find, and march out through the gate.'}:state.encounter;
   const {label,keys}=fieldHints({state,keymap,kind});
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
-  <div class="rt-scene">
-    <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys"
-      aria-label="${label}"></canvas>
-    <p id="rt-keys" class="visually-hidden">${keys}</p>
-    <aside class="rt-lesson" data-role="lesson" aria-label="Field guide" hidden><p class="eyebrow">FIELD GUIDE · <span data-role="lessonStep"></span></p>
-      <h2 data-role="lessonTitle"></h2><p data-role="lessonBody"></p><button class="text-link" type="button" data-cmd="dismiss-guide">Hide the guide</button></aside>
-    <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
-    ${chamber?`<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>
-    <aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>`:''}
-    <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
-      <p><strong>Deployment.</strong> Choose a standard, your soldier or a companion, then click marked ground in the zone (or drag a standard there; the arrow keys and Enter work too). No Command is spent.</p>
-      <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
-    </div>
     <header class="rt-top">
-      <div class="rt-squad-area">
-        <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>
-        <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Clear</button>
-      </div>
-      <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2>
-        <p data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p><p class="rt-progress" data-role="progress"></p>
-        ${chamber?'<div class="rt-coalition" data-role="coalition" aria-label="The coalition and the Chamber Whip Forecast"></div>':''}</div>
+      <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2></div>
       <div class="rt-time" role="group" aria-label="Time">
+        <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
         <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
         ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">Yield</button>`
           :`<button data-role="slowButton" type="button" data-shortcut="slow_time" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Slow</button>
@@ -85,34 +70,63 @@ export function fieldMarkup({state,keymap,kind='field'}){
       </div>
       <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
-    <p class="rt-paused" data-role="pausedBand" hidden>Paused · point at anything for its forecast; every command still works</p>
+    <section class="rt-status-strip" aria-label="Current mission">
+      <p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
+      <p class="rt-progress" data-role="progress"></p>
+      <p class="rt-next" data-role="missionNext" hidden></p>
+      <div class="rt-status-facts"><p class="rt-deadline" data-role="deadlineLine" hidden></p><p data-role="orderStatus" hidden></p></div>
+      <p class="rt-mission-warning" data-role="missionWarning" hidden></p>
+    </section>
+    ${chamber?'<div class="rt-coalition" data-role="coalition" aria-label="The coalition and the Chamber Whip Forecast"></div>':''}
+    <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
+      <p><strong>Deployment · time is stopped.</strong> Choose a standard or soldier, then click marked ground to place them. Arrow keys and Enter also place them. No Command is spent.</p>
+      <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
+    </div>
+    ${chamber?'<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>':''}
+    <div class="rt-workspace">
+      <div class="rt-scene" data-action-region="clear">
+        <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys" aria-label="${label}"></canvas>
+        <p id="rt-keys" class="visually-hidden">${keys}</p>
+        <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
+      </div>
+      ${chamber?'<aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>':''}
+    </div>
     <footer class="rt-hud" tabindex="-1">
-      <div class="rt-party" data-role="party" role="group" aria-label="${chamber?'Your speakers: choose who speaks':'Your party: choose who you control'}"></div>
+      <div class="rt-unit-dock" aria-label="Choose your unit">
+        <div class="rt-party" data-role="party" role="group" aria-label="${chamber?'Your speakers: choose who speaks':'Your party: choose who you control'}"></div>
+        <div class="rt-squad-area">
+          <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>
+          <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Clear</button>
+        </div>
+      </div>
       <div class="rt-message-area">
         <div class="rt-clock" role="timer" aria-label="${chamber?'The clepsydra: hours to the vote':'Battle clock'}">
           <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt-clock-track" cx="18" cy="18" r="15"/><circle data-role="clockRing" class="rt-clock-ring" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="0 100"/></svg>
           <p><strong data-role="roundLabel">Round 1</strong><span data-role="clockTime">0:00</span></p>
         </div>
         <div class="rt-command" data-role="commandPips" role="img" hidden></div>
-        <div class="rt-message-lines"><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
+        <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
       </div>
       <div class="rt-ability-area">
         <p class="rt-current"><span class="eyebrow">${chamber?'Right button: speech':'Right button'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
         <div class="rt-ability-bar" data-role="abilityBar" role="toolbar" aria-label="${chamber?'Speeches':'Abilities'}"></div>
         ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>`}
-        ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion and lists">
+        <div class="rt-tools">
+          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every ${chamber?'speech, walk and conversation':'action'} as a list">List</button>
+        ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion">
           <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Motion</button>
-          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every speech, walk and conversation as a list">List</button>
-        </div>`:`<div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
+        </div>`:`<details class="rt-toolbox"><summary>Controls</summary><div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
           <button data-role="swordsButton" class="rt-swords" type="button" data-shortcut="combat_toggle" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" data-title="Draw or sheathe" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
           <button data-role="walkButton" type="button" data-shortcut="walk_toggle" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
           <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force</button>
           <button data-role="rangesButton" type="button" data-shortcut="show_ranges" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
-          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every action as a list">List</button>
-        </div>`}
+        </div></details>`}
+        </div>
       </div>
+      <p class="rt-input-context" data-role="inputContext">${chamber?'Speeches use the selected speaker.':'Orders use the selected soldier or squad.'} ${key('pause')} pauses from the scene or command controls.</p>
     </footer>
-  </div>
+    <aside class="rt-lesson" data-role="lesson" aria-label="Field guide" hidden><div><p class="eyebrow">FIELD GUIDE · <span data-role="lessonStep"></span></p>
+      <h2 data-role="lessonTitle"></h2><p data-role="lessonBody"></p></div><button class="text-link" type="button" data-cmd="dismiss-guide">Hide the guide</button></aside>
   <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
     <h2 id="rt-list-title">Command list</h2>
     <p class="rt-log-note">${chamber?'Choose which speaker acts, then Use a speech, a walk or a conversation.':'Choose who acts, then Use an order. It works while paused; a paused world carries it out on resume.'}</p>
@@ -172,19 +186,4 @@ export function realtimeResult(state,{keymap}={}){
     <p class="result-save-note">${won?'Record the result to keep the rewards and consequences.':'Retry restores the encounter exactly as it began, including the random seed.'}</p>
     <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
   </section>`;
-}
-
-// What ended a lost fight, in the words the guide uses.
-export function defeatCause(world){
-  const hero=world.actors.find(a=>a.id===world.heroId);
-  if(world.mission?.reason)return world.mission.reason;
-  if(hero&&!hero.alive){const by=world.actors.find(a=>a.id===hero.killedBy);return by?`You fell to ${by.name}.`:'You fell.';}
-  return 'The objective was not held.';
-}
-export function defeatHelp(world,keymap){
-  const hero=world.actors.find(a=>a.id===world.heroId),log=world.log.map(l=>l.text).join('\n');
-  if(/from the (rear|flank)/.test(log))return 'Blows from the flank and rear struck most often: keep a rock, a wall or a companion at your back, and turn to face the man you fight.';
-  if(hero&&hero.ammo?.pilum>0)return 'Your pila were never thrown: a pilum that sticks in a shield halves how often it blocks.';
-  if(world.mission?.escorts?.length)return 'Keep the column close: wounded men wait for Bind wounds or Carry, and raiders go for the weakest first.';
-  return `Pause (${firstKeyLabel('pause',keymap)}) when the fight turns, brace against heavy blows and let your companions’ standing orders cover you.`;
 }

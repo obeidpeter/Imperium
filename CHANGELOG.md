@@ -2,7 +2,16 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. No phase's playtests or phone checks have been performed yet; each report says what was and was not checked.
+The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. The original phase reports retain their validation limits; the later Windows assessment and improvements are recorded separately below. Physical phone and first-time player checks remain open.
+
+### Windows playtest improvements ([report](docs/realtime-playtest-polish.md))
+
+- Live keyboard target health, distance and current-ability forecasts; Pause works from the command list and HUD; retry clears the previous encounter's messages and input state.
+- An unobstructed battlefield with a compact dock, separate mission/deadline/order strip, small pause indicator and conversations beside or below the scene.
+- Rescue planning pause, action-matched guidance, endangered-ally alerts and specific failure explanations; contextual squad tactics teaching.
+- Rotatable equipped-character previews, item comparisons and exact next-training-point effects; clearer lighting, combat timing cues, target markers, terrain continuity and horizon framing.
+- Clearer political movement/speech restrictions, persistent vote projections, delegate medallions, bloc costumes and reactions. Lower High-quality shadow and occlusion costs.
+- A dedicated Chromium playtest-regression runner is included in CI, alongside the existing full smoke test. See the report for completed checks and remaining device/player qualification.
 
 ### Phase 4: the finale and finishing work ([report](docs/realtime-phase-4-report.md))
 

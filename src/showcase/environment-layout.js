@@ -48,6 +48,8 @@ export function roadSegments(e,tileSize=TILE_SIZE){
     for(const [dx,dy]of [[1,0],[0,1]])if(terrainAt(e,x+dx,y+dy)==='road'&&x+dx<e.width&&y+dy<e.height)result.push([p,gridToWorld({x:x+dx,y:y+dy},e,tileSize)]);
     if(x===0)result.push([{x:p.x-18,y:0,z:p.z},p]);
     if(x===e.width-1)result.push([p,{x:p.x+18,y:0,z:p.z}]);
+    if(y===0)result.push([{x:p.x,y:0,z:p.z-18},p]);
+    if(y===e.height-1)result.push([p,{x:p.x,y:0,z:p.z+18}]);
   }return result;
 }
 export function isPlayable(x,z,e,tileSize=TILE_SIZE,margin=0){return Math.abs(x)<=e.width*tileSize/2+margin&&Math.abs(z)<=e.height*tileSize/2+margin;}

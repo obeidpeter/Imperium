@@ -1,3 +1,4 @@
+import {ITEMS} from '../data/items.js';
 // Presentation classification only. Names preserve a defecting unit's original
 // equipment; allegiance never changes its ancestry or rewrites campaign state.
 export function actorKit(unit={},options={}){
@@ -14,9 +15,18 @@ export function actorKit(unit={},options={}){
   const commendations=Number.isFinite(options.commendations)?options.commendations:Number.isFinite(options.commendations?.[unit.veteranId])?options.commendations[unit.veteranId]:Number.isFinite(unit.commendations)?unit.commendations:unit.moraleResistance?6:unit.specialization?3:0;
   const veteranTier=!civic&&!escort&&!trainer&&faction==='Roman'?(commendations>=6?3:commendations>=3?2:commendations>=1?1:0):0;
   const signum=options.signum==='aquila'||escort&&/eagle-bearer/i.test(name)?'aquila':options.signum==='signum'||options.signum===true||(!civic&&!escort&&!trainer&&faction==='Roman'&&unit.specialization==='leader')?'signum':null;
-  return {role,faction,chapter,rank,trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
+  const result={role,faction,chapter,rank,trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
     helmet:armored?(eastern?'conical':faction==='Roman'?'ridge':'segmented'):null,
     cloak:officer||!archer&&armored&&faction==='Roman',wounded:escort&&/wounded|Varro/i.test(name),
     // A man the rules give no shield carries none (unit.shield false); otherwise the role decides.
-    shield:unit.shield!==false};
+    shield:unit.shield!==false,...(unit.appearance?{appearance:{...unit.appearance}}:{})};
+  if(Array.isArray(unit.equipment)&&!civic&&!escort&&!trainer){
+    const ids=[...unit.equipment],visual=Object.assign({},...ids.map(id=>ITEMS[id]?.visuals??{}));
+    Object.assign(result,{equipped:true,equipment:ids,armor:visual.armour??null,armored:!!visual.armour,helmet:visual.helmet??null,
+      crest:!!visual.crest,cloak:!!visual.cloak,cloakKind:visual.cloak??null,shield:!!visual.shield,shieldShape:visual.shield??null,
+      weapon:visual.weapon??null,archer:visual.weapon==='bow',armed:!!visual.weapon,manica:!!visual.manica,greaves:!!visual.greaves,
+      trousers:!!visual.trousers,boots:!!visual.boots,padding:!!visual.padding,cap:!!visual.cap,belt:!!visual.belt,quiver:!!visual.quiver,
+      tunic:!!visual.tunic,linen:ids.includes('linen_tunic')});
+  }
+  return result;
 }

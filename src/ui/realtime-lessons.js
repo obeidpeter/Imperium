@@ -1,5 +1,7 @@
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
 import {missionProgress} from '../core/realtime/simulation.js';
+import {missionReadout} from './realtime-mission-readout.js';
+import {TIME} from '../data/realtime-rules.js';
 
 // The guided opening in real time (build brief Phase 4, guide "Settings
 // reference": step-by-step lessons in the drill, including pause and slow time,
@@ -26,7 +28,22 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
     if(e.turn===2)return {step:'2 / 2',title:'The rivals answer each hour',body:`Hold ${k('show_usable')} to see where each rival means to walk next. ${k('yield_floor')} yields the floor; only the vote at the deadline counts.`};
     return null;
   }
-  if(kind!=='field'||state.chapter!==1||world.status!=='active')return null;
+  if(kind!=='field'||world.status!=='active')return null;
+  // Rescue instruction follows the same live facts as the objective strip.
+  // It remains useful after treatment: healing is not the extraction objective.
+  if(world.mission?.mode==='extract'||world.mission?.rescue){
+    const readout=missionReadout(world,{keymap}),party=(world.mission.escorts??[]).map(id=>world.actors.find(a=>a.id===id)).filter(Boolean);
+    const treatment=world.actors.some(a=>a.action?.what==='bind_wounds'&&party.some(p=>p.id===a.action.targetId));
+    const wounded=party.some(a=>a.alive&&!a.carriedBy&&(!a.escort?.escorted||a.down));
+    const carried=party.some(a=>a.carriedBy);
+    return {step:wounded||treatment?'1 / 3':carried?'2 / 3':'3 / 3',title:treatment?'Cover the treatment':wounded?'Protect before you treat':carried?'Clear the carrying route':'Leave together',
+      body:`${readout.next}${wounded&&!treatment?` ${k('pause')} pauses while you plan; healing alone does not keep him safe.`:''}`};
+  }
+  // The same combination applies wherever the commander brings a company.
+  // Once a command has been given, the persistent order-status strip takes over.
+  if(state.chapter>=4&&(world.squads??[]).some(q=>q.side!=='enemy')&&world.tick<TIME.roundTicks&&!(world.log??[]).some(l=>l.kind==='order'))
+    return {step:'COMMAND',title:'Screen, then flank',body:missionReadout(world,{keymap}).tactic};
+  if(state.chapter!==1)return null;
   const hero=world.actors.find(a=>a.id===world.heroId);
   if(world.mission?.mode==='training'){
     const i=DRILL.findIndex(l=>!l.done(world,seen,hero));

@@ -52,9 +52,9 @@ function adaptAnatomy(master,id,{quality='balanced'}={}){
   geometry.setAttribute('color',new T.Float32BufferAttribute(c,3));geometry.deleteAttribute('normal');geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();geometry.userData={asset:'MakeHuman CC0',identity:id.key};
   // The bound female groom reaches the nape; the male short/receding cut keeps
   // its existing back and temple heights. The bound frontal hairline stays .148.
-  const backHairline=id.female?.038:.073,templeRise=id.female?.016:.028;
+  const backHairline=id.hair==='long'?.015:id.female?.038:.073,templeRise=id.female?.016:.028;
   const hairline=(x,y,z)=>Math.min(y-(1.485+backHairline+clamp((z+.03)/.09)*((id.hair==='receding'?.165:id.hair==='bound'?.148:.133)-backHairline)+templeRise*clamp(Math.abs(x)/.085)**2+Math.sin(x*102)*(id.female?0:.0013)),.096-Math.abs(x));
-  const importedHair=actorHairGeometry(id),hair=importedHair??groomActorHair(surfaceSubset(geometry,hairline,.0035,id),id,{quality,edgeDistance:hairline});
+  const importedHair=actorHairGeometry(id),hair=id.hair==='shaved'?null:importedHair??groomActorHair(surfaceSubset(geometry,hairline,.0035,id),id,{quality,edgeDistance:hairline});
   const beardLine=(x,y,z)=>{const side=clamp(Math.abs(x)/.10),mouth=(Math.hypot(x/.041,(y-1.494)/.022)-1)*.022,cheeks=Math.min(z-.015,y-(1.445+.012*side),1.493+.036*side**.7-y,mouth),moustache=.009*(1-Math.hypot((Math.abs(x)-.016)/.026,(y-1.505)/.009));return Math.max(cheeks,Math.min(z-.04,moustache));};
   const beard=(id.beard??0)>.3?groomActorHair(surfaceSubset(geometry,beardLine,.0015+id.beard*.0014,id),id,{beard:true,quality,edgeDistance:beardLine}):null;
   // Hundreds of fitted lid/brow samples share a local XY triangle index. Keep

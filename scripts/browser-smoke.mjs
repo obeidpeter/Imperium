@@ -502,13 +502,19 @@ async function chamberHearing(){
   await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .kit-documents',{timeout:30000}).catch(()=>assert.fail('The pack holds the hearing’s documents'));
   await page.click('#modal .kit-documents [data-cmd="inspect-case"] >> nth=0');await page.waitForSelector('#modal[open] .case-preview-table');
   assert.ok(await page.locator('#modal .case-preview-table tbody tr').count()>0,'Inspecting shows each member’s exact change');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
-  const tribunal=await page.evaluate(()=>{const s=window.__chamber.stage(),a=window.__realtime.world().actors.find(x=>x.id==='magistrate'),r=s.canvas.getBoundingClientRect(),p=s.screen(s.lastView,a.x,a.z);
+  const tribunalPoint=()=>page.evaluate(()=>{const s=window.__chamber.stage(),a=window.__realtime.world().actors.find(x=>x.id==='magistrate'),r=s.canvas.getBoundingClientRect(),p=s.screen(s.lastView,a.x,a.z);
     return {x:r.left+p.x,y:r.top+p.y-s.lastView.th*1.2};});
+  const tribunal=await tribunalPoint();
   await page.mouse.move(tribunal.x,tribunal.y);await page.mouse.down();await page.mouse.up();
   await page.waitForFunction(()=>window.__chamber.talking()==='magistrate',null,{timeout:30000}).catch(()=>assert.fail('A click on the magistrate opens the tribunal'));
-  const doc=await page.locator('[data-role="conversation"] [data-document][draggable="true"] >> nth=0').boundingBox();
+  const document=page.locator('[data-role="conversation"] [data-document][draggable="true"] >> nth=0');
+  await document.scrollIntoViewIfNeeded();
+  // The conversation reserves a column and resizes the scene. Use the tribunal's
+  // rendered position after that layout (and any document scroll), just as a player does.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const doc=await document.boundingBox(),drop=await tribunalPoint();
   await page.mouse.move(doc.x+doc.width/2,doc.y+12);await page.mouse.down();await page.mouse.move(doc.x+doc.width/2-30,doc.y+30,{steps:4});
-  await page.mouse.move(tribunal.x,tribunal.y+10,{steps:12});await page.mouse.up();await chamberIdle(page);
+  await page.mouse.move(drop.x,drop.y+10,{steps:12});await page.mouse.up();await chamberIdle(page);
   await page.waitForFunction(()=>window.__chamber.unit('hero').acted,null,{timeout:30000}).catch(()=>assert.fail('A document dropped on the tribunal is presented'));
   assert.match(await text(page,'[data-role="eventLine"]'),/One speech;/,'The rules record the documented case');
   await page.context().close();

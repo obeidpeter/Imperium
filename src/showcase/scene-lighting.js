@@ -1,6 +1,15 @@
 import * as T from '../../vendor/three/three.module.js';
 import {skyPalette} from './sky.js';
 
+// Keep faces, shield rims and weapon hands readable on the unlit side of a
+// figure. This is a broad, unshadowed bounce, not another shadow-map pass.
+// Chapter hues and the key light still establish time of day.
+export function readableLighting(profile){
+  const night=profile.timeOfDay==='night',balance=profile.grade??{};
+  return {ambient:Math.max(night?.95:1.4,(profile.ambientIntensity??2.1)*.86*(balance.ambient??1)),
+    fill:night?.38:profile.civic?.62:.52,fillColor:night?'#adc4e5':'#f1e6d0',environment:night?.48:.56};
+}
+
 // Original, small HDR radiance field. The visible sky and the reflections use
 // the same palette and sun bearing. PMREM convolution happens once per scene,
 // never in the animation loop; no remote panorama or licensed bitmap is used.
@@ -31,7 +40,7 @@ export function createSceneLighting(renderer,scene,profile,{quality='balanced'}=
   const source=new T.DataTexture(data,width,height,T.RGBAFormat,T.FloatType);source.mapping=T.EquirectangularReflectionMapping;source.needsUpdate=true;
   const generator=new T.PMREMGenerator(renderer);let output;
   try{output=generator.fromEquirectangular(source);}finally{source.dispose();generator.dispose();}
-  scene.environment=output.texture;scene.environmentIntensity=.46;
+  scene.environment=output.texture;scene.environmentIntensity=readableLighting(profile).environment;
   let disposed=false;
   return {stats:()=>({type:'locally generated HDR sky reflection',width,height,intensity:scene.environmentIntensity,perFrameCaptures:0}),dispose(){if(disposed)return;disposed=true;if(scene.environment===output.texture)scene.environment=null;output.dispose();}};
 }

@@ -13,7 +13,10 @@ const named={
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export function actorIdentity(unit={},kit={}){
   const chapter=clamp(Math.trunc(Number(kit.chapter)||1),1,12),elapsed=years[chapter-1],name=String(unit.veteranId??unit.name??'').toLowerCase(),key=Object.keys(named).find(k=>name.includes(k));
-  if(unit.id==='hero')return Object.freeze({key:'marcellus',age:20+elapsed,jaw:1,cheek:1,nose:1,brow:1.04,eyes:1,mouth:1,build:1,hair:'curly',beard:elapsed<3?0:elapsed<10?.24:.62,grey:clamp((elapsed-12)/26,0,.55),skin:0xbe8966,scar:chapter>=5});
+  if(unit.id==='hero')return Object.freeze({key:'marcellus',age:20+elapsed,jaw:1,cheek:1,nose:1,brow:1.04,eyes:1,mouth:1,build:1,
+    hair:unit.appearance?['cropped','curly','shaved','long'][unit.appearance.hair]??'cropped':'curly',
+    beard:unit.appearance?[0,.4,.85][unit.appearance.beard]??0:elapsed<3?0:elapsed<10?.24:.62,
+    customAppearance:!!unit.appearance,grey:clamp((elapsed-12)/26,0,.55),skin:0xbe8966,scar:chapter>=5});
   if(key){const p=named[key],age=p.age+(key==='lucan'?elapsed:Math.max(0,elapsed-10));return Object.freeze({...p,age,grey:clamp(p.grey+Math.max(0,age-p.age)*.012,0,1),beard:p.female?0:Math.min(.9,p.beard+(age>27?.12:0))});}
   const seed=kit.identity??0,variation=n=>((seed>>>n)&7)/7,age=24+Math.round(variation(9)*22),eastern=kit.eastern;
   return Object.freeze({key:`figure-${seed}`,age,jaw:.91+variation(0)*.23,cheek:.94+variation(3)*.16,nose:.9+variation(6)*.22,brow:.92+variation(12)*.18,eyes:.95+variation(15)*.1,mouth:.92+variation(18)*.16,build:.96+variation(21)*.09,hair:kit.faction==='Gothic'?'long':eastern?'wavy':age>40?'receding':'cropped',beard:kit.trainer?.4:eastern?.75:kit.faction==='Gothic'?.85:variation(6)>.5?.5:.1,grey:Math.max(0,age-35)/42,skin:eastern?0xb07e59:kit.faction==='Gothic'?0xc49a76:0xbb8966});

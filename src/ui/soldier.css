@@ -38,4 +38,13 @@
 .save-slot img,.save-slot-blank{inline-size:160px;block-size:90px;border-radius:.3rem;object-fit:cover;background:#2a2f2a;color:#cfc6b0;display:grid;place-items:center;font-weight:700}
 .save-slot small{display:block;color:var(--muted,#666)}.save-slot input{inline-size:100%;margin-block-start:.3rem}
 .save-slot-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.soldier-model{margin:0 0 1rem;border:1px solid #a9956a;border-radius:.5rem;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#4c534d,#202c2c 75%);color:#f4ead6;max-inline-size:28rem}
+.soldier-model canvas{display:block;inline-size:100%;block-size:320px;touch-action:none;cursor:grab}.soldier-model canvas:focus-visible{outline:3px solid #f2c367;outline-offset:-4px}
+.soldier-model figcaption{display:flex;flex-direction:column;gap:.15rem;padding:.6rem 1rem}.soldier-model figcaption span{font-size:.8rem;color:#ddd4c2}
+.soldier-model-controls{display:flex;justify-content:center;gap:.5rem;padding:0 .5rem .7rem}.soldier-model-controls button{min-block-size:2.5rem;min-inline-size:3rem;color:#233030;background:#f2e8d3;border:1px solid #b5a074}.soldier-model-controls button:hover{background:#d6bd87;color:#17211f}
+.character-panel .soldier-model{margin-inline:auto;inline-size:min(100%,28rem)}
+.kit-comparison{margin-block:1rem;padding:.75rem;border:1px solid var(--line);border-radius:.4rem;background:#c3a76d14}.kit-comparison h4{margin:0}.kit-comparison table{inline-size:100%;border-collapse:collapse}
+.kit-comparison th,.kit-comparison td{padding:.3rem;text-align:start;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.kit-comparison td:last-child{font-weight:700}
+.attribute-table{max-inline-size:none}.attribute-impact{max-inline-size:25rem}.attribute-impact small,.attribute-impact strong{display:block;font-size:.78rem;line-height:1.4}.attribute-impact small{font-weight:400;color:var(--muted)}
+@media(max-width:600px){.attribute-table thead{display:none}.attribute-table tr{display:grid;grid-template-columns:1fr auto;gap:.25rem;padding-block:.6rem;border-bottom:1px solid var(--line)}.attribute-table td,.attribute-table th{border:0}.attribute-table .attribute-impact{grid-column:1/-1;max-inline-size:none}.attribute-table td:last-child{grid-column:1/-1}.pack-grid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}.soldier-model canvas{block-size:300px}}
 @media (max-width:760px){.save-slot{grid-template-columns:1fr}.save-slot img,.save-slot-blank{inline-size:100%;block-size:auto;aspect-ratio:16/9}}

@@ -14,6 +14,7 @@ import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
 import {TRADER_STOCK} from '../data/camps.js';
 import {errandList} from '../core/dialogue.js';
+import {ATTRIBUTE_EFFECTS,attributeImprovement,equipmentComparison} from './soldier-comparison.js';
 
 // The soldier's panels (guide "Your soldier", build brief §3.12–§3.13): kit
 // (I), character (C), decorations and titles (A), company and standing orders
@@ -26,6 +27,11 @@ const button=(kind,label,data={},{primary=false,disabled=false,title=''}={})=>`<
 const signed=n=>n>0?`+${n}`:`${n}`;
 const percent=n=>`${Math.round(n*100)}%`;
 const inCamp=state=>state.phase!=='encounter';
+const figurePreview=()=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
+  `<figcaption><strong>Current equipped kit</strong><span data-preview-status>Preparing the model…</span></figcaption>`+
+  `<div class="soldier-model-controls"><button type="button" data-preview-turn="-1" aria-label="Turn model left">←</button><button type="button" data-preview-reset>Front</button><button type="button" data-preview-turn="1" aria-label="Turn model right">→</button></div></figure>`;
+const comparisonView=c=>!c?'':`<section class="kit-comparison" aria-label="Equipment comparison"><h4>If worn: ${esc(c.item)}</h4><p>Replaces ${esc(c.replaced)}.</p>`+
+  (c.rows.length?`<table><thead><tr><th>Effect</th><th>Now</th><th>If worn</th></tr></thead><tbody>${c.rows.map(r=>`<tr><th scope="row">${esc(r.label)}</th><td>${esc(r.before)}</td><td>${esc(r.after)}</td></tr>`).join('')}</tbody></table>`:'<p>The displayed combat totals stay the same.</p>')+'</section>';
 
 // The numbers the rules use for the soldier as he stands (or for a companion).
 export function soldierValues(state){
@@ -59,13 +65,13 @@ export function kitPanel(state,{selected=null,spoils=[],documents=[]}={}){
       ` style="grid-column:${e.x+1}/span ${item.shape.w};grid-row:${e.y+1}/span ${item.shape.h}" aria-pressed="${selected===e.uid}"`+
       ` aria-label="${esc(`${item.name}${problem?`, ${problem}`:''}`)}" title="${esc(itemSummary(e.id))}">${esc(item.name)}</button>`;}).join('');
   const chosen=s.pack.find(e=>e.uid===selected),item=chosen&&ITEMS[chosen.id];
-  const actions=chosen?`<div class="kit-actions" role="group" aria-label="${esc(item.name)}"><p><strong>${esc(item.name)}</strong> · ${esc(itemSummary(chosen.id))}</p>`+
+  const actions=chosen?comparisonView(equipmentComparison(s,chosen.id))+`<div class="kit-actions" role="group" aria-label="${esc(item.name)}"><p><strong>${esc(item.name)}</strong> · ${esc(itemSummary(chosen.id))}</p>`+
     (camp?[item.slot?button('wear','Wear',{uid:chosen.uid},{primary:true,disabled:!!wearProblem(state,chosen.id,attrs),title:wearProblem(state,chosen.id,attrs)??''}):'',
       button('drop','Leave on the ground',{uid:chosen.uid}),
       ...(item.slot&&item.slot!=='charm'?Object.keys(COMPANIONS).filter(id=>(state.company??[]).some(v=>v.id===id)).map(id=>
         button('give',`Give to ${COMPANIONS[id].name}`,{uid:chosen.uid,companion:id})):[])].join(''):'<p class="panel-note">Change your kit in camp.</p>')+'</div>':'';
   return `<div class="kit-panel">
-    <section aria-labelledby="kit-worn"><h3 id="kit-worn">Worn</h3><ul class="kit-places">${worn}</ul>
+    <section aria-labelledby="kit-worn">${figurePreview()}<h3 id="kit-worn">Worn</h3><ul class="kit-places">${worn}</ul>
       <table class="kit-protection"><caption>Protection (flat / share)</caption><tbody>${protectionRows(wornIds(s))}</tbody></table>
       <p>Restriction <strong>${values.restriction}</strong>${values.restriction>=10?`: ${Math.floor(values.restriction/10)} off Attack and Defence`:''} · `+
       `Weapon <strong>${esc(values.weapon.name??'')}</strong> · Coin <strong>${s.denarii} denarii</strong></p></section>
@@ -86,14 +92,17 @@ export function characterPanel(state){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const attrs=soldierAttributes(s),v=soldierValues(state),camp=inCamp(state);
   const rows=ATTRIBUTES.map(k=>{const cost=attributeCost(s.base[k]),bonus=attrs[k]-s.base[k];
+    const delta=attributeImprovement(state,k),effect=delta.length?delta.map(r=>`${r.label} ${r.before} → ${r.after}`).join(' · '):'No immediate change to the displayed totals; some effects rise at thresholds.';
     return `<tr><th scope="row">${esc(ATTRIBUTE_NAMES[k])}</th><td>${attrs[k]}${bonus?` <small>(${s.base[k]} ${signed(bonus)})</small>`:''}</td>`+
-      `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost,title:s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
+      `<td class="attribute-impact"><small>${esc(ATTRIBUTE_EFFECTS[k])}</small><strong>Next point: ${esc(effect)}</strong></td>`+
+      `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost||s.base[k]>=60,title:s.base[k]>=60?'Maximum reached.':s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
   const derived=[['Health',v.health],['Stamina',v.stamina],['Attack',v.attack],['Defence',v.defence],['Missile attack',v.missile],['Restriction',v.restriction],
     ['Running speed',`${v.run.toFixed(1)} m/s`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
   const abilities=knownAbilities(state).map(id=>`<li><strong>${esc(ABILITIES[id].name)}</strong>: ${esc(ABILITIES[id].summary??'')}</li>`).join('');
   return `<div class="character-panel">
+    ${figurePreview()}
     <p><strong>${esc(state.name)}</strong> · ${esc(TRAINING_PATHS[s.path].name)} training · <strong>${s.tp}</strong> training points to spend (${s.tpEarned} earned)</p>
-    <table class="attribute-table"><thead><tr><th>Attribute</th><th>Value</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <table class="attribute-table"><thead><tr><th>Attribute</th><th>Value</th><th>What improves</th><th></th></tr></thead><tbody>${rows}</tbody></table>
     <p class="panel-note">Raising an attribute costs ${TP.below20} TP below 20, ${TP.from20} from 20, then one more for every ten. ${camp?'':'Training points are spent in camp.'}</p>
     <dl class="derived-values">${derived}</dl>
     <h3>Techniques</h3><ul>${abilities}</ul>

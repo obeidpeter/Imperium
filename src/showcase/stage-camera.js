@@ -53,8 +53,32 @@ export const stageCamera={
   horizon(){
     // Lift the point of interest, rather than merely flattening an orbit aimed
     // at the ground. The sky occupies the upper third while units remain framed.
+    const liveTarget=this.live?.cameraTarget?.();
+    if(liveTarget){
+      // A real-time battlefield can be over a hundred metres across. Fitting
+      // every corner at eye level makes the actual fight a few pixels high.
+      // Horizon follows the controlled exchange; Z still offers the whole field.
+      this.focusMode=true;this.cameraView='horizon';this.orbit.yaw=this.profile?.staging?.camera.yaw??-.55;
+      this.orbit.pitch=.14;this.orbit.distance=this.liveHorizonDistance();this.baseTarget.copy(liveTarget);return;
+    }
     this.focusMode=false;this.cameraView='horizon';this.orbit.yaw=-.55;this.orbit.pitch=.105;
     this.baseTarget.set(0,2.7,0);this.orbit.distance=Math.max(28,this.overviewDistance());
+  },
+  liveHorizonDistance(){return clamp(24/Math.max(.7,this.camera.aspect),20,34);},
+  conversationFrame(){
+    // A chosen overview and a manually dragged camera belong to the player.
+    // In a follow view, fit the two actual people without rotating the camera
+    // or allowing a conversation panel to determine an arbitrary crop.
+    if(!['follow','horizon'].includes(this.cameraView)||this.reducedMotion||this.drag||this.actionCamera===false)return null;
+    const frame=this.live?.cameraFraming?.();if(!frame)return null;
+    const {yaw,pitch}=this.orbit,right=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw)),
+      up=new T.Vector3(-Math.sin(yaw)*Math.sin(pitch),Math.cos(pitch),-Math.cos(yaw)*Math.sin(pitch)),
+      out=new T.Vector3(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)),
+      tangent=Math.tan(this.camera.fov*Math.PI/360)*.75;
+    const distance=Math.max(7,...frame.points.flatMap(point=>[point,point.clone().add(new T.Vector3(0,2.6,0))]).map(point=>{
+      const p=point.clone().sub(frame.target);return p.dot(out)+Math.max(Math.abs(p.dot(right))/(tangent*this.camera.aspect),Math.abs(p.dot(up))/tangent);
+    }));
+    return {target:frame.target,distance};
   },
   focusSelected(){
     const u=this.encounter.units.find(u=>u.id===this.selected);

@@ -3,12 +3,12 @@ import {hash,noise,smooth,clamp} from './environment-layout.js';
 
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
-export function createEnvironmentHorizon({ground,profile,height,quality='balanced'}){
+export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40}){
   const group=new T.Group();group.name='regional distant landscape';group.userData.environmentHorizon=true;
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
   const haze=new T.Color(profile.fog),land=new T.Color(arid?'#9c8b6a':wet?'#657461':'#68765d'),seed=profile.chapter*17;
-  const rows=[40,48,64,100,155,235,355,550],size=segments*4,riverJoin=62.5,riverEdges=[];
+  const rows=[innerRadius,innerRadius+8,innerRadius+24,Math.max(100,innerRadius+60),Math.max(155,innerRadius+110),Math.max(235,innerRadius+180),Math.max(355,innerRadius+280),550],size=segments*4,riverJoin=62.5,riverEdges=[];
   let waterGeometry=null;
   let disposed=false;
   for(let edge=0;edge<4;edge++)for(let i=0;i<segments;i++){
@@ -17,13 +17,13 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   function riverCentre(x){const d=Math.max(0,Math.abs(x)-riverJoin);return -29+Math.sin(d*.011)*d*.075;}
   function riverWidth(x){return 8+smooth((Math.abs(x)-riverJoin)/320)*13;}
   function terrainHeight(x,z){
-    const edge=Math.max(Math.abs(x),Math.abs(z)),distance=Math.hypot(x,z),blend=smooth((edge-40)/65),amplitude=city?14:wet?10:arid?35:30;
+    const edge=Math.max(Math.abs(x),Math.abs(z)),distance=Math.hypot(x,z),blend=smooth((edge-innerRadius)/65),amplitude=city?14:wet?10:arid?35:30;
     const broad=noise(x*.009,z*.009,seed),spine=Math.pow(noise(x*.021,z*.021,seed+4),1.35),distant=smooth((distance-80)/290);
     let y=height(x,z)+blend*((broad-.20)*amplitude*(.34+distant*.72)+spine*amplitude*.43);
     if(profile.distantWater&&Math.abs(x)>40){const channel=1-smooth((Math.abs(z-riverCentre(x))-riverWidth(x))/(10+Math.abs(x)*.015));y=y*(1-channel)+Math.min(y,-2.05)*channel;}
     return y;
   }
-  function point(q,r){const length=Math.hypot(...q),round=smooth((r-40)/140);return [q[0]*r*(1-round)+q[0]/length*r*round,q[1]*r*(1-round)+q[1]/length*r*round];}
+  function point(q,r){const length=Math.hypot(...q),round=smooth((r-innerRadius)/140);return [q[0]*r*(1-round)+q[0]/length*r*round,q[1]*r*(1-round)+q[1]/length*r*round];}
   function tint(x,z,y,extra=0){const distance=Math.hypot(x,z),variation=(noise(x*.05,z*.05,seed+2)-.5)*.12,c=land.clone().multiplyScalar(.93+variation+y*.0014);return c.lerp(haze,clamp(.32+smooth((distance-60)/490)*.60+extra));}
   function addMesh(name,geometry,material){geometries.add(geometry);const mesh=new T.Mesh(geometry,material);mesh.name=name;mesh.castShadow=false;mesh.receiveShadow=false;mesh.userData.environmentHorizon=true;group.add(mesh);return mesh;}
   function ring(from,to,material,near=false){
@@ -42,8 +42,12 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     if(near){
       // Preserve the fine ground's edge normals too: a coarser outer ring must
       // not create a lighting seam where its first vertices meet that ground.
-      const source=ground.geometry.attributes.normal,target=geometry.attributes.normal;
-      for(let i=0;i<size;i++){const edge=Math.floor(i/segments),j=i%segments,k=edge===0?j:edge===1?j*(segments+1)+segments:edge===2?segments*(segments+1)+segments-j:(segments-j)*(segments+1);target.setXYZ(i,source.getX(k),source.getY(k),source.getZ(k));}
+      // Copy all boundary shader inputs. Expanded real-time ground may have a
+      // road verge or a plateau near this join; recomputing only a generic soil
+      // mix created an obvious square material edge around those maps.
+      for(let i=0;i<size;i++){const edge=Math.floor(i/segments),j=i%segments,k=edge===0?j:edge===1?j*(segments+1)+segments:edge===2?segments*(segments+1)+segments-j:(segments-j)*(segments+1);
+        for(const name of ['position','normal','color','uv','soilMix']){const source=ground.geometry.attributes[name],target=geometry.attributes[name];
+          if(source&&target)for(let c=0;c<source.itemSize;c++)target.array[i*target.itemSize+c]=source.array[k*source.itemSize+c];}}
     }
     geometry.computeBoundingSphere();
     const mesh=addMesh(near?'continuous outer ground bridge':'360 degree regional ridges',geometry,material);mesh.userData.innerRadius=rows[from];mesh.userData.outerRadius=rows[to];return mesh;
@@ -142,7 +146,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   }
   if(silhouettePositions.length){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silhouettePositions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(silhouetteColors,3));geometry.computeVertexNormals();addMesh('regional distant silhouettes',geometry,distant);}
   let triangles=0;group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;});
-  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3});
+  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3});
   group.userData.horizonStats=stats;
   const cameraRay=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000),cameraHits=[],cameraSurfaces=[bridge,ridges];
   let lastCameraX=NaN,lastCameraZ=NaN,lastCameraHeight=0;
@@ -150,7 +154,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     // Camera clearance samples rendered triangles, not the higher-resolution
     // procedural function: the coarse ridges interpolate a different surface.
     // This never participates in gameplay elevation or board picking.
-    if(disposed||Math.max(Math.abs(x),Math.abs(z))<=40||Math.hypot(x,z)>550)return height(x,z);
+    if(disposed||Math.max(Math.abs(x),Math.abs(z))<=innerRadius||Math.hypot(x,z)>550)return height(x,z);
     if(x===lastCameraX&&z===lastCameraZ)return lastCameraHeight;
     for(const mesh of cameraSurfaces)mesh.updateWorldMatrix(true,false);
     cameraRay.ray.origin.set(x,1000,z);cameraHits.length=0;
