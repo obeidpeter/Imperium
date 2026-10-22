@@ -494,7 +494,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     switch(action){
       case 'pause':togglePause();return true;
       case 'slow_time':if(kind==='camp')return true;setSlow(clock,!clock.slow);if(clock.slow)seen.slowed=true;say(clock.slow?'Slow time: half speed.':'Normal time.');return true;
-      case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
+      case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){pausedFor=null;stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
       case 'combat_toggle':if(h)issue({actorId:h.id,kind:'setDrawn',payload:{drawn:!pendingDrawn()}});return true;
       case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?'Walking everywhere (W).':'Running again on far clicks.');}return true;
       case 'target_next_enemy':case 'target_next_friend':{
@@ -533,6 +533,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function togglePause(){
     // P does nothing until the advance is sounded.
     if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return;}
+    // The player's choice stands: a key can arrive before a closed panel's close event is handled, and that
+    // event must not then resume a pause the player chose (nor cut short a round played with N).
+    pausedFor=null;
     const pause=!clock.paused||stepping(clock);setPaused(clock,pause);say(pause?'Paused.':'Resumed.',{announce:true});showPlanned();
     if(pause){seen.paused=true;saveResume('pause');}else resumePending=true;
   }

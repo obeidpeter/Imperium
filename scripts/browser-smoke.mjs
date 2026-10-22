@@ -584,6 +584,15 @@ async function settingsAndHelp(){
   await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});await page.keyboard.press('KeyK');
   await page.waitForFunction(()=>window.__realtime.paused()===true,null,{timeout:10000}).catch(()=>assert.fail('K pauses'));
   await page.keyboard.press('KeyP');assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'P no longer pauses');
+  // The Menu pauses while it is open. Its close event can come hundreds of milliseconds after it closes, and keys
+  // pressed before then are the player's: resumed and paused again, the world stays paused when the event comes.
+  await page.keyboard.press('KeyK');await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});
+  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  await page.evaluate(()=>new Promise(done=>{
+    const modal=document.querySelector('#modal'),c=document.querySelector('#rt-board'),k=()=>c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyK',key:'k',bubbles:true,cancelable:true}));
+    // The page's own close handler runs first; then this one.
+    modal.addEventListener('close',()=>setTimeout(done),{once:true});modal.close();k();k();}));
+  assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'A pause chosen as the Menu closes stands');await page.locator('#rt-board').focus();
   await page.keyboard.press('Shift+Slash');await page.waitForSelector('#modal[open] .guide-help',{timeout:30000}).catch(()=>assert.fail('? opens the guide'));
   await page.click('#modal [data-cmd="help-section"][data-id="controls"]');await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
   assert.match(await text(page,'#modal .help-keys.changed[data-actions="pause"]'),/K or Pause \(by default P or Pause\)/);
@@ -591,7 +600,7 @@ async function settingsAndHelp(){
   await page.click('#modal [data-cmd="reset-keys"]');
   assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'P or Pause','Restore default keys');
   await page.context().close();
-  console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; Restore default keys');
+  console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; a pause chosen as the Menu closes stands; Restore default keys');
 }
 
 // Migration from 0.38 in the page (2D): a Chapter V camp saved before 0.40 (no soldier record) asks once for the
