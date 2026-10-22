@@ -28,8 +28,8 @@ import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
 export const FINE=2.5;
 // Public Confidence lost for each neutral the party struck first (guide "Fighting").
 export const PROVOKED_COST=3;
-// Modes the real-time mission runs in Phase 1 (the others arrive with their phase).
-export const REALTIME_MODES=Object.freeze(['training','clear','extract','hold','recover','capture']);
+// Modes the real-time mission runs: every 0.38 battle's, and the finale's standoffs (mission.js).
+export const REALTIME_MODES=Object.freeze(['training','clear','extract','hold','recover','capture','supply','defection','settlement','surrender']);
 const LINEAR=new Set(['road','wall','river','ford']);
 const LINKS={road:['road','ford','stone'],wall:['wall'],river:['river','ford'],ford:['river','ford','road']};
 const EDGE_LINKS=new Set(['road','river','ford']);
@@ -208,7 +208,9 @@ function memberOf(state,role,faction){
 function squadSpec(state,e,unit,k,{party=[],index=0}={}){
   const enemy=unit.side==='enemy',faction=enemy?factionFor(state.chapter):'roman',role=unit.role==='heavy'?'heavy':unit.role;
   const led=!enemy&&unit.veteranId&&!party.includes(unit.veteranId),veteran=led?state.company?.find(v=>v.id===unit.veteranId):null;
-  const name=enemy?`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${role==='archer'?'archers':'squad'}`
+  // The finale's rival bands keep their 0.38 names: the claimant's own and the civil-war cohorts.
+  const finale=state.chapter===12&&['confrontation','standoff'].includes(e.type);
+  const name=enemy?finale&&unit.name?unit.name:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${role==='archer'?'archers':'squad'}`
     :`${ORDINALS[index]??'Reserve'} ${role==='archer'?'archers':'squad'}`;
   return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
     damage:unit.damage??null,morale:unit.morale??80,cohesion:unit.cohesion??80,braced:!!unit.braced,formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,
@@ -268,7 +270,9 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     else if(u.side==='neutral'&&u.role==='escort'){
       const wounded=!u.escorted;
       actors.push({id:u.id,name:u.name,side:'neutral',role:'escort',attributes:{...ESCORTS.attributes},kit:[...ESCORTS.kit],at:pos(u,k),face:[1,0],unitId:u.id,
-        veteranId:u.veteranId??null,escort:{escorted:!!u.escorted,wounded},hp:wounded?8:undefined,pace:MOVEMENT.walk,drawn:false});
+        veteranId:u.veteranId??null,escort:{escorted:!!u.escorted,wounded},hp:wounded?8:undefined,pace:MOVEMENT.walk,drawn:false,
+        // The settlement's envoy goes to the claimant under parley.
+        ...(e.mission?.mode==='settlement'?{parley:true}:{})});
     }
   }
   const heroAt=tileCentre(hero,k);
@@ -285,6 +289,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.turnLimit,
     waves:(e.mission.waves??[]).map(wave),escorts:[...(e.mission.escortIds??[])],
     required:(e.requiredAbilities??[]).filter(a=>!CAMP_CAPABILITIES.has(a)),defence:e.defence??100,pressure:difficultyRule(e).pressure,objectId:null,
+    // The finale's standoffs: the rivals to win over, the pledges and the meeting so far.
+    rivals:e.units.filter(u=>u.side==='enemy'&&u.hp>0).length,defections:e.defections??0,meeting:e.mission.envoyProgress??0,
     waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
   const objects=[],field=fieldFor(e,layout,fine);if(field)objects.push(...field.objects);
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
@@ -344,6 +350,15 @@ export function applyRealtimeOutcome(state,world){
     Object.assign(unit,{hp:fielded(world,squad)?clamp(Math.round(squad.strength),1,unit.maxHp):0,x:t.x,y:t.y,morale:clamp(Math.round(squad.morale),0,100),
       cohesion:clamp(Math.round(squad.cohesion),0,100),suppression:clamp(Math.floor(squad.suppression),0,3)});
   }
+  // The finale's standoffs, as 0.38 records them: a pledged band is the soldier's (or gone from the field), and the meeting's rounds.
+  if(m.mode==='defection'){
+    e.defections=m.defections??0;
+    for(const unit of e.units.filter(u=>u.side==='enemy')){
+      if(world.squads?.find(q=>q.unitId===unit.id)?.side==='ally')Object.assign(unit,{side:'ally',name:'Pledged cohort'});
+      else if(m.departed?.includes(unit.id))Object.assign(unit,{hp:0,defected:true});
+    }
+  }
+  if(m.mode==='settlement')e.mission.envoyProgress=Math.min(30,m.meeting??0);
   // The party marches as the company's deployed veterans: a veteran's own unit, if he has one, records his fate.
   const fate=(a,maxHp)=>a.alive&&!a.down?Math.max(1,Math.round(a.hp/a.maxHp*maxHp)):0;
   const partyUnits=world.party.flatMap((id,i)=>{

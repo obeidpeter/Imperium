@@ -18,8 +18,9 @@ test('a chapter plays in real time only when the model is real time, it is liste
   // The kill criteria's fallback: "0.40 Prologue", chapters I–III in real time and the rest on turns.
   assert.equal(controlsFor({controlsModel:'realtime',realtimeChapters:[1,2,3]},2,ALL_CHAPTERS),'realtime');
   assert.equal(controlsFor({controlsModel:'realtime',realtimeChapters:[1,2,3]},7,ALL_CHAPTERS),'turns');
-  // Phases 1 and 2 convert Chapters I–IX; X–XII still play on turns.
-  for(const chapter of ALL_CHAPTERS)assert.equal(controlsFor({controlsModel:'realtime',realtimeChapters:ALL_CHAPTERS},chapter),chapter<=9?'realtime':'turns');
+  // Phases 1, 2 and 4 convert every chapter; one taken out of the list keeps its turns.
+  for(const chapter of ALL_CHAPTERS)assert.equal(controlsFor({controlsModel:'realtime',realtimeChapters:ALL_CHAPTERS},chapter),'realtime');
+  assert.equal(controlsFor({controlsModel:'realtime',realtimeChapters:ALL_CHAPTERS.filter(c=>c!==12)},12),'turns');
   assert.equal(skirmishControls({controlsModel:'realtime'}),'realtime');assert.equal(skirmishControls({}),'turns');
 });
 

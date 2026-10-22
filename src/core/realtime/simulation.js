@@ -257,6 +257,9 @@ function logLine(world,e){
     case 'reinforcements':return 'Enemy reinforcements arrive.';
     case 'secured':return 'A position is secured.';
     case 'pressure':return `Enemies hold the objective: the line weakens to ${e.defence}.`;
+    case 'oath-heard':return `${e.name} hears the soldier’s oath: its morale falls to ${e.morale}.`;
+    case 'pledge':return `${e.name} pledges itself to the soldier${e.joined?' and joins his side':' and leaves the field'}.`;
+    case 'meeting':return `The meeting holds: ${e.rounds} of 2 rounds.`;
     case 'used-object':return `${by} finishes: ${nameOf(world,e.objectId)}.`;
     case 'work-stopped':return `${by}'s work is interrupted.`;
     case 'capability-needed':return `The objective is held, but you must still ${capabilityTasks(e.missing)}.`;

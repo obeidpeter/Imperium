@@ -231,9 +231,9 @@ test('the chamber world: everyone where the Contest puts him; a walk, the rivals
 });
 
 test('the chamber is offered where it exists, and a chapter taken out of real time keeps the 0.38 Contest board',()=>{
-  assert.deepEqual([...CHAMBER_READY_CHAPTERS],[7,8,10,11]);
-  for(const c of [7,8,10,11])assert.equal(chamberFor({controlsModel:'realtime'},c),true);
-  for(const c of [1,9,12])assert.equal(chamberFor({controlsModel:'realtime'},c),false);
+  assert.deepEqual([...CHAMBER_READY_CHAPTERS],[7,8,10,11,12]);
+  for(const c of [7,8,10,11,12])assert.equal(chamberFor({controlsModel:'realtime'},c),true);
+  for(const c of [1,9])assert.equal(chamberFor({controlsModel:'realtime'},c),false);
   assert.equal(chamberFor({controlsModel:'turns'},7),false);assert.equal(chamberFor({controlsModel:'realtime',realtimeChapters:[8]},7),false,'kill criterion K3');
 });
 

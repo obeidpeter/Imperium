@@ -45,7 +45,8 @@ export function validateSpecial(world,actor,abilityId,other){
 export function useSpecial(world,actor,abilityId,target){
   const ability=ABILITIES[abilityId];actor.order=null;actor.path=[];actor.gait=null;
   if(abilityId==='rally'){
-    actor.stamina-=ability.cost.stamina;actor.cooldowns={...actor.cooldowns,rally:world.tick+Math.round(ability.recovery_s*TIME.ticksPerSecond)};
+    const oath=world.mission?.mode==='defection'&&actor.id===world.heroId,recovery=oath?RALLY.oathRecovery_s:ability.recovery_s;
+    actor.stamina-=ability.cost.stamina;actor.cooldowns={...actor.cooldowns,rally:world.tick+Math.round(recovery*TIME.ticksPerSecond)};
     const radius=rallyRadius(actor),rallied=[];
     for(const squad of squadsOf(world)){
       if(!fielded(world,squad)||!alliedSides(squad.side,actor.side))continue;const c=squadCentre(world,squad);if(span(c.x-actor.x,c.z-actor.z)>radius)continue;

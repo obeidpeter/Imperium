@@ -442,12 +442,12 @@ async function chamberCouncil(){
   await page.context().close();
   console.log('ok - chamber: Chapter VII’s council in 3D: a seat opens the conversation, asking is free, Walk beside him and Persuade move a member, Y and Space play and skip the rivals’ hour, U names their next walks, a click on a figure talks to him, and the vote ends in the division and its result');
 }
-// Gate 3: every chamber Contest (VII, VIII, X and both of XI) played through in full in the page, in
+// Gates 3 and 4: every chamber Contest (VII, VIII, X, both of XI and XII) played through in full in the page, in
 // the 2D view: a winning 0.38 log recorded from the same camp, replayed through the Command list's
 // own path (walks, speeches and yields as a player gives them), to the vote and Record the result.
 async function chamberContests(){
   const played=[];
-  for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection']){
+  for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection','ch12-legitimacy']){
     const code=battleCampCode(id),probe=Game.decodeSave(code);assert.ok(Game.startEncounter(probe).ok);
     const trace=[],summary=playEncounter(probe,{approach:'record',trace});assert.equal(summary.status,'won',`${id}: the recorded log wins`);
     const page=await open();await restoreChamber(page,code,'2d');
@@ -498,11 +498,47 @@ async function chamberHearing(){
   console.log('ok - chamber hearing: the Motion panel invokes a precedent, the pack’s documents show each member’s exact change, and a document dragged onto the tribunal is presented');
 }
 
+// Phase 4: the finale in the page (2D). The Chapter XII camp's defection route is chosen, the company
+// deploys and the advance is sounded; the soldier walks to the nearest rival band (legal commands through
+// the field's own path) and swears the oath with Rally: the band hears it, and the progress line counts pledges.
+async function realtimeFinale(){
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');await page.click('[data-cmd="route"][data-id="defection"]');
+  await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen');await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await page.waitForSelector('[data-role="advanceButton"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter XII opens in deployment'));
+  await page.click('[data-role="advanceButton"]');await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]');await page.click('[data-role="advanceButton"]');
+  await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
+  assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
+  assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
+  // Walk to the nearest rival band, then swear the oath once it is within three places (23 m).
+  const heard=await page.evaluate(async()=>{
+    const w=()=>window.__realtime.world(),hero=()=>w().actors.find(a=>a.id==='hero'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+    const near=()=>{const h=hero();return w().actors.filter(a=>a.side==='enemy'&&a.alive).map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((x,y)=>x.d-y.d)[0];};
+    for(let i=0;i<600;i++){
+      if(window.__realtime.paused())document.querySelector('[data-role="pauseButton"]')?.click();
+      const n=near();if(!n)return 'no rival';
+      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok)break;}
+      else if(!hero().goal||Math.hypot(hero().goal.x-n.a.x,hero().goal.z-n.a.z)>4)window.__realtime.issue({actorId:'hero',kind:'move',payload:{x:n.a.x,z:n.a.z}});
+      await wait(100);
+    }
+    for(let i=0;i<300;i++){if(w().log.some(l=>/hears the soldier’s oath/.test(l.text)))return 'heard';await wait(100);}
+    return 'not heard';
+  });
+  assert.equal(heard,'heard','A rival band hears the oath');
+  await page.waitForFunction(()=>/Pledges \d of 3/.test(document.querySelector('[data-role="progress"]')?.textContent??''));
+  await page.context().close();
+  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names, and the soldier’s oath (Rally within 23 m) is heard');
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

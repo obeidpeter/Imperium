@@ -2,7 +2,8 @@ import {ESCORT_RULES,TIME,capabilityTasks} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {helpless,setRoute} from './motion.js';
 import {spawnActor} from './actors.js';
-import {spawnSquad} from './squads.js';
+import {fielded,membersOf,spawnSquad} from './squads.js';
+import {defaultStanding} from './squad-ai.js';
 import {span} from './navigation.js';
 
 // A campaign encounter's objective in real time (§3.2 "Converting 0.38
@@ -106,6 +107,41 @@ function advancePhase(world){
   emit(world,{kind:'phase',index:m.phase,label:m.label});return true;
 }
 
+// --- The finale's standoffs (0.38 configureFinale) -------------------------------
+// Defection: the soldier's Rally within three tiles of a rival band costs it 40
+// morale (the lowest-morale band in reach); at 25 or below it pledges itself,
+// joining the soldier's side while that side has fewer than eight units (the
+// soldier and his squads, as 0.38 counts its units), else leaving the field.
+// Three pledges win, as does a field without rivals.
+// Settlement: the Senate's envoy walks with the soldier to the claimant and no
+// one strikes him; each round's end with the envoy beside the claimant, the
+// soldier within two tiles of him and the parley reassured by a Rally counts
+// one round of the meeting. Two rounds win. The claimant's infantry guard the
+// meeting's perimeter (squad-ai.js). Surrender: both gate approaches secured,
+// then the soldier at the claimant's standard.
+const PLEDGE=Object.freeze({hear:3,loss:40,at:25,joinUnder:8,morale:65});
+function hearOath(world,rallier){
+  const m=world.mission,reach=PLEDGE.hear*m.radius;
+  const band=(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q)&&membersOf(world,q).some(a=>distanceBetween(a,rallier)<=reach))
+    .sort((a,b)=>a.morale-b.morale||(a.id<b.id?-1:1))[0];
+  if(!band)return;band.morale=Math.max(0,band.morale-PLEDGE.loss);emit(world,{kind:'oath-heard',squadId:band.id,name:band.name,morale:band.morale});
+  if(band.morale<=PLEDGE.at)pledge(world,band);
+}
+function pledge(world,band){
+  const m=world.mission,name=band.name,ours=1+(world.squads??[]).filter(q=>q.side!=='enemy'&&fielded(world,q)).length;
+  m.defections=(m.defections??0)+1;
+  if(ours<PLEDGE.joinUnder){
+    Object.assign(band,{side:'ally',name:'Pledged cohort',morale:PLEDGE.morale,broken:false,order:null,pending:null,anchor:null,contact:null,standing:defaultStanding('clear',band.role)});
+    for(const id of band.members){const a=actorById(world,id);if(a){a.side='ally';a.lock=null;a.order=null;}}
+    emit(world,{kind:'pledge',squadId:band.id,name,joined:true});return;
+  }
+  // Leaving the field: the band and its men are gone from the world (no one fell).
+  (m.departed??=[]).push(band.unitId);const gone=new Set(band.members);world.actors=world.actors.filter(a=>!gone.has(a.id));world.squads=world.squads.filter(q=>q!==band);
+  for(const a of world.actors){if(gone.has(a.lock))a.lock=null;if(gone.has(a.order?.targetId))a.order=null;}
+  emit(world,{kind:'pledge',squadId:band.id,name,joined:false});
+}
+const nearGoal=(world,o,tiles=1)=>!!o&&span(o.x-world.mission.goal.x,o.z-world.mission.goal.z)<=world.mission.radius*tiles;
+
 export function objectiveMet(world){
   const m=world.mission;
   if(m.gather)return gathered(world);
@@ -119,6 +155,9 @@ export function objectiveMet(world){
     }
     case 'hold':{const c=control(world,m.goal,m.radius);return m.heldTicks>=m.holdRequired*R&&c.foes===0;}
     case 'capture':case 'supply':return m.points.every(p=>p.secured)&&m.defence>0;
+    case 'defection':return (m.defections??0)>=Math.min(3,m.rivals??3)||!world.actors.some(o=>o.side==='enemy'&&o.alive);
+    case 'settlement':return (m.meeting??0)>=2;
+    case 'surrender':return m.points.every(p=>p.secured)&&nearGoal(world,actorById(world,world.heroId));
     default:return !world.actors.some(o=>o.side==='enemy'&&o.alive);
   }
 }
@@ -126,12 +165,15 @@ export function objectiveMet(world){
 export function missionTick(world){
   const m=world.mission;if(!m||world.status!=='active')return;
   if(world.tick%TIME.aiInterval===0)moveEscorts(world);
+  if(m.mode==='defection')for(const e of world.events)if(e.kind==='rally'&&e.actorId===world.heroId)hearOath(world,actorById(world,world.heroId));
   const goal=control(world,m.goal,m.radius);
   if(m.holdRequired>0&&goal.friends>0&&goal.foes===0)m.heldTicks++;
   if(goal.foes>0&&goal.friends===0)m.occupiedTicks++;
   for(const p of m.points)if(!p.secured){const c=control(world,p,m.radius);if(c.friends>0&&c.foes===0){p.secured=true;emit(world,{kind:'secured',x:p.x,z:p.z});}}
   if(roundEnd(world)){
     const round=(world.tick+1)/R;
+    if(m.mode==='settlement'){const envoy=escortsOf(world).find(e=>e.parley);
+      if(envoy&&standing(envoy)&&nearGoal(world,envoy)&&nearGoal(world,actorById(world,world.heroId),2)&&world.used.includes('rally')){m.meeting=(m.meeting??0)+1;emit(world,{kind:'meeting',rounds:m.meeting});}}
     m.waves.forEach((w,i)=>{if(!w.arrived&&round>=w.round)arrive(world,w,i);});
     if(['hold','supply'].includes(m.mode)&&m.pressure&&m.occupiedTicks>=R/2){m.defence-=m.pressure;emit(world,{kind:'pressure',amount:m.pressure,defence:m.defence});}
     m.occupiedTicks=0;
@@ -163,8 +205,11 @@ export function missionProgress(world){
     case 'extract':{const e=escortsOf(world),there=e.filter(x=>atGoal(world,x)).length;
       return `Columns at the rally point ${there} of ${e.length}${m.holdRequired?`; held ${held} of ${m.holdRequired} rounds`:''}. ${deadline}.`;}
     case 'hold':return `Ground held ${held} of ${m.holdRequired} rounds; line ${m.defence}. ${deadline}.`;
-    case 'capture':return `${m.gather?'Gather at the marker':`Positions secured ${m.points.filter(p=>p.secured).length} of ${m.points.length}`}`+
-      `${m.commander?'; the soldier must stand at the marker':''}. ${deadline}.`;
+    case 'capture':case 'supply':return `${m.gather?'Gather at the marker':`Positions secured ${m.points.filter(p=>p.secured).length} of ${m.points.length}`}`+
+      `${m.commander?'; the soldier must stand at the marker':''}${m.mode==='supply'?`; stores ${m.defence}`:''}. ${deadline}.`;
+    case 'defection':return `Pledges ${m.defections??0} of ${Math.min(3,m.rivals??3)}: Rally within ${Math.round(PLEDGE.hear*m.radius)} m of a rival band. ${deadline}.`;
+    case 'settlement':return `The meeting: ${m.meeting??0} of 2 rounds, the envoy beside the claimant, the soldier near and the parley reassured by a Rally. ${deadline}.`;
+    case 'surrender':return `Gate approaches secured ${m.points.filter(p=>p.secured).length} of ${m.points.length}${m.points.every(p=>p.secured)?'; now the soldier to the claimant’s standard':''}. ${deadline}.`;
     default:return `${deadline}; ${left} left.`;
   }
 }

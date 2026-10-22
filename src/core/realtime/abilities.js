@@ -14,7 +14,8 @@ export function actorById(world,id){
   if(!index||index.size!==list.length||index.get(list[list.length-1]?.id)!==list[list.length-1]){index=new Map(list.map(a=>[a.id,a]));byId.set(list,index);}
   return index.get(id)??null;
 }
-export const hostile=(a,b)=>!!a&&!!b&&a.side!==b.side&&(a.side==='enemy'||b.side==='enemy');
+// A parley's envoy (the finale's settlement) is no one's enemy.
+export const hostile=(a,b)=>!!a&&!!b&&a.side!==b.side&&(a.side==='enemy'||b.side==='enemy')&&!a.parley&&!b.parley;
 export const staggered=(world,a)=>a.staggerUntil>world.tick;
 export const busy=(world,a)=>!!a.action||a.readyAt>world.tick;
 export const distanceBetween=(a,b)=>span(b.x-a.x,b.z-a.z);

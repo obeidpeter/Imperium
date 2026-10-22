@@ -22,6 +22,8 @@ import {ESCORT_RULES} from '../src/data/realtime-rules.js';
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
 const nearest=(list,p)=>list.reduce((b,o)=>!b||distanceBetween(o,p)<distanceBetween(b,p)?o:b,null);
 const issue=(world,kind,payload={})=>queueCommand(world,{actorId:world.controlled,kind,payload}).ok;
+const nearestBand=(world,hero)=>(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q))
+  .map(q=>({q,d:distanceBetween(squadCentre(world,q),hero)})).sort((a,b)=>a.d-b.d)[0]?.q??null;
 
 // One decision for the soldier the bot plays.
 export function heroDecision(world,memo={}){
@@ -43,6 +45,8 @@ export function heroDecision(world,memo={}){
     return;
   }
   if(hero.hp<hero.maxHp*.45&&(hero.bandages??0)>0&&!attacker.length&&!hero.carrying){issue(world,'ability',{abilityId:'bind_wounds'});return;}
+  // The finale's defection: within three tiles of a rival band, the oath (Rally) comes before any fight.
+  if(m?.mode==='defection'){const band=nearestBand(world,hero);if(band&&membersOf(world,band).some(a=>distanceBetween(a,hero)<=3*m.radius*.85)&&issue(world,'ability',{abilityId:'rally'}))return;}
   if(attacker.length&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(nearest(attacker,hero));return;}
   if(!m){fight(nearest(enemies,hero));return;}
   // A protected man who cannot yet walk: bind his wounds, or carry him.
@@ -73,7 +77,22 @@ export function heroDecision(world,memo={}){
       if(!chest.done){if(distanceBetween(hero,chest)>1.6){go(chest);return;}issue(world,'interact',{objectId:chest.id});return;}
       fight(nearest(enemies,hero));return;
     }
-    case 'hold':case 'capture':{
+    case 'defection':{
+      // Walk to the nearest rival band; the oath is sworn above once in reach.
+      const band=nearestBand(world,hero);if(!band){go(m.goal);return;}const c=squadCentre(world,band);
+      if(!membersOf(world,band).some(a=>distanceBetween(a,hero)<=3*m.radius*.85)){go(c);return;}
+      const close=nearest(enemies.filter(o=>distanceBetween(o,hero)<3),hero);if(close){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(close);}
+      return;
+    }
+    case 'settlement':{
+      // Reassure the parley (a Rally, anywhere), then lead the envoy to the claimant and stand within two tiles of him.
+      if(!world.used.includes('rally')&&issue(world,'ability',{abilityId:'rally'}))return;
+      const envoy=columns.find(c=>c.parley);
+      if(envoy&&distanceBetween(hero,envoy)>m.followRange*.5){go({x:envoy.x,z:envoy.z});return;}
+      if(span(hero.x-m.goal.x,hero.z-m.goal.z)>m.radius*1.5)go(m.goal);
+      return;
+    }
+    case 'hold':case 'capture':case 'supply':case 'surrender':{
       const target=m.points.find(p=>!p.secured)??m.goal;
       const threat=nearest(enemies.filter(o=>span(o.x-target.x,o.z-target.z)<=m.radius*1.6||distanceBetween(o,hero)<6),hero);
       if(threat&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(threat);return;}
@@ -161,10 +180,12 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
     if(state.phase==='camp'){
       if(!state.decisions[chapter.decision.id]){const r=G.choose(state,choices[chapter.decision.id]??chapter.decision.options[0].id);if(!r.ok)throw new Error(r.message);}
       if(state.chapter===1&&state.encounterIndex>0&&!state.oath)G.swearOath(state);
-      // The camp's choices the 0.38 autoplay makes too: Chapter VII's drill, VIII's safe passage, IX's flank march.
+      // The camp's choices the 0.38 autoplay makes too: Chapter VII's drill, VIII's safe passage, IX's flank march,
+      // and X's even allocation of the convoys and the land judgment its decision names.
       if(state.chapter===7&&!state.preparation)G.prepare(state,'drill');
       if(state.chapter===8&&!state.negotiation)G.negotiate(state,'safe-passage');
       if(state.chapter===9&&!state.stratagem)G.selectStratagem(state,'flank');
+      if(state.chapter===10){if(!state.allocation)G.allocate(state,{river:2,farms:2,town:2});if(!state.judgment)G.judge(state,state.decisions.ch10);}
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){

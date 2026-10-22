@@ -107,7 +107,9 @@ export const SPECIALISTS=freeze({
   volley:freeze({id:'volley',path:'ranged',name:'Volley',range:60,perBattle:2,damage:freeze({pierce:freeze([4,9])}),
     summary:'An aimed volley at a visible enemy within 60 m with a clear line; two a battle.'})});
 // Rally (the soldier's technique from Chapter VI): radius 20 m + (Authority − 10) / 2, and 5 more with Steady voice.
-export const RALLY=freeze({radius:20,perAuthority:.5,steadyVoice:5,morale:20});
+// In the finale's defection standoff the soldier's Rally is his oath to the rival bands: it can be
+// sworn once a round, as 0.38 allowed one a turn (mission.js), instead of its usual recovery.
+export const RALLY=freeze({radius:20,perAuthority:.5,steadyVoice:5,morale:20,oathRecovery_s:10});
 
 // Our squads' men by role, before the chapter's tier (realtime-forces.js TIERS).
 export const ROMAN_SQUADS=freeze({

@@ -122,6 +122,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')say(`${q.name} stands again.`,{announce:true});}
       if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true});}
       if(e.kind==='rally')say(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
+      // The finale's standoffs (mission.js): an oath heard, a band pledged, the meeting's rounds.
+      if(e.kind==='oath-heard')say(`${e.name} hears your oath: its morale falls to ${e.morale}.`,{announce:true});
+      if(e.kind==='pledge')say(`${e.name} pledges itself to you${e.joined?' and joins your side':' and leaves the field'}.`,{announce:true});
+      if(e.kind==='meeting')say(`The meeting holds: ${e.rounds} of 2 rounds.`,{announce:true});
       // The field objects (field-objects.js): what changed, as the log says it.
       if(e.kind==='field'&&e.what!=='brazier-burns'){const line=world.log.findLast?.(l=>l.tick===e.tick&&/gate|bridge|barricade|brazier|pitch|opportunit|secures/i.test(l.text));
         if(line)say(line.text,{announce:true,warning:e.what==='opportunities-closed'});}

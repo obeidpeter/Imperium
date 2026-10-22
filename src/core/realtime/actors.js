@@ -28,6 +28,8 @@ export function makeActor(spec){
       anchor:spec.anchor?{x:spec.anchor[0],z:spec.anchor[1]}:spec.guard||spec.practice?{x:spec.at[0],z:spec.at[1]}:null,focus:null,look:null,alertAt:0}:null};
   // A man of a squad (squads.js): his squad drives him, and his place in its formation.
   if(spec.squadId){actor.squadId=spec.squadId;actor.slot=spec.slot??0;}
+  // Under parley (the finale's settlement envoy): no one's enemy (abilities.js hostile).
+  if(spec.parley)actor.parley=true;
   // A veteran specialist (from Chapter IV): his specialism and, for a ranged specialist, his volleys this battle.
   if(spec.specialist){actor.specialist=spec.specialist;if(spec.volleys)actor.volleys=spec.volleys;}
   if(actor.ai&&spec.alert)actor.ai.notice=Object.fromEntries((spec.aware??[]).map(id=>[id,100]));
