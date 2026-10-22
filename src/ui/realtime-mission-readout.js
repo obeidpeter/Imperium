@@ -40,7 +40,7 @@ function rescueNext(world){
   if(wounded){
     const working=world.actors.find(a=>a.action?.what==='bind_wounds'&&a.action.targetId===wounded.id);
     if(working)return `Cover ${working.name} while he binds ${wounded.name}’s wounds (${seconds(working.action.end-world.tick)}s). A hit interrupts treatment.`;
-    return `Reach ${wounded.name}. Clear his approach, then use Bind wounds; or sheath your weapon and Carry him.`;
+    return `Reach ${wounded.name}. Clear his approach, then use Bind wounds; or sheathe your weapon and Carry him.`;
   }
   const carried=party.find(a=>a.carriedBy);
   if(carried)return `Carry ${carried.name} to the marker. You can only walk and cannot block; a clear route matters more than pursuit.`;
@@ -158,7 +158,7 @@ export function missionDefeatCause(world){
 export function missionDefeatHelp(world,keymap=DEFAULT_KEYMAP){
   const m=world.mission,hero=world.actors.find(a=>a.id===world.heroId),pause=firstKeyLabel('pause',keymap);
   if(m?.mode==='settlement')return `Pause (${pause}) and follow the envoy to the claimant’s marker. Keep your soldier within ${Math.round(m.radius*2)} m, use Rally, and sustain the meeting for two round endings. The envoy is protected by parley; he needs your presence and reassurance, not a rescue treatment.`;
-  if(m?.escorts?.length)return `Retry restores the rescue checkpoint. Pause (${pause}) to identify the casualty, the nearest raider and the rally marker. Cover the approach before Bind wounds (3s, interrupted by a hit), or sheath your weapon and Carry. Healing does not make him safe: keep a protector within ${ESCORT_RULES.cover} m of a threatened survivor, then escort every survivor and your soldier into the marker. No permanent companion fate is changed by this failed attempt.`;
+  if(m?.escorts?.length)return `Retry restores the rescue checkpoint. Pause (${pause}) to identify the casualty, the nearest raider and the rally marker. Cover the approach before Bind wounds (3s, interrupted by a hit), or sheathe your weapon and Carry. Healing does not make him safe: keep a protector within ${ESCORT_RULES.cover} m of a threatened survivor, then escort every survivor and your soldier into the marker. No permanent companion fate is changed by this failed attempt.`;
   if(m?.defence<=0)return `Pause (${pause}) and put a friendly screen on the marked ground. Chasing enemies away leaves the stores or line exposed; hold the position while another group handles the flank.`;
   if(m&&world.tick>=m.deadline*TIME.roundTicks)return `Pause (${pause}) at the start and follow the objective strip. ${nextStep({...world,status:'active'})} Optional opportunities never replace the main objective.`;
   const log=(world.log??[]).map(l=>l.text).join('\n');
