@@ -7,6 +7,8 @@ The conversion to real time with pause, following the real-time build brief (sup
 ### Asset foundation
 
 - **3D players download no 2D art.** A chapter's offline pack leaves out the 2D view's unit atlases, action sheets and ground and prop atlases. Chapter I falls from 9.86 to 6.02 MB for 3D players. The 2D view and painted figures add those files to the pack when chosen, and a 3D player's chapter is never reported offline-ready for the 2D view without them. Offline without them, the 2D board draws its own units and props, as it always could. Sculpted 3D figures no longer decode that art, even ahead of the next chapter. The offline worker reports progress only for files it actually fetches, so a mostly cached pack no longer sends hundreds of reports.
+- **A world catalog** ([`world-catalog.js`](src/ui/world-catalog.js)) lists each generated prop, landmark, kit piece, texture set and panorama with the chapters that use it. A chapter's offline pack takes exactly its own world files, and the build checks every chapter's group against it; the five Chapter V props are its first entries.
+- **New download limits for the worlds to come:** Chapter I for the 3D view 12 MB (was 10 MB with the 2D art), any one chapter with its 2D art 14 MB (new), and the complete campaign 50 MB (was 24 MB). The 2 MB first load is unchanged. Today Chapter I takes 6.02 MB, the largest chapter with its 2D art 9.87 MB and the complete campaign 18.47 MB ([budgets](docs/asset-pipeline.md#budgets)).
 
 ### The landing page
 

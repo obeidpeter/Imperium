@@ -14,7 +14,7 @@ import {createModelLoader} from '../src/showcase/model-loader.js';
 
 const root=new URL('../',import.meta.url),file=path=>readFile(new URL(path,root));
 const manifest=JSON.parse(await file('docs/asset-manifest.json'));
-const generated=Object.entries(SCENERY_MODELS).flatMap(([chapter,set])=>set.models.map(m=>({chapter:Number(chapter),...m,path:sceneryModelUrl(chapter,m.id)})));
+const generated=Object.entries(SCENERY_MODELS).flatMap(([chapter,set])=>set.models.map(m=>({chapter:Number(chapter),...m,path:sceneryModelUrl(m.id)})));
 // Chapter V starts reached from New Game through public commands.
 let starts=null;
 function chapterFiveStarts(){
@@ -135,7 +135,7 @@ test('embedded textures load under the page Content Security Policy', async t =>
 });
 
 test('embedded images decode from the model bytes, off the main thread, and fall back to image elements', async () => {
-  const bytes=await file(sceneryModelUrl(5,'ch5-storage-jars')),buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
+  const bytes=await file(sceneryModelUrl('ch5-storage-jars')),buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
   const fetchBefore=globalThis.fetch,fetched=[];globalThis.fetch=async url=>{fetched.push(String(url));throw Error('no fetch');};
   try{
     // createImageBitmap receives the GLB's own image bytes, never a URL.

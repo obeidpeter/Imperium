@@ -53,7 +53,7 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
    - the processing settings, from the report;
    - the export: format, bytes, SHA-256 and triangles;
    - the licence under the owner's Tripo plan.
-7. **Integrate.** Put a prop in `assets/models/chapters/<NN>/` and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
+7. **Integrate.** Put a prop in `assets/models/chapters/<NN>/`, add it to the [world catalog](../src/ui/world-catalog.js) with its kind and the chapters that show it, and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
 
 ## The processing script
 
@@ -103,13 +103,16 @@ Limitations:
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 |
-| Shell plus Chapter I | 10,000,000 (8,000,000 until 0.37.0) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) |
-| Complete campaign | 24,000,000 | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation (unreleased) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,134 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 12,000,000 (8,000,000 until 0.37.0, then 10,000,000) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,017,652 |
+| Shell plus any one chapter, with its 2D art | 14,000,000 (new) | | | | | 9,865,356 (Chapter I, the largest) |
+| Complete campaign | 50,000,000 (24,000,000 until the asset foundation) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 18,467,799 |
 
-The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. Generated models therefore go in `assets/models/chapters/<NN>/`, which only chapter NN downloads (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js), since 0.36.0). In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+The asset foundation takes the 2D view's art (unit atlases, action sheets, ground and prop atlases) out of the 3D download: the 2D view and painted figures add it when chosen. It raises the Chapter I limit to 12 MB and the complete campaign to 50 MB for the world models to come, and caps any one chapter's first download, with its 2D art, at 14 MB. The first load grew by about 285 KB between 0.38.0 and this work, more than half of it the real-time modules the shell imports. The 2 MB first load, the external requirement, is unchanged.
 
 In 0.38.0 the first load grew by 12,019 bytes: the shell now carries every module the page imports before it runs (the board readout among them) and the performance check. Chapter I shrank by 159,076 bytes because no chapter downloads the pre-0.31 Roman unit atlas any more.
 
@@ -125,7 +128,7 @@ Proposed limits per asset:
 
 ## Generated scenery in the game
 
-- **Downloads.** Models in `assets/models/chapters/NN/` belong to chapter NN's offline group alone (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)), so Chapter I's budget is untouched. `scripts/verify-assets.mjs` checks that each such model is in exactly its own chapter's group.
+- **Downloads.** A world asset belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)), so the five Chapter V props leave Chapter I's budget untouched. [`world-catalog.test.mjs`](../tests/world-catalog.test.mjs) checks that every model in `assets/models/chapters/` is catalogued with provenance and that every placed model downloads with the chapter where it stands; `scripts/verify-assets.mjs` checks each built chapter group holds exactly its own world files.
 - **Loader.** [`scenery-models.js`](../src/showcase/scenery-models.js) holds the placements, in metres from the board centre. Since 0.38 each model is loaded once per session into a master that is never freed, as the character bodies are. The battle preloader loads a battle's masters before its stage is built; the stage places its own copies (sharing the master's geometry, materials and textures) as it builds the scene, so they compile and upload behind the "Preparing" veil. A master that is still loading joins when it arrives, compiled first.
   - It loads nothing at Performance quality.
   - It stands each model on the lowest ground sample under its footprint.

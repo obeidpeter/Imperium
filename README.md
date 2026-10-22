@@ -280,7 +280,7 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I above 10,000,000 (8,000,000 before 0.37), or the complete campaign above 24,000,000. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, per-chapter and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I for the 3D view above 12,000,000 (8,000,000 before 0.37, then 10,000,000), shell plus any one chapter with its 2D art above 14,000,000, or the complete campaign above 50,000,000 (24,000,000 before the asset foundation). All include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
 
 ## Replit static deployment
 

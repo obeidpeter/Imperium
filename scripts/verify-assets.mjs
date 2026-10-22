@@ -7,6 +7,7 @@ import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {chapterAudioAssets} from '../src/ui/art.js';
 import {chapterBodies} from '../src/ui/actor-body-catalog.js';
+import {chapterWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -23,10 +24,15 @@ const {CONFIG:builtConfig}=await import('../dist/src/config.js');
 assert.equal(builtConfig.saveKey,CONFIG.saveKey,'The built rename must keep the existing campaign store.');
 assert.equal(builtConfig.version,build.version);
 assert.ok(build.initialGzipBytes<=budget.initialGzipBytes&&build.chapterOneGzipBytes<=budget.chapterOneGzipBytes&&build.completeGzipBytes<=budget.completeGzipBytes);
+assert.equal(Object.keys(build.chapterDownloadGzipBytes).length,12);
+for(const [chapter,sizes]of Object.entries(build.chapterDownloadGzipBytes)){
+  assert.ok(sizes.view3D<=sizes.view2D&&sizes.view2D<=budget.chapterGroupGzipBytes,'Chapter '+chapter+' download '+JSON.stringify(sizes));
+  if(chapter==='1')assert.equal(sizes.view3D,build.chapterOneGzipBytes,'Chapter I as the budget counts it');
+}
 assert.equal(Object.keys(build.chapterAssets).length,12);
 for(const paths of Object.values(build.chapterAssets))for(const path of paths)assert.ok(build.initialAssets.includes(path)||build.deferredAssets.includes(path),path);
 for(const path of [...build.initialAssets,...build.deferredAssets].filter(path=>path.startsWith('./assets/')))assert.ok(manifest.assets.some(asset=>'./'+asset.path===path),'Missing provenance: '+path);
-console.log('PASS declared startup/chapter1/campaign budgets, chapter groups and bundled asset provenance');
+console.log('PASS declared startup/chapter1/per-chapter/campaign budgets, chapter groups and bundled asset provenance');
 const audioPaths=manifest.assets.filter(a=>a.path.startsWith('assets/audio/')).map(a=>'./'+a.path);
 assert.equal(audioPaths.length,14,'All original generated audio files have provenance');
 for(const path of audioPaths){assert.ok(build.deferredAssets.includes(path),'Audio stays out of installation: '+path);assert.ok(!build.initialAssets.includes(path));}
@@ -75,13 +81,17 @@ assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await re
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
 const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
 for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&build.deferredAssets.includes(path),'Complete deferred inventory retains female resources: '+path);
-// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone.
-const chapterModel=path=>/^\.\/assets\/models\/chapters\/(\d\d)\//.exec(path)?.[1];
+// A world asset belongs to the chapters the world catalog names.
+const world=new Set(worldFiles().map(file=>'./'+file));
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!chapterModel(path)&&!characterBody(path));
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path));
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
-for(const path of build.showcaseAssets.filter(chapterModel))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),Number(chapterModel(path))===Number(chapter),'Chapter '+chapter+' and generated scenery '+path);
+for(const path of world){
+  assert.ok(build.deferredAssets.includes(path),'World asset built and deferred: '+path);
+  for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterWorldFiles(Number(chapter)).includes(path.slice(2)),'Chapter '+chapter+' and world asset '+path);
+}
+assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/models/chapters/')&&!world.has(path)),[],'Every chapter model is in the world catalog');
 for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);

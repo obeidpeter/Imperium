@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
+import {worldModelUrl} from '../ui/world-catalog.js';
 
 /** Generated scenery (docs/asset-pipeline.md): Tripo models processed in
  * Blender, set outside the playable board in chosen encounters. Positions
@@ -20,13 +21,14 @@ export const SCENERY_MODELS=Object.freeze({
     {id:'ch5-mudbrick-stack',x:-7,z:20,yaw:1.1}
   ].map(Object.freeze))})
 });
-export const sceneryModelUrl=(chapter,id)=>`assets/models/chapters/${String(chapter).padStart(2,'0')}/${id}.glb`;
+// Each model's file, and the chapters that download it, are in the world catalog.
+export const sceneryModelUrl=id=>worldModelUrl(id);
 
 /** World placements for an encounter, or none where the chapter has no scenery. */
 export function sceneryPlacements(e,{chapter}={}){
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
-  return set.models.map(m=>({id:m.id,url:sceneryModelUrl(chapter,m.id),x:m.x,z:m.z,yaw:m.yaw}));
+  return set.models.map(m=>({id:m.id,url:sceneryModelUrl(m.id),x:m.x,z:m.z,yaw:m.yaw}));
 }
 
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>gltf.scene);
