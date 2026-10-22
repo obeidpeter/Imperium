@@ -13,10 +13,11 @@
   "budget": {
     "triangles": 3000,
     "texture": 512,
-    "bytes": 200000,
+    "bytes": 250000,
     "heightMetres": 0.6,
     "minHeight": 0.4,
-    "maxHeight": 0.9
+    "maxHeight": 0.9,
+    "bytesNote": "Raised from 200,000 on 2026-10-22, when the asset foundation compressed every model: KTX2 textures are larger than the WebP ones they replaced."
   },
   "provenance": {
     "taskId": "e4a3180a-7bb9-438f-a9c2-15c716734d0a",

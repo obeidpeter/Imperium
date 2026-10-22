@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/persian-cavalry.glb",
+  "output": "assets/models/characters/persian-cavalry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 549960,
+    "gzipBytes": 418234,
+    "sha256": "0e2823a4b4de4142c1f5ba1e7471f1e23c20cf1787ce0f0a708a1a64a44a180c"
+  },
+  "after": {
+    "bytes": 479072,
+    "gzipBytes": 458173,
+    "sha256": "d0c3eabcc877d7dc78ab571d47dc9d83bcb0e0d243cc3b47b952e9c8c6a1d33f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14015,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36960
+      },
+      "bytes": 41538,
+      "psnr": 31.639
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 90654
+      },
+      "bytes": 170647,
+      "psnr": 35.641
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 32188
+      },
+      "bytes": 44186,
+      "psnr": 27.283
+    }
+  ]
+}

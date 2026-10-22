@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-legionary.glb",
+  "output": "assets/models/characters/roman-legionary.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 508428,
+    "gzipBytes": 369120,
+    "sha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b"
+  },
+  "after": {
+    "bytes": 447560,
+    "gzipBytes": 426432,
+    "sha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13931,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14900
+      },
+      "bytes": 24161,
+      "psnr": 38.701
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 64832
+      },
+      "bytes": 149901,
+      "psnr": 36.26
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31892
+      },
+      "bytes": 47771,
+      "psnr": 28.624
+    }
+  ]
+}

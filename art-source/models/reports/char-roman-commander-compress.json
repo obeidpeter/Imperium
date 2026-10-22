@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-commander.glb",
+  "output": "assets/models/characters/roman-commander.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 546208,
+    "gzipBytes": 395645,
+    "sha256": "6256d8490e2f62941f61e44657579887620551665dd863b1517d4f7c13485f75"
+  },
+  "after": {
+    "bytes": 482700,
+    "gzipBytes": 460600,
+    "sha256": "2c20dd77247c577eaa3904815df233861cb49b38653e8b13209bc9729d06c974"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13797,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21668
+      },
+      "bytes": 31730,
+      "psnr": 36.302
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 83180
+      },
+      "bytes": 167098,
+      "psnr": 35.576
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31030
+      },
+      "bytes": 47739,
+      "psnr": 27.019
+    }
+  ]
+}

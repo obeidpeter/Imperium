@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/palmyrene-archer.glb",
+  "output": "assets/models/characters/palmyrene-archer.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 472440,
+    "gzipBytes": 357778,
+    "sha256": "43c2f9b3bca7407fc99d0ad633d1cd17925e2775cb5fd9c198fcf069a769ba97"
+  },
+  "after": {
+    "bytes": 417196,
+    "gzipBytes": 396349,
+    "sha256": "ac12d8fe3e633f239c33bba740143059a7160a9fd80643116ba875a4b8a07c28"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13909,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13690
+      },
+      "bytes": 23010,
+      "psnr": 39.038
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 66242
+      },
+      "bytes": 146135,
+      "psnr": 37.122
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27236
+      },
+      "bytes": 42606,
+      "psnr": 35.962
+    }
+  ]
+}

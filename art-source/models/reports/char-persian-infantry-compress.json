@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/persian-infantry.glb",
+  "output": "assets/models/characters/persian-infantry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 525572,
+    "gzipBytes": 380885,
+    "sha256": "44840ef56103b78189f03b45981d10addf7599e79e21e176886e97bf7949e765"
+  },
+  "after": {
+    "bytes": 460068,
+    "gzipBytes": 437679,
+    "sha256": "bcb5466f79d40f3546c38e9f48824f93631272b338bcaf02bace967da34e0c22"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13980,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16512
+      },
+      "bytes": 26718,
+      "psnr": 38.357
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 73336
+      },
+      "bytes": 154510,
+      "psnr": 36.136
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29902
+      },
+      "bytes": 44799,
+      "psnr": 29.005
+    }
+  ]
+}

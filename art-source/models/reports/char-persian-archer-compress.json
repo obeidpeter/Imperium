@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/persian-archer.glb",
+  "output": "assets/models/characters/persian-archer.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 512640,
+    "gzipBytes": 383419,
+    "sha256": "f67425174ca64b6a96a1aa553f09e40d793c10324e33796ae166cfec83d3ef22"
+  },
+  "after": {
+    "bytes": 446880,
+    "gzipBytes": 425887,
+    "sha256": "95060da900e7f5b312a5b91caddeb1235075d000d5d35410253e7db37de099ae"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13965,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16822
+      },
+      "bytes": 27718,
+      "psnr": 38.16
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 78866
+      },
+      "bytes": 154688,
+      "psnr": 35.134
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30496
+      },
+      "bytes": 43576,
+      "psnr": 35.158
+    }
+  ]
+}

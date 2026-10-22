@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-archer.glb",
+  "output": "assets/models/characters/roman-archer.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 483852,
+    "gzipBytes": 355078,
+    "sha256": "80584d9e4d5a422fa9df7be06d777a728692699aaa37f35574e8dbb67af72f4c"
+  },
+  "after": {
+    "bytes": 436028,
+    "gzipBytes": 415144,
+    "sha256": "07554bb0a8050c1a534e5c8bb5a997e2850d6189e7a74b1db13c6e76f8aea7e0"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13630,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14466
+      },
+      "bytes": 25684,
+      "psnr": 38.263
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 63274
+      },
+      "bytes": 152394,
+      "psnr": 36.248
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 28036
+      },
+      "bytes": 44958,
+      "psnr": 27.927
+    }
+  ]
+}

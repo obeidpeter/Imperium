@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
 import {GLTFLoader} from '../vendor/three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from '../vendor/three/addons/libs/meshopt_decoder.module.js';
 import * as G from '../src/core/game.js';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
@@ -23,7 +24,7 @@ const BIND={hips:[0,.91,0],torso:[0,.91,0],head:[0,1.485,0],'right-shoulder':[-.
   'right-thigh':[-.104,.91,0],'right-knee':[-.104,.48,0],'right-ankle':[-.104,.05,0],'left-thigh':[.104,.91,0],'left-knee':[.104,.48,0],'left-ankle':[.104,.05,0]};
 // Node has no image decoder: geometry loads in full with placeholder textures.
 async function parse(id){
-  const bytes=await file(actorBodyUrl(id)),loader=new GLTFLoader();
+  const bytes=await file(actorBodyUrl(id)),loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   loader.register(()=>({name:'NODE_IMAGE_PLACEHOLDER',loadTexture:async()=>new T.Texture()}));loader.pluginCallbacks.unshift(loader.pluginCallbacks.pop());
   return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
@@ -51,7 +52,9 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
     const bytes=await file(actorBodyUrl(id)),info=await inspectModel(bytes),b=request.budget;
     assert.equal(info.bytes,entry.export.bytes);assert.equal(info.triangles,entry.export.triangles);
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
-    assert.deepEqual(info.extensionsRequired.filter(n=>!['EXT_texture_webp','KHR_mesh_quantization'].includes(n)),[]);
+    // Shipped compressed (scripts/assets/compress.mjs): KTX2 textures and meshopt geometry over quantized vertices.
+    assert.deepEqual([...info.extensionsRequired].sort(),['EXT_meshopt_compression','KHR_mesh_quantization','KHR_texture_basisu'],id);
+    assert.ok(info.textures.length===3&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
     // Soles on the game's sole plane, seven centimetres under the ankle joints.
     assert.ok(Math.abs(info.base-(-.02))<.006,`${id} stands on the game's sole plane (${info.base})`);
     const gltf=await parse(id),near=gltf.scene.getObjectByName('body'),overview=gltf.scene.getObjectByName('body-overview');

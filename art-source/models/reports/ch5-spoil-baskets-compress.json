@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/chapters/05/ch5-spoil-baskets.glb",
+  "output": "assets/models/chapters/05/ch5-spoil-baskets.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 188228,
+    "gzipBytes": 126816,
+    "sha256": "5b95258e2b7b0b3f30cd888e56d4712b8e6c1d1d22686f1e80fa259d71e65cad"
+  },
+  "after": {
+    "bytes": 213856,
+    "gzipBytes": 207198,
+    "sha256": "9002f1a96e6a17e442981d4cfa0b6f3147a593a1013b83dbc9500675b6552955"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2939,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15310
+      },
+      "bytes": 28665,
+      "psnr": 38.902
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25800
+      },
+      "bytes": 50541,
+      "psnr": 35.47
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8970
+      },
+      "bytes": 29112,
+      "psnr": 42.83
+    }
+  ]
+}

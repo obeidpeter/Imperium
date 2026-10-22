@@ -6,7 +6,8 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 
 - **In the game since 0.37.0:** sixteen generated character bodies, one for each kind of figure the battles and ceremonies show: Roman recruits, trainer, legionaries, archers, a centurion and a commander, a civilian, and Gothic, Persian and Palmyrene infantry, archers and riders. They replace the procedural bodies on the game's own skeleton, clips and kit. See [Generated characters in the game](#generated-characters-in-the-game).
 - **In the game since 0.36.0:** five Tripo props for Chapter V, a supply camp on open ground off the board's west and south sides. They load at Balanced and High quality, in Chapter V's download only. See [Generated scenery in the game](#generated-scenery-in-the-game).
-- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the compressor (KTX2 textures and meshopt geometry, since the asset foundation), the model checker and the preview renderer (see [Checked so far](#checked-so-far) and [Compression](#compression)).
+- **Compressed since the asset foundation:** every body and prop ships with KTX2 textures and meshopt geometry ([Compression](#compression)).
+- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the compressor (KTX2 textures and meshopt geometry), the model checker and the preview renderer (see [Checked so far](#checked-so-far) and [Compression](#compression)).
 - **Requests and provenance:** [`art-source/models/requests/`](../art-source/models/requests/) holds each exact prompt, Tripo task, rig task, model version, licence and raw digests; [`art-source/models/reports/`](../art-source/models/reports/) holds the processing and binding reports.
 
 ## One-time setup
@@ -113,6 +114,37 @@ Limitations:
 
 ETC1S trades download size for memory: a KTX2 image is two to three times the size of the WebP it replaces, and it barely shrinks under gzip, while meshopt geometry is a little smaller than before. Data maps fare worst, since ETC1S suits colour better than independent channels.
 
+**The shipped models.** On 2026-10-22 all sixteen bodies and the five Chapter V props were compressed in place, at the default settings, with a report each in [`art-source/models/reports/`](../art-source/models/reports/) (`*-compress.json`) and the previous bytes and digest in their manifest entries. Every triangle came through unchanged. The encoder measured colour maps at 34.8–39.8 dB, normal maps at 31.6–46.6 dB and metal/roughness maps at 26.7–44.5 dB against the WebP images they replace.
+
+| Model | Bytes (before → after) | Gzip (before → after) | PSNR colour / normal / data (dB) |
+| --- | ---: | ---: | --- |
+| [`ch5-gallery-timbers`](../assets/models/chapters/05/ch5-gallery-timbers.glb) | 271,412 → 266,160 | 182,220 → 257,030 | 35.0 / 39.4 / 44.5 |
+| [`ch5-leather-tent`](../assets/models/chapters/05/ch5-leather-tent.glb) | 230,672 → 231,056 | 171,434 → 223,877 | 35.0 / 42.1 / 37.6 |
+| [`ch5-mudbrick-stack`](../assets/models/chapters/05/ch5-mudbrick-stack.glb) | 173,144 → 187,856 | 122,554 → 181,516 | 34.8 / 41.1 / 42.5 |
+| [`ch5-spoil-baskets`](../assets/models/chapters/05/ch5-spoil-baskets.glb) | 188,228 → 213,856 | 126,816 → 207,198 | 35.5 / 38.9 / 42.8 |
+| [`ch5-storage-jars`](../assets/models/chapters/05/ch5-storage-jars.glb) | 161,296 → 181,820 | 124,517 → 176,102 | 38.2 / 43.3 / 41.7 |
+| [`civilian-escort`](../assets/models/characters/civilian-escort.glb) | 422,340 → 377,588 | 310,796 → 356,850 | 37.6 / 41.7 / 39.9 |
+| [`gothic-archer`](../assets/models/characters/gothic-archer.glb) | 484,744 → 426,424 | 346,281 → 404,513 | 37.6 / 41.1 / 35.0 |
+| [`gothic-noble`](../assets/models/characters/gothic-noble.glb) | 498,632 → 441,704 | 365,461 → 419,854 | 36.6 / 39.3 / 28.8 |
+| [`gothic-warrior`](../assets/models/characters/gothic-warrior.glb) | 432,708 → 368,820 | 311,507 → 348,152 | 39.8 / 46.6 / 36.5 |
+| [`palmyrene-archer`](../assets/models/characters/palmyrene-archer.glb) | 472,440 → 417,196 | 357,778 → 396,349 | 37.1 / 39.0 / 36.0 |
+| [`palmyrene-cavalry`](../assets/models/characters/palmyrene-cavalry.glb) | 557,720 → 479,632 | 418,339 → 458,087 | 35.8 / 33.9 / 27.2 |
+| [`palmyrene-infantry`](../assets/models/characters/palmyrene-infantry.glb) | 535,356 → 463,580 | 400,263 → 442,748 | 35.5 / 36.5 / 28.1 |
+| [`persian-archer`](../assets/models/characters/persian-archer.glb) | 512,640 → 446,880 | 383,419 → 425,887 | 35.1 / 38.2 / 35.2 |
+| [`persian-cavalry`](../assets/models/characters/persian-cavalry.glb) | 549,960 → 479,072 | 418,234 → 458,173 | 35.6 / 31.6 / 27.3 |
+| [`persian-infantry`](../assets/models/characters/persian-infantry.glb) | 525,572 → 460,068 | 380,885 → 437,679 | 36.1 / 38.4 / 29.0 |
+| [`roman-archer`](../assets/models/characters/roman-archer.glb) | 483,852 → 436,028 | 355,078 → 415,144 | 36.2 / 38.3 / 27.9 |
+| [`roman-commander`](../assets/models/characters/roman-commander.glb) | 546,208 → 482,700 | 395,645 → 460,600 | 35.6 / 36.3 / 27.0 |
+| [`roman-legionary`](../assets/models/characters/roman-legionary.glb) | 508,428 → 447,560 | 369,120 → 426,432 | 36.3 / 38.7 / 28.6 |
+| [`roman-officer`](../assets/models/characters/roman-officer.glb) | 537,496 → 471,316 | 397,785 → 449,927 | 35.8 / 36.1 / 26.7 |
+| [`roman-recruit`](../assets/models/characters/roman-recruit.glb) | 418,392 → 366,388 | 306,085 → 345,732 | 38.1 / 41.8 / 37.4 |
+| [`roman-trainer`](../assets/models/characters/roman-trainer.glb) | 448,620 → 401,064 | 325,109 → 380,285 | 39.0 / 41.4 / 35.2 |
+| All 21 | 8,959,860 → 8,046,768 | 6,569,326 → 7,672,135 | |
+
+Each body's three maps (one 1,024 px, two 512 px) took about 8.4 MB of GPU memory decoded with mipmaps; transcoded they take about 2.1 MB as BC7 and 1.0 MB as ETC2 or BC1. A prop's three 512 px maps fall from about 4.2 MB to 0.5–1.0 MB. These are computed from the formats, not measured on a device.
+
+Side-by-side renders of the recruit, the officer, the Palmyrene rider and the storage jars (software rendering with SwiftShader and a simple studio light, not the game's lighting) were reviewed before shipping: whole figures and props look the same; in close-ups of the face and torso the compressed colour maps are slightly softer and blockier around the eyes, and highlights on armour are a little less even. No phone or desktop GPU has been checked, and nobody has judged the figures in play.
+
 **In the game.** [`model-loader.js`](../src/showcase/model-loader.js) gives three.js's `GLTFLoader` the meshopt decoder and the KTX2 loader, both vendored from Three.js 0.186.1 ([provenance](../vendor/three/addons/PROVENANCE.md)):
 
 - `KTX2Loader` starts its transcoder worker from a `blob:` URL, which the page's policy refuses (`worker-src 'self'`). [`basis_worker.js`](../vendor/three/addons/libs/basis/basis_worker.js) is that same worker as a file on the page's own origin, generated by [`ktx2-worker.mjs`](../scripts/assets/ktx2-worker.mjs); a test fails while it differs from what the vendored loader would assemble.
@@ -129,14 +161,14 @@ The download budgets are in [`presentation-budget.js`](../src/ui/presentation-bu
 
 | Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation (unreleased) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,134 |
-| Shell plus Chapter I (the 3D view since the asset foundation) | 12,000,000 (8,000,000 until 0.37.0, then 10,000,000) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,017,652 |
-| Shell plus any one chapter, with its 2D art | 14,000,000 (new) | | | | | 9,865,356 (Chapter I, the largest) |
-| Complete campaign | 50,000,000 (24,000,000 until the asset foundation) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 18,467,799 |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 12,000,000 (8,000,000 until 0.37.0, then 10,000,000) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 |
+| Shell plus any one chapter, with its 2D art | 14,000,000 (new) | | | | | 10,490,504 (Chapter VIII, the largest) |
+| Complete campaign | 50,000,000 (24,000,000 until the asset foundation) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 |
 
 The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
 
-The asset foundation takes the 2D view's art (unit atlases, action sheets, ground and prop atlases) out of the 3D download: the 2D view and painted figures add it when chosen. It raises the Chapter I limit to 12 MB and the complete campaign to 50 MB for the world models to come, and caps any one chapter's first download, with its 2D art, at 14 MB. The first load grew by about 285 KB between 0.38.0 and this work, more than half of it the real-time modules the shell imports. The 2 MB first load, the external requirement, is unchanged.
+The asset foundation takes the 2D view's art (unit atlases, action sheets, ground and prop atlases) out of the 3D download: the 2D view and painted figures add it when chosen. It raises the Chapter I limit to 12 MB and the complete campaign to 50 MB for the world models to come, and caps any one chapter's first download, with its 2D art, at 14 MB. The first load grew by about 285 KB between 0.38.0 and this work, more than half of it the real-time modules the shell imports. The 2 MB first load, the external requirement, is unchanged. Then the KTX2 and meshopt decoders (about 0.31 MB in every chapter) and the compressed models (about 1.1 MB more in all) brought Chapter I for the 3D view from 6.02 to 6.58 MB, and the largest chapter with its 2D art is now Chapter VIII.
 
 In 0.38.0 the first load grew by 12,019 bytes: the shell now carries every module the page imports before it runs (the board readout among them) and the performance check. Chapter I shrank by 159,076 bytes because no chapter downloads the pre-0.31 Roman unit atlas any more.
 
@@ -146,9 +178,11 @@ Proposed limits per asset:
 
 | Kind | Triangles | Texture edge | Bytes |
 | --- | ---: | ---: | ---: |
-| Small prop | 3,000 | 512 px | 200 KB |
-| Large prop or tent | 5,000 | 512 px | 300 KB |
-| Building or landmark | 15,000 | 1,024 px | 600 KB |
+| Small prop | 3,000 | 512 px | 250 KB (200 KB with WebP textures) |
+| Large prop or tent | 5,000 | 512 px | 350 KB (300 KB with WebP textures) |
+| Building or landmark | 15,000 | 1,024 px | 800 KB (600 KB with WebP textures) |
+
+The limits are for the compressed model. The spoil baskets' own budget rose from 200,000 to 250,000 bytes when they were compressed (213,856 bytes), as their request records.
 
 ## Generated scenery in the game
 
@@ -177,7 +211,7 @@ Proposed limits per asset:
 
 - **Which figures.** [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js) maps a figure's kit (faction, role, armour; for the protagonist, a centurion's mail in Chapters IV–VI and a commander's cuirass from Chapter VII) to one of sixteen bodies. Every battle figure and both ceremonies' figures have one. Civic speakers and voters keep their procedural togas, whose trims name their bloc; the painted figure style is unchanged.
 - **What changes.** A figure that wears a body loses its procedural clothes, armour, head, hair, face and limbs: every procedural surface on the body's own joints ([`actors.js`](../src/showcase/actors.js), `BODY_REPLACES` in [`actor-bodies.js`](../src/showcase/actor-bodies.js)). The rest stays the game's own and is drawn as before: the rig and every clip, gesture, contact and foot plant; the gripping hands; swords, spears, javelins, shields and their heraldry, bows, arrows, quivers, scabbards and standards; cloaks (purple for the emperor at the accession, since the body's tunic colour is baked) and crests and phalerae, the officer and veteran insignia; horses.
-- **Loading.** [`actor-bodies.js`](../src/showcase/actor-bodies.js) loads one master per body, decoding its textures off the main thread within the page's Content Security Policy ([`model-loader.js`](../src/showcase/model-loader.js), since 0.38), and skins it to each figure's own bones in the bind pose. Figures share the master's geometry and materials; each owns only its skinned meshes and skeleton, and disposal never frees the master. A figure starts procedural and switches when its body arrives; a body that fails to load leaves the procedural figure. The canvas reports how many figures wear one (`data-generated-bodies`).
+- **Loading.** [`actor-bodies.js`](../src/showcase/actor-bodies.js) loads one master per body, transcoding its KTX2 textures in a worker on the page's own origin within its Content Security Policy ([`model-loader.js`](../src/showcase/model-loader.js); see [Compression](#compression)), and skins it to each figure's own bones in the bind pose. Figures share the master's geometry and materials; each owns only its skinned meshes and skeleton, and disposal never frees the master. A figure starts procedural and switches when its body arrives; a body that fails to load leaves the procedural figure. The canvas reports how many figures wear one (`data-generated-bodies`).
 - **Distance and crowds.** Each body has a near level (11,131–11,611 triangles) and an overview level (about 2,500), switched with the figure's other detail. Formation followers instance the overview with the leader's pose history, and fallen bodies bake its colours. The procedural figures measured up to 63,052 near and 11,673 overview triangles ([evidence](evidence/characters-v035.json)).
 - **Downloads.** A body is in the offline group of each chapter whose figures wear it (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); `scripts/verify-assets.mjs` and the tests check the groups against the catalog, and the catalog against the campaign.
 - **Records.** Each body has a runtime entry in [`asset-manifest.json`](asset-manifest.json) with its prompt file, Tripo and rig tasks, raw and rigged digests, binding settings, bytes, SHA-256 and licence, and a row and prompt in [`art-generation.md`](art-generation.md).

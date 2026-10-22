@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-archer.glb",
+  "output": "assets/models/characters/gothic-archer.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 484744,
+    "gzipBytes": 346281,
+    "sha256": "73da129c3a9c9be254e8c3e11e6c752d5b6b56a94dffc7703966d69418348e37"
+  },
+  "after": {
+    "bytes": 426424,
+    "gzipBytes": 404513,
+    "sha256": "6113d02a0e0a9a7d70f8b6a49d93a632e1cb69655e362f746f3f20a783938357"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13874,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11176
+      },
+      "bytes": 22661,
+      "psnr": 41.122
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 65096
+      },
+      "bytes": 149914,
+      "psnr": 37.607
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13646
+      },
+      "bytes": 29829,
+      "psnr": 34.982
+    }
+  ]
+}

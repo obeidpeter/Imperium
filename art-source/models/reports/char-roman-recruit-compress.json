@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-recruit.glb",
+  "output": "assets/models/characters/roman-recruit.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 418392,
+    "gzipBytes": 306085,
+    "sha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07"
+  },
+  "after": {
+    "bytes": 366388,
+    "gzipBytes": 345732,
+    "sha256": "aaeccd7ce97a7b41188e43615e03b045640e990aa45ac9ab26f4243a62ad032e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13685,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 5614
+      },
+      "bytes": 13106,
+      "psnr": 41.841
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 37940
+      },
+      "bytes": 116136,
+      "psnr": 38.063
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 19368
+      },
+      "bytes": 40694,
+      "psnr": 37.433
+    }
+  ]
+}

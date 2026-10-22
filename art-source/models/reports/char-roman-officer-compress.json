@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-officer.glb",
+  "output": "assets/models/characters/roman-officer.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 537496,
+    "gzipBytes": 397785,
+    "sha256": "509bfca7bc38d11ac86523d8e8c7635379228cbc65fa27d920018e1d549aa335"
+  },
+  "after": {
+    "bytes": 471316,
+    "gzipBytes": 449927,
+    "sha256": "4c0cce27574ae39d0c112c2a0eb96b0b7d4ea7fb3225fa52256a260a30bd1c3b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13892,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23074
+      },
+      "bytes": 33297,
+      "psnr": 36.067
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 84790
+      },
+      "bytes": 165179,
+      "psnr": 35.782
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 32956
+      },
+      "bytes": 47091,
+      "psnr": 26.682
+    }
+  ]
+}

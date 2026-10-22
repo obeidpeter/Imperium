@@ -3,7 +3,8 @@
 // compressed, and the geometry is reordered and packed with meshopt
 // (EXT_meshopt_compression) without changing a value. The game decodes both
 // (src/showcase/model-loader.js). The tool checks that every triangle is
-// unchanged and reports each texture's error (PSNR) from the encoder.
+// unchanged and reports the model's bytes and digest before and after, and
+// each texture's error (PSNR) from the encoder.
 //
 // Development tool. It needs the Basis Universal encoder (set BASISU to the
 // basisu program, or put it on PATH) and these modules, which are not project
@@ -99,8 +100,8 @@ export async function compressModel(bytes,{quality=128,basisu=process.env.BASISU
   if(!same)throw new Error('The compressed geometry differs from the input; nothing was written.');
   return {bytes:result,report:{
     encoder:{basisu:version,mode:'ETC1S',quality,mipmaps:true,meshopt:'EXT_meshopt_compression, reorder for size, no filters'},
-    input:{bytes:bytes.length,gzipBytes:gzipSync(bytes,{level:9}).length,sha256:createHash('sha256').update(bytes).digest('hex')},
-    output:{bytes:result.length,gzipBytes:gzipSync(result,{level:9}).length,sha256:createHash('sha256').update(result).digest('hex')},
+    before:{bytes:bytes.length,gzipBytes:gzipSync(bytes,{level:9}).length,sha256:createHash('sha256').update(bytes).digest('hex')},
+    after:{bytes:result.length,gzipBytes:gzipSync(result,{level:9}).length,sha256:createHash('sha256').update(result).digest('hex')},
     geometryUnchanged:same,triangles:after.reduce((n,soup)=>n+soup.triangles.length,0),textures}};
 }
 
