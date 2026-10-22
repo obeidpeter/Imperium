@@ -22,13 +22,11 @@ export function holdDelay(value){const n=Number(value);return Number.isFinite(n)
 // use swaps the two commands. Esc, Enter, Tab and the arrows keep their meaning, and the browser its own keys.
 export function keyPreferences(keymap){
   const now=action=>keymap[action].map(keyLabel).join(' or ');
-  return `<details class="key-map"><summary><span id="key-map-title">Keys</span> <small class="muted">Remap every key except Esc, Enter, Tab and the arrows`+
-    `</small></summary><p class="settings-description">Choose <strong>Change</strong>, then press the new key (Esc `+
-    `cancels). A key already in use swaps the two commands. Esc, Enter, Tab and the arrow keys cannot be changed, nor the keys your browser keeps: F1, F3, F5–F7, `+
-    `F10–F12 and anything with Ctrl, Cmd or Alt.</p><p id="rebind-status" class="settings-description" role="status" aria-live="polite"></p>`+
-    KEY_GROUPS.map(([title,rows])=>`<fieldset class="key-group"><legend>${esc(title)}</legend>${rows.map(([action,label])=>`<div class="key-row" data-action="${action}">`+
+  return `<details class="key-map" id="settings-key-map"><summary><span id="key-map-title">Keyboard shortcuts</span></summary><p class="settings-description">Choose <strong>Change</strong>, then press a key. Esc cancels. An occupied key swaps the two commands. `+
+    `Arrow keys, Enter, Esc, Tab and browser shortcuts stay unchanged.</p><p id="rebind-status" class="settings-description" role="status" aria-live="polite"></p>`+
+    KEY_GROUPS.map(([title,rows],i)=>`<details class="key-group" id="settings-key-group-${i}"><summary>${esc(title)}</summary>${rows.map(([action,label])=>`<div class="key-row" data-action="${action}">`+
       `<span>${esc(label)}</span><kbd>${esc(now(action))}</kbd><button class="ghost small" type="button" data-cmd="rebind" data-id="${action}" `+
-      `aria-label="Change the key for ${esc(label)}, now ${esc(now(action))}">Change</button></div>`).join('')}</fieldset>`).join('')+
+      `aria-label="Change the key for ${esc(label)}, now ${esc(now(action))}">Change</button></div>`).join('')}</details>`).join('')+
     `<button class="ghost" type="button" data-cmd="reset-keys">Restore default keys</button></details>`;
 }
 // The pointer's habits and the labels (guide "Controls and readability"): each a stored setting the live field reads.
@@ -52,14 +50,14 @@ export function confirmMovesSetting(settings={}){
     `as this turn allows; Undo Move takes it back until you act. On: the first selection previews the move, and selecting it again or Confirm walks.</small>`+
     `</span><input id="confirm-moves" type="checkbox" ${settings.confirmMoves?'checked':''}></label>`;
 }
-export function controlPreferences(settings={},{keymap=null}={}){
+export function controlPreferences(settings={},{keymap=null,readability=true}={}){
   const bindings=controlBindings(settings.keyBindings);
   return `<section class="settings-group control-preferences"><h3>Controls & readability</h3>
-    ${keymap?`${keyPreferences(keymap)}${pointerPreferences(settings)}`:''}
-    <label class="setting" for="high-contrast"><span>High-contrast interface<small class="muted">Stronger boundaries and brighter labels. Unit allegiance also has a symbol.</small></span><input id="high-contrast" type="checkbox" ${settings.highContrast?'checked':''}></label>
-    <label class="setting" for="compact-hud"><span>Focus on the battlefield<small class="muted">A compact mission header and camera bar, with full orders still available.</small></span><input id="compact-hud" type="checkbox" ${settings.compactHud!==false?'checked':''}></label>
+    ${keymap?`${keyPreferences(keymap)}<details id="settings-pointer"><summary>Mouse & touch</summary>${pointerPreferences(settings)}`:''}
+    ${readability?`<label class="setting" for="high-contrast"><span>High-contrast interface<small class="muted">Stronger boundaries and brighter labels. Unit allegiance also has a symbol.</small></span><input id="high-contrast" type="checkbox" ${settings.highContrast?'checked':''}></label>
+    <label class="setting" for="compact-hud"><span>Focus on the battlefield<small class="muted">A compact mission header and camera bar, with full orders still available.</small></span><input id="compact-hud" type="checkbox" ${settings.compactHud!==false?'checked':''}></label>`:''}
     <label class="setting" for="hold-delay"><span>Touch hold delay<small class="muted">${keymap?'How long to hold a finger still to inspect.':'Keep a finger still to inspect a tile. Lifting after a hold spends nothing.'}</small></span><select id="hold-delay">${[250,450,650,900,1200].map(ms=>`<option value="${ms}" ${holdDelay(settings.holdDelay)===ms?'selected':''}>${ms/1000} seconds</option>`).join('')}</select></label>
-    ${keymap?`<details class="board-shortcuts"><summary>Turn-based board: Confirm moves and shortcuts (0.38 board and archive practice)</summary>${confirmMovesSetting(settings)}`:''}
+    ${keymap?`</details><details class="board-shortcuts" id="settings-board-keys"><summary>Turn-based controls</summary>${confirmMovesSetting(settings)}`:''}
     <p class="settings-description">Choose a letter for each shortcut. Choosing an occupied letter swaps the two commands. Arrow keys, Enter, Escape and action keys 1–9 stay available.</p>
     <div class="control-binding-grid">${keys.map(id=>`<label for="binding-${id}">${CONTROL_LABELS[id]}<select id="binding-${id}" data-binding="${id}" aria-label="${CONTROL_LABELS[id]} shortcut">${'abcdefghijklmnopqrstuvwxyz'.split('').map(key=>`<option value="${key}" ${bindings[id]===key?'selected':''}>${key.toUpperCase()}</option>`).join('')}</select></label>`).join('')}</div>
     <button class="ghost" data-cmd="reset-controls">Restore default shortcuts</button>${keymap?'</details>':''}</section>`;

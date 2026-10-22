@@ -55,11 +55,10 @@ test('the settings follow the controls: real time has the guide’s names and it
   const turns=panel({}),realtime=panel({controlsModel:'realtime'});
   for(const id of Object.keys(SETTING_TOGGLES))for(const html of [turns,realtime])assert.match(html,new RegExp(`<input id="${id}" type="checkbox"`),id);
   for(const id of ['game-speed','pause-sighted','objective-markers','floating-numbers'])assert.ok(realtime.includes(`id="${id}"`)&&!turns.includes(`id="${id}"`),id);
-  assert.match(realtime,/<span>Close-ups<small/);assert.match(turns,/<span>Action camera<small/);
-  assert.match(realtime,/opening chamber hours/);assert.match(turns,/opening chamber turns/);
+  for(const html of [turns,realtime]){assert.match(html,/<span>Combat close-ups<small/);assert.match(html,/<span>Learning tips<small/);}
   for(const html of [turns,realtime])assert.match(html,/<span>Touch hold delay<small/);
   // Real time has no moves to confirm: Confirm moves sits with the turn-based board's shortcuts.
-  assert.match(realtime,/<details class="board-shortcuts">(?:(?!<\/details>)[^])*id="confirm-moves"/);assert.ok(!turns.includes('board-shortcuts'));
+  assert.match(realtime,/<details class="board-shortcuts"[^>]*>(?:(?!<\/details>)[^])*id="confirm-moves"/);assert.ok(!turns.includes('board-shortcuts'));
 });
 
 test('the field’s hints and buttons name the player’s keys',()=>{

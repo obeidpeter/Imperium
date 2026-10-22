@@ -59,6 +59,30 @@ press **P**, and every command in the game can be given while it is
 stopped. The rule of the game is simple: **play your own soldier; pause
 to think.**
 
+## Finding what you need
+
+The **Menu** pauses play. Choose **Resume game** to return, **Soldier &
+company** for equipment and training, **Campaign** for your mission and
+records, **Save & load**, **Settings**, or **How to play**. Historical
+notes, credits and the title screen are under **More**. Every panel has
+a **Menu** return button and a **Close** button; **Esc** closes it too.
+
+Settings has five categories: **Readability**, **Controls**, **Graphics**,
+**Sound**, and **Saves & offline**. Changes save automatically. Keyboard
+shortcuts, mouse preferences and automatic pause have their own expandable
+sections. Developer controls are separate under **Controls → Developer tools**.
+
+During play, your objective, progress, deadline and urgent warnings stay
+visible. Expand **Mission details** for the full orders. The main action
+bar shows common actions; **More actions** reveals the others. Their
+number keys still work and reveal the selected action. **Options → Time
+controls** contains half speed and one-round stepping. **All actions**
+offers every action as a text list. Tips, camera controls and the battle
+log expand only when you want them.
+
+**How to play** starts with three basic actions and a search box. Search
+for a task such as attack, equipment or saving, or open a guide topic.
+The full guide remains available offline.
 ## The title screen
 
 - **Play · Begin your story** starts a new chronicle. Give your recruit
@@ -149,7 +173,7 @@ Ctrl with a number.
 | Order the selected squad       | Right-click ground or an enemy           | Tap ground or an enemy             | **1–6** on its command card; arrow keys and **Enter** to send it |
 | Kit, character, journal        | **I**, **C**, **J**                      | Menu buttons                       | **I**, **C**, **J**                                              |
 | Mission orders, chronicle, map | **Q**, **L**, **M**                      | Menu buttons                       | **Q**, **L**, **M**                                              |
-| Quick save                     | **F2**                                   | **Menu → Quick save**              | **F2**                                                           |
+| Quick save                     | **F2**                                   | **Menu → Save & load → Quick save**              | **F2**                                                           |
 | Turn and zoom the 3D view      | Middle-drag; scroll wheel                | Two-finger twist; pinch            | **,** and **.**; **+ / −**                                       |
 | Follow, overview, horizon      | **F**, **Z**, **H**                      | Camera buttons                     | **F**, **Z**, **H**                                              |
 | Settings, help and saves       | **Esc** for the Menu; **?** for help     | **Menu** button                    | **Esc**; **?**                                                   |
@@ -533,8 +557,9 @@ panels**. Conversations, the chronicle and the Menu always pause it.
   there would do: the forecast and, on open ground, the route. Lifting
   the finger after a hold does nothing.
 
-- The large **Pause** button sits at the top centre, with **Slow** and
-  **Next round** beside it; in a Contest, **Yield** joins them.
+- **Pause** stays at the top beside **Menu**. **Options → Time controls**
+  contains **Half speed** and **Play one round**. In a Contest, **End hour**
+  ends the current hour.
 
 - Drag with two fingers to look around, pinch to zoom and twist to turn
   the 3D view.
@@ -544,11 +569,11 @@ panels**. Conversations, the chronicle and the Menu always pause it.
   selected, a tap on ground or on an enemy gives the order.
 
 - The mission strip, lesson and controls sit outside the scene. On a
-  narrow screen, swipe the party and ability rows sideways to reach
-  additional choices. **Controls** opens the weapon, walk, force and
-  range buttons. **List** offers every action without pointing at a figure.
+  narrow screen, swipe the party row sideways to reach companions.
+  **More actions** opens additional abilities. **Options** opens weapon, walk, force and
+  range buttons. **All actions** offers every action without pointing at a figure.
 
-- The hold delay can be changed in **Menu → Controls & readability**.
+- The hold delay can be changed in **Menu → Settings → Controls**.
 
 ## Keyboard
 
@@ -590,7 +615,7 @@ has loot; otherwise it is cleared. No new enemy is chosen automatically.
 | **G**                   | Show ranges: your weapon's reach, throwing range and the area of the current ability                                                                                                                                                                        |
 | **I C J Q L M R A O ?** | Open the panels listed above                                                                                                                                                                                                                                |
 
-The **Command list** (**Menu → Command list**, or the list button beside
+The **Command list** (**All actions**, or the list button beside
 the ability bar) names everyone and everything you can act on: your
 party, your squads, visible enemies, objects and places. Choose who
 acts, the ability or order and the target from lists, then **Use**. It
@@ -625,7 +650,7 @@ Moving the camera never spends anything or changes the rules.
 
 ## Changing the controls
 
-In **Menu → Controls & readability** every key can be remapped, except
+In **Menu → Settings → Controls** every key can be remapped, except
 **Esc**, **Enter**, **Tab** and the arrow keys. Choosing a key that is
 already in use swaps the two commands, and Help and the on-screen hints
 follow your choices. **Restore default keys** puts everything back.
@@ -635,7 +660,7 @@ The same panel sets **draw to attack**, **keep fighting**,
 buttons**, **labels** (while **U** is held, or always), the **touch hold
 delay** (0.25 to 1.2 seconds; 0.45 seconds by default), a
 **high-contrast interface** and a compact **Focus on the battlefield**
-layout. **Menu → Time and pace** sets the **game speed**, the
+layout. **Menu → Settings → Controls → Time and pace** sets the **game speed**, the
 **auto-pause** events, **pause each round** and **pause in panels**.
 
 # Your soldier
@@ -1294,12 +1319,12 @@ promised and when it falls due.
   **Continue the chronicle** returns you to that moment, and the resume
   point is discarded as soon as play resumes.
 
-- **Quick save** (**F2**, or **Menu → Quick save**) saves at once,
-  anywhere except in a conversation, and **Menu → Load** restores it.
+- **Quick save** (**F2**, or **Menu → Save & load → Quick save**) saves at once,
+  anywhere except in a conversation, and **Menu → Save & load** restores it.
   With **Iron discipline** you cannot save inside encounters, by quick
   save or by name.
 
-- **Menu → Save** keeps up to five named saves of your chronicle, each
+- **Menu → Save & load** keeps up to five named saves of your chronicle, each
   with a picture of the moment. A save records everything, including
   battle time, recoveries and the random seed, so a loaded fight
   continues exactly as it was.
@@ -1310,7 +1335,7 @@ promised and when it falls due.
 
 ## Keeping or moving your progress
 
-1.  Open **Menu → Copy a save code**.
+1.  Open **Menu → Settings → Saves & offline → Export save code**.
 
 2.  Copy the code, or download it as a text file, and keep it somewhere
     you control.
@@ -1328,7 +1353,7 @@ incompatible code is rejected without touching your chronicle.
 
 ## Recovery
 
-**Menu → Recover an earlier checkpoint** lists the last three distinct
+**Menu → Settings → Saves & offline → Recover older progress** lists the last three distinct
 checkpoints or replaced chronicles; inspect one, then restore it. If
 another browser tab saves, use **Continue in this tab** to review the
 takeover and load the latest chronicle. Clearing browser data can erase
@@ -1341,11 +1366,11 @@ well.
   suitable connections also fetch the next chapter ahead of time. **This
   chapter is ready offline** does not mean later chapters are.
 
-- To take the whole campaign offline, choose **Menu → Download all
-  chapters for offline play** and wait for **All chapters available
+- To take the whole campaign offline, choose **Menu → Settings → Saves &
+  offline → Download all chapters** and wait for **All chapters available
   offline** before disconnecting.
 
-- If artwork is missing, **Retry this chapter's artwork**; an
+- If artwork is missing, choose **Retry chapter download**; an
   interrupted full download can be started again from the Menu.
 
 - On iPhone, add the game to the Home Screen from Safari's Share menu.
@@ -1356,18 +1381,23 @@ well.
 Open the **Menu** (**Esc**) for settings, help, saves and the campaign
 panels. The world is paused while the Menu is open.
 
-## Display and accessibility
+## Readability
+
+Open **Menu → Settings → Readability**. Objective markers and damage
+numbers are in the **Graphics** category.
 
 | **Setting**                | **What it does**                                                                                                   |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------|
 | Text size                  | 100%, 125%, 150% or 200% across the game; enlarged text scrolls normally.                                          |
-| Guided opening             | Step-by-step lessons in the drill (including pause and slow time), the first patrol and the opening chamber hours. |
-| Contextual tactical advice | Advice for the current field or chamber position.                                                                  |
+| Learning tips              | Expandable help for the drill, patrols and opening chamber hours. |
+| Tactical advice            | Advice for the current field or chamber position.                                                                  |
 | Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.       |
 | Floating numbers           | Damage and healing shown over the people concerned.                                                                |
 | Reduced motion             | Removes nonessential motion; action feedback stays readable.                                                       |
 
 ## Time and pace
+
+Open **Settings → Controls**. Automatic pause options expand separately.
 
 | **Setting**      | **What it does**                                                                                                                                                                            |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1377,6 +1407,9 @@ panels. The world is paused while the Menu is open.
 | Pause in panels  | On by default: opening a panel pauses the world.                                                                                                                                            |
 
 ## Scene and graphics
+
+Open **Settings → Graphics**. Optional appearance settings are under
+**Scene appearance**, and measurements are under **Performance diagnostics**.
 
 | **Setting**            | **What it does**                                                                                                                                                                                                                                                                     |
 |------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1426,7 +1459,7 @@ panels. The world is paused while the Menu is open.
 - **Download all chapters for offline play** and **Retry this chapter's
   artwork**.
 
-- **Controls & rules** (the in-game help), **Command list**,
+- **How to play** (the in-game help), **Command list**,
   **Historical notes**, **Art & credits**, **Mission journal** and
   **Campaign**.
 

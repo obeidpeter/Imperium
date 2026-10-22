@@ -1,3 +1,4 @@
+import {settingsView} from './settings-view.js';
 import {relationshipLedger} from './progression-views.js';
 import {controlPreferences,controlHelp,applyControlLabels,confirmMovesSetting} from './control-preferences.js';
 import * as Game from '../core/game.js';
@@ -5,7 +6,7 @@ import {difficultyChoices,soundscapeSettings} from './campaign-upgrade-views.js'
 import {recruitChoices} from './soldier-views.js';
 // The generated guide is part of the shell, so Controls & rules works offline.
 import {GUIDE_HELP} from '../data/guide-help.js';
-import {guideHelpView} from './guide-help-view.js';
+import {guideHelpView,quickHelp} from './guide-help-view.js';
 import {CHAPTERS,CAST,HISTORICAL_NOTES,choiceEchoes} from '../data/campaign.js';
 import {heroPortrait,speakerPortrait,journeyMap} from './art.js';
 import {esc,roman,companyPanel} from './view-helpers.js';
@@ -130,83 +131,14 @@ export function createPanels(context){
       `</article>`).join('')}</div>`)}`);
   }
 
-  function showSettings(){
-    const {state,settings,offline,currentChapterOffline,offlineProgress,showModal,preservedUnreadable,devMenu,keymap}=context();
-    const options=(list,current)=>list.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
-    const offlineStatus=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} `+
-      `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.';
-    // Real time shows the 0.40 guide's settings; the turn-based board keeps its own, and the settings only the live field reads stay out of its way.
-    const realtime=settings.controlsModel==='realtime';
-    showModal('Pause & settings',`<p class="panel-lead">Nothing advances while this menu is open.</p>`+
-      `${controlPreferences(settings,{keymap:realtime?keymap:null})}${realtime?pacePreferences(settings,state?.difficulty):''}`+
-      `<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
-      `<label class="setting" for="text-size"><span>Text size<small class="muted">Enlarge text across the game.</small></span>`+
-      `<select id="text-size">${[1,1.25,1.5,2].map(n=>`<option value="${n}" ${(settings.textScale||1)===n?'selected':''}>${n*100}%</option>`).join('')}</select>`+
-      `</label><label class="setting" for="guide-setting"><span>Guided opening<small class="muted">${realtime?'Step-by-step lessons in the drill (including '+
-      'pause and slow time), the first patrol and the opening chamber hours.':'Step-by-step lessons in the drill, first patrol and opening chamber turns.'}`+
-      `</small></span><input id="guide-setting" type="checkbox" ${settings.guide!==false?'checked':''}></label>`+
-      `<label class="setting" for="coach-setting"><span>Contextual tactical advice<small class="muted">Show advice for the current field or chamber `+
-      `position.</small></span><input id="coach-setting" type="checkbox" ${settings.coach!==false?'checked':''}></label>`+
-      `${realtime?`<label class="setting" for="objective-markers"><span>Objective markers<small class="muted">The mission's next step is marked on the scene. `+
-      `Turn it off to find your own way.</small></span><input id="objective-markers" type="checkbox" data-rt-setting="objectiveMarkers" `+
-      `${settings.objectiveMarkers!==false?'checked':''}></label><label class="setting" for="floating-numbers"><span>Floating numbers<small class="muted">Damage `+
-      `and healing shown over the people concerned.</small></span><input id="floating-numbers" type="checkbox" data-rt-setting="floatingNumbers" `+
-      `${settings.floatingNumbers!==false?'checked':''}></label>`:''}`+
-      `<label class="setting" for="motion-setting"><span>Reduced motion<small class="muted">Remove nonessential motion; action feedback remains `+
-      `readable.</small></span><input id="motion-setting" type="checkbox" ${settings.reducedMotion?'checked':''}></label>`+
-      `${realtime?'':confirmMovesSetting(settings)}<label class="setting" for="battle-view">`+
-      `<span>Campaign view<small class="muted">Choose 3D scenes or the 2D tactical view for every chapter. Commands and progress are shared.</small></span>`+
-      `<select id="battle-view"><option value="3d" ${settings.battleView!=='2d'?'selected':''}>3D scene</option>`+
-      `<option value="2d" ${settings.battleView==='2d'?'selected':''}>2D tactical view</option></select></label><label class="setting" for="figure-style">`+
-      `<span>3D figure style<small class="muted">Sculpted 3D figures, the campaign's painted figures standing in the 3D scene, or sculpted figures finished `+
-      `in ink and wash. Presentation only; tilt-shift and ink need Balanced or High quality.</small></span>`+
-      `<select id="figure-style">${options([['sculpted','Sculpted'],['painted','Painted (HD-2D)'],['inked','Ink and wash']],settings.figureStyle??'sculpted')}</select>`+
-      `</label><label class="setting" for="action-camera"><span>${realtime?'Close-ups<small class="muted">The camera briefly closes in on a critical blow struck '+
-      'by or against the man you control, then returns. Never while paused, while you turn the view, in the overview or with reduced motion.'
-      :'Action camera<small class="muted">The 3D overview briefly closes in on each committed attack, then returns. Never moves with reduced motion or while '+
-      'following a figure.'}</small></span>`+
-      `<input id="action-camera" type="checkbox" ${settings.actionCamera!==false?'checked':''}></label><label class="setting" for="battle-remains">`+
-      `<span>Battle remains<small class="muted">The fallen, spent arrows and trodden ground stay on the 3D field until the encounter ends. Presentation only; `+
-      `the rules never see them.</small></span><input id="battle-remains" type="checkbox" ${settings.battleRemains!==false?'checked':''}></label>`+
-      `<label class="setting" for="adaptive-resolution"><span>Adaptive 3D resolution<small class="muted">Adjust scene resolution using GPU timing or `+
-      `sustained missed frames. Text and controls stay sharp.</small></span>`+
-      `<input id="adaptive-resolution" type="checkbox" ${settings.adaptiveResolution!==false?'checked':''}></label>`+
-      `<label class="setting" for="graphics-quality"><span>Graphics quality<small class="muted">Essential units and tactical information stay visible. `+
-      `Repeated slow rendering lowers quality for the next battle, never in the middle of one; Run performance check (below) measures this device.</small>`+
-      `</span><select id="graphics-quality">${options([['performance','Performance'],['balanced','Balanced'],['high','High quality']],settings.quality)}</select>`+
-      `</label></fieldset><fieldset class="settings-group"><legend>Audio</legend><label class="setting" for="audio-setting">`+
-      `<span>Sound effects<small class="muted">Optional. Every action is understandable without sound.</small></span>`+
-      `<input id="audio-setting" type="checkbox" ${settings.audio?'checked':''}></label><label class="setting" for="audio-volume">`+
-      `<span>Effects volume<small id="audio-volume-value">${Math.round((settings.audioVolume??.5)*100)}%</small></span>`+
-      `<input id="audio-volume" type="range" min="0" max="100" step="10" value="${Math.round((settings.audioVolume??.5)*100)}">`+
-      `</label>${soundscapeSettings(settings)}</fieldset><section class="settings-group"><h3>Rendering measurements</h3>`+
-      `<p id="render-measurements">Measured figures describe this browser session, not a device certification.</p>`+
-      `<button data-cmd="render-report">Show current frame report</button>`+
-      `<p class="settings-description">The performance check takes about a minute in the current 3D battle: it rebuilds the battle at each quality and turns `+
-      `the camera, then shows the results and saves them as a file you can share. Nothing is sent anywhere, and the board takes no commands while it runs.</p>`+
-      `<button data-cmd="performance-check">Run performance check</button></section><section class="settings-group"><h3>Downloads & offline play</h3>`+
-      `<p id="settings-offline-status" class="panel-note" role="status">${offlineStatus}</p>`+
-      `<p>Artwork downloads as you reach each chapter. On suitable connections, the next chapter is prefetched. A complete offline download starts only when `+
-      `you choose it below; it uses your current connection.</p>${actions(`${state&&!currentChapterOffline?'<button data-cmd="retry-chapter">Retry this '+
-      'chapter’s artwork</button>':''}${!offline&&globalThis.navigator&&'serviceWorker' in globalThis.navigator?'<button data-cmd="retry-offline">Download '+
-      'all chapters for offline play</button>':''}`)}<p class="settings-description">No installation is required. On iPhone, Safari’s Share menu offers Add `+
-      `to Home Screen. Offline readiness depends on downloaded content remaining in browser storage.</p></section><section class="settings-group">`+
-      `<h3>Your chronicle & saved data</h3><p>Actions save on this device when browser storage is available. Check the save status for confirmation. Keep a `+
-      `portable code: browsers `+
-      `can clear local data.</p>${actions(`${state?'<button data-cmd="export">Copy a save code</button>':''}<button data-cmd="restore">Restore a save `+
-      `code</button>`+
-      `<button data-cmd="recovery">Recover an `+
-      `earlier checkpoint</button>`)}${preservedUnreadable?`<p class="panel-note">${preservedUnreadable===1?'One stored chronicle':`${preservedUnreadable} stored chronicles`} `+
-      `could not be read by this edition. ${preservedUnreadable===1?'It is':'They are'} kept on `+
-      `this device, not deleted.</p>${actions('<button data-cmd="export-unreadable">Download preserved '+
-      'unreadable save data</button>')}`:''}<p class="settings-description">The last three distinct checkpoints or replaced chronicles are kept locally. `+
-      `Retry restores the encounter-start checkpoint; earlier campaign choices remain.</p>${actions('<button data-cmd="new">Start a new chronicle</button>'+
-      '<button data-cmd="privacy">Privacy & local data</button>')}</section><section class="settings-group">`+
-      `<h3>Reference & support</h3>${actions(`<button data-cmd="help">Controls & rules</button><button data-cmd="history">Historical notes</button>`+
-      `<button data-cmd="credits">Art & credits</button>${state?'<button data-cmd="character">Character & equipment</button>'+
-      '<button data-cmd="journal">Mission journal</button>'+
-      '<button data-cmd="map">Campaign</button>':''}`)}</section>${devMenu?developmentSettings(settings,options):''}`+
-      `${actions('<button class="primary full" data-cmd="close-modal">Close settings</button>')}`,{menu:true});
+  let settingsPage='general';
+  function showSettings(page){
+    if(typeof page==='string')settingsPage=page;
+    const ctx=context();
+    const options=(rows,current)=>rows.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
+    ctx.showModal('Settings',settingsView(ctx,{page:settingsPage,
+      pace:ctx.settings.controlsModel==='realtime'?pacePreferences(ctx.settings,ctx.state?.difficulty):'',
+      development:ctx.devMenu?developmentSettings(ctx.settings,options):''}),{menu:true});
   }
   // Time and pace (guide "Settings reference"): the real-time encounters' game speed, auto-pause
   // events, pause each round and pause in panels. Until one is changed they follow the difficulty.
@@ -214,19 +146,17 @@ export function createPanels(context){
     const check=(id,key,label,hint)=>`<label class="setting" for="${id}"><span>${label}<small class="muted">${hint}</small></span>`+
       `<input id="${id}" type="checkbox" data-pace="${key}" ${settings[key]?'checked':''}></label>`;
     const level=difficulty==='story'?'Story':difficulty==='veteran'?'Veteran':'Standard';
-    return `<fieldset class="settings-group pace-settings"><legend>Time and pace</legend><p class="settings-description">For real-time encounters. `+
-      `${settings.paceChosen?'These are your choices; the difficulty no longer changes them.':`${level} starts here: ${difficulty==='story'?'75% speed, pausing '+
-      'when an enemy comes into view':'full speed, with no auto-pause'}. Changing any of them makes the pace yours.`}</p>`+
-      `<label class="setting" for="game-speed"><span>Game speed<small class="muted">The normal pace of battle time. V halves it; N steps a round while `+
-      `paused.</small></span><select id="game-speed" data-pace="gameSpeed">${[[.5,'50%'],[.75,'75%'],[1,'100%']].map(([v,l])=>`<option value="${v}" `+
+    return `<fieldset class="settings-group pace-settings"><legend>Time and pace</legend><p class="settings-description">${settings.paceChosen?'Your custom pace.':`${level} difficulty defaults.`}</p>`+
+      `<label class="setting" for="game-speed"><span>Game speed<small class="muted">Slow the action without changing its rules.</small></span><select id="game-speed" data-pace="gameSpeed">${[[.5,'50%'],[.75,'75%'],[1,'100%']].map(([v,l])=>`<option value="${v}" `+
       `${settings.gameSpeed===v?'selected':''}>${l}</option>`).join('')}</select></label>`+
-      check('pause-sighted','pauseSighted','Auto-pause: an enemy comes into view','Also when an ambush is revealed or reinforcements arrive.')+
+      '<details id="settings-auto-pause" class="settings-details"><summary>Automatic pause</summary>'+
+      check('pause-sighted','pauseSighted','Enemy spotted','Includes ambushes and reinforcements.')+
       check('pause-hurt','pauseHurt','Auto-pause: badly hurt','Your soldier or a companion below a quarter of his Health, or down.')+
       check('pause-squad','pauseSquad','Auto-pause: a squad breaks','One of your squads breaks and falls back.')+
       check('pause-objective','pauseObjective','Auto-pause: the objective changes','A new objective or phase.')+
       check('pause-order','pauseOrder','Auto-pause: an order cannot be carried out','A command refused, with its reason.')+
       check('round-pause','roundPause','Pause each round','Stop at the start of every round, for a game played almost turn by turn.')+
-      check('panel-pause','panelPause','Pause in panels','Opening a panel (kit, character, journal…) pauses the world.')+`</fieldset>`;
+      check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The main Menu always pauses.')+`</details></fieldset>`;
   }
   // The development menu (npm run dev, or ?dev in the address): the 0.40
   // conversion's controls model and its per-chapter fallback.
@@ -271,11 +201,11 @@ export function createPanels(context){
   function showHelp(page){
     const {showModal,settings={},keymap}=context();
     if(settings.controlsModel==='realtime'){
-      showModal('Controls & rules',`<p class="panel-lead">The player guide (${esc(GUIDE_HELP.version)}), chapter by chapter. Its key tables show your own `+
-        `keys; elsewhere the text names the default keys.</p>${guideHelpView(GUIDE_HELP,{page:typeof page==='string'?page:undefined,keymap})}`);
+      showModal('How to play',guideHelpView(GUIDE_HELP,{page:typeof page==='string'?page:undefined,keymap}));
       if(typeof page==='string')document.getElementById('guide-page-title')?.focus({preventScroll:true});return;
     }
-    showModal('Controls & rules',`${controlHelp(settings)}<div class="panel-lead"><p class="eyebrow">READ THE PREVIEW. THEN COMMIT.</p>`+
+    if(page!=='full-rules'){showModal('How to play',quickHelp({realtime:false,keymap})+'<button data-cmd="help-section" data-id="full-rules">Full rules & shortcuts</button>');return;}
+    showModal('Controls & rules',`<button class="text-link" data-cmd="help">← Help overview</button>${controlHelp(settings)}<div class="panel-lead"><p class="eyebrow">READ THE PREVIEW. THEN COMMIT.</p>`+
       `<p>There is no timer between turns. Choose each action, read its exact effect and cost, then confirm when ready.</p>`+
       `</div>${section('Your first turn',applyControlLabels('<ol class="guide-steps"><li>'+
       '<strong>Select a unit.</strong> Start with your commander; direct control of allies comes later.</li><li>'+
@@ -412,35 +342,27 @@ export function createPanels(context){
       'review</button>'+(state?'<button data-cmd="export">Export current chronicle</button>':'')+'<button data-cmd="close-modal">Cancel</button>')}`);
   }
 
-  function showNavigation(){
+  function showNavigation(page='main'){
     const {state,screen,showModal}=context();
-    const item=(cmd,label,description,active=false)=>`<button class="menu-link" data-cmd="${cmd}" ${active?'aria-current="page"':''}><strong>${label}</strong>`+
-      `<span>${description}</span></button>`;
-    const intro=state?`<p class="eyebrow">CHAPTER ${roman(state.chapter)} · ${esc(state.rank)}</p><h3>${esc(state.name)}</h3>`+
-      `<p>${esc(phaseLabel(state.phase))}. Opening a panel does not advance a turn.</p>`
-      :'<p class="eyebrow">IMPERIUM</p><p>A Roman career, from the first oath to the imperial purple.</p>';
-    const fight=state?.phase==='encounter'&&state.encounter?.controls==='realtime'&&state.encounter.status==='active'
-      ?`<div class="menu-group">${item('command-list','Command list','Every action as lists, with Use; it works while paused.')}</div>`:'';
-    const begin=state?item('continue','Continue the chronicle','Return to your current orders.',screen==='game')
-      :item('new','Begin your chronicle','Start as a recruit in AD 250.');
-    const chronicle=state?`<div class="menu-group">${item('map','Campaign','Your current chapter and earned progress.')}`+
-      `${item('character','Character & equipment','Your rank, possessions, and company.')}`+
-      `${item('journal','Mission journal','Orders, decisions, and the service record.')}`+
-      `${item('ledger','Obligations & alliances','Who is owed what, and when.')}</div>`+
-      `<div class="menu-group">${[['kit','Kit and pack (I)','What you wear and carry, and your coin.'],['character','Your soldier (C)','Attributes, training points and techniques.'],
-        ['decorations','Decorations & titles (A)','Honours and what each gives.'],['company','Company & standing orders (R)','Who marches with you, and how they fight.'],
-        ['chronicle','The chronicle (L)','The story so far, page by page.']].map(([id,label,text])=>
-        `<button class="menu-link" data-cmd="soldier-panel" data-id="${id}"><strong>${label}</strong><span>${text}</span></button>`).join('')}</div>`:'';
-    showModal('Your way through the chronicle',`<div class="menu-intro panel-lead">${intro}</div><nav class="menu-links" aria-label="Main navigation">`+
-      `${fight}<div class="menu-group">${begin}${item('home','Title & introduction','The game, its world, and how to begin.',screen==='title')}</div>${chronicle}`+
-      `<div class="menu-group">${state?item('saves','Saves (F2 quick save)','Quick save, five named saves, and loading them.'):''}${item('settings','Settings & saves','Display, sound, offline content, and backups.')}`+
-      `${item('help','Controls & rules','A guide to battles and political Contests.')}`+
-      `${item('history','Historical notes','The sources and deliberate adaptations.')}`+
-      `${item('credits','Art & credits','How this chronicle was made.')}`+
-      `${item('privacy','Privacy & local data','What stays on your device.')}</div></nav>`);
+    const item=(cmd,label,hint='',id='')=>`<button class="menu-link" data-cmd="${cmd}"${id?` data-id="${id}"`:''}><strong>${label}</strong>${hint?`<span>${hint}</span>`:''}</button>`;
+    const soldier=state?.soldier;
+    const groups={
+      main:[state?item('continue',screen==='game'?'Resume game':'Continue game'):item('new','New game'),
+        state?item('menu-section',soldier?'Soldier & company':'Your character','Equipment, training and companions','soldier'):'',
+        state?item('menu-section','Campaign','Mission, progress and commitments','campaign'):'',
+        state?item('saves','Save & load'):'',item('settings','Settings'),item('help','How to play'),item('menu-section','More','Title screen, history and credits','about')],
+      soldier:soldier?[item('soldier-panel','Equipment','Wear, compare and manage items','kit'),item('soldier-panel','Training','Attributes and techniques','character'),
+        item('soldier-panel','Company','Companions and standing orders','company'),item('soldier-panel','Honours','Decorations and titles','decorations')]:[item('character','Character & equipment')],
+      campaign:[item('soldier-panel','Current mission','Objective and next step','mission'),item('map','Campaign map'),item('journal','Mission journal'),
+        item('ledger','Obligations & alliances','Promises, costs and due dates'),item('character','Career record','Rank and standing'),
+        ...(soldier?[item('soldier-panel','Story so far','','chronicle')]:[])],
+      about:[item('home','Title screen'),item('history','Historical notes'),item('credits','Credits'),item('privacy','Privacy & local data')]
+    };
+    const current=Object.hasOwn(groups,page)?page:'main';
+    const titles={main:'Menu',soldier:soldier?'Soldier & company':'Your character',campaign:'Campaign',about:'More'};
+    const intro=state?`<p class="menu-status"><strong>Chapter ${roman(state.chapter)}</strong> · ${esc(state.rank)}${screen==='game'?' · Play paused':''}</p>`:'';
+    showModal(titles[current],`${intro}<nav class="menu-links menu-simple" aria-label="${titles[current]}">${groups[current].join('')}</nav>`,{menu:true,back:current==='main'?null:'menu'});
   }
-
-
   function showCredits(){
     const {showModal}=context();
     showModal('Art & credits',`<div class="panel-lead"><p class="eyebrow">AN ORIGINAL ROMAN CHRONICLE</p>`+

@@ -39,12 +39,10 @@ export function fieldHints({state,keymap,kind='field'}){
   const title=camp?campFor(state.chapter)?.title??'The camp':state.encounter.title;
   const label=chamber?`${esc(title)}. Click the floor inside the pale circles to walk, a person to talk to him; right-click gives the chosen speech. ${key('yield_floor')} yields the floor.`
     :`${esc(title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses.`;
-  const keys=chamber?`The arrow keys walk your speaker one place at a time. ${key('target_next_enemy')} chooses the next member or rival speaker and gives the chosen speech’s forecast;
-      Enter talks to him, ${key('interact_nearest')} to the nearest. ${key('ability_1')} to ${key('ability_7')} choose a speech; the same key again gives it to the person chosen. ${key('yield_floor')} yields the floor and ends the hour.
-      Hold ${key('show_usable')} to see where each rival means to walk next. ${key('party_prev')} and ${key('party_next')} change the speaker you control; ${key('control_hero')} returns to your soldier. Escape closes the conversation, then opens the Menu.`
-    :`Arrow keys move your soldier. ${key('target_next_enemy')} chooses the next enemy or thing to use, Enter acts on it, ${key('interact_nearest')} uses what is nearest.
-      ${key('combat_toggle')} draws or sheathes. ${key('ability_1')} to ${key('ability_7')} choose an ability; the same key again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
-      ${key('step_round')} plays one round while paused. ${key('party_prev')} and ${key('party_next')} change the companion you control; ${key('control_hero')} returns to your soldier. Escape opens the Menu.`;
+  const keys=chamber?`Arrow keys move. ${key('target_next_enemy')} selects a member; Enter talks. ${key('interact_nearest')} uses what is nearest. ${key('yield_floor')} ends the hour.
+      All actions provides a text list. Escape closes the current panel or opens Menu; How to play has help.`
+    :`Arrow keys move. ${key('target_next_enemy')} selects a target; Enter acts. ${key('interact_nearest')} uses what is nearest. ${key('pause')} pauses.
+      All actions provides a text list. Escape cancels or opens Menu; How to play has help.`;
   return {label,keys};
 }
 // After the keys are remapped: the hints, the buttons' shortcuts and their titles follow (the bars rebuild in the field).
@@ -64,22 +62,25 @@ export function fieldMarkup({state,keymap,kind='field'}){
       <div class="rt-time" role="group" aria-label="Time">
         <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
         <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
-        ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">Yield</button>`
-          :`<button data-role="slowButton" type="button" data-shortcut="slow_time" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Slow</button>
-        <button data-role="stepButton" type="button" data-shortcut="step_round" aria-keyshortcuts="${key('step_round')}" disabled>Next round</button>`}
+        ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">End hour</button>`:''}
+        <span class="rt-speed-state" data-role="speedState" hidden>Half speed</span>
       </div>
       <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
     <section class="rt-status-strip" aria-label="Current mission">
-      <p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
-      <p class="rt-progress" data-role="progress"></p>
-      <p class="rt-next" data-role="missionNext" hidden></p>
-      <div class="rt-status-facts"><p class="rt-deadline" data-role="deadlineLine" hidden></p><p data-role="orderStatus" hidden></p></div>
+      <div class="rt-mission-summary"><p class="rt-objective" data-role="missionHeadline">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
+        <span class="rt-progress" data-role="progressBadge"></span><span class="rt-deadline" data-role="deadlineBadge"></span><span class="rt-order-feedback" data-role="orderBadge"></span></div>
       <p class="rt-mission-warning" data-role="missionWarning" hidden></p>
+      <details class="rt-mission-details" data-role="missionDetails"><summary>Mission details</summary><div class="rt-detail-body">
+        <p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
+        <p class="rt-progress" data-role="progress"></p><p class="rt-next" data-role="missionNext" hidden></p>
+        <div class="rt-status-facts"><p class="rt-deadline" data-role="deadlineLine" hidden></p><p data-role="orderStatus" hidden></p></div>
+        <button type="button" data-close-disclosure>Close details</button>
+      </div></details>
     </section>
-    ${chamber?'<div class="rt-coalition" data-role="coalition" aria-label="The coalition and the Chamber Whip Forecast"></div>':''}
+    ${chamber?'<div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
-      <p><strong>Deployment · time is stopped.</strong> Choose a standard or soldier, then click marked ground to place them. Arrow keys and Enter also place them. No Command is spent.</p>
+      <p><strong>Place your units.</strong> Select a unit, then click the marked ground. Time is paused.</p>
       <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
     </div>
     ${chamber?'<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>':''}
@@ -108,35 +109,43 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
       </div>
       <div class="rt-ability-area">
-        <p class="rt-current"><span class="eyebrow">${chamber?'Right button: speech':'Right button'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
-        <div class="rt-ability-bar" data-role="abilityBar" role="toolbar" aria-label="${chamber?'Speeches':'Abilities'}"></div>
+        <p class="rt-current"><span>${chamber?'Selected speech':'Selected action'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
+        <div class="rt-ability-bar" data-role="abilityBar" role="${chamber?'toolbar':'group'}" aria-label="${chamber?'Speeches':'Actions'}"></div>
         ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>`}
         <div class="rt-tools">
-          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every ${chamber?'speech, walk and conversation':'action'} as a list">List</button>
+          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every ${chamber?'speech, walk and conversation':'action'} as a list">All actions</button>
         ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion">
-          <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Motion</button>
-        </div>`:`<details class="rt-toolbox"><summary>Controls</summary><div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
-          <button data-role="swordsButton" class="rt-swords" type="button" data-shortcut="combat_toggle" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" data-title="Draw or sheathe" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
-          <button data-role="walkButton" type="button" data-shortcut="walk_toggle" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
-          <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force</button>
-          <button data-role="rangesButton" type="button" data-shortcut="show_ranges" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
-        </div></details>`}
+          <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Vote agenda</button>
+        </div>`:`<details class="rt-toolbox" data-role="controlOptions"><summary>Options</summary><div class="rt-detail-body"><div class="rt-toggles" role="group" aria-label="Weapon and movement">
+          <button data-role="swordsButton" class="rt-swords" type="button" data-shortcut="combat_toggle" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" data-title="Draw or sheathe" title="Draw or sheathe (${key('combat_toggle')})">Draw weapon</button>
+          <button data-role="walkButton" type="button" data-shortcut="walk_toggle" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Always walk</button>
+          <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force attack</button>
+          <button data-role="rangesButton" type="button" data-shortcut="show_ranges" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Show ranges</button>
+        </div><details class="rt-time-options" data-role="timeControls"><summary>Time controls</summary><div class="rt-toggles">
+          <button data-role="slowButton" type="button" data-shortcut="slow_time" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Half speed</button>
+          <button data-role="stepButton" type="button" data-shortcut="step_round" aria-keyshortcuts="${key('step_round')}" disabled>Play one round</button>
+          <button type="button" data-close-disclosure>Close time controls</button>
+        </div></details><button type="button" data-close-disclosure>Close options</button></div></details>`}
         </div>
       </div>
-      <p class="rt-input-context" data-role="inputContext">${chamber?'Speeches use the selected speaker.':'Orders use the selected soldier or squad.'} ${key('pause')} pauses from the scene or command controls.</p>
     </footer>
-    <aside class="rt-lesson" data-role="lesson" aria-label="Field guide" hidden><div><p class="eyebrow">FIELD GUIDE · <span data-role="lessonStep"></span></p>
-      <h2 data-role="lessonTitle"></h2><p data-role="lessonBody"></p></div><button class="text-link" type="button" data-cmd="dismiss-guide">Hide the guide</button></aside>
+    <div class="rt-support"><details class="rt-help" data-role="fieldHelp"><summary>How to play</summary><div class="rt-detail-body">
+      <p>${camp?'Click a person to talk or an object to use it.':chamber?'Click a person to talk. Click the floor to move.':'Click the ground to move. Click an enemy to attack.'}</p>
+      <p>${camp?'Use <strong>All actions</strong> for a list of people and places.':`Select an action, then ${chamber?'right-click a person':'right-click a target'}. Use <strong>All actions</strong> for a text list.`}</p>
+      <p class="rt-input-context" data-role="inputContext">${key('pause')} pauses from the scene or command controls.</p>
+      <p>Arrow keys move. ${key('target_next_enemy')} selects a target; Enter acts.${!camp&&!chamber?' During deployment, arrows and Enter place the selected unit.':''}</p>
+      <button type="button" data-close-disclosure>Close help</button></div></details>
+    <details class="rt-lesson" data-role="lesson" hidden><summary><span class="rt-tip-label">Tip</span> <span data-role="lessonTitle"></span><span data-role="lessonStep" class="visually-hidden"></span></summary>
+      <div class="rt-detail-body"><p data-role="lessonBody"></p><div class="rt-toggles"><button type="button" data-close-disclosure>Close tip</button><button class="text-link" type="button" data-cmd="dismiss-guide">Hide tips</button></div></div></details>
+      <details class="rt-log-panel" data-role="logDetails"><summary id="rt-log-title">${chamber?'Debate log':'Battle log'}</summary>
+        <div class="rt-detail-body"><p class="rt-log-note">${chamber?'Latest speech first.':'Select an event to view its location.'}</p>
+        <ol data-role="log" class="rt-log"></ol><button type="button" data-close-disclosure>Close log</button></div>
+      </details></div>
   <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
-    <h2 id="rt-list-title">Command list</h2>
-    <p class="rt-log-note">${chamber?'Choose which speaker acts, then Use a speech, a walk or a conversation.':'Choose who acts, then Use an order. It works while paused; a paused world carries it out on resume.'}</p>
+    <div class="rt-list-head"><h2 id="rt-list-title">All actions</h2><button type="button" data-role="closeListButton">Close</button></div>
+    <p class="rt-log-note">${chamber?'Choose a speaker and an action.':'Choose a unit and an action. Queued actions run when you resume.'}</p>
     <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
     <div data-role="listOptions"></div>
-  </section>
-  <section class="rt-log-panel" aria-labelledby="rt-log-title">
-    ${chamber?'<h2 id="rt-log-title">Chamber record</h2><p class="rt-log-note">Every speech and reply, latest first.</p>'
-      :'<h2 id="rt-log-title">Battle log</h2><p class="rt-log-note">Select an entry to look at that place; F follows your soldier again.</p>'}
-    <ol data-role="log" class="rt-log"></ol>
   </section>
   <div class="visually-hidden" role="status" aria-live="polite" data-role="announcer"></div>
 </section>`;
@@ -175,15 +184,18 @@ export function realtimeResult(state,{keymap}={}){
     `<li><span><strong>${esc(b.name)}</strong>: ${esc(b.loot.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
     `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}</ul></section>`:'';
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
-    <span class="eyebrow">${won?'OBJECTIVE ACHIEVED · AFTER-ACTION CHRONICLE':'A CHANCE TO REGROUP'}</span>
-    <h2 id="rt-result-title">${won?'The day is yours.':'The field is lost.'}</h2>
-    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p>${DEFEAT_PAGES[e.id]?`<blockquote class="rt-defeat-page"><span class="eyebrow">How history remembers the day</span>`+
-      `<p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote>`:''}<p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p>`}
-    <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
-    ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
+    <span class="eyebrow">BATTLE RESULT</span>
+    <h2 id="rt-result-title">${won?'Objective complete':'Try this battle again'}</h2>
+    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
     ${search}
-    <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol></details>
-    <p class="result-save-note">${won?'Record the result to keep the rewards and consequences.':'Retry restores the encounter exactly as it began, including the random seed.'}</p>
-    <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
+    <details class="rt-result-details"><summary>Battle details &amp; rewards</summary>
+      <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
+      ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
+      <button type="button" data-close-disclosure>Close details</button>
+    </details>
+    ${!won&&DEFEAT_PAGES[e.id]?`<details class="rt-history-note"><summary>Historical context</summary><blockquote class="rt-defeat-page"><p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote><button type="button" data-close-disclosure>Close context</button></details>`:''}
+    <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol><button type="button" data-close-disclosure>Close log</button></details>
+    <p class="result-save-note">${won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
+    <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
   </section>`;
 }

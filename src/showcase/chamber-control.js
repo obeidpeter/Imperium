@@ -429,7 +429,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
       if(action.startsWith('camera_')||action.startsWith('zoom_')||action.startsWith('panel_')||['pause','help','map_overlay','quick_save'].includes(action))return false;
       say(`${show.kind==='division'?'The members are dividing':'The rivals have the floor'}: click or press ${firstKeyLabel('combat_toggle',keymap)} to skip.`);return true;
     }
-    if(action.startsWith('ability_')){const id=known()[Number(action.slice(8))-1];if(!id)say('No speech in that place.');else chooseSpeech(id);return true;}
+    if(/^ability_\d+$/.test(action)){const id=known()[Number(action.slice(8))-1];if(!id)say('No speech in that place.');else chooseSpeech(id);return true;}
     if(ARROWS[action]){
       const sp=unit(me());if(!sp||!live())return true;const [dx,dy]=ARROWS[action];
       // The arrows step to the next place in that direction (the chamber's own grid, north up).

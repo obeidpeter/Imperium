@@ -79,7 +79,7 @@ test('Settings expose the effective graphics tier and distinguish current-chapte
   assert.match(shown.at(-1),/id="graphics-quality"/);
   assert.match(shown.at(-1),/value="high" selected/);
   assert.match(shown.at(-1),/Chapter I is available offline/);
-  assert.match(shown.at(-1),/complete offline download starts only when you choose it/);
+  assert.match(shown.at(-1),/Download everything before playing without internet/);
   offline=true;panels.showSettings();
   assert.match(shown.at(-1),/All twelve chapters are available offline/);
   assert.equal(Game.serialize(state),before);

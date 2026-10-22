@@ -2,10 +2,11 @@
 # expanded, command and production campaigns, production build, asset/offline
 # checks and character audits) on every pull request and on main: on Node 20,
 # the oldest version the project supports (package.json "engines"), and on
-# Node 22. There are no dependencies to install. Three more jobs drive the
+# Node 22. There are no dependencies to install. Four more jobs drive the
 # production build in headless Chromium: the browser smoke test
 # (scripts/browser-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
+# the usability and save-protection checks (scripts/usability-smoke.mjs),
 # and the 3D stage benchmark (scripts/benchmark-stage.mjs), which fails on a
 # shader compiled in the first frame or in play, and whose report is uploaded.
 # Playwright is installed for those jobs only and is not a project dependency.
@@ -59,6 +60,27 @@ jobs:
         with:
           name: realtime-polish-smoke
           path: tests/visual-results/realtime-polish/
+          retention-days: 14
+
+  usability:
+    name: usability and navigation (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Usability, navigation and save protection
+        run: npm run smoke:usability
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: usability-smoke
+          path: tests/visual-results/usability/
           retention-days: 14
 
   benchmark:

@@ -17,6 +17,7 @@ import {DEFAULT_KEYMAP,actionFor,actionLabel,firstKeyLabel,learnKey} from '../ui
 import {targetReadout} from '../ui/realtime-target-readout.js';
 import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
 import {missionReadout} from '../ui/realtime-mission-readout.js';
+import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -55,6 +56,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const seen={paused:false,slowed:false};
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
+  const hudRoot=canvas.closest('.rt-field'),unbindDisclosures=bindHudDisclosures(canvas.closest('.realtime-frame')??hudRoot);let coalitionSummaryKey='';
   const me=()=>actorById(world,world.controlled);
   const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance()});
   const say=(text,{warning=false,announce=false}={})=>{
@@ -73,11 +75,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(!r.valid){keyTarget=null;targetState='cleared';}
     }else if(!targetState){write(dom.targetLine,'');if(dom.targetLine)dom.targetLine.hidden=true;}
     const r=missionReadout(world,{keymap,objective:base?.objective});
+    const compact=compactMissionReadout(world,r);
+    for(const [role,text]of Object.entries({missionHeadline:compact.headline,progressBadge:compact.progress,deadlineBadge:compact.deadline,orderBadge:compact.order}))write(dom[role],text);
     for(const [role,text]of Object.entries({objective:r.objective,progress:r.progress,missionNext:r.next,missionWarning:r.warning,deadlineLine:r.opportunity,orderStatus:r.orderStatus})){
       write(dom[role],text??'');if(dom[role]&&['missionNext','missionWarning','deadlineLine','orderStatus'].includes(role))dom[role].hidden=!text;
     }
     if(r.warningKey&&r.warningKey!==missionWarningKey&&now-(warnedAt.get(r.warningKey)??-Infinity)>=6000){say(r.warning,{warning:true,announce:true});warnedAt.set(r.warningKey,now);}missionWarningKey=r.warningKey??'';
-    write(dom.inputContext,`${firstKeyLabel('pause',keymap)} pauses from the scene or controls · Enter uses a focused button · click the scene for movement keys.`);
+    write(dom.inputContext,`${firstKeyLabel('pause',keymap)} pauses. Enter uses a focused button. Click the scene to use movement keys.`);
   }
   function rescueBriefing(){
     if(kind==='field'&&world.tick===0&&(world.mission?.rescue||world.mission?.mode==='extract')&&world.status==='active'){
@@ -223,14 +227,28 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function buildAbilityBar(){
     if(!dom.abilityBar||kind==='chamber')return;const list=abilitiesOf(me());barKey=list.join(',');
-    dom.abilityBar.replaceChildren(...list.map((id,i)=>{
+    const wasOpen=!!dom.abilityBar.querySelector('[data-more-actions]')?.open;
+    const buttons=new Map(list.map((id,i)=>{
       const b=document.createElement('button');b.type='button';b.className='ability';b.dataset.ability=id;b.tabIndex=i===0?0:-1;
       const key=actionLabel(`ability_${i+1}`,keymap);b.setAttribute('aria-keyshortcuts',key);
       b.innerHTML=`<kbd>${esc(key)}</kbd><span>${esc(ABILITIES[id].name)}</span><small></small>`;
       b.addEventListener('click',event=>{chooseAbility(id,{touch:event.pointerType==='touch'||armed!==null});canvas.focus({preventScroll:true});});
-      return b;
+      return [id,b];
     }));
+    // The standalone arena keeps its existing three-action toolbar and styling.
+    if(!hudRoot){dom.abilityBar.replaceChildren(...buttons.values());if(!list.includes(ability))ability='strike';return;}
+    const {primary,more}=abilityGroups(list),main=document.createElement('div');main.className='rt-primary-actions';main.dataset.abilityGroup='primary';main.setAttribute('role','toolbar');main.setAttribute('aria-label','Common actions');
+    main.append(...primary.map(id=>buttons.get(id)));if(main.firstElementChild)main.firstElementChild.tabIndex=0;
+    dom.abilityBar.replaceChildren(main);
+    if(more.length){
+      const details=document.createElement('details'),summary=document.createElement('summary'),extra=document.createElement('div'),close=document.createElement('button');
+      details.className='rt-more-actions';details.dataset.moreActions='';details.open=wasOpen;summary.textContent='More actions';
+      extra.className='rt-extra-actions';extra.dataset.abilityGroup='more';extra.setAttribute('role','toolbar');extra.setAttribute('aria-label','More actions');
+      extra.append(...more.map(id=>buttons.get(id)));extra.firstElementChild.tabIndex=0;
+      close.type='button';close.dataset.closeDisclosure='';close.textContent='Close actions';details.append(summary,extra,close);dom.abilityBar.append(details);
+    }
     if(!list.includes(ability))ability='strike';
+    revealAbility(dom.abilityBar,ability);
   }
   function abilityNote(id,a){
     const c=ABILITIES[id].cost??{};
@@ -247,7 +265,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
       const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
-      chamber.update(now);if(dom.pauseButton){dom.pauseButton.textContent=paused?'Resume':'Pause';dom.pauseButton.setAttribute('aria-pressed',String(paused));}
+      chamber.update(now);
+      const chamberState=callbacks.chamber.state(),coalitionKey=chamberReadoutKey(chamberState,dom.coalition?.innerHTML??'');
+      if(coalitionKey!==coalitionSummaryKey){coalitionSummaryKey=coalitionKey;const c=compactChamberReadout(chamberState);
+        write(dom.voteSummary,c.votes);write(dom.voteProjection,c.projection);write(dom.deadlineBadge,c.deadline);}
+      if(dom.pauseButton){dom.pauseButton.textContent=paused?'Resume':'Pause';dom.pauseButton.setAttribute('aria-pressed',String(paused));}
       if(dom.pausedBand)dom.pausedBand.hidden=!paused;if(listOpen&&metrics.frames%30===0)renderList();return;
     }
     const h=me(),paused=clock.paused&&!stepping(clock),round=roundOf(world),progress=world.tick%TIME.roundTicks/TIME.roundTicks;
@@ -272,16 +294,18 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     }
     if(h){
       dom.swordsButton?.setAttribute('aria-pressed',String(h.drawn));dom.walkButton?.setAttribute('aria-pressed',String(h.walkMode));
+      if(hudRoot)write(dom.swordsButton,h.drawn?'Sheathe weapon':'Draw weapon');
       if(dom.healthText)dom.healthText.textContent=`${h.hp} / ${h.maxHp}`;
     }
     if(dom.pauseButton){dom.pauseButton.textContent=paused?'Resume':'Pause';dom.pauseButton.setAttribute('aria-pressed',String(paused));}
     dom.slowButton?.setAttribute('aria-pressed',String(clock.slow));if(dom.stepButton)dom.stepButton.disabled=!paused||world.status!=='active';
+    if(dom.speedState)dom.speedState.hidden=!clock.slow;
     if(dom.pausedBand)dom.pausedBand.hidden=!paused;if(dom.roundLabel)dom.roundLabel.textContent=kind==='camp'?'Camp':`Round ${round}`;
     if(dom.clockTime)dom.clockTime.textContent=clockText(world.tick);dom.clockRing?.setAttribute('stroke-dasharray',`${Math.round(progress*100)} 100`);
     if(dom.currentAbility)dom.currentAbility.textContent=ABILITIES[ability]?.name??'Strike';dom.forceButton?.setAttribute('aria-pressed',String(force));
     dom.rangesButton?.setAttribute('aria-pressed',String(ranges));
     const states=Object.fromEntries(abilityState.split(',').filter(Boolean).map(s=>s.split(':')));
-    for(const b of dom.abilityBar?.children??[]){
+    for(const b of dom.abilityBar?.querySelectorAll('[data-ability]')??[]){
       const id=b.dataset.ability,state=states[id];b.setAttribute('aria-pressed',String(id===ability));b.classList.toggle('armed',id===armed);
       const off=state&&state!=='ok'&&state!=='NO_TARGET';b.classList.toggle('unavailable',off);b.title=off?REASONS[state]:ABILITIES[id].summary;
       b.querySelector('small').textContent=abilityNote(id,h);
@@ -329,6 +353,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function toggleList(open=!listOpen){
     listOpen=open;if(dom.commandList)dom.commandList.hidden=!open;dom.listButton?.setAttribute('aria-pressed',String(open));listKey='';
     if(open){listActor=world.controlled;renderList();dom.listOptions?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
+    else dom.listButton?.focus({preventScroll:true});
   }
 
   // ——— Pointer: what is under it, and what a click there does. ———
@@ -433,6 +458,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   // The ability buttons and number keys follow one rule (intents.js abilityKey).
   function chooseAbility(id,{touch=false}={}){
+    revealAbility(dom.abilityBar,id);
     if(touch){
       // Touch: a tap arms the ability for the next tap on the scene; tapping it again uses it on yourself.
       if(armed===id){armed=null;pressAbility(id,{again:true,target:null});return;}armed=id;ability=id;say(`${ABILITIES[id].name}: tap the target.`);return;
@@ -440,6 +466,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     pressAbility(id);
   }
   function pressAbility(id,{again=false,target=keyTarget,pointer=null}={}){
+    revealAbility(dom.abilityBar,id);
     const r=abilityKey(world,{abilityId:id,current:again?id:ability,keyTarget:target,pointer,quickCast:!!pointer});ability=r.current;
     if(r.command)issue(r.command);else say(r.message,{warning:r.warning});
   }
@@ -495,10 +522,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // While squads are selected the arrows move the order marker, 1–6 are the command card and 7–0 do nothing.
     if(squads?.active&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
       squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
-    if(squads?.active&&action.startsWith('ability_')){const n=Number(action.slice(8));if(n<=6)squads.card(n-1);else say('The command card has six orders: 1 to 6. Clear the selection (Esc) for your abilities.');return true;}
+    if(squads?.active&&/^ability_\d+$/.test(action)){const n=Number(action.slice(8));if(n<=6)squads.card(n-1);else say('The command card has six orders: 1 to 6. Clear the selection (Esc) for your abilities.');return true;}
     if(squads?.active&&action==='act_on_target'){squads.sendMarker(keyTarget);return true;}
     if(ARROWS[action]){arrows.add(action);arrowMove();return true;}
-    if(action.startsWith('ability_')){
+    if(/^ability_\d+$/.test(action)){
       const id=abilitiesOf(h)[Number(action.slice(8))-1];if(!id){say('No ability in that place.');return true;}
       if(options.quickCast&&hoverPoint&&id!=='strike'){const pick=pickAt(hoverPoint);if(pick){pressAbility(id,{pointer:pick});return true;}}
       chooseAbility(id);return true;
@@ -535,7 +562,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'party_prev':cycleParty(-1);return true;case 'party_next':cycleParty(1);return true;
       case 'control_hero':takeControl(world.heroId);return true;
       case 'help':callbacks.onPanel?.('help');return true;
-      case 'ability_bar':dom.abilityBar?.querySelector('[tabindex="0"]')?.focus();return true;
+      case 'ability_bar':
+        if(squads?.active&&!deploying(world))dom.commandCard?.querySelector('button')?.focus({preventScroll:true});
+        else if(kind==='chamber')dom.abilityBar?.querySelector('[tabindex="0"]')?.focus();
+        else revealAbility(dom.abilityBar,ability,{focus:true});return true;
       default:
         if(action.startsWith('panel_')||action==='map_overlay'){callbacks.onPanel?.(action.replace('panel_',''));return true;}
         return false;
@@ -584,9 +614,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
     if(dom.listButton)dom.listButton.onclick=()=>toggleList();
+    if(dom.closeListButton)dom.closeListButton.onclick=()=>toggleList(false);
     if(dom.menuButton)dom.menuButton.onclick=()=>callbacks.onMenu?.();
     dom.abilityBar?.addEventListener('keydown',e=>{
-      if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const list=[...dom.abilityBar.children],i=list.indexOf(document.activeElement);if(i<0)return;
+      if(!['ArrowLeft','ArrowRight'].includes(e.key))return;
+      const group=e.target.closest('[data-ability-group]')??dom.abilityBar;
+      const list=[...group.querySelectorAll('[data-ability],button.ability')],i=list.indexOf(document.activeElement);if(i<0)return;
       e.preventDefault();const next=list[(i+(e.key==='ArrowRight'?1:list.length-1))%list.length];list.forEach(b=>b.tabIndex=b===next?0:-1);next.focus();
     });
     document.addEventListener('keydown',onKey);document.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);
@@ -648,6 +681,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     setMarks(next){marks=next??{};presenter?.setMarks(marks);},
     snapshot:()=>snapshotWorld(world),
     dispose(){
+      unbindDisclosures();
       disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
       document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
       canvas.removeEventListener('pointermove',onEdge);canvas.removeEventListener('pointerleave',onLeave);document.body.classList.remove('labels-full');

@@ -15,6 +15,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
+import {menuCommand,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -71,32 +72,29 @@ async function open(options={}){
   await page.goto(base,{waitUntil:'domcontentloaded'});return page;
 }
 async function close(page){contexts.delete(page.context());await page.context().close();}
-async function menu(page,cmd){
-  if(!await page.locator(`[data-cmd="${cmd}"]:visible`).count())await page.locator('[data-cmd="menu"]:visible').first().click();
-  await page.locator(`[data-cmd="${cmd}"]:visible`).first().click();
-}
+const menu=menuCommand;
 async function closeModal(page){await page.locator('#modal [data-cmd="close-modal"]').first().click();}
-async function settings(page,fn){await menu(page,'settings');await page.waitForSelector('#battle-view');await fn();await closeModal(page);}
+async function settings(page,fn){await menu(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');await fn();await closeModal(page);}
 const settled=page=>page.waitForFunction(()=>{const b=document.querySelector('#battle-board');return !b||b.dataset.bound==='true';});
 async function restore(page,snapshot){
-  await menu(page,'settings');await page.locator('#modal [data-cmd="restore"]').click();
+  await settingsCommand(page,'restore');
   await page.locator('#restore-code').fill(snapshot.code);await page.locator('[data-cmd="import-code"]').click();
   await page.locator('[data-cmd="confirm-import"]').click();
   await page.waitForSelector(JSON.parse(snapshot.serialized).phase==='encounter'?'#battle-board':'.camp-page');
   await settled(page);
 }
 async function exported(page){
-  await menu(page,'settings');await page.locator('#modal [data-cmd="export"]').click();
+  await settingsCommand(page,'export');
   const code=await page.locator('#save-code').inputValue();await closeModal(page);return unpack(code);
 }
 async function config(page,{view='3d',quality='balanced',text='1'}={}){
   await settings(page,async()=>{
-    await page.selectOption('#battle-view',view);
-    await page.selectOption('#graphics-quality',quality);
-    await page.selectOption('#text-size',text);
-    await page.check('#motion-setting');
-    await page.uncheck('#adaptive-resolution');
-    await page.uncheck('#guide-setting');
+    await (await revealControl(page,'#battle-view')).selectOption(view);
+    await (await revealControl(page,'#graphics-quality')).selectOption(quality);
+    await (await revealControl(page,'#text-size')).selectOption(text);
+    await (await revealControl(page,'#motion-setting')).check();
+    await (await revealControl(page,'#adaptive-resolution')).uncheck();
+    await (await revealControl(page,'#guide-setting')).uncheck();
   });
 }
 async function ready3D(page){
@@ -191,7 +189,7 @@ async function sceneInventory(){
       console.log(`  capturing ${snapshot.id}`);const overviewCapture=await captureScene(page,snapshot.id,{quality:requestedQuality,cameraView:'overview'});
       const screenshot=overviewCapture.screenshot,captureObservations={overview:overviewCapture.observations};let horizon=null;
       if(snapshot.chapter===5){
-        await page.locator('[data-cmd="camera-horizon"]').click();
+        await (await revealControl(page,'[data-cmd="camera-horizon"]')).click();
         await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#battle-board').dataset.renderStats).cameraView==='horizon';}catch{return false;}},null,{polling:300});
         const horizonCapture=await captureScene(page,`${snapshot.id}-horizon`,{quality:requestedQuality,cameraView:'horizon'});
         horizon=horizonCapture.screenshot;captureObservations.horizon=horizonCapture.observations;
@@ -253,7 +251,7 @@ async function remappedKeyboard(){
   const page=await open(),snapshot=snapshots.find(s=>s.id==='ch1-training');
   try{
     await config(page,{view:'2d'});await restore(page,snapshot);
-    await settings(page,()=>page.selectOption('#binding-undo','z'));
+    await settings(page,async()=>(await revealControl(page,'#binding-undo')).selectOption('z'));
     // Closing Settings re-renders the board; keys sent before the new one is
     // bound are lost (on slow CI this timed out waiting for the walk).
     await settled(page);await page.focus('#battle-board');await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');
@@ -263,9 +261,9 @@ async function remappedKeyboard(){
     await settled(page);await page.focus('#battle-board');await page.keyboard.press('z');
     await page.waitForFunction(()=>/movement restored/.test(document.querySelector('#announcement').textContent));
     const returned=(await exported(page)).encounter.units.find(u=>u.id==='hero');assert.equal(`${returned.x},${returned.y}`,`${origin.x},${origin.y}`);assert.equal(returned.moved,origin.moved);
-    await menu(page,'help');assert.match(await page.locator('#modal').innerText(),/Z takes back|Undo Move \(Z\)/);await closeModal(page);
+    await menu(page,'help');await page.locator('#modal [data-cmd="help-section"][data-id="full-rules"]').click();assert.match(await page.locator('#modal').innerText(),/Z takes back|Undo Move \(Z\)/);await closeModal(page);
     await page.reload();await page.locator('[data-cmd="continue"]').first().click();
-    await menu(page,'settings');assert.equal(await page.locator('#binding-undo').inputValue(),'z');await closeModal(page);
+    await menu(page,'settings');assert.equal(await (await revealControl(page,'#binding-undo')).inputValue(),'z');await closeModal(page);
     return {undo:'z',walked:true,returned:true,persistedAfterReload:true};
   }finally{await close(page);}
 }
@@ -274,7 +272,7 @@ async function practiceIsolation(){
   try{
     await config(page,{view:'2d'});await restore(page,snapshot);
     const primary=Game.serialize(await exported(page));
-    await page.locator('.practice-library > summary').click();await page.locator('[data-cmd="archive-replay"]').first().click();
+    await (await revealControl(page,'[data-cmd="archive-replay"]')).click();
     await page.waitForSelector('.archive-banner');await settled(page);
     await page.locator('.archive-mutators > summary').click();
     await page.selectOption('#archive-weather','rain');await page.selectOption('#archive-time','dusk');await page.selectOption('#archive-difficulty','veteran');
