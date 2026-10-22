@@ -4,7 +4,8 @@
 # the oldest version the project supports (package.json "engines"), and on
 # Node 22. There are no dependencies to install. Four more jobs drive the
 # production build in headless Chromium: the browser smoke test
-# (scripts/browser-smoke.mjs), the twelve-chapter screenshot benchmark
+# (scripts/browser-smoke.mjs, then the real-time checks of
+# scripts/realtime-polish-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs),
 # and the 3D stage benchmark (scripts/benchmark-stage.mjs), which fails on a
@@ -43,7 +44,9 @@ jobs:
   smoke:
     name: browser smoke (Chromium)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Usually about 12 minutes. A slow runner has taken 13 minutes to install
+    # Chromium and three times as long for each scenario (about 40 in all).
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -65,7 +68,8 @@ jobs:
   usability:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Usually about 2 minutes; room for the same slow runner as the smoke test.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
