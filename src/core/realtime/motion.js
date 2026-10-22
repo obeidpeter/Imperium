@@ -95,21 +95,32 @@ export function moveActors(world){
     actor.gait=run?'run':'walk';actor.moving=moved>0;actor.walked+=moved;
     if(!actor.path.length&&order?.kind==='move'){if(order.setDown)setDown(world,actor);actor.order=null;actor.gait=null;}
   }
-  // Resolve crowded bodies after every formation has moved. A later pair can
-  // push an earlier one together again, so use a bounded relaxation rather than
-  // a single sweep. Alternating the sweep reduces the bias of actor list order;
-  // the fixed budget and ordering keep save/replay results deterministic.
-  const min=MOVEMENT.radius*2,list=world.actors.filter(a=>a.alive&&!a.down&&!a.carriedBy);
-  const push=(actor,nx,nz,amount)=>{
-    const p=clampToMap(grid,{x:actor.x+nx*amount,z:actor.z+nz*amount});
+  separateBodies(world,grid);
+  // Follow the bearer's final position, including any crowd correction this tick.
+  for(const actor of world.actors)if(actor.carriedBy){const b=actorById(world,actor.carriedBy);if(b){actor.x=b.x-b.fx*.3;actor.z=b.z-b.fz*.3;actor.fx=b.fx;actor.fz=b.fz;}}
+}
+// Resolve crowded bodies after every formation has moved. A later pair can
+// push an earlier one together again, so use a bounded relaxation rather than
+// a single sweep. Alternating the sweep reduces the bias of actor list order;
+// the fixed budget and ordering keep save/replay results deterministic. The
+// passes work on copies of the centres in typed arrays, which are far cheaper to
+// read than the actors themselves: the pairs, their order and every operation
+// are those of the plain sweep over the actors, so each result is identical.
+export function separateBodies(world,grid=navGrid(world.map)){
+  const min=MOVEMENT.radius*2,list=world.actors.filter(a=>a.alive&&!a.down&&!a.carriedBy),n=list.length;
+  const X=new Float64Array(n),Z=new Float64Array(n),pushed=new Uint8Array(n);for(let k=0;k<n;k++){X[k]=list[k].x;Z[k]=list[k].z;}
+  const push=(k,nx,nz,amount)=>{
+    const p=clampToMap(grid,{x:X[k]+nx*amount,z:Z[k]+nz*amount});
     if(!walkable(grid,p.x,p.z))return 0;
-    const moved=Math.max(0,(p.x-actor.x)*nx+(p.z-actor.z)*nz);actor.x=p.x;actor.z=p.z;return moved;
+    const moved=Math.max(0,(p.x-X[k])*nx+(p.z-Z[k])*nz);X[k]=p.x;Z[k]=p.z;pushed[k]=1;return moved;
   };
   for(let pass=0;pass<4;pass++){
     let crowded=false;
-    for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
-      const a=list[pass%2?list.length-1-i:i],b=list[pass%2?list.length-1-j:j];
-      const dx=b.x-a.x,dz=b.z-a.z,d2=dx*dx+dz*dz;if(d2>=min*min)continue;
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const a=pass%2?n-1-i:i,b=pass%2?n-1-j:j;
+      // Bodies a body's width apart along x cannot overlap: the full test would skip them too.
+      const dx=X[b]-X[a];if(dx>=min||dx<=-min)continue;
+      const dz=Z[b]-Z[a],d2=dx*dx+dz*dz;if(d2>=min*min)continue;
       const d=Math.sqrt(d2),overlap=min-d;if(overlap<1e-4)continue;crowded=true;
       const nx=d>1e-6?dx/d:1,nz=d>1e-6?dz/d:0,half=overlap/2;
       const am=push(a,-nx,-nz,half),bm=push(b,nx,nz,half),left=overlap-am-bm;
@@ -119,8 +130,7 @@ export function moveActors(world){
     }
     if(!crowded)break;
   }
-  // Follow the bearer's final position, including any crowd correction this tick.
-  for(const actor of world.actors)if(actor.carriedBy){const b=actorById(world,actor.carriedBy);if(b){actor.x=b.x-b.fx*.3;actor.z=b.z-b.fz*.3;actor.fx=b.fx;actor.fz=b.fz;}}
+  for(let k=0;k<n;k++)if(pushed[k]){list[k].x=X[k];list[k].z=Z[k];}
 }
 export const objectById=(world,id)=>world.objects?.find(o=>o.id===id)??null;
 // Set a carried comrade down at the bearer's feet.
