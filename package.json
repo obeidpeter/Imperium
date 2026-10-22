@@ -29,6 +29,7 @@
     "asset:tripo": "node scripts/assets/tripo.mjs",
     "asset:process": "node scripts/assets/process-model.mjs",
     "asset:bind": "node scripts/assets/bind-character.mjs",
+    "asset:compress": "node scripts/assets/compress.mjs",
     "asset:check": "node scripts/assets/check-model.mjs",
     "asset:preview": "node scripts/assets/preview-model.mjs"
   },

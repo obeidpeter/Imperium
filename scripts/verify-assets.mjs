@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
-import {chapterAudioAssets} from '../src/ui/art.js';
+import {BUILD_ONLY,chapterAudioAssets} from '../src/ui/art.js';
 import {chapterBodies} from '../src/ui/actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
@@ -85,7 +85,9 @@ for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&bu
 const world=new Set(worldFiles().map(file=>'./'+file));
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path));
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path)&&!BUILD_ONLY.includes(path));
+for(const path of BUILD_ONLY)assert.ok(build.deferredAssets.includes(path)&&Object.values(build.chapterAssets).every(paths=>!paths.includes(path)),'Only the complete download carries '+path);
+for(const path of ['./vendor/three/addons/libs/basis/basis_worker.js','./vendor/three/addons/libs/basis/basis_transcoder.wasm','./vendor/three/addons/libs/meshopt_decoder.module.js'])assert.ok(shared3D.includes(path),'Every chapter decodes compressed models: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const path of world){
   assert.ok(build.deferredAssets.includes(path),'World asset built and deferred: '+path);

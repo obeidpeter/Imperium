@@ -6,7 +6,7 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 
 - **In the game since 0.37.0:** sixteen generated character bodies, one for each kind of figure the battles and ceremonies show: Roman recruits, trainer, legionaries, archers, a centurion and a commander, a civilian, and Gothic, Persian and Palmyrene infantry, archers and riders. They replace the procedural bodies on the game's own skeleton, clips and kit. See [Generated characters in the game](#generated-characters-in-the-game).
 - **In the game since 0.36.0:** five Tripo props for Chapter V, a supply camp on open ground off the board's west and south sides. They load at Balanced and High quality, in Chapter V's download only. See [Generated scenery in the game](#generated-scenery-in-the-game).
-- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the model checker and the preview renderer (see [Checked so far](#checked-so-far)).
+- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the compressor (KTX2 textures and meshopt geometry, since the asset foundation), the model checker and the preview renderer (see [Checked so far](#checked-so-far) and [Compression](#compression)).
 - **Requests and provenance:** [`art-source/models/requests/`](../art-source/models/requests/) holds each exact prompt, Tripo task, rig task, model version, licence and raw digests; [`art-source/models/reports/`](../art-source/models/reports/) holds the processing and binding reports.
 
 ## One-time setup
@@ -20,6 +20,9 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
    - Blender's Python module: `python3 -m venv /tmp/blender && /tmp/blender/bin/pip install bpy==5.2.2`, then `export BLENDER_PYTHON=/tmp/blender/bin/python`. The wheel must match the Python version (5.2.2 installs on Python 3.13); it takes about 1 GB.
    - The Blender 5.2 application: `export BLENDER=/path/to/blender`.
 3. **Previews** need Playwright, as the smoke test does: `npm install --no-save --no-package-lock playwright@1.56.1`, or set `PLAYWRIGHT_MODULE`. Neither Blender nor Playwright is a project dependency.
+4. **Compression** needs two things, neither a project dependency:
+   - The Basis Universal encoder, built from [its source](https://github.com/BinomialLLC/basis_universal) (version 1.16.4 here; it needs `cmake` and a C++ compiler): `cmake -S basis_universal -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j`, then `export BASISU=/path/to/basisu` (or put `basisu` on `PATH`).
+   - The glTF-Transform modules: `npm install --no-save --no-package-lock @gltf-transform/core@4.5.1 @gltf-transform/extensions@4.5.1 @gltf-transform/functions@4.5.1 meshoptimizer@1.3.0 sharp@0.35.5`, or set `ASSET_MODULES` to a folder whose `node_modules` holds them.
 
 ## Workflow for each asset
 
@@ -41,19 +44,20 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
      --output assets/models/characters/<id>.glb --report art-source/models/reports/char-<id>.json \
      --triangles 12000 --overview-triangles 2500 --texture 1024
    ```
-4. **Check:** `npm run asset:check -- <model.glb> --bytes <n> --triangles <n> --texture <n> --min-height <m> --max-height <m>`. It exits non-zero when the model breaks a budget or needs a decoder the game does not ship (Draco, meshopt, KTX2).
-5. **Preview:** `npm run asset:preview -- <model.glb> <sheet.png>`. Look at the sheet:
+4. **Compress:** `npm run asset:compress -- <model.glb> <model.glb> --report art-source/models/reports/<id>-compress.json`. Each texture becomes KTX2 and the geometry meshopt; the tool refuses to write a model whose triangles changed (see [Compression](#compression)).
+5. **Check:** `npm run asset:check -- <model.glb> --bytes <n> --triangles <n> --texture <n> --min-height <m> --max-height <m>`. It exits non-zero when the model breaks a budget or needs a decoder the game does not ship (Draco).
+6. **Preview:** `npm run asset:preview -- <model.glb> <sheet.png>`. Look at the sheet:
    - shape and colours;
    - scale against the 1.8 m figure;
    - floating or missing parts.
 
-   Regenerate rather than ship a poor model.
-6. **Record.** Add a runtime entry to the `assets` list in [`asset-manifest.json`](asset-manifest.json) and a note in [`art-generation.md`](art-generation.md). `scripts/verify-assets.mjs` checks the bytes and SHA-256 of every entry. The entry needs:
+   Regenerate rather than ship a poor model. The preview loads the model as the game does, KTX2 and meshopt included.
+7. **Record.** Add a runtime entry to the `assets` list in [`asset-manifest.json`](asset-manifest.json) and a note in [`art-generation.md`](art-generation.md). `scripts/verify-assets.mjs` checks the bytes and SHA-256 of every entry. The entry needs:
    - the source: generator, model version, task id, and the prompt file;
-   - the processing settings, from the report;
+   - the processing and compression settings, from the reports;
    - the export: format, bytes, SHA-256 and triangles;
    - the licence under the owner's Tripo plan.
-7. **Integrate.** Put a prop in `assets/models/chapters/<NN>/`, add it to the [world catalog](../src/ui/world-catalog.js) with its kind and the chapters that show it, and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
+8. **Integrate.** Put a prop in `assets/models/chapters/<NN>/`, add it to the [world catalog](../src/ui/world-catalog.js) with its kind and the chapters that show it, and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
 
 ## The processing script
 
@@ -99,6 +103,26 @@ Limitations:
 - Colours are baked, so a body cannot take a figure's palette. Shields, cloaks and crests stay the game's own and keep their colours and heraldry.
 - Weights come from Tripo's rig. Long robes deform with the legs, and an extreme pose can crease a shoulder.
 
+## Compression
+
+[`compress.mjs`](../scripts/assets/compress.mjs) prepares a processed or bound GLB for the game:
+
+- **Textures** become KTX2 (`KHR_texture_basisu`): Basis Universal ETC1S at the encoder's default quality (128), with mipmaps. Colour maps are encoded as sRGB, normal maps with the encoder's normal-map settings, and metal/roughness maps as linear data. In the game each texture is transcoded to a format the GPU keeps compressed: ETC2 on most phones, BC7 or BC1 on most computers, about a quarter to an eighth of the memory of the decoded image. A 1,024 px colour map takes 0.7–1.4 MB of GPU memory instead of 5.6 MB, and needs no mipmaps made on upload.
+- **Geometry** is reordered for the codec and packed with meshopt (`EXT_meshopt_compression`), with no filters and no new quantization, so every stored value is kept. The tool reads both models back and refuses to write unless every triangle, with all its attributes, is unchanged.
+- **Report.** The input and output bytes (raw and gzip), the encoder version and settings, and each texture's use, size, original bytes, KTX2 bytes and the encoder's measured error (PSNR, in dB).
+
+ETC1S trades download size for memory: a KTX2 image is two to three times the size of the WebP it replaces, and it barely shrinks under gzip, while meshopt geometry is a little smaller than before. Data maps fare worst, since ETC1S suits colour better than independent channels.
+
+**In the game.** [`model-loader.js`](../src/showcase/model-loader.js) gives three.js's `GLTFLoader` the meshopt decoder and the KTX2 loader, both vendored from Three.js 0.186.1 ([provenance](../vendor/three/addons/PROVENANCE.md)):
+
+- `KTX2Loader` starts its transcoder worker from a `blob:` URL, which the page's policy refuses (`worker-src 'self'`). [`basis_worker.js`](../vendor/three/addons/libs/basis/basis_worker.js) is that same worker as a file on the page's own origin, generated by [`ktx2-worker.mjs`](../scripts/assets/ktx2-worker.mjs); a test fails while it differs from what the vendored loader would assemble.
+- The page's Content Security Policy adds `'wasm-unsafe-eval'` to `script-src`, and nothing else: it lets the decoders compile WebAssembly, and still evaluates no other code. The arena page carries the same policy.
+- The transcoder starts only for a model with KTX2 images, once per page, with at most two workers. The GPU's formats are read from a throwaway WebGL 2 context, as models load before a stage has a renderer; without one, or without a compressed format (S3TC counts only with its sRGB variant), the transcoder writes plain pixels, which every GPU takes.
+- A model whose texture cannot be transcoded, or whose geometry cannot be decoded, fails to load as a whole, rather than drawing untextured; its figures and props keep their code-built fallback. A browser that refuses WebAssembly fails every compressed model that way.
+- WebP models still load as before, so an uncompressed model works too.
+
+The decoders and transcoder are in every chapter's offline group, about 0.31 MB compressed, as every chapter shows generated bodies. The transcoder's own script is left out: the worker holds it. The local server (`scripts/serve.mjs`) names `.glb`, `.ktx2` and `.wasm` files.
+
 ## Budgets
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
@@ -139,7 +163,7 @@ Proposed limits per asset:
   - A quality change rebuilds the set on the new ground.
 
   This is presentation only: no rules state and no gameplay randomness.
-- **Content Security Policy.** The page allows `blob:` images but not `blob:` fetches. three.js's default `ImageBitmapLoader` fetches a GLB's embedded textures as `blob:` URLs, which the policy refuses. Since 0.38 [`model-loader.js`](../src/showcase/model-loader.js) decodes them with `createImageBitmap` straight from the GLB's own bytes: no request at all, and the browser decodes off the main thread, so uploading a texture is no longer also decoding it. An image that `createImageBitmap` refuses (or a browser without it) decodes through an image element as before. The policy itself is unchanged.
+- **Content Security Policy.** The page allows `blob:` images but not `blob:` fetches. three.js's default `ImageBitmapLoader` fetches a GLB's embedded textures as `blob:` URLs, which the policy refuses. Since 0.38 [`model-loader.js`](../src/showcase/model-loader.js) decodes them with `createImageBitmap` straight from the GLB's own bytes: no request at all, and the browser decodes off the main thread, so uploading a texture is no longer also decoding it. An image that `createImageBitmap` refuses (or a browser without it) decodes through an image element as before. Since the asset foundation, KTX2 images are transcoded from the same bytes in a worker on the page's own origin, and the policy adds `'wasm-unsafe-eval'` for the decoders (see [Compression](#compression)).
 - **Placement.** A search of the built scenes in both Chapter V encounters chose the ground. It reads every scene object's bounds and tests a grid of positions. A position qualifies when it is:
   - outside the board;
   - clear of every structure, wall and boulder;
