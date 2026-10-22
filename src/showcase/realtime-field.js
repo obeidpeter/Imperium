@@ -44,7 +44,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null;
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null,lessonKey=null;
+  // The guided opening's memory of what the world does not record: a pause and a slowing (callbacks.lesson).
+  const seen={paused:false,slowed:false};
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
   const me=()=>actorById(world,world.controlled);
@@ -211,8 +213,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const text=world.mission?.objective??world.mission?.label??base?.objective??'';
     return world.mission?.deadline?text.replace(/\b(finish|hold|survive|secure)( [^.]*?)? by turn \d+/i,(m,verb,rest)=>`${verb}${rest??''} by round ${world.mission.deadline}`):text;
   }
+  function showLesson(){
+    if(!dom.lesson||metrics.frames%10)return;const l=callbacks.lesson?.(world,seen)??null,key=l?`${l.step}|${l.title}|${l.body}`:'';if(key===lessonKey)return;
+    lessonKey=key;dom.lesson.hidden=!l;if(!l)return;
+    for(const [role,text]of [['lessonStep',l.step],['lessonTitle',l.title],['lessonBody',l.body]]){const el=dom.lesson.querySelector(`[data-role="${role}"]`);if(el)el.textContent=text;}
+  }
   function updateHud(now){
-    if(disposed)return;
+    if(disposed)return;showLesson();
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
       const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
@@ -483,7 +490,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     }
     switch(action){
       case 'pause':togglePause();return true;
-      case 'slow_time':if(kind==='camp')return true;setSlow(clock,!clock.slow);say(clock.slow?'Slow time: half speed.':'Normal time.');return true;
+      case 'slow_time':if(kind==='camp')return true;setSlow(clock,!clock.slow);if(clock.slow)seen.slowed=true;say(clock.slow?'Slow time: half speed.':'Normal time.');return true;
       case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
       case 'combat_toggle':if(h)issue({actorId:h.id,kind:'setDrawn',payload:{drawn:!pendingDrawn()}});return true;
       case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?'Walking everywhere (W).':'Running again on far clicks.');}return true;
@@ -524,7 +531,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // P does nothing until the advance is sounded.
     if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return;}
     const pause=!clock.paused||stepping(clock);setPaused(clock,pause);say(pause?'Paused.':'Resumed.',{announce:true});showPlanned();
-    if(pause)saveResume('pause');else resumePending=true;
+    if(pause){seen.paused=true;saveResume('pause');}else resumePending=true;
   }
   function saveResume(reason){if(world.status==='active')callbacks.onSave?.(world,reason);}
   function follow(){

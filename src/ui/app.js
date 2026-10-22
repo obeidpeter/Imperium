@@ -18,6 +18,8 @@ import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.
 import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
 import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup,relabelField} from './realtime-view.js';
+import {realtimeLesson} from './realtime-lessons.js';
+import {tpAuditTotal} from '../core/tp-audit.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
@@ -125,9 +127,14 @@ function battle(){
   if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict});
   if(chamberMode())return chamberEncounterView({state,saving,lastSaved,saveProblem,saveConflict,known:chamberKnown()});
   selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}
-  return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
+  const view=encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
     keyBindings:settings.keyBindings,coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,
     orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});
+  // A battle begun on the 0.38 board, in a chapter that now plays in real time (a chronicle from before 0.40): it can restart from its checkpoint.
+  const legacy=state.encounter.kind==='battle'&&state.encounter.status==='active'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime';
+  return legacy?view.replace(/(<main\b[^>]*>)/,`$1<aside class="command-save-warning legacy-battle" role="note"><p>This battle began on the turn-based board. Its chapter `+
+    `now plays in real time: restart it from its checkpoint, the battle's start with everything as it was, or finish it here.</p><div>`+
+    `<button data-cmd="restart-realtime">Restart in real time</button></div></aside>`):view;
 }
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span>`+
@@ -206,6 +213,19 @@ function render(){
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
   renderScheduler.schedule({activeId});
+  askSoldier();
+}
+// The recruit's training and appearance as chosen in the open panel (New Game, or a chronicle's one-time choice).
+function recruitChoice(){
+  const path=modal.querySelector('input[name="recruit-path"]:checked')?.value??'legionary';
+  return {path,appearance:Object.fromEntries([...modal.querySelectorAll('[data-appearance]')].map(el=>[el.dataset.appearance,Number(el.value)]))};
+}
+// A chronicle begun before 0.40 is asked once, in camp, to choose its soldier's training (build brief §3.17).
+// Choosing grants the training points of the chapters it has completed; until then the rules read a Legionary.
+let soldierAsked=false;
+function askSoldier(){
+  if(soldierAsked||!state||state.soldier||screen==='title'||state.phase!=='camp'||state.archiveReplay||settings.controlsModel!=='realtime'||modal.open)return;
+  soldierAsked=true;queueMicrotask(()=>{if(!modal.open&&!state.soldier)showSoldierPanel('adopt');});
 }
 function mountPainting(){
   const host=paintingHost(app,{title:screen==='title',ceremony3D:settings.battleView!=='2d'&&!failed3D});
@@ -269,9 +289,11 @@ function mountField(target){
 }
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
 // chronicle like any Contest command (chamber.js checks them); the field animates what they did. ———
+// The guided opening in real time (realtime-lessons.js), while Settings → Guided opening is on.
+const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({state,world,kind,seen,keymap});
 function chamberCallbacks(){
   return {
-    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    lesson:lessonFor('chamber'),onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
     chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
       inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
   };
@@ -300,7 +322,7 @@ function startCampaignEncounter(){
 // ——— Camp: conversations, places and the people with something new to say. ———
 function campCallbacks(){
   return {
-    onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
+    lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
     onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
     onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
@@ -447,7 +469,7 @@ function saveField(world,{announced=false}={}){
 }
 function fieldCallbacks(){
   return {
-    onSave:world=>saveField(world),
+    lesson:lessonFor('field'),onSave:world=>saveField(world),
     // Play resumed: the resume point is discarded on this first tick, so it is never used twice.
     onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
     onQuickSave:()=>quickSave(),
@@ -485,7 +507,8 @@ function showSoldierPanel(name,arg=null){
   const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Your soldier',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
-    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],adopt:()=>['Your soldier’s training',adoptPanel(state)],
+    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],
+    adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
@@ -841,6 +864,7 @@ case 'soldier':{const d=b.dataset;
   await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
   break;}
 case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
+case 'adopt-soldier':{const choice=recruitChoice();soldierPanel={name:'character'};await soldierAct({kind:'adopt',...choice});break;}
 case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
 case 'orders-save':{
   const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
@@ -863,7 +887,7 @@ case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProg
 case 'new':showNew();break;
 case 'begin':{
   const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,
-    {featureEdition:35,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
+    {featureEdition:35,progression:true,...recruitChoice(),difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
       ironDiscipline:!!document.querySelector('#iron-discipline')?.checked});
   if(document.querySelector('#new-soundscape')?.checked){
     settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();
@@ -1053,6 +1077,7 @@ case 'present-case':if(chamberMode()){await chamberSpeech({kind:'case',id},{afte
   break;
 case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();render();showSettings();break;
 case 'rebind':startRebind(id);break;
+case 'restart-realtime':await change(()=>Game.restartInRealtime(state));break;
 case 'help-section':showHelp(id);modal.scrollTop=0;break;
 case 'reset-keys':useKeymap(keymapFrom());showSettings();announce('Every key is back to its default.');modal.querySelector('[data-cmd="reset-keys"]')?.focus();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;

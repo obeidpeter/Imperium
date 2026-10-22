@@ -22,6 +22,7 @@ export {difficultyOptions,companyPlan,selectCompany,prepareCompany,tacticalAdvic
 export {operationPhase} from './operations.js';
 import {initialProgression,validateProgression} from './progression.js';
 import {createSoldier,validateSoldier,commitSoldierRewards,issuePromotions,rewardCapabilities,soldierCommand as soldierAct} from './soldier.js';
+import {tpAuditTotal} from './tp-audit.js';
 import {createEncounterWorld,applyRealtimeOutcome,realtimeMissionSupported} from './realtime/campaign-encounter.js';
 import {snapshotWorld,restoreWorld} from './realtime/simulation.js';
 import {validateWorld} from './realtime/validate.js';
@@ -101,7 +102,23 @@ export function resolveRealtime(state,world){
   return result(true,state.encounter.status==='won'?'Objective secured. Record the result to keep its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
 // The soldier's kit, training, purse and companions' orders (soldier.js): camp commands, each legal or refused unchanged.
-export function soldierCommand(state,command){if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');return soldierAct(state,command);}
+export function soldierCommand(state,command){if(state.archiveReplay)return result(false,'The archive replay keeps your chronicle unchanged.');
+  // A chronicle begun before 0.40 has no soldier record: choosing his training also grants the training points the
+  // campaign could have given through the chapters it has completed (build brief §3.17, tp-audit.js).
+  if(command?.kind==='adopt'&&!state.soldier){
+    const r=soldierAct(state,command);if(!r.ok)return r;const grant=tpAuditTotal(Math.max(0,...(state.completed??[])),state.soldier.path);
+    state.soldier.tp+=grant;state.soldier.tpEarned+=grant;return result(true,`${r.message}${grant?` ${grant} training points for the service already done.`:''}`);
+  }
+  return soldierAct(state,command);}
+// A battle begun on the 0.38 board, in a chapter that now plays in real time (build brief §3.17): it restarts
+// from its checkpoint, the complete encounter start, in real time. Refused, it changes nothing.
+export function restartInRealtime(state){
+  const e=state.encounter;if(state.phase!=='encounter'||!state.snapshot||!e||e.kind!=='battle'||isRealtime(state)||state.archiveReplay)
+    return result(false,'There is no battle on the 0.38 board to restart.');
+  const trial=clone(state);trial.encounterOptions={...(state.encounterOptions??{}),controls:'realtime'};const r=retry(trial);
+  if(!r.ok||!isRealtime(trial))return result(false,r.ok?'This battle has no real-time form.':r.message);
+  for(const key of Object.keys(state))delete state[key];Object.assign(state,trial);return result(true,'The battle restarts from its checkpoint, in real time.');
+}
 // ——— Iron discipline (build brief §3.17–§3.18): no manual saves inside encounters, and a
 // save code copied mid-encounter carries only its checkpoint. It can be turned off, never on. ———
 export function manualSaveProblem(state){

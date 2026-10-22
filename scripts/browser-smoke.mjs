@@ -23,6 +23,7 @@ import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import {playEncounter} from './autoplay.mjs';
+import {tpAuditTotal} from '../src/core/tp-audit.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -312,10 +313,15 @@ async function realtimeCampaign(){
   const state=()=>field(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return {x:h.x,z:h.z,tick:w.tick,used:w.used,status:w.status,paused:window.__realtime.paused()};});
   const running=async()=>{if((await state()).paused)await page.keyboard.press('KeyP');};
   const box=await page.locator('#rt-board').boundingBox(),start=await state();
+  // The guided opening teaches the drill: first the footing, then a pause, then slow time.
+  await page.waitForFunction(()=>/Find your footing/.test(document.querySelector('[data-role="lesson"]:not([hidden])')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('The guided opening starts the drill'));
   await page.mouse.click(box.x+box.width*.62,box.y+box.height*.45);
   await page.waitForFunction(([x,z])=>{const h=window.__realtime.world().actors.find(a=>a.id==='hero');return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000})
     .catch(()=>assert.fail('The click in the campaign field moves the soldier'));
   await page.keyboard.press('KeyP');assert.equal((await state()).paused,true,'P pauses the campaign field');
+  await page.waitForFunction(()=>/Slow time/.test(document.querySelector('[data-role="lesson"]')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('After a walk and a pause, the guide teaches slow time'));
   await page.waitForSelector('[data-role="pausedBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The paused band shows'));
   // Saves: F2 keeps the moment with a picture the 3D stage draws for it; Menu → Saves lists it, paused under the panel.
   await page.keyboard.press('F2');
@@ -574,11 +580,39 @@ async function settingsAndHelp(){
   console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; Restore default keys');
 }
 
+// Migration from 0.38 in the page (2D): a Chapter V camp saved before 0.40 (no soldier record) asks once for the
+// soldier's training and grants the training points of Chapters I–IV; a battle in progress on the 0.38 board offers
+// Restart in real time, which opens the same battle in real time from its checkpoint.
+async function legacyChronicle(){
+  const page=await open(),old=Game.decodeSave(battleCampCode('ch5-mine'));delete old.soldier;
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
+  const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
+  await page.check('#modal input[name="recruit-path"][value="explorator"]');await page.selectOption('#recruit-beard','2');await page.click('#modal [data-cmd="adopt-soldier"]');
+  await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('The soldier is adopted and shown'));
+  await page.context().close();
+  // A battle begun on the 0.38 board.
+  const turns=Game.decodeSave(battleCampCode('ch5-mine'));assert.ok(Game.startEncounter(turns,{}).ok);
+  const second=await open();
+  await second.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await second.goto(base);await menuButton(second,'settings');await second.click('#modal [data-cmd="restore"]');
+  await second.fill('#restore-code',Game.encodeSave(turns));await second.click('[data-cmd="import-code"]');await second.click('[data-cmd="confirm-import"]');
+  await second.waitForSelector('.legacy-battle [data-cmd="restart-realtime"]',{timeout:60000}).catch(()=>assert.fail('The 0.38 battle offers a real-time restart'));
+  await second.click('.legacy-battle [data-cmd="restart-realtime"]');
+  await second.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail('The battle restarts in real time'));
+  assert.equal(await second.evaluate(()=>window.__realtime.world().encounterId),'ch5-mine');
+  await second.context().close();
+  console.log('ok - legacy chronicle: a Chapter V camp saved before 0.40 asks once for its soldier (training and appearance) and grants Chapters I–IV’s training points; a battle in progress on the turn-based board restarts in real time from its checkpoint');
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

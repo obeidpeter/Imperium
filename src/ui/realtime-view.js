@@ -60,6 +60,8 @@ export function fieldMarkup({state,keymap,kind='field'}){
     <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys"
       aria-label="${label}"></canvas>
     <p id="rt-keys" class="visually-hidden">${keys}</p>
+    <aside class="rt-lesson" data-role="lesson" aria-label="Field guide" hidden><p class="eyebrow">FIELD GUIDE · <span data-role="lessonStep"></span></p>
+      <h2 data-role="lessonTitle"></h2><p data-role="lessonBody"></p><button class="text-link" type="button" data-cmd="dismiss-guide">Hide the guide</button></aside>
     <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
     ${chamber?`<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>
     <aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>`:''}

@@ -2,6 +2,7 @@ import {relationshipLedger} from './progression-views.js';
 import {controlPreferences,controlHelp,applyControlLabels} from './control-preferences.js';
 import * as Game from '../core/game.js';
 import {difficultyChoices,soundscapeSettings} from './campaign-upgrade-views.js';
+import {recruitChoices} from './soldier-views.js';
 // The generated guide is part of the shell, so Controls & rules works offline.
 import {GUIDE_HELP} from '../data/guide-help.js';
 import {guideHelpView} from './guide-help-view.js';
@@ -27,7 +28,7 @@ export function createPanels(context){
       `short drill, then swear the oath that will follow you to Rome.</p></div><div class="panel-form"><label for="name-input">Your Roman name</label>`+
       `<input id="name-input" type="text" maxlength="40" value="Aurelius Marcellus" autocomplete="off" aria-describedby="name-hint">`+
       `<p id="name-hint" class="settings-description">Up to 40 characters. This name appears in your chronicle and optional reign card.</p>`+
-      `</div>${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
+      `</div>${recruitChoices()}${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
       `encounters, by quick save or by name; a save code copied mid-encounter carries only its checkpoint. It can be lifted later, never taken up again.</small>`+
       `</span><input id="iron-discipline" type="checkbox"></label><p class="panel-note">New chronicles include operational preparations, chapter-specific field opportunities, coordinated `+
       `enemy doctrines, documented political cases, mechanical weather, policy debates, branching operations, veteran specializations and recurring political `+

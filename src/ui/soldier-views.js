@@ -193,11 +193,23 @@ export function trainerPanel(state,trainerId){
 }
 
 // The one-time choice of training and appearance (a chronicle begun before 0.40 makes it here).
-export function adoptPanel(state){
-  const paths=PATHS.map(id=>`<li><strong>${esc(TRAINING_PATHS[id].name)}</strong>: ${esc(Object.entries(TRAINING_PATHS[id].mods).map(([k,v])=>`${signed(v)} ${ATTRIBUTE_NAMES[k]}`).join(', '))}`+
-    ` ${button('adopt',`Train as ${TRAINING_PATHS[id].name}`,{path:id})}</li>`).join('');
-  return `<div class="adopt-panel"><p>Choose your soldier’s training. It sets his starting attributes; training points raise them later.</p><ul class="shop-list">${paths}</ul>
-    <p class="panel-note">Appearance choices: ${esc(Object.entries(APPEARANCE).map(([k,list])=>`${k} (${list.length})`).join(', '))}.</p></div>`;
+// The recruit's training and appearance (guide "Your recruit"): at New Game, and once for a chronicle begun
+// before 0.40. Legionary is chosen first, as the easiest start. Read by the page when the choice is made.
+const APPEARANCE_NAMES={hair:'Hair',beard:'Beard',tunic:'Tunic',cloak:'Cloak'};
+export function recruitChoices({grants=null}={}){
+  const mods=id=>Object.entries(TRAINING_PATHS[id].mods).map(([k,v])=>`${signed(v)} ${ATTRIBUTE_NAMES[k]}`).join(', ');
+  return `<fieldset class="recruit-training"><legend>Training</legend>${PATHS.map((id,i)=>`<label class="difficulty-choice"><input type="radio" `+
+    `name="recruit-path" value="${id}" ${i===0?'checked':''}><span><strong>${esc(TRAINING_PATHS[id].name)}</strong> <small>${esc(mods(id))}`+
+    `${grants?` · ${grants[id]} training points for the service already done`:''}</small></span></label>`).join('')}</fieldset>`+
+    `<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE).map(([key,list])=>`<label class="setting" `+
+    `for="recruit-${key}"><span>${APPEARANCE_NAMES[key]??key}</span><select id="recruit-${key}" data-appearance="${key}">${list.map((name,i)=>`<option `+
+    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}</fieldset>`;
+}
+export function adoptPanel(state,{grants=null}={}){
+  return `<div class="adopt-panel"><p>This chronicle began before soldiers trained in their own way. Choose his training and appearance once; your `+
+    `record is kept. Training sets his starting attributes, and training points raise them later. Choosing also grants the training points the campaign `+
+    `could have given him through the chapters you have completed.</p>${recruitChoices({grants})}`+
+    `<div class="panel-actions"><button class="primary" data-cmd="adopt-soldier">Choose this training</button></div></div>`;
 }
 
 // Q: the mission's orders — the objective and its progress, the capabilities still to demonstrate, and errands.
