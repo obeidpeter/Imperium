@@ -2088,101 +2088,174 @@
       }
     },
     {
-      "id": "site-battle",
-      "path": "assets/site/battle.webp",
-      "subject": "Chapter I tactical board from an actual v0.8 browser rendering of a legal Move transition",
+      "id": "site-battle-3d",
+      "path": "assets/site/battle-3d.webp",
+      "subject": "Chapter V wall battle in the 3D view: legionaries in formation and mounted troops before a Euphrates fortress",
       "source": {
-        "method": "Mechanical downscale of an actual local browser gameplay-board clip; no generated or composited replacement imagery",
-        "sourceFile": "site-battle-board.jpg",
-        "reviewCapturePath": "work/production-review/site-battle-board.jpg",
-        "sourceSha256": "8994ae94b6734d5593fb9b5d766bea4c3df624345b50388d14ccb628c688b05e",
+        "method": "Crop and mechanical downscale of an actual local browser capture of the game stage; only the HTML name labels are hidden; no generated or composited imagery",
+        "sourceFile": "ch5-wall-3d-horizon-in-in.png",
+        "sourceSha256": "0f91d640e4375548c30ba496f29966bb501011fe24e6444653276e9babbc3d00",
         "sourceSize": [
-          960,
-          640
+          1600,
+          630
         ],
         "cropBox": [
+          120,
           0,
-          0,
-          960,
-          640
+          1380,
+          630
         ],
         "browserCapture": {
           "viewport": [
-            1280,
-            720
+            1600,
+            1000
           ],
           "clip": [
-            160,
             0,
-            960,
-            640
+            328,
+            1600,
+            630
           ],
-          "fixture": "action-move; legal trace step 12",
-          "version": "0.8.0"
+          "fixture": "ch5-wall at its start, reached from New Game by legal commands (scripts/command-autoplay.mjs) and restored through the visible Restore dialog",
+          "settings": {
+            "view": "3d",
+            "quality": "high",
+            "camera": "horizon, then two steps closer",
+            "reducedMotion": true,
+            "adaptiveResolution": false
+          },
+          "build": "31fcca249cbf",
+          "commit": "d42a09e",
+          "version": "0.38.1",
+          "renderer": "Headless Chromium with SwiftShader software rendering"
         },
         "instructions": "docs/interface-assets.md",
         "bundledSource": false
       },
-      "usage": "Landing-page actual gameplay preview; no surrounding controls or narrative UI pictured.",
+      "usage": "Landing-page lead actual gameplay preview (3D battlefield).",
       "loading": "lazy-below-fold",
       "export": {
         "format": "WebP",
-        "width": 640,
-        "height": 427,
-        "quality": 78,
+        "width": 1200,
+        "height": 600,
+        "quality": 80,
         "method": 6,
         "resampling": "Lanczos",
-        "bytes": 53230,
-        "sha256": "42d8523e4b85bcb0f9eacf780f0b3440edf42dbf10c837cfbfac13c0b2cef9d9"
+        "bytes": 95534,
+        "sha256": "bc777a3c28664c85c23fdc3ea4097edb7f694d23f4632830d5a3840b6ad8b353"
       }
     },
     {
-      "id": "site-contest",
-      "path": "assets/site/contest.webp",
-      "subject": "Chapter XI Senate board from an actual v0.8 browser rendering of an earned legal campaign fixture",
+      "id": "site-senate-3d",
+      "path": "assets/site/senate-3d.webp",
+      "subject": "Chapter XI Senate Contest in the 3D chamber, seen from above",
       "source": {
-        "method": "Mechanical downscale of an actual local browser gameplay-board clip; no generated or composited replacement imagery",
-        "sourceFile": "site-contest-board.jpg",
-        "reviewCapturePath": "work/production-review/site-contest-board.jpg",
-        "sourceSha256": "d4fffca436bf2e04729d15716af9688788d8a42e0ebfb6bf576ca94520fc104a",
+        "method": "Crop and mechanical downscale of an actual local browser capture of the game stage; only the HTML name labels are hidden; no generated or composited imagery",
+        "sourceFile": "ch11-adlection-3d.png",
+        "sourceSha256": "490377bc6a9946dc029759ae9d8da40935e9aa921eb270f680bc0763a4962410",
         "sourceSize": [
-          960,
-          640
+          1600,
+          630
         ],
         "cropBox": [
+          220,
           0,
-          0,
-          960,
-          640
+          1340,
+          630
         ],
         "browserCapture": {
           "viewport": [
-            1280,
-            720
+            1600,
+            1000
           ],
           "clip": [
-            160,
             0,
-            960,
-            640
+            268,
+            1600,
+            630
           ],
-          "fixture": "board-ch11-adlection",
-          "version": "0.8.0"
+          "fixture": "ch11-adlection at its start, reached from New Game by legal commands (scripts/command-autoplay.mjs) and restored through the visible Restore dialog",
+          "settings": {
+            "view": "3d",
+            "quality": "high",
+            "camera": "default",
+            "reducedMotion": true,
+            "adaptiveResolution": false
+          },
+          "build": "31fcca249cbf",
+          "commit": "d42a09e",
+          "version": "0.38.1",
+          "renderer": "Headless Chromium with SwiftShader software rendering"
         },
         "instructions": "docs/interface-assets.md",
         "bundledSource": false
       },
-      "usage": "Landing-page actual gameplay preview; no surrounding controls or narrative UI pictured.",
+      "usage": "Landing-page actual gameplay preview (political Contest).",
       "loading": "lazy-below-fold",
       "export": {
         "format": "WebP",
-        "width": 640,
-        "height": 427,
-        "quality": 78,
+        "width": 960,
+        "height": 540,
+        "quality": 80,
         "method": 6,
         "resampling": "Lanczos",
-        "bytes": 46470,
-        "sha256": "8ef032cd897bf47300678a654fb95088324d68dc83584e60bfae4bba8faa02b8"
+        "bytes": 66866,
+        "sha256": "b7740e58ba4e426d18362e948f50d0f0e985b9150d02f81eba5b8da314a32eb2"
+      }
+    },
+    {
+      "id": "site-board-2d",
+      "path": "assets/site/board-2d.webp",
+      "subject": "Chapter IV gate battle on the 2D tactical board",
+      "source": {
+        "method": "Crop and mechanical downscale of an actual local browser capture of the game stage; only the HTML name labels are hidden; no generated or composited imagery",
+        "sourceFile": "ch4-gate-2d.png",
+        "sourceSha256": "781621c002df5a5a7f605b9360c859b44066d484a911fa6c8b1eb8577e9dc0a4",
+        "sourceSize": [
+          1600,
+          550
+        ],
+        "cropBox": [
+          311,
+          0,
+          1289,
+          550
+        ],
+        "browserCapture": {
+          "viewport": [
+            1600,
+            1000
+          ],
+          "clip": [
+            0,
+            362,
+            1600,
+            550
+          ],
+          "fixture": "ch4-gate at its start, reached from New Game by legal commands (scripts/command-autoplay.mjs) and restored through the visible Restore dialog",
+          "settings": {
+            "view": "2d",
+            "reducedMotion": true
+          },
+          "build": "31fcca249cbf",
+          "commit": "d42a09e",
+          "version": "0.38.1",
+          "renderer": "Headless Chromium with SwiftShader software rendering"
+        },
+        "instructions": "docs/interface-assets.md",
+        "bundledSource": false
+      },
+      "usage": "Landing-page actual gameplay preview (2D tactical view).",
+      "loading": "lazy-below-fold",
+      "export": {
+        "format": "WebP",
+        "width": 960,
+        "height": 540,
+        "quality": 80,
+        "method": 6,
+        "resampling": "Lanczos",
+        "bytes": 94954,
+        "sha256": "e14f2e0b10a46c9212a16509626d22e7b3a306b153d887b149433e5c6e998a81"
       }
     },
     {
@@ -5905,8 +5978,8 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-21T00:36:24.259358+00:00",
-  "totalArtworkBytes": 7385566,
+  "updatedAt": "2026-10-22T17:42:51.770050+00:00",
+  "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
@@ -5916,7 +5989,7 @@
   },
   "assetCounts": {
     "tactical": 6,
-    "site": 2,
+    "site": 3,
     "icon-180.png": 1,
     "icon-192.png": 1,
     "icon-512.png": 1,
@@ -5930,6 +6003,6 @@
     "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 19560801,
+  "totalBundledAssetBytes": 19718455,
   "totalModelBytes": 9424987
 }

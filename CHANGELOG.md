@@ -4,6 +4,15 @@
 
 The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. The original phase reports retain their validation limits; the later Windows assessment and improvements are recorded separately below. Physical phone and first-time player checks remain open.
 
+### The landing page
+
+- **A returning player's chronicle.** The title screen shows the chronicle in progress: the soldier's portrait for his rank, his name, chapter, rank, place and year, and a mark for each of the twelve chapters, with **Continue your chronicle** first. A first visit sees the game at a glance instead: its chapters and encounters (counted from the campaign data), free to play and playable offline.
+- **Actual gameplay, larger.** Three captures from the production build replace the v0.8 previews: Chapter V's wall in 3D, Chapter XI's Contest in the Curia and Chapter IV's board in the 2D view. Each was taken at a checkpoint reached by legal commands, with only the name labels hidden ([interface assets](docs/interface-assets.md)). They load as the reader reaches them, outside the first download, which grows by about 4 KB; the complete offline download grows by about 160 KB.
+- **The route of the career.** The Imperial Tabula is drawn whole above the five stages of the career and every rank they hold. Its text alternative names each journey.
+- **A clearer Tabula, in the Menu too.** Chapter VII has its own theatre in northern Italy; the map had put the army before Milan on the Danube. A journey back bows the other way from the way out, so the return from Abritus no longer hides under the way there. Abritus lies south of the Danube base and the province south-east of it, which clears the crowded Danube theatres. Every numeral stands clear of the routes, and names are haloed where a route or river passes.
+- The guide's title screen uses the game's names (**Play now**, **Continue your chronicle**), and the steps to begin mention the readability settings and keyboard play.
+- The twelve-chapter benchmark waits for a dialog's close event before sending keys; on a slow runner, keys could reach the Menu button the event focuses, and the remapped-key check timed out.
+
 ### In-game usability ([report](docs/usability-overhaul.md))
 
 - Short, grouped menus with a consistent Menu return and Close action; equipment, training, company and honours share local navigation.

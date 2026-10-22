@@ -85,14 +85,18 @@ for a task such as attack, equipment or saving, or open a guide topic.
 The full guide remains available offline.
 ## The title screen
 
-- **Play · Begin your story** starts a new chronicle. Give your recruit
+- **Play now** starts a new chronicle. Give your recruit
   a Roman name (up to 40 characters) or keep Aurelius Marcellus, choose
   his appearance and his **training**, and choose a difficulty. You
   begin as a *tiro*, a recruit with no command authority: only your own
-  soldier is yours to control.
+  soldier is yours to control. **Restore a save code** loads a chronicle
+  from a save code instead.
 
-- **Continue the chronicle** restores the latest valid save on this
-  device.
+- When this device holds a chronicle, the title screen shows it: your
+  soldier, his chapter, rank and place, and how many of the twelve
+  chapters are complete. **Continue your chronicle** restores the latest
+  valid save. **Begin a new chronicle** starts again, and offers to
+  export the current one first.
 
 - **Try a standalone skirmish** opens one separate 3D battle with the
   full real-time controls. It never changes your chronicle or grants
@@ -1317,7 +1321,7 @@ promised and when it falls due.
 
 - It also keeps a **resume point** whenever you pause or leave the tab,
   so a phone browser that closes the page cannot lose a fight.
-  **Continue the chronicle** returns you to that moment, and the resume
+  **Continue your chronicle** returns you to that moment, and the resume
   point is discarded as soon as play resumes.
 
 - **Quick save** (**F2**, or **Menu → Save & load → Quick save**) saves at once,

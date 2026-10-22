@@ -49,9 +49,10 @@ export function createPanels(context){
     const chapters=id?CHAPTERS.filter(c=>c.id===id):CHAPTERS;
     const completed=state?.completed||[],current=state?.chapter||0,history=state?.history||[];
     const theatres=[
-      ['danube','Danube Frontier',[1,3,4,7],'Frontier forts, road stations, and the northern legions at Milan.'],
+      ['danube','Danube Frontier',[1,3,4],'The legionary base, a plague-struck road station, and a fort above a Danube ford.'],
       ['abritus','Marshes of Abritus',[2],'Wetland rearguard actions after the Gothic breakthrough.'],
       ['euphrates','Euphrates & Edessa',[5,6],'Eastern siege lines, countermines, and desert rearguard columns.'],
+      ['milan','Northern Italy',[7],'The army before Milan in the last months of Gallienus.'],
       ['crossing','Danube Crossings',[8],'Negotiated river parleys and settler convoy escorts.'],
       ['palmyra','Palmyra & the East',[9],'Aurelian’s eastern coalition and cataphract engagements.'],
       ['province','Dacia Aureliana',[10],'Provincial grain convoys, land tenure judgments, and tribunal votes.'],
