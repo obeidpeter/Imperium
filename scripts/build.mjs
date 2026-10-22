@@ -2,7 +2,7 @@ import {mkdir,cp,readdir,readFile,writeFile,rm} from 'node:fs/promises';
 import {resolve,relative,join,dirname,basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {gzipSync} from 'node:zlib';
-import {chapterOfflineAssets} from '../src/ui/art.js';
+import {chapterFlatAssets,chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
@@ -47,11 +47,13 @@ for(const url of shellModules)if(!assets.includes(url))throw new Error(`The shel
 const showcaseAssets=studyAssets(assets,{shellModules}),showcaseSet=new Set(showcaseAssets);
 const initial=initialAssets(assets,{shellModules,openingArt});
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
-for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
+// The 2D art each chapter adds for the 2D view and painted figures.
+const chapterFlatGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterFlatAssets(i+1)]));
+for(const groups of [chapterGroups,chapterFlatGroups])for(const [chapter,paths]of Object.entries(groups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
 // Offline play: every module the page can load, on demand included, is in the shell or in every chapter's pack.
 for(const url of await moduleClosure(dist,'src/ui/app.js'))if(!initial.includes(url))for(const [chapter,paths]of Object.entries(chapterGroups))
   if(!paths.includes(url))throw new Error(`Chapter ${chapter}'s offline pack lacks ${url}, which the page can load`);
-const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));
+const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups)).replace('__CHAPTER_FLAT_FILES__',JSON.stringify(chapterFlatGroups));
 await writeFile(join(dist,'sw.js'),sw);
 const sum=(items,key)=>items.reduce((total,item)=>total+item[key],0);
 const bytes=sum(records,'bytes'),gzipBytes=sum(records,'gzipBytes');
@@ -61,9 +63,11 @@ const initialBytes=sum(initialRecords,'bytes')+workerBytes,initialGzipBytes=sum(
 const chapterOneFiles=[...new Set([...initial,...chapterGroups[1]])];
 const chapterOneRecords=records.filter(r=>chapterOneFiles.includes(r.url));
 const chapterOneBytes=sum(chapterOneRecords,'bytes')+workerBytes,chapterOneGzipBytes=sum(chapterOneRecords,'gzipBytes')+workerGzipBytes;
+// Chapter I as the 2D view and painted figures download it.
+const chapterOneFlatGzipBytes=chapterOneGzipBytes+sum(records.filter(r=>chapterFlatGroups[1].includes(r.url)&&!chapterOneFiles.includes(r.url)),'gzipBytes');
 const completeBytes=bytes+workerBytes,completeGzipBytes=gzipBytes+workerGzipBytes;
 // Keep the initial shell small; authored animation and environments arrive by chapter.
 if(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||completeGzipBytes>budget.completeGzipBytes)throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
-const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 

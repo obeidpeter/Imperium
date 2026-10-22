@@ -41,7 +41,7 @@ import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,
   readUnreadableSave} from './storage.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
-import {heroPortrait,chapterScene,loadArt,prefetchChapter,TACTICAL_2D_ONLY} from './art.js';
+import {heroPortrait,chapterScene,loadArt,prefetchChapter,viewDecodes} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
 import {playAmbientScene} from './ambient.js';
 import {setupSiteMedia} from './site-media.js';
@@ -74,6 +74,9 @@ const ceremony=createCeremonyController({onError:()=>{}});
 // Story paintings drift in 2.5D over their still image; any failure keeps the still image.
 const scenePainting=createScenePainting({load:src=>loadArt(src)});
 function uses3D(){return screen!=='title'&&chapterHas3D(state)&&settings.battleView!=='2d'&&!failed3D;}
+// The chapter's 2D art is drawn by the 2D view (chosen, or after a 3D failure) and by painted 3D figures.
+const flatView=()=>settings.battleView==='2d'||failed3D;
+const wantsFlatArt=()=>flatView()||settings.figureStyle==='painted';
 function boardHover(point){
   hoverTile=point;const label=document.querySelector('#board-hover');if(label)label.textContent=hoverText(state?.encounter,point,routeAt(point));
   if(uses3D())battleStage.stage?.setRoute?.(routeAt(point),reach());
@@ -628,11 +631,13 @@ function updateLoadingStatus(){
   if(progress)progress.textContent=offline?'All twelve chapters are available offline.':offlineProgress||(currentChapterOffline&&state?`Chapter ${roman(state.chapter)} `+
     `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.');
 }
+// The offline pack follows the view: a change to the 2D view or painted figures requests the chapter's 2D art.
 function requestCurrentChapter({allowTitle=false}={}){
-  if(!offlineWorker||(screen==='title'&&!allowTitle)||!state||cachedChapterRequest===state.chapter)return;
-  cachedChapterRequest=state.chapter;
-  offlineWorker.postMessage({type:'cache-chapter',chapter:state.chapter});
-  offlineWorker.postMessage({type:'offline-status',chapter:state.chapter});
+  const flat=wantsFlatArt(),key=state&&`${state.chapter}:${flat}`;
+  if(!offlineWorker||(screen==='title'&&!allowTitle)||!state||cachedChapterRequest===key)return;
+  cachedChapterRequest=key;
+  offlineWorker.postMessage({type:'cache-chapter',chapter:state.chapter,flat});
+  offlineWorker.postMessage({type:'offline-status',chapter:state.chapter,flat});
 }
 function prepareChapterArt({retry=false,allowTitle=false}={}){
   if((screen==='title'&&!allowTitle)||!state)return;
@@ -640,11 +645,11 @@ function prepareChapterArt({retry=false,allowTitle=false}={}){
   if(loadedArtChapter!==chapter){
     loadedArtChapter=chapter;currentChapterOffline=offline;const request=++artRequest;
     prefetchChapter(chapter,
-      {retry,skip:path=>settings.battleView!=='2d'&&!failed3D&&TACTICAL_2D_ONLY.includes(path),
+      {retry,skip:path=>!viewDecodes(path,{flat:flatView(),painted:settings.figureStyle==='painted'}),
         shouldPrefetchNext:()=>request===artRequest&&screen!=='title'&&!document.hidden,
         onProgress:progress=>{if(request!==artRequest)return;artProgress=progress.completed<progress.total?`Preparing `+
       `chapter artwork · ${progress.completed}/${progress.total}`:progress.failed?'Some artwork is unavailable. Readable tactical '+
-      'symbols remain available.':'';updateLoadingStatus();}}).then(()=>{if(request===artRequest)offlineWorker?.postMessage({type:'offline-status',chapter});});
+      'symbols remain available.':'';updateLoadingStatus();}}).then(()=>{if(request===artRequest)offlineWorker?.postMessage({type:'offline-status',chapter,flat:wantsFlatArt()});});
   }
   requestCurrentChapter({allowTitle});updateLoadingStatus();
 }
@@ -1225,6 +1230,7 @@ document.addEventListener('change',async event=>{
   }
   if(control.id==='figure-style'){
     settings.figureStyle=FIGURE_STYLES.includes(control.value)?control.value:'sculpted';saveSettings();battleStage.figures(settings.figureStyle);
+    requestCurrentChapter();
   }
   if(control.id==='delegate-inspect'){
     const unit=state.encounter.units.find(u=>u.id===control.value&&!u.hidden&&u.role==='voter');
@@ -1323,7 +1329,7 @@ if('serviceWorker'in navigator){
     const data=event.data;
     if(data?.type==='offline-ready'){offline=true;currentChapterOffline=true;fullDownloadRequested=false;offlineProgress='';}
     else if(data?.type==='offline-progress'){offline=false;if(fullDownloadRequested)offlineProgress=`Downloading all twelve chapters · ${data.percent}%`;}
-    else if(data?.type==='chapter-offline'&&state?.chapter===data.chapter){currentChapterOffline=data.ready;}
+    else if(data?.type==='chapter-offline'&&state?.chapter===data.chapter&&Boolean(data.flat)===wantsFlatArt()){currentChapterOffline=data.ready;}
     else if(data?.type==='offline-error'){if(data.chapter&&state?.chapter!==data.chapter)return;offlineProgress=data.message;fullDownloadRequested=false;}
     updateLoadingStatus();
   });
@@ -1332,7 +1338,7 @@ if('serviceWorker'in navigator){
     const registration=await navigator.serviceWorker.register('./sw.js');
     watchEditionUpdates(registration,{hadController,onReady:()=>toast('A new edition is downloaded. Close and reopen the game after saving to use it.')});
     const ready=await navigator.serviceWorker.ready;offlineWorker=ready.active;
-    offlineWorker?.postMessage({type:'offline-status',chapter:state?.chapter});
+    offlineWorker?.postMessage({type:'offline-status',chapter:state?.chapter,flat:wantsFlatArt()});
     requestCurrentChapter();
   }catch{/* Source preview has no generated worker; production build includes it. */}
 }

@@ -6,8 +6,8 @@ import vm from 'node:vm';
 const template=await readFile(new URL('../scripts/service-worker.template.js',import.meta.url),'utf8');
 const base='https://imperium.test/game/',revision='test-edition';
 const initial=['./index.html','./src/ui/app.js','./assets/title.webp'];
-const groups={1:['./assets/first.webp'],12:['./assets/final.webp']};
-const files=[...initial,...groups[1],...groups[12]];
+const groups={1:['./assets/first.webp'],12:['./assets/final.webp']},flatGroups={1:['./assets/first-2d.webp']};
+const files=[...initial,...groups[1],...groups[12],...flatGroups[1]];
 
 function harness(){
   const handlers={},stores=new Map(),messages=[],fetches=[];
@@ -24,7 +24,7 @@ function harness(){
   };
   const client={postMessage:message=>messages.push(message)};
   const self={registration:{scope:base},location:{origin:new URL(base).origin},clients:{matchAll:async()=>[client],claim:async()=>{}},skipWaiting:()=>{skipCalls++;},addEventListener:(name,handler)=>handlers[name]=handler};
-  const code=template.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(files)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(groups));
+  const code=template.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(files)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(groups)).replace('__CHAPTER_FLAT_FILES__',JSON.stringify(flatGroups));
   vm.runInNewContext(code,{self,caches:{open:async name=>cache(name),keys:async()=>[...stores.keys()],delete:async name=>stores.delete(name)},fetch:fetcher,URL,Request,Response,console});
   const fire=async(name,data={})=>{let result;handlers[name]({...data,waitUntil:p=>{result=p;},respondWith:p=>{result=p;}});return result;};
   return {fire,client,messages,stores,fetches,cache,normalize,cacheName:'imperium-'+revision,setFail:path=>{fail=path?normalize(path):null;},setOffline:value=>{offline=value;},skipCalls:()=>skipCalls};
@@ -92,4 +92,19 @@ test('CACHE-08 Imperium activation cleans both obsolete brands while retaining i
   for(const name of ['another-game-v1','unrelated-imperium-notes'])assert.equal(await(await h.cache(name).match('./index.html')).text(),name);
   h.setOffline(true);const response=await h.fire('fetch',{request:{method:'GET',url:h.normalize(groups[12][0]),mode:'cors'}});
   assert.equal(await response.text(),'current:'+h.normalize(groups[12][0]));assert.equal(h.skipCalls(),0);
+});
+test('CACHE-09 a 3D player’s chapter leaves the 2D art out; the 2D view adds only that art to it',async()=>{
+  const h=harness();await h.fire('install');
+  await h.fire('message',{data:{type:'cache-chapter',chapter:1},source:h.client});
+  assert.equal(h.messages.at(-1).ready,true);assert.equal(h.messages.at(-1).flat,false);
+  assert.equal(h.stores.get(h.cacheName).has(h.normalize(flatGroups[1][0])),false,'A 3D player never downloads the 2D art');
+  await h.fire('message',{data:{type:'offline-status',chapter:1,flat:true},source:h.client});
+  const status=h.messages.at(-1);assert.equal(status.type,'chapter-offline');assert.equal(status.flat,true);
+  assert.equal(status.ready,false,'The 2D view is not ready offline without its art');
+  const before=h.fetches.length;
+  await h.fire('message',{data:{type:'cache-chapter',chapter:1,flat:true},source:h.client});
+  assert.equal(h.messages.at(-1).ready,true);assert.equal(h.messages.at(-1).flat,true);
+  assert.deepEqual(h.fetches.slice(before).map(f=>f.url),flatGroups[1].map(h.normalize),'Only the 2D art is fetched; the 3D pack is reused');
+  await h.fire('message',{data:{type:'cache-chapter',chapter:12,flat:true},source:h.client});
+  assert.equal(h.messages.at(-1).ready,true,'A chapter without 2D art is ready for the 2D view with its pack alone');
 });

@@ -4,6 +4,10 @@
 
 The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. The original phase reports retain their validation limits; the later Windows assessment and improvements are recorded separately below. Physical phone and first-time player checks remain open.
 
+### Asset foundation
+
+- **3D players download no 2D art.** A chapter's offline pack leaves out the 2D view's unit atlases, action sheets and ground and prop atlases. Chapter I falls from 9.86 to 6.02 MB for 3D players. The 2D view and painted figures add those files to the pack when chosen, and a 3D player's chapter is never reported offline-ready for the 2D view without them. Offline without them, the 2D board draws its own units and props, as it always could. Sculpted 3D figures no longer decode that art, even ahead of the next chapter. The offline worker reports progress only for files it actually fetches, so a mostly cached pack no longer sends hundreds of reports.
+
 ### The landing page
 
 - **A returning player's chronicle.** The title screen shows the chronicle in progress: the soldier's portrait for his rank, his name, chapter, rank, place and year, and a mark for each of the twelve chapters, with **Continue your chronicle** first. A first visit sees the game at a glance instead: its chapters and encounters (counted from the campaign data), free to play and playable offline.
