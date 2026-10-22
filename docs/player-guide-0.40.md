@@ -357,8 +357,8 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
     a moment, then he goes back to the same man.
 
 3.  When the target falls, your soldier stands ready. He does not chase
-    the next man unless **Keep fighting** is on in **Controls &
-    readability**.
+    the next man unless **Keep fighting** is on in **Settings → Controls
+    → Mouse & touch**.
 
 4.  Click open ground to step away, or press **Space** again to sheathe.
     Sheathe to talk or to search the fallen.

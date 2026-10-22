@@ -52,7 +52,7 @@ export function confirmMovesSetting(settings={}){
 }
 export function controlPreferences(settings={},{keymap=null,readability=true}={}){
   const bindings=controlBindings(settings.keyBindings);
-  return `<section class="settings-group control-preferences"><h3>Controls & readability</h3>
+  return `<section class="settings-group control-preferences"><h3>${keymap?'Keys, mouse and touch':'Keys and touch'}</h3>
     ${keymap?`${keyPreferences(keymap)}<details id="settings-pointer"><summary>Mouse & touch</summary>${pointerPreferences(settings)}`:''}
     ${readability?`<label class="setting" for="high-contrast"><span>High-contrast interface<small class="muted">Stronger boundaries and brighter labels. Unit allegiance also has a symbol.</small></span><input id="high-contrast" type="checkbox" ${settings.highContrast?'checked':''}></label>
     <label class="setting" for="compact-hud"><span>Focus on the battlefield<small class="muted">A compact mission header and camera bar, with full orders still available.</small></span><input id="compact-hud" type="checkbox" ${settings.compactHud!==false?'checked':''}></label>`:''}
