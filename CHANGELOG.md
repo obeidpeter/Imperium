@@ -23,6 +23,7 @@ The conversion to real time with pause, following the real-time build brief (sup
 - Clearer political movement/speech restrictions, persistent vote projections, delegate medallions, bloc costumes and reactions. Lower High-quality shadow and occlusion costs.
 - A dedicated Chromium playtest-regression runner is included in CI, alongside the existing full smoke test. See the report for completed checks and remaining device/player qualification.
 - Gate 4's sweeps were run again after the crowd-separation change, which changes outcomes: every battle and finale route is still won on Standard and on Story. The simulation's tick costs more, about 2 ms at p95 in the finale on the development container against 4 ms budgeted for a phone; no phone has been measured ([Phase 4 report](docs/realtime-phase-4-report.md#after-the-report)).
+- Crowd separation is about five times cheaper, with identical results. It works on typed copies of the bodies' centres: the same pairs, in the same order, with the same arithmetic. 405 replayed battles keep every position on every tick, and both sweeps keep every outcome. The finale's tick at p95 falls from about 2 ms to 1 ms on the development container, below its level before the four-pass separation.
 
 ### Phase 4: the finale and finishing work ([report](docs/realtime-phase-4-report.md))
 
