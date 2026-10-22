@@ -303,7 +303,7 @@ barred circle where there is no way through. The **message line** at the
 bottom of the screen says the same thing in words.
 
 Hold **U** to label everything nearby that you can talk to, use or pick
-up, or set the labels to stay on in **Controls & readability**.
+up, or keep the labels on in **Settings → Controls → Mouse & touch**.
 
 ## Moving
 
@@ -516,8 +516,8 @@ the squad's men on the field.
 | **M**   | Map of this area; **Shift+M** lays it over the scene                                                      |
 | **R**   | Company: companions, squads and their standing orders                                                     |
 | **A**   | Decorations and titles                                                                                    |
-| **O**   | Options (the settings part of the Menu)                                                                   |
-| **?**   | Controls & rules, the in-game help                                                                        |
+| **O**   | Settings                                                                                                  |
+| **?**   | How to play, the in-game help                                                                             |
 | **Esc** | Closes the open panel; with none open, clears your target or squad selection, and then opens the **Menu** |
 
 Opening a panel pauses the world, unless you turn off **Pause in
@@ -537,8 +537,8 @@ panels**. Conversations, the chronicle and the Menu always pause it.
   to the edge of the screen scrolls the view when **Edge scrolling** is
   on.
 
-- **Swap mouse buttons** in **Controls & readability** for left-handed
-  play.
+- **Swap mouse buttons** in **Settings → Controls → Mouse & touch** for
+  left-handed play.
 
 - Nothing essential needs hovering or a timing-sensitive double click.
 
@@ -615,8 +615,8 @@ has loot; otherwise it is cleared. No new enemy is chosen automatically.
 | **G**                   | Show ranges: your weapon's reach, throwing range and the area of the current ability                                                                                                                                                                        |
 | **I C J Q L M R A O ?** | Open the panels listed above                                                                                                                                                                                                                                |
 
-The **Command list** (**All actions**, or the list button beside
-the ability bar) names everyone and everything you can act on: your
+**All actions** (the button beside the action bar) lists everyone and
+everything you can act on: your
 party, your squads, visible enemies, objects and places. Choose who
 acts, the ability or order and the target from lists, then **Use**. It
 works while paused and gives a complete alternative to pointing at the
@@ -641,10 +641,10 @@ Moving the camera never spends anything or changes the rules.
 - The **battle log** below the scene lists the latest events with their
   battle time; select one to look at the place again.
 
-- **Floating numbers** show damage and healing over the people
-  concerned. They can be turned off.
+- **Damage and healing numbers** show over the people concerned. They
+  can be turned off in **Settings → Graphics**.
 
-- **Close-ups** briefly bring the camera in on critical blows, then
+- **Combat close-ups** briefly bring the camera in on critical blows, then
   return. They never happen while paused, while you turn the view or
   with reduced motion.
 
@@ -655,13 +655,14 @@ In **Menu → Settings → Controls** every key can be remapped, except
 already in use swaps the two commands, and Help and the on-screen hints
 follow your choices. **Restore default keys** puts everything back.
 
-The same panel sets **draw to attack**, **keep fighting**,
-**quick-cast**, **hold to move**, **edge scrolling**, **swap mouse
-buttons**, **labels** (while **U** is held, or always), the **touch hold
-delay** (0.25 to 1.2 seconds; 0.45 seconds by default), a
-**high-contrast interface** and a compact **Focus on the battlefield**
-layout. **Menu → Settings → Controls → Time and pace** sets the **game speed**, the
-**auto-pause** events, **pause each round** and **pause in panels**.
+Its **Mouse & touch** section sets **draw to attack**, **keep
+fighting**, **quick-cast**, **hold to move**, **edge scrolling**, **swap
+mouse buttons**, **labels** (while **U** is held, or always) and the
+**touch hold delay** (0.25 to 1.2 seconds; 0.45 seconds by default).
+**High contrast** and the **compact interface** are under **Settings →
+Readability**. **Time and pace**, also under Controls, sets the **game
+speed**, the **automatic pause** events, **pause each round** and
+**pause in panels**.
 
 # Your soldier
 
@@ -1329,7 +1330,7 @@ promised and when it falls due.
   battle time, recoveries and the random seed, so a loaded fight
   continues exactly as it was.
 
-- One chronicle occupies a device, so **Start a new chronicle** replaces
+- One chronicle occupies a device, so **Start a new game** replaces
   it and all its saves (the replaced chronicle also enters the local
   recovery records).
 
@@ -1340,8 +1341,8 @@ promised and when it falls due.
 2.  Copy the code, or download it as a text file, and keep it somewhere
     you control.
 
-3.  On the other device, choose **Restore a save code**, paste the code
-    and validate it.
+3.  On the other device, choose **Menu → Settings → Saves & offline →
+    Import save code**, paste the code and validate it.
 
 4.  Check the name and chapter shown before confirming that it replaces
     that device's chronicle.
@@ -1378,50 +1379,70 @@ well.
 
 # Settings reference
 
-Open the **Menu** (**Esc**) for settings, help, saves and the campaign
-panels. The world is paused while the Menu is open.
+Open the **Menu** (**Esc**) and choose **Settings**. The world is paused
+while the Menu is open, and changes save automatically. Settings has five
+categories: **Readability**, **Controls**, **Graphics**, **Sound** and
+**Saves & offline**.
 
 ## Readability
 
-Open **Menu → Settings → Readability**. Objective markers and damage
-numbers are in the **Graphics** category.
+| **Setting**       | **What it does**                                                           |
+|-------------------|----------------------------------------------------------------------------|
+| Text size         | 100%, 125%, 150% or 200% across the game; enlarged text scrolls normally.  |
+| High contrast     | Stronger boundaries, brighter labels and bolder symbols.                   |
+| Reduce motion     | Removes nonessential motion; action feedback stays readable.               |
+| Compact interface | A compact mission header and camera bar, with full orders still available. |
+| Learning tips     | Expandable help for the drill, patrols and opening chamber hours.          |
+| Tactical advice   | Advice for the current field or chamber position.                          |
 
-| **Setting**                | **What it does**                                                                                                   |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------|
-| Text size                  | 100%, 125%, 150% or 200% across the game; enlarged text scrolls normally.                                          |
-| Learning tips              | Expandable help for the drill, patrols and opening chamber hours. |
-| Tactical advice            | Advice for the current field or chamber position.                                                                  |
-| Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.       |
-| Floating numbers           | Damage and healing shown over the people concerned.                                                                |
-| Reduced motion             | Removes nonessential motion; action feedback stays readable.                                                       |
+## Controls
+
+**Keyboard shortcuts**, **Mouse & touch** and **Turn-based controls**
+expand when you need them.
+
+| **Setting**         | **What it does**                                                                                 |
+|---------------------|--------------------------------------------------------------------------------------------------|
+| Keyboard shortcuts  | Remap every key except Esc, Enter, Tab and the arrow keys; **Restore default keys** resets them. |
+| Draw to attack      | On by default: clicking an enemy draws your weapon.                                              |
+| Keep fighting       | Off by default: after a kill, your soldier engages whoever is attacking him.                     |
+| Quick-cast          | Off by default: an ability's number uses it at the pointer at once.                              |
+| Hold to move        | On by default: hold the mouse button down to keep moving toward the pointer.                     |
+| Edge scrolling      | Off by default: the view scrolls when the pointer reaches the edge of the screen.                |
+| Swap mouse buttons  | For left-handed play.                                                                            |
+| Labels              | While **U** is held, or always.                                                                  |
+| Touch hold delay    | How long to hold a finger still to inspect: 0.25 to 1.2 seconds.                                 |
+| Turn-based controls | **Confirm moves** and the shortcut letters of the turn-based board.                              |
 
 ## Time and pace
 
-Open **Settings → Controls**. Automatic pause options expand separately.
+Also in **Settings → Controls**. The **Automatic pause** events expand
+separately.
 
-| **Setting**      | **What it does**                                                                                                                                                                            |
-|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Game speed       | 50%, 75% or 100%. Story starts at 75%.                                                                                                                                                      |
-| Auto-pause       | Pause when an enemy comes into view, your soldier or a companion is badly hurt, a squad breaks, an objective changes or an order cannot be carried out. Each event can be turned on or off. |
-| Pause each round | Pause at the start of every round of battle time.                                                                                                                                           |
-| Pause in panels  | On by default: opening a panel pauses the world.                                                                                                                                            |
+| **Setting**      | **What it does**                                                                                                                                                                       |
+|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Game speed       | 50%, 75% or 100%. Story starts at 75%.                                                                                                                                                 |
+| Automatic pause  | Pause when an enemy is spotted, your soldier or a companion is badly hurt, a squad breaks, an objective changes or an order cannot be carried out. Each event can be turned on or off. |
+| Pause each round | Pause at the start of every round of battle time.                                                                                                                                      |
+| Pause in panels  | On by default: viewing equipment or records pauses the world. The Menu always pauses it.                                                                                               |
 
-## Scene and graphics
+## Graphics
 
-Open **Settings → Graphics**. Optional appearance settings are under
-**Scene appearance**, and measurements are under **Performance diagnostics**.
+Optional appearance settings are under **Scene appearance**, and
+measurements under **Performance diagnostics**.
 
-| **Setting**            | **What it does**                                                                                                                                                                                                                                                                     |
-|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Campaign view          | 3D scene or 2D isometric view for every chapter; commands and progress are shared.                                                                                                                                                                                                   |
-| 3D figure style        | **Sculpted** figures, **Painted (HD-2D)** (the campaign's painted figures standing in the 3D scene, with a tilt-shift) or **Ink and wash** outlines. The painted and ink finishes need Balanced or High quality, and show fewer layers of kit than Sculpted figures.                 |
-| Close-ups              | On by default: the camera briefly closes in on critical blows.                                                                                                                                                                                                                       |
-| Battle remains         | On by default: the fallen, spent missiles and trodden ground stay on the 3D field until the encounter ends. Presentation only.                                                                                                                                                       |
-| Adaptive 3D resolution | Adjusts the scene's resolution to keep frames smooth; text and controls stay sharp.                                                                                                                                                                                                  |
-| Graphics quality       | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. Essential people, legal targets, labels and rules never change. Phones start on Performance; repeated slow rendering lowers the setting from the next encounter, never during one. |
-| Run performance check  | Measures this device in the current 3D battle in about a minute (each quality, three camera views), recommends a quality and can save the results as a file. Nothing is sent anywhere; Esc or Cancel stops it.                                                                       |
+| **Setting**                | **What it does**                                                                                                                                                                                                                                                                     |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Game view                  | 3D scene or 2D tactical view for every chapter; commands and progress are shared.                                                                                                                                                                                                    |
+| Graphics quality           | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. Essential people, legal targets, labels and rules never change. Phones start on Performance; repeated slow rendering lowers the setting from the next encounter, never during one. |
+| Automatic resolution       | Adjusts the scene's resolution to keep frames smooth; text and controls stay sharp.                                                                                                                                                                                                  |
+| Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.                                                                                                                                                                         |
+| Damage and healing numbers | Shown over the people concerned.                                                                                                                                                                                                                                                     |
+| Character style            | **Sculpted** figures, **Painted** (the campaign's painted figures standing in the 3D scene, with a tilt-shift) or **Ink and wash** outlines. The painted and ink finishes need Balanced or High quality, and show fewer layers of kit than Sculpted figures.                         |
+| Combat close-ups           | On by default: the camera briefly closes in on critical blows.                                                                                                                                                                                                                       |
+| Battle remains             | On by default: the fallen, spent missiles and trodden ground stay on the 3D field until the encounter ends. Presentation only.                                                                                                                                                       |
+| Run performance check      | Measures this device in the current 3D battle in about a minute (each quality, three camera views), recommends a quality and can save the results as a file. Nothing is sent anywhere; Esc or Cancel stops it.                                                                       |
 
-## Audio
+## Sound
 
 | **Setting**                    | **What it does**                                                                                |
 |--------------------------------|-------------------------------------------------------------------------------------------------|
@@ -1431,40 +1452,29 @@ Open **Settings → Graphics**. Optional appearance settings are under
 | Voiced briefings               | Selected moments, with the complete text always shown.                                          |
 | Music, ambience & voice volume | One volume for the soundscape.                                                                  |
 
-## Controls and readability
+## Saves & offline
 
-| **Setting**              | **What it does**                                                                                 |
-|--------------------------|--------------------------------------------------------------------------------------------------|
-| Keys                     | Remap every key except Esc, Enter, Tab and the arrow keys; **Restore default keys** resets them. |
-| Swap mouse buttons       | For left-handed play.                                                                            |
-| Draw to attack           | On by default: clicking an enemy draws your weapon.                                              |
-| Keep fighting            | Off by default: after a kill, your soldier engages whoever is attacking him.                     |
-| Quick-cast               | Off by default: an ability's number uses it at the pointer at once.                              |
-| Hold to move             | On by default: hold the mouse button down to keep moving toward the pointer.                     |
-| Edge scrolling           | Off by default: the view scrolls when the pointer reaches the edge of the screen.                |
-| Labels                   | While **U** is held, or always.                                                                  |
-| Touch hold delay         | How long to hold a finger still to inspect: 0.25 to 1.2 seconds.                                 |
-| High-contrast interface  | Stronger boundaries, brighter labels and bolder symbols.                                         |
-| Focus on the battlefield | A compact mission header and camera bar, with full orders still available.                       |
+- **Save & load** holds the quick save and the five named saves. Loading
+  a save, or replacing one, asks you to confirm first.
 
-## Saves, downloads and reference
+- **Export save code** and **Import save code** move a chronicle between
+  devices or browsers.
 
-- **Quick save**, **Save**, **Load**, **Copy a save code**, **Restore a
-  save code**, **Recover an earlier checkpoint** and **Start a new
-  chronicle**.
+- **Recover older progress** lists the last three checkpoints or replaced
+  chronicles.
 
-- **Turn off Iron discipline**, for a chronicle that began with it. It
-  cannot be turned on again.
+- **Download all chapters** and **Retry chapter download**.
 
-- **Download all chapters for offline play** and **Retry this chapter's
-  artwork**.
+- **New game & local data** holds **Start a new game** and **Privacy &
+  local data**, which explains what the game keeps on your device. There
+  are no accounts, advertising or analytics.
 
-- **How to play** (the in-game help), **Command list**,
-  **Historical notes**, **Art & credits**, **Mission journal** and
-  **Campaign**.
+- **Turn off Iron discipline**, in **Save & load**, for a chronicle that
+  began with it. It cannot be turned on again.
 
-- **Privacy & local data** explains what the game keeps on your device.
-  There are no accounts, advertising or analytics.
+**How to play** in the Menu opens the in-game help. **Menu → Campaign**
+holds the current mission, the campaign map and the mission journal, and
+**Menu → More** the historical notes and credits.
 
 # Accessibility
 
@@ -1474,7 +1484,7 @@ Open **Settings → Graphics**. Optional appearance settings are under
   Contests advance only by the hour.
 
 - Every action in the field and in the chamber can be given from the
-  **Command list**, without pointing at the scene, and standing orders,
+  **All actions** list, without pointing at the scene, and standing orders,
   kit and deployment all work from lists and keys, without dragging.
 
 - The whole game works from the keyboard: the arrow keys move, **T**
@@ -1522,7 +1532,7 @@ its checkpoint.
 | A Formation lasts for the current round                        | Formations last until you order another                                                                                           |
 | Wounds reduce readiness                                        | Wounded companions spend a few encounters in the valetudinarium                                                                   |
 | **Pause** opened settings and saves; **Home** reset the camera | **Esc** opens the **Menu** and **P** only pauses; **Home** takes back your own soldier and **Z** is the overview                  |
-| **Action camera** on every committed attack                    | **Close-ups** on critical blows only                                                                                              |
+| **Action camera** on every committed attack                    | **Combat close-ups** on critical blows only                                                                                       |
 | **Next ready unit** (**N**); **Show grid** (**G**)             | Play one round while paused (**N**); show ranges (**G**)                                                                          |
 | **Confirm moves**; **Turn resolved** panel; **Speed 1× / 2×**  | Removed; the battle log; game speed and slow time                                                                                 |
 | One save slot with checkpoints, saved after every action       | Autosave, a resume point when you pause or leave, quick save (**F2**), five named saves, checkpoints and save codes               |

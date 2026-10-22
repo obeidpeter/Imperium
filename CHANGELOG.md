@@ -12,6 +12,7 @@ The conversion to real time with pause, following the real-time build brief (sup
 - Camp prioritizes departure and unmet requirements. Equipment, training, company orders and campaign records reveal supporting detail when requested.
 - Loading or replacing a named save requires confirmation; cancelled changes preserve progress.
 - Correct high-contrast colors on light and dark surfaces, reliable action-bar focus shortcuts, and clean dialog transitions after conversations or mission orders.
+- The player guide, and the in-game help generated from it, name every setting as the game does, under its five categories.
 
 ### Windows playtest improvements ([report](docs/realtime-playtest-polish.md))
 
