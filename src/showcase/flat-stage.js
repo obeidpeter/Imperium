@@ -40,10 +40,13 @@ export class FlatStage{
   // The view: tile size and centre for this frame.
   view(world){
     const r=this.canvas.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height),overview=this.cameraView==='overview';
-    const span=world.map.width+world.map.height,fit=Math.min(w/(span/2),h/(span/4))*.95;
+    // A chamber's few tiles would fill the whole view: its overview leaves room for the header and the HUD over it.
+    const span=world.map.width+world.map.height,fit=Math.min(w/(span/2),h/(span/4))*(world.kind==='chamber'?.84:.95);
     const tw=overview?fit:Math.max(fit,Math.min(w,h)/9)*this.zoomLevel,th=tw/2;
     const hero=world.actors.find(a=>a.id===world.controlled),alpha=this.live?.alpha?.()??1;
-    const c=overview?{x:world.map.width*TILE/2,z:world.map.height*TILE/2}:this.cameraView==='point'&&this.point?this.point
+    // A chamber's overview sits a tile lower, clear of the header over its north edge (the tribunal).
+    const lower=world.kind==='chamber'?TILE:0;
+    const c=overview?{x:world.map.width*TILE/2-lower,z:world.map.height*TILE/2-lower}:this.cameraView==='point'&&this.point?this.point
       :hero?{x:lerp(hero.px,hero.x,alpha),z:lerp(hero.pz,hero.z,alpha)}:{x:0,z:0};
     return {w,h,tw,th,cu:c.x/TILE,cv:c.z/TILE,cx:w/2,cy:h/2};
   }

@@ -27,6 +27,8 @@ export function stageUnit(actor){
   const unit={id:actor.id,name:actor.name,side:actor.side,role:actor.role,...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
     intent:'',hidden:false,trained:actor.side==='player',shield:actor.kit.some(id=>ITEMS[id]?.shield),crowd:false};
   const c=actor.civic;if(!c)return unit;
+  // A hearing's presiding magistrate wears the toga and presides: no stance and no Resolve.
+  if(c.role==='magistrate')return {...unit,role:'speaker',trained:false,shield:false,presides:true};
   return {...unit,trained:false,shield:false,bloc:c.bloc,interest:c.interest,vote:c.vote,...(c.role==='voter'?{stance:c.stance}:{resolve:c.resolve,maxResolve:c.maxResolve,blunted:c.blunted})};
 }
 // A squad (from Chapter IV) is drawn as one figure, its foremost standing man,
@@ -200,6 +202,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const cx=lerp(carrier.px,carrier.x,alpha),cz=lerp(carrier.pz,carrier.z,alpha),cy=Math.atan2(lerp(carrier.pfx,carrier.fx,alpha),lerp(carrier.pfz,carrier.fz,alpha));
       unit.x=(cx+Math.cos(cy)*.32)/TILE-.5;unit.y=(cz-Math.sin(cy)*.32)/TILE-.5;motion='dead';phase=1;lift=1.05;direction=cy+Math.PI/2;focusId=null;
     }else if(a.alive&&a.down){motion='dead';phase=1;focusId=null;}
+    else if(a.stand){lift=a.stand;}
     else if(!a.alive){
       const p=(r-a.diedAt)/FALL_TICKS;motion='dead';phase=clamp(p,0,1);visible=r-a.diedAt<FALL_TICKS+LIE_TICKS;focusId=null;
     }else if(a.staggerUntil>r){

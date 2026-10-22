@@ -236,3 +236,48 @@ test('the chamber is offered where it exists, and a chapter taken out of real ti
   for(const c of [1,9,12])assert.equal(chamberFor({controlsModel:'realtime'},c),false);
   assert.equal(chamberFor({controlsModel:'turns'},7),false);assert.equal(chamberFor({controlsModel:'realtime',realtimeChapters:[8]},7),false,'kill criterion K3');
 });
+
+// Phase 3's hearings, motions and the Rhetor (guide "Policy debates", "Hearings and evidence", "Trainers").
+import {MAGISTRATE} from '../src/core/realtime/chamber-world.js';
+import {soldierCampCard} from '../src/ui/soldier-views.js';
+
+test('a hearing’s documents: the earned cases with every member’s exact change; inspecting is free, presenting spends the soldier’s speech once, and the magistrate is only presentation',()=>{
+  for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection']){
+    const s=G.deserialize(neutralCampaignStarts().get(id)),before=G.serialize(s),docs=C.hearingDocuments(s);
+    assert.equal(C.isHearing(s),true,`${id} is a hearing`);assert.ok(docs.length>0,`${id}: the campaign has earned a document`);assert.equal(G.serialize(s),before,'reading them changes nothing');
+    for(const d of docs){
+      const copy=G.deserialize(before),r=C.speak(copy,{kind:'case',id:d.id});assert.ok(r.ok,`${id}: ${d.id}`);
+      for(const c of d.changes)assert.equal(copy.encounter.units.find(u=>u.id===c.id).stance,c.to,`${id}: ${c.name} as the document said`);
+      assert.equal(copy.encounter.units.find(u=>u.id==='hero').acted,true);assert.equal(C.hearingDocuments(copy).every(x=>!x.ok),true,'once a hearing');
+    }
+    const world=createChamberWorld(s,{magistrate:true}),m=world.actors.find(a=>a.id===MAGISTRATE);
+    assert.ok(m&&m.civic.role==='magistrate');assert.equal(s.encounter.units.some(u=>u.id===MAGISTRATE),false,'he is no part of the Contest');
+    assert.deepEqual(syncChamberWorld(world,s),[],'the rules never move him');
+  }
+});
+
+test('the policy debate through the chamber (8 supplies injected; the campaign bot spends its own): one motion tabled with the soldier’s speech, the rival’s amendment answered in a later hour, as 0.38 rules it',()=>{
+  const s=G.deserialize(neutralCampaignStarts().get('ch10-tribunal'));s.supplies=8;
+  const v=C.motionView(s);assert.ok(v.policy.options.some(m=>m.preview.ok),'a motion can be tabled');
+  const motion=v.policy.options.find(m=>m.preview.ok),listed=C.chamberOptions(s,'hero').find(o=>o.group==='The motion'&&o.command?.command.id===motion.id);
+  assert.ok(listed,'the Command list offers it');assert.equal(C.chamberOptions(s,'speaker-ally').some(o=>o.group==='The motion'),false,'only the soldier tables it');
+  assert.ok(C.speak(s,listed.command.command).ok);assert.equal(C.motionView(s).policy.tabled.id,motion.id);assert.equal(s.encounter.units.find(u=>u.id==='hero').acted,true);
+  // Hours pass until the rival offers his amendment; the soldier answers it with a speech.
+  for(let i=0;i<4&&!C.motionView(s).policy.tabled.awaiting&&s.encounter.status==='active';i++)assert.ok(C.yieldFloor(s).ok);
+  const t=C.motionView(s).policy.tabled;
+  if(t.awaiting){assert.ok(t.amended.ok,t.amended.message);assert.ok(C.speak(s,{kind:'policy',id:t.id,terms:'amended'}).ok);
+    assert.equal(s.encounter.policy.terms,'amended');assert.equal(C.motionView(s).policy.tabled.awaiting,false,'answered');}
+  else assert.equal(s.encounter.policy.terms,'original','left unanswered, the original terms stand');
+});
+
+test('the Rhetor teaches from Chapter VII: the camp card names him, and Practised delivery adds 5 Resolve to the soldier in the next Contest',()=>{
+  let camp=null;const stop=new Error('saved');
+  try{runCommandCampaign({featureEdition:35,onCheckpoint(s){if(G.getChapter(s).encounters[s.encounterIndex]?.id==='ch7-council'){camp=G.serialize(s);throw stop;}}});}catch(error){if(error!==stop)throw error;}
+  const s=G.deserialize(camp);assert.match(soldierCampCard(s),/Rhetor Theon/,'the camp card lists the Rhetor in Chapter VII');
+  const early=G.deserialize(camp);early.chapter=6;assert.doesNotMatch(soldierCampCard(early),/Rhetor Theon/,'not before');
+  const plain=G.deserialize(camp);assert.ok(G.startEncounter(plain).ok);
+  // Injected: the training points and coin the course costs (the campaign's own may be spent).
+  s.soldier.tp=Math.max(s.soldier.tp,5);s.soldier.denarii=Math.max(s.soldier.denarii,40);
+  assert.ok(G.soldierCommand(s,{kind:'course',courseId:'practised_delivery'}).ok);assert.ok(G.startEncounter(s).ok);
+  const hero=x=>x.encounter.units.find(u=>u.id==='hero');assert.equal(hero(s).maxResolve,hero(plain).maxResolve+5);
+});

@@ -471,11 +471,38 @@ async function chamberContests(){
   console.log(`ok - chamber Contests: every walk-and-talk Contest played through in full in the 2D page, won and recorded: ${played.join(', ')}`);
 }
 
+// A hearing (Chapter X's tribunal, 2D): the Motion panel invokes a career precedent with the
+// soldier's speech; in the next hour the pack's documents are inspected (each member's exact
+// change), and one is dragged from the presiding magistrate's panel onto the tribunal.
+async function chamberHearing(){
+  const page=await open();await restoreChamber(page,battleCampCode('ch10-tribunal'),'2d');
+  await page.click('[data-role="motionButton"]');await page.waitForSelector('[data-role="conversation"]:not([hidden]) [data-precedent]');
+  assert.match(await text(page,'[data-role="conversation"]'),/The motion/,'The Motion panel holds the policy debate');
+  await page.click('[data-role="conversation"] [data-precedent]:not(:disabled) >> nth=0');await chamberIdle(page);
+  assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').acted),true,'A precedent spends the soldier’s speech');
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyY');await chamberIdle(page);await page.keyboard.press('Space');
+  await page.waitForFunction(()=>window.__chamber.hour().hour===2&&!window.__chamber.busy(),null,{timeout:30000});
+  await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .kit-documents',{timeout:30000}).catch(()=>assert.fail('The pack holds the hearing’s documents'));
+  await page.click('#modal .kit-documents [data-cmd="inspect-case"] >> nth=0');await page.waitForSelector('#modal[open] .case-preview-table');
+  assert.ok(await page.locator('#modal .case-preview-table tbody tr').count()>0,'Inspecting shows each member’s exact change');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const tribunal=await page.evaluate(()=>{const s=window.__chamber.stage(),a=window.__realtime.world().actors.find(x=>x.id==='magistrate'),r=s.canvas.getBoundingClientRect(),p=s.screen(s.lastView,a.x,a.z);
+    return {x:r.left+p.x,y:r.top+p.y-s.lastView.th*1.2};});
+  await page.mouse.move(tribunal.x,tribunal.y);await page.mouse.down();await page.mouse.up();
+  await page.waitForFunction(()=>window.__chamber.talking()==='magistrate',null,{timeout:30000}).catch(()=>assert.fail('A click on the magistrate opens the tribunal'));
+  const doc=await page.locator('[data-role="conversation"] [data-document][draggable="true"] >> nth=0').boundingBox();
+  await page.mouse.move(doc.x+doc.width/2,doc.y+12);await page.mouse.down();await page.mouse.move(doc.x+doc.width/2-30,doc.y+30,{steps:4});
+  await page.mouse.move(tribunal.x,tribunal.y+10,{steps:12});await page.mouse.up();await chamberIdle(page);
+  await page.waitForFunction(()=>window.__chamber.unit('hero').acted,null,{timeout:30000}).catch(()=>assert.fail('A document dropped on the tribunal is presented'));
+  assert.match(await text(page,'[data-role="eventLine"]'),/One speech;/,'The rules record the documented case');
+  await page.context().close();
+  console.log('ok - chamber hearing: the Motion panel invokes a precedent, the pack’s documents show each member’s exact change, and a document dragged onto the tribunal is presented');
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

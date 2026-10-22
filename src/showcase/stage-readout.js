@@ -16,6 +16,8 @@ export function actorReadout(unit, encounter) {
       ratio:bounded(Math.abs(stance), 6), signal:`${stance >= 1 ? '✓' : '−'} ${stance > 0 ? '+' : ''}${stance} stance`,
       detail:`${unit.bloc || 'Delegate'} · ${Math.abs(stance) >= 3 ? 'Committed' : 'Wavering'}${promised ? ' · Promised' : ''}${agreed ? ' · Agreed' : ''}`};
   }
+  // A hearing's presiding magistrate (the walk-and-talk chamber): he receives the evidence.
+  if (unit.presides) return {type:'office', tone:'neutral', value:0, ratio:1, signal:'Presides', detail:'Talk to him to present evidence'};
   if (unit.resolve !== undefined) {
     const withdrawn = unit.resolve <= 0;
     return {type:'resolve', tone:unit.side === 'enemy' ? 'opposition' : 'support', value:unit.resolve,

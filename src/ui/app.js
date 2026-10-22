@@ -18,7 +18,7 @@ import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.
 import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
 import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
-import {chamberEncounterView} from './chamber-view.js';
+import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
 import {DEFAULT_KEYMAP} from './action-map.js';
 import {ITEMS} from '../data/items.js';
@@ -255,8 +255,9 @@ function mountField(target){
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
   Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
     if(field?.ticket!==ticket||!element.isConnected)return;
-    const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=createChamberWorld;
-    const world=camp?Game.createCampWorld(state):chamber?createChamberWorld(state):Game.realtimeWorld(state);
+    // A hearing's chamber has its presiding magistrate at the tribunal.
+    const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
+    const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
@@ -267,7 +268,8 @@ function mountField(target){
 function chamberCallbacks(){
   return {
     onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
-    chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}}}
+    chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
+      inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
   };
 }
 function chamberApply(op){
@@ -473,8 +475,9 @@ function refreshMissionPanel(){
 }
 function showSoldierPanel(name,arg=null){
   if(!state)return;
-  soldierPanel={name,arg};const world=field?.runtime?.world??null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
-  const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils})],character:()=>['Your soldier',soldierCharacterPanel(state)],
+  // A chamber's world is its people, not a fight: the panels read the chronicle there.
+  soldierPanel={name,arg};const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
+  const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Your soldier',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
     trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],adopt:()=>['Your soldier’s training',adoptPanel(state)],
@@ -1020,7 +1023,7 @@ case 'approach-upgrade':await change(()=>Game.enableFieldApproaches(state));brea
 case 'field-approach':await change(()=>Game.chooseFieldApproach(state,id));break;
 case 'command-upgrade':await change(()=>Game.enableCommandCampaign(state));break;
 case 'operational-plan':await change(()=>Game.chooseOperationalPlan(state,id));break;
-case 'inspect-case':showModal('Present a documented case',casePreview(state,id));break;
+case 'inspect-case':if(chamberMode())showModal('Inspect a document',documentPreview(state,id));else showModal('Present a documented case',casePreview(state,id));break;
 case 'present-case':if(chamberMode()){await chamberSpeech({kind:'case',id},{afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});break;}
   await change(()=>Game.presentCase(state,id),
   {tone:'agreement',afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});

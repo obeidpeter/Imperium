@@ -1,8 +1,33 @@
 # Changelog
 
-## Unreleased — 0.40 Phase 0: the real-time arena
+## Unreleased — 0.40: real time with pause, Phases 0–3
 
-The first phase of the conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Results: [Phase 0 report](docs/realtime-phase-0-report.md). The campaign, its rules and saves are unchanged and still play on turns.
+The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default, and the campaign's rules and saves are unchanged. No phase's playtests or phone checks have been performed yet; each report says what was and was not checked.
+
+### Phase 3: the walk-and-talk Curia ([report](docs/realtime-phase-3-report.md))
+
+- **The chamber.** The Contests of Chapters VII, VIII, X and XI open as chambers over the 0.38 Contest rules ([`chamber.js`](src/core/chamber.js), [`chamber-control.js`](src/showcase/chamber-control.js)).
+  - Each hour, each speaker walks inside his reach and gives one speech: from the conversation, the speech bar or a right-click, with its forecast shown first.
+  - The hour ends when every standing speaker has spoken, or on Yield.
+  - The rivals' hour plays out and can be skipped, and the vote ends in the division.
+- **Reading the chamber.** The coalition strip with the Chamber Whip Forecast; **U** for the rivals' next walks; **T**, **Enter** and the Command list for every speech, walk and conversation.
+- **The motion and the evidence.** The policy debate and career precedents in the Motion panel. A hearing's documents are in the pack, with a free Inspect; the presiding magistrate receives one, or it is dragged onto the tribunal.
+- **The speaker profile.** Eloquence, Authority, decorations and the Rhetor's courses (from Chapter VII) add to the soldier's Resolve, Denounce, Rebut and Invoke Record, never below 0.38's values.
+- **Gate 3's automated checks pass.** Test F30 replays the frozen 0.38 routes and generated logs through the chamber state by state. The browser smoke test plays all five chamber Contests through in full and records them.
+
+### Phase 2: squads and Chapters IV–IX ([report](docs/realtime-phase-2-report.md))
+
+- Squads with the 0.38 combat and morale port, Command, orders, formations and specialists.
+- Deployment, field objects, weather, cavalry charges, intelligence and auto-pause.
+- The battles of Chapters IV–IX in real time, with a 20-seed deadline sweep.
+
+### Phase 1: the soldier and Chapters I–III ([report](docs/realtime-phase-1-report.md))
+
+- The soldier's attributes, training points, trainers, decorations and layered kit, with loot and pay.
+- Companions with standing orders, and control switching.
+- Chapters I–III in real time with their walkable camps; the Command list, the screen reader's announcements, touch and keyboard paths, and the 2D view.
+
+### Phase 0: the real-time arena ([report](docs/realtime-phase-0-report.md))
 
 - **Survey:** every module mapped to keep, adapt, replace or delete after Gate 4, and the stack recorded exactly ([realtime-survey.md](docs/realtime-survey.md)).
 - **Simulation core** ([`src/core/realtime/`](src/core/realtime)): a fixed 20 Hz tick, Commands queued for the next tick with the latest order per actor winning, named random streams split from the campaign's seeded generator, a 0.5 m walkability grid with A* and string pulling, the §3.5 blow (d40 roll, criticals, front-arc shields, absorb and resist, staggers), Strike, Brace and Throw pilum with pure forecasts and reason codes, simple enemy AI, a battle log, and an exact snapshot with a world hash. Every rule is data ([`realtime-rules.js`](src/data/realtime-rules.js)).

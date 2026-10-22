@@ -62,7 +62,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   // A chamber (from Chapter VII): the Curia's hours, speeches and conversations (chamber-control.js) take
   // the pointer, the keys and the HUD; the battle's controls are not shown.
   const makeChamber=()=>kind==='chamber'?createChamberControl({world:()=>world,dom,say,message,presenter:()=>presenter,canvas,keymap,rules:callbacks.chamber,
-    takeControl:id=>takeControl(id),paused:()=>clock.paused&&!stepping(clock),announce:text=>{if(dom.announcer)dom.announcer.textContent=text;}}):null;
+    takeControl:id=>takeControl(id),pick:p=>pickAt(p),paused:()=>clock.paused&&!stepping(clock),announce:text=>{if(dom.announcer)dom.announcer.textContent=text;}}):null;
   let chamber=null;
   function issue(command){
     const outcome=queueCommand(world,command);

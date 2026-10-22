@@ -16,16 +16,19 @@ const FACING={north:[0,-1],south:[0,1],east:[1,0],west:[-1,0]};
 const civic=u=>({role:u.role,bloc:u.bloc??null,stance:u.stance??null,interest:u.interest??null,vote:u.vote??null,resolve:u.resolve??null,
   maxResolve:u.maxResolve??null,blunted:!!u.blunted,withdrawn:u.role==='speaker'&&!alive(u),negotiatorId:u.negotiatorId??null,tile:{x:u.x,y:u.y}});
 
-export function createChamberWorld(state){
+// A hearing's presiding magistrate stands on the tribunal at the chamber's north edge,
+// facing the floor. He is no part of the Contest: he receives the evidence.
+export const MAGISTRATE='magistrate';
+const TRIBUNAL={height:.42};
+export function createChamberWorld(state,{magistrate=false}={}){
   const e=state?.encounter;if(e?.kind!=='contest')return null;
-  const specs=e.units.map(u=>{
-    const at=tilePoint(u);
-    return {id:u.id,name:u.name,side:u.side,role:u.role,at:[at.x,at.z],face:FACING[u.facing]??[u.side==='enemy'?-1:1,0],
-      attributes:{str:10,agi:10,con:10,per:10,combat:2,field:4},kit:['tunic'],pace:1.6,drawn:false,ai:false};
-  });
+  const spec=(id,name,side,role,at,face)=>({id,name,side,role,at,face,attributes:{str:10,agi:10,con:10,per:10,combat:2,field:4},kit:['tunic'],pace:1.6,drawn:false,ai:false});
+  const specs=e.units.map(u=>{const at=tilePoint(u);return spec(u.id,u.name,u.side,u.role,[at.x,at.z],FACING[u.facing]??[u.side==='enemy'?-1:1,0]);});
+  if(magistrate)specs.push(spec(MAGISTRATE,'Presiding magistrate','neutral','speaker',[e.width*TILE/2,.35],[0,1]));
   const world=createWorld({map:{id:`chamber-${e.id}`,width:e.width,height:e.height,terrain:e.terrain.map(row=>row.map(()=>'stone'))},seed:7000+state.chapter,actors:specs,
     party:e.units.some(u=>u.id==='speaker-ally')?['speaker-ally']:[],controlled:'hero',kind:'chamber',mission:null});
   for(const u of e.units)world.actors.find(a=>a.id===u.id).civic=civic(u);
+  if(magistrate)Object.assign(world.actors.find(a=>a.id===MAGISTRATE),{civic:{role:MAGISTRATE,bloc:null,stance:null,withdrawn:false,tile:null},stand:TRIBUNAL.height});
   world.title=e.title;world.contestId=e.id;world.chapter=state.chapter;
   return world;
 }

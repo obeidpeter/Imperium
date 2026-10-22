@@ -84,7 +84,8 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <p class="rt-current"><span class="eyebrow">${chamber?'Right button: speech':'Right button'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
         <div class="rt-ability-bar" data-role="abilityBar" role="toolbar" aria-label="${chamber?'Speeches':'Abilities'}"></div>
         ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>`}
-        ${chamber?`<div class="rt-toggles" role="group" aria-label="Lists">
+        ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion and lists">
+          <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Motion</button>
           <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every speech, walk and conversation as a list">List</button>
         </div>`:`<div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
           <button data-role="swordsButton" class="rt-swords" type="button" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>

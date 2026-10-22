@@ -198,10 +198,56 @@ export function chamberOptions(state,speakerId){
     out.push({group:'Walk',label:`Walk beside ${u.name}`,detail:`For ${SPEECH_NAMES[action]}: ${place.cost} ${place.cost===1?'place':'places'} along the aisle`,command:{kind:'walk',unitId:speakerId,tile:{x:place.x,y:place.y}}});
   }
   for(const id of chamberTargets(state,speakerId))out.push({group:'Talk',label:`Talk to ${name(id)}`,detail:`${distance(sp,unitOf(state,id))*SEAT} m`,command:{kind:'talk',personId:id}});
-  out.push(yieldOption());
+  out.push(...motionOptions(state,speakerId),yieldOption());
   return out;
 }
 const yieldOption=()=>({group:'The hour',label:'Yield the floor',detail:'The hour ends now; a speech not yet given is lost',command:{kind:'yield'}});
+
+// A hearing's documents (guide "Hearings and evidence"): the documented cases that the
+// soldier's earlier service, choices and surviving witnesses have earned for this
+// Contest, each with every member's exact change. Inspecting one costs nothing;
+// presenting it spends the soldier's own speech, once a hearing.
+export function hearingDocuments(state){
+  const e=contest(state);if(!e)return [];
+  const options=G.caseOptions(state).filter(c=>c.earned),hero=e.units.find(u=>u.id==='hero'),used=e.commandCampaign?.case??null;let fresh=null;
+  return options.map(c=>{
+    // Inspecting shows each member's exact change whatever the hour holds: as if the soldier's speech were unspent.
+    let p=c.preview;if(!p.ok&&!used){fresh??=unspent(state);p=G.previewCase(fresh,c.id);}
+    const reason=c.preview.ok?null:used===c.id?'Presented in this hearing.':used?'One document a hearing has been presented.':hero&&!alive(hero)?'Your soldier has withdrawn.'
+      :hero?.acted?'Your soldier has spoken this hour.':c.preview.message;
+    return {id:c.id,label:c.label,description:c.description,interest:c.interest,opposition:c.opposition,presented:used===c.id,ok:c.preview.ok,message:reason??c.preview.message,
+      reason,changes:p.changes??[],netVotes:p.netVotes??0};
+  });
+}
+function unspent(state){const copy=G.deserialize(G.serialize(state)),h=copy.encounter.units.find(u=>u.id==='hero');if(h){h.acted=false;if(!alive(h)){h.resolve=1;h.hp=1;}}return copy;}
+// A Contest with documented cases is a hearing: a presiding magistrate receives the evidence.
+export const isHearing=state=>!!contest(state)&&G.caseOptions(state).length>0;
+const caseLine=d=>`${d.reason?`${d.reason} `:''}${d.changes.length||d.ok?`${d.netVotes>=0?'+':''}${d.netVotes} ${Math.abs(d.netVotes)===1?'vote':'votes'} · ${d.changes.map(c=>`${c.name} ${signed(c.from)} → ${signed(c.to)}`).join(', ')||'no stance moves'}`:''}`.trim();
+export const documentLine=caseLine;
+// The motion (guide "Policy debates"): one policy motion a Contest, tabled by the soldier's
+// speech; after the rivals' next hour their amendment may be accepted or the original
+// defended (each a speech), or left unanswered. With the career precedents.
+export function motionView(state){
+  const e=contest(state);if(!e)return null;
+  const p=e.policy,m=p?.motion?G.POLICY_MOTIONS.find(x=>x.id===p.motion):null;
+  const policy=e.featureEdition!==31||!p?null:m?{tabled:{id:m.id,label:m.label,terms:p.terms,effect:p.terms==='amended'?m.amendment:m.effect,amendment:m.amendment,
+      awaiting:!!p.counter&&!p.answered,answered:!!p.answered,original:G.previewPolicy(state,m.id,'original'),amended:G.previewPolicy(state,m.id,'amended')},options:[]}
+    :{tabled:null,options:G.policyOptions(state).map(x=>({id:x.id,label:x.label,description:x.description,effect:x.effect,preview:x.preview}))};
+  const precedents=e.politicsVersion===2?G.precedentOptions(state):null;
+  return {policy,precedents:precedents?.motions?.length?precedents:null};
+}
+// The motion, the precedents and the evidence as Command list options (the soldier's speech each).
+function motionOptions(state,speakerId){
+  if(speakerId!=='hero')return [];
+  const v=motionView(state),out=[],speak=(group,label,detail,ok,message,command)=>out.push({group,label,detail,...(ok?{command:{kind:'speak',command}}:{reason:'REFUSED',message})});
+  if(v?.policy?.tabled?.awaiting){const t=v.policy.tabled;
+    speak('The motion',`Defend the original motion: ${t.label}`,t.original.message,t.original.ok,t.original.message,{kind:'policy',id:t.id,terms:'original'});
+    speak('The motion',`Accept the amendment: ${t.label}`,t.amended.message,t.amended.ok,t.amended.message,{kind:'policy',id:t.id,terms:'amended'});}
+  for(const m of v?.policy?.options??[])speak('The motion',`Table the motion: ${m.label}`,m.preview.message,m.preview.ok,m.preview.message,{kind:'policy',id:m.id,terms:'original'});
+  for(const m of v?.precedents?.motions??[])if(m.unlocked)speak('Precedents',m.label,m.summary,m.available,m.available?'':v.precedents.used?`Invoked this Contest: ${v.precedents.used}.`:'Not now.',{kind:'precedent',id:m.id});
+  for(const d of hearingDocuments(state))speak('Evidence',`Present evidence: ${d.label}`,caseLine(d),d.ok,d.message,{kind:'case',id:d.id});
+  return out;
+}
 
 // The coalition panel: who is committed, who wavers, who is against, and the promises left; with the Chamber Whip Forecast.
 export function coalitionView(state){

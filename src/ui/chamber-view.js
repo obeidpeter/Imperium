@@ -6,6 +6,7 @@ import {commandIntelligence} from './command-edition-views.js';
 import {expandedPanel} from './expanded-views.js';
 import {precedentPanel} from './encounter-view.js';
 import {delegateAppealSummary} from './direct-controls.js';
+import {hearingDocuments} from '../core/chamber.js';
 
 // The page around a walk-and-talk chamber (build brief §3.11). The chamber itself
 // (the scene, the speakers, the speeches, the conversation and the coalition
@@ -62,4 +63,16 @@ export function chamberResult(state){
     <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
     ${!won&&!e.fallback?'<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><div class="panel-actions"><button data-cmd="fallback">Accept backing and re-run the vote</button></div>':''}
   </section>`;
+}
+
+// A document inspected from the pack or the tribunal (free): every member's exact change, and
+// Present evidence when the soldier's speech is unspent (guide "Hearings and evidence").
+export function documentPreview(state,id){
+  const d=hearingDocuments(state).find(x=>x.id===id);if(!d)return '<p>This document is not in your keeping for this hearing.</p>';
+  return `<p class="panel-lead">${esc(d.description)}</p><p>${esc(d.interest)} interests gain 2 stance; ${esc(d.opposition)} interests lose 1, before commitment resists.</p>`+
+    `${d.changes.length?`<table class="case-preview-table"><caption>Each member’s exact change</caption><thead><tr><th>Member</th><th>Now</th><th>After</th></tr></thead><tbody>`+
+      d.changes.map(c=>`<tr><th scope="row">${esc(c.name)}</th><td>${signed(c.from)}</td><td>${signed(c.to)}</td></tr>`).join('')+'</tbody></table>':'<p>It moves no member now.</p>'}`+
+    `<p>${d.ok?'Presenting it spends your soldier’s speech, once a hearing.':esc(d.reason??d.message)}</p>`+
+    `<div class="panel-actions"><button class="primary" data-cmd="present-case" data-id="${esc(id)}" ${d.ok?'':'disabled'}>Present evidence · one speech</button>`+
+    `<button data-cmd="close-modal">Keep deliberating</button></div>`;
 }

@@ -1,6 +1,6 @@
 import * as Chamber from '../core/chamber.js';
 import {getActions,agreementOptions} from '../core/game.js';
-import {discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePoint,walkRoute} from '../core/realtime/chamber-world.js';
+import {MAGISTRATE,discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePoint,walkRoute} from '../core/realtime/chamber-world.js';
 import {actionLabel} from '../ui/action-map.js';
 
 // The walk-and-talk Curia on the page (build brief §3.11; guide "Political
@@ -15,8 +15,13 @@ import {actionLabel} from '../ui/action-map.js';
 // places the rules have put them.
 //
 // rules: {state(), apply(op) → Promise of the outcome (null when the page was busy),
-// known(id), ask(id)}; ops: {kind:'walk', unitId, tile}, {kind:'speak', command},
-// {kind:'yield'}.
+// known(id), ask(id), inspect(caseId)}; ops: {kind:'walk', unitId, tile},
+// {kind:'speak', command}, {kind:'yield'}. In a hearing a presiding magistrate
+// stands at the tribunal: he receives the documents, from his conversation or
+// dragged onto the tribunal. The Motion panel holds the policy debate, the career
+// precedents and the hearing's documents.
+
+const MOTION='#motion',DOCUMENT='application/x-imperium-document',TRIBUNAL_REACH=4;
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 const signed=n=>`${n>0?'+':''}${n}`;
@@ -26,7 +31,7 @@ const ARROWS={move_up:[0,-1],move_down:[0,1],move_left:[-1,0],move_right:[1,0]};
 // What a speech's bar button says it reaches (0.38 tiles as the chamber's metres).
 const reachNote=action=>action==='address'?`${Chamber.SPEECH_REACH.address*Chamber.SEAT} m around`:action==='persuade'?'beside him':`${Chamber.SPEECH_REACH[action]*Chamber.SEAT} m`;
 
-export function createChamberControl({world:getWorld,dom,say,message,presenter:getPresenter,canvas,keymap,rules,takeControl,paused=()=>false,announce=()=>{}}){
+export function createChamberControl({world:getWorld,dom,say,message,presenter:getPresenter,canvas,keymap,rules,takeControl,pick=null,paused=()=>false,announce=()=>{}}){
   let speech='persuade',armed=null,target=null,talking=null,show=null,hover=null;
   let partyKey='',barKey='',hudKey='',coalitionKey='',reachKey='',logKey='',badgesKey='',lastNow=0;
   const state=()=>rules.state();
@@ -190,6 +195,10 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
     if(!live()){canvas.dataset.cursor='walk';message(contest()?.status==='won'?'The motion carries. Record the result below.':'The motion is defeated. Below: retry, or a patron’s backing.');setBadges(null);return;}
     const sp=unit(me());if(!sp||!pick){message(' ');setBadges(null);return;}
     const action=armed??speech;
+    if(pick.actorId===MAGISTRATE){
+      canvas.dataset.cursor='talk';presenter()?.setRoute(null);setBadges(null);
+      message(`Click: talk to the presiding magistrate${Chamber.hearingDocuments(state()).length?', who receives the evidence':''}.`);return;
+    }
     if(pick.actorId){
       const person=unit(pick.actorId);if(!person){message(' ');return;}presenter()?.setRoute(null);
       if(person.id===sp.id){
@@ -221,6 +230,7 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
     if(!live()||!pick)return;
     const sp=unit(me());if(!sp)return;
     const right=button==='right'||touch&&armed,action=armed??speech;
+    if(pick.actorId===MAGISTRATE){openTalk(MAGISTRATE);return;}
     if(pick.actorId){
       const person=unit(pick.actorId);if(!person)return;
       if(right){if(person.id===sp.id&&action==='address')speakTo(null,action);else if(person.id===sp.id)say(`Right-click a member, a rival or your ally for ${Chamber.SPEECH_NAMES[action]}.`);else speakTo(person.id,action);return;}
@@ -247,11 +257,15 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
   }
 
   // ——— The conversation: opens where the speaker stands; nothing in it moves anyone. ———
-  function openTalk(personId){talking=personId;target=personId;renderTalk(true);announce(`Talking to ${unit(personId)?.name}.`);}
+  function openTalk(personId){
+    talking=personId;if(unit(personId))target=personId;renderTalk(true);
+    announce(personId===MOTION?'The motion, the precedents and the evidence.':personId===MAGISTRATE?'The presiding magistrate.':`Talking to ${unit(personId)?.name}.`);
+  }
   function closeTalk(){if(!talking)return false;talking=null;talkKey='';if(dom.conversation){dom.conversation.hidden=true;dom.conversation.replaceChildren();}return true;}
-  const controlKey=el=>el?['speak','walk','deal','ask','close'].map(k=>el.dataset?.[k]!==undefined?`${k}:${el.dataset[k]}`:null).find(Boolean)??null:null;
+  const controlKey=el=>el?['speak','walk','deal','ask','close','present','inspect','policy','precedent'].map(k=>el.dataset?.[k]!==undefined?`${k}:${el.dataset[k]}:${el.dataset.terms??''}`:null).find(Boolean)??null:null;
   let talkKey='';
   function renderTalk(focus=false){
+    if(talking===MOTION||talking===MAGISTRATE){renderOffice(focus);return;}
     const panel=dom.conversation;if(!panel)return;const s=state(),c=talking&&live()?Chamber.conversation(s,me(),talking,{known:rules.known(talking)}):null;if(!c){closeTalk();return;}
     const key=JSON.stringify([c,s.progressionVersion===1?agreementOptions(s,talking):null]);if(key===talkKey&&!panel.hidden&&!focus)return;talkKey=key;
     // A speech given from here re-renders the panel: the same button keeps the focus.
@@ -280,6 +294,75 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
     if(focus)panel.querySelector('button:not([data-close]):not(:disabled)')?.focus({preventScroll:true});
     else if(was)([...panel.querySelectorAll('button')].find(b=>controlKey(b)===was)??panel.querySelector('button:not(:disabled)'))?.focus({preventScroll:true});
   }
+
+  // ——— The presiding magistrate and the Motion panel: the documents, the policy debate and the precedents. ———
+  function documentsHtml(docs,{present=true}={}){
+    if(!docs.length)return '';
+    return `<section class="rt-talk-docs"><h4>Documents for this hearing</h4><p class="rt-talk-note">Inspecting is free. Presenting spends your soldier’s speech, once a hearing; `+
+      `drag a document onto the tribunal to present it.</p><ul>${docs.map(d=>`<li draggable="${d.ok}" data-document="${esc(d.id)}" title="${esc(d.description)}">`+
+      `<strong>${esc(d.label)}</strong><small>${esc(Chamber.documentLine(d))}</small><span class="rt-talk-doc-actions">`+
+      `<button type="button" data-inspect="${esc(d.id)}">Inspect</button>${present?`<button type="button" data-present="${esc(d.id)}" ${d.ok?'':'disabled'}>Present evidence</button>`:''}</span></li>`).join('')}</ul></section>`;
+  }
+  function renderOffice(focus=false){
+    const panel=dom.conversation;if(!panel)return;const s=state();if(!live()){closeTalk();return;}
+    const docs=Chamber.hearingDocuments(s),motion=talking===MOTION?Chamber.motionView(s):null;
+    const key=JSON.stringify([talking,docs,motion,unit('hero')?.acted]);if(key===talkKey&&!panel.hidden&&!focus)return;talkKey=key;
+    const was=panel.contains(document.activeElement)?controlKey(document.activeElement):null;
+    let body='';
+    if(talking===MAGISTRATE)body=docs.length?documentsHtml(docs):'<p>No documented case in your keeping fits this hearing.</p>';
+    else{
+      const p=motion?.policy,t=p?.tabled,row=(attrs,label,detail,ok)=>`<li><button type="button" ${attrs} ${ok?'':'disabled'}><strong>${esc(label)}</strong><small>${esc(detail)}</small></button></li>`;
+      if(p)body+=`<section><h4>The motion</h4>${t?`<p><strong>${esc(t.label)}</strong>, ${t.terms==='amended'?'amended terms':'original terms'}: ${esc(t.effect)}</p>`+
+        (t.awaiting?`<p class="rt-talk-note">The rival offers an amendment: ${esc(t.amendment)}</p><ul class="rt-talk-speeches">`+
+          row(`data-policy="${esc(t.id)}" data-terms="original"`,'Defend the original motion',t.original.message,t.original.ok)+
+          row(`data-policy="${esc(t.id)}" data-terms="amended"`,'Accept the amendment',t.amended.message,t.amended.ok)+'</ul>'
+          :`<p class="rt-talk-note">${t.answered?'The amendment is answered.':'The rival may offer an amendment after his next hour; left unanswered, your terms stand.'} Win the vote to enact it.</p>`)
+        :`<p class="rt-talk-note">One motion a Contest, tabled with your soldier’s speech. Its costs and lasting effects apply only if you win and record the vote.</p>`+
+          `<ul class="rt-talk-speeches">${p.options.map(m=>row(`data-policy="${esc(m.id)}" data-terms="original"`,`Table the motion: ${m.label}`,m.preview.message,m.preview.ok)).join('')}</ul>`}</section>`;
+      const pr=motion?.precedents;
+      if(pr)body+=`<section><h4>Career precedents</h4><p class="rt-talk-note">${pr.used?`Invoked this Contest: ${esc(pr.used)}.`:'One a Contest, with your soldier’s speech.'}</p><ul class="rt-talk-speeches">`+
+        pr.motions.map(m=>row(`data-precedent="${esc(m.id)}"`,m.label,m.summary,m.available)).join('')+'</ul></section>';
+      body+=documentsHtml(docs,{present:false});
+      if(docs.length)body+='<p class="rt-talk-note">The presiding magistrate at the tribunal receives the evidence: talk to him, or drag a document onto the tribunal.</p>';
+      if(!body)body='<p>No motion, precedent or document is open to this Contest.</p>';
+    }
+    panel.innerHTML=`<header class="rt-talk-head"><span class="rt-talk-seal" aria-hidden="true">${talking===MAGISTRATE?'⚖':'§'}</span><div><p class="eyebrow">${talking===MAGISTRATE?'The tribunal':'Your soldier’s speech'}</p>`+
+      `<h3 id="rt-talk-title">${talking===MAGISTRATE?'The presiding magistrate':'The motion and the evidence'}</h3><p>${unit('hero')?.acted?'Your soldier has spoken this hour.':'Your soldier may still speak this hour.'}</p></div>`+
+      `<button type="button" class="rt-talk-close" data-close aria-label="Close (Esc)">×</button></header>${body}`;
+    panel.hidden=false;bindOffice(panel);
+    if(focus)panel.querySelector('button:not([data-close]):not(:disabled)')?.focus({preventScroll:true});
+    else if(was)([...panel.querySelectorAll('button')].find(b=>controlKey(b)===was)??panel.querySelector('button:not(:disabled)'))?.focus({preventScroll:true});
+  }
+  function bindOffice(panel){
+    panel.querySelector('[data-close]').onclick=()=>{closeTalk();canvas.focus({preventScroll:true});};
+    for(const b of panel.querySelectorAll('[data-present]'))b.onclick=()=>present(b.dataset.present);
+    for(const b of panel.querySelectorAll('[data-inspect]'))b.onclick=()=>rules.inspect?.(b.dataset.inspect);
+    for(const b of panel.querySelectorAll('[data-policy]'))b.onclick=()=>apply({kind:'speak',command:{kind:'policy',id:b.dataset.policy,terms:b.dataset.terms}});
+    for(const b of panel.querySelectorAll('[data-precedent]'))b.onclick=()=>apply({kind:'speak',command:{kind:'precedent',id:b.dataset.precedent}});
+    // While a document is carried the panel fades and lets the pointer through to the tribunal under it.
+    for(const li of panel.querySelectorAll('[data-document][draggable="true"]')){
+      li.addEventListener('dragstart',e=>{e.dataTransfer.setData(DOCUMENT,li.dataset.document);e.dataTransfer.effectAllowed='copy';requestAnimationFrame(()=>panel.classList.add('carrying'));});
+      li.addEventListener('dragend',()=>panel.classList.remove('carrying'));
+    }
+  }
+  // Present a document: the soldier's speech, through the rules (once a hearing).
+  function present(id){
+    const d=Chamber.hearingDocuments(state()).find(x=>x.id===id);if(!d)return;
+    if(!d.ok){say(d.message,{warning:true});return;}
+    lastForecast={stanceChanges:d.changes,resolveChanges:[]};apply({kind:'speak',command:{kind:'case',id}});
+  }
+  // A document dropped on the scene: on the tribunal (the magistrate, or the floor before him) it is presented.
+  const magistrate=()=>world().actors.find(a=>a.id===MAGISTRATE)??null;
+  function onDragOver(e){if(!e.dataTransfer?.types?.includes(DOCUMENT)||!magistrate())return;e.preventDefault();e.dataTransfer.dropEffect='copy';}
+  function onDrop(e){
+    const id=e.dataTransfer?.getData(DOCUMENT),m=magistrate();if(!id||!m)return;e.preventDefault();
+    const at=pick?.({clientX:e.clientX,clientY:e.clientY});
+    const onTribunal=at&&(at.actorId===MAGISTRATE||Number.isFinite(at.x)&&Math.hypot(at.x-m.x,at.z-m.z)<=TRIBUNAL_REACH);
+    if(onTribunal)present(id);else say('Drop the document on the tribunal, before the presiding magistrate.',{warning:true});
+  }
+  canvas.addEventListener('dragover',onDragOver);canvas.addEventListener('drop',onDrop);
+  function toggleMotion(){if(talking===MOTION)closeTalk();else openTalk(MOTION);}
+  if(dom.motionButton)dom.motionButton.onclick=()=>{toggleMotion();};
 
   // ——— The coalition strip and the Chamber Whip Forecast. ———
   function renderCoalition(){
@@ -312,13 +395,13 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
   function update(now=performance.now()){
     const dt=lastNow?Math.min(250,now-lastNow):0;lastNow=now;playShow(dt);
     const e=contest();if(!e)return;
-    const h=Chamber.hourView(state()),key=JSON.stringify([e.turn,e.status,me(),speech,armed,!!show,e.units.map(u=>[u.x,u.y,u.stance,u.resolve,u.acted,u.moved]),e.promises?.length]);
+    const h=Chamber.hourView(state()),key=JSON.stringify([e.turn,e.status,me(),speech,armed,!!show,talking,e.units.map(u=>[u.x,u.y,u.stance,u.resolve,u.acted,u.moved]),e.promises?.length]);
     showReach();if(key===hudKey)return;hudKey=key;
     updateParty();updateBar();renderCoalition();renderLog();
     if(dom.roundLabel)dom.roundLabel.textContent=`Hour ${h.hour} of ${h.of}`;
     if(dom.clockTime)dom.clockTime.textContent=e.status!=='active'?'The vote is taken':h.of-h.hour===0?'The vote follows this hour':`${h.of-h.hour+1} hours to the vote`;
     dom.clockRing?.setAttribute('stroke-dasharray',`${Math.round((e.status==='active'?h.hour-1:h.of)/h.of*100)} 100`);
-    if(dom.yieldButton)dom.yieldButton.disabled=e.status!=='active';
+    if(dom.yieldButton)dom.yieldButton.disabled=e.status!=='active';if(dom.motionButton){dom.motionButton.disabled=e.status!=='active';dom.motionButton.setAttribute('aria-pressed',String(talking===MOTION));}
     if(talking)renderTalk();if(hover)hoverAt(hover);
   }
 
@@ -371,6 +454,7 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
   function options(actorId){return Chamber.chamberOptions(state(),actorId);}
   function use(command){
     if(command.kind==='talk'){openTalk(command.personId);return true;}
+    if(command.kind==='speak'&&command.command?.kind==='case'){present(command.command.id);return true;}
     if(command.kind==='yield'){yieldFloor();return true;}
     if(command.kind==='speak'){lastForecast=Chamber.forecastFrom(state(),command.command).forecast??null;apply(command);return true;}
     if(command.kind==='walk'){apply(command);return true;}
@@ -389,11 +473,11 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
   return {
     get busy(){return !!show;},get talking(){return talking;},get target(){return target;},get pending(){return inflight;},
     // Talk to a member from the page (the members list, the coalition panel's seats).
-    talk(personId){if(show)skip();if(live()&&unit(personId))openTalk(personId);},
+    talk(personId){if(show)skip();if(live()&&(unit(personId)||personId===MAGISTRATE&&magistrate()||personId===MOTION))openTalk(personId);},toggleMotion,
     hover:hoverAt,press,act,update,sync,reset,options,use,rivalArrows,canControl,skip,
     // A new presenter (the stage rebuilt): the reach and the forecast marks are drawn again.
     invalidate(){reachKey='';badgesKey='';hudKey='';},
     speakers:()=>Chamber.speakers(state()).filter(s=>s.standing),
-    dispose(){closeTalk();presenter()?.setReach?.(null);presenter()?.setMarks({});}
+    dispose(){closeTalk();presenter()?.setReach?.(null);presenter()?.setMarks({});canvas.removeEventListener('dragover',onDragOver);canvas.removeEventListener('drop',onDrop);}
   };
 }

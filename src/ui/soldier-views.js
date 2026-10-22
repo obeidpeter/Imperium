@@ -46,7 +46,7 @@ function itemSummary(id){
 }
 
 // I: what the soldier wears by place and layer, his pack grid, the ground strip here, and his coin.
-export function kitPanel(state,{selected=null,spoils=[]}={}){
+export function kitPanel(state,{selected=null,spoils=[],documents=[]}={}){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const camp=inCamp(state),attrs=soldierAttributes(s),values=soldierValues(state),area=areaOf(state),ground=s.ground[area]??[];
   const worn=WORN_PLACES.map(place=>{
@@ -69,6 +69,10 @@ export function kitPanel(state,{selected=null,spoils=[]}={}){
       <table class="kit-protection"><caption>Protection (flat / share)</caption><tbody>${protectionRows(wornIds(s))}</tbody></table>
       <p>Restriction <strong>${values.restriction}</strong>${values.restriction>=10?`: ${Math.floor(values.restriction/10)} off Attack and Defence`:''} · `+
       `Weapon <strong>${esc(values.weapon.name??'')}</strong> · Coin <strong>${s.denarii} denarii</strong></p></section>
+    ${documents.length?`<section aria-labelledby="kit-documents"><h3 id="kit-documents">Documents for this hearing</h3>
+      <p class="panel-note">Your earlier service, choices and witnesses give you these. Inspecting one costs nothing; the presiding magistrate receives one, for your soldier’s speech, once a hearing.</p>
+      <ul class="kit-documents">${documents.map(d=>`<li><strong>${esc(d.label)}</strong> <small>${esc(d.description)}</small>`+
+        `<button data-cmd="inspect-case" data-id="${esc(d.id)}">Inspect</button>${d.presented?' <span class="status-pill">Presented</span>':''}</li>`).join('')}</ul></section>`:''}
     <section aria-labelledby="kit-pack"><h3 id="kit-pack">Pack <small>${PACK.cols} × ${PACK.rows}</small></h3>
       <div class="pack-grid" style="--cols:${PACK.cols};--rows:${PACK.rows}" role="group" aria-label="Pack: choose an item">${cells}</div>
       ${camp?button('sort','Sort'):''}${actions}
