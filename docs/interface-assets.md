@@ -1,19 +1,18 @@
 # Interface assets and optimization
 
-The interface reuses the frontier illustration and eastern scene, whose captions identify illustrative art. In **v0.8**, both images under `assets/site/` were refreshed from **actual v0.8 browser-rendered gameplay boards**. They are not concept art or generated interface mock-ups. The source JPEGs are exact browser screenshot clips, not edited or re-encoded source captures.
+The landing page reuses the frontier illustration and the eastern scene, whose captions identify illustrative art. Its three gameplay images under `assets/site/` are **actual captures of the game**, not concept art, generated interface mock-ups or composites.
 
-| Export | Source capture outside the runtime bundle | Input | Output | Bytes |
-| --- | --- | --- | --- | ---: |
-| `assets/site/battle.webp` | `work/production-review/site-battle-board.jpg` | 960 × 640 | 640 × 427 | 53,230 |
-| `assets/site/contest.webp` | `work/production-review/site-contest-board.jpg` | 960 × 640 | 640 × 427 | 46,470 |
+| Export | Encounter and view | Capture | Crop | Output | Bytes |
+| --- | --- | --- | --- | --- | ---: |
+| `assets/site/battle-3d.webp` | Chapter V, the wall (`ch5-wall`); 3D, High quality, horizon camera two steps closer | 1600 × 630 | x 120–1380 | 1200 × 600 | 95,534 |
+| `assets/site/senate-3d.webp` | Chapter XI, the Senate (`ch11-adlection`); 3D, High quality, default camera | 1600 × 630 | x 220–1340 | 960 × 540 | 66,866 |
+| `assets/site/board-2d.webp` | Chapter IV, the gate (`ch4-gate`); 2D tactical view | 1600 × 550 | x 311–1289 | 960 × 540 | 94,954 |
 
-Both captures use a 1280 × 720 browser viewport and an exact board clip at x=160, y=0, width=960, height=640. The battle samples the real renderer's `action-move` timeline from legal trace step 12 in Chapter I. The Contest uses the earned `board-ch11-adlection` fixture. The included rules-state fixtures were reached by validated campaign commands. These captures show the actual Canvas board, not surrounding dialogue or command controls. Captions and alternative text identify gameplay.
+Each capture is the battle stage of the production build (revision `31fcca249cbf`, commit `d42a09e`, version 0.38.1) in headless Chromium with SwiftShader software rendering, at a 1600 × 1000 viewport. Each encounter was reached from New Game by legal commands (`scripts/command-autoplay.mjs`) and restored at its start through the visible Restore dialog, as the twelve-chapter benchmark does, with reduced motion on and automatic resolution off. Only the HTML name labels (`.world-labels`) were hidden; the rendered scene is captured as drawn, objective markers included. Captions and alternative text identify gameplay and its chapter.
 
-Both source images were inspected before export. The refreshed exports total **99,700 bytes**, intended as illustrative gameplay previews rather than readable-control demonstrations. They load below the landing hero through the existing lazy/connection-aware image policy, with intrinsic dimensions reserved to reduce layout movement. The README's `docs/images/production-battle.jpg` is a byte-for-byte copy of the original battle clip and is excluded from the production game bundle.
+The images load below the landing hero through the lazy, connection-aware image policy, with intrinsic dimensions reserved to reduce layout movement. Together they are **257,354 bytes**, outside the first download. Pillow performs only RGB conversion, the crop, a Lanczos downscale and WebP compression at **quality 80, method 6**. No pixels are painted, removed, relabelled or generated. Source and final SHA-256 hashes, crop boxes and capture settings are in [asset-manifest.json](asset-manifest.json); the source PNGs are review evidence and are not shipped.
 
-Pillow performs only RGB conversion, Lanczos downscale and WebP compression at **quality 78, method 6**. The entire 960 × 640 source clip is retained before scaling. No source pixels are painted, selectively removed, relabelled or generated. To reproduce, resize each clip to 640 × 427 and save with those settings. Source and final SHA-256 hashes are in [asset-manifest.json](asset-manifest.json). This explicitly supersedes the v0.5 320-pixel, quality-40 previews and their combined 9,830-byte target; the v0.8 production build enforces the revised package budgets.
-
-The capture JPEG paths identify the separate review evidence in this workspace; full screenshots are not shipped in the browser bundle. The underlying generated art retains the provenance and rights qualifications in [LICENSE-NOTICES.md](LICENSE-NOTICES.md); recording a screenshot does not create a new exclusive-rights guarantee.
+They replace the v0.8 previews `battle.webp` and `contest.webp`: 2D boards at 640 × 427 (99,700 bytes) that no longer showed the game's 3D battlefields and chambers. The README's `docs/images/production-battle.jpg` remains a copy of the v0.8 battle clip, outside the game bundle. The underlying generated art retains the provenance and rights qualifications in [LICENSE-NOTICES.md](LICENSE-NOTICES.md); recording a screenshot does not create a new exclusive-rights guarantee.
 
 ## Historical v0.5 installed-app icon optimization
 
@@ -23,4 +22,4 @@ This saves **22,711 raw file bytes** across the three icons. Independent RGB com
 
 That saving provided room for the v0.5 interface markup and its smaller gameplay previews. No character portrait, scene, unit sheet or environment artwork was recompressed during that historical interface update. The current production build report remains the authority for package totals.
 
-The current [asset manifest](asset-manifest.json) records **48 files**: 43 generated artwork files, two gameplay capture derivatives and three code-native icons. Icon entries retain their v0.5 baseline PNG hash, related SVG path/hash, final hash, byte count and measured pixel differences. The SVG itself remains a separate source emblem and is not counted among those raster files.
+The [asset manifest](asset-manifest.json) records every bundled asset (109 files today), including the three gameplay capture derivatives and the three code-native icons. Icon entries retain their v0.5 baseline PNG hash, related SVG path/hash, final hash, byte count and measured pixel differences. The SVG itself remains a separate source emblem and is not counted among those raster files.

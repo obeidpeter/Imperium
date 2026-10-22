@@ -15,12 +15,12 @@ function presenter(state=Game.newGame('<Aurelius & Lucius>'),extra={}){
 }
 const commands=html=>[...html.matchAll(/data-cmd="([^"]+)"/g)].map(match=>match[1]);
 
-test('Landing offers the correct first action, valid section targets and three genuinely deferred optional images',()=>{
+test('Landing offers the correct first action, valid section targets and four genuinely deferred optional images',()=>{
   const p=presenter(null,{screen:'title'}),fresh=p.views.titleView();
   assert.match(fresh,/<button class="primary" data-cmd="new">/);assert.ok(!commands(fresh).includes('continue'));
   const ids=[...fresh.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);assert.equal(new Set(ids).size,ids.length);
   for(const [,target]of fresh.matchAll(/href="#([^"]+)"/g))assert.ok(ids.includes(target),`Missing destination ${target}`);
-  const optional=[...fresh.matchAll(/<img\b[^>]*\bdata-src="[^"]+"[^>]*>/g)].map(match=>match[0]);assert.equal(optional.length,3);
+  const optional=[...fresh.matchAll(/<img\b[^>]*\bdata-src="[^"]+"[^>]*>/g)].map(match=>match[0]);assert.equal(optional.length,4);
   for(const image of optional){assert.ok(!/\ssrc=/.test(image));assert.match(image,/\bwidth="\d+"/);assert.match(image,/\bheight="\d+"/);assert.match(image,/\balt="[^"]+"/);}
   assert.match(fresh,/Actual gameplay/);assert.match(fresh,/Illustrative key art/);assert.ok(!fresh.includes('No downloads required'));
   p.context.state=Game.newGame('<Aurelius>');const before=Game.serialize(p.context.state),returning=p.views.titleView();assert.match(returning,/<button class="primary" data-cmd="continue">/);assert.ok(!returning.includes('<Aurelius>'));assert.equal(Game.serialize(p.context.state),before);

@@ -15,7 +15,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -73,7 +73,9 @@ async function open(options={}){
 }
 async function close(page){contexts.delete(page.context());await page.context().close();}
 const menu=menuCommand;
-async function closeModal(page){await page.locator('#modal [data-cmd="close-modal"]').first().click();}
+// The dialog's close event comes later, and its handler returns focus to the control
+// that opened it: wait for it, or keys meant for the board can land on that control.
+const closeModal=closePanel;
 async function settings(page,fn){await menu(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');await fn();await closeModal(page);}
 const settled=page=>page.waitForFunction(()=>{const b=document.querySelector('#battle-board');return !b||b.dataset.bound==='true';});
 async function restore(page,snapshot){
@@ -253,7 +255,8 @@ async function remappedKeyboard(){
     await config(page,{view:'2d'});await restore(page,snapshot);
     await settings(page,async()=>(await revealControl(page,'#binding-undo')).selectOption('z'));
     // Closing Settings re-renders the board; keys sent before the new one is
-    // bound are lost (on slow CI this timed out waiting for the walk).
+    // bound are lost. Keys sent before the close event's handler has run went to
+    // the Menu button it focuses (on slow CI both timed out waiting for the walk).
     await settled(page);await page.focus('#battle-board');await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');
     await page.waitForFunction(()=>/^Walked/.test(document.querySelector('#announcement').textContent));
     const moved=await exported(page),origin=Game.deserialize(snapshot.serialized).encounter.units.find(u=>u.id==='hero'),walked=moved.encounter.units.find(u=>u.id==='hero');

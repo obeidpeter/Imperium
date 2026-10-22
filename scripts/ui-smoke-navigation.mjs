@@ -84,17 +84,21 @@ export async function verifyCampPanelTransitions(page){
   await page.waitForFunction(()=>!window.__realtime.paused());
   await page.locator('#rt-board').focus();await page.keyboard.press('KeyQ');await page.waitForSelector('#modal .mission-orders');
   await page.locator('#modal .modal-close').focus();
-  const missionHeading=await page.locator('#panel-title').elementHandle();
-  const beforeRefresh=await page.evaluate(()=>({tick:window.__realtime.world().tick,paused:window.__realtime.paused()}));
-  await page.waitForFunction(el=>!el.isConnected,missionHeading,{timeout:30000}).catch(async error=>{
+  const missionControls=await page.evaluateHandle(()=>({head:document.querySelector('#modal .modal-head'),back:document.querySelector('#modal .modal-back'),close:document.querySelector('#modal .modal-close')}));
+  const beforeRefresh=await page.evaluate(()=>({tick:window.__realtime.world().tick,paused:window.__realtime.paused(),at:performance.now()}));
+  // Let the live HUD cross multiple one-second refreshes. The navigation must
+  // remain connected throughout, including on a slow software-rendered stage.
+  await page.waitForFunction(({tick,at})=>performance.now()-at>=2200&&window.__realtime.world().tick>tick,beforeRefresh,{timeout:30000}).catch(async error=>{
     const observed=await page.evaluate(()=>({tick:window.__realtime.world().tick,paused:window.__realtime.paused(),hidden:document.hidden,title:document.querySelector('#panel-title')?.textContent,focus:document.activeElement?.className,panel:document.querySelector('#modal')?.dataset,settings:JSON.parse(localStorage.getItem('sacramentum.settings')||'{}')}));
     throw new Error(`Camp mission refresh: ${error.message.split('\n')[0]}; ${JSON.stringify({beforeRefresh,observed})}`);
   });
   assert.equal(await page.evaluate(()=>window.__realtime.paused()),false,'Pause in panels off keeps the camp running behind Mission orders');
   assert.ok(await page.evaluate(()=>window.__realtime.world().tick)>beforeRefresh.tick,'The camp advances real simulation ticks behind the unpaused mission panel');
   assert.equal(await page.locator('#panel-title').textContent(),'Mission orders','The camp HUD refresh keeps the active mission panel');
+  assert.equal(await missionControls.evaluate(({head,back,close})=>head===document.querySelector('#modal .modal-head')&&back===document.querySelector('#modal .modal-back')&&close===document.querySelector('#modal .modal-close')),true,'Live refreshes keep the same Back and Close controls');
+  await missionControls.dispose();
   assert.equal(await page.locator('#modal .modal-close').evaluate(el=>el===document.activeElement),true,'A same-panel refresh preserves focus');
-  await page.locator('#modal .modal-back').click();await page.waitForTimeout(1300);
+  await page.locator('#modal .modal-back').click({timeout:30000});await page.waitForTimeout(1300);
   assert.equal(await page.locator('#panel-title').textContent(),'Menu','The next HUD refresh never reopens a panel after Back');
   await page.locator('#modal [data-cmd="settings"]').click();await (await revealControl(page,'#panel-pause')).setChecked(wasPanelPaused);
   await closePanel(page);
