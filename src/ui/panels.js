@@ -1,5 +1,5 @@
 import {relationshipLedger} from './progression-views.js';
-import {controlPreferences,controlHelp,applyControlLabels} from './control-preferences.js';
+import {controlPreferences,controlHelp,applyControlLabels,confirmMovesSetting} from './control-preferences.js';
 import * as Game from '../core/game.js';
 import {difficultyChoices,soundscapeSettings} from './campaign-upgrade-views.js';
 import {recruitChoices} from './soldier-views.js';
@@ -9,7 +9,7 @@ import {guideHelpView} from './guide-help-view.js';
 import {CHAPTERS,CAST,HISTORICAL_NOTES,choiceEchoes} from '../data/campaign.js';
 import {heroPortrait,speakerPortrait,journeyMap} from './art.js';
 import {esc,roman,companyPanel} from './view-helpers.js';
-import {ALL_CHAPTERS,REALTIME_READY_CHAPTERS} from '../core/controls-model.js';
+import {ALL_CHAPTERS,CHAMBER_READY_CHAPTERS,REALTIME_READY_CHAPTERS} from '../core/controls-model.js';
 
 const phaseLabel = phase => ({camp:'In camp',encounter:'Encounter in progress',promotion:'Promotion awaiting',epilogue:'Chronicle complete'}[phase] || phase);
 const statusLabel = status => ({open:'Open',honoured:'Honoured',broken:'Broken'}[status] || status);
@@ -135,33 +135,36 @@ export function createPanels(context){
     const options=(list,current)=>list.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
     const offlineStatus=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} `+
       `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.';
+    // Real time shows the 0.40 guide's settings; the turn-based board keeps its own, and the settings only the live field reads stay out of its way.
+    const realtime=settings.controlsModel==='realtime';
     showModal('Pause & settings',`<p class="panel-lead">Nothing advances while this menu is open.</p>`+
-      `${controlPreferences(settings,{keymap:settings.controlsModel==='realtime'?keymap:null})}${pacePreferences(settings,state?.difficulty)}`+
+      `${controlPreferences(settings,{keymap:realtime?keymap:null})}${realtime?pacePreferences(settings,state?.difficulty):''}`+
       `<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
       `<label class="setting" for="text-size"><span>Text size<small class="muted">Enlarge text across the game.</small></span>`+
       `<select id="text-size">${[1,1.25,1.5,2].map(n=>`<option value="${n}" ${(settings.textScale||1)===n?'selected':''}>${n*100}%</option>`).join('')}</select>`+
-      `</label><label class="setting" for="guide-setting"><span>Guided opening<small class="muted">Step-by-step lessons in the drill, first patrol and `+
-      `opening chamber turns.</small></span><input id="guide-setting" type="checkbox" ${settings.guide!==false?'checked':''}></label>`+
+      `</label><label class="setting" for="guide-setting"><span>Guided opening<small class="muted">${realtime?'Step-by-step lessons in the drill (including '+
+      'pause and slow time), the first patrol and the opening chamber hours.':'Step-by-step lessons in the drill, first patrol and opening chamber turns.'}`+
+      `</small></span><input id="guide-setting" type="checkbox" ${settings.guide!==false?'checked':''}></label>`+
       `<label class="setting" for="coach-setting"><span>Contextual tactical advice<small class="muted">Show advice for the current field or chamber `+
       `position.</small></span><input id="coach-setting" type="checkbox" ${settings.coach!==false?'checked':''}></label>`+
-      `<label class="setting" for="objective-markers"><span>Objective markers<small class="muted">The mission's next step is marked on the scene. Turn it `+
-      `off to find your own way.</small></span><input id="objective-markers" type="checkbox" data-rt-setting="objectiveMarkers" `+
+      `${realtime?`<label class="setting" for="objective-markers"><span>Objective markers<small class="muted">The mission's next step is marked on the scene. `+
+      `Turn it off to find your own way.</small></span><input id="objective-markers" type="checkbox" data-rt-setting="objectiveMarkers" `+
       `${settings.objectiveMarkers!==false?'checked':''}></label><label class="setting" for="floating-numbers"><span>Floating numbers<small class="muted">Damage `+
       `and healing shown over the people concerned.</small></span><input id="floating-numbers" type="checkbox" data-rt-setting="floatingNumbers" `+
-      `${settings.floatingNumbers!==false?'checked':''}></label>`+
+      `${settings.floatingNumbers!==false?'checked':''}></label>`:''}`+
       `<label class="setting" for="motion-setting"><span>Reduced motion<small class="muted">Remove nonessential motion; action feedback remains `+
       `readable.</small></span><input id="motion-setting" type="checkbox" ${settings.reducedMotion?'checked':''}></label>`+
-      `<label class="setting" for="confirm-moves"><span>Confirm moves<small class="muted">Off: selecting open ground walks there at once, or as far toward it `+
-      `as this turn allows; Undo Move takes it back until you act. On: the first selection previews the move, and selecting it again or Confirm walks.</small>`+
-      `</span><input id="confirm-moves" type="checkbox" ${settings.confirmMoves?'checked':''}></label><label class="setting" for="battle-view">`+
+      `${realtime?'':confirmMovesSetting(settings)}<label class="setting" for="battle-view">`+
       `<span>Campaign view<small class="muted">Choose 3D scenes or the 2D tactical view for every chapter. Commands and progress are shared.</small></span>`+
       `<select id="battle-view"><option value="3d" ${settings.battleView!=='2d'?'selected':''}>3D scene</option>`+
       `<option value="2d" ${settings.battleView==='2d'?'selected':''}>2D tactical view</option></select></label><label class="setting" for="figure-style">`+
       `<span>3D figure style<small class="muted">Sculpted 3D figures, the campaign's painted figures standing in the 3D scene, or sculpted figures finished `+
       `in ink and wash. Presentation only; tilt-shift and ink need Balanced or High quality.</small></span>`+
       `<select id="figure-style">${options([['sculpted','Sculpted'],['painted','Painted (HD-2D)'],['inked','Ink and wash']],settings.figureStyle??'sculpted')}</select>`+
-      `</label><label class="setting" for="action-camera"><span>Action camera<small class="muted">The 3D overview briefly closes in on each committed attack, `+
-      `then returns. Never moves with reduced motion or while following a figure.</small></span>`+
+      `</label><label class="setting" for="action-camera"><span>${realtime?'Close-ups<small class="muted">The camera briefly closes in on a critical blow struck '+
+      'by or against the man you control, then returns. Never while paused, while you turn the view, in the overview or with reduced motion.'
+      :'Action camera<small class="muted">The 3D overview briefly closes in on each committed attack, then returns. Never moves with reduced motion or while '+
+      'following a figure.'}</small></span>`+
       `<input id="action-camera" type="checkbox" ${settings.actionCamera!==false?'checked':''}></label><label class="setting" for="battle-remains">`+
       `<span>Battle remains<small class="muted">The fallen, spent arrows and trodden ground stay on the 3D field until the encounter ends. Presentation only; `+
       `the rules never see them.</small></span><input id="battle-remains" type="checkbox" ${settings.battleRemains!==false?'checked':''}></label>`+
@@ -231,8 +234,9 @@ export function createPanels(context){
     const chosen=new Set(settings.realtimeChapters??ALL_CHAPTERS);
     return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
       `conversion</h3><p class="settings-description">Turns keep every 0.38 battle and Contest. Real time opens the standalone skirmish as the real-time `+
-      `arena; a chapter switches only when it is listed below and its real-time encounters exist (so far Chapters `+
-      `${REALTIME_READY_CHAPTERS.map(roman).join(', ')}; Chapters I–III also have walkable camps).</p>`+
+      `arena; a chapter switches only when it is listed below and its real-time encounters exist (${REALTIME_READY_CHAPTERS.length===ALL_CHAPTERS.length?'every '+
+      'chapter’s do':`so far Chapters ${REALTIME_READY_CHAPTERS.map(roman).join(', ')}`}; Chapters I–III also have walkable camps, and the Contests of `+
+      `Chapters ${CHAMBER_READY_CHAPTERS.map(roman).join(', ')} are walked in the chamber).</p>`+
       `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
       `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
       `<fieldset class="setting realtime-chapters"><legend>Chapters in real time when ready</legend>${ALL_CHAPTERS.map(c=>`<label><input type="checkbox" `+

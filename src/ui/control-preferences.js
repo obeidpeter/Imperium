@@ -46,14 +46,20 @@ function pointerPreferences(settings){
     `<select id="labels-setting" data-rt-setting="labelsAlways"><option value="" ${settings.labelsAlways?'':'selected'}>While U is held</option>`+
     `<option value="1" ${settings.labelsAlways?'selected':''}>Always</option></select></label>`;
 }
+// The 0.38 board's Confirm moves. Real time has no moves to confirm: there it sits with the board's shortcuts.
+export function confirmMovesSetting(settings={}){
+  return `<label class="setting" for="confirm-moves"><span>Confirm moves<small class="muted">Off: selecting open ground walks there at once, or as far toward it `+
+    `as this turn allows; Undo Move takes it back until you act. On: the first selection previews the move, and selecting it again or Confirm walks.</small>`+
+    `</span><input id="confirm-moves" type="checkbox" ${settings.confirmMoves?'checked':''}></label>`;
+}
 export function controlPreferences(settings={},{keymap=null}={}){
   const bindings=controlBindings(settings.keyBindings);
   return `<section class="settings-group control-preferences"><h3>Controls & readability</h3>
     ${keymap?`${keyPreferences(keymap)}${pointerPreferences(settings)}`:''}
     <label class="setting" for="high-contrast"><span>High-contrast interface<small class="muted">Stronger boundaries and brighter labels. Unit allegiance also has a symbol.</small></span><input id="high-contrast" type="checkbox" ${settings.highContrast?'checked':''}></label>
     <label class="setting" for="compact-hud"><span>Focus on the battlefield<small class="muted">A compact mission header and camera bar, with full orders still available.</small></span><input id="compact-hud" type="checkbox" ${settings.compactHud!==false?'checked':''}></label>
-    <label class="setting" for="hold-delay"><span>Touch preview delay<small class="muted">Keep a finger still to inspect a tile. Lifting after a hold spends nothing.</small></span><select id="hold-delay">${[250,450,650,900,1200].map(ms=>`<option value="${ms}" ${holdDelay(settings.holdDelay)===ms?'selected':''}>${ms/1000} seconds</option>`).join('')}</select></label>
-    ${keymap?'<details class="board-shortcuts"><summary>Turn-based board shortcuts (0.38 board and archive practice)</summary>':''}
+    <label class="setting" for="hold-delay"><span>Touch hold delay<small class="muted">${keymap?'How long to hold a finger still to inspect.':'Keep a finger still to inspect a tile. Lifting after a hold spends nothing.'}</small></span><select id="hold-delay">${[250,450,650,900,1200].map(ms=>`<option value="${ms}" ${holdDelay(settings.holdDelay)===ms?'selected':''}>${ms/1000} seconds</option>`).join('')}</select></label>
+    ${keymap?`<details class="board-shortcuts"><summary>Turn-based board: Confirm moves and shortcuts (0.38 board and archive practice)</summary>${confirmMovesSetting(settings)}`:''}
     <p class="settings-description">Choose a letter for each shortcut. Choosing an occupied letter swaps the two commands. Arrow keys, Enter, Escape and action keys 1–9 stay available.</p>
     <div class="control-binding-grid">${keys.map(id=>`<label for="binding-${id}">${CONTROL_LABELS[id]}<select id="binding-${id}" data-binding="${id}" aria-label="${CONTROL_LABELS[id]} shortcut">${'abcdefghijklmnopqrstuvwxyz'.split('').map(key=>`<option value="${key}" ${bindings[id]===key?'selected':''}>${key.toUpperCase()}</option>`).join('')}</select></label>`).join('')}</div>
     <button class="ghost" data-cmd="reset-controls">Restore default shortcuts</button>${keymap?'</details>':''}</section>`;

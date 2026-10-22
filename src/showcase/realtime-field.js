@@ -26,7 +26,8 @@ import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js
 // dom: elements by role (missing ones are skipped; fieldDom reads them from
 // data-role names). options: the player's settings, read as they change
 // (gameSpeed, the auto-pause events, roundPause, drawToAttack, keepFighting,
-// quickCast, holdToMove, swapButtons).
+// quickCast, holdToMove, swapButtons, edgeScroll, labelsAlways,
+// objectiveMarkers, floatingNumbers).
 
 const SPEEDS=[.5,.75,1];
 const ARROWS={move_up:[0,-1],move_down:[0,1],move_left:[-1,0],move_right:[1,0]};
