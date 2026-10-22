@@ -20,6 +20,7 @@
     "benchmark": "node scripts/benchmark-campaign.mjs",
     "benchmark:stage": "node scripts/benchmark-stage.mjs",
     "benchmark:arena": "node scripts/arena-benchmark.mjs",
+    "guide:help": "node scripts/guide-help.mjs",
     "autoplay:production": "node scripts/production-autoplay.mjs",
     "art:handoff": "node scripts/build-character-handoff.mjs",
     "audit:handoff": "node scripts/check-character-handoff.mjs",

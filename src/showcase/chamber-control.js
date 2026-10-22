@@ -476,7 +476,7 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
     talk(personId){if(show)skip();if(live()&&(unit(personId)||personId===MAGISTRATE&&magistrate()||personId===MOTION))openTalk(personId);},toggleMotion,
     hover:hoverAt,press,act,update,sync,reset,options,use,rivalArrows,canControl,skip,
     // A new presenter (the stage rebuilt): the reach and the forecast marks are drawn again.
-    invalidate(){reachKey='';badgesKey='';hudKey='';},
+    invalidate(){reachKey='';badgesKey='';hudKey='';barKey='';},
     speakers:()=>Chamber.speakers(state()).filter(s=>s.standing),
     dispose(){closeTalk();presenter()?.setReach?.(null);presenter()?.setMarks({});canvas.removeEventListener('dragover',onDragOver);canvas.removeEventListener('drop',onDrop);}
   };

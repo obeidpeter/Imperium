@@ -35,14 +35,16 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 export const fieldDom=root=>({canvas:root.querySelector('canvas'),...Object.fromEntries([...root.querySelectorAll('[data-role]')].map(el=>[el.dataset.role,el]))});
 // Who the stage draws: hidden enemies stay off it until they are seen.
 // What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
-const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',');
+const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',')+
+  // The objective's markers: the positions secured, the phase and the next wave.
+  '|'+(world.mission?`${world.mission.phase??0}:${(world.mission.points??[]).map(p=>p.secured?1:0).join('')}:${(world.mission.waves??[]).filter(w=>w.arrived).length}`:'');
 
 export function createRealtimeField({dom,world:initial,base:initialBase,options={},keymap=DEFAULT_KEYMAP,holdDelay=()=>450,callbacks={},kind='field'}){
   let world=initial,base=initialBase,stage=null,presenter=null,input=null,disposed=false;
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={};
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null;
   const metrics={ticks:[],clicks:[],clickFrames:[],frames:0,pending:null,moved:null};
   const canvas=dom.canvas;
   const me=()=>actorById(world,world.controlled);
@@ -94,7 +96,21 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(metrics.pending){const h=me();if(h&&(h.x!==metrics.pending.x||h.z!==metrics.pending.z)){metrics.moved=metrics.pending;metrics.pending=null;}}
     if(ticks)showPlanned();
     if(hoverPoint&&(hoverDirty||metrics.frames%6===0))readPointer();
+    if(edge&&options.edgeScroll)edgeScroll(dt);
     updateHud(now);
+  }
+  // Edge scrolling (3D, a setting): the pointer at the scene's edge slides the view over the ground, faster when further out.
+  function edgeScroll(dt){
+    if(!stage||stage.flat||!stage.orbit||!stage.baseTarget)return;const yaw=stage.orbit.yaw,step=Math.min(80,dt)/1000*stage.orbit.distance*.9;
+    const dx=Math.cos(yaw)*edge.x-Math.sin(yaw)*-edge.y,dz=-Math.sin(yaw)*edge.x-Math.cos(yaw)*-edge.y;
+    const lo=stage.world?.({x:0,y:0}),hi=stage.world?.({x:(stage.encounter?.width??8)-1,y:(stage.encounter?.height??8)-1});
+    stage.focusMode=false;stage.cameraView='overview';stage.baseTarget.x+=dx*step;stage.baseTarget.z+=dz*step;
+    if(lo&&hi){stage.baseTarget.x=Math.min(Math.max(stage.baseTarget.x,Math.min(lo.x,hi.x)),Math.max(lo.x,hi.x));stage.baseTarget.z=Math.min(Math.max(stage.baseTarget.z,Math.min(lo.z,hi.z)),Math.max(lo.z,hi.z));}
+    stage.wake?.();
+  }
+  function onEdge(e){
+    if(e.pointerType&&e.pointerType!=='mouse'){edge=null;return;}const r=canvas.getBoundingClientRect(),m=16;
+    const x=e.clientX<r.left+m?-1:e.clientX>r.right-m?1:0,y=e.clientY<r.top+m?-1:e.clientY>r.bottom-m?1:0;edge=x||y?{x,y}:null;if(edge&&options.edgeScroll)stage?.wake?.();
   }
   function frameDone(){
     if(!metrics.moved)return;metrics.clicks.push(performance.now()-metrics.moved.time);metrics.clickFrames.push(metrics.frames-metrics.moved.frame);
@@ -526,9 +542,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function onKeyUp(e){
     const action=actionFor(e,keymap);
     if(ARROWS[action]&&!chamber){arrows.delete(action);if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
-    if(action==='show_usable'){document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
+    if(action==='show_usable'){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
   }
   function onBlur(){if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
+  function onLeave(){edge=null;}
   function onHidden(){if(document.hidden){if(!clock.paused){setPaused(clock,true);say('Paused while the page was hidden.');}saveResume('hide');}}
 
   function bind(){
@@ -544,6 +561,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       e.preventDefault();const next=list[(i+(e.key==='ArrowRight'?1:list.length-1))%list.length];list.forEach(b=>b.tabIndex=b===next?0:-1);next.focus();
     });
     canvas.addEventListener('keydown',onKey);canvas.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);
+    canvas.addEventListener('pointermove',onEdge);canvas.addEventListener('pointerleave',onLeave);
+    // Labels always (a setting): every figure keeps its name, as while U is held.
+    document.body.classList.toggle('labels-full',!!options.labelsAlways);
     document.addEventListener('visibilitychange',onHidden);addEventListener('pagehide',onHidden);
     input=bindRealtimeInput(canvas,{press,hold,release:()=>{pressMove=false;},hover,inspect:p=>{hover(p);readPointer();},
       rotate:(dy,dp)=>{if(!stage)return;stage.orbit.yaw+=dy;stage.orbit.pitch=Math.min(1.25,Math.max(.25,stage.orbit.pitch+dp));stage.wake();},
@@ -558,7 +578,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function resetPresenter(){
     presenter?.dispose();if(!stage)return;
     // The 3D stage poses figures; the 2D view (flat-stage.js) draws them on its canvas.
-    presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock)});
+    presenter=(stage.flat?createFlatPresenter:createLivePresenter)(stage,{world:()=>world,alpha:()=>clockAlpha(clock),beforeFrame,paused:()=>clock.paused&&!stepping(clock),
+      // Floating numbers and objective markers are the player's to turn off (presentation only).
+      view:()=>({numbers:options.floatingNumbers!==false,markers:options.objectiveMarkers!==false})});
+    stage.objectiveMarkers=options.objectiveMarkers!==false;
     stage.setLive(presenter);presenter.setRanges(ranges);presenter.setMarks(marks);presenter.setSelection?.(squads?.selection??[]);presenter.setMarker?.(squads?.marker??null);
     presenter.setDeployment?.(deploying(world)?world.deployment.zone:null);chamber?.invalidate();
   }
@@ -581,7 +604,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!deploying(world)){setPaused(clock,false);resumePending=true;}}canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
     setSpeed(speed){setSpeed(clock,Number(speed));},
-    setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();},
+    setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();
+      if(key==='labelsAlways')document.body.classList.toggle('labels-full',!!value);
+      if(key==='objectiveMarkers'&&stage){stage.objectiveMarkers=value!==false;stage.sync(stageEncounter(base,world));}},
+    // The keys were remapped (the page changed the shared map in place): the bars show the new keys.
+    relabel(){barKey='';buildAbilityBar();squads?.build();chamber?.invalidate();updateHud(performance.now());},
     issue,act,say,follow,takeControl,toggleList,
     // The page changed a chamber's Contest (a panel's speech): its world and HUD follow, and an hour's end plays out.
     chamberSync:outcome=>{if(!chamber)return;chamber.sync(outcome);stage?.sync(stageEncounter(base,world));},get chamber(){return chamber;},
@@ -590,6 +617,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     dispose(){
       disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
       canvas.removeEventListener('keydown',onKey);canvas.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
+      canvas.removeEventListener('pointermove',onEdge);canvas.removeEventListener('pointerleave',onLeave);document.body.classList.remove('labels-full');
       document.removeEventListener('visibilitychange',onHidden);removeEventListener('pagehide',onHidden);
     }
   };

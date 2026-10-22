@@ -30,17 +30,31 @@ export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveCo
 
 // The live field's own DOM: built once per fight by the page, then owned by
 // the field runtime (src/showcase/realtime-field.js) through its data-role names.
+// The scene's spoken name and its keys, in the player's keys (relabelField repeats them after a remap).
+export function fieldHints({state,keymap,kind='field'}){
+  const chamber=kind==='chamber',camp=kind==='camp',key=action=>esc(actionLabel(action,keymap));
+  const title=camp?campFor(state.chapter)?.title??'The camp':state.encounter.title;
+  const label=chamber?`${esc(title)}. Click the floor inside the pale circles to walk, a person to talk to him; right-click gives the chosen speech. ${key('yield_floor')} yields the floor.`
+    :`${esc(title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses.`;
+  const keys=chamber?`The arrow keys walk your speaker one place at a time. ${key('target_next_enemy')} chooses the next member or rival speaker and gives the chosen speech’s forecast;
+      Enter talks to him, ${key('interact_nearest')} to the nearest. ${key('ability_1')} to ${key('ability_7')} choose a speech; the same key again gives it to the person chosen. ${key('yield_floor')} yields the floor and ends the hour.
+      Hold ${key('show_usable')} to see where each rival means to walk next. ${key('party_prev')} and ${key('party_next')} change the speaker you control; ${key('control_hero')} returns to your soldier. Escape closes the conversation, then opens the Menu.`
+    :`Arrow keys move your soldier. ${key('target_next_enemy')} chooses the next enemy or thing to use, Enter acts on it, ${key('interact_nearest')} uses what is nearest.
+      ${key('combat_toggle')} draws or sheathes. ${key('ability_1')} to ${key('ability_7')} choose an ability; the same key again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
+      ${key('step_round')} plays one round while paused. ${key('party_prev')} and ${key('party_next')} change the companion you control; ${key('control_hero')} returns to your soldier. Escape opens the Menu.`;
+  return {label,keys};
+}
+// After the keys are remapped: the hints, the buttons' shortcuts and their titles follow (the bars rebuild in the field).
+export function relabelField(root,{state,keymap,kind='field'}){
+  if(!root)return;const {label,keys}=fieldHints({state,keymap,kind}),text=html=>{const t=document.createElement('template');t.innerHTML=html;return t.content.textContent;};
+  root.querySelector('#rt-board')?.setAttribute('aria-label',text(label));const p=root.querySelector('#rt-keys');if(p)p.textContent=text(keys);
+  for(const el of root.querySelectorAll('[data-shortcut]')){const k=actionLabel(el.dataset.shortcut,keymap);el.setAttribute('aria-keyshortcuts',k);if(el.dataset.title)el.title=`${el.dataset.title} (${k})`;}
+}
+
 export function fieldMarkup({state,keymap,kind='field'}){
   const camp=kind==='camp',chamber=kind==='chamber',chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
   const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:'Talk to people, use what you find, and march out through the gate.'}:state.encounter;
-  const label=chamber?`${esc(e.title)}. Click the floor inside the pale circles to walk, a person to talk to him; right-click gives the chosen speech. ${key('yield_floor')} yields the floor.`
-    :`${esc(e.title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses.`;
-  const keys=chamber?`The arrow keys walk your speaker one place at a time. ${key('target_next_enemy')} chooses the next member or rival speaker and gives the chosen speech’s forecast;
-      Enter talks to him, E to the nearest. 1 to 7 choose a speech; the same number again gives it to the person chosen. ${key('yield_floor')} yields the floor and ends the hour.
-      Hold ${key('show_usable')} to see where each rival means to walk next. [ and ] change the speaker you control; Home returns to your soldier. Escape closes the conversation, then opens the Menu.`
-    :`Arrow keys move your soldier. ${key('target_next_enemy')} chooses the next enemy or thing to use, Enter acts on it, E uses what is nearest.
-      ${key('combat_toggle')} draws or sheathes. 1 to 7 choose an ability; the same number again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
-      ${key('step_round')} plays one round while paused. [ and ] change the companion you control; Home returns to your soldier. Escape opens the Menu.`;
+  const {label,keys}=fieldHints({state,keymap,kind});
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
   <div class="rt-scene">
     <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys"
@@ -62,10 +76,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <p data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p><p class="rt-progress" data-role="progress"></p>
         ${chamber?'<div class="rt-coalition" data-role="coalition" aria-label="The coalition and the Chamber Whip Forecast"></div>':''}</div>
       <div class="rt-time" role="group" aria-label="Time">
-        <button data-role="pauseButton" class="rt-pause" type="button" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
-        ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" aria-keyshortcuts="${key('yield_floor')}" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">Yield</button>`
-          :`<button data-role="slowButton" type="button" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Slow</button>
-        <button data-role="stepButton" type="button" aria-keyshortcuts="${key('step_round')}" disabled>Next round</button>`}
+        <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
+        ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">Yield</button>`
+          :`<button data-role="slowButton" type="button" data-shortcut="slow_time" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Slow</button>
+        <button data-role="stepButton" type="button" data-shortcut="step_round" aria-keyshortcuts="${key('step_round')}" disabled>Next round</button>`}
       </div>
       <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
@@ -88,10 +102,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
           <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Motion</button>
           <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every speech, walk and conversation as a list">List</button>
         </div>`:`<div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
-          <button data-role="swordsButton" class="rt-swords" type="button" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
-          <button data-role="walkButton" type="button" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
+          <button data-role="swordsButton" class="rt-swords" type="button" data-shortcut="combat_toggle" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" data-title="Draw or sheathe" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
+          <button data-role="walkButton" type="button" data-shortcut="walk_toggle" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
           <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force</button>
-          <button data-role="rangesButton" type="button" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
+          <button data-role="rangesButton" type="button" data-shortcut="show_ranges" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
           <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every action as a list">List</button>
         </div>`}
       </div>

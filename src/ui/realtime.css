@@ -194,3 +194,28 @@
 .rt-talk.carrying{opacity:.3;pointer-events:none}
 .kit-documents{list-style:none;padding:0;display:grid;gap:.4rem}.kit-documents li{display:flex;flex-wrap:wrap;gap:.3rem .6rem;align-items:baseline}
 .kit-documents small{flex-basis:100%;color:var(--muted,#666)}
+
+/* Menu → Controls & readability: the real-time keys, each with Change (guide "Changing the controls"). */
+.key-map h4{margin:.4rem 0 .2rem}
+.key-group{border:1px solid var(--line,rgba(255,255,255,.18));border-radius:.5rem;margin:.6rem 0;padding:.35rem .7rem .55rem}
+.key-group legend{font-weight:700;padding:0 .3rem}
+.key-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:.6rem;padding:.18rem 0}
+.key-row kbd{min-inline-size:2.4rem;text-align:center}
+.key-row.listening{outline:2px solid #f1d38a;outline-offset:2px;border-radius:.35rem}
+#rebind-status.warning{color:#f0a48c}
+.board-shortcuts{margin-top:.8rem}
+.board-shortcuts>summary{cursor:pointer;font-weight:600}
+@media (max-width:520px){.key-row{grid-template-columns:minmax(0,1fr) auto;}.key-row button{grid-column:1/-1;justify-self:start}}
+
+/* Controls & rules: the player guide's chapters (guide-help-view.js). */
+.guide-help{display:grid;grid-template-columns:minmax(11rem,14rem) minmax(0,1fr);gap:1.1rem;align-items:start}
+.guide-toc ol{list-style:none;margin:0;padding:0;display:grid;gap:.15rem}
+.guide-toc button{text-align:start;inline-size:100%;padding:.25rem .35rem;border-radius:.3rem}
+.guide-toc button[aria-current="page"]{font-weight:700;background:rgba(241,211,138,.14)}
+.guide-page h4{margin:1.1rem 0 .35rem}
+.guide-page .help-table{overflow-x:auto;margin:.5rem 0}
+.guide-page table{border-collapse:collapse;inline-size:100%;font-size:.92em}
+.guide-page th,.guide-page td{border-block-end:1px solid rgba(255,255,255,.12);padding:.3rem .45rem;vertical-align:top;text-align:start}
+.guide-page .help-note{border-inline-start:3px solid #f1d38a;padding:.2rem .7rem;margin:.6rem 0;background:rgba(241,211,138,.07)}
+.guide-page .help-keys.changed small{opacity:.8}
+@media (max-width:760px){.guide-help{grid-template-columns:1fr}.guide-toc ol{grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))}}

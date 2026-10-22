@@ -290,7 +290,8 @@ export class BattleStage{
       actor.group.visible=actorVisible(u);
     }
     this.goalMarker.visible=false;
-    const marks=missionReadouts(encounter),wanted=new Set(marks.map(mark=>mark.id));
+    // Objective markers are the player's to turn off (Settings → Display; a live field sets objectiveMarkers).
+    const marks=this.objectiveMarkers===false?[]:missionReadouts(encounter),wanted=new Set(marks.map(mark=>mark.id));
     for(const [id,marker] of this.missionMarkers)if(!wanted.has(id)){
       this.overlay.remove(marker.mesh);marker.mesh.material.dispose();marker.label.remove();this.missionMarkers.delete(id);
     }

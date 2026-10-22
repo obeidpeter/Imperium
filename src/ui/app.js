@@ -17,10 +17,10 @@ import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
 import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
-import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
+import {realtimeEncounterView,fieldMarkup,relabelField} from './realtime-view.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
-import {DEFAULT_KEYMAP} from './action-map.js';
+import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {ITEMS} from '../data/items.js';
 import {TRAINERS} from '../data/soldier.js';
 import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
@@ -80,6 +80,8 @@ function reach(){return walkableReach(state,{selected,action});}
 let settings=loadSettings(storedSettings(),
   {reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,
     phone:phoneLike()});
+// The player's real-time keys: one map, changed in place, shared by the field, its hints and the page's own keys.
+const keymap=keymapFrom(settings.realtimeKeys);
 const soundscape=campaignSoundscape();soundscape.configure(settings);
 function storedSettings(){try{return localStorage.getItem(SETTINGS_KEY);}catch{return null;}}
 function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch{}}
@@ -96,7 +98,7 @@ const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,e
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu}));
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -252,7 +254,7 @@ function mountField(target){
     }
     mountFieldStage();return;
   }
-  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap:DEFAULT_KEYMAP,kind:target.kind}));
+  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
   const element=host.querySelector('.rt-field'),ticket={};
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
   Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
@@ -260,7 +262,7 @@ function mountField(target){
     // A hearing's chamber has its presiding magistrate at the tribunal.
     const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
-    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap:DEFAULT_KEYMAP,
+    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
@@ -463,7 +465,8 @@ function openPanel(name){
   else if(name==='chronicle')showSoldierPanel('chronicle');
   else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
   else if(name==='options')showSettings();
-  else if(name==='help')chamberMode()?showModal('Rules & controls',chamberHelp()):Game.isRealtime(state)?showModal('Rules & controls',realtimeHelp()):showHelp();
+  // Help opens the guide where the player is: the chamber at its Contests, a fight at its battles, a camp at the campaign.
+  else if(name==='help')showHelp(chamberMode()?'political-contests':Game.isRealtime(state)?'battles':campMode()?'the-campaign':undefined);
 }
 const fieldPanel=name=>openPanel(name);
 // The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
@@ -492,19 +495,6 @@ function showSoldierPanel(name,arg=null){
 }
 function soldierAct(command){
   return change(()=>Game.soldierCommand(state,command),{tone:'click',afterRender:()=>{if(soldierPanel)showSoldierPanel(soldierPanel.name,soldierPanel.arg);}});
-}
-function realtimeHelp(){
-  return `<p>Click open ground to move; a far click runs. Click an enemy to fight him; right-click uses the current ability. P pauses, and every command still works while paused.</p>`+
-    `<p>Point at anything for its forecast. Arrow keys move; T chooses the next enemy or thing to use, Enter acts on it, E uses what is nearest. [ and ] change the companion you control; Home returns to your soldier.</p>`;
-}
-// The chamber's controls and rules in brief (guide "Political Contests").
-function chamberHelp(){
-  return `<p>The session runs by the hour of the clepsydra. In each hour each of your speakers may walk inside the pale circles that show his reach and give one speech. `+
-    `The hour ends when every speaker still standing has spoken, or when you yield the floor (Y); the rival speakers then take their hour.</p>`+
-    `<p>Click a member to talk to him: the conversation opens where you stand and shows each speech with its forecast; asking about his interests is free. `+
-    `Choose a speech on the bar (1 to 7) and right-click a member, a rival, your ally or (Address the Chamber) the floor. [ and ] change the speaker you control.</p>`+
-    `<p>T chooses the next member or rival and Enter talks to him; hold U to see where each rival means to walk next. Only the vote at the deadline counts, and a tie rejects the motion. `+
-    `At 0 Resolve a speaker withdraws, but his vote still counts.</p>`;
 }
 function fieldTalk(id){
   const world=field?.runtime?.world,person=world?.actors.find(a=>a.id===id);if(!person)return;
@@ -713,12 +703,43 @@ function showModal(title,body,{menu=false}={}){
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
 }
+// ——— Remapping a key (Menu → Controls & readability): Change listens for the next key pressed. ———
+let rebinding=null;
+const actionName=action=>KEY_GROUPS.flatMap(([,rows])=>rows).find(([a])=>a===action)?.[1]??action;
+function startRebind(action){
+  if(!keymap[action])return;rebinding=action;const row=modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"]`);row?.classList.add('listening');
+  const b=row?.querySelector('[data-cmd="rebind"]');if(b)b.textContent='Press a key…';
+  const status=modal.querySelector('#rebind-status');if(status)status.textContent=`Press the new key for ${actionName(action)}, or Esc to cancel.`;
+}
+function finishRebind(message,{problem=false}={}){
+  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings();modal.scrollTop=top;
+  const status=modal.querySelector('#rebind-status');if(status){status.textContent=message;status.classList.toggle('warning',problem);}
+  announce(message);modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"] [data-cmd="rebind"]`)?.focus({preventScroll:true});
+}
+// The shared map changes in place: the field's keys, bars and hints follow at once.
+function useKeymap(next){
+  for(const action of Object.keys(keymap))keymap[action]=[...next[action]];settings.realtimeKeys=keymapChanges(keymap);saveSettings();
+  if(field)relabelField(field.element,{state,keymap,kind:field.kind});field?.runtime?.relabel?.();
+}
+document.addEventListener('keydown',event=>{
+  if(!rebinding)return;
+  // A modifier alone waits for the key it modifies.
+  if(['Shift','Control','Alt','Meta','AltGraph'].includes(event.key))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(event.key==='Escape'){finishRebind(`${actionName(rebinding)} is unchanged.`);return;}
+  const binding=eventBinding(event);if(!binding){finishRebind(`Ctrl, Cmd and Alt belong to the browser. ${actionName(rebinding)} is unchanged.`,{problem:true});return;}
+  const action=rebinding,r=remapAction(keymap,action,binding);
+  if(r.problem){finishRebind(`${r.problem} ${actionName(action)} is unchanged.`,{problem:true});return;}
+  const holder=Object.keys(keymap).find(a=>a!==action&&keymap[a].includes(binding));useKeymap(r.keymap);
+  finishRebind(`${actionName(action)} is now ${keyLabel(binding)}.${holder?` ${actionName(holder)} takes ${keymap[holder].map(keyLabel).join(' or ')}.`:''}`);
+},true);
+modal.addEventListener('cancel',event=>{if(rebinding)event.preventDefault();});
 modal.addEventListener('keydown',event=>{
   if(!modal.dataset.conversation||event.altKey||event.ctrlKey||event.metaKey)return;const n=Number(event.key);
   if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
 });
 modal.addEventListener('close',()=>{
-  const prior=modalReturn;modalReturn=null;
+  rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
@@ -1031,6 +1052,9 @@ case 'present-case':if(chamberMode()){await chamberSpeech({kind:'case',id},{afte
   {tone:'agreement',afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});
   break;
 case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();render();showSettings();break;
+case 'rebind':startRebind(id);break;
+case 'help-section':showHelp(id);modal.scrollTop=0;break;
+case 'reset-keys':useKeymap(keymapFrom());showSettings();announce('Every key is back to its default.');modal.querySelector('[data-cmd="reset-keys"]')?.focus();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;
 case 'policy-motion':case 'policy-amend':{const terms=cmd==='policy-motion'?'original':'amended';
   if(chamberMode()){await chamberSpeech({kind:'policy',id,terms});break;}await change(()=>Game.tablePolicy(state,id,terms),{tone:'agreement'});break;}
@@ -1078,6 +1102,9 @@ document.addEventListener('change',async event=>{
     const next=remapControl(settings.keyBindings,control.dataset.binding,control.value);
     if(next){settings.keyBindings=next;saveSettings();render();showSettings();document.getElementById(control.id)?.focus();}return;
   }
+  // The pointer's habits, labels, objective markers and floating numbers: stored, and the live field reads them at once.
+  if(control.dataset.rtSetting){const key=control.dataset.rtSetting;settings[key]=control.type==='checkbox'?control.checked:!!control.value;saveSettings();
+    field?.runtime?.setOption?.(key,settings[key]);return;}
   const toggle=SETTING_TOGGLES[control.id];
   if(toggle){settings[toggle.key]=control.checked;saveSettings();if(toggle.stage)battleStage[toggle.stage](control.checked);if(toggle.render)render();return;}
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
@@ -1150,7 +1177,7 @@ document.addEventListener('change',async event=>{
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||modal.open||screen==='title'||!state||Game.isRealtime(state)||sessionGate.busy)return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"],canvas'))return;
-  const action=actionFor(event,DEFAULT_KEYMAP);if(!action)return;
+  const action=actionFor(event,keymap);if(!action)return;
   if(action==='quick_save'){event.preventDefault();quickSave();return;}
   const name=action==='help'?'help':action==='map_overlay'?'map':action.startsWith('panel_')?action.slice(6):null;
   if(!name||(state.phase==='encounter'&&!['kit','character','decorations','company','journal','chronicle','options','help'].includes(name)))return;

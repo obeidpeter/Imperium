@@ -2,6 +2,7 @@ import {GRAPHICS_MODES,FIGURE_STYLES,defaultGraphicsMode} from './graphics-quali
 import {audioLevel} from './audio.js';
 import {controlBindings,holdDelay} from './control-preferences.js';
 import {ALL_CHAPTERS,normalizeControls} from '../core/controls-model.js';
+import {keymapChanges,keymapFrom} from './action-map.js';
 
 // The legacy key keeps existing players' preferences.
 export const SETTINGS_KEY='sacramentum.settings';
@@ -22,6 +23,10 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
     // The pace follows the chronicle's difficulty until the player changes it (paceChosen; followDifficulty below).
     ...paceDefaults('standard'),roundPause:false,panelPause:true,paceChosen:false,
     drawToAttack:true,keepFighting:false,quickCast:false,holdToMove:true,swapButtons:false,
+    // The guide's readability settings: edge scrolling (3D), labels always or while U is held, objective markers and floating numbers.
+    edgeScroll:false,labelsAlways:false,objectiveMarkers:true,floatingNumbers:true,
+    // The real-time keys the player changed (action-map.js keymapFrom); the rest keep their defaults.
+    realtimeKeys:{},
     quality:defaultGraphicsMode({saveData,deviceMemory,phone})
   };
 }
@@ -42,6 +47,7 @@ export function loadSettings(stored,device){
   if(![.5,.75,1].includes(settings.gameSpeed))settings.gameSpeed=defaults.gameSpeed;
   for(const key of REALTIME_FLAGS)if(typeof settings[key]!=='boolean')settings[key]=defaults[key];
   if(typeof settings.paceChosen!=='boolean')settings.paceChosen=false;
+  settings.realtimeKeys=keymapChanges(keymapFrom(settings.realtimeKeys));
   return settings;
 }
 
@@ -62,7 +68,7 @@ export function choosePace(settings,key,value){
 }
 
 const REALTIME_FLAGS=['pauseSighted','pauseHurt','pauseObjective','pauseSquad','pauseOrder','roundPause','panelPause','drawToAttack','keepFighting','quickCast',
-  'holdToMove','swapButtons'];
+  'holdToMove','swapButtons','edgeScroll','labelsAlways','objectiveMarkers','floatingNumbers'];
 
 // Settings checkboxes that only store their setting, then redraw the page or
 // tell the 3D stage (a method of the battle-stage controller).

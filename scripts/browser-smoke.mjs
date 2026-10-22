@@ -422,7 +422,9 @@ async function chamberCouncil(){
   await page.locator('#rt-board').focus();await page.keyboard.press('Escape');assert.equal(await page.isHidden('[data-role="conversation"]'),true,'Escape closes the conversation');
   await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Y yields and the rivals take their hour'));
   await page.keyboard.press('Space');await page.waitForSelector('[data-role="rivalsBand"]',{state:'hidden',timeout:30000}).catch(()=>assert.fail('Space skips the rivals’ hour'));
-  assert.equal((await chamberHour(page)).hour,2);assert.match(await text(page,'[data-role="roundLabel"]'),/^Hour 2 of/);
+  // The HUD redraws on the next frame.
+  assert.equal((await chamberHour(page)).hour,2);await page.waitForFunction(()=>/^Hour 2 of/.test(document.querySelector('[data-role="roundLabel"]')?.textContent??''),null,{timeout:30000})
+    .catch(async()=>assert.fail(`The hour reads ${await text(page,'[data-role="roundLabel"]')}`));
   await page.keyboard.down('KeyU');await page.waitForFunction(()=>/challenges|attacks|no plan/.test(document.querySelector('[data-role="messageLine"]').textContent),null,{timeout:10000})
     .catch(()=>assert.fail('U names where each rival means to walk next'));await page.keyboard.up('KeyU');
   // The pointer: a click on a member's figure opens his conversation.
@@ -534,11 +536,49 @@ async function realtimeFinale(){
   console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names, and the soldier’s oath (Rally within 23 m) is heard');
 }
 
+// Phase 4's settings in the page (2D): a Story chronicle's Time and pace start at 75% with a pause on enemies in
+// view; Pause is remapped to K from the Menu (a browser key is refused, Esc cancels), K pauses the camp, the
+// pause button and the generated Controls & rules name K, and Restore default keys gives P back.
+async function settingsAndHelp(){
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.check('input[name="campaign-difficulty"][value="story"]');await page.click('[data-cmd="begin"]');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  assert.equal(await page.inputValue('#game-speed'),'0.75','Story starts at 75%');assert.equal(await page.isChecked('#pause-sighted'),true,'and pauses when an enemy comes into view');
+  assert.equal(await page.isChecked('#pause-hurt'),false);
+  const status=()=>text(page,'#rebind-status');
+  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Tab');
+  await page.waitForFunction(()=>/belongs to the browser/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
+    .catch(async()=>assert.fail(`Tab is refused: ${await status()}`));
+  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>/unchanged/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000});
+  assert.equal(await page.evaluate(()=>document.querySelector('#modal')?.open),true,'Esc cancels the change, not the Menu');
+  await page.click('.key-row[data-action="pause"] [data-cmd="rebind"]');await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>/Pause and resume is now K\./.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
+    .catch(async()=>assert.fail(`K is taken for Pause: ${await status()}`));
+  assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'K or Pause');
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  assert.equal(await page.getAttribute('[data-role="pauseButton"]','aria-keyshortcuts'),'K or Pause','The pause button names K');
+  await page.locator('#rt-board').focus();if(await page.evaluate(()=>window.__realtime.paused()))await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>window.__realtime.paused()===true,null,{timeout:10000}).catch(()=>assert.fail('K pauses'));
+  await page.keyboard.press('KeyP');assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'P no longer pauses');
+  await page.keyboard.press('Shift+Slash');await page.waitForSelector('#modal[open] .guide-help',{timeout:30000}).catch(()=>assert.fail('? opens the guide'));
+  await page.click('#modal [data-cmd="help-section"][data-id="controls"]');await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
+  assert.match(await text(page,'#modal .help-keys.changed[data-actions="pause"]'),/K or Pause \(by default P or Pause\)/);
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await page.click('#modal [data-cmd="reset-keys"]');
+  assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'P or Pause','Restore default keys');
+  await page.context().close();
+  console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; Restore default keys');
+}
+
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}

@@ -57,6 +57,36 @@ export function remapAction(keymap,action,binding){
   next[action]=[binding,...next[action].slice(1).filter(k=>k!==binding)];
   return {keymap:next};
 }
+// The player's map: the defaults with the changes they made (settings.realtimeKeys), or the
+// defaults whole when the stored changes are damaged (a key the browser keeps, a fixed action
+// moved, one key for two actions).
+export function keymapFrom(changes){
+  const map=Object.fromEntries(Object.entries(DEFAULT_KEYMAP).map(([action,keys])=>[action,[...keys]]));
+  if(!changes||typeof changes!=='object'||Array.isArray(changes))return map;
+  for(const [action,keys]of Object.entries(changes)){
+    if(!map[action]||FIXED_ACTIONS.includes(action)||!Array.isArray(keys)||!keys.length||keys.length>2||keys.some(k=>typeof k!=='string'||bindingProblem(k)))return keymapFrom();
+    map[action]=[...keys];
+  }
+  const all=Object.values(map).flat();return new Set(all).size===all.length?map:keymapFrom();
+}
+// What a map changes from the defaults: what the settings keep.
+export const keymapChanges=map=>Object.fromEntries(Object.entries(map).filter(([action,keys])=>keys.join(' ')!==DEFAULT_KEYMAP[action]?.join(' '))
+  .map(([action,keys])=>[action,[...keys]]));
+// The remappable actions as Menu → Controls & readability lists them (guide "Keyboard" and "Panels").
+export const KEY_GROUPS=Object.freeze([
+  ['Acting',[['combat_toggle','Draw or sheathe'],['target_next_enemy','Next target'],['target_next_friend','Next friend'],['interact_nearest','Talk to or use the nearest'],
+    ['ability_bar','Open the ability bar'],['walk_toggle','Walk everywhere, or run'],['show_usable','Label what you can use (hold)'],['war_cry','War cry']]],
+  ['Abilities',Array.from({length:10},(_,i)=>[`ability_${i+1}`,`Ability ${i+1}`])],
+  ['Time',[['pause','Pause and resume'],['slow_time','Slow time'],['step_round','Play one round while paused']]],
+  ['Party and squads',[['party_prev','Previous party member'],['party_next','Next party member'],['control_hero','Your own soldier'],
+    ...Array.from({length:6},(_,i)=>[`select_squad_${i+1}`,`Squad ${i+1} in or out of the selection`])]],
+  ['Contests',[['yield_floor','Yield the floor']]],
+  ['Camera',[['camera_follow','Follow'],['camera_overview','Overview'],['camera_horizon','Horizon (3D)'],['camera_rotate_left','Turn the view left (3D)'],
+    ['camera_rotate_right','Turn the view right (3D)'],['zoom_in','Zoom in'],['zoom_out','Zoom out'],['see_through','See through'],['show_ranges','Show ranges']]],
+  ['Panels and saving',[['panel_kit','Kit'],['panel_character','Character'],['panel_journal','Journal'],['panel_orders','Mission orders'],['panel_chronicle','Chronicle'],
+    ['panel_map','Map'],['map_overlay','Map over the scene'],['panel_company','Company'],['panel_decorations','Decorations and titles'],['panel_options','Options'],
+    ['help','Controls & rules'],['quick_save','Quick save']]]
+].map(([title,rows])=>Object.freeze([title,Object.freeze(rows.map(Object.freeze))])));
 // Every binding in a map is legal (the defaults included).
 export const keymapProblems=keymap=>Object.entries(keymap).flatMap(([action,keys])=>keys.filter(k=>!FIXED_ACTIONS.includes(action)&&!['Escape','Enter',
   'Shift+Enter'].includes(k)&&bindingProblem(k)).map(k=>`${action}: ${k}`));

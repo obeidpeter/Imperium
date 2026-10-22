@@ -2,6 +2,9 @@ import {relationshipLedger} from './progression-views.js';
 import {controlPreferences,controlHelp,applyControlLabels} from './control-preferences.js';
 import * as Game from '../core/game.js';
 import {difficultyChoices,soundscapeSettings} from './campaign-upgrade-views.js';
+// The generated guide is part of the shell, so Controls & rules works offline.
+import {GUIDE_HELP} from '../data/guide-help.js';
+import {guideHelpView} from './guide-help-view.js';
 import {CHAPTERS,CAST,HISTORICAL_NOTES,choiceEchoes} from '../data/campaign.js';
 import {heroPortrait,speakerPortrait,journeyMap} from './art.js';
 import {esc,roman,companyPanel} from './view-helpers.js';
@@ -127,18 +130,24 @@ export function createPanels(context){
   }
 
   function showSettings(){
-    const {state,settings,offline,currentChapterOffline,offlineProgress,showModal,preservedUnreadable,devMenu}=context();
+    const {state,settings,offline,currentChapterOffline,offlineProgress,showModal,preservedUnreadable,devMenu,keymap}=context();
     const options=(list,current)=>list.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
     const offlineStatus=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} `+
       `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.';
     showModal('Pause & settings',`<p class="panel-lead">Nothing advances while this menu is open.</p>`+
-      `${controlPreferences(settings)}${pacePreferences(settings,state?.difficulty)}<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
+      `${controlPreferences(settings,{keymap:settings.controlsModel==='realtime'?keymap:null})}${pacePreferences(settings,state?.difficulty)}`+
+      `<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
       `<label class="setting" for="text-size"><span>Text size<small class="muted">Enlarge text across the game.</small></span>`+
       `<select id="text-size">${[1,1.25,1.5,2].map(n=>`<option value="${n}" ${(settings.textScale||1)===n?'selected':''}>${n*100}%</option>`).join('')}</select>`+
       `</label><label class="setting" for="guide-setting"><span>Guided opening<small class="muted">Step-by-step lessons in the drill, first patrol and `+
       `opening chamber turns.</small></span><input id="guide-setting" type="checkbox" ${settings.guide!==false?'checked':''}></label>`+
       `<label class="setting" for="coach-setting"><span>Contextual tactical advice<small class="muted">Show advice for the current field or chamber `+
       `position.</small></span><input id="coach-setting" type="checkbox" ${settings.coach!==false?'checked':''}></label>`+
+      `<label class="setting" for="objective-markers"><span>Objective markers<small class="muted">The mission's next step is marked on the scene. Turn it `+
+      `off to find your own way.</small></span><input id="objective-markers" type="checkbox" data-rt-setting="objectiveMarkers" `+
+      `${settings.objectiveMarkers!==false?'checked':''}></label><label class="setting" for="floating-numbers"><span>Floating numbers<small class="muted">Damage `+
+      `and healing shown over the people concerned.</small></span><input id="floating-numbers" type="checkbox" data-rt-setting="floatingNumbers" `+
+      `${settings.floatingNumbers!==false?'checked':''}></label>`+
       `<label class="setting" for="motion-setting"><span>Reduced motion<small class="muted">Remove nonessential motion; action feedback remains `+
       `readable.</small></span><input id="motion-setting" type="checkbox" ${settings.reducedMotion?'checked':''}></label>`+
       `<label class="setting" for="confirm-moves"><span>Confirm moves<small class="muted">Off: selecting open ground walks there at once, or as far toward it `+
@@ -252,8 +261,15 @@ export function createPanels(context){
       `(JSON)</button>${recommended!==current?`<button data-cmd="performance-check-use">Use ${label[recommended]}</button>`:''}<button data-cmd="close-modal">Close</button>`)}`);
   }
 
-  function showHelp(){
-    const {showModal,settings={}}=context();
+  // Controls & rules: in real time, the player guide's chapters (generated from docs/player-guide-0.40.md);
+  // the 0.38 board keeps its own help below.
+  function showHelp(page){
+    const {showModal,settings={},keymap}=context();
+    if(settings.controlsModel==='realtime'){
+      showModal('Controls & rules',`<p class="panel-lead">The player guide (${esc(GUIDE_HELP.version)}), chapter by chapter. Its key tables show your own `+
+        `keys; elsewhere the text names the default keys.</p>${guideHelpView(GUIDE_HELP,{page:typeof page==='string'?page:undefined,keymap})}`);
+      if(typeof page==='string')document.getElementById('guide-page-title')?.focus({preventScroll:true});return;
+    }
     showModal('Controls & rules',`${controlHelp(settings)}<div class="panel-lead"><p class="eyebrow">READ THE PREVIEW. THEN COMMIT.</p>`+
       `<p>There is no timer between turns. Choose each action, read its exact effect and cost, then confirm when ready.</p>`+
       `</div>${section('Your first turn',applyControlLabels('<ol class="guide-steps"><li>'+

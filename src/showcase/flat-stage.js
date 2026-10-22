@@ -94,7 +94,9 @@ export class FlatStage{
 // ring shape: a full ring for friends, a spiked one for enemies, a dashed one
 // for neutrals), the route, the target, ranges, work, missiles and the marks
 // and numbers over people's heads. The field's presenter interface.
-export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{}}={}){
+export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},view=()=>({})}={}){
+  // Floating numbers and the objective's ring are the player's to turn off (Settings → Display).
+  const numbers=()=>view().numbers!==false,markers=()=>view().markers!==false;
   let route=null,planned=null,ranges=false,marks={},selection=[],marker=null,zone=null,shownIntentions=null,threat=null,reach=null;const floating=new Map(),volleys=[];
   const presenter={
     beforeFrame,world:getWorld,alpha:getAlpha,
@@ -109,13 +111,13 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     onEvents(events){
       const now=performance.now();
       for(const e of events){
-        if(e.kind==='hit')floating.set(e.defenderId,{text:`−${e.damage}${e.critical?'!':''}`,color:e.critical?'#ffcf6e':'#ffb39a',until:now+FLOAT_MS});
-        if(e.kind==='block')floating.set(e.defenderId,{text:'Blocked',color:'#d6e3e8',until:now+FLOAT_MS});
-        if(e.kind==='miss')floating.set(e.defenderId,{text:'Miss',color:'#cfd2cc',until:now+FLOAT_MS});
-        if(e.kind==='heal')floating.set(e.targetId,{text:`+${e.amount}`,color:'#b8e0a8',until:now+FLOAT_MS});
+        if(e.kind==='hit'&&numbers())floating.set(e.defenderId,{text:`−${e.damage}${e.critical?'!':''}`,color:e.critical?'#ffcf6e':'#ffb39a',until:now+FLOAT_MS});
+        if(e.kind==='block'&&numbers())floating.set(e.defenderId,{text:'Blocked',color:'#d6e3e8',until:now+FLOAT_MS});
+        if(e.kind==='miss'&&numbers())floating.set(e.defenderId,{text:'Miss',color:'#cfd2cc',until:now+FLOAT_MS});
+        if(e.kind==='heal'&&numbers())floating.set(e.targetId,{text:`+${e.amount}`,color:'#b8e0a8',until:now+FLOAT_MS});
         // A squad's volley: a flight of arrows from its ranks to the target squad.
         if(e.kind==='exchange'&&e.ranged)volleys.push({from:{x:e.fromX,z:e.fromZ},to:{x:e.x,z:e.z},start:now});
-        if(e.kind==='fall'&&e.squadId){const f=floating.get(e.squadId),n=f?.until>now&&f.men?f.men+1:1;
+        if(e.kind==='fall'&&e.squadId&&numbers()){const f=floating.get(e.squadId),n=f?.until>now&&f.men?f.men+1:1;
           floating.set(e.squadId,{text:`−${n} ${n===1?'man':'men'}`,color:'#ffb39a',until:now+FLOAT_MS,men:n});}
       }
     },
@@ -133,7 +135,7 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       if(zone){const q=[flat.screen(v,zone.x0,zone.z0),flat.screen(v,zone.x1,zone.z0),flat.screen(v,zone.x1,zone.z1),flat.screen(v,zone.x0,zone.z1)];
         c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
-      if(w.mission?.goal)ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
+      if(w.mission?.goal&&markers())ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
       for(const o of w.objects??[]){const p=flat.screen(v,o.x,o.z);c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
         // A lit brazier's smoke, and its reach.
         if(o.state==='burning'){ellipse(p,2.5*unit*.7,null,{fill:'#9b928355'});ellipse(p,3*unit*.7,'#e07a2c',{dash:[4,4],width:1.5});}

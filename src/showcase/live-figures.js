@@ -82,8 +82,16 @@ function stageTerrain(world){
 export function stageEncounter(encounter,world){
   const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
-  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(stageUnit),...squads],mission:null,goal:null,
+  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(stageUnit),...squads],...stageMission(world),
     field:stageField(world),operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+}
+// The objective's markers as the board shows them (stage-readout.js missionReadouts): the goal, the
+// positions to secure and the next wave, on the stage's 2.5 m tiles. A camp or chamber has none.
+function stageMission(world){
+  const m=world.mission;if(!m||world.kind==='camp'||world.kind==='chamber')return {mission:null,goal:null};const tile=p=>({x:Math.floor(p.x/2.5),y:Math.floor(p.z/2.5)});
+  const wave=(m.waves??[]).find(w=>!w.arrived);
+  return {mission:{mode:m.mode,rounds:true,points:(m.points??[]).map(p=>({...tile(p),secured:!!p.secured})),waves:wave?[{...tile(wave),turn:wave.round,arrived:false}]:[]},
+    goal:m.goal?tile(m.goal):null};
 }
 // The simulation lands a blow at half the swing; the figure's authored clip
 // lands it at ACTOR_TIMING.contact. Map one onto the other.
@@ -124,7 +132,9 @@ const beat=id=>{let h=2166136261;for(const c of String(id))h=Math.imul(h^c.charC
 const wrapAngle=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const VOLLEY_MS=750;
 
-export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false}={}){
+export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeFrame=()=>{},paused=()=>false,view=()=>({})}={}){
+  // Floating numbers are the player's to turn off (Settings → Display); a member's stance note in a chamber stays.
+  const numbers=()=>view().numbers!==false;
   const odometer=new Map(),last=new Map(),floating=new Map(),sparks=[],reactions=new Map(),marks={route:null,planned:null,goal:null,target:null,ranges:null,work:null};
   const leaders=new Map(),laid=new Set(),volleys=[],orderLines=[];
   let closeUp=null,showRanges=false,route=null,planned=null,labelsKey='',feet=null,marksOver={},selection=[],marker=null,remainsSeen=null,zone=null,
@@ -279,16 +289,16 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     onEvents(events){
       const now=performance.now(),w=getWorld();
       for(const e of events){
-        if(e.kind==='hit')floating.set(labelOf(w,e.defenderId),{text:`−${e.damage}${e.critical?'!':''}`,color:e.critical?'#ffcf6e':'#ffb39a',until:now+FLOAT_MS});
-        if(e.kind==='block'){floating.set(labelOf(w,e.defenderId),{text:'Blocked',color:'#d6e3e8',until:now+FLOAT_MS});reactions.set(e.defenderId,{kind:'block',start:e.tick});}
-        if(e.kind==='miss')floating.set(labelOf(w,e.defenderId),{text:'Miss',color:'#cfd2cc',until:now+FLOAT_MS});
+        if(e.kind==='hit'&&numbers())floating.set(labelOf(w,e.defenderId),{text:`−${e.damage}${e.critical?'!':''}`,color:e.critical?'#ffcf6e':'#ffb39a',until:now+FLOAT_MS});
+        if(e.kind==='block'){if(numbers())floating.set(labelOf(w,e.defenderId),{text:'Blocked',color:'#d6e3e8',until:now+FLOAT_MS});reactions.set(e.defenderId,{kind:'block',start:e.tick});}
+        if(e.kind==='miss'&&numbers())floating.set(labelOf(w,e.defenderId),{text:'Miss',color:'#cfd2cc',until:now+FLOAT_MS});
         if(['hit','block'].includes(e.kind)){
           const d=actorOf(w,e.defenderId);if(d)sparks.push({x:d.x,z:d.z,shield:e.kind==='block',start:now,from:actorOf(w,e.attackerId)});
           if(e.kind==='hit')reactions.set(e.defenderId,{kind:'hit',start:e.tick,from:e.attackerId});
           const mine=[e.attackerId,e.defenderId].includes(w.controlled);
           if(mine&&!stage.reducedMotion)stage.cameraKick=Math.max(stage.cameraKick??0,e.kind==='hit'?(e.critical?1:.55):.3);
           // Close-ups on critical blows, never while paused or with reduced motion.
-          if(e.kind==='hit'&&e.critical&&mine&&!stage.reducedMotion&&!paused()&&!stage.drag&&stage.cameraView!=='overview')
+          if(e.kind==='hit'&&e.critical&&mine&&!stage.reducedMotion&&stage.actionCamera!==false&&!paused()&&!stage.drag&&stage.cameraView!=='overview')
             closeUp={start:now,base:closeUp?.base??stage.orbit.distance};
         }
         // Squads trade blows a second at a time: sparks where the fronts meet, a volley from the archers' ranks.
@@ -299,7 +309,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
             if(stage.sound.cue(e.ranged?'bow':'clash',{side:squadOf(w,e.squadId)?.side==='enemy'?'enemy':'player',pan,intensity:.8}))stage.cuesPlayed++;}
         }
         // A man of a squad falls: the count over its standard.
-        if(e.kind==='fall'&&e.squadId){const f=floating.get(e.squadId),n=f?.until>now&&f.men?f.men+1:1;
+        if(e.kind==='fall'&&e.squadId&&numbers()){const f=floating.get(e.squadId),n=f?.until>now&&f.men?f.men+1:1;
           floating.set(e.squadId,{text:`−${n} ${n===1?'man':'men'}`,color:'#ffb39a',until:now+FLOAT_MS,men:n});}
         if(stage.sound&&['swing','hit','block','throw','brace'].includes(e.kind)){
           const kind={swing:'swing',hit:'impact',block:'shield',throw:'javelin',brace:'guard'}[e.kind],who=actorOf(w,e.defenderId??e.actorId);
