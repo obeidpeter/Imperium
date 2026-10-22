@@ -155,6 +155,17 @@ Side-by-side renders of the recruit, the officer, the Palmyrene rider and the st
 
 The decoders and transcoder are in every chapter's offline group, about 0.31 MB compressed, as every chapter shows generated bodies. The transcoder's own script is left out: the worker holds it. The local server (`scripts/serve.mjs`) names `.glb`, `.ktx2` and `.wasm` files.
 
+## CC0 textures
+
+Photographic textures for the ground, rock, brick, plaster, wood and roof tiles come from [Poly Haven](https://polyhaven.com/license) and [ambientCG](https://docs.ambientcg.com/license/), whose assets are all CC0 1.0 (public domain dedication). [`cc0.mjs`](../scripts/assets/cc0.mjs) takes them in by id:
+
+- `npm run asset:cc0 -- fetch polyhaven:<id> [--resolution 1k] [--format png] [--maps Diffuse,nor_gl,arm]` reads the asset from Poly Haven's API and downloads the chosen maps from `dl.polyhaven.org`, each checked against the MD5 digest Poly Haven publishes. The defaults suit three.js: colour, the OpenGL-convention normal map, and `arm` (occlusion, roughness and metalness in glTF's channel order).
+- `npm run asset:cc0 -- fetch ambientcg:<id> [--resolution 1K-PNG]` reads the asset from ambientCG's API, downloads its archive, checks its size against the one ambientCG lists and extracts the images.
+- Either way the files go to `art-source/cc0/raw/<source>-<id>/` (not committed) and a record to `art-source/cc0/<source>-<id>.json`: the asset page, name, authors, licence and its page, retrieval time, the selection, and each file's URL, bytes and SHA-256 (with Poly Haven's MD5, or ambientCG's archive digest). A file that fails its check stops the intake before anything is written.
+- `npm run asset:cc0 -- record <record.json> <shipped file> --id <id> --subject <text> --usage <text> --loading <text> --processing <text>` adds a file made from those downloads (by `compress.mjs`, for example) to the [asset manifest](asset-manifest.json), or replaces its entry: its source record and the digests of the files it came from, its processing, bytes and SHA-256, and the CC0 licence with its authors credited. It edits only that entry, the totals, the counts and the date, leaving the rest of the file as written.
+
+Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). No CC0 file ships yet.
+
 ## Budgets
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
