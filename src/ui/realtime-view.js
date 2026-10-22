@@ -3,7 +3,7 @@ import {CHAPTERS} from '../data/campaign.js';
 import {ITEMS} from '../data/items.js';
 import {TP} from '../data/soldier.js';
 import {TIME} from '../data/realtime-rules.js';
-import {actionLabel} from './action-map.js';
+import {actionLabel,firstKeyLabel} from './action-map.js';
 import {campFor} from '../data/camps.js';
 import {DEFEAT_PAGES} from '../data/dialogue.js';
 
@@ -15,7 +15,7 @@ import {DEFEAT_PAGES} from '../data/dialogue.js';
 
 const chapterOf=state=>CHAPTERS.find(c=>c.id===state.chapter);
 
-export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict}){
+export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap}){
   const e=state.encounter,chapter=chapterOf(state);
   return `<main id="main" class="encounter-frame realtime-frame" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
@@ -24,7 +24,7 @@ export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveCo
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
     <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
-    ${e.status==='active'?'':realtimeResult(state)}
+    ${e.status==='active'?'':realtimeResult(state,{keymap})}
   </main>`;
 }
 
@@ -131,7 +131,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
 // The After-Action Chronicle of a resolved fight: what the soldier and his
 // party did, what the result will grant when recorded, and, after a defeat,
 // what went wrong and what might help (§3.11).
-export function realtimeResult(state){
+export function realtimeResult(state,{keymap}={}){
   const e=state.encounter,world=e.realtime?.world,won=e.status==='won';
   if(!world)return '';
   const ours=new Set([world.heroId,...world.party]),hero=world.actors.find(a=>a.id===world.heroId);
@@ -164,7 +164,7 @@ export function realtimeResult(state){
     <span class="eyebrow">${won?'OBJECTIVE ACHIEVED · AFTER-ACTION CHRONICLE':'A CHANCE TO REGROUP'}</span>
     <h2 id="rt-result-title">${won?'The day is yours.':'The field is lost.'}</h2>
     ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p>${DEFEAT_PAGES[e.id]?`<blockquote class="rt-defeat-page"><span class="eyebrow">How history remembers the day</span>`+
-      `<p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote>`:''}<p class="rt-defeat-help">${esc(defeatHelp(world))}</p>`}
+      `<p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote>`:''}<p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p>`}
     <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
     ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
     ${search}
@@ -181,10 +181,10 @@ export function defeatCause(world){
   if(hero&&!hero.alive){const by=world.actors.find(a=>a.id===hero.killedBy);return by?`You fell to ${by.name}.`:'You fell.';}
   return 'The objective was not held.';
 }
-export function defeatHelp(world){
+export function defeatHelp(world,keymap){
   const hero=world.actors.find(a=>a.id===world.heroId),log=world.log.map(l=>l.text).join('\n');
   if(/from the (rear|flank)/.test(log))return 'Blows from the flank and rear struck most often: keep a rock, a wall or a companion at your back, and turn to face the man you fight.';
   if(hero&&hero.ammo?.pilum>0)return 'Your pila were never thrown: a pilum that sticks in a shield halves how often it blocks.';
   if(world.mission?.escorts?.length)return 'Keep the column close: wounded men wait for Bind wounds or Carry, and raiders go for the weakest first.';
-  return 'Pause (P) when the fight turns, brace against heavy blows and let your companions’ standing orders cover you.';
+  return `Pause (${firstKeyLabel('pause',keymap)}) when the fight turns, brace against heavy blows and let your companions’ standing orders cover you.`;
 }

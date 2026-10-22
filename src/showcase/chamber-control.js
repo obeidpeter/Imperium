@@ -1,7 +1,7 @@
 import * as Chamber from '../core/chamber.js';
 import {getActions,agreementOptions} from '../core/game.js';
 import {MAGISTRATE,discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePoint,walkRoute} from '../core/realtime/chamber-world.js';
-import {actionLabel} from '../ui/action-map.js';
+import {actionLabel,firstKeyLabel} from '../ui/action-map.js';
 import {hourly} from '../ui/view-helpers.js';
 
 // The walk-and-talk Curia on the page (build brief §3.11; guide "Political
@@ -181,7 +181,8 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
   // Why a speech cannot be given: spent, out of reach (and where to walk), or the rules' own reason.
   function whyNot(action,person,p){
     const sp=unit(me());
-    if(sp?.acted)return `${sp.name} has spoken this hour.${otherReady()?` ${otherReady().name} has not: switch to him ([ or ]).`:' Yield the floor (Y) to end the hour.'}`;
+    if(sp?.acted)return `${sp.name} has spoken this hour.${otherReady()?` ${otherReady().name} has not: switch to him (${firstKeyLabel('party_prev',keymap)} or `+
+      `${firstKeyLabel('party_next',keymap)}).`:` Yield the floor (${firstKeyLabel('yield_floor',keymap)}) to end the hour.`}`;
     if(person&&Chamber.SPEECH_REACH[action]&&Math.abs(person.x-sp.x)+Math.abs(person.y-sp.y)>Chamber.SPEECH_REACH[action]){
       const place=Chamber.walkBeside(state(),sp.id,action,person);
       return place?`${person.name} is out of reach for ${Chamber.SPEECH_NAMES[action]}: click him and Walk beside him first.`:`${person.name} is beyond ${sp.name}’s reach this hour.`;
@@ -412,7 +413,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     if(show){
       if(['cancel_or_menu','act_on_target','combat_toggle','yield_floor'].includes(action)||action.startsWith('ability_')){skip();return true;}
       if(action.startsWith('camera_')||action.startsWith('zoom_')||action.startsWith('panel_')||['pause','help','map_overlay','quick_save'].includes(action))return false;
-      say(`${show.kind==='division'?'The members are dividing':'The rivals have the floor'}: click or press Space to skip.`);return true;
+      say(`${show.kind==='division'?'The members are dividing':'The rivals have the floor'}: click or press ${firstKeyLabel('combat_toggle',keymap)} to skip.`);return true;
     }
     if(action.startsWith('ability_')){const id=known()[Number(action.slice(8))-1];if(!id)say('No speech in that place.');else chooseSpeech(id);return true;}
     if(ARROWS[action]){
@@ -430,7 +431,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
         message(text,!!f&&!f.ok);announce(text);setBadges(f?.ok?f.forecast:null);return true;
       }
       case 'act_on_target':case 'interact_nearest':{
-        const id=action==='act_on_target'?target:Chamber.chamberTargets(state(),me())[0];if(!id){say('Choose someone first (T).');return true;}openTalk(id);return true;
+        const id=action==='act_on_target'?target:Chamber.chamberTargets(state(),me())[0];if(!id){say(`Choose someone first (${firstKeyLabel('target_next_enemy',keymap)}).`);return true;}openTalk(id);return true;
       }
       case 'show_usable':return false;
       case 'cancel_or_menu':if(closeTalk()){say('The conversation is closed.');canvas.focus({preventScroll:true});return true;}if(armed){armed=null;say('Cancelled.');return true;}

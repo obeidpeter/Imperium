@@ -8,6 +8,7 @@ import {fieldHint,fieldProblem,fieldVerb} from './field-objects.js';
 // line's words and the Command a click there gives. Pure: pointing and
 // reading spend nothing and change nothing.
 // pick: {actorId} for a person under the pointer, and/or {x, z} for ground.
+// drawKey: the name of the key that draws a weapon, as the player has set it.
 
 const pct=n=>`${Math.round(n*100)}%`;
 const range=d=>d.min===d.max?`${d.min}`:`${d.min}–${d.max}`;
@@ -22,7 +23,7 @@ export function blowSummary(f){
 }
 const metres=n=>`${Math.round(n)} m`;
 
-export function pointerIntent(world,{actorId=world.controlled,pick={},button='left',shift=false,abilityId='strike'}={}){
+export function pointerIntent(world,{actorId=world.controlled,pick={},button='left',shift=false,abilityId='strike',drawKey='Space'}={}){
   const actor=actorById(world,actorId),none={cursor:'blocked',message:'',command:null,reason:null};
   if(world.status!=='active')return {...none,reason:'BATTLE_OVER',message:REASONS.BATTLE_OVER};
   if(!actor?.alive)return {...none,reason:'ACTOR_DOWN',message:REASONS.ACTOR_DOWN};
@@ -74,7 +75,7 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
     if(reason)return {...none,reason,message:REASONS[reason]};
     const draws=actor.drawn||world.options.drawToAttack;
     return {cursor:draws?'attack':'walk',reason:null,forecast:f,
-      message:draws?`Attack ${person.name}: ${blowSummary(f)}`:`Walk to ${person.name}. Draw to attack is off: press Space to draw your weapon.`,
+      message:draws?`Attack ${person.name}: ${blowSummary(f)}`:`Walk to ${person.name}. Draw to attack is off: press ${drawKey} to draw your weapon.`,
       command:{actorId:actor.id,kind:'attack',payload:{targetId:person.id,...(shift?{forced:true}:{})}}};
   }
   if(person)return {...none,cursor:'walk',message:person.name};

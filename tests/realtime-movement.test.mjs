@@ -96,6 +96,7 @@ test('cursor states and the message line: attack, walk, run, blocked, ability va
   assert.deepEqual(attack.command.payload,{targetId:'r'});
   queueCommand(w,{actorId:'hero',kind:'setOptions',payload:{drawToAttack:false}});step(w);
   assert.equal(pointerIntent(w,{pick:{actorId:'r'}}).cursor,'walk','Draw to attack off: a click only walks to him');
+  assert.match(pointerIntent(w,{pick:{actorId:'r'}}).message,/press Space to draw/);assert.match(pointerIntent(w,{pick:{actorId:'r'},drawKey:'B'}).message,/press B to draw/,'the player’s key');
   assert.equal(pointerIntent(w,{pick:{x:12,z:12}}).cursor,'run');
   const pilum=pointerIntent(w,{pick:{actorId:'r'},button:'right',abilityId:'throw_pilum'});assert.equal(pilum.cursor,'ability_valid');
   by(w,'hero').ammo.pilum=0;const none=pointerIntent(w,{pick:{actorId:'r'},button:'right',abilityId:'throw_pilum'});

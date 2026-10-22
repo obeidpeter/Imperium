@@ -104,3 +104,5 @@ export function keyLabel(binding){
   return [...parts,base].join('+');
 }
 export const actionLabel=(action,keymap=DEFAULT_KEYMAP)=>keymap[action]?.map(keyLabel).join(' or ')??'';
+// The first of an action's keys, for a message that names one.
+export const firstKeyLabel=(action,keymap=DEFAULT_KEYMAP)=>keyLabel(keymap[action]?.[0]??'');

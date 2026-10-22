@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DEFAULT_KEYMAP,FIXED_ACTIONS,KEY_GROUPS,eventBinding,keymapChanges,keymapFrom,keymapProblems,remapAction} from '../src/ui/action-map.js';
+import {DEFAULT_KEYMAP,FIXED_ACTIONS,KEY_GROUPS,eventBinding,firstKeyLabel,keymapChanges,keymapFrom,keymapProblems,remapAction} from '../src/ui/action-map.js';
 import {POINTER_SETTINGS,controlPreferences,keyPreferences} from '../src/ui/control-preferences.js';
 import {SETTING_TOGGLES,defaultSettings,loadSettings} from '../src/ui/settings.js';
 import {createPanels} from '../src/ui/panels.js';
-import {fieldMarkup} from '../src/ui/realtime-view.js';
+import {defeatHelp,fieldMarkup} from '../src/ui/realtime-view.js';
 import {GUIDE_HELP} from '../src/data/guide-help.js';
 import {guideHelpModule,readGuide} from '../scripts/guide-help.mjs';
 import {guideHelpView} from '../src/ui/guide-help-view.js';
@@ -68,6 +68,10 @@ test('the field’s hints and buttons name the player’s keys',()=>{
   const map=keymapFrom({pause:['KeyK','Pause'],interact_nearest:['KeyR'],panel_company:['KeyE']}),html=fieldMarkup({state,keymap:map,kind:'camp'});
   assert.match(html,/data-role="pauseButton"[^>]*aria-keyshortcuts="K or Pause"/);assert.match(html,/K or Pause pauses/);assert.match(html,/R uses what is nearest/);
   assert.ok(!/\bE uses what is nearest/.test(html));
+  // A message names one key: the first the player has set for it.
+  for(const [action,key] of [['pause','P'],['walk_toggle','W'],['yield_floor','Y'],['party_prev','['],['party_next',']'],['combat_toggle','Space']])assert.equal(firstKeyLabel(action),key,action);
+  assert.equal(firstKeyLabel('pause',map),'K');assert.equal(firstKeyLabel('target_next_enemy',keymapFrom({target_next_enemy:['KeyK']})),'K');
+  const lost={actors:[],log:[],heroId:'hero'};assert.match(defeatHelp(lost),/^Pause \(P\) when/);assert.match(defeatHelp(lost,map),/^Pause \(K\) when/);
 });
 
 test('Controls & rules is the player guide, generated from docs/player-guide-0.40.md, with the player’s keys in its key tables',async()=>{

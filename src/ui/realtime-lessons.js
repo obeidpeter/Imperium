@@ -1,4 +1,4 @@
-import {DEFAULT_KEYMAP,keyLabel} from './action-map.js';
+import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
 import {missionProgress} from '../core/realtime/simulation.js';
 
 // The guided opening in real time (build brief Phase 4, guide "Settings
@@ -18,7 +18,7 @@ const DRILL=[
 
 export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_KEYMAP}){
   // Each action by its first key, as the player has set it.
-  if(!state||!world)return null;const k=action=>keyLabel(keymap[action]?.[0]??'');
+  if(!state||!world)return null;const k=action=>firstKeyLabel(action,keymap);
   if(kind==='chamber'){
     // The opening chamber hours: the first Contest walked as a chamber.
     const e=state.encounter;if(!e||e.status!=='active'||state.chapter!==7)return null;

@@ -13,7 +13,7 @@ import {commandSquads,squadOrderOptions} from '../core/realtime/order-intents.js
 import {deploy,deploying,deploymentProblem,soundTheAdvance} from '../core/realtime/deployment.js';
 import {friendlyStandard} from '../core/realtime/order-intents.js';
 import {intentions,threatArea} from '../core/realtime/intel.js';
-import {DEFAULT_KEYMAP,actionFor,actionLabel,learnKey} from '../ui/action-map.js';
+import {DEFAULT_KEYMAP,actionFor,actionLabel,firstKeyLabel,learnKey} from '../ui/action-map.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -329,7 +329,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function intentAt(p,button,abilityId=ability){
     const pick=pickAt(p);if(!pick)return null;
-    return pointerIntent(world,{pick,button,shift:!!p.shift||force,abilityId:button==='right'?abilityId:'strike'});
+    return pointerIntent(world,{pick,button,shift:!!p.shift||force,abilityId:button==='right'?abilityId:'strike',drawKey:firstKeyLabel('combat_toggle',keymap)});
   }
   function hover(p){hoverPoint=p;hoverDirty=true;if(!p){canvas.dataset.cursor='walk';presenter?.setRoute(null);hoverEnemy=null;chamber?.hover(null);}}
   // The enemy whose threat is hatched: the one pointed at, else the one targeted (T, or locked).
@@ -463,7 +463,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     return `${t.name}, ${d} metres.${t.talk?' Enter talks to him.':''}`;
   }
   function actOnTarget(forced){
-    if(!keyTarget){say('Choose a target first (T).');return;}
+    if(!keyTarget){say(`Choose a target first (${firstKeyLabel('target_next_enemy',keymap)}).`);return;}
     const object=objectById(world,keyTarget),t=actorById(world,keyTarget),h=me();
     if(object){issue({actorId:world.controlled,kind:'interact',payload:{objectId:object.id}});return;}
     if(!t){keyTarget=null;return;}
@@ -494,9 +494,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     switch(action){
       case 'pause':togglePause();return true;
       case 'slow_time':if(kind==='camp')return true;setSlow(clock,!clock.slow);if(clock.slow)seen.slowed=true;say(clock.slow?'Slow time: half speed.':'Normal time.');return true;
-      case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){pausedFor=null;stepRound(clock);say('Playing one round…');}else say('Pause first (P) to play one round.');return true;
+      case 'step_round':if(kind==='camp')return true;if(deploying(world)){say(REASONS.DEPLOYING,{warning:true});return true;}if(clock.paused){pausedFor=null;stepRound(clock);say('Playing one round…');}else say(`Pause first (${firstKeyLabel('pause',keymap)}) to play one round.`);return true;
       case 'combat_toggle':if(h)issue({actorId:h.id,kind:'setDrawn',payload:{drawn:!pendingDrawn()}});return true;
-      case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?'Walking everywhere (W).':'Running again on far clicks.');}return true;
+      case 'walk_toggle':if(h){issue({actorId:h.id,kind:'setWalk',payload:{walk:!h.walkMode}});say(!h.walkMode?`Walking everywhere (${firstKeyLabel('walk_toggle',keymap)}).`:'Running again on far clicks.');}return true;
       case 'target_next_enemy':case 'target_next_friend':{
         keyTarget=nextTarget(world,{current:keyTarget,friends:action==='target_next_friend'});
         if(!keyTarget){say('No one to choose.');return true;}const text=describeTarget(keyTarget);
