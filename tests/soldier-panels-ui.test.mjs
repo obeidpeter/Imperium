@@ -40,3 +40,25 @@ test('the soldier panels open from the camp card and the panel keys, and their c
   if(preset){preset.dispatchEvent(new Event('click',{bubbles:true,cancelable:true}));await app.settle();
     assert.equal(app.saved().soldier.orders[preset.dataset.companion][0][0],'bind_wounds');}
 });
+
+test('refreshing Mission orders keeps navigation, focus and scroll while updating its contents',async t=>{
+  const app=await bootApp(t,{name:'mission-refresh-navigation'});
+  await app.click('new');await app.click('begin');
+  await app.command('soldier-panel','mission');
+  const modal=app.modal(),head=app.find('.modal-head'),back=app.find('.modal-back'),close=app.find('.modal-close'),body=app.find('.modal-body');
+  const objective=app.find('.mission-orders h3'),title=objective.textContent,saved=app.raw();
+  for(const focused of [close,back]){
+    focused.focus();modal.scrollTop=120;objective.textContent='Stale orders';
+    // The live HUD calls the same panel refresh without opening a new dialog.
+    await app.command('soldier-panel','mission');
+    assert.ok(app.find('.modal-head')===head,'Refreshing orders must not detach the navigation controls');
+    assert.ok(app.find('.modal-back')===back);assert.ok(app.find('.modal-close')===close);
+    assert.ok(app.find('.modal-body')===body);assert.ok(app.find('.mission-orders h3')===objective);
+    assert.equal(objective.textContent,title,'The contents are still refreshed');
+    assert.ok(app.doc.activeElement===focused,'Refresh never steals focus');assert.equal(modal.scrollTop,120);
+  }
+  assert.equal(app.raw(),saved,'Reading orders does not change the saved game');
+  back.dispatchEvent(new Event('click',{bubbles:true,cancelable:true}));await app.settle();
+  assert.equal(app.find('#panel-title').textContent,'Menu');assert.equal(modal.dataset.soldier,undefined,'Back ends the mission refresh context');
+  await app.click('close-modal');assert.equal(modal.open,false);
+});

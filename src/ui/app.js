@@ -544,6 +544,13 @@ function showSoldierPanel(name,arg=null){
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
+  if(samePanel&&name==='mission'){
+    // Live intelligence must not replace Back/Close underneath a click or
+    // refocus the heading every second. Keep the dialog and patch its contents.
+    updatePage(modal.querySelector('.modal-body'),body);
+    for(const id of openDetails){const el=modal.querySelector(`#${CSS.escape(id)}`);if(el)el.open=true;}
+    modal.scrollTop=scroll;return;
+  }
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
   const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
