@@ -735,10 +735,12 @@ function startRebind(action){
   const status=modal.querySelector('#rebind-status');if(status)status.textContent=`Press the new key for ${actionName(action)}, or Esc to cancel.`;
 }
 function finishRebind(message,{problem=false}={}){
-  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings();modal.scrollTop=top;
+  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings();keysOpen();modal.scrollTop=top;
   const status=modal.querySelector('#rebind-status');if(status){status.textContent=message;status.classList.toggle('warning',problem);}
   announce(message);modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"] [data-cmd="rebind"]`)?.focus({preventScroll:true});
 }
+// The key list stays open while the player is remapping.
+const keysOpen=()=>{const list=modal.querySelector('details.key-map');if(list)list.open=true;};
 // The shared map changes in place: the field's keys, bars and hints follow at once.
 function useKeymap(next){
   for(const action of Object.keys(keymap))keymap[action]=[...next[action]];settings.realtimeKeys=keymapChanges(keymap);saveSettings();
@@ -1079,7 +1081,7 @@ case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();
 case 'rebind':startRebind(id);break;
 case 'restart-realtime':await change(()=>Game.restartInRealtime(state));break;
 case 'help-section':showHelp(id);modal.scrollTop=0;break;
-case 'reset-keys':useKeymap(keymapFrom());showSettings();announce('Every key is back to its default.');modal.querySelector('[data-cmd="reset-keys"]')?.focus();break;
+case 'reset-keys':useKeymap(keymapFrom());showSettings();keysOpen();announce('Every key is back to its default.');modal.querySelector('[data-cmd="reset-keys"]')?.focus();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;
 case 'policy-motion':case 'policy-amend':{const terms=cmd==='policy-motion'?'original':'amended';
   if(chamberMode()){await chamberSpeech({kind:'policy',id,terms});break;}await change(()=>Game.tablePolicy(state,id,terms),{tone:'agreement'});break;}

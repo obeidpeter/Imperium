@@ -367,18 +367,20 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(r.ok){say(`${name} stands there.`,{announce:true});stage?.sync(stageEncounter(base,world));hudKey='';}else say(REASONS[r.reason]??'Not there.',{warning:true});
     return r.ok;
   }
-  let advanceArmed=0;
+  // When the first press was made (null: not armed). A page loaded under five seconds ago is no confirmation.
+  let advanceArmed=null;
   function showDeployment(){
     const on=deploying(world);if(dom.deployBar)dom.deployBar.hidden=!on;presenter?.setDeployment?.(on?world.deployment.zone:null);
     const root=canvas.closest('.rt-field');if(root)root.dataset.deploying=String(on);
     if(on&&!clock.paused)setPaused(clock,true);
   }
+  function disarmAdvance(){advanceArmed=null;if(dom.advanceButton){delete dom.advanceButton.dataset.confirm;dom.advanceButton.textContent='Sound the advance';}}
   // Sound the advance once it is confirmed (a second press within five seconds).
   function advance(){
     if(!deploying(world))return;const now=performance.now();
-    if(now-advanceArmed>5000){advanceArmed=now;if(dom.advanceButton){dom.advanceButton.dataset.confirm='true';dom.advanceButton.textContent='Confirm: sound the advance';}
+    if(advanceArmed===null||now-advanceArmed>5000){advanceArmed=now;if(dom.advanceButton){dom.advanceButton.dataset.confirm='true';dom.advanceButton.textContent='Confirm: sound the advance';}
       say('Press again to sound the advance and start the battle.',{announce:true});return;}
-    advanceArmed=0;if(dom.advanceButton){delete dom.advanceButton.dataset.confirm;dom.advanceButton.textContent='Sound the advance';}
+    disarmAdvance();
     if(soundTheAdvance(world).ok){showDeployment();setPaused(clock,false);say('The advance sounds. The battle begins.',{announce:true});squads?.clear();hoverDirty=true;}
   }
   function press(p){
@@ -603,7 +605,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;
-      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();showDeployment();
+      eventMessage=null;setPaused(clock,false);applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();
       if(stage){stage.sync(stageEncounter(base,world));stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.

@@ -2,6 +2,7 @@ import * as Chamber from '../core/chamber.js';
 import {getActions,agreementOptions} from '../core/game.js';
 import {MAGISTRATE,discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePoint,walkRoute} from '../core/realtime/chamber-world.js';
 import {actionLabel} from '../ui/action-map.js';
+import {hourly} from '../ui/view-helpers.js';
 
 // The walk-and-talk Curia on the page (build brief §3.11; guide "Political
 // Contests"): the chamber's part of the real-time field, which hands it the
@@ -31,7 +32,8 @@ const ARROWS={move_up:[0,-1],move_down:[0,1],move_left:[-1,0],move_right:[1,0]};
 // What a speech's bar button says it reaches (0.38 tiles as the chamber's metres).
 const reachNote=action=>action==='address'?`${Chamber.SPEECH_REACH.address*Chamber.SEAT} m around`:action==='persuade'?'beside him':`${Chamber.SPEECH_REACH[action]*Chamber.SEAT} m`;
 
-export function createChamberControl({world:getWorld,dom,say,message,presenter:getPresenter,canvas,keymap,rules,takeControl,pick=null,paused=()=>false,announce=()=>{}}){
+export function createChamberControl({world:getWorld,dom,say:speak,message:line,presenter:getPresenter,canvas,keymap,rules,takeControl,pick=null,paused=()=>false,announce=()=>{}}){
+  const say=(text,options)=>speak(hourly(text),options),message=(text,warning)=>line(hourly(text),warning);
   let speech='persuade',armed=null,target=null,talking=null,show=null,hover=null;
   let partyKey='',barKey='',hudKey='',coalitionKey='',reachKey='',logKey='',badgesKey='',lastNow=0;
   const state=()=>rules.state();
@@ -384,7 +386,7 @@ export function createChamberControl({world:getWorld,dom,say,message,presenter:g
   // ——— The chamber record (the Contest's own log). ———
   function renderLog(){
     const log=contest()?.log??[];if(!dom.log)return;const key=`${log.length}:${log.at(-1)}`;if(key===logKey)return;logKey=key;
-    dom.log.replaceChildren(...[...log].reverse().slice(0,30).map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
+    dom.log.replaceChildren(...[...log].reverse().slice(0,30).map(text=>{const li=document.createElement('li');li.textContent=hourly(text);return li;}));
   }
 
   // ——— The HUD: the hour and the clepsydra, the reach, and everything above. ———

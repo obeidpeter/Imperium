@@ -67,9 +67,9 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
 const {chromium}=await playwright();
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const problems=[];
+const problems=[],contexts=new Set();
 async function open(options={}){
-  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();
+  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();contexts.add(context);
   page.setDefaultTimeout(240000);
   page.on('pageerror',error=>problems.push(`page error: ${error.message}`));
   page.on('console',message=>{if(message.type()==='error')problems.push(`console error: ${message.text()}`);});
@@ -331,9 +331,13 @@ async function realtimeCampaign(){
   await page.click('#modal [data-cmd="slot-save"][data-id="1"]');
   await page.waitForSelector('#modal .save-slot:nth-child(2) img',{timeout:30000}).catch(()=>assert.fail('A named save from the panel shows its picture'));
   await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
-  await page.keyboard.press('KeyP');await running();
+  // The dialog's close event hands focus back to the scene a moment after it closes: give the keys to the scene.
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');await running();
   await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
-  await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack the drill partner'));
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(async()=>assert.fail(`T and Enter attack the drill partner: ${
+    await page.evaluate(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return JSON.stringify({tick:w.tick,status:w.status,paused:window.__realtime.paused(),
+      focus:document.activeElement?.id||document.activeElement?.dataset?.role||document.activeElement?.tagName,modal:document.querySelector('#modal')?.open,lock:h.lock,order:h.order?.kind,
+      used:w.used,line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`));
   await running();await page.keyboard.press('Digit2');await page.keyboard.press('Digit2');
   await page.waitForFunction(()=>window.__realtime.world().used.includes('brace'),null,{timeout:60000}).catch(()=>assert.fail('2 twice braces'));
   await running();await page.keyboard.press('KeyT');await page.keyboard.press('Digit3');await page.keyboard.press('Digit3');
@@ -385,7 +389,8 @@ async function realtimeDeployment(){
   assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'The clock stands still while deploying');
   await page.click('[data-role="advanceButton"]');await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]');
   assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'One press only asks to confirm');
-  await page.click('[data-role="advanceButton"]');
+  // The confirmation within its five seconds: the button's own click, without Playwright's waits for a steady frame.
+  await page.evaluate(()=>document.querySelector('[data-role="advanceButton"]').click());
   await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The second press sounds the advance and the battle runs'));
   assert.equal(await page.isVisible('[data-role="deployBar"]'),false,'The deployment bar is gone');
   await page.context().close();
@@ -514,11 +519,19 @@ async function realtimeFinale(){
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
   await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
   await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page');await page.click('[data-cmd="route"][data-id="defection"]');
-  await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen');await page.click('[data-cmd="start"]:visible');
-  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await page.click('[data-cmd="route"][data-id="defection"]');
+  await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
+  await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
   await page.waitForSelector('[data-role="advanceButton"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter XII opens in deployment'));
-  await page.click('[data-role="advanceButton"]');await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]');await page.click('[data-role="advanceButton"]');
+  await page.click('[data-role="advanceButton"]');
+  await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]',{timeout:60000}).catch(async()=>{
+    await page.screenshot({path:'/tmp/claude-0/-home-user-Imperium/e09ac0a8-2386-5e16-9f83-c9d748d8d29c/scratchpad/finale/advance-fail.png'}).catch(()=>{});
+    assert.fail(`One press asks to confirm the advance: ${await page.evaluate(()=>{const b=document.querySelector('[data-role="advanceButton"]');
+      return JSON.stringify({hidden:b?.closest('[hidden]')?.dataset.role??null,text:b?.textContent,confirm:b?.dataset.confirm??null,tick:window.__realtime.world()?.tick,modal:document.querySelector('#modal')?.open,
+        line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`);});
+  // The confirmation within its five seconds: the button's own click, without Playwright's waits for a steady frame.
+  await page.evaluate(()=>document.querySelector('[data-role="advanceButton"]').click());
   await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
   assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
   assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
@@ -554,7 +567,7 @@ async function settingsAndHelp(){
   await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
   assert.equal(await page.inputValue('#game-speed'),'0.75','Story starts at 75%');assert.equal(await page.isChecked('#pause-sighted'),true,'and pauses when an enemy comes into view');
   assert.equal(await page.isChecked('#pause-hurt'),false);
-  const status=()=>text(page,'#rebind-status');
+  const status=()=>text(page,'#rebind-status');await page.click('#modal details.key-map > summary');
   await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Tab');
   await page.waitForFunction(()=>/belongs to the browser/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
     .catch(async()=>assert.fail(`Tab is refused: ${await status()}`));
@@ -574,7 +587,8 @@ async function settingsAndHelp(){
   await page.keyboard.press('Shift+Slash');await page.waitForSelector('#modal[open] .guide-help',{timeout:30000}).catch(()=>assert.fail('? opens the guide'));
   await page.click('#modal [data-cmd="help-section"][data-id="controls"]');await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
   assert.match(await text(page,'#modal .help-keys.changed[data-actions="pause"]'),/K or Pause \(by default P or Pause\)/);
-  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await page.click('#modal [data-cmd="reset-keys"]');
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await page.click('#modal details.key-map > summary');
+  await page.click('#modal [data-cmd="reset-keys"]');
   assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'P or Pause','Restore default keys');
   await page.context().close();
   console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; Restore default keys');
@@ -614,6 +628,8 @@ const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Bool
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
+  // A failed scenario leaves its pages open: close them, so their scenes stop drawing before the next scenario.
+  finally{for(const context of contexts)await context.close().catch(()=>{});contexts.clear();}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}
 else console.log('ok - no page or console errors');

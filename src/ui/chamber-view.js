@@ -1,6 +1,6 @@
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
-import {esc,roman} from './view-helpers.js';
+import {esc,hourly,roman} from './view-helpers.js';
 import {coalitionPanel,encounterDebrief,missionBrief} from './tactical-intel.js';
 import {commandIntelligence} from './command-edition-views.js';
 import {expandedPanel} from './expanded-views.js';
@@ -55,7 +55,7 @@ export function chamberResult(state){
   return `<section class="result command-result rt-result chamber-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="chamber-result-title">
     <span class="eyebrow">${won?'THE DIVISION · THE MOTION CARRIES':'THE DIVISION · A CHANCE TO REGROUP'}</span>
     <h2 id="chamber-result-title">${won?'The motion carries.':'The motion is defeated.'}</h2>
-    <p>${esc(e.log?.at(-1)??'')}</p>
+    <p>${esc(hourly(e.log?.at(-1)??''))}</p>
     <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
     ${debrief.distinguished?`<p class="debrief-citation"><strong>Distinguished service:</strong> ${esc(debrief.distinguished.citation)}</p>`:''}
     ${!won&&debrief.diagnostic?`<p class="defeat-diagnostic"><strong>What went wrong:</strong> ${esc(debrief.diagnostic)}</p>`:''}

@@ -22,13 +22,14 @@ export function holdDelay(value){const n=Number(value);return Number.isFinite(n)
 // use swaps the two commands. Esc, Enter, Tab and the arrows keep their meaning, and the browser its own keys.
 export function keyPreferences(keymap){
   const now=action=>keymap[action].map(keyLabel).join(' or ');
-  return `<div class="key-map"><h4 id="key-map-title">Keys</h4><p class="settings-description">Choose <strong>Change</strong>, then press the new key (Esc `+
+  return `<details class="key-map"><summary><span id="key-map-title">Keys</span> <small class="muted">Remap every key except Esc, Enter, Tab and the arrows`+
+    `</small></summary><p class="settings-description">Choose <strong>Change</strong>, then press the new key (Esc `+
     `cancels). A key already in use swaps the two commands. Esc, Enter, Tab and the arrow keys cannot be changed, nor the keys your browser keeps: F1, F3, F5–F7, `+
     `F10–F12 and anything with Ctrl, Cmd or Alt.</p><p id="rebind-status" class="settings-description" role="status" aria-live="polite"></p>`+
     KEY_GROUPS.map(([title,rows])=>`<fieldset class="key-group"><legend>${esc(title)}</legend>${rows.map(([action,label])=>`<div class="key-row" data-action="${action}">`+
       `<span>${esc(label)}</span><kbd>${esc(now(action))}</kbd><button class="ghost small" type="button" data-cmd="rebind" data-id="${action}" `+
       `aria-label="Change the key for ${esc(label)}, now ${esc(now(action))}">Change</button></div>`).join('')}</fieldset>`).join('')+
-    `<button class="ghost" type="button" data-cmd="reset-keys">Restore default keys</button></div>`;
+    `<button class="ghost" type="button" data-cmd="reset-keys">Restore default keys</button></details>`;
 }
 // The pointer's habits and the labels (guide "Controls and readability"): each a stored setting the live field reads.
 export const POINTER_SETTINGS=Object.freeze([
