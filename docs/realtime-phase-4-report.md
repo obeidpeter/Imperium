@@ -109,7 +109,7 @@ Real time therefore stays opt-in behind the development setting, and the 0.38 tu
 - **Named saves of a real-time fight** are larger than 0.38's (up to about 330 KB each). Six slots and the chronicle's history fit a browser's local storage, but with less room to spare.
 - **The finale may be easy in real time:** the bot wins every route in 4–5 of 16 rounds. Its balance needs a person's play.
 - **The settlement and surrender routes** were only reached with their meters raised: the bot's campaign never opens them. A person's campaign that does would test them as played.
-- **The header over the chamber** still covers its north edge on a phone (Phase 3); the 2D overview sits below it.
+- **The chamber on a phone.** Phase 3 noted the header over the chamber's north edge. Checked again after this report (Chapter VII at 390 × 844, both views), the header leaves the tribunal in view, but the HUD below it (the speakers, the hour, the speech bar, Motion and List: 319 of the scene's 658 pixels) hides the floor's south half. The fix is to frame the floor between the header and the HUD. Moving the header out of the scene alone pushed the floor under the HUD and put the 3D labels out of place, so it was not kept.
 
 ## Proposed next step
 
@@ -122,3 +122,14 @@ Real time therefore stays opt-in behind the development setting, and the 0.38 tu
    - Play a few minutes with touch, and check that the guided opening, the settings and the help read well.
 3. **The manual checks of §5:** keyboard-only play (Chapters I–II, the standing orders of III, the Formation of V, the deployment of VII, a Contest and a kit change); a screen reader (NVDA or VoiceOver); colour, 200% text and reduced motion.
 4. **Then Gate 4:** with those passed, real time becomes the default, the guide's deviations are settled with Peter, and the turn code listed in the survey is removed.
+
+## After the report
+
+A review of the finished work found these; all but the last are fixed. Checked with `npm run verify` (1019 tests) and the full browser smoke test on the production build: automated, real interface, software rendering.
+
+- **A pause could be undone by the Menu.** The Menu pauses the world while it is open, and its close event can come hundreds of milliseconds after it closes. A pause pressed in between was resumed when that event came. The player's pause, or a round played with **N**, now stands. The smoke test reproduces the case and failed on it before the fix.
+- **Messages name the player's keys.** "Pause first (P)", "Choose a target first (T)", "Walking everywhere (W)", the chamber's **Y**, **[** / **]** and skip key, the defeat advice and the hover hint for drawing a weapon all named the default keys.
+- **The settings follow the controls.** In real time the Menu uses the guide's names (**Close-ups**, **Touch hold delay**, the guided opening's hours) and keeps Confirm moves with the turn-based board's shortcuts. On the 0.38 board, Time and pace, objective markers and floating numbers are not shown, since only the real-time field reads them.
+- **The browser smoke test prints each scenario's time.** Alone, the 16 scenarios take about 11 minutes, inside CI's 30-minute limit.
+- **The chamber on a phone** was measured again, and is described under Known issues; it is not fixed.
+

@@ -8,12 +8,16 @@
 // touch at phone width (hold to preview, tap to walk), the Settings
 // performance check, the 0.40 real-time arena (click to move, pause, step), the
 // walkable camp and the campaign's drill in real time (conversations, the table,
-// the gate, the field, pause, keys, result, record), and the same in 2D.
-// It fails on any page or console error. Development and CI only: it
-// needs Playwright, which is not a project dependency, and a production build.
+// the gate, the field, pause, keys, result, record), and the same in 2D; then
+// squads and deployment, the chamber Contests (Chapter VII's council played
+// through, every Contest won, the hearing), the finale's defection route, the
+// settings and help (pace by difficulty, a remapped key) and a chronicle saved
+// before 0.40. It fails on any page or console error. Development and CI only:
+// it needs Playwright, which is not a project dependency, and a production build.
 //
 //   npm run build && npm run smoke
 //   PLAYWRIGHT_MODULE=/path/to/playwright/index.js npm run smoke
+//   SMOKE_ONLY=chamberCouncil,legacyChronicle npm run smoke   # just those scenarios
 import http from 'node:http';
 import assert from 'node:assert/strict';
 import {access} from 'node:fs/promises';
@@ -91,7 +95,7 @@ async function expectAnnouncement(page,pattern,step){
 }
 const keys=async(page,list)=>{for(const key of list)await page.keyboard.press(key);};
 async function menuButton(page,cmd){if(!await page.locator(`[data-cmd="${cmd}"]:visible`).count())await page.click('[data-cmd="menu"]:visible >> nth=0');await page.click(`[data-cmd="${cmd}"]:visible >> nth=0`);}
-async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#confirm-moves');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
+async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#modal[open] #battle-view');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
 async function view(page,mode){
   await settings(page,()=>page.selectOption('#battle-view',mode));
   if(mode==='3d')await page.waitForFunction(()=>document.querySelector('#battle-board')?.parentElement?.dataset.ready==='true',null,{timeout:300000,polling:500});
@@ -636,9 +640,11 @@ let failed=false;
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+  // Each scenario's time is printed, so a slow one shows in CI's log.
+  const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
   // A failed scenario leaves its pages open: close them, so their scenes stop drawing before the next scenario.
-  finally{for(const context of contexts)await context.close().catch(()=>{});contexts.clear();}
+  finally{for(const context of contexts)await context.close().catch(()=>{});contexts.clear();console.log(`# ${scenario.name}: ${Math.round((Date.now()-started)/1000)} s`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}
 else console.log('ok - no page or console errors');
