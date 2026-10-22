@@ -18,7 +18,8 @@
 // listed with what was left undone. The tick times are this machine's (Node,
 // headless), not a phone's. Development only:
 //   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--write]
-// --write saves docs/evidence/realtime-gate2-sweep.json (realtime-gate4-sweep.json with --last=12).
+// --write saves docs/evidence/realtime-gate2-sweep.json (realtime-gate4-sweep.json with --last=12), with
+// the difficulty in its name when it is not Standard (realtime-gate4-sweep-story.json).
 import {writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {performance} from 'node:perf_hooks';
@@ -130,7 +131,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
     const out={...report,machine:'Node.js, headless, on the development container (not a phone)',runs:report.runs.map(r=>({...r,tick:fixed(r.tick)})),
       variants:report.variants.map(r=>({...r,tick:fixed(r.tick)})),losses:report.losses.map(r=>({...r,tick:fixed(r.tick)})),
       battles:report.battles.map(b=>({...b,tickP95:+b.tickP95.toFixed(3),tickMax:+b.tickMax.toFixed(2)}))};
-    const file=LAST>=12?'realtime-gate4-sweep.json':'realtime-gate2-sweep.json';if(out.routes)out.routes=out.routes.map(r=>({...r,tick:fixed(r.tick)}));
+    const file=`${LAST>=12?'realtime-gate4-sweep':'realtime-gate2-sweep'}${DIFFICULTY==='standard'?'':`-${DIFFICULTY}`}.json`;if(out.routes)out.routes=out.routes.map(r=>({...r,tick:fixed(r.tick)}));
     await writeFile(new URL(`../docs/evidence/${file}`,import.meta.url),`${JSON.stringify(out,null,1)}\n`);console.log(`Wrote docs/evidence/${file}`);
   }
   if(report.losses.some(lostOnDeadline))process.exitCode=1;

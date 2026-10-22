@@ -28,11 +28,13 @@ function camp(id){
 }
 const started=id=>{const s=camp(id);assert.equal(G.startEncounter(s,{controls:'realtime'}).ok,true);return s;};
 
-test('the bot plays Chapters I–IX in real time from New Game by legal commands: every battle won and every chapter’s capability shown',()=>{
-  const {state,encounters}=runRealtimeCampaign({throughChapter:9,ready:[1,2,3,4,5,6,7,8,9]});
+test('the bot plays the whole campaign in real time from New Game by legal commands, to the accession: every battle won and every chapter’s capability shown',()=>{
+  const {state,encounters}=runRealtimeCampaign({throughChapter:12});
   const battles=encounters.filter(e=>e.world===undefined&&e.rounds!==undefined);
-  assert.deepEqual(battles.filter(e=>e.chapter>=4).map(e=>e.id),['ch4-gate','ch4-wall','ch5-mine','ch5-wall','ch6-wells','ch6-eagle','ch7-legion','ch8-ferry','ch8-crossing','ch9-wing','ch9-city']);
-  assert.ok(battles.every(e=>e.status==='won'));assert.equal(state.chapter,10);assert.deepEqual(state.completed,[1,2,3,4,5,6,7,8,9]);
+  assert.deepEqual(battles.filter(e=>e.chapter>=4).map(e=>e.id),['ch4-gate','ch4-wall','ch5-mine','ch5-wall','ch6-wells','ch6-eagle','ch7-legion','ch8-ferry','ch8-crossing',
+    'ch9-wing','ch9-city','ch10-road','ch12-confrontation']);
+  assert.ok(battles.every(e=>e.status==='won'));assert.deepEqual(state.completed,[1,2,3,4,5,6,7,8,9,10,11,12]);
+  assert.equal(state.phase,'epilogue');assert.ok(state.milestones.includes('augustus'));
   for(const [chapter,capability]of [[4,'order'],[5,'formation'],[6,'rally'],[7,'deploy'],[9,'stratagem']])
     assert.ok(state.chapterCapabilities[chapter].includes(capability),`Chapter ${chapter}: ${capability}`);
   assert.doesNotThrow(()=>G.serialize(state));

@@ -15,7 +15,7 @@ import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
-import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
+import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
 import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup} from './realtime-view.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
@@ -158,6 +158,8 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
 function render(){
   // A running performance check owns the 3D stage; the page catches up after it.
   if(renderHold.defer())return;
+  // Time and pace follow this chronicle's difficulty until the player chooses their own.
+  followDifficulty(settings,state?.difficulty);
   cleanupSiteMedia();
   stopMotion();
   replay.stop();
@@ -700,9 +702,9 @@ async function replaceCampaign({load,save,message}){
   });
 }
 let modalReturn=null;
-function showModal(title,body){
-
-  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(settings.panelPause!==false)field?.runtime?.pauseFor('panel');
+function showModal(title,body,{menu=false}={}){
+  // The Menu always pauses the world; other panels as Pause in panels says.
+  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(menu||settings.panelPause!==false)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
   modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
   modal.setAttribute('aria-labelledby','panel-title');modal.removeAttribute('aria-label');
@@ -1079,6 +1081,8 @@ document.addEventListener('change',async event=>{
   const toggle=SETTING_TOGGLES[control.id];
   if(toggle){settings[toggle.key]=control.checked;saveSettings();if(toggle.stage)battleStage[toggle.stage](control.checked);if(toggle.render)render();return;}
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
+  if(control.dataset.pace){const key=control.dataset.pace;choosePace(settings,key,control.type==='checkbox'?control.checked:control.value);saveSettings();
+    field?.runtime?.setOption?.(key,settings[key]);return;}
   if(control.id==='controls-model'){Object.assign(settings,normalizeControls({...settings,controlsModel:control.value}));saveSettings();render();return;}
   if(control.matches?.('.realtime-chapter')){
     const chapters=[...document.querySelectorAll('.realtime-chapter')].filter(box=>box.checked).map(box=>Number(box.value));

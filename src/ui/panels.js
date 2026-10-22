@@ -131,8 +131,8 @@ export function createPanels(context){
     const options=(list,current)=>list.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('');
     const offlineStatus=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} `+
       `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.';
-    showModal('Pause & settings',`<p class="panel-lead">Your game is turn-based. Nothing advances `+
-      `while this panel is open.</p>${controlPreferences(settings)}<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
+    showModal('Pause & settings',`<p class="panel-lead">Nothing advances while this menu is open.</p>`+
+      `${controlPreferences(settings)}${pacePreferences(settings,state?.difficulty)}<fieldset class="settings-group"><legend>Display & accessibility</legend>`+
       `<label class="setting" for="text-size"><span>Text size<small class="muted">Enlarge text across the game.</small></span>`+
       `<select id="text-size">${[1,1.25,1.5,2].map(n=>`<option value="${n}" ${(settings.textScale||1)===n?'selected':''}>${n*100}%</option>`).join('')}</select>`+
       `</label><label class="setting" for="guide-setting"><span>Guided opening<small class="muted">Step-by-step lessons in the drill, first patrol and `+
@@ -193,7 +193,27 @@ export function createPanels(context){
       `<button data-cmd="credits">Art & credits</button>${state?'<button data-cmd="character">Character & equipment</button>'+
       '<button data-cmd="journal">Mission journal</button>'+
       '<button data-cmd="map">Campaign</button>':''}`)}</section>${devMenu?developmentSettings(settings,options):''}`+
-      `${actions('<button class="primary full" data-cmd="close-modal">Close settings</button>')}`);
+      `${actions('<button class="primary full" data-cmd="close-modal">Close settings</button>')}`,{menu:true});
+  }
+  // Time and pace (guide "Settings reference"): the real-time encounters' game speed, auto-pause
+  // events, pause each round and pause in panels. Until one is changed they follow the difficulty.
+  function pacePreferences(settings,difficulty){
+    const check=(id,key,label,hint)=>`<label class="setting" for="${id}"><span>${label}<small class="muted">${hint}</small></span>`+
+      `<input id="${id}" type="checkbox" data-pace="${key}" ${settings[key]?'checked':''}></label>`;
+    const level=difficulty==='story'?'Story':difficulty==='veteran'?'Veteran':'Standard';
+    return `<fieldset class="settings-group pace-settings"><legend>Time and pace</legend><p class="settings-description">For real-time encounters. `+
+      `${settings.paceChosen?'These are your choices; the difficulty no longer changes them.':`${level} starts here: ${difficulty==='story'?'75% speed, pausing '+
+      'when an enemy comes into view':'full speed, with no auto-pause'}. Changing any of them makes the pace yours.`}</p>`+
+      `<label class="setting" for="game-speed"><span>Game speed<small class="muted">The normal pace of battle time. V halves it; N steps a round while `+
+      `paused.</small></span><select id="game-speed" data-pace="gameSpeed">${[[.5,'50%'],[.75,'75%'],[1,'100%']].map(([v,l])=>`<option value="${v}" `+
+      `${settings.gameSpeed===v?'selected':''}>${l}</option>`).join('')}</select></label>`+
+      check('pause-sighted','pauseSighted','Auto-pause: an enemy comes into view','Also when an ambush is revealed or reinforcements arrive.')+
+      check('pause-hurt','pauseHurt','Auto-pause: badly hurt','Your soldier or a companion below a quarter of his Health, or down.')+
+      check('pause-squad','pauseSquad','Auto-pause: a squad breaks','One of your squads breaks and falls back.')+
+      check('pause-objective','pauseObjective','Auto-pause: the objective changes','A new objective or phase.')+
+      check('pause-order','pauseOrder','Auto-pause: an order cannot be carried out','A command refused, with its reason.')+
+      check('round-pause','roundPause','Pause each round','Stop at the start of every round, for a game played almost turn by turn.')+
+      check('panel-pause','panelPause','Pause in panels','Opening a panel (kit, character, journal…) pauses the world.')+`</fieldset>`;
   }
   // The development menu (npm run dev, or ?dev in the address): the 0.40
   // conversion's controls model and its per-chapter fallback.
