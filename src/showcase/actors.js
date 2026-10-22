@@ -214,7 +214,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     }
     strip(s,bronze,[[-.07,.03,-.045],[.07,.03,-.045]],.012);return s;
   }
-  const shield=archer||!armed?null:makeShield();
+  const shield=archer||!armed||kit.shield===false?null:makeShield();
   const shieldContact=shield?part(shield,'shield-contact',0,.03,.13):null;
   if(shield&&mounted)shield.scale.setScalar(.82);
   if(shield&&kit.eastern)shield.scale.set(.85,.84,1);

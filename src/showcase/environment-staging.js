@@ -27,7 +27,11 @@ const plans={
   'ch11-accounts':['senate-audit','The Senate’s treasury hearing','south','north','accounts',.40,.70],
   'ch11-adlection':['senate-admission','The Senate’s admission chamber','south','north','admission',.64,.70],
   'ch12-legitimacy':['imperial-recognition','The recognition audience','south','north','recognition',.45,.70],
-  'ch12-confrontation':['rome-approach','The rival standards at the Roman gate','west','east','imperial-gate',.60,.67]
+  'ch12-confrontation':['rome-approach','The rival standards at the Roman gate','west','east','imperial-gate',.60,.67],
+  // The walkable camps (0.40): a tent street inside the palisade, the gate to the south.
+  'ch1-camp':['legion-camp','The legionary base at Novae','south','north','camp',.62,.66],
+  'ch2-camp':['march-camp','The march camp on the causeway','south','north','camp',.62,.66],
+  'ch3-camp':['station-camp','The camp below the road station','south','north','camp',.62,.66]
 };
 export function getEncounterStaging(encounter={}, {chapter=1,civic=encounter.kind==='contest',training=false}={}){
   const record=plans[encounter.id]??(training?plans['ch1-training']:plans[`ch${chapter}-${civic?'council':'road'}`])??[civic?'audience-court':'field-approach',civic?'The audience court':'The field approach',civic?'south':'west',civic?'north':'east',civic?'council':'checkpoint',.65,.68];

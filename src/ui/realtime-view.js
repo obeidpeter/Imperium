@@ -1,0 +1,190 @@
+import {esc,roman} from './view-helpers.js';
+import {CHAPTERS} from '../data/campaign.js';
+import {ITEMS} from '../data/items.js';
+import {TP} from '../data/soldier.js';
+import {TIME} from '../data/realtime-rules.js';
+import {actionLabel,firstKeyLabel} from './action-map.js';
+import {campFor} from '../data/camps.js';
+import {DEFEAT_PAGES} from '../data/dialogue.js';
+
+// The page around a real-time encounter (build brief §3.14–§3.16). The field
+// itself (the scene, its HUD and the battle log) is placed by the page's
+// script into #rt-host and kept there between renders (data-live); this view
+// renders only what the chronicle decides: the header, save problems and,
+// once the fight is resolved, its result. Pure over the campaign state.
+
+const chapterOf=state=>CHAPTERS.find(c=>c.id===state.chapter);
+
+export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap}){
+  const e=state.encounter,chapter=chapterOf(state);
+  return `<main id="main" class="encounter-frame realtime-frame" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
+    <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
+    <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · Real time</span>
+      <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
+    ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
+      `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
+    <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
+    ${e.status==='active'?'':realtimeResult(state,{keymap})}
+  </main>`;
+}
+
+// The live field's own DOM: built once per fight by the page, then owned by
+// the field runtime (src/showcase/realtime-field.js) through its data-role names.
+// The scene's spoken name and its keys, in the player's keys (relabelField repeats them after a remap).
+export function fieldHints({state,keymap,kind='field'}){
+  const chamber=kind==='chamber',camp=kind==='camp',key=action=>esc(actionLabel(action,keymap));
+  const title=camp?campFor(state.chapter)?.title??'The camp':state.encounter.title;
+  const label=chamber?`${esc(title)}. Click the floor inside the pale circles to walk, a person to talk to him; right-click gives the chosen speech. ${key('yield_floor')} yields the floor.`
+    :`${esc(title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses.`;
+  const keys=chamber?`The arrow keys walk your speaker one place at a time. ${key('target_next_enemy')} chooses the next member or rival speaker and gives the chosen speech’s forecast;
+      Enter talks to him, ${key('interact_nearest')} to the nearest. ${key('ability_1')} to ${key('ability_7')} choose a speech; the same key again gives it to the person chosen. ${key('yield_floor')} yields the floor and ends the hour.
+      Hold ${key('show_usable')} to see where each rival means to walk next. ${key('party_prev')} and ${key('party_next')} change the speaker you control; ${key('control_hero')} returns to your soldier. Escape closes the conversation, then opens the Menu.`
+    :`Arrow keys move your soldier. ${key('target_next_enemy')} chooses the next enemy or thing to use, Enter acts on it, ${key('interact_nearest')} uses what is nearest.
+      ${key('combat_toggle')} draws or sheathes. ${key('ability_1')} to ${key('ability_7')} choose an ability; the same key again uses it. ${key('pause')} pauses, ${key('slow_time')} slows time,
+      ${key('step_round')} plays one round while paused. ${key('party_prev')} and ${key('party_next')} change the companion you control; ${key('control_hero')} returns to your soldier. Escape opens the Menu.`;
+  return {label,keys};
+}
+// After the keys are remapped: the hints, the buttons' shortcuts and their titles follow (the bars rebuild in the field).
+export function relabelField(root,{state,keymap,kind='field'}){
+  if(!root)return;const {label,keys}=fieldHints({state,keymap,kind}),text=html=>{const t=document.createElement('template');t.innerHTML=html;return t.content.textContent;};
+  root.querySelector('#rt-board')?.setAttribute('aria-label',text(label));const p=root.querySelector('#rt-keys');if(p)p.textContent=text(keys);
+  for(const el of root.querySelectorAll('[data-shortcut]')){const k=actionLabel(el.dataset.shortcut,keymap);el.setAttribute('aria-keyshortcuts',k);if(el.dataset.title)el.title=`${el.dataset.title} (${k})`;}
+}
+
+export function fieldMarkup({state,keymap,kind='field'}){
+  const camp=kind==='camp',chamber=kind==='chamber',chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
+  const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:'Talk to people, use what you find, and march out through the gate.'}:state.encounter;
+  const {label,keys}=fieldHints({state,keymap,kind});
+  return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
+  <div class="rt-scene">
+    <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys"
+      aria-label="${label}"></canvas>
+    <p id="rt-keys" class="visually-hidden">${keys}</p>
+    <aside class="rt-lesson" data-role="lesson" aria-label="Field guide" hidden><p class="eyebrow">FIELD GUIDE · <span data-role="lessonStep"></span></p>
+      <h2 data-role="lessonTitle"></h2><p data-role="lessonBody"></p><button class="text-link" type="button" data-cmd="dismiss-guide">Hide the guide</button></aside>
+    <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
+    ${chamber?`<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>
+    <aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>`:''}
+    <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
+      <p><strong>Deployment.</strong> Choose a standard, your soldier or a companion, then click marked ground in the zone (or drag a standard there; the arrow keys and Enter work too). No Command is spent.</p>
+      <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
+    </div>
+    <header class="rt-top">
+      <div class="rt-squad-area">
+        <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>
+        <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Clear</button>
+      </div>
+      <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2>
+        <p data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p><p class="rt-progress" data-role="progress"></p>
+        ${chamber?'<div class="rt-coalition" data-role="coalition" aria-label="The coalition and the Chamber Whip Forecast"></div>':''}</div>
+      <div class="rt-time" role="group" aria-label="Time">
+        <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
+        ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">Yield</button>`
+          :`<button data-role="slowButton" type="button" data-shortcut="slow_time" aria-keyshortcuts="${key('slow_time')}" aria-pressed="false">Slow</button>
+        <button data-role="stepButton" type="button" data-shortcut="step_round" aria-keyshortcuts="${key('step_round')}" disabled>Next round</button>`}
+      </div>
+      <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
+    </header>
+    <p class="rt-paused" data-role="pausedBand" hidden>Paused · point at anything for its forecast; every command still works</p>
+    <footer class="rt-hud" tabindex="-1">
+      <div class="rt-party" data-role="party" role="group" aria-label="${chamber?'Your speakers: choose who speaks':'Your party: choose who you control'}"></div>
+      <div class="rt-message-area">
+        <div class="rt-clock" role="timer" aria-label="${chamber?'The clepsydra: hours to the vote':'Battle clock'}">
+          <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rt-clock-track" cx="18" cy="18" r="15"/><circle data-role="clockRing" class="rt-clock-ring" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="0 100"/></svg>
+          <p><strong data-role="roundLabel">Round 1</strong><span data-role="clockTime">0:00</span></p>
+        </div>
+        <div class="rt-command" data-role="commandPips" role="img" hidden></div>
+        <div class="rt-message-lines"><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
+      </div>
+      <div class="rt-ability-area">
+        <p class="rt-current"><span class="eyebrow">${chamber?'Right button: speech':'Right button'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
+        <div class="rt-ability-bar" data-role="abilityBar" role="toolbar" aria-label="${chamber?'Speeches':'Abilities'}"></div>
+        ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>`}
+        ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion and lists">
+          <button data-role="motionButton" type="button" aria-pressed="false" title="The policy motion, career precedents and the hearing’s documents">Motion</button>
+          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every speech, walk and conversation as a list">List</button>
+        </div>`:`<div class="rt-toggles" role="group" aria-label="Weapon, movement and touch">
+          <button data-role="swordsButton" class="rt-swords" type="button" data-shortcut="combat_toggle" aria-keyshortcuts="${key('combat_toggle')}" aria-pressed="false" data-title="Draw or sheathe" title="Draw or sheathe (${key('combat_toggle')})"><span aria-hidden="true">⚔</span><span class="visually-hidden">Weapons drawn</span></button>
+          <button data-role="walkButton" type="button" data-shortcut="walk_toggle" aria-keyshortcuts="${key('walk_toggle')}" aria-pressed="false">Walk</button>
+          <button data-role="forceButton" type="button" aria-pressed="false" title="The next tap or click forces an attack">Force</button>
+          <button data-role="rangesButton" type="button" data-shortcut="show_ranges" aria-keyshortcuts="${key('show_ranges')}" aria-pressed="false">Ranges</button>
+          <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every action as a list">List</button>
+        </div>`}
+      </div>
+    </footer>
+  </div>
+  <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
+    <h2 id="rt-list-title">Command list</h2>
+    <p class="rt-log-note">${chamber?'Choose which speaker acts, then Use a speech, a walk or a conversation.':'Choose who acts, then Use an order. It works while paused; a paused world carries it out on resume.'}</p>
+    <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
+    <div data-role="listOptions"></div>
+  </section>
+  <section class="rt-log-panel" aria-labelledby="rt-log-title">
+    ${chamber?'<h2 id="rt-log-title">Chamber record</h2><p class="rt-log-note">Every speech and reply, latest first.</p>'
+      :'<h2 id="rt-log-title">Battle log</h2><p class="rt-log-note">Select an entry to look at that place; F follows your soldier again.</p>'}
+    <ol data-role="log" class="rt-log"></ol>
+  </section>
+  <div class="visually-hidden" role="status" aria-live="polite" data-role="announcer"></div>
+</section>`;
+}
+
+// The After-Action Chronicle of a resolved fight: what the soldier and his
+// party did, what the result will grant when recorded, and, after a defeat,
+// what went wrong and what might help (§3.11).
+export function realtimeResult(state,{keymap}={}){
+  const e=state.encounter,world=e.realtime?.world,won=e.status==='won';
+  if(!world)return '';
+  const ours=new Set([world.heroId,...world.party]),hero=world.actors.find(a=>a.id===world.heroId);
+  const kills=world.actors.filter(a=>a.side==='enemy'&&!a.alive&&ours.has(a.killedBy)),party=world.actors.filter(a=>world.party.includes(a.id));
+  const seconds=Math.round(world.tick/TIME.ticksPerSecond),time=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
+  const staged=e.staged??{},spoils=(staged.spoils??[]).map(id=>ITEMS[id]?.name??id);
+  const killTP=Math.min(TP.killCap,staged.killTP??0),commendations=staged.commendations??[];
+  const rows=[['Battle time',time],['Enemies your party struck down',`${kills.length}`],
+    ['Companions',party.length?party.map(a=>`${a.name}: ${!a.alive?'fallen':a.down?'down':`${a.hp} of ${a.maxHp} Health`}`).join(' · '):'none in the field'],
+    ['Your soldier',hero?`${hero.alive?`${hero.hp} of ${hero.maxHp} Health`:'fallen'}`:'—']];
+  // From Chapter IV the squads' day: each of ours, and the enemy's bands cut down.
+  if(world.squads?.length){
+    const men=q=>q.members.filter(id=>world.actors.find(a=>a.id===id)?.alive).length,state=q=>!men(q)||q.strength<=0?'cut down':q.broken?'broken':q.morale<=40?'shaken':'steady';
+    const mine=world.squads.filter(q=>q.side!=='enemy'),theirs=world.squads.filter(q=>q.side==='enemy');
+    rows.push(['Your squads',mine.map(q=>`${q.name}: ${men(q)} of ${q.members.length} men, ${state(q)}`).join(' · ')||'none']);
+    rows.push(['Enemy bands cut down',`${theirs.filter(q=>!men(q)||q.strength<=0).length} of ${theirs.length}`]);
+  }
+  // The field's opportunity (guide "Field objects").
+  if(world.field){const f=world.field,taken=f.choice?world.objects.find(o=>o.field&&o.kind===f.choice):null;
+    rows.push(['Field opportunity',taken?`${taken.name}: secured`:f.outcome==='missed'?'Both closed at the end of round '+f.deadline:'None taken']);}
+  if(won)rows.push(['Training points when recorded',`${killTP} for the fallen${commendations.length?`, ${commendations.reduce((n,c)=>n+c.tp,0)} for distinguished service`:''}, and the objective’s own`]);
+  if(spoils.length)rows.push(['Taken from the field',spoils.join(', ')]);
+  const lines=world.log.slice(-6).map(l=>`<li>${esc(l.text)}</li>`).join('');
+  // What the fallen still carry: searched here, the pack receives it when the result is recorded.
+  const bodies=won?world.actors.filter(a=>!a.alive&&a.side==='enemy'&&a.loot?.length):[];
+  const search=bodies.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the fallen</h3><ul class="rt-loot">${bodies.map(b=>
+    `<li><span><strong>${esc(b.name)}</strong>: ${esc(b.loot.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
+    `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}</ul></section>`:'';
+  return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
+    <span class="eyebrow">${won?'OBJECTIVE ACHIEVED · AFTER-ACTION CHRONICLE':'A CHANCE TO REGROUP'}</span>
+    <h2 id="rt-result-title">${won?'The day is yours.':'The field is lost.'}</h2>
+    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p>${DEFEAT_PAGES[e.id]?`<blockquote class="rt-defeat-page"><span class="eyebrow">How history remembers the day</span>`+
+      `<p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote>`:''}<p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p>`}
+    <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
+    ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
+    ${search}
+    <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol></details>
+    <p class="result-save-note">${won?'Record the result to keep the rewards and consequences.':'Retry restores the encounter exactly as it began, including the random seed.'}</p>
+    <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
+  </section>`;
+}
+
+// What ended a lost fight, in the words the guide uses.
+export function defeatCause(world){
+  const hero=world.actors.find(a=>a.id===world.heroId);
+  if(world.mission?.reason)return world.mission.reason;
+  if(hero&&!hero.alive){const by=world.actors.find(a=>a.id===hero.killedBy);return by?`You fell to ${by.name}.`:'You fell.';}
+  return 'The objective was not held.';
+}
+export function defeatHelp(world,keymap){
+  const hero=world.actors.find(a=>a.id===world.heroId),log=world.log.map(l=>l.text).join('\n');
+  if(/from the (rear|flank)/.test(log))return 'Blows from the flank and rear struck most often: keep a rock, a wall or a companion at your back, and turn to face the man you fight.';
+  if(hero&&hero.ammo?.pilum>0)return 'Your pila were never thrown: a pilum that sticks in a shield halves how often it blocks.';
+  if(world.mission?.escorts?.length)return 'Keep the column close: wounded men wait for Bind wounds or Carry, and raiders go for the weakest first.';
+  return `Pause (${firstKeyLabel('pause',keymap)}) when the fight turns, brace against heavy blows and let your companions’ standing orders cover you.`;
+}

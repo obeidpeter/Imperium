@@ -1,5 +1,19 @@
 # IMPERIUM: From Recruit to Emperor
 
+## In development: 0.40, real time with pause (Phases 0–4)
+
+Imperium is being converted from turns to real time with pause. The player guide for 0.40 is the specification ([player-guide-0.40.md](docs/player-guide-0.40.md)); the survey of what changes is [realtime-survey.md](docs/realtime-survey.md); each phase's results and what is still to be judged are in its report ([0](docs/realtime-phase-0-report.md), [1](docs/realtime-phase-1-report.md), [2](docs/realtime-phase-2-report.md), [3](docs/realtime-phase-3-report.md), [4](docs/realtime-phase-4-report.md)). **The campaign still plays on turns by default** until Gate 4. With Settings → Development → Controls model set to *Real time* (shown under `npm run dev`, or with `?dev` in the address):
+
+- **Every chapter plays in real time:** your own soldier, his companions with their standing orders and, from Chapter IV, his squads under Command; walkable camps in Chapters I–III; the Contests of Chapters VII–XII walked as chambers; and the finale's five routes. **P** pauses at any moment and every command still works.
+- **Difficulty, every setting of the guide** with key remapping, and the guide itself as the in-game Controls & rules (**?**).
+- **Chronicles saved before 0.40** load exactly as saved, choose their soldier's training once and receive the training points of the chapters they completed.
+- **The real-time arena** ([`showcase/arena.html`](showcase/arena.html)): a Legionary against three raiders, the first real-time fight.
+- **A deterministic simulation** ([`src/core/realtime/`](src/core/realtime)) stepped at 20 Hz, its rules as data, replayed identically at every speed, with pauses and through save and load. Its timing is in Settings → Run performance check.
+
+Gate 4 still needs a person's play-through on Story and on Standard, the manual accessibility checks, and phone and desktop measurements.
+
+To try the arena, run `npm run dev` and open `http://127.0.0.1:4173/showcase/arena.html`. To measure it on a phone on the same trusted network, run `npm run build`, then `HOST=0.0.0.0 npm run preview` (this serves only the production build), and open the computer's address on port 4173 at `/showcase/arena.html`.
+
 ## Version 0.38.1 — the rest of smooth play
 
 A battle is now built in short steps behind its "Preparing" veil, so the page keeps answering while it is made: in the software benchmark no task while building reaches 90 ms, where 0.38.0's took up to a second. Each battle compiles 46–56 shader programs instead of 58–68, the figures' geometry is a third of what it was, and the page updates in place instead of being rebuilt, so the board keeps its focus between moves. The codebase is tidier: consistent line endings, archived reports, behavioural tests instead of source-text checks, and the 3D stage split into modules. See the [changelog](CHANGELOG.md) and the [performance notes](docs/performance.md); no device has been measured yet.

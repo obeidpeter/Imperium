@@ -5,12 +5,19 @@
 // a legal Chapter V expanded checkpoint restored through the Restore dialog
 // (field-object readouts), a field approach chosen at a restored Chapter V camp
 // (with Chapter V's generated scenery and character bodies loaded in 3D),
-// touch at phone width (hold to preview, tap to walk), and the Settings
-// performance check. It fails on any page or console error. Development and CI only: it
-// needs Playwright, which is not a project dependency, and a production build.
+// touch at phone width (hold to preview, tap to walk), the Settings
+// performance check, the 0.40 real-time arena (click to move, pause, step), the
+// walkable camp and the campaign's drill in real time (conversations, the table,
+// the gate, the field, pause, keys, result, record), and the same in 2D; then
+// squads and deployment, the chamber Contests (Chapter VII's council played
+// through, every Contest won, the hearing), the finale's defection route, the
+// settings and help (pace by difficulty, a remapped key) and a chronicle saved
+// before 0.40. It fails on any page or console error. Development and CI only:
+// it needs Playwright, which is not a project dependency, and a production build.
 //
 //   npm run build && npm run smoke
 //   PLAYWRIGHT_MODULE=/path/to/playwright/index.js npm run smoke
+//   SMOKE_ONLY=chamberCouncil,legacyChronicle npm run smoke   # just those scenarios
 import http from 'node:http';
 import assert from 'node:assert/strict';
 import {access} from 'node:fs/promises';
@@ -19,6 +26,8 @@ import {serveRequest} from './serve.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
+import {playEncounter} from './autoplay.mjs';
+import {tpAuditTotal} from '../src/core/tp-audit.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -49,14 +58,22 @@ function approachCampCode(){
   assert.ok(code,'A Chapter V camp that can afford the engineering approach');return code;
 }
 
+// A legal edition-35 command chronicle saved at a battle's camp (the campaign stops there).
+function battleCampCode(id){
+  let code=null;const stop=new Error('saved');
+  try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{if(Game.getChapter(s).encounters[s.encounterIndex]?.id!==id)return;code=Game.encodeSave(s);throw stop;}});}
+  catch(error){if(error!==stop)throw error;}
+  assert.ok(code,`A legal camp before ${id}`);return code;
+}
+
 const server=http.createServer((req,res)=>serveRequest(req,res,root));
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
 const {chromium}=await playwright();
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const problems=[];
+const problems=[],contexts=new Set();
 async function open(options={}){
-  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();
+  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();contexts.add(context);
   page.setDefaultTimeout(240000);
   page.on('pageerror',error=>problems.push(`page error: ${error.message}`));
   page.on('console',message=>{if(message.type()==='error')problems.push(`console error: ${message.text()}`);});
@@ -78,7 +95,7 @@ async function expectAnnouncement(page,pattern,step){
 }
 const keys=async(page,list)=>{for(const key of list)await page.keyboard.press(key);};
 async function menuButton(page,cmd){if(!await page.locator(`[data-cmd="${cmd}"]:visible`).count())await page.click('[data-cmd="menu"]:visible >> nth=0');await page.click(`[data-cmd="${cmd}"]:visible >> nth=0`);}
-async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#confirm-moves');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
+async function settings(page,fn){await menuButton(page,'settings');await page.waitForSelector('#modal[open] #battle-view');await fn();await page.click('#modal [data-cmd="close-modal"] >> nth=0');}
 async function view(page,mode){
   await settings(page,()=>page.selectOption('#battle-view',mode));
   if(mode==='3d')await page.waitForFunction(()=>document.querySelector('#battle-board')?.parentElement?.dataset.ready==='true',null,{timeout:300000,polling:500});
@@ -225,9 +242,409 @@ async function performanceCheck(){
   await page.context().close();console.log(`ok - performance check: three qualities rebuilt and measured with no first-frame compiles, the board untouched, results saved (recommends ${report.recommendation})`);
 }
 
+// The 0.40 real-time arena (Phase 0): the development menu sends the
+// standalone skirmish there; a click moves the soldier on the frames that
+// follow; pausing stops the clock while commands still queue; clicking a
+// raider starts the auto-fight; N plays exactly one round while paused.
+async function realtimeArena(){
+  const page=await open();
+  await page.goto(`${base}?dev`);await menuButton(page,'settings');await page.waitForSelector('#controls-model');
+  await page.selectOption('#controls-model','realtime');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const skirmishLink=()=>[...document.querySelectorAll('a')].find(a=>/standalone skirmish/i.test(a.textContent))?.getAttribute('href')??'';
+  await page.waitForFunction(`/showcase\\/arena\\.html$/.test((${skirmishLink})())`,null,{timeout:10000})
+    .catch(async()=>assert.fail(`The skirmish opens the arena under real time (its link reads ${await page.evaluate(skirmishLink)})`));
+  await page.addInitScript(()=>{try{localStorage.setItem('imperium.arena',JSON.stringify({quality:'performance'}));}catch{}});
+  await page.goto(`${base}showcase/arena.html`);await page.waitForSelector('#scene[data-ready="true"]');await page.click('#begin-button');
+  const arena=fn=>page.evaluate(fn);
+  const hero=()=>arena(()=>{const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);return {x:h.x,z:h.z,drawn:h.drawn,lock:h.lock,tick:w.tick};});
+  const box=await page.locator('#scene').boundingBox(),start=await hero();
+  await page.mouse.move(box.x+box.width*.6,box.y+box.height*.45);await page.mouse.down();await page.mouse.up();
+  const step=(label,promise)=>promise.catch(async error=>assert.fail(`${label}: ${error.message.split('\n')[0]} (${await page.evaluate(()=>{
+    const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);
+    return JSON.stringify({tick:w.tick,status:w.status,paused:window.__arena.clock.paused,lock:h.lock,order:h.order,drawn:h.drawn,queue:w.queue,
+      message:document.querySelector('#message-line')?.textContent,event:document.querySelector('#event-line')?.textContent});})})`));
+  await step('The click moves the soldier',page.waitForFunction(([x,z])=>{const w=window.__arena.world(),h=w.actors.find(a=>a.id===w.controlled);return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000}));
+  // The click's frame count is recorded when the frame showing the move is drawn (Performance draws every other frame).
+  const frames=await page.waitForFunction(()=>{const n=window.__arena.metrics.clickFrames.at(-1);return Number.isFinite(n)?{n}:null;},null,{timeout:30000})
+    .then(handle=>handle.jsonValue()).then(v=>v.n).catch(()=>assert.fail('The click to first movement is measured'));
+  await page.click('#pause-button');const paused=(await hero()).tick;await page.waitForTimeout(800);
+  assert.equal((await hero()).tick,paused,'No tick runs while paused');
+  await page.focus('#scene');await page.keyboard.press('Space');
+  assert.equal((await hero()).drawn,false,'Space while paused only queues');
+  await page.click('#pause-button');await step('The queued Space draws on resume',page.waitForFunction(()=>{const w=window.__arena.world();return w.actors.find(a=>a.id===w.controlled).drawn;},null,{timeout:60000}));
+  // Paused, the raiders hold still to be clicked; the overview shows every man, and a raider is
+  // chosen whose body is clear of the bars over the scene. The order waits for the resume.
+  await page.click('#pause-button');await page.focus('#scene');await page.keyboard.press('z');
+  await step('The overview camera settles',page.waitForFunction(()=>{const s=window.__arena.stage();return s.cameraView==='overview'&&s.cameraSettled;},null,{timeout:120000}));
+  const enemy=await arena(()=>{
+    const s=window.__arena.stage(),w=window.__arena.world(),r=s.canvas.getBoundingClientRect();
+    for(const e of w.actors.filter(a=>a.side==='enemy'&&a.alive)){
+      const p=s.actors.get(e.id).group.position.clone();p.y+=1.1;p.project(s.camera);const x=r.left+(p.x+1)/2*r.width,y=r.top+(1-p.y)/2*r.height;
+      if(document.elementFromPoint(x,y)===s.canvas)return {id:e.id,x,y};
+    }
+    return null;});
+  assert.ok(enemy,'A raider is in view');
+  await page.mouse.move(enemy.x,enemy.y);await page.mouse.down();await page.mouse.up();
+  assert.equal(await arena(()=>window.__arena.world().queue.at(-1)?.kind),'attack','The click on a raider is an attack, queued while paused');
+  await page.click('#pause-button');
+  await step('Clicking a raider locks him',page.waitForFunction(id=>window.__arena.world().actors.find(a=>a.id==='hero').lock===id,enemy.id,{timeout:60000}));
+  await page.click('#pause-button');const before=(await hero()).tick;await page.click('#step-button');
+  await page.waitForFunction(t=>window.__arena.world().tick>=t+200&&window.__arena.clock.paused&&!window.__arena.clock.stepTicks,before,{timeout:600000});
+  assert.equal((await hero()).tick,before+200,'N plays exactly one round');
+  await page.context().close();
+  console.log(`ok - real-time arena: the dev menu routes the skirmish there; a click moved the soldier (${frames} frame${frames===1?'':'s'} after it); pause stops the clock while Space queues; clicking a raider locks him; N plays 200 ticks`);
+}
+
+// The campaign's drill in real time (0.40 Phase 1): the field mounts in the page, a
+// click walks, P pauses, T and Enter attack the partner, the ability keys finish
+// the drill, the After-Action Chronicle appears and Record returns to the camp.
+// The walkable camp: through its list path, Varro's conversation (a reply by number) and the decision at the
+// commander's table, then the gate. Returns once the drill's field is ready.
+async function campToDrill(page,view='3d'){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.realtime-camp');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  await page.click('[data-cmd="conversation"][data-id="ch1:varro"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');
+  assert.match(await text(page,'#modal'),/Varro/);await page.keyboard.press('Escape');
+  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
+  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+}
+async function realtimeCampaign(){
+  const page=await open();await campToDrill(page);
+  const field=fn=>page.evaluate(fn);
+  const state=()=>field(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return {x:h.x,z:h.z,tick:w.tick,used:w.used,status:w.status,paused:window.__realtime.paused()};});
+  const running=async()=>{if((await state()).paused)await page.keyboard.press('KeyP');};
+  const box=await page.locator('#rt-board').boundingBox(),start=await state();
+  // The guided opening teaches the drill: first the footing, then a pause, then slow time.
+  await page.waitForFunction(()=>/Find your footing/.test(document.querySelector('[data-role="lesson"]:not([hidden])')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('The guided opening starts the drill'));
+  await page.mouse.click(box.x+box.width*.62,box.y+box.height*.45);
+  await page.waitForFunction(([x,z])=>{const h=window.__realtime.world().actors.find(a=>a.id==='hero');return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000})
+    .catch(()=>assert.fail('The click in the campaign field moves the soldier'));
+  await page.keyboard.press('KeyP');assert.equal((await state()).paused,true,'P pauses the campaign field');
+  await page.waitForFunction(()=>/Slow time/.test(document.querySelector('[data-role="lesson"]')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('After a walk and a pause, the guide teaches slow time'));
+  await page.waitForSelector('[data-role="pausedBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The paused band shows'));
+  // Saves: F2 keeps the moment with a picture the 3D stage draws for it; Menu → Saves lists it, paused under the panel.
+  await page.keyboard.press('F2');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('imperium.slots')??'{}').quick?.thumbnail?.startsWith('data:image/jpeg'),null,{timeout:30000})
+    .catch(()=>assert.fail('F2 quick-saves the fight with a picture'));
+  await page.click('[data-role="menuButton"]');await page.click('#modal [data-cmd="saves"]');await page.waitForSelector('#modal .save-slots');
+  await page.click('#modal [data-cmd="slot-save"][data-id="1"]');
+  await page.waitForSelector('#modal .save-slot:nth-child(2) img',{timeout:30000}).catch(()=>assert.fail('A named save from the panel shows its picture'));
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);
+  // The dialog's close event hands focus back to the scene a moment after it closes: give the keys to the scene.
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');await running();
+  await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(async()=>assert.fail(`T and Enter attack the drill partner: ${
+    await page.evaluate(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return JSON.stringify({tick:w.tick,status:w.status,paused:window.__realtime.paused(),
+      focus:document.activeElement?.id||document.activeElement?.dataset?.role||document.activeElement?.tagName,modal:document.querySelector('#modal')?.open,lock:h.lock,order:h.order?.kind,
+      used:w.used,line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`));
+  await running();await page.keyboard.press('Digit2');await page.keyboard.press('Digit2');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('brace'),null,{timeout:60000}).catch(()=>assert.fail('2 twice braces'));
+  await running();await page.keyboard.press('KeyT');await page.keyboard.press('Digit3');await page.keyboard.press('Digit3');
+  await page.waitForSelector('.rt-result',{timeout:120000}).catch(()=>assert.fail('The drill ends in the After-Action Chronicle'));
+  assert.match(await text(page,'.rt-result h2'),/The day is yours/);
+  await page.click('[data-cmd="commit"]');await page.waitForSelector('.camp-page');
+  // Back in the walkable camp: its own field, never the battle's.
+  assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"]')),false,'The battle field is gone after the result is recorded');
+  await page.context().close();
+  console.log('ok - real-time campaign: the drill plays in the campaign page (click, pause, F2 and a named save with pictures, T and Enter, abilities), ends in the After-Action Chronicle and is recorded');
+}
+
+// The same drill in the 2D view: the camp and the field drawn flat, the same keys and commands.
+async function realtimeFlat(){
+  const page=await open();await campToDrill(page,'2d');
+  assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"] canvas')),true);
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack in the 2D view'));
+  await page.context().close();
+  console.log('ok - real-time 2D view: the walkable camp and the drill are drawn flat; the list path, the table decision, T and Enter all work');
+}
+
+// Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
+async function restoreRealtime(page,code){
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+}
+async function realtimeSquads(){
+  const page=await open();await restoreRealtime(page,battleCampCode('ch5-mine'));
+  const standards=await page.locator('[data-role="squadBar"] .rt-standard').count();assert.ok(standards>=3,`The squad bar has a standard for each squad (${standards})`);
+  await page.waitForSelector('[data-role="commandPips"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The Command pips show beside the clock'));
+  await page.locator('#rt-board').focus();await page.keyboard.press('Shift+Digit1');
+  await page.waitForSelector('[data-role="squadBar"] .rt-standard[aria-pressed="true"]',{timeout:30000}).catch(()=>assert.fail('Shift+1 selects the first squad'));
+  await page.waitForSelector('[data-role="commandCard"]:not([hidden]) .rt-card-order[data-order="line"]',{timeout:30000}).catch(()=>assert.fail('The command card replaces the ability bar'));
+  await page.keyboard.press('Digit4');
+  if(await page.evaluate(()=>window.__realtime.paused()))await page.keyboard.press('KeyP');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('formation'),null,{timeout:120000}).catch(()=>assert.fail('4 orders the selected squad into line'));
+  await page.keyboard.press('KeyQ');await page.waitForSelector('#modal[open] .field-intel',{timeout:30000}).catch(()=>assert.fail('Q shows the field intelligence'));
+  assert.match(await text(page,'#modal .field-intel'),/Field intelligence/);assert.match(await text(page,'#modal'),/Allied plans/);
+  await page.context().close();
+  console.log('ok - real-time squads: a restored Chapter V battle plays in real time with its squad bar, Command pips and command card; Shift+1 and 4 form a line; Q shows the field intelligence and Allied plans');
+}
+async function realtimeDeployment(){
+  const page=await open();await restoreRealtime(page,battleCampCode('ch7-legion'));
+  await page.waitForSelector('[data-role="deployBar"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter VII opens in deployment'));
+  assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'The clock stands still while deploying');
+  await page.click('[data-role="advanceButton"]');await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]');
+  assert.equal(await page.evaluate(()=>window.__realtime.world().tick),0,'One press only asks to confirm');
+  // The confirmation within its five seconds: the button's own click, without Playwright's waits for a steady frame.
+  await page.evaluate(()=>document.querySelector('[data-role="advanceButton"]').click());
+  await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The second press sounds the advance and the battle runs'));
+  assert.equal(await page.isVisible('[data-role="deployBar"]'),false,'The deployment bar is gone');
+  await page.context().close();
+  console.log('ok - real-time deployment: a restored Chapter VII battle opens with the clock stopped, and Sound the advance (pressed twice) starts it');
+}
+
+// Phase 3 in the page: a restored camp's Contest walked as the Curia.
+async function restoreChamber(page,code,view='3d'){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+}
+// Every chamber command is recorded through the page's save transaction: wait for it before the next.
+const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
+const chamberHour=page=>page.evaluate(()=>window.__chamber.hour());
+// Chapter VII's council in 3D, by pointer and keys: a seat in the coalition strip opens the
+// conversation, asking his interest is free, Walk beside him and Persuade change his stance,
+// Y yields and the rivals' hour plays until Space skips it, U names the rivals' next walks, a
+// click on a member's figure talks to him, and yielding to the deadline ends in the division and the result.
+async function chamberCouncil(){
+  const page=await open();await restoreChamber(page,battleCampCode('ch7-council'));
+  assert.match(await text(page,'[data-role="roundLabel"]'),/^Hour 1 of \d+$/,'The clepsydra counts hours');
+  assert.equal(await page.locator('[data-role="abilityBar"] [data-speech]').count(),1,'Chapter VII has taught Persuade alone');
+  assert.match(await text(page,'[data-role="coalition"]'),/of 13 for · 7 needed/,'The coalition strip counts the vote');
+  let member=null;
+  for(let i=0;i<await page.locator('[data-role="coalition"] [data-person]').count()&&!member;i++){
+    await page.locator('[data-role="coalition"] [data-person]').nth(i).click();await page.waitForSelector('[data-role="conversation"]:not([hidden])');
+    if(await page.locator('[data-role="conversation"] [data-walk]').count())member=await page.evaluate(()=>window.__chamber.talking());
+  }
+  assert.ok(member,'A member the soldier can walk beside this hour');
+  const hour=JSON.stringify(await chamberHour(page));await page.click('[data-role="conversation"] [data-ask]');
+  await page.waitForSelector('[data-role="conversation"] .rt-talk-interest');assert.equal(JSON.stringify(await chamberHour(page)),hour,'Asking takes no time and changes nothing');
+  const stance=await page.evaluate(id=>window.__chamber.unit(id).stance,member);
+  await page.click('[data-role="conversation"] [data-walk]');await chamberIdle(page);assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').moved),true,'He walks beside him');
+  await page.waitForSelector('[data-role="conversation"] [data-speak="persuade"]');await page.click('[data-role="conversation"] [data-speak="persuade"]');await chamberIdle(page);
+  assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').acted),true,'Persuade spends his speech');
+  assert.ok(await page.evaluate(id=>window.__chamber.unit(id).stance,member)>stance,'Persuade moves the member');
+  await page.locator('#rt-board').focus();await page.keyboard.press('Escape');assert.equal(await page.isHidden('[data-role="conversation"]'),true,'Escape closes the conversation');
+  await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Y yields and the rivals take their hour'));
+  await page.keyboard.press('Space');await page.waitForSelector('[data-role="rivalsBand"]',{state:'hidden',timeout:30000}).catch(()=>assert.fail('Space skips the rivals’ hour'));
+  // The HUD redraws on the next frame.
+  assert.equal((await chamberHour(page)).hour,2);await page.waitForFunction(()=>/^Hour 2 of/.test(document.querySelector('[data-role="roundLabel"]')?.textContent??''),null,{timeout:30000})
+    .catch(async()=>assert.fail(`The hour reads ${await text(page,'[data-role="roundLabel"]')}`));
+  await page.keyboard.down('KeyU');await page.waitForFunction(()=>/challenges|attacks|no plan/.test(document.querySelector('[data-role="messageLine"]').textContent),null,{timeout:10000})
+    .catch(()=>assert.fail('U names where each rival means to walk next'));await page.keyboard.up('KeyU');
+  // The pointer: a click on a member's figure opens his conversation.
+  const figure=await page.evaluate(()=>{const s=window.__chamber.stage(),w=window.__realtime.world(),r=s.canvas.getBoundingClientRect();
+    for(const a of w.actors.filter(x=>x.civic?.role==='voter')){const g=s.actors.get(a.id).group.position.clone();g.y+=1.1;g.project(s.camera);
+      const x=r.left+(g.x+1)/2*r.width,y=r.top+(1-g.y)/2*r.height;if(document.elementFromPoint(x,y)===s.canvas)return {id:a.id,x,y};}return null;});
+  assert.ok(figure,'A member is in view');await page.mouse.move(figure.x,figure.y);await page.mouse.down();await page.mouse.up();
+  await page.waitForFunction(id=>window.__chamber.talking()===id,figure.id,{timeout:30000}).catch(()=>assert.fail('A click on a member talks to him'));
+  for(let guard=0;(await chamberHour(page)).status==='active'&&guard<20;guard++){
+    await page.locator('#rt-board').focus();await page.keyboard.press('KeyY');await chamberIdle(page);
+    await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000});await page.keyboard.press('Space');
+  }
+  await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The members divide at the vote'));
+  assert.match(await text(page,'[data-role="rivalsBand"]'),/The division/);
+  await page.waitForSelector('.chamber-result',{timeout:30000}).catch(()=>assert.fail('The vote’s result is shown'));
+  assert.match(await text(page,'.chamber-result'),/The motion (carries|is defeated)\./);
+  await page.context().close();
+  console.log('ok - chamber: Chapter VII’s council in 3D: a seat opens the conversation, asking is free, Walk beside him and Persuade move a member, Y and Space play and skip the rivals’ hour, U names their next walks, a click on a figure talks to him, and the vote ends in the division and its result');
+}
+// Gates 3 and 4: every chamber Contest (VII, VIII, X, both of XI and XII) played through in full in the page, in
+// the 2D view: a winning 0.38 log recorded from the same camp, replayed through the Command list's
+// own path (walks, speeches and yields as a player gives them), to the vote and Record the result.
+async function chamberContests(){
+  const played=[];
+  for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection','ch12-legitimacy']){
+    const code=battleCampCode(id),probe=Game.decodeSave(code);assert.ok(Game.startEncounter(probe).ok);
+    const trace=[],summary=playEncounter(probe,{approach:'record',trace});assert.equal(summary.status,'won',`${id}: the recorded log wins`);
+    const page=await open();await restoreChamber(page,code,'2d');
+    const start=await page.evaluate(()=>['hero','member0','member8','rival-speaker'].map(id=>window.__chamber.unit(id)).map(u=>[u.x,u.y,u.stance??u.resolve]));
+    const fresh=Game.decodeSave(code);Game.startEncounter(fresh);
+    assert.deepEqual(start,['hero','member0','member8','rival-speaker'].map(i=>fresh.encounter.units.find(u=>u.id===i)).map(u=>[u.x,u.y,u.stance??u.resolve]),`${id}: the page starts the same chamber`);
+    let ended=false,commands=0;
+    for(const t of trace){
+      if(t.kind==='endTurn'){if(ended){ended=false;continue;}await page.evaluate(()=>window.__chamber.use({kind:'yield'}));await chamberIdle(page);continue;}
+      const c=t.payload,before=await chamberHour(page);
+      await page.evaluate(op=>window.__chamber.use(op),c.action==='move'?{kind:'walk',unitId:c.unitId,tile:{x:c.x,y:c.y}}:{kind:'speak',command:c});await chamberIdle(page);
+      const after=await chamberHour(page);commands++;ended=after.hour!==before.hour||after.status!==before.status;
+    }
+    const result=await chamberHour(page);assert.equal(result.status,'won',`${id}: won in the page`);assert.deepEqual(result.votes,Game.voteCount(probe),`${id}: the same vote`);
+    const members=probe.encounter.units.filter(u=>u.role==='voter');
+    assert.deepEqual(await page.evaluate(ids=>ids.map(i=>window.__chamber.unit(i).stance),members.map(u=>u.id)),members.map(u=>u.stance),`${id}: every member’s stance as the rules played it`);
+    await page.waitForSelector('.chamber-result [data-cmd="commit"]',{timeout:30000});await page.click('.chamber-result [data-cmd="commit"]');
+    await page.waitForFunction(()=>!document.querySelector('.chamber-frame'),null,{timeout:60000}).catch(()=>assert.fail(`${id}: Record the result leaves the chamber`));
+    played.push(`${id} (${commands} commands, ${result.votes.for} of ${result.votes.total})`);await page.context().close();
+  }
+  console.log(`ok - chamber Contests: every walk-and-talk Contest played through in full in the 2D page, won and recorded: ${played.join(', ')}`);
+}
+
+// A hearing (Chapter X's tribunal, 2D): the Motion panel invokes a career precedent with the
+// soldier's speech; in the next hour the pack's documents are inspected (each member's exact
+// change), and one is dragged from the presiding magistrate's panel onto the tribunal.
+async function chamberHearing(){
+  const page=await open();await restoreChamber(page,battleCampCode('ch10-tribunal'),'2d');
+  await page.click('[data-role="motionButton"]');await page.waitForSelector('[data-role="conversation"]:not([hidden]) [data-precedent]');
+  assert.match(await text(page,'[data-role="conversation"]'),/The motion/,'The Motion panel holds the policy debate');
+  await page.click('[data-role="conversation"] [data-precedent]:not(:disabled) >> nth=0');await chamberIdle(page);
+  assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').acted),true,'A precedent spends the soldier’s speech');
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyY');await chamberIdle(page);await page.keyboard.press('Space');
+  await page.waitForFunction(()=>window.__chamber.hour().hour===2&&!window.__chamber.busy(),null,{timeout:30000});
+  await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .kit-documents',{timeout:30000}).catch(()=>assert.fail('The pack holds the hearing’s documents'));
+  await page.click('#modal .kit-documents [data-cmd="inspect-case"] >> nth=0');await page.waitForSelector('#modal[open] .case-preview-table');
+  assert.ok(await page.locator('#modal .case-preview-table tbody tr').count()>0,'Inspecting shows each member’s exact change');await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const tribunal=await page.evaluate(()=>{const s=window.__chamber.stage(),a=window.__realtime.world().actors.find(x=>x.id==='magistrate'),r=s.canvas.getBoundingClientRect(),p=s.screen(s.lastView,a.x,a.z);
+    return {x:r.left+p.x,y:r.top+p.y-s.lastView.th*1.2};});
+  await page.mouse.move(tribunal.x,tribunal.y);await page.mouse.down();await page.mouse.up();
+  await page.waitForFunction(()=>window.__chamber.talking()==='magistrate',null,{timeout:30000}).catch(()=>assert.fail('A click on the magistrate opens the tribunal'));
+  const doc=await page.locator('[data-role="conversation"] [data-document][draggable="true"] >> nth=0').boundingBox();
+  await page.mouse.move(doc.x+doc.width/2,doc.y+12);await page.mouse.down();await page.mouse.move(doc.x+doc.width/2-30,doc.y+30,{steps:4});
+  await page.mouse.move(tribunal.x,tribunal.y+10,{steps:12});await page.mouse.up();await chamberIdle(page);
+  await page.waitForFunction(()=>window.__chamber.unit('hero').acted,null,{timeout:30000}).catch(()=>assert.fail('A document dropped on the tribunal is presented'));
+  assert.match(await text(page,'[data-role="eventLine"]'),/One speech;/,'The rules record the documented case');
+  await page.context().close();
+  console.log('ok - chamber hearing: the Motion panel invokes a precedent, the pack’s documents show each member’s exact change, and a document dragged onto the tribunal is presented');
+}
+
+// Phase 4: the finale in the page (2D). The Chapter XII camp's defection route is chosen, the company
+// deploys and the advance is sounded; the soldier walks to the nearest rival band (legal commands through
+// the field's own path) and swears the oath with Rally: the band hears it, and the progress line counts pledges.
+async function realtimeFinale(){
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await page.click('[data-cmd="route"][data-id="defection"]');
+  await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
+  await page.click('[data-cmd="start"]:visible');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
+  await page.waitForSelector('[data-role="advanceButton"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter XII opens in deployment'));
+  await page.click('[data-role="advanceButton"]');
+  await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]',{timeout:60000}).catch(async()=>{
+    await page.screenshot({path:'/tmp/claude-0/-home-user-Imperium/e09ac0a8-2386-5e16-9f83-c9d748d8d29c/scratchpad/finale/advance-fail.png'}).catch(()=>{});
+    assert.fail(`One press asks to confirm the advance: ${await page.evaluate(()=>{const b=document.querySelector('[data-role="advanceButton"]');
+      return JSON.stringify({hidden:b?.closest('[hidden]')?.dataset.role??null,text:b?.textContent,confirm:b?.dataset.confirm??null,tick:window.__realtime.world()?.tick,modal:document.querySelector('#modal')?.open,
+        line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`);});
+  // The confirmation within its five seconds: the button's own click, without Playwright's waits for a steady frame.
+  await page.evaluate(()=>document.querySelector('[data-role="advanceButton"]').click());
+  await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
+  assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
+  assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
+  // Walk to the nearest rival band, then swear the oath once it is within three places (23 m).
+  const heard=await page.evaluate(async()=>{
+    const w=()=>window.__realtime.world(),hero=()=>w().actors.find(a=>a.id==='hero'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+    const near=()=>{const h=hero();return w().actors.filter(a=>a.side==='enemy'&&a.alive).map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((x,y)=>x.d-y.d)[0];};
+    for(let i=0;i<600;i++){
+      if(window.__realtime.paused())document.querySelector('[data-role="pauseButton"]')?.click();
+      const n=near();if(!n)return 'no rival';
+      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok)break;}
+      else if(!hero().goal||Math.hypot(hero().goal.x-n.a.x,hero().goal.z-n.a.z)>4)window.__realtime.issue({actorId:'hero',kind:'move',payload:{x:n.a.x,z:n.a.z}});
+      await wait(100);
+    }
+    for(let i=0;i<300;i++){if(w().log.some(l=>/hears the soldier’s oath/.test(l.text)))return 'heard';await wait(100);}
+    return 'not heard';
+  });
+  assert.equal(heard,'heard','A rival band hears the oath');
+  await page.waitForFunction(()=>/Pledges \d of 3/.test(document.querySelector('[data-role="progress"]')?.textContent??''));
+  await page.context().close();
+  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names, and the soldier’s oath (Rally within 23 m) is heard');
+}
+
+// Phase 4's settings in the page (2D): a Story chronicle's Time and pace start at 75% with a pause on enemies in
+// view; Pause is remapped to K from the Menu (a browser key is refused, Esc cancels), K pauses the camp, the
+// pause button and the generated Controls & rules name K, and Restore default keys gives P back.
+async function settingsAndHelp(){
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.check('input[name="campaign-difficulty"][value="story"]');await page.click('[data-cmd="begin"]');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  assert.equal(await page.inputValue('#game-speed'),'0.75','Story starts at 75%');assert.equal(await page.isChecked('#pause-sighted'),true,'and pauses when an enemy comes into view');
+  assert.equal(await page.isChecked('#pause-hurt'),false);
+  const status=()=>text(page,'#rebind-status');await page.click('#modal details.key-map > summary');
+  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Tab');
+  await page.waitForFunction(()=>/belongs to the browser/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
+    .catch(async()=>assert.fail(`Tab is refused: ${await status()}`));
+  await page.click('.key-row[data-action="war_cry"] [data-cmd="rebind"]');await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>/unchanged/.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000});
+  assert.equal(await page.evaluate(()=>document.querySelector('#modal')?.open),true,'Esc cancels the change, not the Menu');
+  await page.click('.key-row[data-action="pause"] [data-cmd="rebind"]');await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>/Pause and resume is now K\./.test(document.querySelector('#rebind-status')?.textContent??''),null,{timeout:10000})
+    .catch(async()=>assert.fail(`K is taken for Pause: ${await status()}`));
+  assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'K or Pause');
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  assert.equal(await page.getAttribute('[data-role="pauseButton"]','aria-keyshortcuts'),'K or Pause','The pause button names K');
+  await page.locator('#rt-board').focus();if(await page.evaluate(()=>window.__realtime.paused()))await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});await page.keyboard.press('KeyK');
+  await page.waitForFunction(()=>window.__realtime.paused()===true,null,{timeout:10000}).catch(()=>assert.fail('K pauses'));
+  await page.keyboard.press('KeyP');assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'P no longer pauses');
+  // The Menu pauses while it is open. Its close event can come hundreds of milliseconds after it closes, and keys
+  // pressed before then are the player's: resumed and paused again, the world stays paused when the event comes.
+  await page.keyboard.press('KeyK');await page.waitForFunction(()=>window.__realtime.paused()===false,null,{timeout:10000});
+  await menuButton(page,'settings');await page.waitForSelector('#modal[open] .pace-settings');
+  await page.evaluate(()=>new Promise(done=>{
+    const modal=document.querySelector('#modal'),c=document.querySelector('#rt-board'),k=()=>c.dispatchEvent(new KeyboardEvent('keydown',{code:'KeyK',key:'k',bubbles:true,cancelable:true}));
+    // The page's own close handler runs first; then this one.
+    modal.addEventListener('close',()=>setTimeout(done),{once:true});modal.close();k();k();}));
+  assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'A pause chosen as the Menu closes stands');await page.locator('#rt-board').focus();
+  await page.keyboard.press('Shift+Slash');await page.waitForSelector('#modal[open] .guide-help',{timeout:30000}).catch(()=>assert.fail('? opens the guide'));
+  await page.click('#modal [data-cmd="help-section"][data-id="controls"]');await page.waitForSelector('#modal .help-keys.changed[data-actions="pause"]');
+  assert.match(await text(page,'#modal .help-keys.changed[data-actions="pause"]'),/K or Pause \(by default P or Pause\)/);
+  await page.click('#modal [data-cmd="close-modal"] >> nth=0');await menuButton(page,'settings');await page.click('#modal details.key-map > summary');
+  await page.click('#modal [data-cmd="reset-keys"]');
+  assert.equal(await text(page,'.key-row[data-action="pause"] kbd'),'P or Pause','Restore default keys');
+  await page.context().close();
+  console.log('ok - settings: a Story chronicle starts at 75% with a pause on enemies in view; Pause remapped to K in the Menu (Tab refused, Esc cancels) pauses the camp and is named on its button and in the generated Controls & rules; a pause chosen as the Menu closes stands; Restore default keys');
+}
+
+// Migration from 0.38 in the page (2D): a Chapter V camp saved before 0.40 (no soldier record) asks once for the
+// soldier's training and grants the training points of Chapters I–IV; a battle in progress on the 0.38 board offers
+// Restart in real time, which opens the same battle in real time from its checkpoint.
+async function legacyChronicle(){
+  const page=await open(),old=Game.decodeSave(battleCampCode('ch5-mine'));delete old.soldier;
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await menuButton(page,'settings');await page.click('#modal [data-cmd="restore"]');
+  await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
+  const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
+  await page.check('#modal input[name="recruit-path"][value="explorator"]');await page.selectOption('#recruit-beard','2');await page.click('#modal [data-cmd="adopt-soldier"]');
+  await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
+    .catch(()=>assert.fail('The soldier is adopted and shown'));
+  await page.context().close();
+  // A battle begun on the 0.38 board.
+  const turns=Game.decodeSave(battleCampCode('ch5-mine'));assert.ok(Game.startEncounter(turns,{}).ok);
+  const second=await open();
+  await second.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await second.goto(base);await menuButton(second,'settings');await second.click('#modal [data-cmd="restore"]');
+  await second.fill('#restore-code',Game.encodeSave(turns));await second.click('[data-cmd="import-code"]');await second.click('[data-cmd="confirm-import"]');
+  await second.waitForSelector('.legacy-battle [data-cmd="restart-realtime"]',{timeout:60000}).catch(()=>assert.fail('The 0.38 battle offers a real-time restart'));
+  await second.click('.legacy-battle [data-cmd="restart-realtime"]');
+  await second.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail('The battle restarts in real time'));
+  assert.equal(await second.evaluate(()=>window.__realtime.world().encounterId),'ch5-mine');
+  await second.context().close();
+  console.log('ok - legacy chronicle: a Chapter V camp saved before 0.40 asks once for its soldier (training and appearance) and grants Chapters I–IV’s training points; a battle in progress on the turn-based board restarts in real time from its checkpoint');
+}
+
 let failed=false;
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck]){
+// SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
+const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
+for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+  // Each scenario's time is printed, so a slow one shows in CI's log.
+  const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
+  // A failed scenario leaves its pages open: close them, so their scenes stop drawing before the next scenario.
+  finally{for(const context of contexts)await context.close().catch(()=>{});contexts.clear();console.log(`# ${scenario.name}: ${Math.round((Date.now()-started)/1000)} s`);}
 }
 if(problems.length){failed=true;console.error(`not ok - browser errors:\n${problems.map(p=>`  ${p}`).join('\n')}`);}
 else console.log('ok - no page or console errors');

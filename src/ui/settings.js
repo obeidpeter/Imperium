@@ -1,6 +1,8 @@
 import {GRAPHICS_MODES,FIGURE_STYLES,defaultGraphicsMode} from './graphics-quality.js';
 import {audioLevel} from './audio.js';
 import {controlBindings,holdDelay} from './control-preferences.js';
+import {ALL_CHAPTERS,normalizeControls} from '../core/controls-model.js';
+import {keymapChanges,keymapFrom} from './action-map.js';
 
 // The legacy key keeps existing players' preferences.
 export const SETTINGS_KEY='sacramentum.settings';
@@ -15,6 +17,16 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
     coach:true,guide:true,
     adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,
     confirmMoves:false,fastMotion:false,reducedMotion,
+    // The 0.40 conversion's development switch (core/controls-model.js): 0.38 turns until it is changed.
+    controlsModel:'turns',realtimeChapters:[...ALL_CHAPTERS],
+    // Real time (the guide's Time and pace, and Controls): game speed, the auto-pause events and the pointer's habits.
+    // The pace follows the chronicle's difficulty until the player changes it (paceChosen; followDifficulty below).
+    ...paceDefaults('standard'),roundPause:false,panelPause:true,paceChosen:false,
+    drawToAttack:true,keepFighting:false,quickCast:false,holdToMove:true,swapButtons:false,
+    // The guide's readability settings: edge scrolling (3D), labels always or while U is held, objective markers and floating numbers.
+    edgeScroll:false,labelsAlways:false,objectiveMarkers:true,floatingNumbers:true,
+    // The real-time keys the player changed (action-map.js keymapFrom); the rest keep their defaults.
+    realtimeKeys:{},
     quality:defaultGraphicsMode({saveData,deviceMemory,phone})
   };
 }
@@ -31,8 +43,32 @@ export function loadSettings(stored,device){
   settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
   settings.keyBindings=controlBindings(settings.keyBindings);
   settings.holdDelay=holdDelay(settings.holdDelay);
+  Object.assign(settings,normalizeControls(settings));
+  if(![.5,.75,1].includes(settings.gameSpeed))settings.gameSpeed=defaults.gameSpeed;
+  for(const key of REALTIME_FLAGS)if(typeof settings[key]!=='boolean')settings[key]=defaults[key];
+  if(typeof settings.paceChosen!=='boolean')settings.paceChosen=false;
+  settings.realtimeKeys=keymapChanges(keymapFrom(settings.realtimeKeys));
   return settings;
 }
+
+// Time and pace by difficulty (build brief §4, guide "Difficulty"): Story starts at 75% and pauses
+// when an enemy comes into view; Standard and Veteran at 100% with every auto-pause off. The pace
+// follows the chronicle's difficulty until the player changes one of these, and then stays theirs.
+export const PACE_KEYS=Object.freeze(['gameSpeed','pauseSighted','pauseHurt','pauseObjective','pauseSquad','pauseOrder']);
+export function paceDefaults(difficulty){
+  const story=difficulty==='story';
+  return {gameSpeed:story?.75:1,pauseSighted:story,pauseHurt:false,pauseObjective:false,pauseSquad:false,pauseOrder:false};
+}
+export function followDifficulty(settings,difficulty){if(!settings.paceChosen)Object.assign(settings,paceDefaults(difficulty));return settings;}
+// The player sets one: from now on the pace is theirs, whatever the difficulty.
+export function choosePace(settings,key,value){
+  if(key==='gameSpeed'){if(![.5,.75,1].includes(Number(value)))return settings;settings.gameSpeed=Number(value);}
+  else if([...PACE_KEYS,'roundPause','panelPause'].includes(key))settings[key]=!!value;else return settings;
+  if(PACE_KEYS.includes(key))settings.paceChosen=true;return settings;
+}
+
+const REALTIME_FLAGS=['pauseSighted','pauseHurt','pauseObjective','pauseSquad','pauseOrder','roundPause','panelPause','drawToAttack','keepFighting','quickCast',
+  'holdToMove','swapButtons','edgeScroll','labelsAlways','objectiveMarkers','floatingNumbers'];
 
 // Settings checkboxes that only store their setting, then redraw the page or
 // tell the 3D stage (a method of the battle-stage controller).

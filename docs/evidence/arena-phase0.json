@@ -1,0 +1,137 @@
+{
+  "tool": "imperium-arena-benchmark",
+  "measuredAt": "2026-10-21T16:20:20.463Z",
+  "build": "dist",
+  "quality": "performance",
+  "renderer": "headless Chromium, SwiftShader (software)",
+  "readyMs": 4035,
+  "input": {
+    "clickToMovementMs": [
+      457.29999999981374,
+      47.5,
+      3204.100000000559,
+      97.40000000037253,
+      19.90000000037253
+    ],
+    "clickToMovementFrames": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "ms": {
+      "p50": 97.40000000037253,
+      "max": 3204.100000000559,
+      "n": 5
+    },
+    "frames": {
+      "p50": 1,
+      "max": 1,
+      "n": 5
+    }
+  },
+  "fights": [
+    {
+      "status": "won",
+      "battleSeconds": 33.75,
+      "hp": 9,
+      "maxHp": 26,
+      "clicks": 3
+    },
+    {
+      "status": "won",
+      "battleSeconds": 16.8,
+      "hp": 10,
+      "maxHp": 26,
+      "clicks": 3
+    },
+    {
+      "status": "won",
+      "battleSeconds": 22.55,
+      "hp": 17,
+      "maxHp": 26,
+      "clicks": 3
+    }
+  ],
+  "check": {
+    "tool": "imperium-arena-check",
+    "version": 1,
+    "measuredAt": "2026-10-21T16:20:13.681Z",
+    "quality": "performance",
+    "render": {
+      "actors": 15,
+      "seconds": 12,
+      "frames": 11,
+      "fps": 5,
+      "intervalMs": {
+        "p50": 216.7,
+        "p95": 4199.9,
+        "max": 4199.9,
+        "n": 11
+      },
+      "cpuMs": {
+        "p50": 14.2,
+        "p95": 27,
+        "max": 27,
+        "n": 11
+      },
+      "longTasks": {
+        "count": 1,
+        "maxMs": 58
+      },
+      "tickMs": {
+        "p50": 0.2,
+        "p95": 8,
+        "max": 9.3,
+        "n": 35
+      }
+    },
+    "simulation": {
+      "skirmish15": {
+        "actors": 15,
+        "p50": 0,
+        "p95": 0.2,
+        "max": 4.7,
+        "n": 255
+      },
+      "crowd82": {
+        "actors": 82,
+        "p50": 0.2,
+        "p95": 0.5,
+        "max": 7.1,
+        "n": 406
+      }
+    },
+    "input": {
+      "clickToMovementMs": {
+        "p50": 97.4,
+        "p95": 3204.1,
+        "max": 3204.1,
+        "n": 5
+      },
+      "clickToMovementFrames": {
+        "p50": 1,
+        "p95": 1,
+        "max": 1,
+        "n": 5
+      }
+    },
+    "gate0": {
+      "fpsTarget": 45,
+      "clickMs": 100,
+      "tickBudgetMs": 4
+    },
+    "device": {
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+      "hardwareConcurrency": 4,
+      "deviceMemoryGb": 8,
+      "devicePixelRatio": 1,
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      }
+    }
+  },
+  "errors": []
+}

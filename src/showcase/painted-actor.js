@@ -13,6 +13,8 @@ const SCALE=PAINTED_CANVAS.figure/117.5; // drawUnitSprite paints an infantryman
 const TILE_WIDTH=140/1.62,PER_METRE=PAINTED_CANVAS.figure/PAINTED_CANVAS.metres;
 const GRID_FACING={east:Math.PI/2,south:0,west:-Math.PI/2,north:Math.PI};
 
+// A follower's turn (a real-time man faces his own way) varies the card's size by a few per cent at most.
+const clamp11=v=>Math.max(-.11,Math.min(.11,Number(v)||0));
 // The authored columns show four 3/4 views. Pick the one whose painted
 // direction matches the figure's yaw as seen from the camera: right/left on
 // screen and toward/away from the viewer (the 2D board's own convention).
@@ -171,7 +173,7 @@ export function createPaintedActor(unit={},{chapter=1,contest=false,light=[1,1,1
         update({slots=[],visible=0,heightAt=null,onFall=null}={}){if(gone)return;const next=placeFollowers(group,{slots,visible,heightAt,max});
           if(typeof onFall==='function')for(let i=next.length;i<placed.length;i++)onFall({world:placed[i].world.clone(),yaw:group.rotation.y+(placed[i].yaw??0),index:i});
           placed=next;footprints.length=0;for(const p of placed)footprints.push(p.world);},
-        place(){if(gone)return;placed.forEach((p,i)=>{const s=1+p.yaw*.18;position.set(p.x,p.y,p.z);scale.set(s,s,s);cards.setMatrixAt(i,matrix.compose(position,card.quaternion,scale));shadows.setMatrixAt(i,matrix.compose(position,shadow.quaternion,scale));});cards.count=shadows.count=placed.length;cards.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;},
+        place(){if(gone)return;placed.forEach((p,i)=>{const s=1+clamp11(p.yaw)*.18;position.set(p.x,p.y,p.z);scale.set(s,s,s);cards.setMatrixAt(i,matrix.compose(position,card.quaternion,scale));shadows.setMatrixAt(i,matrix.compose(position,shadow.quaternion,scale));});cards.count=shadows.count=placed.length;cards.instanceMatrix.needsUpdate=shadows.instanceMatrix.needsUpdate=true;},
         dispose(){if(gone)return;gone=true;cards.removeFromParent();shadows.removeFromParent();cards.dispose();shadows.dispose();if(crowd===this)crowd=null;}};
       return crowd;
     },

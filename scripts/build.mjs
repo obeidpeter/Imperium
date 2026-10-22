@@ -5,7 +5,7 @@ import {gzipSync} from 'node:zlib';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
-import {staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
+import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
 
 const root=resolve('.'),dist=resolve(root,'dist');
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
@@ -48,6 +48,9 @@ const showcaseAssets=studyAssets(assets,{shellModules}),showcaseSet=new Set(show
 const initial=initialAssets(assets,{shellModules,openingArt});
 const chapterGroups=Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
 for(const [chapter,paths]of Object.entries(chapterGroups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
+// Offline play: every module the page can load, on demand included, is in the shell or in every chapter's pack.
+for(const url of await moduleClosure(dist,'src/ui/app.js'))if(!initial.includes(url))for(const [chapter,paths]of Object.entries(chapterGroups))
+  if(!paths.includes(url))throw new Error(`Chapter ${chapter}'s offline pack lacks ${url}, which the page can load`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups));
 await writeFile(join(dist,'sw.js'),sw);
 const sum=(items,key)=>items.reduce((total,item)=>total+item[key],0);

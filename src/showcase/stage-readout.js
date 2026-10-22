@@ -16,6 +16,8 @@ export function actorReadout(unit, encounter) {
       ratio:bounded(Math.abs(stance), 6), signal:`${stance >= 1 ? '✓' : '−'} ${stance > 0 ? '+' : ''}${stance} stance`,
       detail:`${unit.bloc || 'Delegate'} · ${Math.abs(stance) >= 3 ? 'Committed' : 'Wavering'}${promised ? ' · Promised' : ''}${agreed ? ' · Agreed' : ''}`};
   }
+  // A hearing's presiding magistrate (the walk-and-talk chamber): he receives the evidence.
+  if (unit.presides) return {type:'office', tone:'neutral', value:0, ratio:1, signal:'Presides', detail:'Talk to him to present evidence'};
   if (unit.resolve !== undefined) {
     const withdrawn = unit.resolve <= 0;
     return {type:'resolve', tone:unit.side === 'enemy' ? 'opposition' : 'support', value:unit.resolve,
@@ -42,8 +44,9 @@ export function missionReadouts(encounter) {
   for (const [index,point] of (mission.points??[]).entries()) entries.push({id:`point-${index}`,...point,label:`${ index===0&&!entries.length?phasePrefix:''}${point.secured?'✓ Secured':'◇ Secure'} ${index+1}`,tone:point.secured?'secured':'goal'});
   // Only the next publicly announced wave is marked, matching the orders panel.
   const wave=mission.waves?.find(item=>!item.arrived);
-  if (wave) entries.push({id:'wave',x:wave.x,y:wave.y,label:`Reinforcements · turn ${wave.turn}`,tone:'warning'});
-  for(const o of encounter.field?.objects??[])if(['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
+  if (wave) entries.push({id:'wave',x:wave.x,y:wave.y,label:`Reinforcements · ${mission.rounds?'round':'turn'} ${wave.turn}`,tone:'warning'});
+  // A real-time footbridge is drawn in sections; only its middle one is named.
+  for(const o of encounter.field?.objects??[])if(!o.section&&['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
   return entries;
 }
 

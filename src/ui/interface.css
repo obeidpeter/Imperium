@@ -35,3 +35,5 @@ html[data-reduced=true] .title-art img{animation:none}html[data-hidden=true] *{a
 .gameplay-shot img{max-width:320px;aspect-ratio:auto}.gameplay-gallery{max-width:54rem}.gameplay-shot img[data-src],.world-art img[data-src]{color:transparent}.media-request{margin-top:.5rem;font-size:var(--font-label)}
 .campaign-list{list-style:none;padding:0}.chapter-state{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .75rem}.route-map{margin-bottom:1rem}.route-map summary{cursor:pointer;min-height:44px;padding:.6rem 0;color:var(--red);font-size:var(--font-label)}.route-map[open] summary{margin-bottom:.75rem}.route-map .campaign-geography{margin:0}.ledger-summary>span{flex:1}.site-header .menu-toggle[aria-expanded=true]{background:#ffffff24}
 dialog{max-width:calc(100% - 1rem)}
+/* Development menu: the 0.40 conversion's per-chapter switches wrap as a grid of checkboxes. */
+.realtime-chapters{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;border:0;margin:0}.realtime-chapters legend{flex-basis:100%;font:inherit;padding:0 0 .4rem}.realtime-chapters label{display:inline-flex;gap:.35rem;align-items:center;min-height:44px}

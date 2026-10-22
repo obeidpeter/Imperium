@@ -1,0 +1,119 @@
+/* The real-time arena (0.40 Phase 0). The scene fills the screen; the HUD sits over it. */
+:root{color-scheme:dark;--ink:#f4ead5;--muted:#c0bba9;--deep:#101714;--panel:rgba(20,26,22,.86);--line:#596052;--bronze:#c8aa70;--focus:#f3d48d;
+  --health:#c2523f;--stamina:#d6b25b;--friend:#9fd3d0;--enemy:#ef8f74;--radius:.4rem;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#171c1a;color:var(--ink)}
+*{box-sizing:border-box}
+body{margin:0;line-height:1.45;overscroll-behavior:none}
+h1,h2,p{margin:0}
+h1,h2{font-family:Palatino,"Palatino Linotype","Book Antiqua",Georgia,serif;font-weight:400;line-height:1.1}
+button,select,input,a.button{font:inherit}
+button,select,a.button{min-block-size:2.75rem;min-inline-size:2.75rem;padding:.45rem .8rem;border:1px solid var(--line);border-radius:var(--radius);
+  background:#29312a;color:var(--ink);font-weight:650;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.4rem}
+button:hover:not(:disabled),a.button:hover{background:#354032;border-color:var(--bronze)}
+button:disabled{opacity:.55;cursor:not-allowed}
+button[aria-pressed="true"]{background:#4a3f25;border-color:var(--bronze)}
+button.primary{background:#7a5d2a;border-color:var(--bronze)}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+[hidden]{display:none!important}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip-link{position:absolute;left:-999px;top:.5rem;z-index:20;background:var(--deep);padding:.5rem 1rem}.skip-link:focus{left:.5rem}
+.eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bronze)}
+
+.arena-scene{position:relative;block-size:100vh;block-size:100dvh;min-block-size:480px;overflow:hidden;background:#141a17}
+#scene{display:block;inline-size:100%;block-size:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;outline:none}
+#scene:focus-visible{box-shadow:inset 0 0 0 3px var(--focus)}
+/* The figures' labels, as the 3D study draws them (showcase.css). */
+.world-labels{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;contain:layout style paint}
+.world-unit{position:absolute;inset-block-start:0;inset-inline-start:0;display:flex;flex-direction:column;align-items:center;gap:.15rem;min-inline-size:2rem;max-inline-size:10rem;pointer-events:none;will-change:transform}
+.world-name{padding:.18rem .45rem;border:1px solid #77907a75;border-radius:.2rem;background:#13231deb;color:#f6efdb;font-size:.6875rem;font-weight:650;line-height:1.35;text-shadow:0 1px 2px #000;overflow-wrap:anywhere;text-align:center}
+.world-health{display:block;inline-size:2.5rem;block-size:.2rem;overflow:hidden;border-radius:2px;background:#0d1715dc;box-shadow:0 0 0 1px #cfdfbc4d}
+.world-health>i{display:block;block-size:100%;max-inline-size:100%;background:#abc89a}
+.world-unit.enemy .world-name{border-color:#ba7b6866;background:#2e1c18eb;color:#f3ddce}.world-unit.enemy .world-health>i{background:#db9e81}
+.world-unit.selected .world-name{border-color:#d4b773;background:#3b3321f2;color:#fff1bd}
+/* Your soldier is marked with a star (the guide's Battles section). */
+.world-unit.selected .world-name::before{content:'★ ';color:#f1d38a}
+.world-unit>strong{order:-1;color:#ffe2b0;font-size:1rem;font-weight:800;line-height:1.2;text-shadow:0 1px 3px #000,1px 0 3px #000,-1px 0 3px #000}
+.world-unit>strong:empty,.world-unit .world-short,.world-unit .world-detail,.world-unit .world-signal,.world-unit .world-role{display:none}
+.world-unit .world-leader{position:absolute;inset:100% auto auto 50%;height:1px;background:#dccb9a88;transform-origin:0 50%}
+.world-unit[data-layout=occluded],.world-unit[data-layout=offscreen]{visibility:hidden}.world-unit.selected{z-index:3}
+.veil{position:absolute;inset:0;display:grid;place-items:center;background:#141a17;font-size:1.1rem;z-index:5;transition:opacity .4s}
+.veil.done{opacity:0;pointer-events:none}
+
+/* Cursor states (§3.14): boot to walk, a running boot, crossed swords, a barred circle, an ability's target. */
+#scene[data-cursor="walk"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M9 3h6v12l6 3v5H6l1-8z' fill='%23f4ead5' stroke='%23141a17' stroke-width='1.5'/%3E%3C/svg%3E") 6 24,pointer}
+#scene[data-cursor="run"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M12 3h6v12l6 3v5H9l1-8z' fill='%23f1dfa2' stroke='%23141a17' stroke-width='1.5'/%3E%3Cpath d='M1 10h6M2 14h5M1 18h6' stroke='%23f1dfa2' stroke-width='2'/%3E%3C/svg%3E") 9 24,pointer}
+#scene[data-cursor="attack"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M4 4l20 20M24 4L4 24' stroke='%23141a17' stroke-width='5'/%3E%3Cpath d='M4 4l20 20M24 4L4 24' stroke='%23ef8f74' stroke-width='3'/%3E%3C/svg%3E") 14 14,crosshair}
+#scene[data-cursor="blocked"],#scene[data-cursor="ability_invalid"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%23141a17' stroke-width='5'/%3E%3Ccircle cx='14' cy='14' r='10' fill='none' stroke='%23e06b5a' stroke-width='3'/%3E%3Cpath d='M7 7l14 14' stroke='%23e06b5a' stroke-width='3'/%3E%3C/svg%3E") 14 14,not-allowed}
+#scene[data-cursor="ability_valid"]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='14' cy='14' r='9' fill='none' stroke='%239fd3d0' stroke-width='3'/%3E%3Cpath d='M14 1v8M14 19v8M1 14h8M19 14h8' stroke='%239fd3d0' stroke-width='2'/%3E%3C/svg%3E") 14 14,crosshair}
+
+/* Top: mission, time, clock, menu. */
+.arena-top{position:absolute;inset:0 0 auto 0;display:flex;align-items:flex-start;gap:.75rem;padding:max(.75rem,env(safe-area-inset-top)) .9rem .5rem;
+  background:linear-gradient(#0b0f0dcc,#0b0f0d00);pointer-events:none;z-index:3}
+.arena-top>*{pointer-events:auto}
+.mission{flex:1 1 auto;min-inline-size:0}.mission h1{font-size:1.45rem}.mission p:last-child{color:var(--muted);font-size:.92rem}
+.time-controls{display:flex;gap:.4rem}.pause-button{min-inline-size:6.5rem;font-size:1rem}
+.battle-clock{display:flex;align-items:center;gap:.45rem;flex:none;padding-inline-end:.6rem;border-inline-end:1px solid var(--line)}
+.battle-clock svg{inline-size:2.1rem;block-size:2.1rem;transform:rotate(-90deg)}.battle-clock circle{fill:none;stroke-width:4}
+.clock-track{stroke:#3a4339}.clock-ring{stroke:var(--bronze);stroke-linecap:round}
+.battle-clock p{display:grid;line-height:1.15}.battle-clock span{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.paused-band{position:absolute;inset:5.2rem 0 auto;margin-inline:auto;inline-size:max-content;max-inline-size:92%;background:#4a3f25ee;border:1px solid var(--bronze);
+  border-radius:var(--radius);padding:.35rem .9rem;font-weight:650;z-index:3;text-align:center}
+
+/* Bottom: portrait, message line, abilities. */
+.arena-hud{position:absolute;inset:auto 0 0 0;display:grid;grid-template-columns:auto 1fr auto;gap:.75rem;align-items:end;
+  padding:.6rem .9rem max(.7rem,env(safe-area-inset-bottom));background:linear-gradient(#0b0f0d00,#0b0f0dd9 40%);z-index:3}
+/* The bars sit over the scene: only their controls take the pointer, never the space between them. */
+.arena-hud,.paused-band{pointer-events:none}.arena-hud>*{pointer-events:auto}
+.portrait-card{display:flex;align-items:center;gap:.55rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.4rem .55rem}
+.portrait{padding:0;position:relative;inline-size:3.6rem;block-size:3.6rem;border-radius:.35rem;overflow:hidden;border:2px solid var(--friend)}
+.portrait img{inline-size:100%;block-size:100%;object-fit:cover}
+.portrait-card.hurt .portrait{border-color:var(--health);box-shadow:0 0 0 2px #c2523f88}
+.portrait-card.hurt .portrait-mark::after{content:"!";position:absolute;right:.15rem;top:0;font-weight:900;color:#ffd0c4;text-shadow:0 0 3px #000}
+.portrait-card.down .portrait{filter:grayscale(1)}.portrait-card.down .portrait-mark::after{content:"✝";position:absolute;right:.2rem;top:0}
+.vitals{display:grid;gap:.22rem;min-inline-size:11.5rem}.hero-name{font-weight:650;font-size:.92rem}
+.bar{position:relative;block-size:1rem;background:#2b2f2a;border-radius:.2rem;overflow:hidden;font-size:.72rem;line-height:1rem}
+.bar i{position:absolute;inset:0 auto 0 0;inline-size:100%;transition:inline-size .15s}.bar span{position:relative;padding-inline:.35rem;font-variant-numeric:tabular-nums}
+.bar.health i{background:var(--health)}.bar.stamina i{background:var(--stamina)}.bar.stamina span{color:#1a1608}
+.swords{font-size:1.35rem;inline-size:2.9rem}.swords[aria-pressed="true"]{color:#ffd28a}
+.message-area{align-self:end;min-inline-size:0;display:flex;align-items:center;gap:.7rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.45rem .7rem}
+.message-lines{min-inline-size:0;flex:1}
+.message-line{font-size:.95rem;min-block-size:1.4em;overflow-wrap:anywhere}.message-line.warning{color:#ffc4b5}
+.event-line{color:var(--muted);font-size:.85rem;min-block-size:1.2em}
+.ability-area{display:grid;gap:.35rem;justify-items:end}
+.current-ability{display:flex;align-items:baseline;gap:.4rem;font-size:.95rem}
+.ability-bar,.toggles{display:flex;gap:.35rem;flex-wrap:wrap;justify-content:flex-end}
+.ability{flex-direction:column;gap:0;min-inline-size:4.6rem;line-height:1.1;font-size:.82rem;position:relative}
+.ability kbd{position:absolute;left:.3rem;top:.15rem;font:600 .68rem system-ui;color:var(--muted)}
+.ability small{font-weight:400;color:var(--muted);font-size:.72rem}
+.ability[aria-pressed="true"]{background:#4a3f25;border-color:var(--bronze);box-shadow:inset 0 0 0 1px var(--bronze)}
+.ability.unavailable{opacity:.6}.ability.armed{outline:3px solid var(--friend)}
+
+/* The battle log, below the scene. */
+.battle-log-panel{padding:1rem 1.2rem 2rem;max-inline-size:60rem;margin-inline:auto}
+.battle-log-panel h2{font-size:1.3rem}.log-note{color:var(--muted);font-size:.85rem;margin-block:.2rem .6rem}
+.battle-log{list-style:none;margin:0;padding:0;display:grid;gap:.2rem}
+.battle-log button{inline-size:100%;justify-content:flex-start;min-block-size:2.4rem;font-weight:400;background:transparent;border-color:transparent;text-align:start}
+.battle-log time{color:var(--bronze);font-variant-numeric:tabular-nums;min-inline-size:3rem}
+
+/* Dialogs. */
+.arena-dialog{max-inline-size:min(36rem,94vw);border:1px solid var(--bronze);border-radius:.6rem;background:#1b211d;color:var(--ink);padding:1.4rem 1.5rem}
+.arena-dialog.wide{max-inline-size:min(52rem,96vw)}
+.arena-dialog::backdrop{background:#000a}.arena-dialog h2{font-size:1.7rem;margin-block:.3rem .7rem}
+.arena-dialog p+p,.arena-dialog ul{margin-block-start:.6rem}.how-to{padding-inline-start:1.2rem;display:grid;gap:.35rem}
+.study-note{color:var(--muted);font-size:.85rem;margin-block-start:.7rem}
+.dialog-actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-block-start:1.1rem}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:.5rem 1rem;margin-block-start:.8rem}
+.menu-grid label{display:grid;gap:.2rem}.menu-grid label.check{display:flex;align-items:center;gap:.5rem;min-block-size:2.75rem}
+.menu-grid select{inline-size:100%}
+.check-table{border-collapse:collapse;inline-size:100%;font-variant-numeric:tabular-nums;margin-block-start:.6rem}
+.check-table th,.check-table td{border-block-end:1px solid var(--line);padding:.35rem .4rem;text-align:start}
+
+/* Phones: one column; the message line keeps its place above the controls. */
+@media (max-width:760px){
+  .arena-top{flex-wrap:wrap;gap:.45rem}.mission{flex-basis:100%}.mission .eyebrow,.mission p:last-child{display:none}.mission h1{font-size:1.1rem}
+  .paused-band{inset-block-start:7.2rem}
+  .arena-hud{grid-template-columns:1fr;gap:.45rem}.portrait-card{justify-self:start}.ability-area{justify-items:stretch}
+  .ability-bar,.toggles{justify-content:flex-start}.current-ability{display:none}
+}
+@media (prefers-reduced-motion:reduce){.veil,.bar i{transition:none}}

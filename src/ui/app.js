@@ -15,7 +15,23 @@ import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
-import {SETTINGS_KEY,SETTING_TOGGLES,loadSettings} from './settings.js';
+import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
+import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
+import {realtimeEncounterView,fieldMarkup,relabelField} from './realtime-view.js';
+import {realtimeLesson} from './realtime-lessons.js';
+import {tpAuditTotal} from '../core/tp-audit.js';
+import {chamberEncounterView,documentPreview} from './chamber-view.js';
+import * as Chamber from '../core/chamber.js';
+import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
+import {ITEMS} from '../data/items.js';
+import {TRAINERS} from '../data/soldier.js';
+import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
+import {practicePanel} from './command-edition-views.js';
+import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
+import {warCouncilAdvisories} from './campaign-upgrade-views.js';
+import {actionFor} from './action-map.js';
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,
+  adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -66,9 +82,13 @@ function reach(){return walkableReach(state,{selected,action});}
 let settings=loadSettings(storedSettings(),
   {reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,saveData:navigator.connection?.saveData,deviceMemory:navigator.deviceMemory,
     phone:phoneLike()});
+// The player's real-time keys: one map, changed in place, shared by the field, its hints and the page's own keys.
+const keymap=keymapFrom(settings.realtimeKeys);
 const soundscape=campaignSoundscape();soundscape.configure(settings);
 function storedSettings(){try{return localStorage.getItem(SETTINGS_KEY);}catch{return null;}}
 function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch{}}
+// The development menu: always in the source tree (npm run dev), and in a build with ?dev in the address.
+const devMenu=CONFIG.development!==false||/[?&]dev(?:[=&]|$)/.test(globalThis.location?.search??'');
 const graphics=createGraphicsQuality({mode:settings.quality,
   onChange:({mode,reason})=>{
     battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;
@@ -76,11 +96,11 @@ const graphics=createGraphicsQuality({mode:settings.quality,
     if(reason==='measured-cost')announce(`Graphics `+
   `changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);
   }});
-const {header,footer,titleView,meters,requirements,camp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
+const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable}));
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -104,10 +124,17 @@ function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction,orderDestination});}
 
 function battle(){
+  if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap});
+  if(chamberMode())return chamberEncounterView({state,saving,lastSaved,saveProblem,saveConflict,known:chamberKnown()});
   selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}
-  return encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
+  const view=encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
     keyBindings:settings.keyBindings,coach:settings.coach,guide:settings.guide,state,selected,action,target,focusTile,showGrid,formation,orderAction,
     orderDestination,feedback,header,footer,requirements,saving,lastSaved,saveProblem,saveConflict,artProgress,offlineProgress});
+  // A battle begun on the 0.38 board, in a chapter that now plays in real time (a chronicle from before 0.40): it can restart from its checkpoint.
+  const legacy=state.encounter.kind==='battle'&&state.encounter.status==='active'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime';
+  return legacy?view.replace(/(<main\b[^>]*>)/,`$1<aside class="command-save-warning legacy-battle" role="note"><p>This battle began on the turn-based board. Its chapter `+
+    `now plays in real time: restart it from its checkpoint, the battle's start with everything as it was, or finish it here.</p><div>`+
+    `<button data-cmd="restart-realtime">Restart in real time</button></div></aside>`):view;
 }
 const replay=createTurnReplay({
   show(text,index,total){const panel=document.querySelector('#turn-replay');if(!panel)return;panel.hidden=false;panel.innerHTML=`<span>`+
@@ -140,6 +167,8 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
 function render(){
   // A running performance check owns the 3D stage; the page catches up after it.
   if(renderHold.defer())return;
+  // Time and pace follow this chronicle's difficulty until the player chooses their own.
+  followDifficulty(settings,state?.difficulty);
   cleanupSiteMedia();
   stopMotion();
   replay.stop();
@@ -158,9 +187,12 @@ function render(){
   // A new screen starts afresh; within one, the page is updated in place, so the
   // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
   if(newView)app.replaceChildren();
-  updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending():camp());
+  updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
+    :campMode()?realtimeCamp():camp());
   soundscape.update(state,screen);
-  if(uses3D()){
+  const target=fieldTarget();
+  if(target)mountField(target);
+  else if(uses3D()){
     const motion=pendingMotion,cmd=command(),checked=cmd?Game.preview(state,cmd):null,
       commendations=Object.fromEntries((state.company||[]).map(v=>[v.id,v.commendations||0]));
     pendingMotion=null;
@@ -172,6 +204,7 @@ function render(){
         holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,audioVolume:settings.audioVolume,paused:modal.open,
         onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});
   }else battleStage.release();
+  if(field&&!target)disposeField();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
   if(ceremony3D)ceremony.mount(ceremonyHost,
     {kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
@@ -180,10 +213,340 @@ function render(){
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
   renderScheduler.schedule({activeId});
+  askSoldier();
+}
+// The recruit's training and appearance as chosen in the open panel (New Game, or a chronicle's one-time choice).
+function recruitChoice(){
+  const path=modal.querySelector('input[name="recruit-path"]:checked')?.value??'legionary';
+  return {path,appearance:Object.fromEntries([...modal.querySelectorAll('[data-appearance]')].map(el=>[el.dataset.appearance,Number(el.value)]))};
+}
+// A chronicle begun before 0.40 is asked once, in camp, to choose its soldier's training (build brief §3.17).
+// Choosing grants the training points of the chapters it has completed; until then the rules read a Legionary.
+let soldierAsked=false;
+function askSoldier(){
+  if(soldierAsked||!state||state.soldier||screen==='title'||state.phase!=='camp'||state.archiveReplay||settings.controlsModel!=='realtime'||modal.open)return;
+  soldierAsked=true;queueMicrotask(()=>{if(!modal.open&&!state.soldier)showSoldierPanel('adopt');});
 }
 function mountPainting(){
   const host=paintingHost(app,{title:screen==='title',ceremony3D:settings.battleView!=='2d'&&!failed3D});
   if(host)scenePainting.mount(host,{chapter:state?.chapter,quality:graphics.mode,reducedMotion:settings.reducedMotion});else scenePainting.release();
+}
+// ——— The real-time field (0.40): one per fight, kept between renders. The
+// world steps on the page; the chronicle receives it only when it is saved
+// (pause, a hidden page, F2) or resolved. ———
+let field=null;
+// What the field plays: a fight's saved world, or (a chamber) the Contest itself, which a retry or a load replaces.
+const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
+// A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
+function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter);}
+// A Contest is walked as a chamber once its chapter's chamber exists (chamberFor); the
+// archive's sandbox replays keep the 0.38 board with its mutators.
+function chamberMode(){return !!state&&screen!=='title'&&state.phase==='encounter'&&state.encounter?.kind==='contest'&&!state.archiveReplay&&chamberFor(settings,state.chapter);}
+// What the page's field shows now: a real-time fight, a walkable camp, a chamber, or nothing.
+function fieldTarget(){
+  if(screen==='title'||!state)return null;
+  if(Game.isRealtime(state))return {kind:'field',key:`fight:${state.encounter.id}`};
+  if(chamberMode())return {kind:'chamber',key:`chamber:${state.encounter.id}`};
+  if(campMode())return {kind:'camp',key:`camp:${state.chapter}:${state.encounterIndex}:${state.decisions[Game.getChapter(state).decision.id]??''}`};
+  return null;
+}
+// The stage's encounter for a camp: its fine map, nothing to fight.
+function campBase(world){
+  const c=campFor(state.chapter);
+  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:'Walk the camp: talk to people, then march out through the gate.',
+    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day'};
+}
+function mountField(target){
+  const host=document.querySelector('#rt-host');if(!host)return;
+  if(field&&(field.kind!==target.kind||!field.element.isConnected||(target.kind==='field'&&field.key!==target.key)))disposeField();
+  if(field){
+    if(field.runtime&&target.kind==='field'&&field.source!==fieldSource()){
+      // A retry or a load brings another fight here: the same field plays it.
+      field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),state.encounter);
+    }else if(field.runtime&&target.kind==='chamber'){
+      // A retry, a patron's re-run or a load brings another session of the chamber; otherwise the chamber follows the Contest.
+      if(field.source!==fieldSource()){field.source=fieldSource();field.runtime.load(field.makeWorld(state),state.encounter);}else field.runtime.chamberSync();
+    }else if(field.runtime&&target.kind==='camp'&&field.key!==target.key){
+      // The camp changed (a decision, another encounter ahead): the same field walks the new one, from where the soldier stands.
+      const was=field.runtime.world.actors.find(a=>a.id==='hero'),next=Game.createCampWorld(state),hero=next.actors.find(a=>a.id==='hero');
+      if(was&&field.chapter===state.chapter)Object.assign(hero,{x:was.x,z:was.z,px:was.x,pz:was.z,fx:was.fx,fz:was.fz});
+      field.key=target.key;field.chapter=state.chapter;field.runtime.load(next,campBase(next));refreshCampMarks();
+    }
+    mountFieldStage();return;
+  }
+  host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
+  const element=host.querySelector('.rt-field'),ticket={};
+  field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
+  Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
+    if(field?.ticket!==ticket||!element.isConnected)return;
+    // A hearing's chamber has its presiding magistrate at the tribunal.
+    const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
+    const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
+    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,
+      holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
+    mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
+  }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
+}
+// ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
+// chronicle like any Contest command (chamber.js checks them); the field animates what they did. ———
+// The guided opening in real time (realtime-lessons.js), while Settings → Guided opening is on.
+const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({state,world,kind,seen,keymap});
+function chamberCallbacks(){
+  return {
+    lesson:lessonFor('chamber'),onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
+      inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
+  };
+}
+function chamberApply(op){
+  return new Promise(resolve=>{
+    let outcome=null;
+    const run=()=>{outcome=op.kind==='walk'?Chamber.walk(state,op.unitId,op.tile):op.kind==='speak'?Chamber.speak(state,op.command):op.kind==='yield'?Chamber.yieldFloor(state)
+      :{ok:false,message:'That is not a chamber command.'};return outcome;};
+    const action=op.command?.action??op.command?.kind,tone=op.kind==='walk'?null:op.kind==='yield'?'turn':['threaten','denounce'].includes(action)?'threaten':['promise','agreement'].includes(action)?'agreement':'click';
+    Promise.resolve(change(run,{tone,silent:true,afterRender:()=>resolve(outcome)})).then(()=>resolve(outcome));
+  });
+}
+// A speech from the page's own panels (a case, the policy motion, a precedent, an agreement): through the chamber, so its hour can end.
+async function chamberSpeech(command,{afterRender=null,tone='agreement'}={}){
+  let outcome=null;
+  await change(()=>{outcome=Chamber.speak(state,command);return outcome;},{tone,afterRender:()=>{if(outcome?.ok)field?.runtime?.chamberSync(outcome);afterRender?.();}});
+}
+// The interests asked about in this chamber: free knowledge, kept for the session and not in the save.
+let chamberAsked={key:null,ids:new Set()};
+function chamberKnown(){const key=state?.encounter?.id??null;if(chamberAsked.key!==key)chamberAsked={key,ids:new Set()};return chamberAsked.ids;}
+function startCampaignEncounter(){
+  return change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
+    ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});
+}
+// ——— Camp: conversations, places and the people with something new to say. ———
+function campCallbacks(){
+  return {
+    lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
+    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
+    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
+  };
+}
+function noteVisit(world){
+  const place=Game.campPlaceAt(world);if(!place||!state.soldier||Game.campVisited(state).includes(place)||sessionGate.busy)return;
+  change(()=>Game.campVisit(state,place),{tone:null,silent:true});
+}
+// A speech mark over everyone whose conversation offers something new: an errand, a decision, the oath or a reward.
+function refreshCampMarks(){
+  const world=field?.runtime?.world;if(!world||field.kind!=='camp')return;const marks={};
+  for(const a of world.actors.filter(x=>x.talk))if(Game.campHasNews(state,a.talk.tree))marks[a.id]={text:'“',color:'#f1d38a'};
+  field.runtime.setMarks(marks);
+}
+let conversation=null;
+function showConversation(treeId,nodeId=null){
+  const view=Game.campConversation(state,treeId,nodeId);if(!view){toast('No one answers.');return;}
+  conversation={treeId,nodeId:view.nodeId};
+  showModal(view.speaker,`<p class="dialogue-text">${esc(view.text)}</p><ol class="dialogue-options" aria-label="Replies: press a number">`+
+    view.options.map((o,i)=>`<li><button class="dialogue-option ${o.needs.length?'is-dimmed':''}" data-cmd="reply" data-id="${o.index}" ${o.needs.length?'aria-disabled="true"':''}>`+
+      `<kbd>${i+1}</kbd> ${o.needs.length?`<span class="dialogue-needs">[${esc(o.needs.join(', '))}]</span> `:''}<span>${esc(o.text)}</span>`+
+      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>');
+  modal.dataset.conversation=treeId;
+}
+async function replyConversation(index){
+  if(!conversation)return;const {treeId,nodeId}=conversation;
+  const view=Game.campConversation(state,treeId,nodeId),option=view?.options.find(o=>o.index===index);
+  if(option?.needs.length){toast(`Needs ${option.needs.join(', ')}.`);return;}
+  let outcome=null;
+  await change(()=>{outcome=Game.campReply(state,{treeId,nodeId,index});return outcome;},{tone:'click',silent:true,afterRender:()=>{
+    if(!outcome?.ok)return;refreshCampMarks();
+    if(outcome.open){modal.close();followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    if(outcome.message)toast(outcome.message);
+  }});
+}
+// What a reply opens next: a panel, the War Council, the practice post, or the march.
+function followUp(open){
+  if(open==='march'){startCampaignEncounter();return;}
+  if(open==='council'){showCouncil();return;}
+  if(open==='practice'){showModal('Practice completed encounters',practicePanel(state)||'<p>No completed encounter to practise yet.</p>');return;}
+  if(open.startsWith('trainer:')){showSoldierPanel('trainer',open.slice(8));return;}
+  showSoldierPanel(open);
+}
+function showCouncil(){
+  const voices=warCouncilAdvisories(state);
+  showModal('The War Council',(voices.length?voices.map(a=>`<article class="war-council-card"><div><span class="eyebrow">${esc(a.role)} · ${esc(a.focus)}</span>`+
+    `<h4>${esc(a.name)}</h4><blockquote>“${esc(a.quote)}”</blockquote></div></article>`).join(''):'<p>No officers are present to advise you.</p>')+
+    '<div class="panel-actions"><button data-cmd="conversation" data-id="table">Back to the table</button></div>');
+}
+// The camp's map (M): its places, and travel to those already walked to.
+function showCampMap(){
+  const visited=new Set(Game.campVisited(state));
+  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(PLACE_NAMES[id])}</strong> <small>${esc(PLACE_HINTS[id])}</small></span>`+
+    `<button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>${visited.has(id)||id==='gate'?'Go there':'Not yet visited'}</button></li>`).join('')}</ul>`);
+}
+function campTravel(place){
+  const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}
+  if(modal.open)modal.close();const outcome=runtime.issue({actorId:runtime.world.heroId,kind:'travel',payload:{x:p.x,z:p.z+2}});
+  if(outcome.ok){runtime.follow();announce(`${PLACE_NAMES[place]}.`);}
+}
+function mountFieldStage(){
+  const runtime=field?.runtime;if(!runtime)return;
+  const canvas=field.element.querySelector('canvas');
+  // The 2D view (or no WebGL): the same field drawn flat, with the same commands and lists.
+  if(settings.battleView==='2d'||failed3D){
+    battleStage.release();
+    if(!field.flat&&!field.flatLoading){
+      const mine=field;mine.flatLoading=true;
+      import('../showcase/flat-stage.js').then(({FlatStage})=>{
+        if(field!==mine||!canvas.isConnected)return;mine.flatLoading=false;
+        mine.flat=new FlatStage(canvas,{onFrame:cost=>{graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open});field?.runtime?.frameDone();}});
+        mine.runtime?.attach(mine.flat);canvas.parentElement.dataset.ready='true';
+      }).catch(error=>{console.error(error);toast(`The 2D view could not start: ${error.message}`);});
+    }
+    return;
+  }
+  if(field.flat){field.flat.dispose();field.flat=null;}
+  const own=battleStage.mount(canvas,{encounter:runtime.stageView(),chapter:state.chapter,rank:state.rank,commendations:{},live:true,input:false,
+    quality:graphics.mode,figureStyle:settings.figureStyle,actionCamera:settings.actionCamera!==false,battleRemains:settings.battleRemains!==false,
+    adaptiveResolution:settings.adaptiveResolution,motionSpeed:1,holdDelay:settings.holdDelay,reducedMotion:settings.reducedMotion,audio:settings.audio,
+    audioVolume:settings.audioVolume,paused:modal.open,
+    onFrame:cost=>{graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open});field?.runtime?.frameDone();},
+    onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
+  if(own&&runtime.stage!==own)runtime.attach(own);
+}
+function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+// For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
+window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
+// The same for a chamber: what the rules hold (read-only) and whether the field is playing the rivals' hour or the division.
+window.__chamber={active:()=>chamberMode()&&!!field?.runtime?.chamber,hour:()=>chamberMode()?Chamber.hourView(state):null,
+  coalition:()=>chamberMode()?Chamber.coalitionView(state):null,reach:id=>chamberMode()?Chamber.reach(state,id):[],
+  unit:id=>chamberMode()?structuredClone(state.encounter.units.find(u=>u.id===id)??null):null,busy:()=>field?.runtime?.chamber?.busy??null,
+  talking:()=>field?.runtime?.chamber?.talking??null,pending:()=>field?.runtime?.chamber?.pending??null,stage:()=>field?.runtime?.stage??null,
+  // The Command list's own path (chamber-control.js use): a walk, a speech, a conversation or a yield, as a player gives them.
+  use:command=>field?.runtime?.chamber?.use(command)??false};
+// Keep the chronicle's copy of the fight: the resume point after a pause, a hidden page or a quick save.
+// ——— Quick save and the named saves (§3.17). ———
+// A picture of the moment for a save: the 2D canvas as it stands, or a frame the 3D stage draws for it.
+// Without one the slot shows its number.
+function savePicture(){
+  try{
+    const c=field?.flat?field.element.querySelector('canvas'):null;
+    if(c){const t=document.createElement('canvas');t.width=160;t.height=90;t.getContext('2d').drawImage(c,0,0,160,90);return t.toDataURL('image/jpeg',.6);}
+    return field?.runtime?.stage?.picture?.(160,90)??null;
+  }catch{return null;}
+}
+function slotSummary(){
+  const ch=Game.getChapter(state),e=state.encounter;
+  return `Chapter ${roman(state.chapter)} · ${e&&state.phase==='encounter'?e.title:state.phase==='camp'?'In camp':ch.title}`;
+}
+// Bring the fight in progress into the chronicle first, so the save holds it exactly.
+function syncFieldIntoChronicle(){const w=field?.runtime?.world;if(w&&field.kind==='field'&&Game.isRealtime(state)&&state.encounter.status==='active')Game.saveRealtime(state,w);}
+function quickSave(){saveToSlot('quick','Quick save');}
+function saveToSlot(id,name){
+  const problem=Game.manualSaveProblem(state)??(modal.open&&modal.dataset.conversation?'Saving waits until the conversation ends.':null);
+  if(problem){toast(problem);return false;}
+  syncFieldIntoChronicle();
+  try{writeSlot(id,state,{name,summary:slotSummary(),thumbnail:savePicture()});}catch(error){toast(error.message);return false;}
+  toast(id==='quick'?'Quick saved. Menu → Saves loads it.':`Saved: ${name}.`);if(modal.open&&modal.dataset.panel==='saves')showSaves();return true;
+}
+function showSaves(){
+  const problem=Game.manualSaveProblem(state),slots=listSlots();
+  showModal('Saves',`<p class="panel-note">${problem?esc(problem):'Each save keeps everything, battle time and the random seed included, so a loaded fight continues exactly.'}`+
+    `${state?.ironDiscipline?' <button class="text-link" data-cmd="end-iron">Turn off Iron discipline (it cannot be turned on again)</button>':''}</p>`+
+    `<ul class="save-slots">${slots.map(s=>`<li class="save-slot">${s.thumbnail?`<img src="${esc(s.thumbnail)}" width="160" height="90" alt="">`:
+      `<span class="save-slot-blank" aria-hidden="true">${s.id==='quick'?'F2':s.id}</span>`}<div><strong>${esc(s.id==='quick'?'Quick save':s.empty?`Slot ${s.id}`:s.name)}</strong>`+
+      `<small>${s.empty?'Empty':`${esc(s.summary)} · ${esc(new Date(s.savedAt).toLocaleString())}`}</small>`+
+      `${s.id!=='quick'?`<label class="visually-hidden" for="slot-name-${s.id}">Name for slot ${s.id}</label><input id="slot-name-${s.id}" maxlength="60" value="${esc(s.empty?slotSummary():s.name)}">`:''}</div>`+
+      `<div class="save-slot-actions"><button data-cmd="slot-save" data-id="${s.id}" ${problem?'disabled':''}>Save here</button>`+
+      `<button data-cmd="slot-load" data-id="${s.id}" ${s.empty?'disabled':''}>Load</button></div></li>`).join('')}</ul>`);
+}
+async function loadSlot(id){
+  let candidate;try{candidate=readSlot(id);}catch(error){toast(error.message);return;}
+  disposeField();await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),message:'Save loaded.'});
+}
+function saveField(world,{announced=false}={}){
+  if(!Game.isRealtime(state)||state.encounter.status!=='active'||state.archiveReplay)return;
+  const saved=Game.saveRealtime(state,world);if(!saved.ok)return;if(field)field.source=fieldSource();
+  if(sessionGate.busy||saveConflict){if(announced)toast(saveConflict?saveProblem:'Saving… try again in a moment.');return;}
+  sessionGate.run(()=>persist()).then(result=>{
+    const label=document.querySelector('.save-status');if(label)label.textContent=result?.ok?'Saved':'';
+    if(announced)toast(result?.ok?'Saved. The fight continues from here after a reload.':saveProblem);
+  }).catch(error=>{if(error.code!=='SESSION_BUSY')console.error(error);});
+}
+function fieldCallbacks(){
+  return {
+    lesson:lessonFor('field'),onSave:world=>saveField(world),
+    // Play resumed: the resume point is discarded on this first tick, so it is never used twice.
+    onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
+    onQuickSave:()=>quickSave(),
+    onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
+    onMenu:()=>showNavigation(),
+    onPanel:name=>fieldPanel(name),
+    onTalk:id=>fieldTalk(id),
+    onLoot:id=>fieldLoot(id)
+  };
+}
+// The panel keys (guide "Panels"), in the field and in camp.
+function openPanel(name){
+  if(['kit','character','decorations','company','orders'].includes(name))showSoldierPanel(name==='orders'?'mission':name);
+  else if(name==='journal')showJournal();
+  else if(name==='chronicle')showSoldierPanel('chronicle');
+  else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
+  else if(name==='options')showSettings();
+  // Help opens the guide where the player is: the chamber at its Contests, a fight at its battles, a camp at the campaign.
+  else if(name==='help')showHelp(chamberMode()?'political-contests':Game.isRealtime(state)?'battles':campMode()?'the-campaign':undefined);
+}
+const fieldPanel=name=>openPanel(name);
+// The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
+// and the panel is drawn again with the focus where it was.
+let kitSelected=null,soldierPanel=null;
+// The mission orders panel's field intelligence follows the field while it is open (at most once a second).
+let missionPanelAt=0;
+function refreshMissionPanel(){
+  const now=performance.now();if(!modal.open||soldierPanel?.name!=='mission'||modal.dataset.soldier!=='mission'||now-missionPanelAt<1000)return;
+  missionPanelAt=now;showSoldierPanel('mission');
+}
+function showSoldierPanel(name,arg=null){
+  if(!state)return;
+  // A chamber's world is its people, not a fight: the panels read the chronicle there.
+  soldierPanel={name,arg};const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
+  const panels={kit:()=>['Kit',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Your soldier',soldierCharacterPanel(state)],
+    decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
+    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],
+    adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
+    mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
+  const [title,body]=(panels[name]??panels.character)();
+  const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
+    .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
+  showModal(title,body);modal.dataset.soldier=name;
+  if(keep){const again=modal.querySelector(keep);if(again&&!again.disabled)again.focus({preventScroll:true});}
+}
+function soldierAct(command){
+  return change(()=>Game.soldierCommand(state,command),{tone:'click',afterRender:()=>{if(soldierPanel)showSoldierPanel(soldierPanel.name,soldierPanel.arg);}});
+}
+function fieldTalk(id){
+  const world=field?.runtime?.world,person=world?.actors.find(a=>a.id===id);if(!person)return;
+  showModal(person.name,`<p>${esc(person.talk?.line??`${person.name} nods. “Keep your shield up.”`)}</p>`);
+}
+function fieldLoot(id){
+  const world=field?.runtime?.world,body=world?.actors.find(a=>a.id===id);if(!body)return;
+  showLoot(body);
+}
+const itemName=id=>ITEMS[id]?.name??id;
+// The items already chosen from this body in the take waiting for the next tick (while paused, the window's choices wait there).
+function pendingTake(world,bodyId){return [...world.queue].reverse().find(c=>c.kind==='take'&&c.actorId===world.controlled&&c.payload.targetId===bodyId)?.payload.items??[];}
+function showLoot(body){
+  const world=field?.runtime?.world;if(!world)return;
+  const left=[...(body.loot??[])],pending=[...pendingTake(world,body.id)];
+  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
+    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take" data-id="${esc(body.id)}" data-item="${esc(item)}" data-key="take:${i}">Take</button>`}</li>`;});
+  showModal(`Search ${body.name}`,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
+    `<div class="panel-actions"><button class="primary" data-cmd="rt-take" data-id="${esc(body.id)}" data-item="*">Take all</button></div>`+
+    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>Nothing left worth taking.</p>');
+}
+function takeLoot(bodyId,itemId){
+  const runtime=field?.runtime,world=runtime?.world,body=world?.actors.find(a=>a.id===bodyId);if(!body)return;
+  const pending=pendingTake(world,bodyId),left=[...body.loot];for(const id of pending)left.splice(left.indexOf(id),1);
+  const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
+  if(!runtime.issue({actorId:world.controlled,kind:'take',payload:{targetId:bodyId,items}}).ok)return;
+  showLoot(body);
+  // Running, the take happens on the next tick: show what is left once it has.
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&modal.dataset.panel?.startsWith('search'))showLoot(body);}));
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;
@@ -352,9 +715,9 @@ async function replaceCampaign({load,save,message}){
   });
 }
 let modalReturn=null;
-function showModal(title,body){
-
-  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);
+function showModal(title,body,{menu=false}={}){
+  // The Menu always pauses the world; other panels as Pause in panels says.
+  stopMotion();pendingMotion=null;replay.stop();battleStage.pause(true);if(menu||settings.panelPause!==false)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
   modal.dataset.panel=title.toLowerCase().replace(/[^a-z]+/g,'-');
   modal.setAttribute('aria-labelledby','panel-title');modal.removeAttribute('aria-label');
@@ -363,14 +726,51 @@ function showModal(title,body){
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
 }
+// ——— Remapping a key (Menu → Controls & readability): Change listens for the next key pressed. ———
+let rebinding=null;
+const actionName=action=>KEY_GROUPS.flatMap(([,rows])=>rows).find(([a])=>a===action)?.[1]??action;
+function startRebind(action){
+  if(!keymap[action])return;rebinding=action;const row=modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"]`);row?.classList.add('listening');
+  const b=row?.querySelector('[data-cmd="rebind"]');if(b)b.textContent='Press a key…';
+  const status=modal.querySelector('#rebind-status');if(status)status.textContent=`Press the new key for ${actionName(action)}, or Esc to cancel.`;
+}
+function finishRebind(message,{problem=false}={}){
+  const action=rebinding;rebinding=null;const top=modal.scrollTop;showSettings();keysOpen();modal.scrollTop=top;
+  const status=modal.querySelector('#rebind-status');if(status){status.textContent=message;status.classList.toggle('warning',problem);}
+  announce(message);modal.querySelector(`.key-row[data-action="${CSS.escape(action)}"] [data-cmd="rebind"]`)?.focus({preventScroll:true});
+}
+// The key list stays open while the player is remapping.
+const keysOpen=()=>{const list=modal.querySelector('details.key-map');if(list)list.open=true;};
+// The shared map changes in place: the field's keys, bars and hints follow at once.
+function useKeymap(next){
+  for(const action of Object.keys(keymap))keymap[action]=[...next[action]];settings.realtimeKeys=keymapChanges(keymap);saveSettings();
+  if(field)relabelField(field.element,{state,keymap,kind:field.kind});field?.runtime?.relabel?.();
+}
+document.addEventListener('keydown',event=>{
+  if(!rebinding)return;
+  // A modifier alone waits for the key it modifies.
+  if(['Shift','Control','Alt','Meta','AltGraph'].includes(event.key))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  if(event.key==='Escape'){finishRebind(`${actionName(rebinding)} is unchanged.`);return;}
+  const binding=eventBinding(event);if(!binding){finishRebind(`Ctrl, Cmd and Alt belong to the browser. ${actionName(rebinding)} is unchanged.`,{problem:true});return;}
+  const action=rebinding,r=remapAction(keymap,action,binding);
+  if(r.problem){finishRebind(`${r.problem} ${actionName(action)} is unchanged.`,{problem:true});return;}
+  const holder=Object.keys(keymap).find(a=>a!==action&&keymap[a].includes(binding));useKeymap(r.keymap);
+  finishRebind(`${actionName(action)} is now ${keyLabel(binding)}.${holder?` ${actionName(holder)} takes ${keymap[holder].map(keyLabel).join(' or ')}.`:''}`);
+},true);
+modal.addEventListener('cancel',event=>{if(rebinding)event.preventDefault();});
+modal.addEventListener('keydown',event=>{
+  if(!modal.dataset.conversation||event.altKey||event.ctrlKey||event.metaKey)return;const n=Number(event.key);
+  if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
+});
 modal.addEventListener('close',()=>{
-  const prior=modalReturn;modalReturn=null;
+  rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
-async function showExport(){showExportCode(await saveCode(archivePrimaryState??state));}
+async function showExport(){showExportCode(await saveCode(Game.codeState(archivePrimaryState??state)));}
 // Settings → Run performance check. The battle is measured where it stands:
 // the panel closes, and until the check ends a status band covers the page so
 // neither pointer nor keys can reach the board (Escape or Cancel stop it).
@@ -450,18 +850,54 @@ document.addEventListener('click',
         }else toast('Offline content is available from the production build.');break;
       }
 case 'close-modal':modal.close();break;
+case 'rt-take':takeLoot(id,b.dataset.item);break;
+case 'conversation':showConversation(id);break;
+case 'reply':await replyConversation(Number(id));break;
+case 'camp-travel':campTravel(id);break;
+case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
+case 'saves':showSaves();break;
+case 'slot-save':saveToSlot(id,id==='quick'?'Quick save':modal.querySelector(`#slot-name-${id}`)?.value||slotSummary());break;
+case 'slot-load':await loadSlot(id);break;
+case 'end-iron':await change(()=>Game.endIronDiscipline(state));if(modal.open)showSaves();break;
+case 'soldier':{const d=b.dataset;
+  // The editors open; they change nothing until saved.
+  if(d.kind==='orders-edit'||d.kind==='squad-orders-edit'){showSoldierPanel(d.kind==='orders-edit'?'orders':'squad-orders',d.companion);break;}
+  if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
+  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
+  break;}
+case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
+case 'adopt-soldier':{const choice=recruitChoice();soldierPanel={name:'character'};await soldierAct({kind:'adopt',...choice});break;}
+case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
+case 'orders-save':{
+  const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
+    .map(([a,t])=>[a,['follow_close','follow_far','stay_hidden','withdraw'].includes(a)?'hero':t]);
+  await soldierAct({kind:'orders',companionId:id,slots});soldierPanel={name:'company'};showSoldierPanel('company');break;}
+case 'squad-orders-save':{
+  // Hold the line takes no target; the rest keep the one chosen (or the soldier).
+  const slots=[0,1,2,3].map(i=>[modal.querySelector(`#squad-orders-action-${i}`)?.value,modal.querySelector(`#squad-orders-target-${i}`)?.value||null]).filter(([a])=>a)
+    .map(([a,t])=>[a,a==='hold_line'?null:t??'hero']);
+  await soldierAct({kind:'squad-orders',companionId:id,slots});soldierPanel={name:'company'};showSoldierPanel('company');break;}
+case 'soldier-party':{
+  const party=[...modal.querySelectorAll('[data-cmd="soldier-party"]')].filter(x=>x.checked).map(x=>x.dataset.id);
+  if(party.length>3){b.checked=false;toast('Up to three companions march with you.');break;}
+  await soldierAct({kind:'party',party});break;}
+case 'rt-spoils':await change(()=>{const body=state.encounter?.realtime?.world.actors.find(a=>a.id===id);
+  return Game.takeSpoils(state,{bodyId:id,items:b.dataset.item==='*'?[...(body?.loot??[])]:[b.dataset.item]});});break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying '+
   'this chapter’s artwork. Other chapters are optional.');}break;
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
   const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,
-    {featureEdition:35,progression:true,difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard'});
+    {featureEdition:35,progression:true,...recruitChoice(),difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
+      ironDiscipline:!!document.querySelector('#iron-discipline')?.checked});
   if(document.querySelector('#new-soundscape')?.checked){
     settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();
   }
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),
     message:'Chapter I. You are a Tiro: a recruit in training.'});
+  // One chronicle per device: the new one replaces the old one's saves too.
+  if(result.ok)clearSlots();
   if(result.error?.code==='SAVE_UNAVAILABLE'){
     pendingNew=candidate;
     showStorageUnavailable();
@@ -497,7 +933,8 @@ case 'specialize-veteran':{
   const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;
 }
 case 'agreement-demand':
-      case 'agreement-counter':await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'),
+      case 'agreement-counter':if(chamberMode()){await chamberSpeech({kind:'agreement',targetId:id,terms:cmd==='agreement-demand'?'demand':'counteroffer'});break;}
+        await change(()=>Game.negotiateAgreement(state,id,cmd==='agreement-demand'?'demand':'counteroffer'),
         {tone:'agreement',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('agreement',{intensity:.7});}});
         break;
 case 'agreement-honour':
@@ -529,9 +966,9 @@ case 'allocate':await change(()=>Game.allocate(state,
   {river:Number(document.querySelector('#river').value),farms:Number(document.querySelector('#farms').value),town:Number(document.querySelector('#town').value)}));
   break;
 case 'route':await change(()=>Game.chooseRoute(state,id));break;
-case 'start':await change(()=>Game.startEncounter(state,state.chapter===12?{route:state.route||'backer'}:{}),{reset:true});break;
+case 'start':await startCampaignEncounter();break;
 case 'unit':case 'select-unit':selected=id;action=null;target=null;orderDestination=null;focusTile=null;render();break;
-case 'inspect-delegate':{
+case 'inspect-delegate':if(chamberMode()){if(modal.open)modal.close();field?.runtime?.chamber?.talk(id);break;}{
   const unit=state?.encounter?.units?.find(u=>u.id===id&&!u.hidden&&u.role==='voter');
   if(unit){
     focusTile={x:unit.x,y:unit.y,unitId:unit.id};action=null;target=null;orderDestination=null;render();if(uses3D())battleStage.focusPoint(focusTile);
@@ -612,7 +1049,7 @@ case 'exit-archive':if(archivePrimaryState){
   toast('Returned from the Archive to your active chronicle.');
 }
   break;
-case 'invoke-precedent':await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
+case 'invoke-precedent':if(chamberMode()){await chamberSpeech({kind:'precedent',id});break;}await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
 case 'performance-check':await startPerformanceCheck();break;
 case 'performance-check-save':if(performanceReport)download(new Blob([JSON.stringify(performanceReport,null,2)+'\n'],{type:'application/json'}),
   `imperium-performance-${performanceReport.measuredAt.slice(0,10)}.json`);
@@ -635,14 +1072,19 @@ case 'approach-upgrade':await change(()=>Game.enableFieldApproaches(state));brea
 case 'field-approach':await change(()=>Game.chooseFieldApproach(state,id));break;
 case 'command-upgrade':await change(()=>Game.enableCommandCampaign(state));break;
 case 'operational-plan':await change(()=>Game.chooseOperationalPlan(state,id));break;
-case 'inspect-case':showModal('Present a documented case',casePreview(state,id));break;
-case 'present-case':await change(()=>Game.presentCase(state,id),
+case 'inspect-case':if(chamberMode())showModal('Inspect a document',documentPreview(state,id));else showModal('Present a documented case',casePreview(state,id));break;
+case 'present-case':if(chamberMode()){await chamberSpeech({kind:'case',id},{afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});break;}
+  await change(()=>Game.presentCase(state,id),
   {tone:'agreement',afterRender:()=>{if(state.encounter?.commandCampaign?.case===id)modal.close();}});
   break;
 case 'reset-controls':settings.keyBindings={...CONTROL_DEFAULTS};saveSettings();render();showSettings();break;
+case 'rebind':startRebind(id);break;
+case 'restart-realtime':await change(()=>Game.restartInRealtime(state));break;
+case 'help-section':showHelp(id);modal.scrollTop=0;break;
+case 'reset-keys':useKeymap(keymapFrom());showSettings();keysOpen();announce('Every key is back to its default.');modal.querySelector('[data-cmd="reset-keys"]')?.focus();break;
 case 'field-action':await change(()=>Game.fieldAction(state,id),{tone:'brace'});break;
-case 'policy-motion':await change(()=>Game.tablePolicy(state,id,'original'),{tone:'agreement'});break;
-case 'policy-amend':await change(()=>Game.tablePolicy(state,id,'amended'),{tone:'agreement'});break;
+case 'policy-motion':case 'policy-amend':{const terms=cmd==='policy-motion'?'original':'amended';
+  if(chamberMode()){await chamberSpeech({kind:'policy',id,terms});break;}await change(()=>Game.tablePolicy(state,id,terms),{tone:'agreement'});break;}
 case 'invoke-fieldwork':await change(()=>Game.invokeFieldwork(state,id),
   {tone:'brace',afterRender:()=>{if(uses3D())battleStage.stage?.sound?.cue('fieldwork',{intensity:.75});}});
   break;
@@ -687,9 +1129,19 @@ document.addEventListener('change',async event=>{
     const next=remapControl(settings.keyBindings,control.dataset.binding,control.value);
     if(next){settings.keyBindings=next;saveSettings();render();showSettings();document.getElementById(control.id)?.focus();}return;
   }
+  // The pointer's habits, labels, objective markers and floating numbers: stored, and the live field reads them at once.
+  if(control.dataset.rtSetting){const key=control.dataset.rtSetting;settings[key]=control.type==='checkbox'?control.checked:!!control.value;saveSettings();
+    field?.runtime?.setOption?.(key,settings[key]);return;}
   const toggle=SETTING_TOGGLES[control.id];
   if(toggle){settings[toggle.key]=control.checked;saveSettings();if(toggle.stage)battleStage[toggle.stage](control.checked);if(toggle.render)render();return;}
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
+  if(control.dataset.pace){const key=control.dataset.pace;choosePace(settings,key,control.type==='checkbox'?control.checked:control.value);saveSettings();
+    field?.runtime?.setOption?.(key,settings[key]);return;}
+  if(control.id==='controls-model'){Object.assign(settings,normalizeControls({...settings,controlsModel:control.value}));saveSettings();render();return;}
+  if(control.matches?.('.realtime-chapter')){
+    const chapters=[...document.querySelectorAll('.realtime-chapter')].filter(box=>box.checked).map(box=>Number(box.value));
+    Object.assign(settings,normalizeControls({...settings,realtimeChapters:chapters}));saveSettings();return;
+  }
   if(['river','farms','town'].includes(control.id)){
     const prev=document.querySelector('#allocation-preview');
     if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),
@@ -748,8 +1200,20 @@ document.addEventListener('change',async event=>{
     if(settings.audio){battleStage.unlock();if(!uses3D())sound('click',true,settings.audioVolume);}else stopAudio();paint();
   }
 });
+// Panel keys away from the field (camp, promotion, the record): I, C, J, Q, L, M, R, A, O and ?.
+document.addEventListener('keydown',event=>{
+  if(event.defaultPrevented||event.repeat||modal.open||screen==='title'||!state||Game.isRealtime(state)||sessionGate.busy)return;
+  if(event.target?.closest?.('input,select,textarea,[contenteditable="true"],canvas'))return;
+  const action=actionFor(event,keymap);if(!action)return;
+  if(action==='quick_save'){event.preventDefault();quickSave();return;}
+  const name=action==='help'?'help':action==='map_overlay'?'map':action.startsWith('panel_')?action.slice(6):null;
+  if(!name||(state.phase==='encounter'&&!['kit','character','decorations','company','journal','chronicle','options','help'].includes(name)))return;
+  event.preventDefault();openPanel(name);
+});
 document.addEventListener('keydown',event=>{
   if(event.defaultPrevented||event.repeat||event.altKey||event.ctrlKey||event.metaKey||modal.open||screen==='title'||state?.phase!=='encounter'||sessionGate.busy)return;
+  // A real-time field or a chamber takes its keys on its own scene (realtime-field.js).
+  if(Game.isRealtime(state)||chamberMode())return;
   if(event.target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
   const shortcut=controlAction(event.key,settings.keyBindings);
   if(uses3D()){

@@ -6,6 +6,18 @@ import {dirname,join,relative,resolve} from 'node:path';
 // out, as the browser fetches it only when called. Paths are returned the way
 // the offline lists name them ('./src/ui/app.js').
 const STATIC=/(?:^|[;\s}])(?:import|export)\s*(?:[^'"();]*?\sfrom\s*)?['"](\.{1,2}\/[^'"]+)['"]/g;
+// Every module the page may load, its dynamic import()s followed too: the
+// offline packs must hold all of them (scripts/build.mjs checks).
+const DYNAMIC=/import\(\s*['"](\.{1,2}\/[^'"]+)['"]\s*\)/g;
+export async function moduleClosure(root,entry){
+  const seen=new Set(),queue=[resolve(root,entry)];
+  while(queue.length){
+    const file=queue.pop();if(seen.has(file))continue;seen.add(file);
+    const source=(await readFile(file,'utf8')).replace(/\/\*[\s\S]*?\*\//g,'').replace(/(^|[^:'"`])\/\/.*$/gm,'$1');
+    for(const pattern of [STATIC,DYNAMIC])for(const [,specifier]of source.matchAll(pattern))queue.push(join(dirname(file),specifier));
+  }
+  return [...seen].map(file=>'./'+relative(root,file).replaceAll('\\','/')).sort();
+}
 export async function staticImportClosure(root,entry){
   const seen=new Set(),queue=[resolve(root,entry)];
   while(queue.length){

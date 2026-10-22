@@ -6,7 +6,10 @@ import * as T from '../../vendor/three/three.module.js';
 // rules still hold one unit per tile; this reads the unit and never edits it.
 export const FORMATION_LIMIT=Object.freeze({performance:3,balanced:5,high:8});
 const MILITARY=new Set(['infantry','guard','archer','raider','cavalry','heavy','soldier']);
+// A real-time unit says so itself: crowd:false for a man who stands alone, or
+// the number of his squad's other men.
 export function formationEligible(unit,{chapter=1,contest=false}={}){
+  if(unit?.crowd===false)return false;if(Number.isFinite(unit?.crowd))return !contest&&unit.crowd>0;
   return !contest&&chapter>=4&&!!unit&&unit.id!=='hero'&&MILITARY.has(unit.role);
 }
 // Slots in the unit's own frame (x to its right, z forward, metres from the
