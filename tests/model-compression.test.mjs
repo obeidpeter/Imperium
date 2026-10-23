@@ -25,13 +25,24 @@ test('the transcoder worker file is the script KTX2Loader would assemble', async
   assert.equal((await file(KTX2_WORKER)).toString('utf8'),await ktx2WorkerSource(),'Run node scripts/assets/ktx2-worker.mjs after updating the vendored KTX2Loader or transcoder.');
 });
 
-test('the vendored addons are three.js r186 as published, with local three imports', async()=>{
+test('the vendored addons are three.js r186 as published, with local three imports and LF or CRLF text', async()=>{
   const rows=[...(await file('vendor/three/addons/PROVENANCE.md')).toString('utf8').matchAll(/^\| `([^`]+)` \| `([0-9a-f]{64})` \|/gm)];
   assert.ok(rows.length>=12,'every vendored addon is listed');
+  const publishedHash=(path,bytes)=>{
+    // Git may convert text to CRLF on Windows; binary decoders must remain byte-for-byte identical.
+    if(!path.endsWith('.wasm'))bytes=Buffer.from(bytes.toString('utf8').replaceAll('\r\n','\n').replaceAll("from '../../three.module.js'","from 'three'"));
+    return createHash('sha256').update(bytes).digest('hex');
+  };
   for(const [,path,sha256]of rows){
-    let bytes=await file('vendor/three/addons/'+path);
-    if(!path.endsWith('.wasm'))bytes=Buffer.from(bytes.toString('utf8').replaceAll("from '../../three.module.js'","from 'three'"));
-    assert.equal(createHash('sha256').update(bytes).digest('hex'),sha256,path);
+    const bytes=await file('vendor/three/addons/'+path);
+    assert.equal(publishedHash(path,bytes),sha256,path);
+    if(!path.endsWith('.wasm')){
+      // Exercise both checkout formats even when CI itself uses LF.
+      const lf=bytes.toString('utf8').replaceAll('\r\n','\n');
+      for(const eol of ['\n','\r\n'])assert.equal(publishedHash(path,Buffer.from(lf.replaceAll('\n',eol))),sha256,`${path}: ${eol==='\n'?'LF':'CRLF'}`);
+    }
+    const changed=Buffer.from(bytes);changed[0]^=1;
+    assert.notEqual(publishedHash(path,changed),sha256,`${path}: changed content is still rejected`);
   }
 });
 
