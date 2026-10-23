@@ -211,17 +211,19 @@ export function trainerPanel(state,trainerId){
 // The one-time choice of training and appearance (a chronicle begun before 0.40 makes it here).
 // The recruit's training and appearance (guide "Your recruit"): at New Game, and once for a chronicle begun
 // before 0.40. Legionary is chosen first, as the easiest start. Read by the page when the choice is made.
-const APPEARANCE_NAMES={hair:'Hair',beard:'Beard',tunic:'Tunic',cloak:'Cloak'};
+// Only the cloak's colour is chosen: the generated bodies have their own hair, beard and tunic. The soldier's
+// record keeps all four (data/soldier.js), as saved, for the procedural figure where no body loads.
+const APPEARANCE_CHOICES={cloak:'Cloak'};
 export function recruitChoices({grants=null}={}){
   const mods=id=>Object.entries(TRAINING_PATHS[id].mods).map(([k,v])=>`${signed(v)} ${ATTRIBUTE_NAMES[k]}`).join(', ');
   return `<fieldset class="recruit-training"><legend>Training</legend>${PATHS.map((id,i)=>`<label class="difficulty-choice"><input type="radio" `+
     `name="recruit-path" value="${id}" ${i===0?'checked':''}><span><strong>${esc(TRAINING_PATHS[id].name)}</strong> <small>${esc(mods(id))}`+
     `${grants?` · ${grants[id]} training points for the service already done`:''}</small></span></label>`).join('')}</fieldset>`+
-    `<div class="recruit-look">${figurePreview()}<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE).map(([key,list])=>`<label class="setting" `+
-    `for="recruit-${key}"><span>${APPEARANCE_NAMES[key]??key}</span><select id="recruit-${key}" data-appearance="${key}">${list.map((name,i)=>`<option `+
-    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}<p class="settings-description">In 3D he wears a generated body `+
-    `that matches his armour, with its own face, hair and tunic, as the preview shows: the cloak colour shows once he wears a cloak, and hair, `+
-    `beard and tunic only if that body cannot load.</p></fieldset></div>`;
+    `<div class="recruit-look">${figurePreview()}<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE_CHOICES).map(([key,label])=>`<label class="setting" `+
+    `for="recruit-${key}"><span>${label}</span><select id="recruit-${key}" data-appearance="${key}">${APPEARANCE[key].map((name,i)=>`<option `+
+    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}<p class="settings-description">He wears a generated body that `+
+    `matches his armour, with its own face, hair and tunic. The preview shows him in a cloak of the chosen colour; the quartermaster sells one `+
+    `from Chapter I.</p></fieldset></div>`;
 }
 export function adoptPanel(state,{grants=null}={}){
   return `<div class="adopt-panel"><p>This chronicle began before soldiers trained in their own way. Choose his training and appearance once; your `+

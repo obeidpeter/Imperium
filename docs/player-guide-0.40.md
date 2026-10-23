@@ -87,7 +87,7 @@ The full guide remains available offline.
 
 - **Play now** starts a new chronicle. Give your recruit
   a Roman name (up to 40 characters) or keep Aurelius Marcellus, choose
-  his appearance and his **training**, and choose a difficulty. You
+  his cloak colour and his **training**, and choose a difficulty. You
   begin as a *tiro*, a recruit with no command authority: only your own
   soldier is yours to control. **Restore a save code** loads a chronicle
   from a save code instead.
@@ -104,12 +104,12 @@ The full guide remains available offline.
 
 ## Your recruit
 
-**Appearance** sets hair, beard and the colours of tunic and cloak. In
-3D your soldier wears a generated body that matches his armour: a
-recruit's tunic until he puts on mail or scale, then a legionary's, an
-officer's from Chapter IV and a commander's from Chapter VII. That body
-has its own face, hair and tunic, so in 3D the cloak colour is what
-shows; hair, beard and tunic show only if the body cannot load.
+**Appearance** sets the colour of his cloak. In 3D your soldier wears a
+generated body that matches his armour, with its own face, hair and
+tunic: a recruit's tunic until he puts on mail or scale, then a
+legionary's, an officer's from Chapter IV and a commander's from Chapter
+VII. The preview shows him in a cloak of the chosen colour; the
+quartermaster sells one from Chapter I.
 **Training** sets your starting attributes (see **Your soldier**) and
 the optional errand you are offered in Chapters II to IV. It never
 locks kit or techniques: any soldier can learn anything later.
