@@ -383,11 +383,12 @@ async function realtimeFlat(){
 }
 
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
-async function restoreRealtime(page,code){
-  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+async function restoreRealtime(page,code,{view='3d',beforeStart=null}={}){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await restoreCamp(page,code);
+  if(beforeStart)await beforeStart();
+  await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
 }
 async function realtimeSquads(){
@@ -420,12 +421,50 @@ async function realtimeDeployment(){
 }
 
 // Phase 3 in the page: a restored camp's Contest walked as the Curia.
-async function restoreChamber(page,code,view='3d'){
+async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
   await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await restoreCamp(page,code);
+  if(beforeStart)await beforeStart();
+  await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+}
+async function restoreCamp(page,code){
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');
+  const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
+  await page.click('[data-cmd="confirm-import"]');await closed;
+  await page.waitForSelector('.camp-page');
+}
+// Hold the real browser save lock, rather than changing campaign state, to
+// reproduce a slow first-visit autosave before either kind of departure.
+async function campSaveDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open();
+    await page.addInitScript(()=>{
+      const request=navigator.locks.request.bind(navigator.locks),delay=window.__campSaveDelay={held:false,release:null};
+      navigator.locks.request=(name,...args)=>{
+        const callback=args.pop();
+        return request(name,...args,async lock=>{
+          if(name==='sacramentum-save'&&!delay.held&&document.querySelector('.camp-page')){
+            delay.held=true;await new Promise(resolve=>{delay.release=resolve;});
+          }
+          return callback(lock);
+        });
+      };
+    });
+    const beforeStart=async()=>{
+      await page.waitForFunction(()=>window.__campSaveDelay.held,null,{timeout:30000});
+      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for the camp autosave`);
+      assert.match(await text(page,'.save-status'),/Saving/);
+      assert.equal(await page.locator('.rt-field[data-kind="camp"]').count(),1,'The camp stays open during the save');
+      await page.evaluate(()=>window.__campSaveDelay.release());
+    };
+    if(kind==='field')await restoreRealtime(page,battleCampCode(id),{view:'2d',beforeStart});
+    else await restoreChamber(page,battleCampCode(id),'2d',{beforeStart});
+    assert.equal(await page.locator(`.rt-field[data-kind="${kind}"]`).count(),1,`${id}: one click departs after saving`);
+    await page.context().close();
+  }
+  console.log('ok - slow camp autosave: departure stays disabled until saving finishes, then one click enters both a field and a chamber');
 }
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
@@ -682,7 +721,7 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle,campSaveDeparture].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}

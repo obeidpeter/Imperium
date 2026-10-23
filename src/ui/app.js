@@ -57,7 +57,15 @@ const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
   offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
   pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
-const sessionGate=createSessionGate();
+const sessionGate=createSessionGate({onBusyChange:syncDepartureControls});
+// A camp's first-visit save can begin before its first frame. Reflect the
+// transaction immediately so an enabled departure never silently drops a click.
+function syncDepartureControls(busy=sessionGate.busy){
+  for(const button of document.querySelectorAll('[data-cmd="start"]')){
+    button.disabled=busy;
+    if(busy)button.setAttribute('aria-busy','true');else button.removeAttribute('aria-busy');
+  }
+}
 let memoryOnly=false,archivePrimaryState=null;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,
   artRequest=0,cachedChapterRequest=0;
@@ -198,6 +206,7 @@ function render(){
   if(newView)app.replaceChildren();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
+  syncDepartureControls();
   soundscape.update(state,screen);
   const target=fieldTarget();
   if(target)mountField(target);
