@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createWorld,step,queueCommand,snapshotWorld,restoreWorld,worldHash} from '../src/core/realtime/simulation.js';
 import {abilityKey} from '../src/core/realtime/intents.js';
-import {ARENA,FIELD_ORDER} from '../src/data/realtime-rules.js';
+import {ARENA,ENEMY_AI,FIELD_ORDER,TIME} from '../src/data/realtime-rules.js';
 import {missionAbilities,missionAbilityHint,fieldNotice,enemyCue,victoryReason} from '../src/ui/field-experience.js';
 import {abilityGroups} from '../src/ui/realtime-hud.js';
 import {attributeImprovement,attributeMilestone} from '../src/ui/soldier-comparison.js';
@@ -46,8 +46,10 @@ test('critical field notices and target counters are factual, stable and read-on
 
 test('archer retreats are bounded, create a shooting window and replay exactly after a save',()=>{
   const w=battle(),events=[];for(let i=0;i<50;i++){step(w);events.push(...w.events);}
-  const retreats=events.filter(e=>e.kind==='intent'&&e.what==='disengage');assert.ok(retreats.length<=1);
-  assert.ok(w.actors[1].ai.nextRetreatAt>0,'The nearby archer actually disengaged');
+  const retreats=events.filter(e=>e.kind==='intent'&&e.what==='disengage');assert.equal(retreats.length,1,'The nearby archer disengaged once');
+  // Both windows are the rules data's (ENEMY_AI), counted from the tick he turned away.
+  const {ai}=w.actors[1],seconds=s=>Math.round(s*TIME.ticksPerSecond);
+  assert.equal(ai.retreatUntil,retreats[0].tick+seconds(ENEMY_AI.archerRetreat));assert.equal(ai.nextRetreatAt,retreats[0].tick+seconds(ENEMY_AI.archerRetreatInterval));
   assert.equal(w.actors[1].action?.kind,'shot','The archer plants its feet and shoots after disengaging');
   const saved=restoreWorld(snapshotWorld(w));for(let i=0;i<90;i++)step(w);for(let i=0;i<90;i++)step(saved);
   assert.equal(worldHash(saved),worldHash(w));
