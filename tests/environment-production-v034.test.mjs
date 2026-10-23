@@ -68,14 +68,23 @@ test('V034 regional palettes are distinct immutable production metadata across e
 });
 
 test('V034 siege composition stays out of narrow and wide boards and within environment budgets',()=>{
-  for(const id of ['ch5-mine','ch5-wall'])for(const quality of ['performance','balanced','high'])for(const width of [8,10]){
+  for(const id of ['ch5-mine','ch5-wall'])for(const quality of ['performance','balanced','high'])for(const width of [8,24]){
     const scene=fixtures.scenes.find(s=>s.id===id),e=structuredClone(scene.state.encounter);
-    e.width=width;for(const row of e.terrain)while(row.length<width)row.push('grass');
+    e.width=width;e.height=width;
+    while(e.terrain.length<e.height)e.terrain.push(Array(width).fill('sand'));
+    for(const row of e.terrain)while(row.length<width)row.push('sand');
     const before=JSON.stringify(e),world=createEnvironment(new T.Scene(),e,{quality,loadTextures:false});
-    assert.ok(world.group.getObjectByName('fractured Euphrates curtain and mine works'));
-    const bounds=world.group.userData.precinctStructures.find(s=>s.name==='Euphrates siege benchmark');
-    assert.ok(bounds.min[0]>e.width*1.25||bounds.max[0]<-e.width*1.25||bounds.min[2]>e.height*1.25||bounds.max[2]<-e.height*1.25);
-    assert.ok(world.stats().meshes<48);world.update(4);assert.equal(JSON.stringify(e),before);world.dispose();
+    const pilot=world.group.getObjectByName('Chapter V Euphrates fortress pilot');assert.ok(pilot);
+    const structures=world.group.userData.precinctStructures;assert.equal(structures.length,world.group.userData.chapterFivePilot.components);
+    assert.ok(structures.length>=20&&structures.length<=36);
+    for(const bounds of structures){
+      const object=world.group.getObjectByName(bounds.name);assert.ok(object?.visible);
+      assert.ok(bounds.min[0]>e.width*1.25+.5||bounds.max[0]<-e.width*1.25-.5||bounds.min[2]>e.height*1.25+.5||bounds.max[2]<-e.height*1.25-.5,bounds.name+' clears every legal cell');
+      // Independently verify the rendered fallback geometry, not only metadata.
+      const box=new T.Box3().setFromObject(object,true);
+      assert.ok(box.min.x>e.width*1.25+.5||box.max.x<-e.width*1.25-.5||box.min.z>e.height*1.25+.5||box.max.z<-e.height*1.25-.5,bounds.name+' actual geometry clears the board');
+    }
+    assert.ok(world.stats().meshes<180,`${quality}: bounded fallback material batches on ${width}x${width}`);world.update(4);assert.equal(JSON.stringify(e),before);world.dispose();
   }
 });
 

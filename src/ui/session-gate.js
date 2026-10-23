@@ -1,5 +1,6 @@
 /** One active session mutation. Busy work is rejected, never queued for later. */
-export function createSessionGate() {
+export function createSessionGate({onBusyChange = () => {}} = {}) {
+  if (typeof onBusyChange !== 'function') throw new TypeError('A busy-state callback is required.');
   let active = false;
   return {
     get busy() { return active; },
@@ -11,8 +12,16 @@ export function createSessionGate() {
       }
       if (typeof work !== 'function') throw new TypeError('A session operation is required.');
       active = true;
-      try { return await work(); }
-      finally { active = false; }
+      try {
+        // Disable conflicting controls before work starts, including an
+        // automatic save that begins while the player is still in camp.
+        onBusyChange(true);
+        return await work();
+      }
+      finally {
+        active = false;
+        onBusyChange(false);
+      }
     }
   };
 }

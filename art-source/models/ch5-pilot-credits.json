@@ -1,0 +1,40 @@
+{
+  "scope": "Chapter V pilot only; owner review required before other chapters",
+  "authorizedCredits": 400,
+  "startingBalance": 4180,
+  "endingBalance": 4100,
+  "spentCredits": 80,
+  "unspentAuthorization": 320,
+  "reservedCredits": 0,
+  "tasks": [
+    {
+      "id": "ch5-cistern",
+      "taskId": "2bdcf87b-03d7-49f6-bb1d-c020d541f6be",
+      "credits": 20
+    },
+    {
+      "id": "ch5-siege-hoist",
+      "taskId": "b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+      "credits": 20
+    },
+    {
+      "id": "ch5-damaged-masonry",
+      "taskId": "5fa86617-35d7-42ae-aea7-bdc7dc8fe577",
+      "credits": 20
+    },
+    {
+      "id": "ch5-household-bundles",
+      "taskId": "dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+      "credits": 20
+    }
+  ],
+  "failedTasks": 0,
+  "regenerations": 0,
+  "confirmedAt": "2026-10-23",
+  "reconciliation": "Four sequential 20-credit generations; API balance fell from 4180 to 4100, frozen credits zero. No rigging, paid retopology or other generation used. No further spending scheduled.",
+  "ownerReview": {
+    "status": "approved",
+    "date": "2026-10-23",
+    "reply": "I approve the Chapter V pilot. Go ahead and extend the world-building improvements across the remaining eleven chapters."
+  }
+}

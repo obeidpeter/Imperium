@@ -1,0 +1,62 @@
+{
+  "id": "ch5-siege-hoist",
+  "status": "Chapter V pilot: processed, compressed and approved by the owner on 2026-10-23",
+  "chapters": [
+    5
+  ],
+  "use": "mine works and battered tower engineering area",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single compact ancient Roman timber lifting hoist from an eastern frontier siege, AD 256. Two heavy weathered oak A-frame supports joined by a thick horizontal beam, simple thick rope winding on a hand operated wooden drum, a visibly hanging rough stone block secured in rope sling. Roman practical field engineering, robust low triangular silhouette, mortise joints, iron straps, dark aged grain, dust in crevices. Realistic PBR, freestanding on level ground without surrounding scene or base plate. No figures, text, wheels, modern machinery, steel cables or fantasy motifs. Keep ropes thick enough to read at game camera distance.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 350000,
+    "heightMetres": 2.6,
+    "minHeight": 2.4699999999999998,
+    "maxHeight": 2.7300000000000004
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "pilot": "chapter-v-world-pilot",
+    "creditCeiling": 400,
+    "expectedCredits": 20,
+    "taskId": "b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+    "requestedAt": "2026-10-23T14:59:30.648Z",
+    "balanceBefore": 4160,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single compact ancient Roman timber lifting hoist from an eastern frontier siege, AD 256. Two heavy weathered oak A-frame supports joined by a thick horizontal beam, simple thick rope winding on a hand operated wooden drum, a visibly hanging rough stone block secured in rope sling. Roman practical field engineering, robust low triangular silhouette, mortise joints, iron straps, dark aged grain, dust in crevices. Realistic PBR, freestanding on level ground without surrounding scene or base plate. No figures, text, wheels, modern machinery, steel cables or fantasy motifs. Keep ropes thick enough to read at game camera distance.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T15:01:49.111Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-siege-hoist.glb",
+    "rawBytes": 45764992,
+    "rawSha256": "d313a79aa927ff59f74fc6193eb5c87a79a08facbb277e3f745d7a629e60bbec",
+    "tripoInput": {
+      "prompt": "A single compact ancient Roman timber lifting hoist from an eastern frontier siege, AD 256. Two heavy weathered oak A-frame supports joined by a thick horizontal beam, simple thick rope winding on a hand operated wooden drum, a visibly hanging rough stone block secured in rope sling. Roman practical field engineering, robust low triangular silhouette, mortise joints, iron straps, dark aged grain, dust in crevices. Realistic PBR, freestanding on level ground without surrounding scene or base plate. No figures, text, wheels, modern machinery, steel cables or fantasy motifs. Keep ropes thick enough to read at game camera distance.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-siege-hoist-tripo-render.webp"
+  }
+}

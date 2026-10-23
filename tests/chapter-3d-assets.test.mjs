@@ -4,6 +4,7 @@ import {readdir,readFile} from 'node:fs/promises';
 import {chapterAssets,chapterAudioAssets,chapterFlatAssets,chapterOfflineAssets,isFlatArt,viewDecodes} from '../src/ui/art.js';
 import {tacticalAssets} from '../src/ui/unit-sprites.js';
 import {chapterBodies,actorBodyUrl} from '../src/ui/actor-body-catalog.js';
+import {chapterWorldFiles} from '../src/ui/world-catalog.js';
 import vm from 'node:vm';
 
 const root=new URL('../',import.meta.url);
@@ -24,9 +25,9 @@ test('Every chapter can be restored cold with actual renderer, sound, vendor and
   }
 });
 
-// Generated scenery in assets/models/chapters/NN/ belongs to chapter NN alone; a
-// generated character body, to the chapters whose figures wear it.
-const ownModels=chapter=>files.filter(path=>path.startsWith(`./assets/models/chapters/${String(chapter).padStart(2,'0')}/`)||chapterBodies(chapter).some(id=>path==='./'+actorBodyUrl(id)));
+// Props and modular kits follow the world catalog regardless of asset folder;
+// generated character bodies belong to the chapters whose figures wear them.
+const ownModels=chapter=>files.filter(path=>chapterWorldFiles(chapter).some(file=>path==='./'+file)||chapterBodies(chapter).some(id=>path==='./'+actorBodyUrl(id)));
 
 test('Shared dependencies use identical deduplicated URLs across chapters without losing any chapter-specific art',()=>{
   const first=chapterOfflineAssets(1,files).filter(path=>!chapterAssets(1).includes(path)&&!chapterAudioAssets(1).includes(path)&&!ownModels(1).includes(path));

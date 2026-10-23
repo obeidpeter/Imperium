@@ -1,0 +1,505 @@
+{
+  "version": 1,
+  "id": "river-wetlands",
+  "generator": "scripts/assets/build-regional-kits.py",
+  "chapters": [
+    2,
+    8
+  ],
+  "authorship": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+  "licence": "Created for the Imperium project; no third-party source assets",
+  "components": [
+    {
+      "name": "duckboard_straight",
+      "triangles": 276,
+      "boundsBlender": {
+        "min": [
+          -1.2500000596046448,
+          -2.5,
+          0.0
+        ],
+        "max": [
+          1.2500000596046448,
+          2.5,
+          0.9500000610699857
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.2500000596046448,
+          0.0,
+          -2.5
+        ],
+        "max": [
+          1.2500000596046448,
+          0.9500000610699857,
+          2.5
+        ]
+      },
+      "dimensions": {
+        "width": 2.5000001192092896,
+        "height": 0.9500000610699857,
+        "depth": 5.0
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "duckboard_corner",
+      "triangles": 240,
+      "boundsBlender": {
+        "min": [
+          -1.7000001072883606,
+          -1.7000001668930054,
+          0.0
+        ],
+        "max": [
+          1.7000001072883606,
+          1.7000001668930054,
+          1.0000001233004703
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.7000001072883606,
+          0.0,
+          -1.7000001668930054
+        ],
+        "max": [
+          1.7000001072883606,
+          1.0000001233004703,
+          1.7000001668930054
+        ]
+      },
+      "dimensions": {
+        "width": 3.400000214576721,
+        "height": 1.0000001233004703,
+        "depth": 3.4000003337860107
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "landing_steps",
+      "triangles": 332,
+      "boundsBlender": {
+        "min": [
+          -1.5500001907348633,
+          -1.818122386932373,
+          0.0
+        ],
+        "max": [
+          1.5500001907348633,
+          1.818122386932373,
+          2.4466003457266936
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.5500001907348633,
+          0.0,
+          -1.818122386932373
+        ],
+        "max": [
+          1.5500001907348633,
+          2.4466003457266936,
+          1.818122386932373
+        ]
+      },
+      "dimensions": {
+        "width": 3.1000003814697266,
+        "height": 2.4466003457266936,
+        "depth": 3.636244773864746
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "mooring_jetty",
+      "triangles": 424,
+      "boundsBlender": {
+        "min": [
+          -1.699999988079071,
+          -3.0,
+          0.0
+        ],
+        "max": [
+          1.699999988079071,
+          3.0,
+          1.600000023841858
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.699999988079071,
+          0.0,
+          -3.0
+        ],
+        "max": [
+          1.699999988079071,
+          1.600000023841858,
+          3.0
+        ]
+      },
+      "dimensions": {
+        "width": 3.399999976158142,
+        "height": 1.600000023841858,
+        "depth": 6.0
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "reed_screen",
+      "triangles": 424,
+      "boundsBlender": {
+        "min": [
+          -1.9500001072883606,
+          -0.09500004351139069,
+          0.0
+        ],
+        "max": [
+          1.9500001072883606,
+          0.09500004351139069,
+          2.118872880935669
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.9500001072883606,
+          0.0,
+          -0.09500004351139069
+        ],
+        "max": [
+          1.9500001072883606,
+          2.118872880935669,
+          0.09500004351139069
+        ]
+      },
+      "dimensions": {
+        "width": 3.900000214576721,
+        "height": 2.118872880935669,
+        "depth": 0.19000008702278137
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Weathered cedar grain",
+        "Worn ochre gypsum and brick"
+      ]
+    },
+    {
+      "name": "stilt_store",
+      "triangles": 1116,
+      "boundsBlender": {
+        "min": [
+          -2.377556085586548,
+          -2.53000009059906,
+          0.0
+        ],
+        "max": [
+          2.377556085586548,
+          2.53000009059906,
+          4.885000346400815
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.377556085586548,
+          0.0,
+          -2.53000009059906
+        ],
+        "max": [
+          2.377556085586548,
+          4.885000346400815,
+          2.53000009059906
+        ]
+      },
+      "dimensions": {
+        "width": 4.755112171173096,
+        "height": 4.885000346400815,
+        "depth": 5.06000018119812
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "fish_drying_rack",
+      "triangles": 252,
+      "boundsBlender": {
+        "min": [
+          -1.9200000166893005,
+          -1.0000001192092896,
+          0.0
+        ],
+        "max": [
+          1.9200000166893005,
+          1.0000001192092896,
+          2.450000070693598
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.9200000166893005,
+          0.0,
+          -1.0000001192092896
+        ],
+        "max": [
+          1.9200000166893005,
+          2.450000070693598,
+          1.0000001192092896
+        ]
+      },
+      "dimensions": {
+        "width": 3.840000033378601,
+        "height": 2.450000070693598,
+        "depth": 2.000000238418579
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "flood_revetment",
+      "triangles": 1540,
+      "boundsBlender": {
+        "min": [
+          -2.0500000715255737,
+          -0.5050000250339508,
+          0.0
+        ],
+        "max": [
+          2.0500000715255737,
+          0.5050000250339508,
+          1.3799999803304672
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.0500000715255737,
+          0.0,
+          -0.5050000250339508
+        ],
+        "max": [
+          2.0500000715255737,
+          1.3799999803304672,
+          0.5050000250339508
+        ]
+      },
+      "dimensions": {
+        "width": 4.1000001430511475,
+        "height": 1.3799999803304672,
+        "depth": 1.0100000500679016
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "River-worn grey limestone"
+      ]
+    },
+    {
+      "name": "ferry_shelter",
+      "triangles": 404,
+      "boundsBlender": {
+        "min": [
+          -2.5,
+          -1.9511491060256958,
+          0.0
+        ],
+        "max": [
+          2.5,
+          1.9511491060256958,
+          3.0
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.5,
+          0.0,
+          -1.9511491060256958
+        ],
+        "max": [
+          2.5,
+          3.0,
+          1.9511491060256958
+        ]
+      },
+      "dimensions": {
+        "width": 5.0,
+        "height": 3.0,
+        "depth": 3.9022982120513916
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Dusty flax canvas weave",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "rope_bollards",
+      "triangles": 660,
+      "boundsBlender": {
+        "min": [
+          -1.5199999809265137,
+          -0.27000001072883606,
+          0.0
+        ],
+        "max": [
+          1.5199999809265137,
+          0.27000001072883606,
+          1.2999999523162842
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.5199999809265137,
+          0.0,
+          -0.27000001072883606
+        ],
+        "max": [
+          1.5199999809265137,
+          1.2999999523162842,
+          0.27000001072883606
+        ]
+      },
+      "dimensions": {
+        "width": 3.0399999618530273,
+        "height": 1.2999999523162842,
+        "depth": 0.5400000214576721
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Dusty flax canvas weave",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "levee_stair",
+      "triangles": 264,
+      "boundsBlender": {
+        "min": [
+          -1.100000023841858,
+          -1.5074999332427979,
+          0.0
+        ],
+        "max": [
+          1.100000023841858,
+          1.5074999332427979,
+          1.5
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.100000023841858,
+          0.0,
+          -1.5074999332427979
+        ],
+        "max": [
+          1.100000023841858,
+          1.5,
+          1.5074999332427979
+        ]
+      },
+      "dimensions": {
+        "width": 2.200000047683716,
+        "height": 1.5,
+        "depth": 3.0149998664855957
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "River-worn grey limestone"
+      ]
+    },
+    {
+      "name": "bridge_trestle",
+      "triangles": 240,
+      "boundsBlender": {
+        "min": [
+          -2.7500001192092896,
+          -1.3670732975006104,
+          0.0
+        ],
+        "max": [
+          2.7500001192092896,
+          1.3670732975006104,
+          2.6263419184833765
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.7500001192092896,
+          0.0,
+          -1.3670732975006104
+        ],
+        "max": [
+          2.7500001192092896,
+          2.6263419184833765,
+          1.3670732975006104
+        ]
+      },
+      "dimensions": {
+        "width": 5.500000238418579,
+        "height": 2.6263419184833765,
+        "depth": 2.7341465950012207
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "family": "River-worn grey limestone",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Worn ochre gypsum and brick",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Dusty flax canvas weave",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Weathered cedar grain",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/river-wetlands-kit.glb",
+    "bytes": 1360268,
+    "sha256": "378e841744150d29f2ec67b163dc84266995ff2bac034c107ec4e6382d6294f1",
+    "triangles": 6172
+  },
+  "runtimePath": "assets/models/scenery/river-wetlands-kit.glb"
+}

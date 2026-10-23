@@ -3,7 +3,7 @@ import {hash,noise,isPlayable} from './environment-layout.js';
 
 // Perimeter architecture frames the actual rules grid. Nothing in this module
 // occupies an authored standing cell, changes terrain, or creates a blocker.
-export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,instance,branch}){
+export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,instance,branch,regionalWorld=false}){
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,perf=quality==='performance',landmarks=root.userData.environmentLandmarks;
   const mark=(name,g)=>{g.name=name;landmarks.push(name);return g;};
   const group=(name,x=0,z=0)=>mark(name,p.group(root,x,height(x,z),z));
@@ -98,13 +98,13 @@ export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,
     }
     // Tangled fallen timber gives the rescue approach an interrupted human
     // route without placing invented obstacles on the playable causeway.
-    for(const [x,z,a]of [[-13,-1,.35],[14,-7,-.55],[-15,10,.7]]){
+    for(const [x,z,a]of [[-hx-4,-1,.35],[hx+4,-7,-.55],[-hx-5,10,.7]]){
       const g=group('flood-carried willow trunk',x,z);g.rotation.y=a;
       p.beam(g,[-2,.20,0],[2.1,.40,.1],.19,m.darkWood);for(let j=0;j<4;j++)p.beam(g,[-1+j*.8,.30,0],[-.7+j*.7,.75,(j%2?1:-1)*.65],.045,m.wood);
     }
     mark('continuous muddy wetland banks',p.group(root,0,0,0));
   }
-  if(profile.architecture==='colonnaded-city'){
+  if(profile.architecture==='colonnaded-city'&&!regionalWorld){
     const g=group('connected Palmyrene urban edge'),back=-hz-8;
     // The open porticoes connect to the proper courtyard houses authored in
     // environment-inhabited, rather than a row of sealed solid box facades.

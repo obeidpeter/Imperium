@@ -1,0 +1,62 @@
+{
+  "id": "ch5-damaged-masonry",
+  "status": "Chapter V pilot: processed, compressed and approved by the owner on 2026-10-23",
+  "chapters": [
+    5
+  ],
+  "use": "breached fortress perimeter and engineering consequence marker",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single compact heap of ancient Roman frontier fortress rubble, AD 256 Euphrates valley. Several large broken pale limestone blocks with chipped corners and tool marks, jagged ochre mud brick wall fragment still carrying flaking dusty cream plaster, tiny dark scorch patch. Broad low irregular silhouette, convincingly heavy stone, crevice shadows, varied rubble sizes with readable larger blocks. Realistic weathered PBR, isolated prop, no background, no continuous ground slab, no soldiers, text, plants, skulls, modern concrete or reinforcement bars. Asset must have thickness and interesting geometry viewed from any angle.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 350000,
+    "heightMetres": 1.3,
+    "minHeight": 1.2349999999999999,
+    "maxHeight": 1.3650000000000002
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "pilot": "chapter-v-world-pilot",
+    "creditCeiling": 400,
+    "expectedCredits": 20,
+    "taskId": "5fa86617-35d7-42ae-aea7-bdc7dc8fe577",
+    "requestedAt": "2026-10-23T15:02:39.745Z",
+    "balanceBefore": 4140,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single compact heap of ancient Roman frontier fortress rubble, AD 256 Euphrates valley. Several large broken pale limestone blocks with chipped corners and tool marks, jagged ochre mud brick wall fragment still carrying flaking dusty cream plaster, tiny dark scorch patch. Broad low irregular silhouette, convincingly heavy stone, crevice shadows, varied rubble sizes with readable larger blocks. Realistic weathered PBR, isolated prop, no background, no continuous ground slab, no soldiers, text, plants, skulls, modern concrete or reinforcement bars. Asset must have thickness and interesting geometry viewed from any angle.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T15:05:14.849Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-damaged-masonry.glb",
+    "rawBytes": 46330524,
+    "rawSha256": "f93af1137f59fe4ec0b3341f2db070d81ea199942e7e537590992395ff46067b",
+    "tripoInput": {
+      "prompt": "A single compact heap of ancient Roman frontier fortress rubble, AD 256 Euphrates valley. Several large broken pale limestone blocks with chipped corners and tool marks, jagged ochre mud brick wall fragment still carrying flaking dusty cream plaster, tiny dark scorch patch. Broad low irregular silhouette, convincingly heavy stone, crevice shadows, varied rubble sizes with readable larger blocks. Realistic weathered PBR, isolated prop, no background, no continuous ground slab, no soldiers, text, plants, skulls, modern concrete or reinforcement bars. Asset must have thickness and interesting geometry viewed from any angle.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-damaged-masonry-tripo-render.webp"
+  }
+}

@@ -101,3 +101,47 @@ test('SESSION-06 replacement holds the gate until delayed publication completes'
   assert.equal(await operation, 'saved');
   assert.equal(gate.busy, false);
 });
+
+test('SESSION-07 busy notifications keep controls disabled through replacement load, save and publication', async () => {
+  const notifications = [], loading = deferred(), saving = deferred(), publishing = deferred();
+  const saveStarted = deferred(), publishStarted = deferred();
+  const gate = createSessionGate({onBusyChange: busy => notifications.push({busy, observed:gate.busy})});
+  const operation = gate.run(() => commitReplacement({
+    load: () => { assert.deepEqual(notifications, [{busy:true, observed:true}]); return loading.promise; },
+    save: async () => { saveStarted.resolve(); await saving.promise; },
+    publish: async () => { publishStarted.resolve(); await publishing.promise; }
+  }));
+  assert.deepEqual(notifications, [{busy:true, observed:true}], 'Controls are disabled synchronously');
+  loading.resolve('restored');await saveStarted.promise;
+  assert.deepEqual(notifications, [{busy:true, observed:true}]);
+  saving.resolve();await publishStarted.promise;
+  assert.deepEqual(notifications, [{busy:true, observed:true}]);
+  await assert.rejects(gate.run(() => assert.fail('An overlapping action ran')), {code:'SESSION_BUSY'});
+  assert.deepEqual(notifications, [{busy:true, observed:true}], 'A rejected overlap does not re-enable controls');
+  publishing.resolve();assert.equal(await operation, 'restored');
+  assert.deepEqual(notifications, [{busy:true, observed:true}, {busy:false, observed:false}]);
+});
+
+test('SESSION-08 failed async saves re-enable controls and allow a fresh action', async () => {
+  const notifications = [], saving = deferred();
+  const gate = createSessionGate({onBusyChange: busy => notifications.push(busy)});
+  const operation = gate.run(() => saving.promise);
+  const rejected = assert.rejects(operation, /Storage unavailable/);
+  assert.deepEqual(notifications, [true]);
+  saving.reject(new Error('Storage unavailable'));await rejected;
+  assert.equal(gate.busy, false);assert.deepEqual(notifications, [true, false]);
+  assert.equal(await gate.run(() => 'retry saved'), 'retry saved');
+  assert.deepEqual(notifications, [true, false, true, false]);
+});
+
+test('SESSION-09 synchronous failures release the busy notification without accepting nested work', async () => {
+  const notifications = [];
+  const gate = createSessionGate({onBusyChange: busy => notifications.push(busy)});
+  await assert.rejects(gate.run(() => { throw new Error('Action failed'); }), /Action failed/);
+  assert.deepEqual(notifications, [true, false]);
+  await gate.run(async () => {
+    await assert.rejects(gate.run(() => assert.fail('A nested action ran')), {code:'SESSION_BUSY'});
+    assert.deepEqual(notifications, [true, false, true]);
+  });
+  assert.deepEqual(notifications, [true, false, true, false]);
+});

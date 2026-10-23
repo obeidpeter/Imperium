@@ -47,7 +47,7 @@ test('Every new precinct leaves the complete playable rectangle and routes clear
 test('Staged landmarks stay batched and disposable in all three quality tiers',()=>{
   for(const id of ['ch2-marsh','ch9-city','ch11-adlection'])for(const quality of ['performance','balanced','high']){
     const s=fixture.scenes.find(s=>s.id===id),scene=new THREE.Scene(),before=JSON.stringify(s.state),world=createEnvironment(scene,s.state.encounter,{quality,loadTextures:false,chapter:s.chapter});
-    assert.equal(world.group.userData.encounterStaging.key,world.profile.staging.key);assert.ok(world.group.userData.environmentLandmarks.includes(world.profile.staging.title));assert.ok(world.group.userData.precinctStructures.length>0);assert.ok(world.stats().meshes<42,id+' inhabited architecture remains a bounded set of material batches');
+    assert.equal(world.group.userData.encounterStaging.key,world.profile.staging.key);assert.ok(world.group.userData.environmentLandmarks.includes(world.profile.staging.title));assert.ok(world.group.userData.precinctStructures.length>0);assert.ok(world.stats().meshes<=64,id+' individually replaceable regional components stay within sixty-four draw objects');
     let disposed=0;const geometries=new Set();world.group.traverse(o=>{if(o.isMesh)geometries.add(o.geometry);});for(const g of geometries)g.addEventListener('dispose',()=>disposed++);
     world.update(0);world.update(10);assert.equal(JSON.stringify(s.state),before);world.dispose();world.dispose();assert.equal(disposed,geometries.size);assert.equal(scene.children.length,0);
   }

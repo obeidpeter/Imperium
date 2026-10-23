@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/eagle-rally-stand.glb",
+  "output": "assets/models/world/eagle-rally-stand.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 269376,
+    "gzipBytes": 205446,
+    "sha256": "7eea9904e96b4b4ced4813f75a48c59bfdaf90414a3150ec5a592b8f9e368c8d"
+  },
+  "after": {
+    "bytes": 256852,
+    "gzipBytes": 248365,
+    "sha256": "e4f784eb2fb905821d17b909c18de0eb04aec4bcaeb36d617ed4cdd80aa949ac"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6369,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9236
+      },
+      "bytes": 17224,
+      "psnr": 41.586
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25048
+      },
+      "bytes": 48728,
+      "psnr": 35.964
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22480
+      },
+      "bytes": 39192,
+      "psnr": 28.903
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/broken-baggage-cart.glb",
+  "output": "assets/models/world/broken-baggage-cart.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 329624,
+    "gzipBytes": 220473,
+    "sha256": "e8f79fcc6c8724a61de89dc1b5f82db9728f6fca6000825117c45aca119efce5"
+  },
+  "after": {
+    "bytes": 300056,
+    "gzipBytes": 288988,
+    "sha256": "d232f60771f224b6caec6af3a6f729bb3eeb6988719a8665e16edae1783a30e9"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6860,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 5588
+      },
+      "bytes": 11327,
+      "psnr": 44.592
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30884
+      },
+      "bytes": 52508,
+      "psnr": 35.468
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13082
+      },
+      "bytes": 30149,
+      "psnr": 41.261
+    }
+  ]
+}

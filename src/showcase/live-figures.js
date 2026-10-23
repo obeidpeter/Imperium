@@ -7,6 +7,9 @@ import {EXCHANGE,MORALE} from '../data/realtime-squads.js';
 import {actorById} from '../core/realtime/abilities.js';
 import {span} from '../core/realtime/navigation.js';
 import {voterPosture} from './stage-figures.js';
+import {campActivityFor,sampleCampActivity} from './camp-activity.js';
+import {createWorldAcoustics} from './world-acoustics.js';
+import {campaignSoundscape} from '../ui/soundscape.js';
 
 // The real-time world on the 3D stage (BattleStage.setLive): every frame each
 // figure's place and pose come from the simulation, interpolated between its
@@ -16,6 +19,23 @@ import {voterPosture} from './stage-figures.js';
 
 const TILE=2.5,FALL_TICKS=16,LIE_TICKS=10,REACTION_TICKS=9,FLOAT_MS=1300,SPARK_MS=320;
 const lerp=(a,b,t)=>a+(b-a)*t,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const closeUpViewChanged=(stage,c)=>stage.cameraView!==c.view||stage.focusMode!==c.focus||stage.selected!==c.selected||stage.followCollision!==c.follow||
+  stage.orbit.yaw!==c.yaw||stage.orbit.pitch!==c.pitch||Math.abs(stage.orbit.distance-c.distance)>1e-8;
+export function beginLiveCloseUp(stage,now,previous=null){
+  return {start:now,base:previous&&!closeUpViewChanged(stage,previous)?previous.base:stage.orbit.distance,
+    view:stage.cameraView,focus:stage.focusMode,selected:stage.selected,follow:stage.followCollision,yaw:stage.orbit.yaw,pitch:stage.orbit.pitch,distance:stage.orbit.distance};
+}
+export function sampleLiveCloseUp(stage,closeUp,now){
+  stage.followFramingActive=false;if(!closeUp)return null;
+  // A camera command owns its new distance. In particular, Follow replaces
+  // its clearance record and Zoom clears it, even if the view name is unchanged.
+  const replaced=stage.cameraView!==closeUp.view||stage.focusMode!==closeUp.focus||stage.selected!==closeUp.selected||stage.followCollision!==closeUp.follow;
+  if(replaced||Math.abs(stage.orbit.distance-closeUp.distance)>1e-8)return null;
+  const k=(now-closeUp.start)/900;
+  if(k>=1||stage.drag||stage.reducedMotion||stage.actionCamera===false||stage.orbit.yaw!==closeUp.yaw||stage.orbit.pitch!==closeUp.pitch){stage.orbit.distance=closeUp.base;return null;}
+  closeUp.distance=stage.orbit.distance=closeUp.base*(1-.28*Math.sin(Math.PI*clamp(k,0,1)));
+  stage.followFramingActive=true;return closeUp;
+}
 // Simulation metres (from the map's north-west corner) as the stage's fractional tiles, and back.
 export const stageTile=(x,z)=>({x:x/TILE-.5,y:z/TILE-.5});
 export const simPoint=(world,ground)=>ground&&{x:ground.x+world.map.width*TILE/2,z:ground.z+world.map.height*TILE/2};
@@ -24,11 +44,11 @@ export const worldPoint=(world,p)=>({x:p.x-world.map.width*TILE/2,z:p.z-world.ma
 // A man outside a squad stands alone (no formation crowd).
 // In a chamber (chamber-world.js) each figure carries the Contest's own readings: his
 // bloc (the toga trim and letter), a member's stance (his posture and marker) and a speaker's Resolve.
-export function stageUnit(actor,{appearance}={}){
+export function stageUnit(actor,{appearance,campActivity}={}){
   const unit={id:actor.id,name:actor.name,side:actor.side,role:actor.role,...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
     intent:'',hidden:false,trained:actor.side==='player',shield:actor.kit.some(id=>ITEMS[id]?.shield),crowd:false,
     ...((actor.id==='hero'||actor.side==='player'||actor.veteranId)&&!actor.civic?{equipment:[...actor.kit]}:{}),
-    ...(actor.id==='hero'&&appearance?{appearance:{...appearance}}:{})};
+    ...(actor.id==='hero'&&appearance?{appearance:{...appearance}}:{}),...(campActivity?{campActivity}:{})};
   const c=actor.civic;if(!c)return unit;
   // A hearing's presiding magistrate wears the toga and presides: no stance and no Resolve.
   if(c.role==='magistrate')return {...unit,role:'speaker',trained:false,shield:false,presides:true};
@@ -85,7 +105,7 @@ function stageTerrain(world){
 export function stageEncounter(encounter,world,{appearance}={}){
   const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
-  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance})),...squads],...stageMission(world),
+  return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance,campActivity:campActivityFor(world,a.id)})),...squads],...stageMission(world),
     field:stageField(world),operation:null,reinforcements:[],status:'active',turn:1,log:[]};
 }
 // The objective's markers as the board shows them (stage-readout.js missionReadouts): the goal, the
@@ -187,6 +207,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
   const KINDS=['friend','enemy','neutral','guard','chosen','windup','recovery','stagger','shaken','broken'];
   function disposeFeet(){if(!feet)return;for(const kind of KINDS){feet[kind].removeFromParent();feet[kind].geometry.dispose();feet[kind].material.dispose();}feet=null;}
   const rendered=()=>{const w=getWorld();return w.tick-1+getAlpha();};
+  const acoustics=createWorldAcoustics();
   const actorOf=(w,id)=>actorById(w,id);
   const squadOf=(w,id)=>w.squads?.find(q=>q.id===id)??null;
   // Marks over a man of a squad go over his squad's standard (the squad's figure carries the label).
@@ -246,6 +267,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     else if(a.civic?.withdrawn){motion='withdrawn';phase=1;}
     else if(gestures.get(a.id)?.until>performance.now()){const g=gestures.get(a.id);motion=g.motion;phase=clamp(1-(g.until-performance.now())/g.span,0,1);focusId=g.toward??focusId;}
     else if(a.civic?.role==='voter'){const posture=voterPosture(a.civic);if(posture){motion=posture.motion;phase=posture.phase;}}
+    if(motion==='idle'){const activity=sampleCampActivity(w,a,{time,reducedMotion});if(activity){motion=activity.motion;phase=activity.phase;}}
     const reaction=reactions.get(a.id);
     if(reaction&&r-reaction.start>=0&&r-reaction.start<REACTION_TICKS&&['idle','brace'].includes(motion)){
       motion=reaction.kind==='block'?'block':'hit';phase=clamp((r-reaction.start)/REACTION_TICKS,0,1);
@@ -253,7 +275,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     }
     if(!['walk','run'].includes(motion))locomotionWeight=1;
     if(focusId)focusId=labelOf(w,focusId);
-    return {at:{x:unit.x,y:unit.y},visible,active:motion!=='idle'||a.id===w.controlled,aimHeight,focusId,lift,
+    return {at:{x:unit.x,y:unit.y},visible,active:motion!=='idle'&&!motion.startsWith('camp-')||a.id===w.controlled,aimHeight,focusId,lift,
       pose:{time:reducedMotion?0:time,dt,motion,phase,direction,locomotionDistance:walked,locomotionWeight,movementProgress:undefined,
         braced:a.braceUntil>r,health:a.alive?a.hp/a.maxHp:1,impactDirection,turnSign:1,reducedMotion,selected:false}};
   }
@@ -341,7 +363,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           if(mine&&!stage.reducedMotion)stage.cameraKick=Math.max(stage.cameraKick??0,e.kind==='hit'?(e.critical?1:.55):.3);
           // Close-ups on critical blows, never while paused or with reduced motion.
           if(e.kind==='hit'&&e.critical&&mine&&!stage.reducedMotion&&stage.actionCamera!==false&&!paused()&&!stage.drag&&stage.cameraView!=='overview')
-            closeUp={start:now,base:closeUp?.base??stage.orbit.distance};
+            closeUp=beginLiveCloseUp(stage,now,closeUp);
         }
         // Squads trade blows a second at a time: sparks where the fronts meet, a volley from the archers' ranks.
         if(e.kind==='exchange'){
@@ -376,6 +398,12 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     },
     effects(stage,{now}){
       const w=getWorld(),r=rendered(),alpha=getAlpha();
+      const acoustic=acoustics.sample(w,{now,paused:paused()});
+      campaignSoundscape().setSpace(acoustic.space);
+      for(const cue of acoustic.cues){
+        const played=cue.environment?campaignSoundscape().environmentCue(cue.kind,cue):stage.sound?.cue(cue.kind,cue);
+        if(played)stage.cuesPlayed++;
+      }
       // Missiles in flight, from the hand to where they will land.
       stage.projectiles.forEach(p=>p.visible=false);
       w.projectiles.forEach((p,i)=>{
@@ -536,13 +564,12 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         mesh.position.set(p.x,p.y+.08,p.z);mesh.scale.setScalar(metres);
       }
       // A close-up closes in for a moment, then gives the view back.
-      if(closeUp){
-        const k=(now-closeUp.start)/900;
-        if(k>=1||stage.drag){stage.orbit.distance=closeUp.base;closeUp=null;}else stage.orbit.distance=closeUp.base*(1-.28*Math.sin(Math.PI*clamp(k,0,1)));
-      }
+      closeUp=sampleLiveCloseUp(stage,closeUp,now);
       return {volleys:shots};
     },
     dispose(){
+      if(closeUp){sampleLiveCloseUp(stage,closeUp,Infinity);closeUp=null;}stage.followFramingActive=false;
+      acoustics.reset();campaignSoundscape().setSpace({enclosed:false});
       for(const m of [marks.route,marks.planned,marks.goal,marks.target,marks.focus,marks.work,marks.zone,intentionLines?.strike,intentionLines?.move,threatLines,...(marks.ranges??[]),...(marks.marker??[]),
         ...orderLines.flatMap(l=>[l.advance,l.attack])])
         if(m){m.removeFromParent();m.geometry.dispose();m.material.dispose();}

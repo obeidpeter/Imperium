@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/equipment-rack.glb",
+    "bytes": 45408116,
+    "sha256": "587e997ed250582c5cdc9e52cd8392920ccf3558959164eb75ded63aa161fe35",
+    "triangles": 1478054
+  },
+  "output": {
+    "path": "art-source/models/processed/equipment-rack.glb",
+    "bytes": 235064,
+    "sha256": "6586d64380f08e4535c4df0e74af201a11718a12f7ecbef97d86c3a9ec079905",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9999163185801718,
+  "sizeMetres": {
+    "width": 0.7175,
+    "height": 2.0,
+    "depth": 1.706
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_9a732ae9-85b9-4fde-98fa-084823134827",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_9a732ae9-85b9-4fde-98fa-084823134827",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_9a732ae9-85b9-4fde-98fa-084823134827",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

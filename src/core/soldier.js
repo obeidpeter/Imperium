@@ -102,7 +102,7 @@ export function takeCourse(state,courseId){
 }
 // Techniques the soldier can use now, in the field bar's order.
 export function knownAbilities(state){
-  const s=state.soldier;
+  const s=soldierOf(state);
   // Specialists' actions belong to veteran companions, never to the soldier himself.
   return FIELD_ORDER.filter(id=>{const a=ABILITIES[id],u=a?.unlock??{};return a?.kind!=='specialist'&&(u.course?s.courses.includes(u.course):(u.chapter??1)<=state.chapter);});
 }

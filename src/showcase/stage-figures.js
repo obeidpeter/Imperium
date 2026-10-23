@@ -13,7 +13,7 @@ import {replaceStageActor} from './actor-replacement.js';
 // A figure is rebuilt when its key changes: a committed defection changes the
 // uniform and allegiance together, and quality and figure style change how it is built.
 export function figureStyleKey(unit,{commendations,quality,figureStyle}){
-  return `${unit.side}:${unit.role}:${unit.name}:${commendations}:${quality}:${figureStyle}:${unit.equipment?.join(',')??''}:${JSON.stringify(unit.appearance??null)}`;
+  return `${unit.side}:${unit.role}:${unit.name}:${commendations}:${quality}:${figureStyle}:${unit.equipment?.join(',')??''}:${JSON.stringify(unit.appearance??null)}:${unit.campActivity??''}`;
 }
 // The finish the scene adds for each figure style: painted figures a tilt-shift, inked ones outlines and washes.
 export const figureStyleFinish=style=>({tiltShift:style==='painted'?1:0,ink:style==='inked'?1:0});

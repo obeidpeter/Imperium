@@ -1,0 +1,184 @@
+{
+  "scope": "Remaining eleven chapters after approval of Chapter V; independent of the pilot allowance",
+  "authorization": {
+    "credits": 600,
+    "approvedBy": "Owner",
+    "date": "2026-10-23",
+    "reply": "Approve up to 600 additional credits"
+  },
+  "pricing": {
+    "checked": "2026-10-23",
+    "source": "https://platform.tripo3d.ai/docs/billing",
+    "model": "v3.1-20260211",
+    "textWithStandardTextures": 20
+  },
+  "startingBalance": 4100,
+  "startingFrozen": 0,
+  "plannedCredits": 340,
+  "spentCredits": 340,
+  "reservedCredits": 0,
+  "remainingAuthorization": 260,
+  "status": "Complete and reconciled",
+  "tasks": [
+    {
+      "id": "legionary-cookstation",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "897be104-7bb7-480a-b95e-7179a07a1b4f",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "equipment-rack-initial",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "ad972738-b9c5-4aba-ab35-7251396630d0",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20,
+      "review": "Not selected: incompatible helmet silhouette"
+    },
+    {
+      "id": "courier-table",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "fc09a428-d874-4d5b-9847-ec27eb151c54",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "casualty-litter",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "e115be12-e79d-49d0-8048-269c1fcf9fc1",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "broken-baggage-cart",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "86849821-1c27-4322-bded-c760efb15de4",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "river-ferry",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "mooring-ropes",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "429261a7-1be8-49d7-bd56-2187deaf8556",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "eagle-rally-stand",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "caravan-trough",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "caravan-baggage",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "261422e4-0f91-40fe-a0da-90ace23caba6",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "signal-brazier",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "4ad6c430-4b19-427c-9948-f3f03b84b551",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "command-table",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "cf48fbd6-e4a0-4cf3-9c19-5be52457a590",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "grain-bins",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "relief-cart",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "b51df8e0-d3cf-4557-aea3-a179cb13645e",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "archive-cabinet",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "c14e3f77-4f2f-420c-9021-59c3862985e4",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "civic-fountain",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "f00d2770-59a6-499a-9fb1-c00b7519d65c",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    },
+    {
+      "id": "equipment-rack",
+      "expectedCredits": 20,
+      "status": "success",
+      "taskId": "9a732ae9-85b9-4fde-98fa-084823134827",
+      "creditsReported": 20,
+      "creditSource": "task.consumed_credit",
+      "accountedCredits": 20
+    }
+  ],
+  "initialPlannedCredits": 320,
+  "endingBalance": 3760,
+  "endingFrozen": 0,
+  "reconciliation": "Seventeen successful tasks each reported 20 credits. Wallet balance fell from 4100 to 3760, matching 340 credits; frozen zero. Sixteen final props selected, one initial equipment rack rejected. Cookstation support repaired locally without charge. No further paid work scheduled.",
+  "selectedProps": 16,
+  "paidRevisions": 1
+}

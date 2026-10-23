@@ -29,6 +29,7 @@ import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import {playEncounter} from './autoplay.mjs';
 import {tpAuditTotal} from '../src/core/tp-audit.js';
+import {sceneryPlacements} from '../src/showcase/scenery-models.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -171,9 +172,13 @@ async function expandedFieldReadouts(){
 }
 
 async function fieldApproach(){
+  const code=approachCampCode(),expected=Game.decodeSave(code);
+  assert.ok(Game.chooseFieldApproach(expected,'breach').ok);assert.ok(Game.startEncounter(expected).ok);
+  const expectedScenery=sceneryPlacements(expected.encounter,{chapter:expected.chapter}).length;
+  assert.ok(expectedScenery>0,'The legal Chapter V field has authored scenery');
   const page=await open();await page.goto(base);
   await settingsCommand(page,'restore');
-  await page.fill('#restore-code',approachCampCode());await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');
   const card=id=>`[data-cmd="field-approach"][data-id="${id}"]`;
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'true','Each camp starts from direct deployment');
@@ -182,7 +187,7 @@ async function fieldApproach(){
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
   // The generated supply camp loads in the 3D view through the page's own policy and worker.
-  await page.waitForFunction(()=>document.querySelector('#battle-board')?.dataset.sceneryModels==='5',null,{timeout:300000,polling:500});
+  await page.waitForFunction(count=>document.querySelector('#battle-board')?.dataset.sceneryModels===String(count),expectedScenery,{timeout:300000,polling:500});
   // Generated character bodies replace the procedural figures in the same view.
   await page.waitForFunction(()=>Number(document.querySelector('#battle-board')?.dataset.generatedBodies)>0,null,{timeout:300000,polling:500});
   await view(page,'2d');await page.focus('#battle-board');
@@ -378,12 +383,22 @@ async function realtimeFlat(){
 }
 
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
-async function restoreRealtime(page,code){
-  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+async function restoreRealtime(page,code,{view='3d',beforeStart=null}={}){
+  await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
-  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await restoreCamp(page,code);
+  if(beforeStart)await beforeStart();
+  await page.click('[data-cmd="start"]:visible');
+  try{await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');}
+  catch(error){
+    const observed=await page.evaluate(()=>({phase:document.documentElement.dataset.phase,kind:document.querySelector('.rt-field')?.dataset.kind,
+      scene:document.querySelector('.rt-scene')?.dataset,board:document.querySelector('#rt-board')?.dataset,
+      world:window.__realtime.world()?.encounterId,feedback:document.querySelector('#announcement')?.textContent,
+      save:document.querySelector('.save-status')?.textContent,startDisabled:document.querySelector('[data-cmd="start"]')?.disabled,
+      title:document.querySelector('#panel-title')?.textContent,modalOpen:document.querySelector('#modal')?.open,
+      preparing:document.querySelector('.rt-scene')?.textContent?.slice(0,500)}));
+    throw new Error(`${error.message}\nField departure state: ${JSON.stringify(observed)}`);
+  }
 }
 async function realtimeSquads(){
   const page=await open();await restoreRealtime(page,battleCampCode('ch5-mine'));
@@ -415,12 +430,132 @@ async function realtimeDeployment(){
 }
 
 // Phase 3 in the page: a restored camp's Contest walked as the Curia.
-async function restoreChamber(page,code,view='3d'){
+async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
   await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page');await page.click('[data-cmd="start"]:visible');
+  await restoreCamp(page,code);
+  if(beforeStart)await beforeStart();
+  await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+}
+async function restoreCamp(page,code){
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');
+  const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
+  await page.click('[data-cmd="confirm-import"]');await closed;
+  await page.waitForSelector('.camp-page');
+}
+// Hold the real browser save lock, rather than changing campaign state, to
+// reproduce a slow first-visit autosave before either kind of departure.
+async function campSaveDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open();
+    await page.addInitScript(()=>{
+      const request=navigator.locks.request.bind(navigator.locks),delay=window.__campSaveDelay={held:false,release:null};
+      navigator.locks.request=(name,...args)=>{
+        const callback=args.pop();
+        return request(name,...args,async lock=>{
+          if(name==='sacramentum-save'&&!delay.held&&document.querySelector('.camp-page')){
+            delay.held=true;await new Promise(resolve=>{delay.release=resolve;});
+          }
+          return callback(lock);
+        });
+      };
+    });
+    const beforeStart=async()=>{
+      await page.waitForFunction(()=>window.__campSaveDelay.held,null,{timeout:30000});
+      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for the camp autosave`);
+      assert.match(await text(page,'.save-status'),/Saving/);
+      assert.equal(await page.locator('.rt-field[data-kind="camp"]').count(),1,'The camp stays open during the save');
+      await page.evaluate(()=>window.__campSaveDelay.release());
+    };
+    if(kind==='field')await restoreRealtime(page,battleCampCode(id),{view:'2d',beforeStart});
+    else await restoreChamber(page,battleCampCode(id),'2d',{beforeStart});
+    assert.equal(await page.locator(`.rt-field[data-kind="${kind}"]`).count(),1,`${id}: one click departs after saving`);
+    await page.context().close();
+  }
+  console.log('ok - slow camp autosave: departure stays disabled until saving finishes, then one click enters both a field and a chamber');
+}
+async function campStartupDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open({serviceWorkers:'block'});let releaseModule;
+    const held=new Promise(resolve=>{releaseModule=resolve;});
+    await page.route('**/src/showcase/realtime-field.js',async route=>{await held;await route.continue();});
+    const loading=page.waitForRequest('**/src/showcase/realtime-field.js',{timeout:30000});
+    void loading.catch(()=>{}); // A preceding restore failure still closes the page safely.
+    const beforeStart=async()=>{
+      await loading;
+      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for initial camp setup`);
+      releaseModule();
+    };
+    try{
+      if(kind==='field')await restoreRealtime(page,battleCampCode(id),{view:'2d',beforeStart});
+      else await restoreChamber(page,battleCampCode(id),'2d',{beforeStart});
+      assert.equal(await page.locator(`.rt-field[data-kind="${kind}"]`).count(),1,`${id}: departure works after camp setup`);
+    }finally{releaseModule();await page.context().close();}
+  }
+  console.log('ok - slow camp setup: departure remains disabled through module loading and the initial visit save, then enters field and chamber');
+}
+// A route choice is a saved campaign command just like departure. Hold both
+// initialization boundaries so an enabled choice can never silently lose a click.
+async function campRouteChoice(){
+  const page=await open({serviceWorkers:'block'});let releaseModule;
+  const held=new Promise(resolve=>{releaseModule=resolve;});
+  await page.route('**/src/showcase/realtime-field.js',async route=>{await held;await route.continue();});
+  const loading=page.waitForRequest('**/src/showcase/realtime-field.js',{timeout:30000});void loading.catch(()=>{});
+  await page.addInitScript(()=>{
+    localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));
+    const request=navigator.locks.request.bind(navigator.locks),delay=window.__campRouteSaveDelay={held:false,release:null};
+    navigator.locks.request=(name,...args)=>{
+      const callback=args.pop();
+      return request(name,...args,async lock=>{
+        if(name==='sacramentum-save'&&!delay.held&&document.querySelector('.camp-page')){
+          delay.held=true;await new Promise(resolve=>{delay.release=resolve;});
+        }
+        return callback(lock);
+      });
+    };
+  });
+  try{
+    await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode('ch12-confrontation'));await loading;
+    const route='[data-cmd="route"][data-id="defection"]',firstPosition=page.locator('[data-cmd="company-up"][data-id="0"]');
+    assert.equal(await (await revealControl(page,route)).isDisabled(),true,'A route waits for the initial camp runtime');
+    assert.equal(await firstPosition.count(),1,'The first deployment position has its move-up control');
+    assert.equal(await firstPosition.isDisabled(),true,'The first deployment position cannot move up');
+    await menuButton(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');
+    const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
+    await page.click('#modal [data-cmd="close-modal"] >> nth=0');await closed;
+    releaseModule();await page.waitForFunction(()=>window.__campRouteSaveDelay.held,null,{timeout:30000});
+    assert.equal(await (await revealControl(page,route)).isDisabled(),true,'A route remains disabled throughout the initial camp save');
+    assert.match(await text(page,'.save-status'),/Saving/);
+    assert.equal(await page.locator('[data-cmd="ledger"]').first().isEnabled(),true,'Reading the ledger remains available during a camp save');
+    await page.evaluate(()=>window.__campRouteSaveDelay.release());
+    await (await revealControl(page,route)).click();await page.waitForSelector(`${route}.chosen`,{timeout:30000});
+    assert.equal(await firstPosition.isDisabled(),true,'Ending the save never enables an inherently unavailable deployment order');
+  }finally{
+    releaseModule();await page.evaluate(()=>window.__campRouteSaveDelay?.release?.()).catch(()=>{});await page.context().close();
+  }
+  console.log('ok - camp route choice: initialization and saving disable mutations, Settings and ledger remain available, and one click selects defection after saving without enabling unavailable deployment orders');
+}
+// The gate reply first saves the conversation, then starts the encounter as a
+// second command. Both steps must complete through the ordinary visible reply.
+async function campGateDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open();
+    await page.addInitScript(()=>{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));});
+    await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode(id));
+    await (await revealControl(page,'[data-cmd="conversation"][data-id="gate"]')).click();
+    await page.waitForSelector('#modal[open] [data-cmd="reply"][data-id="0"]');
+    assert.match(await text(page,'#modal [data-cmd="reply"][data-id="0"]'),/March out/);
+    await page.click('#modal [data-cmd="reply"][data-id="0"]');
+    await page.waitForSelector(`.rt-field[data-kind="${kind}"] .rt-scene[data-ready="true"]`,{timeout:30000}).catch(async error=>{
+      const observed=await page.evaluate(()=>({kind:document.querySelector('.rt-field')?.dataset.kind,modal:document.querySelector('#modal')?.open,
+        save:document.querySelector('.save-status')?.textContent,feedback:document.querySelector('#announcement')?.textContent}));
+      throw new Error(`${id}: the gate reply must enter its ${kind} after saving the conversation: ${error.message.split('\n')[0]}; ${JSON.stringify(observed)}`);
+    });
+    assert.equal(await page.evaluate(()=>{const world=window.__realtime.world();return world.encounterId??world.contestId;}),id,'The gate enters the selected next encounter');
+    await page.context().close();
+  }
+  console.log('ok - camp gate reply: one March out reply saves the conversation and enters both a field and a chamber');
 }
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
@@ -545,8 +680,8 @@ async function realtimeFinale(){
   const page=await open();
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
+  await restoreCamp(page,battleCampCode('ch12-confrontation'));
+  await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
   await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
@@ -642,10 +777,22 @@ async function legacyChronicle(){
   await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
+  await page.waitForFunction(()=>window.__realtime?.world()?.campId==='ch5-camp',null,{timeout:30000})
+    .catch(()=>assert.fail('The legacy camp mounts behind its adoption panel without changing the saved soldier choice'));
+  const entry=await page.evaluate(()=>{const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');return {x:hero.x,z:hero.z};});
   const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
   await page.check('#modal input[name="recruit-path"][value="explorator"]');await (await revealControl(page,'#recruit-cloak')).selectOption('2');await page.click('#modal [data-cmd="adopt-soldier"]');
   await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
     .catch(()=>assert.fail('The soldier is adopted and shown'));
+  assert.ok(Game.soldierCommand(old,{kind:'adopt',path:'explorator',appearance:{cloak:2}}).ok);
+  const expectedHero=Game.createCampWorld(old).actors.find(actor=>actor.id==='hero');
+  await page.waitForFunction(expected=>{
+    const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');
+    return JSON.stringify(hero.attributes)===JSON.stringify(expected.attributes)&&JSON.stringify(hero.kit)===JSON.stringify(expected.kit);
+  },{attributes:expectedHero.attributes,kit:expectedHero.kit},{timeout:30000})
+    .catch(()=>assert.fail('The mounted camp immediately reflects the adopted Explorator attributes and issued kit'));
+  assert.deepEqual(await page.evaluate(()=>{const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');return {x:hero.x,z:hero.z};}),entry,
+    'Adopting training keeps the soldier at the same camp position');
   await page.context().close();
   // A battle begun on the 0.38 board.
   const turns=Game.decodeSave(battleCampCode('ch5-mine'));assert.ok(Game.startEncounter(turns,{}).ok);
@@ -658,13 +805,14 @@ async function legacyChronicle(){
   await second.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail('The battle restarts in real time'));
   assert.equal(await second.evaluate(()=>window.__realtime.world().encounterId),'ch5-mine');
   await second.context().close();
-  console.log('ok - legacy chronicle: a Chapter V camp saved before 0.40 asks once for its soldier (training and appearance) and grants Chapters I–IV’s training points; a battle in progress on the turn-based board restarts in real time from its checkpoint');
+  console.log('ok - legacy chronicle: a Chapter V camp mounts before adoption, grants Chapters I–IV’s training points and immediately refreshes the chosen training without moving the soldier; a turn-based battle restarts in real time from its checkpoint');
 }
 
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
+// Check departure races first, before the longer whole-campaign scenarios.
+for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();

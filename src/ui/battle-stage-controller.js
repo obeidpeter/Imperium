@@ -3,6 +3,9 @@
 export function chapterHas3D(state){return Number.isInteger(state?.chapter)&&state.chapter>=1&&state.chapter<=12&&state.phase==='encounter'&&['battle','contest'].includes(state.encounter?.kind);}
 
 const PRELOAD_MS=15000;
+// The courtyard's settled orders change static scenery. Ordinary UI refreshes
+// reuse its renderer; a changed consequence rebuilds it from the derived view.
+const campVisualKey=e=>e.campPresentation?JSON.stringify(e.campPresentation):'';
 
 // onStrain(quality) answers a battle that stayed slow at its lowest resolution
 // with the quality the next battle is built at (the stage itself never rebuilds
@@ -24,7 +27,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
   function release(){version++;if(stage?.strained)strained=stage.quality;stage?.dispose();stage=null;key=null;latest=null;pending=null;lastMotion=null;}
   return {
     mount(canvas,options){
-      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}:${options.live?'live':'turns'}`;
+      const nextKey=`${options.chapter??''}:${options.encounter.id}:${options.encounter.kind}:${options.rank??''}:${options.stratagem??''}:${options.encounter.weather??options.weather??''}:${options.encounter.timeOfDay??options.timeOfDay??''}:${options.live?'live':'turns'}:${campVisualKey(options.encounter)}`;
       if(key!==nextKey){release();key=nextKey;}
       if(strained&&!stage){const quality=strained;strained=null;const next=onStrain(quality);if(next)options={...options,quality:next};}
       latest=options;if(options.motion&&options.motion!==lastMotion){pending=options.motion;lastMotion=options.motion;}

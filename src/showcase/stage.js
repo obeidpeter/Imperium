@@ -8,9 +8,9 @@ import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
-import {createSceneryModels} from './scenery-models.js';
+import {createSceneryModels,sceneryResidency} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
-import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows} from './atmosphere.js';
+import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,landscapeFogRange} from './atmosphere.js';
 import {installBakedOcclusion} from './environment-baked-occlusion.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
@@ -259,7 +259,7 @@ export class BattleStage{
   }
   // A constructor failure must not strand the overlay, renderer, observer or audio.
   releasePartial(){
-    this.disposed=true;try{this.sound?.dispose?.();}catch{}this.resizeObserver?.disconnect();this.events?.forEach(fn=>fn());this.labelLayer?.remove();
+    this.disposed=true;this.sceneryModels?.dispose();try{this.sound?.dispose?.();}catch{}this.resizeObserver?.disconnect();this.events?.forEach(fn=>fn());this.labelLayer?.remove();
     try{this.renderer?.dispose();if(this.canvas&&!this.canvas.isConnected)this.renderer?.forceContextLoss?.();}catch{}
   }
   world(tile){const p=gridToWorld(tile,this.encounter,2.5);return new T.Vector3(p.x,this.surfaceHeight?.(p.x,p.z)??this.environment.groundHeight(p.x,p.z),p.z);}
@@ -361,6 +361,7 @@ export class BattleStage{
   }
   // Generated chapter scenery: re-placed on the rebuilt ground, absent at Performance quality.
   rebuildSceneryModels(){
+    this.followGeometryDirty=true;
     this.sceneryModels?.dispose();
     const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,
       {chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
@@ -368,7 +369,7 @@ export class BattleStage{
     // Models placed at once take the cutaway now (a first build's occlusion covers the group).
     this.sceneryOcclusion?.add(own.group);
     this.canvas.dataset.sceneryModels=own.placements.length?'loading':'0';
-    own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;});
+    own.ready.then(ids=>{if(this.sceneryModels!==own||this.disposed)return;this.canvas.dataset.sceneryModels=String(ids.length);this.shadowDirty=true;this.followGeometryDirty=true;});
   }
   // What the battle leaves on the ground (bodies, spent arrows, trodden earth),
   // rebuilt with the ground it marks. Contests and ceremonies leave none.
@@ -638,6 +639,7 @@ export class BattleStage{
         light.position.copy(brazier.userData.brazierLightAt).add(brazier.position);
       }
       else light.intensity=0;}
+    this.refreshFollowCamera(selected?.group.position,!!selected?.group.userData.actor?.mounted);
     const conversation=this.conversationFrame(),target=conversation?.target??(this.live&&this.cameraView==='horizon'?this.live.cameraTarget?.()??this.baseTarget.clone():
       this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone());
     let actionGoal=0;
@@ -692,10 +694,9 @@ export class BattleStage{
     // Aerial haze starts past the board's far corner from this camera (half-diagonal ~14m).
     const focusDistance=this.camera.position.distanceTo(this.lookTarget);
     this.compositor?.setHaze?.({near:focusDistance+14,far:focusDistance+140,color:this.profile.grade?.haze});
-    // Scene fog likewise begins past the board (sooner in mist and rain), so the
-    // playable ground keeps its contrast while the surrounding land recedes.
-    const misty=['mist','rain'].includes(this.profile.weather),fog=this.scene.fog;
-    fog.near=focusDistance+(misty?6:12);fog.far=fog.near+(misty?1.4:2)/(this.profile.fogDensity??.017);
+    // Retain the close atmospheric grade above, while the shared scene fog
+    // lets the real hills connect continuously to their painted continuation.
+    Object.assign(this.scene.fog,landscapeFogRange(this.profile,focusDistance));
     this.rimDirection.copy(this.lookTarget).sub(this.camera.position).setY(0);
     if(this.rimDirection.lengthSq()>1e-6){
       this.rimDirection.normalize();this.rim.position.copy(this.lookTarget).addScaledVector(this.rimDirection,14);this.rim.position.y+=7;
@@ -756,7 +757,7 @@ export class BattleStage{
   }
   stats(){
     return {device:this.deviceReport,firstFramePrograms:this.firstFramePrograms??null,frameProfile:this.frameProfile.stats(),
-      pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,
+      pairedContacts:this.pairedContacts??0,fieldFeatures:this.fieldFeatures?.stats(),cuesPlayed:this.cuesPlayed,sceneryResidency:sceneryResidency(),
       renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,
       callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),
       shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,

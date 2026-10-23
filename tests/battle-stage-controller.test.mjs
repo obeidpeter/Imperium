@@ -17,6 +17,32 @@ function fakeClass({fail=false}={}){const instances=[];class FakeStage{
 const options=(id='ch1-road',extra={})=>({encounter:{id,kind:'battle',units:[],turn:1},selected:'hero',targets:[],target:null,grid:false,quality:'balanced',reducedMotion:false,audio:false,audioVolume:.4,paused:false,...extra});
 const plays=stage=>stage.calls.filter(c=>c[0]==='play');
 
+test('Chapter V courtyard reuses ordinary refreshes but rebuilds visible orders and committed field consequences',async()=>{
+  const {FakeStage,instances}=fakeClass(),c=createBattleStageController({load:async()=>({BattleStage:FakeStage})}),board=canvas();
+  const config=options('ch5-camp',{chapter:5,live:true,encounter:{id:'ch5-camp',kind:'battle',units:[],campPresentation:{decision:'pending',civilianOutcome:'waiting',stores:'unassigned',waterDetail:false,engineeringRecovered:false,stage:'tower'}}});
+  c.mount(board,config);await settle();const first=c.stage;
+  c.mount(board,structuredClone(config));assert.equal(c.stage,first);assert.equal(instances.length,1);
+  const chosen=structuredClone(config);Object.assign(chosen.encounter.campPresentation,{decision:'civilians',civilianOutcome:'departing',stores:'transport'});
+  const before=structuredClone(chosen);c.mount(board,chosen);await settle();
+  assert.equal(first.disposals,1);assert.equal(instances.length,2);assert.deepEqual(chosen,before,'scene rebuild cannot change campaign-derived data');
+  const second=c.stage,returned=structuredClone(chosen);Object.assign(returned.encounter.campPresentation,{waterDetail:true,stage:'river-gate'});
+  c.mount(board,returned);await settle();assert.equal(second.disposals,1);assert.equal(instances.length,3);
+  c.release();
+});
+
+test('regional hubs rebuild changed allocation and committed outcomes while ordinary refreshes reuse their stage',async()=>{
+  for(const chapter of [1,4,6,7,8,9,10,11,12]){
+    const {FakeStage,instances}=fakeClass(),c=createBattleStageController({load:async()=>({BattleStage:FakeStage})}),board=canvas();
+    const config=options(`ch${chapter}-camp`,{chapter,live:true,encounter:{id:`ch${chapter}-camp`,kind:'battle',units:[],campPresentation:{decision:'pending',decisionDetails:[],outcomeDetails:[]}}});
+    c.mount(board,config);await settle();const first=c.stage;
+    c.mount(board,structuredClone(config));assert.equal(c.stage,first);
+    const changed=structuredClone(config);changed.encounter.campPresentation.decisionDetails.push({id:'relief:river',kind:'stores',place:'quartermaster',state:'river:3',count:3});
+    c.mount(board,changed);await settle();assert.equal(first.disposals,1);assert.equal(instances.length,2);
+    const second=c.stage,returned=structuredClone(changed);returned.encounter.campPresentation.outcomeDetails.push({id:'recorded',kind:'engineering',place:'quartermaster',state:'repaired'});
+    c.mount(board,returned);await settle();assert.equal(second.disposals,1);assert.equal(instances.length,3);c.release();
+  }
+});
+
 test('Horizon remains an explicit camera command and does not replace tactical startup or mutate the encounter',async()=>{
   const {FakeStage}=fakeClass(),job=deferred(),c=createBattleStageController({load:()=>job.promise}),data=options(),before=structuredClone(data);
   c.horizon();c.mount(canvas(),data);c.horizon();job.resolve({BattleStage:FakeStage});await settle();const stage=c.stage;

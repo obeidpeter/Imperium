@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/caravan-trough.glb",
+    "bytes": 43923108,
+    "sha256": "4906cd23207303c6b598f32add683f861c05d6950744ebe99834c35331dbbf68",
+    "triangles": 1426462
+  },
+  "output": {
+    "path": "art-source/models/processed/caravan-trough.glb",
+    "bytes": 186352,
+    "sha256": "fc1326cda848359f8aba68e6c728892864a722b016d33f6087338ea76792a554",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.3410221275859473,
+  "sizeMetres": {
+    "width": 0.9014,
+    "height": 0.8,
+    "depth": 2.3427
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

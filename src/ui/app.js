@@ -13,6 +13,7 @@ import {casePreview} from './command-edition-views.js';
 import {CONTROL_DEFAULTS,controlAction,remapControl,holdDelay,controlKeys} from './control-preferences.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
+import {createSessionControls} from './session-controls.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
@@ -25,13 +26,13 @@ import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {ITEMS} from '../data/items.js';
 import {createSoldier} from '../core/soldier.js';
-import {TRAINERS} from '../data/soldier.js';
-import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
+import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
+import {campRuntimeKey} from './camp-runtime.js';
 import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
-import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,trainerName,
   adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
@@ -57,7 +58,14 @@ const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
   offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
   pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
-const sessionGate=createSessionGate();
+const sessionControls=createSessionControls(document);
+const sessionGate=createSessionGate({onBusyChange:syncSessionControls});
+// Camp decisions and preparations share the save transaction with departure.
+// Wait through setup too: its first visit save can begin during pointer dispatch.
+function syncSessionControls(busy=sessionGate.busy){
+  const waiting=busy||(campMode()&&(field?.kind!=='camp'||!field.runtime||!field.element.isConnected));
+  sessionControls.sync(waiting);
+}
 let memoryOnly=false,archivePrimaryState=null;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,
   artRequest=0,cachedChapterRequest=0;
@@ -196,8 +204,11 @@ function render(){
   // A new screen starts afresh; within one, the page is updated in place, so the
   // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
   if(newView)app.replaceChildren();
+  // Remove temporary save locks before reconciling rule-driven disabled states.
+  sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
+  syncSessionControls();
   soundscape.update(state,screen);
   const target=fieldTarget();
   if(target)mountField(target);
@@ -257,14 +268,15 @@ function fieldTarget(){
   if(screen==='title'||!state)return null;
   if(Game.isRealtime(state))return {kind:'field',key:`fight:${state.encounter.id}`};
   if(chamberMode())return {kind:'chamber',key:`chamber:${state.encounter.id}`};
-  if(campMode())return {kind:'camp',key:`camp:${state.chapter}:${state.encounterIndex}:${state.decisions[Game.getChapter(state).decision.id]??''}`};
+  if(campMode())return {kind:'camp',key:campRuntimeKey(state)};
   return null;
 }
 // The stage's encounter for a camp: its fine map, nothing to fight.
 function campBase(world){
   const c=campFor(state.chapter);
-  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:'Walk the camp: talk to people, then march out through the gate.',
-    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day'};
+  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:c.purpose,
+    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day',
+    ...(world.campPresentation?{campPresentation:world.campPresentation}:{})};
 }
 function mountField(target){
   const host=document.querySelector('#rt-host');if(!host)return;
@@ -294,7 +306,11 @@ function mountField(target){
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
-    mountFieldStage();if(camp)refreshCampMarks();if(camp||state.encounter?.status==='active')element.querySelector('canvas')?.focus({preventScroll:true});
+    syncSessionControls();
+    // A panel may open while the runtime module is still loading. Inherit its
+    // pause before attaching a renderer, and leave keyboard focus in the panel.
+    if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
+    mountFieldStage();if(camp)refreshCampMarks();if(!modal.open&&(camp||state.encounter?.status==='active'))element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
 }
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
@@ -363,14 +379,28 @@ async function replyConversation(index){
   let outcome=null;
   await change(()=>{outcome=Game.campReply(state,{treeId,nodeId,index});return outcome;},{tone:'click',silent:true,afterRender:()=>{
     if(!outcome?.ok)return;refreshCampMarks();
-    if(outcome.open){modal.close();followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    if(outcome.open){modal.close();if(outcome.open!=='march')followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
     if(outcome.message)toast(outcome.message);
   }});
+  // The gate's March out reply explicitly starts another saved command. Finish
+  // this reply's transaction before taking that next step, without queuing input.
+  if(outcome?.ok&&outcome.open==='march')await startCampaignEncounter();
 }
 // What a reply opens next: a panel, the War Council, the practice post, or the march.
 function followUp(open){
   if(open==='march'){startCampaignEncounter();return;}
   if(open==='council'){showCouncil();return;}
+  if(open==='preparation'){
+    const section=document.getElementById('camp-preparation');
+    if(section){
+      section.open=true;
+      // close() queues its event. Let the dialog's normal focus restoration
+      // and field release finish before handing focus to this destination.
+      modal.addEventListener('close',()=>{
+        if(section.isConnected&&!modal.open){section.querySelector('summary')?.focus();section.scrollIntoView({block:'nearest'});}
+      },{once:true});
+    }return;
+  }
   if(open==='practice'){showModal('Practice completed encounters',practicePanel(state)||'<p>No completed encounter to practise yet.</p>');return;}
   if(open.startsWith('trainer:')){showSoldierPanel('trainer',open.slice(8));return;}
   showSoldierPanel(open);
@@ -384,13 +414,13 @@ function showCouncil(){
 // The camp's map (M): its places, and travel to those already walked to.
 function showCampMap(){
   const visited=new Set(Game.campVisited(state));
-  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(PLACE_NAMES[id])}</strong> <small>${esc(PLACE_HINTS[id])}</small></span>`+
+  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(campPlaceName(state.chapter,id))}</strong> <small>${esc(campPlaceHint(state.chapter,id))}</small></span>`+
     `<button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>${visited.has(id)||id==='gate'?'Go there':'Not yet visited'}</button></li>`).join('')}</ul>`);
 }
 function campTravel(place){
   const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}
   if(modal.open)modal.close();const outcome=runtime.issue({actorId:runtime.world.heroId,kind:'travel',payload:{x:p.x,z:p.z+2}});
-  if(outcome.ok){runtime.follow();announce(`${PLACE_NAMES[place]}.`);}
+  if(outcome.ok){runtime.follow();announce(`${campPlaceName(state.chapter,place)}.`);}
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
@@ -569,7 +599,7 @@ function showSoldierPanel(name,arg=null){
   const panels={kit:()=>['Equipment',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
-    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],
+    trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
@@ -744,7 +774,7 @@ async function persist(){
   finally{saving=false;}
 }
 async function change(fn,{reset=false,tone='click',turn=false,silent=false,command:issuedCommand=null,clearSelection=false,afterRender=null}={}){
-  if(sessionGate.busy)return;
+  if(sessionGate.busy){toast('Please wait for the current save to finish.');return;}
   if(saveConflict){toast(saveProblem);return;}
   return sessionGate.run(async()=>{
     stopMotion();
@@ -809,6 +839,7 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   const returnButton=back?`<button class="text-link modal-back" ${back==='company'?'data-cmd="soldier-panel" data-id="company"':'data-cmd="menu"'}>← ${back==='company'?'Company':'Menu'}</button>`:'';
   modal.innerHTML=`<div class="modal-head"><div>${returnButton}<h2 id="panel-title" tabindex="-1">${esc(title)}</h2>`+
     `</div><button class="ghost modal-close" data-cmd="close-modal" aria-label="Close panel">Close <kbd>Esc</kbd></button></div><div class="modal-body">${body}</div>`;
+  syncSessionControls();
   for(const id of openDetails){const detail=document.getElementById(id);if(detail?.tagName==='DETAILS')detail.open=true;}
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});

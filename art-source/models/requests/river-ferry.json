@@ -1,0 +1,77 @@
+{
+  "id": "river-ferry",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    8
+  ],
+  "use": "A single ancient Roman flat-bottomed river ferry, a broad low rectangular wooden punt with tapered blunt ends, flat plank deck, very low gunwales and two simple mooring cleats. Length about five metres, beam two and a half metres. Weathered tarred oak, pale worn deck, no mast, sail, cabin, engine, wheels, water, passengers or ground. Clear flat open deck, plausible simple utilitarian construction.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single ancient Roman flat-bottomed river ferry, a broad low rectangular wooden punt with tapered blunt ends, flat plank deck, very low gunwales and two simple mooring cleats. Length about five metres, beam two and a half metres. Weathered tarred oak, pale worn deck, no mast, sail, cabin, engine, wheels, water, passengers or ground. Clear flat open deck, plausible simple utilitarian construction. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 8000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 1.6,
+    "minHeight": 1.52,
+    "maxHeight": 1.6800000000000002
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+    "requestedAt": "2026-10-23T17:33:36.546Z",
+    "balanceBefore": 4000,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single ancient Roman flat-bottomed river ferry, a broad low rectangular wooden punt with tapered blunt ends, flat plank deck, very low gunwales and two simple mooring cleats. Length about five metres, beam two and a half metres. Weathered tarred oak, pale worn deck, no mast, sail, cabin, engine, wheels, water, passengers or ground. Clear flat open deck, plausible simple utilitarian construction. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:35:31.026Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/river-ferry.glb",
+    "rawBytes": 46751160,
+    "rawSha256": "38eeb526744bb74c3f2b3d0762f16e9a3b4f3ed4f274cffd82bcff2dc6f6e556",
+    "tripoInput": {
+      "prompt": "A single ancient Roman flat-bottomed river ferry, a broad low rectangular wooden punt with tapered blunt ends, flat plank deck, very low gunwales and two simple mooring cleats. Length about five metres, beam two and a half metres. Weathered tarred oak, pale worn deck, no mast, sail, cabin, engine, wheels, water, passengers or ground. Clear flat open deck, plausible simple utilitarian construction. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/river-ferry-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "678968d37d68793cbc33f07c28bb6e4d5c2a09495e03ca8ce67af37cd23718bf",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

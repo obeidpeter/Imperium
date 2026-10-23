@@ -1,0 +1,137 @@
+{
+  "input": "art-source/models/processed/river-wetlands-kit.glb",
+  "output": "assets/models/scenery/river-wetlands-kit.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 1360268,
+    "gzipBytes": 972924,
+    "sha256": "378e841744150d29f2ec67b163dc84266995ff2bac034c107ec4e6382d6294f1"
+  },
+  "after": {
+    "bytes": 365648,
+    "gzipBytes": 187999,
+    "sha256": "3ab7827088fcd07f2a2827fc43cb1f042e54a9a01d3945bc3ac840e21b5dc02e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6172,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 184478
+      },
+      "bytes": 31874,
+      "psnr": 41.615
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 49710
+      },
+      "bytes": 5861,
+      "psnr": 54.9
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 182065
+      },
+      "bytes": 25327,
+      "psnr": 40.332
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 47289
+      },
+      "bytes": 7094,
+      "psnr": 50.287
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 170882
+      },
+      "bytes": 23934,
+      "psnr": 47.642
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 48718
+      },
+      "bytes": 6038,
+      "psnr": 55.608
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 171173
+      },
+      "bytes": 21670,
+      "psnr": 42.238
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 47731
+      },
+      "bytes": 5849,
+      "psnr": 54.842
+    }
+  ]
+}

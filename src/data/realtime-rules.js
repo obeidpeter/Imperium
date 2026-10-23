@@ -134,6 +134,7 @@ export const REASONS=Object.freeze({
   OUTSIDE_REACH:'Outside his reach this hour.',ONCE_PER_MEMBER:'Once per member.',NOT_IN_DEPLOYMENT_ZONE:'Outside the deployment zone.',
   DEPLOYING:'Deployment: place your company, then Sound the advance.',NOT_DEPLOYING:'The battle has begun.',
   CANNOT_SAVE_HERE:'You cannot save here.',
+  PEACEFUL_CAMP:'Weapons stay sheathed in this courtyard. Speak to a person or use a service.',
   NO_SHIELD:'Brace needs a shield.',STAGGERED:'Staggered: wait a moment.',NO_TARGET:'Choose a target.',TARGET_DOWN:'He has already fallen.',
   NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',FRIENDLY:'He is on your side.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',
   NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',

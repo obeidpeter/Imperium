@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/legionary-cookstation.glb",
+    "bytes": 44357444,
+    "sha256": "f5321ec6284b3cc6e06ab1685a170b373b7a29045cbcdcaa7ea5dfdf506bc394",
+    "triangles": 1421186
+  },
+  "output": {
+    "path": "art-source/models/processed/legionary-cookstation.glb",
+    "bytes": 288828,
+    "sha256": "8cf3595f4153ca37e69d5420bdc1ba46dbd33343597ee21de0bcf920f742ff84",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.357987852042553,
+  "sizeMetres": {
+    "width": 1.3598,
+    "height": 1.3,
+    "depth": 1.2133
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_897be104-7bb7-480a-b95e-7179a07a1b4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_897be104-7bb7-480a-b95e-7179a07a1b4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_897be104-7bb7-480a-b95e-7179a07a1b4f",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

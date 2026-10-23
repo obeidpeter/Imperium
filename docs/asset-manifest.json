@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Five 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Nine 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below. The Chapter V sixteen-component fortress kit is original project-authored Blender geometry and procedural surface textures; its source and builder are retained. The approved regional rollout adds sixteen original-prompt Tripo props and five original Blender architecture kits (sixty components), with requests, exact task charges, sources and compression reports retained.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -4989,7 +4989,7 @@
         }
       },
       "usage": "Off-board scenery: terracotta stores in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "loading": "Shared deferred chapter packs 5, 6, 9, 10 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 181820,
@@ -5022,7 +5022,7 @@
           "triangles": 5000,
           "texture": 512,
           "webpQuality": 80,
-          "height": 2.0,
+          "height": 2,
           "sharpAngle": 35.0,
           "mergeDistance": 0.0001,
           "keepSkin": false
@@ -5039,7 +5039,7 @@
         }
       },
       "usage": "Off-board scenery: a spare countermine shoring frame in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "loading": "Deferred local GLB in Chapter V only; used at Balanced and High in the cracked tower, red river gate and Chapter V staging courtyard. Placements follow full map bounds or explicit blocked service pads; never cover a walkable route.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 266160,
@@ -5049,7 +5049,7 @@
         "textureEdge": 512,
         "sizeMetres": {
           "width": 0.9525,
-          "height": 2.0,
+          "height": 2,
           "depth": 2.1258
         }
       },
@@ -5089,7 +5089,7 @@
         }
       },
       "usage": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "loading": "Shared deferred chapter packs 5, 6 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 231056,
@@ -5139,7 +5139,7 @@
         }
       },
       "usage": "Off-board scenery: wall-repair materials in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "loading": "Shared deferred chapter packs 5, 9 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 187856,
@@ -5189,7 +5189,7 @@
         }
       },
       "usage": "Off-board scenery: spoil baskets from the mine works in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
+      "loading": "Shared deferred chapter packs 4, 5, 9 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 213856,
@@ -6083,7 +6083,7 @@
         }
       },
       "usage": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
-      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VI, VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred civilian body shared by all twelve chapter packs. Peaceful service roles, civic residents and protected escorts use their existing gameplay identities.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 377588,
@@ -6100,6 +6100,1439 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-cistern",
+      "path": "assets/models/chapters/05/ch5-cistern.glb",
+      "subject": "Chapter V pilot scenery: cistern",
+      "source": {
+        "method": "Tripo H3.1 from original text prompt only, processed in Blender 5.2.2 LTS, KTX2 and meshopt compressed; no reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "2bdcf87b-03d7-49f6-bb1d-c020d541f6be",
+        "generatedAt": "2026-10-23T14:58:53.194Z",
+        "prompt": "art-source/models/requests/ch5-cistern.json",
+        "rawBytes": 45060032,
+        "rawSha256": "ba277c0fc421342031e4b26109411e4abc7c17903cddb78b9cc830edaf7ebb44",
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.55,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-cistern.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/ch5-cistern-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "water supply and an optional courtyard landmark",
+      "loading": "Shared deferred chapter packs 5, 6 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 207008,
+        "sha256": "09d436b342a0cdf7e5713afc56f4c0f736d52cceaddb1f6589ee33e715711606",
+        "triangles": 3920,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.7529,
+          "height": 1.55,
+          "depth": 1.705
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-siege-hoist",
+      "path": "assets/models/chapters/05/ch5-siege-hoist.glb",
+      "subject": "Chapter V pilot scenery: siege hoist",
+      "source": {
+        "method": "Tripo H3.1 from original text prompt only, processed in Blender 5.2.2 LTS, KTX2 and meshopt compressed; no reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+        "generatedAt": "2026-10-23T15:01:49.111Z",
+        "prompt": "art-source/models/requests/ch5-siege-hoist.json",
+        "rawBytes": 45764992,
+        "rawSha256": "d313a79aa927ff59f74fc6193eb5c87a79a08facbb277e3f745d7a629e60bbec",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-siege-hoist.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/ch5-siege-hoist-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "mine works and battered tower engineering area",
+      "loading": "Deferred Chapter V offline group only. Balanced and High in ch5-mine, ch5-wall and ch5-camp; authored blocked service pads in the courtyard, safe perimeter scenery in battle. Performance uses procedural scenery.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 240768,
+        "sha256": "92b651daf7e0c98af17401ce68d9fc599d7334be36006cfd3fd166e84c9facc8",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.3811,
+          "height": 2.6,
+          "depth": 3.3797
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-damaged-masonry",
+      "path": "assets/models/chapters/05/ch5-damaged-masonry.glb",
+      "subject": "Chapter V pilot scenery: damaged masonry",
+      "source": {
+        "method": "Tripo H3.1 from original text prompt only, processed in Blender 5.2.2 LTS, KTX2 and meshopt compressed; no reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5fa86617-35d7-42ae-aea7-bdc7dc8fe577",
+        "generatedAt": "2026-10-23T15:05:14.849Z",
+        "prompt": "art-source/models/requests/ch5-damaged-masonry.json",
+        "rawBytes": 46330524,
+        "rawSha256": "f93af1137f59fe4ec0b3341f2db070d81ea199942e7e537590992395ff46067b",
+        "processing": {
+          "triangles": 3500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.3,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-damaged-masonry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/ch5-damaged-masonry-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "breached fortress perimeter and engineering consequence marker",
+      "loading": "Deferred Chapter V offline group only. Balanced and High in ch5-mine, ch5-wall and ch5-camp; authored blocked service pads in the courtyard, safe perimeter scenery in battle. Performance uses procedural scenery.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 227144,
+        "sha256": "5092d0e48986e21767b266dfbf9b6c4dab845717b59cbd4ac1731b238d906fa8",
+        "triangles": 3430,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.4808,
+          "height": 1.3,
+          "depth": 3.1352
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-household-bundles",
+      "path": "assets/models/chapters/05/ch5-household-bundles.glb",
+      "subject": "Chapter V pilot scenery: household bundles",
+      "source": {
+        "method": "Tripo H3.1 from original text prompt only, processed in Blender 5.2.2 LTS, KTX2 and meshopt compressed; no reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+        "generatedAt": "2026-10-23T15:07:52.073Z",
+        "prompt": "art-source/models/requests/ch5-household-bundles.json",
+        "rawBytes": 46994008,
+        "rawSha256": "bcca0a5157597ed7d08f673b86b1d27cbb203a4c458c06f0a84c48b445e03f1a",
+        "processing": {
+          "triangles": 8000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.9,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/ch5-household-bundles.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/ch5-household-bundles-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "civilian shelter, relief supplies and visible civilian decision",
+      "loading": "Shared deferred chapter packs 2, 5, 8 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 355564,
+        "sha256": "61ff0cf0317dc64e8a425de97be550eb5abc05a6a0fbd2b0adb377b45f8f9b09",
+        "triangles": 7840,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.897,
+          "height": 0.9,
+          "depth": 2.0807
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "ch5-fortress-kit",
+      "path": "assets/models/scenery/ch5-fortress-kit.glb",
+      "subject": "Sixteen modular Euphrates fortress components with limestone, ochre plaster, timber and canvas surfaces",
+      "source": {
+        "method": "Original Blender-authored geometry and original procedural surface bakes; no external images",
+        "builder": "scripts/assets/build-ch5-fortress.py",
+        "seed": 5017,
+        "sourceBlend": "art-source/models/ch5-fortress-kit.blend",
+        "report": "art-source/models/processed/ch5-fortress-kit.json",
+        "components": [
+          "wall_bay",
+          "wall_breached",
+          "wall_return",
+          "tower_intact",
+          "tower_broken",
+          "gate_arch",
+          "buttress",
+          "mine_frame",
+          "roof_gallery",
+          "stair_flight",
+          "landing_deck",
+          "quay_revetment",
+          "bluff_section",
+          "drain_channel",
+          "paved_threshold",
+          "plaster_repair"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/ch5-fortress-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Chapter V mine, river gate and staging courtyard, preserving rules geometry and movement routes. Named components replace corresponding procedural scenery after successful load.",
+      "loading": "Shared deferred chapter packs 5, 9 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 1602352,
+        "gzipBytes": 473750,
+        "sha256": "64e5e57512ca74192f4944782c2230c4d72486e12acdcf6acd10da66924d321a",
+        "triangles": 34108,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 16
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "legionary-cookstation",
+      "path": "assets/models/world/legionary-cookstation.glb",
+      "subject": "Regional world scenery: legionary cookstation",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "897be104-7bb7-480a-b95e-7179a07a1b4f",
+        "generatedAt": "2026-10-23T17:31:36.757Z",
+        "prompt": "art-source/models/requests/legionary-cookstation.json",
+        "rawBytes": 44357444,
+        "rawSha256": "f5321ec6284b3cc6e06ab1685a170b373b7a29045cbcdcaa7ea5dfdf506bc394",
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.3,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/legionary-cookstation.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/legionary-cookstation-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-cookstation.py",
+          "authorship": "Original local Blender iron support frame added to the generated model",
+          "reason": "The generated cauldron chain had no supporting overhead structure",
+          "input": {
+            "path": "art-source/models/raw/legionary-cookstation-processed-before-support.glb",
+            "sha256": "8cf3595f4153ca37e69d5420bdc1ba46dbd33343597ee21de0bcf920f742ff84"
+          },
+          "originalProcessingReport": "art-source/models/reports/legionary-cookstation-pre-refinement.json",
+          "addedTriangles": 84,
+          "chainTopBeforeBlender": [
+            -0.4296596646308899,
+            0.12236088514328003,
+            1.2999999523162842
+          ],
+          "beamBottomBeforeNormalization": 1.2849999523162843,
+          "chainOverlapsCrossbeam": true,
+          "frameGrounded": true,
+          "normalizationScale": 0.9629630309891193,
+          "paidCalls": 0
+        },
+        "sourceBlend": "art-source/models/legionary-cookstation-supported.blend"
+      },
+      "usage": "A compact Roman military field cook station",
+      "loading": "Deferred chapter packs 1, 3, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 281264,
+        "gzipBytes": 267926,
+        "sha256": "c45b0ac506ad515d373164f61691b6b1b4d686997e3e25e684444a44d2ec6078",
+        "triangles": 5964,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5984,
+          "height": 1.3,
+          "depth": 1.1684
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "equipment-rack",
+      "path": "assets/models/world/equipment-rack.glb",
+      "subject": "Regional world scenery: equipment rack",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "9a732ae9-85b9-4fde-98fa-084823134827",
+        "generatedAt": "2026-10-23T17:51:21.610Z",
+        "prompt": "art-source/models/requests/equipment-rack.json",
+        "rawBytes": 45408116,
+        "rawSha256": "587e997ed250582c5cdc9e52cd8392920ccf3558959164eb75ded63aa161fe35",
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/equipment-rack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/equipment-rack-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A practical Roman military equipment maintenance rack",
+      "loading": "Deferred chapter packs 1, 4, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 232580,
+        "gzipBytes": 224716,
+        "sha256": "f693a1b33f385afe56c3f838f59fcd72c8fe96da1a1ff15d4ca558a3c2480ad4",
+        "triangles": 5880,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.7175,
+          "height": 2,
+          "depth": 1.706
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "courier-table",
+      "path": "assets/models/world/courier-table.glb",
+      "subject": "Regional world scenery: courier table",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "fc09a428-d874-4d5b-9847-ec27eb151c54",
+        "generatedAt": "2026-10-23T17:33:13.549Z",
+        "prompt": "art-source/models/requests/courier-table.json",
+        "rawBytes": 46374904,
+        "rawSha256": "5a673c4d09d2102bd51e9cdf0003ae91f2d7dbf9c38698bd215d5f7c7ec0c895",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/courier-table.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/courier-table-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Roman military courier sorting table made of weathered oak trestles and thick boards. On the tabletop lie three rolled parchment packets tied with leather cord, two small closed wax-tablet folios and a closed brown leather messenger satchel. Four sturdy legs and a low cross brace, clearly readable open space underneath.",
+      "loading": "Deferred chapter packs 3, 7, 11. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 257084,
+        "gzipBytes": 248061,
+        "sha256": "8ad9ff5bcb8f9ab6a70b11e875d921f21478c062530f70f507e9daeb456d2137",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.3669,
+          "height": 1,
+          "depth": 0.7522
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "casualty-litter",
+      "path": "assets/models/world/casualty-litter.glb",
+      "subject": "Regional world scenery: casualty litter",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e115be12-e79d-49d0-8048-269c1fcf9fc1",
+        "generatedAt": "2026-10-23T17:33:33.213Z",
+        "prompt": "art-source/models/requests/casualty-litter.json",
+        "rawBytes": 43394284,
+        "rawSha256": "b98a5857ae28c38a6493e9aba6d35c7aedf9955005725edbf84fe229f951207c",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.75,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/casualty-litter.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/casualty-litter-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An empty Roman military casualty litter resting on two low wooden supports",
+      "loading": "Deferred chapter packs 2, 6, 8. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 242008,
+        "gzipBytes": 233593,
+        "sha256": "457fcdf2baf4cd209be8718cb919862873b122a59f4ba819dd584df0515a24c1",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.4531,
+          "height": 0.75,
+          "depth": 0.901
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "broken-baggage-cart",
+      "path": "assets/models/world/broken-baggage-cart.glb",
+      "subject": "Regional world scenery: broken baggage cart",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "86849821-1c27-4322-bded-c760efb15de4",
+        "generatedAt": "2026-10-23T17:35:38.640Z",
+        "prompt": "art-source/models/requests/broken-baggage-cart.json",
+        "rawBytes": 45961192,
+        "rawSha256": "91c3688d1aa07f6f1d505e585886a9821db938ba779f599e4e5ff4f3bab64571",
+        "processing": {
+          "triangles": 7000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.7,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/broken-baggage-cart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/broken-baggage-cart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A damaged Roman two-wheeled wooden baggage cart abandoned on its axle. One wooden spoked wheel intact and one broken wheel tilted against the chassis, short broken draft pole, open weathered plank bed holding two tightly roped cloth sacks and a dented wicker basket. Dark wet oak, rusty iron rim bands, dirty flax cloth. No animal or driver. Compact low silhouette.",
+      "loading": "Deferred chapter packs 2, 6. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 300056,
+        "gzipBytes": 288988,
+        "sha256": "d232f60771f224b6caec6af3a6f729bb3eeb6988719a8665e16edae1783a30e9",
+        "triangles": 6860,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.941,
+          "height": 1.7,
+          "depth": 1.7145
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "river-ferry",
+      "path": "assets/models/world/river-ferry.glb",
+      "subject": "Regional world scenery: river ferry",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+        "generatedAt": "2026-10-23T17:35:31.026Z",
+        "prompt": "art-source/models/requests/river-ferry.json",
+        "rawBytes": 46751160,
+        "rawSha256": "38eeb526744bb74c3f2b3d0762f16e9a3b4f3ed4f274cffd82bcff2dc6f6e556",
+        "processing": {
+          "triangles": 8000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/river-ferry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/river-ferry-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A single ancient Roman flat-bottomed river ferry, a broad low rectangular wooden punt with tapered blunt ends, flat plank deck, very low gunwales and two simple mooring cleats. Length about five metres, beam two and a half metres. Weathered tarred oak, pale worn deck, no mast, sail, cabin, engine, wheels, water, passengers or ground. Clear flat open deck, plausible simple utilitarian construction.",
+      "loading": "Deferred chapter packs 8. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 303060,
+        "gzipBytes": 294134,
+        "sha256": "678968d37d68793cbc33f07c28bb6e4d5c2a09495e03ca8ce67af37cd23718bf",
+        "triangles": 7839,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.8742,
+          "height": 1.6,
+          "depth": 7.895
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "mooring-ropes",
+      "path": "assets/models/world/mooring-ropes.glb",
+      "subject": "Regional world scenery: mooring ropes",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "429261a7-1be8-49d7-bd56-2187deaf8556",
+        "generatedAt": "2026-10-23T17:37:44.140Z",
+        "prompt": "art-source/models/requests/mooring-ropes.json",
+        "rawBytes": 46950352,
+        "rawSha256": "1b5fc00b7c26ae7aa09a42e7df0a396a3fbde33e35e8be2c39fadba64eb2f3d0",
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/mooring-ropes.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/mooring-ropes-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A small Roman river landing mooring group",
+      "loading": "Deferred chapter packs 2, 8. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 229596,
+        "gzipBytes": 222261,
+        "sha256": "1889c2552fb6bd00df95205955005999f0101d3ba3f117dcb2455f1d9d715aca",
+        "triangles": 3918,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.7611,
+          "height": 0.6,
+          "depth": 0.5807
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "eagle-rally-stand",
+      "path": "assets/models/world/eagle-rally-stand.glb",
+      "subject": "Regional world scenery: eagle rally stand",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+        "generatedAt": "2026-10-23T17:37:16.878Z",
+        "prompt": "art-source/models/requests/eagle-rally-stand.json",
+        "rawBytes": 42993964,
+        "rawSha256": "de519e9ebbe9a9f67143f431e158815881edc2ef2fd8a97b67ce65532eb5c898",
+        "processing": {
+          "triangles": 6500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/eagle-rally-stand.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/eagle-rally-stand-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Roman legionary rally standard resting in a heavy square wooden stand",
+      "loading": "Deferred chapter packs 6, 12. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 256852,
+        "gzipBytes": 248365,
+        "sha256": "e4f784eb2fb905821d17b909c18de0eb04aec4bcaeb36d617ed4cdd80aa949ac",
+        "triangles": 6369,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.8672,
+          "height": 2.6,
+          "depth": 1.0228
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "caravan-trough",
+      "path": "assets/models/world/caravan-trough.glb",
+      "subject": "Regional world scenery: caravan trough",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+        "generatedAt": "2026-10-23T17:39:24.807Z",
+        "prompt": "art-source/models/requests/caravan-trough.json",
+        "rawBytes": 43923108,
+        "rawSha256": "4906cd23207303c6b598f32add683f861c05d6950744ebe99834c35331dbbf68",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.8,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/caravan-trough.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/caravan-trough-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A long low ancient caravan water trough carved from pale limestone. Thick rectangular sides with softly chipped corners, a dark shallow recessed interior, one rounded stone lip at the end. Sandy worn cream stone with ochre mineral staining and damp grey seams. No flowing water or surrounding paving, no modern tap or pipe. Roman eastern frontier utilitarian object, length approximately two metres.",
+      "loading": "Deferred chapter packs 9. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 199060,
+        "gzipBytes": 192201,
+        "sha256": "af961e0ff4df163d413e76e7f60ba62bd1d59708dc7e9363bde065e672383ffe",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9014,
+          "height": 0.8,
+          "depth": 2.3427
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "caravan-baggage",
+      "path": "assets/models/world/caravan-baggage.glb",
+      "subject": "Regional world scenery: caravan baggage",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "261422e4-0f91-40fe-a0da-90ace23caba6",
+        "generatedAt": "2026-10-23T17:40:44.561Z",
+        "prompt": "art-source/models/requests/caravan-baggage.json",
+        "rawBytes": 45405228,
+        "rawSha256": "eafe8e60c015f01e0ea7e187255d567cd4fe0cf12f80711ca68e2c005705bc65",
+        "processing": {
+          "triangles": 7000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/caravan-baggage.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/caravan-baggage-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A compact freestanding pile of ancient Roman eastern caravan baggage",
+      "loading": "Deferred chapter packs 9. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 343388,
+        "gzipBytes": 328798,
+        "sha256": "5050e1dfdc632d9843c3a12936c6025cf41f8fb2beda01cb5db1d12f2ad299c4",
+        "triangles": 6858,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5061,
+          "height": 1.2,
+          "depth": 1.5532
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "signal-brazier",
+      "path": "assets/models/world/signal-brazier.glb",
+      "subject": "Regional world scenery: signal brazier",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4ad6c430-4b19-427c-9948-f3f03b84b551",
+        "generatedAt": "2026-10-23T17:42:01.123Z",
+        "prompt": "art-source/models/requests/signal-brazier.json",
+        "rawBytes": 45789456,
+        "rawSha256": "763476e257a4c1e6a336a174700bfe96335cff382fa64a58f0dd00cb217289e7",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.5,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/signal-brazier.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/signal-brazier-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A sturdy ancient Roman signal brazier",
+      "loading": "Deferred chapter packs 4, 6. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 246004,
+        "gzipBytes": 237203,
+        "sha256": "27954c41bfccbb117dd8af65c0d5f43851075751def8917c69386f96bba48cae",
+        "triangles": 4899,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.559,
+          "height": 1.5,
+          "depth": 1.5597
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "command-table",
+      "path": "assets/models/world/command-table.glb",
+      "subject": "Regional world scenery: command table",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "cf48fbd6-e4a0-4cf3-9c19-5be52457a590",
+        "generatedAt": "2026-10-23T17:43:16.171Z",
+        "prompt": "art-source/models/requests/command-table.json",
+        "rawBytes": 44826220,
+        "rawSha256": "434f7d1b8ba3da6c7edf4e023e8880b3d18340563d16fcdfbf4a4df168368fbb",
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/command-table.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/command-table-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Roman command pavilion table, broad sturdy dark oak trestles and plank top covered by a cream parchment map without readable writing. Small plain wooden counters, two rolled maps and a shallow bronze weight sit on top. One burgundy wool cloth strip drapes over an edge. Four short legs with clearly open space beneath, practical third century military furniture, no modern objects.",
+      "loading": "Deferred chapter packs 7, 12. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 246568,
+        "gzipBytes": 237957,
+        "sha256": "346764e3b4a79c1e81fbae841a3d5552ddf3058204b23d21cfb28df32946f040",
+        "triangles": 5880,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5211,
+          "height": 1,
+          "depth": 0.8349
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "grain-bins",
+      "path": "assets/models/world/grain-bins.glb",
+      "subject": "Regional world scenery: grain bins",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+        "generatedAt": "2026-10-23T17:44:43.118Z",
+        "prompt": "art-source/models/requests/grain-bins.json",
+        "rawBytes": 46016372,
+        "rawSha256": "df1ba2e02592fae65bcd98f27f8cf54a8548f07399792456911162c17e3c0cc5",
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.3,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/grain-bins.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/grain-bins-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Roman provincial granary storage group",
+      "loading": "Deferred chapter packs 10. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 321856,
+        "gzipBytes": 310071,
+        "sha256": "1aa812835d63aa56d8e0a07ecfd76290939ab9c2ebb7523436f055abf98c9b18",
+        "triangles": 5880,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.9384,
+          "height": 1.3,
+          "depth": 1.8548
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "relief-cart",
+      "path": "assets/models/world/relief-cart.glb",
+      "subject": "Regional world scenery: relief cart",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b51df8e0-d3cf-4557-aea3-a179cb13645e",
+        "generatedAt": "2026-10-23T17:46:28.825Z",
+        "prompt": "art-source/models/requests/relief-cart.json",
+        "rawBytes": 45622284,
+        "rawSha256": "2793c66fb795f3ee6f0dbabc202259dcef43a62828f7c18357b47d77d7b80a04",
+        "processing": {
+          "triangles": 7000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/relief-cart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/relief-cart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A well-maintained Roman two-wheeled relief supply cart with thick wooden spoked wheels, iron tyre rims and a low oak plank cargo bed. Four tied cream grain sacks stacked neatly with one small wicker basket. Short wooden towing shafts, no animal or driver. Warm honey weathered timber, ochre linen, sturdy practical construction, no modern features or ground slab.",
+      "loading": "Deferred chapter packs 10. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 352556,
+        "gzipBytes": 338980,
+        "sha256": "e91c7da5a87debf56d3af6871a327c41d7d6166864fc4d0d2946ee8741371862",
+        "triangles": 6860,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.9324,
+          "height": 1.6,
+          "depth": 2.4307
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "archive-cabinet",
+      "path": "assets/models/world/archive-cabinet.glb",
+      "subject": "Regional world scenery: archive cabinet",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c14e3f77-4f2f-420c-9021-59c3862985e4",
+        "generatedAt": "2026-10-23T17:47:32.944Z",
+        "prompt": "art-source/models/requests/archive-cabinet.json",
+        "rawBytes": 42692464,
+        "rawSha256": "e3d7db3c7261e887fd95682f5cd8dfd66d5c189c113511e3761ab072313831a6",
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.1,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/archive-cabinet.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/archive-cabinet-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A freestanding Roman archive cabinet made from dark polished but worn walnut timber. A rectangular frame contains twelve open square cubbies with separate rolled parchment scrolls, two shut wax-tablet cases on a waist-height shelf, solid broad plinth and simple shallow cornice. Clear regular shelf geometry, no glass or modern handles, no text, no ornate fantasy carving.",
+      "loading": "Deferred chapter packs 11. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 276564,
+        "gzipBytes": 266825,
+        "sha256": "6401791ba5dd684c3954b8fc79a7dc0ea284e974c6c692b291d2fb99c3b0edfd",
+        "triangles": 5879,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9226,
+          "height": 2.1,
+          "depth": 1.8827
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "civic-fountain",
+      "path": "assets/models/world/civic-fountain.glb",
+      "subject": "Regional world scenery: civic fountain",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f00d2770-59a6-499a-9fb1-c00b7519d65c",
+        "generatedAt": "2026-10-23T17:48:34.677Z",
+        "prompt": "art-source/models/requests/civic-fountain.json",
+        "rawBytes": 43903312,
+        "rawSha256": "8dc0d5b200a2c23c45707b5dfc79409be44ab0b7fc9df7a9c5c7cd4ac87f76c0",
+        "processing": {
+          "triangles": 7000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.5,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/civic-fountain.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/civic-fountain-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A small Roman civic drinking fountain of pale aged travertine",
+      "loading": "Deferred chapter packs 11, 12. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 206152,
+        "gzipBytes": 198193,
+        "sha256": "066413bc5bd7efab8e0aac2824b46225ea168cd46fd96e515d668a5cadaf045a",
+        "triangles": 6860,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.7765,
+          "height": 1.5,
+          "depth": 1.0837
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "danube-military-kit",
+      "path": "assets/models/scenery/danube-military-kit.glb",
+      "subject": "Twelve original modular danube military architecture components",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-regional-kits.py",
+        "sourceBlend": "art-source/models/danube-military-kit.blend",
+        "report": "art-source/models/processed/danube-military-kit.json",
+        "components": [
+          "barrack_gable",
+          "storehouse_raised",
+          "timber_gate",
+          "palisade_bay",
+          "watch_platform",
+          "tiled_portico",
+          "granary_vent",
+          "ditch_bridge",
+          "forge_shelter",
+          "stone_well",
+          "signal_beacon",
+          "milestone_base"
+        ],
+        "materialFamilies": [
+          "Oxide red fired clay tile",
+          "River-worn grey limestone",
+          "Weathered ivory lime render",
+          "Weathered cedar grain"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/danube-military-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
+      "loading": "Shared deferred chapter packs 1, 3, 4 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 402160,
+        "gzipBytes": 194244,
+        "sha256": "fd9c456ab05dc251982cb0cdb5fe1d0c2d22cdc30fa34d5d088e43c694244d64",
+        "triangles": 6892,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "river-wetlands-kit",
+      "path": "assets/models/scenery/river-wetlands-kit.glb",
+      "subject": "Twelve original modular river wetlands architecture components",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-regional-kits.py",
+        "sourceBlend": "art-source/models/river-wetlands-kit.blend",
+        "report": "art-source/models/processed/river-wetlands-kit.json",
+        "components": [
+          "duckboard_straight",
+          "duckboard_corner",
+          "landing_steps",
+          "mooring_jetty",
+          "reed_screen",
+          "stilt_store",
+          "fish_drying_rack",
+          "flood_revetment",
+          "ferry_shelter",
+          "rope_bollards",
+          "levee_stair",
+          "bridge_trestle"
+        ],
+        "materialFamilies": [
+          "Weathered cedar grain",
+          "Worn ochre gypsum and brick",
+          "River-worn grey limestone",
+          "Dusty flax canvas weave"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/river-wetlands-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
+      "loading": "Shared deferred chapter packs 2, 8 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 365648,
+        "gzipBytes": 187999,
+        "sha256": "3ab7827088fcd07f2a2827fc43cb1f042e54a9a01d3945bc3ac840e21b5dc02e",
+        "triangles": 6172,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "italian-marching-kit",
+      "path": "assets/models/scenery/italian-marching-kit.glb",
+      "subject": "Twelve original modular italian marching architecture components",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-regional-kits.py",
+        "sourceBlend": "art-source/models/italian-marching-kit.blend",
+        "report": "art-source/models/processed/italian-marching-kit.json",
+        "components": [
+          "command_pavilion",
+          "ridge_tent",
+          "officers_awning",
+          "wagon_shed",
+          "roadside_shrine",
+          "marching_gate",
+          "field_kitchen",
+          "baggage_rack",
+          "drainage_crossing",
+          "vine_pergola",
+          "road_marker",
+          "canvas_windbreak"
+        ],
+        "materialFamilies": [
+          "Dusty flax canvas weave",
+          "Weathered cedar grain",
+          "Oxide red fired clay tile",
+          "Weathered ivory lime render"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/italian-marching-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
+      "loading": "Shared deferred chapter packs 6, 7 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 311028,
+        "gzipBytes": 187428,
+        "sha256": "e82b48f4d99b1ee41e6dd95bcbe3e6b1ab9d3d727df51042ea6258e8c47bc56c",
+        "triangles": 4352,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "provincial-civic-kit",
+      "path": "assets/models/scenery/provincial-civic-kit.glb",
+      "subject": "Twelve original modular provincial civic architecture components",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-regional-kits.py",
+        "sourceBlend": "art-source/models/provincial-civic-kit.blend",
+        "report": "art-source/models/processed/provincial-civic-kit.json",
+        "components": [
+          "raised_granary",
+          "tribunal_portico",
+          "farm_courtyard_wall",
+          "tile_roof_store",
+          "market_stall",
+          "olive_press_frame",
+          "irrigation_sluice",
+          "pergola_arcade",
+          "boundary_cairn",
+          "public_fountain",
+          "tally_counter",
+          "produce_store"
+        ],
+        "materialFamilies": [
+          "Oxide red fired clay tile",
+          "River-worn grey limestone",
+          "Weathered ivory lime render",
+          "Weathered cedar grain"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/provincial-civic-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
+      "loading": "Shared deferred chapter packs 10 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 439964,
+        "gzipBytes": 197121,
+        "sha256": "de80aba5192e2ced4912eabe22ca49236946c784027416420b4971fa241bd788",
+        "triangles": 7648,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "roman-monumental-kit",
+      "path": "assets/models/scenery/roman-monumental-kit.glb",
+      "subject": "Twelve original modular roman monumental architecture components",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-regional-kits.py",
+        "sourceBlend": "art-source/models/roman-monumental-kit.blend",
+        "report": "art-source/models/processed/roman-monumental-kit.json",
+        "components": [
+          "apsidal_hall",
+          "colonnade_bay",
+          "archive_stalls",
+          "checkpoint_arch",
+          "tribunal_dais",
+          "monumental_stair",
+          "garden_exedra",
+          "civic_fountain",
+          "screen_wall",
+          "vaulted_entry",
+          "administrative_portico",
+          "statue_plinth"
+        ],
+        "materialFamilies": [
+          "Oxide red fired clay tile",
+          "Pitted pale travertine",
+          "Weathered ivory lime render",
+          "Weathered cedar grain"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/roman-monumental-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
+      "loading": "Shared deferred chapter packs 9, 11, 12 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 505580,
+        "gzipBytes": 269049,
+        "sha256": "fcbf58a9c48900b3a8ba63656cea4835035ef96482fb51c215609a675bcaa0d8",
+        "triangles": 9528,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
     }
   ],
   "developmentAssets": [
@@ -6167,7 +7600,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-22T21:17:11.756165+00:00",
+  "updatedAt": "2026-10-23T17:53:15.039Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -6189,10 +7622,10 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 24,
+    "models": 50,
     "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 18805363,
-  "totalModelBytes": 8511895
+  "totalBundledAssetBytes": 27757227,
+  "totalModelBytes": 17463759
 }

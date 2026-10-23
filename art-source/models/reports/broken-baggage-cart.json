@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/broken-baggage-cart.glb",
+    "bytes": 45961192,
+    "sha256": "91c3688d1aa07f6f1d505e585886a9821db938ba779f599e4e5ff4f3bab64571",
+    "triangles": 1485106
+  },
+  "output": {
+    "path": "art-source/models/processed/broken-baggage-cart.glb",
+    "bytes": 329624,
+    "sha256": "e8f79fcc6c8724a61de89dc1b5f82db9728f6fca6000825117c45aca119efce5",
+    "triangles": 6860
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.7,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.941255284768821,
+  "sizeMetres": {
+    "width": 2.941,
+    "height": 1.7,
+    "depth": 1.7145
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_86849821-1c27-4322-bded-c760efb15de4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_86849821-1c27-4322-bded-c760efb15de4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_86849821-1c27-4322-bded-c760efb15de4",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

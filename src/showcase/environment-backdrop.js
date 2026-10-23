@@ -91,7 +91,11 @@ export function createPaintedBackdrop(profile,{quality='balanced'}={}){
   const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=THREE.RepeatWrapping;texture.anisotropy=4;
   // The painting spans roughly -2 to +9 degrees of elevation from the board.
   const heightMetres=120,geometry=new THREE.CylinderGeometry(BACKDROP_RADIUS,BACKDROP_RADIUS,heightMetres,quality==='performance'?48:96,1,true);
-  const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,fog:false,side:THREE.BackSide});
+  // The panorama recedes through the same scene fog as the modeled ridges.
+  // Otherwise their opaque fog hides its lower half but leaves dark floating
+  // crest fragments above the terrain. Mist can naturally obscure this far
+  // continuation; the nearer 3D landscape remains readable in every weather.
+  const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,depthWrite:false,fog:true,side:THREE.BackSide});
   const mesh=new THREE.Mesh(geometry,material);mesh.name='painted panorama';mesh.position.y=heightMetres/2-21;mesh.castShadow=false;mesh.receiveShadow=false;mesh.frustumCulled=false;group.add(mesh);
   return {group,stats:{painted:true,width:canvas.width,height:canvas.height,landmark:backdropLandmark(profile)},dispose(){geometry.dispose();material.dispose();texture.dispose();}};
 }

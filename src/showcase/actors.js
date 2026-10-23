@@ -201,6 +201,19 @@ function createActorRig(unit={},options={},reuseGroup=null){
     arms.push({shoulder,elbow,hand});
   }
   const right=arms[0],left=arms[1];
+  // The pilot’s service props belong to the existing figure rig, so their
+  // geometry/materials follow its normal rebuild and disposal lifecycle.
+  if(unit.campActivity==='carry'&&!armed){
+    const bucket=part(right.hand,'courtyard-water-bucket',0,0,.025);
+    mesh(bucket,new T.CylinderGeometry(.10,.075,.20,10),leather,0,-.22,0);
+    mesh(bucket,new T.TorusGeometry(.10,.008,4,10,Math.PI),bronze,0,-.10,0);
+    mesh(bucket,new T.CylinderGeometry(.087,.087,.006,10),black,0,-.118,0);
+  }
+  if(unit.campActivity==='work'&&!armed){
+    const tablet=part(left.hand,'courtyard-stores-tablet',0,-.04,.025);
+    mesh(tablet,new T.BoxGeometry(.15,.025,.21),leather);
+    mesh(tablet,new T.BoxGeometry(.125,.005,.18),black,0,.015,0);
+  }
 
   function makeShield(){
     const s=part(left.hand,'oval-shield',0,-.082,.065),rim=new T.Shape();rim.absellipse(0,0,.265,.40,0,TAU,false,0);

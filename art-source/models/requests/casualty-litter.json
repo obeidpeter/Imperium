@@ -1,0 +1,79 @@
+{
+  "id": "casualty-litter",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    2,
+    6,
+    8
+  ],
+  "use": "An empty Roman military casualty litter resting on two low wooden supports",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "An empty Roman military casualty litter resting on two low wooden supports: two long ashwood carrying poles with projecting handles, tightly laced cream canvas sleeping sling, folded dark wool blanket at one end, small leather water flask. No person, blood or body. Clear parallel carrying handles, practical hand-made stretcher, light mud splashes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 0.75,
+    "minHeight": 0.7124999999999999,
+    "maxHeight": 0.7875000000000001
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "e115be12-e79d-49d0-8048-269c1fcf9fc1",
+    "requestedAt": "2026-10-23T17:31:42.566Z",
+    "balanceBefore": 4040,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "An empty Roman military casualty litter resting on two low wooden supports: two long ashwood carrying poles with projecting handles, tightly laced cream canvas sleeping sling, folded dark wool blanket at one end, small leather water flask. No person, blood or body. Clear parallel carrying handles, practical hand-made stretcher, light mud splashes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:33:33.213Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/casualty-litter.glb",
+    "rawBytes": 43394284,
+    "rawSha256": "b98a5857ae28c38a6493e9aba6d35c7aedf9955005725edbf84fe229f951207c",
+    "tripoInput": {
+      "prompt": "An empty Roman military casualty litter resting on two low wooden supports: two long ashwood carrying poles with projecting handles, tightly laced cream canvas sleeping sling, folded dark wool blanket at one end, small leather water flask. No person, blood or body. Clear parallel carrying handles, practical hand-made stretcher, light mud splashes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/casualty-litter-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "457fcdf2baf4cd209be8718cb919862873b122a59f4ba819dd584df0515a24c1",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

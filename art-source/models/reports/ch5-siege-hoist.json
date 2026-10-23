@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-siege-hoist.glb",
+    "bytes": 45764992,
+    "sha256": "d313a79aa927ff59f74fc6193eb5c87a79a08facbb277e3f745d7a629e60bbec",
+    "triangles": 1474450
+  },
+  "output": {
+    "path": "art-source/models/processed/ch5-siege-hoist.glb",
+    "bytes": 238184,
+    "sha256": "9585cf6c42d5cdcd7d3403e227f5170c24e14302d6c5ec71be6f34d87beb6046",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.3837922207882,
+  "sizeMetres": {
+    "width": 3.3811,
+    "height": 2.6,
+    "depth": 3.3797
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_b3771e29-29e6-4cec-a4c5-4aba5b1d828b",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

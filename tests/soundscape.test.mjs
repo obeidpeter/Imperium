@@ -15,6 +15,7 @@ function platform({size=65536,fail=[],amplitude=.3}={}){
     createStereoPanner(){return {...node(),pan:param()};}
     createBiquadFilter(){const filter={...node(),frequency:param(),Q:param()};this.filters.push(filter);return filter;}
     createDynamicsCompressor(){return {...node(),threshold:param(),knee:param(),ratio:param()};}
+    createBuffer(channels,length,sampleRate){const samples=new Float32Array(length);return {numberOfChannels:channels,length,sampleRate,getChannelData:()=>samples};}
     createBufferSource(){const source={...node(),start(at,offset){this.started=[at,offset];},stop(at){this.stopped=at??0;},end(){this.onended?.();}};this.sources.push(source);return source;}
     async resume(){this.state='running';}
     async suspend(){this.state='suspended';}
@@ -33,6 +34,16 @@ test('Local mixer waits for explicit opt-in and a gesture; repeated updates shar
   const p=platform(),s=p.sound;s.update(field());assert.equal(await s.unlock(),false);assert.equal(p.contexts.length,0);assert.equal(p.calls.length,0);
   s.configure({music:true,ambience:true,audio:true});assert.equal(p.calls.length,0);await s.unlock();for(let i=0;i<10;i++)s.update(field());await settle();
   assert.equal(s.stats().loops,2);assert.equal(s.stats().sources,2);assert.equal(new Set(p.calls.map(c=>c.id)).size,p.calls.length);s.dispose();
+});
+
+test('Room transitions filter existing ambience; bounded local foley respects ambience mute and releases every source',async()=>{
+  const p=platform(),s=p.sound;s.update(field());assert.equal(s.environmentCue('river'),false);
+  s.configure({ambience:true,audio:true});await s.unlock();await settle();
+  const filter=p.contexts[0].filters[0],open=filter.frequency.value;s.setSpace({enclosed:true});assert.ok(filter.frequency.value<open);s.setSpace({enclosed:false});assert.equal(filter.frequency.value,open);
+  for(const kind of ['river','wind','workshop','room'])assert.equal(s.environmentCue(kind),true);
+  assert.equal(s.stats().environmentBuffers,4);assert.equal(s.cue('footstep',{surface:'stone'}),false,'Paving uses the surface-aware stage foley.');
+  s.configure({ambience:false});assert.equal(s.stats().effects,0);assert.equal(s.environmentCue('river'),false);
+  s.dispose();assert.equal(s.stats().environmentBuffers,0);assert.equal(s.stats().sources,0);
 });
 
 test('Mute or hide during a pending resume cannot reopen the mixer or allocate a late source',async()=>{

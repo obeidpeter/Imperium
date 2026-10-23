@@ -17,6 +17,8 @@
     "smoke": "node scripts/browser-smoke.mjs",
     "smoke:polish": "node scripts/realtime-polish-smoke.mjs",
     "smoke:usability": "node scripts/usability-smoke.mjs",
+    "smoke:ch5-pilot": "node scripts/ch5-pilot-smoke.mjs",
+    "smoke:world": "node scripts/regional-world-smoke.mjs",
     "autoplay:command": "node scripts/command-autoplay.mjs",
     "audit:production": "node scripts/build-character-performance.mjs --check && node scripts/audit-character-production.mjs",
     "benchmark": "node scripts/benchmark-campaign.mjs",

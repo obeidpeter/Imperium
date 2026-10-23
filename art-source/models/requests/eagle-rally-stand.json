@@ -1,0 +1,78 @@
+{
+  "id": "eagle-rally-stand",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    6,
+    12
+  ],
+  "use": "A Roman legionary rally standard resting in a heavy square wooden stand",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman legionary rally standard resting in a heavy square wooden stand: a single dark timber pole capped by a small bronze eagle with lifted wings, beneath it a plain oxblood red cloth panel hanging from a crossbar. Bronze finial weathered not shiny; practical Roman military proportions. No inscriptions, text, logos, skulls or fantasy ornament, no person. Broad stable stand at ground level. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6500,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 2.6,
+    "minHeight": 2.4699999999999998,
+    "maxHeight": 2.7300000000000004
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+    "requestedAt": "2026-10-23T17:35:42.505Z",
+    "balanceBefore": 3960,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman legionary rally standard resting in a heavy square wooden stand: a single dark timber pole capped by a small bronze eagle with lifted wings, beneath it a plain oxblood red cloth panel hanging from a crossbar. Bronze finial weathered not shiny; practical Roman military proportions. No inscriptions, text, logos, skulls or fantasy ornament, no person. Broad stable stand at ground level. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:37:16.878Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/eagle-rally-stand.glb",
+    "rawBytes": 42993964,
+    "rawSha256": "de519e9ebbe9a9f67143f431e158815881edc2ef2fd8a97b67ce65532eb5c898",
+    "tripoInput": {
+      "prompt": "A Roman legionary rally standard resting in a heavy square wooden stand: a single dark timber pole capped by a small bronze eagle with lifted wings, beneath it a plain oxblood red cloth panel hanging from a crossbar. Bronze finial weathered not shiny; practical Roman military proportions. No inscriptions, text, logos, skulls or fantasy ornament, no person. Broad stable stand at ground level. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/eagle-rally-stand-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "e4f784eb2fb905821d17b909c18de0eb04aec4bcaeb36d617ed4cdd80aa949ac",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

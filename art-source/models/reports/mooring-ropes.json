@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/mooring-ropes.glb",
+    "bytes": 46950352,
+    "sha256": "1b5fc00b7c26ae7aa09a42e7df0a396a3fbde33e35e8be2c39fadba64eb2f3d0",
+    "triangles": 1492650
+  },
+  "output": {
+    "path": "art-source/models/processed/mooring-ropes.glb",
+    "bytes": 228484,
+    "sha256": "c6d3dbfd74b3251775fd8e80e294f92e3061b3f712244a4ab3f35b43a9413b8a",
+    "triangles": 3918
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 0.7622863419056565,
+  "sizeMetres": {
+    "width": 0.7611,
+    "height": 0.6,
+    "depth": 0.5807
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_429261a7-1be8-49d7-bd56-2187deaf8556",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_429261a7-1be8-49d7-bd56-2187deaf8556",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_429261a7-1be8-49d7-bd56-2187deaf8556",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

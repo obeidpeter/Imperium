@@ -217,6 +217,27 @@
   .rt-message-area{flex-wrap:wrap}.rt-target-details>summary{font-size:.7rem}
   .rt-result-actions button{inline-size:100%}.rt-result{margin:.5rem;padding:.75rem}
 }
+/* Campaign courtyards need room for the people and their shelters.
+   This scoped override keeps combat and chamber layouts unchanged. */
+.camp-page.world-courtyard{padding-block-start:.8rem}
+.world-courtyard .chapter-heading{margin-block-end:.55rem;gap:.5rem 1.5rem}
+.world-courtyard .chapter-heading h1{font-size:calc(1.85rem * var(--text-scale,1));margin-block-start:.2rem}
+.world-courtyard>#campaign-chapters{margin-block:.3rem}
+.world-courtyard>.camp-departure{padding:.65rem .95rem;margin-block:.45rem .8rem;gap:.65rem 1.2rem}
+.world-courtyard>.camp-departure h2{margin-block:.15rem .3rem}
+.world-courtyard>.camp-departure p{margin-block:.25rem}
+.world-courtyard>.camp-departure .notice{padding:.45rem .6rem;margin-block:.35rem 0}
+.world-courtyard .rt-field{--rt-scene-height:clamp(22.5rem,54dvh,32.5rem)}
+.world-courtyard .rt-field .rt-scene{min-block-size:22.5rem}
+@media(max-width:600px){
+  .world-courtyard .chapter-heading h1{font-size:calc(1.55rem * var(--text-scale,1))}
+  .world-courtyard .rt-field{--rt-scene-height:clamp(20rem,50dvh,28rem)}
+  .world-courtyard .rt-field .rt-scene{min-block-size:20rem}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .world-courtyard .rt-field{--rt-scene-height:clamp(18rem,60dvh,24rem)}
+  .world-courtyard .rt-field .rt-scene{min-block-size:18rem}
+}
 /* The chamber (from Chapter VII; guide "Political Contests"): the coalition strip under the motion, the speakers'
    Resolve, a conversation beside/below the scene and a separate rivals' narration row. Blocs also read by letter. */
 .rt-field[data-kind="chamber"]{--rt-veterans:#d0564a;--rt-landholders:#d8ae4c;--rt-civic:#6a96dc;--rt-chamber:#a070b8}

@@ -1,0 +1,82 @@
+{
+  "id": "archive-cabinet",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Four cardinal views of the final compressed runtime model, with a 1.8 m scale reference",
+    "notes": "Open scroll cubbies are on local +X; the opposite side is the solid wooden back. Runtime placement turns the cubbies toward the board. This asset inspection does not certify production-camera readability or device performance.",
+    "localForward": [
+      1,
+      0,
+      0
+    ],
+    "runtimeSha256": "6401791ba5dd684c3954b8fc79a7dc0ea284e974c6c692b291d2fb99c3b0edfd",
+    "evidence": "Local work/regional-world-review/orientation-contact-sheet.png (not a shipped asset)",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  },
+  "chapters": [
+    11
+  ],
+  "use": "A freestanding Roman archive cabinet made from dark polished but worn walnut timber. A rectangular frame contains twelve open square cubbies with separate rolled parchment scrolls, two shut wax-tablet cases on a waist-height shelf, solid broad plinth and simple shallow cornice. Clear regular shelf geometry, no glass or modern handles, no text, no ornate fantasy carving.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A freestanding Roman archive cabinet made from dark polished but worn walnut timber. A rectangular frame contains twelve open square cubbies with separate rolled parchment scrolls, two shut wax-tablet cases on a waist-height shelf, solid broad plinth and simple shallow cornice. Clear regular shelf geometry, no glass or modern handles, no text, no ornate fantasy carving. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 2.1,
+    "minHeight": 1.9949999999999999,
+    "maxHeight": 2.205
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "c14e3f77-4f2f-420c-9021-59c3862985e4",
+    "requestedAt": "2026-10-23T17:44:46.140Z",
+    "balanceBefore": 3820,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A freestanding Roman archive cabinet made from dark polished but worn walnut timber. A rectangular frame contains twelve open square cubbies with separate rolled parchment scrolls, two shut wax-tablet cases on a waist-height shelf, solid broad plinth and simple shallow cornice. Clear regular shelf geometry, no glass or modern handles, no text, no ornate fantasy carving. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:47:32.944Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/archive-cabinet.glb",
+    "rawBytes": 42692464,
+    "rawSha256": "e3d7db3c7261e887fd95682f5cd8dfd66d5c189c113511e3761ab072313831a6",
+    "tripoInput": {
+      "prompt": "A freestanding Roman archive cabinet made from dark polished but worn walnut timber. A rectangular frame contains twelve open square cubbies with separate rolled parchment scrolls, two shut wax-tablet cases on a waist-height shelf, solid broad plinth and simple shallow cornice. Clear regular shelf geometry, no glass or modern handles, no text, no ornate fantasy carving. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/archive-cabinet-tripo-render.webp"
+  }
+}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as Game from '../src/core/game.js';
 import {createCampaignViews} from '../src/ui/campaign-views.js';
-import {characterPanel,companyPanel,kitPanel,soldierCampCard} from '../src/ui/soldier-views.js';
+import {characterPanel,companyPanel,kitPanel,soldierCampCard,trainerPanel,trainerName} from '../src/ui/soldier-views.js';
 import {ITEMS} from '../src/data/items.js';
 import {campFor} from '../src/data/camps.js';
 import {Document} from './mini-dom.mjs';
@@ -78,4 +78,16 @@ test('company readiness and party membership stay exposed; detailed order contro
   for(const button of presets)assert.match(collapsedAncestor(button)?.id??'',/^companion-orders-/);
   for(const card of doc.querySelectorAll('.companion-card'))visible(card.querySelector('.orders-summary'));
   assert.equal(Game.serialize(s),before);
+});
+
+test('later hub training uses a resident instructor after either mentor fate, with identical course actions and costs',()=>{
+  for(const chapter of [6,7,8,9,10,11,12])for(const fate of ['save','obey']){
+    const state=camp(chapter);state.decisions.ch6=fate;const before=JSON.stringify(state);
+    assert.equal(trainerName(state,'campidoctor'),'The veteran instructor');
+    const panel=trainerPanel(state,'campidoctor'),card=soldierCampCard(state);
+    assert.doesNotMatch(panel,/Campidoctor Varro/);assert.doesNotMatch(card,/Campidoctor Varro/);
+    assert.match(panel,/data-kind="course"/);assert.match(panel,/training points/);assert.equal(JSON.stringify(state),before);
+  }
+  assert.equal(trainerName(camp(1),'campidoctor'),'Campidoctor Varro');
+  assert.equal(trainerName(camp(5),'campidoctor'),'Campidoctor Varro');
 });

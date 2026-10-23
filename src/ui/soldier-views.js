@@ -203,10 +203,13 @@ export function quartermasterPanel(state){
 export function trainerPanel(state,trainerId){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const t=TRAINERS[trainerId],options=courseOptions(state,trainerId);
-  return `<div class="trainer-panel"><p><strong>${esc(t.name)}</strong>, ${esc(t.title)}. You have <strong>${s.tp}</strong> training points and ${s.denarii} denarii.</p>
+  return `<div class="trainer-panel"><p><strong>${esc(trainerName(state,trainerId))}</strong>, ${esc(t.title)}. You have <strong>${s.tp}</strong> training points and ${s.denarii} denarii.</p>
     <ul class="shop-list">${options.map(c=>`<li><span><strong>${esc(c.name)}</strong> · ${esc(c.summary)} <small>${c.tp} TP${c.denarii?`, ${c.denarii} denarii`:''}</small></span>`+
       `${c.taken?'<span class="status-pill">Learnt</span>':`<div>${button('course','Learn',{course:c.id},{disabled:!c.available,title:c.reason??''})}${!c.available&&c.reason?`<small>${esc(c.reason)}</small>`:''}</div>`}</li>`).join('')}</ul></div>`;
 }
+// The courses outlive their first instructor. Varro is at the early camps
+// and the Chapter V courtyard; later courts use the resident instructor.
+export const trainerName=(state,id)=>id==='campidoctor'&&(state.chapter===4||state.chapter>=6)?'The veteran instructor':TRAINERS[id]?.name??'Trainer';
 
 // The one-time choice of training and appearance (a chronicle begun before 0.40 makes it here).
 // The recruit's training and appearance (guide "Your recruit"): at New Game, and once for a chronicle begun
@@ -293,7 +296,7 @@ export function soldierCampCard(state){
     <p class="soldier-balance"><strong>${s.tp} training points</strong> · ${s.denarii} denarii</p>
     <div class="camp-task-links">${link('kit','Equipment','I')}${link('character','Training','C')}
     ${link('company','Company','R')}${link('quartermaster','Trade & pay','')}</div>
-    ${disclosure('camp-trainers',`Courses & trainers (${trainers.length})`,trainers.map(t=>link('trainer',`${t.name} · ${t.title.match(/\(([^)]+)\)/)?.[1]??t.title}`,'',t.id)).join(''))}
+    ${disclosure('camp-trainers',`Courses & trainers (${trainers.length})`,trainers.map(t=>link('trainer',`${trainerName(state,t.id)} · ${t.title.match(/\(([^)]+)\)/)?.[1]??t.title}`,'',t.id)).join(''))}
     ${disclosure('camp-honours','Service honours',link('decorations','Decorations and titles','A'))}</section>`;
 }
 

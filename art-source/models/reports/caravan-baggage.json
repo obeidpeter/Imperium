@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/caravan-baggage.glb",
+    "bytes": 45405228,
+    "sha256": "eafe8e60c015f01e0ea7e187255d567cd4fe0cf12f80711ca68e2c005705bc65",
+    "triangles": 1439950
+  },
+  "output": {
+    "path": "art-source/models/processed/caravan-baggage.glb",
+    "bytes": 382936,
+    "sha256": "4758f5ffc232e4a730e0a8f0d11053b82ba67e0de3201fbfe109ba0f8bef2c4b",
+    "triangles": 6858
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.5569353953674026,
+  "sizeMetres": {
+    "width": 1.5061,
+    "height": 1.2,
+    "depth": 1.5532
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_261422e4-0f91-40fe-a0da-90ace23caba6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_261422e4-0f91-40fe-a0da-90ace23caba6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_261422e4-0f91-40fe-a0da-90ace23caba6",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile,stat} from 'node:fs/promises';
 import {WORLD_CATALOG,WORLD_KINDS,chapterWorldFiles,worldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
-import {SCENERY_MODELS} from '../src/showcase/scenery-models.js';
+import {SCENERY_MODELS,sceneryPlacements} from '../src/showcase/scenery-models.js';
 import {chapterOfflineAssets,isFlatArt} from '../src/ui/art.js';
 
 const root=new URL('../',import.meta.url);
@@ -27,11 +27,15 @@ test('every world asset names its kind, its chapters and files with provenance',
 });
 
 test('no world model sits outside the catalog, and every placed model is catalogued for its chapter',async()=>{
-  const models=await paths('assets/models/chapters/');
+  const models=(await Promise.all(['assets/models/chapters/','assets/models/scenery/','assets/models/world/'].map(paths))).flat();
   assert.deepEqual(models.filter(path=>!worldFiles().includes(path)),[],'A model in assets/models/chapters/ must be in the world catalog');
   for(const [chapter,set]of Object.entries(SCENERY_MODELS))for(const {id}of set.models){
     assert.ok(worldModelUrl(id),`${id} is in the world catalog`);
     assert.ok(WORLD_CATALOG[id].chapters.includes(Number(chapter)),`${id} downloads with Chapter ${chapter}, where it stands`);
+  }
+  for(let chapter=1;chapter<=12;chapter++)for(const {id}of sceneryPlacements({id:`ch${chapter}-camp`,width:20,height:16},{chapter})){
+    assert.ok(worldModelUrl(id),`${id} is in the world catalog`);
+    assert.ok(WORLD_CATALOG[id].chapters.includes(chapter),`${id} downloads with Chapter ${chapter}, where it stands`);
   }
 });
 

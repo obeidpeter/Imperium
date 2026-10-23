@@ -6,6 +6,17 @@ import * as T from '../../vendor/three/three.module.js';
 // a few shafts of sunlight slant through the air with dust turning in them.
 // Presentation only and deterministic; reduced motion holds both still.
 export const CLOUD_UNIFORMS=Object.freeze({cloudTime:{value:0},cloudStrength:{value:0},cloudShape:{value:new T.Vector3(1/22,.03,.02)}});
+// A shared atmospheric depth for ground, built silhouettes and the panorama.
+// The former 70–170 m outdoor range erased the supporting hills while the
+// unfogged painting remained visible above them as detached crest fragments.
+// Keep the near onset and interior treatment; give the 550 m modeled landscape
+// room to recede before its 610 m painted continuation merges into the sky.
+export function landscapeFogRange(profile={},focusDistance=0){
+  const focus=Number.isFinite(focusDistance)?Math.max(0,focusDistance):0,misty=['mist','rain'].includes(profile.weather),near=focus+(misty?6:12);
+  const density=Number.isFinite(profile.fogDensity)&&profile.fogDensity>0?profile.fogDensity:.017;
+  const span=profile.civic?(misty?1.4:2)/density:Math.max(misty?360:540,Math.min(misty?520:780,(misty?8:12)/density));
+  return {near,far:near+span};
+}
 // How strongly clouds dim the sun here (0 indoors, at night and under rain).
 export function cloudStrength(profile={}){
   if(profile.civic||['night','interior'].includes(profile.timeOfDay)||['rain','embers'].includes(profile.weather))return 0;

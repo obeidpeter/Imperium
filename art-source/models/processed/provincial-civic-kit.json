@@ -1,0 +1,516 @@
+{
+  "version": 1,
+  "id": "provincial-civic",
+  "generator": "scripts/assets/build-regional-kits.py",
+  "chapters": [
+    10
+  ],
+  "authorship": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+  "licence": "Created for the Imperium project; no third-party source assets",
+  "components": [
+    {
+      "name": "raised_granary",
+      "triangles": 1128,
+      "boundsBlender": {
+        "min": [
+          -3.0,
+          -2.8299999237060547,
+          0.0
+        ],
+        "max": [
+          3.0,
+          2.8299999237060547,
+          5.010000228881836
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.0,
+          0.0,
+          -2.8299999237060547
+        ],
+        "max": [
+          3.0,
+          5.010000228881836,
+          2.8299999237060547
+        ]
+      },
+      "dimensions": {
+        "width": 6.0,
+        "height": 5.010000228881836,
+        "depth": 5.659999847412109
+      },
+      "materials": 4,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "River-worn grey limestone",
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "tribunal_portico",
+      "triangles": 648,
+      "boundsBlender": {
+        "min": [
+          -3.0214730501174927,
+          -1.9800000190734863,
+          0.0
+        ],
+        "max": [
+          3.0214730501174927,
+          1.9800000190734863,
+          4.735000133514404
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.0214730501174927,
+          0.0,
+          -1.9800000190734863
+        ],
+        "max": [
+          3.0214730501174927,
+          4.735000133514404,
+          1.9800000190734863
+        ]
+      },
+      "dimensions": {
+        "width": 6.042946100234985,
+        "height": 4.735000133514404,
+        "depth": 3.9600000381469727
+      },
+      "materials": 3,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "farm_courtyard_wall",
+      "triangles": 1848,
+      "boundsBlender": {
+        "min": [
+          -2.625,
+          -0.4000000059604645,
+          0.0
+        ],
+        "max": [
+          2.625,
+          0.4000000059604645,
+          2.0149998664855957
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.625,
+          0.0,
+          -0.4000000059604645
+        ],
+        "max": [
+          2.625,
+          2.0149998664855957,
+          0.4000000059604645
+        ]
+      },
+      "dimensions": {
+        "width": 5.25,
+        "height": 2.0149998664855957,
+        "depth": 0.800000011920929
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "River-worn grey limestone"
+      ]
+    },
+    {
+      "name": "tile_roof_store",
+      "triangles": 720,
+      "boundsBlender": {
+        "min": [
+          -2.5261778831481934,
+          -2.5299999713897705,
+          0.0
+        ],
+        "max": [
+          2.5261778831481934,
+          2.5299999713897705,
+          3.9100003242492676
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.5261778831481934,
+          0.0,
+          -2.5299999713897705
+        ],
+        "max": [
+          2.5261778831481934,
+          3.9100003242492676,
+          2.5299999713897705
+        ]
+      },
+      "dimensions": {
+        "width": 5.052355766296387,
+        "height": 3.9100003242492676,
+        "depth": 5.059999942779541
+      },
+      "materials": 4,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "River-worn grey limestone",
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "market_stall",
+      "triangles": 552,
+      "boundsBlender": {
+        "min": [
+          -2.1178568601608276,
+          -1.6799999475479126,
+          0.0
+        ],
+        "max": [
+          2.1178568601608276,
+          1.6799999475479126,
+          3.1850001445254463
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.1178568601608276,
+          0.0,
+          -1.6799999475479126
+        ],
+        "max": [
+          2.1178568601608276,
+          3.1850001445254463,
+          1.6799999475479126
+        ]
+      },
+      "dimensions": {
+        "width": 4.235713720321655,
+        "height": 3.1850001445254463,
+        "depth": 3.359999895095825
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "olive_press_frame",
+      "triangles": 444,
+      "boundsBlender": {
+        "min": [
+          -1.5,
+          -1.25,
+          0.0
+        ],
+        "max": [
+          1.5,
+          1.25,
+          2.950000047683716
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.5,
+          0.0,
+          -1.25
+        ],
+        "max": [
+          1.5,
+          2.950000047683716,
+          1.25
+        ]
+      },
+      "dimensions": {
+        "width": 3.0,
+        "height": 2.950000047683716,
+        "depth": 2.5
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "River-worn grey limestone",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "irrigation_sluice",
+      "triangles": 148,
+      "boundsBlender": {
+        "min": [
+          -1.0750000476837158,
+          -1.649999976158142,
+          0.0
+        ],
+        "max": [
+          1.0750000476837158,
+          1.649999976158142,
+          1.6200000047683716
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.0750000476837158,
+          0.0,
+          -1.649999976158142
+        ],
+        "max": [
+          1.0750000476837158,
+          1.6200000047683716,
+          1.649999976158142
+        ]
+      },
+      "dimensions": {
+        "width": 2.1500000953674316,
+        "height": 1.6200000047683716,
+        "depth": 3.299999952316284
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "River-worn grey limestone",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "pergola_arcade",
+      "triangles": 276,
+      "boundsBlender": {
+        "min": [
+          -3.0199999809265137,
+          -1.9000000357627869,
+          0.0
+        ],
+        "max": [
+          3.0199999809265137,
+          1.9000000357627869,
+          2.955000400543213
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.0199999809265137,
+          0.0,
+          -1.9000000357627869
+        ],
+        "max": [
+          3.0199999809265137,
+          2.955000400543213,
+          1.9000000357627869
+        ]
+      },
+      "dimensions": {
+        "width": 6.039999961853027,
+        "height": 2.955000400543213,
+        "depth": 3.8000000715255737
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "boundary_cairn",
+      "triangles": 616,
+      "boundsBlender": {
+        "min": [
+          -0.9600000083446503,
+          -0.32499998807907104,
+          0.0
+        ],
+        "max": [
+          0.9600000083446503,
+          0.32499998807907104,
+          1.1899999231100082
+        ]
+      },
+      "bounds": {
+        "min": [
+          -0.9600000083446503,
+          0.0,
+          -0.32499998807907104
+        ],
+        "max": [
+          0.9600000083446503,
+          1.1899999231100082,
+          0.32499998807907104
+        ]
+      },
+      "dimensions": {
+        "width": 1.9200000166893005,
+        "height": 1.1899999231100082,
+        "depth": 0.6499999761581421
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "River-worn grey limestone"
+      ]
+    },
+    {
+      "name": "public_fountain",
+      "triangles": 344,
+      "boundsBlender": {
+        "min": [
+          -1.5,
+          -1.5,
+          0.0
+        ],
+        "max": [
+          1.5,
+          1.5,
+          1.7000000476837158
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.5,
+          0.0,
+          -1.5
+        ],
+        "max": [
+          1.5,
+          1.7000000476837158,
+          1.5
+        ]
+      },
+      "dimensions": {
+        "width": 3.0,
+        "height": 1.7000000476837158,
+        "depth": 3.0
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "River-worn grey limestone",
+        "Weathered ivory lime render"
+      ]
+    },
+    {
+      "name": "tally_counter",
+      "triangles": 156,
+      "boundsBlender": {
+        "min": [
+          -1.600000023841858,
+          -1.0499999523162842,
+          0.0
+        ],
+        "max": [
+          1.600000023841858,
+          1.0499999523162842,
+          1.375
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          0.0,
+          -1.0499999523162842
+        ],
+        "max": [
+          1.600000023841858,
+          1.375,
+          1.0499999523162842
+        ]
+      },
+      "dimensions": {
+        "width": 3.200000047683716,
+        "height": 1.375,
+        "depth": 2.0999999046325684
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "produce_store",
+      "triangles": 768,
+      "boundsBlender": {
+        "min": [
+          -2.1750991344451904,
+          -2.0299999713897705,
+          0.0
+        ],
+        "max": [
+          2.1750991344451904,
+          2.0299999713897705,
+          3.4850005507469177
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.1750991344451904,
+          0.0,
+          -2.0299999713897705
+        ],
+        "max": [
+          2.1750991344451904,
+          3.4850005507469177,
+          2.0299999713897705
+        ]
+      },
+      "dimensions": {
+        "width": 4.350198268890381,
+        "height": 3.4850005507469177,
+        "depth": 4.059999942779541
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "Weathered cedar grain"
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "family": "River-worn grey limestone",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Weathered ivory lime render",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Oxide red fired clay tile",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Weathered cedar grain",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/provincial-civic-kit.glb",
+    "bytes": 1475908,
+    "sha256": "6c67e8c19c7643d221ae87db1d041f4465996d96fff220914afda874b5900655",
+    "triangles": 7648
+  },
+  "runtimePath": "assets/models/scenery/provincial-civic-kit.glb"
+}

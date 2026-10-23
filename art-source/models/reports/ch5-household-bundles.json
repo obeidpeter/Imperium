@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-household-bundles.glb",
+    "bytes": 46994008,
+    "sha256": "bcca0a5157597ed7d08f673b86b1d27cbb203a4c458c06f0a84c48b445e03f1a",
+    "triangles": 1487116
+  },
+  "output": {
+    "path": "art-source/models/processed/ch5-household-bundles.glb",
+    "bytes": 397720,
+    "sha256": "5bbe05853fa6a2c9bf57bbac11c107c50adb4d5bb8307ef463ad35ae2e5cee0c",
+    "triangles": 7840
+  },
+  "settings": {
+    "triangles": 8000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.9,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.081366497320237,
+  "sizeMetres": {
+    "width": 1.897,
+    "height": 0.9,
+    "depth": 2.0807
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

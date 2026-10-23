@@ -40,6 +40,7 @@ export function fieldHints({state,keymap,kind='field'}){
   const chamber=kind==='chamber',camp=kind==='camp',key=action=>esc(actionLabel(action,keymap));
   const title=camp?campFor(state.chapter)?.title??'The camp':state.encounter.title;
   const label=chamber?`${esc(title)}. Click the floor inside the pale circles to walk, a person to talk to him; right-click gives the chosen speech. ${key('yield_floor')} yields the floor.`
+    :camp?`${esc(title)}. Click ground to move, a person to talk, or a service to use it. ${key('pause')} pauses.`
     :`${esc(title)}. Click ground to move, a person or thing to act; right-click uses the current ability. ${key('pause')} pauses.`;
   const keys=chamber?`Arrow keys move. ${key('target_next_enemy')} selects a member; Enter talks. ${key('interact_nearest')} uses what is nearest. ${key('yield_floor')} ends the hour.
       All actions provides a text list. Escape closes the current panel or opens Menu; How to play has help.`
@@ -56,7 +57,7 @@ export function relabelField(root,{state,keymap,kind='field'}){
 
 export function fieldMarkup({state,keymap,kind='field'}){
   const camp=kind==='camp',chamber=kind==='chamber',chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
-  const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:'Talk to people, use what you find, and march out through the gate.'}:state.encounter;
+  const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:campFor(state.chapter)?.purpose??'Prepare, speak to people, and depart through the gate.'}:state.encounter;
   const {label,keys}=fieldHints({state,keymap,kind});
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
     <header class="rt-top">

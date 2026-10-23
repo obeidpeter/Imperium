@@ -1,0 +1,77 @@
+{
+  "id": "grain-bins",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    10
+  ],
+  "use": "A Roman provincial granary storage group",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman provincial granary storage group: two large cylindrical wicker grain bins with conical woven lids, one lower open wicker bin filled with pale grain, two tightly tied linen grain sacks leaning against them. Warm straw, dark wood hoops and dirty cream fabric. Coherent compact freestanding group, no building or ground slab, no text. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 1.3,
+    "minHeight": 1.2349999999999999,
+    "maxHeight": 1.3650000000000002
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+    "requestedAt": "2026-10-23T17:42:04.614Z",
+    "balanceBefore": 3860,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman provincial granary storage group: two large cylindrical wicker grain bins with conical woven lids, one lower open wicker bin filled with pale grain, two tightly tied linen grain sacks leaning against them. Warm straw, dark wood hoops and dirty cream fabric. Coherent compact freestanding group, no building or ground slab, no text. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:44:43.118Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/grain-bins.glb",
+    "rawBytes": 46016372,
+    "rawSha256": "df1ba2e02592fae65bcd98f27f8cf54a8548f07399792456911162c17e3c0cc5",
+    "tripoInput": {
+      "prompt": "A Roman provincial granary storage group: two large cylindrical wicker grain bins with conical woven lids, one lower open wicker bin filled with pale grain, two tightly tied linen grain sacks leaning against them. Warm straw, dark wood hoops and dirty cream fabric. Coherent compact freestanding group, no building or ground slab, no text. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/grain-bins-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "1aa812835d63aa56d8e0a07ecfd76290939ab9c2ebb7523436f055abf98c9b18",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

@@ -1,5 +1,8 @@
 // Pure presentation planning. Never consumes the campaign RNG or edits terrain.
 export const TILE_SIZE=2.5;
+// Keep the scenic river beyond the entire rules rectangle on expanded maps.
+// The original twenty-metre battle boards retain their established datum.
+export const distantRiverCentre=(e,tileSize=TILE_SIZE)=>-Math.max(29,e.height*tileSize/2+16);
 // Readable relief: authored high ground is a flat-topped rise whose bank falls
 // mostly inside its own cell, so a neighbouring road or standing centre stays
 // level. Rivers sit in a channel below one water level; a ford is a shallow bar.
@@ -25,14 +28,14 @@ export function worldToGrid(x,z,e,tileSize=TILE_SIZE){return {x:Math.round(x/til
 export function createGroundHeight(e,tileSize=TILE_SIZE,{profile=null,relief=true}={}){
   const high=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&['high','hill'].includes(terrainAt(e,x,y)),hills=[];
   if(relief)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(high(x,y))hills.push({centre:gridToWorld({x,y},e,tileSize),sides:{east:high(x+1,y),west:high(x-1,y),south:high(x,y+1),north:high(x,y-1)}});
-  const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
+  const hx=e.width*tileSize/2,hz=e.height*tileSize/2,riverCentre=distantRiverCentre(e,tileSize);
   const riverExits=[];for(const y of [0,e.height-1])for(let x=0;x<e.width;x++)if(terrainAt(e,x,y)==='river')riverExits.push({x:gridToWorld({x,y},e,tileSize).x,side:y===0?-1:1});
   const wet=(x,y)=>{const t=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));return t==='river'?RIVER_BED:t==='ford'?FORD_BED:t==='marsh'?-.065:0;};
   return (x,z)=>{
     if(!Number.isFinite(x)||!Number.isFinite(z))return 0;
     const distance=Math.max(Math.abs(x)-hx,Math.abs(z)-hz,0),outside=smooth(distance/7);
     let h=outside*((noise(x*.052,z*.052,3)-.43)*(profile?.setting==='wetland'?.65:3.2)+(noise(x*.16,z*.16,7)-.5)*.55);
-    const river=smooth((-z-18)/5)*(1-smooth((-z-38)/7));if(profile?.distantWater!==false)h-=river*2.7;
+    const river=smooth((riverCentre-z+11)/5)*(1-smooth((riverCentre-z-9)/7));if(profile?.distantWater!==false)h-=river*2.7;
     if(profile?.civic&&(!profile.distantWater||(Math.abs(x)<=hx+2&&Math.abs(z)<=hz+2)))return 0;
     const gx=x/tileSize+(e.width-1)/2,gy=z/tileSize+(e.height-1)/2,ix=Math.floor(gx),iy=Math.floor(gy),u=smooth(gx-ix),v=smooth(gy-iy);
     if(Math.abs(x)<=hx&&Math.abs(z)<=hz)h+=(wet(ix,iy)*(1-u)+wet(ix+1,iy)*u)*(1-v)+(wet(ix,iy+1)*(1-u)+wet(ix+1,iy+1)*u)*v;

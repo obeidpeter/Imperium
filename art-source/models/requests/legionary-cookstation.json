@@ -1,0 +1,79 @@
+{
+  "id": "legionary-cookstation",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    1,
+    3,
+    7
+  ],
+  "use": "A compact Roman military field cook station",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A compact Roman military field cook station: two low soot-blackened stone hearth cheeks supporting an iron crossbar, a hanging bronze cooking cauldron, one large terracotta cooking pot and a short stack of split firewood. Warm dark bronze and terracotta, ash-grey stone, charred wood. No flames or smoke. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 1.3,
+    "minHeight": 1.2349999999999999,
+    "maxHeight": 1.3650000000000002
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "897be104-7bb7-480a-b95e-7179a07a1b4f",
+    "requestedAt": "2026-10-23T17:28:50.238Z",
+    "balanceBefore": 4100,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A compact Roman military field cook station: two low soot-blackened stone hearth cheeks supporting an iron crossbar, a hanging bronze cooking cauldron, one large terracotta cooking pot and a short stack of split firewood. Warm dark bronze and terracotta, ash-grey stone, charred wood. No flames or smoke. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:31:36.757Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/legionary-cookstation.glb",
+    "rawBytes": 44357444,
+    "rawSha256": "f5321ec6284b3cc6e06ab1685a170b373b7a29045cbcdcaa7ea5dfdf506bc394",
+    "tripoInput": {
+      "prompt": "A compact Roman military field cook station: two low soot-blackened stone hearth cheeks supporting an iron crossbar, a hanging bronze cooking cauldron, one large terracotta cooking pot and a short stack of split firewood. Warm dark bronze and terracotta, ash-grey stone, charred wood. No flames or smoke. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/legionary-cookstation-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Final grounded frame visibly supports the cauldron; local Blender repair reviewed in the compressed runtime model.",
+    "runtimeSha256": "c45b0ac506ad515d373164f61691b6b1b4d686997e3e25e684444a44d2ec6078",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}
