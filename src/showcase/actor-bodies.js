@@ -6,10 +6,14 @@ import {actorBodyUrl} from '../ui/actor-body-catalog.js';
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
 export const BODY_JOINTS=Object.freeze(['hips','torso','head','right-shoulder','right-elbow','right-hand','left-shoulder','left-elbow','left-hand','right-thigh','right-knee','right-ankle','left-thigh','left-knee','left-ankle']);
-// Procedural surfaces a body replaces: everything on these joints. Hands,
+// Procedural surfaces a body replaces: everything on these joints, and the
+// helmet and the felt cap worn under it, since the body wears its own. Hands,
 // weapons, shields, bows, quivers, scabbards, cloaks, crests, decorations and
 // standards hang from other joints and stay.
-export const BODY_REPLACES=/^(hips|torso|tunic-hem(-fold|-edge)?|head|(right|left)-(brow|eyelid|thigh|shoulder)|facial-jaw|(ridge|conical|segmented)-helmet|knee|ankle|elbow)$/;
+const BODY_SURFACES='hips|torso|tunic-hem(-fold|-edge)?|head|(right|left)-(brow|eyelid|thigh|shoulder)|facial-jaw|knee|ankle|elbow';
+export const BODY_REPLACES=new RegExp(`^(${BODY_SURFACES}|(ridge|conical|segmented)-helmet|equipped-arming-cap)$`);
+// A bare-headed body (the recruit's) keeps the figure's own helmet or cap, fitted to its head.
+export const BARE_HEAD_REPLACES=new RegExp(`^(${BODY_SURFACES})$`);
 
 // Embedded textures decode off the main thread, within the page's Content
 // Security Policy (model-loader.js).

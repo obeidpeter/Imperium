@@ -219,7 +219,9 @@ export function recruitChoices({grants=null}={}){
     `${grants?` · ${grants[id]} training points for the service already done`:''}</small></span></label>`).join('')}</fieldset>`+
     `<div class="recruit-look">${figurePreview()}<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE).map(([key,list])=>`<label class="setting" `+
     `for="recruit-${key}"><span>${APPEARANCE_NAMES[key]??key}</span><select id="recruit-${key}" data-appearance="${key}">${list.map((name,i)=>`<option `+
-    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}</fieldset></div>`;
+    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}<p class="settings-description">In 3D he wears a generated body `+
+    `that matches his armour, with its own face, hair and tunic, as the preview shows: the cloak colour shows once he wears a cloak, and hair, `+
+    `beard and tunic only if that body cannot load.</p></fieldset></div>`;
 }
 export function adoptPanel(state,{grants=null}={}){
   return `<div class="adopt-panel"><p>This chronicle began before soldiers trained in their own way. Choose his training and appearance once; your `+

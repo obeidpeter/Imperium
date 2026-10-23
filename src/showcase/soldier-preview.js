@@ -9,8 +9,9 @@ export function soldierPreviewUnit(soldier,{name='Your soldier',uncovered=false}
   return {id:'hero',name,side:'player',role:'infantry',trained:true,hp:1,maxHp:1,equipment,appearance:{...soldier.appearance},crowd:false};
 }
 
-/** A demand-rendered inspection turntable. A standard fitting outfit keeps its
- * generated body; combinations it cannot depict use the articulated kit rig.
+/** A demand-rendered inspection turntable. The soldier wears the generated body
+ * closest to his kit, as in the field (actor-body-catalog.js), and the
+ * articulated kit rig until it loads or if it cannot.
  * Modal owner must dispose on close/replacement. No timer runs while idle. */
 export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovered=false,reducedMotion=false,onError=()=>{}}={}){
   let renderer=null,actor=null,observer=null,frame=0,disposed=false,drag=null,yaw=.35,detail=false;

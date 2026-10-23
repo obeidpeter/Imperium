@@ -104,11 +104,15 @@ The full guide remains available offline.
 
 ## Your recruit
 
-**Appearance** sets hair, beard and the colours of tunic and cloak. Most
-helmets hide the hair, as they did. **Training** sets your starting
-attributes (see **Your soldier**) and the optional errand you are
-offered in Chapters II to IV. It never locks kit or techniques: any
-soldier can learn anything later.
+**Appearance** sets hair, beard and the colours of tunic and cloak. In
+3D your soldier wears a generated body that matches his armour: a
+recruit's tunic until he puts on mail or scale, then a legionary's, an
+officer's from Chapter IV and a commander's from Chapter VII. That body
+has its own face, hair and tunic, so in 3D the cloak colour is what
+shows; hair, beard and tunic show only if the body cannot load.
+**Training** sets your starting attributes (see **Your soldier**) and
+the optional errand you are offered in Chapters II to IV. It never
+locks kit or techniques: any soldier can learn anything later.
 
 | **Training**                        | **Starts stronger in**                                | **Starts weaker in**                   |
 |-------------------------------------|-------------------------------------------------------|----------------------------------------|
@@ -759,7 +763,11 @@ in Combat and Fieldcraft, before his training.
 ## Kit
 
 The kit panel (**I**) shows your equipped soldier, worn layers and pack.
-Drag the model or use its arrow buttons to turn it. Select a packed
+Drag the model or use its arrow buttons to turn it. It wears the
+generated body closest to his kit, as he looks in the field: your
+shield, weapons and cloak are drawn as worn, and your helmet or cap sits
+on the recruit's bare head, but an armoured body brings its own helmet
+and armour, whichever you wear. Select a packed
 piece to compare protection, Restriction and derived combat totals
 against the piece it would replace, then choose **Wear** in camp.
 The comparison spends nothing. **Give** and **Leave on the ground**

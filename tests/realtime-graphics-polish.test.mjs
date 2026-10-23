@@ -93,12 +93,12 @@ test('Expanded real-time maps retain detailed terrain beyond every playable edge
 test('Preview and field use detached real worn items and chosen appearance instead of chapter-assumed equipment',()=>{
   const soldier=createSoldier({appearance:{hair:2,beard:2,tunic:2,cloak:3}}),before=JSON.stringify(soldier),unit=soldierPreviewUnit(soldier,{name:'Aurelius'}),kit=actorKit(unit,{chapter:5});
   assert.equal(kit.armored,false);assert.equal(kit.helmet,'ridge');assert.equal(kit.weapon,'spatha');assert.equal(kit.cloak,false);assert.equal(kit.shield,true);
-  assert.equal(actorIdentity(unit,kit).hair,'shaved');assert.equal(actorIdentity(unit,kit).beard,.85);assert.equal(actorBodyId(kit),null,'A baked face cannot override chosen hair and beard');
+  assert.equal(actorIdentity(unit,kit).hair,'shaved');assert.equal(actorIdentity(unit,kit).beard,.85);assert.equal(actorBodyId(kit),'roman-recruit','Unarmoured, he wears the recruit\'s generated body; the chosen hair and beard show on the procedural figure');
   const world={map:{width:8,height:8},actors:[{id:'hero',name:'Aurelius',side:'player',role:'soldier',x:2,z:3,hp:10,maxHp:10,kit:[...unit.equipment]}]};
   const scene=stageEncounter({width:8,height:8},world,{appearance:soldier.appearance}),field=scene.units[0];
   assert.deepEqual(field.equipment,unit.equipment);assert.deepEqual(field.appearance,unit.appearance);
   field.equipment.pop();field.appearance.hair=0;assert.equal(JSON.stringify(soldier),before);assert.equal(world.actors[0].kit.length,unit.equipment.length);
-  const compatible=actorKit({...unit,appearance:null,equipment:['hamata','galea','bracae','caligae','spatha','scutum']},{chapter:5});assert.equal(actorBodyId(compatible),'roman-legionary');
+  const mail=actorKit({...unit,equipment:['hamata','galea','bracae','caligae','spatha','scutum']},{chapter:5});assert.equal(actorBodyId(mail),'roman-officer','In mail he wears the generated body of his rank');
 });
 
 test('Equipped weapon, shield, helmet and armour combinations create distinct finite rigs without changing input',()=>{

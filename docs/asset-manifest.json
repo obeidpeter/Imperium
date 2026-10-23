@@ -5242,8 +5242,8 @@
           "previousSha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07"
         }
       },
-      "usage": "Chapter I recruits, the protagonist among them; the game adds the practice kit.",
-      "loading": "Deferred local GLB in the offline groups of Chapter I only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "usage": "Chapter I recruits, and the protagonist in his own kit while unarmoured (the real-time views and the kit panel), with his helmet or cap fitted over its bare head; the game adds the practice kit.",
+      "loading": "Deferred local GLB in the offline groups of every chapter (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 366388,
@@ -5410,8 +5410,8 @@
           "previousSha256": "80584d9e4d5a422fa9df7be06d777a728692699aaa37f35574e8dbb67af72f4c"
         }
       },
-      "usage": "Roman archers; the game adds the bow, arrows and quiver.",
-      "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "usage": "Roman archers, and the bowmen of the protagonist's company in their own kit; the game adds the bow, arrows and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapters III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 436028,
@@ -5523,7 +5523,7 @@
         }
       },
       "usage": "The protagonist as a senior commander from Chapter VII, and rival claimants; the game adds the crest, cloak (purple at the accession), shield and sword.",
-      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, IX, X, XI, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 482700,
@@ -6083,7 +6083,7 @@
         }
       },
       "usage": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
-      "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, VI, VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VI, VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 377588,
