@@ -7,7 +7,7 @@ Vendored from the official Three.js r186 release (the GitHub tag and the `three@
 - https://github.com/mrdoob/three.js/blob/r186/examples/jsm/utils/SkeletonUtils.js
 - and, since the asset foundation, from the `three@0.186.1` npm package: the KTX2 loader with its worker pool, colour spaces, KTX container parser and Zstandard decoder; the Basis Universal transcoder; and the meshopt decoder.
 
-Only changes: bare `three` imports become local `../../three.module.js` imports. No CDN requests or external decoder services. The glTF addons were fetched 2026-10-17, the others 2026-10-22. `tests/model-compression.test.mjs` checks every file below against its published SHA-256, after undoing the import change.
+Only changes: bare `three` imports become local `../../three.module.js` imports. No CDN requests or external decoder services. The glTF addons were fetched 2026-10-17, the others 2026-10-22. `tests/model-compression.test.mjs` checks every file below against its published SHA-256, after undoing the import change and normalizing text CRLF line endings to LF. Binary files are hashed without modification; both text checkout formats are tested.
 
 | File | Published SHA-256 | Licence |
 | --- | --- | --- |
