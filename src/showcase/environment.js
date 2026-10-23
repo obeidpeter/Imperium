@@ -12,6 +12,8 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
 import {createPaintedBackdrop} from './environment-backdrop.js';
 import {addFinaleApproach} from './environment-finale.js';
+import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads} from './environment-ch5-pilot.js';
+import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks} from './environment-regional-world.js';
 import {groundArchitecturalFoundations} from './environment-foundations.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
@@ -19,7 +21,7 @@ import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {bakeEnvironmentOcclusion,installBakedOcclusion} from './environment-baked-occlusion.js';
 import {installCloudShadows} from './atmosphere.js';
 import {runSteps} from './build-steps.js';
-import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
+import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,distantRiverCentre,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
 /** Self-contained 3D presentation. The supplied encounter is never modified.
@@ -45,10 +47,11 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
-  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=createGroundHeight(encounter,tileSize,{profile}),level=createGroundHeight(encounter,tileSize,{profile,relief:false});
+  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=chapterFivePilotHeight(createGroundHeight(encounter,tileSize,{profile}),encounter,tileSize),level=createGroundHeight(encounter,tileSize,{profile,relief:false});
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
-  const e={width:encounter.width,height:encounter.height,terrain:terrainSnapshot};
-  const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2;
+  const e={id:encounter.id,kind:encounter.kind,width:encounter.width,height:encounter.height,terrain:terrainSnapshot,
+    ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{})};
+  const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0};
@@ -79,7 +82,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(let i=0;i<pos.count;i++){
     if(i%1024===1023)yield;
     const x=pos.getX(i),z=pos.getZ(i);pos.setY(i,height(x,z));
-    const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
+    const patch=noise(x*.23,z*.23,8),damp=smooth((riverZ-z+12)/4)*(1-smooth((riverZ-z-11)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
     colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
     const yard=1-smooth(Math.max(Math.abs(x)-halfX+.8,Math.abs(z)-halfZ+.8)/2.7),wear=training?yard*(.72+patch*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48;
     // Steep relief near the board (plateau banks, river cuts) shows bare earth
@@ -122,7 +125,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const rockPos=rockGeometry.attributes.position;
   for(let i=0;i<rockPos.count;i++){const x=rockPos.getX(i),y=rockPos.getY(i),z=rockPos.getZ(i),k=.83+noise(x*3+5,z*3+2,y*3)*.3;rockPos.setXYZ(i,x*k,y*(.85+hash(x,z,y)*.12),z*k);}smoothCoincidentNormals(rockGeometry);
   function boulder(x,z,scale=1,seed=0){instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
-  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
+  const serviceRockCells=new Set([...chapterFiveServicePads(e,tileSize),...regionalServicePads(e,tileSize)].flatMap(pad=>pad.cells.map(c=>`${c.x},${c.y}`)));
+  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))&&!serviceRockCells.has(`${x},${y}`)){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
   for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41||precinctRoute(x,z)>.12)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
   yield;
 
@@ -130,7 +134,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // playable rectangle; nothing here becomes an invented pathfinding blocker.
   const edgeRoad=roads.find(([a,b])=>a.x< -halfX&&b.x>=-halfX),gateZ=edgeRoad?.[1].z??-tileSize*1.5,fortX=-halfX-3.1,gateWidth=4.8;
   const cartX=halfX+3.5,cartZ=3.8;
-  if(profile.architecture==='fort'){
+  if(profile.architecture==='fort'&&(!regional||training)){
   const pointed=p.geo(new THREE.ConeGeometry(1,1,12));
   for(let z=-22;z<=18;z+=.46){if(Math.abs(z-gateZ)<gateWidth/2)continue;const y=height(fortX,z),h=3.1+hash(z,fortX)*.32;
     instance('stockade posts',p.cylinder,m.wood,[fortX,y+h/2,z],[.235,h,.235],[0,hash(z)*.2,0]);instance('stockade points',pointed,m.wood,[fortX,y+h+.31,z],[.235,.62,.235]);
@@ -164,9 +168,18 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }
   yield;
   const vegetation=createVegetationFactory({p,m,instance,height,quality});
-  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry};
+  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry,geometries,regionalWorld:regional};
+  const pilot=isChapterFivePilot(e)&&profile.chapter===5;
+  if(pilot||regional){root.userData.environmentLandmarks=[];root.userData.inhabitedSetpieces=[];}
   for(const add of [addCampaignTerrain,addCampaignScenery,addEnvironmentDepth,addEncounterPrecinct,addFinaleApproach,addInhabitedEnvironment,
-    groundArchitecturalFoundations]){add(campaignContext);yield;}
+    addChapterFivePilot,addRegionalWorld,groundArchitecturalFoundations]){
+    // Chapter V's unified modular frontage replaces the overlapping generic
+    // wall, siege landmark and houses, including their Performance fallback.
+    if(pilot&&[addCampaignScenery,addEncounterPrecinct,addInhabitedEnvironment].includes(add))continue;
+    if(regional&&([addEncounterPrecinct,addInhabitedEnvironment].includes(add)||add===addCampaignScenery&&!profile.civic))continue;
+    add(campaignContext);yield;
+  }
+  if(regional)addRegionalPropFallbacks(campaignContext,regionalPropPlacements(encounter,{chapter:profile.chapter,tileSize}));
 
   // Solid branching trunks carry curved, alpha-cut leaf sprays in shared
   // batches. The small geometric leaves below remain a low-growth fallback.
@@ -176,7 +189,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
   for(let t=0;t<trees.length;t++){
     const [x,z,h]=trees[t];
-    if(precinctRoute(x,z)>.10||root.userData.inhabitedSetpieces.some(b=>x>b.min[0]-2&&x<b.max[0]+2&&z>b.min[2]-2&&z<b.max[2]+2))continue;
+    if(isPlayable(x,z,e,tileSize,1.5)||precinctRoute(x,z)>.10||root.userData.inhabitedSetpieces.some(b=>x>b.min[0]-2&&x<b.max[0]+2&&z>b.min[2]-2&&z<b.max[2]+2))continue;
     vegetation.tree('oak',x,z,h,t);
   }
   // Grasses use crossed, tapered geometry with varying height, not a flat
@@ -192,7 +205,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(let i=0;i<grassCount;i++){
     if(i%1024===1023)yield;
     const x=(hash(i,31)-.5)*Math.max(65,halfX*2+24),z=(hash(i,32)-.5)*Math.max(55,halfZ*2+24);
-    if(profile.distantWater&&z< -18&&z> -40)continue;
+    if(profile.distantWater&&z<riverZ+11&&z>riverZ-11)continue;
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
     if(['rock','wall','river','ford','stone','chamber','marsh'].includes(type)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||(profile.architecture==='fort'&&Math.abs(x-fortX)<1))continue;
@@ -223,7 +236,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let river=null;
   if(profile.distantWater){
   const riverGeometry=p.geo(new THREE.PlaneGeometry(125,16,perf?70:130,12));riverGeometry.rotateX(-Math.PI/2);
-  river=p.mesh(root,riverGeometry,m.water,0,-1.24,-29);river.name='Danube';river.castShadow=false;river.receiveShadow=true;
+  river=p.mesh(root,riverGeometry,m.water,0,-1.24,riverZ);river.name='Danube';river.castShadow=false;river.receiveShadow=true;
   const riverBase=Float32Array.from(riverGeometry.attributes.position.array);
   animated.push(time=>{const a=riverGeometry.attributes.position;for(let i=0;i<a.count;i++){const xx=riverBase[i*3],zz=riverBase[i*3+2];a.setY(i,.023*Math.sin(xx*.64+time*.9)+.017*Math.sin(zz*1.7+xx*.17-time*.55));}a.needsUpdate=true;if(!perf)riverGeometry.computeVertexNormals();});
   }
@@ -232,7 +245,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(let k=0;k<3;k++){const mat=ownMaterial(new THREE.MeshBasicMaterial({color:[0xf3a143,0xf5c777,0xbc502c][k],transparent:true,opacity:[.67,.6,.3][k],depthWrite:false,blending:THREE.AdditiveBlending}));const flame=p.mesh(g,p.sphere,mat,(k-1)*.11,.38,0,.12,.5,.12);flame.castShadow=false;flame.receiveShadow=false;flames.push({mesh:flame,seed:k+x,base:.40,scale});}
     if(!perf){const light=new THREE.PointLight(0xe99b53,1.6*scale,6,2);light.position.set(0,.9,0);g.add(light);animated.push(t=>light.intensity=scale*(1.4+Math.sin(t*7+x)*.17+Math.sin(t*11)*.12));}
   }
-  if(!training&&profile.architecture==='fort'){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
+  if(!training&&!regional&&profile.architecture==='fort'){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
   yield;
   // Preserve animated surfaces and authoritative ground objects. Static
   // scenery is instanced where repeated, otherwise merged by exact material
@@ -249,7 +262,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
-  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water});root.add(horizon.group);
+  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water,riverZ});root.add(horizon.group);
   yield;
   const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;

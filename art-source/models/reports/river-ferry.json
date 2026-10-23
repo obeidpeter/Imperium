@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/river-ferry.glb",
+    "bytes": 46751160,
+    "sha256": "38eeb526744bb74c3f2b3d0762f16e9a3b4f3ed4f274cffd82bcff2dc6f6e556",
+    "triangles": 1465758
+  },
+  "output": {
+    "path": "art-source/models/processed/river-ferry.glb",
+    "bytes": 346632,
+    "sha256": "e8b953f7ae776527c5ae1b441fa7f40eca54bd618309b5de83ca963edd35b1b5",
+    "triangles": 7839
+  },
+  "settings": {
+    "triangles": 8000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 7.896324307505471,
+  "sizeMetres": {
+    "width": 2.8742,
+    "height": 1.6,
+    "depth": 7.895
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_f3565f2c-dd61-49c9-adfa-fb0372a2ee3f",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

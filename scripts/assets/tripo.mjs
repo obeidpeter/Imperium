@@ -71,9 +71,12 @@ async function finish(file,request){
   let preview=null;
   if(output.rendered_image){preview=`art-source/models/raw/${request.id}-tripo-render${new URL(output.rendered_image).pathname.match(/\.\w+$/)?.[0]??'.png'}`;await download(output.rendered_image,preview).catch(()=>{preview=null;});}
   // The task reports its own charge; the balance difference is exact only for one task at a time.
-  const spent=Number.isFinite(task.consumed_credit)?task.consumed_credit:request.provenance.balanceBefore===undefined?null:request.provenance.balanceBefore-await balance();
+  // Concurrent requests share a balance. Never attribute another task's charge
+  // to this asset; batch callers reconcile the final wallet delta separately.
+  const reported=Number.isFinite(task.consumed_credit),batch=request.provenance.creditAccounting==='batch';
+  const spent=reported?task.consumed_credit:batch||request.provenance.balanceBefore===undefined?null:request.provenance.balanceBefore-await balance();
   Object.assign(request.provenance,{status:task.status,generatedAt:new Date().toISOString(),output:field,raw,rawBytes:bytes.length,rawSha256:digest(bytes),
-    tripoInput:task.input??null,modelVersion:task.input?.model_version??task.model_version??null,creditsSpent:spent,tripoRender:preview});
+    tripoInput:task.input??null,modelVersion:task.input?.model_version??task.model_version??null,creditsSpent:spent,creditSource:reported?'task.consumed_credit':batch?'batch reconciliation required':'sequential wallet delta',tripoRender:preview});
   request.status='generated: awaiting review';
   await save(file,request);
   console.log(JSON.stringify({id:request.id,task:id,raw,bytes:bytes.length,modelVersion:request.provenance.modelVersion,creditsSpent:spent},null,2));

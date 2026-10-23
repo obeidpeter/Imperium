@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/caravan-baggage.glb",
+  "output": "assets/models/world/caravan-baggage.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 382936,
+    "gzipBytes": 224597,
+    "sha256": "4758f5ffc232e4a730e0a8f0d11053b82ba67e0de3201fbfe109ba0f8bef2c4b"
+  },
+  "after": {
+    "bytes": 343388,
+    "gzipBytes": 328798,
+    "sha256": "5050e1dfdc632d9843c3a12936c6025cf41f8fb2beda01cb5db1d12f2ad299c4"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6858,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7708
+      },
+      "bytes": 16647,
+      "psnr": 44.344
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 37228
+      },
+      "bytes": 54696,
+      "psnr": 34.033
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7410
+      },
+      "bytes": 22741,
+      "psnr": 43.845
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/civic-fountain.glb",
+    "bytes": 43903312,
+    "sha256": "8dc0d5b200a2c23c45707b5dfc79409be44ab0b7fc9df7a9c5c7cd4ac87f76c0",
+    "triangles": 1454324
+  },
+  "output": {
+    "path": "art-source/models/processed/civic-fountain.glb",
+    "bytes": 225792,
+    "sha256": "3338309a3236942c233943607db766dc135dc3cb8db34baf93b8d7925824eae8",
+    "triangles": 6860
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.5000864168120533,
+  "sizeMetres": {
+    "width": 0.7765,
+    "height": 1.5,
+    "depth": 1.0837
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f00d2770-59a6-499a-9fb1-c00b7519d65c",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_f00d2770-59a6-499a-9fb1-c00b7519d65c",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_f00d2770-59a6-499a-9fb1-c00b7519d65c",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -22,6 +22,18 @@ function camp(id){
 // The same camp as a chronicle from before 0.40 saved it: no soldier record.
 function legacy(id){const s=JSON.parse(camps.get(id)??G.serialize(camp(id)));delete s.soldier;return JSON.stringify(s);}
 
+test('a legacy camp can mount before adoption without adding a soldier or granting a course',()=>{
+  const text=legacy('ch5-mine'),state=G.deserialize(text),world=G.createCampWorld(state);
+  assert.equal(world.kind,'camp');assert.equal(world.chapter,5);
+  const hero=world.actors.find(actor=>actor.id==='hero');
+  assert.equal(hero.role,'soldier');
+  assert.ok(hero.abilities.includes('strike'),'ordinary chapter abilities remain usable');
+  assert.ok(!hero.abilities.includes('shield_bash'),'an unchosen soldier has not taken a course');
+  assert.equal(state.soldier,undefined,'mounting must not adopt a soldier for the player');
+  assert.equal(G.serialize(state),text,'reading the camp preserves the exact legacy save');
+  assert.equal(worldHash(G.createCampWorld(state)),worldHash(world),'the read-only fallback is deterministic');
+});
+
 test('a 0.38 chronicle loads exactly as saved, and choosing its soldier grants the training points of its completed chapters, once',()=>{
   const text=legacy('ch5-mine'),state=G.deserialize(text);
   assert.equal(G.serialize(state),text,'loading changes nothing');assert.equal(state.soldier,undefined);

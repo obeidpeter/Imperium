@@ -1,5 +1,5 @@
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS} from '../../data/realtime-rules.js';
-import {actorById,distanceBetween,forecast,hostile,liftable,validate} from './abilities.js';
+import {actorById,distanceBetween,forecast,hostile,liftable,validate,campCareAbility} from './abilities.js';
 import {commandProblem,commandable,routePreview} from './simulation.js';
 import {objectById} from './motion.js';
 import {fieldHint,fieldProblem,fieldVerb} from './field-objects.js';
@@ -118,7 +118,8 @@ export function nearestUse(world,{actorId=world.controlled}={}){
 // action the scene's pointer and keys reach, and works while paused. Pure.
 export function commandOptions(world,{actorId=world.controlled}={}){
   const actor=actorById(world,actorId),out=[];if(!actor||!commandable(world,actor))return out;
-  const known=FIELD_ORDER.filter(id=>(actor.abilities??FIELD_BAR).includes(id)&&!ABILITIES[id].enemyOnly);
+  const peaceful=world.kind==='camp'&&world.peaceful===true;
+  const known=FIELD_ORDER.filter(id=>(actor.abilities??FIELD_BAR).includes(id)&&!ABILITIES[id].enemyOnly&&(!peaceful||campCareAbility(id)));
   const add=(group,label,command,{detail='',subject=null}={})=>{
     const reason=commandProblem(world,command);
     out.push({group,label,subject,command:reason?null:command,reason,message:reason?REASONS[reason]??'That cannot be done now.':null,detail});
@@ -126,12 +127,12 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   const order=(kind,payload={})=>({actorId:actor.id,kind,payload});
   const near=(a,b)=>distanceBetween(actor,a)-distanceBetween(actor,b)||(a.id<b.id?-1:1),m=n=>`${Math.round(n)} m`;
   // Himself.
-  add('Yourself',actor.drawn?'Sheathe weapons':'Draw weapons',order('setDrawn',{drawn:!actor.drawn}));
+  if(!peaceful)add('Yourself',actor.drawn?'Sheathe weapons':'Draw weapons',order('setDrawn',{drawn:!actor.drawn}));
   add('Yourself',actor.walkMode?'Run on far orders':'Walk everywhere',order('setWalk',{walk:!actor.walkMode}));
   add('Yourself','Stop',order('stop'));
-  for(const id of known.filter(id=>ABILITIES[id].target==='self'||ABILITIES[id].selfIfNoTarget))add('Yourself',ABILITIES[id].name,order('ability',{abilityId:id}));
+  for(const id of known.filter(id=>(ABILITIES[id].target==='self'||ABILITIES[id].selfIfNoTarget)&&(!peaceful||id!=='bind_wounds'||actor.hp<actor.maxHp)))add('Yourself',ABILITIES[id].name,order('ability',{abilityId:id}));
   if(actor.carrying)add('Yourself','Set him down here',order('ability',{abilityId:'carry'}));
-  add('Yourself','Raise the war cry',order('warCry'));
+  if(!peaceful)add('Yourself','Raise the war cry',order('warCry'));
   // Enemies in sight: each man alone, and each enemy squad once (its nearest man).
   const enemies=world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near),seen=new Set();
   for(const e of enemies.filter(o=>!o.squadId||!seen.has(o.squadId)&&seen.add(o.squadId))){
@@ -145,11 +146,11 @@ export function commandOptions(world,{actorId=world.controlled}={}){
     const where=m(distanceBetween(actor,o));
     for(const id of known.filter(id=>ABILITIES[id].target==='ally'&&!['bind_wounds','carry'].includes(id)))
       add('Friends',`${ABILITIES[id].name}: ${o.name}`,order('ability',{abilityId:id,targetId:o.id}),{subject:o.id,detail:where});
-    if(known.includes('bind_wounds'))add('Friends',`Bind wounds: ${o.name}`,order('ability',{abilityId:'bind_wounds',targetId:o.id}),{subject:o.id,detail:`${where}, ${o.hp} of ${o.maxHp} Health${o.down?', down':''}.`});
+    if(known.includes('bind_wounds')&&(!peaceful||o.hp<o.maxHp))add('Friends',`Bind wounds: ${o.name}`,order('ability',{abilityId:'bind_wounds',targetId:o.id}),{subject:o.id,detail:`${where}, ${o.hp} of ${o.maxHp} Health${o.down?', down':''}.`});
     if(known.includes('carry')&&liftable(o))add('Friends',`Lift ${o.name}`,order('ability',{abilityId:'carry',targetId:o.id}),{subject:o.id,detail:where});
     if(o.talk)add('Friends',`Talk to ${o.name}`,order('talk',{targetId:o.id}),{subject:o.id,detail:where});
     if(commandable(world,o)&&o.id!==world.controlled)add('Friends',`Take control of ${o.name}`,{actorId:o.id,kind:'control',payload:{}},{subject:o.id});
-    if(o.side==='neutral')add('Friends',`Force an attack on ${o.name}`,order('attack',{targetId:o.id,forced:true}),{subject:o.id,detail:'He is no enemy: striking him turns him hostile and costs Public Confidence.'});
+    if(o.side==='neutral'&&!peaceful)add('Friends',`Force an attack on ${o.name}`,order('attack',{targetId:o.id,forced:true}),{subject:o.id,detail:'He is no enemy: striking him turns him hostile and costs Public Confidence.'});
   }
   // Objects, the fallen and places.
   for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near))add('Objects',`${o.field?fieldVerb(o):'Use'}: ${o.name}`,order('interact',{objectId:o.id}),
@@ -170,6 +171,7 @@ export function commandOptions(world,{actorId=world.controlled}={}){
 // the Command to give (or null) and what to tell the player. Pure.
 export function abilityKey(world,{actorId=world.controlled,abilityId,current='strike',keyTarget=null,pointer=null,quickCast=false}={}){
   const ability=ABILITIES[abilityId];if(!ability)return {current,command:null,message:'No ability in that place.',warning:false};
+  if(world.kind==='camp'&&world.peaceful===true&&!campCareAbility(abilityId))return {current,command:null,message:REASONS.PEACEFUL_CAMP,warning:true};
   if(quickCast&&pointer&&abilityId!=='strike'){
     const it=pointerIntent(world,{actorId,pick:pointer,button:'right',abilityId});
     return {current:abilityId,command:it.command,message:it.command?`${ability.name}.`:it.message||REASONS.NO_TARGET,warning:!it.command};

@@ -1,0 +1,63 @@
+{
+  "id": "ch5-household-bundles",
+  "status": "Chapter V pilot: processed, compressed and approved by the owner on 2026-10-23",
+  "chapters": [
+    5
+  ],
+  "use": "civilian shelter, relief supplies and visible civilian decision",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A compact cluster of civilian belongings in a third-century Euphrates frontier fortress courtyard: two rolled wool blankets tied with thick rope, a worn woven reed basket, a patched ochre canvas sack and a simple earthenware cooking pot. Irregular low composition, soft folded cloth, textured basket weaving, realistic natural beige, muted rust red and umber palette, dust and use without ruin. Realistic PBR game prop viewed from above at medium distance, clear shapes and contrasting rough surfaces. Isolated freestanding cluster, no base slab, no people, labels, writing, modern objects or fantasy details.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 8000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 0.9,
+    "minHeight": 0.855,
+    "maxHeight": 0.9450000000000001,
+    "note": "Increased from the initial 3,000-triangle target to retain cloth folds and basket silhouette after visual review. Final output 7,840 triangles; no additional generation charge."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "pilot": "chapter-v-world-pilot",
+    "creditCeiling": 400,
+    "expectedCredits": 20,
+    "taskId": "dbdf4a04-8b06-48c1-9019-9609d6d1b428",
+    "requestedAt": "2026-10-23T15:05:39.394Z",
+    "balanceBefore": 4120,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A compact cluster of civilian belongings in a third-century Euphrates frontier fortress courtyard: two rolled wool blankets tied with thick rope, a worn woven reed basket, a patched ochre canvas sack and a simple earthenware cooking pot. Irregular low composition, soft folded cloth, textured basket weaving, realistic natural beige, muted rust red and umber palette, dust and use without ruin. Realistic PBR game prop viewed from above at medium distance, clear shapes and contrasting rough surfaces. Isolated freestanding cluster, no base slab, no people, labels, writing, modern objects or fantasy details.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T15:07:52.073Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/ch5-household-bundles.glb",
+    "rawBytes": 46994008,
+    "rawSha256": "bcca0a5157597ed7d08f673b86b1d27cbb203a4c458c06f0a84c48b445e03f1a",
+    "tripoInput": {
+      "prompt": "A compact cluster of civilian belongings in a third-century Euphrates frontier fortress courtyard: two rolled wool blankets tied with thick rope, a worn woven reed basket, a patched ochre canvas sack and a simple earthenware cooking pot. Irregular low composition, soft folded cloth, textured basket weaving, realistic natural beige, muted rust red and umber palette, dust and use without ruin. Realistic PBR game prop viewed from above at medium distance, clear shapes and contrasting rough surfaces. Isolated freestanding cluster, no base slab, no people, labels, writing, modern objects or fantasy details.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "tripoRender": "art-source/models/raw/ch5-household-bundles-tripo-render.webp"
+  }
+}

@@ -35,6 +35,7 @@ export const stageCamera={
       }));
   },
   home(){
+    this.followCollision=null;
     if(this.ceremony){
       const focus=this.world(this.ceremony.focus??{x:3.5,y:3.5});this.focusMode=false;this.cameraView='ceremony';this.orbit.yaw=this.ceremony.yaw??-.62;
       this.orbit.pitch=this.ceremony.pitch??.3;this.orbit.distance=this.ceremony.distance??17;this.baseTarget.set(focus.x,focus.y+1.1,focus.z);return;
@@ -80,17 +81,32 @@ export const stageCamera={
     }));
     return {target:frame.target,distance};
   },
-  focusSelected(){
+  focusSelected({position:livePosition,distance,preferredYaw,preferredPitch}={}){
     const u=this.encounter.units.find(u=>u.id===this.selected);
     if(u){
-      const position=this.world(u),mounted=['cavalry','heavy'].includes(u.role),view=findFocusCamera(this.environment,{position,mounted});
+      const position=livePosition??this.world(u),mounted=['cavalry','heavy'].includes(u.role),view=findFocusCamera(this.environment,{position,mounted,distance,preferredYaw,preferredPitch,
+        sceneryGroups:[this.sceneryModels?.group,this.fieldFeatures?.group]});
       if(!view){this.home();return;}this.focusMode=true;this.cameraView='follow';this.baseTarget.copy(position);this.baseTarget.y+=mounted?1.2:.85;
       Object.assign(this.orbit,view);
+      this.followCollision={selected:this.selected,position:new T.Vector3().copy(position),view:{...view}};this.followGeometryDirty=false;
     }
+  },
+  refreshFollowCamera(position,mounted=false){
+    const previous=this.followCollision;
+    if(!previous||!position||!this.focusMode||this.cameraView!=='follow'||this.drag||this.followFramingActive)return false;
+    // A manual rotation, pitch or zoom belongs to the player until Follow is
+    // chosen again. Checking coordinates here is cheap; traversing geometry is
+    // reserved for a two-metre movement or a completed scenery replacement.
+    if(previous.selected!==this.selected||['yaw','pitch','distance'].some(key=>Math.abs(this.orbit[key]-previous.view[key])>1e-8)){this.followCollision=null;return false;}
+    if(!this.followGeometryDirty&&previous.position.distanceToSquared(position)<4)return false;
+    const view=findFocusCamera(this.environment,{position,mounted,distance:this.orbit.distance,preferredYaw:this.orbit.yaw,preferredPitch:this.orbit.pitch,
+      sceneryGroups:[this.sceneryModels?.group,this.fieldFeatures?.group]});
+    if(!view){this.home();return true;}
+    Object.assign(this.orbit,view);previous.position.copy(position);previous.view={...view};this.followGeometryDirty=false;return true;
   },
   focusPoint(tile){
     if(!tile||!Number.isFinite(tile.x)||!Number.isFinite(tile.y)){this.home();return;}const pos=this.world(tile);this.focusMode=false;
     this.baseTarget.set(pos.x,pos.y+.85,pos.z);this.hoverRing.visible=true;this.hoverRing.position.copy(pos);this.hoverRing.position.y+=.08;
   },
-  zoom(delta){this.orbit.distance=clamp(this.orbit.distance+delta,5.5,Math.max(85,this.orbit.distance,this.overviewDistance()));}
+  zoom(delta){this.followCollision=null;this.orbit.distance=clamp(this.orbit.distance+delta,5.5,Math.max(85,this.orbit.distance,this.overviewDistance()));}
 };

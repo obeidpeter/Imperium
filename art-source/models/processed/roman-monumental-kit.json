@@ -1,0 +1,514 @@
+{
+  "version": 1,
+  "id": "roman-monumental",
+  "generator": "scripts/assets/build-regional-kits.py",
+  "chapters": [
+    11,
+    12
+  ],
+  "authorship": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+  "licence": "Created for the Imperium project; no third-party source assets",
+  "components": [
+    {
+      "name": "apsidal_hall",
+      "triangles": 1288,
+      "boundsBlender": {
+        "min": [
+          -3.599999785423279,
+          -4.929655194282532,
+          0.0
+        ],
+        "max": [
+          3.599999785423279,
+          4.929655194282532,
+          5.704999923706055
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.599999785423279,
+          0.0,
+          -4.929655194282532
+        ],
+        "max": [
+          3.599999785423279,
+          5.704999923706055,
+          4.929655194282532
+        ]
+      },
+      "dimensions": {
+        "width": 7.199999570846558,
+        "height": 5.704999923706055,
+        "depth": 9.859310388565063
+      },
+      "materials": 4,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "Pitted pale travertine",
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "colonnade_bay",
+      "triangles": 792,
+      "boundsBlender": {
+        "min": [
+          -2.799999952316284,
+          -1.0,
+          0.0
+        ],
+        "max": [
+          2.799999952316284,
+          1.0,
+          4.320000171661377
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.799999952316284,
+          0.0,
+          -1.0
+        ],
+        "max": [
+          2.799999952316284,
+          4.320000171661377,
+          1.0
+        ]
+      },
+      "dimensions": {
+        "width": 5.599999904632568,
+        "height": 4.320000171661377,
+        "depth": 2.0
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Pitted pale travertine"
+      ]
+    },
+    {
+      "name": "archive_stalls",
+      "triangles": 1876,
+      "boundsBlender": {
+        "min": [
+          -2.8499999046325684,
+          -1.2000000476837158,
+          0.0
+        ],
+        "max": [
+          2.8499999046325684,
+          1.2000000476837158,
+          3.4000000953674316
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.8499999046325684,
+          0.0,
+          -1.2000000476837158
+        ],
+        "max": [
+          2.8499999046325684,
+          3.4000000953674316,
+          1.2000000476837158
+        ]
+      },
+      "dimensions": {
+        "width": 5.699999809265137,
+        "height": 3.4000000953674316,
+        "depth": 2.4000000953674316
+      },
+      "materials": 3,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "checkpoint_arch",
+      "triangles": 748,
+      "boundsBlender": {
+        "min": [
+          -2.724999785423279,
+          -0.8999999761581421,
+          0.0
+        ],
+        "max": [
+          2.724999785423279,
+          0.8999999761581421,
+          5.199999809265137
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.724999785423279,
+          0.0,
+          -0.8999999761581421
+        ],
+        "max": [
+          2.724999785423279,
+          5.199999809265137,
+          0.8999999761581421
+        ]
+      },
+      "dimensions": {
+        "width": 5.449999570846558,
+        "height": 5.199999809265137,
+        "depth": 1.7999999523162842
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render"
+      ]
+    },
+    {
+      "name": "tribunal_dais",
+      "triangles": 264,
+      "boundsBlender": {
+        "min": [
+          -2.8499999046325684,
+          -1.899999976158142,
+          0.0
+        ],
+        "max": [
+          2.8499999046325684,
+          1.899999976158142,
+          2.0999999046325684
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.8499999046325684,
+          0.0,
+          -1.899999976158142
+        ],
+        "max": [
+          2.8499999046325684,
+          2.0999999046325684,
+          1.899999976158142
+        ]
+      },
+      "dimensions": {
+        "width": 5.699999809265137,
+        "height": 2.0999999046325684,
+        "depth": 3.799999952316284
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render"
+      ]
+    },
+    {
+      "name": "monumental_stair",
+      "triangles": 376,
+      "boundsBlender": {
+        "min": [
+          -3.0250003337860107,
+          -2.1006234884262085,
+          0.0
+        ],
+        "max": [
+          3.0250003337860107,
+          2.1006234884262085,
+          2.651246512419675
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.0250003337860107,
+          0.0,
+          -2.1006234884262085
+        ],
+        "max": [
+          3.0250003337860107,
+          2.651246512419675,
+          2.1006234884262085
+        ]
+      },
+      "dimensions": {
+        "width": 6.0500006675720215,
+        "height": 2.651246512419675,
+        "depth": 4.201246976852417
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Pitted pale travertine"
+      ]
+    },
+    {
+      "name": "garden_exedra",
+      "triangles": 572,
+      "boundsBlender": {
+        "min": [
+          -2.7481918334960938,
+          -1.3649747371673584,
+          0.0
+        ],
+        "max": [
+          2.7481918334960938,
+          1.3649747371673584,
+          0.75
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.7481918334960938,
+          0.0,
+          -1.3649747371673584
+        ],
+        "max": [
+          2.7481918334960938,
+          0.75,
+          1.3649747371673584
+        ]
+      },
+      "dimensions": {
+        "width": 5.4963836669921875,
+        "height": 0.75,
+        "depth": 2.729949474334717
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Pitted pale travertine"
+      ]
+    },
+    {
+      "name": "civic_fountain",
+      "triangles": 620,
+      "boundsBlender": {
+        "min": [
+          -2.0,
+          -2.0,
+          0.0
+        ],
+        "max": [
+          2.0,
+          2.0,
+          2.1600000858306885
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.0,
+          0.0,
+          -2.0
+        ],
+        "max": [
+          2.0,
+          2.1600000858306885,
+          2.0
+        ]
+      },
+      "dimensions": {
+        "width": 4.0,
+        "height": 2.1600000858306885,
+        "depth": 4.0
+      },
+      "materials": 1,
+      "materialFamilies": [
+        "Pitted pale travertine"
+      ]
+    },
+    {
+      "name": "screen_wall",
+      "triangles": 264,
+      "boundsBlender": {
+        "min": [
+          -2.8499999046325684,
+          -0.4000000059604645,
+          0.0
+        ],
+        "max": [
+          2.8499999046325684,
+          0.4000000059604645,
+          3.2099997997283936
+        ]
+      },
+      "bounds": {
+        "min": [
+          -2.8499999046325684,
+          0.0,
+          -0.4000000059604645
+        ],
+        "max": [
+          2.8499999046325684,
+          3.2099997997283936,
+          0.4000000059604645
+        ]
+      },
+      "dimensions": {
+        "width": 5.699999809265137,
+        "height": 3.2099997997283936,
+        "depth": 0.800000011920929
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render"
+      ]
+    },
+    {
+      "name": "vaulted_entry",
+      "triangles": 748,
+      "boundsBlender": {
+        "min": [
+          -1.9249999523162842,
+          -1.590000033378601,
+          0.0
+        ],
+        "max": [
+          1.9249999523162842,
+          1.590000033378601,
+          3.8034894466400146
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.9249999523162842,
+          0.0,
+          -1.590000033378601
+        ],
+        "max": [
+          1.9249999523162842,
+          3.8034894466400146,
+          1.590000033378601
+        ]
+      },
+      "dimensions": {
+        "width": 3.8499999046325684,
+        "height": 3.8034894466400146,
+        "depth": 3.180000066757202
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render"
+      ]
+    },
+    {
+      "name": "administrative_portico",
+      "triangles": 1804,
+      "boundsBlender": {
+        "min": [
+          -3.5708149671554565,
+          -2.130000114440918,
+          0.0
+        ],
+        "max": [
+          3.5708149671554565,
+          2.130000114440918,
+          5.335000038146973
+        ]
+      },
+      "bounds": {
+        "min": [
+          -3.5708149671554565,
+          0.0,
+          -2.130000114440918
+        ],
+        "max": [
+          3.5708149671554565,
+          5.335000038146973,
+          2.130000114440918
+        ]
+      },
+      "dimensions": {
+        "width": 7.141629934310913,
+        "height": 5.335000038146973,
+        "depth": 4.260000228881836
+      },
+      "materials": 3,
+      "materialFamilies": [
+        "Oxide red fired clay tile",
+        "Pitted pale travertine",
+        "Weathered cedar grain"
+      ]
+    },
+    {
+      "name": "statue_plinth",
+      "triangles": 176,
+      "boundsBlender": {
+        "min": [
+          -1.25,
+          -1.25,
+          0.0
+        ],
+        "max": [
+          1.25,
+          1.25,
+          2.0899999141693115
+        ]
+      },
+      "bounds": {
+        "min": [
+          -1.25,
+          0.0,
+          -1.25
+        ],
+        "max": [
+          1.25,
+          2.0899999141693115,
+          1.25
+        ]
+      },
+      "dimensions": {
+        "width": 2.5,
+        "height": 2.0899999141693115,
+        "depth": 2.5
+      },
+      "materials": 2,
+      "materialFamilies": [
+        "Pitted pale travertine",
+        "Weathered ivory lime render"
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "family": "Pitted pale travertine",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Weathered ivory lime render",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Oxide red fired clay tile",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    },
+    {
+      "family": "Weathered cedar grain",
+      "size": 512,
+      "authorship": "Original deterministic procedural bake",
+      "channels": [
+        "baseColor",
+        "roughness"
+      ]
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/roman-monumental-kit.glb",
+    "bytes": 1587760,
+    "sha256": "9c8e512e633b2680d70e5af4277aa180d1a1f66271b7c6631442360aabbe1a9c",
+    "triangles": 9528
+  },
+  "runtimePath": "assets/models/scenery/roman-monumental-kit.glb"
+}

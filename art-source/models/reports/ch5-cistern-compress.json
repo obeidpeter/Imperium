@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/ch5-cistern.glb",
+  "output": "assets/models/chapters/05/ch5-cistern.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 201212,
+    "gzipBytes": 148338,
+    "sha256": "ad47f526daa8f5f4f2b766b67d2f0d89217d4360f4f4140a552a6291e0aa705c"
+  },
+  "after": {
+    "bytes": 207008,
+    "gzipBytes": 199757,
+    "sha256": "09d436b342a0cdf7e5713afc56f4c0f736d52cceaddb1f6589ee33e715711606"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3920,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11764
+      },
+      "bytes": 22977,
+      "psnr": 40.69
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31118
+      },
+      "bytes": 51787,
+      "psnr": 34.529
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8218
+      },
+      "bytes": 23022,
+      "psnr": 41.272
+    }
+  ]
+}

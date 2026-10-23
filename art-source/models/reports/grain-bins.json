@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/grain-bins.glb",
+    "bytes": 46016372,
+    "sha256": "df1ba2e02592fae65bcd98f27f8cf54a8548f07399792456911162c17e3c0cc5",
+    "triangles": 1413284
+  },
+  "output": {
+    "path": "art-source/models/processed/grain-bins.glb",
+    "bytes": 365180,
+    "sha256": "d847c9c69e207bfb840d88d9dc51e1bd0beb832561e0d50079b360fc5fd1f4f4",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9390529922994892,
+  "sizeMetres": {
+    "width": 1.9384,
+    "height": 1.3,
+    "depth": 1.8548
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_6c3c735d-8c3c-4703-b1d8-87c0ee41ff4f",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

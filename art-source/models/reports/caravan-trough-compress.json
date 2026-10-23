@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/caravan-trough.glb",
+  "output": "assets/models/world/caravan-trough.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 186352,
+    "gzipBytes": 146079,
+    "sha256": "fc1326cda848359f8aba68e6c728892864a722b016d33f6087338ea76792a554"
+  },
+  "after": {
+    "bytes": 199060,
+    "gzipBytes": 192201,
+    "sha256": "af961e0ff4df163d413e76e7f60ba62bd1d59708dc7e9363bde065e672383ffe"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9516
+      },
+      "bytes": 21325,
+      "psnr": 41.526
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 17392
+      },
+      "bytes": 46246,
+      "psnr": 38.362
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7710
+      },
+      "bytes": 25369,
+      "psnr": 44.606
+    }
+  ]
+}

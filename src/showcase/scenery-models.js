@@ -1,95 +1,140 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
 import {worldModelUrl} from '../ui/world-catalog.js';
+import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
+import {createSceneryModelCache} from './scenery-cache.js';
+import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements} from './environment-regional-world.js';
 
-/** Generated scenery (docs/asset-pipeline.md): Tripo models processed in
- * Blender, set outside the playable board in chosen encounters. Positions
- * are metres from the board centre (x across its width, z across its depth).
- * Presentation only: no rules state and no gameplay randomness. A model that
- * fails to load is simply absent; Performance quality loads none. */
+/** Presentation-only generated scenery. Exterior positions follow the actual
+ * board bounds, including real-time maps. Interior camp props use authored
+ * blocked service pads; models never take picks or change navigation. Failed
+ * architecture and interior props retain their procedural fallbacks. */
 export const SCENERY_MODELS=Object.freeze({
-  5:Object.freeze({encounters:Object.freeze(['ch5-mine','ch5-wall']),models:Object.freeze([
-    // Supplies along the southern approach and a tent at its south-west
-    // corner. A search of the built scenes chose this ground: clear of every
-    // structure, wall and boulder, in frame and unobstructed for the overview
-    // camera in both encounters, and never drawn over the board, so no unit
-    // is hidden. From the horizon camera, buildings hide most of it.
-    {id:'ch5-leather-tent',x:-24,z:14,yaw:.4},
-    {id:'ch5-spoil-baskets',x:-20,z:16,yaw:.5},
-    {id:'ch5-storage-jars',x:-14,z:19,yaw:.2},
-    {id:'ch5-gallery-timbers',x:-11,z:18,yaw:.9},
-    {id:'ch5-mudbrick-stack',x:-7,z:20,yaw:1.1}
+  5:Object.freeze({encounters:Object.freeze(['ch5-mine','ch5-wall','ch5-camp']),models:Object.freeze([
+    {id:'ch5-leather-tent',side:'south',along:-.85,gap:7,yaw:.4},
+    {id:'ch5-spoil-baskets',side:'south',along:-.55,gap:4,yaw:.5},
+    {id:'ch5-storage-jars',side:'south',along:-.25,gap:8,yaw:.2},
+    {id:'ch5-gallery-timbers',side:'south',along:.1,gap:9,yaw:.9},
+    {id:'ch5-mudbrick-stack',side:'south',along:.55,gap:10,yaw:1.1},
+    {id:'ch5-cistern',side:'west',along:.2,gap:4,yaw:.25},
+    {id:'ch5-siege-hoist',side:'south',along:.1,gap:3.5,yaw:-.3},
+    {id:'ch5-damaged-masonry',side:'south',along:.55,gap:4,yaw:.6},
+    {id:'ch5-household-bundles',side:'west',along:-.6,gap:4,yaw:.5}
   ].map(Object.freeze))})
 });
-// Each model's file, and the chapters that download it, are in the world catalog.
 export const sceneryModelUrl=id=>worldModelUrl(id);
 
-/** World placements for an encounter, or none where the chapter has no scenery. */
-export function sceneryPlacements(e,{chapter}={}){
+// Interior camp props may only occupy an explicitly authored rock pocket.
+// Checking the whole footprint prevents stale/partial presentation metadata
+// from placing a solid-looking object on otherwise walkable ground.
+function campPad(e,id,tileSize){
+  if(e.id!=='ch5-camp')return null;
+  const pad=e.campPresentation?.sceneryPads?.find(p=>p.id===id);
+  if(!pad||![pad.x,pad.z,pad.width,pad.depth].every(Number.isFinite)||pad.width<=.6||pad.depth<=.6||!Array.isArray(pad.cells))return null;
+  const cells=new Set((pad.cells??[]).map(c=>`${c.x},${c.y}`)),hx=e.width*tileSize/2,hz=e.height*tileSize/2;
+  if(pad.x-pad.width/2 < -hx||pad.x+pad.width/2 > hx||pad.z-pad.depth/2 < -hz||pad.z+pad.depth/2 > hz)return null;
+  const left=Math.floor((pad.x-pad.width/2+hx+1e-6)/tileSize),right=Math.floor((pad.x+pad.width/2+hx-1e-6)/tileSize);
+  const top=Math.floor((pad.z-pad.depth/2+hz+1e-6)/tileSize),bottom=Math.floor((pad.z+pad.depth/2+hz-1e-6)/tileSize);
+  for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+    const tile=e.terrain?.[y]?.[x],type=typeof tile==='string'?tile:tile?.type;
+    if(x<0||y<0||x>=e.width||y>=e.height||!cells.has(`${x},${y}`)||type!=='rock')return null;
+  }
+  return pad;
+}
+
+/** Only confirmed campaign presentation metadata changes a camp placement.
+ * Bundles face the departure side after the civilian-priority decision while
+ * retaining the same fixed collision pocket. */
+export function sceneryPlacements(e,{chapter,tileSize=2.5}={}){
+  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize}).map(p=>({...p,url:sceneryModelUrl(p.id)}))];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
-  return set.models.map(m=>({id:m.id,url:sceneryModelUrl(m.id),x:m.x,z:m.z,yaw:m.yaw}));
+  const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
+  if(!Number.isFinite(hx)||!Number.isFinite(hz)||hx<=0||hz<=0)return [];
+  const props=set.models.map(m=>{
+    let x=m.side==='west'?-hx-m.gap:hx*m.along,z=m.side==='west'?hz*m.along:hz+m.gap,yaw=m.yaw;
+    if(e.id==='ch5-camp'&&m.id==='ch5-household-bundles'&&e.campPresentation?.civilianOutcome==='departing')yaw=-.4;
+    const pad=campPad(e,m.id,tileSize);
+    if(pad)return {id:m.id,url:sceneryModelUrl(m.id),x:pad.x,z:pad.z,yaw,pad:true,
+      fitWithin:{width:pad.width-.6,depth:pad.depth-.6},fallbackName:`ch5-service-pad:${pad.id}`};
+    return {id:m.id,url:sceneryModelUrl(m.id),x,z,yaw};
+  });
+  return [...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)}))];
 }
 
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>gltf.scene);
-const TEXTURES=['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap'];
-
-// One immutable master per model and session, as for the generated bodies. The
-// battle preloader loads a battle's masters before its stage is built; a stage
-// then places its own copies at once, sharing the masters' geometry, materials
-// and textures, so they compile and upload behind the veil with everything else.
-const masters=new Map();
-export function warmSceneryModel(url,load=loadScene){
-  let entry=masters.get(url);
-  if(!entry){
-    entry={scene:null};
-    entry.promise=Promise.resolve().then(()=>load(url)).then(scene=>(entry.scene=scene),error=>{masters.delete(url);throw error;});
-    masters.set(url,entry);
-  }
-  return entry.promise;
-}
-export const sceneryMaster=url=>masters.get(url)?.scene??null;
-export function preloadSceneryModels(e,{chapter,quality='balanced'}={}){
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter});
-  return Promise.all(placements.map(p=>warmSceneryModel(p.url).then(()=>true,()=>false)));
+const masters=createSceneryModelCache({load:loadScene});
+export const warmSceneryModel=(url,load)=>masters.warm(url,load);
+export const sceneryMaster=url=>masters.master(url);
+export const sceneryResidency=()=>masters.stats();
+let preload=null;
+const preloadKey=urls=>[...urls].sort().join('\n');
+const releasePreload=()=>{const previous=preload;preload=null;for(const lease of previous?.leases??[])lease.release();};
+/** The newest preload stays pinned until a stage acquires its own leases or a
+ * subsequent preload replaces it. Thus LRU pressure cannot evict a model in
+ * the gap between the loading veil's preload and stage construction. */
+export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
+  const leases=urls.map(url=>masters.acquire(url,load));releasePreload();
+  preload={key:preloadKey(urls),leases};masters.setWorkingSet(urls);
+  return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
 
-// Without a load function a stage uses the session's masters and never frees
-// them; a given load function's models belong to the stage and are freed with it.
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null}={}){
-  const group=new T.Group(),owned=new Set(),shared=!load;group.name='generated scenery';scene.add(group);
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters}={}){
+  const group=new T.Group();group.name='generated scenery';scene.add(group);
+  const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
+  const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
+  library.setWorkingSet(urls);
+  if(library===masters&&preload?.key===preloadKey(urls))releasePreload();
   let disposed=false;
-  // Resources are owned until dispose; a model that arrives after dispose is freed at once.
-  const track=model=>{
-    const found=new Set();model.traverse(o=>{if(!o.isMesh)return;found.add(o.geometry);for(const m of [o.material].flat()){found.add(m);for(const k of TEXTURES)if(m[k])found.add(m[k]);}});
-    for(const r of found)disposed?r.dispose?.():owned.add(r);
-  };
-  // The model stands on its lowest ground sample, so no corner floats on a slope.
-  const ground=model=>{
+  const fallbacks=new Map(),release=state=>{if(state.released||state.preparing)return;state.released=true;state.lease.release({discard:!state.used});};
+  // Lowest footprint sample puts every foundation into the sloped earth.
+  const ground=(model,groundY)=>{
     const box=new T.Box3().setFromObject(model,true),{x,z}=model.position;
+    if(box.isEmpty()){model.position.y=Number.isFinite(groundY)?groundY:heightAt(x,z)||0;return;}
     const samples=[[x,z],[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([sx,sz])=>heightAt(sx,sz)).filter(Number.isFinite);
-    model.position.y=samples.length?Math.min(...samples):0;
+    model.position.y=(Number.isFinite(groundY)?groundY:samples.length?Math.min(...samples):0)-box.min.y;
   };
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter});
   const place=(p,source)=>{
-    const model=shared?source.clone():source;
-    model.name=p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw;model.updateMatrixWorld(true);
+    const component=p.component?source.getObjectByName(p.component):source;if(!component)return null;
+    const model=component.clone(true);model.name=p.key??p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw??0;
+    if(p.scale)model.scale.set(...p.scale);model.updateMatrixWorld(true);
+    if(p.fitWithin){
+      const box=new T.Box3().setFromObject(model,true);
+      if(!box.isEmpty()){
+        const size=box.getSize(new T.Vector3()),factor=Math.min(1,p.fitWithin.width/Math.max(.001,size.x),p.fitWithin.depth/Math.max(.001,size.z));
+        model.scale.multiplyScalar(factor);model.updateMatrixWorld(true);box.setFromObject(model,true);
+        const centre=box.getCenter(new T.Vector3());model.position.x+=p.x-centre.x;model.position.z+=p.z-centre.z;model.updateMatrixWorld(true);
+      }
+    }
     model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.raycast=()=>{};}});
-    ground(model);return model;
+    ground(model,p.groundY);return model;
   };
-  // Masters already loaded stand at once (the stage readies them with the rest).
+  const add=(p,model)=>{
+    group.add(model);leases.get(p.url).used=true;
+    if(p.fallbackName){const fallback=scene.getObjectByName(p.fallbackName);if(fallback&&!fallbacks.has(fallback)){fallbacks.set(fallback,fallback.visible);fallback.visible=false;}}
+    return p.key??p.id;
+  };
   const placed=[],pending=[];
-  for(const p of placements){const master=shared?sceneryMaster(p.url):null;if(master){group.add(place(p,master));placed.push(p.id);}else pending.push(p);}
+  // Warm models exist synchronously, before the stage's normal compilation.
+  // Only genuinely late models need an individual preparation pass.
+  for(const p of placements){const source=leases.get(p.url).lease.scene;if(source){const model=place(p,source);if(model)placed.push(add(p,model));}else pending.push(p);}
   const ready=Promise.all(pending.map(async p=>{
-    let source;
-    try{source=shared?await warmSceneryModel(p.url):await load(p.url);}catch{return null;}
-    if(!shared)track(source);
+    const state=leases.get(p.url);let source;try{source=await state.lease.ready;}catch{return null;}
+    if(disposed||!source)return null;
+    const model=place(p,source);if(!model)return null;
+    if(prepare){
+      // Do not free geometry while an asynchronous GPU preparation still uses
+      // it. Pending network loads, however, need no such protection on close.
+      state.preparing++;
+      try{await prepare(model);}catch{return null;}
+      finally{state.preparing--;if(disposed)release(state);}
+    }
     if(disposed)return null;
-    const model=place(p,source);
-    // The stage readies a late model (its cutaway and shaders) before it is ever drawn.
-    if(prepare){try{await prepare(model);}catch{}if(disposed)return null;}
-    group.add(model);return p.id;
+    return add(p,model);
   })).then(ids=>[...placed,...ids.filter(Boolean)]);
   return {group,placements,ready,
-    dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const r of owned)r.dispose?.();owned.clear();}};
+    dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const [fallback,visible]of fallbacks)fallback.visible=visible;fallbacks.clear();for(const state of leases.values())release(state);}
+  };
 }

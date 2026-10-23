@@ -75,6 +75,17 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     const w=smooth(phase===undefined?1:p);pose.headX=-.07*w;pose.bodyX=.035*w;pose.leftArm=[-.2-.46*w,0,-.1+.3*w];pose.rightArm=[-.1-.5*w,0,.08-.3*w];pose.leftElbow=-.55-1.4*w;pose.rightElbow=-.35-1.55*w;
   }else if(motion==='yield'){
     const close=smooth(phase===undefined?1:p);pose.headX=.18*close;pose.bodyX=.035*close;pose.leftArm=[-.2-.34*close,0,-.1+.16*close];pose.rightArm=[-.1-.36*close,0,.08-.16*close];pose.leftElbow=-.55-.9*close;pose.rightElbow=-.35-1.05*close;
+  }else if(motion==='camp-watch'){
+    pose.headY=(p-.5)*.34;pose.bodyY=(p-.5)*.06;pose.rightElbow=-.6;
+  }else if(motion==='camp-work'){
+    pose.bodyX=.07;pose.headX=.18;pose.leftArm=[-.4,0,-.16];pose.leftElbow=-1.1;
+    pose.rightArm=[-.40-.08*p,0,.13];pose.rightElbow=-1.1-.13*p;pose.rightWrist=-.10+.12*p;
+  }else if(motion==='camp-carry'){
+    pose.bodyZ=-.025;pose.rightArm=[-.12,0,.18];pose.rightElbow=-.48-.06*p;pose.leftArm=[-.3,0,-.08];
+    pose.headY=-.10;pose.hipY-=.008*p;
+  }else if(motion==='camp-rest'){
+    pose.bodyX=.09;pose.headX=.12;pose.hipY-=.035;pose.leftArm=[-.25,0,-.08];pose.rightArm=[-.3,0,.08];
+    pose.leftElbow=-.8;pose.rightElbow=-.8;pose.headY=(p-.5)*.06;
   }else if(['dead','withdrawn'].includes(motion)||health<=0){
     const fall=health<=0?1:smooth(p);pose.hipY-=.6*fall;pose.hipX=-.025*fall;pose.bodyX=.8*fall;pose.bodyZ=.09*fall;pose.headX=.35*fall;pose.rightArm[0]=-.7*fall;pose.opacity=1;
   }

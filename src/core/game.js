@@ -29,7 +29,7 @@ import {validateWorld} from './realtime/validate.js';
 import {ITEMS as REALTIME_ITEMS} from '../data/items.js';
 import {dialogueNode,reply as dialogueReply,errandList,hasNews} from './dialogue.js';
 import {campFor,CAMP_PLACES} from '../data/camps.js';
-import {createCampWorld,placeAt as campPlaceAt} from './realtime/camp-world.js';
+import {createCampWorld,placeAt as campPlaceAt,campPresentationFor} from './realtime/camp-world.js';
 import {commitOperationResult} from './progression-operations.js';
 import {commitAgreements,negotiateAgreement as makeAgreement} from './progression-politics.js';
 export {veteranTraining,specializeVeteran,veteranRank,companionCallout,VETERAN_RANKS} from './progression-veterans.js';
@@ -136,7 +136,7 @@ export function codeState(state){
   const checkpoint=clone(state.snapshot);checkpoint.phase='camp';checkpoint.encounter=null;checkpoint.snapshot=null;return checkpoint;
 }
 // ——— The walkable camp (build brief §3.12) ———
-export {errandList,createCampWorld,campPlaceAt};
+export {errandList,createCampWorld,campPlaceAt,campPresentationFor};
 export const campHasNews=(state,treeId)=>treeId==='table'?!state.decisions[getChapter(state).decision.id]:treeId==='gate'?false:hasNews(state,treeId);
 // Why the column cannot march out now, or null (the 0.38 departure rules, unchanged).
 export function departureCheck(state){
@@ -148,7 +148,17 @@ export function departureCheck(state){
 export function campConversation(state,treeId,nodeId=null){
   if(treeId==='table')return tableConversation(state);
   if(treeId==='gate')return gateConversation(state);
-  return dialogueNode(state,treeId,nodeId);
+  const view=dialogueNode(state,treeId,nodeId);
+  if(treeId==='ch5:report'&&view&&state.chapter===5){const p=campPresentationFor(state);
+    return {...view,text:[p.summary,p.waterDetail?'The last committed field report records the water detail.':p.engineeringRecovered?'The last committed field report records the recovered engineers’ plans.':'No Chapter V field opportunity has yet been recorded.',
+      p.stage==='river-gate'?'The tower encounter is recorded; the red river gate remains ahead.':'The cracked tower remains ahead.'].join(' ')};}
+  if(view&&['hub:report','hub:local','hub:clerk'].includes(treeId)){
+    const p=campPresentationFor(state);
+    if(p&&state.chapter!==5)return {...view,speaker:treeId==='hub:local'?(state.chapter>=10?'The petitions clerk':'The local steward'):view.speaker,
+      text:view.nodeId==='inspect'?p.inspection:treeId==='hub:clerk'?p.purpose:
+        [p.summary,...(treeId==='hub:report'?(p.outcomeDetails.length?[p.outcomeDetails.at(-1).text]:['No local field opportunity or hearing has yet been recorded.']):[])].join(' ')};
+  }
+  return view;
 }
 function tableConversation(state){
   const d=getChapter(state).decision,picked=state.decisions[d.id],council={text:'Consult the War Council.',next:null,needs:[],preview:[],open:'council'};

@@ -239,7 +239,7 @@ test('v0.29.0: the painted regional backdrop wraps seamlessly, picks a regional 
     const civic = createPaintedBackdrop({setting: 'rome', civic: true, chapter: 11});assert.equal(civic.stats.painted, false, 'Enclosed chambers have no panorama');
     const backdrop = createPaintedBackdrop({setting: 'italy', chapter: 10}, {quality: 'balanced'}), mesh = backdrop.group.children[0];
     assert.equal(backdrop.stats.landmark, 'alps');assert.equal(mesh.geometry.parameters.radiusTop, BACKDROP_RADIUS);
-    assert.equal(mesh.material.side, THREE.BackSide);assert.equal(mesh.material.fog, false);assert.equal(mesh.material.depthWrite, false);assert.equal(mesh.castShadow, false);
+    assert.equal(mesh.material.side, THREE.BackSide);assert.equal(mesh.material.fog, true, 'The painting shares fog with the modeled terrain, avoiding detached crest strips');assert.equal(mesh.material.depthWrite, false);assert.equal(mesh.castShadow, false);
     assert.ok(BACKDROP_RADIUS > 550 && BACKDROP_RADIUS < 700, 'It stands beyond the outer ridges and inside the sky');
     let disposed = 0;mesh.geometry.addEventListener('dispose', () => disposed++);backdrop.dispose();assert.equal(disposed, 1);
   } finally {if (previous === undefined) delete globalThis.OffscreenCanvas;else globalThis.OffscreenCanvas = previous;}

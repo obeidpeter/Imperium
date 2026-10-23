@@ -1,0 +1,137 @@
+{
+  "input": "art-source/models/processed/provincial-civic-kit.glb",
+  "output": "assets/models/scenery/provincial-civic-kit.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 1475908,
+    "gzipBytes": 984683,
+    "sha256": "6c67e8c19c7643d221ae87db1d041f4465996d96fff220914afda874b5900655"
+  },
+  "after": {
+    "bytes": 439964,
+    "gzipBytes": 197121,
+    "sha256": "de80aba5192e2ced4912eabe22ca49236946c784027416420b4971fa241bd788"
+  },
+  "geometryUnchanged": true,
+  "triangles": 7648,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 170882
+      },
+      "bytes": 23934,
+      "psnr": 47.642
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 48718
+      },
+      "bytes": 6038,
+      "psnr": 55.608
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 185312
+      },
+      "bytes": 28795,
+      "psnr": 39.157
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 49342
+      },
+      "bytes": 5863,
+      "psnr": 55.02
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 184478
+      },
+      "bytes": 31874,
+      "psnr": 41.615
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 49710
+      },
+      "bytes": 5861,
+      "psnr": 54.9
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 171076
+      },
+      "bytes": 23947,
+      "psnr": 43.767
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 48718
+      },
+      "bytes": 6038,
+      "psnr": 55.608
+    }
+  ]
+}

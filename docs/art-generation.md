@@ -275,3 +275,59 @@ Full-body Palmyrene heavy cavalryman of the 270s AD, standing in a T-pose for ri
 ```text
 Full-body provincial Roman civilian traveller of the mid-3rd century AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved faded blue-grey wool tunic to the knee with a rope belt, wool leggings and worn leather shoes. Short brown hair and a short beard, tired face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
 ```
+
+## Chapter V world-building pilot · 23 October 2026
+
+Four additional Tripo text-to-model generations used `v3.1-20260211`, standard geometry, textures and PBR. Each cost 20 credits: **80 credits total**, within the owner's 400-credit pilot cap. Complete prompts, request bodies, task IDs, raw hashes and actual charges are retained in:
+
+- [Cistern request](../art-source/models/requests/ch5-cistern.json)
+- [Siege hoist request](../art-source/models/requests/ch5-siege-hoist.json)
+- [Damaged masonry request](../art-source/models/requests/ch5-damaged-masonry.json)
+- [Household bundles request](../art-source/models/requests/ch5-household-bundles.json)
+
+The generated objects were processed in Blender, reviewed on contact sheets, and exported with compressed geometry and mipmapped KTX2 PBR maps. The household bundle mesh was processed again locally at 7,840 triangles to retain its cloth and basket shapes; this incurred no further generation charge. They are environmental props, without paid rigs or character animation.
+
+The sixteen-component fortress kit and its stone, plaster, timber and canvas surfaces are original procedural Blender work, built by [build-ch5-fortress.py](../scripts/assets/build-ch5-fortress.py), with the editable `.blend` retained under `art-source/models/`. The [pilot guide](chapter-v-world-pilot.md) records integration, review steps and limits. The [credit ledger](../art-source/models/ch5-pilot-credits.json) reconciles the balance from 4,180 to 4,100 and records the remaining 320-credit authorization as unspent. The owner subsequently approved the pilot and the regional extension below; its credit allowance is separate.
+
+## Regional world-building extension · 23 October 2026
+
+The owner approved up to **600 additional Tripo credits** after reviewing Chapter V. Seventeen successful text-to-model tasks used `v3.1-20260211`, standard geometry, textures and PBR, at 20 credits each: **340 consumed, 260 unused and zero reserved**. The [regional credit ledger](../art-source/models/regional-world-credits.json) reconciles each reported charge with the account balance falling from 4,100 to 3,760. Sixteen props were selected; the first rack was not selected because its full-face helmet did not fit the art direction. Its [original request](../art-source/models/requests/equipment-rack-initial.json) and task remain recorded alongside the selected replacement.
+
+All prompts were original text requests with no supplied third-party model or image. Each linked request retains the exact prompt, submitted body, task ID, raw digest, reported charge and the owner's recorded licence terms. Blender processing set the prop heights and triangle budgets, reduced textures to 512 pixels, and exported static models; meshopt and mipmapped KTX2 compression produced the final files in `assets/models/world/`. No new character rig or animation was purchased. The sixteen runtime files total **4,294,648 bytes** before transport compression.
+
+| Selected request | Chapters |
+| --- | --- |
+| [Legionary cookstation](../art-source/models/requests/legionary-cookstation.json) | I, III, VII |
+| [Equipment rack](../art-source/models/requests/equipment-rack.json) | I, IV, VII |
+| [Courier table](../art-source/models/requests/courier-table.json) | III, VII, XI |
+| [Casualty litter](../art-source/models/requests/casualty-litter.json) | II, VI, VIII |
+| [Broken baggage cart](../art-source/models/requests/broken-baggage-cart.json) | II, VI |
+| [River ferry](../art-source/models/requests/river-ferry.json) | VIII |
+| [Mooring ropes](../art-source/models/requests/mooring-ropes.json) | II, VIII |
+| [Eagle rally stand](../art-source/models/requests/eagle-rally-stand.json) | VI, XII |
+| [Caravan trough](../art-source/models/requests/caravan-trough.json) | IX |
+| [Caravan baggage](../art-source/models/requests/caravan-baggage.json) | IX |
+| [Signal brazier](../art-source/models/requests/signal-brazier.json) | IV, VI |
+| [Command table](../art-source/models/requests/command-table.json) | VII, XII |
+| [Grain bins](../art-source/models/requests/grain-bins.json) | X |
+| [Relief cart](../art-source/models/requests/relief-cart.json) | X |
+| [Archive cabinet](../art-source/models/requests/archive-cabinet.json) | XI |
+| [Civic fountain](../art-source/models/requests/civic-fountain.json) | XI, XII |
+
+The selected rack omits the rejected helmet and has two red oval shield fronts. Four cardinal views of the final compressed rack and archive cabinet confirmed their useful fronts face local +X; authored placement now turns those faces toward their service approach or the playable board. The cookstation's initially unsupported cauldron chain received an original local iron support frame through [refine-cookstation.py](../scripts/assets/refine-cookstation.py). The [refinement report](../art-source/models/reports/legionary-cookstation-refinement.json) records 84 added triangles, contact with the chain and grounded feet, with zero paid calls. Asset review statuses describe their specific inspection scope; they do not stand in for the final production playthrough.
+
+### Original regional architecture
+
+[build-regional-kits.py](../scripts/assets/build-regional-kits.py) authors five kits, each with twelve named components and at most four shared materials. Geometry and deterministic 512-pixel surface bakes are original local work, without external photographs. Editable `.blend` sources, processed GLBs, compression reports and the [complete component bounds](../art-source/models/processed/regional-kits.json) are retained. The sixty components total **34,592 triangles**; compressed runtime kits total **2,024,380 bytes**.
+
+| Kit | Chapters | Triangles | Runtime bytes |
+| --- | --- | ---: | ---: |
+| Danube military | I, III, IV | 6,892 | 402,160 |
+| River wetlands | II, VIII | 6,172 | 365,648 |
+| Italian marching | VI, VII | 4,352 | 311,028 |
+| Provincial civic | X | 7,648 | 439,964 |
+| Roman monumental | IX, XI, XII | 9,528 | 505,580 |
+
+Chapter IX combines the approved eastern fortress kit with selected Roman components. Other pilot props are reused only in chapter packs named by the [world catalog](../src/ui/world-catalog.js); Chapter V's approved composition is retained. The existing civilian body is reused for service roles across all twelve chapters rather than generating new people. These fictional settings and symbolic outcome details do not claim archaeological fidelity or add enterable buildings, naval play or new gameplay rewards.
+
+Final build, browser and benchmark results remain pending in [regional-world-building.md](regional-world-building.md). File-size and triangle totals above are asset measurements, not frame-rate or real-device claims.

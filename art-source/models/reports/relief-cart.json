@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/relief-cart.glb",
+    "bytes": 45622284,
+    "sha256": "2793c66fb795f3ee6f0dbabc202259dcef43a62828f7c18357b47d77d7b80a04",
+    "triangles": 1441643
+  },
+  "output": {
+    "path": "art-source/models/processed/relief-cart.glb",
+    "bytes": 391116,
+    "sha256": "4d1c23795e254b15e28e047e31a9ec0a0a215789673b2933c362f304d6ace1cc",
+    "triangles": 6860
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.4288055935496407,
+  "sizeMetres": {
+    "width": 1.9324,
+    "height": 1.6,
+    "depth": 2.4307
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_b51df8e0-d3cf-4557-aea3-a179cb13645e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_b51df8e0-d3cf-4557-aea3-a179cb13645e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_b51df8e0-d3cf-4557-aea3-a179cb13645e",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

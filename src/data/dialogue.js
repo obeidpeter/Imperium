@@ -45,6 +45,48 @@ export const DEFEAT_PAGES=freeze({
 });
 
 export const DIALOGUE=freeze({
+  // Shared service actions, with each chapter's short context supplied by
+  // campConversation. These open existing tools and grant no new rewards.
+  'hub:instructor':tree('greet',{
+    greet:node('The veteran instructor','Keep the work simple enough to repeat when the field becomes confused.',[
+      opt('Training courses.',null,{effects:{open:'trainer:campidoctor'}}),opt('Review the company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'hub:clerk':tree('greet',{
+    greet:node('The duty clerk','The next orders are ready.',[
+      opt('Review battle preparation.',null,{effects:{open:'preparation'}}),opt('Officers’ advice.',null,{effects:{open:'council'}}),bye])
+  }),
+  'hub:porter':tree('greet',{
+    greet:node('The supply orderly','The loads stay by their tally. Nothing leaves the stores just because someone has talked about a march.',[
+      opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
+  }),
+  'hub:capsarius':tree('greet',{
+    greet:node('Capsarius Didius','Look at the company’s condition before giving it another road to walk.',[
+      opt('Review the company.',null,{effects:{open:'company'}}),opt('Medical training.',null,{effects:{open:'trainer:capsarius'}}),bye])
+  }),
+  'hub:quartermaster':tree('greet',{
+    greet:node('Quartermaster Aper','The stores are counted. Equipment, pay and anything you brought from the field are on the same account.',[
+      opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
+  }),
+  'hub:lucan':tree('greet',{
+    greet:node('Aurelius Lucan','I still remember the marsh. Let us see who is ready for the next road.',[
+      opt('Review our company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'hub:sabinus':tree('greet',{
+    greet:node('Gaius Sabinus','Lucan’s name stays on the roll. I will look after the people standing beside us now.',[
+      opt('Review our company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'hub:local':tree('greet',{
+    greet:node('The local steward','The local report is ready.',[opt('What is this place?','inspect'),bye]),
+    inspect:node('The local steward','The place and its people.',[opt('Return.','greet'),bye])
+  }),
+  'hub:report':tree('report',{
+    report:node('The local report','The current orders and committed outcomes.',[opt('Look around.','inspect'),opt('Leave the report.')]),
+    inspect:node('The local report','The place and its people.',[opt('Return to the report.','report'),opt('Leave the report.')])
+  }),
+  'hub:practice':tree('post',{
+    post:node('The practice place','Practice revisits an encounter already completed; it does not advance the campaign.',[
+      opt('Practise a completed encounter.',null,{conditions:{history:{min:1}},effects:{open:'practice'}}),opt('Leave it.')])
+  }),
   // ——— Chapter I: the legionary base at Novae ———
   'ch1:varro':tree('greet',{
     greet:node('Varro','Tiro. Recruit. For now it means you listen. Ask what you need to ask; the post does not wait for questions.',[
@@ -237,5 +279,50 @@ export const DIALOGUE=freeze({
     greet:node('Syra the sutler','I followed the army up the river. Do not ask me why; I ask myself every morning.',[
       opt('Show me your goods.',null,{effects:{open:'trader'}}),opt('Any news?','rumour'),bye]),
     rumour:node('Syra the sutler','The station emptied a week ago. The courier who came through said the raiders took the road above it, not the road itself. Look up the hill before you look down it.',[opt('Thank you.','greet')])
+  }),
+  // Chapter V pilot: services and short optional context, with no new rewards.
+  'ch5:varro':tree('greet',{
+    greet:node('Varro','A clear route and a steady formation. Get those right before you think about the tower.',[
+      opt('Train with Varro.',null,{effects:{open:'trainer:campidoctor'}}),
+      opt('Review my company.',null,{effects:{open:'company'}}),opt('How should I prepare?','formation'),bye]),
+    formation:node('Varro','Check your company and supplies before departure. In the field, select your squads and give a Formation order. Keep the narrow approach clear for those who must pass through it.',[opt('Understood.')])
+  }),
+  'ch5:engineer':tree('greet',{
+    greet:node('The fortress engineer','The cracked tower lies beyond this court. At the commander’s table you decide whether the century supports the countermine or the households leaving for the river.',[
+      opt('What do the engineers’ plans change?','plans'),opt('Review battle preparation.',null,{effects:{open:'preparation'}}),bye]),
+    plans:node('The fortress engineer','Recover the engineers’ plans in the field to open the side gate and repair the footbridge. That creates alternatives to the central approach. The water detail is the other field opportunity; you cannot assign the same detachment to both.',[opt('Understood.')])
+  }),
+  'ch5:water':tree('greet',{
+    greet:node('The water steward','Water stays under shade until the detail is called. The crews here do not change your supplies or heal the company by themselves.',[
+      opt('What does the water detail do?','detail'),bye]),
+    detail:node('The water steward','Organise it in the field to extinguish the burning pitch braziers and restore two health to living friendly formations and protected columns. Choose it instead of recovering the engineers’ plans.',[opt('Understood.')])
+  }),
+  'ch5:capsarius':tree('greet',{
+    greet:node('Capsarius Didius','The shade is for the wounded. Leave the path clear; every stretcher must reach the gate.',[
+      opt('Medical training.',null,{effects:{open:'trainer:capsarius'}}),opt('Review the company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'ch5:quartermaster':tree('greet',{
+    greet:node('Quartermaster Aper','The stores and the transport have separate tallies. Check your kit now; the field gate is no place to discover an empty belt.',[
+      opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
+  }),
+  'ch5:lucan':tree('greet',{
+    greet:node('Aurelius Lucan','You carried me out of the marsh. I remember that when I look at the people waiting for this gate.',[
+      opt('Review our company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'ch5:sabinus':tree('greet',{
+    greet:node('Gaius Sabinus','Lucan is still on the roll of those lost in the marsh. I will keep the names here too, whatever route you choose.',[
+      opt('Review our company.',null,{effects:{open:'company'}}),bye])
+  }),
+  'ch5:evacuation':tree('greet',{
+    greet:node('The evacuation officer','This court holds the households waiting for the river route. Your decision is made at the commander’s table.',[
+      opt('The households have priority.','departing',{conditions:{decision:{ch5:'civilians'}}}),
+      opt('The century is committed to the countermine.','delayed',{conditions:{decision:{ch5:'countermine'}}}),
+      opt('I have not given the order yet.','waiting',{conditions:{decision:{ch5:null}}}),bye]),
+    departing:node('The evacuation officer','We are gathering the households for transport. The fortress still has to hold through both encounters; an order to depart is not a safe crossing.',[opt('Keep the route clear.')]),
+    delayed:node('The evacuation officer','The households remain under shelter while the century secures the stores and works below ground. They know whose order made them wait.',[opt('I understand.')]),
+    waiting:node('The evacuation officer','The engineer needs the same soldiers. We can wait for your decision, but we cannot send the century to both places.',[opt('I will decide.')])
+  }),
+  'ch5:report':tree('report',{
+    report:node('The courtyard report','The current orders and committed field reports.',[opt('Leave the report.')])
   })
 });

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
 import {createEnvironment} from '../src/showcase/environment.js';
+import {landscapeFogRange} from '../src/showcase/atmosphere.js';
+import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
 
 const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
 const create=(id,quality='performance')=>{const s=fixture.scenes.find(s=>s.id===id);assert.ok(s,id);return createEnvironment(new T.Scene(),s.state.encounter,{chapter:s.chapter,quality,loadTextures:false});};
@@ -68,6 +70,42 @@ test('Distant urban scenery remains a low roofline rather than filling the sky',
     }
     w.dispose();
   }
+});
+
+test('Distant silhouettes share the supporting ground fog and their actual foundations intersect rendered terrain',()=>{
+  const ray=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000);
+  for(let chapter=1;chapter<=12;chapter++){
+    const e={id:`ch${chapter}-camp`,width:chapter<=3?30:20,height:chapter<=3?24:16,terrain:Array.from({length:chapter<=3?24:16},()=>Array(chapter<=3?30:20).fill('grass')),units:[]};
+    const w=createEnvironment(new T.Scene(),e,{chapter,quality:'performance',loadTextures:false}),h=w.horizon,mesh=h.group.getObjectByName('regional distant silhouettes');
+    assert.equal(mesh.material.fog,w.ground.material.fog,`chapter ${chapter}: no unfogged tower after its ground disappears`);assert.equal(mesh.material.fog,true);
+    h.group.updateWorldMatrix(true,true);const positions=mesh.geometry.attributes.position,foundations=h.group.userData.distantFoundations;assert.ok(foundations.length>=3);
+    for(const f of foundations){
+      const bounds=new T.Box3();for(let i=f.firstVertex;i<f.firstVertex+30;i++)bounds.expandByPoint(new T.Vector3().fromBufferAttribute(positions,i));
+      assert.ok(Math.abs(bounds.min.y-f.base)<.00001,'metadata identifies an actual emitted foundation, not only its intended placement');
+      assert.ok(Math.abs(bounds.min.x-(f.x-f.width/2))<.00005);assert.ok(Math.abs(bounds.max.z-(f.z+f.depth/2))<.00005);
+      let lowest=Infinity;
+      for(const [x,z]of [[f.x,f.z],[f.x-f.width/2,f.z-f.depth/2],[f.x+f.width/2,f.z-f.depth/2],[f.x-f.width/2,f.z+f.depth/2],[f.x+f.width/2,f.z+f.depth/2]]){
+        ray.ray.origin.set(x,1000,z);const hit=ray.intersectObjects([h.bridge,h.ridges],false)[0];assert.ok(hit,'visible terrain supports every footprint sample');lowest=Math.min(lowest,hit.point.y);
+        assert.ok(bounds.min.y<=hit.point.y-.039,`chapter ${chapter}: foundation cannot float over a coarsely interpolated ridge`);
+      }
+      assert.ok(Math.abs(bounds.min.y-(lowest-.04))<.00001,'grounding preserves the intended silhouette instead of burying it arbitrarily');
+    }
+    w.dispose();
+  }
+});
+
+test('Outdoor fog retains the real middle-distance hills and fades the farther painted continuation coherently',()=>{
+  for(let chapter=1;chapter<=12;chapter++)for(const focus of [20,34,85]){
+    const profile=getSceneProfile({id:`ch${chapter}-camp`}),before=JSON.stringify(profile),range=landscapeFogRange(profile,focus),fog=z=>T.MathUtils.smoothstep(z,range.near,range.far),misty=['mist','rain'].includes(profile.weather);
+    assert.equal(range.near,focus+(misty?6:12),'foreground onset stays unchanged');assert.equal(fog(focus),0);
+    assert.ok(fog(focus+150)<.4,`chapter ${chapter}: visible land still supports the middle-distance landmarks`);
+    assert.ok(fog(focus+550)>.7,'outer ridges soften into atmosphere');
+    assert.ok(fog(focus+610)>=fog(focus+550),'a farther painting cannot bypass fog that obscures the nearer hills');
+    assert.ok(fog(focus+610)>.85,'painted crests retain only restrained distant contrast');assert.equal(JSON.stringify(profile),before);
+  }
+  const wet=landscapeFogRange({weather:'rain',fogDensity:.019},20),dry=landscapeFogRange({weather:'clear',fogDensity:.019},20);assert.ok(wet.far<dry.far,'rain remains less clear than dry weather');
+  const interior=landscapeFogRange({civic:true,weather:'clear',fogDensity:.006},20);assert.equal(interior.near,32);assert.equal(interior.far,32+2/.006,'indoor treatment remains unchanged');
+  for(const profile of [{},{fogDensity:NaN},{fogDensity:0}])assert.ok(Object.values(landscapeFogRange(profile,NaN)).every(Number.isFinite));
 });
 
 test('Horizon layout is deterministic, independent of campaign state and releases owned resources exactly once',()=>{

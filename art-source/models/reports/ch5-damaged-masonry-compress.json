@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/ch5-damaged-masonry.glb",
+  "output": "assets/models/chapters/05/ch5-damaged-masonry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 210824,
+    "gzipBytes": 153386,
+    "sha256": "7a70d0c9a49fbf3f921c73a8518912a5d3502c9a7cc77da04a360d4221d2b793"
+  },
+  "after": {
+    "bytes": 227144,
+    "gzipBytes": 220108,
+    "sha256": "5092d0e48986e21767b266dfbf9b6c4dab845717b59cbd4ac1731b238d906fa8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3430,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14882
+      },
+      "bytes": 24975,
+      "psnr": 39.726
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31312
+      },
+      "bytes": 54471,
+      "psnr": 34.998
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 19188
+      },
+      "bytes": 38412,
+      "psnr": 39.429
+    }
+  ]
+}

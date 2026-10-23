@@ -29,7 +29,7 @@ export const ACTOR_BODIES=Object.freeze({
   'palmyrene-infantry':body([{faction:'Palmyrene',role:'raider'}],[9]),
   'palmyrene-archer':body([{faction:'Palmyrene',role:'archer'}],[9]),
   'palmyrene-cavalry':body([{faction:'Palmyrene',role:'cavalry'}],[9]),
-  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,6,8])
+  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12])
 });
 export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 

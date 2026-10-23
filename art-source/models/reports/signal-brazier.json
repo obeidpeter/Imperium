@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/signal-brazier.glb",
+    "bytes": 45789456,
+    "sha256": "763476e257a4c1e6a336a174700bfe96335cff382fa64a58f0dd00cb217289e7",
+    "triangles": 1439877
+  },
+  "output": {
+    "path": "art-source/models/processed/signal-brazier.glb",
+    "bytes": 253132,
+    "sha256": "e98b955623f52404b14b26bfda33d5e32bb12d57c59dce80b6d38d4afe82fc70",
+    "triangles": 4899
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.5566075207134442,
+  "sizeMetres": {
+    "width": 1.559,
+    "height": 1.5,
+    "depth": 1.5597
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_4ad6c430-4b19-427c-9948-f3f03b84b551",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_4ad6c430-4b19-427c-9948-f3f03b84b551",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_4ad6c430-4b19-427c-9948-f3f03b84b551",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

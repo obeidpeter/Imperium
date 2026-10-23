@@ -81,6 +81,7 @@ export function commandProblem(world,command){
   if(!commandable(world,actor))return 'NO_TARGET';
   if(!actor.alive||actor.down)return 'ACTOR_DOWN';
   if(actor.carriedBy)return 'ACTOR_DOWN';
+  if(world.kind==='camp'&&world.peaceful===true&&['attack','warCry','order'].includes(command.kind))return 'PEACEFUL_CAMP';
   switch(command.kind){
     case 'move':return Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     case 'attack':return actor.carrying?'CARRYING':validate(world,actor.id,'strike',{actorId:p.targetId,forced:!!p.forced});
@@ -102,7 +103,8 @@ export function commandProblem(world,command){
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     // Orders to squads (command.js): the soldier gives them while he stands.
     case 'order':return actor.id===world.heroId?orderProblem(world,p):'NO_TARGET';
-    case 'stop':case 'setDrawn':case 'setWalk':case 'warCry':return null;
+    case 'setDrawn':return world.kind==='camp'&&world.peaceful===true&&p.drawn?'PEACEFUL_CAMP':null;
+    case 'stop':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
     default:return 'NO_TARGET';
   }

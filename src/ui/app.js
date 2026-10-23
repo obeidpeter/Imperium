@@ -25,13 +25,13 @@ import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {ITEMS} from '../data/items.js';
 import {createSoldier} from '../core/soldier.js';
-import {TRAINERS} from '../data/soldier.js';
-import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
+import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
+import {campRuntimeKey} from './camp-runtime.js';
 import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
-import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,trainerName,
   adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
@@ -257,14 +257,15 @@ function fieldTarget(){
   if(screen==='title'||!state)return null;
   if(Game.isRealtime(state))return {kind:'field',key:`fight:${state.encounter.id}`};
   if(chamberMode())return {kind:'chamber',key:`chamber:${state.encounter.id}`};
-  if(campMode())return {kind:'camp',key:`camp:${state.chapter}:${state.encounterIndex}:${state.decisions[Game.getChapter(state).decision.id]??''}`};
+  if(campMode())return {kind:'camp',key:campRuntimeKey(state)};
   return null;
 }
 // The stage's encounter for a camp: its fine map, nothing to fight.
 function campBase(world){
   const c=campFor(state.chapter);
-  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:'Walk the camp: talk to people, then march out through the gate.',
-    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day'};
+  return {id:c.id,kind:'battle',type:'camp',chapter:state.chapter,title:c.title,objective:c.purpose,
+    width:world.map.width,height:world.map.height,terrain:world.map.terrain,units:[],weather:null,timeOfDay:'day',
+    ...(world.campPresentation?{campPresentation:world.campPresentation}:{})};
 }
 function mountField(target){
   const host=document.querySelector('#rt-host');if(!host)return;
@@ -294,7 +295,10 @@ function mountField(target){
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
-    mountFieldStage();if(camp)refreshCampMarks();if(camp||state.encounter?.status==='active')element.querySelector('canvas')?.focus({preventScroll:true});
+    // A panel may open while the runtime module is still loading. Inherit its
+    // pause before attaching a renderer, and leave keyboard focus in the panel.
+    if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
+    mountFieldStage();if(camp)refreshCampMarks();if(!modal.open&&(camp||state.encounter?.status==='active'))element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
 }
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
@@ -371,6 +375,17 @@ async function replyConversation(index){
 function followUp(open){
   if(open==='march'){startCampaignEncounter();return;}
   if(open==='council'){showCouncil();return;}
+  if(open==='preparation'){
+    const section=document.getElementById('camp-preparation');
+    if(section){
+      section.open=true;
+      // close() queues its event. Let the dialog's normal focus restoration
+      // and field release finish before handing focus to this destination.
+      modal.addEventListener('close',()=>{
+        if(section.isConnected&&!modal.open){section.querySelector('summary')?.focus();section.scrollIntoView({block:'nearest'});}
+      },{once:true});
+    }return;
+  }
   if(open==='practice'){showModal('Practice completed encounters',practicePanel(state)||'<p>No completed encounter to practise yet.</p>');return;}
   if(open.startsWith('trainer:')){showSoldierPanel('trainer',open.slice(8));return;}
   showSoldierPanel(open);
@@ -384,13 +399,13 @@ function showCouncil(){
 // The camp's map (M): its places, and travel to those already walked to.
 function showCampMap(){
   const visited=new Set(Game.campVisited(state));
-  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(PLACE_NAMES[id])}</strong> <small>${esc(PLACE_HINTS[id])}</small></span>`+
+  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(campPlaceName(state.chapter,id))}</strong> <small>${esc(campPlaceHint(state.chapter,id))}</small></span>`+
     `<button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>${visited.has(id)||id==='gate'?'Go there':'Not yet visited'}</button></li>`).join('')}</ul>`);
 }
 function campTravel(place){
   const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}
   if(modal.open)modal.close();const outcome=runtime.issue({actorId:runtime.world.heroId,kind:'travel',payload:{x:p.x,z:p.z+2}});
-  if(outcome.ok){runtime.follow();announce(`${PLACE_NAMES[place]}.`);}
+  if(outcome.ok){runtime.follow();announce(`${campPlaceName(state.chapter,place)}.`);}
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
@@ -569,7 +584,7 @@ function showSoldierPanel(name,arg=null){
   const panels={kit:()=>['Equipment',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
-    trainer:()=>[TRAINERS[arg]?.name??'Trainer',trainerPanel(state,arg)],
+    trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();

@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/civic-fountain.glb",
+  "output": "assets/models/world/civic-fountain.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 225792,
+    "gzipBytes": 175007,
+    "sha256": "3338309a3236942c233943607db766dc135dc3cb8db34baf93b8d7925824eae8"
+  },
+  "after": {
+    "bytes": 206152,
+    "gzipBytes": 198193,
+    "sha256": "066413bc5bd7efab8e0aac2824b46225ea168cd46fd96e515d668a5cadaf045a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6860,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 2750
+      },
+      "bytes": 7817,
+      "psnr": 47.089
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9410
+      },
+      "bytes": 36353,
+      "psnr": 40.085
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8870
+      },
+      "bytes": 22632,
+      "psnr": 33.443
+    }
+  ]
+}

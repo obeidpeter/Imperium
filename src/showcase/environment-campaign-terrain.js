@@ -1,6 +1,8 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {gridToWorld,terrainAt,hash,noise,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
+import {isChapterFivePilot} from './environment-ch5-pilot.js';
+import {hasRegionalWorld} from './environment-regional-world.js';
 
 // Authored terrain reads as landform, not as tile squares. Plateaus carry rock
 // outcrops on their slopes; rivers fill a channel under one water surface whose
@@ -89,9 +91,14 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
     if(type==='stone'){
       cells.push({type,x,y});
       // Flagstones in courses of irregular length; a few lift or go missing at the edges.
-      for(let row=0;row<4;row++){let u=-half+.02;const depth=tileSize/4;
-        while(u<half-.12){const w=Math.min(half-u,.42+hash(row,u*3,x+y)*.5),missing=(row===0||row===3)&&hash(u*5,row,x*y)>.95;
-          if(!missing)instance('authored flagstones',p.box,m.marble,[xx+u+w/2,height(xx+u+w/2,zz-half+(row+.5)*depth)+.012+hash(u,row,y)*.012,zz-half+(row+.5)*depth],[w-.045,.034,depth-.045],[0,(hash(row,u,x)-.5)*.03,0],tint('#e4dccb',u*11+row,x*5+y));
+      // The approved pilot's broader paving now carries through each region
+      // and reads from the normal follow camera without
+      // dense subpixel grout. It uses fewer instances in the same draw batch;
+      // reduced yaw keeps the narrower joints physically separated.
+      const pilot=isChapterFivePilot(e)||hasRegionalWorld(e),courses=pilot?3:4,joint=pilot?.025:.045;
+      for(let row=0;row<courses;row++){let u=-half+.02;const depth=tileSize/courses;
+        while(u<half-.12){const w=Math.min(half-u,(pilot?.75:.42)+hash(row,u*3,x+y)*.5),missing=(row===0||row===courses-1)&&hash(u*5,row,x*y)>.95;
+          if(!missing)instance('authored flagstones',p.box,m.marble,[xx+u+w/2,height(xx+u+w/2,zz-half+(row+.5)*depth)+.012+hash(u,row,y)*.012,zz-half+(row+.5)*depth],[w-joint,.034,depth-joint],[0,(hash(row,u,x)-.5)*(pilot?.012:.03),0],tint('#e4dccb',u*11+row,x*5+y));
           u+=w;}
       }
     }

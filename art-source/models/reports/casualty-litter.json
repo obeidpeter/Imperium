@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/casualty-litter.glb",
+    "bytes": 43394284,
+    "sha256": "b98a5857ae28c38a6493e9aba6d35c7aedf9955005725edbf84fe229f951207c",
+    "triangles": 1407408
+  },
+  "output": {
+    "path": "art-source/models/processed/casualty-litter.glb",
+    "bytes": 245184,
+    "sha256": "029257faf4101a93c8efa69cca30fc1821980bf62839f573751c2a6eeb820bf8",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.75,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.4549934873833172,
+  "sizeMetres": {
+    "width": 2.4531,
+    "height": 0.75,
+    "depth": 0.901
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e115be12-e79d-49d0-8048-269c1fcf9fc1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e115be12-e79d-49d0-8048-269c1fcf9fc1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e115be12-e79d-49d0-8048-269c1fcf9fc1",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

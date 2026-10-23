@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/river-ferry.glb",
+  "output": "assets/models/world/river-ferry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 346632,
+    "gzipBytes": 276560,
+    "sha256": "e8b953f7ae776527c5ae1b441fa7f40eca54bd618309b5de83ca963edd35b1b5"
+  },
+  "after": {
+    "bytes": 303060,
+    "gzipBytes": 294134,
+    "sha256": "678968d37d68793cbc33f07c28bb6e4d5c2a09495e03ca8ce67af37cd23718bf"
+  },
+  "geometryUnchanged": true,
+  "triangles": 7839,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 47076
+      },
+      "bytes": 47803,
+      "psnr": 31.133
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 41340
+      },
+      "bytes": 54677,
+      "psnr": 33.449
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9168
+      },
+      "bytes": 28688,
+      "psnr": 43.883
+    }
+  ]
+}

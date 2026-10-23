@@ -1,0 +1,78 @@
+{
+  "id": "broken-baggage-cart",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    2,
+    6
+  ],
+  "use": "A damaged Roman two-wheeled wooden baggage cart abandoned on its axle. One wooden spoked wheel intact and one broken wheel tilted against the chassis, short broken draft pole, open weathered plank bed holding two tightly roped cloth sacks and a dented wicker basket. Dark wet oak, rusty iron rim bands, dirty flax cloth. No animal or driver. Compact low silhouette.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A damaged Roman two-wheeled wooden baggage cart abandoned on its axle. One wooden spoked wheel intact and one broken wheel tilted against the chassis, short broken draft pole, open weathered plank bed holding two tightly roped cloth sacks and a dented wicker basket. Dark wet oak, rusty iron rim bands, dirty flax cloth. No animal or driver. Compact low silhouette. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 7000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 1.7,
+    "minHeight": 1.615,
+    "maxHeight": 1.785
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "86849821-1c27-4322-bded-c760efb15de4",
+    "requestedAt": "2026-10-23T17:33:16.577Z",
+    "balanceBefore": 4020,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A damaged Roman two-wheeled wooden baggage cart abandoned on its axle. One wooden spoked wheel intact and one broken wheel tilted against the chassis, short broken draft pole, open weathered plank bed holding two tightly roped cloth sacks and a dented wicker basket. Dark wet oak, rusty iron rim bands, dirty flax cloth. No animal or driver. Compact low silhouette. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:35:38.640Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/broken-baggage-cart.glb",
+    "rawBytes": 45961192,
+    "rawSha256": "91c3688d1aa07f6f1d505e585886a9821db938ba779f599e4e5ff4f3bab64571",
+    "tripoInput": {
+      "prompt": "A damaged Roman two-wheeled wooden baggage cart abandoned on its axle. One wooden spoked wheel intact and one broken wheel tilted against the chassis, short broken draft pole, open weathered plank bed holding two tightly roped cloth sacks and a dented wicker basket. Dark wet oak, rusty iron rim bands, dirty flax cloth. No animal or driver. Compact low silhouette. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/broken-baggage-cart-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "d232f60771f224b6caec6af3a6f729bb3eeb6988719a8665e16edae1783a30e9",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

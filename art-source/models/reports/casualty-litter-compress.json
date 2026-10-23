@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/casualty-litter.glb",
+  "output": "assets/models/world/casualty-litter.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 245184,
+    "gzipBytes": 173743,
+    "sha256": "029257faf4101a93c8efa69cca30fc1821980bf62839f573751c2a6eeb820bf8"
+  },
+  "after": {
+    "bytes": 242008,
+    "gzipBytes": 233593,
+    "sha256": "457fcdf2baf4cd209be8718cb919862873b122a59f4ba819dd584df0515a24c1"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9248
+      },
+      "bytes": 20420,
+      "psnr": 41.605
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33632
+      },
+      "bytes": 53499,
+      "psnr": 34.124
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10776
+      },
+      "bytes": 27287,
+      "psnr": 39.264
+    }
+  ]
+}

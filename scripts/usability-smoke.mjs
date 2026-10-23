@@ -2,6 +2,8 @@
 // campaign supplies the checkpoint, imported through the player's dialog.
 // Browser evaluation only observes state/DOM; it never injects play or saves.
 // Build first. PLAYWRIGHT_MODULE / PLAYWRIGHT_EXECUTABLE_PATH are optional.
+// USABILITY_ONLY=phone-settings diagnoses the settings/reload flow alone.
+// USABILITY_ONLY=desktop runs all desktop flows after a focused repair.
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -15,6 +17,8 @@ import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=fileURLToPath(new URL('../tests/visual-results/usability/',import.meta.url));
+const only=process.env.USABILITY_ONLY;
+assert.ok(!only||['phone-settings','desktop'].includes(only),'Unknown USABILITY_ONLY scenario');
 await access(`${root}index.html`).catch(()=>{throw new Error('Build first: node scripts/build.mjs');});
 const build=JSON.parse(await readFile(`${root}build-report.json`,'utf8'));
 let playwright;
@@ -34,9 +38,20 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
 const browser=await playwright.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,
   args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const report={method:'Automated Chromium; visible categories, summaries, buttons and keyboard; legal checkpoint import; no simulation injection',
-  build:build.revision,browser:browser.version(),physicalDeviceTest:false,checks:[],errors:[]};
+const report={method:'Automated Chromium; visible categories, summaries, buttons and keyboard; legal checkpoint import; no simulation injection',scope:only||'full',
+  build:build.revision,browser:browser.version(),physicalDeviceTest:false,
+  capture:{cssAnimations:'disabled during capture',timeoutMs:60000,maxAttempts:2,retries:[]},checks:[],errors:[]};
 const record=(name,details={})=>{report.checks.push({name,pass:true,...details});console.log(`ok - ${name}`);};
+async function screenshot(page,options){
+  for(let attempt=1;attempt<=2;attempt++){
+    try{return await page.screenshot({...options,animations:'disabled',timeout:60000});}
+    catch(error){
+      if(error.name!=='TimeoutError'||attempt===2)throw error;
+      const name=options.path.slice(output.length);report.capture.retries.push({name,attempt});
+      console.log(`# ${name}: screenshot timed out; retrying the unchanged page once`);
+    }
+  }
+}
 const close=closePanel;
 const tick=page=>page.evaluate(()=>window.__realtime.world().tick);
 const paused=page=>page.evaluate(()=>window.__realtime.paused());
@@ -103,15 +118,21 @@ async function setup(viewport){
   if(await page.locator('[data-cmd="adopt-soldier"]:visible').count()){
     await page.locator('[data-cmd="adopt-soldier"]').click();await page.waitForSelector('#modal .character-panel');await close(page);
   }
+  // Import replaces the campaign before the asynchronous camp renderer arrives.
+  // Let normal arrival complete before measuring whether later UI browsing
+  // changes the save; the first live HUD records visiting the entrance.
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  await page.waitForFunction(()=>!document.querySelector('#modal[open]')&&window.__realtime?.world()?.tick>0);
   return page;
 }
 async function menuAndSettings(page,label){
   const original=await exported(page);
+  assert.equal(JSON.parse(original).soldier.flags['visited:5:gate'],true,'The normal camp arrival is recorded before the settings baseline');
   await menuCommand(page,'menu');
   const menu=await metrics(page,'#modal .menu-links');fits(menu,`${label} menu`);
   assert.ok(menu.buttons<=7,`The main menu offers at most seven choices, including Resume: ${menu.buttons}`);
   assert.ok(menu.words<=90,`The main menu is a short scan: ${menu.words} words`);
-  await page.locator('#modal').screenshot({path:`${output}${label}-menu.png`});
+  await screenshot(page,{path:`${output}${label}-menu.png`,fullPage:false});
   await page.locator('#modal [data-cmd="menu-section"][data-id="campaign"]').click();
   assert.ok(await page.locator('#modal [data-cmd="map"]:visible').count(),'Campaign map remains reachable');
   await page.locator('#modal .modal-back').click();await page.locator('#modal [data-cmd="settings"]').click();
@@ -122,7 +143,7 @@ async function menuAndSettings(page,label){
     assert.equal(await page.locator('#modal [data-cmd="settings-section"][aria-current="page"]').getAttribute('data-id'),id);
     assert.equal(await page.evaluate(()=>document.activeElement?.id),`settings-${id}-title`,'Category selection announces its heading');
     const measured=await metrics(page,'#modal');fits(measured,`${label} ${id}`);categories.push({id,...measured});
-    if(id==='general')await page.locator('#modal').screenshot({path:`${output}${label}-settings.png`});
+    if(id==='general')await screenshot(page,{path:`${output}${label}-settings.png`,fullPage:false});
     const unnamed=await page.locator(`#settings-${id}`).evaluate(section=>[...section.querySelectorAll('input,select')]
       .filter(el=>el.checkVisibility({checkVisibilityCSS:true})&&!el.labels?.length&&!el.getAttribute('aria-label')&&!el.getAttribute('aria-labelledby')).map(el=>el.id));
     assert.deepEqual(unnamed,[],`${id}: visible inputs have accessible names`);
@@ -143,7 +164,22 @@ async function menuAndSettings(page,label){
   await (await revealControl(page,'#motion-setting')).check();
   await settingsPage(page,'controls');await (await revealControl(page,'#pause-sighted')).check();
   await settingsPage(page,'audio');await (await revealControl(page,'#audio-setting')).uncheck();
-  await close(page);await page.reload();await page.locator('[data-cmd="continue"]:visible').first().click();await page.waitForSelector('.camp-page');
+  await close(page);
+  const reloadStarted=Date.now(),reloadState=()=>page.evaluate(()=>({
+    url:location.href,readyState:document.readyState,bodyClass:document.body.className,fonts:document.fonts.status,
+    serviceWorker:navigator.serviceWorker?.controller?.state??null,
+    app:{className:document.querySelector('#app')?.className??null,children:document.querySelector('#app')?.childElementCount??null,
+      titlePage:!!document.querySelector('.title-hero'),campPage:!!document.querySelector('.camp-page'),openModal:!!document.querySelector('#modal[open]')},
+    buttons:[...document.querySelectorAll('[data-cmd="continue"]')].map(e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return {
+      text:e.textContent,connected:e.isConnected,disabled:e.disabled,hidden:e.hidden,inert:e.inert,display:s.display,visibility:s.visibility,opacity:s.opacity,
+      rect:{x:r.x,y:r.y,width:r.width,height:r.height}};}),
+    resources:performance.getEntriesByType('resource').slice(-8).map(r=>({name:r.name,duration:r.duration,responseEnd:r.responseEnd})),
+    text:document.body.innerText.slice(0,500)
+  }));
+  await page.reload();const afterReload=await reloadState();
+  try{await page.locator('[data-cmd="continue"]:visible').first().click();}
+  catch(error){await writeFile(`${output}${label}-reload-diagnostic.json`,JSON.stringify({elapsedMs:Date.now()-reloadStarted,afterReload,atFailure:await reloadState()},null,2)+'\n');throw error;}
+  await page.waitForSelector('.camp-page');
   await menuCommand(page,'settings');
   assert.equal(await (await revealControl(page,'#high-contrast')).isChecked(),true);
   assert.equal(await (await revealControl(page,'#text-size')).inputValue(),'1.25');
@@ -160,13 +196,15 @@ async function menuAndSettings(page,label){
       await page.setViewportSize({...viewport,width});
       for(const id of ['general','controls','graphics','audio','saves']){
         await settingsPage(page,id);const measured=await verifyEnlargedSettingsGeometry(page);enlarged.push({id,...measured});
-        if(id==='general')await page.screenshot({path:`${output}${width===390?label:width+'px'}-settings-200percent.png`,fullPage:false});
+        if(id==='general')await screenshot(page,{path:`${output}${width===390?label:width+'px'}-settings-200percent.png`,fullPage:false});
       }
     }
     await page.setViewportSize(viewport);
   }
   await (await revealControl(page,'#text-size')).selectOption('1');await (await revealControl(page,'#pause-sighted')).uncheck();await close(page);
-  assert.equal(await exported(page),original,'Browsing and changing preferences preserve the exact campaign save');
+  const afterPreferences=await exported(page);
+  if(afterPreferences!==original)await writeFile(`${output}${label}-preferences-save-diff.json`,JSON.stringify({before:JSON.parse(original),after:JSON.parse(afterPreferences)},null,2)+'\n');
+  assert.equal(afterPreferences,original,'Browsing and changing preferences preserve the exact campaign save');
   record(`${label}: compact menu, five accessible settings categories, focus and persisted preferences`,{menu,categories,enlargedText:enlarged,contrast,saveUnchanged:true,saveSha256:createHash('sha256').update(original).digest('hex')});
 }
 async function helpAndSoldier(page,label){
@@ -287,13 +325,8 @@ async function fieldControls(page,label){
   console.log(`# ${label}: all field assertions passed; capturing the page`);
   await page.mouse.move(0,0);
   // Chromium's compositor can time out once after the repeated modal/canvas
-  // transitions. A single retry must still produce the same unaltered page.
-  try{await page.screenshot({path:`${output}${label}-field.png`,fullPage:true});}
-  catch(error){
-    if(error.name!=='TimeoutError')throw error;
-    console.log(`# ${label}: screenshot timed out; retrying the unchanged page once`);
-    await page.screenshot({path:`${output}${label}-field.png`,fullPage:true});
-  }
+  // transitions. The bounded capture helper retries the same unaltered page.
+  await screenshot(page,{path:`${output}${label}-field.png`,fullPage:true});
 }
 async function campTransitions(){
   const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(30000);
@@ -312,10 +345,12 @@ async function campTransitions(){
   }finally{await context.close();}
 }
 try{
-  await campTransitions();
-  for(const viewport of [{width:390,height:844},{width:1280,height:900}]){
+  if(!only)await campTransitions();
+  for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>!only||v.width===(only==='phone-settings'?390:1280))){
     const label=viewport.width<600?'phone':'desktop',page=await setup(viewport);
-    await menuAndSettings(page,label);await helpAndSoldier(page,label);await saveConfirmation(page,label);await fieldControls(page,label);await page.context().close();
+    await menuAndSettings(page,label);
+    if(only!=='phone-settings'){await helpAndSoldier(page,label);await saveConfirmation(page,label);await fieldControls(page,label);}
+    await page.context().close();
   }
   assert.deepEqual(report.errors,[],'No browser page or console errors');
   assert.equal(JSON.parse(await readFile(`${root}build-report.json`,'utf8')).revision,build.revision,'The tested build remains unchanged');report.passed=true;

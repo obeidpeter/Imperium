@@ -3,7 +3,7 @@ import {hash,noise,smooth,clamp} from './environment-layout.js';
 
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
-export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null}){
+export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null,riverZ=-29}){
   const group=new T.Group();group.name='regional distant landscape';group.userData.environmentHorizon=true;
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
@@ -14,7 +14,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   for(let edge=0;edge<4;edge++)for(let i=0;i<segments;i++){
     const t=i/segments*2-1;edges.push(edge===0?[t,-1]:edge===1?[1,t]:edge===2?[-t,1]:[-1,-t]);
   }
-  function riverCentre(x){const d=Math.max(0,Math.abs(x)-riverJoin);return -29+Math.sin(d*.011)*d*.075;}
+  function riverCentre(x){const d=Math.max(0,Math.abs(x)-riverJoin);return riverZ+Math.sin(d*.011)*d*.075;}
   function riverWidth(x){return 8+smooth((Math.abs(x)-riverJoin)/320)*13;}
   function terrainHeight(x,z){
     const edge=Math.max(Math.abs(x),Math.abs(z)),distance=Math.hypot(x,z),blend=smooth((edge-innerRadius)/65),amplitude=city?14:wet?10:arid?35:30;
@@ -32,7 +32,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
       const [x,z]=point(edges[i],rows[row]),y=terrainHeight(x,z);positions.push(x,y,z);uv.push((x+40)/2,(40-z)/2);
       if(near){
         // Identical inputs to the original ground shader at the shared edge.
-        const patch=noise(x*.23,z*.23,8),damp=smooth((-z-17)/4)*(1-smooth((-z-40)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
+        const patch=noise(x*.23,z*.23,8),damp=smooth((riverZ-z+12)/4)*(1-smooth((riverZ-z-11)/5)),edge=.93+noise(x*.06,z*.06,2)*.07;
         colors.push((.91+patch*.09)*edge*(1-damp*.2),(.94+patch*.06)*edge*(1-damp*.13),(.88+patch*.09)*edge*(1-damp*.12));
         soil.push(clamp((profile.training?.12:profile.soilMix)+(profile.training?0:Math.pow(noise(x*.19,z*.19,31),2)*.48)+damp*.42));
       }else colors.push(...tint(x,z,y).toArray());
@@ -52,9 +52,9 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     geometry.computeBoundingSphere();
     const mesh=addMesh(near?'continuous outer ground bridge':'360 degree regional ridges',geometry,material);mesh.userData.innerRadius=rows[from];mesh.userData.outerRadius=rows[to];return mesh;
   }
-  // Ground and water keep their lighting across joins. Distant silhouettes
-  // have their own atmospheric blend so their skyline remains legible.
-  const distant=new T.MeshBasicMaterial({vertexColors:true,fog:false});materials.add(distant);
+  // Ground, water and silhouettes share scene fog. Keeping silhouettes outside
+  // that fog left towers and wall strips visible after their support vanished.
+  const distant=new T.MeshBasicMaterial({vertexColors:true,fog:true});materials.add(distant);
   const bridge=ring(0,2,ground.material,true),ridges=ring(2,rows.length-1,ground.material,true);
   ridges.name='360 degree regional ridges';
   // Keep texture, roughness, lighting and normals continuous at the second
@@ -62,6 +62,22 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   for(const name of ['position','normal','color','uv','soilMix']){
     const a=bridge.geometry.attributes[name],b=ridges.geometry.attributes[name];
     for(let i=0;i<size;i++)for(let c=0;c<a.itemSize;c++)b.array[i*a.itemSize+c]=a.array[(a.count-size+i)*a.itemSize+c];
+  }
+
+  const cameraRay=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000),cameraHits=[],cameraSurfaces=[bridge,ridges];
+  for(const mesh of cameraSurfaces)mesh.updateWorldMatrix(true,false);
+  function renderedGroundHeight(x,z){
+    cameraRay.ray.origin.set(x,1000,z);cameraHits.length=0;
+    cameraRay.intersectObjects(cameraSurfaces,false,cameraHits);
+    const result=cameraHits.length?cameraHits[0].point.y:height(x,z);cameraHits.length=0;return result;
+  }
+  const foundations=[];
+  function foundation(x,z,w,d){
+    // The analytical noise function does not equal the coarse rendered mesh
+    // between its rings. Sample the visible triangles at the entire footprint
+    // and bury the bottom slightly, instead of leaving a roofline in mid-air.
+    const y=Math.min(...[[x,z],[x-w/2,z-d/2],[x+w/2,z-d/2],[x-w/2,z+d/2],[x+w/2,z+d/2]].map(([px,pz])=>renderedGroundHeight(px,pz)))-.04;
+    foundations.push({x,z,width:w,depth:d,base:y,firstVertex:silhouettePositions.length/3});return y;
   }
 
   if(profile.distantWater){
@@ -97,7 +113,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   }
   if(city){
     for(let i=0;i<(quality==='performance'?45:70);i++){
-      const angle=i*2.39996,r=190+hash(i,seed)*175,x=Math.cos(angle)*r,z=Math.sin(angle)*r,y=terrainHeight(x,z),w=5+hash(i,31)*11,d=5+hash(i,33)*9,h=3+hash(i,32)*(profile.setting==='palmyra'?5:7),c=tint(x,z,y,.05);
+      const angle=i*2.39996,r=190+hash(i,seed)*175,x=Math.cos(angle)*r,z=Math.sin(angle)*r,w=5+hash(i,31)*11,d=5+hash(i,33)*9,y=foundation(x,z,w,d),h=3+hash(i,32)*(profile.setting==='palmyra'?5:7),c=tint(x,z,y,.05);
       box(x,y,z,w,h,d,c);const roof=tint(x,z,y).multiplyScalar(.86),a=[x-w*.55,y+h,z-d*.55],b=[x+w*.55,y+h,z-d*.55],c1=[x+w*.55,y+h,z+d*.55],d1=[x-w*.55,y+h,z+d*.55],top1=[x,y+h+2,z-d*.55],top2=[x,y+h+2,z+d*.55];
       triangle(a,b,top1,roof);triangle(d1,top2,c1,roof);triangle(a,top1,top2,roof);triangle(a,top2,d1,roof);triangle(b,c1,top2,roof);triangle(b,top2,top1,roof);
     }
@@ -106,7 +122,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     // Low-poly closed tree crowns are small distant silhouettes, never nearby
     // billboard scenery. They occupy every bearing, with broad natural gaps.
     for(let i=0;i<(quality==='performance'?20:29);i++){
-      const angle=i*2.39996,r=(wet?105:155)+hash(i,seed)*135,x=Math.cos(angle)*r,z=Math.sin(angle)*r,y=terrainHeight(x,z),h=wet?4.8+hash(i,8)*4:5+hash(i,8)*5,c=tint(x,z,y,.06).multiplyScalar(.87);
+      const angle=i*2.39996,r=(wet?105:155)+hash(i,seed)*135,x=Math.cos(angle)*r,z=Math.sin(angle)*r,y=foundation(x,z,.32,.32),h=wet?4.8+hash(i,8)*4:5+hash(i,8)*5,c=tint(x,z,y,.06).multiplyScalar(.87);
       box(x,y,z,.32,h*.48,.32,c);
       // Three uneven, overlapping volumes break up a single ball-on-a-stick
       // contour. Their shared colour fades into the same atmospheric band.
@@ -125,11 +141,11 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   const landmarkKinds=['frontier watch','marsh watch','road station','marching camp','siege aqueduct','frontier watch','colonnade','river watch','hill sanctuary','farm settlement','urban temple','urban temple'];
   const landmarkKind=landmarkKinds[(profile.chapter??1)-1]??'frontier watch';
   for(let cluster=0;cluster<3;cluster++){
-    const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=(city?195:115)+cluster*28,cx=Math.cos(angle)*r,cz=Math.sin(angle)*r,base=terrainHeight(cx,cz),c=tint(cx,cz,base,.03);
+    const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=(city?195:115)+cluster*28,cx=Math.cos(angle)*r,cz=Math.sin(angle)*r,temple=landmarkKind==='urban temple'||landmarkKind==='hill sanctuary',base=temple?foundation(cx,cz,18,11):renderedGroundHeight(cx,cz)-.04,c=tint(cx,cz,base,.03);
     if(landmarkKind==='siege aqueduct'||landmarkKind==='colonnade'){
       const aqueduct=landmarkKind==='siege aqueduct',count=aqueduct?8:6;
       for(let i=0;i<count;i++){
-        const x=cx+(i-(count-1)/2)*3.5,y=terrainHeight(x,cz);
+        const x=cx+(i-(count-1)/2)*3.5,y=foundation(x,cz,aqueduct?1.25:.65,1.25);
         box(x,y,cz,aqueduct?1.25:.65,base+8-y,1.25,c);
         box(x,base+7.4,cz,3.5,.9,1.55,c);
         if(aqueduct){box(x,base+6.5,cz,2.25,.9,1.3,c);box(x,base+5.9,cz,1.7,.6,1.3,c);}
@@ -143,18 +159,19 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
       triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz-6],[cx,base+13,cz+6],roof);triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx-9.5,base+9.5,cz+6],roof);
       triangle([cx+9.5,base+9.5,cz-6],[cx+9.5,base+9.5,cz+6],[cx,base+13,cz+6],roof);triangle([cx+9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx,base+13,cz-6],roof);
     }else if(landmarkKind==='farm settlement'||landmarkKind==='marching camp'){
-      for(let i=0;i<7;i++){const x=cx+(i%4)*6,z=cz+Math.floor(i/4)*9,y=terrainHeight(x,z);box(x,y,z,4,landmarkKind==='marching camp'?2.5:4.5,5,c);}
+      for(let i=0;i<7;i++){const x=cx+(i%4)*6,z=cz+Math.floor(i/4)*9,y=foundation(x,z,4,5);box(x,y,z,4,landmarkKind==='marching camp'?2.5:4.5,5,c);}
     }else{
-      box(cx,base,cz,5.8,8.5,5.8,c);box(cx,base+8.5,cz,6.4,.7,6.4,c);
-      for(const side of [-1,1])for(let i=0;i<3;i++)box(cx+(i-1)*2,base+9.2,cz+side*2.7,.9,1.1,1,c);
-      box(cx+11,terrainHeight(cx+11,cz),cz,12,2.3,1.3,c);
+      const floor=foundation(cx,cz,5.8,5.8);
+      box(cx,floor,cz,5.8,8.5,5.8,c);box(cx,floor+8.5,cz,6.4,.7,6.4,c);
+      for(const side of [-1,1])for(let i=0;i<3;i++)box(cx+(i-1)*2,floor+9.2,cz+side*2.7,.9,1.1,1,c);
+      box(cx+11,foundation(cx+11,cz,12,1.3),cz,12,2.3,1.3,c);
     }
   }
   if(silhouettePositions.length){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silhouettePositions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(silhouetteColors,3));geometry.computeVertexNormals();addMesh('regional distant silhouettes',geometry,distant);}
+  group.userData.distantFoundations=foundations;
   let triangles=0;group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;});
   const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3});
   group.userData.horizonStats=stats;
-  const cameraRay=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000),cameraHits=[],cameraSurfaces=[bridge,ridges];
   let lastCameraX=NaN,lastCameraZ=NaN,lastCameraHeight=0;
   function cameraGroundHeight(x,z){
     // Camera clearance samples rendered triangles, not the higher-resolution
@@ -163,10 +180,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     if(disposed||Math.max(Math.abs(x),Math.abs(z))<=innerRadius||Math.hypot(x,z)>550)return height(x,z);
     if(x===lastCameraX&&z===lastCameraZ)return lastCameraHeight;
     for(const mesh of cameraSurfaces)mesh.updateWorldMatrix(true,false);
-    cameraRay.ray.origin.set(x,1000,z);cameraHits.length=0;
-    cameraRay.intersectObjects(cameraSurfaces,false,cameraHits);
-    lastCameraX=x;lastCameraZ=z;lastCameraHeight=cameraHits.length?cameraHits[0].point.y:height(x,z);
-    cameraHits.length=0;return lastCameraHeight;
+    lastCameraX=x;lastCameraZ=z;lastCameraHeight=renderedGroundHeight(x,z);return lastCameraHeight;
   }
   return {group,bridge,ridges,stats,cameraGroundHeight,
     update(time){if(disposed||!waterGeometry||!Number.isFinite(time))return;const p=waterGeometry.attributes.position;for(const {index,x,localZ} of riverEdges)p.setY(index,-1.24+.023*Math.sin(x*.64+time*.9)+.017*Math.sin(localZ*1.7+x*.17-time*.55));p.needsUpdate=true;},

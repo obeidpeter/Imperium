@@ -28,12 +28,18 @@ export function missileRange(world,actor,missile,point){
 const recovering=(world,actor,id)=>(actor.cooldowns?.[id]??0)>world.tick;
 // A comrade who can be lifted: down, or a wounded man who cannot walk.
 export const liftable=o=>o.alive&&!o.carriedBy&&(o.down||o.escort?.wounded&&!o.escort.escorted);
+export const campCareAbility=id=>id==='bind_wounds'||id==='carry';
 
 export function validate(world,actorId,abilityId,target={}){
   const ability=ABILITIES[abilityId],actor=actorById(world,actorId);
   if(!ability)return 'NO_TARGET';
   if(world.status!=='active')return 'BATTLE_OVER';
   if(!actor?.alive||actor.down)return 'ACTOR_DOWN';
+  // Safe staging areas reject combat techniques and every forced
+  // person target before costs or RNG are used. Even a self/ally technique
+  // must not reach applyCommand's neutral-target provocation through a
+  // forged target payload (for example Brace with forced: true).
+  if(world.kind==='camp'&&world.peaceful===true&&(!campCareAbility(abilityId)||target.forced&&target.actorId))return 'PEACEFUL_CAMP';
   if(staggered(world,actor))return 'STAGGERED';
   if(actor.abilities&&!actor.abilities.includes(abilityId))return 'NOT_LEARNT';
   const other=target.actorId?actorById(world,target.actorId):null;

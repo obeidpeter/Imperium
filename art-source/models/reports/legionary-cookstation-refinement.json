@@ -1,0 +1,21 @@
+{
+  "tool": "scripts/assets/refine-cookstation.py",
+  "authorship": "Original local Blender iron support frame added to the generated model",
+  "reason": "The generated cauldron chain had no supporting overhead structure",
+  "input": {
+    "path": "art-source/models/raw/legionary-cookstation-processed-before-support.glb",
+    "sha256": "8cf3595f4153ca37e69d5420bdc1ba46dbd33343597ee21de0bcf920f742ff84"
+  },
+  "originalProcessingReport": "art-source/models/reports/legionary-cookstation-pre-refinement.json",
+  "addedTriangles": 84,
+  "chainTopBeforeBlender": [
+    -0.4296596646308899,
+    0.12236088514328003,
+    1.2999999523162842
+  ],
+  "beamBottomBeforeNormalization": 1.2849999523162843,
+  "chainOverlapsCrossbeam": true,
+  "frameGrounded": true,
+  "normalizationScale": 0.9629630309891193,
+  "paidCalls": 0
+}

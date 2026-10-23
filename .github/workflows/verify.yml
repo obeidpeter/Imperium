@@ -7,7 +7,9 @@
 # (scripts/browser-smoke.mjs, then the real-time checks of
 # scripts/realtime-polish-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
-# the usability and save-protection checks (scripts/usability-smoke.mjs),
+# the usability and save-protection checks (scripts/usability-smoke.mjs), followed
+# by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
+# and the twelve-hub regional asset, service and cache checks,
 # and the 3D stage benchmark (scripts/benchmark-stage.mjs), which fails on a
 # shader compiled in the first frame or in play, and whose report is uploaded.
 # Playwright is installed for those jobs only and is not a project dependency.
@@ -68,8 +70,9 @@ jobs:
   usability:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
-    # Usually about 2 minutes; room for the same slow runner as the smoke test.
-    timeout-minutes: 30
+    # Includes sequential twelve-hub loading/camera/resource checks. Leave room
+    # for software rendering on the same slow runners as the broad smoke job.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -80,11 +83,27 @@ jobs:
       - run: npm run build
       - name: Usability, navigation and save protection
         run: npm run smoke:usability
+      - name: Chapter V courtyard and fortress pilot acceptance
+        run: npm run smoke:ch5-pilot -- --river-gate
+      - name: Twelve regional hubs, direct services and resource retirement
+        run: npm run smoke:world
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: usability-smoke
           path: tests/visual-results/usability/
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: chapter-v-pilot
+          path: tests/visual-results/ch5-pilot/
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: regional-world-smoke
+          path: tests/visual-results/regional-world/
           retention-days: 14
 
   benchmark:

@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/legionary-cookstation.glb",
+  "output": "assets/models/world/legionary-cookstation.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 306124,
+    "gzipBytes": 220374,
+    "sha256": "e4f6db2fcc552c5f900b758ef1c50f9a098b3c67eff7a9fcb2ba63c4b83b1a03"
+  },
+  "after": {
+    "bytes": 281264,
+    "gzipBytes": 267926,
+    "sha256": "c45b0ac506ad515d373164f61691b6b1b4d686997e3e25e684444a44d2ec6078"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5964,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 5994
+      },
+      "bytes": 13684,
+      "psnr": 45.018
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 34002
+      },
+      "bytes": 57425,
+      "psnr": 34.286
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22766
+      },
+      "bytes": 37670,
+      "psnr": 32.475
+    }
+  ]
+}

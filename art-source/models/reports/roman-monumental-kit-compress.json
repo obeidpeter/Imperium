@@ -1,0 +1,137 @@
+{
+  "input": "art-source/models/processed/roman-monumental-kit.glb",
+  "output": "assets/models/scenery/roman-monumental-kit.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 1587760,
+    "gzipBytes": 1029061,
+    "sha256": "9c8e512e633b2680d70e5af4277aa180d1a1f66271b7c6631442360aabbe1a9c"
+  },
+  "after": {
+    "bytes": 505580,
+    "gzipBytes": 269049,
+    "sha256": "fcbf58a9c48900b3a8ba63656cea4835035ef96482fb51c215609a675bcaa0d8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 9528,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 185312
+      },
+      "bytes": 28795,
+      "psnr": 39.157
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 49342
+      },
+      "bytes": 5863,
+      "psnr": 55.02
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 170863
+      },
+      "bytes": 24190,
+      "psnr": 42.554
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 50326
+      },
+      "bytes": 6029,
+      "psnr": 55.165
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 184478
+      },
+      "bytes": 31874,
+      "psnr": 41.615
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 49710
+      },
+      "bytes": 5861,
+      "psnr": 54.9
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 171076
+      },
+      "bytes": 23947,
+      "psnr": 43.767
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 48718
+      },
+      "bytes": 6038,
+      "psnr": 55.608
+    }
+  ]
+}

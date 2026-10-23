@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/ch5-siege-hoist.glb",
+  "output": "assets/models/chapters/05/ch5-siege-hoist.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 238184,
+    "gzipBytes": 171743,
+    "sha256": "9585cf6c42d5cdcd7d3403e227f5170c24e14302d6c5ec71be6f34d87beb6046"
+  },
+  "after": {
+    "bytes": 240768,
+    "gzipBytes": 232644,
+    "sha256": "92b651daf7e0c98af17401ce68d9fc599d7334be36006cfd3fd166e84c9facc8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9164
+      },
+      "bytes": 18619,
+      "psnr": 42.587
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25054
+      },
+      "bytes": 49754,
+      "psnr": 36.89
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 17672
+      },
+      "bytes": 36872,
+      "psnr": 36.342
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "signal-brazier",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    4,
+    6
+  ],
+  "use": "A sturdy ancient Roman signal brazier",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A sturdy ancient Roman signal brazier: a broad shallow dark iron fire bowl supported by three thick splayed legs with a circular brace, containing charred split logs and dull grey ash. Hammered iron, soot and rust, practical heavy silhouette. No flame, glow or smoke, no ornament, no ground slab. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 1.5,
+    "minHeight": 1.4249999999999998,
+    "maxHeight": 1.5750000000000002
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "4ad6c430-4b19-427c-9948-f3f03b84b551",
+    "requestedAt": "2026-10-23T17:39:29.644Z",
+    "balanceBefore": 3900,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A sturdy ancient Roman signal brazier: a broad shallow dark iron fire bowl supported by three thick splayed legs with a circular brace, containing charred split logs and dull grey ash. Hammered iron, soot and rust, practical heavy silhouette. No flame, glow or smoke, no ornament, no ground slab. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:42:01.123Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/signal-brazier.glb",
+    "rawBytes": 45789456,
+    "rawSha256": "763476e257a4c1e6a336a174700bfe96335cff382fa64a58f0dd00cb217289e7",
+    "tripoInput": {
+      "prompt": "A sturdy ancient Roman signal brazier: a broad shallow dark iron fire bowl supported by three thick splayed legs with a circular brace, containing charred split logs and dull grey ash. Hammered iron, soot and rust, practical heavy silhouette. No flame, glow or smoke, no ornament, no ground slab. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/signal-brazier-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "27954c41bfccbb117dd8af65c0d5f43851075751def8917c69386f96bba48cae",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

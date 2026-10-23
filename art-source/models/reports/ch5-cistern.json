@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/ch5-cistern.glb",
+    "bytes": 45060032,
+    "sha256": "ba277c0fc421342031e4b26109411e4abc7c17903cddb78b9cc830edaf7ebb44",
+    "triangles": 1446558
+  },
+  "output": {
+    "path": "art-source/models/processed/ch5-cistern.glb",
+    "bytes": 201212,
+    "sha256": "ad47f526daa8f5f4f2b766b67d2f0d89217d4360f4f4140a552a6291e0aa705c",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.55,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.7507361646995137,
+  "sizeMetres": {
+    "width": 1.7529,
+    "height": 1.55,
+    "depth": 1.705
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_2bdcf87b-03d7-49f6-bb1d-c020d541f6be",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_2bdcf87b-03d7-49f6-bb1d-c020d541f6be",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_2bdcf87b-03d7-49f6-bb1d-c020d541f6be",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "date": "2026-10-23T19:07:04.557Z",
+  "scope": "Approved Chapter V pilot extended across the remaining eleven chapters",
+  "production": {
+    "revision": "bec5ebc44939",
+    "files": 435,
+    "initialGzipBytes": 807033,
+    "chapterOne3DGzipBytes": 7676373,
+    "completeGzipBytes": 26597932,
+    "largestChapterGzipBytes": 12586495
+  },
+  "automated": {
+    "platform": "Windows",
+    "node": "v24.19.0",
+    "unitTests": {
+      "tests": 1185,
+      "passed": 1185,
+      "failed": 0
+    },
+    "browser": "155.0.8059.82",
+    "rendering": "Chromium with SwiftShader software WebGL; not a physical-device frame-rate measurement",
+    "browserSuites": [
+      {
+        "name": "chromium-smoke",
+        "passed": true,
+        "completed": "2026-10-23T18:52:49.738Z",
+        "localLog": "chromium-smoke.log"
+      },
+      {
+        "name": "realtime-polish",
+        "passed": true,
+        "completed": "2026-10-23T18:53:47.616Z",
+        "localLog": "realtime-polish.log"
+      },
+      {
+        "name": "usability",
+        "passed": true,
+        "completed": "2026-10-23T18:55:12.591Z",
+        "localLog": "usability.log"
+      },
+      {
+        "name": "chapter-v-pilot",
+        "passed": true,
+        "completed": "2026-10-23T18:57:06.913Z",
+        "localLog": "chapter-v-pilot.log"
+      },
+      {
+        "name": "twelve-chapter-benchmark",
+        "passed": true,
+        "completed": "2026-10-23T19:01:33.770Z",
+        "localLog": "twelve-chapter-benchmark.log"
+      },
+      {
+        "name": "stage-benchmark",
+        "passed": true,
+        "completed": "2026-10-23T19:03:21.428Z",
+        "localLog": "stage-benchmark.log"
+      }
+    ],
+    "realtimePolishChecks": 20,
+    "usabilityChecks": 9,
+    "pilotChecks": 9,
+    "chapterBenchmark": {
+      "checks": 5,
+      "scenes": 13,
+      "errors": 0
+    },
+    "stageBenchmark": {
+      "runs": 4,
+      "firstFrameProgramCompiles": 0,
+      "programsCompiledAfterShown": 0,
+      "errors": 0
+    },
+    "fullWorldAcceptance": {
+      "build": "0884476d18a4",
+      "checks": 21,
+      "captures": 18,
+      "residencySnapshots": 16,
+      "errors": 0,
+      "method": "Production Chromium, one context, UI Restore of legal-command campaign saves, visible cameras/settings/services, read-only world and render diagnostics",
+      "scope": "All twelve hubs, three cameras, narrow services, quality transitions, residency and unavailable-model fallback",
+      "laterChanges": "Final build additionally fixes legacy soldier reads, camp refresh after soldier changes, and temporary critical-hit camera framing; covered by focused regressions, full final Node suite, broad Chromium and final Windows review."
+    },
+    "legalCampaigns": {
+      "base": 1,
+      "expanded": 4,
+      "command": 6,
+      "production": 4,
+      "chapters": 12,
+      "encounters": 25
+    },
+    "assetAndOfflineVerification": true,
+    "characterRuntimeAndProductionAudits": true
+  },
+  "manualWindows": {
+    "date": "2026-10-23T19:06:59.882Z",
+    "build": "bec5ebc44939",
+    "passed": true,
+    "platform": "Windows, Codex in-app Chromium",
+    "url": "http://127.0.0.1:55587/?dev",
+    "chapter": 8,
+    "scope": "Manual UI spot-check of the legally earned Chapter VIII camp; not a second full campaign playthrough",
+    "checks": [
+      "Restore a legally earned checkpoint through Validate and Confirm",
+      "Enable real-time controls through Settings",
+      "Balanced 3D: 14 regional scenery placements and 9 generated character bodies loaded",
+      "Horizon, Follow and Overview cameras show the camp",
+      "Ground click announces a 6 m walk and visibly moves the soldier",
+      "Supply orderly conversation opens the quartermaster without buying or drawing pay",
+      "Back returns to Menu; Resume returns to the camp",
+      "Leave the preview paused in Horizon"
+    ],
+    "device": {
+      "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "vendor": "Google Inc. (Intel)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "identity": "unmasked",
+      "software": false,
+      "maxTextureSize": 16384,
+      "maxRenderbufferSize": 16384
+    },
+    "quality": "balanced",
+    "sceneryModels": 14,
+    "generatedBodies": 9,
+    "firstFramePrograms": 1,
+    "console": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLProgram: Program Info Log: (90,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value\n(90,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value",
+        "timestamp": "2026-10-23T19:04:51.260Z",
+        "url": "http://127.0.0.1:55587/vendor/three/three.core.js"
+      }
+    ],
+    "screenshot": "imperium-chapter-viii-windows.png",
+    "limitations": [
+      "One first-frame program compile was reported in this Intel camp session; the four automated stage benchmark runs separately reported zero.",
+      "Intel Direct3D logged one nonfatal gradient-in-loop shader warning; no page errors or visible failure observed.",
+      "No physical-phone, audio-listening or first-time-player assessment; no general frame-rate certification."
+    ]
+  },
+  "art": {
+    "regionalBlenderKits": 5,
+    "regionalComponents": 60,
+    "regionalKitTriangles": 34592,
+    "regionalKitRuntimeBytes": 2024380,
+    "selectedTripoProps": 16,
+    "tripoPropRuntimeBytes": 4294648
+  },
+  "tripo": {
+    "approvedAdditionalCredits": 600,
+    "spentAdditionalCredits": 340,
+    "unusedAdditionalCredits": 260,
+    "reservedCredits": 0,
+    "successfulTasks": 17,
+    "selectedProps": 16,
+    "endingBalance": 3760,
+    "endingFrozen": 0
+  },
+  "limitations": [
+    "No physical-phone or first-time-player test; owner will arrange these later.",
+    "No frame-rate certification from software-rendered checks.",
+    "The optional character handoff audit reports stale offline source exports; runtime character audits pass. Re-export before a future character-art handoff.",
+    "This snapshot records local working-tree validation before publication; subsequent GitHub CI results belong to the pull request. No deployment performed."
+  ],
+  "localEvidence": "work/regional-world-review (logs, captures, reports and legally earned checkpoints retained outside the repository)"
+}

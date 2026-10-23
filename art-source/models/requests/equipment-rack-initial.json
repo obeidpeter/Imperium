@@ -1,0 +1,66 @@
+{
+  "id": "equipment-rack",
+  "status": "Not selected: full-face helmet did not fit the Roman equipment direction",
+  "chapters": [
+    1,
+    4,
+    7
+  ],
+  "use": "A practical Roman military equipment maintenance rack",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A practical Roman military equipment maintenance rack: two sturdy timber uprights with a crossbeam, two worn oval red painted wooden shields leaning against the lower rail, a bronze helmet on the top shelf and coiled leather straps. Broad simple silhouette; shields clearly separate, upright poles no taller than the frame. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 2,
+    "minHeight": 1.9,
+    "maxHeight": 2.1
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "ad972738-b9c5-4aba-ab35-7251396630d0",
+    "requestedAt": "2026-10-23T17:28:50.192Z",
+    "balanceBefore": 4100,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A practical Roman military equipment maintenance rack: two sturdy timber uprights with a crossbeam, two worn oval red painted wooden shields leaning against the lower rail, a bronze helmet on the top shelf and coiled leather straps. Broad simple silhouette; shields clearly separate, upright poles no taller than the frame. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:30:46.098Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/equipment-rack-initial.glb",
+    "rawBytes": 46578624,
+    "rawSha256": "f86fa2ad97a89121e4927e181ced0fae2752f8a9aa50e19f047e9178c05209dd",
+    "tripoInput": {
+      "prompt": "A practical Roman military equipment maintenance rack: two sturdy timber uprights with a crossbeam, two worn oval red painted wooden shields leaning against the lower rail, a bronze helmet on the top shelf and coiled leather straps. Broad simple silhouette; shields clearly separate, upright poles no taller than the frame. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/equipment-rack-initial-tripo-render.webp"
+  }
+}

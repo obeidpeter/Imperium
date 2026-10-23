@@ -29,6 +29,7 @@ import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import {playEncounter} from './autoplay.mjs';
 import {tpAuditTotal} from '../src/core/tp-audit.js';
+import {sceneryPlacements} from '../src/showcase/scenery-models.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
@@ -171,9 +172,13 @@ async function expandedFieldReadouts(){
 }
 
 async function fieldApproach(){
+  const code=approachCampCode(),expected=Game.decodeSave(code);
+  assert.ok(Game.chooseFieldApproach(expected,'breach').ok);assert.ok(Game.startEncounter(expected).ok);
+  const expectedScenery=sceneryPlacements(expected.encounter,{chapter:expected.chapter}).length;
+  assert.ok(expectedScenery>0,'The legal Chapter V field has authored scenery');
   const page=await open();await page.goto(base);
   await settingsCommand(page,'restore');
-  await page.fill('#restore-code',approachCampCode());await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('.camp-page');
   const card=id=>`[data-cmd="field-approach"][data-id="${id}"]`;
   assert.equal(await page.getAttribute(card('balanced'),'aria-pressed'),'true','Each camp starts from direct deployment');
@@ -182,7 +187,7 @@ async function fieldApproach(){
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
   assert.match((await text(page,'#command-doctrine')).replace(/\s+/g,' '),/Engineering approach · Open gates, repair bridges/,'The field intelligence names the approach');
   // The generated supply camp loads in the 3D view through the page's own policy and worker.
-  await page.waitForFunction(()=>document.querySelector('#battle-board')?.dataset.sceneryModels==='5',null,{timeout:300000,polling:500});
+  await page.waitForFunction(count=>document.querySelector('#battle-board')?.dataset.sceneryModels===String(count),expectedScenery,{timeout:300000,polling:500});
   // Generated character bodies replace the procedural figures in the same view.
   await page.waitForFunction(()=>Number(document.querySelector('#battle-board')?.dataset.generatedBodies)>0,null,{timeout:300000,polling:500});
   await view(page,'2d');await page.focus('#battle-board');
@@ -642,10 +647,22 @@ async function legacyChronicle(){
   await page.goto(base);await settingsCommand(page,'restore');
   await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
+  await page.waitForFunction(()=>window.__realtime?.world()?.campId==='ch5-camp',null,{timeout:30000})
+    .catch(()=>assert.fail('The legacy camp mounts behind its adoption panel without changing the saved soldier choice'));
+  const entry=await page.evaluate(()=>{const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');return {x:hero.x,z:hero.z};});
   const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
   await page.check('#modal input[name="recruit-path"][value="explorator"]');await (await revealControl(page,'#recruit-cloak')).selectOption('2');await page.click('#modal [data-cmd="adopt-soldier"]');
   await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
     .catch(()=>assert.fail('The soldier is adopted and shown'));
+  assert.ok(Game.soldierCommand(old,{kind:'adopt',path:'explorator',appearance:{cloak:2}}).ok);
+  const expectedHero=Game.createCampWorld(old).actors.find(actor=>actor.id==='hero');
+  await page.waitForFunction(expected=>{
+    const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');
+    return JSON.stringify(hero.attributes)===JSON.stringify(expected.attributes)&&JSON.stringify(hero.kit)===JSON.stringify(expected.kit);
+  },{attributes:expectedHero.attributes,kit:expectedHero.kit},{timeout:30000})
+    .catch(()=>assert.fail('The mounted camp immediately reflects the adopted Explorator attributes and issued kit'));
+  assert.deepEqual(await page.evaluate(()=>{const hero=window.__realtime.world().actors.find(actor=>actor.id==='hero');return {x:hero.x,z:hero.z};}),entry,
+    'Adopting training keeps the soldier at the same camp position');
   await page.context().close();
   // A battle begun on the 0.38 board.
   const turns=Game.decodeSave(battleCampCode('ch5-mine'));assert.ok(Game.startEncounter(turns,{}).ok);
@@ -658,7 +675,7 @@ async function legacyChronicle(){
   await second.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail('The battle restarts in real time'));
   assert.equal(await second.evaluate(()=>window.__realtime.world().encounterId),'ch5-mine');
   await second.context().close();
-  console.log('ok - legacy chronicle: a Chapter V camp saved before 0.40 asks once for its soldier (training and appearance) and grants Chapters I–IV’s training points; a battle in progress on the turn-based board restarts in real time from its checkpoint');
+  console.log('ok - legacy chronicle: a Chapter V camp mounts before adoption, grants Chapters I–IV’s training points and immediately refreshes the chosen training without moving the soldier; a turn-based battle restarts in real time from its checkpoint');
 }
 
 let failed=false;

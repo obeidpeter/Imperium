@@ -39,6 +39,16 @@ const ARROWS={move_up:[0,-1],move_down:[0,1],move_left:[-1,0],move_right:[1,0]};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 
 export const fieldDom=root=>({canvas:root.querySelector('canvas'),...Object.fromEntries([...root.querySelectorAll('[data-role]')].map(el=>[el.dataset.role,el]))});
+export function followRealtimeCamera(stage,actor,kind='field'){
+  if(!stage||!actor)return;
+  stage.selected=actor.id;stage.focusMode=true;stage.cameraView='follow';
+  // Keep the established real-time framing while testing the actual current
+  // position, rather than the encounter's initial snapshot, against scenery.
+  const pitch=kind==='chamber'?.98:.87,distance=kind==='chamber'?Math.min(Math.max(stage.orbit.distance,13),19):Math.min(Math.max(stage.orbit.distance,9),16);
+  if(stage.focusSelected)stage.focusSelected({position:stage.world(stageTile(actor.x,actor.z)),distance,preferredYaw:stage.orbit.yaw,preferredPitch:pitch});
+  else Object.assign(stage.orbit,{pitch,distance}); // The flat view has no 3D obstructions.
+  stage.wake();
+}
 // Who the stage draws: hidden enemies stay off it until they are seen.
 // What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
 const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',')+
@@ -615,9 +625,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function saveResume(reason){if(world.status==='active')callbacks.onSave?.(world,reason);}
   function follow(){
-    if(!stage)return;stage.selected=world.controlled;stage.focusMode=true;stage.cameraView='follow';
-    // A chamber is seen from higher and further back: the speaker, his reach and the benches around him.
-    Object.assign(stage.orbit,kind==='chamber'?{pitch:.98,distance:Math.min(Math.max(stage.orbit.distance,13),19)}:{pitch:.87,distance:Math.min(Math.max(stage.orbit.distance,9),16)});stage.wake();
+    followRealtimeCamera(stage,me(),kind);
   }
   // A chamber opens on the whole floor (F follows the speaker); a field follows the soldier.
   function firstView(){if(kind!=='chamber'){follow();return;}if(!stage)return;stage.selected=world.controlled;stage.home();stage.wake?.();}

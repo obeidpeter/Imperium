@@ -1,0 +1,67 @@
+{
+  "input": "art-source/models/processed/mooring-ropes.glb",
+  "output": "assets/models/world/mooring-ropes.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 228484,
+    "gzipBytes": 170239,
+    "sha256": "c6d3dbfd74b3251775fd8e80e294f92e3061b3f712244a4ab3f35b43a9413b8a"
+  },
+  "after": {
+    "bytes": 229596,
+    "gzipBytes": 222261,
+    "sha256": "1889c2552fb6bd00df95205955005999f0101d3ba3f117dcb2455f1d9d715aca"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3918,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14008
+      },
+      "bytes": 23027,
+      "psnr": 39.293
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 38166
+      },
+      "bytes": 52998,
+      "psnr": 32.625
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20002
+      },
+      "bytes": 38791,
+      "psnr": 39.26
+    }
+  ]
+}

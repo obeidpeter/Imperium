@@ -1,0 +1,77 @@
+{
+  "id": "caravan-trough",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "chapters": [
+    9
+  ],
+  "use": "A long low ancient caravan water trough carved from pale limestone. Thick rectangular sides with softly chipped corners, a dark shallow recessed interior, one rounded stone lip at the end. Sandy worn cream stone with ochre mineral staining and damp grey seams. No flowing water or surrounding paving, no modern tap or pipe. Roman eastern frontier utilitarian object, length approximately two metres.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A long low ancient caravan water trough carved from pale limestone. Thick rectangular sides with softly chipped corners, a dark shallow recessed interior, one rounded stone lip at the end. Sandy worn cream stone with ochre mineral staining and damp grey seams. No flowing water or surrounding paving, no modern tap or pipe. Roman eastern frontier utilitarian object, length approximately two metres. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 0.8,
+    "minHeight": 0.76,
+    "maxHeight": 0.8400000000000001
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "c1c822a3-4c30-4c40-81ef-6df90b5677a1",
+    "requestedAt": "2026-10-23T17:37:21.591Z",
+    "balanceBefore": 3940,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A long low ancient caravan water trough carved from pale limestone. Thick rectangular sides with softly chipped corners, a dark shallow recessed interior, one rounded stone lip at the end. Sandy worn cream stone with ochre mineral staining and damp grey seams. No flowing water or surrounding paving, no modern tap or pipe. Roman eastern frontier utilitarian object, length approximately two metres. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:39:24.807Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/caravan-trough.glb",
+    "rawBytes": 43923108,
+    "rawSha256": "4906cd23207303c6b598f32add683f861c05d6950744ebe99834c35331dbbf68",
+    "tripoInput": {
+      "prompt": "A long low ancient caravan water trough carved from pale limestone. Thick rectangular sides with softly chipped corners, a dark shallow recessed interior, one rounded stone lip at the end. Sandy worn cream stone with ochre mineral staining and damp grey seams. No flowing water or surrounding paving, no modern tap or pipe. Roman eastern frontier utilitarian object, length approximately two metres. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/caravan-trough-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Compressed runtime model rendered through the game loader, with a 1.8 m scale reference",
+    "evidence": "Local work/regional-world-review/props-contact-sheet.png (not a shipped asset)",
+    "notes": "Reviewed silhouette, grounding, material readability and physical support. Production scene review is recorded separately.",
+    "runtimeSha256": "af961e0ff4df163d413e76e7f60ba62bd1d59708dc7e9363bde065e672383ffe",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  }
+}

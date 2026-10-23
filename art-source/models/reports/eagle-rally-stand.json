@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/eagle-rally-stand.glb",
+    "bytes": 42993964,
+    "sha256": "de519e9ebbe9a9f67143f431e158815881edc2ef2fd8a97b67ce65532eb5c898",
+    "triangles": 1396514
+  },
+  "output": {
+    "path": "art-source/models/processed/eagle-rally-stand.glb",
+    "bytes": 269376,
+    "sha256": "7eea9904e96b4b4ced4813f75a48c59bfdaf90414a3150ec5a592b8f9e368c8d",
+    "triangles": 6369
+  },
+  "settings": {
+    "triangles": 6500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.598667148899062,
+  "sizeMetres": {
+    "width": 0.8672,
+    "height": 2.6,
+    "depth": 1.0228
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e3c4f1c7-f7a9-455a-8aba-11b7b38a451d",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

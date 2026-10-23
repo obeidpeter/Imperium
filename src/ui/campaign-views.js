@@ -12,7 +12,7 @@ import {esc,roman,actionNames,companyPanel} from './view-helpers.js';
 import {skirmishControls} from '../core/controls-model.js';
 import {soldierCampCard} from './soldier-views.js';
 import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-view.js';
-import {campFor,PLACE_NAMES,PLACE_HINTS,CAMP_PLACES} from '../data/camps.js';
+import {campFor,campPlaceName,campPlaceHint,campPersonPresent,CAMP_PLACES} from '../data/camps.js';
 
 const campDisclosure=(id,label,body,{open=false}={})=>body?`<details id="${id}" class="camp-disclosure"${open?' open':''}><summary>${esc(label)}</summary>${body}</details>`:'';
 
@@ -133,19 +133,22 @@ function camp(){
 function realtimeCamp(){
   const {state}=context(),ch=Game.getChapter(state),next=ch.encounters[state.encounterIndex],c=campFor(state.chapter);
   const decided=state.decisions[ch.decision.id],visited=new Set(Game.campVisited(state));
-  const present=p=>(!p.requires||state.decisions?.[p.requires[0]]===p.requires[1])&&!(p.absentAfter&&state.decisions?.[p.absentAfter[0]]===p.absentAfter[1]);
-  const people=c.people.filter(present),talk=(tree,label)=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}">${esc(label)}</button>`;
-  return `${header()}<main id="main" class="frame camp-page realtime-camp" data-key="rt-camp:${state.chapter}">${chapterHeading()}${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
+  const people=c.people.filter(p=>campPersonPresent(state,p)),talk=(tree,label)=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}">${esc(label)}</button>`;
+  const placeName=id=>campPlaceName(state.chapter,id),placeHint=id=>campPlaceHint(state.chapter,id),presentation=Game.campPresentationFor(state);
+  return `${header()}<main id="main" class="frame camp-page realtime-camp world-courtyard${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">${chapterHeading()}${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
     <div class="rt-camp-grid">
       <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div>
-        <p class="rt-camp-note">Click a person to talk or a place to use it. People and places are also listed beside the scene.</p></div>
+        <p class="rt-camp-note">Click a person to talk. All services are also available beside the scene.</p></div>
       <aside class="camp-side camp-sidebar">
         <section class="sidebar-card"><p class="eyebrow">IN CAMP</p><h3>${esc(c.title)}</h3>
+          ${presentation?`<p class="briefing" data-camp-consequence>${esc(presentation.summary)}</p>`:''}
           ${talk('table',decided?'Review the chapter decision':'Make the chapter decision')}${preparations()}
-          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>`<li><span><strong>${esc(p.name)}</strong> <small>${esc(PLACE_NAMES[p.place])}</small></span>${talk(p.talk,'Talk')}</li>`).join('')}</ul>`)}
-          ${campDisclosure('camp-places','Travel to a place',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(PLACE_NAMES[id])} <small>${esc(PLACE_HINTS[id])}${visited.has(id)||id==='gate'?'':' · Walk there once to unlock travel'}</small></span>`+
+          ${campPreparation(state)+campDisclosure('camp-operation','Operation & veteran training',operationPlanning(state)+veteranAcademy(state))}
+          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>`<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(p.place))}</small></span>${talk(p.talk,'Talk')}</li>`).join('')}</ul>`)}
+          ${campDisclosure('camp-places','Travel to a place',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(placeName(id))} <small>${esc(placeHint(id))}${visited.has(id)||id==='gate'?'':' · Walk there once to unlock travel'}</small></span>`+
             `<button class="text-link" data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>Go</button></li>`).join('')}</ul>`)}</section>
         ${soldierCampCard(state)}${practicePanel(state)}
+        ${campDisclosure('camp-story','Chapter story & advice',story()+warCouncilPanel(state))+campDisclosure('camp-records','Local report & campaign records',talk(c.reportTree,c.chapter===5?'Read the courtyard report':'Read the local report')+commandRecord(state)+relationshipLedger(state,{compact:true}))+`<button class="text-link full" data-cmd="ledger">Promises & alliances →</button>`}
       </aside>
     </div></main>${footer()}`;
 }

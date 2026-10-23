@@ -31,7 +31,16 @@ const plans={
   // The walkable camps (0.40): a tent street inside the palisade, the gate to the south.
   'ch1-camp':['legion-camp','The legionary base at Novae','south','north','camp',.62,.66],
   'ch2-camp':['march-camp','The march camp on the causeway','south','north','camp',.62,.66],
-  'ch3-camp':['station-camp','The camp below the road station','south','north','camp',.62,.66]
+  'ch3-camp':['station-camp','The camp below the road station','south','north','camp',.62,.66],
+  'ch4-camp':['ford-fort-courtyard','The limestone fort above the ford','south','north','camp',.32,.66],
+  'ch5-camp':['euphrates-courtyard','The fortress engineering and relief courtyard','south','north','camp',.32,.66],
+  'ch6-camp':['retreat-water-court','The shaded water court on the retreat road','south','north','camp',.32,.66],
+  'ch7-camp':['italian-command-street','The command tents and Italian supply street','south','north','camp',.32,.66],
+  'ch8-camp':['danube-landing-court','The household staging court above the landing','south','north','camp',.32,.66],
+  'ch9-camp':['eastern-portico-court','The shaded portico outside the eastern city','south','north','camp',.32,.66],
+  'ch10-camp':['provincial-market-court','The provincial grain and public service court','south','north','camp',.32,.66],
+  'ch11-camp':['roman-archive-court','The Roman archive and petitioners courtyard','south','north','camp',.32,.66],
+  'ch12-camp':['roman-command-court','The command courtyard beneath the Roman walls','south','north','camp',.32,.66]
 };
 export function getEncounterStaging(encounter={}, {chapter=1,civic=encounter.kind==='contest',training=false}={}){
   const record=plans[encounter.id]??(training?plans['ch1-training']:plans[`ch${chapter}-${civic?'council':'road'}`])??[civic?'audience-court':'field-approach',civic?'The audience court':'The field approach',civic?'south':'west',civic?'north':'east',civic?'council':'checkpoint',.65,.68];

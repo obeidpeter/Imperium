@@ -1,0 +1,85 @@
+{
+  "id": "equipment-rack",
+  "status": "Regional rollout: final compressed asset reviewed and twelve-hub production acceptance passed",
+  "review": {
+    "date": "2026-10-23",
+    "scope": "Four cardinal views of the final compressed runtime model, with a 1.8 m scale reference",
+    "notes": "Helmet-free rack with two red oval shield fronts and bronze bosses. Useful front is local +X; runtime placement faces the board or the quartermaster service approach. This asset inspection does not certify production-camera readability or device performance.",
+    "localForward": [
+      1,
+      0,
+      0
+    ],
+    "runtimeSha256": "f693a1b33f385afe56c3f838f59fcd72c8fe96da1a1ff15d4ca558a3c2480ad4",
+    "evidence": "Local work/regional-world-review/orientation-contact-sheet.png (not a shipped asset)",
+    "production": {
+      "build": "0884476d18a4",
+      "browser": "155.0.8059.82",
+      "scope": "All twelve hubs: asset loading, cameras, reviewed captures, resource retirement and unavailable-model fallback",
+      "evidence": "Local work/regional-world-review/regional-smoke-final/report.json (not a shipped asset)"
+    }
+  },
+  "chapters": [
+    1,
+    4,
+    7
+  ],
+  "use": "A practical Roman military equipment maintenance rack",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A freestanding ancient Roman military equipment storage rack made of dark weathered oak. Exactly two plain oval wooden shields painted faded oxblood red lean against the lower horizontal rail, each with a small plain round bronze central boss. Two looped leather belts hang from the middle crossbar. The top rail is bare and empty. Thick square timber feet sit level on the ground. Clear simple open frame, practical hand-made construction, grounded painterly-realistic PBR wood grain and worn red paint. Compact isolated game prop, complete geometry from every side. No helmet, armour, head, people, weapons, inscriptions, logos, decorative platform or surrounding environment.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 2,
+    "minHeight": 1.9,
+    "maxHeight": 2.1
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "regional-world-rollout",
+    "creditCeiling": 600,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "revision": "One paid refinement after visual review; original task retained in equipment-rack-initial.json",
+    "taskId": "9a732ae9-85b9-4fde-98fa-084823134827",
+    "requestedAt": "2026-10-23T17:49:09.093Z",
+    "balanceBefore": 3780,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A freestanding ancient Roman military equipment storage rack made of dark weathered oak. Exactly two plain oval wooden shields painted faded oxblood red lean against the lower horizontal rail, each with a small plain round bronze central boss. Two looped leather belts hang from the middle crossbar. The top rail is bare and empty. Thick square timber feet sit level on the ground. Clear simple open frame, practical hand-made construction, grounded painterly-realistic PBR wood grain and worn red paint. Compact isolated game prop, complete geometry from every side. No helmet, armour, head, people, weapons, inscriptions, logos, decorative platform or surrounding environment.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-23T17:51:21.610Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/equipment-rack.glb",
+    "rawBytes": 45408116,
+    "rawSha256": "587e997ed250582c5cdc9e52cd8392920ccf3558959164eb75ded63aa161fe35",
+    "tripoInput": {
+      "prompt": "A freestanding ancient Roman military equipment storage rack made of dark weathered oak. Exactly two plain oval wooden shields painted faded oxblood red lean against the lower horizontal rail, each with a small plain round bronze central boss. Two looped leather belts hang from the middle crossbar. The top rail is bare and empty. Thick square timber feet sit level on the ground. Clear simple open frame, practical hand-made construction, grounded painterly-realistic PBR wood grain and worn red paint. Compact isolated game prop, complete geometry from every side. No helmet, armour, head, people, weapons, inscriptions, logos, decorative platform or surrounding environment.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/equipment-rack-tripo-render.webp"
+  }
+}
