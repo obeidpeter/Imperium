@@ -552,7 +552,7 @@ async function showSoldierPreview(){
     const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
     if(generation!==soldierPreviewGeneration||!modal.open||!canvas.isConnected)return;
     const recruit=!!modal.querySelector('[data-appearance]');
-    const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:recruit?createSoldier(recruitChoice()):state.soldier,name:recruit?'Your recruit':state.name,chapter:recruit?1:state.chapter,rank:recruit?'Tiro':state.rank,uncovered:recruit,
+    const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:recruit?createSoldier(recruitChoice()):state.soldier,name:recruit?'Your recruit':state.name,chapter:recruit?1:state.chapter,rank:recruit?'Tiro':state.rank,uncovered:recruit,cloaked:recruit,
       reducedMotion:settings.reducedMotion,onError:text=>{if(status)status.textContent=text;}});
     for(const button of modal.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
     const reset=modal.querySelector('[data-preview-reset]');if(reset)reset.onclick=()=>preview.reset();

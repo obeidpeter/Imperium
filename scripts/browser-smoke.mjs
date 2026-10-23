@@ -643,7 +643,7 @@ async function legacyChronicle(){
   await page.fill('#restore-code',Game.encodeSave(old));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   await page.waitForSelector('#modal[open] [data-cmd="adopt-soldier"]',{timeout:30000}).catch(()=>assert.fail('An old chronicle is asked for its soldier'));
   const grant=tpAuditTotal(4,'explorator');assert.match(await text(page,'#modal'),new RegExp(`${grant} training points for the service already done`));
-  await page.check('#modal input[name="recruit-path"][value="explorator"]');await (await revealControl(page,'#recruit-beard')).selectOption('2');await page.click('#modal [data-cmd="adopt-soldier"]');
+  await page.check('#modal input[name="recruit-path"][value="explorator"]');await (await revealControl(page,'#recruit-cloak')).selectOption('2');await page.click('#modal [data-cmd="adopt-soldier"]');
   await page.waitForFunction(()=>/Explorator/.test(document.querySelector('#modal[open]')?.textContent??''),null,{timeout:30000})
     .catch(()=>assert.fail('The soldier is adopted and shown'));
   await page.context().close();

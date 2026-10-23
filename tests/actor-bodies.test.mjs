@@ -13,6 +13,11 @@ import {ceremonyScene} from '../src/showcase/ceremony.js';
 import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies} from '../src/ui/actor-body-catalog.js';
 import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES} from '../src/showcase/actor-bodies.js';
 import {createActor} from '../src/showcase/actors.js';
+import {helmetBowlGeometry} from '../src/showcase/actor-helmet.js';
+import {stageUnit,squadUnit} from '../src/showcase/live-figures.js';
+import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
+import {createCampWorld} from '../src/core/realtime/camp-world.js';
+import {createEncounterWorld} from '../src/core/realtime/campaign-encounter.js';
 import {createSkinnedCrowd} from '../src/showcase/formation.js';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
@@ -32,9 +37,20 @@ const library=createActorBodyLibrary(parse);
 const legionary={id:'veteran-naso',veteranId:'naso',name:'Naso',side:'ally',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body is worn in exactly the chapters that list it, from New Game through both ceremonies', () => {
+test('every generated body is worn in exactly the chapters that list it, from New Game through both ceremonies, in turns and in real time', () => {
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
-  const collect=s=>{const e=G.getChapter(s).encounters[s.encounterIndex];if(!e||seen.has(`${s.chapter}:${e.id}`))return;const t=clone(s);if(!G.startEncounter(t).ok)return;seen.add(`${s.chapter}:${e.id}`);for(const u of t.encounter.units)add(actorBodyId(actorKit(u,{chapter:t.chapter,rank:t.rank})),t.chapter);};
+  const collect=s=>{
+    const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
+    const look=(unit,state=s)=>add(actorBodyId(actorKit(unit,{chapter:state.chapter,rank:state.rank})),state.chapter);
+    // The real-time camp and field draw the soldier and his company in their own kit.
+    const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
+    world(createCampWorld(clone(s)));
+    // The kit panel shows him in what he wears, and in the mail he may put on in any chapter.
+    const preview=soldierPreviewUnit(s.soldier);look(preview);look({...preview,equipment:[...preview.equipment,'hamata']});
+    const t=clone(s);if(!e||!G.startEncounter(t).ok)return;
+    for(const u of t.encounter.units)look(u,t);
+    if(e.kind!=='contest')world(createEncounterWorld(t));
+  };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
   for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units)add(actorBodyId(actorKit(u,{chapter:scene.chapter,rank:scene.rank})),scene.chapter);}
   for(const [id,body]of Object.entries(ACTOR_BODIES))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
@@ -78,6 +94,50 @@ test('a figure wears its body once it loads: procedural body surfaces go, the ki
   for(const kit of ['sword','oval-shield','scabbard','command-cloak'])assert.ok(g.getObjectByName(kit),`${kit} stays`);
   a.update({detailDistance:8});assert.ok(near.visible&&!far.visible);a.update({detailDistance:40});assert.ok(!near.visible&&far.visible);
   a.dispose();
+});
+
+test('a soldier in his own kit wears the body closest to it: the recruit\'s tunic, then mail by rank, the bowman\'s for an archer', () => {
+  const hero=(equipment,chapter,rank)=>actorBodyId(actorKit({id:'hero',name:'Aurelius',side:'player',role:'infantry',trained:true,equipment,appearance:{hair:1,beard:2,tunic:2,cloak:3}},{chapter,rank}));
+  const tunic=['tunic','subarmalis','galea','bracae','caligae','spatha','training_shield'],mail=['tunic','hamata','galea','bracae','caligae','spatha','scutum'];
+  for(const chapter of [1,5,12])assert.equal(hero(tunic,chapter),'roman-recruit',`Unarmoured in chapter ${chapter}`);
+  assert.equal(hero(mail,2,'Miles'),'roman-legionary');assert.equal(hero(mail,3,'Optio'),'roman-officer','An optio wears the officer\'s mail');
+  assert.equal(hero(mail,5),'roman-officer');assert.equal(hero([...mail.filter(id=>id!=='hamata'),'squamata'],8),'roman-commander');
+  assert.equal(actorBodyId(actorKit({id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},{chapter:4})),'roman-archer');
+  assert.equal(hero(['tunic','bracae','caligae','bow','quiver'],4),'roman-recruit','The protagonist with a bow is still himself');
+});
+
+test('the recruit\'s body wears the soldier\'s own helmet or cap, fitted over its hair; armoured bodies wear their own', async () => {
+  const hero=equipment=>({id:'hero',name:'Aurelius',side:'player',role:'infantry',trained:true,equipment});
+  const pieces=g=>{const found={};g.traverse(o=>{if(o.isBone&&/-helmet$|arming-cap$/.test(o.name))found[o.name]=o;});return found;};
+  // Vertices the figure draws on a joint: its own procedural surfaces, not the body's.
+  const drawn=(g,bone)=>{let n=0;g.traverse(o=>{if(!o.isSkinnedMesh||o.userData.overview||o.userData.generatedBody)return;const i=o.skeleton.bones.indexOf(bone),j=o.geometry.attributes.skinIndex;if(i>=0)for(let k=0;k<j.count;k++)if(j.getX(k)===i)n++;});return n;};
+  const {headwear}=ACTOR_BODIES['roman-recruit'];
+  for(const [item,joint]of [['galea','ridge-helmet'],['conical_helmet','conical-helmet'],['segmented_helmet','segmented-helmet'],['arming_cap','equipped-arming-cap']]){
+    const a=createActor(hero(['tunic','bracae','caligae','spatha',item]),{chapter:2,bodyLibrary:library});
+    assert.equal(await a.ready,true);assert.equal(a.group.userData.actor.body,'roman-recruit',item);
+    const piece=pieces(a.group)[joint];assert.deepEqual(piece.position.toArray(),[...headwear.position],`${item} is moved to the body's head`);assert.deepEqual(piece.scale.toArray(),[...headwear.scale]);
+    assert.ok(drawn(a.group,piece)>50,`${item} is drawn`);a.dispose();
+  }
+  // Every head vertex above the rim lies inside the fitted bowl (actor-helmet.js), at both levels of detail.
+  const bowl=helmetBowlGeometry({detail:false}),bp=bowl.attributes.position,rings=new Map();
+  for(let i=0;i<bp.count;i++){const key=bp.getY(i).toFixed(6),ring=rings.get(key)??{y:bp.getY(i),x:0,z0:Infinity,z1:-Infinity};ring.x=Math.max(ring.x,Math.abs(bp.getX(i)));ring.z0=Math.min(ring.z0,bp.getZ(i));ring.z1=Math.max(ring.z1,bp.getZ(i));rings.set(key,ring);}
+  const levels=[...rings.values()].sort((a,b)=>a.y-b.y),inverse=new T.Matrix4().compose(new T.Vector3(...headwear.position),new T.Quaternion(),new T.Vector3(...headwear.scale)).invert();
+  const inside=p=>{const k=levels.findIndex(r=>r.y>=p.y);if(k<1)return false;const a=levels[k-1],b=levels[k],t=(p.y-a.y)/(b.y-a.y),mix=key=>a[key]+(b[key]-a[key])*t,x=mix('x'),z0=mix('z0'),z1=mix('z1');return (p.x/x)**2+((p.z-(z0+z1)/2)/((z1-z0)/2))**2<=1;};
+  await library.warm('roman-recruit');const master=library.body('roman-recruit');
+  for(const level of ['near','overview']){
+    const {geometry,bones}=master[level],head=bones.indexOf('head'),p=geometry.attributes.position,j=geometry.attributes.skinIndex,w=geometry.attributes.skinWeight,v=new T.Vector3();let above=0;
+    for(let i=0;i<p.count;i++){let weight=0;for(let k=0;k<4;k++)if(j.getComponent(i,k)===head)weight+=w.getComponent(i,k);if(weight<.5)continue;
+      v.fromBufferAttribute(p,i).sub(new T.Vector3(...BIND.head)).applyMatrix4(inverse);if(v.y<=levels[0].y)continue;above++;
+      assert.ok(inside(v),`${level}: head vertex ${i} shows through the helmet`);}
+    assert.ok(above>90,`${level}: the bowl covers the crown (${above} vertices)`);
+  }
+  bowl.dispose();
+  // An armoured body and the bowman's bring their own helmets: the figure's helmet and the cap under it go.
+  for(const [unit,id,joint]of [[hero(['tunic','hamata','galea','bracae','caligae','spatha','scutum']),'roman-legionary','ridge-helmet'],
+    [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'roman-archer','equipped-arming-cap']]){
+    const a=createActor(unit,{chapter:2,bodyLibrary:library});assert.equal(await a.ready,true);assert.equal(a.group.userData.actor.body,id);
+    const piece=pieces(a.group)[joint];assert.ok(!piece||drawn(a.group,piece)===0,`${id} wears its own, not the figure's ${joint}`);a.dispose();
+  }
 });
 
 test('the body follows the game clips: forearm vertices stay on the forearm through a strike', async () => {

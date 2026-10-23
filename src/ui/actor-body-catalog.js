@@ -8,15 +8,18 @@
 // crests, cloaks and standards stay the game's own. Civic figures keep their
 // procedural togas, whose trims name their bloc, and a figure without a fitting
 // body, or whose body fails to load, keeps its procedural look.
-const body=(fits,chapters)=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters)});
+// A bare-headed body keeps the figure's own helmet or cap, moved and scaled
+// from the procedural head (head-joint metres) to cover its head and hair.
+const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),scale:Object.freeze(scale)});
+const body=(fits,chapters,{headwear=null}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear)});
 export const ACTOR_BODIES=Object.freeze({
-  'roman-recruit':body([{faction:'Roman',role:'recruit'}],[1]),
+  'roman-recruit':body([{faction:'Roman',role:'recruit'}],[1,2,3,4,5,6,7,8,9,10,11,12],{headwear:{position:[-.018,.04,.048],scale:[.85,.9,1.04]}}),
   'roman-trainer':body([{faction:'Roman',role:'trainer'}],[1]),
   'roman-legionary':body([{faction:'Roman',role:'veteran'}],[1,2,3,4,5,6,7,8,9,10,12]),
-  'roman-archer':body([{faction:'Roman',role:'archer'}],[4,5,6,7,8,9,10,12]),
+  'roman-archer':body([{faction:'Roman',role:'archer'}],[3,4,5,6,7,8,9,10,12]),
   // The protagonist's command shows in his armour: a centurion's mail, then a commander's cuirass.
   'roman-officer':body([{faction:'Roman',role:'officer',command:false}],[4,5,6]),
-  'roman-commander':body([{faction:'Roman',role:'officer',command:true}],[7,8,9,10,12]),
+  'roman-commander':body([{faction:'Roman',role:'officer',command:true}],[7,8,9,10,11,12]),
   'gothic-warrior':body([{faction:'Gothic',role:'raider',armored:false}],[1,2,3,4,7,8,10]),
   'gothic-archer':body([{faction:'Gothic',role:'archer'}],[1,2,3,4,7,8,10]),
   'gothic-noble':body([{faction:'Gothic',role:'raider',armored:true},{faction:'Gothic',role:'cavalry'}],[4,7]),
@@ -26,20 +29,26 @@ export const ACTOR_BODIES=Object.freeze({
   'palmyrene-infantry':body([{faction:'Palmyrene',role:'raider'}],[9]),
   'palmyrene-archer':body([{faction:'Palmyrene',role:'archer'}],[9]),
   'palmyrene-cavalry':body([{faction:'Palmyrene',role:'cavalry'}],[9]),
-  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[2,3,4,6,8])
+  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,6,8])
 });
 export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 
 /** The generated body for a kit (actor-kit.js), or null to keep the procedural figure. */
 export function actorBodyId(kit={}){
   if(kit.civic)return null;
-  // The baked bodies cannot take off a helmet or change mail into scale.
-  // Exact player loadouts use the matching legionary body only when its baked
-  // surfaces fit; other combinations keep the existing articulated rig.
-  if(kit.appearance)return null;
+  // A soldier drawn in his own kit (the real-time views and the kit panel)
+  // wears the body closest to it: the protagonist the recruit's tunic until he
+  // wears armour, then the legionary's mail and, as his rank rises, the
+  // centurion's and the commander's; a bowman of his company the archer's. The
+  // game still draws his shield, weapons and cloak, and his helmet or cap over
+  // the recruit's bare head (an armoured body wears its own helmet). The body
+  // brings its own hair, face and tunic: the chosen ones show on the procedural
+  // figure only, where no body loads.
   if(kit.equipped){
-    if(kit.faction==='Roman'&&kit.armor==='mail'&&kit.helmet==='ridge'&&kit.trousers&&kit.boots)return 'roman-legionary';
-    return null;
+    if(kit.faction!=='Roman')return null;
+    if(kit.archer&&!kit.hero)return 'roman-archer';
+    if(!kit.armored)return 'roman-recruit';
+    return kit.officer?(kit.chapter>=7?'roman-commander':'roman-officer'):'roman-legionary';
   }
   const traits={...kit,armored:!!kit.armored,command:!!kit.officer&&kit.chapter>=7};
   for(const [id,{fits}]of Object.entries(ACTOR_BODIES))if(fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;

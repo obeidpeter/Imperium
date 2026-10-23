@@ -27,8 +27,8 @@ import {applyCharacterPresence,performanceTransition,applyPerformance} from './a
 import {updateActorExpressionMorphs} from './actor-expression-mesh.js';
 import {simplifyActorOverview} from './actor-overview.js';
 import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
-import {actorBodyId} from '../ui/actor-body-catalog.js';
-import {actorBody,warmActorBody,mountActorBody,BODY_REPLACES} from './actor-bodies.js';
+import {ACTOR_BODIES,actorBodyId} from '../ui/actor-body-catalog.js';
+import {actorBody,warmActorBody,mountActorBody,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -275,8 +275,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
     armorMaterial=mail;
     for(const side of [-1,1])strip(torso,leather,[[side*.10,.10,.142],[side*.13,.31,.155],[side*.15,.44,.102]],.019);
   }
+  // A bare-headed generated body wears the helmet or cap fitted to its own head.
+  const headwear=body?ACTOR_BODIES[bodyId]?.headwear:null,fitted=piece=>{if(headwear){piece.position.fromArray(headwear.position);piece.scale.fromArray(headwear.scale);}return piece;};
   if(kit.helmet){
-    const mail=armorMaterial??metal,helmetRoot=part(head,`${kit.helmet}-helmet`);
+    const mail=armorMaterial??metal,helmetRoot=fitted(part(head,`${kit.helmet}-helmet`));
     if(kit.helmet==='conical'){
       mesh(helmetRoot,profile([[.135,.127,.127,-.012],[.19,.120,.121,-.012],[.28,.070,.075,-.018],[.345,.008,.01,-.024]],{segments:24}),metal);
       for(const side of [-1,1])strip(helmetRoot,bronze,[[side*.12,.14,.025],[side*.088,.24,.025],[0,.345,-.024]],.005);
@@ -316,7 +318,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
       for(const [px,py]of [[-.068,.315],[0,.325],[.068,.315],[-.042,.235],[.042,.235]])faceDetail(phalerae,bronze,px,py,.164,.018,.018,.006);
     }
   }
-  if(kit.cap&&!kit.helmet){const cap=part(head,'equipped-arming-cap');mesh(cap,helmetBowlGeometry({detail:false,seed:kit.identity}),clothDark);}
+  if(kit.cap&&!kit.helmet){const cap=fitted(part(head,'equipped-arming-cap'));mesh(cap,helmetBowlGeometry({detail:false,seed:kit.identity}),clothDark);}
   mountCharacterDetail(unit,kit,{torso,head,cloth,clothDark,leather,bronze,mesh,strip,ellipsoid:faceDetail,profile});
   if(kit.armored){
     // Padded neckline separates warm skin, textile and cold armor. It follows
@@ -382,7 +384,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const simple=mesh(parent,reduced,overviewMaterial);simple.name='overview-detail';simple.userData.overview=true;simple.visible=false;farMeshes.push(simple);
   }
   // A generated body takes the place of every procedural surface on its own joints.
-  if(body){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&BODY_REPLACES.test(o.parent.name))replaced.push(o);});
+  if(body){const replaced=[],replaces=headwear?BARE_HEAD_REPLACES:BODY_REPLACES;group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&replaces.test(o.parent.name))replaced.push(o);});
     for(const item of replaced){item.removeFromParent();for(const g of [item.geometry,item.userData.overviewGeometry])if(g){geometries.delete(g);g.dispose();}}}
   overview(group);
   if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}

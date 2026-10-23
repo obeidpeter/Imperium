@@ -15,7 +15,7 @@ export function actorKit(unit={},options={}){
   const commendations=Number.isFinite(options.commendations)?options.commendations:Number.isFinite(options.commendations?.[unit.veteranId])?options.commendations[unit.veteranId]:Number.isFinite(unit.commendations)?unit.commendations:unit.moraleResistance?6:unit.specialization?3:0;
   const veteranTier=!civic&&!escort&&!trainer&&faction==='Roman'?(commendations>=6?3:commendations>=3?2:commendations>=1?1:0):0;
   const signum=options.signum==='aquila'||escort&&/eagle-bearer/i.test(name)?'aquila':options.signum==='signum'||options.signum===true||(!civic&&!escort&&!trainer&&faction==='Roman'&&unit.specialization==='leader')?'signum':null;
-  const result={role,faction,chapter,rank,trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
+  const result={role,faction,chapter,rank,hero:unit.id==='hero',trainer,civic,escort,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
     helmet:armored?(eastern?'conical':faction==='Roman'?'ridge':'segmented'):null,
     cloak:officer||!archer&&armored&&faction==='Roman',wounded:escort&&/wounded|Varro/i.test(name),
     // A man the rules give no shield carries none (unit.shield false); otherwise the role decides.

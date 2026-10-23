@@ -2,11 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createWorld,step,queueCommand,snapshotWorld,restoreWorld,worldHash} from '../src/core/realtime/simulation.js';
 import {abilityKey} from '../src/core/realtime/intents.js';
-import {ARENA,FIELD_ORDER} from '../src/data/realtime-rules.js';
+import {ARENA,ENEMY_AI,FIELD_ORDER,TIME} from '../src/data/realtime-rules.js';
 import {missionAbilities,missionAbilityHint,fieldNotice,enemyCue,victoryReason} from '../src/ui/field-experience.js';
 import {abilityGroups} from '../src/ui/realtime-hud.js';
 import {attributeImprovement,attributeMilestone} from '../src/ui/soldier-comparison.js';
 import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
+import {recruitChoices} from '../src/ui/soldier-views.js';
 import {createSoldier,attributeCost} from '../src/core/soldier.js';
 import * as Game from '../src/core/game.js';
 
@@ -46,8 +47,10 @@ test('critical field notices and target counters are factual, stable and read-on
 
 test('archer retreats are bounded, create a shooting window and replay exactly after a save',()=>{
   const w=battle(),events=[];for(let i=0;i<50;i++){step(w);events.push(...w.events);}
-  const retreats=events.filter(e=>e.kind==='intent'&&e.what==='disengage');assert.ok(retreats.length<=1);
-  assert.ok(w.actors[1].ai.nextRetreatAt>0,'The nearby archer actually disengaged');
+  const retreats=events.filter(e=>e.kind==='intent'&&e.what==='disengage');assert.equal(retreats.length,1,'The nearby archer disengaged once');
+  // Both windows are the rules data's (ENEMY_AI), counted from the tick he turned away.
+  const {ai}=w.actors[1],seconds=s=>Math.round(s*TIME.ticksPerSecond);
+  assert.equal(ai.retreatUntil,retreats[0].tick+seconds(ENEMY_AI.archerRetreat));assert.equal(ai.nextRetreatAt,retreats[0].tick+seconds(ENEMY_AI.archerRetreatInterval));
   assert.equal(w.actors[1].action?.kind,'shot','The archer plants its feet and shoots after disengaging');
   const saved=restoreWorld(snapshotWorld(w));for(let i=0;i<90;i++)step(w);for(let i=0;i<90;i++)step(saved);
   assert.equal(worldHash(saved),worldHash(w));
@@ -68,5 +71,18 @@ test('recruit preview reveals appearance without removing equipment from the sav
   const soldier=createSoldier({appearance:{hair:3,beard:2}}),before=JSON.stringify(soldier);
   const wearing=soldierPreviewUnit(soldier),uncovered=soldierPreviewUnit(soldier,{uncovered:true});
   assert.deepEqual(wearing.appearance,uncovered.appearance);assert.ok(wearing.equipment.length>uncovered.equipment.length);
+  assert.equal(JSON.stringify(soldier),before);
+});
+
+test('creation offers only the cloak colour, and its preview wears a cloak of that colour without changing the save',()=>{
+  // The generated bodies bring their own hair, beard and tunic; the cloak is the game's own.
+  assert.deepEqual([...recruitChoices().matchAll(/data-appearance="(\w+)"/g)].map(m=>m[1]),['cloak']);
+  const soldier=createSoldier({appearance:{cloak:2}}),before=JSON.stringify(soldier);
+  assert.deepEqual(soldier.appearance,{hair:0,beard:0,tunic:0,cloak:2},'The record keeps every key, for the procedural figure and saves');
+  const creation=soldierPreviewUnit(soldier,{uncovered:true,cloaked:true});
+  assert.ok(creation.equipment.includes('sagum')&&!soldierPreviewUnit(soldier).equipment.includes('sagum'),'Only the creation preview adds a cloak');
+  assert.equal(creation.appearance.cloak,2);
+  const travelling={...soldier,worn:{...soldier.worn,'body:3':'paenula'}},own=soldierPreviewUnit(travelling,{cloaked:true}).equipment;
+  assert.ok(own.includes('paenula')&&!own.includes('sagum'),'A soldier in his own cloak keeps it');
   assert.equal(JSON.stringify(soldier),before);
 });

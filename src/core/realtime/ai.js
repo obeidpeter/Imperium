@@ -145,7 +145,7 @@ export function decideEnemy(world,actor){
       // A bounded disengagement creates an opening to pursue or throw. A new
       // flee route every AI tick let archers kite a melee soldier indefinitely.
       const grid=navGrid(world.map);if(walkable(grid,away.x,away.z)){
-        ai.nextRetreatAt=world.tick+ticksOf(4);ai.retreatUntil=world.tick+ticksOf(1);goTo(world,actor,away,{run:true});
+        ai.nextRetreatAt=world.tick+ticksOf(ENEMY_AI.archerRetreatInterval);ai.retreatUntil=world.tick+ticksOf(ENEMY_AI.archerRetreat);goTo(world,actor,away,{run:true});
         emit(world,{kind:'intent',actorId:actor.id,what:'disengage',text:'Falling back to shoot — close the gap or use a pilum.'});return;
       }
     }

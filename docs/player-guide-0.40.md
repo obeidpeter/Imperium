@@ -87,7 +87,7 @@ The full guide remains available offline.
 
 - **Play now** starts a new chronicle. Give your recruit
   a Roman name (up to 40 characters) or keep Aurelius Marcellus, choose
-  his appearance and his **training**, and choose a difficulty. You
+  his cloak colour and his **training**, and choose a difficulty. You
   begin as a *tiro*, a recruit with no command authority: only your own
   soldier is yours to control. **Restore a save code** loads a chronicle
   from a save code instead.
@@ -104,11 +104,15 @@ The full guide remains available offline.
 
 ## Your recruit
 
-**Appearance** sets hair, beard and the colours of tunic and cloak. Most
-helmets hide the hair, as they did. **Training** sets your starting
-attributes (see **Your soldier**) and the optional errand you are
-offered in Chapters II to IV. It never locks kit or techniques: any
-soldier can learn anything later.
+**Appearance** sets the colour of his cloak. In 3D your soldier wears a
+generated body that matches his armour, with its own face, hair and
+tunic: a recruit's tunic until he puts on mail or scale, then a
+legionary's, an officer's from Chapter IV and a commander's from Chapter
+VII. The preview shows him in a cloak of the chosen colour; the
+quartermaster sells one from Chapter I.
+**Training** sets your starting attributes (see **Your soldier**) and
+the optional errand you are offered in Chapters II to IV. It never
+locks kit or techniques: any soldier can learn anything later.
 
 | **Training**                        | **Starts stronger in**                                | **Starts weaker in**                   |
 |-------------------------------------|-------------------------------------------------------|----------------------------------------|
@@ -759,7 +763,11 @@ in Combat and Fieldcraft, before his training.
 ## Kit
 
 The kit panel (**I**) shows your equipped soldier, worn layers and pack.
-Drag the model or use its arrow buttons to turn it. Select a packed
+Drag the model or use its arrow buttons to turn it. It wears the
+generated body closest to his kit, as he looks in the field: your
+shield, weapons and cloak are drawn as worn, and your helmet or cap sits
+on the recruit's bare head, but an armoured body brings its own helmet
+and armour, whichever you wear. Select a packed
 piece to compare protection, Restriction and derived combat totals
 against the piece it would replace, then choose **Wear** in camp.
 The comparison spends nothing. **Give** and **Leave on the ground**

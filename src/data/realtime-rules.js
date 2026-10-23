@@ -152,8 +152,10 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   skirmish:Object.freeze({close:7,far:18}),
   // A drill partner spars within this of his post; a guard defends this far from his; raiders go for columns this near.
   practiceRange:6,guardRadius:14,raidRadius:24,
-  // Archers step back this far when a foe comes within archerClose.
-  archerClose:5,archerStep:6,
+  // Archers step back this far when a foe comes within archerClose: for at most
+  // archerRetreat seconds, and no sooner than archerRetreatInterval seconds
+  // after the last time, so a swordsman can close the gap (ai.js).
+  archerClose:5,archerStep:6,archerRetreat:1,archerRetreatInterval:4,
   // An engaged enemy keeps his man unless another foe stands this much closer.
   stickiness:3});
 

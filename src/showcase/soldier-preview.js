@@ -1,20 +1,26 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createActor} from './actors.js';
 import {wornIds} from '../core/soldier.js';
+import {ITEMS} from '../data/items.js';
 
 // The inventory and field use the same equipment-aware rig. No campaign
 // values, simulation clocks, slots or shared model materials are changed.
-export function soldierPreviewUnit(soldier,{name='Your soldier',uncovered=false}={}){
-  const equipment=wornIds(soldier).filter(id=>!uncovered||!['galea','galea_crest','conical_helmet','segmented_helmet','arming_cap'].includes(id));
+// Creation shows the chosen cloak colour (cloaked), cloak or no cloak in his kit.
+export function soldierPreviewUnit(soldier,{name='Your soldier',uncovered=false,cloaked=false}={}){
+  const worn=wornIds(soldier),equipment=worn.filter(id=>!uncovered||!['galea','galea_crest','conical_helmet','segmented_helmet','arming_cap'].includes(id));
+  if(cloaked&&!worn.some(id=>ITEMS[id]?.visuals?.cloak))equipment.push('sagum');
   return {id:'hero',name,side:'player',role:'infantry',trained:true,hp:1,maxHp:1,equipment,appearance:{...soldier.appearance},crowd:false};
 }
 
-/** A demand-rendered inspection turntable. A standard fitting outfit keeps its
- * generated body; combinations it cannot depict use the articulated kit rig.
+/** A demand-rendered inspection turntable. The soldier wears the generated body
+ * closest to his kit, as in the field (actor-body-catalog.js), and the
+ * articulated kit rig until it loads or if it cannot.
  * Modal owner must dispose on close/replacement. No timer runs while idle. */
-export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovered=false,reducedMotion=false,onError=()=>{}}={}){
-  let renderer=null,actor=null,observer=null,frame=0,disposed=false,drag=null,yaw=.35,detail=false;
-  const events=[],scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,.1,30),unit=soldierPreviewUnit(soldier,{name,uncovered});
+export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovered=false,cloaked=false,reducedMotion=false,onError=()=>{}}={}){
+  // A cloaked creation preview starts turned to show the cloak behind him as well as his face.
+  const home=cloaked?-.6:.35;
+  let renderer=null,actor=null,observer=null,frame=0,disposed=false,drag=null,yaw=home,detail=false;
+  const events=[],scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,.1,30),unit=soldierPreviewUnit(soldier,{name,uncovered,cloaked});
   const geometry=new T.CircleGeometry(1.1,48),material=new T.MeshBasicMaterial({color:'#1c2426',transparent:true,opacity:.8});
   const floor=new T.Mesh(geometry,material);floor.rotation.x=-Math.PI/2;floor.position.y=-.012;scene.add(floor);
   scene.background=new T.Color('#273336');scene.add(new T.HemisphereLight('#e2e9e4','#746959',2.5));
@@ -30,7 +36,7 @@ export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovere
   }
   function invalidate(){if(!disposed&&!frame)frame=requestAnimationFrame(render);}
   function rotate(delta){if(!Number.isFinite(delta)||disposed)return;yaw+=delta;invalidate();}
-  function reset(){yaw=.35;detail=false;invalidate();}
+  function reset(){yaw=home;detail=false;invalidate();}
   function inspectFace(){detail=true;yaw=.15;invalidate();}
   function on(type,handler,options){canvas.addEventListener(type,handler,options);events.push(()=>canvas.removeEventListener(type,handler,options));}
   function dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer?.disconnect();for(const off of events)off();actor?.dispose();geometry.dispose();material.dispose();renderer?.dispose();scene.clear();}
