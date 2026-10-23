@@ -7,6 +7,8 @@ import {actionLabel} from './action-map.js';
 import {campFor} from '../data/camps.js';
 import {DEFEAT_PAGES} from '../data/dialogue.js';
 import {missionDefeatCause as defeatCause,missionDefeatHelp as defeatHelp} from './realtime-mission-readout.js';
+import {victoryReason} from './field-experience.js';
+import {commitSoldierRewards} from '../core/soldier.js';
 
 export {defeatCause,defeatHelp};
 
@@ -26,8 +28,8 @@ export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveCo
       <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
-    <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
     ${e.status==='active'?'':realtimeResult(state,{keymap})}
+    <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
   </main>`;
 }
 
@@ -71,6 +73,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
       <div class="rt-mission-summary"><p class="rt-objective" data-role="missionHeadline">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
         <span class="rt-progress" data-role="progressBadge"></span><span class="rt-deadline" data-role="deadlineBadge"></span><span class="rt-order-feedback" data-role="orderBadge"></span></div>
       <p class="rt-mission-warning" data-role="missionWarning" hidden></p>
+      <p class="rt-opportunity" data-role="opportunity" hidden></p>
       <details class="rt-mission-details" data-role="missionDetails"><summary>Mission details</summary><div class="rt-detail-body">
         <p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
         <p class="rt-progress" data-role="progress"></p><p class="rt-next" data-role="missionNext" hidden></p>
@@ -78,6 +81,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <button type="button" data-close-disclosure>Close details</button>
       </div></details>
     </section>
+    <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
     ${chamber?'<div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
       <p><strong>Place your units.</strong> Select a unit, then click the marked ground. Time is paused.</p>
@@ -87,6 +91,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
     <div class="rt-workspace">
       <div class="rt-scene" data-action-region="clear">
         <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys" aria-label="${label}"></canvas>
+        <div class="rt-wayfinders"><button type="button" data-role="locateTarget" hidden>Find target</button><button type="button" data-role="locateObjective" hidden>Find objective</button></div>
         <p id="rt-keys" class="visually-hidden">${keys}</p>
         <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
       </div>
@@ -94,10 +99,11 @@ export function fieldMarkup({state,keymap,kind='field'}){
     </div>
     <footer class="rt-hud" tabindex="-1">
       <div class="rt-unit-dock" aria-label="Choose your unit">
+        <p class="rt-selection-label" data-role="selectionLabel"></p>
         <div class="rt-party" data-role="party" role="group" aria-label="${chamber?'Your speakers: choose who speaks':'Your party: choose who you control'}"></div>
         <div class="rt-squad-area">
           <div class="rt-squads" data-role="squadBar" role="group" aria-label="Your squads: a standard selects; Shift adds" hidden></div>
-          <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Clear</button>
+          <button data-role="clearButton" class="rt-clear" type="button" aria-keyshortcuts="Escape" hidden>Soldier controls</button>
         </div>
       </div>
       <div class="rt-message-area">
@@ -106,7 +112,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
           <p><strong data-role="roundLabel">Round 1</strong><span data-role="clockTime">0:00</span></p>
         </div>
         <div class="rt-command" data-role="commandPips" role="img" hidden></div>
-        <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
+        <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="targetCue" class="rt-target-cue" hidden></p><details class="rt-target-details" data-role="targetDetails" hidden><summary>Target details</summary><p data-role="targetForecast"></p></details><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p></div>
       </div>
       <div class="rt-ability-area">
         <p class="rt-current"><span>${chamber?'Selected speech':'Selected action'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
@@ -162,6 +168,7 @@ export function realtimeResult(state,{keymap}={}){
   const seconds=Math.round(world.tick/TIME.ticksPerSecond),time=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
   const staged=e.staged??{},spoils=(staged.spoils??[]).map(id=>ITEMS[id]?.name??id);
   const killTP=Math.min(TP.killCap,staged.killTP??0),commendations=staged.commendations??[];
+  const draft=won&&state.soldier?structuredClone(state):null,rewards=draft?commitSoldierRewards(draft,draft.encounter):null;
   const rows=[['Battle time',time],['Enemies your party struck down',`${kills.length}`],
     ['Companions',party.length?party.map(a=>`${a.name}: ${!a.alive?'fallen':a.down?'down':`${a.hp} of ${a.maxHp} Health`}`).join(' · '):'none in the field'],
     ['Your soldier',hero?`${hero.alive?`${hero.hp} of ${hero.maxHp} Health`:'fallen'}`:'—']];
@@ -185,9 +192,12 @@ export function realtimeResult(state,{keymap}={}){
     `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}</ul></section>`:'';
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
     <span class="eyebrow">BATTLE RESULT</span>
-    <h2 id="rt-result-title">${won?'Objective complete':'Try this battle again'}</h2>
+    <h2 id="rt-result-title" tabindex="-1">${won?'Objective complete':'Try this battle again'}</h2>
+    ${won?`<p class="rt-victory-reason">${esc(victoryReason(world))}</p>`:''}
+    ${rewards?`<p class="rt-reward-summary">Earned: <strong>${rewards.tp} training points</strong>${rewards.denarii?` · ${rewards.denarii} denarii`:''}${rewards.decorations.length?` · ${rewards.decorations.length} decorations`:''}. Collected equipment is kept when you continue.</p>`:''}
+    <div class="panel-actions rt-result-actions">${won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
     ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
-    ${search}
+    ${search?`<details class="rt-result-loot"><summary>Collect spoils · ${bodies.length} ${bodies.length===1?'body':'bodies'}</summary>${search}</details>`:''}
     <details class="rt-result-details"><summary>Battle details &amp; rewards</summary>
       <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
       ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
@@ -196,6 +206,5 @@ export function realtimeResult(state,{keymap}={}){
     ${!won&&DEFEAT_PAGES[e.id]?`<details class="rt-history-note"><summary>Historical context</summary><blockquote class="rt-defeat-page"><p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote><button type="button" data-close-disclosure>Close context</button></details>`:''}
     <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol><button type="button" data-close-disclosure>Close log</button></details>
     <p class="result-save-note">${won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
-    <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
   </section>`;
 }

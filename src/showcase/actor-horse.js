@@ -7,6 +7,17 @@ export function createHorse(root,kit,b){
   const {part,mesh,profile,ellipsoid,strip,material,surface,leather,metal,hair,cloth}=b;
   const coat=material([0x6b4937,0x8b694b,0x5e5349][kit.identity%3],{...surface('horse'),vertexColors:true}),hoof=material(0x322e29),mark=material(0xbdb39c),horse=part(root,'horse'),body=part(horse,'horse-body',0,1.04,0);
   const trunk=mesh(body,profile([[-.86,.075,.17],[-.72,.28,.29],[-.53,.350,.345],[-.26,.356,.373],[.05,.35,.385],[.31,.335,.37],[.53,.29,.325],[.68,.16,.20]],{segments:24,anatomy:'horse-barrel'}),coat);trunk.rotation.x=Math.PI/2;
+  // Sculpt shoulder and haunch volume into the continuous barrel. Reuse its
+  // vertices: large cavalry groups keep the same mesh and triangle budget.
+  const positions=trunk.geometry.attributes.position;
+  for(let i=0;i<positions.count;i++){
+    const axial=positions.getY(i),volume=.10*Math.exp(-(((axial-.43)/.20)**2))+.12*Math.exp(-(((axial+.52)/.22)**2));
+    positions.setX(i,positions.getX(i)*(1+volume));
+  }
+  trunk.geometry.computeVertexNormals();
+  for(const side of [-1,1]){
+    strip(body,coat,[[side*.25,.22,.49],[side*.33,.04,.36],[side*.285,-.19,.30]],.018);
+  }
   const neck=part(body,'horse-neck');
   mesh(neck,profile([[.0,.245,.23,.49],[.16,.265,.25,.54],[.32,.24,.245,.59],[.47,.193,.21,.67],[.60,.15,.178,.76],[.72,.12,.148,.82],[.79,.10,.125,.85]],{segments:20,anatomy:'horse-neck'}),coat);
   const head=part(neck,'horse-head',0,.72,.87);head.rotation.x=.32;
@@ -26,9 +37,10 @@ export function createHorse(root,kit,b){
     strip(head,leather,[[side*.11,-.16,.22],[side*.12,.03,.05],[side*.07,.15,-.04]],.011);
   }
   strip(head,leather,[[-.103,-.20,.21],[0,-.19,.293],[.103,-.20,.21]],.012);
-  strip(head,mark,[[0,.17,.047],[0,.04,.177],[0,-.13,.23]],.014);
+  if(kit.identity%3!==1)strip(head,mark,[[0,.17,.047],[0,.04,.177],[0,kit.identity%3===0?-.13:-.02,.23]],kit.identity%3===0?.014:.006);
   for(let i=0;i<12;i++)strip(neck,hair,[[0,.73-i*.053,.75-i*.029],[-.023,.66-i*.053,.69-i*.029],[-.033,.58-i*.053,.65-i*.029]],.013);
   const tail=part(body,'horse-tail',0,.04,-.78);strip(tail,hair,[[0,0,0],[.03,-.27,-.18],[.01,-.67,-.24]],.055);
+  for(let strand=0;strand<3;strand++){const x=(strand-1)*.024;strip(tail,hair,[[x,-.12,-.10],[x+.035,-.44,-.23],[x-.015,-.76+Math.abs(x)*1.3,-.30]],.011);}
   const saddle=part(body,'saddle');
   const blanket=mesh(saddle,profile([[-.30,.25,.39],[-.24,.36,.40],[.16,.37,.38],[.29,.22,.25]],{segments:20}),cloth,0,.34,-.1);blanket.rotation.x=Math.PI/2;
   mesh(saddle,profile([[.30,.23,.30],[.43,.24,.25],[.46,.22,.22]],{segments:20}),leather,0,0,-.08);

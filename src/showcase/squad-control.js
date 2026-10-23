@@ -22,6 +22,8 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
   function setSelection(next,{quiet=false}={}){
     const w=world();selection=liveSelection(w,next);if(!selection.length)marker=null;
     presenter()?.setSelection?.(selection);presenter()?.setMarker?.(marker);update(true);
+    const chosen=[...dom.squadBar?.children??[]].find(b=>b.dataset.squad===selection.at(-1));
+    if(chosen&&dom.squadBar){const left=chosen.offsetLeft-dom.squadBar.offsetLeft;dom.squadBar.scrollLeft=Math.max(0,left-(dom.squadBar.clientWidth-chosen.offsetWidth)/2);}
     if(!quiet)say(selection.length?`Selected: ${selection.map(id=>squadById(w,id)?.name).join(', ')}. Right-click to order; 1 to 6 on the card.`:'Selection cleared.',{announce:true});
   }
   function build(){

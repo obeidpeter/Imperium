@@ -36,7 +36,10 @@ const plans={
 export function getEncounterStaging(encounter={}, {chapter=1,civic=encounter.kind==='contest',training=false}={}){
   const record=plans[encounter.id]??(training?plans['ch1-training']:plans[`ch${chapter}-${civic?'council':'road'}`])??[civic?'audience-court':'field-approach',civic?'The audience court':'The field approach',civic?'south':'west',civic?'north':'east',civic?'council':'checkpoint',.65,.68];
   const [key,title,entranceEdge,landmarkEdge,form,yaw,pitch]=record;
-  return Object.freeze({key,title,entranceEdge,landmarkEdge,axis:`${entranceEdge}-${landmarkEdge}`,form,camera:Object.freeze({yaw,pitch})});
+  // Look along the approach toward the destination. An east-side camera
+  // looked away from the eastern fortress, leaving only scattered props.
+  const bearing=!civic&&!training?({east:-1.05,west:1.05,north:.32,south:2.8}[landmarkEdge]??yaw):yaw;
+  return Object.freeze({key,title,entranceEdge,landmarkEdge,axis:`${entranceEdge}-${landmarkEdge}`,form,camera:Object.freeze({yaw:bearing,pitch})});
 }
 
 // Use real edge-road coordinates where they exist; never redirect a road

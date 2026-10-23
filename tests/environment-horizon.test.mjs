@@ -31,7 +31,7 @@ test('Outer terrain meets every original edge sample exactly and leaves gameplay
 test('Every regional horizon wraps all bearings, remains finite and respects a bounded geometry budget',()=>{
   const signatures=new Set();
   for(const s of fixture.scenes){const w=create(s.id),h=w.horizon,a=h.ridges.geometry.attributes.position,n=h.stats.innerEdgeSamples;let seen=0;
-    assert.ok(h.stats.meshes<=8);assert.ok(h.stats.triangles<=15000);assert.equal(h.stats.outerRadius,550);assert.equal(h.ridges.material.fog,false);assert.equal(h.ridges.material.toneMapped,true);
+    assert.ok(h.stats.meshes<=8);assert.ok(h.stats.triangles<=15000);assert.equal(h.stats.outerRadius,550);assert.equal(h.ridges.material,w.ground.material,'Distant terrain retains the textured ground material');assert.equal(h.ridges.material.toneMapped,true);
     for(let i=a.count-n;i<a.count;i++){assert.ok(Math.abs(Math.hypot(a.getX(i),a.getZ(i))-550)<.0001);seen|=(a.getX(i)>=0?1:2)|(a.getZ(i)>=0?4:8);}
     assert.equal(seen,15,'All four quadrants have a continuous outer boundary');
     h.group.traverse(o=>{if(!o.isMesh)return;for(const attr of Object.values(o.geometry.attributes))for(const value of attr.array)assert.ok(Number.isFinite(value),s.id);const g=o.geometry;if(g.index)for(const i of g.index.array)assert.ok(i>=0&&i<g.attributes.position.count);assert.equal(o.castShadow,false);});
@@ -102,6 +102,7 @@ test('Camera clearance follows actual outer ridge triangles, including the low-p
 test('Distant river begins at the real near-water edge and matches every animated boundary vertex',()=>{
   for(const quality of ['performance','balanced','high']){
     const w=create('ch1-road',quality),near=w.group.getObjectByName('Danube'),far=w.horizon.group.getObjectByName('distant meandering Danube'),np=near.geometry.attributes.position,fp=far.geometry.attributes.position;
+    assert.equal(near.material,far.material,'Near and far river share lighting, colour, roughness and fog');
     const nearEdges=new Map();for(let i=0;i<np.count;i++)if(Math.abs(np.getX(i))===62.5)nearEdges.set(`${np.getX(i)},${(np.getZ(i)-29).toFixed(3)}`,i);
     assert.equal(nearEdges.size,26);let joins=0;
     for(let i=0;i<fp.count;i++){assert.ok(Math.abs(fp.getX(i))>=62.5,'Far water has no surface inside the animated river extent');if(Math.abs(fp.getX(i))===62.5)joins++;}

@@ -91,9 +91,21 @@ export function addEncounterPrecinct({root,e,p,m,profile,height,tileSize,quality
     if(staging.form==='parade'){for(const x of [-4,0,4])p.practicePost(g,x,0,3.5);}else{p.banner(g,-3,0,2);tiedPosts(g,9,2.4);}
   }
 
+  // Connect the destination to an inhabited perimeter. All new structures
+  // stay beyond the legal board, leaving the approach and every route open.
+  if(!profile.civic&&profile.chapter!==5){
+    const g=solid('connected regional frontage',atEdge(staging.landmarkEdge,9.5));
+    const wet=['causeway','refuge','quay','bridgehead'].includes(staging.form),fort=['gate','sally','city-gate','imperial-gate'].includes(staging.form);
+    for(const side of [-1,1])for(let bay=0;bay<(perf?3:4);bay++){
+      const x=side*(11+bay*5.1),h=fort?4.6:wet?1.1:2.4;
+      wallBay(g,x,3.8,5.2,h,wet||profile.chapter===1?m.darkWood:profile.vegetation==='arid'?m.plaster:m.stone);
+      if(fort)for(let tooth=0;tooth<3;tooth++)p.plank(g,x+(tooth-1)*1.5,h+.55,3.8,.8,.75,.72,m.stone);
+      if(bay%2===0)porch(g,x,8.2,4.6,5.5,wet||profile.chapter<=3||staging.form==='camp'?'timber':'stone');
+    }
+  }
   // A connected, ground-following apron is outside the legal board. Avoids
   // the floating building pads of the former perimeter-only arrangement.
-  if(!profile.civic&&['avenue','city-gate','imperial-gate','courier','granary','gate','sally'].includes(staging.form)){
+  if(!profile.civic&&['avenue','city-gate','imperial-gate','courier','granary','gate','sally','breach'].includes(staging.form)){
     const positions=[],uv=[],indices=[],hx=e.width*tileSize/2,hz=e.height*tileSize/2;
     for(const edge of [staging.entranceEdge,staging.landmarkEdge]){
       const a=stagingEdge(e,edge,tileSize),side=edge==='west'||edge==='east',sign=edge==='west'||edge==='north'?-1:1;

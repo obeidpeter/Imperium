@@ -56,7 +56,18 @@ export function addCampaignScenery(ctx){
   }else if(profile.architecture==='stone-fort'||profile.architecture==='eastern-fort'){
     const east=profile.architecture==='eastern-fort';perimeterWall(east?'Euphrates siege curtain':'Danube fortress curtain',0,-hz-3,27,east?5:4.3);
     for(const side of [-1,1]){const g=building(east?'mudbrick siege tower':'stone gate tower',side*(hx+2.7),-hz-2.8,4.2,4.2,{roof:false,brick:east});for(let j=0;j<4;j++)p.plank(g,(j-1.5)*1.04,4.3,2.0,.70,.85,.55,east?m.brick:m.stone);}
-    const gate=place('fortress arched gate',-hx-3,2);gate.rotation.y=Math.PI/2;arch(gate,0,0,0,4.1,5.2);
+    // Keep the arrival wall behind the low follow camera at the starting line.
+    // Its frontage stays visible when surveying the approach, not across combat.
+    const gate=place('fortress arched gate',-hx-18,2);gate.rotation.y=Math.PI/2;arch(gate,0,0,0,4.1,5.2);
+    // The arrival arch belongs to a wall, rather than standing alone in front
+    // of the camera. All shoulders and buttresses remain outside the board.
+    for(const side of [-1,1]){
+      const mat=east?m.brick:m.stone;
+      p.plank(gate,side*5.3,2.35,0,5.8,4.7,.9,mat);
+      p.plank(gate,side*5.3,4.8,0,6,.24,1.15,m.stone);
+      for(const x of [3.1,6.8])p.plank(gate,side*x,1.8,-.55,.7,3.6,1.1,m.stone);
+      for(let i=0;i<4;i++)p.plank(gate,side*(3.1+i*1.4),5.23,0,.75,.65,.95,mat);
+    }
     if(east){const mine=place('besiegers timber mine entrance',hx+4,5);for(const z of [-1,0,1]){p.beam(mine,[-.8,0,z],[-.8,1.65,z],.10);p.beam(mine,[.8,0,z],[.8,1.65,z],.10);p.beam(mine,[-.9,1.7,z],[.9,1.7,z],.12);}p.plank(mine,0,.8,1.2,1.5,1.6,.15,m.charcoal);p.crate(mine,1.8,0,0,.65);}else pier('ford watch landing',hx+3,5,5);
   }else if(profile.architecture==='desert-camp'){
     well(-hx-3,1);for(const [x,z,r]of [[hx+5,-5,.3],[-hx-6,-hz-2,-.2],[4,-hz-5,.1]])p.tent(root,x,height(x,z),z,.85,r);

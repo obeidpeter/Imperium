@@ -7,6 +7,25 @@ import {hash} from './environment-layout.js';
 export function addSiegeLandmark({parent,p,m,quality='balanced'}){
   const perf=quality==='performance',g=p.group(parent,0,0,0);g.name='fractured Euphrates curtain and mine works';
   const brick=(x,y,z,w,h,d,mat=m.brick)=>p.plank(g,x,y,z,w,h,d,mat);
+  // The breach belongs to a continuous fortification. Receding shoulders and
+  // inner barracks give it a readable scale from the expanded real-time field.
+  for(const side of [-1,1]){
+    for(let bay=0;bay<5;bay++){
+      const x=side*(9+bay*5),h=5.1+Math.sin(bay*.7)*.35;
+      brick(x,h/2,2.1,5.05,h,2.2);brick(x,.22,1.8,5.3,.44,3.1,m.darkStone);
+      brick(x,h+.12,2.1,5.2,.24,2.5,m.stone);
+      for(let merlon=0;merlon<3;merlon++)brick(x+(merlon-1)*1.6,h+.65,.98,.84,.85,.72);
+      brick(x,h*.42,.65,.75,h*.84,1.2,m.stone);
+    }
+    const x=side*31;
+    brick(x,3.5,3.6,5.6,7,5.5);brick(x,7.1,3.6,6,.28,5.9,m.stone);
+    for(let i=0;i<4;i++)brick(x+(i-1.5)*1.5,7.65,.9,.8,.85,.7);
+    for(let row=0;row<2;row++){
+      const z=10+row*10,bx=side*(14+row*6);
+      brick(bx,2.1,z,11,4.2,7,m.plaster);brick(bx,4.3,z,11.6,.4,7.6,m.earth);
+      for(let door=0;door<3;door++)brick(bx+(door-1)*3.1,1.2,z-3.54,.95,2.4,.08,m.darkWood);
+    }
+  }
   // Two unequal tower masses leave the approach visibly open between them.
   for(const [cx,width,top,broken]of [[-5.1,3.8,6.4,false],[5.1,4.1,5.8,true]]){
     brick(cx,.17,1.4,width+.7,.34,4.5,m.darkStone);
@@ -70,6 +89,6 @@ export function addSiegeLandmark({parent,p,m,quality='balanced'}){
   const pos=shade.attributes.position;for(let i=0;i<pos.count;i++)pos.setY(i,-.22*Math.cos(pos.getX(i)*Math.PI/3.1)*Math.cos(pos.getZ(i)*Math.PI/2.2));
   shade.computeVertexNormals();p.mesh(g,shade,m.cloth,-7.9,2.25,3.1);
   for(const x of [-9.4,-6.4])p.beam(g,[x,0,2.0],[x,2.3,2.0],.045,m.wood);
-  g.userData.benchmarkComposition={chapter:5,layers:['mine apron','broken curtain','unequal towers'],openApproach:4.2};
+  g.userData.benchmarkComposition={chapter:5,layers:['mine apron','broken curtain','unequal towers','connected curtain wings','inner barracks'],openApproach:4.2};
   return g;
 }

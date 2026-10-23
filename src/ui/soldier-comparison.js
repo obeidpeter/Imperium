@@ -1,6 +1,6 @@
 import {ITEMS} from '../data/items.js';
 import {ATTRIBUTES} from '../data/realtime-rules.js';
-import {courseEffects,placeFor,soldierAttributes,wornIds} from '../core/soldier.js';
+import {attributeCost,courseEffects,placeFor,soldierAttributes,wornIds} from '../core/soldier.js';
 import {derivedValues,protectionOf} from '../core/realtime/combat.js';
 import {speakerProfile} from '../core/contest.js';
 import {rallyRadius} from '../core/realtime/specialists.js';
@@ -39,4 +39,16 @@ export function attributeImprovement(state,key){
   for(const metric of ['resolve','denounce','rebut'])if(before[metric]!==after[metric])rows.push({label:`Chamber ${metric}`,before:before[metric],after:after[metric]});
   const a=rallyRadius(actor(s)),b=rallyRadius(actor(next));if(a!==b)rows.push({label:'Rally reach (m)',before:tidy(a),after:tidy(b)});
   return rows;
+}
+
+export function attributeMilestone(state,key){
+  const s=state.soldier;if(!s||!ATTRIBUTES.includes(key)||s.base[key]>=60)return null;
+  let cost=0;
+  for(let steps=1;s.base[key]+steps<=60;steps++){
+    cost+=attributeCost(s.base[key]+steps-1);
+    const prior={...state,soldier:{...s,base:{...s.base,[key]:s.base[key]+steps-1}}};
+    const rows=attributeImprovement(prior,key);
+    if(rows.length)return {steps,cost,value:s.base[key]+steps,rows};
+  }
+  return null;
 }

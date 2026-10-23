@@ -5,8 +5,12 @@ export async function menuCommand(page,command){
   if(command==='menu'){
     await page.locator('[data-cmd="menu"]:visible, [data-role="menuButton"]:visible').first().click();return;
   }
-  const target=page.locator(`[data-cmd="${command}"]:visible`).first();
+  // The page behind an open dialog is inert, but Playwright's :visible still
+  // matches it. Prefer the dialog's controls instead of a covered footer link.
+  let target=page.locator(`#modal[open] [data-cmd="${command}"]:visible`).first();
+  if(!await page.locator('#modal[open]').count())target=page.locator(`[data-cmd="${command}"]:visible`).first();
   if(!await target.count())await page.locator('[data-cmd="menu"]:visible, [data-role="menuButton"]:visible').first().click();
+  if(await page.locator('#modal[open]').count())target=page.locator(`#modal[open] [data-cmd="${command}"]:visible`).first();
   if(!await target.count()){
     const group={character:'campaign',map:'campaign',journal:'campaign',ledger:'campaign',history:'about',credits:'about',privacy:'about',home:'about'}[command];
     if(group)await page.locator(`#modal [data-cmd="menu-section"][data-id="${group}"]`).click();

@@ -29,8 +29,8 @@ export function chamberEncounterView({state,saving,lastSaved,saveProblem,saveCon
       <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
-    <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
     ${e.status==='active'?'':chamberResult(state)}
+    <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
     <section class="chamber-records" aria-label="The motion, the members and the record" data-key="chamber-records:${esc(e.id)}">
       ${e.status==='active'?`${commandIntelligence(state)}${expandedPanel(state)}${e.politicsVersion===2?precedentPanel(state):''}`:''}
       <details id="chamber-members" class="command-mission-record"><summary>Motion, members & obligations</summary>
@@ -55,13 +55,13 @@ export function chamberResult(state){
   if(agreements.length)rows.push(['Agreements',agreements.map(a=>`${a.personName}: ${a.cost} supplies, due Chapter ${roman(a.due)}`).join(' · ')]);
   return `<section class="result command-result rt-result chamber-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="chamber-result-title">
     <span class="eyebrow">${won?'THE DIVISION · THE MOTION CARRIES':'THE DIVISION · A CHANCE TO REGROUP'}</span>
-    <h2 id="chamber-result-title">${won?'The motion carries.':'The motion is defeated.'}</h2>
+    <h2 id="chamber-result-title" tabindex="-1">${won?'The motion carries.':'The motion is defeated.'}</h2>
+    <div class="panel-actions rt-result-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
     <p>${esc(hourly(e.log?.at(-1)??''))}</p>
-    <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>
+    <details><summary>Vote, rewards and commitments</summary><dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl></details>
     ${debrief.distinguished?`<p class="debrief-citation"><strong>Distinguished service:</strong> ${esc(debrief.distinguished.citation)}</p>`:''}
     ${!won&&debrief.diagnostic?`<p class="defeat-diagnostic"><strong>What went wrong:</strong> ${esc(debrief.diagnostic)}</p>`:''}
     <p class="result-save-note">${won?'Record the result to keep the rewards, promises and consequences.':'Retry restores the chamber exactly as it began, supplies and promises included.'}</p>
-    <div class="panel-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
     ${!won&&!e.fallback?'<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><div class="panel-actions"><button data-cmd="fallback">Accept backing and re-run the vote</button></div>':''}
   </section>`;
 }

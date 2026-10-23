@@ -3,6 +3,7 @@ import {objectById} from '../core/realtime/motion.js';
 import {blowSummary} from '../core/realtime/intents.js';
 import {ABILITIES} from '../data/realtime-rules.js';
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
+import {enemyCue} from './field-experience.js';
 
 // Presentation only. Read the current world each time; a selection never caches a
 // combat forecast, consumes RNG, or silently acquires another opponent.
@@ -21,5 +22,6 @@ export function targetReadout(world,id,{abilityId='strike',keymap=DEFAULT_KEYMAP
     text+=` ${f.name}: ${f.ok?(f.blow?blowSummary(f):f.heal?`restores up to ${f.heal} Health; ${f.bandages} bandages left.`:ability.summary):f.message}`;
   }
   if(target.side==='enemy'&&abilityId==='strike')text+=` ${actKey} orders an attack; ${firstKeyLabel('target_next_enemy',keymap)} changes target.`;
-  return {valid:true,text,state:down?'rescue':'alive'};
+  const execution=abilityId==='strike'?`${actKey} attacks`:`${actKey} uses ${ability?.name??abilityId}`;
+  return {valid:true,text,cue:enemyCue(world,target),summary:`${target.name} · ${distance} m · ${target.hp}/${target.maxHp} HP${target.side==='enemy'?` · ${execution}`:''}`,state:down?'rescue':'alive'};
 }

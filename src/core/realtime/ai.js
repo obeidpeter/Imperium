@@ -139,9 +139,15 @@ export function decideEnemy(world,actor){
   // Archers keep their distance and shoot; too close, they step back first.
   const weapon=derivedValues(actor).weapon;
   if(weapon.ranged&&(weapon.ranged.ammo===null||(actor.ammo?.[weapon.ranged.ammo]??0)>0)){
-    if(near<ENEMY_AI.archerClose&&!actor.action){
+    if(world.tick<(ai.retreatUntil??0)&&actor.order?.kind==='move'&&actor.path?.length)return;
+    if(near<ENEMY_AI.archerClose&&!actor.action&&world.tick>=(ai.nextRetreatAt??0)){
       const d=near||1,away={x:actor.x+(actor.x-target.x)/d*ENEMY_AI.archerStep,z:actor.z+(actor.z-target.z)/d*ENEMY_AI.archerStep};
-      const grid=navGrid(world.map);if(walkable(grid,away.x,away.z)){goTo(world,actor,away,{run:true});return;}
+      // A bounded disengagement creates an opening to pursue or throw. A new
+      // flee route every AI tick let archers kite a melee soldier indefinitely.
+      const grid=navGrid(world.map);if(walkable(grid,away.x,away.z)){
+        ai.nextRetreatAt=world.tick+ticksOf(4);ai.retreatUntil=world.tick+ticksOf(1);goTo(world,actor,away,{run:true});
+        emit(world,{kind:'intent',actorId:actor.id,what:'disengage',text:'Falling back to shoot — close the gap or use a pilum.'});return;
+      }
     }
     actor.drawn=true;if(actor.order?.kind!=='attack'||actor.order.targetId!==target.id)actor.order={kind:'attack',targetId:target.id};return;
   }

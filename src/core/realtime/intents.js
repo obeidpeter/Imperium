@@ -163,9 +163,9 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   return out;
 }
 
-// A number key (guide "Abilities"): the first press chooses the ability for
-// the right button; a second press uses it on the chosen target (T), or on
-// yourself when there is none and the ability allows it. With quick-cast on,
+// A targeted ability key first chooses the ability for
+// Enter or the right button; a second press also executes it. Self abilities
+// execute on the first press. With quick-cast on,
 // one press uses it at the pointer at once. Returns the ability now chosen,
 // the Command to give (or null) and what to tell the player. Pure.
 export function abilityKey(world,{actorId=world.controlled,abilityId,current='strike',keyTarget=null,pointer=null,quickCast=false}={}){
@@ -174,7 +174,8 @@ export function abilityKey(world,{actorId=world.controlled,abilityId,current='st
     const it=pointerIntent(world,{actorId,pick:pointer,button:'right',abilityId});
     return {current:abilityId,command:it.command,message:it.command?`${ability.name}.`:it.message||REASONS.NO_TARGET,warning:!it.command};
   }
-  if(current!==abilityId)return {current:abilityId,command:null,message:`${ability.name} is ready: right-click the target, or press its number again.`,warning:false};
+  if(current!==abilityId&&ability.target!=='self')return {current:abilityId,command:null,message:`${ability.name} selected. Enter, right-click, or press its number again to use it.`,warning:false};
+  current=abilityId;
   if(abilityId==='strike')return keyTarget?{current,command:{actorId,kind:'attack',payload:{targetId:keyTarget}},message:'Strike.',warning:false}
     :{current,command:null,message:REASONS.NO_TARGET,warning:true};
   const self=ability.target==='self'||ability.selfIfNoTarget&&!keyTarget;

@@ -30,7 +30,7 @@ export function formationShape(unit){
   if(unit?.braced)return 'shield-wall';
   return unit?.role==='archer'?'archer':unit?.role==='raider'?'raider':'line';
 }
-export function formationSlots(unit){return SHAPES[formationShape(unit)].map(([x,z],i)=>({x,z,yaw:jitter(unit?.id??'',i)}));}
+export function formationSlots(unit){const field=Number.isFinite(unit?.crowd),mounted=formationShape(unit)==='mounted';return SHAPES[formationShape(unit)].map(([x,z],i)=>({x:x*(field?(mounted?1.8:1.45):1),z:z*(field?1.65:1),yaw:jitter(unit?.id??'',i)}));}
 export function followerCount(unit,available){
   const max=Number.isFinite(unit?.maxHp)?unit.maxHp:Number.isFinite(unit?.maxResolve)?unit.maxResolve:null,now=Number.isFinite(unit?.hp)?unit.hp:unit?.resolve;
   const ratio=max>0&&Number.isFinite(now)?Math.max(0,Math.min(1,now/max)):1;
@@ -57,7 +57,7 @@ export function placeFollowers(group,{slots=[],visible=0,heightAt=null,max=8}={}
 // rank. Banks are chosen per man from his unit and slot, never at random.
 export const POSE_BANK_DELAYS=Object.freeze([0,.11,.23,.36]);
 export function poseBank(id,index){let h=2166136261;for(const c of `${id}:bank:${index}`)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)%POSE_BANK_DELAYS.length;}
-const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nuniform float crowdBones;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
+const CROWD_VERTEX_HEAD='attribute vec4 crowdOffset;\nattribute float crowdBank;\nattribute vec2 crowdVariation;\nvarying float vCrowdTint;\nuniform float crowdBones;\nvec3 crowdTurn(vec3 v){float c=cos(crowdOffset.w),s=sin(crowdOffset.w);return vec3(c*v.x+s*v.z,v.y,-s*v.x+c*v.z);}\n';
 const CROWD_SKIN_BASE=`#ifdef USE_SKINNING
   float crowdBoneBase=crowdBank*crowdBones;
   mat4 boneMatX=getBoneMatrix(skinIndex.x+crowdBoneBase);
@@ -72,24 +72,26 @@ function crowdShader(shader,bones){
   shader.vertexShader=CROWD_VERTEX_HEAD+shader.vertexShader
     .replace('#include <skinbase_vertex>',CROWD_SKIN_BASE)
     .replace('#include <skinnormal_vertex>','#include <skinnormal_vertex>\n  objectNormal=crowdTurn(objectNormal);')
-    .replace('#include <skinning_vertex>','#include <skinning_vertex>\n  transformed=crowdTurn(transformed)+crowdOffset.xyz;');
+    .replace('#include <skinning_vertex>','#include <skinning_vertex>\n  transformed=crowdTurn(transformed*crowdVariation.x)+crowdOffset.xyz; vCrowdTint=crowdVariation.y;');
+  shader.fragmentShader='varying float vCrowdTint;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb *= vCrowdTint;');
 }
 function crowdMaterial(source,bones){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
   material.userData.crowdBones=bones;
   material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader,bones);};
-  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v3`;
+  material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v4`;
   return material;
 }
 function crowdDepthMaterial(bones){
   const material=new T.MeshDepthMaterial({depthPacking:T.RGBADepthPacking});material.userData.crowdBones=bones;
-  material.onBeforeCompile=shader=>crowdShader(shader,bones);material.customProgramCacheKey=()=>'formation-crowd-depth-v3';return material;
+  material.onBeforeCompile=shader=>crowdShader(shader,bones);material.customProgramCacheKey=()=>'formation-crowd-depth-v4';return material;
 }
-function instanced(source,max,offsets,banks){
+function instanced(source,max,offsets,banks,variation){
   const geometry=new T.InstancedBufferGeometry();
   for(const [name,attribute]of Object.entries(source.attributes))geometry.setAttribute(name,attribute);
   if(source.index)geometry.setIndex(source.index);
-  geometry.setAttribute('crowdOffset',offsets);geometry.setAttribute('crowdBank',banks);geometry.instanceCount=0;geometry.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);return geometry;
+  geometry.setAttribute('crowdOffset',offsets);geometry.setAttribute('crowdBank',banks);geometry.setAttribute('crowdVariation',variation);geometry.instanceCount=0;geometry.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),6);return geometry;
 }
 // A skeleton whose bone texture holds the leader's pose now and as it was a
 // moment ago, one block of bones per bank. Three updates it once per frame.
@@ -147,11 +149,13 @@ export function createSkinnedCrowd(group,{max=8}={}){
   const skinned=sources.filter(o=>o.isSkinnedMesh),rigid=sources.filter(o=>!o.isSkinnedMesh);
   if(!skinned.length||max<1)return null;
   const offsets=new T.InstancedBufferAttribute(new Float32Array(max*4),4).setUsage(T.DynamicDrawUsage),banks=new T.InstancedBufferAttribute(new Float32Array(max),1).setUsage(T.DynamicDrawUsage),meshes=[],owned=[],materials=[],histories=new Map();
+  const variation=new T.InstancedBufferAttribute(new Float32Array(max*2),2);
+  for(let i=0;i<max;i++)variation.setXY(i,.965+(i*7%11)*.007,.88+(i*3%7)*.025);
   const historyFor=skeleton=>{if(!histories.has(skeleton))histories.set(skeleton,createPoseHistory(skeleton));return histories.get(skeleton);};
   const add=(geometry,source,skeleton,bindMatrix)=>{
     const history=historyFor(skeleton),material=crowdMaterial(source.material,history.bones),depth=crowdDepthMaterial(history.bones);materials.push(material,depth);
-    const mesh=new T.SkinnedMesh(instanced(geometry,max,offsets,banks),material);mesh.name='formation followers';mesh.userData.formationCrowd=true;mesh.userData.overview=false;
-    mesh.bind(history.skeleton,bindMatrix);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),4);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.customDepthMaterial=depth;mesh.raycast=()=>{};
+    const mesh=new T.SkinnedMesh(instanced(geometry,max,offsets,banks,variation),material);mesh.name='formation followers';mesh.userData.formationCrowd=true;mesh.userData.overview=false;
+    mesh.bind(history.skeleton,bindMatrix);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),6);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.customDepthMaterial=depth;mesh.raycast=()=>{};
     owned.push(mesh.geometry);group.add(mesh);meshes.push(mesh);
   };
   for(const source of skinned)add(source.geometry,source,source.skeleton,source.bindMatrix);
@@ -177,8 +181,17 @@ export function createSkinnedCrowd(group,{max=8}={}){
       for(const h of histories.values())h.setTime(time);
       if(typeof onFall==='function')for(let i=placed.length;i<placedBefore.length;i++)onFall({world:placedBefore[i].world.clone(),yaw:group.rotation.y+(placedBefore[i].yaw??0),index:i});
       placedBefore=placed;count=placed.length;footprints.length=0;
-      placed.forEach((p,i)=>{offsets.setXYZW(i,p.x,p.y,p.z,p.yaw);banks.setX(i,poseBank(unitId,i));footprints.push(p.world);});
-      offsets.needsUpdate=true;banks.needsUpdate=true;for(const mesh of meshes)mesh.geometry.instanceCount=count;
+      let moved=false,changedBank=false;
+      placed.forEach((p,i)=>{
+        const values=[p.x,p.y,p.z,p.yaw];
+        if(values.some((v,j)=>Math.abs(offsets.array[i*4+j]-v)>1e-5)){offsets.setXYZW(i,...values);moved=true;}
+        const bank=poseBank(unitId,i);if(banks.getX(i)!==bank){banks.setX(i,bank);changedBank=true;}
+        footprints.push(p.world);
+      });
+      // Idle formations still animate, but unchanged placement/bank buffers
+      // need no driver upload. Skeleton history remains independent.
+      if(moved)offsets.needsUpdate=true;if(changedBank)banks.needsUpdate=true;
+      for(const mesh of meshes)mesh.geometry.instanceCount=count;
     },
     dispose(){if(disposed)return;disposed=true;for(const mesh of meshes)mesh.removeFromParent();for(const g of owned)g.dispose();for(const m of materials)m.dispose();for(const h of histories.values())h.skeleton.dispose();histories.clear();}
   };

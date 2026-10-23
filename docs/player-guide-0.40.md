@@ -185,7 +185,7 @@ Ctrl with a number.
 > **Tip** Press **P** whenever a fight gets busy. While paused you can
 > point at anything to read its forecast, choose abilities, pick targets
 > and give orders; everyone carries out the latest command you gave him
-> when you resume.
+> when you resume. The recruit drill starts paused so its timer waits for you.
 
 # The campaign
 
@@ -409,8 +409,9 @@ the right mouse button uses it.
   abilities take the next free number in their set.
 
 - From the keyboard, choose an ability with its number, then press the
-  same number again to use it on your target (**T**), or on yourself if
-  no target is chosen.
+  same number again, **Enter**, or right-click to use it on your target (**T**).
+  Self abilities such as Brace, Scout and Rally execute with one press, then
+  return to Strike. While paused, the action waits for Resume.
 
 - **Quick-cast** (off by default) uses an ability at the pointer as soon
   as you press its number.
@@ -950,8 +951,9 @@ struck stops the work. Using an object spends no Command and no Stamina.
 ## Reading the battlefield
 
 - When you choose an ability, the ground it can reach is washed in ink.
-  Pointing at or targeting an enemy hatches in red the ground he could
-  strike within the next round.
+  With **Show ranges** enabled (or **U** held while paused), a thin outline
+  marks the ground the selected enemy could strike within the next round.
+  The target card also describes his wind-up, recovery and a useful counter.
 
 - Pause and hold **U** to see each visible enemy's intention as an
   arrow: where he is going and whom he means to strike. **Allied plans &

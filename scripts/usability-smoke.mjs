@@ -267,6 +267,13 @@ async function fieldControls(page,label){
   assert.equal(await page.evaluate(()=>document.activeElement?.dataset.role),'listButton','Closing All actions restores its opening control');
   assert.equal(await tick(page),clock,'Inspection and selection while paused spend no simulation time');
   await page.locator('[data-role="menuButton"]').click();await page.locator('#modal [data-cmd="menu-section"][data-id="campaign"]').click();
+  await page.locator('#modal [data-cmd="retry"]').click();
+  assert.equal(await page.locator('#modal [data-cmd="retry-confirm"]').isVisible(),true,'An active encounter offers a confirmed restart');
+  const cancelled=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
+  await page.getByRole('button',{name:'Keep playing',exact:true}).click();await cancelled;
+  assert.equal(await tick(page),clock,'Cancelling a restart preserves the paused encounter');
+  assert.equal(await paused(page),true);
+  await page.locator('[data-role="menuButton"]').click();await page.locator('#modal [data-cmd="menu-section"][data-id="campaign"]').click();
   await page.locator('#modal .modal-back').click();assert.equal(await paused(page),true);
   await page.locator('#modal .menu-links [data-cmd="continue"]').click();await page.waitForSelector('#modal[open]',{state:'hidden'});
   assert.equal(await paused(page),true,'Resume closes the menu without cancelling a pre-existing pause');assert.equal(await tick(page),clock);

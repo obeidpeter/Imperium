@@ -3,8 +3,9 @@ import {coalitionView,hourView} from '../core/chamber.js';
 
 // Presentation only: reduce the first view without changing action order, keys,
 // mission conditions or the detailed forecasts available to the player.
-export function abilityGroups(ids){
-  return {primary:ids.filter(id=>FIELD_BAR.includes(id)),more:ids.filter(id=>!FIELD_BAR.includes(id))};
+export function abilityGroups(ids,essential=[]){
+  const visible=new Set([...FIELD_BAR,...essential]);
+  return {primary:ids.filter(id=>visible.has(id)),more:ids.filter(id=>!visible.has(id))};
 }
 
 export function compactMissionReadout(world,full={}){
