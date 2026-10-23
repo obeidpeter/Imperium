@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/civilian-escort.glb",
+  "output": "assets/models/characters/civilian-escort.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 422340,
+    "gzipBytes": 310796,
+    "sha256": "efdb2701c1d3296c28177369a3ad60434395fd3ae30eb08986260293e68e4fc3"
+  },
+  "after": {
+    "bytes": 377588,
+    "gzipBytes": 356850,
+    "sha256": "4637a473cc26007f29ccac46ea4611151ff29c4f13a4e96f93c24fd89d4feaa8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13769,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8086
+      },
+      "bytes": 16970,
+      "psnr": 41.731
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 44534
+      },
+      "bytes": 129607,
+      "psnr": 37.626
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13494
+      },
+      "bytes": 34216,
+      "psnr": 39.945
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-warrior.glb",
+  "output": "assets/models/characters/gothic-warrior.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 432708,
+    "gzipBytes": 311507,
+    "sha256": "d32c073353bea4df189e062d3242c0a4cd9c53349625d5e8a5860a2286c4dc82"
+  },
+  "after": {
+    "bytes": 368820,
+    "gzipBytes": 348152,
+    "sha256": "9bccd7724053d309bc09ee20071653c80a9d68b144b44bfa28b527a70f8a6589"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3208
+      },
+      "bytes": 8554,
+      "psnr": 46.606
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 42222
+      },
+      "bytes": 122005,
+      "psnr": 39.832
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15186
+      },
+      "bytes": 32422,
+      "psnr": 36.544
+    }
+  ]
+}

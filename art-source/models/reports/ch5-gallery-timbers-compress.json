@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/chapters/05/ch5-gallery-timbers.glb",
+  "output": "assets/models/chapters/05/ch5-gallery-timbers.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 271412,
+    "gzipBytes": 182220,
+    "sha256": "cd58d67fdb9d29d91fdd2506f31a3f1470709a67e0a3632288576c3466634b8e"
+  },
+  "after": {
+    "bytes": 266160,
+    "gzipBytes": 257030,
+    "sha256": "4ec0d72b2db6a3b13e84ea576b4e4de11874f863180a7a03219497947522efad"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4899,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15748
+      },
+      "bytes": 25965,
+      "psnr": 39.37
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33210
+      },
+      "bytes": 53566,
+      "psnr": 34.962
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8834
+      },
+      "bytes": 26095,
+      "psnr": 44.52
+    }
+  ]
+}

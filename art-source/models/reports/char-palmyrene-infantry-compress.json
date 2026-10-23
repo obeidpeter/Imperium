@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/palmyrene-infantry.glb",
+  "output": "assets/models/characters/palmyrene-infantry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 535356,
+    "gzipBytes": 400263,
+    "sha256": "a5202fc69eb8d051cdb2ce4699acc78a2e112af33a2664745fec364d2c6c0289"
+  },
+  "after": {
+    "bytes": 463580,
+    "gzipBytes": 442748,
+    "sha256": "9b78817c7edb4ad0c66e489c1440fbd9cf8b913da93955e704092e1cf7f4466b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14021,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21382
+      },
+      "bytes": 32303,
+      "psnr": 36.497
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 86112
+      },
+      "bytes": 159099,
+      "psnr": 35.513
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 34724
+      },
+      "bytes": 49239,
+      "psnr": 28.066
+    }
+  ]
+}

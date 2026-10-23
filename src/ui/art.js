@@ -3,6 +3,7 @@ import {paintedJourneyMap} from './campaign-map.js';
 import {PRESENTATION_BUDGET} from './presentation-budget.js';
 import {animationAssets} from './sprite-frames.js';
 import {chapterBodies,actorBodyUrl} from './actor-body-catalog.js';
+import {chapterWorldFiles,worldFiles} from './world-catalog.js';
 // Presentation assets never infer or award campaign milestones.
 const artLoader=createAssetLoader({maxEntries:PRESENTATION_BUDGET.decodedEntries,maxBytes:PRESENTATION_BUDGET.decodedBytes});
 export function heroPortrait(rank='Tiro') {
@@ -66,6 +67,15 @@ export function chapterAudioAssets(chapter=1){
   if(n>=4)keys.push('voice-rally');
   return [...new Set(keys)].map(key=>`./assets/audio/${key}.mp3`);
 }
+// Art only 2D drawing uses: the tactical board's unit atlases and action sheets,
+// and its ground and prop atlases. In 3D, painted figures draw the atlases and
+// sheets; sculpted figures draw none of it.
+export const isFlatArt=path=>/^\.\/assets\/(?:tactical|animation|world)\//.test(path);
+// Vendored files the page never loads: the KTX2 transcoder's script, which
+// basis_worker.js already holds (scripts/assets/ktx2-worker.mjs).
+export const BUILD_ONLY=Object.freeze(['./vendor/three/addons/libs/basis/basis_transcoder.js']);
+// A chapter's offline pack, for the 3D view: everything but the 2D art, which
+// chapterFlatAssets lists for players of the 2D view or painted figures.
 export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // A restored later chapter may be the first one visited on this device.
   // Every chapter therefore owns the shared renderer dependencies; the worker
@@ -74,23 +84,27 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // and the original material maps remain in the complete historical pack.
   // Cold chapter restores need only active artwork and anatomy. Aelia's model
   // is deferred until Chapter VIII; the complete inventory retains it always.
-  // Generated scenery in assets/models/chapters/NN/ belongs to chapter NN only;
-  // a generated character body, to the chapters whose figures wear it.
-  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),own=`./assets/models/chapters/${String(n).padStart(2,'0')}/`,bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id));
-  const shared3D=availableFiles.filter(path=>path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/chapters/')&&!path.startsWith(own))&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&!['./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
-  return [...new Set([...chapterAssets(chapter),...shared3D,...chapterAudioAssets(chapter)])];
+  // A world asset belongs to the chapters the world catalog names, and a
+  // generated character body to the chapters whose figures wear it.
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id));
+  const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n).map(file=>'./'+file));
+  const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
+  return [...new Set([...chapterAssets(chapter).filter(path=>!isFlatArt(path)),...shared3D,...chapterAudioAssets(chapter)])];
 }
+export const chapterFlatAssets=chapter=>chapterAssets(chapter).filter(isFlatArt);
 let chapterRequest=0;
-// Atlases only the 2D tactical view draws. The 3D view never decodes them; they
-// stay in the offline chapter group and the 2D view loads them on demand.
+// Atlases only the 2D tactical view draws, never painted 3D figures.
 export const TACTICAL_2D_ONLY=Object.freeze(['./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp']);
+// Whether a view decodes a file of the chapter's art: the 2D board all of it,
+// painted 3D figures their atlases and action sheets, sculpted ones no 2D art.
+export const viewDecodes=(path,{flat=false,painted=false}={})=>flat||!isFlatArt(path)||painted&&!TACTICAL_2D_ONLY.includes(path);
 export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=globalThis.navigator?.connection,shouldPrefetchNext=()=>true,skip=()=>false}={}) {
   const request=++chapterRequest;
   const current=await artLoader.prefetch(chapterAssets(chapter).filter(path=>!skip(path)),{onProgress,retry});
   const nextAllowed=request===chapterRequest&&next&&chapter<12&&!constrainedConnection(connection)&&shouldPrefetchNext();
   // Optional next-chapter requests warm compressed responses only: decoding them
   // here would evict sprites still used by the current battlefield.
-  const nextResult=nextAllowed?await prefetchFiles(chapterAssets(chapter+1),{shouldContinue:()=>request===chapterRequest&&shouldPrefetchNext()}):null;
+  const nextResult=nextAllowed?await prefetchFiles(chapterAssets(chapter+1).filter(path=>!skip(path)),{shouldContinue:()=>request===chapterRequest&&shouldPrefetchNext()}):null;
   return {...current,nextPrefetched:Boolean(nextResult&&nextResult.completed===nextResult.total&&!nextResult.failed)};
 }
 // The painted Imperial Tabula (campaign-map.js) keeps the theatre-node contract.

@@ -215,7 +215,7 @@ Original procedural character rigs now include shaped anatomy and clothing, dist
 
 **Generated sound effects** remain optional and off by default in Pause. With sound enabled, the 3D action timeline cues restrained footsteps, cloth, weapons, shields and impacts synthesized locally with Web Audio. Volume is adjustable; no recordings or audio service are used. Sound stops when the page is hidden, and every action remains understandable without it.
 
-Three.js 0.186.1 and its MIT license are local files; no CDN or installation is required. The initial shell excludes the 3D modules and textures. Chapter I's offline download includes the shared renderer, materials and vendor files; the separate study page and its stylesheet join the explicit full download. See [3D presentation verification](docs/archive/showcase-verification.md) for checks actually performed and pending browser/device work, and [art provenance](docs/3d-art-provenance.md) for how the models and materials were made.
+Three.js 0.186.1 and its MIT license are local files, with the KTX2 and meshopt decoders it publishes (the Basis Universal transcoder is Apache 2.0); no CDN or installation is required. The initial shell excludes the 3D modules and textures. Chapter I's offline download includes the shared renderer, materials and vendor files; the separate study page and its stylesheet join the explicit full download. See [3D presentation verification](docs/archive/showcase-verification.md) for checks actually performed and pending browser/device work, and [art provenance](docs/3d-art-provenance.md) for how the models and materials were made.
 
 ## Version 0.9 — the separate frontier study remains available
 
@@ -280,7 +280,7 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with startup, chapter I, and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I above 10,000,000 (8,000,000 before 0.37), or the complete campaign above 24,000,000. All three include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, per-chapter and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I for the 3D view above 12,000,000 (8,000,000 before 0.37, then 10,000,000), shell plus any one chapter with its 2D art above 14,000,000, or the complete campaign above 50,000,000 (24,000,000 before the asset foundation). All include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
 
 ## Replit static deployment
 
@@ -353,7 +353,7 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/showcase/environment*.js` / `combat-presentation.js` / `battle-sound.js` | Procedural scenery/materials, visual event timing and optional synthesized combat sounds |
 | `src/showcase/campaign-scene-profile.js` / `stage-readout.js` | Campaign scene identity, military/civic labels and mission markers |
 | `showcase/` / `src/showcase/main.js` / `session.js` | Optional standalone frontier study and its isolated in-memory battle |
-| `vendor/three/` | Locally bundled Three.js 0.186.1 modules and their unchanged MIT license |
+| `vendor/three/` | Locally bundled Three.js 0.186.1 modules and their unchanged MIT license; its glTF, KTX2 and meshopt addons (`addons/PROVENANCE.md`) |
 | `src/ui/storage.js` | Browser save envelopes, mirrored storage, conflict handling, portable codes |
 | `src/ui/audio.js` | Optional browser-generated sound effects |
 | `src/ui/styles.css` / `interface.css` | Shared tokens, responsive website and panels, focus states, status treatments, and reduced-motion presentation |

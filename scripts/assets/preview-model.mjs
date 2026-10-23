@@ -1,6 +1,7 @@
 // Renders a model as a 2 × 2 contact sheet (front, side, three-quarter and
 // top) with a 1.8 m figure for scale, in headless Chromium through the
-// vendored three.js, so a generated asset can be reviewed as an image. A
+// vendored three.js and the game's model loader (KTX2 and meshopt included),
+// so a generated asset can be reviewed as an image. A
 // software renderer is correctness evidence, not the game's lighting or a
 // hardware result. Development tool: it needs Playwright, which is not a
 // project dependency (install it separately or set PLAYWRIGHT_MODULE).
@@ -22,13 +23,13 @@ const page=`<!doctype html><meta charset="utf-8"><body style="margin:0;backgroun
 <canvas id="sheet" width="1024" height="1024"></canvas>
 <script type="module">
 import * as T from '/vendor/three/three.module.js';
-import {GLTFLoader} from '/vendor/three/addons/loaders/GLTFLoader.js';
+import {createModelLoader} from '/src/showcase/model-loader.js';
 const canvas=document.querySelector('#sheet'),renderer=new T.WebGLRenderer({canvas,antialias:true,preserveDrawingBuffer:true});
 renderer.outputColorSpace=T.SRGBColorSpace;renderer.setScissorTest(true);
 const scene=new T.Scene();scene.background=new T.Color('#8f8f8a');
 scene.add(new T.HemisphereLight('#fff6e8','#5a5248',1.4));const sun=new T.DirectionalLight('#ffffff',2.2);sun.position.set(-3,6,4);scene.add(sun);
 try{
-  const gltf=await new GLTFLoader().loadAsync('/model.glb');scene.add(gltf.scene);gltf.scene.updateMatrixWorld(true);
+  const gltf=await createModelLoader().loadAsync('/model.glb');scene.add(gltf.scene);gltf.scene.updateMatrixWorld(true);
   const box=new T.Box3().setFromObject(gltf.scene,true),size=box.getSize(new T.Vector3()),centre=box.getCenter(new T.Vector3());
   // Scale reference: a plain 1.8 m figure beside the model.
   const figure=new T.Mesh(new T.CapsuleGeometry(.22,1.36,4,12),new T.MeshStandardMaterial({color:'#c45a3c'}));
@@ -48,7 +49,7 @@ try{
 const server=http.createServer((req,res)=>{
   if(req.url==='/'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(page);return;}
   if(req.url==='/model.glb'){res.writeHead(200,{'content-type':'model/gltf-binary'});res.end(bytes);return;}
-  if(req.url.startsWith('/vendor/three/'))return serveRequest(req,res,root);
+  if(req.url.startsWith('/vendor/three/')||req.url==='/src/showcase/model-loader.js')return serveRequest(req,res,root);
   res.writeHead(404);res.end();
 });
 await new Promise(done=>server.listen(0,'127.0.0.1',done));

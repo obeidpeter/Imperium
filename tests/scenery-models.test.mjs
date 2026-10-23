@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
 import {GLTFLoader} from '../vendor/three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from '../vendor/three/addons/libs/meshopt_decoder.module.js';
 import * as G from '../src/core/game.js';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
@@ -11,10 +12,11 @@ import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels,war
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
 import {createModelLoader} from '../src/showcase/model-loader.js';
+import {useNodeWorkers} from './node-workers.mjs';
 
 const root=new URL('../',import.meta.url),file=path=>readFile(new URL(path,root));
 const manifest=JSON.parse(await file('docs/asset-manifest.json'));
-const generated=Object.entries(SCENERY_MODELS).flatMap(([chapter,set])=>set.models.map(m=>({chapter:Number(chapter),...m,path:sceneryModelUrl(chapter,m.id)})));
+const generated=Object.entries(SCENERY_MODELS).flatMap(([chapter,set])=>set.models.map(m=>({chapter:Number(chapter),...m,path:sceneryModelUrl(m.id)})));
 // Chapter V starts reached from New Game through public commands.
 let starts=null;
 function chapterFiveStarts(){
@@ -25,7 +27,7 @@ function chapterFiveStarts(){
 }
 // Node has no image decoder: geometry loads in full with placeholder textures.
 async function loadFile(url){
-  const bytes=await file(url),loader=new GLTFLoader();
+  const bytes=await file(url),loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   loader.register(()=>({name:'NODE_IMAGE_PLACEHOLDER',loadTexture:async()=>new T.Texture()}));loader.pluginCallbacks.unshift(loader.pluginCallbacks.pop());
   return (await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'')).scene;
 }
@@ -50,6 +52,7 @@ test('every generated model has its request, licence, manifest entry and budget'
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],m.id);
     assert.equal(info.bytes,entry.export.bytes);assert.equal(info.triangles,entry.export.triangles,`${m.id} records the shipped triangle count`);
     assert.equal(info.base,0,'Each model stands on its base at the origin');
+    assert.deepEqual([...info.extensionsRequired].sort(),['EXT_meshopt_compression','KHR_texture_basisu'],`${m.id} ships compressed`);
   }
 });
 
@@ -115,27 +118,29 @@ test('preloaded scenery stands as a stage is built, sharing session masters that
 });
 
 test('embedded textures load under the page Content Security Policy', async t => {
-  // The policy allows blob: images but not blob: fetches, which three's ImageBitmapLoader would make.
+  // The policy allows blob: images, but not the blob: fetches and blob: workers three's ImageBitmapLoader and KTX2Loader would use.
   const page=await readFile(new URL('index.html',root),'utf8');
   const policy=Object.fromEntries(/http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)[1].split(';').map(d=>d.trim().split(/\s+/)).map(([name,...values])=>[name,values]));
-  assert.deepEqual(policy['img-src'],["'self'",'data:','blob:']);assert.deepEqual(policy['connect-src'],["'self'"]);
-  // So the default loaders of generated scenery and bodies request only the model itself, and decode its images from its own bytes.
-  const requests=[],decoded=[],saved={fetch:globalThis.fetch,createImageBitmap:globalThis.createImageBitmap,ProgressEvent:globalThis.ProgressEvent};
-  globalThis.ProgressEvent??=class extends Event{constructor(type,init={}){super(type);Object.assign(this,init);}}; // Node has none; three reports download progress with it.
-  globalThis.fetch=async input=>{const url=String(input?.url??input);requests.push(url);if(!url.startsWith('file:'))throw new TypeError(`connect-src refuses ${url}`);return new Response(await readFile(new URL(url)));};
-  globalThis.createImageBitmap=async(blob,options)=>{decoded.push({type:blob.type,options});return {width:4,height:4,close(){}};};
-  t.after(()=>Object.assign(globalThis,saved));
+  assert.deepEqual(policy['img-src'],["'self'",'data:','blob:']);assert.deepEqual(policy['connect-src'],["'self'"]);assert.deepEqual(policy['worker-src'],["'self'"]);
+  // So the default loaders of generated scenery and bodies request each model and, once, the KTX2 transcoder,
+  // and transcode the textures from the model's own bytes in the page's own worker.
+  const node=useNodeWorkers(),decoded=[],saved=globalThis.createImageBitmap;
+  globalThis.createImageBitmap=async blob=>{decoded.push(blob.type);return {width:4,height:4,close(){}};};
+  t.after(()=>{node.restore();if(saved===undefined)delete globalThis.createImageBitmap;else globalThis.createImageBitmap=saved;});
   const prop=new URL(generated[0].path,root).href,scene=await warmSceneryModel(prop),textures=new Set();
   scene.traverse(o=>{for(const value of Object.values(o.material??{}))if(value?.isTexture)textures.add(value);});
-  assert.deepEqual(requests,[prop]);assert.ok(textures.size>0&&[...textures].every(texture=>texture.userData.decodedOffThread),'every texture came from the model\'s bytes');
-  const {createActorBodyLibrary}=await import('../src/showcase/actor-bodies.js'),{BITMAP_OPTIONS}=await import('../src/showcase/model-loader.js');
+  assert.ok(textures.size>0&&[...textures].every(texture=>texture.isCompressedTexture&&texture.userData.decodedOffThread),'every texture was transcoded from the model\'s bytes');
+  const {createActorBodyLibrary}=await import('../src/showcase/actor-bodies.js');
   assert.equal(await createActorBodyLibrary().warm('roman-recruit'),true);
-  assert.equal(requests.length,2);assert.match(requests[1],/^file:.*\/assets\/models\/characters\/roman-recruit\.glb$/);
-  assert.ok(decoded.length>=textures.size&&decoded.every(d=>/^image\//.test(d.type)&&d.options===BITMAP_OPTIONS),'decoded with createImageBitmap, as stored');
+  const local=url=>url.slice(root.href.length);
+  assert.deepEqual(node.requests.map(local),[generated[0].path,'vendor/three/addons/libs/basis/basis_transcoder.wasm','assets/models/characters/roman-recruit.glb']);
+  assert.deepEqual([...new Set(node.workers.map(local))],['vendor/three/addons/libs/basis/basis_worker.js']);assert.ok(node.workers.length<=2,'at most two transcoder workers');
+  assert.deepEqual(decoded,[],'no image is decoded on the page');
 });
 
 test('embedded images decode from the model bytes, off the main thread, and fall back to image elements', async () => {
-  const bytes=await file(sceneryModelUrl(5,'ch5-storage-jars')),buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
+  // A WebP model (tests/models/webp-quad.glb): the shipped models are KTX2 since the asset foundation.
+  const bytes=await file('tests/models/webp-quad.glb'),buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
   const fetchBefore=globalThis.fetch,fetched=[];globalThis.fetch=async url=>{fetched.push(String(url));throw Error('no fetch');};
   try{
     // createImageBitmap receives the GLB's own image bytes, never a URL.

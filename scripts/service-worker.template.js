@@ -2,6 +2,8 @@ const CACHE='imperium-__REVISION__';
 const FILES=__ALL_FILES__;
 const INITIAL=__INITIAL_FILES__;
 const CHAPTERS=__CHAPTER_FILES__;
+// Each chapter's 2D art, added to its pack for the 2D view and painted figures.
+const FLAT=__CHAPTER_FLAT_FILES__;
 const absolute=path=>new URL(path,self.registration.scope).href;
 const KNOWN=new Set(FILES.map(absolute));
 const inflight=new Map(),chapterDownloads=new Map();
@@ -21,32 +23,34 @@ async function report(source){
   await send({type:completed===FILES.length?'offline-ready':'offline-progress',completed,loaded:completed,total:FILES.length,assets:completed,percent:Math.floor(completed*100/FILES.length),revision:'__REVISION__'},source);
   return completed;
 }
-async function reportChapter(chapter,source){
-  const files=CHAPTERS[chapter];if(!files)return;
-  const required=[...new Set([...INITIAL,...files])],completed=await count(required);
-  await send({type:'chapter-offline',chapter:Number(chapter),ready:completed===required.length,completed,total:required.length,percent:Math.floor(completed*100/required.length),revision:'__REVISION__'},source);
+const chapterFiles=(chapter,flat)=>[...new Set([...INITIAL,...CHAPTERS[chapter],...(flat?FLAT[chapter]??[]:[])])];
+async function reportChapter(chapter,source,flat=false){
+  if(!CHAPTERS[chapter])return;
+  const required=chapterFiles(chapter,flat),completed=await count(required);
+  await send({type:'chapter-offline',chapter:Number(chapter),flat:Boolean(flat),ready:completed===required.length,completed,total:required.length,percent:Math.floor(completed*100/required.length),revision:'__REVISION__'},source);
 }
+// Whether the file had to be fetched: a pack that is mostly cached reports no progress for the cached part.
 async function ensure(path){
   const url=absolute(path),cache=await caches.open(CACHE);
-  if(await cache.match(url))return;
+  if(await cache.match(url))return false;
   if(!inflight.has(url))inflight.set(url,(async()=>{
     // Reused URLs must not seed a new edition with stale HTTP-cache artwork.
     const response=await fetch(new Request(url,{cache:'reload'}));
     if(!response.ok)throw new Error('Asset unavailable');
     await cache.put(url,response);
   })().finally(()=>inflight.delete(url)));
-  return inflight.get(url);
+  await inflight.get(url);return true;
 }
-async function download(paths,{chapter,source}={}){
+async function download(paths,{chapter,flat=false,source}={}){
   try{
     for(const path of paths){
-      await ensure(path);
-      if(chapter)await reportChapter(chapter,source);else await report(source);
+      if(!await ensure(path))continue;
+      if(chapter)await reportChapter(chapter,source,flat);else await report(source);
     }
   }catch{
     await send({type:'offline-error',chapter:chapter||null,message:'Some artwork is not downloaded yet. Reconnect and try again; saved progress stays on this device.'},source);
   }
-  if(chapter)await reportChapter(chapter,source);else await report(source);
+  if(chapter)await reportChapter(chapter,source,flat);else await report(source);
 }
 
 self.addEventListener('install',event=>event.waitUntil(Promise.all(INITIAL.map(ensure))));
@@ -73,10 +77,11 @@ self.addEventListener('fetch',event=>{
 });
 self.addEventListener('message',event=>{
   const data=event.data;
-  if(data==='offline-status'||data?.type==='offline-status')event.waitUntil((async()=>{await report(event.source);if(data.chapter)await reportChapter(data.chapter,event.source);})());
+  if(data==='offline-status'||data?.type==='offline-status')event.waitUntil((async()=>{await report(event.source);if(data.chapter)await reportChapter(data.chapter,event.source,data.flat);})());
   if(data?.type==='cache-chapter'&&CHAPTERS[data.chapter]){
-    if(!chapterDownloads.has(data.chapter))chapterDownloads.set(data.chapter,download([...new Set([...INITIAL,...CHAPTERS[data.chapter]])],{chapter:data.chapter,source:event.source}).finally(()=>chapterDownloads.delete(data.chapter)));
-    event.waitUntil(chapterDownloads.get(data.chapter).then(()=>reportChapter(data.chapter,event.source)));
+    const flat=Boolean(data.flat),key=`${data.chapter}:${flat}`;
+    if(!chapterDownloads.has(key))chapterDownloads.set(key,download(chapterFiles(data.chapter,flat),{chapter:data.chapter,flat,source:event.source}).finally(()=>chapterDownloads.delete(key)));
+    event.waitUntil(chapterDownloads.get(key).then(()=>reportChapter(data.chapter,event.source,flat)));
   }
   // Only an explicit user request should send this message. No install/activate full warm.
   if(data==='cache-campaign'){

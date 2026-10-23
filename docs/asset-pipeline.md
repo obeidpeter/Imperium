@@ -6,7 +6,8 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 
 - **In the game since 0.37.0:** sixteen generated character bodies, one for each kind of figure the battles and ceremonies show: Roman recruits, trainer, legionaries, archers, a centurion and a commander, a civilian, and Gothic, Persian and Palmyrene infantry, archers and riders. They replace the procedural bodies on the game's own skeleton, clips and kit. See [Generated characters in the game](#generated-characters-in-the-game).
 - **In the game since 0.36.0:** five Tripo props for Chapter V, a supply camp on open ground off the board's west and south sides. They load at Balanced and High quality, in Chapter V's download only. See [Generated scenery in the game](#generated-scenery-in-the-game).
-- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the model checker and the preview renderer (see [Checked so far](#checked-so-far)).
+- **Compressed since the asset foundation:** every body and prop ships with KTX2 textures and meshopt geometry ([Compression](#compression)).
+- **Tooling:** the Tripo client (generation and rigging), the Blender processing and binding steps, the quantizer, the compressor (KTX2 textures and meshopt geometry), the model checker and the preview renderer (see [Checked so far](#checked-so-far) and [Compression](#compression)).
 - **Requests and provenance:** [`art-source/models/requests/`](../art-source/models/requests/) holds each exact prompt, Tripo task, rig task, model version, licence and raw digests; [`art-source/models/reports/`](../art-source/models/reports/) holds the processing and binding reports.
 
 ## One-time setup
@@ -20,6 +21,9 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
    - Blender's Python module: `python3 -m venv /tmp/blender && /tmp/blender/bin/pip install bpy==5.2.2`, then `export BLENDER_PYTHON=/tmp/blender/bin/python`. The wheel must match the Python version (5.2.2 installs on Python 3.13); it takes about 1 GB.
    - The Blender 5.2 application: `export BLENDER=/path/to/blender`.
 3. **Previews** need Playwright, as the smoke test does: `npm install --no-save --no-package-lock playwright@1.56.1`, or set `PLAYWRIGHT_MODULE`. Neither Blender nor Playwright is a project dependency.
+4. **Compression** needs two things, neither a project dependency:
+   - The Basis Universal encoder, built from [its source](https://github.com/BinomialLLC/basis_universal) (version 1.16.4 here; it needs `cmake` and a C++ compiler): `cmake -S basis_universal -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j`, then `export BASISU=/path/to/basisu` (or put `basisu` on `PATH`).
+   - The glTF-Transform modules: `npm install --no-save --no-package-lock @gltf-transform/core@4.5.1 @gltf-transform/extensions@4.5.1 @gltf-transform/functions@4.5.1 meshoptimizer@1.3.0 sharp@0.35.5`, or set `ASSET_MODULES` to a folder whose `node_modules` holds them.
 
 ## Workflow for each asset
 
@@ -41,19 +45,20 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
      --output assets/models/characters/<id>.glb --report art-source/models/reports/char-<id>.json \
      --triangles 12000 --overview-triangles 2500 --texture 1024
    ```
-4. **Check:** `npm run asset:check -- <model.glb> --bytes <n> --triangles <n> --texture <n> --min-height <m> --max-height <m>`. It exits non-zero when the model breaks a budget or needs a decoder the game does not ship (Draco, meshopt, KTX2).
-5. **Preview:** `npm run asset:preview -- <model.glb> <sheet.png>`. Look at the sheet:
+4. **Compress:** `npm run asset:compress -- <model.glb> <model.glb> --report art-source/models/reports/<id>-compress.json`. Each texture becomes KTX2 and the geometry meshopt; the tool refuses to write a model whose triangles changed (see [Compression](#compression)).
+5. **Check:** `npm run asset:check -- <model.glb> --bytes <n> --triangles <n> --texture <n> --min-height <m> --max-height <m>`. It exits non-zero when the model breaks a budget or needs a decoder the game does not ship (Draco).
+6. **Preview:** `npm run asset:preview -- <model.glb> <sheet.png>`. Look at the sheet:
    - shape and colours;
    - scale against the 1.8 m figure;
    - floating or missing parts.
 
-   Regenerate rather than ship a poor model.
-6. **Record.** Add a runtime entry to the `assets` list in [`asset-manifest.json`](asset-manifest.json) and a note in [`art-generation.md`](art-generation.md). `scripts/verify-assets.mjs` checks the bytes and SHA-256 of every entry. The entry needs:
+   Regenerate rather than ship a poor model. The preview loads the model as the game does, KTX2 and meshopt included.
+7. **Record.** Add a runtime entry to the `assets` list in [`asset-manifest.json`](asset-manifest.json) and a note in [`art-generation.md`](art-generation.md). `scripts/verify-assets.mjs` checks the bytes and SHA-256 of every entry. The entry needs:
    - the source: generator, model version, task id, and the prompt file;
-   - the processing settings, from the report;
+   - the processing and compression settings, from the reports;
    - the export: format, bytes, SHA-256 and triangles;
    - the licence under the owner's Tripo plan.
-7. **Integrate.** Put a prop in `assets/models/chapters/<NN>/` and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
+8. **Integrate.** Put a prop in `assets/models/chapters/<NN>/`, add it to the [world catalog](../src/ui/world-catalog.js) with its kind and the chapters that show it, and add its placement to [`scenery-models.js`](../src/showcase/scenery-models.js). Choose ground the cameras see, off the board and clear of the scenery (see [Generated scenery in the game](#generated-scenery-in-the-game)), then add it to the tests in [`scenery-models.test.mjs`](../tests/scenery-models.test.mjs). Put a character body in `assets/models/characters/` and add the kits it fits and the chapters that show them to [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js); [`actor-bodies.test.mjs`](../tests/actor-bodies.test.mjs) checks those chapters against the real campaign.
 
 ## The processing script
 
@@ -99,17 +104,82 @@ Limitations:
 - Colours are baked, so a body cannot take a figure's palette. Shields, cloaks and crests stay the game's own and keep their colours and heraldry.
 - Weights come from Tripo's rig. Long robes deform with the legs, and an extreme pose can crease a shoulder.
 
+## Compression
+
+[`compress.mjs`](../scripts/assets/compress.mjs) prepares a processed or bound GLB for the game:
+
+- **Textures** become KTX2 (`KHR_texture_basisu`): Basis Universal ETC1S at the encoder's default quality (128), with mipmaps. Colour maps are encoded as sRGB, normal maps with the encoder's normal-map settings, and metal/roughness maps as linear data. In the game each texture is transcoded to a format the GPU keeps compressed: ETC2 on most phones, BC7 or BC1 on most computers, about a quarter to an eighth of the memory of the decoded image. A 1,024 px colour map takes 0.7–1.4 MB of GPU memory instead of 5.6 MB, and needs no mipmaps made on upload.
+- **Geometry** is reordered for the codec and packed with meshopt (`EXT_meshopt_compression`), with no filters and no new quantization, so every stored value is kept. The tool reads both models back and refuses to write unless every triangle, with all its attributes, is unchanged.
+- **Report.** The input and output bytes (raw and gzip), the encoder version and settings, and each texture's use, size, original bytes, KTX2 bytes and the encoder's measured error (PSNR, in dB).
+
+ETC1S trades download size for memory: a KTX2 image is two to three times the size of the WebP it replaces, and it barely shrinks under gzip, while meshopt geometry is a little smaller than before. Data maps fare worst, since ETC1S suits colour better than independent channels.
+
+**The shipped models.** On 2026-10-22 all sixteen bodies and the five Chapter V props were compressed in place, at the default settings, with a report each in [`art-source/models/reports/`](../art-source/models/reports/) (`*-compress.json`) and the previous bytes and digest in their manifest entries. Every triangle came through unchanged. The encoder measured colour maps at 34.8–39.8 dB, normal maps at 31.6–46.6 dB and metal/roughness maps at 26.7–44.5 dB against the WebP images they replace.
+
+| Model | Bytes (before → after) | Gzip (before → after) | PSNR colour / normal / data (dB) |
+| --- | ---: | ---: | --- |
+| [`ch5-gallery-timbers`](../assets/models/chapters/05/ch5-gallery-timbers.glb) | 271,412 → 266,160 | 182,220 → 257,030 | 35.0 / 39.4 / 44.5 |
+| [`ch5-leather-tent`](../assets/models/chapters/05/ch5-leather-tent.glb) | 230,672 → 231,056 | 171,434 → 223,877 | 35.0 / 42.1 / 37.6 |
+| [`ch5-mudbrick-stack`](../assets/models/chapters/05/ch5-mudbrick-stack.glb) | 173,144 → 187,856 | 122,554 → 181,516 | 34.8 / 41.1 / 42.5 |
+| [`ch5-spoil-baskets`](../assets/models/chapters/05/ch5-spoil-baskets.glb) | 188,228 → 213,856 | 126,816 → 207,198 | 35.5 / 38.9 / 42.8 |
+| [`ch5-storage-jars`](../assets/models/chapters/05/ch5-storage-jars.glb) | 161,296 → 181,820 | 124,517 → 176,102 | 38.2 / 43.3 / 41.7 |
+| [`civilian-escort`](../assets/models/characters/civilian-escort.glb) | 422,340 → 377,588 | 310,796 → 356,850 | 37.6 / 41.7 / 39.9 |
+| [`gothic-archer`](../assets/models/characters/gothic-archer.glb) | 484,744 → 426,424 | 346,281 → 404,513 | 37.6 / 41.1 / 35.0 |
+| [`gothic-noble`](../assets/models/characters/gothic-noble.glb) | 498,632 → 441,704 | 365,461 → 419,854 | 36.6 / 39.3 / 28.8 |
+| [`gothic-warrior`](../assets/models/characters/gothic-warrior.glb) | 432,708 → 368,820 | 311,507 → 348,152 | 39.8 / 46.6 / 36.5 |
+| [`palmyrene-archer`](../assets/models/characters/palmyrene-archer.glb) | 472,440 → 417,196 | 357,778 → 396,349 | 37.1 / 39.0 / 36.0 |
+| [`palmyrene-cavalry`](../assets/models/characters/palmyrene-cavalry.glb) | 557,720 → 479,632 | 418,339 → 458,087 | 35.8 / 33.9 / 27.2 |
+| [`palmyrene-infantry`](../assets/models/characters/palmyrene-infantry.glb) | 535,356 → 463,580 | 400,263 → 442,748 | 35.5 / 36.5 / 28.1 |
+| [`persian-archer`](../assets/models/characters/persian-archer.glb) | 512,640 → 446,880 | 383,419 → 425,887 | 35.1 / 38.2 / 35.2 |
+| [`persian-cavalry`](../assets/models/characters/persian-cavalry.glb) | 549,960 → 479,072 | 418,234 → 458,173 | 35.6 / 31.6 / 27.3 |
+| [`persian-infantry`](../assets/models/characters/persian-infantry.glb) | 525,572 → 460,068 | 380,885 → 437,679 | 36.1 / 38.4 / 29.0 |
+| [`roman-archer`](../assets/models/characters/roman-archer.glb) | 483,852 → 436,028 | 355,078 → 415,144 | 36.2 / 38.3 / 27.9 |
+| [`roman-commander`](../assets/models/characters/roman-commander.glb) | 546,208 → 482,700 | 395,645 → 460,600 | 35.6 / 36.3 / 27.0 |
+| [`roman-legionary`](../assets/models/characters/roman-legionary.glb) | 508,428 → 447,560 | 369,120 → 426,432 | 36.3 / 38.7 / 28.6 |
+| [`roman-officer`](../assets/models/characters/roman-officer.glb) | 537,496 → 471,316 | 397,785 → 449,927 | 35.8 / 36.1 / 26.7 |
+| [`roman-recruit`](../assets/models/characters/roman-recruit.glb) | 418,392 → 366,388 | 306,085 → 345,732 | 38.1 / 41.8 / 37.4 |
+| [`roman-trainer`](../assets/models/characters/roman-trainer.glb) | 448,620 → 401,064 | 325,109 → 380,285 | 39.0 / 41.4 / 35.2 |
+| All 21 | 8,959,860 → 8,046,768 | 6,569,326 → 7,672,135 | |
+
+Each body's three maps (one 1,024 px, two 512 px) took about 8.4 MB of GPU memory decoded with mipmaps; transcoded they take about 2.1 MB as BC7 and 1.0 MB as ETC2 or BC1. A prop's three 512 px maps fall from about 4.2 MB to 0.5–1.0 MB. These are computed from the formats, not measured on a device.
+
+Side-by-side renders of the recruit, the officer, the Palmyrene rider and the storage jars (software rendering with SwiftShader and a simple studio light, not the game's lighting) were reviewed before shipping: whole figures and props look the same; in close-ups of the face and torso the compressed colour maps are slightly softer and blockier around the eyes, and highlights on armour are a little less even. No phone or desktop GPU has been checked, and nobody has judged the figures in play.
+
+**In the game.** [`model-loader.js`](../src/showcase/model-loader.js) gives three.js's `GLTFLoader` the meshopt decoder and the KTX2 loader, both vendored from Three.js 0.186.1 ([provenance](../vendor/three/addons/PROVENANCE.md)):
+
+- `KTX2Loader` starts its transcoder worker from a `blob:` URL, which the page's policy refuses (`worker-src 'self'`). [`basis_worker.js`](../vendor/three/addons/libs/basis/basis_worker.js) is that same worker as a file on the page's own origin, generated by [`ktx2-worker.mjs`](../scripts/assets/ktx2-worker.mjs); a test fails while it differs from what the vendored loader would assemble.
+- The page's Content Security Policy adds `'wasm-unsafe-eval'` to `script-src`, and nothing else: it lets the decoders compile WebAssembly, and still evaluates no other code. The arena page carries the same policy.
+- The transcoder starts only for a model with KTX2 images, once per page, with at most two workers. The GPU's formats are read from a throwaway WebGL 2 context, as models load before a stage has a renderer; without one, or without a compressed format (S3TC counts only with its sRGB variant), the transcoder writes plain pixels, which every GPU takes.
+- A model whose texture cannot be transcoded, or whose geometry cannot be decoded, fails to load as a whole, rather than drawing untextured; its figures and props keep their code-built fallback. A browser that refuses WebAssembly fails every compressed model that way.
+- WebP models still load as before, so an uncompressed model works too.
+
+The decoders and transcoder are in every chapter's offline group, about 0.31 MB compressed, as every chapter shows generated bodies. The transcoder's own script is left out: the worker holds it. The local server (`scripts/serve.mjs`) names `.glb`, `.ktx2` and `.wasm` files.
+
+## CC0 textures
+
+Photographic textures for the ground, rock, brick, plaster, wood and roof tiles come from [Poly Haven](https://polyhaven.com/license) and [ambientCG](https://docs.ambientcg.com/license/), whose assets are all CC0 1.0 (public domain dedication). [`cc0.mjs`](../scripts/assets/cc0.mjs) takes them in by id:
+
+- `npm run asset:cc0 -- fetch polyhaven:<id> [--resolution 1k] [--format png] [--maps Diffuse,nor_gl,arm]` reads the asset from Poly Haven's API and downloads the chosen maps from `dl.polyhaven.org`, each checked against the MD5 digest Poly Haven publishes. The defaults suit three.js: colour, the OpenGL-convention normal map, and `arm` (occlusion, roughness and metalness in glTF's channel order).
+- `npm run asset:cc0 -- fetch ambientcg:<id> [--resolution 1K-PNG]` reads the asset from ambientCG's API, downloads its archive, checks its size against the one ambientCG lists and extracts the images.
+- Either way the files go to `art-source/cc0/raw/<source>-<id>/` (not committed) and a record to `art-source/cc0/<source>-<id>.json`: the asset page, name, authors, licence and its page, retrieval time, the selection, and each file's URL, bytes and SHA-256 (with Poly Haven's MD5, or ambientCG's archive digest). A file that fails its check stops the intake before anything is written.
+- `npm run asset:cc0 -- record <record.json> <shipped file> --id <id> --subject <text> --usage <text> --loading <text> --processing <text>` adds a file made from those downloads (a KTX2 texture encoded with `basisu`, for example) to the [asset manifest](asset-manifest.json), or replaces its entry: its source record and the digests of the files it came from, its processing, bytes and SHA-256, and the CC0 licence with its authors credited. It edits only that entry, the totals, the counts and the date, leaving the rest of the file as written.
+
+Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). No CC0 file ships yet.
+
 ## Budgets
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 |
-| Shell plus Chapter I | 10,000,000 (8,000,000 until 0.37.0) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) |
-| Complete campaign | 24,000,000 | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation (unreleased) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 12,000,000 (8,000,000 until 0.37.0, then 10,000,000) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 |
+| Shell plus any one chapter, with its 2D art | 14,000,000 (new) | | | | | 10,490,504 (Chapter VIII, the largest) |
+| Complete campaign | 50,000,000 (24,000,000 until the asset foundation) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 |
 
-The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. Generated models therefore go in `assets/models/chapters/<NN>/`, which only chapter NN downloads (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js), since 0.36.0). In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+The asset foundation takes the 2D view's art (unit atlases, action sheets, ground and prop atlases) out of the 3D download: the 2D view and painted figures add it when chosen. It raises the Chapter I limit to 12 MB and the complete campaign to 50 MB for the world models to come, and caps any one chapter's first download, with its 2D art, at 14 MB. The first load grew by about 285 KB between 0.38.0 and this work, more than half of it the real-time modules the shell imports. The 2 MB first load, the external requirement, is unchanged. Then the KTX2 and meshopt decoders (about 0.31 MB in every chapter) and the compressed models (about 1.1 MB more in all) brought Chapter I for the 3D view from 6.02 to 6.58 MB, and the largest chapter with its 2D art is now Chapter VIII.
 
 In 0.38.0 the first load grew by 12,019 bytes: the shell now carries every module the page imports before it runs (the board readout among them) and the performance check. Chapter I shrank by 159,076 bytes because no chapter downloads the pre-0.31 Roman unit atlas any more.
 
@@ -119,13 +189,15 @@ Proposed limits per asset:
 
 | Kind | Triangles | Texture edge | Bytes |
 | --- | ---: | ---: | ---: |
-| Small prop | 3,000 | 512 px | 200 KB |
-| Large prop or tent | 5,000 | 512 px | 300 KB |
-| Building or landmark | 15,000 | 1,024 px | 600 KB |
+| Small prop | 3,000 | 512 px | 250 KB (200 KB with WebP textures) |
+| Large prop or tent | 5,000 | 512 px | 350 KB (300 KB with WebP textures) |
+| Building or landmark | 15,000 | 1,024 px | 800 KB (600 KB with WebP textures) |
+
+The limits are for the compressed model. The spoil baskets' own budget rose from 200,000 to 250,000 bytes when they were compressed (213,856 bytes), as their request records.
 
 ## Generated scenery in the game
 
-- **Downloads.** Models in `assets/models/chapters/NN/` belong to chapter NN's offline group alone (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)), so Chapter I's budget is untouched. `scripts/verify-assets.mjs` checks that each such model is in exactly its own chapter's group.
+- **Downloads.** A world asset belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)), so the five Chapter V props leave Chapter I's budget untouched. [`world-catalog.test.mjs`](../tests/world-catalog.test.mjs) checks that every model in `assets/models/chapters/` is catalogued with provenance and that every placed model downloads with the chapter where it stands; `scripts/verify-assets.mjs` checks each built chapter group holds exactly its own world files.
 - **Loader.** [`scenery-models.js`](../src/showcase/scenery-models.js) holds the placements, in metres from the board centre. Since 0.38 each model is loaded once per session into a master that is never freed, as the character bodies are. The battle preloader loads a battle's masters before its stage is built; the stage places its own copies (sharing the master's geometry, materials and textures) as it builds the scene, so they compile and upload behind the "Preparing" veil. A master that is still loading joins when it arrives, compiled first.
   - It loads nothing at Performance quality.
   - It stands each model on the lowest ground sample under its footprint.
@@ -136,7 +208,7 @@ Proposed limits per asset:
   - A quality change rebuilds the set on the new ground.
 
   This is presentation only: no rules state and no gameplay randomness.
-- **Content Security Policy.** The page allows `blob:` images but not `blob:` fetches. three.js's default `ImageBitmapLoader` fetches a GLB's embedded textures as `blob:` URLs, which the policy refuses. Since 0.38 [`model-loader.js`](../src/showcase/model-loader.js) decodes them with `createImageBitmap` straight from the GLB's own bytes: no request at all, and the browser decodes off the main thread, so uploading a texture is no longer also decoding it. An image that `createImageBitmap` refuses (or a browser without it) decodes through an image element as before. The policy itself is unchanged.
+- **Content Security Policy.** The page allows `blob:` images but not `blob:` fetches. three.js's default `ImageBitmapLoader` fetches a GLB's embedded textures as `blob:` URLs, which the policy refuses. Since 0.38 [`model-loader.js`](../src/showcase/model-loader.js) decodes them with `createImageBitmap` straight from the GLB's own bytes: no request at all, and the browser decodes off the main thread, so uploading a texture is no longer also decoding it. An image that `createImageBitmap` refuses (or a browser without it) decodes through an image element as before. Since the asset foundation, KTX2 images are transcoded from the same bytes in a worker on the page's own origin, and the policy adds `'wasm-unsafe-eval'` for the decoders (see [Compression](#compression)).
 - **Placement.** A search of the built scenes in both Chapter V encounters chose the ground. It reads every scene object's bounds and tests a grid of positions. A position qualifies when it is:
   - outside the board;
   - clear of every structure, wall and boulder;
@@ -150,7 +222,7 @@ Proposed limits per asset:
 
 - **Which figures.** [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js) maps a figure's kit (faction, role, armour; for the protagonist, a centurion's mail in Chapters IV–VI and a commander's cuirass from Chapter VII) to one of sixteen bodies. Every battle figure and both ceremonies' figures have one. Civic speakers and voters keep their procedural togas, whose trims name their bloc; the painted figure style is unchanged.
 - **What changes.** A figure that wears a body loses its procedural clothes, armour, head, hair, face and limbs: every procedural surface on the body's own joints ([`actors.js`](../src/showcase/actors.js), `BODY_REPLACES` in [`actor-bodies.js`](../src/showcase/actor-bodies.js)). The rest stays the game's own and is drawn as before: the rig and every clip, gesture, contact and foot plant; the gripping hands; swords, spears, javelins, shields and their heraldry, bows, arrows, quivers, scabbards and standards; cloaks (purple for the emperor at the accession, since the body's tunic colour is baked) and crests and phalerae, the officer and veteran insignia; horses.
-- **Loading.** [`actor-bodies.js`](../src/showcase/actor-bodies.js) loads one master per body, decoding its textures off the main thread within the page's Content Security Policy ([`model-loader.js`](../src/showcase/model-loader.js), since 0.38), and skins it to each figure's own bones in the bind pose. Figures share the master's geometry and materials; each owns only its skinned meshes and skeleton, and disposal never frees the master. A figure starts procedural and switches when its body arrives; a body that fails to load leaves the procedural figure. The canvas reports how many figures wear one (`data-generated-bodies`).
+- **Loading.** [`actor-bodies.js`](../src/showcase/actor-bodies.js) loads one master per body, transcoding its KTX2 textures in a worker on the page's own origin within its Content Security Policy ([`model-loader.js`](../src/showcase/model-loader.js); see [Compression](#compression)), and skins it to each figure's own bones in the bind pose. Figures share the master's geometry and materials; each owns only its skinned meshes and skeleton, and disposal never frees the master. A figure starts procedural and switches when its body arrives; a body that fails to load leaves the procedural figure. The canvas reports how many figures wear one (`data-generated-bodies`).
 - **Distance and crowds.** Each body has a near level (11,131–11,611 triangles) and an overview level (about 2,500), switched with the figure's other detail. Formation followers instance the overview with the leader's pose history, and fallen bodies bake its colours. The procedural figures measured up to 63,052 near and 11,673 overview triangles ([evidence](evidence/characters-v035.json)).
 - **Downloads.** A body is in the offline group of each chapter whose figures wear it (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); `scripts/verify-assets.mjs` and the tests check the groups against the catalog, and the catalog against the campaign.
 - **Records.** Each body has a runtime entry in [`asset-manifest.json`](asset-manifest.json) with its prompt file, Tripo and rig tasks, raw and rigged digests, binding settings, bytes, SHA-256 and licence, and a row and prompt in [`art-generation.md`](art-generation.md).
@@ -202,4 +274,9 @@ Each prompt adds the same exclusions: no people, animals, text, modern objects o
 - **In the 3D stage (scripted views, not committed).** Probe pages built the real stage from legal starts for the Chapter I road, Chapter II marsh, both Chapter V battles, the Chapter VII legion, the Chapter IX wing and the Chapter XII confrontation, at Balanced quality, plus both ceremonies through the development ceremony page and the development character viewer (idle, walk and the strike's contact frame). Every figure in those scenes wore its body, with no page or console errors. A gallery of all sixteen as game figures, with their kit, read clearly by faction and rank. On the built figure, the accession's palette turns the commander's cloak purple.
 - **Cost.** In the Chapter V mine battle the renderer's own counters fell from 649,435 to 456,855 triangles and from 151 to 121 draw calls in the overview, and from 1,137,119 to 797,735 triangles and 204 to 170 calls with the camera 8 m from a figure. These are counts under software rendering, not frame times.
 - **Seen but not changed.** The horses are still procedural and now look plain beside their riders. The finale's massed legions are still primitive figures. Shields keep one motif for unnamed figures. Faces are static.
+- **Asset foundation, 2026-10-22.** Automated checks, software rendering only:
+  - `npm run verify` passed (1,099 tests, the autoplay campaigns, the production build, the asset and offline checks and the character audits), `npm run smoke` passed every scenario with the compressed models, Chapter V's props and bodies in 3D among them, with no page or console errors, and `npm run smoke:polish` passed its 16 checks.
+  - A compressed fixture loaded through the game's loader in the production page under its real policy, with no policy violations; a control run without `'wasm-unsafe-eval'` refused the decoder's WebAssembly, and the model failed whole, as designed.
+  - Eight bodies took about 300 ms to load the first time on a page (the transcoder starting) and about 100 ms once it was running; the WebP versions took about 160 ms ([`model-loader.js`](../src/showcase/model-loader.js) path in Chromium, no long tasks either way).
+  - `npm run benchmark:stage -- --dist --check` on the commit before the KTX2 work and after the compressed models ([before](evidence/stage-benchmark-asset-foundation-before.json), [after](evidence/stage-benchmark-asset-foundation.json)): the same shader programs, draw calls and triangles in all ten runs, no shader compiled in the first frame or in play, every figure in its generated body. Battles were ready 144 ms later on average (from 207 ms sooner to 601 ms later; the container's runs vary by a few hundred milliseconds), and the longest task rose from 95 to 109 ms at most. The first battle on a page pays the transcoder's start; in play the battle's assets load while its briefing is shown.
 - **Limits of these checks.** They ran in a CPU-only cloud container with software rendering (SwiftShader). No real device or GPU was involved, frame time and memory were not measured, and nobody has yet judged in play how the camp or the new figures read.

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/palmyrene-cavalry.glb",
+  "output": "assets/models/characters/palmyrene-cavalry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 557720,
+    "gzipBytes": 418339,
+    "sha256": "c5057f8a3349fbdd85f41b4a56441fdc9fb1b98c188600a559eb84be87a6797e"
+  },
+  "after": {
+    "bytes": 479632,
+    "gzipBytes": 458087,
+    "sha256": "52872ef229a3646bbd3b7db5051b328909162c7b1f257aa80fbf681892696ff1"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14110,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30426
+      },
+      "bytes": 37457,
+      "psnr": 33.941
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 90552
+      },
+      "bytes": 165857,
+      "psnr": 35.778
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36190
+      },
+      "bytes": 48471,
+      "psnr": 27.171
+    }
+  ]
+}

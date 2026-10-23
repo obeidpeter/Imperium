@@ -1,7 +1,8 @@
 // Checks a processed model before it joins the game: a self-contained binary
-// glTF 2.0 file of triangle meshes that the vendored three.js GLTFLoader can
-// read without extra decoders, within a triangle, byte, texture and material
-// budget, at a plausible size in metres. Development tool; no rendering.
+// glTF 2.0 file of triangle meshes that the game's loader can read (the
+// vendored three.js GLTFLoader with the meshopt and KTX2 decoders the game
+// ships), within a triangle, byte, texture and material budget, at a
+// plausible size in metres. Development tool; no rendering.
 //
 //   node scripts/assets/check-model.mjs model.glb [--bytes N] [--triangles N]
 //     [--texture N] [--materials N] [--min-height M] [--max-height M]
@@ -9,13 +10,16 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import * as T from '../../vendor/three/three.module.js';
 import {GLTFLoader} from '../../vendor/three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from '../../vendor/three/addons/libs/meshopt_decoder.module.js';
 
-// The game loads models with a bare GLTFLoader: no Draco, meshopt or KTX2 decoder.
-const NEEDS_DECODER=['KHR_draco_mesh_compression','EXT_meshopt_compression','KHR_texture_basisu'];
+// The game decodes meshopt geometry and KTX2 textures (src/showcase/model-loader.js), but not Draco.
+const NEEDS_DECODER=['KHR_draco_mesh_compression'];
+const KTX2_IDENTIFIER=Buffer.from([0xab,0x4b,0x54,0x58,0x20,0x32,0x30,0xbb,0x0d,0x0a,0x1a,0x0a]);
 
-/** Pixel size from a PNG, JPEG or WebP header; zero when unreadable. */
+/** Pixel size from a PNG, JPEG, WebP or KTX2 header; zero when unreadable. */
 export function imageSize(b){
   if(b.length>24&&b.readUInt32BE(0)===0x89504e47)return {width:b.readUInt32BE(16),height:b.readUInt32BE(20)};
+  if(b.length>=28&&b.subarray(0,12).equals(KTX2_IDENTIFIER))return {width:b.readUInt32LE(20),height:b.readUInt32LE(24)};
   if(b.length>30&&b.toString('ascii',0,4)==='RIFF'&&b.toString('ascii',8,12)==='WEBP'){
     const chunk=b.toString('ascii',12,16);
     if(chunk==='VP8 ')return {width:b.readUInt16LE(26)&0x3fff,height:b.readUInt16LE(28)&0x3fff};
@@ -57,9 +61,9 @@ export async function inspectModel(bytes){
     if((p.mode??4)!==4)fail('Only triangle lists are supported.');
     const count=doc.accessors[p.indices??p.attributes.POSITION].count;triangles+=uses*count/3;primitives+=uses;
   }
-  const loader=new GLTFLoader();
+  const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   // Node has no image decoder; geometry, skins and clips still load in full.
-  // First in line, so it also stands in for the built-in WebP texture extension.
+  // First in line, so it also stands in for the WebP and KTX2 texture extensions.
   loader.register(()=>({name:'NODE_IMAGE_PLACEHOLDER',loadTexture:async()=>new T.Texture()}));
   loader.pluginCallbacks.unshift(loader.pluginCallbacks.pop());
   const gltf=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');

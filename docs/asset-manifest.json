@@ -4960,7 +4960,7 @@
       "path": "assets/models/chapters/05/ch5-storage-jars.glb",
       "subject": "Generated Chapter V scenery: Terracotta storage jars, two standing and two on their sides",
       "source": {
-        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v2.5-20250123",
         "taskId": "a95f1fff-ae87-4967-a352-a6c803227789",
@@ -4977,14 +4977,23 @@
           "mergeDistance": 0.0001,
           "keepSkin": false
         },
-        "report": "art-source/models/reports/ch5-storage-jars.json"
+        "report": "art-source/models/reports/ch5-storage-jars.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/ch5-storage-jars-compress.json",
+          "previousBytes": 161296,
+          "previousSha256": "8e4ec225a7b2541efc403cc100bae5c4e1928fd7a3da341a6cf43ad278d321d2"
+        }
       },
       "usage": "Off-board scenery: terracotta stores in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
       "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
       "export": {
-        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
-        "bytes": 161296,
-        "sha256": "8e4ec225a7b2541efc403cc100bae5c4e1928fd7a3da341a6cf43ad278d321d2",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 181820,
+        "sha256": "46408505b7e22e9edd668a564ad420f22daeb1a1303e826588a625d8a3cc4ac6",
         "triangles": 3919,
         "textures": 3,
         "textureEdge": 512,
@@ -5001,7 +5010,7 @@
       "path": "assets/models/chapters/05/ch5-gallery-timbers.glb",
       "subject": "Generated Chapter V scenery: Rough timber shoring frame for a siege-mine gallery",
       "source": {
-        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v2.5-20250123",
         "taskId": "ad77a449-ea69-4c32-9ba6-60c45bb6812b",
@@ -5018,14 +5027,23 @@
           "mergeDistance": 0.0001,
           "keepSkin": false
         },
-        "report": "art-source/models/reports/ch5-gallery-timbers.json"
+        "report": "art-source/models/reports/ch5-gallery-timbers.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/ch5-gallery-timbers-compress.json",
+          "previousBytes": 271412,
+          "previousSha256": "cd58d67fdb9d29d91fdd2506f31a3f1470709a67e0a3632288576c3466634b8e"
+        }
       },
       "usage": "Off-board scenery: a spare countermine shoring frame in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
       "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
       "export": {
-        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
-        "bytes": 271412,
-        "sha256": "cd58d67fdb9d29d91fdd2506f31a3f1470709a67e0a3632288576c3466634b8e",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 266160,
+        "sha256": "4ec0d72b2db6a3b13e84ea576b4e4de11874f863180a7a03219497947522efad",
         "triangles": 4899,
         "textures": 3,
         "textureEdge": 512,
@@ -5042,7 +5060,7 @@
       "path": "assets/models/chapters/05/ch5-leather-tent.glb",
       "subject": "Generated Chapter V scenery: Roman eight-man leather tent on a ridge pole",
       "source": {
-        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v2.5-20250123",
         "taskId": "efad6e3f-58d8-4752-a888-b23213a51cf3",
@@ -5059,14 +5077,23 @@
           "mergeDistance": 0.0001,
           "keepSkin": false
         },
-        "report": "art-source/models/reports/ch5-leather-tent.json"
+        "report": "art-source/models/reports/ch5-leather-tent.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/ch5-leather-tent-compress.json",
+          "previousBytes": 230672,
+          "previousSha256": "5f62a77089572ace87e6478c9d777986596be7cc20a18758e13eee5f1804192d"
+        }
       },
       "usage": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
       "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
       "export": {
-        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
-        "bytes": 230672,
-        "sha256": "5f62a77089572ace87e6478c9d777986596be7cc20a18758e13eee5f1804192d",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 231056,
+        "sha256": "b2854626d9dc9467acf5dbb5638a4624dd171482d565cc32eafbbbf2f8b1de1b",
         "triangles": 4898,
         "textures": 3,
         "textureEdge": 512,
@@ -5083,7 +5110,7 @@
       "path": "assets/models/chapters/05/ch5-mudbrick-stack.glb",
       "subject": "Generated Chapter V scenery: Stack of mudbricks with loose bricks beside it",
       "source": {
-        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v2.5-20250123",
         "taskId": "48f5ed9c-ccc5-4f6e-8322-ecd58b10e161",
@@ -5100,14 +5127,23 @@
           "mergeDistance": 0.0001,
           "keepSkin": false
         },
-        "report": "art-source/models/reports/ch5-mudbrick-stack.json"
+        "report": "art-source/models/reports/ch5-mudbrick-stack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/ch5-mudbrick-stack-compress.json",
+          "previousBytes": 173144,
+          "previousSha256": "8b6ffc1d772acfd7f0c9605b26b893df5c73f93f023f7482275579621e33162b"
+        }
       },
       "usage": "Off-board scenery: wall-repair materials in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
       "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
       "export": {
-        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
-        "bytes": 173144,
-        "sha256": "8b6ffc1d772acfd7f0c9605b26b893df5c73f93f023f7482275579621e33162b",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 187856,
+        "sha256": "4b3ac09af387f56016175b2df26d5393764c1b082ef98a6102cfbe1f337c2185",
         "triangles": 2937,
         "textures": 3,
         "textureEdge": 512,
@@ -5124,7 +5160,7 @@
       "path": "assets/models/chapters/05/ch5-spoil-baskets.glb",
       "subject": "Generated Chapter V scenery: Woven baskets heaped with mining spoil",
       "source": {
-        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py",
+        "method": "Tripo text-to-model (v2.5-20250123) from a text prompt only (no reference image or third-party model), processed in Blender 5.2.2 LTS by scripts/assets/process-model.py, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v2.5-20250123",
         "taskId": "e4a3180a-7bb9-438f-a9c2-15c716734d0a",
@@ -5141,14 +5177,23 @@
           "mergeDistance": 0.0001,
           "keepSkin": false
         },
-        "report": "art-source/models/reports/ch5-spoil-baskets.json"
+        "report": "art-source/models/reports/ch5-spoil-baskets.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/ch5-spoil-baskets-compress.json",
+          "previousBytes": 188228,
+          "previousSha256": "5b95258e2b7b0b3f30cd888e56d4712b8e6c1d1d22686f1e80fa259d71e65cad"
+        }
       },
       "usage": "Off-board scenery: spoil baskets from the mine works in the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
       "loading": "Deferred local GLB in Chapter V's offline group only (src/ui/art.js); loaded by src/showcase/scenery-models.js at Balanced and High quality in the ch5-mine and ch5-wall encounters, in a supply camp on open ground off the board's west and south sides.",
       "export": {
-        "format": "GLB 2.0 with WebP textures (EXT_texture_webp)",
-        "bytes": 188228,
-        "sha256": "5b95258e2b7b0b3f30cd888e56d4712b8e6c1d1d22686f1e80fa259d71e65cad",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 213856,
+        "sha256": "9002f1a96e6a17e442981d4cfa0b6f3147a593a1013b83dbc9500675b6552955",
         "triangles": 2939,
         "textures": 3,
         "textureEdge": 512,
@@ -5165,7 +5210,7 @@
       "path": "assets/models/characters/roman-recruit.glb",
       "subject": "Generated character body: young Roman army recruit in training in the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "9de4f190-0e52-4686-8687-0c669eef23c5",
@@ -5186,14 +5231,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-recruit.json"
+        "report": "art-source/models/reports/char-roman-recruit.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-recruit-compress.json",
+          "previousBytes": 418392,
+          "previousSha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07"
+        }
       },
       "usage": "Chapter I recruits, the protagonist among them; the game adds the practice kit.",
       "loading": "Deferred local GLB in the offline groups of Chapter I only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 418392,
-        "sha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 366388,
+        "sha256": "aaeccd7ce97a7b41188e43615e03b045640e990aa45ac9ab26f4243a62ad032e",
         "triangles": 13685,
         "nearTriangles": 11186,
         "overviewTriangles": 2499,
@@ -5212,7 +5266,7 @@
       "path": "assets/models/characters/roman-trainer.glb",
       "subject": "Generated character body: grizzled Roman veteran drill instructor of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "753e26c5-63d2-4df0-ae10-28a450a55866",
@@ -5233,14 +5287,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-trainer.json"
+        "report": "art-source/models/reports/char-roman-trainer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-trainer-compress.json",
+          "previousBytes": 448620,
+          "previousSha256": "ed9ca20119b4386ccd69d16615adc1632775a232ab05aef9d979b53178370151"
+        }
       },
       "usage": "The Chapter I drill instructor; the game adds the practice sword.",
       "loading": "Deferred local GLB in the offline groups of Chapter I only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 448620,
-        "sha256": "ed9ca20119b4386ccd69d16615adc1632775a232ab05aef9d979b53178370151",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 401064,
+        "sha256": "89ac95eebdefd4d60a99cc778a7bbb1f8ccb291d9495347c8e562c80bc170433",
         "triangles": 13794,
         "nearTriangles": 11295,
         "overviewTriangles": 2499,
@@ -5259,7 +5322,7 @@
       "path": "assets/models/characters/roman-legionary.glb",
       "subject": "Generated character body: Roman legionary soldier of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "3d021c57-c89e-4575-bfce-ceae378320c9",
@@ -5280,14 +5343,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-legionary.json"
+        "report": "art-source/models/reports/char-roman-legionary.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-legionary-compress.json",
+          "previousBytes": 508428,
+          "previousSha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b"
+        }
       },
       "usage": "Roman line infantry, from Lucan and the oath's recruits to the legions at the accession; the game adds the shield, sword, cloak and crests.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 508428,
-        "sha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 447560,
+        "sha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88",
         "triangles": 13931,
         "nearTriangles": 11432,
         "overviewTriangles": 2499,
@@ -5306,7 +5378,7 @@
       "path": "assets/models/characters/roman-archer.glb",
       "subject": "Generated character body: Roman auxiliary archer of the mid-3rd century AD, recruited in the eastern provinces",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "9b6df0c7-2627-4789-b283-0e9a680b1b63",
@@ -5327,14 +5399,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-archer.json"
+        "report": "art-source/models/reports/char-roman-archer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-archer-compress.json",
+          "previousBytes": 483852,
+          "previousSha256": "80584d9e4d5a422fa9df7be06d777a728692699aaa37f35574e8dbb67af72f4c"
+        }
       },
       "usage": "Roman archers; the game adds the bow, arrows and quiver.",
       "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 483852,
-        "sha256": "80584d9e4d5a422fa9df7be06d777a728692699aaa37f35574e8dbb67af72f4c",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 436028,
+        "sha256": "07554bb0a8050c1a534e5c8bb5a997e2850d6189e7a74b1db13c6e76f8aea7e0",
         "triangles": 13630,
         "nearTriangles": 11131,
         "overviewTriangles": 2499,
@@ -5353,7 +5434,7 @@
       "path": "assets/models/characters/roman-officer.glb",
       "subject": "Generated character body: Roman centurion of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "5434c6ae-dcdb-4d6b-9009-68a3c523558b",
@@ -5374,14 +5455,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-officer.json"
+        "report": "art-source/models/reports/char-roman-officer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-officer-compress.json",
+          "previousBytes": 537496,
+          "previousSha256": "509bfca7bc38d11ac86523d8e8c7635379228cbc65fa27d920018e1d549aa335"
+        }
       },
       "usage": "The protagonist as a centurion in Chapters IV to VI; the game adds the crest, cloak, shield and sword.",
       "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 537496,
-        "sha256": "509bfca7bc38d11ac86523d8e8c7635379228cbc65fa27d920018e1d549aa335",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 471316,
+        "sha256": "4c0cce27574ae39d0c112c2a0eb96b0b7d4ea7fb3225fa52256a260a30bd1c3b",
         "triangles": 13892,
         "nearTriangles": 11393,
         "overviewTriangles": 2499,
@@ -5400,7 +5490,7 @@
       "path": "assets/models/characters/roman-commander.glb",
       "subject": "Generated character body: Roman senior army commander of the 260s and 270s AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "b3680837-dcef-4bcd-a98d-c84df9414e34",
@@ -5421,14 +5511,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-roman-commander.json"
+        "report": "art-source/models/reports/char-roman-commander.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-roman-commander-compress.json",
+          "previousBytes": 546208,
+          "previousSha256": "6256d8490e2f62941f61e44657579887620551665dd863b1517d4f7c13485f75"
+        }
       },
       "usage": "The protagonist as a senior commander from Chapter VII, and rival claimants; the game adds the crest, cloak (purple at the accession), shield and sword.",
       "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 546208,
-        "sha256": "6256d8490e2f62941f61e44657579887620551665dd863b1517d4f7c13485f75",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 482700,
+        "sha256": "2c20dd77247c577eaa3904815df233861cb49b38653e8b13209bc9729d06c974",
         "triangles": 13797,
         "nearTriangles": 11298,
         "overviewTriangles": 2499,
@@ -5447,7 +5546,7 @@
       "path": "assets/models/characters/gothic-warrior.glb",
       "subject": "Generated character body: Gothic warrior of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "d4e79b53-deea-4280-8e3f-52643d6b27e1",
@@ -5468,14 +5567,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-gothic-warrior.json"
+        "report": "art-source/models/reports/char-gothic-warrior.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-gothic-warrior-compress.json",
+          "previousBytes": 432708,
+          "previousSha256": "d32c073353bea4df189e062d3242c0a4cd9c53349625d5e8a5860a2286c4dc82"
+        }
       },
       "usage": "Gothic spearmen; the game adds the spear and shield.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VII, VIII, X only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 432708,
-        "sha256": "d32c073353bea4df189e062d3242c0a4cd9c53349625d5e8a5860a2286c4dc82",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 368820,
+        "sha256": "9bccd7724053d309bc09ee20071653c80a9d68b144b44bfa28b527a70f8a6589",
         "triangles": 13940,
         "nearTriangles": 11441,
         "overviewTriangles": 2499,
@@ -5494,7 +5602,7 @@
       "path": "assets/models/characters/gothic-archer.glb",
       "subject": "Generated character body: Gothic archer of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "3b3595b2-ee0c-4699-9ce8-ae9533b85e98",
@@ -5515,14 +5623,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-gothic-archer.json"
+        "report": "art-source/models/reports/char-gothic-archer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-gothic-archer-compress.json",
+          "previousBytes": 484744,
+          "previousSha256": "73da129c3a9c9be254e8c3e11e6c752d5b6b56a94dffc7703966d69418348e37"
+        }
       },
       "usage": "Gothic archers; the game adds the bow, arrows and quiver.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, VII, VIII, X only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 484744,
-        "sha256": "73da129c3a9c9be254e8c3e11e6c752d5b6b56a94dffc7703966d69418348e37",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 426424,
+        "sha256": "6113d02a0e0a9a7d70f8b6a49d93a632e1cb69655e362f746f3f20a783938357",
         "triangles": 13874,
         "nearTriangles": 11375,
         "overviewTriangles": 2499,
@@ -5541,7 +5658,7 @@
       "path": "assets/models/characters/gothic-noble.glb",
       "subject": "Generated character body: Gothic chieftain warrior of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "ecb62c9b-603a-4f92-bc7c-b3c618424586",
@@ -5562,14 +5679,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-gothic-noble.json"
+        "report": "art-source/models/reports/char-gothic-noble.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-gothic-noble-compress.json",
+          "previousBytes": 498632,
+          "previousSha256": "149853a43f34e389ca55b1d203e224760eecdc78cfa18d627cd44d03e4bfb7b2"
+        }
       },
       "usage": "Armoured Gothic warriors and riders; the game adds the spear, shield and horse.",
       "loading": "Deferred local GLB in the offline groups of Chapters IV, VII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 498632,
-        "sha256": "149853a43f34e389ca55b1d203e224760eecdc78cfa18d627cd44d03e4bfb7b2",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 441704,
+        "sha256": "31caa1c5dab908d5ad104d823c4dd93a1ecbfbbaffa0f43e91064e770a2ef3de",
         "triangles": 13980,
         "nearTriangles": 11480,
         "overviewTriangles": 2500,
@@ -5588,7 +5714,7 @@
       "path": "assets/models/characters/persian-infantry.glb",
       "subject": "Generated character body: Sasanian Persian infantry spearman of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "19e9cdd2-7155-4311-8b3e-e93ef0e417c3",
@@ -5609,14 +5735,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-persian-infantry.json"
+        "report": "art-source/models/reports/char-persian-infantry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-persian-infantry-compress.json",
+          "previousBytes": 525572,
+          "previousSha256": "44840ef56103b78189f03b45981d10addf7599e79e21e176886e97bf7949e765"
+        }
       },
       "usage": "Sasanian spearmen; the game adds the spear and shield.",
       "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 525572,
-        "sha256": "44840ef56103b78189f03b45981d10addf7599e79e21e176886e97bf7949e765",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 460068,
+        "sha256": "bcb5466f79d40f3546c38e9f48824f93631272b338bcaf02bace967da34e0c22",
         "triangles": 13980,
         "nearTriangles": 11480,
         "overviewTriangles": 2500,
@@ -5635,7 +5770,7 @@
       "path": "assets/models/characters/persian-archer.glb",
       "subject": "Generated character body: Sasanian Persian archer of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "0fe42e69-c07a-4806-81bf-77125cfb87d6",
@@ -5656,14 +5791,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-persian-archer.json"
+        "report": "art-source/models/reports/char-persian-archer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-persian-archer-compress.json",
+          "previousBytes": 512640,
+          "previousSha256": "f67425174ca64b6a96a1aa553f09e40d793c10324e33796ae166cfec83d3ef22"
+        }
       },
       "usage": "Sasanian archers; the game adds the bow, arrows and quiver.",
       "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 512640,
-        "sha256": "f67425174ca64b6a96a1aa553f09e40d793c10324e33796ae166cfec83d3ef22",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 446880,
+        "sha256": "95060da900e7f5b312a5b91caddeb1235075d000d5d35410253e7db37de099ae",
         "triangles": 13965,
         "nearTriangles": 11465,
         "overviewTriangles": 2500,
@@ -5682,7 +5826,7 @@
       "path": "assets/models/characters/persian-cavalry.glb",
       "subject": "Generated character body: Sasanian Persian heavy cavalryman of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "6ea64fb2-7dc9-43d1-a928-90280b523387",
@@ -5703,14 +5847,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-persian-cavalry.json"
+        "report": "art-source/models/reports/char-persian-cavalry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-persian-cavalry-compress.json",
+          "previousBytes": 549960,
+          "previousSha256": "0e2823a4b4de4142c1f5ba1e7471f1e23c20cf1787ce0f0a708a1a64a44a180c"
+        }
       },
       "usage": "Sasanian heavy cavalry riders; the game adds the spear, shield and horse.",
       "loading": "Deferred local GLB in the offline groups of Chapters V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 549960,
-        "sha256": "0e2823a4b4de4142c1f5ba1e7471f1e23c20cf1787ce0f0a708a1a64a44a180c",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 479072,
+        "sha256": "d0c3eabcc877d7dc78ab571d47dc9d83bcb0e0d243cc3b47b952e9c8c6a1d33f",
         "triangles": 14015,
         "nearTriangles": 11515,
         "overviewTriangles": 2500,
@@ -5729,7 +5882,7 @@
       "path": "assets/models/characters/palmyrene-infantry.glb",
       "subject": "Generated character body: Palmyrene soldier of the 270s AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "4e6ac7da-0733-4cef-94a7-a849d668c822",
@@ -5750,14 +5903,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-palmyrene-infantry.json"
+        "report": "art-source/models/reports/char-palmyrene-infantry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-palmyrene-infantry-compress.json",
+          "previousBytes": 535356,
+          "previousSha256": "a5202fc69eb8d051cdb2ce4699acc78a2e112af33a2664745fec364d2c6c0289"
+        }
       },
       "usage": "Palmyrene spearmen; the game adds the spear and shield.",
       "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 535356,
-        "sha256": "a5202fc69eb8d051cdb2ce4699acc78a2e112af33a2664745fec364d2c6c0289",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 463580,
+        "sha256": "9b78817c7edb4ad0c66e489c1440fbd9cf8b913da93955e704092e1cf7f4466b",
         "triangles": 14021,
         "nearTriangles": 11521,
         "overviewTriangles": 2500,
@@ -5776,7 +5938,7 @@
       "path": "assets/models/characters/palmyrene-archer.glb",
       "subject": "Generated character body: Palmyrene archer of the 270s AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "5e86017f-e99d-4922-a5ec-3c957af69fcb",
@@ -5797,14 +5959,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-palmyrene-archer.json"
+        "report": "art-source/models/reports/char-palmyrene-archer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-palmyrene-archer-compress.json",
+          "previousBytes": 472440,
+          "previousSha256": "43c2f9b3bca7407fc99d0ad633d1cd17925e2775cb5fd9c198fcf069a769ba97"
+        }
       },
       "usage": "Palmyrene archers; the game adds the bow, arrows and quiver.",
       "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 472440,
-        "sha256": "43c2f9b3bca7407fc99d0ad633d1cd17925e2775cb5fd9c198fcf069a769ba97",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 417196,
+        "sha256": "ac12d8fe3e633f239c33bba740143059a7160a9fd80643116ba875a4b8a07c28",
         "triangles": 13909,
         "nearTriangles": 11410,
         "overviewTriangles": 2499,
@@ -5823,7 +5994,7 @@
       "path": "assets/models/characters/palmyrene-cavalry.glb",
       "subject": "Generated character body: Palmyrene heavy cavalryman of the 270s AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "b61ba77c-f98c-4b3a-b885-77178554817c",
@@ -5844,14 +6015,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-palmyrene-cavalry.json"
+        "report": "art-source/models/reports/char-palmyrene-cavalry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-palmyrene-cavalry-compress.json",
+          "previousBytes": 557720,
+          "previousSha256": "c5057f8a3349fbdd85f41b4a56441fdc9fb1b98c188600a559eb84be87a6797e"
+        }
       },
       "usage": "Palmyrene heavy cavalry riders; the game adds the spear, shield and horse.",
       "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 557720,
-        "sha256": "c5057f8a3349fbdd85f41b4a56441fdc9fb1b98c188600a559eb84be87a6797e",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 479632,
+        "sha256": "52872ef229a3646bbd3b7db5051b328909162c7b1f257aa80fbf681892696ff1",
         "triangles": 14110,
         "nearTriangles": 11611,
         "overviewTriangles": 2499,
@@ -5870,7 +6050,7 @@
       "path": "assets/models/characters/civilian-escort.glb",
       "subject": "Generated character body: provincial Roman civilian traveller of the mid-3rd century AD",
       "source": {
-        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs",
+        "method": "Tripo text-to-model (v3.0-20250812) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.0-20250812",
         "taskId": "7292c822-f168-4ce9-abd2-2e7ef4893100",
@@ -5891,14 +6071,23 @@
           "clavicleDegrees": 10,
           "sharpAngle": 60
         },
-        "report": "art-source/models/reports/char-civilian-escort.json"
+        "report": "art-source/models/reports/char-civilian-escort.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-22",
+          "report": "art-source/models/reports/char-civilian-escort-compress.json",
+          "previousBytes": 422340,
+          "previousSha256": "efdb2701c1d3296c28177369a3ad60434395fd3ae30eb08986260293e68e4fc3"
+        }
       },
       "usage": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
       "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, VI, VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with WebP textures (EXT_texture_webp) and quantized vertex data (KHR_mesh_quantization)",
-        "bytes": 422340,
-        "sha256": "efdb2701c1d3296c28177369a3ad60434395fd3ae30eb08986260293e68e4fc3",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 377588,
+        "sha256": "4637a473cc26007f29ccac46ea4611151ff29c4f13a4e96f93c24fd89d4feaa8",
         "triangles": 13769,
         "nearTriangles": 11269,
         "overviewTriangles": 2500,
@@ -5978,14 +6167,15 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-22T17:42:51.770050+00:00",
+  "updatedAt": "2026-10-22T21:17:11.756165+00:00",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
     "compressedInitialBuildBytes": 2000000,
-    "compressedChapterOneBuildBytes": 10000000,
-    "compressedCompleteBuildBytes": 24000000
+    "compressedChapterOneBuildBytes": 12000000,
+    "compressedCompleteBuildBytes": 50000000,
+    "compressedChapterGroupBuildBytes": 14000000
   },
   "assetCounts": {
     "tactical": 6,
@@ -6003,6 +6193,6 @@
     "textures": 4
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 19718455,
-  "totalModelBytes": 9424987
+  "totalBundledAssetBytes": 18805363,
+  "totalModelBytes": 8511895
 }

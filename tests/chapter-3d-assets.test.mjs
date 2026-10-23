@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile} from 'node:fs/promises';
-import {chapterAssets,chapterAudioAssets,chapterOfflineAssets} from '../src/ui/art.js';
+import {chapterAssets,chapterAudioAssets,chapterFlatAssets,chapterOfflineAssets,isFlatArt,viewDecodes} from '../src/ui/art.js';
+import {tacticalAssets} from '../src/ui/unit-sprites.js';
 import {chapterBodies,actorBodyUrl} from '../src/ui/actor-body-catalog.js';
 import vm from 'node:vm';
 
@@ -33,8 +34,27 @@ test('Shared dependencies use identical deduplicated URLs across chapters withou
     const art=chapterAssets(chapter),models=ownModels(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
     assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)&&!models.includes(path)),first);
-    for(const path of [...art,...models])assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
+    for(const path of [...art.filter(path=>!isFlatArt(path)),...models])assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
+});
+
+// A 3D player's pack leaves out the 2D art; the 2D view and painted figures add it.
+test('Each chapter’s 2D art is outside its 3D pack and in its 2D extras, which hold nothing else',()=>{
+  for(let chapter=1;chapter<=12;chapter++){
+    const pack=chapterOfflineAssets(chapter,files),flat=chapterFlatAssets(chapter);
+    assert.ok(flat.length&&flat.every(isFlatArt),`Chapter ${chapter}: its 2D extras are 2D art`);
+    assert.ok(!pack.some(isFlatArt),`Chapter ${chapter}: the 3D pack carries no 2D art`);
+    for(const path of chapterAssets(chapter))assert.ok(pack.includes(path)!==flat.includes(path),`Chapter ${chapter}: ${path} is in exactly one of the two`);
+    for(const path of tacticalAssets({id:`ch${chapter}-test`,kind:'battle',units:[]}))assert.ok(isFlatArt(path),`The 2D board’s ${path} is 2D art`);
+  }
+});
+
+test('A view decodes only the 2D art it draws: the board all of it, painted figures their atlases and sheets, sculpted none',()=>{
+  const atlas='./assets/tactical/units-frontier.webp',sheet='./assets/animation/roman-actions.webp',ground='./assets/world/ground-materials.webp',props='./assets/tactical/environment-props.webp',scene='./assets/scenes/danube.webp';
+  assert.equal(viewDecodes(scene),true,'The 3D view still decodes the chapter’s paintings');
+  for(const path of [atlas,sheet,ground,props])assert.equal(viewDecodes(path),false,`Sculpted figures never draw ${path}`);
+  assert.deepEqual([atlas,sheet,ground,props].map(path=>viewDecodes(path,{painted:true})),[true,true,false,false]);
+  for(const path of [atlas,sheet,ground,props,scene])assert.equal(viewDecodes(path,{flat:true}),true);
 });
 
 test('Female anatomy and complexion are deferred through Chapter VII; male complexion is available for every cold restore',()=>{
@@ -58,7 +78,7 @@ test('A cold restored Senate chapter retries missing 3D code, works offline and 
   const cache=name=>{if(!stores.has(name))stores.set(name,new Map());const m=stores.get(name);return {match:async p=>m.get(normal(p))?.clone(),put:async(p,r)=>m.set(normal(p),r.clone()),keys:async()=>[...m.keys()]};};
   const fetcher=async p=>{const url=normal(p);fetches.push(url);if(offline||url===failed)throw Error('offline');return new Response('current:'+url);};
   const client={postMessage:m=>messages.push(m)},self={registration:{scope:base},location:{origin:new URL(base).origin},clients:{matchAll:async()=>[client],claim:async()=>{}},addEventListener:(k,v)=>handlers[k]=v};
-  const code=template.replaceAll('__REVISION__','campaign-3d').replace('__ALL_FILES__',JSON.stringify(all)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(groups));
+  const code=template.replaceAll('__REVISION__','campaign-3d').replace('__ALL_FILES__',JSON.stringify(all)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(groups)).replace('__CHAPTER_FLAT_FILES__',JSON.stringify(Object.fromEntries(Array.from({length:12},(_,i)=>[i+1,chapterFlatAssets(i+1)]))));
   vm.runInNewContext(code,{self,caches:{open:async n=>cache(n),keys:async()=>[...stores.keys()],delete:async n=>stores.delete(n)},fetch:fetcher,URL,Request,Response,console});
   const fire=async(type,data={})=>{let p;handlers[type]({...data,waitUntil:v=>p=v,respondWith:v=>p=v});return p;};
   await fire('install');assert.deepEqual(fetches,initial.map(normal),'Initial installation must not fetch Three or shared scenes');

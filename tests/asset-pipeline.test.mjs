@@ -27,8 +27,10 @@ test('asset pipeline: embedded maps, skins and clips of a handoff GLB are counte
   assert.match(budgetProblems(info,{maxHeight:1.5}).join(' '),/m tall is above 1\.5 m/);
 });
 
-test('asset pipeline: image sizes come from PNG, WebP and JPEG headers', async () => {
+test('asset pipeline: image sizes come from PNG, WebP, JPEG and KTX2 headers', async () => {
   assert.deepEqual(imageSize(await file('icons/icon-180.png')),{width:180,height:180});
+  const quad=await inspectModel(await file('tests/models/compressed-quad.glb'));
+  assert.deepEqual(quad.textures.map(t=>[t.mimeType,t.width,t.height]),[['image/ktx2',16,16]]);
   for(const id of ['complexion-male-v018','frontier-oath']){const e=entry(id);assert.deepEqual(imageSize(await file(e.path)),{width:e.export.width,height:e.export.height},id);}
   const jpeg=imageSize(await file('docs/images/production-battle.jpg'));assert.ok(jpeg.width>0&&jpeg.height>0);
   assert.deepEqual(imageSize(Buffer.from('not an image')),{width:0,height:0});
@@ -37,8 +39,11 @@ test('asset pipeline: image sizes come from PNG, WebP and JPEG headers', async (
 test('asset pipeline: what the game cannot load is refused', async () => {
   await assert.rejects(inspectModel(Buffer.from('not a model at all, just text')),/Not a binary glTF/);
   const info=await inspectModel(await file('assets/models/roman-human-v017.glb'));
-  // Constructed variants of a real report: compression the bare loader cannot decode.
-  for(const name of ['KHR_draco_mesh_compression','EXT_meshopt_compression','KHR_texture_basisu'])
-    assert.deepEqual(budgetProblems({...info,extensionsRequired:[name]}),[`${name} needs a decoder the game does not ship.`]);
-  assert.deepEqual(budgetProblems({...info,extensionsRequired:['EXT_texture_webp','KHR_texture_transform']}),[]);
+  // Constructed variants of a real report: compression the game's loader cannot decode.
+  assert.deepEqual(budgetProblems({...info,extensionsRequired:['KHR_draco_mesh_compression']}),['KHR_draco_mesh_compression needs a decoder the game does not ship.']);
+  assert.deepEqual(budgetProblems({...info,extensionsRequired:['EXT_texture_webp','KHR_texture_transform','EXT_meshopt_compression','KHR_texture_basisu']}),[]);
+  // A model from the compressor reads in full: meshopt geometry and KTX2 textures.
+  const quad=await inspectModel(await file('tests/models/compressed-quad.glb'));
+  assert.deepEqual([quad.triangles,quad.extensionsRequired.sort(),budgetProblems(quad)],[2,['EXT_meshopt_compression','KHR_texture_basisu'],[]]);
+  assert.deepEqual(quad.sizeMetres,{width:1,height:1,depth:0});
 });

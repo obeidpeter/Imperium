@@ -50,15 +50,15 @@ The service worker initially caches the application shell plus the title, recrui
 
 | Request to the active worker | Meaning |
 | --- | --- |
-| `{type: 'cache-chapter', chapter}` | Cache shell plus that chapter's declared assets. |
-| `{type: 'offline-status', chapter}` | Report complete-campaign and current-chapter readiness. |
+| `{type: 'cache-chapter', chapter, flat}` | Cache shell plus that chapter's declared assets; with `flat`, its 2D art too (the 2D view and painted figures). |
+| `{type: 'offline-status', chapter, flat}` | Report complete-campaign and current-chapter readiness. |
 | `'cache-campaign'` | Download every declared production asset after the player's request. |
 
-`chapter-offline` responses contain `{chapter, ready, completed, total, percent, revision}`. Full progress uses `offline-progress`; `offline-ready` is sent only when all production files are present. Errors identify the failed chapter or complete request and allow retry. The header distinguishes current-chapter readiness from all-chapter readiness. Optional prefetch completion alone is never treated as proof that a chapter is available offline.
+`chapter-offline` responses contain `{chapter, flat, ready, completed, total, percent, revision}`. Full progress uses `offline-progress`; `offline-ready` is sent only when all production files are present. Errors identify the failed chapter or complete request and allow retry. The header distinguishes current-chapter readiness from all-chapter readiness. Optional prefetch completion alone is never treated as proof that a chapter is available offline.
 
 Each build uses a content revision and an edition-scoped cache. Reads and readiness checks use that cache alone. Installation fetches with HTTP cache revalidation bypass (`cache: 'reload'`) so an old image at the same URL cannot satisfy the new edition. A waiting worker does not call `skipWaiting`; old tabs finish before activation and old-cache cleanup. Production navigation can restore the cached shell. A source preview does not include generated `sw.js` and therefore does not prove PWA behavior.
 
-`scripts/build.mjs` produces chapter groups and `dist/build-report.json`, fails on missing required artwork, and enforces the v0.8 limits in `presentation-budget.js`: **2,000,000 compressed bytes for the opening install, 8,000,000 for shell plus chapter I, and 24,000,000 for the complete opt-in campaign**; 0.37 raised the chapter I limit to 10,000,000 for its generated character bodies. This release raises the chapter/full limits to accommodate additional artwork; the initial cap remains unchanged. Measurements sum individually gzipped production files, including the worker. They are package estimates, not browser transfer traces or ZIP sizes. `scripts/verify-assets.mjs` checks those limits, declared integrity, chapter coverage and worker behavior.
+`scripts/build.mjs` produces chapter groups and `dist/build-report.json`, fails on missing required artwork, and enforces the v0.8 limits in `presentation-budget.js`: **2,000,000 compressed bytes for the opening install, 8,000,000 for shell plus chapter I, and 24,000,000 for the complete opt-in campaign**; 0.37 raised the chapter I limit to 10,000,000 for its generated character bodies. The asset foundation counts Chapter I as the 3D view downloads it, without the 2D art, raises its limit to 12,000,000 and the complete campaign's to 50,000,000, and caps any one chapter with its 2D art at 14,000,000. This release raises the chapter/full limits to accommodate additional artwork; the initial cap remains unchanged. Measurements sum individually gzipped production files, including the worker. They are package estimates, not browser transfer traces or ZIP sizes. `scripts/verify-assets.mjs` checks those limits, declared integrity, chapter coverage and worker behavior.
 
 ## Version 0.29 presentation systems (3D)
 
