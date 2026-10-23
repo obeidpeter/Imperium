@@ -495,6 +495,68 @@ async function campStartupDeparture(){
   }
   console.log('ok - slow camp setup: departure remains disabled through module loading and the initial visit save, then enters field and chamber');
 }
+// A route choice is a saved campaign command just like departure. Hold both
+// initialization boundaries so an enabled choice can never silently lose a click.
+async function campRouteChoice(){
+  const page=await open({serviceWorkers:'block'});let releaseModule;
+  const held=new Promise(resolve=>{releaseModule=resolve;});
+  await page.route('**/src/showcase/realtime-field.js',async route=>{await held;await route.continue();});
+  const loading=page.waitForRequest('**/src/showcase/realtime-field.js',{timeout:30000});void loading.catch(()=>{});
+  await page.addInitScript(()=>{
+    localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));
+    const request=navigator.locks.request.bind(navigator.locks),delay=window.__campRouteSaveDelay={held:false,release:null};
+    navigator.locks.request=(name,...args)=>{
+      const callback=args.pop();
+      return request(name,...args,async lock=>{
+        if(name==='sacramentum-save'&&!delay.held&&document.querySelector('.camp-page')){
+          delay.held=true;await new Promise(resolve=>{delay.release=resolve;});
+        }
+        return callback(lock);
+      });
+    };
+  });
+  try{
+    await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode('ch12-confrontation'));await loading;
+    const route='[data-cmd="route"][data-id="defection"]',firstPosition=page.locator('[data-cmd="company-up"][data-id="0"]');
+    assert.equal(await (await revealControl(page,route)).isDisabled(),true,'A route waits for the initial camp runtime');
+    assert.equal(await firstPosition.count(),1,'The first deployment position has its move-up control');
+    assert.equal(await firstPosition.isDisabled(),true,'The first deployment position cannot move up');
+    await menuButton(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');
+    const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
+    await page.click('#modal [data-cmd="close-modal"] >> nth=0');await closed;
+    releaseModule();await page.waitForFunction(()=>window.__campRouteSaveDelay.held,null,{timeout:30000});
+    assert.equal(await (await revealControl(page,route)).isDisabled(),true,'A route remains disabled throughout the initial camp save');
+    assert.match(await text(page,'.save-status'),/Saving/);
+    assert.equal(await page.locator('[data-cmd="ledger"]').first().isEnabled(),true,'Reading the ledger remains available during a camp save');
+    await page.evaluate(()=>window.__campRouteSaveDelay.release());
+    await (await revealControl(page,route)).click();await page.waitForSelector(`${route}.chosen`,{timeout:30000});
+    assert.equal(await firstPosition.isDisabled(),true,'Ending the save never enables an inherently unavailable deployment order');
+  }finally{
+    releaseModule();await page.evaluate(()=>window.__campRouteSaveDelay?.release?.()).catch(()=>{});await page.context().close();
+  }
+  console.log('ok - camp route choice: initialization and saving disable mutations, Settings and ledger remain available, and one click selects defection after saving without enabling unavailable deployment orders');
+}
+// The gate reply first saves the conversation, then starts the encounter as a
+// second command. Both steps must complete through the ordinary visible reply.
+async function campGateDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open();
+    await page.addInitScript(()=>{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));});
+    await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode(id));
+    await (await revealControl(page,'[data-cmd="conversation"][data-id="gate"]')).click();
+    await page.waitForSelector('#modal[open] [data-cmd="reply"][data-id="0"]');
+    assert.match(await text(page,'#modal [data-cmd="reply"][data-id="0"]'),/March out/);
+    await page.click('#modal [data-cmd="reply"][data-id="0"]');
+    await page.waitForSelector(`.rt-field[data-kind="${kind}"] .rt-scene[data-ready="true"]`,{timeout:30000}).catch(async error=>{
+      const observed=await page.evaluate(()=>({kind:document.querySelector('.rt-field')?.dataset.kind,modal:document.querySelector('#modal')?.open,
+        save:document.querySelector('.save-status')?.textContent,feedback:document.querySelector('#announcement')?.textContent}));
+      throw new Error(`${id}: the gate reply must enter its ${kind} after saving the conversation: ${error.message.split('\n')[0]}; ${JSON.stringify(observed)}`);
+    });
+    assert.equal(await page.evaluate(()=>{const world=window.__realtime.world();return world.encounterId??world.contestId;}),id,'The gate enters the selected next encounter');
+    await page.context().close();
+  }
+  console.log('ok - camp gate reply: one March out reply saves the conversation and enters both a field and a chamber');
+}
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
 const chamberHour=page=>page.evaluate(()=>window.__chamber.hour());
@@ -618,8 +680,8 @@ async function realtimeFinale(){
   const page=await open();
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
   await page.goto(base);await settingsCommand(page,'restore');
-  await page.fill('#restore-code',battleCampCode('ch12-confrontation'));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
-  await page.waitForSelector('.camp-page').catch(()=>assert.fail('The Chapter XII camp opens'));await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
+  await restoreCamp(page,battleCampCode('ch12-confrontation'));
+  await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
   await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
@@ -750,7 +812,7 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
-for(const scenario of [campStartupDeparture,campSaveDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
+for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();

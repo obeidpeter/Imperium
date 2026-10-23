@@ -13,6 +13,7 @@ import {casePreview} from './command-edition-views.js';
 import {CONTROL_DEFAULTS,controlAction,remapControl,holdDelay,controlKeys} from './control-preferences.js';
 import {createTurnReplay,turnReplaySteps} from './turn-replay.js';
 import {createSessionGate,commitReplacement} from './session-gate.js';
+import {createSessionControls} from './session-controls.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
 import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
@@ -57,17 +58,13 @@ const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
   offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
   pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
-const sessionGate=createSessionGate({onBusyChange:syncDepartureControls});
-// A camp's first-visit save can begin before its first frame. Reflect the
-// transaction immediately so an enabled departure never silently drops a click.
-function syncDepartureControls(busy=sessionGate.busy){
-  // Do not briefly enable the button before the runtime's first visit save:
-  // starting that save during pointer dispatch can cancel a native click.
+const sessionControls=createSessionControls(document);
+const sessionGate=createSessionGate({onBusyChange:syncSessionControls});
+// Camp decisions and preparations share the save transaction with departure.
+// Wait through setup too: its first visit save can begin during pointer dispatch.
+function syncSessionControls(busy=sessionGate.busy){
   const waiting=busy||(campMode()&&(field?.kind!=='camp'||!field.runtime||!field.element.isConnected));
-  for(const button of document.querySelectorAll('[data-cmd="start"]')){
-    button.disabled=waiting;
-    if(waiting)button.setAttribute('aria-busy','true');else button.removeAttribute('aria-busy');
-  }
+  sessionControls.sync(waiting);
 }
 let memoryOnly=false,archivePrimaryState=null;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,
@@ -207,9 +204,11 @@ function render(){
   // A new screen starts afresh; within one, the page is updated in place, so the
   // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
   if(newView)app.replaceChildren();
+  // Remove temporary save locks before reconciling rule-driven disabled states.
+  sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
-  syncDepartureControls();
+  syncSessionControls();
   soundscape.update(state,screen);
   const target=fieldTarget();
   if(target)mountField(target);
@@ -307,7 +306,7 @@ function mountField(target){
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
-    syncDepartureControls();
+    syncSessionControls();
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
@@ -380,9 +379,12 @@ async function replyConversation(index){
   let outcome=null;
   await change(()=>{outcome=Game.campReply(state,{treeId,nodeId,index});return outcome;},{tone:'click',silent:true,afterRender:()=>{
     if(!outcome?.ok)return;refreshCampMarks();
-    if(outcome.open){modal.close();followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    if(outcome.open){modal.close();if(outcome.open!=='march')followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
     if(outcome.message)toast(outcome.message);
   }});
+  // The gate's March out reply explicitly starts another saved command. Finish
+  // this reply's transaction before taking that next step, without queuing input.
+  if(outcome?.ok&&outcome.open==='march')await startCampaignEncounter();
 }
 // What a reply opens next: a panel, the War Council, the practice post, or the march.
 function followUp(open){
@@ -772,7 +774,7 @@ async function persist(){
   finally{saving=false;}
 }
 async function change(fn,{reset=false,tone='click',turn=false,silent=false,command:issuedCommand=null,clearSelection=false,afterRender=null}={}){
-  if(sessionGate.busy)return;
+  if(sessionGate.busy){toast('Please wait for the current save to finish.');return;}
   if(saveConflict){toast(saveProblem);return;}
   return sessionGate.run(async()=>{
     stopMotion();
@@ -837,6 +839,7 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   const returnButton=back?`<button class="text-link modal-back" ${back==='company'?'data-cmd="soldier-panel" data-id="company"':'data-cmd="menu"'}>← ${back==='company'?'Company':'Menu'}</button>`:'';
   modal.innerHTML=`<div class="modal-head"><div>${returnButton}<h2 id="panel-title" tabindex="-1">${esc(title)}</h2>`+
     `</div><button class="ghost modal-close" data-cmd="close-modal" aria-label="Close panel">Close <kbd>Esc</kbd></button></div><div class="modal-body">${body}</div>`;
+  syncSessionControls();
   for(const id of openDetails){const detail=document.getElementById(id);if(detail?.tagName==='DETAILS')detail.open=true;}
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
