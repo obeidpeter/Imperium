@@ -64,7 +64,8 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced',h
     // Tension folds converge toward the belt and armpits. Fine threads belong
     // in the material; these centimeter-scale folds alter the actual contour.
     const compression=Math.exp(-(((y-.055)/.10)**2))*.003*Math.sin(a*11+y*24);
-    const fold=(armor?.0035:.011)*(diagonal*(.35+.65*waist))+(armor?0:compression);
+    const gravityFold=Math.sin(a*7+(y<0?y*2:y*8)+characterPhase*.3)*Math.max(0,1-Math.abs(y-.06)*2.6);
+    const fold=(armor?.0035:.011)*(diagonal*(.35+.65*waist))+(armor?0:compression+gravityFold*.004);
     const chest=armor?.003:.006*Math.exp(-(((y-.31)/.12)**2))*front;
     const scaleStep=kind==='scale'&&y<.285?.0045*Math.pow(.5+.5*Math.cos((y+.13)*TAU/.063),6):0;
     const scallop=armor&&y<-.10?.0035*Math.cos(a*12)*(1-smooth((y+.135)/.035)):0;
@@ -72,7 +73,8 @@ export function costumeGeometry({kind='tunic',detail='near',quality='balanced',h
     const build=clamp(identity.build??1,.90,1.13)-1;
     const tailored=1+build*.52*Math.exp(-(((y-.22)/.23)**2));
     const drape=fullLength&&y<0?.007*Math.cos(a*7+y*4)*(1-smooth((y-bottom)/(-bottom))):0;
-    return [Math.sin(a)*(rx+fold+scaleStep+drape)*tailored,y+scallop-collarDrop,Math.cos(a)*(rz+fold+scaleStep+drape)*(1+build*.28)+chest];
+    const hemWeight=fullLength&&y<-.08?Math.sin(a*3+.4)*.008*(1-smooth((y-bottom)/(-bottom))):0;
+    return [Math.sin(a)*(rx+fold+scaleStep+drape)*tailored,y+scallop-collarDrop+hemWeight,Math.cos(a)*(rz+fold+scaleStep+drape)*(1+build*.28)+chest];
   };
   for(let j=0;j<rows.length;j++){
     const ring=[];

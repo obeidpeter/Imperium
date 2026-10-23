@@ -24,6 +24,7 @@ import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {ITEMS} from '../data/items.js';
+import {createSoldier} from '../core/soldier.js';
 import {TRAINERS} from '../data/soldier.js';
 import {campFor,CAMP_PLACES,PLACE_NAMES,PLACE_HINTS} from '../data/camps.js';
 import {practicePanel} from './command-edition-views.js';
@@ -61,7 +62,7 @@ let memoryOnly=false,archivePrimaryState=null;
 let cancelMotion=null,currentAnimation=null,currentChapterOffline=false,artProgress='',offlineWorker=null,fullDownloadRequested=false,loadedArtChapter=0,
   artRequest=0,cachedChapterRequest=0;
 let cancelAmbient=null,ambientTime=null;
-let renderedLocation='',pendingScroll=false;
+let renderedLocation='',pendingScroll=false,resultFocusKey='';
 let cleanupSiteMedia=()=>{};
 let hoverTile=null,showGrid=false,failed3D=false,preservedUnreadable=0,lastPersisted='';
 // A battle that stayed slow at its lowest resolution builds the next one a tier
@@ -167,7 +168,10 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
         }});
   }
   if(pendingReplay){replay.start(pendingReplay,settings.reducedMotion||document.hidden);pendingReplay=null;}
-  if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
+  const result=document.querySelector('.rt-result h2'),resultKey=result?`${state?.encounter?.id}:${state?.encounter?.status}`:'';
+  if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
+  else if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
+  if(!result)resultFocusKey='';
 });
 function render(){
   // A running performance check owns the 3D stage; the page catches up after it.
@@ -214,6 +218,7 @@ function render(){
   if(ceremony3D)ceremony.mount(ceremonyHost,
     {kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
   mountPainting();
+  void mountIdentityPreview();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}
   if(screen==='title')cleanupSiteMedia=setupSiteMedia(app);
   prepareChapterArt();
@@ -289,7 +294,7 @@ function mountField(target){
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
-    mountFieldStage();if(camp)refreshCampMarks();element.querySelector('canvas')?.focus({preventScroll:true});
+    mountFieldStage();if(camp)refreshCampMarks();if(camp||state.encounter?.status==='active')element.querySelector('canvas')?.focus({preventScroll:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
 }
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
@@ -468,7 +473,7 @@ function showSaves(){
       `<small>${s.empty?'Empty':`${esc(s.summary)} · ${esc(new Date(s.savedAt).toLocaleString())}`}</small>`+
       `${s.id!=='quick'?`<label class="visually-hidden" for="slot-name-${s.id}">Name for slot ${s.id}</label><input id="slot-name-${s.id}" maxlength="60" value="${esc(s.empty?slotSummary():s.name)}">`:''}</div>`+
       `<div class="save-slot-actions"><button data-cmd="slot-save" data-id="${s.id}" ${problem?'disabled':''}>Save here</button>`+
-      `<button data-cmd="slot-load" data-id="${s.id}" ${s.empty?'disabled':''}>Load</button></div></li>`).join('')}</ul>`);
+      `<button data-cmd="slot-load" data-id="${s.id}" ${s.empty?'disabled':''}>Load</button></div></li>`).join('')}</ul><details class="soldier-details"><summary>Move a save between devices</summary><p>Copy your chronicle to a save code, or restore one here. Import checks the code before replacing your current game.</p><div class="panel-actions"><button data-cmd="export" ${state?'':'disabled'}>Export save code</button><button data-cmd="restore">Import save code</button></div></details>`);
 }
 async function loadSlot(id){
   let candidate;try{candidate=readSlot(id);}catch(error){toast(error.message);return;}
@@ -517,6 +522,25 @@ function refreshMissionPanel(){
   missionPanelAt=now;showSoldierPanel('mission');
 }
 let soldierPreview=null,soldierPreviewGeneration=0;
+let identityPreview=null,identityCanvas=null,identityGeneration=0,identityKey='';
+async function mountIdentityPreview(){
+  const canvas=app.querySelector('[data-soldier-preview]');
+  const key=JSON.stringify([state?.name,state?.rank,state?.chapter,state?.soldier?.appearance,state?.soldier?.worn]);
+  if(canvas===identityCanvas&&key===identityKey)return;
+  identityGeneration++;identityPreview?.dispose();identityPreview=null;identityCanvas=canvas;identityKey=key;
+  if(!canvas||!state?.soldier||typeof globalThis.WebGLRenderingContext==='undefined')return;
+  const generation=identityGeneration,host=canvas.closest('.soldier-model'),status=host.querySelector('[data-preview-status]');
+  try{
+    const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
+    if(generation!==identityGeneration||!canvas.isConnected)return;
+    const preview=identityPreview=mountSoldierPreview(canvas,{soldier:state.soldier,name:state.name,chapter:state.chapter,rank:state.rank,onError:text=>{status.textContent=text;}});
+    for(const button of host.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
+    host.querySelector('[data-preview-reset]').onclick=()=>preview.reset();
+    host.querySelector('[data-preview-detail]').onclick=()=>{preview.inspectFace?.();canvas.scrollIntoView({block:'start',behavior:'instant'});};
+    await preview.ready;
+    if(generation===identityGeneration&&canvas.dataset.preview!=='unavailable')status.textContent='Your soldier, carrying the kit earned in this chronicle.';
+  }catch{if(generation===identityGeneration)status.textContent='Your equipment remains available in the character panel.';}
+}
 function disposeSoldierPreview(){soldierPreviewGeneration++;soldierPreview?.dispose();soldierPreview=null;}
 async function showSoldierPreview(){
   const canvas=modal.querySelector('[data-soldier-preview]'),status=modal.querySelector('[data-preview-status]');
@@ -527,10 +551,12 @@ async function showSoldierPreview(){
   try{
     const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
     if(generation!==soldierPreviewGeneration||!modal.open||!canvas.isConnected)return;
-    const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:state.soldier,name:state.name,chapter:state.chapter,rank:state.rank,
+    const recruit=!!modal.querySelector('[data-appearance]');
+    const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:recruit?createSoldier(recruitChoice()):state.soldier,name:recruit?'Your recruit':state.name,chapter:recruit?1:state.chapter,rank:recruit?'Tiro':state.rank,uncovered:recruit,
       reducedMotion:settings.reducedMotion,onError:text=>{if(status)status.textContent=text;}});
     for(const button of modal.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
     const reset=modal.querySelector('[data-preview-reset]');if(reset)reset.onclick=()=>preview.reset();
+    const detail=modal.querySelector('[data-preview-detail]');if(detail)detail.onclick=()=>{preview.inspectFace?.();canvas.scrollIntoView({block:'start',behavior:'instant'});};
     await preview.ready;
     if(generation===soldierPreviewGeneration&&canvas.dataset.preview!=='unavailable'&&status)status.textContent='Drag or use the arrows to inspect your equipped outfit.';
   }catch{if(generation===soldierPreviewGeneration&&status)status.textContent='Model unavailable. Your equipped items are listed below.';}
@@ -557,7 +583,8 @@ function showSoldierPanel(name,arg=null){
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
   const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
-  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu'});soldierPanel={name,arg};modal.dataset.soldier=name;void showSoldierPreview();
+  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu'});soldierPanel={name,arg};modal.dataset.soldier=name;
+  if(!modal.querySelector('[data-appearance]'))void showSoldierPreview();
   for(const id of openDetails){const el=document.getElementById(id);if(el)el.open=true;}
   if(samePanel)modal.scrollTop=scroll;
   if(keep){const again=modal.querySelector(keep);if(again&&!again.disabled)again.focus({preventScroll:true});}
@@ -785,6 +812,7 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   for(const id of openDetails){const detail=document.getElementById(id);if(detail?.tagName==='DETAILS')detail.open=true;}
   modal.scrollTop=0;if(!modal.open)modal.showModal();
   modal.querySelector('#panel-title').focus({preventScroll:true});
+  if(modal.querySelector('[data-appearance]'))void showSoldierPreview();
 }
 // ——— Remapping a key (Settings → Controls): Change listens for the next key pressed. ———
 let rebinding=null;
@@ -1062,7 +1090,7 @@ case 'toggle-grid':showGrid=!showGrid;render();break;
 case 'confirm':await confirmCommand();break;
 case 'skip-replay':replay.stop();break;
 case 'end-turn':await change(()=>Game.endTurn(state),{tone:'turn',turn:true,command:{action:'endTurn'},clearSelection:true});break;
-case 'retry':showRetry();break;
+case 'retry':if(state?.encounter?.status==='lost')await change(()=>Game.retry(state),{reset:true,tone:'click'});else showRetry();break;
 case 'retry-confirm':modal.close();await change(()=>Game.retry(state),{reset:true});break;
 case 'commit':await change(()=>Game.commitEncounter(state),{reset:true,tone:'promotion'});break;
 case 'advance':await change(()=>Game.advanceChapter(state),{reset:true,tone:'promotion'});break;
@@ -1188,6 +1216,7 @@ case 'share-card':{
   });
 document.addEventListener('input',event=>{
   const control=event.target;
+  if(control.matches?.('[data-appearance],input[name="recruit-path"]')){disposeSoldierPreview();void showSoldierPreview();return;}
   if(['river','farms','town'].includes(control?.id)){
     const prev=document.querySelector('#allocation-preview');
     if(prev)prev.outerHTML=allocationDraftPreview({river:Number(document.querySelector('#river')?.value),farms:Number(document.querySelector('#farms')?.value),

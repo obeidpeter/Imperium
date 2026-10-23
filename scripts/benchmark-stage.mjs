@@ -58,7 +58,7 @@ try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{const id=G.getChapter
 const missing=sceneIds.filter(id=>!camps.has(id));if(missing.length)throw new Error(`No legal checkpoint for ${missing.join(', ')}`);
 const exchanges=new Map(sceneIds.map(id=>[id,exchange(id,camps.get(id))]));
 
-const page=(id,quality)=>{const x=exchanges.get(id);return `<!doctype html><meta charset="utf-8">
+const page=(id,quality)=>{const x=exchanges.get(id);return `<!doctype html><meta charset="utf-8"><link rel="icon" type="image/svg+xml" href="/icon.svg">
 <style>body{margin:0;background:#000}.world-stage{position:relative;width:${VIEWPORT.width}px;height:${VIEWPORT.height}px;overflow:hidden}canvas{display:block;width:100%;height:100%}.world-labels{position:absolute;inset:0;pointer-events:none}.world-labels>*{position:absolute;left:0;top:0;font:12px sans-serif}</style>
 <div class="world-stage"><canvas id="battle-board" tabindex="0"></canvas></div>
 <script>

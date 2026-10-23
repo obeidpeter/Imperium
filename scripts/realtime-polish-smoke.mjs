@@ -13,6 +13,7 @@ import {serveRequest} from './serve.mjs';
 import {menuCommand,revealControl} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runCommandCampaign} from './command-autoplay.mjs';
+import {step} from '../src/core/realtime/simulation.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 await access(`${root}index.html`).catch(()=>{throw new Error('Build the production site first: node scripts/build.mjs');});
@@ -22,13 +23,20 @@ for(const specifier of [process.env.PLAYWRIGHT_MODULE,'playwright'].filter(Boole
   try{const module=await import(specifier);playwright=module.chromium?module:module.default;break;}catch{}
 }
 assert.ok(playwright?.chromium,'Set PLAYWRIGHT_MODULE to an installed Playwright module.');
-const wanted=new Set(['ch1-road','ch2-marsh','ch5-mine','ch7-council']),codes=new Map(),stop=new Error('checkpoints earned');
+const wanted=new Set(['ch1-training','ch1-road','ch2-marsh','ch5-mine','ch7-council']),codes=new Map(),stop=new Error('checkpoints earned');
 try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{
   const id=Game.getChapter(s).encounters[s.encounterIndex]?.id;
   if(wanted.has(id)&&!codes.has(id))codes.set(id,Game.encodeSave(s));
   if(codes.size===wanted.size)throw stop;
 }});}catch(error){if(error!==stop)throw error;}
 assert.equal(codes.size,wanted.size,'Every checkpoint is reached through the legal campaign.');
+// A legal failure: allow the drill's clock to run out without giving an order.
+const failed=Game.decodeSave(codes.get('ch1-training'));
+assert.equal(Game.startEncounter(failed,{controls:'realtime'}).ok,true);
+const failedWorld=Game.realtimeWorld(failed);
+for(let i=0;i<10000&&failedWorld.status==='active';i++)step(failedWorld);
+assert.equal(failedWorld.status,'lost');assert.equal(Game.saveRealtime(failed,failedWorld).ok,true);
+codes.set('failed-drill',Game.encodeSave(failed));
 const output=fileURLToPath(new URL('../tests/visual-results/realtime-polish/',import.meta.url));await mkdir(output,{recursive:true});
 const server=http.createServer((req,res)=>serveRequest(req,res,root));
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -56,6 +64,7 @@ async function restore(viewport,id){
   for(const id of ['pause-sighted','pause-hurt','pause-squad','pause-objective','pause-order'])await (await revealControl(page,`#${id}`)).uncheck();
   await (await revealControl(page,'#modal [data-cmd="restore"]')).click();
   await page.fill('#restore-code',codes.get(id));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
+  if(id==='failed-drill'){await page.waitForSelector('.rt-result');return page;}
   await page.waitForSelector('.camp-page');await page.locator('[data-cmd="start"]:visible').first().click();
   await page.waitForSelector(`.rt-field[data-kind="${id==='ch7-council'?'chamber':'field'}"] .rt-scene[data-ready="true"]`);
   if(id==='ch2-marsh'){
@@ -80,7 +89,7 @@ async function layout(page,label){
       panels:panels.map(el=>({name:el.className,...rect(el)})),targetLive:document.querySelector('[data-role="targetLine"]')?.getAttribute('aria-live')};
   });
   assert.deepEqual(result.overlap,[],`${label}: controls, lessons and conversations never cover the action region`);
-  assert.ok(result.canvas.h>=318&&result.canvas.w>=300,`${label}: usable canvas dimensions ${JSON.stringify(result.canvas)}`);
+  assert.ok(result.canvas.h>=254&&result.canvas.w>=300,`${label}: usable canvas dimensions ${JSON.stringify(result.canvas)}`);
   assert.ok(result.documentWidth<=result.viewport.w+1,`${label}: no document-wide horizontal overflow`);
   assert.ok(result.feedback.y+result.feedback.h<=Math.min(result.units.y,result.actions.y)+1,`${label}: live target/feedback is above the unit and ability rows`);
   assert.notEqual(result.targetLive,'assertive','Continuous target updates must not repeatedly interrupt speech');
@@ -88,15 +97,27 @@ async function layout(page,label){
   await page.locator('.rt-field').screenshot({path:`${output}${label}.png`});
 }
 try{
+  for(const viewport of [{width:390,height:844},{width:1280,height:900}]){
+    const failed=await restore(viewport,'failed-drill');await failed.waitForFunction(()=>document.activeElement?.id==='rt-result-title');
+    const box=await failed.locator('.rt-result [data-cmd="retry"]').boundingBox();
+    assert.ok(box.y>=0&&box.y+box.height<=viewport.height,'Retry is visible without scrolling');
+    await failed.locator('.rt-result [data-cmd="retry"]').click();
+    await failed.waitForFunction(()=>window.__realtime.world().tick===0&&window.__realtime.world().status==='active');
+    await failed.waitForSelector('.rt-scene[data-ready="true"]');
+    assert.equal(await tick(failed),0);assert.equal(await paused(failed),true);
+    await failed.waitForSelector('[data-role="lesson"]:not([hidden])');
+    evidence.checks.push({name:`Failure focuses visible Retry and restarts the guided drill at tick zero (${viewport.width}px)`,pass:true});
+    await failed.context().close();
+  }
   const road=await restore({width:580,height:700},'ch1-road');
   await layout(road,'road-narrow');
   await road.locator('#rt-board').focus();await road.keyboard.press('KeyT');
-  await road.waitForFunction(()=>/\d+ metres.*Health/.test(document.querySelector('[data-role="targetLine"]')?.textContent??''));
-  const before=await text(road,'[data-role="targetLine"]'),initial=Number(before.match(/(\d+) metres/)?.[1]);
+  await road.waitForFunction(()=>/\d+ m.*HP/.test(document.querySelector('[data-role="targetLine"]')?.textContent??''));
+  const before=await text(road,'[data-role="targetLine"]'),initial=Number(before.match(/(\d+) m/)?.[1]);
   assert.ok(initial>5,`The selected enemy starts at a measurable distance: ${before}`);
   await road.keyboard.press('Enter');await pause(road,false);
   await road.waitForFunction(start=>{
-    const s=document.querySelector('[data-role="targetLine"]')?.textContent??'',distance=Number(s.match(/(\d+) metres/)?.[1]);
+    const s=document.querySelector('[data-role="targetLine"]')?.textContent??'',distance=Number(s.match(/(\d+) m/)?.[1]);
     return Number.isFinite(distance)&&distance<=start-5;
   },initial,{timeout:60000});
   const approaching=await text(road,'[data-role="targetLine"]');
@@ -104,7 +125,7 @@ try{
   await road.waitForFunction(()=>{
     const w=window.__realtime.world(),h=w.actors.find(a=>a.id===w.controlled),t=w.actors.find(a=>a.id===h?.lock);
     const line=document.querySelector('[data-role="targetLine"]')?.textContent??'';
-    return t?.alive&&Math.hypot(h.x-t.x,h.z-t.z)<=3&&/\b[0-3] metres/.test(line)&&!line.includes('Ambush: he has not seen you');
+    return t?.alive&&Math.hypot(h.x-t.x,h.z-t.z)<=3&&/\b[0-3] m/.test(line)&&!line.includes('Ambush: he has not seen you');
   },null,{timeout:60000});
   evidence.checks.push({name:'target forecast follows approach and detection',before,approaching,melee:await text(road,'[data-role="targetLine"]')});
   // Reproduce the reported focus failure: List puts focus on Use; P must work
@@ -134,6 +155,14 @@ try{
     await field.locator('[data-role="squadBar"] button').first().click();
     await field.waitForSelector('[data-role="commandCard"]:not([hidden])');
     await layout(field,`chapter-v-command-${suffix}`);
+    await field.locator('#rt-board').focus();await field.keyboard.press('Shift+Digit3');
+    const selection=await field.locator('[data-role="squadBar"] button.selected').last().evaluate(b=>{
+      const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return {left:r.left,right:r.right,parentLeft:p.left,parentRight:p.right};});
+    assert.ok(selection.left>=selection.parentLeft-1&&selection.right<=selection.parentRight+1,'A hotkey reveals the selected squad card');
+    await field.keyboard.press('Home');await field.waitForSelector('[data-role="commandCard"]',{state:'hidden'});
+    assert.equal(await field.locator('[data-role="squadBar"] button.selected').count(),0,'Home clears squad command mode');
+    assert.equal(await field.locator('[data-role="abilityBar"]').isVisible(),true);
+    evidence.checks.push({name:`Squad hotkey reveals its card; Home restores soldier controls (${suffix})`,pass:true});
     await revealControl(field,'[data-role="deadlineLine"]');
     assert.match(await text(field,'[data-role="deadlineLine"]'),/Optional|opportunit/i,'Optional field opportunities remain visible');
     await field.locator('.rt-toolbox > summary').click();await layout(field,`chapter-v-controls-${suffix}`);

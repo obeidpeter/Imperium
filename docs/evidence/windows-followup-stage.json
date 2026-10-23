@@ -1,0 +1,784 @@
+{
+  "tool": "scripts/benchmark-stage.mjs",
+  "version": "0.38.1",
+  "source": "production dist",
+  "browser": "Chromium 155.0.8059.82",
+  "conditions": {
+    "rendering": "SwiftShader software WebGL (not a device measurement)",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "deviceScaleFactor": 1,
+    "adaptiveResolution": false,
+    "reducedMotion": false
+  },
+  "method": "Legal command-campaign checkpoints (feature edition 35); the encounter started and its turns ended through the rules API until the enemy strikes; mounted with the game's battle-stage controller; that exchange played, then the follow, horizon and overview cameras.",
+  "started": "2026-10-23T08:25:44.906Z",
+  "runs": [
+    {
+      "id": "ch4-gate",
+      "quality": "performance",
+      "chapter": 4,
+      "turnPlayed": 2,
+      "enemyBlows": "player",
+      "startup": {
+        "constructedMs": 1086,
+        "readyMs": 3234,
+        "firstFrameMs": 3233,
+        "settledMs": 7276,
+        "longTasks": {
+          "construct": {
+            "count": 2,
+            "totalMs": 106,
+            "maxMs": 54
+          },
+          "prepare": {
+            "count": 3,
+            "totalMs": 325,
+            "maxMs": 204
+          },
+          "firstFrame": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          }
+        }
+      },
+      "phases": [
+        {
+          "name": "build",
+          "durationMs": 3228,
+          "longTasks": {
+            "count": 5,
+            "totalMs": 431,
+            "maxMs": 204
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 18.5,
+              "p95": 18.5,
+              "max": 18.5
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 50,
+          "calls": 260,
+          "triangles": 548827,
+          "cameraView": "overview"
+        },
+        {
+          "name": "settle",
+          "durationMs": 4024,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 2,
+              "p50": 6.6,
+              "p95": 6.6,
+              "max": 7.8
+            },
+            "interval": {
+              "samples": 1,
+              "p50": 3018.5,
+              "p95": 3018.5,
+              "max": 3018.5
+            }
+          },
+          "programs": 50,
+          "calls": 184,
+          "triangles": 409279,
+          "cameraView": "overview"
+        },
+        {
+          "name": "idle",
+          "durationMs": 3027,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 3,
+              "p50": 7.1,
+              "p95": 7.1,
+              "max": 9.8
+            },
+            "interval": {
+              "samples": 2,
+              "p50": 850.2,
+              "p95": 850.2,
+              "max": 902.6
+            }
+          },
+          "programs": 50,
+          "calls": 184,
+          "triangles": 409279,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 2342,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 11,
+              "p95": 11,
+              "max": 11
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 50,
+          "calls": 185,
+          "triangles": 409295,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7698,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 6,
+              "p50": 7.8,
+              "p95": 9.4,
+              "max": 9.8
+            },
+            "interval": {
+              "samples": 5,
+              "p50": 1482.6,
+              "p95": 1516.4,
+              "max": 1584.2
+            }
+          },
+          "programs": 50,
+          "calls": 185,
+          "triangles": 409295,
+          "cameraView": "overview"
+        }
+      ],
+      "overview": {
+        "calls": 109,
+        "triangles": 268384,
+        "textures": 94,
+        "geometries": 212,
+        "programs": 50,
+        "generatedBodies": 7,
+        "actorAssets": "imported"
+      },
+      "programsCompiledAfterShown": 0,
+      "lateProgramNames": [],
+      "firstFramePrograms": 0,
+      "parallelShaderCompile": false,
+      "device": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "identity": "unmasked",
+        "software": true,
+        "maxTextureSize": 8192,
+        "maxRenderbufferSize": 8192
+      },
+      "errors": []
+    },
+    {
+      "id": "ch4-gate",
+      "quality": "balanced",
+      "chapter": 4,
+      "turnPlayed": 2,
+      "enemyBlows": "player",
+      "startup": {
+        "constructedMs": 1743,
+        "readyMs": 2766,
+        "firstFrameMs": 2765,
+        "settledMs": 6879,
+        "longTasks": {
+          "construct": {
+            "count": 5,
+            "totalMs": 353,
+            "maxMs": 83
+          },
+          "prepare": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "firstFrame": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          }
+        }
+      },
+      "phases": [
+        {
+          "name": "build",
+          "durationMs": 2808,
+          "longTasks": {
+            "count": 5,
+            "totalMs": 353,
+            "maxMs": 83
+          },
+          "frames": {
+            "cpu": {
+              "samples": 3,
+              "p50": 14.2,
+              "p95": 14.2,
+              "max": 44.2
+            },
+            "interval": {
+              "samples": 2,
+              "p50": 11.7,
+              "p95": 11.7,
+              "max": 17
+            }
+          },
+          "programs": 53,
+          "calls": 111,
+          "triangles": 558245,
+          "cameraView": "overview"
+        },
+        {
+          "name": "settle",
+          "durationMs": 4055,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 53,
+          "calls": 111,
+          "triangles": 558245,
+          "cameraView": "overview"
+        },
+        {
+          "name": "idle",
+          "durationMs": 3013,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 53,
+          "calls": 111,
+          "triangles": 558245,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 2214,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 2,
+              "p50": 9.3,
+              "p95": 9.3,
+              "max": 10.6
+            },
+            "interval": {
+              "samples": 1,
+              "p50": 12.1,
+              "p95": 12.1,
+              "max": 12.1
+            }
+          },
+          "programs": 53,
+          "calls": 112,
+          "triangles": 558261,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7903,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 3,
+              "p50": 11.2,
+              "p95": 11.2,
+              "max": 13.3
+            },
+            "interval": {
+              "samples": 2,
+              "p50": 12.9,
+              "p95": 12.9,
+              "max": 2064.3
+            }
+          },
+          "programs": 53,
+          "calls": 112,
+          "triangles": 558261,
+          "cameraView": "overview"
+        }
+      ],
+      "overview": {
+        "calls": 111,
+        "triangles": 558245,
+        "textures": 96,
+        "geometries": 215,
+        "programs": 53,
+        "generatedBodies": 7,
+        "actorAssets": "imported"
+      },
+      "programsCompiledAfterShown": 0,
+      "lateProgramNames": [],
+      "firstFramePrograms": 0,
+      "parallelShaderCompile": false,
+      "device": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "identity": "unmasked",
+        "software": true,
+        "maxTextureSize": 8192,
+        "maxRenderbufferSize": 8192
+      },
+      "errors": []
+    },
+    {
+      "id": "ch5-mine",
+      "quality": "performance",
+      "chapter": 5,
+      "turnPlayed": 2,
+      "enemyBlows": "player",
+      "startup": {
+        "constructedMs": 1538,
+        "readyMs": 3958,
+        "firstFrameMs": 3957,
+        "settledMs": 8247,
+        "longTasks": {
+          "construct": {
+            "count": 4,
+            "totalMs": 247,
+            "maxMs": 67
+          },
+          "prepare": {
+            "count": 4,
+            "totalMs": 1516,
+            "maxMs": 1173
+          },
+          "firstFrame": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          }
+        }
+      },
+      "phases": [
+        {
+          "name": "build",
+          "durationMs": 4030,
+          "longTasks": {
+            "count": 8,
+            "totalMs": 1763,
+            "maxMs": 1173
+          },
+          "frames": {
+            "cpu": {
+              "samples": 2,
+              "p50": 7.1,
+              "p95": 7.1,
+              "max": 25
+            },
+            "interval": {
+              "samples": 1,
+              "p50": 13.2,
+              "p95": 13.2,
+              "max": 13.2
+            }
+          },
+          "programs": 52,
+          "calls": 116,
+          "triangles": 253986,
+          "cameraView": "overview"
+        },
+        {
+          "name": "settle",
+          "durationMs": 4204,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 7.8,
+              "p95": 7.8,
+              "max": 7.8
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 52,
+          "calls": 203,
+          "triangles": 428028,
+          "cameraView": "overview"
+        },
+        {
+          "name": "idle",
+          "durationMs": 3069,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 2,
+              "p50": 7.9,
+              "p95": 7.9,
+              "max": 9.3
+            },
+            "interval": {
+              "samples": 1,
+              "p50": 1135.7,
+              "p95": 1135.7,
+              "max": 1135.7
+            }
+          },
+          "programs": 52,
+          "calls": 203,
+          "triangles": 428028,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 2011,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 15.2,
+              "p95": 15.2,
+              "max": 15.2
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 52,
+          "calls": 205,
+          "triangles": 424644,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7831,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 7,
+              "p50": 9.5,
+              "p95": 13.1,
+              "max": 43.9
+            },
+            "interval": {
+              "samples": 6,
+              "p50": 1100.5,
+              "p95": 1332.1,
+              "max": 1438.9
+            }
+          },
+          "programs": 52,
+          "calls": 205,
+          "triangles": 424644,
+          "cameraView": "overview"
+        }
+      ],
+      "overview": {
+        "calls": 116,
+        "triangles": 253986,
+        "textures": 109,
+        "geometries": 239,
+        "programs": 52,
+        "generatedBodies": 8,
+        "actorAssets": "imported"
+      },
+      "programsCompiledAfterShown": 0,
+      "lateProgramNames": [],
+      "firstFramePrograms": 0,
+      "parallelShaderCompile": false,
+      "device": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "identity": "unmasked",
+        "software": true,
+        "maxTextureSize": 8192,
+        "maxRenderbufferSize": 8192
+      },
+      "errors": []
+    },
+    {
+      "id": "ch5-mine",
+      "quality": "balanced",
+      "chapter": 5,
+      "turnPlayed": 2,
+      "enemyBlows": "player",
+      "startup": {
+        "constructedMs": 1714,
+        "readyMs": 3127,
+        "firstFrameMs": 3126,
+        "settledMs": 7220,
+        "longTasks": {
+          "construct": {
+            "count": 4,
+            "totalMs": 270,
+            "maxMs": 82
+          },
+          "prepare": {
+            "count": 6,
+            "totalMs": 691,
+            "maxMs": 161
+          },
+          "firstFrame": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          }
+        }
+      },
+      "phases": [
+        {
+          "name": "build",
+          "durationMs": 3184,
+          "longTasks": {
+            "count": 10,
+            "totalMs": 961,
+            "maxMs": 161
+          },
+          "frames": {
+            "cpu": {
+              "samples": 3,
+              "p50": 13.4,
+              "p95": 13.4,
+              "max": 37.2
+            },
+            "interval": {
+              "samples": 2,
+              "p50": 10,
+              "p95": 10,
+              "max": 15.8
+            }
+          },
+          "programs": 55,
+          "calls": 117,
+          "triangles": 464685,
+          "cameraView": "overview"
+        },
+        {
+          "name": "settle",
+          "durationMs": 4021,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 55,
+          "calls": 117,
+          "triangles": 464685,
+          "cameraView": "overview"
+        },
+        {
+          "name": "idle",
+          "durationMs": 3064,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 55,
+          "calls": 117,
+          "triangles": 464685,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 1727,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 9.8,
+              "p95": 9.8,
+              "max": 9.8
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 55,
+          "calls": 119,
+          "triangles": 464669,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7645,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 4,
+              "p50": 8.7,
+              "p95": 13.6,
+              "max": 14.7
+            },
+            "interval": {
+              "samples": 3,
+              "p50": 1826.1,
+              "p95": 1826.1,
+              "max": 2376
+            }
+          },
+          "programs": 55,
+          "calls": 215,
+          "triangles": 839262,
+          "cameraView": "overview"
+        }
+      ],
+      "overview": {
+        "calls": 117,
+        "triangles": 464685,
+        "textures": 126,
+        "geometries": 246,
+        "programs": 55,
+        "generatedBodies": 8,
+        "actorAssets": "imported"
+      },
+      "programsCompiledAfterShown": 0,
+      "lateProgramNames": [],
+      "firstFramePrograms": 0,
+      "parallelShaderCompile": false,
+      "device": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "vendor": "Google Inc. (Google)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "identity": "unmasked",
+        "software": true,
+        "maxTextureSize": 8192,
+        "maxRenderbufferSize": 8192
+      },
+      "errors": []
+    }
+  ],
+  "completed": "2026-10-23T08:27:31.244Z",
+  "verificationNote": "The first probe initially requested a missing default favicon. Its test page now uses the game icon.svg, and that exact scene/quality was rerun successfully. Other runs passed unchanged. Gateway position is the only game change since the twelve-chapter capture.",
+  "buildRevision": "0bd5e4831842",
+  "passed": true
+}

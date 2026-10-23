@@ -16,7 +16,7 @@ const freeze=v=>{if(v&&typeof v==='object'){Object.freeze(v);Object.values(v).fo
 test('All 25 encounters have distinct immutable compositions and bounded overview recommendations',()=>{
   const keys=new Set(),forms=new Set();
   for(const s of fixture.scenes){const e=freeze(s.state.encounter),before=JSON.stringify(e),profile=getSceneProfile(e,{chapter:s.chapter}),a=profile.staging;keys.add(a.key);forms.add(a.form);
-    assert.ok(Object.isFrozen(a)&&Object.isFrozen(a.camera));assert.ok(a.title.length>15);assert.match(a.axis,/^(west|south)-(north|east|south)$/);assert.ok(a.camera.yaw>=.35&&a.camera.yaw<=.9);assert.ok(a.camera.pitch>=.6&&a.camera.pitch<=.75);assert.deepEqual(getEncounterStaging(e,{chapter:s.chapter,civic:e.kind==='contest',training:profile.training}),a);assert.equal(JSON.stringify(e),before);
+    assert.ok(Object.isFrozen(a)&&Object.isFrozen(a.camera));assert.ok(a.title.length>15);assert.match(a.axis,/^(west|south)-(north|east|south)$/);assert.ok(Math.abs(a.camera.yaw)<=Math.PI);if(!profile.civic&&!profile.training&&a.landmarkEdge==='east')assert.ok(a.camera.yaw<0,'The camera looks toward the eastern destination');assert.ok(a.camera.pitch>=.6&&a.camera.pitch<=.75);assert.deepEqual(getEncounterStaging(e,{chapter:s.chapter,civic:e.kind==='contest',training:profile.training}),a);assert.equal(JSON.stringify(e),before);
   }assert.equal(keys.size,25);assert.ok(forms.size>=20);assert.equal(getSceneProfile({id:'ch1-drill'}).staging.key,'recruit-parade');assert.equal(getSceneProfile({id:'unknown',kind:'contest'},{chapter:11}).staging.form,'council');
 });
 

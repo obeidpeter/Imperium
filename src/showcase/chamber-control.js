@@ -4,6 +4,7 @@ import {MAGISTRATE,discessio,placeChamberWorld,pointTile,syncChamberWorld,tilePo
 import {actionLabel,firstKeyLabel} from '../ui/action-map.js';
 import {hourly} from '../ui/view-helpers.js';
 import {delegatePortrait} from '../ui/delegate-portrait.js';
+import {delegateVoice} from '../ui/field-experience.js';
 
 // The walk-and-talk Curia on the page (build brief §3.11; guide "Political
 // Contests"): the chamber's part of the real-time field, which hands it the
@@ -284,7 +285,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     const agreements=deals?.options?.length?`<section class="rt-talk-deals"><h4>An agreement · trust ${deals.trust}</h4>${deals.reason?`<p>${esc(deals.reason)}</p>`:''}<ul>${deals.options.map(o=>
       `<li><button type="button" data-deal="${o.id==='demand'?'demand':'counteroffer'}" ${o.available?'':'disabled'}><strong>${esc(o.label)}</strong><small>${esc(o.pledge)} · ${o.cost} supplies, due Chapter ${o.due} · stance ${signed(o.stanceFrom)} → ${signed(o.stanceTo)}. Uses your soldier’s speech.</small></button></li>`).join('')}</ul></section>`:'';
     panel.innerHTML=`<header class="rt-talk-head">${delegatePortrait(p,{decorative:true})}<div><p class="eyebrow">${letter}${esc(p.bloc??(p.side==='enemy'?'Opposition':'Your side'))}</p><h3 id="rt-talk-title">${esc(p.name)}</h3><p>${standing}</p></div>`+
-      `<button type="button" class="rt-talk-close" data-close aria-label="Close the conversation (Esc)">×</button></header>${interest}`+
+      `<button type="button" class="rt-talk-close" data-close aria-label="Close the conversation (Esc)">×</button></header><blockquote class="rt-delegate-voice">${esc(delegateVoice(p))}</blockquote>${interest}`+
       `<p class="rt-talk-where">${p.metres} m from ${esc(c.speaker.name)}${c.speaker.spoken?`, who has spoken this hour`:''}.</p>`+
       `<ul class="rt-talk-speeches" aria-label="Speeches">${c.speeches.map(row).join('')}</ul>${agreements}`;
     panel.hidden=false;

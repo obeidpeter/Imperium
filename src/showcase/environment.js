@@ -249,7 +249,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
-  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius});root.add(horizon.group);
+  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water});root.add(horizon.group);
   yield;
   const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;

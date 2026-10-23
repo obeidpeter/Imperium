@@ -103,6 +103,9 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,image
   };
   m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
   const waterTime={value:0};
+  // Keep broad daylight water from reading as an opaque blue floor. Its
+  // moving highlights remain, with deeper green-brown body colour.
+  m.water.color.multiplyScalar(.58);m.water.roughness=.48;m.water.metalness=0;
   // Board water (marsh flood, river channel) can mirror the scene on High.
   const reflectionFallback=new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1);reflectionFallback.needsUpdate=true;textures.add(reflectionFallback);
   const waterReflection={waterReflectionMap:{value:reflectionFallback},waterReflectionMatrix:{value:new THREE.Matrix4()},waterReflectionStrength:{value:0}};

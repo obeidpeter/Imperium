@@ -356,6 +356,7 @@ export function createPanels(context){
         item('soldier-panel','Company','Companions and standing orders','company'),item('soldier-panel','Honours','Decorations and titles','decorations')]:[item('character','Character & equipment')],
       campaign:[item('soldier-panel','Current mission','Objective and next step','mission'),item('map','Campaign map'),item('journal','Mission journal'),
         item('ledger','Obligations & alliances','Promises, costs and due dates'),item('character','Career record','Rank and standing'),
+        ...(state?.encounter?.status==='active'?[item('retry','Restart this encounter','Restore its starting checkpoint')]:[]),
         ...(soldier?[item('soldier-panel','Story so far','','chronicle')]:[])],
       about:[item('home','Title screen'),item('history','Historical notes'),item('credits','Credits'),item('privacy','Privacy & local data')]
     };

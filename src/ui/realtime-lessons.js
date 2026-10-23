@@ -9,13 +9,13 @@ import {TIME} from '../data/realtime-rules.js';
 // memory of a pause and a slowing, never the world's). Pure: reading or hiding a
 // lesson changes nothing.
 const DRILL=[
-  {id:'move',done:(w)=>w.used.includes('move'),title:'Find your footing',body:()=>`Click the ground to move. Far clicks run; arrow keys walk.`},
+  {id:'move',done:(w)=>w.used.includes('move'),title:'Find your footing',body:k=>`The drill starts paused. Click the ground to choose a destination, then ${k('pause')} resumes. Far clicks run; arrow keys walk.`},
   {id:'pause',done:(w,seen)=>seen.paused,title:'Pause to think',body:k=>`Press ${k('pause')}, or select Pause. You can still choose actions. Press it again to resume.`},
   {id:'slow',done:(w,seen)=>seen.slowed,title:'Slow time',body:k=>`${k('slow_time')} toggles half speed. Options → Time controls has the same button. While paused, ${k('step_round')} plays one round.`},
   {id:'draw',done:(w,seen,hero)=>!!hero?.drawn||w.used.includes('strike'),title:'Draw your weapon',body:k=>`Press ${k('combat_toggle')}, or choose Options → Draw weapon, to use your weapon’s full strength.`},
   {id:'strike',done:w=>w.used.includes('strike'),title:'Strike the drill partner',body:k=>`Click him to approach and attack. Keyboard: ${k('target_next_enemy')}, then Enter. Fighting continues until you give another order.`},
-  {id:'brace',done:w=>w.used.includes('brace'),title:'Brace behind your shield',body:()=>`Select Brace, then right-click your soldier. Keyboard: press Brace’s number twice.`},
-  {id:'throw',done:w=>w.used.includes('throw'),title:'Throw a pilum',body:()=>`Select Throw pilum, then right-click the partner. Keyboard: target him and press Throw pilum’s number twice.`}];
+  {id:'brace',done:w=>w.used.includes('brace'),title:'Brace behind your shield',body:()=>`Click Brace or press its number once. Self abilities act immediately; while paused, they are queued for resume.`},
+  {id:'throw',done:w=>w.used.includes('throw'),title:'Throw a pilum',body:()=>`Select Throw pilum, then right-click the partner. Keyboard: target him, choose Throw pilum, then Enter.`}];
 
 export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_KEYMAP}){
   // Each action by its first key, as the player has set it.

@@ -7,12 +7,16 @@
 .kit-protection{border-collapse:collapse;margin-block:.6rem;font-variant-numeric:tabular-nums}
 .kit-protection caption{text-align:start;font-weight:650;padding-block-end:.2rem}
 .kit-protection th,.kit-protection td{padding:.15rem .6rem;text-align:start;border-block-end:1px solid var(--line,#ddd)}
-.pack-grid{display:grid;grid-template-columns:repeat(var(--cols),minmax(2.4rem,1fr));grid-template-rows:repeat(var(--rows),2.6rem);gap:3px;padding:3px;
+.pack-grid{display:flex;flex-wrap:wrap;align-content:start;gap:.5rem;padding:.5rem;
   background:repeating-linear-gradient(90deg,#00000010 0 1px,transparent 1px 100%),#e9e1cf;border:1px solid var(--line,#bbb);border-radius:.3rem;margin-block-end:.6rem}
-.pack-item{min-block-size:0;min-inline-size:0;padding:.2rem;font-size:.72rem;line-height:1.15;overflow:hidden;border-radius:.25rem;background:#f8f2e2;
+.pack-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;inline-size:7.2rem;min-block-size:7.4rem;min-inline-size:0;padding:.5rem;font-size:.8rem;line-height:1.25;overflow:hidden;border-radius:.25rem;background:#f8f2e2;
   border:1px solid #b9a77f;text-align:center;overflow-wrap:anywhere}
 .pack-item.is-selected,.pack-item[aria-pressed="true"]{outline:3px solid var(--bronze,#b08a3c);background:#f1e2b8}
 .pack-item.is-dimmed{opacity:.6}
+.kit-art{inline-size:3rem;block-size:3rem;color:#79592b}.pack-item small{color:#665c4b}.pack-grid:empty::after{content:'Your pack is empty.';padding:1rem;color:#665c4b}
+.cinematic-page .soldier-model{margin:0;inline-size:100%}.cinematic-page .soldier-model canvas{block-size:340px}
+.ceremony-record>summary,.legacy-chapter>summary{cursor:pointer;min-block-size:2.75rem;padding:.7rem;font-weight:650;color:var(--bronze,#b08a3c)}
+.legacy-chapter{border-block-end:1px solid #b5a078;padding:1rem}.legacy-chapter p{max-inline-size:70ch;line-height:1.7}
 .kit-actions{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-block:.5rem}.kit-actions p{flex-basis:100%;margin:0}
 .attribute-table{border-collapse:collapse;inline-size:100%;max-inline-size:34rem}
 .attribute-table th,.attribute-table td{padding:.25rem .5rem;text-align:start;border-block-end:1px solid var(--line,#ddd)}
@@ -71,4 +75,11 @@
 #campaign-chapters{margin-block:-.3rem .8rem;border:0}#campaign-chapters>summary{font-size:calc(.85rem * var(--text-scale,1));min-block-size:2.75rem;padding-block:.5rem}#campaign-chapters .campaign-strip{margin-block-end:.25rem}
 .game-header .topnav{flex-wrap:wrap;justify-content:flex-end}.game-header .game-status{font-size:calc(.75rem * var(--text-scale,1));white-space:nowrap}
 .game-footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-block-size:3rem;padding:.6rem max(1.25rem,calc((100% - 1200px)/2));font-size:calc(.75rem * var(--text-scale,1))}
+[data-soldier-preview]{scroll-margin-block-start:8rem}
+.soldier-model-controls{flex-wrap:wrap}
+.profile-identity:has(.soldier-model){display:block}
+.profile-identity .portrait-wrap:has(.soldier-model){inline-size:100%;max-inline-size:22rem;aspect-ratio:auto;overflow:visible}
+.profile-identity .soldier-model canvas{block-size:260px}
 @media(max-width:760px){.camp-departure{grid-template-columns:1fr;padding:1rem;gap:.6rem}.camp-departure .start-block{inline-size:100%}.camp-due{align-items:stretch;flex-direction:column;gap:.5rem}.game-header .game-status{flex-basis:100%;text-align:end;font-size:calc(.65rem * var(--text-scale,1))}.game-header .topnav{row-gap:0}html[data-phase='encounter'] #campaign-chapters{display:none}}
+
+.recruit-look{display:grid;grid-template-columns:minmax(12rem,1fr) minmax(12rem,1fr);gap:1rem;align-items:start}.recruit-look .soldier-model canvas{block-size:280px}.recruit-look .soldier-model figcaption strong{display:none}.recruit-look fieldset{min-inline-size:0;margin:0}.recruit-look .setting{flex-wrap:wrap}@media(max-width:600px){.recruit-look{grid-template-columns:1fr}.recruit-look .soldier-model{max-inline-size:100%}.recruit-look .soldier-model canvas{block-size:240px}}

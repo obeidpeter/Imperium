@@ -3,7 +3,7 @@ import {hash,noise,smooth,clamp} from './environment-layout.js';
 
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
-export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40}){
+export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null}){
   const group=new T.Group();group.name='regional distant landscape';group.userData.environmentHorizon=true;
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
@@ -39,7 +39,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
       if(row<to){const a=(row-from)*size+i,b=(row-from)*size+(i+1)%size,c=a+size,d=b+size;indices.push(a,b,c,b,d,c);}
     }
     const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uv,2));if(near)geometry.setAttribute('soilMix',new T.Float32BufferAttribute(soil,1));geometry.setIndex(indices);geometry.computeVertexNormals();
-    if(near){
+    if(near&&from===0){
       // Preserve the fine ground's edge normals too: a coarser outer ring must
       // not create a lighting seam where its first vertices meet that ground.
       // Copy all boundary shader inputs. Expanded real-time ground may have a
@@ -52,11 +52,17 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     geometry.computeBoundingSphere();
     const mesh=addMesh(near?'continuous outer ground bridge':'360 degree regional ridges',geometry,material);mesh.userData.innerRadius=rows[from];mesh.userData.outerRadius=rows[to];return mesh;
   }
-  // The close bridge shares the actual material/textures and fog treatment.
-  // Distant geometry handles its own atmospheric blend so scene FogExp2 cannot
-  // erase the horizon completely when the camera lowers toward eye level.
+  // Ground and water keep their lighting across joins. Distant silhouettes
+  // have their own atmospheric blend so their skyline remains legible.
   const distant=new T.MeshBasicMaterial({vertexColors:true,fog:false});materials.add(distant);
-  const bridge=ring(0,2,ground.material,true),ridges=ring(2,rows.length-1,distant);
+  const bridge=ring(0,2,ground.material,true),ridges=ring(2,rows.length-1,ground.material,true);
+  ridges.name='360 degree regional ridges';
+  // Keep texture, roughness, lighting and normals continuous at the second
+  // join too. A flat unlit colour here used to outline the entire play area.
+  for(const name of ['position','normal','color','uv','soilMix']){
+    const a=bridge.geometry.attributes[name],b=ridges.geometry.attributes[name];
+    for(let i=0;i<size;i++)for(let c=0;c<a.itemSize;c++)b.array[i*a.itemSize+c]=a.array[(a.count-size+i)*a.itemSize+c];
+  }
 
   if(profile.distantWater){
     const positions=[],colors=[],indices=[],steps=50;
@@ -80,7 +86,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
         face(a+samples-1,b+1,b);
       }
     }
-    waterGeometry=new T.BufferGeometry();waterGeometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));waterGeometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));waterGeometry.setIndex(indices);waterGeometry.computeVertexNormals();addMesh('distant meandering Danube',waterGeometry,distant);
+    waterGeometry=new T.BufferGeometry();waterGeometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));waterGeometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));waterGeometry.setIndex(indices);waterGeometry.computeVertexNormals();addMesh('distant meandering Danube',waterGeometry,waterMaterial??distant);
   }
 
   const silhouettePositions=[],silhouetteColors=[];

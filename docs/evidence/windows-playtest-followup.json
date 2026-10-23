@@ -1,0 +1,481 @@
+{
+  "date": "2026-10-23",
+  "baseCommit": "d5957feac6ed2c256e6e31a8329c39e79d774855",
+  "branch": "codex/playtest-quality-overhaul",
+  "build": "e99521297bf2",
+  "unit": {
+    "passed": 1105,
+    "failed": 0,
+    "postLayoutFocused": 25,
+    "postGatewayFocused": 11,
+    "postMenuFocused": 10
+  },
+  "chromiumSmoke": {
+    "passed": true,
+    "scenarios": 16,
+    "build": "441fbb33e11c"
+  },
+  "polish": {
+    "passed": true,
+    "build": "2b1fecb2160c",
+    "checks": 20
+  },
+  "campaign": {
+    "passed": true,
+    "build": "2b1fecb2160c",
+    "chapters": 12,
+    "scenes": 13,
+    "acceptanceChecks": [
+      {
+        "name": "All twelve chapters render; both Chapter V encounters first",
+        "passed": true,
+        "milliseconds": 292250,
+        "chapters": 12,
+        "encounters": 13,
+        "qualityPolicy": "Balanced Chapter V; Performance inventory elsewhere; viewport, DPR and observed quality recorded per scene"
+      },
+      {
+        "name": "Political case preview and commit",
+        "passed": true,
+        "milliseconds": 8576,
+        "encounter": "ch7-council",
+        "case": "company-roll",
+        "stanceChanges": [
+          {
+            "id": "member0",
+            "name": "Gaius Faustus",
+            "from": 2,
+            "to": 4
+          },
+          {
+            "id": "member4",
+            "name": "Publius Rufinus",
+            "from": -1,
+            "to": -2
+          },
+          {
+            "id": "member6",
+            "name": "Aulus Priscus",
+            "from": 2,
+            "to": 1
+          }
+        ],
+        "screenshot": "tests/visual-results/playtest-overhaul/chapters/v035-political-case-preview.png",
+        "previewUnchanged": true,
+        "commitMatchesPublicCommand": true
+      },
+      {
+        "name": "320px viewport at 200% text",
+        "passed": true,
+        "milliseconds": 3736,
+        "battlefield": {
+          "viewport": 320,
+          "width": 320,
+          "overflow": []
+        },
+        "modal": {
+          "viewport": 320,
+          "width": 320,
+          "overflow": []
+        },
+        "textScale": 2,
+        "screenshot": "tests/visual-results/playtest-overhaul/chapters/v035-320px-200percent-text.png",
+        "settingsShot": "tests/visual-results/playtest-overhaul/chapters/v035-320px-200percent-settings.png"
+      },
+      {
+        "name": "Remapped keyboard action and persistence",
+        "passed": true,
+        "milliseconds": 10003,
+        "undo": "z",
+        "walked": true,
+        "returned": true,
+        "persistedAfterReload": true
+      },
+      {
+        "name": "Practice primary-save isolation",
+        "passed": true,
+        "milliseconds": 13676,
+        "primaryStateSha256": "05be6a2dabb38c52cced16cc1ef0f44ebb8d8e2257b02a15db76d31b0972ff4a",
+        "changedWeather": true,
+        "changedDifficulty": true,
+        "playedTurn": true,
+        "exportUnchanged": true,
+        "exitUnchanged": true,
+        "reloadUnchanged": true,
+        "screenshot": "tests/visual-results/playtest-overhaul/chapters/v035-practice-isolation.png"
+      }
+    ],
+    "campaign": {
+      "rank": "Augustus",
+      "encounters": 25,
+      "completed": 12,
+      "exactRetries": 25
+    },
+    "errors": [],
+    "browser": "Chromium / SwiftShader",
+    "physicalDeviceTest": false,
+    "scenesSummary": [
+      {
+        "chapter": 5,
+        "id": "ch5-mine",
+        "stateUnchanged": true,
+        "quality": "balanced",
+        "calls": 119,
+        "triangles": 475201,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 5,
+        "id": "ch5-wall",
+        "stateUnchanged": true,
+        "quality": "balanced",
+        "calls": 122,
+        "triangles": 485313,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 1,
+        "id": "ch1-road",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 94,
+        "triangles": 213495,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 2,
+        "id": "ch2-marsh",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 82,
+        "triangles": 197649,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 3,
+        "id": "ch3-station",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 87,
+        "triangles": 201160,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 4,
+        "id": "ch4-gate",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 110,
+        "triangles": 276576,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 6,
+        "id": "ch6-wells",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 119,
+        "triangles": 244550,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 7,
+        "id": "ch7-council",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 113,
+        "triangles": 148220,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 8,
+        "id": "ch8-parley",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 113,
+        "triangles": 149750,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 9,
+        "id": "ch9-wing",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 131,
+        "triangles": 301076,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 10,
+        "id": "ch10-road",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 134,
+        "triangles": 347922,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 11,
+        "id": "ch11-accounts",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 115,
+        "triangles": 158174,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      },
+      {
+        "chapter": 12,
+        "id": "ch12-confrontation",
+        "stateUnchanged": true,
+        "quality": "performance",
+        "calls": 149,
+        "triangles": 423760,
+        "firstFramePrograms": 0,
+        "actorAssets": "imported"
+      }
+    ]
+  },
+  "finalChangeChecks": "After the full smoke run, narrow layout changes passed usability and 20 polish flows. After the campaign benchmark, only arrival-gateway placement changed in Chapters IV/V (four focused scene/quality probes and 11 environment tests passed), then the active-restart menu entry was added (10 menu unit tests and a separate usability rerun).",
+  "assets": {
+    "integrityAndOffline": "passed",
+    "characterAssets": "passed",
+    "characterPerformanceBudgets": "passed",
+    "productionCharacters": "passed"
+  },
+  "autoplay": {
+    "baseline": "passed",
+    "expanded": "passed",
+    "command": "passed",
+    "production": "passed",
+    "realTimeSweep": {
+      "seeds": 3,
+      "throughChapter": 12,
+      "passed": true,
+      "limitation": "Alternate decisions and five finale routes; locked settlement/surrender scenarios explicitly inject prerequisite meters. Automated commands, not human play."
+    }
+  },
+  "balance": {
+    "method": "Legal Chapter XII checkpoint; injected weak/mixed/strong campaign meters; deterministic command bot; not a human playtest",
+    "cases": [
+      {
+        "profile": "weak",
+        "route": "backer",
+        "available": true,
+        "alliedFormations": 3,
+        "rivalFormations": 6,
+        "status": "won",
+        "rounds": 8,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "weak",
+        "route": "battle",
+        "available": true,
+        "alliedFormations": 3,
+        "rivalFormations": 6,
+        "status": "lost",
+        "rounds": 9,
+        "reason": "The soldier falls.",
+        "pledges": 0
+      },
+      {
+        "profile": "weak",
+        "route": "defection",
+        "available": false
+      },
+      {
+        "profile": "weak",
+        "route": "settlement",
+        "available": false
+      },
+      {
+        "profile": "weak",
+        "route": "surrender",
+        "available": false
+      },
+      {
+        "profile": "mixed",
+        "route": "backer",
+        "available": true,
+        "alliedFormations": 5,
+        "rivalFormations": 5,
+        "status": "won",
+        "rounds": 6,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "mixed",
+        "route": "battle",
+        "available": true,
+        "alliedFormations": 5,
+        "rivalFormations": 5,
+        "status": "won",
+        "rounds": 8,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "mixed",
+        "route": "defection",
+        "available": true,
+        "alliedFormations": 5,
+        "rivalFormations": 5,
+        "status": "won",
+        "rounds": 3,
+        "reason": null,
+        "pledges": 3
+      },
+      {
+        "profile": "mixed",
+        "route": "settlement",
+        "available": false
+      },
+      {
+        "profile": "mixed",
+        "route": "surrender",
+        "available": false
+      },
+      {
+        "profile": "strong",
+        "route": "backer",
+        "available": true,
+        "alliedFormations": 7,
+        "rivalFormations": 3,
+        "status": "won",
+        "rounds": 3,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "strong",
+        "route": "battle",
+        "available": true,
+        "alliedFormations": 7,
+        "rivalFormations": 3,
+        "status": "won",
+        "rounds": 4,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "strong",
+        "route": "defection",
+        "available": true,
+        "alliedFormations": 7,
+        "rivalFormations": 3,
+        "status": "won",
+        "rounds": 3,
+        "reason": null,
+        "pledges": 2
+      },
+      {
+        "profile": "strong",
+        "route": "settlement",
+        "available": true,
+        "alliedFormations": 7,
+        "rivalFormations": 3,
+        "status": "won",
+        "rounds": 4,
+        "reason": null,
+        "pledges": 0
+      },
+      {
+        "profile": "strong",
+        "route": "surrender",
+        "available": true,
+        "alliedFormations": 7,
+        "rivalFormations": 3,
+        "status": "won",
+        "rounds": 3,
+        "reason": null,
+        "pledges": 0
+      }
+    ]
+  },
+  "limitations": [
+    "Physical phones and first-time players remain pending.",
+    "No human campaign-duration or audio-quality claim.",
+    "SwiftShader scene timings establish rendering correctness, not hardware FPS.",
+    "The original playtest chronicle was not overwritten; hands-on checks use a separate localhost origin."
+  ],
+  "usability": {
+    "passed": true,
+    "build": "e99521297bf2",
+    "checks": 9,
+    "browser": "155.0.8059.82",
+    "physicalDeviceTest": false,
+    "activeRestartCancelPreservesPause": true
+  },
+  "windowsDevice": {
+    "evidence": "windows-followup-device.json",
+    "physicalDeviceTest": true,
+    "encounter": "ch5-mine",
+    "build": "e99521297bf2",
+    "viewport": {
+      "board": {
+        "height": 257.1953125,
+        "width": 1265
+      },
+      "height": 720,
+      "width": 1265
+    },
+    "quality": "performance",
+    "targetFps": 30,
+    "resolutionScale": 1,
+    "laterFrameProfile": {
+      "frames": 6707,
+      "cpuSubmission": {
+        "samples": 240,
+        "meanMs": 7.4883333320419,
+        "p95Ms": 11.199999988079071,
+        "worstMs": 24.80000001192093
+      },
+      "displayInterval": {
+        "samples": 240,
+        "meanMs": 33.32375000000005,
+        "p95Ms": 33.5,
+        "worstMs": 34.20000000001164
+      },
+      "reflectionSubmission": {
+        "samples": 240,
+        "meanMs": 0.030833333233992257,
+        "p95Ms": 0.10000002384185791,
+        "worstMs": 0.19999998807907104
+      },
+      "reflectionStride": 1,
+      "note": "Measured on this browser; CPU submission excludes asynchronous GPU execution."
+    },
+    "method": "Windows in-app browser, two rolling 240-frame samples during active Chapter V combat with test runners stopped; idle hero and autonomous formations, not a full manual campaign or controlled GPU benchmark."
+  },
+  "stage": {
+    "evidence": "windows-followup-stage.json",
+    "passed": true,
+    "probes": 4,
+    "encounters": [
+      "ch4-gate",
+      "ch5-mine"
+    ],
+    "qualities": [
+      "performance",
+      "balanced"
+    ]
+  },
+  "screenshots": [
+    "../images/windows-followup-ch5.png",
+    "../images/windows-followup-character.png"
+  ]
+}

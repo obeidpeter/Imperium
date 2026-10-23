@@ -14,7 +14,8 @@ import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
 import {TRADER_STOCK} from '../data/camps.js';
 import {errandList} from '../core/dialogue.js';
-import {ATTRIBUTE_EFFECTS,attributeImprovement,equipmentComparison} from './soldier-comparison.js';
+import {ATTRIBUTE_EFFECTS,attributeImprovement,attributeMilestone,equipmentComparison} from './soldier-comparison.js';
+import {itemArt} from './item-art.js';
 
 // The soldier's panels (guide "Your soldier", build brief §3.12–§3.13): kit
 // (I), character (C), decorations and titles (A), company and standing orders
@@ -28,9 +29,9 @@ const signed=n=>n>0?`+${n}`:`${n}`;
 const percent=n=>`${Math.round(n*100)}%`;
 const inCamp=state=>state.phase!=='encounter';
 const disclosure=(id,label,body)=>`<details id="${esc(id)}" class="soldier-details"><summary>${esc(label)}</summary>${body}</details>`;
-const figurePreview=()=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
+export const figurePreview=()=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
   `<figcaption><strong>Current equipped kit</strong><span data-preview-status>Preparing the model…</span></figcaption>`+
-  `<div class="soldier-model-controls"><button type="button" data-preview-turn="-1" aria-label="Turn model left">←</button><button type="button" data-preview-reset>Front</button><button type="button" data-preview-turn="1" aria-label="Turn model right">→</button></div></figure>`;
+  `<div class="soldier-model-controls"><button type="button" data-preview-turn="-1" aria-label="Turn model left">←</button><button type="button" data-preview-reset>Full kit</button><button type="button" data-preview-detail>Face</button><button type="button" data-preview-turn="1" aria-label="Turn model right">→</button></div></figure>`;
 const comparisonView=c=>!c?'':`<section class="kit-comparison" aria-label="Equipment comparison"><h4>If worn: ${esc(c.item)}</h4><p>Replaces ${esc(c.replaced)}.</p>`+
   (c.rows.length?`<table><thead><tr><th>Effect</th><th>Now</th><th>If worn</th></tr></thead><tbody>${c.rows.map(r=>`<tr><th scope="row">${esc(r.label)}</th><td>${esc(r.before)}</td><td>${esc(r.after)}</td></tr>`).join('')}</tbody></table>`:'<p>The displayed combat totals stay the same.</p>')+'</section>';
 
@@ -64,7 +65,7 @@ export function kitPanel(state,{selected=null,spoils=[],documents=[]}={}){
   const cells=s.pack.map(e=>{const item=ITEMS[e.id],problem=item.slot?wearProblem(state,e.id,attrs):null;
     return `<button class="pack-item ${selected===e.uid?'is-selected':''} ${problem?'is-dimmed':''}" data-cmd="kit-select" data-id="${esc(e.uid)}"`+
       ` style="grid-column:${e.x+1}/span ${item.shape.w};grid-row:${e.y+1}/span ${item.shape.h}" aria-pressed="${selected===e.uid}"`+
-      ` aria-label="${esc(`${item.name}${problem?`, ${problem}`:''}`)}" title="${esc(itemSummary(e.id))}">${esc(item.name)}</button>`;}).join('');
+      ` aria-label="${esc(`${item.name}${problem?`, ${problem}`:''}`)}" title="${esc(itemSummary(e.id))}">${itemArt(item)}<span>${esc(item.name)}</span><small>${item.shape.w} × ${item.shape.h}</small></button>`;}).join('');
   const chosen=s.pack.find(e=>e.uid===selected),item=chosen&&ITEMS[chosen.id];
   const wearReason=chosen&&item.slot?wearProblem(state,chosen.id,attrs):null;
   const actions=chosen?comparisonView(equipmentComparison(s,chosen.id))+`<div class="kit-actions" role="group" aria-label="${esc(item.name)}"><p><strong>${esc(item.name)}</strong> · ${esc(item.description)}</p>`+
@@ -97,7 +98,7 @@ export function characterPanel(state){
   const s=state.soldier;if(!s)return adoptPanel(state);
   const attrs=soldierAttributes(s),v=soldierValues(state),camp=inCamp(state);
   const rows=ATTRIBUTES.map(k=>{const cost=attributeCost(s.base[k]),bonus=attrs[k]-s.base[k];
-    const delta=attributeImprovement(state,k),effect=delta.length?delta.map(r=>`${r.label} ${r.before} → ${r.after}`).join(' · '):'No displayed total changes at this step.';
+    const delta=attributeImprovement(state,k),milestone=delta.length?null:attributeMilestone(state,k),effect=delta.length?delta.map(r=>`${r.label} ${r.before} → ${r.after}`).join(' · '):milestone?`${milestone.rows[0].label} improves at base ${milestone.value}: ${milestone.steps} points, ${milestone.cost} TP in total.`:k==='field'?'Reduces how quickly enemies notice you; improves concealment after an ambush.':ATTRIBUTE_EFFECTS[k];
     return `<tr><th scope="row">${esc(ATTRIBUTE_NAMES[k])}</th><td>${attrs[k]}${bonus?` <small>(${s.base[k]} ${signed(bonus)})</small>`:''}</td>`+
       `<td class="attribute-impact"><strong>Next point: ${esc(effect)}</strong>${disclosure(`attribute-help-${k}`,'What this affects',`<p>${esc(ATTRIBUTE_EFFECTS[k])}</p>`)}</td>`+
       `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost||s.base[k]>=60,title:s.base[k]>=60?'Maximum reached.':s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
@@ -216,9 +217,9 @@ export function recruitChoices({grants=null}={}){
   return `<fieldset class="recruit-training"><legend>Training</legend>${PATHS.map((id,i)=>`<label class="difficulty-choice"><input type="radio" `+
     `name="recruit-path" value="${id}" ${i===0?'checked':''}><span><strong>${esc(TRAINING_PATHS[id].name)}</strong> <small>${esc(mods(id))}`+
     `${grants?` · ${grants[id]} training points for the service already done`:''}</small></span></label>`).join('')}</fieldset>`+
-    `<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE).map(([key,list])=>`<label class="setting" `+
+    `<div class="recruit-look">${figurePreview()}<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE).map(([key,list])=>`<label class="setting" `+
     `for="recruit-${key}"><span>${APPEARANCE_NAMES[key]??key}</span><select id="recruit-${key}" data-appearance="${key}">${list.map((name,i)=>`<option `+
-    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}</fieldset>`;
+    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}</fieldset></div>`;
 }
 export function adoptPanel(state,{grants=null}={}){
   return `<div class="adopt-panel"><p>This chronicle began before soldiers trained in their own way. Choose his training and appearance once; your `+

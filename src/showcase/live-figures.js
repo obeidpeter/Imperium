@@ -297,7 +297,10 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         if(speaker?.civic&&recipient?.civic){from=speaker;to=recipient;}
       }
       to??=actorOf(w,view().targetId??targetId);
-      if(!from?.civic||!to?.civic||from===to||!upright(from)||!upright(to)||from.hidden||to.hidden)return null;
+      if(!from||!to||from===to||!upright(from)||!upright(to)||from.hidden||to.hidden)return null;
+      // Fit nearby combatants as well as speakers. A distant inspection must
+      // not pull the camera so far back that the controlled soldier disappears.
+      if(!from.civic&&Math.hypot(from.x-to.x,from.z-to.z)>24)return null;
       const points=[from,to].map(a=>{const p=lerped(a,getAlpha());return ground(p.x,p.z);});
       return {points,target:points[0].clone().add(points[1]).multiplyScalar(.5).add(new T.Vector3(0,1.15,0))};
     },
@@ -316,7 +319,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     setDeployment(next){zone=next?{...next}:null;stage.wake();},
     // Each visible enemy's intention (hold U while paused): an arrow to where he goes or whom he strikes (intel.js).
     setIntentions(list){shownIntentions=list?list.map(i=>({...i})):null;stage.wake();},
-    // The ground an enemy could strike within the next round, hatched in red (intel.js threatArea).
+    // Optional quiet boundary of next-round threat (intel.js threatArea).
     setThreat(area){threat=area?{...area}:null;stage.wake();},
     // A chamber: where the speaker may walk this hour, a pale disc on each place ({x, z} in metres).
     setReach(points){places=points?.length?points.map(p=>({x:p.x,z:p.z})):null;stage.wake();},
@@ -475,15 +478,13 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         draw(intentionLines.strike,pairs.strike,.14);draw(intentionLines.move,pairs.move,.14);
       }else{intentionLines.strike.visible=false;intentionLines.move.visible=false;}
       // A threat: his reach's edge, and hatching across it.
-      threatLines??=segments('#e0503c',4000,.75);
+      threatLines??=segments('#dc9a73',4000,.32);
       if(threat){
         const pairs=[],r=threat.radius,c={x:threat.x,z:threat.z},n=48;
         for(let i=0;i<n;i++){const a=i/n*Math.PI*2,b=(i+1)/n*Math.PI*2;pairs.push([{x:c.x+Math.cos(a)*r,z:c.z+Math.sin(a)*r},{x:c.x+Math.cos(b)*r,z:c.z+Math.sin(b)*r}]);}
-        const gap=Math.max(1.5,r/14);
-        // Diagonal chords across the circle, k metres apart.
-        for(let k=-r+gap/2;k<r;k+=gap){const mx=c.x+k*Math.SQRT1_2,mz=c.z-k*Math.SQRT1_2,L=Math.sqrt(Math.max(0,r*r-k*k));
-          if(L>0)pairs.push([{x:mx-L*Math.SQRT1_2,z:mz-L*Math.SQRT1_2},{x:mx+L*Math.SQRT1_2,z:mz+L*Math.SQRT1_2}]);}
-        draw(threatLines,pairs,.1);
+        // A quiet boundary preserves readable ground and avoids dense
+        // diagonal aliasing. Full intention arrows remain available with U.
+        draw(threatLines,pairs,.16);
       }else threatLines.visible=false;
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
       marks.marker??=[ring(.55,.72,'#f3d48d',.95),ring(0,.16,'#f3d48d',.95)];

@@ -11,7 +11,7 @@
 .rt-canvas{display:block;inline-size:100%;block-size:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none;outline:none}
 .rt-canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--rt-focus)}
 .rt-veil{position:absolute;inset:0;display:grid;place-items:center;background:#141a17;font-size:1.05rem;z-index:5;transition:opacity .4s;padding:1rem;text-align:center}
-.rt-scene[data-ready="true"] .rt-veil{opacity:0;pointer-events:none}
+.rt-scene[data-ready="true"] .rt-veil{opacity:0;pointer-events:none;visibility:hidden}
 /* Hidden text stays available; controls have solid backing for predictable contrast. */
 .realtime-frame .visually-hidden,.rt-field .visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .rt-field button{min-block-size:2.75rem;min-inline-size:2.75rem;padding:.45rem .8rem;border:1px solid var(--rt-line);border-radius:.4rem;background:#29312a;color:#f4ead5;
@@ -178,6 +178,45 @@
    the live target readout and essential controls immediately beneath it. */
 @media (max-height:800px){.rt-field{--rt-scene-height:clamp(20rem,44dvh,30rem)}.rt-field .rt-scene{block-size:var(--rt-scene-height)}}
 .rt-defeat-page{margin:.6rem 0;padding:.6rem .9rem;border-inline-start:3px solid var(--bronze,#b08a3c);background:#00000008}.rt-defeat-page p{margin:.2rem 0 0;font-style:italic}
+/* Keep characters, formations and primary actions visible as separate rows. */
+.rt-field{--rt-scene-height:clamp(15rem,43dvh,34rem)}
+.rt-field .rt-scene{block-size:var(--rt-scene-height);min-block-size:15rem}
+.rt-hud{grid-template-columns:minmax(0,1fr)}
+.rt-unit-dock{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;gap:.3rem}
+.rt-selection-label{margin:0;color:var(--rt-focus);font-size:.75rem;line-height:1.25}
+.rt-party{overflow-x:auto;max-inline-size:100%;padding:.15rem}
+.rt-squad-area{min-inline-size:0;max-inline-size:100%}
+.rt-squads{flex:1;min-inline-size:0;overflow-x:auto;scroll-padding:.2rem;padding:.15rem}
+.rt-field .rt-standard{flex:0 0 8.3rem}
+.rt-ability-area{grid-column:1/-1;grid-row:3;display:flex;flex-wrap:wrap;gap:.4rem;align-items:start}
+.rt-ability-bar{flex:1 1 auto}.rt-tools{flex:0 1 auto;min-inline-size:0;max-inline-size:100%}
+.rt-toolbox{min-inline-size:0;max-inline-size:100%}
+.rt-tools:has(.rt-toolbox[open]){flex-basis:100%;margin-inline-start:0}
+.rt-target-details>summary{min-block-size:1.5rem!important;padding:.1rem!important;color:var(--rt-muted)}
+.rt-target-details p{font-size:.8rem;max-inline-size:75ch}
+.rt-opportunity{grid-column:1/-1;color:var(--rt-bronze);font-size:.75rem}
+.rt-notice{display:flex;align-items:start;gap:.75rem;padding:.65rem .85rem;background:#334037;border-inline-start:4px solid #d8b778}
+.rt-notice>div{flex:1;min-inline-size:0}.rt-notice p{font-size:.84rem;line-height:1.4;margin:.2rem 0 0;max-inline-size:85ch}
+.rt-result{scroll-margin-block-start:1rem;border:1px solid #aa8750;border-radius:.7rem;padding:1.1rem;background:#f4eedf}
+.rt-result h2{margin:.25rem 0}.rt-result-actions{position:sticky;top:0;z-index:2;background:#f4eedf;padding:.45rem 0}
+.rt-result-actions button{min-block-size:3rem;min-inline-size:12rem}
+.rt-result details{margin-block:.4rem}.rt-result summary{min-block-size:2.75rem;cursor:pointer;display:flex;align-items:center}
+.realtime-frame:not([data-outcome="active"]) .rt-field :is(.rt-hud,.rt-support,.rt-time,.rt-status-strip,.rt-vote-summary,.rt-coalition-details,.rt-notice){display:none}
+.realtime-frame:not([data-outcome="active"]) .rt-scene{block-size:15rem;pointer-events:none}
+@container (max-width:900px){
+  .rt-field .rt-standard{flex-basis:6.6rem;grid-template-columns:auto 1fr;justify-items:stretch}
+  .rt-standard-name{display:block;font-size:.65rem}.rt-standard-flag{grid-row:span 2}
+  .rt-field .rt-clear{font-size:.7rem;min-inline-size:3rem;max-inline-size:5rem;white-space:normal}
+  .rt-ability-area{display:flex}.rt-tools{margin-inline-start:auto}
+}
+@media (max-height:800px){.rt-field{--rt-scene-height:clamp(16rem,36dvh,26rem)}.rt-field .rt-scene{min-block-size:12rem}}
+@media (max-width:480px){
+  .rt-field{--rt-scene-height:clamp(20rem,38dvh,24rem)}.rt-field .rt-scene{min-block-size:20rem}
+  .rt-field .rt-portrait{inline-size:5.3rem;min-inline-size:5.3rem}.rt-selection-label{font-size:.68rem}
+  .rt-top{padding-block:.25rem}.rt-field details>summary{min-block-size:2rem}
+  .rt-message-area{flex-wrap:wrap}.rt-target-details>summary{font-size:.7rem}
+  .rt-result-actions button{inline-size:100%}.rt-result{margin:.5rem;padding:.75rem}
+}
 /* The chamber (from Chapter VII; guide "Political Contests"): the coalition strip under the motion, the speakers'
    Resolve, a conversation beside/below the scene and a separate rivals' narration row. Blocs also read by letter. */
 .rt-field[data-kind="chamber"]{--rt-veterans:#d0564a;--rt-landholders:#d8ae4c;--rt-civic:#6a96dc;--rt-chamber:#a070b8}
@@ -273,3 +312,10 @@
 .rt-support>.rt-log-panel{margin:0;border:0}
 .rt-support .rt-detail-body{font-size:calc(.85rem * var(--text-scale,1))}.rt-tip-label{color:var(--rt-bronze)}
 @container (max-width:700px){.rt-support,.rt-log-panel{margin-inline:.55rem}.rt-support>details{max-inline-size:100%}}
+
+/* Readable field guidance without the former filled threat hatching. */
+.rt-wayfinders{position:absolute;inset-block-start:.65rem;inset-inline-end:.65rem;display:flex;gap:.4rem;max-inline-size:85%;flex-wrap:wrap;pointer-events:none;z-index:3}
+.rt-wayfinders button{pointer-events:auto;background:#17241ded;color:#f3dfad;border:1px solid #bba577;min-block-size:2.75rem;font-size:.8rem;padding:.4rem .7rem}
+.rt-target-cue{margin:.15rem 0;color:#e9ca88;font-size:.8rem;line-height:1.35}
+.rt-delegate-voice{font-size:.9rem;line-height:1.5;margin:.6rem 0;padding:.5rem .75rem;border-inline-start:2px solid #bba577;color:#f0e3c5}
+.realtime-frame:not([data-outcome="active"]) .rt-wayfinders{display:none}

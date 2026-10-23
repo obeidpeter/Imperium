@@ -322,7 +322,9 @@ async function realtimeCampaign(){
   // The guided opening teaches the drill: first the footing, then a pause, then slow time.
   await page.waitForFunction(()=>/Find your footing/.test(document.querySelector('[data-role="lesson"]:not([hidden])')?.textContent??''),null,{timeout:30000})
     .catch(()=>assert.fail('The guided opening starts the drill'));
+  assert.equal(start.paused,true,'The opening drill waits for the player');assert.equal(start.tick,0);
   await page.mouse.click(box.x+box.width*.62,box.y+box.height*.45);
+  await running();
   await page.waitForFunction(([x,z])=>{const h=window.__realtime.world().actors.find(a=>a.id==='hero');return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000})
     .catch(()=>assert.fail('The click in the campaign field moves the soldier'));
   await page.keyboard.press('KeyP');assert.equal((await state()).paused,true,'P pauses the campaign field');
@@ -344,11 +346,19 @@ async function realtimeCampaign(){
     await page.evaluate(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return JSON.stringify({tick:w.tick,status:w.status,paused:window.__realtime.paused(),
       focus:document.activeElement?.id||document.activeElement?.dataset?.role||document.activeElement?.tagName,modal:document.querySelector('#modal')?.open,lock:h.lock,order:h.order?.kind,
       used:w.used,line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`));
-  await running();await page.keyboard.press('Digit2');await page.keyboard.press('Digit2');
-  await page.waitForFunction(()=>window.__realtime.world().used.includes('brace'),null,{timeout:60000}).catch(()=>assert.fail('2 twice braces'));
-  await running();await page.keyboard.press('KeyT');await page.keyboard.press('Digit3');await page.keyboard.press('Digit3');
+  await running();await page.keyboard.press('Digit2');
+  await page.waitForFunction(()=>window.__realtime.world().used.includes('brace'),null,{timeout:60000}).catch(()=>assert.fail('One press braces'));
+  await running();await page.keyboard.press('KeyT');await page.keyboard.press('Digit3');await page.keyboard.press('Enter');
   await page.waitForSelector('.rt-result',{timeout:120000}).catch(()=>assert.fail('The drill ends in the After-Action Chronicle'));
   assert.match(await text(page,'.rt-result h2'),/Objective complete/);assert.equal((await state()).status,'won','The compact result reports the won drill');
+  await page.waitForFunction(()=>document.activeElement?.id==='rt-result-title');
+  const finished=(await state()).tick;await page.keyboard.press('KeyP');await page.waitForTimeout(350);
+  assert.equal((await state()).tick,finished,'Completion cannot restart battle time');
+  for(const viewport of [{width:1280,height:900},{width:390,height:844}]){
+    await page.setViewportSize(viewport);
+    const action=await page.locator('.rt-result [data-cmd="commit"]').boundingBox();
+    assert.ok(action.y>=0&&action.y+action.height<=viewport.height,'Continue is visible without scrolling');
+  }
   await page.click('[data-cmd="commit"]');await page.waitForSelector('.camp-page');
   // Back in the walkable camp: its own field, never the battle's.
   assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"]')),false,'The battle field is gone after the result is recorded');
@@ -360,6 +370,7 @@ async function realtimeCampaign(){
 async function realtimeFlat(){
   const page=await open();await campToDrill(page,'2d');
   assert.equal(await page.evaluate(()=>!!document.querySelector('.rt-field[data-kind="field"] canvas')),true);
+  assert.equal(await page.evaluate(()=>window.__realtime.paused()),true);await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');
   await page.locator('#rt-board').focus();await page.keyboard.press('KeyT');await page.keyboard.press('Enter');
   await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack in the 2D view'));
   await page.context().close();
@@ -453,7 +464,10 @@ async function chamberCouncil(){
   await page.waitForFunction(id=>window.__chamber.talking()===id,figure.id,{timeout:30000}).catch(()=>assert.fail('A click on a member talks to him'));
   for(let guard=0;(await chamberHour(page)).status==='active'&&guard<20;guard++){
     await page.locator('#rt-board').focus();await page.keyboard.press('KeyY');await chamberIdle(page);
-    await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000});await page.keyboard.press('Space');
+    await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000});
+    // The final vote deliberately focuses the result. Use the visible Skip
+    // control so the test does not send a battlefield shortcut to that heading.
+    await page.locator('[data-role="rivalsBand"] [data-skip]').click();
   }
   await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('The members divide at the vote'));
   assert.match(await text(page,'[data-role="rivalsBand"]'),/The division/);
@@ -536,6 +550,9 @@ async function realtimeFinale(){
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
   await page.click('[data-cmd="start"]:visible');
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
+  const rally=page.locator('[data-role="abilityBar"] [data-ability="rally"]');
+  assert.equal(await rally.isVisible(),true,'Rally is visible without opening More actions');
+  assert.match(await rally.getAttribute('title'),/Win allegiance.*morale/,'Rally explains its effect on rival formations');
   await page.waitForSelector('[data-role="advanceButton"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter XII opens in deployment'));
   await page.click('[data-role="advanceButton"]');
   await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]',{timeout:60000}).catch(async()=>{
