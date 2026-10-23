@@ -389,7 +389,16 @@ async function restoreRealtime(page,code,{view='3d',beforeStart=null}={}){
   await restoreCamp(page,code);
   if(beforeStart)await beforeStart();
   await page.click('[data-cmd="start"]:visible');
-  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  try{await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');}
+  catch(error){
+    const observed=await page.evaluate(()=>({phase:document.documentElement.dataset.phase,kind:document.querySelector('.rt-field')?.dataset.kind,
+      scene:document.querySelector('.rt-scene')?.dataset,board:document.querySelector('#rt-board')?.dataset,
+      world:window.__realtime.world()?.encounterId,feedback:document.querySelector('#announcement')?.textContent,
+      save:document.querySelector('.save-status')?.textContent,startDisabled:document.querySelector('[data-cmd="start"]')?.disabled,
+      title:document.querySelector('#panel-title')?.textContent,modalOpen:document.querySelector('#modal')?.open,
+      preparing:document.querySelector('.rt-scene')?.textContent?.slice(0,500)}));
+    throw new Error(`${error.message}\nField departure state: ${JSON.stringify(observed)}`);
+  }
 }
 async function realtimeSquads(){
   const page=await open();await restoreRealtime(page,battleCampCode('ch5-mine'));
@@ -465,6 +474,26 @@ async function campSaveDeparture(){
     await page.context().close();
   }
   console.log('ok - slow camp autosave: departure stays disabled until saving finishes, then one click enters both a field and a chamber');
+}
+async function campStartupDeparture(){
+  for(const [id,kind]of [['ch5-mine','field'],['ch8-parley','chamber']]){
+    const page=await open({serviceWorkers:'block'});let releaseModule;
+    const held=new Promise(resolve=>{releaseModule=resolve;});
+    await page.route('**/src/showcase/realtime-field.js',async route=>{await held;await route.continue();});
+    const loading=page.waitForRequest('**/src/showcase/realtime-field.js',{timeout:30000});
+    void loading.catch(()=>{}); // A preceding restore failure still closes the page safely.
+    const beforeStart=async()=>{
+      await loading;
+      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for initial camp setup`);
+      releaseModule();
+    };
+    try{
+      if(kind==='field')await restoreRealtime(page,battleCampCode(id),{view:'2d',beforeStart});
+      else await restoreChamber(page,battleCampCode(id),'2d',{beforeStart});
+      assert.equal(await page.locator(`.rt-field[data-kind="${kind}"]`).count(),1,`${id}: departure works after camp setup`);
+    }finally{releaseModule();await page.context().close();}
+  }
+  console.log('ok - slow camp setup: departure remains disabled through module loading and the initial visit save, then enters field and chamber');
 }
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
@@ -720,8 +749,9 @@ async function legacyChronicle(){
 let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
-for(const scenario of [drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeSquads,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle,campSaveDeparture].filter(s=>!only?.length||only.includes(s.name))){
+// Check departure races first, before the longer whole-campaign scenarios.
+for(const scenario of [campStartupDeparture,campSaveDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}

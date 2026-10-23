@@ -61,9 +61,12 @@ const sessionGate=createSessionGate({onBusyChange:syncDepartureControls});
 // A camp's first-visit save can begin before its first frame. Reflect the
 // transaction immediately so an enabled departure never silently drops a click.
 function syncDepartureControls(busy=sessionGate.busy){
+  // Do not briefly enable the button before the runtime's first visit save:
+  // starting that save during pointer dispatch can cancel a native click.
+  const waiting=busy||(campMode()&&(field?.kind!=='camp'||!field.runtime||!field.element.isConnected));
   for(const button of document.querySelectorAll('[data-cmd="start"]')){
-    button.disabled=busy;
-    if(busy)button.setAttribute('aria-busy','true');else button.removeAttribute('aria-busy');
+    button.disabled=waiting;
+    if(waiting)button.setAttribute('aria-busy','true');else button.removeAttribute('aria-busy');
   }
 }
 let memoryOnly=false,archivePrimaryState=null;
@@ -304,6 +307,7 @@ function mountField(target){
     const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
+    syncDepartureControls();
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
