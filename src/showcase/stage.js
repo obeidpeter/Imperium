@@ -154,7 +154,7 @@ export class BattleStage{
     // input:false leaves the pointer and keys to the page (the real-time arena binds its own).
     this.keyboardMode=keyboardMode;this.inputEnabled=input!==false;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;
     this.encounter=encounter;this.onPick=onPick;
-    this.onHover=onHover;this.quality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
+    this.onHover=onHover;this.quality=quality;this.builtQuality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
     this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);
     this.paintedLighting=createPaintedLighting();this.actors=new Map();this.labels=new Map();this.selected='hero';this.targets=[];this.lastPaint=0;
     this.elapsed=0;this.disposed=false;
@@ -328,23 +328,33 @@ export class BattleStage{
     // occlusion, and (sync) its camera cutaway. They then share its shaders.
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
     this.fieldFeatures?.dispose();
-    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.quality,finish});
+    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.worldQuality,finish});
   }
-  applyQuality(quality){
-    const previous=this.quality;this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];
+  // The tier the world (ground, scenery, sky, lighting, figures and the finishing
+  // pass) was built at. It can lag behind the live tier below until a rebuild.
+  get worldQuality(){return this.builtQuality??this.quality;}
+  // Frame rate, resolution, shadow map size and shadow refresh follow at once.
+  // The world is rebuilt at the new tier only when asked (a Settings choice, made
+  // while the Menu pauses play, and the performance check). Automatic adaptation
+  // in play never rebuilds it: the next encounter is built at the new tier. The
+  // finishing pass stays with the world, as turning it on or off recompiles
+  // every shader through the tone mapping.
+  applyQuality(quality,{world=true}={}){
+    this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];
     this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();
     this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));
     if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}
-    if(previous!==this.quality&&this.environment){
+    if(world&&this.worldQuality!==this.quality&&this.environment){
+      this.builtQuality=this.quality;
       this.sceneryOcclusion?.dispose();this.environment.dispose();
-      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.quality,chapter:this.chapter});this.rebuildFieldFeatures();
+      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter});this.rebuildFieldFeatures();
       this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
       this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();
-      this.sky=createSky(this.scene,this.profile,{quality:this.quality,reducedMotion:this.reducedMotion});this.lighting.dispose();
-      this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.quality});this.sync(this.encounter);
-      this.compositor?.setQuality(this.quality);this.ready=this.prepare();
+      this.sky=createSky(this.scene,this.profile,{quality:this.worldQuality,reducedMotion:this.reducedMotion});this.lighting.dispose();
+      this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality:this.worldQuality});this.sync(this.encounter);
+      this.compositor?.setQuality(this.worldQuality);this.ready=this.prepare();
     }
-    this.compositor?.setQuality(this.quality);this.resize();
+    this.compositor?.setQuality(this.worldQuality);this.resize();
   }
   updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
@@ -364,7 +374,7 @@ export class BattleStage{
     this.followGeometryDirty=true;
     this.sceneryModels?.dispose();
     const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,
-      {chapter:this.chapter,quality:this.quality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
+      {chapter:this.chapter,quality:this.worldQuality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
       prepare:model=>{this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
     // Models placed at once take the cutaway now (a first build's occlusion covers the group).
     this.sceneryOcclusion?.add(own.group);
@@ -378,7 +388,7 @@ export class BattleStage{
     const hx=this.encounter.width*1.25+2,hz=this.encounter.height*1.25+2;
     // Bodies and spent arrows rest on a repaired bridge deck, like the units who fell there.
     this.remains=createBattleRemains(this.scene,
-      {quality:this.quality,ground:this.environment.ground,heightAt:(x,z)=>this.surfaceHeight(x,z),bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},
+      {quality:this.worldQuality,ground:this.environment.ground,heightAt:(x,z)=>this.surfaceHeight(x,z),bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},
         visible:this.battleRemains});
   }
   setBattleRemains(value){this.battleRemains=value!==false;this.remains?.setVisible(this.battleRemains);}
@@ -389,9 +399,9 @@ export class BattleStage{
     this.cloudLevel=this.ceremony?0:cloudStrength(this.profile);const [wx,wz]=cloudWind(this.chapter);CLOUD_UNIFORMS.cloudShape.value.set(1/22,wx,wz);
     const hx=this.encounter.width*1.25,hz=this.encounter.height*1.25;
     this.shafts=createLightShafts(this.scene,this.profile,
-      {quality:this.quality,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},sunDirection:this.sunOffset.clone().normalize(),seed:this.chapter});
+      {quality:this.worldQuality,bounds:{minX:-hx,maxX:hx,minZ:-hz,maxZ:hz},sunDirection:this.sunOffset.clone().normalize(),seed:this.chapter});
     const level=this.environment.reflectionLevel;
-    if(!this.ceremony&&level!==null&&reflectionAvailable(this.renderer,this.quality))this.reflection=createWaterReflection(this.renderer,
+    if(!this.ceremony&&level!==null&&reflectionAvailable(this.renderer,this.worldQuality))this.reflection=createWaterReflection(this.renderer,
       this.environment.waterReflection,
       {level,hide:()=>[...this.environment.waterMeshes,this.ink?.mesh,this.overlay,this.grid,this.sky?.group,this.shafts?.group]});
   }
@@ -761,7 +771,7 @@ export class BattleStage{
       renderMs:this.samples.reduce((a,b)=>a+b,0)/Math.max(1,this.samples.length),samples:this.samples.length,calls:this.renderer.info.render.calls,
       callsMean:this.renderCounts.reduce((a,b)=>a+b,0)/Math.max(1,this.renderCounts.length),callsMax:Math.max(0,...this.renderCounts),
       shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,
-      geometries:this.renderer.info.memory.geometries,quality:this.quality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),
+      geometries:this.renderer.info.memory.geometries,quality:this.quality,worldQuality:this.worldQuality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),
       resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,
       ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,
       atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),

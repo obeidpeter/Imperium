@@ -87,8 +87,8 @@ export async function runPerformanceCheck(controller,{current='balanced',adaptiv
     for(const [index,tier]of order.entries()){
       if(isCancelled()){cancelled=true;break;}
       onProgress({tier,index,total:order.length,step:'build'});
-      const before=controller.stage;live(first);const rebuilt=before.quality!==tier,started=now();
-      controller.quality(tier);await before.ready;live(first);const built=now();
+      const before=controller.stage;live(first);const rebuilt=(before.worldQuality??before.quality)!==tier,started=now();
+      controller.quality(tier,{world:true});await before.ready;live(first);const built=now();
       onProgress({tier,index,total:order.length,step:'tour'});
       const log=before.startFrameLog(),views={};
       try{
@@ -110,7 +110,7 @@ export async function runPerformanceCheck(controller,{current='balanced',adaptiv
     }
   }finally{
     longTasks.dispose?.();
-    if(controller.stage===first&&first.quality!==current)controller.quality(current);
+    if(controller.stage===first&&(first.worldQuality??first.quality)!==current)controller.quality(current,{world:true});
     controller.adaptive(adaptive);
   }
   let ticks=null;

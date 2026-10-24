@@ -66,7 +66,7 @@ export const stagePreparation={
       if(performance.now()-slice>FRAME_SLICE_MS){this.showProgress(index,queue.length);await nextSlice();if(!current())return;slice=performance.now();}
       const unit=this.visibleUnits.find(u=>u.id===id);if(!unit||this.actors.has(id))continue;
       const vComm=this.commendationsOf(unit);
-      this.placeFigure(unit,{styleKey:figureStyleKey(unit,{commendations:vComm,quality:this.quality,figureStyle:this.figureStyle}),vComm});
+      this.placeFigure(unit,{styleKey:figureStyleKey(unit,{commendations:vComm,quality:this.worldQuality,figureStyle:this.figureStyle}),vComm});
     }
     this.figureQueue=null;this.showProgress(queue.length,queue.length);this.sync(this.encounter);
   },

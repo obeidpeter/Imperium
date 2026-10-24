@@ -10,6 +10,10 @@ export const GRAPHICS_MODES=Object.freeze({
 export const FIGURE_STYLES=Object.freeze(['sculpted','painted','inked']);
 const ORDER=['performance','balanced','high'];
 const WINDOW=30,OVER_BUDGET_MS=22,OVER_BUDGET_COUNT=18;
+// Back up after an automatic step down: 300 frames in a row within half the
+// budget, and 600 since the last change, for each step, never above the
+// player's own choice.
+const RECOVERY_RUN=300,RECOVERY_MS=11,RECOVERY_COOLDOWN=600;
 
 /** These are conservative initial hints, not measured device capability: a
  * phone (a touch-first screen no wider than 820 CSS px on its short side),
@@ -23,24 +27,32 @@ export function phoneLike(win=globalThis){
 }
 
 /** Feed actual rendering costs, not elapsed time while idle or hidden.
- * Thirty active samples and a majority over budget are needed for each step.
- * A faster run never raises quality automatically; the player can choose it.
+ * Thirty active samples and a majority over budget are needed for each step
+ * down. A long, clearly faster run steps back up only after an automatic step
+ * down, and never above the tier the player chose.
  */
 export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=false,onChange}={}) {
   let current=mode??defaultGraphicsMode({saveData,deviceMemory,phone});
   if(!Object.hasOwn(GRAPHICS_MODES,current))throw new TypeError('Unknown graphics mode.');
-  let samples=[],totalSamples=0,downgrades=0,lastReason='initial';
+  let samples=[],totalSamples=0,downgrades=0,upgrades=0,lastReason='initial',chosen=current,fastRun=0,sinceChange=0;
+  const restart=()=>{samples=[];fastRun=0;sinceChange=0;};
   function setMode(next) {
     if(!Object.hasOwn(GRAPHICS_MODES,next))throw new TypeError('Unknown graphics mode.');
-    const changed=next!==current;current=next;samples=[];lastReason='player';
+    const changed=next!==current;current=next;chosen=next;restart();lastReason='player';
     if(changed)onChange?.({mode:current,reason:'player'});
     return GRAPHICS_MODES[current];
   }
   function recordFrame(costMs,{hidden=false,active=true}={}) {
     if(hidden||!active||!Number.isFinite(costMs)||costMs<0)return {mode:current,changed:false,accepted:false};
-    totalSamples++;samples.push(costMs);if(samples.length>WINDOW)samples.shift();
+    totalSamples++;sinceChange++;samples.push(costMs);if(samples.length>WINDOW)samples.shift();
+    fastRun=costMs<=RECOVERY_MS?fastRun+1:0;
     if(current!=='performance'&&samples.length===WINDOW&&samples.filter(cost=>cost>OVER_BUDGET_MS).length>=OVER_BUDGET_COUNT){
-      current=ORDER[ORDER.indexOf(current)-1];samples=[];downgrades++;lastReason='measured-cost';
+      current=ORDER[ORDER.indexOf(current)-1];restart();downgrades++;lastReason='measured-cost';
+      onChange?.({mode:current,reason:lastReason});
+      return {mode:current,changed:true,accepted:true};
+    }
+    if(ORDER.indexOf(current)<ORDER.indexOf(chosen)&&fastRun>=RECOVERY_RUN&&sinceChange>=RECOVERY_COOLDOWN){
+      current=ORDER[ORDER.indexOf(current)+1];restart();upgrades++;lastReason='measured-headroom';
       onChange?.({mode:current,reason:lastReason});
       return {mode:current,changed:true,accepted:true};
     }
@@ -50,7 +62,7 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=fa
   // built a tier lower (never rebuilt mid-battle). Returns the new mode.
   function stepDown(reason='measured-cost') {
     if(current==='performance')return current;
-    current=ORDER[ORDER.indexOf(current)-1];samples=[];downgrades++;lastReason=reason;
+    current=ORDER[ORDER.indexOf(current)-1];restart();downgrades++;lastReason=reason;
     onChange?.({mode:current,reason});return current;
   }
   // Strain a battle reported (battle-stage-controller.js onStrain). It counts
@@ -60,7 +72,7 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=fa
   }
   function stats() {
     const sorted=[...samples].sort((a,b)=>a-b);
-    return {mode:current,samples:samples.length,maxSamples:WINDOW,totalSamples,downgrades,
+    return {mode:current,chosen,samples:samples.length,maxSamples:WINDOW,totalSamples,downgrades,upgrades,
       overBudgetMs:OVER_BUDGET_MS,requiredOverBudget:OVER_BUDGET_COUNT,
       meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
       p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};

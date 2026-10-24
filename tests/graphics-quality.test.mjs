@@ -50,3 +50,33 @@ test('QUALITY-06 retained statistics stay bounded over a long session and profil
   for(const mode of Object.values(GRAPHICS_MODES))assert.equal(Object.isFrozen(mode),true);
   assert.equal(quality.profile,GRAPHICS_MODES.balanced);
 });
+test('QUALITY-07 after an automatic step down, a long fast run steps back up, never above the player\'s choice',()=>{
+  const notices=[],quality=createGraphicsQuality({mode:'high',onChange:change=>notices.push(change)});
+  for(let i=0;i<30;i++)quality.recordFrame(28);
+  for(let i=0;i<30;i++)quality.recordFrame(28);
+  assert.equal(quality.mode,'performance');
+  // One slow frame breaks the run: no step up yet.
+  for(let i=0;i<599;i++)quality.recordFrame(5);
+  quality.recordFrame(15);
+  for(let i=0;i<299;i++)quality.recordFrame(5);
+  assert.equal(quality.mode,'performance');
+  quality.recordFrame(5);
+  assert.equal(quality.mode,'balanced');
+  // Each step needs its own quiet period and run.
+  for(let i=0;i<599;i++)quality.recordFrame(5);
+  assert.equal(quality.mode,'balanced');
+  quality.recordFrame(5);
+  assert.equal(quality.mode,'high');
+  for(let i=0;i<5000;i++)quality.recordFrame(2);
+  assert.equal(quality.mode,'high','Never above the chosen tier');
+  assert.deepEqual(notices.map(n=>n.reason),['measured-cost','measured-cost','measured-headroom','measured-headroom']);
+  assert.equal(quality.stats().upgrades,2);assert.equal(quality.stats().chosen,'high');
+});
+test('QUALITY-08 a player choice becomes the ceiling for recovery',()=>{
+  const quality=createGraphicsQuality({mode:'high'});
+  for(let i=0;i<30;i++)quality.recordFrame(28);
+  assert.equal(quality.mode,'balanced');
+  quality.setMode('balanced');
+  for(let i=0;i<5000;i++)quality.recordFrame(2);
+  assert.equal(quality.mode,'balanced');assert.equal(quality.stats().chosen,'balanced');
+});
