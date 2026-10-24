@@ -38,6 +38,8 @@ export function detectTextureSupport(loader,canvas=globalThis.document?.createEl
 // One transcoder for the page: each KTX2 loader would fetch its own and start its own workers.
 let sharedKTX2=null;
 const pageKTX2=()=>sharedKTX2??=detectTextureSupport(new SameOriginKTX2Loader().setWorkerLimit(2));
+/** A KTX2 texture file (a 2D array becomes a CompressedArrayTexture), through the page's transcoder. */
+export const loadKTX2Texture=url=>pageKTX2().loadAsync(url);
 
 // The page's Content Security Policy allows blob: images but not blob:
 // fetches, and three's ImageBitmapLoader fetches a GLB's embedded images as

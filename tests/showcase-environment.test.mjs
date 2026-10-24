@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three/three.module.js';
 import {createEnvironment,gridToWorld} from '../src/showcase/environment.js';
 import {createGroundHeight,roadSegments,terrainAt,isTrainingGround,HIGH_GROUND_HEIGHT} from '../src/showcase/environment-layout.js';
+import {splatWeights} from '../src/showcase/terrain-splat.js';
+import {GROUND_LAYERS} from '../src/ui/ground-layers.js';
 import {BATTLE_SCENARIOS} from '../src/data/encounters.js';
 import * as Game from '../src/core/game.js';
 
@@ -16,7 +18,7 @@ test('3D environment keeps centered coordinates, authored elevation and road adj
   for(const [a,b]of roadSegments(e)){const distance=Math.hypot(a.x-b.x,a.z-b.z);assert.ok(Math.abs(distance-2.5)<1e-9||distance===18);assert.equal(a.x===b.x||a.z===b.z,true);}
 });
 
-test('Real Three environment builds finite geometry and upward roads without changing encounter input',()=>{
+test('Real Three environment builds finite geometry and a road in its ground without changing encounter input',()=>{
   const e=freeze(scenario()),before=JSON.stringify(e),scene=new THREE.Scene();
   // Three itself allocates UUIDs using Math.random; gameplay-independent layout
   // is checked by coordinates below, rather than forbidding library UUIDs.
@@ -24,11 +26,11 @@ test('Real Three environment builds finite geometry and upward roads without cha
   assert.equal(scene.children.length,1);assert.equal(JSON.stringify(e),before);
   let count=0,disposed=0;const unique=new Set();
   world.group.traverse(o=>{if(!o.geometry)return;count++;unique.add(o.geometry);for(const n of o.geometry.attributes.position.array)assert.ok(Number.isFinite(n));if(o.isInstancedMesh)for(const n of o.instanceMatrix.array)assert.ok(Number.isFinite(n));});
-  assert.ok(count>0&&count<60,'Static batching keeps the complete environment below sixty draw objects');assert.ok(world.stats().batching.savedDrawObjects>50);const road=world.group.getObjectByName('authored boundary road');assert.ok(road.geometry.attributes.normal.count>0);
-  // The feathered verge spans authored rises, so its normals need not be flat.
-  // Every triangle still faces upward instead of culling the road from above.
-  for(let i=0;i<road.geometry.attributes.normal.count;i++)assert.ok(road.geometry.attributes.normal.getY(i)>.85);
-  const roadColor=road.geometry.attributes.color;assert.equal(roadColor.itemSize,4);assert.ok([...roadColor.array].some((v,i)=>i%4===3&&v===0));assert.ok([...roadColor.array].some((v,i)=>i%4===3&&v>.2&&v<.8));assert.equal(road.material.transparent,true);
+  assert.ok(count>0&&count<60,'Static batching keeps the complete environment below sixty draw objects');assert.ok(world.stats().batching.savedDrawObjects>50);
+  // The road is drawn in the ground itself: Chapter I's tread is gravel and soil, with no overlay mesh.
+  assert.equal(world.group.getObjectByName('authored boundary road'),undefined);
+  const roads=[];for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(terrainAt(e,x,y)==='road'&&['grass','road'].includes(terrainAt(e,x,y-1)??'grass'))roads.push(gridToWorld({x,y},e));
+  assert.ok(roads.length>0);for(const p of roads){const w=splatWeights(world.terrain.splat,p.x,p.z);assert.ok(w.gravel+w.soil>.85,`road at ${p.x},${p.z}`);}
   world.group.traverse(o=>{if(o.isMesh&&o.material.vertexColors)assert.ok(o.geometry.attributes.color,`${o.name} requires vertex colours when the material enables them`);});
   for(const name of ['limestone','oak leaves','meadow grass']){const batch=world.group.getObjectByName(name);assert.equal(batch.material.vertexColors,false);assert.ok(batch.instanceColor);}
   for(const geometry of unique)geometry.addEventListener('dispose',()=>disposed++);
@@ -63,7 +65,9 @@ test('Mixed soil shader has complete bounded inputs and all three quality levels
     const world=createEnvironment(new THREE.Scene(),freeze(scenario()),{quality,loadTextures:false}),g=world.ground.geometry;
     assert.equal(g.attributes.soilMix.count,g.attributes.position.count);for(const n of g.attributes.soilMix.array)assert.ok(n>=0&&n<=1);
     const material=world.ground.material,shader={uniforms:{},vertexShader:THREE.ShaderLib.standard.vertexShader,fragmentShader:THREE.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);
-    assert.equal(shader.uniforms.frontierSoil,material.userData.soilTexture);assert.equal(shader.uniforms.frontierSoil.value.isDataTexture,true,'Procedural soil is available before local image load');
+    for(const name of ['groundAlbedoMap','groundNormalMap','groundSplatMap'])assert.equal(shader.uniforms[name],material.userData.terrain.uniforms[name],name);
+    assert.equal(shader.uniforms.groundAlbedoMap.value.isDataArrayTexture,true,'The stand-in layers are there before any download');assert.equal(shader.uniforms.groundAlbedoMap.value.image.depth,GROUND_LAYERS.length);
+    assert.equal('GROUND_NORMALS' in material.defines,quality!=='performance','Performance draws the layers without normal maps');
     let triangles=0;world.group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3*(o.isInstancedMesh?o.count:1);});
     assert.ok(triangles<650000,`${quality} environment stays below 650k submitted surface triangles`);assert.ok(world.stats().meshes<150);assert.ok(world.stats().instances<20000);
     world.dispose();

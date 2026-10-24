@@ -3,6 +3,8 @@ import {noise,hash,clamp} from './environment-layout.js';
 import {finishEnvironmentMaterial} from './environment-surface-shaders.js';
 import {createFoliagePixels,FOLIAGE_ATLAS_URL} from './environment-foliage.js';
 import {IMAGE_DECODER} from './decoded-images.js';
+import {groundBiome} from '../ui/ground-layers.js';
+import {createTerrainUniforms,installTerrainMaterial} from './terrain-material.js';
 
 // Local neutral colour maps by surface kind, and the images a scene samples
 // (the battle preloader decodes them before the stage is built).
@@ -13,7 +15,7 @@ export function environmentImageUrls(profile=null){return [...SURFACE_IMAGES.map
 // once per session and shared (read-only) by every stage's own textures.
 const SURFACE_PIXELS=new Map();
 
-export function createEnvironmentMaterials({loadTextures=true,profile=null,images=IMAGE_DECODER}={}){
+export function createEnvironmentMaterials({loadTextures=true,profile=null,quality='balanced',images=IMAGE_DECODER}={}){
   const textures=new Set(),materials=new Set();let disposed=false;
   const texture=(data,size,color=true)=>{const t=new THREE.DataTexture(data,size,size,THREE.RGBAFormat);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.magFilter=THREE.LinearFilter;t.minFilter=THREE.LinearMipmapLinearFilter;t.generateMipmaps=true;t.colorSpace=color?THREE.SRGBColorSpace:THREE.NoColorSpace;t.anisotropy=4;t.needsUpdate=true;textures.add(t);return t;};
   function surface(kind,size=128){
@@ -32,9 +34,10 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,image
     }SURFACE_PIXELS.set(`${kind}:${size}`,{bytes,normal});return {map:texture(bytes,size),normalMap:texture(normal,size,false)};
   }
   const make=(props)=>{const m=new THREE.MeshStandardMaterial(props);materials.add(m);return m;};
-  const maps=Object.fromEntries(['earth','grass','stone','wood','bark','cloth'].map(k=>[k,surface(k)]));
+  const maps=Object.fromEntries(['earth','stone','wood','bark','cloth'].map(k=>[k,surface(k)]));
   const m={
-    ground:make({...maps.grass,color:0xeee5cf,roughness:1,vertexColors:true,normalScale:new THREE.Vector2(.24,.24)}),
+    // The layered ground (terrain-material.js): its colour comes from the photographed layers.
+    ground:make({color:0xffffff,roughness:1,vertexColors:true}),
     earth:make({...maps.earth,color:0xc5b997,roughness:.98,normalScale:new THREE.Vector2(.55,.55)}),
     road:make({...maps.earth,color:0xe3d6b9,roughness:.98,normalScale:new THREE.Vector2(.22,.22),vertexColors:true,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}),
     stone:make({...maps.stone,color:0xeee8d6,roughness:.98,normalScale:new THREE.Vector2(.4,.4)}),
@@ -74,7 +77,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,image
   // Board rivers: vertex alpha carries depth below one water level (shallows clear, channel dark).
   m.riverWater=make({color:0x3f6e74,roughness:.44,metalness:.04,transparent:true,opacity:.94,depthWrite:false,vertexColors:true});
   m.gravel=make({...maps.stone,color:0xa69a83,roughness:.96,normalScale:new THREE.Vector2(.2,.2)});
-  if(profile){m.ground.color.set(profile.vegetation==='reeds'?'#c9ceb9':'#eee5cf');if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);m.riverWater.color.set(profile.waterColor).multiplyScalar(.64);if(profile.setting==='wetland'){m.ground.roughness=.86;m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid'){m.ground.color.set('#ecdbc0');m.road.color.set('#cfb991');}}
+  if(profile){if(profile.chapter!==1)m.stone.color.set(profile.stoneColor);m.water.color.set(profile.waterColor);m.riverWater.color.set(profile.waterColor).multiplyScalar(.64);if(profile.setting==='wetland'){m.road.color.set('#b7ad8e');m.road.roughness=.83;}if(profile.vegetation==='arid')m.road.color.set('#cfb991');}
   if(profile?.artDirection){
     const a=profile.artDirection;
     // Keep the neutral local texture's luminance while matching fieldwork,
@@ -86,22 +89,10 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,image
     if(a.masonry==='mudbrick')m.brick.color.set('#b99a73');
     if(a.masonry==='brick')m.brick.color.set('#a77962');
   }
-  // One lit surface blends the generated soil image with the fine turf map.
-  // Vertex weights describe worn ground; they never encode movement rules.
-  const soilUniform={value:maps.earth.map};
-  m.ground.userData.soilTexture=soilUniform;
-  m.ground.onBeforeCompile=shader=>{
-    shader.uniforms.frontierSoil=soilUniform;
-    shader.vertexShader='attribute float soilMix; varying float vSoilMix;\n'+shader.vertexShader;
-    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvSoilMix = soilMix;');
-    shader.fragmentShader='uniform sampler2D frontierSoil; varying float vSoilMix;\n'+shader.fragmentShader;
-    shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
-      vec4 turf = texture2D(map, vMapUv);
-      vec3 soil = mix(texture2D(frontierSoil, vMapUv * 0.71).rgb, texture2D(frontierSoil, vec2(-vMapUv.y, vMapUv.x) * 0.47 + vec2(0.37, 0.19)).rgb, 0.36);
-      diffuseColor *= vec4(mix(turf.rgb, soil * vec3(0.89, 0.91, 0.88), clamp(vSoilMix, 0.0, 1.0)), turf.a);
-    #endif`);
-  };
-  m.ground.customProgramCacheKey=()=> 'frontier-soil-turf-v2';
+  // The ground blends the photographed layers by the board's cells (terrain-material.js);
+  // the stage sets its splat map once built. Performance draws them without normal maps.
+  const terrain=createTerrainUniforms(groundBiome(profile?.chapter??1));
+  installTerrainMaterial(m.ground,terrain,{normals:quality!=='performance'});
   const waterTime={value:0};
   // Keep broad daylight water from reading as an opaque blue floor. Its
   // moving highlights remain, with deeper green-brown body colour.
@@ -128,12 +119,12 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,image
   };
   if(loadTextures&&typeof document!=='undefined')for(const [kind,url]of SURFACE_IMAGES)attach(url,t=>{
     t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;textures.add(t);
-    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone','gravel']){m[key].map=t;m[key].needsUpdate=true;}if(kind==='earth')soilUniform.value=t;
+    for(const key of kind==='wood'?['wood','darkWood']:kind==='earth'?['earth','road','mud','sand']:['stone','marble','brick','darkStone','gravel']){m[key].map=t;m[key].needsUpdate=true;}
   });
   if(loadTextures&&!profile?.civic&&typeof document!=='undefined')attach(FOLIAGE_ATLAS_URL.href,t=>{
     t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;textures.add(t);const fallback=m.foliage.map;m.foliage.map=t;m.foliage.needsUpdate=true;
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
   });
-  return {materials:m,textures,waterTime,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();}};
+  return {materials:m,textures,terrain,waterTime,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();terrain.groundSplatMap.value.dispose();}};
 }

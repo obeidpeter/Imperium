@@ -11,6 +11,7 @@ import {loadTacticalArt} from '../ui/unit-sprites.js';
 import {environmentImageUrls} from './environment-materials.js';
 import {decodeImage} from './decoded-images.js';
 import {preloadSceneryModels} from './scenery-models.js';
+import {warmGroundTextures} from './ground-textures.js';
 import {nextSlice} from './build-steps.js';
 
 // The figures' shared textures (skin complexions and the procedural surface
@@ -44,7 +45,7 @@ export function battleFigureNeeds(encounter,{chapter,rank,commendations={},figur
 }
 
 /** Fetch and decode everything a battle's figures will wear, the images its
- * ground, stone, timber and foliage sample, and its generated scenery, before
+ * ground layers, stone, timber and foliage sample, and its generated scenery, before
  * its stage is built: each figure is built once, already complete, every
  * material compiles with its maps, the scenery stands from the start, and
  * nothing is rebuilt in play. Resolves when all has arrived or failed
@@ -62,6 +63,8 @@ export function preloadBattleFigures(encounter,options={}){
   };
   const surfaces=environmentImageUrls({civic:encounter.kind==='contest'}).map(url=>decodeImage(url).then(()=>true));
   const models=preloadSceneryModels(encounter,{chapter:options.chapter,quality:options.quality}).then(loaded=>loaded.every(Boolean));
-  const tasks=[...[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need))),...surfaces,models].map(task=>task.catch(()=>false));
+  // The ground's photographed layers, held for the session once loaded.
+  const ground=warmGroundTextures();
+  const tasks=[...[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need))),...surfaces,models,ground].map(task=>task.catch(()=>false));
   return Promise.all(tasks).then(results=>({tasks:results.length,failed:results.filter(r=>r===false).length}));
 }

@@ -101,8 +101,9 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
       // The floor keeps wave troughs from mirroring the sky's sun highlight as white blotches.
       roughness='roughnessFactor*=clamp(.88-envWave*.24-envRipple*.28+envFoam*.18,.62,1.05);';
     }else if(kind==='ground'){
+      // The photographed layers carry their own colour: broad, even light and shade only.
       color=`float envBroad=envNoise(vEnvironmentSurface.xz*.13),envFine=envNoise(vEnvironmentSurface.xz*.77+vec2(9.0,17.0));
-        diffuseColor.rgb*=mix(vec3(${arid?'.86,.82,.73':'.72,.85,.65'}),vec3(1.13,1.10,.97),smoothstep(.15,.85,envBroad))*(.94+envFine*.10);
+        diffuseColor.rgb*=mix(.88,1.06,smoothstep(.15,.85,envBroad))*(.96+envFine*.06);
         ${wet||rain?`float envPuddle=smoothstep(.64,.86,envNoise(vEnvironmentSurface.xz*.42+vec2(3.7,11.3)))*(1.0-smoothstep(.08,.65,abs(vEnvironmentSurface.y)));
         diffuseColor.rgb*=mix(1.0,.89,envPuddle);`:''}`;
       roughness=wet||rain?'roughnessFactor*=mix(mix(.64,.96,envFine),.20,envPuddle);':'roughnessFactor*=mix(.84,1.0,envFine);';
