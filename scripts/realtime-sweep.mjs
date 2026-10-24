@@ -54,18 +54,19 @@ export function playBattle(state,{maxRounds=40,attempt=1}={}){
   // From Chapter VII the company deploys first: the soldier takes his place, then the advance is sounded.
   if(deploying(world)){const hero=world.actors.find(a=>a.id===world.heroId);deploy(world,{id:hero.id,x:hero.x,z:hero.z});soundTheAdvance(world);}
   const ours=()=>(world.squads??[]).filter(q=>q.side!=='enemy');
-  const full=ours().reduce((n,q)=>n+q.maxStrength,0);
+  const full=ours().reduce((n,q)=>n+q.maxStrength,0),hidden=(world.squads??[]).filter(q=>q.lying).length,ambushes={enemy:0,ours:0};
   for(let t=0;t<maxRounds*R&&world.status==='active';t++){
     if(world.tick%10===0){commandDecision(world,memo);heroDecision(world,memo);}
     if(world.doctrine?.plan)plans.add(world.doctrine.plan.id);
-    const t0=performance.now();step(world);times.push(performance.now()-t0);watch(world);
+    const t0=performance.now(),events=step(world);times.push(performance.now()-t0);watch(world);
+    for(const e of events)if(e.kind==='squad-ambush')ambushes[(world.squads??[]).find(q=>q.id===e.squadId)?.side==='enemy'?'enemy':'ours']++;
     actors=Math.max(actors,world.actors.filter(a=>a.alive).length);squads=Math.max(squads,(world.squads??[]).length);
   }
   const m=world.mission,rounds=roundOf(world),left=ours().filter(q=>q.maxStrength>0).reduce((n,q)=>n+q.strength,0);
   const hero=world.actors.find(a=>a.id===world.heroId),resolved=G.resolveRealtime(state,world);
   return {realtime:true,id:state.encounter.id,chapter:state.chapter,status:world.status,rounds,deadline,slack:world.status==='won'&&deadline?deadline-rounds:null,
     reason:m?.reason??null,phase:m?.phases?`${m.phase+1}/${m.phases.length} ${m.label}`:m?.label??null,resolved:resolved.ok,
-    plans:[...plans],weather:world.weather,loss:full?+(1-left/full).toFixed(3):null,heroHealth:hero?+(hero.hp/hero.maxHp).toFixed(2):null,
+    plans:[...plans],weather:world.weather,hidden,ambushes,loss:full?+(1-left/full).toFixed(3):null,heroHealth:hero?+(hero.hp/hero.maxHp).toFixed(2):null,
     actors,squads,orders:world.used.includes('order'),incidents:watch.incidents.length,tick:{p50:percentile(times,.5),p95:percentile(times,.95),max:Math.max(...times)}};
 }
 
@@ -129,6 +130,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
       slackMin:firstWins.length?Math.min(...firstWins.map(o=>o.first.slack)):null,lossMedian:percentile(seen.map(o=>o.won?.loss).filter(n=>n!==null&&n!==undefined),.5),
       otherDecision:other.length?{decision:variants.find(r=>r.id===id).decision,seeds:other.length,firstTry:other.filter(o=>o.first.status==='won').length,
         within:other.filter(o=>o.tries!==null).length}:null,
+      hidden:list.filter(r=>r.hidden>0).length,ambushes:{enemy:list.reduce((n,r)=>n+(r.ambushes?.enemy??0),0),ours:list.reduce((n,r)=>n+(r.ambushes?.ours??0),0)},
       actorsMax:Math.max(...list.map(r=>r.actors)),squadsMax:Math.max(...list.map(r=>r.squads)),
       tickP95:percentile(list.map(r=>r.tick.p95),.5),tickMax:Math.max(...list.map(r=>r.tick.max))};
   });
@@ -166,7 +168,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   console.log(`\n${report.difficulty}, ${report.seeds} seeds (pass 1 used ${report.seedsUsed}), up to ${report.retries} retries`);
   console.log('Battle              first  ≤2  ≤3  rounds(med/max) deadline slack  loss  plans                               tick p95/max (ms)');
   for(const b of report.battles)console.log(`${b.id.padEnd(19)} ${String(b.firstTry).padStart(2)}/${b.seeds} ${String(b.within2).padStart(3)} ${String(b.within3).padStart(3)}  ${String(b.roundsMedian).padStart(6)}/${b.roundsMax}`+
-    `       ${String(b.deadline).padStart(3)} ${String(b.slackMin).padStart(5)}  ${b.lossMedian===null?'  —  ':b.lossMedian.toFixed(2)}  ${b.plans.join(',').padEnd(34)}  ${b.tickP95.toFixed(2)}/${b.tickMax.toFixed(1)}`);
+    `       ${String(b.deadline).padStart(3)} ${String(b.slackMin).padStart(5)}  ${b.lossMedian===null?'  —  ':b.lossMedian.toFixed(2)}  ${b.plans.join(',').padEnd(34)}  ${b.tickP95.toFixed(2)}/${b.tickMax.toFixed(1)}  hidden ${b.hidden}, ambushes ${b.ambushes.enemy}:${b.ambushes.ours}`);
   for(const f of report.finale??[])console.log(`route ${f.route.padEnd(10)} ${f.firstTry}/${f.seeds} first try, ${f.within} won (${f.injected} injected), rounds ${f.roundsMin}–${f.roundsMax} (median ${f.roundsMedian}), plans ${f.plans.join(',')}`);
   let baseline=null;try{baseline=JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../docs/evidence/realtime-gate4-sweep.json',import.meta.url),'utf8'));}catch{}
   const checks=targets(report,{baseline});console.log('\nTargets');for(const c of checks)console.log(`${c.met?'met    ':'NOT MET'} ${c.target}: ${c.value}`);
