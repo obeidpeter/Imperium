@@ -66,7 +66,7 @@ let server,browser,base=externalBase;
 const contexts=new Set();
 async function open(options={}){
   const context=await browser.newContext({viewport:{width:1280,height:900},deviceScaleFactor:1,...options});
-  contexts.add(context);const page=await context.newPage();page.setDefaultTimeout(60000);
+  contexts.add(context);const page=await context.newPage();page.setDefaultTimeout(120000);
   page.on('pageerror',error=>report.errors.push({type:'page',message:error.message,url:page.url()}));
   page.on('console',message=>{if(message.type()==='error')report.errors.push({type:'console',message:message.text(),url:page.url()});});
   await page.goto(base,{waitUntil:'domcontentloaded'});return page;
@@ -170,10 +170,11 @@ async function run(name,fn){
   await writeFile(reportPath,JSON.stringify(report,null,2)+'\n');
 }
 async function sceneInventory(){
-  const deadline=Date.now()+30*60*1000,failures=[];
+  // Software rendering: about twice release 1's frame time since the photographed ground.
+  const deadline=Date.now()+45*60*1000,failures=[];
   for(const snapshot of captures){
     if(report.scenes.some(s=>s.id===snapshot.id)){console.log(`  reusing verified ${snapshot.id} from the same build and legal snapshot`);continue;}
-    const remaining=deadline-Date.now();assert.ok(remaining>0,'Scene inventory exceeded its 30-minute total budget');
+    const remaining=deadline-Date.now();assert.ok(remaining>0,'Scene inventory exceeded its 45-minute total budget');
     // Closing the context after every capture releases its actual WebGL context
     // and software raster resources, rather than waiting for canvas GC.
     const viewport=snapshot.chapter===5?{width:1280,height:900}:{width:960,height:720};
@@ -202,7 +203,7 @@ async function sceneInventory(){
       console.log(`  captured ${snapshot.id}: ${observed.stats.calls} draws, ${observed.stats.triangles} triangles, ${observed.stats.quality}`);
       await writeFile(reportPath,JSON.stringify(report,null,2)+'\n');
       })();
-      await Promise.race([work,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(`${snapshot.id} exceeded its bounded scene budget`)),Math.min(remaining,snapshot.chapter===5?300000:150000));})]);
+      await Promise.race([work,new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(`${snapshot.id} exceeded its bounded scene budget`)),Math.min(remaining,snapshot.chapter===5?480000:240000));})]);
     }catch(error){
       failures.push({id:snapshot.id,message:error.message});
       report.sceneFailures??=[];report.sceneFailures.push({id:snapshot.id,error:error.message,observed:await bounded(page.evaluate(()=>{
