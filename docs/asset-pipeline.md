@@ -192,18 +192,41 @@ Every 3D scene's ground (release 2 of the [worlds and gameplay plan](worlds-and-
 - **Shading.** [`terrain-material.js`](../src/showcase/terrain-material.js) blends the layers by those weights and by their own heights, so pebbles stand out of sand rather than fading into it. Each layer also samples a turned, larger copy of itself, mixed in by a broad noise, so no tile repeats in view. Normals follow the layers on Balanced and High; Performance draws them flat, one program per quality. Beyond the weight map, on the outer ground and the horizon, the region's turf wears toward its worn ground with the ground's soil weight.
 - **Download and fallback.** Every chapter's offline pack takes the set (1.9 MB, counted once in the complete campaign), and the battle's preloader loads it with the page's KTX2 transcoder before the scene is built. Until it arrives, or if it cannot, each layer is its flat mean colour, drawn by the same program, and the arrays replace it without a recompile.
 
+## The horizon
+
+Beyond the modelled ridges (550 m), each region's skyline is an original landscape rendered in Blender (release 2 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md)): nine panoramas, one per region, no external image or model.
+
+| Region | Chapters | What it shows |
+| --- | --- | --- |
+| forest | I, IV, VIII | The Danube across the north, wooded hills, villages and a fort on the Roman bank, the Haemus far to the south |
+| reeds | II | Flooded meadow, pools and reed beds, willows, low ridges under a grey morning |
+| hills | III | Fields and vineyards over rolling hills, a road station, villas, a fort |
+| mesa | V, VI | The Euphrates' valley with its palm groves to the east, buttes on the desert plateau, the Persian siege camp, at dusk |
+| alps | VII | The Po plain's fields and poplar rows, Milan's walls, the Alps along the northern sky |
+| palmyra | IX | The colonnade and the temple of Bel, the oasis, tower tombs in the western valley, bare ranges |
+| farmland | X | Harvest fields south of the Danube, villages, a granary, the Haemus |
+| rome | XI | Rome's roofs on every side, the Colosseum, the Palatine, the Capitol, the Pantheon, Aurelian's wall, the Alban and Sabine hills |
+| campagna | XII | The Campagna at dusk: aqueducts, tombs and pines along the road, the city behind its wall, a rival camp |
+
+- **Render.** `$BLENDER_PYTHON scripts/assets/render-panorama.py -- --repo . [--only forest,rome]` ([source](../scripts/assets/render-panorama.py)) builds each region from its data (`REGIONS`: relief near and far, mountain ranges in arcs, plains, rivers and pools, forests, fields and landmarks, the sun and the sky's light) and renders it in Cycles (CPU, 64 samples, no denoiser) as an equirectangular band from 4° below the horizon to 10.0625° above, 8192 by 320 pixels, seen from 12 m above the board's centre with the sky transparent. North is the image's centre; a bearing b (clockwise from north) is at u = 0.5 + b / 360. Every surface fades toward a neutral haze with distance (at most 80%, half of it by about 7 km). The battle camera faces north-north-east by default, so each region's chief sights stand between north and east. The PNG stays out of the repository; its report in `art-source/panoramas/<key>.json` keeps the seed, the settings, the region's data and the PNG's SHA-256.
+- **Encode.** `node scripts/assets/build-panoramas.mjs [--only mesa] [--record]` ([source](../scripts/assets/build-panoramas.mjs)) checks each PNG against its report and the game's band, gives the clear sky and the strip below the nearest ground the colour of the skyline above or below them (so filtering never darkens a silhouette), folds the band into two rows of 4096 (south through west to north above north through east to south: no side exceeds 4096) and writes `assets/textures/panoramas/<key>-v1.ktx2` with basisu (ETC1S, quality 255, sRGB, mipmaps with clamped edges). `--record` writes each file's manifest entry.
+- **In the game.** [`environment-panorama.js`](../src/showcase/environment-panorama.js) draws it on a cylinder 610 m out, where the code-painted backdrop stood, reading each pixel at the elevation it was rendered at. Its foot sinks into the scene's fog like the ridges in front of it; from a degree below its horizon to 1.5° above it rises to a lighter haze (more in dust, mist, rain and at night), so the far ranges stand over the mist. It takes the chapter's fog colour and a little of its sun, dimmer at dawn and dusk and dark at night. The ridges' relief settles from 120 m outward so the panorama, not a bowl of near ridges, makes the skyline. One program draws every region.
+- **Download and fallback.** A panorama (217–364 KB; 2.86 MB for all nine) belongs to its chapters' offline packs only and is preloaded before a scene is built; it is held for the session. Until it arrives, if it cannot, and in council chambers, the code-painted backdrop stands in.
+
 ## Budgets
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) | Used with the regional worlds (unreleased) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 | 809,581 |
-| Shell plus Chapter I (the 3D view since the asset foundation) | 16,000,000 (8,000,000 until 0.37.0, then 10,000,000, then 12,000,000 until the worlds and gameplay plan) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 | 7,678,904 |
-| Shell plus any one chapter, with its 2D art | 24,000,000 (14,000,000 until the worlds and gameplay plan) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) | 12,589,026 (Chapter V) |
-| Complete campaign | 80,000,000 (24,000,000 until the asset foundation, then 50,000,000) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 | 26,600,463 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) | Used with the regional worlds (unreleased) | Used with release 2: ground, sky and light (unreleased) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 | 809,581 | 817,265 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 16,000,000 (8,000,000 until 0.37.0, then 10,000,000, then 12,000,000 until the worlds and gameplay plan) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 | 7,678,904 | 9,988,698 |
+| Shell plus any one chapter, with its 2D art | 24,000,000 (14,000,000 until the worlds and gameplay plan) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) | 12,589,026 (Chapter V) | 14,823,718 (Chapter V) |
+| Complete campaign | 80,000,000 (24,000,000 until the asset foundation, then 50,000,000) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 | 26,600,463 | 31,331,913 |
 
 The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+Release 2 of the plan adds the ground's layers (1.9 MB in every chapter) and one regional skyline per chapter (217–364 KB): Chapter I for the 3D view grows to 9,988,698 bytes, the largest chapter with its 2D art (Chapter V) to 14,823,718 and the complete campaign to 31,331,913.
 
 The [worlds and gameplay plan](worlds-and-gameplay-plan.md) raises three limits: Chapter I for the 3D view to 16 MB, any one chapter with its 2D art to 24 MB, and the complete campaign to 80 MB. The extra room is for the regional ground textures, trees, rocks, board kit, landmarks and new figures to come. The 2 MB first load, the external requirement, is unchanged. Before that work, with the regional worlds of PR #26, Chapter V with its 2D art was the largest chapter at 12,589,026 bytes. Chapter I took 7,678,904 for the 3D view and the complete campaign 26,600,463.
 
