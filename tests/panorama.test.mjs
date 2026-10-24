@@ -4,7 +4,7 @@ import * as T from '../vendor/three/three.module.js';
 import {PANORAMA_BAND,PANORAMA_REGIONS,panoramaChapters,panoramaFile,panoramaKey} from '../src/ui/panoramas.js';
 import {WORLD_CATALOG,chapterWorldFiles} from '../src/ui/world-catalog.js';
 import {bleedColumns,foldRows,checkRender} from '../scripts/assets/build-panoramas.mjs';
-import {PANORAMA_RADIUS,createPanorama,createPanoramaMaterial,panoramaHaze,panoramaLoaded,panoramaTexture,panoramaTint,warmPanorama} from '../src/showcase/environment-panorama.js';
+import {PANORAMAS_KEPT,PANORAMA_RADIUS,createPanorama,createPanoramaMaterial,panoramaHaze,panoramaLoaded,panoramaTexture,panoramaTint,warmPanorama} from '../src/showcase/environment-panorama.js';
 import {BACKDROP_RADIUS} from '../src/showcase/environment-backdrop.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
 import {createHash} from 'node:crypto';
@@ -86,14 +86,28 @@ test('haze and light follow the chapter: hazier in rain and mist, darker at nigh
   assert.ok(dusk.r/dusk.b>day.r/day.b,'dusk is warmer');
 });
 
-test('a panorama loads once for the session; a failure or a wrong shape leaves the stand-in and is tried again',async()=>{
+test('a panorama loads once while kept; a failure or a wrong shape leaves the stand-in and is tried again',async()=>{
   assert.equal(await warmPanorama(null),false);
   assert.equal(await warmPanorama('reeds',{load:()=>Promise.reject(new Error('offline'))}),false);assert.equal(panoramaLoaded('reeds'),false);
   const shaped=(w,h)=>()=>Promise.resolve(Object.assign(new T.Texture(),{image:{width:w,height:h}}));
   assert.equal(await warmPanorama('reeds',{load:shaped(64,64)}),false,'a square image is not the band');
   let calls=0;const load=(...args)=>{calls++;return shaped(1024,160)(...args);};
   assert.equal(await warmPanorama('reeds',{load}),true);assert.equal(panoramaLoaded('reeds'),true);
-  assert.equal(await warmPanorama('reeds',{load}),true);assert.equal(calls,1,'held for the session');
+  assert.equal(await warmPanorama('reeds',{load}),true);assert.equal(calls,1,'held while kept');
   assert.equal(panoramaTexture('reeds').colorSpace,T.SRGBColorSpace);
   assert.equal(createPanorama(getSceneProfile({},{chapter:2})).stats.panorama,'reeds','the next scene in the region uses it');
+});
+
+test('the session keeps the current region\'s panorama and the one before; an older one is released',async()=>{
+  assert.equal(PANORAMAS_KEPT,2);
+  const released=new Set(),load=key=>()=>{const texture=Object.assign(new T.Texture(),{image:{width:1024,height:160}});texture.addEventListener('dispose',()=>released.add(key));return Promise.resolve(texture);};
+  for(const key of ['forest','hills'])assert.equal(await warmPanorama(key,{load:load(key)}),true);
+  // Reeds (the test before) went first: the oldest of three.
+  assert.equal(panoramaLoaded('reeds'),false);assert.deepEqual([...released],[]);
+  assert.equal(await warmPanorama('forest',{load:load('forest')}),true,'a return to a kept region needs no download');
+  assert.equal(await warmPanorama('mesa',{load:load('mesa')}),true);
+  assert.equal(panoramaLoaded('hills'),false,'the least recently warmed is released');assert.deepEqual([...released],['hills']);
+  assert.ok(panoramaLoaded('forest')&&panoramaLoaded('mesa'));
+  const before=released.size;assert.equal(await warmPanorama('hills',{load:load('hills')}),true,'a released region loads again');
+  assert.equal(panoramaLoaded('forest'),false);assert.equal(released.size,before+1);
 });

@@ -9,31 +9,40 @@ import {BACKDROP_RADIUS,createPaintedBackdrop} from './environment-backdrop.js';
 // eye above the board's centre. Its foot sinks into the scene's fog like the
 // ridges in front of it; above the horizon it rises to a lighter haze, so the
 // far ranges stand over the mist. It takes the chapter's fog colour and light.
-// Held for the session once loaded, like the ground's layers; until then, if it
-// cannot load, and in council chambers, the code-painted backdrop stands in.
-// Presentation only: never pickable, no rule and no random draw.
+// Held once loaded for the current region and the one before, so a return is
+// immediate; until then, if it cannot load, and in council chambers, the
+// code-painted backdrop stands in. Presentation only: never pickable, no rule
+// and no random draw.
 export const PANORAMA_RADIUS=BACKDROP_RADIUS;
+// Every scene warms its region's panorama before it is built, so the one a
+// third region releases is never on screen.
+export const PANORAMAS_KEPT=2;
 const DEG=Math.PI/180;
 const textures=new Map(),pending=new Map();
+// The most recently warmed last; older ones beyond PANORAMAS_KEPT are released.
+const keep=(key,texture)=>{
+  textures.delete(key);textures.set(key,texture);
+  for(const [old,held] of textures){if(textures.size<=PANORAMAS_KEPT)break;textures.delete(old);held.dispose();}
+};
 
 /** Whether a region's panorama is loaded. */
 export const panoramaLoaded=key=>textures.has(key);
 /** The region's loaded panorama texture, or null. */
 export const panoramaTexture=key=>textures.get(key)??null;
 /**
- * Fetches and transcodes a region's panorama once; resolves true when it is
- * ready, false if it failed (the painted backdrop stays; the next call tries
- * again). Never rejects. `load` is for tests.
+ * Fetches and transcodes a region's panorama once while it is kept; resolves
+ * true when it is ready, false if it failed (the painted backdrop stays; the
+ * next call tries again). Never rejects. `load` is for tests.
  */
 export function warmPanorama(key,{load=loadKTX2Texture}={}){
   if(!key)return Promise.resolve(false);
-  if(textures.has(key))return Promise.resolve(true);
+  if(textures.has(key)){keep(key,textures.get(key));return Promise.resolve(true);}
   if(!pending.has(key))pending.set(key,load(panoramaFile(key)).then(texture=>{
     const {width,height,rows}=PANORAMA_BAND,w=texture?.image?.width,h=texture?.image?.height;
     // Any resolution of the band's proportion: previews are smaller.
     if(!texture?.isTexture||!(w>0&&h>0)||Math.abs(w/h-width/rows/(height*rows))>1e-3){texture?.dispose?.();throw new Error(`The ${key} panorama is not the band's shape.`);}
     texture.colorSpace=T.SRGBColorSpace;texture.wrapS=texture.wrapT=T.ClampToEdgeWrapping;texture.anisotropy=4;texture.name=`Imperium ${key} panorama`;texture.needsUpdate=true;
-    textures.set(key,texture);pending.delete(key);return true;
+    keep(key,texture);pending.delete(key);return true;
   }).catch(()=>{pending.delete(key);return false;}));
   return pending.get(key);
 }
@@ -117,6 +126,6 @@ export function createPanorama(profile,{quality='balanced',texture=null}={}){
   const material=createPanoramaMaterial(map,profile),mesh=new T.Mesh(geometry,material);
   mesh.name='regional panorama';mesh.castShadow=mesh.receiveShadow=false;mesh.frustumCulled=false;group.add(mesh);
   return {group,stats:{painted:false,panorama:key,width:map.image?.width,height:map.image?.height},
-    // The texture stays with the session for the next scene in the region.
+    // The texture stays with the cache for the next scene in the region.
     dispose(){geometry.dispose();material.dispose();}};
 }
