@@ -80,3 +80,12 @@ test('QUALITY-08 a player choice becomes the ceiling for recovery',()=>{
   for(let i=0;i<5000;i++)quality.recordFrame(2);
   assert.equal(quality.mode,'balanced');assert.equal(quality.stats().chosen,'balanced');
 });
+test('QUALITY-09 after a reload, a choice saved above the saved tier is still the ceiling; a lower one is ignored',()=>{
+  const reloaded=createGraphicsQuality({mode:'performance',chosen:'high'});
+  assert.equal(reloaded.mode,'performance');assert.equal(reloaded.chosen,'high');
+  for(let i=0;i<600;i++)reloaded.recordFrame(5);
+  assert.equal(reloaded.mode,'balanced');
+  for(let i=0;i<600;i++)reloaded.recordFrame(5);
+  assert.equal(reloaded.mode,'high');
+  for(const chosen of ['performance','ultra',undefined])assert.equal(createGraphicsQuality({mode:'balanced',chosen}).chosen,'balanced',String(chosen));
+});

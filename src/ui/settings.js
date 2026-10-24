@@ -27,7 +27,10 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
     edgeScroll:false,labelsAlways:false,objectiveMarkers:true,floatingNumbers:true,
     // The real-time keys the player changed (action-map.js keymapFrom); the rest keep their defaults.
     realtimeKeys:{},
-    quality:defaultGraphicsMode({saveData,deviceMemory,phone})
+    // The quality the game runs at, which slow rendering can lower, and the one the
+    // player chose (graphics-quality.js), which it returns to when rendering keeps up.
+    quality:defaultGraphicsMode({saveData,deviceMemory,phone}),
+    qualityChoice:defaultGraphicsMode({saveData,deviceMemory,phone})
   };
 }
 
@@ -39,6 +42,8 @@ export function loadSettings(stored,device){
   const settings={...defaults,...(saved&&typeof saved==='object'?saved:{})};
   if(!FIGURE_STYLES.includes(settings.figureStyle))settings.figureStyle='sculpted';
   if(!Object.hasOwn(GRAPHICS_MODES,settings.quality))settings.quality=defaults.quality;
+  // Saved before the choice was kept apart: the saved quality stands for it.
+  if(!Object.hasOwn(GRAPHICS_MODES,settings.qualityChoice)||!Object.hasOwn(saved??{},'qualityChoice'))settings.qualityChoice=settings.quality;
   settings.audioVolume=audioLevel(settings.audioVolume);
   settings.soundtrackVolume=audioLevel(settings.soundtrackVolume);
   settings.keyBindings=controlBindings(settings.keyBindings);

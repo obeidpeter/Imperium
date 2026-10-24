@@ -29,12 +29,14 @@ export function phoneLike(win=globalThis){
 /** Feed actual rendering costs, not elapsed time while idle or hidden.
  * Thirty active samples and a majority over budget are needed for each step
  * down. A long, clearly faster run steps back up only after an automatic step
- * down, and never above the tier the player chose.
+ * down, and never above the tier the player chose. `chosen` is that tier when it
+ * was saved apart from `mode`, a tier stepped down to in an earlier visit.
  */
-export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=false,onChange}={}) {
+export function createGraphicsQuality({mode,chosen:savedChoice,saveData=false,deviceMemory,phone=false,onChange}={}) {
   let current=mode??defaultGraphicsMode({saveData,deviceMemory,phone});
   if(!Object.hasOwn(GRAPHICS_MODES,current))throw new TypeError('Unknown graphics mode.');
-  let samples=[],totalSamples=0,downgrades=0,upgrades=0,lastReason='initial',chosen=current,fastRun=0,sinceChange=0;
+  const above=Object.hasOwn(GRAPHICS_MODES,savedChoice??'')&&ORDER.indexOf(savedChoice)>ORDER.indexOf(current);
+  let samples=[],totalSamples=0,downgrades=0,upgrades=0,lastReason='initial',chosen=above?savedChoice:current,fastRun=0,sinceChange=0;
   const restart=()=>{samples=[];fastRun=0;sinceChange=0;};
   function setMode(next) {
     if(!Object.hasOwn(GRAPHICS_MODES,next))throw new TypeError('Unknown graphics mode.');
@@ -77,5 +79,5 @@ export function createGraphicsQuality({mode,saveData=false,deviceMemory,phone=fa
       meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
       p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};
   }
-  return {get mode(){return current;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,strained,stats};
+  return {get mode(){return current;},get chosen(){return chosen;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,strained,stats};
 }
