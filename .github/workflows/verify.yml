@@ -2,16 +2,18 @@
 # expanded, command and production campaigns, production build, asset/offline
 # checks and character audits) on every pull request and on main: on Node 20,
 # the oldest version the project supports (package.json "engines"), and on
-# Node 22. There are no dependencies to install. Four more jobs drive the
+# Node 22. There are no dependencies to install. Five more jobs drive the
 # production build in headless Chromium: the browser smoke test
 # (scripts/browser-smoke.mjs, then the real-time checks of
 # scripts/realtime-polish-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
-# by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
-# and the twelve-hub regional asset, service and cache checks,
-# and the 3D stage benchmark (scripts/benchmark-stage.mjs), which fails on a
-# shader compiled in the first frame or in play, and whose report is uploaded.
+# by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs),
+# the twelve camps' regional asset, service and cache checks
+# (scripts/regional-world-smoke.mjs), and the 3D stage benchmark
+# (scripts/benchmark-stage.mjs), which fails on a shader compiled in the first
+# frame or in play, or on draw calls, triangles or shader programs above the
+# ceilings recorded in scripts/stage-ceilings.json, and whose report is uploaded.
 # Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
@@ -70,9 +72,9 @@ jobs:
   usability:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
-    # Includes sequential twelve-hub loading/camera/resource checks. Leave room
-    # for software rendering on the same slow runners as the broad smoke job.
-    timeout-minutes: 45
+    # Usability flows and the Chapter V pilot: about 10 minutes including the
+    # browser install. Leave room for slow runners.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -85,8 +87,6 @@ jobs:
         run: npm run smoke:usability
       - name: Chapter V courtyard and fortress pilot acceptance
         run: npm run smoke:ch5-pilot -- --river-gate
-      - name: Twelve regional hubs, direct services and resource retirement
-        run: npm run smoke:world
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -99,6 +99,23 @@ jobs:
           name: chapter-v-pilot
           path: tests/visual-results/ch5-pilot/
           retention-days: 14
+
+  world:
+    name: twelve camps (Chromium)
+    runs-on: ubuntu-latest
+    # Every camp's regional models, cameras, services and scenery residency in one
+    # browser: about 13 minutes of software rendering, plus the browser install.
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Twelve regional hubs, direct services and resource retirement
+        run: npm run smoke:world
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -138,7 +155,7 @@ jobs:
       - run: npm install --no-save --no-package-lock playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm run benchmark:stage -- --dist --scenes ch5-mine,ch12-confrontation --check --report tests/visual-results/stage-benchmark.json
+      - run: npm run benchmark:stage -- --dist --scenes ch5-mine,ch12-confrontation --check --ceilings scripts/stage-ceilings.json --report tests/visual-results/stage-benchmark.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:

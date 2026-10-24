@@ -12,6 +12,10 @@
 // error, a shader program first compiled in play (a stall on every device) or
 // by the first frame (a variant the warm-up missed), figures without their
 // generated bodies, or more programs than --max-programs.
+// --ceilings FILE also fails a run whose still-overview draw calls, triangles or
+// shader programs rise above the ceilings recorded for its scene and quality;
+// --write-ceilings FILE records this run's counts as those ceilings (10% above the
+// calls and triangles, two programs above), on purpose, keeping other scenes'.
 //   PLAYWRIGHT_MODULE=/absolute/playwright/index.js node scripts/benchmark-stage.mjs
 import http from 'node:http';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -26,6 +30,7 @@ const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1];};
 const sceneIds=arg('--scenes','ch1-road,ch5-mine,ch7-legion,ch9-wing,ch12-confrontation').split(',');
 const qualities=arg('--quality','performance,balanced').split(',');
+const ceilingsPath=arg('--ceilings',null),writeCeilingsPath=arg('--write-ceilings',null);
 const reportPath=arg('--report',null),dist=process.argv.includes('--dist'),root=dist?resolve(repo,'dist'):repo,check=process.argv.includes('--check'),maxPrograms=Number(arg('--max-programs',60));
 const VIEWPORT={width:1280,height:720};
 
@@ -106,7 +111,23 @@ async function run(browser,base,id,quality){
     // instead of easing there over slow software frames.
     const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames();s.setReducedMotion(true);s.home();
       while(frames()<start+3)await new Promise(done=>setTimeout(done,50));const v=s.stats();s.setReducedMotion(false);
-      return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length};});
+      // Estimated GPU bytes of the scene's own textures and geometry, each counted once
+      // (render targets, shadow maps and the compositor's buffers are not included).
+      const textures=new Set(),geometries=new Set(),buffers=new Set();
+      const addTexture=t=>{if(t?.isTexture)textures.add(t);};
+      s.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of [o.material].flat())if(m)for(const value of Object.values(m))addTexture(value);
+        for(const u of Object.values(o.material?.uniforms??{}))addTexture(u?.value);});
+      addTexture(s.scene.background);addTexture(s.scene.environment);
+      let geometryBytes=0,textureBytes=0;
+      const attribute=a=>{const array=a?.isInterleavedBufferAttribute?a.data.array:a?.array;if(array&&!buffers.has(array)){buffers.add(array);geometryBytes+=array.byteLength;}};
+      for(const g of geometries){for(const a of Object.values(g.attributes))attribute(a);attribute(g.index);for(const list of Object.values(g.morphAttributes??{}))for(const a of list)attribute(a);}
+      for(const t of textures){
+        if(t.isCompressedTexture||t.isCompressedArrayTexture)textureBytes+=(t.mipmaps??[]).reduce((n,m)=>n+(m.data?.byteLength??0),0);
+        else{const image=t.image,layers=t.isCubeTexture?6:(image?.depth??1),data=image?.data?.byteLength,w=image?.width??image?.[0]?.width??0,h=image?.height??image?.[0]?.height??0;
+          textureBytes+=(data??w*h*4*layers)*(t.generateMipmaps&&t.minFilter!==1006&&t.minFilter!==1003?4/3:1);}
+      }
+      return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length,
+        gpuBytes:{textures:Math.round(textureBytes),geometry:geometryBytes,total:Math.round(textureBytes)+geometryBytes}};});
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
     await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);}});
     // Programs first compiled after the battle was shown, by name: each is a stall in play.
@@ -116,7 +137,7 @@ async function run(browser,base,id,quality){
     const frameWindow=p=>{const frames=within(raw.frames,p),intervals=frames.slice(1).map(([t],i)=>t-frames[i][0]);return {cpu:percentiles(frames.map(([,c])=>c)),interval:percentiles(intervals)};};
     const longWindow=p=>{const l=within(raw.long,p).map(([,d])=>d);return {count:l.length,totalMs:Math.round(l.reduce((a,b)=>a+b,0)),maxMs:Math.round(Math.max(0,...l))};};
     const m=raw.marks,since=t=>Number.isFinite(t)?Math.round(t-m.mount):null;
-    return {id,quality,chapter:exchanges.get(id).chapter,turnPlayed:exchanges.get(id).turn,enemyBlows:exchanges.get(id).blows,
+    return {id,quality,kind:exchanges.get(id).before.kind??'battle',chapter:exchanges.get(id).chapter,turnPlayed:exchanges.get(id).turn,enemyBlows:exchanges.get(id).blows,
       startup:{constructedMs:since(m.constructed),readyMs:since(m.ready),firstFrameMs:since(m.firstFrame),settledMs:Math.round(phases[1].end-m.mount),
         // Where the start-up's long tasks fall: preload and construction, preparing (figures, compiles), the first draw.
         longTasks:{construct:longWindow({start:m.mount,end:m.constructed??m.mount}),prepare:longWindow({start:m.constructed??m.mount,end:m.ready??m.firstFrame??m.mount}),firstFrame:longWindow({start:m.ready??m.mount,end:(m.firstFrame??m.mount)+1})}},
@@ -143,17 +164,33 @@ try{
   for(const id of sceneIds)for(const quality of qualities){
     const result=await run(browser,base,id,quality);report.runs.push(result);
     const build=result.phases[0].longTasks,settle=result.phases[1].longTasks,combat=result.phases[3].longTasks,tour=result.phases[4].longTasks;
-    console.log(`${id.padEnd(20)} ${quality.padEnd(12)} first frame ${String(result.startup.firstFrameMs).padStart(6)} ms | longest task: build ${build.maxMs}, settle ${settle.maxMs}, combat ${combat.maxMs}, tour ${tour.maxMs} ms | programs ${result.overview.programs} (+${result.firstFramePrograms??'?'} in first frame, +${result.programsCompiledAfterShown} after shown) | ${result.overview.calls} calls, ${result.overview.triangles} triangles | bodies ${result.overview.generatedBodies}${result.errors.length?` | ${result.errors.length} errors`:''}`);
+    console.log(`${id.padEnd(20)} ${quality.padEnd(12)} first frame ${String(result.startup.firstFrameMs).padStart(6)} ms | longest task: build ${build.maxMs}, settle ${settle.maxMs}, combat ${combat.maxMs}, tour ${tour.maxMs} ms | programs ${result.overview.programs} (+${result.firstFramePrograms??'?'} in first frame, +${result.programsCompiledAfterShown} after shown) | ${result.overview.calls} calls, ${result.overview.triangles} triangles, ${(result.overview.gpuBytes.total/1048576).toFixed(1)} MB textures and geometry | bodies ${result.overview.generatedBodies}${result.errors.length?` | ${result.errors.length} errors`:''}`);
   }
 }finally{await browser.close();server.close();}
 report.completed=new Date().toISOString();
 if(reportPath){const out=resolve(repo,reportPath);await mkdir(dirname(out),{recursive:true});await writeFile(out,JSON.stringify(report,null,2)+'\n');console.log(`Report: ${relative(repo,out)}`);}
+// Regression ceilings on the deterministic counts, per scene and quality.
+const COUNTED=['calls','triangles','programs'];
+const ceilings=ceilingsPath?JSON.parse(await readFile(resolve(repo,ceilingsPath),'utf8')):null;
+const overCeiling=r=>{const c=ceilings.ceilings?.[r.id]?.[r.quality];if(!c)return ['no recorded ceiling (record one with --write-ceilings)'];
+  return COUNTED.filter(k=>r.overview[k]>c[k]).map(k=>`${k} ${r.overview[k]} above the recorded ceiling ${c[k]}`);};
+if(writeCeilingsPath){
+  const out=resolve(repo,writeCeilingsPath);let file={};try{file=JSON.parse(await readFile(out,'utf8'));}catch{}
+  file.note??='Stage benchmark regression ceilings: still-overview draw calls, triangles and shader programs per scene and quality, with headroom. Written on purpose by --write-ceilings; checked in CI by --ceilings.';
+  file.ceilings??={};
+  for(const r of report.runs)(file.ceilings[r.id]??={})[r.quality]={calls:Math.ceil(r.overview.calls*1.1),triangles:Math.ceil(r.overview.triangles*1.1/1000)*1000,programs:r.overview.programs+2,
+    recorded:{calls:r.overview.calls,triangles:r.overview.triangles,programs:r.overview.programs,gpuBytes:r.overview.gpuBytes.total,source:report.source,date:report.completed}};
+  file.ceilings=Object.fromEntries(Object.entries(file.ceilings).sort(([a],[b])=>a.localeCompare(b,undefined,{numeric:true})));
+  await mkdir(dirname(out),{recursive:true});await writeFile(out,JSON.stringify(file,null,2)+'\n');console.log(`Ceilings: ${relative(repo,out)}`);
+}
 const problems=report.runs.flatMap(r=>[
   ...r.errors.map(e=>`page error: ${e}`),
   ...(check&&r.lateProgramNames.length?[`${r.lateProgramNames.length} shader program(s) compiled in play: ${r.lateProgramNames.join(', ')}`]:[]),
   ...(check&&r.firstFramePrograms>0?[`${r.firstFramePrograms} shader program(s) compiled by the first frame, missed by the warm-up`]:[]),
-  ...(check&&!(r.overview.generatedBodies>0)?['no figure wears its generated body']:[]),
-  ...(check&&r.overview.programs>maxPrograms?[`${r.overview.programs} shader programs (limit ${maxPrograms})`]:[])
+  // A Contest's senators are code-built togas: no generated body to wear yet.
+  ...(check&&r.kind!=='contest'&&!(r.overview.generatedBodies>0)?['no figure wears its generated body']:[]),
+  ...(check&&r.overview.programs>maxPrograms?[`${r.overview.programs} shader programs (limit ${maxPrograms})`]:[]),
+  ...(ceilings?overCeiling(r):[])
 ].map(problem=>`${r.id} ${r.quality}: ${problem}`));
 for(const problem of problems)console.error(problem);
 if(problems.length)process.exitCode=1;
