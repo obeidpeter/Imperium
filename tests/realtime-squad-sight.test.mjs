@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createWorld,queueCommand,step,worldHash} from '../src/core/realtime/simulation.js';
-import {planDoctrine} from '../src/core/realtime/squad-ai.js';
+import {decideSquad,planDoctrine} from '../src/core/realtime/squad-ai.js';
 import {squadById,squadModifiers,membersOf} from '../src/core/realtime/squads.js';
 import {noticeOf,squadSight,unseen} from '../src/core/realtime/squad-sight.js';
 import {battleVariety} from '../src/core/realtime/variety.js';
@@ -10,6 +10,7 @@ import {blowSetup} from '../src/core/realtime/combat.js';
 import {EXCHANGE,MORALE,ORDERS,ROMAN_SQUADS} from '../src/data/realtime-squads.js';
 import {ARCHETYPES} from '../src/data/realtime-forces.js';
 import {ARENA,TIME} from '../src/data/realtime-rules.js';
+import {HIDDEN_BANDS} from '../src/data/realtime-variety.js';
 
 // What squads see (worlds and gameplay plan, release 3): a notice meter for
 // each hostile, ambushes on squads that have not seen their attacker, and the
@@ -111,4 +112,27 @@ test('from Chapter IV a raider band may start lying in wait, never on Story: hid
   const events=[];for(let t=0;t<R&&!events.some(e=>e.kind==='squad-ambush');t++)events.push(...step(w));
   assert.ok(events.some(e=>e.kind==='squad-ambush'&&e.squadId==='raiders'&&e.targetSquadId==='ours'),'the hidden band falls on the squad');
   assert.equal(raiders.lying,false);assert.ok(membersOf(w,raiders).every(m=>!m.hidden),'striking shows its men');
+});
+
+test('a hidden band that none of ours comes near rises at the end of its patience and joins the plan, seen',()=>{
+  const w=field([roman('ours',[8,30]),band('raiders',[45,30],{role:'raider',lying:true})],{actors:[hero({at:[6,30]})]});
+  const raiders=squadById(w,'raiders'),events=[];
+  // It waits, hidden and still, through the rounds of its patience.
+  while(Math.floor(w.tick/R)<HIDDEN_BANDS.patience)events.push(...step(w));
+  assert.ok(raiders.lying&&membersOf(w,raiders).every(m=>m.hidden),'still waiting at the end of its patience');
+  assert.equal(raiders.plan.intent,'Lie in wait.');assert.ok(!events.some(e=>e.kind==='squad-revealed'));
+  // The next round it rises: its men are seen, the log says so, and it goes about the plan.
+  for(let t=0;t<TIME.aiInterval*2;t++)events.push(...step(w));
+  assert.equal(raiders.lying,false);assert.ok(membersOf(w,raiders).every(m=>!m.hidden),'its men are seen');
+  assert.ok(events.some(e=>e.kind==='squad-revealed'&&e.squadId==='raiders'));assert.notEqual(raiders.plan.intent,'Lie in wait.');
+});
+
+test('a hidden band rises at once when one of ours nears the objective, and waits while none does',()=>{
+  const at=goal=>{const w=field([roman('ours',[8,30]),band('raiders',[45,30],{role:'raider',lying:true})],{actors:[hero({at:[6,30]})]});
+    w.mission={mode:'hold',goal,escorts:[]};const raiders=squadById(w,'raiders');w.events=[];decideSquad(w,raiders);return {w,raiders};};
+  // The objective far from all of ours: the band keeps waiting.
+  const far=at({x:30,z:60});assert.ok(far.raiders.lying);assert.equal(far.raiders.plan.intent,'Lie in wait.');
+  // Our squad at the objective in the first round: the band rises, seen, and goes about the plan.
+  const near=at({x:10,z:30});assert.equal(near.raiders.lying,false);assert.ok(membersOf(near.w,near.raiders).every(m=>!m.hidden));
+  assert.ok(near.w.events.some(e=>e.kind==='squad-revealed'&&e.squadId==='raiders'));assert.notEqual(near.raiders.plan.intent,'Lie in wait.');
 });

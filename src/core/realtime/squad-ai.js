@@ -7,6 +7,7 @@ import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,
 import {pickWeighted} from './rng-streams.js';
 import {lying,noticeOf,unseen} from './squad-sight.js';
 import {smokeBetween} from './sight.js';
+import {HIDDEN_BANDS} from '../../data/realtime-variety.js';
 
 // How squads decide (§3.7, §3.8, §3.10): ours carry out the soldier's order,
 // else the first feasible of their four standing orders; the enemy's war bands
@@ -242,14 +243,18 @@ function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
   squad.pulledBack=false;
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
-  // A band lying in wait (variety.js) keeps still and hidden until one of ours comes near, then falls on him.
+  // A band lying in wait (variety.js) keeps still and hidden until one of ours comes near, then falls on him. It
+  // rises and joins the plan once one of ours nears the objective (as Contest the approach measures it), or at the
+  // end of round `patience`, so it never sits out the battle.
   if(squad.lying){
     const reach=EXCHANGE.ambush.spring+EXCHANGE.contact,prey=[...squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&hostile(squad,s)),
       ...world.actors.filter(a=>standingActor(a)&&!a.squadId&&hostile(squad,a))].map(t=>({t,d:span(centreOf(world,t).x-c.x,centreOf(world,t).z-c.z)}))
       .filter(x=>x.d<=reach).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
-    if(!prey&&!squad.contact&&membersOf(world,squad).every(m=>m.hidden)){halt(squad);plan(squad,'Lie in wait.');return;}
+    const goal=world.mission?.goal,waiting=Math.floor(world.tick/R)+1<=HIDDEN_BANDS.patience&&!(goal&&foeNearGoal(world,squad,goal));
+    if(!prey&&!squad.contact&&waiting&&membersOf(world,squad).every(m=>m.hidden)){halt(squad);plan(squad,'Lie in wait.');return;}
     squad.lying=false;
     if(prey){squad.spring={targetId:prey.id,unseen:!prey.members||noticeOf(prey,squad.id)<100};engageTarget(world,squad,prey,`Fall on ${prey.name} from hiding.`);return;}
+    rise(world,squad);
   }
   const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
   // Pull back a wavering band behind a steady one near it, away from our nearest squad (ENEMY_TECHNIQUES.pullBack).

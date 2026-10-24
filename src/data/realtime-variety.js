@@ -26,8 +26,10 @@ export const FIELD_WEATHERS=freeze({
 export const PLACES=freeze({objects:4,hidden:4,waves:4,hiddenReach:2});
 
 // From Chapter IV a band of raiders may start lying in wait, hidden on one of the nearest free tiles to its
-// place, and fall on the first of ours to come near (squad-sight.js): the chance by level, never on Story.
-export const HIDDEN_BANDS=freeze({roles:freeze(['raider']),chance:freeze({story:0,standard:.5,veteran:.75}),reach:2});
+// place, and fall on the first of ours to come near (squad-sight.js): the chance by level, never on Story. One
+// that none of ours has come near rises and joins its side's plan once one of ours nears the objective, or at
+// the end of round `patience`.
+export const HIDDEN_BANDS=freeze({roles:freeze(['raider']),chance:freeze({story:0,standard:.5,veteran:.75}),reach:2,patience:2});
 
 // A band's temperament, drawn once: its morale at the start, and how keenly it watches (a factor on its notice).
 export const TEMPERAMENTS=freeze({weights:freeze([['steady',2],['bold',1],['wary',1]]),
