@@ -103,6 +103,8 @@ if(process.argv[1]===fileURLToPath(import.meta.url)){
     }
     report[name]=ok?'ready':'missing';if(ok)Object.assign(env,tool.env);else failed=true;
   }
+  // env.sh also keeps the tools installed here earlier, outside --only.
+  for(const [name,tool]of Object.entries(tools))if(!only.has(name)&&tool.ok())Object.assign(env,tool.env);
   if(!check&&Object.keys(env).length){
     mkdirSync(dir,{recursive:true});
     writeFileSync(join(dir,'env.sh'),`# Written by scripts/assets/setup-tools.mjs. Source it: . ${join(dir,'env.sh')}\n`+
