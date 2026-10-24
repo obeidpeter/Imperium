@@ -1,4 +1,4 @@
-import {COHESION,EXCHANGE,FORMATIONS,HOLD_BRACE_TICKS,MIN_MEN,MORALE,REFERENCE_STRENGTH,SPACING,SQUAD_MEN,SUPPRESSION} from '../../data/realtime-squads.js';
+import {COHESION,ENEMY_FACTIONS,ENEMY_TECHNIQUES,EXCHANGE,FORMATIONS,HOLD_BRACE_TICKS,MIN_MEN,MORALE,REFERENCE_STRENGTH,SPACING,SQUAD_MEN,SUPPRESSION} from '../../data/realtime-squads.js';
 import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {makeActor} from './actors.js';
@@ -320,7 +320,10 @@ export function exchangeSquads(world,{wound=null}={}){
     if(named)continue;
     const target=squads.filter(b=>hostile(a,b)&&known(world,a,b)&&!sightBlocked(world,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
       .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
-    if(target){a.facing=squadCentre(world,target);hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target)});shotAtSquad.add(a);}
+    if(target){a.facing=squadCentre(world,target);shotAtSquad.add(a);
+      // The enemy's archers of a faction that volleys loose one aimed volley a round (ENEMY_TECHNIQUES.volley).
+      const round=Math.floor(world.tick/R)+1,volley=a.side==='enemy'&&ENEMY_FACTIONS[a.faction]?.volley&&a.volleyRound!==round;if(volley)a.volleyRound=round;
+      hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target),volley});}
   }
   // A squad that meets no squad, against a single man: one within reach of its
   // men (the plan's first), else (archers) one in range with a clear line.
@@ -346,9 +349,10 @@ export function exchangeSquads(world,{wound=null}={}){
   for(const hit of hits){
     // An ambush is a whole 0.38 hit at once, its morale loss doubled; any other exchange a tenth, by the spread.
     const {from,to,setup}=hit,before=menOf(world,to),ambush=setup.ambush&&!setup.ranged,A=EXCHANGE.ambush;
-    const damage=ambush?setup.damage*A.scale:setup.damage*EXCHANGE.scale*exchangeSpread(world);
+    const V=ENEMY_TECHNIQUES.volley,damage=ambush?setup.damage*A.scale:hit.volley?setup.damage*V.scale:setup.damage*EXCHANGE.scale*exchangeSpread(world);
     if(ambush){emit(world,{kind:'squad-ambush',squadId:from.id,targetSquadId:to.id});if(from.order?.unseen)from.order.unseen=false;}
-    to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:ambush?A.scale:EXCHANGE.scale,morale:ambush?A.morale:1});
+    if(hit.volley){emit(world,{kind:'squad-volley',squadId:from.id,targetSquadId:to.id});to.suppression=Math.min(SUPPRESSION.max,to.suppression+V.suppression);}
+    to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:ambush?A.scale:hit.volley?V.scale:EXCHANGE.scale,morale:ambush?A.morale:1});
     knowAttacker(to,from.id);
     emit(world,{kind:'exchange',squadId:from.id,targetSquadId:to.id,damage,ranged:setup.ranged,x:hit.at.b?.x??to.x,z:hit.at.b?.z??to.z,fromX:hit.at.a?.x??from.x,fromZ:hit.at.a?.z??from.z,
       ...(ambush?{ambush:true}:{})});
@@ -401,6 +405,8 @@ export function squadsRound(world){
       squad.morale=clamp(squad.morale+MORALE.regroup);
       if(squad.morale>MORALE.broken){squad.broken=false;emit(world,{kind:'squad-rallied',squadId:squad.id});}
     }
+    // An enemy band pulled back behind a steady one is steadied (squad-ai.js, ENEMY_TECHNIQUES.pullBack).
+    else if(squad.pulledBack&&!squad.contact)squad.morale=clamp(squad.morale+MORALE.restore);
   }
 }
 

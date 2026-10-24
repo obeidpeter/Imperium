@@ -1,4 +1,4 @@
-import {COHESION,ENEMY_PLANS,EXCHANGE,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
+import {COHESION,ENEMY_FACTIONS,ENEMY_PLANS,ENEMY_TECHNIQUES,EXCHANGE,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
 import {COMMAND_CHAPTERS} from '../../data/command-campaign.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
@@ -195,7 +195,8 @@ export function planDoctrine(world){
   // The plan: drawn again once it has been kept its rounds (it may be drawn again); a reserve plan only at the start.
   const previous=world.doctrine?.plan??null,kinds=ENEMY_PLANS.kinds;let plan=previous;
   if(!previous||next-previous.since>=(kinds[previous.id]?.hold??ENEMY_PLANS.hold)){
-    const pool=(ENEMY_PLANS.weights[def.doctrine]??ENEMY_PLANS.weights.approach).filter(([id])=>!previous||!kinds[id].opening);
+    const favour=ENEMY_FACTIONS[enemies[0].faction]?.plans??{};
+    const pool=(ENEMY_PLANS.weights[def.doctrine]??ENEMY_PLANS.weights.approach).filter(([id])=>!previous||!kinds[id].opening).map(([id,w])=>[id,w*(favour[id]??1)]);
     plan={id:pickWeighted(world.rng,'ai',pool),since:next};
     if(previous&&previous.id!==plan.id)emit(world,{kind:'enemy-plan',plan:plan.id});
   }
@@ -237,17 +238,32 @@ function preferredTarget(world,squad,friends,hero,c){
 }
 function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
+  squad.pulledBack=false;
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
   const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
+  // Pull back a wavering band behind a steady one near it, away from our nearest squad (ENEMY_TECHNIQUES.pullBack).
+  const P=ENEMY_TECHNIQUES.pullBack,near=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
+  const steady=shaken(squad)?nearestOf(squadsOf(world).filter(s=>s!==squad&&s.side===squad.side&&fielded(world,s)&&!s.broken&&s.morale>P.steady)
+    .map(s=>({...squadCentre(world,s),ref:s})).filter(s=>span(s.x-c.x,s.z-c.z)<=P.range),c):null;
+  if(steady&&near){
+    const k=span(steady.x-near.x,steady.z-near.z)||1,to={x:steady.x+(steady.x-near.x)/k*P.behind,z:steady.z+(steady.z-near.z)/k*P.behind};
+    squad.pulledBack=true;goTo(world,squad,to,{run:true});plan(squad,`Pull back behind ${steady.ref.name} to steady.`,{x:to.x,z:to.z});return;
+  }
   const focus=squadById(world,d?.focusId)??actorById(world,d?.focusId)??nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),c)?.ref??hero;
   if(!focus)return;
   const threat=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
   const threatened=threat&&span(threat.x-c.x,threat.z-c.z)<=12;
-  if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
+  if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);braceStill(world,squad);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
   if(squad.role==='guard'&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
     squad.anchor??={x:squad.x,z:squad.z};const intruder=nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),squad.anchor);
     if(intruder&&span(intruder.x-squad.anchor.x,intruder.z-squad.anchor.z)<=15){engageTarget(world,squad,intruder.ref,'Guard the approach; strike the intruder.');return;}
-    goTo(world,squad,squad.anchor);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;
+    goTo(world,squad,squad.anchor);braceStill(world,squad);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;
+  }
+  // A band of foot near its archers meets the squad that presses them.
+  if(['infantry','guard'].includes(squad.role)&&['Fix','Contest the approach'].includes(role)){
+    const pressed=squadsOf(world).find(s=>s.side===squad.side&&s.role==='archer'&&fielded(world,s)&&s.contact&&span(s.x-c.x,s.z-c.z)<=ENEMY_TECHNIQUES.protect);
+    const presser=pressed?squadById(world,pressed.contact):null;
+    if(presser&&ours(presser)&&fielded(world,presser)){engageTarget(world,squad,presser,`Protect the archers from ${presser.name}.`);return;}
   }
   if(role==='Investigate diversion'){const p={x:squad.x,z:Math.max(4,Math.min(world.map.height*2.5-4,squad.z+(squad.z<world.map.height*1.25?-12:12)))};
     goTo(world,squad,p);plan(squad,'Investigate the false approach.',{x:p.x,z:p.z});return;}
@@ -281,6 +297,11 @@ function enemyDecision(world,squad){
     engageTarget(world,squad,target,`Strike ${target.name} from the flank.`);return;
   }
   engageTarget(world,squad,target,`Fix ${target.name} in place.`);
+}
+// A band of a faction that braces (ENEMY_FACTIONS) braces once it has held its ground long enough.
+function braceStill(world,squad){
+  if(squad.braced||squad.moving||!ENEMY_FACTIONS[squad.faction]?.brace||world.tick-squad.stillSince<ENEMY_TECHNIQUES.braceTicks)return;
+  squad.braced=true;emit(world,{kind:'squad-braced',squadId:squad.id});
 }
 function foeNearGoal(world,squad,g){
   const hero=actorById(world,world.heroId);const list=[...squadsOf(world).filter(s=>ours(s)&&fielded(world,s)),...(hero&&standingActor(hero)?[hero]:[])];

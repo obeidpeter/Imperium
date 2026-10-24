@@ -142,6 +142,21 @@ export const ENEMY_PLANS=freeze({hold:2,
   preferences:freeze([['focus',5],['nearest',2],['archers',1],['soldier',1]]),
   preferenceRange:40});
 
+// How the enemy's bands fight, by faction (squad-ai.js, squads.js): the plans they favour (a factor on the
+// doctrine's weights), whether their archers loose an aimed volley once a round, and whether a band that holds
+// its ground braces.
+export const ENEMY_FACTIONS=freeze({
+  gothic:freeze({plans:freeze({fix:1.5,feint:1.5}),volley:false,brace:false}),
+  persian:freeze({plans:freeze({'flank-left':1.5,'flank-right':1.5,feint:1.5}),volley:true,brace:true}),
+  palmyrene:freeze({plans:freeze({pincer:1.5,'flank-left':1.5,'flank-right':1.5}),volley:true,brace:false}),
+  rival:freeze({plans:freeze({fix:1.5,'early-reserve':1.5,'late-reserve':1.5}),volley:true,brace:true})});
+// The enemy's techniques. An aimed volley is three tenths of a 0.38 missile exchange and a point of suppression,
+// once a round; a band holding its ground braces after `braceTicks` still. A shaken band with a steady one
+// (morale above `steady`) within `range` falls back `behind` metres behind it and is steadied 10 at each round's
+// end out of contact; a band of foot within `protect` metres of its archers meets the squad that presses them.
+export const ENEMY_TECHNIQUES=freeze({volley:freeze({scale:.3,suppression:1}),braceTicks:100,
+  pullBack:freeze({range:15,steady:60,behind:6}),protect:15});
+
 // Specialists (guide "Specialists"): a companion's action for one Command.
 export const SPECIALISTS=freeze({
   guard:freeze({id:'guard',path:'protector',name:'Guard',range:2,reduction:2,rounds:1,summary:'A friend within 2 m takes 2 less from every blow for a round; the protector braces.'}),

@@ -96,9 +96,16 @@ function chooseTarget(world,actor){
   if(actor.practice){const hero=actorById(world,world.heroId);return hero&&foes.includes(hero)&&distanceBetween(hero,anchor)<=ENEMY_AI.practiceRange?hero:null;}
   if(actor.ai.role==='guard'){const near=foes.filter(o=>distanceBetween(o,anchor)<=ENEMY_AI.guardRadius);return nearest(near,actor);}
   if(actor.ai.role==='raider'){const columns=foes.filter(o=>o.escort&&distanceBetween(o,actor)<=ENEMY_AI.raidRadius);if(columns.length)return nearest(columns,actor);}
-  // He keeps his man unless another foe is much closer.
-  const best=nearest(foes,actor),current=foes.find(o=>o.id===actor.order?.targetId);
-  return current&&distanceBetween(current,actor)<=distanceBetween(best,actor)+ENEMY_AI.stickiness?current:best;
+  // The most threatening foe (ENEMY_AI.threat): the nearest, counted nearer when he is striking this man or one of
+  // his fellows, is badly wounded, or presses one of their archers. He keeps his man unless another is much more so.
+  const t=ENEMY_AI.threat,fellows=world.actors.filter(o=>o!==actor&&o.ai&&standing(o)&&o.side===actor.side),
+    archers=fellows.filter(o=>derivedValues(o).weapon.ranged);
+  const score=o=>distanceBetween(o,actor)-(o.lock===actor.id||o.order?.targetId===actor.id?t.attacking:0)
+    -(fellows.some(f=>o.lock===f.id||o.order?.targetId===f.id)?t.band:0)-(o.hp<o.maxHp/2?t.wounded:0)
+    -(archers.some(a=>distanceBetween(a,o)<=t.guardRange)?t.archer:0);
+  let best=null,bs=Infinity;for(const o of foes){const s=score(o);if(s<bs||s===bs&&o.id<best.id){bs=s;best=o;}}
+  const current=foes.find(o=>o.id===actor.order?.targetId);
+  return current&&score(current)<=bs+ENEMY_AI.stickiness?current:best;
 }
 function goTo(world,actor,point,{run=false}={}){
   const grid=navGrid(world.map);let p=clampToMap(grid,point);if(!walkable(grid,p.x,p.z)){const i=nearestWalkable(grid,p.x,p.z);if(i<0)return;p=cellCentre(grid,i);}

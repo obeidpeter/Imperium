@@ -142,8 +142,10 @@ export const REASONS=Object.freeze({
   ALREADY_DONE:'That is already done.',OPPORTUNITY_CLOSED:'That opportunity has closed: only one could be taken, before the end of round 7.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
   NO_FRIEND_NEAR:'No friend within reach.',NOT_A_SQUAD:'Choose a squad.'});
 
-// Phase 0 enemy behaviour (§3.10 arrives in Phase 1): notice within a
-// radius, then engage, spreading round the target; skirmishers throw first.
+// How a single enemy fights (ai.js; perception is PERCEPTION's): he engages,
+// spreading round his target; skirmishers throw first; archers keep their
+// distance. Squads follow the doctrine planner (squad-ai.js, ENEMY_PLANS and
+// ENEMY_FACTIONS in realtime-squads.js).
 export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // Each engager approaches its own side of the target: 0°, ±70°, ±140° from
   // the direct line, as [cos, sin] so the rules need no trigonometry.
@@ -158,7 +160,11 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // after the last time, so a swordsman can close the gap (ai.js).
   archerClose:5,archerStep:6,archerRetreat:1,archerRetreatInterval:4,
   // An engaged enemy keeps his man unless another foe stands this much closer.
-  stickiness:3});
+  stickiness:3,
+  // Whom he strikes (worlds and gameplay plan, release 3): the nearest foe, counted this many metres nearer when he
+  // is striking this man or a man of his band, is badly wounded (below half his Health), or is pressing one of the
+  // band's archers (within `guardRange` of him).
+  threat:Object.freeze({attacking:4,band:2,wounded:3,archer:4,guardRange:6})});
 
 // War bands (Chapters I–III; worlds and gameplay plan, release 3): the single
 // raiders of an early battle share one morale, as every group does (bands.js).

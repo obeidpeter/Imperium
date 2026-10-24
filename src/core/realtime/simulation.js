@@ -279,6 +279,7 @@ function logLine(world,e){
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
     case 'squad-ambush':return `${squadName(world,e.squadId)} falls on ${squadName(world,e.targetSquadId)} from ambush.`;
     case 'squad-lying':return `${squadName(world,e.squadId)} lies in wait.`;
+    case 'squad-volley':return `${squadName(world,e.squadId)} loose an aimed volley at ${squadName(world,e.targetSquadId)}.`;
     case 'squad-revealed':return `${squadName(world,e.squadId)} is revealed.`;
     case 'squad-seen':return `${squadName(world,e.squadId)} is seen: it lies hidden no longer.`;
     case 'band-leader-fell':return 'Their war leader is down: the raiders lose heart.';
