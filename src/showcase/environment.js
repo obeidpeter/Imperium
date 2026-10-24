@@ -10,7 +10,7 @@ import {addInhabitedEnvironment} from './environment-inhabited.js';
 import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
-import {createPaintedBackdrop} from './environment-backdrop.js';
+import {createPanorama} from './environment-panorama.js';
 import {addFinaleApproach} from './environment-finale.js';
 import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads} from './environment-ch5-pilot.js';
 import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks} from './environment-regional-world.js';
@@ -243,7 +243,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
   const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water,riverZ});root.add(horizon.group);
   yield;
-  const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
+  // The far skyline: the region's panorama, or the painted backdrop until it loads.
+  const backdrop=createPanorama(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),

@@ -14,5 +14,7 @@ tests/visual-results/
 art-source/models/raw/
 # CC0 downloads: the records in art-source/cc0/ keep their sources and digests.
 art-source/cc0/raw/
+# Panorama renders: their reports (seed, settings, digest) reproduce them.
+art-source/panoramas/*.png
 # The asset pipeline's development tools (scripts/assets/setup-tools.mjs).
 .tools/

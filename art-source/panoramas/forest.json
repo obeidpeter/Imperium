@@ -1,0 +1,194 @@
+{
+ "key": "forest",
+ "seed": 11,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 15.1,
+ "renderSeconds": 117.9,
+ "region": {
+  "seed": 11,
+  "near": 36,
+  "mid": 170,
+  "ridge": 0.45,
+  "plains": [
+   [
+    10,
+    70,
+    0.55
+   ]
+  ],
+  "ranges": [
+   [
+    195,
+    115,
+    950,
+    9000
+   ],
+   [
+    15,
+    70,
+    650,
+    22000
+   ]
+  ],
+  "forest": 0.52,
+  "lone": 0.012,
+  "fields": 0.14,
+  "rock": 0.04,
+  "river": "danube",
+  "land": [
+   0.17,
+   0.24,
+   0.1
+  ],
+  "dry": [
+   0.3,
+   0.3,
+   0.16
+  ],
+  "wood": [
+   0.05,
+   0.1,
+   0.04
+  ],
+  "rockc": [
+   0.36,
+   0.34,
+   0.3
+  ],
+  "fieldc": [
+   [
+    0.36,
+    0.32,
+    0.14
+   ],
+   [
+    0.2,
+    0.28,
+    0.1
+   ],
+   [
+    0.28,
+    0.22,
+    0.12
+   ]
+  ],
+  "trees": [
+   [
+    "broadleaf",
+    0.8
+   ],
+   [
+    "conifer",
+    0.2
+   ]
+  ],
+  "wall": [
+   0.6,
+   0.55,
+   0.45
+  ],
+  "roof": [
+   0.4,
+   0.15,
+   0.08
+  ],
+  "thatch": [
+   0.3,
+   0.25,
+   0.16
+  ],
+  "sun": [
+   307,
+   46,
+   3.8,
+   [
+    1,
+    0.97,
+    0.9
+   ]
+  ],
+  "sky": [
+   [
+    0.52,
+    0.6,
+    0.7
+   ],
+   0.55
+  ],
+  "landmarks": [
+   [
+    "village",
+    22,
+    2700,
+    {}
+   ],
+   [
+    "watchtower",
+    96,
+    1500,
+    {}
+   ],
+   [
+    "fort",
+    128,
+    2900,
+    {}
+   ],
+   [
+    "village",
+    238,
+    2300,
+    {}
+   ],
+   [
+    "watchtower",
+    274,
+    1700,
+    {}
+   ],
+   [
+    "village",
+    332,
+    3400,
+    {}
+   ],
+   [
+    "watchtower",
+    62,
+    2300,
+    {}
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "river": "danube",
+ "pools": 0,
+ "treeCrowns": 41607,
+ "landmarks": 148,
+ "partVertices": 503228,
+ "png": {
+  "bytes": 1717194,
+  "sha256": "4772ec943e4ecfe7f5bd1c40c8b72316e978463f3553803333387d274e2b3116"
+ }
+}

@@ -10,6 +10,7 @@
 // Files live under assets/models/ or assets/textures/ (assets/world/ holds the
 // 2D board's atlases).
 import {GROUND_FILES} from './ground-layers.js';
+import {PANORAMA_REGIONS,panoramaChapters,panoramaFile} from './panoramas.js';
 
 export const WORLD_KINDS=Object.freeze(['prop','landmark','kit','texture','panorama']);
 const asset=(kind,files,chapters)=>Object.freeze({kind,files:Object.freeze(files),chapters:Object.freeze(chapters)});
@@ -46,7 +47,9 @@ export const WORLD_CATALOG=Object.freeze({
   'roman-monumental-kit':asset('kit',['assets/models/scenery/roman-monumental-kit.glb'],[9,11,12]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
-  'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12])
+  'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),
+  // Each region's far skyline (panoramas.js), in the packs of its chapters.
+  ...Object.fromEntries(PANORAMA_REGIONS.map(key=>[`panorama-${key}`,asset('panorama',[panoramaFile(key)],panoramaChapters(key))]))
 });
 /** The model of a placed world asset, or null. */
 export const worldModelUrl=id=>WORLD_CATALOG[id]?.files.find(file=>file.endsWith('.glb'))??null;

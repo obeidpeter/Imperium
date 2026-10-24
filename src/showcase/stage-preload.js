@@ -12,6 +12,8 @@ import {environmentImageUrls} from './environment-materials.js';
 import {decodeImage} from './decoded-images.js';
 import {preloadSceneryModels} from './scenery-models.js';
 import {warmGroundTextures} from './ground-textures.js';
+import {warmPanorama} from './environment-panorama.js';
+import {panoramaKey} from '../ui/panoramas.js';
 import {nextSlice} from './build-steps.js';
 
 // The figures' shared textures (skin complexions and the procedural surface
@@ -65,6 +67,8 @@ export function preloadBattleFigures(encounter,options={}){
   const models=preloadSceneryModels(encounter,{chapter:options.chapter,quality:options.quality}).then(loaded=>loaded.every(Boolean));
   // The ground's photographed layers, held for the session once loaded.
   const ground=warmGroundTextures();
-  const tasks=[...[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need))),...surfaces,models,ground].map(task=>task.catch(()=>false));
+  // The chapter's far skyline (none in a council chamber, or outside the campaign's chapters).
+  const skyline=encounter.kind==='contest'?null:panoramaKey(options.chapter),panorama=skyline?warmPanorama(skyline):Promise.resolve(true);
+  const tasks=[...[...battleFigureNeeds(encounter,options).values()].map(need=>Promise.resolve().then(()=>run[need.kind](need))),...surfaces,models,ground,panorama].map(task=>task.catch(()=>false));
   return Promise.all(tasks).then(results=>({tasks:results.length,failed:results.filter(r=>r===false).length}));
 }

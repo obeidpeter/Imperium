@@ -1,0 +1,181 @@
+{
+ "key": "hills",
+ "seed": 31,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 8.1,
+ "renderSeconds": 165.8,
+ "region": {
+  "seed": 31,
+  "near": 40,
+  "mid": 280,
+  "ridge": 0.35,
+  "ranges": [
+   [
+    185,
+    110,
+    850,
+    9000
+   ]
+  ],
+  "forest": 0.3,
+  "lone": 0.015,
+  "fields": 0.42,
+  "rock": 0.04,
+  "river": null,
+  "land": [
+   0.2,
+   0.25,
+   0.11
+  ],
+  "dry": [
+   0.36,
+   0.33,
+   0.17
+  ],
+  "wood": [
+   0.06,
+   0.11,
+   0.04
+  ],
+  "rockc": [
+   0.36,
+   0.34,
+   0.3
+  ],
+  "fieldc": [
+   [
+    0.42,
+    0.36,
+    0.16
+   ],
+   [
+    0.22,
+    0.28,
+    0.1
+   ],
+   [
+    0.3,
+    0.24,
+    0.13
+   ],
+   [
+    0.18,
+    0.22,
+    0.09
+   ]
+  ],
+  "trees": [
+   [
+    "broadleaf",
+    0.85
+   ],
+   [
+    "poplar",
+    0.15
+   ]
+  ],
+  "wall": [
+   0.6,
+   0.55,
+   0.45
+  ],
+  "roof": [
+   0.4,
+   0.15,
+   0.08
+  ],
+  "thatch": [
+   0.3,
+   0.25,
+   0.16
+  ],
+  "sun": [
+   300,
+   44,
+   3.8,
+   [
+    1,
+    0.96,
+    0.88
+   ]
+  ],
+  "sky": [
+   [
+    0.55,
+    0.6,
+    0.68
+   ],
+   0.55
+  ],
+  "landmarks": [
+   [
+    "mansio",
+    36,
+    1900,
+    {}
+   ],
+   [
+    "village",
+    70,
+    2700,
+    {
+     "tiled": true
+    }
+   ],
+   [
+    "watchtower",
+    8,
+    1500,
+    {}
+   ],
+   [
+    "villa",
+    300,
+    2300,
+    {}
+   ],
+   [
+    "fort",
+    205,
+    3100,
+    {}
+   ],
+   [
+    "villa",
+    125,
+    2100,
+    {}
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "pools": 0,
+ "treeCrowns": 6491,
+ "landmarks": 100,
+ "partVertices": 80124,
+ "png": {
+  "bytes": 1890811,
+  "sha256": "97c5a55cf8119c473ffcc58ef7fd2f01f029969855116f58e94bb17b44aed294"
+ }
+}

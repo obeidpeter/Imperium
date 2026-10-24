@@ -8125,6 +8125,258 @@
         "sha256": "8536bdd3cfd6b43133d2bfef67182942f8d72cfd99771dbdb7a519e24b9c8142"
       },
       "license": "CC0 1.0 Universal (public domain dedication): https://polyhaven.com/license. No attribution is required; the layers are credited to Rob Tuytel, Dario Barresi, Charlotte Baglioni, Dimitrios Savva on Poly Haven."
+    },
+    {
+      "id": "panorama-forest",
+      "path": "assets/textures/panoramas/forest-v1.ktx2",
+      "subject": "The far skyline of the forest region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 11,
+        "report": "art-source/panoramas/forest.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1717194,
+          "sha256": "4772ec943e4ecfe7f5bd1c40c8b72316e978463f3553803333387d274e2b3116"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapters I, IV, VIII, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 359291,
+        "sha256": "1caee5e1568085f1a3f18bf7e60d1cca779b7532e24fd1af2538067f145d4e1f",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-reeds",
+      "path": "assets/textures/panoramas/reeds-v1.ktx2",
+      "subject": "The far skyline of the reeds region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 23,
+        "report": "art-source/panoramas/reeds.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1421472,
+          "sha256": "e61fcd6afdbec4187392b461824013814bee5673a1ce46ce0444296b098366dd"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter II, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 320336,
+        "sha256": "07a7f02b1bb33d15291bf7c291192eb0866aeb95baf32a8ffa489f5043c6af15",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-hills",
+      "path": "assets/textures/panoramas/hills-v1.ktx2",
+      "subject": "The far skyline of the hills region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 31,
+        "report": "art-source/panoramas/hills.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1890811,
+          "sha256": "97c5a55cf8119c473ffcc58ef7fd2f01f029969855116f58e94bb17b44aed294"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter III, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 312663,
+        "sha256": "948af7fa7b447512a4a1aa1332a284a4a8311901f1f48c920d339f66aec787c8",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-mesa",
+      "path": "assets/textures/panoramas/mesa-v1.ktx2",
+      "subject": "The far skyline of the mesa region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 43,
+        "report": "art-source/panoramas/mesa.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1376117,
+          "sha256": "f0905b33753663d19141fe99aaf2f54b43c832c9af5e9c17969801ca8ff982c5"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapters V, VI, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 276021,
+        "sha256": "11818533e526bf80e91060088965b3b68009c517380c3915e248528841a14625",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-alps",
+      "path": "assets/textures/panoramas/alps-v1.ktx2",
+      "subject": "The far skyline of the alps region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 53,
+        "report": "art-source/panoramas/alps.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1727355,
+          "sha256": "12593416a62bca244180166884011d1634e4bb88aac9ab16ca21d923d7a1e67d"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter VII, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 349713,
+        "sha256": "7635faec521d222078bcdce1f0f8f6bf34cabd3e7638b61b354c61dd18ad8c82",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-palmyra",
+      "path": "assets/textures/panoramas/palmyra-v1.ktx2",
+      "subject": "The far skyline of the palmyra region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 61,
+        "report": "art-source/panoramas/palmyra.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1653681,
+          "sha256": "1a4142d59e0777b1ea0eef353a65f014f420cb564b8398aa113cc81e9f7c2b78"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter IX, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 221792,
+        "sha256": "f7ddbbefef2b9cf71da722f0b7c4e607217549dbe2680407fa0714441dab6e7a",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-farmland",
+      "path": "assets/textures/panoramas/farmland-v1.ktx2",
+      "subject": "The far skyline of the farmland region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 71,
+        "report": "art-source/panoramas/farmland.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1513648,
+          "sha256": "3f9220c4dc1e817325da52762ace90cfbd9d090f4f30fa3dd591714f23641ecd"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter X, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 328418,
+        "sha256": "9cab251f3f8683e31177ef88be32c7191ea8e01765bfecfe79698868c5ebf4d5",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-rome",
+      "path": "assets/textures/panoramas/rome-v1.ktx2",
+      "subject": "The far skyline of the rome region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 83,
+        "report": "art-source/panoramas/rome.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1747743,
+          "sha256": "5da4f7e4179720db5d6c9cad24d2c0f6220da351318cc105972cf085cc285d34"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter XI, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 372477,
+        "sha256": "2a3cfb698cbb4a65b7b5e6dd83647b452f454b917380f78767f37db91ec61763",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "panorama-campagna",
+      "path": "assets/textures/panoramas/campagna-v1.ktx2",
+      "subject": "The far skyline of the campagna region: an original landscape all round the scene, from 4 degrees below the horizon to 10 above",
+      "source": {
+        "method": "Original procedural landscape (seeded noise, rivers, forests, fields and landmarks built from simple shapes), rendered in Blender 5.2.2 LTS: Cycles (CPU), no denoiser, 64 samples. No external images or models",
+        "builder": "scripts/assets/render-panorama.py",
+        "encoder": "scripts/assets/build-panoramas.mjs",
+        "seed": 89,
+        "report": "art-source/panoramas/campagna.json",
+        "render": {
+          "width": 8192,
+          "height": 320,
+          "bytes": 1422030,
+          "sha256": "1a9c8570100f820378bb42416a19a7ae7f367e2c9da7a2ca79e1a8e4e2b0d037"
+        }
+      },
+      "usage": "The horizon of every 3D battle, field and camp in Chapter XII, beyond the modelled ridges; the game hazes and tints it with each chapter's fog and light (src/showcase/environment-panorama.js).",
+      "loading": "Deferred in its chapters' offline packs and preloaded before a 3D scene is built. Without it, or in a council chamber, the scene keeps the code-painted backdrop.",
+      "export": {
+        "format": "KTX2 (Basis Universal v1.16.4 ETC1S, quality 255, sRGB, mipmaps with clamped edges), the band folded into two rows",
+        "bytes": 315789,
+        "sha256": "8e9936c858bc8d94bf2609bb93ca35b9ecf07f8d555f65d336688c84788199fc",
+        "width": 4096,
+        "height": 640
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
     }
   ],
   "developmentAssets": [
@@ -8192,15 +8444,15 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-24T10:03:01.850Z",
+  "updatedAt": "2026-10-24T12:52:27.760Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
     "titleBytes": 350000,
     "compressedInitialBuildBytes": 2000000,
-    "compressedChapterOneBuildBytes": 12000000,
-    "compressedCompleteBuildBytes": 50000000,
-    "compressedChapterGroupBuildBytes": 14000000
+    "compressedChapterOneBuildBytes": 16000000,
+    "compressedCompleteBuildBytes": 80000000,
+    "compressedChapterGroupBuildBytes": 24000000
   },
   "assetCounts": {
     "tactical": 6,
@@ -8215,9 +8467,9 @@
     "showcase": 9,
     "audio": 14,
     "models": 50,
-    "textures": 6
+    "textures": 15
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 29705460,
+  "totalBundledAssetBytes": 32561960,
   "totalModelBytes": 17463759
 }
