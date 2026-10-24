@@ -6,8 +6,8 @@ The owner approved this plan in October 2026, after the regional worlds of [#26]
 
 | # | Release | State |
 | --- | --- | --- |
-| 1 | Foundations | in review |
-| 2 | Ground, sky and light | not started |
+| 1 | Foundations | merged ([#28](https://github.com/obeidpeter/Imperium/pull/28)) |
+| 2 | Ground, sky and light | in progress |
 | 3 | Harder, less predictable battles | not started |
 | 4 | Walls, gates, towers and bridges | not started |
 | 5 | Nature, water, weather and fire | not started |
