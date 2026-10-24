@@ -1,7 +1,7 @@
 import {WORLD_VERSION} from './simulation.js';
 import {STREAMS} from './rng-streams.js';
 import {ITEMS} from '../../data/realtime-rules.js';
-import {ORDERS,SQUAD_STANDING} from '../../data/realtime-squads.js';
+import {ENEMY_PLANS,ORDERS,SQUAD_STANDING} from '../../data/realtime-squads.js';
 
 // A saved real-time world must be well formed before the simulation runs it:
 // a save code can come from anywhere. These checks bound every list and type
@@ -93,7 +93,10 @@ function validateSquads(world,fail){
       ||!Array.isArray(q.path)||q.path.length>400||(q.formation!==null&&!['line','shield-wall','wedge'].includes(q.formation))
       ||(q.standing!==null&&(!Array.isArray(q.standing)||q.standing.length>4||q.standing.some(slot=>squadSlotProblem(slot))))
       ||(q.pending!==null&&(typeof q.pending!=='object'||!int(q.pending.at,0,1e7)||!int(q.pending.cost,0,8)||!ORDERS[q.pending.order?.kind]||!str(q.pending.group??'',24)))
-      ||(q.order!==null&&(typeof q.order!=='object'||!str(q.order.kind,20))))fail('real-time squad.');
+      ||(q.order!==null&&(typeof q.order!=='object'||!str(q.order.kind,20)))
+      // What it has seen (squad-sight.js), the band's preference and a feint's ground (squad-ai.js).
+      ||(q.notice!==undefined&&(!q.notice||typeof q.notice!=='object'||Object.keys(q.notice).length>80||Object.entries(q.notice).some(([k,v])=>!str(k,40)||!num(v)||v<0||v>100)))
+      ||(q.pref!==undefined&&!ENEMY_PLANS.preferences.some(([p])=>p===q.pref))||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z))))fail('real-time squad.');
   }
   if(world.actors.some(a=>a.squadId!==undefined&&!world.squads.some(q=>q.id===a.squadId)))fail('real-time squad member.');
   const c=world.command;

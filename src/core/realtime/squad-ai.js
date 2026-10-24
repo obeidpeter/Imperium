@@ -1,10 +1,11 @@
-import {COHESION,ENEMY_PLANS,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
+import {COHESION,ENEMY_PLANS,EXCHANGE,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
 import {COMMAND_CHAPTERS} from '../../data/command-campaign.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {cellCentre,clampToMap,clearLine,crossesCover,navGrid,nearestWalkable,span,walkable} from './navigation.js';
 import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,shaken,squadById,squadCentre,squadOf,squadsOf} from './squads.js';
 import {pickWeighted} from './rng-streams.js';
+import {lying,noticeOf,unseen} from './squad-sight.js';
 import {smokeBetween} from './sight.js';
 
 // How squads decide (§3.7, §3.8, §3.10): ours carry out the soldier's order,
@@ -47,18 +48,34 @@ const plan=(squad,intent,{targetId=null,x=null,z=null}={})=>{squad.plan={intent,
 // --- Our squads: orders ---------------------------------------------------------
 // An order taking effect (command.js orderEffects).
 export function carryOut(world,squad,order){
+  // Any new order of its own brings a squad lying in wait to its feet (Restore morale and a formation do not).
+  if(lying(squad)&&!['restore','line','shield-wall','wedge','lie_in_wait'].includes(order.kind))rise(world,squad);
   switch(order.kind){
     case 'restore':squad.morale=clamp(squad.morale+MORALE.restore);squad.suppression=Math.max(0,squad.suppression-1);
       if(squad.broken&&squad.morale>MORALE.broken){squad.broken=false;emit(world,{kind:'squad-rallied',squadId:squad.id});}return;
     case 'line':case 'shield-wall':case 'wedge':squad.formation=order.kind;emit(world,{kind:'formation',squadId:squad.id,formation:order.kind});return;
     case 'hold':halt(squad);squad.stillSince=Math.min(squad.stillSince,world.tick);squad.order={kind:'hold',since:world.tick};return;
+    // Lie in wait: the men keep low and still, hidden until seen or until they strike (squad-sight.js).
+    case 'lie_in_wait':halt(squad);squad.order={kind:'lie_in_wait',since:world.tick};
+      for(const m of membersOf(world,squad))if(!m.hidden){m.hidden=true;}emit(world,{kind:'squad-lying',squadId:squad.id});return;
     default:squad.order={...order,since:world.tick};
   }
 }
+// A squad lying in wait stands up: its men are seen again.
+function rise(world,squad){const hid=membersOf(world,squad).filter(m=>m.hidden);for(const m of hid)m.hidden=false;if(hid.length)emit(world,{kind:'squad-revealed',squadId:squad.id});}
 // What the soldier ordered, carried out; false once it is done.
 function followOrder(world,squad){
   const o=squad.order,hero=actorById(world,world.heroId);
   switch(o.kind){
+    case 'lie_in_wait':{
+      // In contact the exchange springs it (and shows the men); an enemy squad within reach is fallen upon.
+      if(squad.contact){squad.order=null;rise(world,squad);return false;}
+      const c=squadCentre(world,squad),prey=squadsOf(world).filter(t=>t.side==='enemy'&&fielded(world,t)&&!t.broken&&hostile(squad,t))
+        .map(t=>({t,d:span(squadCentre(world,t).x-c.x,squadCentre(world,t).z-c.z)})).filter(x=>x.d<=EXCHANGE.ambush.spring+EXCHANGE.contact).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
+      // Fallen upon before it can turn: if it had not seen the squad, the first exchange is an ambush (squads.js).
+      if(prey){squad.order={kind:'attack',targetId:prey.id,since:world.tick,from:'lie_in_wait',unseen:noticeOf(prey,squad.id)<100};return followOrder(world,squad);}
+      halt(squad);plan(squad,'Lie in wait: fall on the first enemy to come near.');return true;
+    }
     case 'hold':halt(squad);plan(squad,'Hold here; a whole round braces the line.');return true;
     case 'advance':{
       const c=squadCentre(world,squad);
@@ -172,7 +189,7 @@ const roundAhead=world=>Math.floor((world.tick+1)/R)+1;
 export function planDoctrine(world){
   const def=COMMAND_CHAPTERS.find(c=>c.id===world.chapter),enemies=squadsOf(world).filter(s=>s.side==='enemy'&&fielded(world,s)).sort((a,b)=>a.id.localeCompare(b.id));
   if(!def||!enemies.length){world.doctrine=null;return;}
-  const hero=actorById(world,world.heroId),friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s));
+  const hero=actorById(world,world.heroId),friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s));
   const escorts=(world.mission?.escorts??[]).map(id=>actorById(world,id)).filter(e=>e&&standingActor(e));
   const pursuing=['pursuit','interdiction'].includes(def.doctrine),round=Math.floor(world.tick/R)+1,next=roundAhead(world);
   // The plan: drawn again once it has been kept its rounds (it may be drawn again); a reserve plan only at the start.
@@ -221,7 +238,7 @@ function preferredTarget(world,squad,friends,hero,c){
 function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
-  const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
+  const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
   const focus=squadById(world,d?.focusId)??actorById(world,d?.focusId)??nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),c)?.ref??hero;
   if(!focus)return;
   const threat=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);

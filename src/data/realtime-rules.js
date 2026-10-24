@@ -178,6 +178,8 @@ export const BAND_MORALE=Object.freeze({start:80,shaken:40,broken:20,
 // to 0 at a sight radius of sightBase + Per.
 export const PERCEPTION=Object.freeze({sightBase:25,near:5,run:60,walk:25,quietWalk:10,stand:10,drawn:15,
   darkness:.5,mist:.6,cover:.4,darkCloak:.8,decay:20,
+  // A squad lying in wait (its order) is half as easy to see (squad-sight.js).
+  lying:.5,
   // Seconds between full notice and the first move; a shout rouses his group this far.
   reaction:.4,shout:30,
   // An ambushed man traces his attacker with probability min(1, 10 / Fieldcraft); otherwise a noise within ±10 m.

@@ -19,6 +19,7 @@ import {specialistTarget} from './party.js';
 import {fieldProblem,fieldRound} from './field-objects.js';
 import {deploying} from './deployment.js';
 import {bandRound,bandTick} from './bands.js';
+import {squadSight} from './squad-sight.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -232,7 +233,7 @@ function checkObjectives(world){
 const nameOf=(world,id)=>actorById(world,id)?.name??objectById(world,id)?.name??'Someone';
 const squadName=(world,id)=>squadById(world,id)?.name??'A squad';
 const ORDER_WORDS={advance:'advance',attack:'attack',hold:'hold fast',restore:'steady the men',withdraw:'withdraw and brace',line:'form line',
-  'shield-wall':'form shield wall',wedge:'form wedge'};
+  'shield-wall':'form shield wall',wedge:'form wedge',lie_in_wait:'lie in wait'};
 function logLine(world,e){
   const by=nameOf(world,e.attackerId??e.actorId),to=nameOf(world,e.defenderId??e.targetId),what=e.missile?MISSILES[e.missile].name.toLowerCase():'blow';
   const a=/^[aeiou]/.test(what)?'an':'a';
@@ -276,6 +277,10 @@ function logLine(world,e){
     case 'squad-braced':return `${squadName(world,e.squadId)} is braced.`;
     case 'order':return `${squadName(world,e.squadId)}: ${ORDER_WORDS[e.order]??e.order}.`;
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
+    case 'squad-ambush':return `${squadName(world,e.squadId)} falls on ${squadName(world,e.targetSquadId)} from ambush.`;
+    case 'squad-lying':return `${squadName(world,e.squadId)} lies in wait.`;
+    case 'squad-revealed':return `${squadName(world,e.squadId)} is revealed.`;
+    case 'squad-seen':return `${squadName(world,e.squadId)} is seen: it lies hidden no longer.`;
     case 'band-leader-fell':return 'Their war leader is down: the raiders lose heart.';
     case 'band-shaken':return 'The raiders waver.';
     case 'band-broken':return 'The raiders break and run for the edge of the field.';
@@ -330,7 +335,7 @@ export function step(world){
     if(world.squads)moveSquads(world);
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
     act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
-    settleLocks(world);regenerate(world);perceive(world);if(world.band)bandTick(world);
+    settleLocks(world);regenerate(world);perceive(world);if(world.squads)squadSight(world);if(world.band)bandTick(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
     if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);

@@ -66,8 +66,12 @@ export const braced=(world,actor)=>actor.braceUntil>world.tick;
 // Whether a blow is an ambush (§3.5 step 9): the defender has not noticed the
 // attacker (his notice meter for him is below 100), or a hidden attacker
 // strikes a man of the party before anyone has spotted him.
-export function unaware(defender,attacker){
+// A man of a squad (squad-sight.js) is unaware while his squad has not seen the
+// attacker and fights no one.
+export function unaware(defender,attacker,world=null){
   if(defender.ai)return (defender.ai.notice?.[attacker.id]??0)<100&&defender.ai.state!=='engage';
+  const q=defender.squadId?world?.squads?.find(s=>s.id===defender.squadId):null;
+  if(q)return (q.notice?.[attacker.squadId??attacker.id]??0)<100&&!q.contact;
   return !!attacker.hidden;
 }
 export function blowSetup(world,attacker,defender,{missile=null,from=null,profile:override=null}={}){
@@ -83,7 +87,7 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
     attack-=COMBAT.weatherMissile;
     mods.push({label:`${world.weather[0].toUpperCase()}${world.weather.slice(1)} beyond 20 m`,kind:'attack',value:-COMBAT.weatherMissile});
   }
-  const ambush=!world.practice&&unaware(defender,attacker);
+  const ambush=!world.practice&&unaware(defender,attacker,world);
   if(ambush)mods.push({label:'Ambush: he has not seen you',kind:'attack',value:0});
   // A man of a squad fights with his squad's state (squads.js): its bracing, formation, cohesion and heart.
   const squadOf=id=>id&&world.squads?world.squads.find(q=>q.id===id)??null:null,As=squadOf(attacker.squadId),Ds=squadOf(defender.squadId);

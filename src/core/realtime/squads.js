@@ -6,6 +6,7 @@ import {derivedValues} from './combat.js';
 import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
 import {sightBlocked} from './sight.js';
 import {pickWeighted} from './rng-streams.js';
+import {knowAttacker,noticeOf} from './squad-sight.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -122,8 +123,8 @@ export function scorchSquad(world,squad,points,fire){
   emit(world,{kind:'scorch',squadId:squad.id,damage:points});afterLoss(world,squad,null);
 }
 // Morale, cohesion and suppression after a hit worth `scale` of a 0.38 hit.
-function hitSquad(world,squad,{flank=false,ranged=false,scale=1}){
-  const loss=Math.max(1,MORALE.hit+(flank?MORALE.flank:0)-(squad.formation==='line'?MORALE.line:0)-squad.moraleResistance)*scale;
+function hitSquad(world,squad,{flank=false,ranged=false,scale=1,morale=1}){
+  const loss=Math.max(1,MORALE.hit+(flank?MORALE.flank:0)-(squad.formation==='line'?MORALE.line:0)-squad.moraleResistance)*scale*morale;
   squad.morale=clamp(squad.morale-loss);squad.cohesion=clamp(squad.cohesion-(ranged?COHESION.ranged:COHESION.melee)*scale);
   if(ranged)squad.suppression=Math.min(SUPPRESSION.max,squad.suppression+SUPPRESSION.ranged*scale);
 }
@@ -226,7 +227,8 @@ function turnToward(actor,dx,dz){const d=span(dx,dz);if(d<1e-6)return;actor.fx=d
 // --- The exchange between squads (once a second) ---------------------------------
 // The 0.38 combatBreakdown (version 2) in metres: a squad's blows or missiles
 // against another, with every modifier named, for the exchange and the forecast.
-export function squadModifiers(world,attacker,target,{ranged=false}={}){
+// An ambush (squad-sight.js) leaves out the target's Brace and cohesive shield wall.
+export function squadModifiers(world,attacker,target,{ranged=false,ambush=false}={}){
   const grid=navGrid(world.map),a=squadCentre(world,attacker),t=squadCentre(world,target),mods=[],add=(label,value)=>{if(value)mods.push({label,value});};
   const dx=a.x-t.x,dz=a.z-t.z,d=span(dx,dz)||1,front=(dx*target.fx+dz*target.fz)/d>=.5;
   const ground=terrainAtPoint(world.map,t.x,t.z),source=terrainAtPoint(world.map,a.x,a.z),rough=g=>['marsh','ford'].includes(g);
@@ -252,7 +254,8 @@ export function squadModifiers(world,attacker,target,{ranged=false}={}){
   add('Shaken morale',shaken(attacker)?-EXCHANGE.shaken:0);
   // The unit's own 0.38 damage (drill, a flank march, night or a specialism change it), else its side's.
   const base=ranged?EXCHANGE.ranged:attacker.damage??EXCHANGE.melee[attacker.side]??EXCHANGE.melee.enemy;
-  return {base,modifiers:mods,damage:Math.max(1,base+mods.reduce((n,m)=>n+m.value,0)),aspect:front?'front':'flank',ranged};
+  const kept=ambush?mods.filter(m=>!EXCHANGE.ambush.ignores.includes(m.label)):mods;
+  return {base,modifiers:kept,damage:Math.max(1,base+kept.reduce((n,m)=>n+m.value,0)),aspect:front?'front':'flank',ranged,ambush};
 }
 // A wall between two points, within 3 m of the defender: he fights from behind it.
 function wallBetween(map,a,t){
@@ -267,6 +270,8 @@ export function chargeReady(world,attacker,target,{rough=false}={}){
 }
 // One exchange's spread: a factor of EXCHANGE.spread by its weight, one draw of the combat stream.
 export const exchangeSpread=world=>pickWeighted(world.rng,'combat',EXCHANGE.spread);
+// Whether a squad knows of another: it is in sight, or its men keep hidden and it has seen them all the same.
+const known=(world,watcher,squad)=>!membersOf(world,squad).every(m=>m.hidden)||noticeOf(watcher,squad.id)>=100;
 // The nearest two men of two squads, and how far apart they stand.
 export function closest(world,a,b){
   let best=Infinity,pa=null,pb=null;const ma=membersOf(world,a),mb=membersOf(world,b);
@@ -301,8 +306,11 @@ export function exchangeSquads(world,{wound=null}={}){
     const a=squads[i],b=squads[j];if(!hostile(a,b))continue;
     const near=closest(world,a,b);if(near.distance>EXCHANGE.contact)continue;
     a.contact=b.id;b.contact=a.id;a.facing=squadCentre(world,b);b.facing=squadCentre(world,a);
-    if(!a.broken||a.role!=='archer')hits.push({from:a,to:b,setup:squadModifiers(world,a,b),at:near});
-    if(!b.broken||b.role!=='archer')hits.push({from:b,to:a,setup:squadModifiers(world,b,a),at:{...near,a:near.b,b:near.a}});
+    // A squad that has not seen the other come, or that one springing on it from lying in wait, is ambushed (squad-sight.js).
+    const sprung=(x,y)=>x.order?.from==='lie_in_wait'&&x.order.unseen&&x.order.targetId===y.id;
+    const aUnseen=noticeOf(b,a.id)<100||sprung(a,b),bUnseen=noticeOf(a,b.id)<100||sprung(b,a);
+    if(!a.broken||a.role!=='archer')hits.push({from:a,to:b,setup:squadModifiers(world,a,b,{ambush:aUnseen}),at:near});
+    if(!b.broken||b.role!=='archer')hits.push({from:b,to:a,setup:squadModifiers(world,b,a,{ambush:bUnseen}),at:{...near,a:near.b,b:near.a}});
   }
   for(const a of squads){
     if(a.contact||a.broken||!missileRangeOf(a))continue;
@@ -310,7 +318,7 @@ export function exchangeSquads(world,{wound=null}={}){
     // A single man the plan names comes first (an escort, the soldier), then the nearest squad in range.
     const named=singles.find(o=>o.id===a.plan?.targetId&&hostile(a,o)&&span(o.x-centre.x,o.z-centre.z)<=range&&!sightBlocked(world,centre,o));
     if(named)continue;
-    const target=squads.filter(b=>hostile(a,b)&&!sightBlocked(world,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
+    const target=squads.filter(b=>hostile(a,b)&&known(world,a,b)&&!sightBlocked(world,centre,squadCentre(world,b))&&span(b.x-centre.x,b.z-centre.z)<=range)
       .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
     if(target){a.facing=squadCentre(world,target);hits.push({from:a,to:target,setup:squadModifiers(world,a,target,{ranged:true}),at:closest(world,a,target)});shotAtSquad.add(a);}
   }
@@ -333,11 +341,17 @@ export function exchangeSquads(world,{wound=null}={}){
     a.facing={x:pick.o.x,z:pick.o.z};struck.push({from:a,to:pick.o,man:pick.man,ranged:pick.ranged,setup:squadModifiers(world,a,asTarget(world,pick.o),{ranged:pick.ranged})});
   }
   // A squad that strikes from hiding is seen at once, as a single man is (damage.js).
-  for(const {from}of [...hits,...struck])for(const m of membersOf(world,from))if(m.hidden){m.hidden=false;emit(world,{kind:'revealed',actorId:m.id});}
+  for(const from of new Set([...hits,...struck].map(h=>h.from))){const hid=membersOf(world,from).filter(m=>m.hidden);
+    for(const m of hid)m.hidden=false;if(hid.length)emit(world,{kind:'squad-revealed',squadId:from.id});}
   for(const hit of hits){
-    const {from,to,setup}=hit,before=menOf(world,to),damage=setup.damage*EXCHANGE.scale*exchangeSpread(world);
-    to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:EXCHANGE.scale});
-    emit(world,{kind:'exchange',squadId:from.id,targetSquadId:to.id,damage,ranged:setup.ranged,x:hit.at.b?.x??to.x,z:hit.at.b?.z??to.z,fromX:hit.at.a?.x??from.x,fromZ:hit.at.a?.z??from.z});
+    // An ambush is a whole 0.38 hit at once, its morale loss doubled; any other exchange a tenth, by the spread.
+    const {from,to,setup}=hit,before=menOf(world,to),ambush=setup.ambush&&!setup.ranged,A=EXCHANGE.ambush;
+    const damage=ambush?setup.damage*A.scale:setup.damage*EXCHANGE.scale*exchangeSpread(world);
+    if(ambush){emit(world,{kind:'squad-ambush',squadId:from.id,targetSquadId:to.id});if(from.order?.unseen)from.order.unseen=false;}
+    to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:ambush?A.scale:EXCHANGE.scale,morale:ambush?A.morale:1});
+    knowAttacker(to,from.id);
+    emit(world,{kind:'exchange',squadId:from.id,targetSquadId:to.id,damage,ranged:setup.ranged,x:hit.at.b?.x??to.x,z:hit.at.b?.z??to.z,fromX:hit.at.a?.x??from.x,fromZ:hit.at.a?.z??from.z,
+      ...(ambush?{ambush:true}:{})});
     // Strength lost becomes men lost: those nearest the front fall.
     const keep=Math.max(0,Math.ceil(to.strength/to.perMan-1e-9)),dying=Math.max(0,before-keep);
     if(dying){

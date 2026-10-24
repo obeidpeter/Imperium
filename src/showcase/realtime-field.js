@@ -4,6 +4,7 @@ import {abilityKey,autoPauseReason,commandOptions,nearestUse,nextTarget,pointerI
 import {actorById,liftable,validate} from '../core/realtime/abilities.js';
 import {objectById} from '../core/realtime/motion.js';
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS,TIME,capabilityTasks} from '../data/realtime-rules.js';
+import {CARD} from '../data/realtime-squads.js';
 import {createLivePresenter,simPoint,stageEncounter,stageTile} from './live-figures.js';
 import {createFlatPresenter} from './flat-stage.js';
 import {bindRealtimeInput} from './realtime-input.js';
@@ -563,7 +564,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // While squads are selected the arrows move the order marker, 1–6 are the command card and 7–0 do nothing.
     if(squads?.active&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
       squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
-    if(squads?.active&&/^ability_\d+$/.test(action)){const n=Number(action.slice(8));if(n<=6)squads.card(n-1);else say('The command card has six orders: 1 to 6. Clear the selection (Esc) for your abilities.');return true;}
+    if(squads?.active&&/^ability_\d+$/.test(action)){const n=Number(action.slice(8));if(n<=CARD.length)squads.card(n-1);else say(`The command card has ${CARD.length} orders: 1 to ${CARD.length}. Clear the selection (Esc) for your abilities.`);return true;}
     if(squads?.active&&action==='act_on_target'){squads.sendMarker(keyTarget);return true;}
     if(ARROWS[action]){arrows.add(action);arrowMove();return true;}
     if(/^ability_\d+$/.test(action)){

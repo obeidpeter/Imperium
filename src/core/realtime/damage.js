@@ -6,6 +6,7 @@ import {cancelAction} from './actions.js';
 import {struck} from './ai.js';
 import {memberFell,squadOf,membersOf} from './squads.js';
 import {bandMemberFell} from './bands.js';
+import {knowAttacker} from './squad-sight.js';
 
 // Systems 5 and 6 (§3.1): missiles land, then every blow released this tick
 // resolves in the order released: hits, blocks, staggers, downs and deaths.
@@ -68,7 +69,7 @@ export function resolveBlows(world){
     const setup=blowSetup(world,attacker,defender,{missile:blow.missile??null,from:blow.from??null,profile:blow.profile??null}),r=rollBlow(world,setup);
     defender.lastHitTick=world.tick;defender.lastHitBy=attacker.id;defender.calmSince=world.tick;
     if(attacker.hidden){attacker.hidden=false;emit(world,{kind:'revealed',actorId:attacker.id});}
-    if(defender.ai)struck(world,defender,attacker,setup.ambush);
+    if(defender.ai)struck(world,defender,attacker,setup.ambush);else if(defender.squadId)knowAttacker(squadOf(world,defender),attacker.squadId??attacker.id);
     const base={attackerId:attacker.id,defenderId:defender.id,missile:blow.missile??null,arc:setup.arc,roll:r.roll,critical:r.critical,ambush:!!setup.ambush,
       projectileId:blow.projectileId??null,bash:!!blow.bash};
     if(!r.hit){emit(world,{kind:'miss',...base});continue;}
