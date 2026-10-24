@@ -4,8 +4,9 @@
 // companions follow their standing orders), plays the campaign from New Game in
 // real time on campaign seeds, every battle by legal Commands only and every
 // Contest by the 0.38 autoplay. A lost battle is retried from its checkpoint
-// (Retry, a legal command) up to --retries times, as a player would; a battle
-// still lost ends its seed's campaign.
+// (Retry, a legal command) up to --retries times; the retry restores the same
+// battle, so the bot plays it more carefully, as a player would (heroDecision).
+// A battle still lost ends its seed's campaign.
 //
 // - Pass 1: each chapter's first decision. Seeds are added until every battle
 //   of Chapters IV–IX (to XII with --last=12) has been played on --seeds of them.
@@ -47,8 +48,8 @@ const percentile=(list,p)=>{if(!list.length)return null;const s=[...list].sort((
 const lostOnDeadline=r=>r.status!=='won'&&/deadline/i.test(r.reason??'');
 
 // Play a started real-time encounter to its end as the bot, timing every tick.
-export function playBattle(state,{maxRounds=40}={}){
-  const world=G.realtimeWorld(state),watch=companionWatch(),times=[],deadline=world.mission?.deadline??null,memo={},plans=new Set();
+export function playBattle(state,{maxRounds=40,attempt=1}={}){
+  const world=G.realtimeWorld(state),watch=companionWatch(),times=[],deadline=world.mission?.deadline??null,memo={attempt},plans=new Set();
   let actors=0,squads=0;
   // From Chapter VII the company deploys first: the soldier takes his place, then the advance is sounded.
   if(deploying(world)){const hero=world.actors.find(a=>a.id===world.heroId);deploy(world,{id:hero.id,x:hero.x,z:hero.z});soundTheAdvance(world);}
@@ -114,7 +115,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
       const state=G.deserialize(camp),open=G.finaleForecast(state).routes.some(r=>r.id===route);
       if(!open)for(const [k,v]of Object.entries(ROUTE_METERS[route]??{}))state.meters[k]=Math.max(state.meters[k],v);
       if(!G.chooseRoute(state,route).ok||!G.startEncounter(state,{controls:'realtime'}).ok||!G.isRealtime(state)){stopped.push({pass:3,seed:s,id:`route:${route}`,status:'error',reason:'Not started.'});continue;}
-      for(let tries=1;;tries++){const r={seed:s,route,injected:!open,...playBattle(state),tries};routes.push(r);onResult?.(r,3);
+      for(let tries=1;;tries++){const r={seed:s,route,injected:!open,...playBattle(state,{attempt:tries}),tries};routes.push(r);onResult?.(r,3);
         if(r.status==='won'||tries>retries||!G.retry(state).ok)break;}
     }
   }

@@ -25,9 +25,12 @@ const issue=(world,kind,payload={})=>queueCommand(world,{actorId:world.controlle
 const nearestBand=(world,hero)=>(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q))
   .map(q=>({q,d:distanceBetween(squadCentre(world,q),hero)})).sort((a,b)=>a.d-b.d)[0]?.q??null;
 
-// One decision for the soldier the bot plays.
+// One decision for the soldier the bot plays. On a retry (memo.attempt 2 or more) it plays more carefully, as a
+// player who lost would: it binds wounds sooner, braces when pressed, keeps beside a threatened column or the
+// held ground and lets enemies come to it; on a third try it carries a wounded man off at once.
 export function heroDecision(world,memo={}){
   const hero=actorById(world,world.controlled),m=world.mission;if(!hero||!standing(hero)||hero.action)return;
+  const careful=(memo.attempt??1)>=2;
   const enemies=world.actors.filter(o=>o.side==='enemy'&&standing(o)&&!o.hidden);
   const attacker=enemies.filter(o=>o.order?.targetId===hero.id||o.lock===hero.id||distanceBetween(o,hero)<=3);
   const fight=t=>{if(!t)return false;if(hero.lock===t.id&&hero.order?.kind==='attack')return true;
@@ -44,7 +47,9 @@ export function heroDecision(world,memo={}){
     if(!world.used.includes('throw')){issue(world,'ability',{abilityId:'throw_pilum',targetId:partner.id});return;}
     return;
   }
-  if(hero.hp<hero.maxHp*.45&&(hero.bandages??0)>0&&!attacker.length&&!hero.carrying){issue(world,'ability',{abilityId:'bind_wounds'});return;}
+  if(hero.hp<hero.maxHp*(careful?.6:.45)&&(hero.bandages??0)>0&&!attacker.length&&!hero.carrying){issue(world,'ability',{abilityId:'bind_wounds'});return;}
+  // Careful: pressed by two or more, brace behind the shield first.
+  if(careful&&attacker.length>=2&&!hero.carrying&&hero.braceUntil<=world.tick&&issue(world,'ability',{abilityId:'brace'}))return;
   // The finale's defection: within three tiles of a rival band, the oath (Rally) comes before any fight.
   if(m?.mode==='defection'){const band=nearestBand(world,hero);if(band&&membersOf(world,band).some(a=>distanceBetween(a,hero)<=3*m.radius*.85)&&issue(world,'ability',{abilityId:'rally'}))return;}
   if(attacker.length&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(nearest(attacker,hero));return;}
@@ -57,14 +62,20 @@ export function heroDecision(world,memo={}){
   };
   switch(m.mode){
     case 'extract':{
+      // A third try carries a wounded man off before anything else.
+      if((memo.attempt??1)>=3&&!hero.carrying){const wounded=columns.find(c=>liftable(c)&&!c.escort?.escorted);
+        if(wounded){if(hero.drawn)issue(world,'setDrawn',{drawn:false});if(issue(world,'ability',{abilityId:'carry',targetId:wounded.id}))return;}}
       if(assist())return;
       if(hero.carrying){go(m.goal);return;}
       // A column threatened with none of ours beside it halts: stand by it first.
       const exposed=columns.find(c=>standing(c)&&enemies.some(o=>distanceBetween(o,c)<=ESCORT_RULES.halt)&&
         !world.actors.some(f=>f!==c&&standing(f)&&(f.side==='player'||f.side==='ally')&&distanceBetween(f,c)<=ESCORT_RULES.cover));
       if(exposed){go({x:exposed.x,z:exposed.z});return;}
-      const close=nearest(enemies.filter(o=>columns.some(c=>distanceBetween(c,o)<8)||distanceBetween(o,hero)<8),hero);
+      // Careful: only enemies at the column or on the soldier himself, and he keeps beside the column.
+      const close=nearest(enemies.filter(o=>columns.some(c=>distanceBetween(c,o)<(careful?4:8))||distanceBetween(o,hero)<(careful?3:8)),hero);
       if(close&&!memo.passive){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(close);return;}
+      if(careful){const near=columns.filter(c=>standing(c)&&!c.escort?.escorted).sort((a,b)=>distanceBetween(a,hero)-distanceBetween(b,hero))[0];
+        if(near&&distanceBetween(near,hero)>2){go({x:near.x,z:near.z});return;}}
       const lag=columns.filter(c=>standing(c)&&span(c.x-m.goal.x,c.z-m.goal.z)>m.radius*.6).reduce((b,c)=>!b||span(c.x-m.goal.x,c.z-m.goal.z)>span(b.x-m.goal.x,b.z-m.goal.z)?c:b,null);
       // Lead the columns: stay within half the follow range of the farthest one.
       if(lag&&distanceBetween(hero,lag)>m.followRange*.5){go({x:lag.x,z:lag.z});return;}
@@ -93,8 +104,9 @@ export function heroDecision(world,memo={}){
       return;
     }
     case 'hold':case 'capture':case 'supply':case 'surrender':{
-      const target=m.points.find(p=>!p.secured)??m.goal;
-      const threat=nearest(enemies.filter(o=>span(o.x-target.x,o.z-target.z)<=m.radius*1.6||distanceBetween(o,hero)<6),hero);
+      // Careful: he holds the ground and lets them come to him.
+      const target=m.points.find(p=>!p.secured)??m.goal,reach=careful?m.radius:m.radius*1.6;
+      const threat=nearest(enemies.filter(o=>span(o.x-target.x,o.z-target.z)<=reach||distanceBetween(o,hero)<(careful?3:6)),hero);
       if(threat&&!hero.carrying){if(!hero.drawn)issue(world,'setDrawn',{drawn:true});fight(threat);return;}
       // A rescue counts once the stranded party can move (0.38 operationQualified).
       if(m.rescue&&assist())return;
@@ -137,7 +149,8 @@ export function commandDecision(world,memo={}){
 }
 
 // Play the encounter's live world to its end; the chronicle learns the outcome.
-export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null}={}){
+export function playRealtime(state,{every=10,maxRounds=40,memo={},onTick=null,attempt=1}={}){
+  memo.attempt??=attempt;
   const world=G.realtimeWorld(state),watch=companionWatch();
   // From Chapter VII the company deploys first: the soldier takes his place (a legal placement, which
   // demonstrates Deploy), then the advance is sounded.
@@ -192,7 +205,7 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
     }else if(state.phase==='encounter'){
       let summary=null;
       for(let tries=1;;tries++){
-        summary={...(G.isRealtime(state)?play(state):playEncounter(state)),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+        summary={...(G.isRealtime(state)?play(state,{attempt:tries}):playEncounter(state)),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
         if(state.encounter.status==='won'||tries>retries)break;
         const r=G.retry(state);if(!r.ok)throw new Error(r.message);
       }

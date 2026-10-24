@@ -274,7 +274,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   for(const u of e.units){
     if(u.id==='hero'||u.hp<=0)continue;
     if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){
-      squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null}));continue;}
+      const spec=squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null});
+      if(variety.hidden[u.id]){spec.at=pos(variety.hidden[u.id],k);spec.anchor=spec.at;}if(variety.lying[u.id])spec.lying=true;squadSpecs.push(spec);continue;}
     if(u.side==='enemy'){const spec=enemySpec(state,e,u,enemyIndex++,k);if(variety.hidden[u.id])spec.at=pos(variety.hidden[u.id],k);actors.push(spec);}
     else if(u.side==='ally'&&state.chapter<3&&u.veteranId&&COMPANIONS[u.veteranId])actors.push(companionSpec(state,u.veteranId,pos(u,k),{unitId:u.id,preset:'shieldmate'}));
     else if(u.side==='neutral'&&u.role==='escort'){
@@ -303,9 +304,9 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     // The finale's standoffs: the rivals to win over, the pledges and the meeting so far.
     rivals:e.units.filter(u=>u.side==='enemy'&&u.hp>0).length,defections:e.defections??0,meeting:e.mission.envoyProgress??0,
     waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
-  // The finale's battle: the claimant's reserve cohorts march on from his side (FINALE_RESERVE).
+  // The finale's battle: the claimant's reserve cohorts march on from his side (FINALE_RESERVE), later on Story, never earlier.
   if(state.chapter===12&&e.type==='confrontation'&&FINALE_RESERVE.routes.includes(e.route)&&templates)
-    for(const w of FINALE_RESERVE.waves)mission.waves.push({round:Math.max(2,w.turn+difficultyRule(e).wave),...tileCentre({x:Math.min(w.x,e.width-1),y:w.y},k),arrived:false,
+    for(const w of FINALE_RESERVE.waves)mission.waves.push({round:w.turn+Math.max(0,difficultyRule(e).wave),...tileCentre({x:Math.min(w.x,e.width-1),y:w.y},k),arrived:false,
       squad:{...templates[w.role],name:FINALE_RESERVE.name}});
   const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects);
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});

@@ -132,7 +132,7 @@ checkpoints. Graphics quality and game speed never affect difficulty.
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Story**    | Three extra rounds on every battle deadline, reinforcements two rounds later, gentler objective pressure and gentler rival speeches. Enemies take longer to notice you and to react. Game speed starts at 75% and the game pauses itself when enemies appear. The same objectives and the same earned promotions. |
 | **Standard** | The established combat and political balance, with company planning and evolving field objectives.                                                                                                                                                                                                                |
-| **Veteran**  | Reinforcements one round earlier, stronger objective pressure and stronger rival speeches. Enemies notice you sooner and coordinate faster. No extra enemy health or damage; evacuation travel time is preserved.                                                                                                 |
+| **Veteran**  | Battle deadlines two rounds shorter, reinforcements one round earlier and, from Chapter IV, at full strength, stronger objective pressure and stronger rival speeches. Enemies notice you sooner and coordinate faster. No enemy is hardier or hits harder; evacuation travel time is preserved.                 |
 
 **Iron discipline** can be added to any difficulty when a chronicle
 begins: you cannot save inside encounters, which can only be retried
@@ -475,8 +475,8 @@ the right mouse button uses it.
 
 - **Auto-pause** stops the world for you when the events you choose
   happen: an enemy comes into view, your soldier or a companion is badly
-  hurt, a squad breaks, an objective changes or an order cannot be
-  carried out.
+  hurt, a squad breaks or is ambushed, an objective changes or an order
+  cannot be carried out.
 
 - **Pause each round** stops the world at the start of every round, for
   a game that plays almost like a turn-based one.
@@ -520,9 +520,9 @@ the squad's men on the field.
   so clear the selection to move your own soldier again.
 
 - The selected squads' **command card** replaces your ability bar until
-  you clear the selection. Its keys **1–6** give **Hold**, **Restore
-  morale**, **Withdraw and brace**, **Line**, **Shield wall** and
-  **Wedge**; **7–0** do nothing while it is shown.
+  you clear the selection. Its keys **1–7** give **Hold**, **Restore
+  morale**, **Withdraw and brace**, **Line**, **Shield wall**, **Wedge**
+  and **Lie in wait**; **8–0** do nothing while it is shown.
 
 - From the keyboard, while squads are selected the arrow keys move an
   **order marker** instead of your soldier; **Enter** sends the squads
@@ -874,6 +874,18 @@ arming cap under the helmet; a cloak over everything.
 - **Scout** (from Chapter III) reveals hidden enemies and concealed
   ground around you for a while.
 
+- From Chapter IV every squad, yours and the enemy's, watches the same
+  way, keeping its own eye on each enemy man and squad. Your soldier's
+  first blow on a man of a squad that has not noticed him, while it is
+  fighting no one, is an ambush too, so **Quiet feet** and **Ambush
+  craft** count in every battle.
+
+- A squad that reaches another that has not seen it coming strikes a
+  whole exchange at once, with twice the usual blow to its morale, and
+  the target's brace and shield wall do not help: an **ambush on a
+  squad**. It works both ways: in mist, at night and behind cover, look
+  for bands you have not yet seen.
+
 # Battles
 
 ## The field and the clock
@@ -896,7 +908,9 @@ arming cap under the helmet; a cloak over everything.
   the formation as the squad loses strength, so a thin formation is a
   weakened one. The rules treat a squad as one body with one strength,
   morale and cohesion, and every man you strike down in an enemy squad
-  takes one from its strength.
+  takes one from its strength. Squads in contact exchange blows once a
+  second; each exchange varies by up to a quarter either way, so a fight
+  averages what its forecast says but no two go alike.
 
 ## Techniques
 
@@ -940,6 +954,12 @@ and command**.
 
 ## Weather
 
+- Each battle's weather is drawn from its chapter's season when it
+  begins: the chapter's own weather most often, sometimes another (rain
+  in Chapter III may give way to mist or a clear day). The marshes of
+  Chapter II always lie in fog. **Retry checkpoint** brings back the
+  same weather.
+
 - In rain, climbing slopes is slower; the route line already counts it.
 
 - Rain, mist and dust take 1 off missile damage and make missiles less
@@ -968,6 +988,12 @@ struck stops the work. Using an object spends no Command and no Stamina.
 - A **closed gate** blocks movement and sight until opened. A **damaged
   footbridge** becomes a ford once repaired.
 
+- Where the supply cart, the signal station, the barricade and the
+  brazier stand varies from battle to battle among the open ground near
+  their usual places, as does where reinforcements come on and where a
+  hidden man lies in Chapter III. **Retry checkpoint** restores the same
+  field.
+
 ## Morale, cohesion and suppression
 
 - **Morale** belongs to every group of fighters, ours and theirs:
@@ -978,6 +1004,17 @@ struck stops the work. Using an object spends no Command and no Stamina.
   shows an amber ring with a notch at its standard; a broken group (20
   or less) shows a crimson ring split in two, and falls back to regroup.
   Rally, Restore morale and Inspire restore morale.
+
+- In Chapters I–III the raiders who fight alone are one **war band**
+  with one morale, led by its **war leader**, the hardiest of them. Each
+  man who falls costs the band heart, more when he is struck down from
+  ambush and more again when he is the leader; ending a round
+  outnumbered two to one costs it too, while a round out of the fight
+  restores some and reinforcements lift it. A wavering band shows the
+  amber ring at each man's feet and, after Chapter I, its blows take 1
+  less; a broken band shows the crimson ring and runs for its own edge
+  of the field. A man who escapes is gone for the objective but earns
+  you no training points; one cut down as he runs still counts.
 
 - Every squad also has **cohesion** (80 at the start) and
   **suppression** (0 to 3). Blows wear cohesion down; arrows and
@@ -1116,10 +1153,11 @@ start of every round**. Your own soldier's actions never spend them.
 | **Restore morale**     | Command card **2**                                  | The squad's leader steadies his men: 10 morale regained and one point of suppression lifted.                                                                                                                      |
 | **Withdraw and brace** | Command card **3**, or right-click your own soldier | Fall back toward you and brace.                                                                                                                                                                                   |
 | **Formation**          | Command card **4–6**: Line, Shield wall, Wedge      | Up to three selected squads, each standing within 15 metres of another, form up together and keep the formation until ordered otherwise. Before you commit, the command card names who joins and who is left out. |
+| **Lie in wait**        | Command card **7**                                  | Halt and keep low: half as easy to see, and left out of the enemy's plans while unseen. The squad falls on the first enemy squad to come within six metres; one that has not seen it takes a whole exchange at once. Another order, or an enemy who sees it, ends it. |
 
-Advance, Attack, Hold, Restore morale and Withdraw cost one point of
-Command for each squad that receives them. A Formation costs one point
-for up to three squads.
+Advance, Attack, Hold, Restore morale, Withdraw and Lie in wait cost one
+point of Command for each squad that receives them. A Formation costs
+one point for up to three squads.
 
 ## Formations
 
@@ -1306,11 +1344,33 @@ restores the complete camp checkpoint and the same departure.
 
 ## Knowing the enemy
 
-The **field intelligence** panel shows the enemy's doctrine, its current
-focus and the chapter's opportunities. Visible enemies work together
-against one exposed man or squad: archers suppress it, flankers look for
-a side approach and the rest hold it in place. A reserve held back early
-can still commit when threatened, so always use the current forecast.
+The **field intelligence** panel shows the enemy's doctrine, its
+**plan**, its current focus and the chapter's opportunities. Visible
+enemies work together against one exposed man or squad, the more so if
+it stands alone or wavers: archers suppress it, flankers look for a side
+approach and the rest hold it in place. A reserve held back early can
+still commit when threatened, so always use the current forecast.
+
+- Within its doctrine the enemy chooses a plan: hold you in front, turn
+  your left or your right, close on both flanks, feint and draw a squad
+  out, or commit its reserve early or hold it back. It keeps a plan for
+  at least two rounds; the battle log says when it changes, and the same
+  battle brings different plans on different days. Each faction
+  favours its own.
+
+- Each band has a leaning of its own (the enemy's focus, the nearest of
+  your men, your archers or your soldier) and a **temperament**:
+  steady, bold (more heart, slower to notice) or wary (less heart,
+  quicker to notice). **Allied plans & visible threats** names it.
+
+- Persian, Palmyrene and the claimant's archers loose one aimed volley
+  a round; Persian and Roman bands brace once they have held their
+  ground. A wavering band pulls back behind a steady one to recover, and
+  a band of foot near its archers turns on the squad that presses them.
+
+- A raider strikes the most dangerous man near him: one attacking him or
+  his fellows, a badly wounded fighter, or one pressing his band's
+  archer.
 
 # Meters, obligations and the finale
 
@@ -1332,6 +1392,11 @@ promised and when it falls due.
   require holding your army together on the map. Choosing a route never
   awards the crown by itself.
 
+- In the battle (the backer and battle routes) the claimant holds two
+  cohorts of his reserve back; they march on from his side at the end of
+  rounds 4 and 7 (two rounds later on Story), and the field is not won
+  until they are beaten too.
+
 - Higher standing keeps more routes open and improves your position. A
   minimum relief force and a costly backer remain available even after a
   hard campaign, but costly backing creates a serious debt.
@@ -1349,9 +1414,13 @@ promised and when it falls due.
   save**.
 
 - **Retry checkpoint** restores the encounter exactly as it began,
-  random seed included. Decisions made in camp before it remain;
-  actions, damage, provisional promises and anything else staged inside
-  it are rolled back.
+  random seed included: the same weather, field and enemy. Decisions
+  made in camp before it remain; actions, damage, provisional promises
+  and anything else staged inside it are rolled back.
+
+- A fight saved by an earlier version of the game cannot go on under
+  newer battle rules: when such a chronicle loads, the battle starts
+  again from its checkpoint, as **Retry checkpoint** would.
 
 - A lost political Contest can also offer a patron-funded rerun with a
   new debt; you must still win the vote.
@@ -1477,7 +1546,7 @@ separately.
 | **Setting**      | **What it does**                                                                                                                                                                       |
 |------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Game speed       | 50%, 75% or 100%. Story starts at 75%.                                                                                                                                                 |
-| Automatic pause  | Pause when an enemy is spotted, your soldier or a companion is badly hurt, a squad breaks, an objective changes or an order cannot be carried out. Each event can be turned on or off. |
+| Automatic pause  | Pause when an enemy is spotted, your soldier or a companion is badly hurt, a squad breaks or is ambushed, an objective changes or an order cannot be carried out. Each event can be turned on or off. |
 | Pause each round | Pause at the start of every round of battle time.                                                                                                                                      |
 | Pause in panels  | On by default: viewing equipment or records pauses the world. The Menu always pauses it.                                                                                               |
 

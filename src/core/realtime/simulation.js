@@ -283,7 +283,7 @@ function logLine(world,e){
     case 'squad-lying':return `${squadName(world,e.squadId)} lies in wait.`;
     case 'squad-volley':return `${squadName(world,e.squadId)} loose an aimed volley at ${squadName(world,e.targetSquadId)}.`;
     case 'squad-revealed':return `${squadName(world,e.squadId)} is revealed.`;
-    case 'squad-seen':return `${squadName(world,e.squadId)} is seen: it lies hidden no longer.`;
+    case 'squad-seen':return squadById(world,e.squadId)?.side==='enemy'?`${squadName(world,e.squadId)} are found lying in wait.`:`${squadName(world,e.squadId)} is seen: it lies hidden no longer.`;
     case 'band-leader-fell':return 'Their war leader is down: the raiders lose heart.';
     case 'band-shaken':return 'The raiders waver.';
     case 'band-broken':return 'The raiders break and run for the edge of the field.';

@@ -6,7 +6,7 @@ import {derivedValues} from './combat.js';
 import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
 import {sightBlocked} from './sight.js';
 import {pickWeighted} from './rng-streams.js';
-import {knowAttacker,noticeOf} from './squad-sight.js';
+import {knowAttacker,lying,noticeOf} from './squad-sight.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -85,13 +85,13 @@ export function spawnSquad(world,spec){
     moraleResistance:spec.moraleResistance??0,damage:spec.damage??null,formation:spec.formation??null,braced:!!spec.braced,broken:false,
     x:spec.at[0],z:spec.at[1],fx:fx0/n,fz:fz0/n,path:[],goal:null,gait:null,moving:false,stillSince:world.tick,runUp:0,
     order:null,pending:null,standing:spec.standing?spec.standing.map(s=>[...s]):null,standingSlot:-1,plan:null,
-    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{})};
+    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{}),...(spec.lying?{lying:true}:{})};
   const slots=formationSlots(shapeOf(squad),men),grid=navGrid(world.map);
   for(let i=0;i<men;i++){
     let p=clampToMap(grid,slotPoint(squad,slots[i]));if(!walkable(grid,p.x,p.z)){const c=nearestWalkable(grid,p.x,p.z);if(c>=0)p=cellCentre(grid,c);}
     const id=`${squad.id}-${i+1}`,m=spec.member;
     const actor=makeActor({id,name:m.name,side:spec.side,role:squad.role,attributes:m.attributes,kit:m.kit,ammo:m.ammo,mounted:!!m.mounted,faction:spec.faction,
-      at:[p.x,p.z],face:[squad.fx,squad.fz],drawn:true,ai:false,squadId:squad.id,slot:i,unitId:null,loot:m.loot});
+      at:[p.x,p.z],face:[squad.fx,squad.fz],drawn:true,ai:false,squadId:squad.id,slot:i,unitId:null,loot:m.loot,hidden:!!spec.lying});
     world.actors.push(actor);squad.members.push(id);
   }
   (world.squads??=[]).push(squad);
@@ -306,14 +306,17 @@ export function exchangeSquads(world,{wound=null}={}){
     const a=squads[i],b=squads[j];if(!hostile(a,b))continue;
     const near=closest(world,a,b);if(near.distance>EXCHANGE.contact)continue;
     a.contact=b.id;b.contact=a.id;a.facing=squadCentre(world,b);b.facing=squadCentre(world,a);
-    // A squad that has not seen the other come, or that one springing on it from lying in wait, is ambushed (squad-sight.js).
-    const sprung=(x,y)=>x.order?.from==='lie_in_wait'&&x.order.unseen&&x.order.targetId===y.id;
-    const aUnseen=noticeOf(b,a.id)<100||sprung(a,b),bUnseen=noticeOf(a,b.id)<100||sprung(b,a);
+    // A squad that has not seen the other come, or that one springing on it from lying in wait, is ambushed (squad-sight.js);
+    // a squad lying in wait, or springing, is waiting for it and never is.
+    const sprung=(x,y)=>x.order?.from==='lie_in_wait'&&x.order.unseen&&x.order.targetId===y.id||x.spring?.unseen&&x.spring.targetId===y.id;
+    const ready=x=>lying(x)||!!x.spring||x.order?.from==='lie_in_wait';
+    const aUnseen=!ready(b)&&noticeOf(b,a.id)<100||sprung(a,b),bUnseen=!ready(a)&&noticeOf(a,b.id)<100||sprung(b,a);
     if(!a.broken||a.role!=='archer')hits.push({from:a,to:b,setup:squadModifiers(world,a,b,{ambush:aUnseen}),at:near});
     if(!b.broken||b.role!=='archer')hits.push({from:b,to:a,setup:squadModifiers(world,b,a,{ambush:bUnseen}),at:{...near,a:near.b,b:near.a}});
   }
   for(const a of squads){
-    if(a.contact||a.broken||!missileRangeOf(a))continue;
+    // A squad lying in wait holds its missiles.
+    if(a.contact||a.broken||!missileRangeOf(a)||lying(a))continue;
     const range=missileRangeOf(a),centre=squadCentre(world,a);
     // A single man the plan names comes first (an escort, the soldier), then the nearest squad in range.
     const named=singles.find(o=>o.id===a.plan?.targetId&&hostile(a,o)&&span(o.x-centre.x,o.z-centre.z)<=range&&!sightBlocked(world,centre,o));
@@ -334,7 +337,7 @@ export function exchangeSquads(world,{wound=null}={}){
     const near=foes.map(o=>({o,...nearestMan(world,a,o)})).filter(x=>x.man&&x.distance<=EXCHANGE.contact)
       .sort((x,y)=>(x.o.id===a.plan?.targetId?-1:0)-(y.o.id===a.plan?.targetId?-1:0)||x.distance-y.distance)[0];
     let pick=near?{o:near.o,man:near.man,ranged:false}:null;
-    if(!pick&&missileRangeOf(a)&&!a.broken){
+    if(!pick&&missileRangeOf(a)&&!a.broken&&!lying(a)){
       const centre=squadCentre(world,a),range=missileRangeOf(a);
       const far=foes.filter(o=>span(o.x-centre.x,o.z-centre.z)<=range&&!sightBlocked(world,centre,o))
         .sort((x,y)=>(x.id===a.plan?.targetId?-1:0)-(y.id===a.plan?.targetId?-1:0)||span(x.x-centre.x,x.z-centre.z)-span(y.x-centre.x,y.z-centre.z))[0];
@@ -350,7 +353,7 @@ export function exchangeSquads(world,{wound=null}={}){
     // An ambush is a whole 0.38 hit at once, its morale loss doubled; any other exchange a tenth, by the spread.
     const {from,to,setup}=hit,before=menOf(world,to),ambush=setup.ambush&&!setup.ranged,A=EXCHANGE.ambush;
     const V=ENEMY_TECHNIQUES.volley,damage=ambush?setup.damage*A.scale:hit.volley?setup.damage*V.scale:setup.damage*EXCHANGE.scale*exchangeSpread(world);
-    if(ambush){emit(world,{kind:'squad-ambush',squadId:from.id,targetSquadId:to.id});if(from.order?.unseen)from.order.unseen=false;}
+    if(ambush){emit(world,{kind:'squad-ambush',squadId:from.id,targetSquadId:to.id});if(from.order?.unseen)from.order.unseen=false;from.spring=null;}
     if(hit.volley){emit(world,{kind:'squad-volley',squadId:from.id,targetSquadId:to.id});to.suppression=Math.min(SUPPRESSION.max,to.suppression+V.suppression);}
     to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:ambush?A.scale:hit.volley?V.scale:EXCHANGE.scale,morale:ambush?A.morale:1});
     knowAttacker(to,from.id);

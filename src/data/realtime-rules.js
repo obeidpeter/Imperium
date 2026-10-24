@@ -205,7 +205,7 @@ export const REALTIME_DIFFICULTY=Object.freeze({
 
 // The finale's battle (Chapter XII's confrontation on the battle and backer routes; worlds and gameplay plan,
 // release 3): the claimant holds two cohorts of his reserve back, and they march on from his side of the field
-// at the end of rounds 4 and 7 (a level's reinforcement timing applies), so the battle runs 8 to 12 of its 16
+// at the end of rounds 4 and 7 (two rounds later on Story; never earlier), so the battle runs 8 to 12 of its 16
 // rounds. Tiles of the 0.38 board, at the main field's eastern edge (on the side gate's near side).
 export const FINALE_RESERVE=Object.freeze({routes:Object.freeze(['battle','backer']),name:'Claimant’s reserve cohort',
   waves:Object.freeze([Object.freeze({turn:4,x:7,y:2,role:'infantry'}),Object.freeze({turn:7,x:7,y:6,role:'infantry'})])});

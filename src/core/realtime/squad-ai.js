@@ -115,7 +115,9 @@ export function defaultStanding(mode,role){
   if(mode==='extract')return [broken,['guard_standard','convoy'],['attack_hero_target','hero'],['advance_with_hero','hero']];
   return [broken,['attack_hero_target','hero'],['advance_with_hero','hero'],['hold_line',null]];
 }
-const enemyGroups=(world,squad)=>squadsOf(world).filter(o=>o.side==='enemy'&&fielded(world,o)&&!o.broken&&hostile(squad,o));
+// The enemy bands a squad of ours knows of: in sight, or hidden but seen all the same.
+const enemyGroups=(world,squad)=>squadsOf(world).filter(o=>o.side==='enemy'&&fielded(world,o)&&!o.broken&&hostile(squad,o)
+  &&(membersOf(world,o).some(m=>!m.hidden)||noticeOf(squad,o.id)>=100));
 function foeNear(world,squad,point,radius,filter=()=>true){
   const groups=enemyGroups(world,squad).filter(filter).map(g=>({g,c:squadCentre(world,g)})).filter(x=>span(x.c.x-point.x,x.c.z-point.z)<=radius);
   return groups.sort((a,b)=>span(a.c.x-point.x,a.c.z-point.z)-span(b.c.x-point.x,b.c.z-point.z))[0]?.g??null;
@@ -240,6 +242,15 @@ function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
   squad.pulledBack=false;
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
+  // A band lying in wait (variety.js) keeps still and hidden until one of ours comes near, then falls on him.
+  if(squad.lying){
+    const reach=EXCHANGE.ambush.spring+EXCHANGE.contact,prey=[...squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&hostile(squad,s)),
+      ...world.actors.filter(a=>standingActor(a)&&!a.squadId&&hostile(squad,a))].map(t=>({t,d:span(centreOf(world,t).x-c.x,centreOf(world,t).z-c.z)}))
+      .filter(x=>x.d<=reach).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
+    if(!prey&&!squad.contact&&membersOf(world,squad).every(m=>m.hidden)){halt(squad);plan(squad,'Lie in wait.');return;}
+    squad.lying=false;
+    if(prey){squad.spring={targetId:prey.id,unseen:!prey.members||noticeOf(prey,squad.id)<100};engageTarget(world,squad,prey,`Fall on ${prey.name} from hiding.`);return;}
+  }
   const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
   // Pull back a wavering band behind a steady one near it, away from our nearest squad (ENEMY_TECHNIQUES.pullBack).
   const P=ENEMY_TECHNIQUES.pullBack,near=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);

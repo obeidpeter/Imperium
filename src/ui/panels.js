@@ -153,7 +153,7 @@ export function createPanels(context){
       '<details id="settings-auto-pause" class="settings-details"><summary>Automatic pause</summary>'+
       check('pause-sighted','pauseSighted','Enemy spotted','Includes ambushes and reinforcements.')+
       check('pause-hurt','pauseHurt','Auto-pause: badly hurt','Your soldier or a companion below a quarter of his Health, or down.')+
-      check('pause-squad','pauseSquad','Auto-pause: a squad breaks','One of your squads breaks and falls back.')+
+      check('pause-squad','pauseSquad','Auto-pause: a squad breaks or is ambushed','One of your squads breaks and falls back, or a band it had not seen falls on it.')+
       check('pause-objective','pauseObjective','Auto-pause: the objective changes','A new objective or phase.')+
       check('pause-order','pauseOrder','Auto-pause: an order cannot be carried out','A command refused, with its reason.')+
       check('round-pause','roundPause','Pause each round','Stop at the start of every round, for a game played almost turn by turn.')+

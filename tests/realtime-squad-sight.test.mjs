@@ -4,6 +4,8 @@ import {createWorld,queueCommand,step,worldHash} from '../src/core/realtime/simu
 import {planDoctrine} from '../src/core/realtime/squad-ai.js';
 import {squadById,squadModifiers,membersOf} from '../src/core/realtime/squads.js';
 import {noticeOf,squadSight,unseen} from '../src/core/realtime/squad-sight.js';
+import {battleVariety} from '../src/core/realtime/variety.js';
+import {splitStreams} from '../src/core/realtime/rng-streams.js';
 import {blowSetup} from '../src/core/realtime/combat.js';
 import {EXCHANGE,MORALE,ORDERS,ROMAN_SQUADS} from '../src/data/realtime-squads.js';
 import {ARCHETYPES} from '../src/data/realtime-forces.js';
@@ -90,4 +92,23 @@ test('squad sight draws no random number: two runs from the same state are the s
   const make=()=>field([roman('a',[20,30]),roman('b',[20,40]),band('g1',[50,30]),band('g2',[56,40])]);
   const a=make(),b=make();const streams={...a.rng};run(a,R*2);run(b,R*2);assert.equal(worldHash(a),worldHash(b));
   assert.equal(a.rng.world,streams.world,'no world draw in battle');
+});
+
+test('from Chapter IV a raider band may start lying in wait, never on Story: hidden and still, unknown to our squads, it falls on the first to come near',()=>{
+  // The chance is the level's, drawn from the world stream (variety.js).
+  const record=level=>({id:'ch5-wall',kind:'battle',width:8,height:8,goal:{x:2,y:4},difficulty:level,terrain:Array.from({length:8},()=>Array(8).fill('grass')),
+    units:[{id:'hero',side:'player',x:0,y:4,hp:20},{id:'enemy0',side:'enemy',role:'raider',x:6,y:4,hp:10},{id:'enemy1',side:'enemy',role:'infantry',x:6,y:2,hp:10}],mission:{mode:'hold',waves:[]}});
+  const lyingIn=level=>Array.from({length:40},(_,i)=>battleVariety({chapter:5,difficulty:level,encounterOptions:{}},record(level),splitStreams(i+1))).filter(v=>v.lying.enemy0).length;
+  assert.equal(lyingIn('story'),0);assert.ok(lyingIn('standard')>5&&lyingIn('veteran')>lyingIn('standard')-6,`${lyingIn('standard')} and ${lyingIn('veteran')} of 40`);
+  assert.ok(Array.from({length:40},(_,i)=>battleVariety({chapter:5,encounterOptions:{}},record('veteran'),splitStreams(i+1))).every(v=>!v.lying.enemy1),'only raiders lie in wait');
+  // The band waits, hidden; our squad standing near does not know of it.
+  const w=field([roman('ours',[20,30],{standing:[['advance_with_hero','hero'],['hold_line',null]]}),band('raiders',[45,30],{role:'raider',lying:true})],{actors:[hero({at:[14,30]})]});
+  const raiders=squadById(w,'raiders');assert.ok(membersOf(w,raiders).every(m=>m.hidden));
+  for(let t=0;t<40;t++)step(w);assert.equal(raiders.plan.intent,'Lie in wait.');
+  assert.ok(!/raiders/.test(squadById(w,'ours').plan?.intent??''),'our squad does not go for a band it has not seen');
+  // Our squad marches up to it: the band springs, and if unseen its first exchange is an ambush.
+  const ours=squadById(w,'ours');ours.x=40;ours.z=30;for(const m of membersOf(w,ours))m.x+=20;ours.notice={};
+  const events=[];for(let t=0;t<R&&!events.some(e=>e.kind==='squad-ambush');t++)events.push(...step(w));
+  assert.ok(events.some(e=>e.kind==='squad-ambush'&&e.squadId==='raiders'&&e.targetSquadId==='ours'),'the hidden band falls on the squad');
+  assert.equal(raiders.lying,false);assert.ok(membersOf(w,raiders).every(m=>!m.hidden),'striking shows its men');
 });

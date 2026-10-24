@@ -20,7 +20,8 @@ const emit=(world,event)=>world.events.push({tick:world.tick,...event});
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
 const nearestTo=(list,p)=>{let best=null,bd=Infinity;if(!p)return null;for(const o of list){const d=span(o.x-p.x,o.z-p.z);if(d<bd){bd=d;best=o;}}return best;};
 
-export const lying=squad=>squad?.order?.kind==='lie_in_wait';
+// Ours by its order; an enemy band from the battle's start (variety.js) until it moves.
+export const lying=squad=>squad?.order?.kind==='lie_in_wait'||!!squad?.lying;
 // How far a squad has noticed a hostile squad or man (by id): 0 to 100.
 export const noticeOf=(squad,id)=>squad?.notice?.[id]??0;
 // A squad whose men all keep hidden and that no hostile squad has seen.
