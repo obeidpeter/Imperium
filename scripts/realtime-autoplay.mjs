@@ -144,8 +144,9 @@ export function commandDecision(world,memo={}){
     const band=bands.map(b=>({b,d:span(squadCentre(world,b).x-c.x,squadCentre(world,b).z-c.z)})).filter(x=>x.d<=20).sort((a,b)=>a.d-b.d)[0]?.b;
     if(band&&order([q.id],{kind:'attack',targetId:band.id}))return;
   }
-  // The chapter's Order still owed: the leading squad is steadied (an order that changes no plan).
-  if(owed('order'))order([ours[0].id],{kind:'restore'});
+  // The chapter's Order still owed: the leading squad is steadied (an order that changes no plan). Once given it is
+  // left to arrive: given again before its delay has passed, it would be replaced and never take effect.
+  if(owed('order')&&!ours.some(q=>q.pending))order([ours[0].id],{kind:'restore'});
 }
 
 // Play the encounter's live world to its end; the chronicle learns the outcome.
