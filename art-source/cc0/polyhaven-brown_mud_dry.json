@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "brown_mud_dry",
+  "page": "https://polyhaven.com/a/brown_mud_dry",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:15.399Z",
+  "name": "Brown Mud Dry",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/brown_mud_dry/brown_mud_dry_diff_1k.png",
+      "bytes": 2530538,
+      "md5": "285628a97ccbcaa4463c875cb5cda5f3",
+      "sha256": "2e2ae48facfb3e5f682329b11b12aee6e2e02a733c4c2f44a4baca9ae0432ae1",
+      "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/brown_mud_dry/brown_mud_dry_nor_gl_1k.png",
+      "bytes": 2602244,
+      "md5": "9db228ea7ef6cd633a848250aab38676",
+      "sha256": "725f8a314d112c0581bdd88d2ef990f6e0821cc072860bd207ff7fa2879411c8",
+      "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/brown_mud_dry/brown_mud_dry_disp_1k.png",
+      "bytes": 2046817,
+      "md5": "f9d2c16e26632b87dc8d79408d5e25d8",
+      "sha256": "8097421e9ab89d9cfcdfee1049c3a6959987b43dfd97948e43ebe3ccdb40ed49",
+      "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_disp_1k.png"
+    }
+  ]
+}

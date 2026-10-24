@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "dry_ground_rocks",
+  "page": "https://polyhaven.com/a/dry_ground_rocks",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:33.365Z",
+  "name": "Dry Ground Rocks",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/dry_ground_rocks/dry_ground_rocks_diff_1k.png",
+      "bytes": 6678731,
+      "md5": "cb8252788d4e55b606e0ef9c41aab4bb",
+      "sha256": "cdd2d7a65ddb048329147596b97dcca5ea9508d3458a1c62400906c24c9eea31",
+      "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/dry_ground_rocks/dry_ground_rocks_nor_gl_1k.png",
+      "bytes": 6664526,
+      "md5": "fb004ab1b72d098d8c0b12a79b201ce8",
+      "sha256": "8de38381d101458e6500366d5e509d2c4abf5a79c2ff3353dc120554186a7a2e",
+      "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/dry_ground_rocks/dry_ground_rocks_disp_1k.png",
+      "bytes": 2106200,
+      "md5": "41cb0dd8263b08d27cfd65b7e11e9f32",
+      "sha256": "c6432c6a3948fe7bb56a263019de750eaba779dfd572136c643a6214337e4183",
+      "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_disp_1k.png"
+    }
+  ]
+}

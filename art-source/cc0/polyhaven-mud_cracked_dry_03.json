@@ -1,0 +1,48 @@
+{
+  "source": "Poly Haven",
+  "id": "mud_cracked_dry_03",
+  "page": "https://polyhaven.com/a/mud_cracked_dry_03",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:35.096Z",
+  "name": "Mud Cracked Dry 03",
+  "authors": [
+    "Dario Barresi",
+    "Dimitrios Savva"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/mud_cracked_dry_03/mud_cracked_dry_03_diff_1k.png",
+      "bytes": 5778984,
+      "md5": "9e903425844fb1984520b3caad79897e",
+      "sha256": "1648a3677dfc21c1b4753994ff7036009edf107629f476526926677f5e7ce4a5",
+      "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/mud_cracked_dry_03/mud_cracked_dry_03_nor_gl_1k.png",
+      "bytes": 5937441,
+      "md5": "d259f9d8e467f091da4b66464da7cff9",
+      "sha256": "f827d14f05f23bc1e1aad410e5583fd851678761bd9a5d2d36d80f5d10a7322e",
+      "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/mud_cracked_dry_03/mud_cracked_dry_03_disp_1k.png",
+      "bytes": 1744127,
+      "md5": "6236f1711d8d7bf40caec08734ef384e",
+      "sha256": "94bf67ad8ccdedb47f90a13117fa91e1d4c64e1d7a9b7e97d8969d20443ec9ae",
+      "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_disp_1k.png"
+    }
+  ]
+}

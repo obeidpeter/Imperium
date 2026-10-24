@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "sand_01",
+  "page": "https://polyhaven.com/a/sand_01",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:18.979Z",
+  "name": "Sand 01",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_01/sand_01_diff_1k.png",
+      "bytes": 6244167,
+      "md5": "2a0bb026ff6270a8b633f6a9a3492e58",
+      "sha256": "3dcd4005e95a3e95ce01f7c35f41b36f2051e562226d2e3589e21652aa326e1e",
+      "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_01/sand_01_nor_gl_1k.png",
+      "bytes": 5683522,
+      "md5": "4005969e85765551ccf8f121e8ee3bbd",
+      "sha256": "e9782a5706185ed78122945a84c9a618daa9fd90f8bdec77e812a4a818b32bb5",
+      "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/sand_01/sand_01_disp_1k.png",
+      "bytes": 1902176,
+      "md5": "cf18d867d0caf4e55418a18f2d705f5e",
+      "sha256": "f05681ab55e130be11757ed5976d72483bafe03bbe6aff8f66e1354bb7f513f4",
+      "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_disp_1k.png"
+    }
+  ]
+}

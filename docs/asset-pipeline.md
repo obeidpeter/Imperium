@@ -167,7 +167,30 @@ Photographic textures for the ground, rock, brick, plaster, wood and roof tiles 
 - Either way the files go to `art-source/cc0/raw/<source>-<id>/` (not committed) and a record to `art-source/cc0/<source>-<id>.json`: the asset page, name, authors, licence and its page, retrieval time, the selection, and each file's URL, bytes and SHA-256 (with Poly Haven's MD5, or ambientCG's archive digest). A file that fails its check stops the intake before anything is written.
 - `npm run asset:cc0 -- record <record.json> <shipped file> --id <id> --subject <text> --usage <text> --loading <text> --processing <text>` adds a file made from those downloads (a KTX2 texture encoded with `basisu`, for example) to the [asset manifest](asset-manifest.json), or replaces its entry: its source record and the digests of the files it came from, its processing, bytes and SHA-256, and the CC0 licence with its authors credited. It edits only that entry, the totals, the counts and the date, leaving the rest of the file as written.
 
-Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). No CC0 file ships yet.
+Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). The ground's layers below are the first CC0 files to ship. Poly Haven's thumbnail server (`cdn.polyhaven.com`) is also refused here; previews were made from each set's 1k colour map instead.
+
+## The ground
+
+Every 3D scene's ground (release 2 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md)) blends eleven photographed layers. Each is a Poly Haven set, taken in on 2026-10-24 with `npm run asset:cc0 -- fetch polyhaven:<id> --resolution 1k --format png --maps Diffuse,nor_gl,Displacement`, and repeats at its real size:
+
+| Layer | Poly Haven set | Size of one tile |
+| --- | --- | --- |
+| grass | `forrest_ground_01` | 2 m |
+| dry grass | `grass_path_2` | 1 m |
+| soil | `brown_mud_dry` | 1.3 m |
+| mud | `brown_mud_02` | 1.3 m |
+| sand | `sand_01` | 1.5 m |
+| gravel | `rocks_ground_01` | 2 m |
+| rock | `rock_ground` | 1.5 m |
+| paving (polygonal, a Roman road) | `grassy_cobblestone` | 2 m |
+| slabs | `stone_floor` | 1.85 m |
+| arid soil | `dry_ground_rocks` | 4 m |
+| cracked earth | `mud_cracked_dry_03` | 1.5 m |
+
+- **Build.** `node scripts/assets/build-ground-set.mjs [--record]` ([source](../scripts/assets/build-ground-set.mjs)) checks every source file against its record's SHA-256, resizes each layer to 512 px (Lanczos) and writes two KTX2 2D arrays with basisu (ETC1S, quality 128, mipmaps): the colour with the displacement map, stretched to the full range, in alpha, for height-blended joins (914 KB), and the OpenGL-convention normal, X in colour and Y in alpha (988 KB). With `--record` it writes both files' manifest entries, which list each layer's source, authors and file digests. It reports each layer's mean colour, which the code-built stand-in draws. At 1,024 px the arrays would take about 5.4 MB, and as UASTC about 7 MB.
+- **Placement.** The layers are data in [`ground-layers.js`](../src/ui/ground-layers.js): each region's mixes for open turf, worn ground, roads, banks, wet ground, river beds, sand, rock, a wall's foot, camps, the joints of flagstones and floors, with tints for the season and a brightness for the scenes' light. [`terrain-splat.js`](../src/showcase/terrain-splat.js) turns the board's own cells into a weight map at two texels a metre over the whole ground: cell edges wander up to half a metre, roads come from the road's distance field and never climb a bank, steep relief shows bare soil and stone, and wear, the fort's yard, staged routes and the river's bank add worn and wet ground. It reads a snapshot of the encounter and uses no random generator.
+- **Shading.** [`terrain-material.js`](../src/showcase/terrain-material.js) blends the layers by those weights and by their own heights, so pebbles stand out of sand rather than fading into it. Each layer also samples a turned, larger copy of itself, mixed in by a broad noise, so no tile repeats in view. Normals follow the layers on Balanced and High; Performance draws them flat, one program per quality. Beyond the weight map, on the outer ground and the horizon, the region's turf wears toward its worn ground with the ground's soil weight.
+- **Download and fallback.** Every chapter's offline pack takes the set (1.9 MB, counted once in the complete campaign), and the battle's preloader loads it with the page's KTX2 transcoder before the scene is built. Until it arrives, or if it cannot, each layer is its flat mean colour, drawn by the same program, and the arrays replace it without a recompile.
 
 ## Budgets
 

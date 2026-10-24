@@ -7533,6 +7533,598 @@
         "componentCount": 12
       },
       "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "ground-albedo",
+      "path": "assets/textures/ground/ground-albedo-v1.ktx2",
+      "subject": "The ground's 11 layers: colour, with the height in alpha",
+      "source": {
+        "method": "CC0 texture sets from Poly Haven, resized to 512 px with Lanczos filtering and encoded as a KTX2 2D array with basisu v1.16.4 (ETC1S, quality 128, mipmaps); the displacement map, stretched to the full range, in alpha",
+        "builder": "scripts/assets/build-ground-set.mjs",
+        "layers": [
+          {
+            "layer": "grass",
+            "generator": "Poly Haven",
+            "name": "Forest Ground 01",
+            "page": "https://polyhaven.com/a/forrest_ground_01",
+            "record": "art-source/cc0/polyhaven-forrest_ground_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:09.939Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_diff_1k.png",
+                "sha256": "c4bae8c86c8f9f50f2cd0fa627b097e089de3427f071e3446e69bf8e39132896"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_nor_gl_1k.png",
+                "sha256": "879a84565d016743583421a644bae72df26f4031ea8852fc6d6275feb967353e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_disp_1k.png",
+                "sha256": "ac071c00c493dd4c2571ea12c50cfe113755f185cabc4bb132dd4169540fae0c"
+              }
+            ]
+          },
+          {
+            "layer": "dryGrass",
+            "generator": "Poly Haven",
+            "name": "Grass Path 2",
+            "page": "https://polyhaven.com/a/grass_path_2",
+            "record": "art-source/cc0/polyhaven-grass_path_2.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:12.141Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_diff_1k.png",
+                "sha256": "11955bedc6b335004f4f83e66762bab3df976e12032a9d545af8b43735cdefa3"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_nor_gl_1k.png",
+                "sha256": "cf7864e1ecb3359bd0cbc42106bdb6149a0d828cb7c91221ceb771d819b1d0bc"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_disp_1k.png",
+                "sha256": "458ea1f2c8cffbc72cde24ae49d8ee63109fa15a6da427c3bb059f5f229047d5"
+              }
+            ]
+          },
+          {
+            "layer": "soil",
+            "generator": "Poly Haven",
+            "name": "Brown Mud Dry",
+            "page": "https://polyhaven.com/a/brown_mud_dry",
+            "record": "art-source/cc0/polyhaven-brown_mud_dry.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:15.399Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_diff_1k.png",
+                "sha256": "2e2ae48facfb3e5f682329b11b12aee6e2e02a733c4c2f44a4baca9ae0432ae1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_nor_gl_1k.png",
+                "sha256": "725f8a314d112c0581bdd88d2ef990f6e0821cc072860bd207ff7fa2879411c8"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_disp_1k.png",
+                "sha256": "8097421e9ab89d9cfcdfee1049c3a6959987b43dfd97948e43ebe3ccdb40ed49"
+              }
+            ]
+          },
+          {
+            "layer": "mud",
+            "generator": "Poly Haven",
+            "name": "Brown Mud 02",
+            "page": "https://polyhaven.com/a/brown_mud_02",
+            "record": "art-source/cc0/polyhaven-brown_mud_02.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:17.392Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_diff_1k.png",
+                "sha256": "29d9e1824a17878f80e742e4f9ec7744be64356215f01c0d9e8a16898a9e8906"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_nor_gl_1k.png",
+                "sha256": "6ab08dc4d8b6ff3a7d8407a5a0fe0af0ed324e7734f18b649c3e211cc820e1df"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_disp_1k.png",
+                "sha256": "01e010e2d230f93ab4686b52d588bb74837f4e97d5dfae49f910225bfe57d7bb"
+              }
+            ]
+          },
+          {
+            "layer": "sand",
+            "generator": "Poly Haven",
+            "name": "Sand 01",
+            "page": "https://polyhaven.com/a/sand_01",
+            "record": "art-source/cc0/polyhaven-sand_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:18.979Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_diff_1k.png",
+                "sha256": "3dcd4005e95a3e95ce01f7c35f41b36f2051e562226d2e3589e21652aa326e1e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_nor_gl_1k.png",
+                "sha256": "e9782a5706185ed78122945a84c9a618daa9fd90f8bdec77e812a4a818b32bb5"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_disp_1k.png",
+                "sha256": "f05681ab55e130be11757ed5976d72483bafe03bbe6aff8f66e1354bb7f513f4"
+              }
+            ]
+          },
+          {
+            "layer": "gravel",
+            "generator": "Poly Haven",
+            "name": "Rocks Ground 01",
+            "page": "https://polyhaven.com/a/rocks_ground_01",
+            "record": "art-source/cc0/polyhaven-rocks_ground_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:21.619Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_diff_1k.png",
+                "sha256": "2a8039b7dc1a565fa4290dd4e6192d291974cb6ce51c86dc97f4a4a884d0d15b"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_nor_gl_1k.png",
+                "sha256": "f3bce3e8c29e2c0665b6e1f8a8216579d46c3137cd131e0f7098c8a8ed86ec1e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_disp_1k.png",
+                "sha256": "dda5ed0351a22441114be5b0ed2fa4444d598573df8913c98de6848f21bd5449"
+              }
+            ]
+          },
+          {
+            "layer": "rock",
+            "generator": "Poly Haven",
+            "name": "Rock Ground",
+            "page": "https://polyhaven.com/a/rock_ground",
+            "record": "art-source/cc0/polyhaven-rock_ground.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:24.791Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_diff_1k.png",
+                "sha256": "550625077ba51480af4d0a08d072a03a0995f6910fb34693312e02ce5b73c6f3"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_nor_gl_1k.png",
+                "sha256": "a3a0f2b76abee9b0bfd7610b6203242a5f8b2711c9052b7000e8feaec1c65d35"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_disp_1k.png",
+                "sha256": "e22eedf9590301c698f29642d6367364fbfc537343f06c94f3710eda6ebe4e35"
+              }
+            ]
+          },
+          {
+            "layer": "paving",
+            "generator": "Poly Haven",
+            "name": "Grassy Cobblestone",
+            "page": "https://polyhaven.com/a/grassy_cobblestone",
+            "record": "art-source/cc0/polyhaven-grassy_cobblestone.json",
+            "authors": [
+              "Dario Barresi",
+              "Charlotte Baglioni"
+            ],
+            "retrievedAt": "2026-10-24T08:59:27.143Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_diff_1k.png",
+                "sha256": "2957f85f0b9915c36c5cc45e8346177e4c56bd17ea244d3badd990fe41f5c1eb"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_nor_gl_1k.png",
+                "sha256": "638c979997e2d6718f8f53837cb9a662d18ba970feb902fb6be9f2959566802d"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_disp_1k.png",
+                "sha256": "281746e8eb8f471fb401074909c262089526bd5fc65b5550f88d85bdad126d1c"
+              }
+            ]
+          },
+          {
+            "layer": "slabs",
+            "generator": "Poly Haven",
+            "name": "Stone Floor",
+            "page": "https://polyhaven.com/a/stone_floor",
+            "record": "art-source/cc0/polyhaven-stone_floor.json",
+            "authors": [
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-24T08:59:29.411Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_diff_1k.png",
+                "sha256": "4287494cbdf0019174efa49e4092d25820069cdf6567424a48c0942b6ba82421"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_nor_gl_1k.png",
+                "sha256": "dd6c201d27525af6dc78f028b985adea946655ba9b96b8291086949c586b19ac"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_disp_1k.png",
+                "sha256": "abee5d27d02102ecff700f7e2626b757da3e91181a8f7779e0d8ecdd2c15e403"
+              }
+            ]
+          },
+          {
+            "layer": "aridSoil",
+            "generator": "Poly Haven",
+            "name": "Dry Ground Rocks",
+            "page": "https://polyhaven.com/a/dry_ground_rocks",
+            "record": "art-source/cc0/polyhaven-dry_ground_rocks.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:33.365Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_diff_1k.png",
+                "sha256": "cdd2d7a65ddb048329147596b97dcca5ea9508d3458a1c62400906c24c9eea31"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_nor_gl_1k.png",
+                "sha256": "8de38381d101458e6500366d5e509d2c4abf5a79c2ff3353dc120554186a7a2e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_disp_1k.png",
+                "sha256": "c6432c6a3948fe7bb56a263019de750eaba779dfd572136c643a6214337e4183"
+              }
+            ]
+          },
+          {
+            "layer": "cracked",
+            "generator": "Poly Haven",
+            "name": "Mud Cracked Dry 03",
+            "page": "https://polyhaven.com/a/mud_cracked_dry_03",
+            "record": "art-source/cc0/polyhaven-mud_cracked_dry_03.json",
+            "authors": [
+              "Dario Barresi",
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-24T08:59:35.096Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_diff_1k.png",
+                "sha256": "1648a3677dfc21c1b4753994ff7036009edf107629f476526926677f5e7ce4a5"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_nor_gl_1k.png",
+                "sha256": "f827d14f05f23bc1e1aad410e5583fd851678761bd9a5d2d36d80f5d10a7322e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_disp_1k.png",
+                "sha256": "94bf67ad8ccdedb47f90a13117fa91e1d4c64e1d7a9b7e97d8969d20443ec9ae"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": "The ground of every 3D battle, field and camp: the terrain material blends the layers the board's cells, roads, water and slopes call for.",
+      "loading": "Every chapter's offline pack (one shared download), preloaded before a 3D scene is built. Without it the ground draws each layer's mean colour.",
+      "export": {
+        "format": "KTX2 texture (Basis Universal)",
+        "bytes": 936380,
+        "sha256": "902dcc2aa19ef02f0b30be8f6a4c0704999009093342ef135d037c5e0c37beab"
+      },
+      "license": "CC0 1.0 Universal (public domain dedication): https://polyhaven.com/license. No attribution is required; the layers are credited to Rob Tuytel, Dario Barresi, Charlotte Baglioni, Dimitrios Savva on Poly Haven."
+    },
+    {
+      "id": "ground-normal",
+      "path": "assets/textures/ground/ground-normal-v1.ktx2",
+      "subject": "The ground's 11 layers: normals (OpenGL), X in colour and Y in alpha",
+      "source": {
+        "method": "CC0 texture sets from Poly Haven, resized to 512 px with Lanczos filtering and encoded as a KTX2 2D array with basisu v1.16.4 (ETC1S, quality 128, mipmaps), tuned for normal maps with X and Y in separate slices",
+        "builder": "scripts/assets/build-ground-set.mjs",
+        "layers": [
+          {
+            "layer": "grass",
+            "generator": "Poly Haven",
+            "name": "Forest Ground 01",
+            "page": "https://polyhaven.com/a/forrest_ground_01",
+            "record": "art-source/cc0/polyhaven-forrest_ground_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:09.939Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_diff_1k.png",
+                "sha256": "c4bae8c86c8f9f50f2cd0fa627b097e089de3427f071e3446e69bf8e39132896"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_nor_gl_1k.png",
+                "sha256": "879a84565d016743583421a644bae72df26f4031ea8852fc6d6275feb967353e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-forrest_ground_01/forrest_ground_01_disp_1k.png",
+                "sha256": "ac071c00c493dd4c2571ea12c50cfe113755f185cabc4bb132dd4169540fae0c"
+              }
+            ]
+          },
+          {
+            "layer": "dryGrass",
+            "generator": "Poly Haven",
+            "name": "Grass Path 2",
+            "page": "https://polyhaven.com/a/grass_path_2",
+            "record": "art-source/cc0/polyhaven-grass_path_2.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:12.141Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_diff_1k.png",
+                "sha256": "11955bedc6b335004f4f83e66762bab3df976e12032a9d545af8b43735cdefa3"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_nor_gl_1k.png",
+                "sha256": "cf7864e1ecb3359bd0cbc42106bdb6149a0d828cb7c91221ceb771d819b1d0bc"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_disp_1k.png",
+                "sha256": "458ea1f2c8cffbc72cde24ae49d8ee63109fa15a6da427c3bb059f5f229047d5"
+              }
+            ]
+          },
+          {
+            "layer": "soil",
+            "generator": "Poly Haven",
+            "name": "Brown Mud Dry",
+            "page": "https://polyhaven.com/a/brown_mud_dry",
+            "record": "art-source/cc0/polyhaven-brown_mud_dry.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:15.399Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_diff_1k.png",
+                "sha256": "2e2ae48facfb3e5f682329b11b12aee6e2e02a733c4c2f44a4baca9ae0432ae1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_nor_gl_1k.png",
+                "sha256": "725f8a314d112c0581bdd88d2ef990f6e0821cc072860bd207ff7fa2879411c8"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_dry/brown_mud_dry_disp_1k.png",
+                "sha256": "8097421e9ab89d9cfcdfee1049c3a6959987b43dfd97948e43ebe3ccdb40ed49"
+              }
+            ]
+          },
+          {
+            "layer": "mud",
+            "generator": "Poly Haven",
+            "name": "Brown Mud 02",
+            "page": "https://polyhaven.com/a/brown_mud_02",
+            "record": "art-source/cc0/polyhaven-brown_mud_02.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:17.392Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_diff_1k.png",
+                "sha256": "29d9e1824a17878f80e742e4f9ec7744be64356215f01c0d9e8a16898a9e8906"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_nor_gl_1k.png",
+                "sha256": "6ab08dc4d8b6ff3a7d8407a5a0fe0af0ed324e7734f18b649c3e211cc820e1df"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-brown_mud_02/brown_mud_02_disp_1k.png",
+                "sha256": "01e010e2d230f93ab4686b52d588bb74837f4e97d5dfae49f910225bfe57d7bb"
+              }
+            ]
+          },
+          {
+            "layer": "sand",
+            "generator": "Poly Haven",
+            "name": "Sand 01",
+            "page": "https://polyhaven.com/a/sand_01",
+            "record": "art-source/cc0/polyhaven-sand_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:18.979Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_diff_1k.png",
+                "sha256": "3dcd4005e95a3e95ce01f7c35f41b36f2051e562226d2e3589e21652aa326e1e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_nor_gl_1k.png",
+                "sha256": "e9782a5706185ed78122945a84c9a618daa9fd90f8bdec77e812a4a818b32bb5"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-sand_01/sand_01_disp_1k.png",
+                "sha256": "f05681ab55e130be11757ed5976d72483bafe03bbe6aff8f66e1354bb7f513f4"
+              }
+            ]
+          },
+          {
+            "layer": "gravel",
+            "generator": "Poly Haven",
+            "name": "Rocks Ground 01",
+            "page": "https://polyhaven.com/a/rocks_ground_01",
+            "record": "art-source/cc0/polyhaven-rocks_ground_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:21.619Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_diff_1k.png",
+                "sha256": "2a8039b7dc1a565fa4290dd4e6192d291974cb6ce51c86dc97f4a4a884d0d15b"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_nor_gl_1k.png",
+                "sha256": "f3bce3e8c29e2c0665b6e1f8a8216579d46c3137cd131e0f7098c8a8ed86ec1e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rocks_ground_01/rocks_ground_01_disp_1k.png",
+                "sha256": "dda5ed0351a22441114be5b0ed2fa4444d598573df8913c98de6848f21bd5449"
+              }
+            ]
+          },
+          {
+            "layer": "rock",
+            "generator": "Poly Haven",
+            "name": "Rock Ground",
+            "page": "https://polyhaven.com/a/rock_ground",
+            "record": "art-source/cc0/polyhaven-rock_ground.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:24.791Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_diff_1k.png",
+                "sha256": "550625077ba51480af4d0a08d072a03a0995f6910fb34693312e02ce5b73c6f3"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_nor_gl_1k.png",
+                "sha256": "a3a0f2b76abee9b0bfd7610b6203242a5f8b2711c9052b7000e8feaec1c65d35"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_disp_1k.png",
+                "sha256": "e22eedf9590301c698f29642d6367364fbfc537343f06c94f3710eda6ebe4e35"
+              }
+            ]
+          },
+          {
+            "layer": "paving",
+            "generator": "Poly Haven",
+            "name": "Grassy Cobblestone",
+            "page": "https://polyhaven.com/a/grassy_cobblestone",
+            "record": "art-source/cc0/polyhaven-grassy_cobblestone.json",
+            "authors": [
+              "Dario Barresi",
+              "Charlotte Baglioni"
+            ],
+            "retrievedAt": "2026-10-24T08:59:27.143Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_diff_1k.png",
+                "sha256": "2957f85f0b9915c36c5cc45e8346177e4c56bd17ea244d3badd990fe41f5c1eb"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_nor_gl_1k.png",
+                "sha256": "638c979997e2d6718f8f53837cb9a662d18ba970feb902fb6be9f2959566802d"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_disp_1k.png",
+                "sha256": "281746e8eb8f471fb401074909c262089526bd5fc65b5550f88d85bdad126d1c"
+              }
+            ]
+          },
+          {
+            "layer": "slabs",
+            "generator": "Poly Haven",
+            "name": "Stone Floor",
+            "page": "https://polyhaven.com/a/stone_floor",
+            "record": "art-source/cc0/polyhaven-stone_floor.json",
+            "authors": [
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-24T08:59:29.411Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_diff_1k.png",
+                "sha256": "4287494cbdf0019174efa49e4092d25820069cdf6567424a48c0942b6ba82421"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_nor_gl_1k.png",
+                "sha256": "dd6c201d27525af6dc78f028b985adea946655ba9b96b8291086949c586b19ac"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_disp_1k.png",
+                "sha256": "abee5d27d02102ecff700f7e2626b757da3e91181a8f7779e0d8ecdd2c15e403"
+              }
+            ]
+          },
+          {
+            "layer": "aridSoil",
+            "generator": "Poly Haven",
+            "name": "Dry Ground Rocks",
+            "page": "https://polyhaven.com/a/dry_ground_rocks",
+            "record": "art-source/cc0/polyhaven-dry_ground_rocks.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-24T08:59:33.365Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_diff_1k.png",
+                "sha256": "cdd2d7a65ddb048329147596b97dcca5ea9508d3458a1c62400906c24c9eea31"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_nor_gl_1k.png",
+                "sha256": "8de38381d101458e6500366d5e509d2c4abf5a79c2ff3353dc120554186a7a2e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-dry_ground_rocks/dry_ground_rocks_disp_1k.png",
+                "sha256": "c6432c6a3948fe7bb56a263019de750eaba779dfd572136c643a6214337e4183"
+              }
+            ]
+          },
+          {
+            "layer": "cracked",
+            "generator": "Poly Haven",
+            "name": "Mud Cracked Dry 03",
+            "page": "https://polyhaven.com/a/mud_cracked_dry_03",
+            "record": "art-source/cc0/polyhaven-mud_cracked_dry_03.json",
+            "authors": [
+              "Dario Barresi",
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-24T08:59:35.096Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_diff_1k.png",
+                "sha256": "1648a3677dfc21c1b4753994ff7036009edf107629f476526926677f5e7ce4a5"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_nor_gl_1k.png",
+                "sha256": "f827d14f05f23bc1e1aad410e5583fd851678761bd9a5d2d36d80f5d10a7322e"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-mud_cracked_dry_03/mud_cracked_dry_03_disp_1k.png",
+                "sha256": "94bf67ad8ccdedb47f90a13117fa91e1d4c64e1d7a9b7e97d8969d20443ec9ae"
+              }
+            ]
+          }
+        ]
+      },
+      "usage": "The ground of every 3D battle, field and camp: the terrain material blends the layers the board's cells, roads, water and slopes call for.",
+      "loading": "Every chapter's offline pack (one shared download), preloaded before a 3D scene is built. Without it the ground draws each layer's mean colour.",
+      "export": {
+        "format": "KTX2 texture (Basis Universal)",
+        "bytes": 1011853,
+        "sha256": "8536bdd3cfd6b43133d2bfef67182942f8d72cfd99771dbdb7a519e24b9c8142"
+      },
+      "license": "CC0 1.0 Universal (public domain dedication): https://polyhaven.com/license. No attribution is required; the layers are credited to Rob Tuytel, Dario Barresi, Charlotte Baglioni, Dimitrios Savva on Poly Haven."
     }
   ],
   "developmentAssets": [
@@ -7600,7 +8192,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-23T17:53:15.039Z",
+  "updatedAt": "2026-10-24T10:03:01.850Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -7623,9 +8215,9 @@
     "showcase": 9,
     "audio": 14,
     "models": 50,
-    "textures": 4
+    "textures": 6
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 27757227,
+  "totalBundledAssetBytes": 29705460,
   "totalModelBytes": 17463759
 }

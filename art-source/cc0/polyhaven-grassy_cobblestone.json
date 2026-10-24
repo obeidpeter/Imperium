@@ -1,0 +1,48 @@
+{
+  "source": "Poly Haven",
+  "id": "grassy_cobblestone",
+  "page": "https://polyhaven.com/a/grassy_cobblestone",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:27.143Z",
+  "name": "Grassy Cobblestone",
+  "authors": [
+    "Dario Barresi",
+    "Charlotte Baglioni"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grassy_cobblestone/grassy_cobblestone_diff_1k.png",
+      "bytes": 5496038,
+      "md5": "444dcec962f4c2e7fed97ea08750bd26",
+      "sha256": "2957f85f0b9915c36c5cc45e8346177e4c56bd17ea244d3badd990fe41f5c1eb",
+      "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grassy_cobblestone/grassy_cobblestone_nor_gl_1k.png",
+      "bytes": 5659685,
+      "md5": "e4e652f96891b4b40c9f2186ee3239e7",
+      "sha256": "638c979997e2d6718f8f53837cb9a662d18ba970feb902fb6be9f2959566802d",
+      "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grassy_cobblestone/grassy_cobblestone_disp_1k.png",
+      "bytes": 1738716,
+      "md5": "930fb16db7c10c6d244c53ce6a9c8fdd",
+      "sha256": "281746e8eb8f471fb401074909c262089526bd5fc65b5550f88d85bdad126d1c",
+      "path": "art-source/cc0/raw/polyhaven-grassy_cobblestone/grassy_cobblestone_disp_1k.png"
+    }
+  ]
+}

@@ -9,6 +9,8 @@
 // structure; a texture set is the maps of one surface; a panorama is a skyline.
 // Files live under assets/models/ or assets/textures/ (assets/world/ holds the
 // 2D board's atlases).
+import {GROUND_FILES} from './ground-layers.js';
+
 export const WORLD_KINDS=Object.freeze(['prop','landmark','kit','texture','panorama']);
 const asset=(kind,files,chapters)=>Object.freeze({kind,files:Object.freeze(files),chapters:Object.freeze(chapters)});
 const prop=(id,chapter)=>asset('prop',[`assets/models/chapters/${String(chapter).padStart(2,'0')}/${id}.glb`],[chapter]);
@@ -42,7 +44,9 @@ export const WORLD_CATALOG=Object.freeze({
   'italian-marching-kit':asset('kit',['assets/models/scenery/italian-marching-kit.glb'],[6,7]),
   'provincial-civic-kit':asset('kit',['assets/models/scenery/provincial-civic-kit.glb'],[10]),
   'roman-monumental-kit':asset('kit',['assets/models/scenery/roman-monumental-kit.glb'],[9,11,12]),
-  ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)]))
+  ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
+  // The ground's photographed layers (ground-layers.js), shared by every chapter.
+  'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12])
 });
 /** The model of a placed world asset, or null. */
 export const worldModelUrl=id=>WORLD_CATALOG[id]?.files.find(file=>file.endsWith('.glb'))??null;

@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "rock_ground",
+  "page": "https://polyhaven.com/a/rock_ground",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:24.791Z",
+  "name": "Rock Ground",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/rock_ground/rock_ground_diff_1k.png",
+      "bytes": 6794901,
+      "md5": "47828498aa33b639c4033df267726862",
+      "sha256": "550625077ba51480af4d0a08d072a03a0995f6910fb34693312e02ce5b73c6f3",
+      "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/rock_ground/rock_ground_nor_gl_1k.png",
+      "bytes": 6775085,
+      "md5": "eea87a9f3cefb895e186ae522e2534ae",
+      "sha256": "a3a0f2b76abee9b0bfd7610b6203242a5f8b2711c9052b7000e8feaec1c65d35",
+      "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/rock_ground/rock_ground_disp_1k.png",
+      "bytes": 2086303,
+      "md5": "0f7c922a7bd1c49c65fdddd96e820c94",
+      "sha256": "e22eedf9590301c698f29642d6367364fbfc537343f06c94f3710eda6ebe4e35",
+      "path": "art-source/cc0/raw/polyhaven-rock_ground/rock_ground_disp_1k.png"
+    }
+  ]
+}

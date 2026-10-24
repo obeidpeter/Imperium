@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "grass_path_2",
+  "page": "https://polyhaven.com/a/grass_path_2",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:12.141Z",
+  "name": "Grass Path 2",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grass_path_2/grass_path_2_diff_1k.png",
+      "bytes": 2444406,
+      "md5": "3439690519436118d4d58e094c0ca56f",
+      "sha256": "11955bedc6b335004f4f83e66762bab3df976e12032a9d545af8b43735cdefa3",
+      "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grass_path_2/grass_path_2_nor_gl_1k.png",
+      "bytes": 2199966,
+      "md5": "142cdf04904b65726dd44ecf60289b77",
+      "sha256": "cf7864e1ecb3359bd0cbc42106bdb6149a0d828cb7c91221ceb771d819b1d0bc",
+      "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/grass_path_2/grass_path_2_disp_1k.png",
+      "bytes": 1945062,
+      "md5": "9cecab9a5cde12937cbe1fad9c6cbb99",
+      "sha256": "458ea1f2c8cffbc72cde24ae49d8ee63109fa15a6da427c3bb059f5f229047d5",
+      "path": "art-source/cc0/raw/polyhaven-grass_path_2/grass_path_2_disp_1k.png"
+    }
+  ]
+}
