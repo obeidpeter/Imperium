@@ -1,6 +1,70 @@
 import * as T from '../../vendor/three/three.module.js';
 import {hash,noise,smooth,clamp} from './environment-layout.js';
 
+// The woods' budget: crowns per quality, each an icosahedron of 20 triangles.
+export const FOREST_CROWNS=Object.freeze({performance:320,balanced:700,high:1100});
+// Lone trees stand between the woods at this fraction of a wood's density.
+const LONE_TREES=.05;
+const FOLIAGE={wetland:'#4f5f45',italy:'#3e4f33'};
+// A unit icosahedron's triangles, and each corner's direction (its own position).
+const CROWN=new T.IcosahedronGeometry(1,0).attributes.position.array;
+// Which of its twelve corners each of the 60 is, so a corner shared by five faces moves as one.
+const CORNER=(()=>{const seen=new Map();return Array.from({length:CROWN.length/3},(_,i)=>{const key=[0,1,2].map(c=>CROWN[i*3+c].toFixed(4)).join();if(!seen.has(key))seen.set(key,seen.size);return seen.get(key);});})();
+// Crowns in a clump: from five to eight, so a wood's outline is a canopy, not a few balls.
+const MEMBERS=[5,8];
+/**
+ * The ridges' trees: woods where a broad noise allows, and lone trees between
+ * them, in clumps of five to eight overlapping crowns on points of the
+ * ridges' own triangles, from 160 m out (clear of the board, its scenery and
+ * the landmark clusters) and off the river. Presentation only: hash, never
+ * the game's random draws.
+ */
+export function forestStandIns({ridges,profile,quality='balanced',share,haze,seed,wet=false,riverCentre=null,riverWidth=null,clear=[]}){
+  const pos=ridges.geometry.attributes.position,index=ridges.geometry.index.array,limit=FOREST_CROWNS[quality]??FOREST_CROWNS.balanced;
+  const A=new T.Vector3(),B=new T.Vector3(),C=new T.Vector3(),wood=(x,z)=>noise(x*.009,z*.009,seed+21)>1-share;
+  const open=(x,z)=>{const d=Math.hypot(x,z);if(d<160||d>535)return false;
+    if(riverCentre&&Math.abs(z-riverCentre(x))<riverWidth(x)+14)return false;return clear.every(([cx,cz])=>Math.hypot(x-cx,z-cz)>34);};
+  const weight=(x,z)=>open(x,z)?(wood(x,z)?1:LONE_TREES):0;
+  // First the wooded area, then clumps in proportion to it: an even wood whatever the budget.
+  const area=t=>{A.fromBufferAttribute(pos,index[t]);B.fromBufferAttribute(pos,index[t+1]);C.fromBufferAttribute(pos,index[t+2]);return B.sub(A).cross(C.sub(A)).length()/2;};
+  const centre=t=>[(pos.getX(index[t])+pos.getX(index[t+1])+pos.getX(index[t+2]))/3,(pos.getZ(index[t])+pos.getZ(index[t+1])+pos.getZ(index[t+2]))/3];
+  let wooded=0;for(let t=0;t<index.length;t+=3)wooded+=area(t)*weight(...centre(t));
+  if(wooded<1)return null;
+  const density=limit/((MEMBERS[0]+MEMBERS[1])/2)/wooded,sun=new T.Vector3(...(profile.sunPosition??[-16,24,-12])).setY(0).normalize(),positions=[],colors=[];
+  const foliage=new T.Color(FOLIAGE[profile.setting]??(wet?FOLIAGE.wetland:'#34492c'));let crowns=0;
+  const surface=(t,u,v)=>{A.fromBufferAttribute(pos,index[t]);B.fromBufferAttribute(pos,index[t+1]);C.fromBufferAttribute(pos,index[t+2]);
+    return [A.x+(B.x-A.x)*u+(C.x-A.x)*v,A.y+(B.y-A.y)*u+(C.y-A.y)*v,A.z+(B.z-A.z)*u+(C.z-A.z)*v];};
+  for(let t=0;t<index.length&&crowns<limit;t+=3){
+    const w=weight(...centre(t));if(!w)continue;
+    const expected=area(t)*density*w,n=Math.floor(expected)+(hash(t,seed,7)<expected%1?1:0);
+    for(let k=0;k<n&&crowns<limit;k++){
+      let u=hash(t,k,seed+3),v=hash(k,t,seed+5);if(u+v>1){u=1-u;v=1-v;}
+      const [cx,,cz]=surface(t,u,v);if(!open(cx,cz))continue;
+      const size=(wet?4.5:6)+hash(cx,cz,seed+9)*(wet?2.5:3),members=MEMBERS[0]+Math.floor(hash(cz,cx,seed+15)*(MEMBERS[1]-MEMBERS[0]+1));
+      for(let m=0;m<members&&crowns<limit;m++){
+        // Each crown of the clump on a point of this or the next quads round the ring, so it stands on the ridge exactly.
+        const tri=Math.min(t+3*m,index.length-3);let mu=hash(tri,m,seed+17),mv=hash(m,tri,seed+19);if(mu+mv>1){mu=1-mu;mv=1-mv;}
+        const [x,y,z]=surface(tri,mu,mv);if(!open(x,z))continue;
+        // Sunk a little, so no crown shows daylight under it on a slope.
+        const wide=size*(wet?.62:.5)*(.8+hash(x,z,seed+11)*.4),tall=size*(.65+hash(z,x,seed+12)*.3),distance=Math.hypot(x,z),foot=y-.5;
+        // Darker below and away from the sun. Only a trace of haze: the blend is in linear
+        // light, where a little of a pale haze outweighs a dark green, and the fog does the rest.
+        const base=foliage.clone().multiplyScalar(.75+hash(x,z,seed+13)*.4).lerp(haze,clamp(.015+smooth((distance-60)/490)*.07));
+        // Each corner in or out a little, so no crown shows a regular outline; the foot stays.
+        for(let i=0;i<CROWN.length;i+=3){
+          const dx=CROWN[i],dy=CROWN[i+1],dz=CROWN[i+2],lump=.76+hash(crowns,CORNER[i/3],seed+23)*.48;
+          positions.push(x+dx*wide*lump,foot+tall*(.42+dy*.5*(dy>0?lump:1)),z+dz*wide*lump);
+          const light=.62+(dy+1)*.2+Math.max(0,dx*sun.x+dz*sun.z)*.14;colors.push(base.r*light,base.g*light,base.b*light);
+        }
+        crowns++;
+      }
+    }
+  }
+  if(!crowns)return null;
+  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));geometry.computeBoundingSphere();
+  return {geometry,crowns};
+}
+
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
 export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null,riverZ=-29}){
@@ -8,7 +72,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
   const haze=new T.Color(profile.fog),land=new T.Color(arid?'#9c8b6a':wet?'#657461':'#68765d'),seed=profile.chapter*17;
-  const rows=[innerRadius,innerRadius+8,innerRadius+24,Math.max(100,innerRadius+60),Math.max(155,innerRadius+110),Math.max(235,innerRadius+180),Math.max(355,innerRadius+280),550],size=segments*4,riverJoin=62.5,riverEdges=[];
+  const rows=[innerRadius,innerRadius+8,innerRadius+24,Math.max(100,innerRadius+60),Math.max(155,innerRadius+110),Math.max(235,innerRadius+180),Math.max(355,innerRadius+280),550],size=segments*4,riverJoin=62.5;
   let waterGeometry=null;
   let disposed=false;
   for(let edge=0;edge<4;edge++)for(let i=0;i<segments;i++){
@@ -17,9 +81,12 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   function riverCentre(x){const d=Math.max(0,Math.abs(x)-riverJoin);return riverZ+Math.sin(d*.011)*d*.075;}
   function riverWidth(x){return 8+smooth((Math.abs(x)-riverJoin)/320)*13;}
   function terrainHeight(x,z){
-    const edge=Math.max(Math.abs(x),Math.abs(z)),distance=Math.hypot(x,z),blend=smooth((edge-innerRadius)/65),amplitude=city?14:wet?10:arid?35:30;
+    const edge=Math.max(Math.abs(x),Math.abs(z)),distance=Math.hypot(x,z),blend=smooth((edge-innerRadius)/65),amplitude=city?12:wet?9:arid?20:22;
     const broad=noise(x*.009,z*.009,seed),spine=Math.pow(noise(x*.021,z*.021,seed+4),1.35),distant=smooth((distance-80)/290);
-    let y=height(x,z)+blend*((broad-.20)*amplitude*(.34+distant*.72)+spine*amplitude*.43);
+    // The relief settles from 120 m on, so the region's panorama, not a bowl of
+    // near ridges, makes the skyline; a quarter of it remains at the edge.
+    const settle=1-smooth((distance-120)/330)*.75;
+    let y=height(x,z)+blend*((broad-.20)*amplitude*(.34+distant*.72)+spine*amplitude*.43)*settle;
     if(profile.distantWater&&Math.abs(x)>40){const channel=1-smooth((Math.abs(z-riverCentre(x))-riverWidth(x))/(10+Math.abs(x)*.015));y=y*(1-channel)+Math.min(y,-2.05)*channel;}
     return y;
   }
@@ -88,11 +155,11 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
         const x=side*(riverJoin+i/steps*(510-riverJoin)),z=riverCentre(x),w=riverWidth(x),c=new T.Color(profile.waterColor).multiplyScalar(.9).lerp(haze,.35+smooth(i/steps)*.6),samples=i===0?13:2;
         offsets.push(positions.length/3);
         for(let j=0;j<samples;j++){
-          // Match all thirteen vertices along the animated near river's edge.
+          // Match all thirteen vertices along the near river's edge.
           // The following row reduces to two points: only 22 extra triangles
           // are needed for the complete join, not a dense distant water mesh.
-          const localZ=i===0?Math.fround(-8+j*16/12):-w+j*w*2,index=positions.length/3;
-          positions.push(x,-1.24,z+localZ);colors.push(...c.toArray());if(i===0)riverEdges.push({index,x,localZ});
+          const localZ=i===0?Math.fround(-8+j*16/12):-w+j*w*2;
+          positions.push(x,-1.24,z+localZ);colors.push(...c.toArray());
         }
       }
       const face=(a,b,c)=>indices.push(...(side===1?[a,b,c]:[a,c,b]));
@@ -119,21 +186,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     }
     group.userData.silhouetteKind=profile.setting==='palmyra'?'Palmyrene rooflines':'Roman urban rooflines';
   }else if(!arid){
-    // Low-poly closed tree crowns are small distant silhouettes, never nearby
-    // billboard scenery. They occupy every bearing, with broad natural gaps.
-    for(let i=0;i<(quality==='performance'?20:29);i++){
-      const angle=i*2.39996,r=(wet?105:155)+hash(i,seed)*135,x=Math.cos(angle)*r,z=Math.sin(angle)*r,y=foundation(x,z,.32,.32),h=wet?4.8+hash(i,8)*4:5+hash(i,8)*5,c=tint(x,z,y,.06).multiplyScalar(.87);
-      box(x,y,z,.32,h*.48,.32,c);
-      // Three uneven, overlapping volumes break up a single ball-on-a-stick
-      // contour. Their shared colour fades into the same atmospheric band.
-      for(let clump=0;clump<3;clump++){
-        const offset=clump*2.399+i,spread=h*(.16+hash(i,clump,11)*.12),cx=x+Math.cos(offset)*spread,cz=z+Math.sin(offset)*spread,cy=y+h*(.44+hash(i,clump,12)*.17),width=h*(.22+hash(clump,i,13)*.12),tall=h*(wet?.33:.29),colour=c.clone().multiplyScalar(.94+hash(i,clump,15)*.12);
-        const crown=(k,row)=>{const theta=k*Math.PI/4,latitude=row*Math.PI/2,irregular=.86+hash(k%8,i,clump)*.25,lean=(row-1)*h*.045;return [cx+Math.cos(theta)*Math.sin(latitude)*width*irregular+lean,cy+Math.cos(latitude)*tall*(.91+hash(row,i,clump)*.14),cz+Math.sin(theta)*Math.sin(latitude)*width*irregular-lean*.7];};
-        for(let row=0;row<2;row++)for(let k=0;k<8;k++){
-          const a=crown(k,row),b=crown(k+1,row),c1=crown(k,row+1),d=crown(k+1,row+1);triangle(a,c1,b,colour);triangle(b,c1,d,colour);
-        }
-      }
-    }
+    // Trees stand on the ridges as the woods below (forestStandIns).
     group.userData.silhouetteKind=wet?'distant willow wetlands':'wooded ridgelines';
   }else group.userData.silhouetteKind='open eastern escarpments';
   // Three authored bearings establish a middle distance before the far hills.
@@ -170,7 +223,17 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   if(silhouettePositions.length){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silhouettePositions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(silhouetteColors,3));geometry.computeVertexNormals();addMesh('regional distant silhouettes',geometry,distant);}
   group.userData.distantFoundations=foundations;
   let triangles=0;group.traverse(o=>{if(o.isMesh)triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;});
-  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3});
+  // Forest stand-ins: woods of low crowns on the ridges, where a broad noise
+  // says wood, so the trees by the board run on into the panorama's forests.
+  // Each stands on a point of the ridges' own triangles, from 150 m out (clear
+  // of the board, its scenery and the landmark clusters) and off the river.
+  // Their light is in their colours, in the same unlit batch as the silhouettes.
+  const forestShare=city||arid?0:{frontier:.5,fortress:.5,crossing:.5,wetland:.42,station:.36,province:.34,italy:.22}[profile.setting]??.3;
+  const forest=forestShare?forestStandIns({ridges,profile,quality,share:forestShare,haze,seed,wet,riverCentre:profile.distantWater?riverCentre:null,riverWidth,
+    clear:Array.from({length:3},(_,cluster)=>{const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=115+cluster*28;return [Math.cos(angle)*r,Math.sin(angle)*r];})}):null;
+  if(forest){geometries.add(forest.geometry);addMesh('distant forest stand-ins',forest.geometry,distant);}
+  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3,
+    forestCrowns:forest?.crowns??0,forestTriangles:forest?forest.geometry.attributes.position.count/3:0});
   group.userData.horizonStats=stats;
   let lastCameraX=NaN,lastCameraZ=NaN,lastCameraHeight=0;
   function cameraGroundHeight(x,z){
@@ -183,6 +246,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     lastCameraX=x;lastCameraZ=z;lastCameraHeight=renderedGroundHeight(x,z);return lastCameraHeight;
   }
   return {group,bridge,ridges,stats,cameraGroundHeight,
-    update(time){if(disposed||!waterGeometry||!Number.isFinite(time))return;const p=waterGeometry.attributes.position;for(const {index,x,localZ} of riverEdges)p.setY(index,-1.24+.023*Math.sin(x*.64+time*.9)+.017*Math.sin(localZ*1.7+x*.17-time*.55));p.needsUpdate=true;},
+    // The water's waves move in its shader (world position), joined with the near river's.
+    update(){},
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.clear();}};
 }

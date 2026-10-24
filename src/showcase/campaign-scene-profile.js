@@ -39,6 +39,14 @@ const GRADES=[
 const NIGHT_GRADE=grade(0.85,1.12,[0.90,0.96,1.14],[1.08,0.98,0.86],'#2d3c58',.90,1.00,'#9eb8dc',.50);
 const COURT_GRADE=grade(0.97,1.08,[0.97,0.97,1.03],[1.05,1.01,0.94],'#a59c8d',.90,1.00,'#f2e6d0',.40);
 export function sceneGrade(chapter,{night=false,court=false}={}){return night?NIGHT_GRADE:court?COURT_GRADE:GRADES[Math.max(1,Math.min(12,chapter))-1];}
+// Where the sun stands (its offset from what it lights, in metres): high by day,
+// low in the east at dawn (II, VIII) and in the west at dusk (V, VI, XII), with
+// long shadows. Chapter II's dawn is overcast, so its sun stands a little higher
+// and its light is weaker. A low sun is warmer and dimmer.
+export const SUN_POSITIONS=Object.freeze({day:Object.freeze([-16,24,-12]),dawn:Object.freeze([17,6.5,-10]),dusk:Object.freeze([-18,6,-8]),
+  overcastDawn:Object.freeze([16,9,-9]),night:Object.freeze([-10,20,-14]),court:Object.freeze([-9,22,-9])});
+const LOW_SUN=Object.freeze({dawn:Object.freeze({color:'#ffcf9e',warmth:.3,intensity:.88}),dusk:Object.freeze({color:'#ffb877',warmth:.38,intensity:.85})});
+const blend=(a,b,t)=>{const x=parseInt(a.slice(1),16),y=parseInt(b.slice(1),16),c=k=>Math.round(((x>>k)&255)*(1-t)+((y>>k)&255)*t);return '#'+[16,8,0].map(k=>c(k).toString(16).padStart(2,'0')).join('');};
 export function getSceneProfile(encounter={},options={}){
   const inferred=Number(/^ch(\d+)-/.exec(encounter.id??'')?.[1]),candidate=options.chapter??encounter.chapter??inferred,chapter=Number.isInteger(candidate)&&candidate>=1&&candidate<=12?candidate:1;
   const [region,setting,architecture,sky,fog,sun,ambient,groundTint,fogDensity,exposure]=regions[chapter-1],civic=encounter.kind==='contest',training=encounter.id==='ch1-training'||encounter.id==='ch1-drill'||encounter.type==='training'||encounter.mission?.mode==='training';
@@ -47,7 +55,7 @@ export function getSceneProfile(encounter={},options={}){
   const timeOfDay=night?'night':civic?'interior':chapterTimeOfDay(chapter);
   const weather=civic?'clear':options.weather??encounter.weather??chapterWeather(chapter);
   return Object.freeze({key:`ch${chapter}-${civic?'civic':training?'training':night?'night':'battle'}`,chapter,grade:sceneGrade(chapter,{night,court}),title:encounter.title||`${region}${civic?' — council':''}`,region,setting,civic,training,timeOfDay,weather,torchlight:night||civic&&chapter===7,staging:getEncounterStaging(encounter,{chapter,civic,training}),architecture:civic?(civicArchitecture[chapter]??'provincial-tribunal'):architecture,
-    sky:night?'#1d2b44':court?'#8a8174':sky,fog:night?'#24324c':court?'#928779':fog,sun:night?'#9eb8dc':sun,ambient:night?'#4d6282':court?'#ded4be':ambient,groundTint:night?'#3e4c5e':groundTint,fogDensity:night?.025:court?.006:fogDensity,exposure:night?.92:court?1.12:exposure,sunIntensity:night?1.45:chapter===2?2.55:court?2.4:3.3,ambientIntensity:night?1.35:court?2.15:2.1,ambientGround:night?'#25303f':court?'#9c8871':'#60694f',sunPosition:Object.freeze(night?[-10,20,-14]:chapter===2?[-12,18,-8]:court?[-9,22,-9]:[-16,24,-12]),
+    sky:night?'#1d2b44':court?'#8a8174':sky,fog:night?'#24324c':court?'#928779':fog,sun:night?'#9eb8dc':LOW_SUN[timeOfDay]?blend(sun,LOW_SUN[timeOfDay].color,LOW_SUN[timeOfDay].warmth):sun,ambient:night?'#4d6282':court?'#ded4be':ambient,groundTint:night?'#3e4c5e':groundTint,fogDensity:night?.025:court?.006:fogDensity,exposure:night?.92:court?1.12:exposure,sunIntensity:night?1.45:chapter===2?2.55:court?2.4:3.3*(LOW_SUN[timeOfDay]?.intensity??1),ambientIntensity:night?1.35:court?2.15:2.1,ambientGround:night?'#25303f':court?'#9c8871':'#60694f',sunPosition:night?SUN_POSITIONS.night:court?SUN_POSITIONS.court:chapter===2&&!civic?SUN_POSITIONS.overcastDawn:SUN_POSITIONS[timeOfDay]??SUN_POSITIONS.day,
     artDirection:regionalEnvironment(chapter),
     vegetation:['desert','siege','palmyra'].includes(setting)?'arid':setting==='wetland'?'reeds':civic?'court':'meadow',soilMix:['desert','siege','palmyra'].includes(setting)?.85:setting==='wetland'?.62:.18,
     distantWater:['frontier','wetland','fortress','crossing','province'].includes(setting)&&(!civic||chapter===8),stoneColor:chapter===5?'#c7b08a':chapter>=9?'#d5c8ab':'#bab9ad',waterColor:night?'#2c475c':chapter===2?'#59766e':'#608f94'});

@@ -118,6 +118,21 @@ export function manifestEntry(record,recordPath,shipped,{id,subject,usage,loadin
     license:`${CC0}: ${record.licenceUrl}. No attribution is required; the files are credited to ${record.authors.join(', ')} on ${record.source}.`};
 }
 
+/** A manifest entry for one file built from several CC0 records, such as the
+ * layers of a texture array: `layers` lists each layer's name, record and path. */
+export function layeredManifestEntry(layers,shipped,{id,subject,usage,loading,processing,builder,format}){
+  for(const [name,value]of Object.entries({id,subject,usage,loading,processing}))if(!value)throw new Error(`The entry needs ${name}.`);
+  if(!layers?.length)throw new Error('The entry needs its layers.');
+  const extension=/\.[a-z0-9]+$/.exec(shipped.path)?.[0],sources=[...new Set(layers.map(l=>l.record.source))],credits=[...new Set(layers.flatMap(l=>l.record.authors))];
+  return {id,path:shipped.path,subject,
+    source:{method:`CC0 texture sets from ${sources.join(' and ')}, ${processing}`,builder,
+      layers:layers.map(({layer,record,recordPath})=>({layer,generator:record.source,name:record.name,page:record.page,record:recordPath,authors:record.authors,retrievedAt:record.retrievedAt,
+        files:record.files.map(f=>({path:f.path,sha256:f.sha256}))}))},
+    usage,loading,
+    export:{format:format??FORMATS[extension]??extension,bytes:shipped.bytes,sha256:shipped.sha256},
+    license:`${CC0}: ${[...new Set(layers.map(l=>l.record.licenceUrl))].join(', ')}. No attribution is required; the layers are credited to ${credits.join(', ')} on ${sources.join(' and ')}.`};
+}
+
 // The manifest is written by Python's json module (indent 2, floats keep their
 // ".0"), so entries are edited as text and the rest of the file is untouched.
 const serialize=(value,indent)=>JSON.stringify(value,null,2).split('\n').map((line,i)=>i?' '.repeat(indent)+line:line).join('\n');

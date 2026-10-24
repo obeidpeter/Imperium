@@ -7,8 +7,17 @@ import * as T from '../../vendor/three/three.module.js';
 // narrow, walled or wooded place. Every quality tier samples it; it is the only
 // occlusion on Performance, which renders without the screen-space pass and
 // without scenery shadows. Deterministic, presentation only, no download.
+//
+// The same bake holds the sun's static shadows: for each texel, how high a
+// point must stand to see the sun past the relief and scenery toward it (one
+// sweep from the sun's side). The ground takes them across the whole field at
+// every distance, the long shadows of dawn and dusk included, beyond the box
+// the live shadow map covers near the camera (which still casts the figures).
 export const BAKED_AO_TEXELS_PER_METRE=4;
 export const BAKED_AO_STRENGTH=Object.freeze({performance:.9,balanced:.55,high:.5});
+// Shadow heights are kept up to this many metres above the ground.
+export const SUN_SHADOW_RANGE=16;
+export const SUN_SHADOW_STRENGTH=Object.freeze({performance:.85,balanced:.9,high:.9});
 const DIRECTIONS=8,STEPS=[.25,.5,.8,1.2,1.8,2.6,3.6],LIFT=.05;
 
 export function createOcclusionField({minX,minZ,maxX,maxZ,resolution=BAKED_AO_TEXELS_PER_METRE,groundAt}){
@@ -69,7 +78,36 @@ export function createOcclusionField({minX,minZ,maxX,maxZ,resolution=BAKED_AO_TE
     for(let iz=0;iz<nz;iz++)for(let ix=0;ix<nx;ix++){let sum=0,w=0;for(let oz=-1;oz<=1;oz++)for(let ox=-1;ox<=1;ox++){const x=ix+ox,z=iz+oz;if(x<0||z<0||x>=nx||z>=nz)continue;const k=(ox||oz)?(ox&&oz?.5:1):2;sum+=raw[z*nx+x]*k;w+=k;}ao[iz*nx+ix]=sum/w;}
     return ao;
   }
-  return {nx,nz,minX,minZ,maxX,maxZ,ground,top,triangle,box,finish,get samples(){return samples;}};
+  return {nx,nz,minX,minZ,maxX,maxZ,cell,ground,top,triangle,box,finish,get samples(){return samples;}};
+}
+
+/**
+ * For each texel, how far above its ground a point must stand to see the sun
+ * (`sun` points toward it): the highest of the relief and scenery toward the
+ * sun, lowered by the sun's rise over the distance. One sweep from the sun's
+ * side, each texel reading the one a step sunward of it. 0 where the ground is
+ * lit; all 0 with the sun overhead or below the horizon.
+ */
+export function sunShadowHeights(field,sun){
+  const {nx,nz,ground,top,cell}=field,out=new Float32Array(nx*nz),flat=Math.hypot(sun?.[0]??0,sun?.[2]??0);
+  if(!(sun?.[1]>0)||flat<1e-6)return out;
+  const along=Math.abs(sun[0])>=Math.abs(sun[2]),main=along?sun[0]/flat:sun[2]/flat,cross=along?sun[2]/flat:sun[0]/flat;
+  const step=Math.sign(main),slope=cross/Math.abs(main),drop=cell/Math.abs(main)*sun[1]/flat;
+  // The highest surface seen looking sunward from each texel, itself included.
+  const highest=new Float32Array(nx*nz).fill(-Infinity),lines=along?nx:nz,width=along?nz:nx;
+  const index=(line,k)=>along?k*nx+line:line*nx+k;
+  for(let n=0;n<lines;n++){
+    const line=step>0?lines-1-n:n,previous=line+step;
+    for(let k=0;k<width;k++){
+      const i=index(line,k);let shade=-Infinity;
+      if(previous>=0&&previous<lines){
+        const at=k+slope,k0=Math.floor(at),f=at-k0,a=k0>=0&&k0<width?highest[index(previous,k0)]:-Infinity,b=k0+1>=0&&k0+1<width?highest[index(previous,k0+1)]:-Infinity;
+        shade=(a===-Infinity||b===-Infinity?Math.max(a,b):a+(b-a)*f)-drop;
+      }
+      out[i]=Math.max(0,shade-ground[i]);highest[i]=Math.max(ground[i],top[i],shade);
+    }
+  }
+  return out;
 }
 
 const corners=Array.from({length:8},()=>new T.Vector3());
@@ -112,28 +150,49 @@ export function rasterizeOccluders(field,root,{exclude=new Set()}={}){
   });
   return {meshes,instances};
 }
-// R: sky visibility; G: ground height across the field's height range.
-export function occlusionTexture(field,ao){
+// R: sky visibility; G: ground height across the field's height range;
+// B: the sun's shadow height above the ground, over SUN_SHADOW_RANGE.
+export function occlusionTexture(field,ao,shadow=null){
   let low=Infinity,high=-Infinity;for(const y of field.ground){low=Math.min(low,y);high=Math.max(high,y);}
   const range=Math.max(.01,high-low),bytes=new Uint8Array(field.nx*field.nz*4);
-  for(let i=0;i<field.nx*field.nz;i++){bytes[i*4]=Math.round(Math.max(0,Math.min(1,ao[i]))*255);bytes[i*4+1]=Math.round((field.ground[i]-low)/range*255);bytes[i*4+3]=255;}
+  for(let i=0;i<field.nx*field.nz;i++){bytes[i*4]=Math.round(Math.max(0,Math.min(1,ao[i]))*255);bytes[i*4+1]=Math.round((field.ground[i]-low)/range*255);
+    bytes[i*4+2]=shadow?Math.round(Math.min(1,shadow[i]/SUN_SHADOW_RANGE)*255):0;bytes[i*4+3]=255;}
   const texture=new T.DataTexture(bytes,field.nx,field.nz,T.RGBAFormat);
   texture.name='Imperium baked scene occlusion';texture.colorSpace=T.NoColorSpace;texture.magFilter=texture.minFilter=T.LinearFilter;texture.wrapS=texture.wrapT=T.ClampToEdgeWrapping;texture.generateMipmaps=false;texture.needsUpdate=true;
   return {texture,low,range};
 }
-export function bakeEnvironmentOcclusion(root,{groundAt,bounds,quality='balanced',exclude}={}){
+// The same uniforms for materials that outlive a scene (the generated scenery,
+// shared through its model cache): each new bake points them at its own field.
+export const SCENE_OCCLUSION=Object.freeze({imperiumAoMap:{value:null},imperiumAoBounds:{value:new T.Vector4(0,0,0,0)},imperiumAoHeight:{value:new T.Vector2(0,1)},
+  imperiumAoStrength:{value:0},imperiumSunShadow:{value:0},imperiumLiveShadow:{value:new T.Vector3(0,0,0)}});
+let sceneBake=null;
+const pointScene=uniforms=>{for(const key of Object.keys(SCENE_OCCLUSION))SCENE_OCCLUSION[key].value=uniforms[key].value;};
+export function bakeEnvironmentOcclusion(root,{groundAt,bounds,quality='balanced',exclude,sun=null}={}){
   const started=globalThis.performance?.now?.()??Date.now();
-  const field=createOcclusionField({...bounds,groundAt}),raster=rasterizeOccluders(field,root,{exclude}),ao=field.finish(),{texture,low,range}=occlusionTexture(field,ao);
+  const field=createOcclusionField({...bounds,groundAt}),raster=rasterizeOccluders(field,root,{exclude}),ao=field.finish(),shadow=sunShadowHeights(field,sun);
+  const {texture,low,range}=occlusionTexture(field,ao,shadow);
   const uniforms={
     imperiumAoMap:{value:texture},
     imperiumAoBounds:{value:new T.Vector4(field.minX,field.minZ,1/(field.maxX-field.minX),1/(field.maxZ-field.minZ))},
     imperiumAoHeight:{value:new T.Vector2(low,range)},
-    imperiumAoStrength:{value:BAKED_AO_STRENGTH[quality]??BAKED_AO_STRENGTH.balanced}
+    imperiumAoStrength:{value:BAKED_AO_STRENGTH[quality]??BAKED_AO_STRENGTH.balanced},
+    imperiumSunShadow:{value:SUN_SHADOW_STRENGTH[quality]??SUN_SHADOW_STRENGTH.balanced},
+    // Where the live shadow map already casts the scenery: centre x, z and half-width (0: nowhere).
+    imperiumLiveShadow:{value:new T.Vector3(0,0,0)}
   };
   let mean=0;for(const v of ao)mean+=v;mean/=ao.length;let darkest=1;for(const v of ao)darkest=Math.min(darkest,v);
-  const stats={width:field.nx,height:field.nz,meshes:raster.meshes,instances:raster.instances,samples:field.samples,mean,darkest,strength:uniforms.imperiumAoStrength.value,milliseconds:(globalThis.performance?.now?.()??Date.now())-started};
-  return {field,ao,texture,uniforms,stats,setQuality(value){uniforms.imperiumAoStrength.value=BAKED_AO_STRENGTH[value]??BAKED_AO_STRENGTH.balanced;stats.strength=uniforms.imperiumAoStrength.value;},dispose(){texture.dispose();}};
+  let shaded=0;for(const v of shadow)if(v>.05)shaded++;
+  const stats={width:field.nx,height:field.nz,meshes:raster.meshes,instances:raster.instances,samples:field.samples,mean,darkest,strength:uniforms.imperiumAoStrength.value,
+    sunShadow:shaded/shadow.length,milliseconds:(globalThis.performance?.now?.()??Date.now())-started};
+  const bake={field,ao,shadow,texture,uniforms,stats,
+    setQuality(value){uniforms.imperiumAoStrength.value=BAKED_AO_STRENGTH[value]??BAKED_AO_STRENGTH.balanced;uniforms.imperiumSunShadow.value=SUN_SHADOW_STRENGTH[value]??SUN_SHADOW_STRENGTH.balanced;stats.strength=uniforms.imperiumAoStrength.value;if(sceneBake===bake)pointScene(uniforms);},
+    // The live map's box this frame, or none (its scenery does not cast at Performance).
+    setLiveShadow(x=0,z=0,half=0){uniforms.imperiumLiveShadow.value.set(x,z,half);},
+    dispose(){texture.dispose();if(sceneBake===bake){sceneBake=null;pointScene(EMPTY);}}};
+  sceneBake=bake;pointScene(uniforms);
+  return bake;
 }
+const EMPTY={imperiumAoMap:{value:null},imperiumAoBounds:{value:new T.Vector4(0,0,0,0)},imperiumAoHeight:{value:new T.Vector2(0,1)},imperiumAoStrength:{value:0},imperiumSunShadow:{value:0},imperiumLiveShadow:{value:new T.Vector3(0,0,0)}};
 
 // Ground surfaces read only the sky term; everything standing on the ground
 // also darkens toward its foot. Indirect light carries the occlusion, with a
@@ -146,7 +205,7 @@ const vertexBody=`
   #endif
   vImperiumAoWorld=(modelMatrix*imperiumAoPosition).xyz;
 `;
-const fragmentDeclarations='varying vec3 vImperiumAoWorld;\nuniform sampler2D imperiumAoMap;\nuniform vec4 imperiumAoBounds;\nuniform vec2 imperiumAoHeight;\nuniform float imperiumAoStrength;\n';
+const fragmentDeclarations='varying vec3 vImperiumAoWorld;\nuniform sampler2D imperiumAoMap;\nuniform vec4 imperiumAoBounds;\nuniform vec2 imperiumAoHeight;\nuniform float imperiumAoStrength;\nuniform float imperiumSunShadow;\nuniform vec3 imperiumLiveShadow;\n';
 const fragmentBody=ground=>`
   {
     vec2 aoUv=(vImperiumAoWorld.xz-imperiumAoBounds.xy)*imperiumAoBounds.zw;
@@ -158,7 +217,15 @@ const fragmentBody=ground=>`
     float aoBaked=mix(1.0,aoSky${ground?'':'*mix(0.58,1.0,smoothstep(0.02,0.8,aoAbove))'},aoInside*imperiumAoStrength);
     reflectedLight.indirectDiffuse*=aoBaked;
     reflectedLight.indirectSpecular*=mix(1.0,aoBaked,0.7);
-    reflectedLight.directDiffuse*=mix(1.0,aoBaked,0.2);
+    reflectedLight.directDiffuse*=mix(1.0,aoBaked,0.2);${ground?`
+    // The scenery's static shadow on the ground, beyond the live shadow map's box.
+    // The box turns with the sun and reaches at least its half-width from the
+    // centre in every direction on the ground, so a disc of that radius is covered.
+    float aoLive=distance(vImperiumAoWorld.xz,imperiumLiveShadow.xy);
+    float aoOutside=1.0-step(0.5,imperiumLiveShadow.z)*(1.0-smoothstep(imperiumLiveShadow.z-4.0,imperiumLiveShadow.z-1.0,aoLive));
+    float aoSun=1.0-smoothstep(0.12,0.45,aoTexel.b*${SUN_SHADOW_RANGE.toFixed(1)}-aoAbove)*aoInside*aoOutside*imperiumSunShadow;
+    reflectedLight.directDiffuse*=aoSun;
+    reflectedLight.directSpecular*=aoSun;`:''}
   }
 `;
 export function installBakedOcclusion(material,uniforms,{ground=false}={}){
@@ -171,7 +238,7 @@ export function installBakedOcclusion(material,uniforms,{ground=false}={}){
     shader.vertexShader=vertexDeclarations+shader.vertexShader.replace('#include <project_vertex>',vertexBody+'\n#include <project_vertex>');
     shader.fragmentShader=fragmentDeclarations+shader.fragmentShader.replace('#include <aomap_fragment>','#include <aomap_fragment>\n'+fragmentBody(ground));
   };
-  material.customProgramCacheKey=()=>`${oldKey}:baked-occlusion-v1:${ground?'ground':'standing'}`;
+  material.customProgramCacheKey=()=>`${oldKey}:baked-occlusion-v2:${ground?'ground':'standing'}`;
   material.userData.bakedOcclusion=ground?'ground':'standing';
   return true;
 }

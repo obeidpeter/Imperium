@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "stone_floor",
+  "page": "https://polyhaven.com/a/stone_floor",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-24T08:59:29.411Z",
+  "name": "Stone Floor",
+  "authors": [
+    "Dimitrios Savva"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "Displacement"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/stone_floor/stone_floor_diff_1k.png",
+      "bytes": 5739764,
+      "md5": "b0aad730f9ad86bad43d2debcd2f9f11",
+      "sha256": "4287494cbdf0019174efa49e4092d25820069cdf6567424a48c0942b6ba82421",
+      "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/stone_floor/stone_floor_nor_gl_1k.png",
+      "bytes": 5696130,
+      "md5": "30f3a186998bee5e2150d7659f81fd1b",
+      "sha256": "dd6c201d27525af6dc78f028b985adea946655ba9b96b8291086949c586b19ac",
+      "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_nor_gl_1k.png"
+    },
+    {
+      "map": "Displacement",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/stone_floor/stone_floor_disp_1k.png",
+      "bytes": 1693917,
+      "md5": "a5477b2ca11cac747c925bd3013cfbe9",
+      "sha256": "abee5d27d02102ecff700f7e2626b757da3e91181a8f7779e0d8ecdd2c15e403",
+      "path": "art-source/cc0/raw/polyhaven-stone_floor/stone_floor_disp_1k.png"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ import {addInhabitedEnvironment} from './environment-inhabited.js';
 import {createStagingRouteSampler} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
-import {createPaintedBackdrop} from './environment-backdrop.js';
+import {createPanorama} from './environment-panorama.js';
 import {addFinaleApproach} from './environment-finale.js';
 import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads} from './environment-ch5-pilot.js';
 import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks} from './environment-regional-world.js';
@@ -19,6 +19,10 @@ import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {bakeEnvironmentOcclusion,installBakedOcclusion} from './environment-baked-occlusion.js';
+import {buildTerrainSplat} from './terrain-splat.js';
+import {setTerrainSplat,refreshTerrainTextures} from './terrain-material.js';
+import {groundTextures} from './ground-textures.js';
+import {groundBiome} from '../ui/ground-layers.js';
 import {installCloudShadows} from './atmosphere.js';
 import {runSteps} from './build-steps.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,distantRiverCentre,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
@@ -26,20 +30,6 @@ export {gridToWorld} from './environment-layout.js';
 
 /** Self-contained 3D presentation. The supplied encounter is never modified.
  * time is elapsed seconds; repeated updates cannot advance simulation state. */
-// Most of the road grid's bounding box lies off the road, where every corner
-// of a triangle is fully transparent: drop those triangles (and the vertices
-// only they used) after the normals are computed, so the visible road is
-// unchanged and nothing is blended or uploaded for empty ground.
-export function dropClearRoadCells(geometry){
-  const index=geometry.index?.array,alpha=geometry.attributes.color;if(!index||!alpha||alpha.itemSize!==4)return 0;
-  const kept=[],remap=new Map(),attributes=Object.entries(geometry.attributes),out=Object.fromEntries(attributes.map(([name])=>[name,[]]));
-  for(let i=0;i<index.length;i+=3){if(alpha.getW(index[i])>0||alpha.getW(index[i+1])>0||alpha.getW(index[i+2])>0)kept.push(index[i],index[i+1],index[i+2]);}
-  // A triangle whose three corners are clear draws nothing anywhere inside it.
-  const remapped=kept.map(v=>{if(!remap.has(v)){remap.set(v,remap.size);for(const [name,a]of attributes)for(let k=0;k<a.itemSize;k++)out[name].push(a.array[v*a.itemSize+k]);}return remap.get(v);});
-  const dropped=index.length/3-kept.length/3;
-  for(const [name,a]of attributes)geometry.setAttribute(name,new THREE.Float32BufferAttribute(out[name],a.itemSize));
-  geometry.setIndex(remapped);return dropped;
-}
 export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
 // The same build in steps: it yields wherever a time-sliced build may give the
 // page a turn (build-steps.js); each step is a small part of the world.
@@ -47,7 +37,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
-  const library=createEnvironmentMaterials({loadTextures,profile}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=chapterFivePilotHeight(createGroundHeight(encounter,tileSize,{profile}),encounter,tileSize),level=createGroundHeight(encounter,tileSize,{profile,relief:false});
+  const library=createEnvironmentMaterials({loadTextures,profile,quality}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=chapterFivePilotHeight(createGroundHeight(encounter,tileSize,{profile}),encounter,tileSize);
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
   const e={id:encounter.id,kind:encounter.kind,width:encounter.width,height:encounter.height,terrain:terrainSnapshot,
     ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{})};
@@ -95,25 +85,15 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const groundUV=groundGeometry.attributes.uv;for(let i=0;i<groundUV.count;i++)groundUV.setXY(i,(pos.getX(i)+40)/2,(40-pos.getZ(i))/2);
   groundGeometry.computeVertexNormals();const ground=p.mesh(root,groundGeometry,m.ground);ground.name='continuous ground';ground.castShadow=false;ground.userData.environmentGround=true;
   yield;
-
-  const roadVertices=[],roadUV=[],roadColors=[],roadIndices=[];
-  // A single distance-field surface follows the authored road, with rounded
-  // joins and a feathered verge. No tile-sized quads or overlapping junctions.
-  if(roads.length){const points=roads.flat(),step=tileSize/10,pad=tileSize*.78,minX=Math.min(...points.map(v=>v.x))-pad,minZ=Math.min(...points.map(v=>v.z))-pad,nx=Math.ceil((Math.max(...points.map(v=>v.x))+pad-minX)/step),nz=Math.ceil((Math.max(...points.map(v=>v.z))+pad-minZ)/step);
-    for(let iz=0;iz<=nz;iz++){
-      for(let ix=0;ix<=nx;ix++){
-        const x=minX+ix*step,z=minZ+iz*step,surface=roadSurface.sample(x,z),tone=surface.tone;
-        // The tread never climbs a plateau bank; there it passes under the ground.
-        roadVertices.push(x,Math.min(height(x,z),level(x,z))+.021,z);roadUV.push(x*.38,z*.38);roadColors.push(tone,tone,tone,surface.opacity*(training?.62:1));
-        if(ix<nx&&iz<nz){const j=iz*(nx+1)+ix;roadIndices.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}
-      }
-      yield;
-    }
-  }
-  const roadGeometry=p.geo(new THREE.BufferGeometry());roadGeometry.setAttribute('position',new THREE.Float32BufferAttribute(roadVertices,3));roadGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(roadUV,2));roadGeometry.setAttribute('color',new THREE.Float32BufferAttribute(roadColors,4));roadGeometry.setIndex(roadIndices);roadGeometry.computeVertexNormals();
-  dropClearRoadCells(roadGeometry);
-  const road=p.mesh(root,roadGeometry,m.road);road.name='authored boundary road';road.castShadow=false;
+  // Which photographed layers lie where (terrain-splat.js): the cells, the road's
+  // tread and verge, slopes, the river's bank and wear, over the whole ground.
+  const splat=yield* buildTerrainSplat({e,tileSize,biome:groundBiome(profile.chapter),height,road:roadSurface,route:precinctRoute,training,
+    damp:profile.distantWater?(x,z)=>smooth((riverZ-z+12)/4)*(1-smooth((riverZ-z-11)/5)):undefined,bounds:{minX:-groundRadius,minZ:-groundRadius,maxX:groundRadius,maxZ:groundRadius}});
+  setTerrainSplat(library.terrain,splat);root.userData.terrainSplat={nx:splat.nx,nz:splat.nz,step:splat.step,minX:splat.minX,minZ:splat.minZ,maxX:splat.maxX,maxZ:splat.maxZ};
   yield;
+
+  // The road's tread is part of the ground's splat map: no overlay to draw or sort.
+  const road=null;
 
   // Shared instance batches keep structural detail from becoming thousands of
   // independent draw calls. Matrices use real solid geometry and cast shadows.
@@ -236,9 +216,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let river=null;
   if(profile.distantWater){
   const riverGeometry=p.geo(new THREE.PlaneGeometry(125,16,perf?70:130,12));riverGeometry.rotateX(-Math.PI/2);
+  // Its waves move in the water's vertex shader (finishEnvironmentMaterial, waves).
   river=p.mesh(root,riverGeometry,m.water,0,-1.24,riverZ);river.name='Danube';river.castShadow=false;river.receiveShadow=true;
-  const riverBase=Float32Array.from(riverGeometry.attributes.position.array);
-  animated.push(time=>{const a=riverGeometry.attributes.position;for(let i=0;i<a.count;i++){const xx=riverBase[i*3],zz=riverBase[i*3+2];a.setY(i,.023*Math.sin(xx*.64+time*.9)+.017*Math.sin(zz*1.7+xx*.17-time*.55));}a.needsUpdate=true;if(!perf)riverGeometry.computeVertexNormals();});
   }
   const flames=[];
   function fire(x,z,scale=1){const y=height(x,z),g=p.group(root,x,y,z);for(let i=0;i<5;i++){const a=i*1.256;p.beam(g,[Math.cos(a)*.47,.09,Math.sin(a)*.47],[-Math.cos(a)*.25,.18,-Math.sin(a)*.25],.065,m.charcoal);}
@@ -254,7 +233,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   yield;
   // Sky and contact occlusion baked from the finished static scene, sampled by
   // every environment surface on every tier (the horizon and panorama follow).
-  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
+  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,sun:profile.sunPosition,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
   yield;
   const groundSurfaces=new Set([m.ground,m.road,m.floor]),occluded=new Set();
   root.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh)return;for(const material of [o.material].flat())if(material&&!occluded.has(material)){occluded.add(material);installCloudShadows(material);if(material.userData.environmentFinish!=='water')installBakedOcclusion(material,occlusion.uniforms,{ground:groundSurfaces.has(material)||material.userData.environmentFinish==='floor'});}});
@@ -264,11 +243,12 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
   const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water,riverZ});root.add(horizon.group);
   yield;
-  const backdrop=createPaintedBackdrop(profile,{quality});root.add(backdrop.group);
+  // The far skyline: the region's panorama, or the painted backdrop until it loads.
+  const backdrop=createPanorama(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;
-  return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,
+  return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;const bounded=time%3600;wind.value=bounded;if(!perf&&library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
+    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600;wind.value=bounded;if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
     dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
     stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,disposed};}
   };

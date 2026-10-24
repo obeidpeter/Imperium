@@ -11,6 +11,32 @@ export const CLOUD_UNIFORMS=Object.freeze({cloudTime:{value:0},cloudStrength:{va
 // unfogged painting remained visible above them as detached crest fragments.
 // Keep the near onset and interior treatment; give the 550 m modeled landscape
 // room to recede before its 610 m painted continuation merges into the sky.
+// Ground mist: haze that lies low and thickens with distance where the land is
+// low, more in mist, rain, dust and smoke, a little at dawn and at night, none
+// indoors. It starts 18 m beyond the fog's near edge, so the board stays clear.
+// Three's fog uniforms cannot carry it, so, like the chapter grade, its strength
+// is written into the fog chunks when a stage is built (one renderer per stage).
+const BASE_FOG=Object.freeze(Object.fromEntries(['fog_pars_vertex','fog_vertex','fog_pars_fragment','fog_fragment'].map(key=>[key,T.ShaderChunk[key]])));
+export function groundMistStrength(profile={}){
+  if(profile.civic||profile.timeOfDay==='interior')return 0;
+  const weather={mist:.42,rain:.38,dust:.28,embers:.2}[profile.weather]??.14;
+  return Math.min(.5,weather+(profile.timeOfDay==='dawn'?.08:profile.timeOfDay==='night'?.1:0));
+}
+export function groundMistChunks(strength){
+  if(!(strength>0))return BASE_FOG;
+  const height='varying float vFogDepth;\n\tvarying float vFogHeight;';
+  return {
+    fog_pars_vertex:BASE_FOG.fog_pars_vertex.replace('varying float vFogDepth;',height),
+    // World height from the view-space position: the view matrix is a rotation and a translation.
+    fog_vertex:BASE_FOG.fog_vertex.replace('vFogDepth = - mvPosition.z;','vFogDepth = - mvPosition.z;\n\tvFogHeight = ( transpose( mat3( viewMatrix ) ) * ( mvPosition.xyz - viewMatrix[ 3 ].xyz ) ).y;'),
+    fog_pars_fragment:BASE_FOG.fog_pars_fragment.replace('varying float vFogDepth;',height),
+    fog_fragment:BASE_FOG.fog_fragment.replace('float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );',`float fogFactor = smoothstep( fogNear, fogFar, vFogDepth );
+		float groundMist = ( 1.0 - smoothstep( -1.5, 3.5, vFogHeight ) ) * smoothstep( fogNear + 18.0, fogNear + 200.0, vFogDepth ) * ${strength.toFixed(3)};
+		fogFactor = 1.0 - ( 1.0 - fogFactor ) * ( 1.0 - groundMist );`)
+  };
+}
+/** Writes this scene's ground mist into the fog chunks; returns its strength. */
+export function installGroundMist(profile){const strength=groundMistStrength(profile);Object.assign(T.ShaderChunk,groundMistChunks(strength));return strength;}
 export function landscapeFogRange(profile={},focusDistance=0){
   const focus=Number.isFinite(focusDistance)?Math.max(0,focusDistance):0,misty=['mist','rain'].includes(profile.weather),near=focus+(misty?6:12);
   const density=Number.isFinite(profile.fogDensity)&&profile.fogDensity>0?profile.fogDensity:.017;

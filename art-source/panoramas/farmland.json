@@ -1,0 +1,185 @@
+{
+ "key": "farmland",
+ "seed": 71,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 8.2,
+ "renderSeconds": 43.3,
+ "region": {
+  "seed": 71,
+  "near": 32,
+  "mid": 170,
+  "ridge": 0.25,
+  "plains": [
+   [
+    10,
+    60,
+    0.5
+   ]
+  ],
+  "ranges": [
+   [
+    185,
+    110,
+    1100,
+    10000
+   ]
+  ],
+  "forest": 0.22,
+  "lone": 0.012,
+  "fields": 0.66,
+  "rock": 0.03,
+  "river": "danube",
+  "land": [
+   0.22,
+   0.26,
+   0.11
+  ],
+  "dry": [
+   0.44,
+   0.38,
+   0.18
+  ],
+  "wood": [
+   0.06,
+   0.11,
+   0.04
+  ],
+  "rockc": [
+   0.36,
+   0.34,
+   0.3
+  ],
+  "fieldc": [
+   [
+    0.52,
+    0.42,
+    0.18
+   ],
+   [
+    0.46,
+    0.36,
+    0.15
+   ],
+   [
+    0.24,
+    0.29,
+    0.1
+   ],
+   [
+    0.36,
+    0.27,
+    0.14
+   ]
+  ],
+  "trees": [
+   [
+    "broadleaf",
+    1
+   ]
+  ],
+  "wall": [
+   0.6,
+   0.55,
+   0.45
+  ],
+  "roof": [
+   0.4,
+   0.15,
+   0.08
+  ],
+  "thatch": [
+   0.3,
+   0.25,
+   0.16
+  ],
+  "sun": [
+   305,
+   40,
+   3.9,
+   [
+    1,
+    0.95,
+    0.84
+   ]
+  ],
+  "sky": [
+   [
+    0.55,
+    0.6,
+    0.68
+   ],
+   0.55
+  ],
+  "landmarks": [
+   [
+    "granary",
+    42,
+    2000,
+    {}
+   ],
+   [
+    "village",
+    16,
+    2800,
+    {}
+   ],
+   [
+    "villa",
+    80,
+    1800,
+    {}
+   ],
+   [
+    "village",
+    300,
+    2500,
+    {}
+   ],
+   [
+    "watchtower",
+    118,
+    2200,
+    {}
+   ],
+   [
+    "village",
+    200,
+    3200,
+    {
+     "tiled": true
+    }
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "river": "danube",
+ "pools": 0,
+ "treeCrowns": 1067,
+ "landmarks": 133,
+ "partVertices": 16198,
+ "png": {
+  "bytes": 1513648,
+  "sha256": "3f9220c4dc1e817325da52762ace90cfbd9d090f4f30fa3dd591714f23641ecd"
+ }
+}

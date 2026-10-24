@@ -172,23 +172,6 @@ test('no chapter downloads the superseded Roman atlas, which only the complete h
   for(const scene of scenes){const atlases=tacticalAssets(scene.state.encounter);assert.ok(!atlases.includes('./assets/tactical/units-roman.webp'),scene.id);if(scene.state.encounter.kind==='battle')assert.ok(atlases.includes('./assets/tactical/units-roman-v031.webp'),scene.id);}
 });
 
-test('the road keeps every triangle that shows and the exact normals, and drops only clear ones',async()=>{
-  const {dropClearRoadCells}=await import('../src/showcase/environment.js');
-  // A 4x3 grid whose right part is clear; one bump makes the normals matter.
-  const nx=3,nz=2,position=[],color=[],uv=[],index=[];
-  for(let z=0;z<=nz;z++)for(let x=0;x<=nx;x++){position.push(x,x===1&&z===1?.3:0,z);uv.push(x,z);color.push(1,1,1,x<=1?.8:0);if(x<nx&&z<nz){const j=z*(nx+1)+x;index.push(j,j+nx+1,j+1,j+1,j+nx+1,j+nx+2);}}
-  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(position,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setAttribute('color',new T.Float32BufferAttribute(color,4));g.setIndex(index);g.computeVertexNormals();
-  const before=g.clone(),key=(geo,i)=>[geo.attributes.position.getX(i),geo.attributes.position.getY(i),geo.attributes.position.getZ(i)].join();
-  const shown=new Map();for(let i=0;i<before.attributes.position.count;i++)shown.set(key(before,i),[before.attributes.normal.getX(i),before.attributes.normal.getY(i),before.attributes.normal.getZ(i),before.attributes.color.getW(i)]);
-  const dropped=dropClearRoadCells(g);
-  assert.ok(dropped>0&&g.index.count/3===index.length/3-dropped);
-  for(let t=0;t<g.index.count;t+=3)assert.ok([0,1,2].some(k=>g.attributes.color.getW(g.index.array[t+k])>0),'no kept triangle is wholly clear');
-  for(let i=0;i<g.attributes.position.count;i++){const [nx_,ny,nz_,a]=shown.get(key(g,i));assert.deepEqual([g.attributes.normal.getX(i),g.attributes.normal.getY(i),g.attributes.normal.getZ(i),g.attributes.color.getW(i)],[nx_,ny,nz_,a]);}
-  const visible=index.length/3-[...Array(index.length/3).keys()].filter(t=>[0,1,2].every(k=>color[index[t*3+k]*4+3]===0)).length;
-  assert.equal(g.index.count/3,visible,'every triangle with any opacity is kept');
-  assert.ok(g.attributes.position.count<before.attributes.position.count,'vertices only clear triangles used are gone');
-});
-
 test('procedural surface tiles are generated once per session; each stage owns and frees its own textures',async()=>{
   const {createEnvironmentMaterials}=await import('../src/showcase/environment-materials.js');
   const first=createEnvironmentMaterials({loadTextures:false}),second=createEnvironmentMaterials({loadTextures:false});
