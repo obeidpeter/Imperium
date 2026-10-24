@@ -9,8 +9,9 @@ import {nextRandom,pickWeighted,randomInt} from './rng-streams.js';
 // tiles to the place 0.38 reserves for it; Chapter III's hidden man on one of
 // the nearest free tiles to his own; each reinforcement's entry on its tile or
 // a neighbour; whether a band of raiders lies in wait (from Chapter IV, by the
-// level's chance) and where; and each enemy band's temperament. Every tile it
-// moves anything to is one the soldier can reach from his start. Pure.
+// level's chance, unless the battle opens with a column to bring out) and
+// where; and each enemy band's temperament. Every tile it moves anything to is
+// one the soldier can reach from his start. Pure.
 
 const near=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y),far=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
 const byNearness=from=>(a,b)=>near(a,from)-near(b,from)||a.y-b.y||a.x-b.x;
@@ -43,8 +44,9 @@ export function battleVariety(state,e,streams){
     const options=free.filter(p=>far(p,u)<=PLACES.hiddenReach&&!living.some(v=>v!==u&&v.x===p.x&&v.y===p.y)).sort(byNearness(u));
     if(options.length)out.hidden[u.id]=pick(streams,options,PLACES.hidden);
   }
-  // From Chapter IV a band of raiders may lie in wait, by the level's chance, on one of the nearest free tiles to its own.
-  const chance=state.chapter>=4?HIDDEN_BANDS.chance[e.difficulty??state.difficulty??'standard']??0:0;
+  // From Chapter IV a band of raiders may lie in wait, by the level's chance, on one of the nearest free tiles to its
+  // own; not where the battle opens with a column to bring out.
+  const chance=state.chapter>=4&&!HIDDEN_BANDS.except.includes(e.mission?.mode)?HIDDEN_BANDS.chance[e.difficulty??state.difficulty??'standard']??0:0;
   if(chance>0)for(const u of living.filter(u=>u.side==='enemy'&&HIDDEN_BANDS.roles.includes(u.role)).sort((a,b)=>a.id.localeCompare(b.id))){
     if(nextRandom(streams,'world')>=chance)continue;out.lying[u.id]=true;
     const options=free.filter(p=>far(p,u)<=HIDDEN_BANDS.reach&&!living.some(v=>v!==u&&v.x===p.x&&v.y===p.y)).sort(byNearness(u));

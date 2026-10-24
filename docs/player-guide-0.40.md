@@ -1373,8 +1373,10 @@ still commit when threatened, so always use the current forecast.
   archer.
 
 - From Chapter IV, on Standard and Veteran, a band of raiders may lie in
-  wait near its place, hidden and holding its javelins. It falls on the
-  first of yours to come near, an ambush if you have not seen it.
+  wait near its place, hidden and holding its javelins, unless the battle
+  begins with a column to bring out: then the raiders hunt the column.
+  It falls on the first of yours to come near, an ambush if you have not
+  seen it.
   **Scout** reveals it, and so does a squad of yours that notices it. It
   does not wait for ever: once one of yours nears the objective, or at
   the end of round 2, it rises and joins the attack.

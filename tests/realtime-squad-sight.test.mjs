@@ -102,6 +102,9 @@ test('from Chapter IV a raider band may start lying in wait, never on Story: hid
   const lyingIn=level=>Array.from({length:40},(_,i)=>battleVariety({chapter:5,difficulty:level,encounterOptions:{}},record(level),splitStreams(i+1))).filter(v=>v.lying.enemy0).length;
   assert.equal(lyingIn('story'),0);assert.ok(lyingIn('standard')>5&&lyingIn('veteran')>lyingIn('standard')-6,`${lyingIn('standard')} and ${lyingIn('veteran')} of 40`);
   assert.ok(Array.from({length:40},(_,i)=>battleVariety({chapter:5,encounterOptions:{}},record('veteran'),splitStreams(i+1))).every(v=>!v.lying.enemy1),'only raiders lie in wait');
+  // Where the battle opens with a column to bring out, the raiders hunt the column instead.
+  const column={...record('veteran'),mission:{mode:'extract',waves:[]}};
+  assert.ok(Array.from({length:40},(_,i)=>battleVariety({chapter:5,encounterOptions:{}},column,splitStreams(i+1))).every(v=>!Object.keys(v.lying).length),'none lies in wait before a column');
   // The band waits, hidden; our squad standing near does not know of it.
   const w=field([roman('ours',[20,30],{standing:[['advance_with_hero','hero'],['hold_line',null]]}),band('raiders',[45,30],{role:'raider',lying:true})],{actors:[hero({at:[14,30]})]});
   const raiders=squadById(w,'raiders');assert.ok(membersOf(w,raiders).every(m=>m.hidden));
