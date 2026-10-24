@@ -63,7 +63,8 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
     pause(value){if(latest)latest.paused=value;stage?.setPaused(value);},
     unlock(){return stage?.sound?.unlock();},
     audio(enabled,volume){if(latest){latest.audio=enabled;latest.audioVolume=volume;}stage?.setAudio(enabled,volume);},
-    quality(value){if(latest)latest.quality=value;stage?.applyQuality(value);},
+    // {world:false} changes only what follows at once; the next battle is built at the new tier.
+    quality(value,options){if(latest)latest.quality=value;stage?.applyQuality(value,options);},
     figures(value){if(latest)latest.figureStyle=value;stage?.setFigureStyle?.(value);},
     actionCamera(value){if(latest)latest.actionCamera=value;if(stage)stage.actionCamera=value!==false;},
     remains(value){if(latest)latest.battleRemains=value;stage?.setBattleRemains?.(value);},

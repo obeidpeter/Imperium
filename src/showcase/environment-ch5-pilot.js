@@ -2,11 +2,12 @@ import * as T from '../../vendor/three/three.module.js';
 import {stagingEdge} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {smooth} from './environment-layout.js';
+import {CH5_FORTRESS_LAYOUT} from '../ui/world-layouts.js';
 
 /** Original Blender modular architecture, and a complete offline/Performance
  * fallback. Every solid footprint stays outside the full rules rectangle;
  * visual detail never creates navigation, cover, doors or picking targets. */
-export const CH5_PILOT_IDS=Object.freeze(['ch5-mine','ch5-wall','ch5-camp']);
+export const CH5_PILOT_IDS=CH5_FORTRESS_LAYOUT.encounters;
 export const CH5_KIT_COMPONENTS=Object.freeze({
   wall_bay:[4.3,5.6,2.2],wall_breached:[4.4,4.8,2.8],wall_return:[4.2,3.8,6.4],
   tower_intact:[5,8,5.7],tower_broken:[5,6.6,5.7],gate_arch:[6.2,5.7,1.9],
@@ -47,44 +48,38 @@ export function chapterFivePilotHeight(base,e,tileSize=2.5){
 }
 
 // Compact two-tower frontage close to the far edge, with receding wings and
-// work spaces beyond it. It scales to both the turn board and the expanded
-// real-time field; no hard-coded position can fall inside the larger map.
+// work spaces beyond it (CH5_FORTRESS_LAYOUT in src/ui/world-layouts.js). It
+// scales to both the turn board and the expanded real-time field; no
+// hard-coded position can fall inside the larger map.
 export function getChapterFiveKitPlacements(e,{chapter=5,tileSize=2.5}={}){
   if(chapter!==5||!isChapterFivePilot(e))return [];
-  const camp=e.id==='ch5-camp',edge=e.id==='ch5-mine'?'east':'north';
-  const anchor=stagingEdge(e,edge,tileSize,5.1),placements=[];
+  const layout=CH5_FORTRESS_LAYOUT,camp=e.id==='ch5-camp',edge=layout.edges[e.id]??layout.defaultEdge;
+  // A value that differs between the courtyard and the battles.
+  const pick=v=>v&&typeof v==='object'&&!Array.isArray(v)?(camp?v.camp:v.field):v;
+  const anchor=stagingEdge(e,edge,tileSize,layout.inset),placements=[];
   const add=(component,x,z,yaw=0,scale=[1,1,1])=>{
     const a=anchor.angle,c=Math.cos(a),s=Math.sin(a),i=placements.length;
     const item={id:'ch5-fortress-kit',component,x:anchor.x+x*c+z*s,z:anchor.z-x*s+z*c,yaw:a+yaw,scale,
       key:`ch5-kit:${component}:${i}`,fallbackName:`ch5-kit-fallback:${component}:${i}`};
     placements.push(item);return item;
   };
-  add('gate_arch',0,.4);
-  add(camp?'tower_intact':'tower_broken',-5.3,1.1);
-  add('tower_intact',5.3,1.1);
   const along=(edge==='east'?e.height:e.width)*tileSize;
-  const bays=Math.min(6,Math.max(2,Math.ceil((along*.5-8)/4.15)));
-  for(const side of [-1,1])for(let i=0;i<bays;i++){
-    add(!camp&&side<0&&i===0?'wall_breached':'wall_bay',side*(9.4+i*4.15),1.5+i*.15);
-    if(i%2===1)add('buttress',side*(9.4+i*4.15),.05+i*.15);
+  for(const entry of layout.frontage){
+    const wall=entry.wall;
+    if(!wall){add(pick(entry.component),entry.x,entry.z,entry.yaw??0,[...(pick(entry.scale)??[1,1,1])]);continue;}
+    const bays=Math.min(wall.max,Math.max(wall.min,Math.ceil((along*.5-wall.clear)/wall.step)));
+    for(const side of [-1,1])for(let i=0;i<bays;i++){
+      const x=side*(wall.first+i*wall.step);
+      add((side<0&&i===0?pick(wall.breach):undefined)??wall.bay,x,wall.z+i*wall.rise);
+      if(i%wall.buttress.every===1)add(wall.buttress.component,x,wall.buttress.z+i*wall.rise);
+    }
   }
-  add('mine_frame',-10.0,-1.5,0,camp?[1,1,1]:[1.2,1.15,1.25]);
-  add('roof_gallery',10.5,6.6);
-  add('roof_gallery',-12.0,6.6);
-  add('plaster_repair',10.5,8.9);
-  add('wall_return',-13,9.1);
-  add('stair_flight',6.6,6.6);
-  add('paved_threshold',0,-1.8);
-  add('drain_channel',14,-.9);
-  // River-facing quay is set on a lower terrace outside the east/north corner.
+  // River-facing quay on a lower terrace outside the east/north corner. Water
+  // structures use the authored water datum: sampling the lowest bank corner
+  // would sink the deck into the carved channel on smaller boards.
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
-  for(const [component,x,z,yaw,groundY]of [
-    ['landing_deck',hx+6,-hz-9,0,-1.4],['quay_revetment',hx+5,-hz-5,0,-1.2],
-    ['bluff_section',hx+11,-hz-5,0],['bluff_section',hx+18,-hz-5,.08]
-  ]){
-    // Water structures use the authored water datum. Sampling the lowest bank
-    // corner would sink the deck into the carved channel on smaller boards.
-    const i=placements.length;placements.push({id:'ch5-fortress-kit',component,x,z,yaw,...(Number.isFinite(groundY)?{groundY}:{}),scale:[1,1,1],key:`ch5-kit:${component}:${i}`,fallbackName:`ch5-kit-fallback:${component}:${i}`});
+  for(const {component,x,z,yaw,groundY}of layout.quay){
+    const i=placements.length;placements.push({id:'ch5-fortress-kit',component,x:hx+x,z:-hz+z,yaw,...(Number.isFinite(groundY)?{groundY}:{}),scale:[1,1,1],key:`ch5-kit:${component}:${i}`,fallbackName:`ch5-kit-fallback:${component}:${i}`});
   }
   return placements;
 }

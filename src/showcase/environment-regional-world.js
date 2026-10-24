@@ -5,14 +5,12 @@ import {stagingEdge,getEncounterStaging} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
+import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
-// Immutable presentation plans. Placement follows full rules-board bounds and
-// real boundary roads; no scenery can add a destination, blocker or reward.
-export const REGIONAL_WORLD_KITS=Object.freeze({
-  1:'danube-military-kit',2:'river-wetlands-kit',3:'danube-military-kit',4:'danube-military-kit',
-  6:'italian-marching-kit',7:'italian-marching-kit',8:'river-wetlands-kit',9:'ch5-fortress-kit',
-  10:'provincial-civic-kit',11:'roman-monumental-kit',12:'roman-monumental-kit'
-});
+// The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
+// follows full rules-board bounds and real boundary roads; no scenery can add
+// a destination, blocker or reward.
+export {REGIONAL_WORLD_KITS};
 export {REGIONAL_PROP_CHAPTERS};
 export const regionalChapter=e=>Number(/^ch(\d+)-/.exec(e?.id??'')?.[1]);
 export const hasRegionalWorld=e=>!!REGIONAL_WORLD_KITS[regionalChapter(e)]&&!isChapterFivePilot(e);
@@ -23,26 +21,12 @@ export function regionalPlacementBounds(p){
   return {minX:p.x-rx,maxX:p.x+rx,minZ:p.z-rz,maxZ:p.z+rz};
 }
 
-// Each entry is a useful regional building or working space, not a generic
-// facade repeated with a different colour. Different mission approaches rotate
-// the frontage toward their existing landmark road, without turning the map.
-const plans={
-  1:['timber_gate','palisade_bay','watch_platform','barrack_gable','forge_shelter','storehouse_raised','stone_well','signal_beacon'],
-  2:['ferry_shelter','reed_screen','stilt_store','fish_drying_rack','flood_revetment','duckboard_corner','rope_bollards','bridge_trestle'],
-  3:['tiled_portico','barrack_gable','storehouse_raised','granary_vent','forge_shelter','ditch_bridge','milestone_base','stone_well'],
-  4:['timber_gate','watch_platform','palisade_bay','storehouse_raised','tiled_portico','granary_vent','signal_beacon','ditch_bridge'],
-  6:['canvas_windbreak','ridge_tent','officers_awning','wagon_shed','baggage_rack','field_kitchen','drainage_crossing','road_marker'],
-  7:['command_pavilion','ridge_tent','officers_awning','wagon_shed','vine_pergola','field_kitchen','marching_gate','roadside_shrine'],
-  8:['ferry_shelter','stilt_store','reed_screen','mooring_jetty','landing_steps','flood_revetment','levee_stair','duckboard_straight'],
-  9:['gate_arch','wall_bay','tower_intact','roof_gallery','wall_return','plaster_repair','paved_threshold','drain_channel'],
-  10:['tribunal_portico','raised_granary','tile_roof_store','market_stall','pergola_arcade','produce_store','irrigation_sluice','boundary_cairn'],
-  11:['administrative_portico','archive_stalls','colonnade_bay','garden_exedra','screen_wall','civic_fountain','statue_plinth','vaulted_entry'],
-  12:['checkpoint_arch','screen_wall','colonnade_bay','apsidal_hall','administrative_portico','tribunal_dais','monumental_stair','statue_plinth']
-};
+// Different mission approaches rotate the frontage toward their existing
+// landmark road, without turning the map.
 export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height))return [];
-  const kit=REGIONAL_WORLD_KITS[chapter],plan=plans[chapter],staging=getEncounterStaging(e,{chapter,civic:e.kind==='contest'}),camp=e.id===`ch${chapter}-camp`,civic=e.kind==='contest';
-  const front=camp?'north':staging.landmarkEdge,opposite=front==='east'?'north':'east',out=[];
+  const kit=REGIONAL_WORLD_KITS[chapter],plan=REGIONAL_PLANS[chapter],staging=getEncounterStaging(e,{chapter,civic:e.kind==='contest'}),camp=e.id===`ch${chapter}-camp`,civic=e.kind==='contest';
+  const front=camp?'north':staging.landmarkEdge,edges={front,opposite:front==='east'?'north':'east',back:front==='east'?'south':'west'},out=[];
   const add=(component,edge,along,gap=1.7,yaw=0,scale=[1,1,1],id=kit)=>{
     const dims=regionalComponentDimensions(id,component);if(!dims)throw new Error(`Missing regional component ${id}/${component}`);
     const depth=Math.abs(Math.cos(yaw))*dims[2]*scale[2]+Math.abs(Math.sin(yaw))*dims[0]*scale[0];
@@ -51,34 +35,14 @@ export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=
     // staging frame points outward, so turn the front back toward the board.
     out.push({id,component,x:a.x+along*c,z:a.z-along*s,yaw:a.angle+Math.PI+yaw,scale,key:`regional:${chapter}:${component}:${i}`,fallbackName:`regional-fallback:${chapter}:${component}:${i}`});
   };
-  if(civic&&chapter>=10){
-    // Existing cutaway audience envelope stays intact. Shallow replacements
-    // line the open entrance and far outer service courts, clear of its walls.
-    add(chapter===10?'tally_counter':'tribunal_dais','north',0,1.1);
-    add(chapter===10?'market_stall':'archive_stalls','south',-8,3.2);
-    add(chapter===10?'public_fountain':'civic_fountain','south',8,3.2);
-    add(plan[0],'north',0,13);
-    add(plan[1],'west',0,12);add(plan[2],'east',0,12);
-  }else if(e.id==='ch12-confrontation'){
-    // Keep the authored Aurelian curtain and distant cohorts. New civic
-    // buildings belong to the city behind it, not to the occupied army verge.
-    add('checkpoint_arch','east',0,6.4);
-    add('administrative_portico','east',-18,19);add('apsidal_hall','east',18,21);
-    add('colonnade_bay','north',-5,9);add('colonnade_bay','north',5,9);
-    add('statue_plinth','south',-7,7);add('garden_exedra','south',7,11);
-  }else{
-    const centre=regionalComponentDimensions(kit,plan[0])[0],left=regionalComponentDimensions(kit,plan[1])[0],right=regionalComponentDimensions(kit,plan[2])[0];
-    add(plan[0],front,0,2.4);add(plan[1],front,-(centre+left)/2-1.1,2.8);add(plan[2],front,(centre+right)/2+1.1,2.8);
-    add(plan[3],opposite,-8,3.3);add(plan[4],opposite,8,4.3);
-    const back=front==='east'?'south':'west';add(plan[5],back,-7,4.5);add(plan[6],back,7,4.0);
-    add(plan[7],front,0,16.5);
-    if(camp){add(plan[3],opposite,-21,4.5);add(plan[4],opposite,21,4.5);}
-    if(chapter===9){
-      add('colonnade_bay','west',-6,10.4,Math.PI/2,[1,1,1],'roman-monumental-kit');
-      add('colonnade_bay','west',6,10.4,Math.PI/2,[1,1,1],'roman-monumental-kit');
-    }
-    if(chapter===10){add('olive_press_frame','west',15,5);add('farm_courtyard_wall','south',0,9);}
-  }
+  const width=slot=>regionalComponentDimensions(kit,plan[slot])[0];
+  const place=entry=>{
+    if(entry.camp&&!camp)return;
+    const {beside}=entry,along=beside?beside.side*((width(beside.slot)+width(entry.slot))/2+beside.spacing):entry.along;
+    add(entry.component??plan[entry.slot],edges[entry.edge]??entry.edge,along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
+  };
+  const layout=civic&&chapter>=10?REGIONAL_HEARINGS[chapter]:ENCOUNTER_LAYOUTS[e.id]??[...REGIONAL_FRONTAGE,...(REGIONAL_CHAPTER_EXTRAS[chapter]??[])];
+  for(const entry of layout)place(entry);
   return out;
 }
 

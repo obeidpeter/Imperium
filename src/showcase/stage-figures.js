@@ -28,7 +28,7 @@ export const stageFigures={
   // The unit's figure, replaced when its key changed. A new figure waits in the
   // queue while the stage is first built (prepare builds them a few at a time).
   syncFigure(u,encounter){
-    const vComm=this.commendationsOf(u),styleKey=figureStyleKey(u,{commendations:vComm,quality:this.quality,figureStyle:this.figureStyle});
+    const vComm=this.commendationsOf(u),styleKey=figureStyleKey(u,{commendations:vComm,quality:this.worldQuality,figureStyle:this.figureStyle});
     const actor=this.actors.get(u.id);if(actor&&actor.group.userData.styleKey===styleKey)return actor;
     if(!actor&&this.figureQueue){this.figureQueue.add(u.id);return null;}
     return this.placeFigure(u,{styleKey,vComm,encounter});
@@ -37,7 +37,7 @@ export const stageFigures={
     const actor=replaceStageActor({actors:this.actors,id:u.id,scene:this.scene,
       create:()=>(this.figureStyle==='painted'&&createPaintedActor(u,
         {chapter:this.chapter,contest:encounter.kind==='contest',light:this.paintedLight,lighting:this.paintedLighting}))||createActor(u,
-          {quality:this.quality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
+          {quality:this.worldQuality,chapter:this.chapter,rank:this.rank,commendations:vComm,palette:this.ceremony?.palettes?.[u.id]}),
       prepare:candidate=>{
         if(candidate.painted)this.loadPaintedArt();this.attachFormation(u,candidate);candidate.group.userData.unitId=u.id;
         candidate.group.userData.styleKey=styleKey;
@@ -70,7 +70,7 @@ export const stageFigures={
     const ranks=actor.crowd?.ranks??[];actor.crowd?.dispose();actor.crowd=null;
     if(!formationEligible(unit,{chapter:this.chapter,contest:this.encounter?.kind==='contest'}))return;
     // A real-time squad shows every man it has; a turn-based unit as many as the quality allows.
-    const max=Number.isFinite(unit.crowd)?unit.crowd:Math.min(FORMATION_LIMIT[this.quality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
+    const max=Number.isFinite(unit.crowd)?unit.crowd:Math.min(FORMATION_LIMIT[this.worldQuality]??FORMATION_LIMIT.balanced,formationSlots(unit).length);
     actor.crowd=actor.painted?actor.createCrowd?.(max)??null:createSkinnedCrowd(actor.group,{max});actor.crowd?.inherit?.(ranks);
     if(actor.crowd&&!actor.crowdOwned){const dispose=actor.dispose.bind(actor);actor.dispose=()=>{actor.crowd?.dispose();dispose();};actor.crowdOwned=true;}
   },

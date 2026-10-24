@@ -26,6 +26,14 @@ test('stored preferences stand over the defaults, and anything unknown or out of
   for (const unreadable of [null, '', 'not json', 'null', '7']) assert.deepEqual(loadSettings(unreadable), loadSettings(null), String(unreadable));
 });
 
+test('the quality the player chose is kept apart from the tier slow rendering lowered', () => {
+  assert.equal(loadSettings(null, {phone: true}).qualityChoice, 'performance');
+  assert.equal(loadSettings(JSON.stringify({quality: 'balanced'})).qualityChoice, 'balanced', 'Saved before the choice was kept apart: the saved quality stands for it');
+  const lowered = loadSettings(JSON.stringify({quality: 'performance', qualityChoice: 'high'}));
+  assert.equal(lowered.quality, 'performance');assert.equal(lowered.qualityChoice, 'high');
+  assert.equal(loadSettings(JSON.stringify({quality: 'balanced', qualityChoice: 'ultra'})).qualityChoice, 'balanced');
+});
+
 test('every Settings checkbox in the toggle table is on the panel and shows its setting', () => {
   const panel = settings => {let html = '';createPanels(() => ({settings: {...loadSettings(null), ...settings}, showModal: (_, body) => {html = body;}})).showSettings();return html;};
   for (const [id, toggle] of Object.entries(SETTING_TOGGLES)) {
@@ -51,4 +59,16 @@ test('the app stores each toggle as the player sets it, and a redrawing toggle c
     await app.change(`#${id}`, {checked: true});assert.equal(app.settings()[key], true, id);
   }
   assert.equal(G.serialize(app.saved()), G.serialize(drill), 'Settings never touch the chronicle');
+});
+
+test('a quality chosen in Settings is saved as the player\'s choice as well as the quality in use', async t => {
+  const drill = G.newGame('Quality');G.choose(drill, G.getChapter(drill).decision.options[0].id);G.startEncounter(drill);
+  const app = await bootApp(t, {name: 'settings-quality', save: drill});
+  await app.click('continue');
+  if (!app.doc.querySelector('[data-cmd="settings"]')) await app.click('menu');
+  await app.click('settings');
+  for (const quality of ['performance', 'high']) {
+    await app.change('#graphics-quality', {value: quality});
+    assert.equal(app.settings().quality, quality);assert.equal(app.settings().qualityChoice, quality);
+  }
 });

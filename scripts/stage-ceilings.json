@@ -1,0 +1,341 @@
+{
+  "note": "Stage benchmark regression ceilings: still-overview draw calls, triangles and shader programs per scene and quality, with headroom. Written on purpose by --write-ceilings; checked in CI by --ceilings.",
+  "ceilings": {
+    "ch1-road": {
+      "performance": {
+        "calls": 81,
+        "triangles": 177000,
+        "programs": 43,
+        "recorded": {
+          "calls": 73,
+          "triangles": 160767,
+          "programs": 41,
+          "gpuBytes": 36971654,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 88,
+        "triangles": 372000,
+        "programs": 50,
+        "recorded": {
+          "calls": 80,
+          "triangles": 337638,
+          "programs": 48,
+          "gpuBytes": 47758620,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch2-marsh": {
+      "performance": {
+        "calls": 94,
+        "triangles": 195000,
+        "programs": 45,
+        "recorded": {
+          "calls": 85,
+          "triangles": 176873,
+          "programs": 43,
+          "gpuBytes": 36829182,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 91,
+        "triangles": 322000,
+        "programs": 53,
+        "recorded": {
+          "calls": 82,
+          "triangles": 292297,
+          "programs": 51,
+          "gpuBytes": 50330950,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch3-station": {
+      "performance": {
+        "calls": 84,
+        "triangles": 185000,
+        "programs": 43,
+        "recorded": {
+          "calls": 76,
+          "triangles": 167296,
+          "programs": 41,
+          "gpuBytes": 31070552,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 90,
+        "triangles": 416000,
+        "programs": 50,
+        "recorded": {
+          "calls": 81,
+          "triangles": 377336,
+          "programs": 48,
+          "gpuBytes": 41772044,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch4-gate": {
+      "performance": {
+        "calls": 117,
+        "triangles": 274000,
+        "programs": 47,
+        "recorded": {
+          "calls": 106,
+          "triangles": 248750,
+          "programs": 45,
+          "gpuBytes": 42172964,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 117,
+        "triangles": 544000,
+        "programs": 53,
+        "recorded": {
+          "calls": 106,
+          "triangles": 494312,
+          "programs": 51,
+          "gpuBytes": 54682384,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch5-mine": {
+      "performance": {
+        "calls": 140,
+        "triangles": 260000,
+        "programs": 48,
+        "recorded": {
+          "calls": 127,
+          "triangles": 235498,
+          "programs": 46,
+          "gpuBytes": 45093749,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 152,
+        "triangles": 482000,
+        "programs": 52,
+        "recorded": {
+          "calls": 138,
+          "triangles": 437313,
+          "programs": 50,
+          "gpuBytes": 67594293,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch6-wells": {
+      "performance": {
+        "calls": 125,
+        "triangles": 242000,
+        "programs": 46,
+        "recorded": {
+          "calls": 113,
+          "triangles": 219178,
+          "programs": 44,
+          "gpuBytes": 46924119,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 124,
+        "triangles": 375000,
+        "programs": 52,
+        "recorded": {
+          "calls": 112,
+          "triangles": 340503,
+          "programs": 50,
+          "gpuBytes": 64621069,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch7-legion": {
+      "performance": {
+        "calls": 139,
+        "triangles": 344000,
+        "programs": 48,
+        "recorded": {
+          "calls": 126,
+          "triangles": 312072,
+          "programs": 46,
+          "gpuBytes": 48627916,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 137,
+        "triangles": 629000,
+        "programs": 55,
+        "recorded": {
+          "calls": 124,
+          "triangles": 571384,
+          "programs": 53,
+          "gpuBytes": 63106248,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch8-ferry": {
+      "performance": {
+        "calls": 137,
+        "triangles": 384000,
+        "programs": 50,
+        "recorded": {
+          "calls": 124,
+          "triangles": 348192,
+          "programs": 48,
+          "gpuBytes": 49523390,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 138,
+        "triangles": 665000,
+        "programs": 58,
+        "recorded": {
+          "calls": 125,
+          "triangles": 604485,
+          "programs": 56,
+          "gpuBytes": 64302432,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch9-wing": {
+      "performance": {
+        "calls": 147,
+        "triangles": 305000,
+        "programs": 48,
+        "recorded": {
+          "calls": 133,
+          "triangles": 276544,
+          "programs": 46,
+          "gpuBytes": 50359702,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 141,
+        "triangles": 503000,
+        "programs": 54,
+        "recorded": {
+          "calls": 128,
+          "triangles": 456833,
+          "programs": 52,
+          "gpuBytes": 68504510,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch10-road": {
+      "performance": {
+        "calls": 142,
+        "triangles": 332000,
+        "programs": 49,
+        "recorded": {
+          "calls": 129,
+          "triangles": 301032,
+          "programs": 47,
+          "gpuBytes": 44369752,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 142,
+        "triangles": 591000,
+        "programs": 56,
+        "recorded": {
+          "calls": 129,
+          "triangles": 536916,
+          "programs": 54,
+          "gpuBytes": 57763282,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch11-accounts": {
+      "performance": {
+        "calls": 128,
+        "triangles": 164000,
+        "programs": 51,
+        "recorded": {
+          "calls": 116,
+          "triangles": 148766,
+          "programs": 49,
+          "gpuBytes": 61118821,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 140,
+        "triangles": 302000,
+        "programs": 55,
+        "recorded": {
+          "calls": 127,
+          "triangles": 274523,
+          "programs": 53,
+          "gpuBytes": 78900709,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    },
+    "ch12-confrontation": {
+      "performance": {
+        "calls": 152,
+        "triangles": 441000,
+        "programs": 48,
+        "recorded": {
+          "calls": 138,
+          "triangles": 400354,
+          "programs": 46,
+          "gpuBytes": 41989034,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      },
+      "balanced": {
+        "calls": 149,
+        "triangles": 865000,
+        "programs": 55,
+        "recorded": {
+          "calls": 135,
+          "triangles": 785732,
+          "programs": 53,
+          "gpuBytes": 55939062,
+          "source": "production dist",
+          "date": "2026-10-24T08:32:25.565Z"
+        }
+      }
+    }
+  }
+}

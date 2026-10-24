@@ -18,6 +18,8 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
    - Store the key as a **network secret**: Secret type **Bearer**, Allowed websites `api.tripo3d.ai`, header `Authorization` with prefix `Bearer`. The agent proxy adds the header to every request for that host, so the session never sees the key and the API client sends no key of its own. Only where network secrets are unavailable, use an environment variable `TRIPO_API_KEY` instead.
    - Check from a session without generating anything: `curl -sS https://api.tripo3d.ai/v2/openapi/user/balance` should answer `"code":0` with the balance. `"code":1002` ("Authentication failed") means the secret did not reach the request: the session predates the secret, or the value, host or prefix is wrong.
    - Never commit the key or paste it into a chat.
+**In one command:** `npm run asset:setup` installs Blender's Python module, builds the Basis Universal encoder and installs the glTF-Transform modules and Playwright under `.tools/` (ignored by git), then writes `.tools/env.sh`; run `. .tools/env.sh` to set `BLENDER_PYTHON`, `BASISU`, `ASSET_MODULES` and `PLAYWRIGHT_MODULE`. `npm run asset:setup -- --check` installs nothing and reports which tools work; `--only bpy,basisu` limits it and `--dir` puts them elsewhere. It needs Python 3.13, `cmake`, a C++ compiler and `curl`, and network access to PyPI, npm and crates.io (the encoder's source comes from the crates.io package `basis-universal-sys` 0.3.1, which vendors Basis Universal 1.16.4). Each step by hand:
+
 2. **Blender**, either way:
    - Blender's Python module: `python3 -m venv /tmp/blender && /tmp/blender/bin/pip install bpy==5.2.2`, then `export BLENDER_PYTHON=/tmp/blender/bin/python`. The wheel must match the Python version (5.2.2 installs on Python 3.13); it takes about 1 GB.
    - The Blender 5.2 application: `export BLENDER=/path/to/blender`.
@@ -171,14 +173,16 @@ Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambi
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 |
-| Shell plus Chapter I (the 3D view since the asset foundation) | 12,000,000 (8,000,000 until 0.37.0, then 10,000,000) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 |
-| Shell plus any one chapter, with its 2D art | 14,000,000 (new) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) |
-| Complete campaign | 50,000,000 (24,000,000 until the asset foundation) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) | Used with the regional worlds (unreleased) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 | 809,581 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 16,000,000 (8,000,000 until 0.37.0, then 10,000,000, then 12,000,000 until the worlds and gameplay plan) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 | 7,678,904 |
+| Shell plus any one chapter, with its 2D art | 24,000,000 (14,000,000 until the worlds and gameplay plan) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) | 12,589,026 (Chapter V) |
+| Complete campaign | 80,000,000 (24,000,000 until the asset foundation, then 50,000,000) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 | 26,600,463 |
 
 The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+The [worlds and gameplay plan](worlds-and-gameplay-plan.md) raises three limits: Chapter I for the 3D view to 16 MB, any one chapter with its 2D art to 24 MB, and the complete campaign to 80 MB. The extra room is for the regional ground textures, trees, rocks, board kit, landmarks and new figures to come. The 2 MB first load, the external requirement, is unchanged. Before that work, with the regional worlds of PR #26, Chapter V with its 2D art was the largest chapter at 12,589,026 bytes. Chapter I took 7,678,904 for the 3D view and the complete campaign 26,600,463.
 
 The asset foundation takes the 2D view's art (unit atlases, action sheets, ground and prop atlases) out of the 3D download: the 2D view and painted figures add it when chosen. It raises the Chapter I limit to 12 MB and the complete campaign to 50 MB for the world models to come, and caps any one chapter's first download, with its 2D art, at 14 MB. The first load grew by about 285 KB between 0.38.0 and this work, more than half of it the real-time modules the shell imports. The 2 MB first load, the external requirement, is unchanged. Then the KTX2 and meshopt decoders (about 0.31 MB in every chapter) and the compressed models (about 1.1 MB more in all) brought Chapter I for the 3D view from 6.02 to 6.58 MB, and the largest chapter with its 2D art is now Chapter VIII.
 

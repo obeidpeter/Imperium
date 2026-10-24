@@ -34,7 +34,8 @@
     "asset:compress": "node scripts/assets/compress.mjs",
     "asset:cc0": "node scripts/assets/cc0.mjs",
     "asset:check": "node scripts/assets/check-model.mjs",
-    "asset:preview": "node scripts/assets/preview-model.mjs"
+    "asset:preview": "node scripts/assets/preview-model.mjs",
+    "asset:setup": "node scripts/assets/setup-tools.mjs"
   },
   "engines": {
     "node": ">=20"

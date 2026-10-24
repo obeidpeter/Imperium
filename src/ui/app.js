@@ -103,12 +103,16 @@ function storedSettings(){try{return localStorage.getItem(SETTINGS_KEY);}catch{r
 function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}catch{}}
 // The development menu: always in the source tree (npm run dev), and in a build with ?dev in the address.
 const devMenu=CONFIG.development!==false||/[?&]dev(?:[=&]|$)/.test(globalThis.location?.search??'');
-const graphics=createGraphicsQuality({mode:settings.quality,
+const graphics=createGraphicsQuality({mode:settings.quality,chosen:settings.qualityChoice,
+  // A Settings choice rebuilds the world at once, while the Menu pauses play.
+  // Automatic changes adjust only what follows at once (frame rate, resolution,
+  // shadows); the next encounter is built at the new tier.
   onChange:({mode,reason})=>{
-    battleStage.quality(mode);mountPainting();settings.quality=mode;saveSettings();document.documentElement.dataset.quality=mode;
+    battleStage.quality(mode,{world:reason==='player'});mountPainting();settings.quality=mode;settings.qualityChoice=graphics.chosen;saveSettings();document.documentElement.dataset.quality=mode;
     const control=document.querySelector('#graphics-quality');if(control)control.value=mode;
     if(reason==='measured-cost')announce(`Graphics `+
-  `changed to ${mode} after repeated slow rendering. You can choose a different quality in Settings.`);
+  `changed to ${mode} after repeated slow rendering; scenery detail follows from the next encounter. You can choose a different quality in Settings.`);
+    else if(reason==='measured-headroom')announce(`Graphics returned to ${mode}: rendering has kept up.`);
   }});
 const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
@@ -1185,7 +1189,7 @@ case 'performance-check-save':if(performanceReport)download(new Blob([JSON.strin
   `imperium-performance-${performanceReport.measuredAt.slice(0,10)}.json`);
   break;
 case 'performance-check-use':if(performanceReport){
-  modal.close();stopMotion();pendingMotion=null;graphics.setMode(performanceReport.recommendation);settings.quality=graphics.mode;saveSettings();
+  modal.close();stopMotion();pendingMotion=null;graphics.setMode(performanceReport.recommendation);settings.quality=graphics.mode;settings.qualityChoice=graphics.chosen;saveSettings();
   clearBattleCache();render();
   announce(`Graphics `+
   `quality set to ${performanceReport.recommendation}.`);
@@ -1313,7 +1317,7 @@ document.addEventListener('change',async event=>{
   if(control.id==='text-size'){settings.textScale=Number(control.value);saveSettings();render();}
   if(control.id==='battle-view'){settings.battleView=control.value;failed3D=false;saveSettings();render();}
   if(control.id==='graphics-quality'){
-    stopMotion();pendingMotion=null;graphics.setMode(control.value);settings.quality=graphics.mode;saveSettings();clearBattleCache();render();
+    stopMotion();pendingMotion=null;graphics.setMode(control.value);settings.quality=graphics.mode;settings.qualityChoice=graphics.chosen;saveSettings();clearBattleCache();render();
   }
   if(control.id==='target-select'){
     const i=control.value;target=i===''?null:targets()[Number(i)];orderDestination=null;render();if(target)announce(Game.preview(state,command()).message);
