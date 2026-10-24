@@ -216,9 +216,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let river=null;
   if(profile.distantWater){
   const riverGeometry=p.geo(new THREE.PlaneGeometry(125,16,perf?70:130,12));riverGeometry.rotateX(-Math.PI/2);
+  // Its waves move in the water's vertex shader (finishEnvironmentMaterial, waves).
   river=p.mesh(root,riverGeometry,m.water,0,-1.24,riverZ);river.name='Danube';river.castShadow=false;river.receiveShadow=true;
-  const riverBase=Float32Array.from(riverGeometry.attributes.position.array);
-  animated.push(time=>{const a=riverGeometry.attributes.position;for(let i=0;i<a.count;i++){const xx=riverBase[i*3],zz=riverBase[i*3+2];a.setY(i,.023*Math.sin(xx*.64+time*.9)+.017*Math.sin(zz*1.7+xx*.17-time*.55));}a.needsUpdate=true;if(!perf)riverGeometry.computeVertexNormals();});
   }
   const flames=[];
   function fire(x,z,scale=1){const y=height(x,z),g=p.group(root,x,y,z);for(let i=0;i<5;i++){const a=i*1.256;p.beam(g,[Math.cos(a)*.47,.09,Math.sin(a)*.47],[-Math.cos(a)*.25,.18,-Math.sin(a)*.25],.065,m.charcoal);}
@@ -248,7 +247,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600;wind.value=bounded;if(!perf&&library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
+    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600;wind.value=bounded;if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
     dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
     stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,disposed};}
   };

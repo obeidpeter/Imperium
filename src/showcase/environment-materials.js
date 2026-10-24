@@ -106,7 +106,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   for(const key of ['wood','darkWood','bark'])finishEnvironmentMaterial(m[key],'wood',finish);
   for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);
   finishEnvironmentMaterial(m.floor,'floor',finish);
-  finishEnvironmentMaterial(m.water,'water',finish);
+  finishEnvironmentMaterial(m.water,'water',{...finish,waves:true});
   finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.gravel,'stone',finish);

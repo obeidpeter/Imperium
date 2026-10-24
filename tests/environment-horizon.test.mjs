@@ -137,7 +137,7 @@ test('Camera clearance follows actual outer ridge triangles, including the low-p
   }
 });
 
-test('Distant river begins at the real near-water edge and matches every animated boundary vertex',()=>{
+test('Distant river begins at the real near-water edge, and both rivers wave in one shader from world position',()=>{
   for(const quality of ['performance','balanced','high']){
     const w=create('ch1-road',quality),near=w.group.getObjectByName('Danube'),far=w.horizon.group.getObjectByName('distant meandering Danube'),np=near.geometry.attributes.position,fp=far.geometry.attributes.position;
     assert.equal(near.material,far.material,'Near and far river share lighting, colour, roughness and fog');
@@ -146,10 +146,10 @@ test('Distant river begins at the real near-water edge and matches every animate
     for(let i=0;i<fp.count;i++){assert.ok(Math.abs(fp.getX(i))>=62.5,'Far water has no surface inside the animated river extent');if(Math.abs(fp.getX(i))===62.5)joins++;}
     assert.equal(joins,26);w.group.updateWorldMatrix(true);
     const ray=new T.Raycaster(new T.Vector3(57,10,-25),new T.Vector3(0,-1,0),0,20);assert.equal(ray.intersectObject(far).length,0,'The old crossing sample cannot hit distant water anymore');
-    for(const time of [0,1,2,3,3601]){
-      w.update(time);
-      for(let i=0;i<fp.count;i++)if(Math.abs(fp.getX(i))===62.5){const n=nearEdges.get(`${fp.getX(i)},${fp.getZ(i).toFixed(3)}`);assert.notEqual(n,undefined);assert.ok(Math.abs(fp.getY(i)-(np.getY(n)+near.position.y))<1e-6,`${quality} shared wave sample at ${time}s`);}
-    }
+    // At rest the joins coincide; the shared shader lifts both alike, so they stay joined.
+    for(let i=0;i<fp.count;i++)if(Math.abs(fp.getX(i))===62.5){const n=nearEdges.get(`${fp.getX(i)},${fp.getZ(i).toFixed(3)}`);assert.notEqual(n,undefined);assert.ok(Math.abs(fp.getY(i)-(np.getY(n)+near.position.y))<1e-6,`${quality} join`);}
+    assert.equal(near.material.userData.environmentFinishOptions.waves,true);
+    const before=np.array.slice();for(const time of [0,1,3601])w.update(time);assert.deepEqual(np.array,before,'No river geometry is rewritten on the CPU');
     assert.ok(w.horizon.stats.triangles<=15000);w.dispose();
   }
 });

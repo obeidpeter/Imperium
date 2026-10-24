@@ -8,7 +8,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
   const haze=new T.Color(profile.fog),land=new T.Color(arid?'#9c8b6a':wet?'#657461':'#68765d'),seed=profile.chapter*17;
-  const rows=[innerRadius,innerRadius+8,innerRadius+24,Math.max(100,innerRadius+60),Math.max(155,innerRadius+110),Math.max(235,innerRadius+180),Math.max(355,innerRadius+280),550],size=segments*4,riverJoin=62.5,riverEdges=[];
+  const rows=[innerRadius,innerRadius+8,innerRadius+24,Math.max(100,innerRadius+60),Math.max(155,innerRadius+110),Math.max(235,innerRadius+180),Math.max(355,innerRadius+280),550],size=segments*4,riverJoin=62.5;
   let waterGeometry=null;
   let disposed=false;
   for(let edge=0;edge<4;edge++)for(let i=0;i<segments;i++){
@@ -88,11 +88,11 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
         const x=side*(riverJoin+i/steps*(510-riverJoin)),z=riverCentre(x),w=riverWidth(x),c=new T.Color(profile.waterColor).multiplyScalar(.9).lerp(haze,.35+smooth(i/steps)*.6),samples=i===0?13:2;
         offsets.push(positions.length/3);
         for(let j=0;j<samples;j++){
-          // Match all thirteen vertices along the animated near river's edge.
+          // Match all thirteen vertices along the near river's edge.
           // The following row reduces to two points: only 22 extra triangles
           // are needed for the complete join, not a dense distant water mesh.
-          const localZ=i===0?Math.fround(-8+j*16/12):-w+j*w*2,index=positions.length/3;
-          positions.push(x,-1.24,z+localZ);colors.push(...c.toArray());if(i===0)riverEdges.push({index,x,localZ});
+          const localZ=i===0?Math.fround(-8+j*16/12):-w+j*w*2;
+          positions.push(x,-1.24,z+localZ);colors.push(...c.toArray());
         }
       }
       const face=(a,b,c)=>indices.push(...(side===1?[a,b,c]:[a,c,b]));
@@ -183,6 +183,7 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     lastCameraX=x;lastCameraZ=z;lastCameraHeight=renderedGroundHeight(x,z);return lastCameraHeight;
   }
   return {group,bridge,ridges,stats,cameraGroundHeight,
-    update(time){if(disposed||!waterGeometry||!Number.isFinite(time))return;const p=waterGeometry.attributes.position;for(const {index,x,localZ} of riverEdges)p.setY(index,-1.24+.023*Math.sin(x*.64+time*.9)+.017*Math.sin(localZ*1.7+x*.17-time*.55));p.needsUpdate=true;},
+    // The water's waves move in its shader (world position), joined with the near river's.
+    update(){},
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.clear();}};
 }
