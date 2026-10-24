@@ -1372,6 +1372,11 @@ still commit when threatened, so always use the current forecast.
   his fellows, a badly wounded fighter, or one pressing his band's
   archer.
 
+- From Chapter IV, on Standard and Veteran, a band of raiders may lie in
+  wait near its place, hidden and holding its javelins. It falls on the
+  first of yours to come near, an ambush if you have not seen it.
+  **Scout** reveals it, and so does a squad of yours that notices it.
+
 # Meters, obligations and the finale
 
 Three meters measure your standing: **Army Loyalty**, **Political
