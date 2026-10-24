@@ -5,6 +5,7 @@ import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalk
 import {helpless,setRoute} from './motion.js';
 import {nextRandom} from './rng-streams.js';
 import {smokeBetween} from './sight.js';
+import {flee,fleeing} from './bands.js';
 
 // Enemy AI (§3.10). Each enemy keeps a notice meter for every hostile actor:
 // the eye over his head. It fills with what he sees and hears and drains when
@@ -107,6 +108,8 @@ function goTo(world,actor,point,{run=false}={}){
 
 export function decideEnemy(world,actor){
   if(!standing(actor)||staggered(world,actor)||world.status!=='active')return;
+  // A man of a broken war band runs for its edge of the field (bands.js).
+  if(fleeing(world,actor)){flee(world,actor);return;}
   const ai=actor.ai;
   if(ai.state==='alert'&&world.tick>=(ai.alertAt??0)){ai.state='engage';const t=actorById(world,ai.focus);if(t)rouse(world,actor,t);}
   if(ai.state==='suspicious'){

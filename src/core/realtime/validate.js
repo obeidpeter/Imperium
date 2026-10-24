@@ -36,7 +36,7 @@ export function validateWorld(world,fail){
   if(world.spoils.some(s=>!s||!ITEMS[s.itemId]||!str(s.from,40)))fail('real-time spoils.');
   if(world.provoked.some(p=>!p||!str(p.id,40)||!str(p.name)||!int(p.tick,0,1e7)))fail('real-time provocations.');
   if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
-  validateSquads(world,fail);validateField(world,fail);
+  validateSquads(world,fail);validateField(world,fail);validateBand(world,fail);
   // Deployment (deployment.js): the zone and whether the advance has sounded.
   const d=world.deployment;
   if(d!==undefined&&(!d||typeof d.done!=='boolean'||!int(d.placed,0,1000)||!d.zone||!['x0','x1','z0','z1'].every(k=>num(d.zone[k]))))fail('real-time deployment.');
@@ -57,6 +57,14 @@ export function validateWorld(world,fail){
   }
 }
 
+// A war band (bands.js, Chapters I–III): its morale, its men and those who fled.
+function validateBand(world,fail){
+  const b=world.band;if(b===undefined)return;
+  if(!b||typeof b!=='object'||!num(b.morale)||b.morale<0||b.morale>100||!int(b.size,1,60)||!Array.isArray(b.members)||b.members.length>60||b.members.some(id=>!str(id,40))
+    ||!['steady','shaken','broken'].includes(b.state)||!str(b.leaderId,40)||!['east','west','north','south'].includes(b.edge)||!int(b.contactTick,0,1e7)
+    ||!Array.isArray(b.fled)||b.fled.length>60||b.fled.some(f=>!f||!str(f.id,40)||!str(f.name)||!(f.unitId===null||str(f.unitId,40))||!str(f.role,20)||!num(f.x)||!num(f.z)))
+    fail('real-time war band.');
+}
 // Squads (from Chapter IV): bounded lists, values in range, every man a squad's.
 const SQUAD_TARGETS=new Set([null,'hero','objective','convoy','nearest_enemy_group','enemy_cavalry','enemy_archers']);
 export function squadSlotProblem(slot){

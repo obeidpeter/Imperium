@@ -104,6 +104,8 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   if(As?.formation==='wedge'&&!missile&&!['marsh','ford'].includes(terrainAtPoint(world.map,src.x,src.z)))squadMod('Wedge',1);
   if(Ds?.formation==='wedge')squadMod('Wedge exposure',1);
   if(As&&world.chapter!==1){if(As.cohesion<40)squadMod('Disrupted cohesion',-1);if(Math.floor(As.suppression)>=2)squadMod('Suppressed',-1);if(As.morale<=40)squadMod('Shaken morale',-1);}
+  // A man of a wavering war band (bands.js) strikes as a shaken squad's man does.
+  if(!As&&world.chapter!==1&&world.band&&world.band.state!=='steady'&&world.band.members.includes(attacker.id))squadMod('Shaken morale',-1);
   if((defender.guardedBy?.until??0)>world.tick)squadMod('Guarded by a protector',-defender.guardedBy.reduction);
   if(world.objects?.some(o=>o.kind==='barricade'&&!o.done&&span(o.x-defender.x,o.z-defender.z)<=2))squadMod('Timber cover',-1);
   const profile=override??(missile?MISSILES[missile].damage:A.weapon.damage),mult=missile?1+(attacker.attributes.str-10)/COMBAT.thrownStrength

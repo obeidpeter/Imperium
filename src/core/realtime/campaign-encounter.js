@@ -18,6 +18,7 @@ import {defaultStanding} from './squad-ai.js';
 import {fielded,squadCentre} from './squads.js';
 import {chapterOpportunity} from '../command-campaign.js';
 import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
+import {formBand} from './bands.js';
 
 // A campaign battle in real time (build brief §3.2 "Converting 0.38 data",
 // §3.4). The 0.38 encounter stays the record the campaign commits: its map,
@@ -298,6 +299,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   const world=createWorld({map,seed,actors,controlled:'hero',party,mission,objects,difficulty,weather:e.weather??null,timeOfDay:e.timeOfDay??'day',
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;
+  // Before Chapter IV the raiders who fight alone are one war band (bands.js).
+  if(!squads&&e.type!=='training')formBand(world);
   preparations(state,e,world);
   // From Chapter VII the battle opens with the company to deploy (deployment.js).
   if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(DEPLOYMENT.tiles,e.width)),done:false,placed:0};
@@ -343,6 +346,8 @@ export function applyRealtimeOutcome(state,world){
     const actor=world.actors.find(a=>a.unitId===unit.id);if(!actor)continue;
     unit.hp=scaled(actor,unit);const t=metresToTile(actor,k,e);unit.x=t.x;unit.y=t.y;if(unit.escorted!==undefined)unit.escorted=!!actor.escort?.escorted||!!actor.carriedBy;
   }
+  // A war band's men who escaped are gone from the field (bands.js): no Health, and marked fled.
+  for(const f of world.band?.fled??[]){const unit=e.units.find(u=>u.id===f.unitId);if(unit){const t=metresToTile(f,k,e);Object.assign(unit,{hp:0,x:t.x,y:t.y,fled:true});}}
   // Squads (from Chapter IV): each 0.38 unit learns its squad's strength, place, morale, cohesion and suppression.
   for(const squad of world.squads??[]){
     const unit=e.units.find(u=>u.id===squad.unitId);if(!unit)continue;
@@ -369,9 +374,10 @@ export function applyRealtimeOutcome(state,world){
   if(world.squads)e.units.push(...partyUnits);else if(partyUnits.length)e.units=[...e.units.filter(u=>u.side!=='ally'),...partyUnits];
   m.waves.forEach((w,i)=>{const record=e.mission.waves[i];if(record&&w.arrived)record.arrived=true;});
   const arrivals=world.squads?world.squads.filter(q=>q.id.startsWith('reinforce')).map(q=>({id:q.id,name:q.name,role:q.role,at:squadCentre(world,q,true),alive:fielded(world,q)}))
-    :world.actors.filter(a=>a.id.startsWith('reinforce')).map(a=>({id:a.id,name:a.name,role:a.role,at:a,alive:a.alive}));
+    :[...world.actors.filter(a=>a.id.startsWith('reinforce')).map(a=>({id:a.id,name:a.name,role:a.role,at:a,alive:a.alive})),
+      ...(world.band?.fled??[]).filter(f=>f.id.startsWith('reinforce')).map(f=>({id:f.id,name:f.name,role:f.role,at:f,alive:false,fled:true}))];
   for(const a of arrivals)if(!e.units.some(u=>u.id===a.id)){const t=metresToTile(a.at,k,e);
-    e.units.push({id:a.id,name:a.name,side:'enemy',x:t.x,y:t.y,hp:a.alive?7:0,maxHp:7,role:a.role,moved:false,acted:false,move:2,facing:'west',morale:80,intent:'Reinforce.'});}
+    e.units.push({id:a.id,name:a.name,side:'enemy',x:t.x,y:t.y,hp:a.alive?7:0,maxHp:7,role:a.role,moved:false,acted:false,move:2,facing:'west',morale:80,intent:'Reinforce.',...(a.fled?{fled:true}:{})});}
   if(e.defence!==undefined)e.defence=Math.max(0,m.defence);
   writeField(e,world);
   for(const p of m.points)if(p.secured){const t=metresToTile(p,k,e),record=e.mission.points.find(q=>q.x===t.x&&q.y===t.y);if(record)record.secured=true;}

@@ -128,6 +128,9 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const at=a=>flat.screen(v,lerp(a.px??a.x,a.x,alpha),lerp(a.pz??a.z,a.z,alpha));
       const ellipse=(p,rx,stroke,{dash=null,width=2,fill=null}={})=>{c.beginPath();c.ellipse(p.x,p.y,rx,rx/2,0,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}
         if(stroke){c.setLineDash(dash??[]);c.lineWidth=width;c.strokeStyle=stroke;c.stroke();c.setLineDash([]);}};
+      // A wavering group's morale ring: amber with a notch when shaken, crimson split in two when broken.
+      const moraleRing=(p,broken)=>{const rx=v.tw*.62,ry=rx/2;c.lineWidth=3;c.strokeStyle=broken?'#c8323f':'#e0a23a';
+        for(const [a0,a1]of broken?[[.18,Math.PI-.18],[Math.PI+.18,Math.PI*2-.18]]:[[-Math.PI/2+.3,Math.PI*1.5-.3]]){c.beginPath();c.ellipse(p.x,p.y,rx,ry,0,a0,a1);c.stroke();}};
       const line=(points,color,{dash=null,width=2}={})=>{if(points.length<2)return;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));
         c.setLineDash(dash??[]);c.lineWidth=width;c.strokeStyle=color;c.stroke();c.setLineDash([]);};
       const unit=v.tw/TILE;// pixels per metre along the board
@@ -156,6 +159,8 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           if(a.id===w.controlled)ellipse(p,v.tw*.36,'#f1d38a',{width:2.5});
           if(a.squadId&&chosen.has(a.squadId))ellipse(p,v.tw*.36,'#f3d48d',{width:2.5});
           if(a.braceUntil>r||squadsById.get(a.squadId)?.braced)ellipse(p,v.tw*.42,'#f1d38a',{dash:[2,3],width:2});
+          // A wavering war band (Chapters I–III): the ring at each of its men's feet.
+          if(!a.squadId&&w.band&&w.band.state!=='steady'&&w.band.members.includes(a.id))moraleRing(p,w.band.state==='broken');
         }
         const civic=a.civic,color=!a.alive?'#4a4038':a.down||civic?.withdrawn?'#857868':civic?.bloc?BLOC_STYLE[civic.bloc]?.color??BODY.neutral:BODY[side]??BODY.neutral;
         if(lying){c.beginPath();c.ellipse(p.x,p.y-v.th*.15,v.tw*.3,v.th*.22,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
@@ -191,8 +196,7 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       // ring with a notch when shaken, a crimson ring split in two when broken).
       for(const q of w.squads??[]){
         const lead=squadLead(w,q);if(!lead)continue;const p=at(lead),hgt=v.th*2.6,top=p.y-hgt*1.55,mine=q.side!=='enemy';
-        if(q.morale<=40){const rx=v.tw*.62,ry=rx/2;c.lineWidth=3;c.strokeStyle=q.broken?'#c8323f':'#e0a23a';
-          for(const [a0,a1]of q.broken?[[.18,Math.PI-.18],[Math.PI+.18,Math.PI*2-.18]]:[[-Math.PI/2+.3,Math.PI*1.5-.3]]){c.beginPath();c.ellipse(p.x,p.y,rx,ry,0,a0,a1);c.stroke();}}
+        if(q.morale<=40)moraleRing(p,q.broken);
         c.beginPath();c.moveTo(p.x+v.tw*.18,p.y-hgt*.2);c.lineTo(p.x+v.tw*.18,top);c.lineWidth=2;c.strokeStyle='#3b2f22';c.stroke();
         c.fillStyle=mine?'#7a2a1f':'#5b3a2c';c.fillRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);if(chosen.has(q.id)){c.lineWidth=2;c.strokeStyle='#f3d48d';c.strokeRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);}
         const bw=v.tw*.6;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,top-7,bw,4);c.fillStyle=mine?'#abc89a':'#db9e81';c.fillRect(p.x-bw/2,top-7,bw*clamp(q.strength/q.maxStrength,0,1),4);

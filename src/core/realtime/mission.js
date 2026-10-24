@@ -4,6 +4,7 @@ import {helpless,setRoute} from './motion.js';
 import {spawnActor} from './actors.js';
 import {fielded,membersOf,spawnSquad} from './squads.js';
 import {defaultStanding} from './squad-ai.js';
+import {bandReinforced} from './bands.js';
 import {span} from './navigation.js';
 
 // A campaign encounter's objective in real time (§3.2 "Converting 0.38
@@ -66,7 +67,7 @@ function arrive(world,wave,index){
     emit(world,{kind:'reinforcements',x:wave.x,z:wave.z,role:wave.squad.role,squadId:squad?.id??null});return;
   }
   const actor=spawnActor(world,wave.spec,{x:wave.x,z:wave.z},`reinforce${index}`);
-  if(actor){actor.ai.state='engage';for(const o of world.actors)if(o.side!=='enemy'&&o.alive)actor.ai.notice[o.id]=100;}
+  if(actor){actor.ai.state='engage';for(const o of world.actors)if(o.side!=='enemy'&&o.alive)actor.ai.notice[o.id]=100;bandReinforced(world,actor);}
   emit(world,{kind:'reinforcements',x:wave.x,z:wave.z,role:wave.spec.role,actorId:actor?.id??null});
 }
 

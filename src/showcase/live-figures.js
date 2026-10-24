@@ -446,6 +446,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       }
       // A squad's low morale: an exclamation mark over its standard.
       for(const q of w.squads??[])if(!shown[q.id]&&q.strength>0&&q.morale<=MORALE.shaken)shown[q.id]={text:'!',color:q.broken?'#ff8f8f':'#f1c27d'};
+      if(w.band&&w.band.state!=='steady')for(const id of w.band.members)if(!shown[id]&&actorOf(w,id)?.alive)shown[id]={text:'!',color:w.band.state==='broken'?'#ff8f8f':'#f1c27d'};
       stage.previewTargets=Object.keys(shown).length?shown:null;
       // The route a click would walk, the soldier's destination, his locked target and his ranges.
       marks.route??=line('#f1dfa2');marks.goal??=ring(.46,.54,'#f1dfa2',.75);marks.target??=ring(.66,.76,'#ef8f74',.85);
@@ -477,6 +478,10 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       for(const q of w.squads??[]){
         if(q.strength<=0||q.morale>MORALE.shaken)continue;const figure=stage.actors.get(q.id);if(!figure?.group.visible)continue;
         put(q.broken?'broken':'shaken',figure.group.position,figure.group.rotation.y,.07);
+      }
+      // A wavering war band (Chapters I–III): the same ring at each of its men's feet.
+      if(w.band&&w.band.state!=='steady')for(const id of w.band.members){
+        const a=actorOf(w,id),figure=a?.alive&&!a.hidden?stage.actors.get(id):null;if(figure?.group.visible)put(w.band.state==='broken'?'broken':'shaken',figure.group.position,figure.group.rotation.y,.07);
       }
       for(const kind of KINDS){feet[kind].count=counts[kind];feet[kind].instanceMatrix.needsUpdate=true;}
       // A chamber speaker's reach: a pale disc on each place he may walk to this hour.

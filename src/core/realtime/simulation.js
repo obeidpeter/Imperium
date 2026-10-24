@@ -18,6 +18,7 @@ import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
 import {fieldProblem,fieldRound} from './field-objects.js';
 import {deploying} from './deployment.js';
+import {bandRound,bandTick} from './bands.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -275,6 +276,11 @@ function logLine(world,e){
     case 'squad-braced':return `${squadName(world,e.squadId)} is braced.`;
     case 'order':return `${squadName(world,e.squadId)}: ${ORDER_WORDS[e.order]??e.order}.`;
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
+    case 'band-leader-fell':return 'Their war leader is down: the raiders lose heart.';
+    case 'band-shaken':return 'The raiders waver.';
+    case 'band-broken':return 'The raiders break and run for the edge of the field.';
+    case 'band-rallied':return 'Fresh men reach the raiders: they stand again.';
+    case 'fled':return `${e.name} escapes the field.`;
     case 'enemy-plan':return `The enemy changes its plan: ${ENEMY_PLANS.kinds[e.plan]?.label.toLowerCase()??'a new plan'}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
@@ -324,7 +330,7 @@ export function step(world){
     if(world.squads)moveSquads(world);
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
     act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
-    settleLocks(world);regenerate(world);perceive(world);
+    settleLocks(world);regenerate(world);perceive(world);if(world.band)bandTick(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
     if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);
@@ -333,6 +339,7 @@ export function step(world){
   if((world.tick+1)%TIME.roundTicks===0){
     // The pitch fire burns and burns down, and the opportunities close at the end of round 7 (field-objects.js).
     if(world.field&&world.status==='active')fieldRound(world);
+    if(world.band&&world.status==='active')bandRound(world);
     if(world.squads&&world.status==='active'){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
     emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
   }

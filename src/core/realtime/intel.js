@@ -47,7 +47,7 @@ export function alliedPlans(world){
   const threats=[
     ...squadsOf(world).filter(q=>seenSquad(world,q)).map(q=>{const c=squadCentre(world,q);
       return {id:q.id,name:q.name,role:roles[q.id]??null,intent:q.plan?.intent??'Holding.',target:q.plan?.targetId?nameOf(world,q.plan.targetId):null,distance:away(c)};}),
-    ...world.actors.filter(seenMan).map(a=>({id:a.id,name:a.name,role:null,intent:a.order?.kind==='attack'?'Attacking.':a.ai?.state==='engage'?'Engaging.':a.ai?.state==='suspicious'?'Searching.':'Holding.',
+    ...world.actors.filter(seenMan).map(a=>({id:a.id,name:a.name,role:null,intent:a.order?.flee?'Fleeing the field.':a.order?.kind==='attack'?'Attacking.':a.ai?.state==='engage'?'Engaging.':a.ai?.state==='suspicious'?'Searching.':'Holding.',
       target:a.order?.targetId?nameOf(world,a.order.targetId):null,distance:away(a)}))
   ].sort((a,b)=>(a.distance??0)-(b.distance??0)||(a.id<b.id?-1:1));
   return {ours,threats};

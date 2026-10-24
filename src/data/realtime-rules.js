@@ -160,6 +160,19 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // An engaged enemy keeps his man unless another foe stands this much closer.
   stickiness:3});
 
+// War bands (Chapters I–III; worlds and gameplay plan, release 3): the single
+// raiders of an early battle share one morale, as every group does (bands.js).
+export const BAND_MORALE=Object.freeze({start:80,shaken:40,broken:20,
+  // Each man who falls costs `loss` ÷ the band's size; struck down from ambush, `ambush` more; the leader, `leader` more.
+  loss:48,ambush:8,leader:15,
+  // At a round's end: outnumbered `ratio` to one by fighters of ours, `outnumbered` less; after a whole round with no man of
+  // the band within `contact` metres of a foe, `rest` more (never above the start).
+  outnumbered:5,ratio:2,rest:10,contact:8,
+  // Reinforcements lift it; a broken band stands again only if they lift it above the broken line.
+  reinforced:15,
+  // A fleeing man leaves the field this near its edge.
+  edge:1.5});
+
 // Perception (§3.10): notice per second = base × visibility × proximity ×
 // (Per / 10) × (1 − Fieldcraft / 100). Proximity is 1 within `near` and falls
 // to 0 at a sight radius of sightBase + Per.
