@@ -8,9 +8,13 @@ const LONE_TREES=.05;
 const FOLIAGE={wetland:'#4f5f45',italy:'#3e4f33'};
 // A unit icosahedron's triangles, and each corner's direction (its own position).
 const CROWN=new T.IcosahedronGeometry(1,0).attributes.position.array;
+// Which of its twelve corners each of the 60 is, so a corner shared by five faces moves as one.
+const CORNER=(()=>{const seen=new Map();return Array.from({length:CROWN.length/3},(_,i)=>{const key=[0,1,2].map(c=>CROWN[i*3+c].toFixed(4)).join();if(!seen.has(key))seen.set(key,seen.size);return seen.get(key);});})();
+// Crowns in a clump: from five to eight, so a wood's outline is a canopy, not a few balls.
+const MEMBERS=[5,8];
 /**
  * The ridges' trees: woods where a broad noise allows, and lone trees between
- * them, in clumps of three to five overlapping crowns on points of the
+ * them, in clumps of five to eight overlapping crowns on points of the
  * ridges' own triangles, from 160 m out (clear of the board, its scenery and
  * the landmark clusters) and off the river. Presentation only: hash, never
  * the game's random draws.
@@ -26,7 +30,7 @@ export function forestStandIns({ridges,profile,quality='balanced',share,haze,see
   const centre=t=>[(pos.getX(index[t])+pos.getX(index[t+1])+pos.getX(index[t+2]))/3,(pos.getZ(index[t])+pos.getZ(index[t+1])+pos.getZ(index[t+2]))/3];
   let wooded=0;for(let t=0;t<index.length;t+=3)wooded+=area(t)*weight(...centre(t));
   if(wooded<1)return null;
-  const density=limit/4/wooded,sun=new T.Vector3(...(profile.sunPosition??[-16,24,-12])).setY(0).normalize(),positions=[],colors=[];
+  const density=limit/((MEMBERS[0]+MEMBERS[1])/2)/wooded,sun=new T.Vector3(...(profile.sunPosition??[-16,24,-12])).setY(0).normalize(),positions=[],colors=[];
   const foliage=new T.Color(FOLIAGE[profile.setting]??(wet?FOLIAGE.wetland:'#34492c'));let crowns=0;
   const surface=(t,u,v)=>{A.fromBufferAttribute(pos,index[t]);B.fromBufferAttribute(pos,index[t+1]);C.fromBufferAttribute(pos,index[t+2]);
     return [A.x+(B.x-A.x)*u+(C.x-A.x)*v,A.y+(B.y-A.y)*u+(C.y-A.y)*v,A.z+(B.z-A.z)*u+(C.z-A.z)*v];};
@@ -36,18 +40,20 @@ export function forestStandIns({ridges,profile,quality='balanced',share,haze,see
     for(let k=0;k<n&&crowns<limit;k++){
       let u=hash(t,k,seed+3),v=hash(k,t,seed+5);if(u+v>1){u=1-u;v=1-v;}
       const [cx,,cz]=surface(t,u,v);if(!open(cx,cz))continue;
-      const size=(wet?6:9)+hash(cx,cz,seed+9)*(wet?3:5),members=3+Math.floor(hash(cz,cx,seed+15)*3);
+      const size=(wet?4.5:6)+hash(cx,cz,seed+9)*(wet?2.5:3),members=MEMBERS[0]+Math.floor(hash(cz,cx,seed+15)*(MEMBERS[1]-MEMBERS[0]+1));
       for(let m=0;m<members&&crowns<limit;m++){
         // Each crown of the clump on a point of this or the next quads round the ring, so it stands on the ridge exactly.
         const tri=Math.min(t+3*m,index.length-3);let mu=hash(tri,m,seed+17),mv=hash(m,tri,seed+19);if(mu+mv>1){mu=1-mu;mv=1-mv;}
         const [x,y,z]=surface(tri,mu,mv);if(!open(x,z))continue;
         // Sunk a little, so no crown shows daylight under it on a slope.
-        const wide=size*(wet?.62:.5)*(.8+hash(x,z,seed+11)*.4),tall=size*(.8+hash(z,x,seed+12)*.4),distance=Math.hypot(x,z),foot=y-.5;
-        // Darker below and away from the sun; lightly hazed, as the scene's fog does the rest.
-        const base=foliage.clone().multiplyScalar(.75+hash(x,z,seed+13)*.4).lerp(haze,clamp(.08+smooth((distance-60)/490)*.25));
+        const wide=size*(wet?.62:.5)*(.8+hash(x,z,seed+11)*.4),tall=size*(.65+hash(z,x,seed+12)*.3),distance=Math.hypot(x,z),foot=y-.5;
+        // Darker below and away from the sun. Only a trace of haze: the blend is in linear
+        // light, where a little of a pale haze outweighs a dark green, and the fog does the rest.
+        const base=foliage.clone().multiplyScalar(.75+hash(x,z,seed+13)*.4).lerp(haze,clamp(.015+smooth((distance-60)/490)*.07));
+        // Each corner in or out a little, so no crown shows a regular outline; the foot stays.
         for(let i=0;i<CROWN.length;i+=3){
-          const dx=CROWN[i],dy=CROWN[i+1],dz=CROWN[i+2];
-          positions.push(x+dx*wide,foot+tall*(.42+dy*.5),z+dz*wide);
+          const dx=CROWN[i],dy=CROWN[i+1],dz=CROWN[i+2],lump=.76+hash(crowns,CORNER[i/3],seed+23)*.48;
+          positions.push(x+dx*wide*lump,foot+tall*(.42+dy*.5*(dy>0?lump:1)),z+dz*wide*lump);
           const light=.62+(dy+1)*.2+Math.max(0,dx*sun.x+dz*sun.z)*.14;colors.push(base.r*light,base.g*light,base.b*light);
         }
         crowns++;
