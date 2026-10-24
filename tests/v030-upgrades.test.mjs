@@ -164,7 +164,7 @@ test('v0.30.0: every environment surface samples the baked occlusion, on every t
     assert.match(shader.vertexShader, /vImperiumAoWorld=\(modelMatrix\*imperiumAoPosition\)\.xyz;\s*#include <project_vertex>/);
     assert.match(shader.fragmentShader, /#include <aomap_fragment>\s*\{\s*vec2 aoUv/);
     assert.ok(shader.uniforms.imperiumAoMap.value.isDataTexture && shader.uniforms.imperiumAoStrength.value === BAKED_AO_STRENGTH[quality]);
-    assert.match(material.customProgramCacheKey(), /baked-occlusion-v1:standing/);
+    assert.match(material.customProgramCacheKey(), /baked-occlusion-v2:standing/);
     env.dispose();
   }
 });

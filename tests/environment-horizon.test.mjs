@@ -137,7 +137,7 @@ test('Camera clearance follows actual outer ridge triangles, including the low-p
   }
 });
 
-test('Distant river begins at the real near-water edge and matches every animated boundary vertex',()=>{
+test('Distant river begins at the real near-water edge, and both rivers wave in one shader from world position',()=>{
   for(const quality of ['performance','balanced','high']){
     const w=create('ch1-road',quality),near=w.group.getObjectByName('Danube'),far=w.horizon.group.getObjectByName('distant meandering Danube'),np=near.geometry.attributes.position,fp=far.geometry.attributes.position;
     assert.equal(near.material,far.material,'Near and far river share lighting, colour, roughness and fog');
@@ -146,10 +146,31 @@ test('Distant river begins at the real near-water edge and matches every animate
     for(let i=0;i<fp.count;i++){assert.ok(Math.abs(fp.getX(i))>=62.5,'Far water has no surface inside the animated river extent');if(Math.abs(fp.getX(i))===62.5)joins++;}
     assert.equal(joins,26);w.group.updateWorldMatrix(true);
     const ray=new T.Raycaster(new T.Vector3(57,10,-25),new T.Vector3(0,-1,0),0,20);assert.equal(ray.intersectObject(far).length,0,'The old crossing sample cannot hit distant water anymore');
-    for(const time of [0,1,2,3,3601]){
-      w.update(time);
-      for(let i=0;i<fp.count;i++)if(Math.abs(fp.getX(i))===62.5){const n=nearEdges.get(`${fp.getX(i)},${fp.getZ(i).toFixed(3)}`);assert.notEqual(n,undefined);assert.ok(Math.abs(fp.getY(i)-(np.getY(n)+near.position.y))<1e-6,`${quality} shared wave sample at ${time}s`);}
-    }
+    // At rest the joins coincide; the shared shader lifts both alike, so they stay joined.
+    for(let i=0;i<fp.count;i++)if(Math.abs(fp.getX(i))===62.5){const n=nearEdges.get(`${fp.getX(i)},${fp.getZ(i).toFixed(3)}`);assert.notEqual(n,undefined);assert.ok(Math.abs(fp.getY(i)-(np.getY(n)+near.position.y))<1e-6,`${quality} join`);}
+    assert.equal(near.material.userData.environmentFinishOptions.waves,true);
+    const before=np.array.slice();for(const time of [0,1,3601])w.update(time);assert.deepEqual(np.array,before,'No river geometry is rewritten on the CPU');
     assert.ok(w.horizon.stats.triangles<=15000);w.dispose();
+  }
+});
+
+test('Woods stand on the ridges themselves, within each quality\'s budget, the same every build, and none in deserts or cities',async()=>{
+  const {FOREST_CROWNS}=await import('../src/showcase/environment-horizon.js');
+  const down=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000);
+  for(const id of ['ch1-road','ch2-marsh','ch7-legion','ch5-mine','ch9-wing','ch11-adlection'])for(const quality of ['performance','balanced','high']){
+    const w=create(id,quality),h=w.horizon,mesh=h.group.getObjectByName('distant forest stand-ins');
+    if(['siege','desert','palmyra','rome','accession'].includes(w.profile.setting)){assert.equal(mesh,undefined,`${id}: no woods`);assert.equal(h.stats.forestCrowns,0);w.dispose();continue;}
+    assert.ok(mesh,`${id} ${quality}`);assert.ok(h.stats.forestCrowns>FOREST_CROWNS[quality]/2&&h.stats.forestCrowns<=FOREST_CROWNS[quality],`${id} ${quality}: ${h.stats.forestCrowns}`);
+    assert.equal(h.stats.forestTriangles,h.stats.forestCrowns*20);assert.equal(mesh.material.fog,true);assert.equal(mesh.castShadow,false);
+    const p=mesh.geometry.attributes.position;h.group.updateMatrixWorld(true);
+    // Each crown is 60 corners; it neither floats over the ridge nor sinks into it.
+    for(let i=0;i<p.count;i+=60){
+      let x=0,z=0,low=Infinity;for(let k=i;k<i+60;k++){x+=p.getX(k)/60;z+=p.getZ(k)/60;low=Math.min(low,p.getY(k));}
+      const d=Math.hypot(x,z);assert.ok(d>=150&&d<=545,`${id}: a crown ${d.toFixed(1)} m out`);
+      down.ray.origin.set(x,1000,z);const hit=down.intersectObjects([h.ridges,h.bridge],false)[0];
+      assert.ok(hit&&low<=hit.point.y+.3&&low>=hit.point.y-3,`${id}: a crown stands on the ridge (${low.toFixed(2)} over ${hit?.point.y.toFixed(2)})`);
+    }
+    if(quality==='balanced'){const again=create(id,quality);assert.deepEqual(Array.from(again.horizon.group.getObjectByName('distant forest stand-ins').geometry.attributes.position.array),Array.from(p.array));again.dispose();}
+    w.dispose();
   }
 });

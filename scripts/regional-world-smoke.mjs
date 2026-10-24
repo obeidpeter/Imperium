@@ -134,7 +134,9 @@ async function camera(mode,key){
 }
 async function screenshot(name){
   await pause();await page.locator('#rt-board').scrollIntoViewIfNeeded();
-  await page.screenshot({path:join(output,name),fullPage:false});report.captures.push(name);
+  // Software rendering takes seconds a frame over the photographed ground; the
+  // capture waits behind them (as the campaign benchmark's stage captures do).
+  await page.screenshot({path:join(output,name),fullPage:false,timeout:120000});report.captures.push(name);
 }
 async function services(checkpoint){
   const before=await exported();

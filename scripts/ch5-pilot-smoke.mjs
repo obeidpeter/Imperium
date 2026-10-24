@@ -84,9 +84,10 @@ async function exported(){
 }
 async function screenshot(name){
   // Pause through the player control, then capture the viewport. A locator
-  // screenshot's element-stability wait can starve on a live WebGL HUD.
+  // screenshot's element-stability wait can starve on a live WebGL HUD. Software
+  // rendering takes seconds a frame over the photographed ground: a long timeout.
   await pause();await page.locator('#rt-board').scrollIntoViewIfNeeded();await page.locator('#rt-board').focus();
-  await page.screenshot({path:join(output,name),fullPage:false});report.screenshots.push(name);
+  await page.screenshot({path:join(output,name),fullPage:false,timeout:120000});report.screenshots.push(name);
 }
 async function geometry(label){
   const measured=await page.evaluate(()=>{

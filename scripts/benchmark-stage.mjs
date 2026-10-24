@@ -16,6 +16,8 @@
 // shader programs rise above the ceilings recorded for its scene and quality;
 // --write-ceilings FILE records this run's counts as those ceilings (10% above the
 // calls and triangles, two programs above), on purpose, keeping other scenes'.
+// --images DIR saves each run's still overview and its follow and horizon views
+// as PNGs (<scene>-<quality>-<view>.png): fixed cameras for before-and-after renders.
 //   PLAYWRIGHT_MODULE=/absolute/playwright/index.js node scripts/benchmark-stage.mjs
 import http from 'node:http';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -30,7 +32,7 @@ const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1];};
 const sceneIds=arg('--scenes','ch1-road,ch5-mine,ch7-legion,ch9-wing,ch12-confrontation').split(',');
 const qualities=arg('--quality','performance,balanced').split(',');
-const ceilingsPath=arg('--ceilings',null),writeCeilingsPath=arg('--write-ceilings',null);
+const ceilingsPath=arg('--ceilings',null),writeCeilingsPath=arg('--write-ceilings',null),imagesPath=arg('--images',null);
 const reportPath=arg('--report',null),dist=process.argv.includes('--dist'),root=dist?resolve(repo,'dist'):repo,check=process.argv.includes('--check'),maxPrograms=Number(arg('--max-programs',60));
 const VIEWPORT={width:1280,height:720};
 
@@ -98,6 +100,7 @@ async function run(browser,base,id,quality){
   const phases=[],now=()=>tab.evaluate(()=>performance.now()),programs=()=>tab.evaluate(()=>(controller.stage?.renderer.info.programs??[]).map(p=>({key:p.cacheKey,name:p.name}))),stats=()=>tab.evaluate(()=>{const s=controller.stage,r=s?.renderer,c=document.getElementById('battle-board')??s?.canvas,v=s?.stats?.()??{};
     return {programs:r?.info.programs?.length??null,calls:v.calls??null,triangles:v.triangles??null,textures:v.textures??null,geometries:v.geometries??null,actorAssets:c?.dataset.actorAssets??null,generatedBodies:Number(c?.dataset.generatedBodies??0),sceneryModels:c?.dataset.sceneryModels??null,cameraView:v.cameraView??null};});
   const phase=async(name,fn)=>{const start=await now();await fn();const end=await now();phases.push({name,start,end,...await stats()});};
+  const capture=async view=>{const out=resolve(repo,imagesPath,`${id}-${quality}-${view}.png`);await mkdir(dirname(out),{recursive:true});await tab.locator('#battle-board').screenshot({path:out});};
   try{
     await tab.goto(`${base}probe--${id}--${quality}.html`);
     await phase('build',()=>tab.waitForFunction(()=>bench.marks.firstFrame||bench.error,null,{polling:100}));
@@ -128,8 +131,10 @@ async function run(browser,base,id,quality){
       }
       return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length,
         gpuBytes:{textures:Math.round(textureBytes),geometry:geometryBytes,total:Math.round(textureBytes)+geometryBytes}};});
+    if(imagesPath)await capture('overview');
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
-    await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);}});
+    await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);
+      if(imagesPath&&view!=='home')await capture(view);}});
     // Programs first compiled after the battle was shown, by name: each is a stall in play.
     const late=(await programs()).filter(p=>!shown.has(p.key)).map(p=>p.name);
     const raw=await tab.evaluate(()=>({long:bench.long,frames:bench.frames,marks:bench.marks,error:bench.error??null,device:controller.stage?.deviceReport??null,firstFramePrograms:controller.stage?.firstFramePrograms??null,parallelShaderCompile:!!controller.stage?.renderer.extensions.get('KHR_parallel_shader_compile')}));

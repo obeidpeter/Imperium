@@ -30,7 +30,7 @@ test('Fluted columns use real bounded geometry, with taper preserved',()=>{
 test('Material finishes preserve the existing soil texture and three quality tiers compose leaf wind without losing surface treatment',()=>{
   for(const chapter of [1,2,9,11]){
     const profile=getSceneProfile({id:`ch${chapter}-test`,kind:chapter===11?'contest':'battle'},{chapter}),library=createEnvironmentMaterials({loadTextures:false,profile}),m=library.materials;
-    for(const key of ['ground','stone','wood','leaves','floor']){const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};m[key].onBeforeCompile(shader);assert.ok(shader.vertexShader.includes('vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;'));assert.ok(shader.fragmentShader.includes('roughnessFactor*='));if(key==='ground')assert.equal(shader.uniforms.frontierSoil,m.ground.userData.soilTexture);}
+    for(const key of ['ground','stone','wood','leaves','floor']){const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};m[key].onBeforeCompile(shader);assert.ok(shader.vertexShader.includes('vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;'));assert.ok(shader.fragmentShader.includes('roughnessFactor*='));if(key==='ground')assert.equal(shader.uniforms.groundSplatMap,m.ground.userData.terrain.uniforms.groundSplatMap);}
     library.dispose();
   }
   const s=fixture.scenes.find(s=>s.id==='ch1-road');

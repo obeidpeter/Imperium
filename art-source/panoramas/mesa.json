@@ -1,0 +1,199 @@
+{
+ "key": "mesa",
+ "seed": 43,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 10.4,
+ "renderSeconds": 72.4,
+ "region": {
+  "seed": 43,
+  "near": 10,
+  "mid": 150,
+  "ridge": 0,
+  "mesa": true,
+  "plains": [
+   [
+    80,
+    75,
+    0.95
+   ]
+  ],
+  "valleys": [
+   [
+    80,
+    70,
+    30
+   ]
+  ],
+  "ranges": [
+   [
+    260,
+    80,
+    260,
+    9000
+   ]
+  ],
+  "forest": 0,
+  "lone": 0,
+  "fields": 0.55,
+  "rock": 0.35,
+  "river": "euphrates",
+  "river_base": -30,
+  "land": [
+   0.36,
+   0.27,
+   0.16
+  ],
+  "dry": [
+   0.44,
+   0.34,
+   0.2
+  ],
+  "wood": [
+   0.08,
+   0.12,
+   0.04
+  ],
+  "rockc": [
+   0.42,
+   0.3,
+   0.18
+  ],
+  "fieldc": [
+   [
+    0.16,
+    0.22,
+    0.06
+   ],
+   [
+    0.26,
+    0.26,
+    0.1
+   ],
+   [
+    0.34,
+    0.28,
+    0.14
+   ]
+  ],
+  "trees": [
+   [
+    "palm",
+    1
+   ]
+  ],
+  "wall": [
+   0.5,
+   0.4,
+   0.28
+  ],
+  "roof": [
+   0.5,
+   0.4,
+   0.28
+  ],
+  "thatch": [
+   0.5,
+   0.4,
+   0.28
+  ],
+  "sun": [
+   282,
+   13,
+   4.6,
+   [
+    1,
+    0.76,
+    0.52
+   ]
+  ],
+  "sky": [
+   [
+    0.6,
+    0.55,
+    0.5
+   ],
+   0.45
+  ],
+  "landmarks": [
+   [
+    "camp",
+    8,
+    1500,
+    {
+     "tents": 220,
+     "size": 1.7
+    }
+   ],
+   [
+    "camp",
+    38,
+    2600,
+    {
+     "tents": 160,
+     "size": 1.5
+    }
+   ],
+   [
+    "riverpalms",
+    0,
+    0,
+    {
+     "n": 2600
+    }
+   ],
+   [
+    "ruin",
+    330,
+    2200,
+    {}
+   ],
+   [
+    "village",
+    140,
+    2400,
+    {
+     "flat": true
+    }
+   ],
+   [
+    "tombs",
+    245,
+    2300,
+    {
+     "n": 7
+    }
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "river": "euphrates",
+ "pools": 0,
+ "treeCrowns": 0,
+ "landmarks": 46,
+ "partVertices": 56000,
+ "png": {
+  "bytes": 1376117,
+  "sha256": "f0905b33753663d19141fe99aaf2f54b43c832c9af5e9c17969801ca8ff982c5"
+ }
+}

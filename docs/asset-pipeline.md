@@ -167,20 +167,66 @@ Photographic textures for the ground, rock, brick, plaster, wood and roof tiles 
 - Either way the files go to `art-source/cc0/raw/<source>-<id>/` (not committed) and a record to `art-source/cc0/<source>-<id>.json`: the asset page, name, authors, licence and its page, retrieval time, the selection, and each file's URL, bytes and SHA-256 (with Poly Haven's MD5, or ambientCG's archive digest). A file that fails its check stops the intake before anything is written.
 - `npm run asset:cc0 -- record <record.json> <shipped file> --id <id> --subject <text> --usage <text> --loading <text> --processing <text>` adds a file made from those downloads (a KTX2 texture encoded with `basisu`, for example) to the [asset manifest](asset-manifest.json), or replaces its entry: its source record and the digests of the files it came from, its processing, bytes and SHA-256, and the CC0 licence with its authors credited. It edits only that entry, the totals, the counts and the date, leaving the rest of the file as written.
 
-Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). No CC0 file ships yet.
+Network access: `api.polyhaven.com` and `dl.polyhaven.org` for Poly Haven; `ambientcg.com` and the host its downloads redirect to, `acg-download.struffelproductions.com`, for ambientCG. Node's `fetch` ignores `HTTPS_PROXY`, so behind a proxy run it with `NODE_USE_ENV_PROXY=1` (Node 22.21 or later). On 2026-10-22 a Poly Haven texture set (`rocky_terrain_02`, three 1k maps) came through with every digest matching; ambientCG's API answered, but this environment's network policy refused its download host, so its download has been checked against fixtures only ([`cc0-intake.test.mjs`](../tests/cc0-intake.test.mjs)). The ground's layers below are the first CC0 files to ship. Poly Haven's thumbnail server (`cdn.polyhaven.com`) is also refused here; previews were made from each set's 1k colour map instead.
+
+## The ground
+
+Every 3D scene's ground (release 2 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md)) blends eleven photographed layers. Each is a Poly Haven set, taken in on 2026-10-24 with `npm run asset:cc0 -- fetch polyhaven:<id> --resolution 1k --format png --maps Diffuse,nor_gl,Displacement`, and repeats at its real size:
+
+| Layer | Poly Haven set | Size of one tile |
+| --- | --- | --- |
+| grass | `forrest_ground_01` | 2 m |
+| dry grass | `grass_path_2` | 1 m |
+| soil | `brown_mud_dry` | 1.3 m |
+| mud | `brown_mud_02` | 1.3 m |
+| sand | `sand_01` | 1.5 m |
+| gravel | `rocks_ground_01` | 2 m |
+| rock | `rock_ground` | 1.5 m |
+| paving (polygonal, a Roman road) | `grassy_cobblestone` | 2 m |
+| slabs | `stone_floor` | 1.85 m |
+| arid soil | `dry_ground_rocks` | 4 m |
+| cracked earth | `mud_cracked_dry_03` | 1.5 m |
+
+- **Build.** `node scripts/assets/build-ground-set.mjs [--record]` ([source](../scripts/assets/build-ground-set.mjs)) checks every source file against its record's SHA-256, resizes each layer to 512 px (Lanczos) and writes two KTX2 2D arrays with basisu (ETC1S, quality 128, mipmaps): the colour with the displacement map, stretched to the full range, in alpha, for height-blended joins (914 KB), and the OpenGL-convention normal, X in colour and Y in alpha (988 KB). With `--record` it writes both files' manifest entries, which list each layer's source, authors and file digests. It reports each layer's mean colour, which the code-built stand-in draws. At 1,024 px the arrays would take about 5.4 MB, and as UASTC about 7 MB.
+- **Placement.** The layers are data in [`ground-layers.js`](../src/ui/ground-layers.js): each region's mixes for open turf, worn ground, roads, banks, wet ground, river beds, sand, rock, a wall's foot, camps, the joints of flagstones and floors, with tints for the season and a brightness for the scenes' light. [`terrain-splat.js`](../src/showcase/terrain-splat.js) turns the board's own cells into a weight map at two texels a metre over the whole ground: cell edges wander up to half a metre, roads come from the road's distance field and never climb a bank, steep relief shows bare soil and stone, and wear, the fort's yard, staged routes and the river's bank add worn and wet ground. It reads a snapshot of the encounter and uses no random generator.
+- **Shading.** [`terrain-material.js`](../src/showcase/terrain-material.js) blends the layers by those weights and by their own heights, so pebbles stand out of sand rather than fading into it. Each layer also samples a turned, larger copy of itself, mixed in by a broad noise, so no tile repeats in view. Normals follow the layers on Balanced and High; Performance draws them flat, one program per quality. Beyond the weight map, on the outer ground and the horizon, the region's turf wears toward its worn ground with the ground's soil weight.
+- **Download and fallback.** Every chapter's offline pack takes the set (1.9 MB, counted once in the complete campaign), and the battle's preloader loads it with the page's KTX2 transcoder before the scene is built. Until it arrives, or if it cannot, each layer is its flat mean colour, drawn by the same program, and the arrays replace it without a recompile.
+
+## The horizon
+
+Beyond the modelled ridges (550 m), each region's skyline is an original landscape rendered in Blender (release 2 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md)): nine panoramas, one per region, no external image or model.
+
+| Region | Chapters | What it shows |
+| --- | --- | --- |
+| forest | I, IV, VIII | The Danube across the north, wooded hills, villages and a fort on the Roman bank, the Haemus far to the south |
+| reeds | II | Flooded meadow, pools and reed beds, willows, low ridges under a grey morning |
+| hills | III | Fields and vineyards over rolling hills, a road station, villas, a fort |
+| mesa | V, VI | The Euphrates' valley with its palm groves to the east, buttes on the desert plateau, the Persian siege camp, at dusk |
+| alps | VII | The Po plain's fields and poplar rows, Milan's walls, the Alps along the northern sky |
+| palmyra | IX | The colonnade and the temple of Bel, the oasis, tower tombs in the western valley, bare ranges |
+| farmland | X | Harvest fields south of the Danube, villages, a granary, the Haemus |
+| rome | XI | Rome's roofs on every side, the Colosseum, the Palatine, the Capitol, the Pantheon, Aurelian's wall, the Alban and Sabine hills |
+| campagna | XII | The Campagna at dusk: aqueducts, tombs and pines along the road, the city behind its wall, a rival camp |
+
+- **Render.** `$BLENDER_PYTHON scripts/assets/render-panorama.py -- --repo . [--only forest,rome]` ([source](../scripts/assets/render-panorama.py)) builds each region from its data (`REGIONS`: relief near and far, mountain ranges in arcs, plains, rivers and pools, forests, fields and landmarks, the sun and the sky's light) and renders it in Cycles (CPU, 64 samples, no denoiser) as an equirectangular band from 4° below the horizon to 10.0625° above, 8192 by 320 pixels, seen from 12 m above the board's centre with the sky transparent. North is the image's centre; a bearing b (clockwise from north) is at u = 0.5 + b / 360. Every surface fades toward a neutral haze with distance (at most 80%, half of it by about 7 km). The battle camera faces north-north-east by default, so each region's chief sights stand between north and east. The PNG stays out of the repository; its report in `art-source/panoramas/<key>.json` keeps the seed, the settings, the region's data and the PNG's SHA-256.
+- **Encode.** `node scripts/assets/build-panoramas.mjs [--only mesa] [--record]` ([source](../scripts/assets/build-panoramas.mjs)) checks each PNG against its report and the game's band, gives the clear sky and the strip below the nearest ground the colour of the skyline above or below them (so filtering never darkens a silhouette), folds the band into two rows of 4096 (south through west to north above north through east to south: no side exceeds 4096) and writes `assets/textures/panoramas/<key>-v1.ktx2` with basisu (ETC1S, quality 255, sRGB, mipmaps with clamped edges). `--record` writes each file's manifest entry.
+- **In the game.** [`environment-panorama.js`](../src/showcase/environment-panorama.js) draws it on a cylinder 610 m out, where the code-painted backdrop stood, reading each pixel at the elevation it was rendered at. Its foot sinks into the scene's fog like the ridges in front of it; from a degree below its horizon to 1.5° above it rises to a lighter haze (more in dust, mist, rain and at night), so the far ranges stand over the mist. It takes the chapter's fog colour and a little of its sun, dimmer at dawn and dusk and dark at night. The ridges' relief settles from 120 m outward so the panorama, not a bowl of near ridges, makes the skyline. One program draws every region.
+- **Download and fallback.** A panorama (217–364 KB; 2.86 MB for all nine) belongs to its chapters' offline packs only and is preloaded before a scene is built; the current region's and the previous one's stay loaded, and an older one is released. Until it arrives, if it cannot, and in council chambers, the code-painted backdrop stands in.
 
 ## Budgets
 
 The download budgets are in [`presentation-budget.js`](../src/ui/presentation-budget.js):
 
-| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) | Used with the regional worlds (unreleased) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 | 809,581 |
-| Shell plus Chapter I (the 3D view since the asset foundation) | 16,000,000 (8,000,000 until 0.37.0, then 10,000,000, then 12,000,000 until the worlds and gameplay plan) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 | 7,678,904 |
-| Shell plus any one chapter, with its 2D art | 24,000,000 (14,000,000 until the worlds and gameplay plan) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) | 12,589,026 (Chapter V) |
-| Complete campaign | 80,000,000 (24,000,000 until the asset foundation, then 50,000,000) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 | 26,600,463 |
+| Budget | Limit (bytes) | Used at 0.35.1 | Used at 0.36.0 | Used at 0.37.0 | Used at 0.38.0 | Used with the asset foundation | Used with the soldier's bodies (unreleased) | Used with the regional worlds (unreleased) | Used with release 2: ground, sky and light (unreleased) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| First load | 2,000,000 | 481,240 | 481,462 | 483,045 | 495,064 | 780,452 | 792,130 | 809,581 | 817,259 |
+| Shell plus Chapter I (the 3D view since the asset foundation) | 16,000,000 (8,000,000 until 0.37.0, then 10,000,000, then 12,000,000 until the worlds and gameplay plan) | 7,989,151 | 7,991,510 | 9,654,943 (345,057 left) | 9,495,867 (504,133 left) | 6,576,713 | 6,949,183 | 7,678,904 | 9,989,077 |
+| Shell plus any one chapter, with its 2D art | 24,000,000 (14,000,000 until the worlds and gameplay plan) | | | | | 10,490,504 (Chapter VIII, the largest) | 10,851,859 (Chapter VIII) | 12,589,026 (Chapter V) | 14,824,097 (Chapter V) |
+| Complete campaign | 80,000,000 (24,000,000 until the asset foundation, then 50,000,000) | 11,339,391 | 12,069,291 | 17,918,247 | 17,937,412 | 19,896,578 | 19,912,153 | 26,600,463 | 31,332,292 |
 
 The figures are gzip sizes from `dist/build-report.json`, not a browser network trace. `chapterDownloadGzipBytes` there gives each chapter's download on a device's first visit, for the 3D view and with the 2D art. Every file directly in `assets/models/` belongs to every chapter's offline group, Chapter I included. A world asset (a generated prop, a landmark, a kit piece, a texture set or a panorama) belongs to the offline groups of the chapters the [world catalog](../src/ui/world-catalog.js) names, never to all of them (`chapterOfflineAssets` in [`art.js`](../src/ui/art.js)); until the asset foundation, a model's folder `assets/models/chapters/<NN>/` decided it. In 0.36.0 the loader and its wiring added 2,359 bytes to Chapter I's download, and the models added nothing; Chapter V's own group is 6,437,618 bytes.
+
+Release 2 of the plan adds the ground's layers (1.9 MB in every chapter) and one regional skyline per chapter (217–364 KB): Chapter I for the 3D view grows to 9,989,077 bytes, the largest chapter with its 2D art (Chapter V) to 14,824,097 and the complete campaign to 31,332,292.
 
 The [worlds and gameplay plan](worlds-and-gameplay-plan.md) raises three limits: Chapter I for the 3D view to 16 MB, any one chapter with its 2D art to 24 MB, and the complete campaign to 80 MB. The extra room is for the regional ground textures, trees, rocks, board kit, landmarks and new figures to come. The 2 MB first load, the external requirement, is unchanged. Before that work, with the regional worlds of PR #26, Chapter V with its 2D art was the largest chapter at 12,589,026 bytes. Chapter I took 7,678,904 for the 3D view and the complete campaign 26,600,463.
 

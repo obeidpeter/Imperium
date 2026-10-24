@@ -1,0 +1,186 @@
+{
+ "key": "palmyra",
+ "seed": 61,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 13.4,
+ "renderSeconds": 57.3,
+ "region": {
+  "seed": 61,
+  "near": 14,
+  "mid": 320,
+  "ridge": 0.6,
+  "plains": [
+   [
+    110,
+    70,
+    0.85
+   ]
+  ],
+  "ranges": [
+   [
+    310,
+    70,
+    800,
+    8000,
+    2.2
+   ],
+   [
+    220,
+    50,
+    500,
+    10000
+   ]
+  ],
+  "forest": 0,
+  "lone": 0,
+  "fields": 0.15,
+  "rock": 0.5,
+  "river": null,
+  "land": [
+   0.38,
+   0.3,
+   0.18
+  ],
+  "dry": [
+   0.46,
+   0.37,
+   0.23
+  ],
+  "wood": [
+   0.08,
+   0.12,
+   0.04
+  ],
+  "rockc": [
+   0.3,
+   0.23,
+   0.15
+  ],
+  "fieldc": [
+   [
+    0.16,
+    0.22,
+    0.06
+   ],
+   [
+    0.26,
+    0.27,
+    0.1
+   ]
+  ],
+  "trees": [
+   [
+    "palm",
+    1
+   ]
+  ],
+  "wall": [
+   0.5,
+   0.44,
+   0.34
+  ],
+  "roof": [
+   0.5,
+   0.44,
+   0.34
+  ],
+  "thatch": [
+   0.5,
+   0.4,
+   0.28
+  ],
+  "sun": [
+   300,
+   55,
+   4.0,
+   [
+    1,
+    0.95,
+    0.85
+   ]
+  ],
+  "sky": [
+   [
+    0.6,
+    0.6,
+    0.62
+   ],
+   0.45
+  ],
+  "landmarks": [
+   [
+    "palmyra",
+    58,
+    2800,
+    {}
+   ],
+   [
+    "palms",
+    125,
+    2300,
+    {
+     "n": 900,
+     "spread": [
+      900,
+      1500
+     ]
+    }
+   ],
+   [
+    "tombs",
+    262,
+    1900,
+    {
+     "n": 18
+    }
+   ],
+   [
+    "tombs",
+    285,
+    2900,
+    {
+     "n": 12
+    }
+   ],
+   [
+    "camp",
+    100,
+    1700,
+    {
+     "tents": 120,
+     "roman": true
+    }
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "pools": 0,
+ "treeCrowns": 0,
+ "landmarks": 428,
+ "partVertices": 36016,
+ "png": {
+  "bytes": 1653681,
+  "sha256": "1a4142d59e0777b1ea0eef353a65f014f420cb564b8398aa113cc81e9f7c2b78"
+ }
+}

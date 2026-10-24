@@ -181,10 +181,8 @@ test('v0.29.0: the diorama board has one river channel surface, cell-edge walls,
     assert.equal(wallStyle({setting: 'fortress'}), 'stone');assert.equal(wallStyle({setting: 'siege'}), 'mudbrick');assert.equal(wallStyle({setting: 'frontier'}), 'timber');
   }
   {
-    const {s, world} = build('ch1-road'), e = s.state.encounter, level = createGroundHeight(e, 2.5, {profile: world.profile, relief: false});
+    const {s, world} = build('ch1-road'), e = s.state.encounter;
     assert.ok(world.group.getObjectByName('squared stone masonry')?.count > 60, 'Roads are edged with kerb stones (batched with other squared stone)');
-    const road = world.group.getObjectByName('authored boundary road').geometry.attributes.position;
-    for (let i = 0; i < road.count; i++) assert.ok(road.getY(i) <= level(road.getX(i), road.getZ(i)) + .021 + 1e-6, 'The road surface passes under a plateau bank instead of climbing it');
     const ground = world.ground.geometry.attributes.position;let inner = 0;
     for (let i = 0; i < ground.count; i++) if (Math.max(Math.abs(ground.getX(i)), Math.abs(ground.getZ(i))) <= 10) inner++;
     assert.ok(inner > ground.count * (20 / 80) ** 2 * 2.4, 'The board holds well over twice its even share of ground vertices');

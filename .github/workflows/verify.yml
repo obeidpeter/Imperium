@@ -104,8 +104,9 @@ jobs:
     name: twelve camps (Chromium)
     runs-on: ubuntu-latest
     # Every camp's regional models, cameras, services and scenery residency in one
-    # browser: about 13 minutes of software rendering, plus the browser install.
-    timeout-minutes: 40
+    # browser: about 16 minutes of software rendering at release 1, and about
+    # twice that per frame over the photographed ground of release 2.
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -126,7 +127,8 @@ jobs:
   benchmark:
     name: twelve-chapter benchmark (Chromium)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # The scene inventory's own budget is 45 minutes (scripts/benchmark-campaign.mjs).
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

@@ -33,6 +33,7 @@ uniform vec3 sunColor;
 uniform vec3 sunDirection;
 uniform float cloudOpacity;
 uniform float cloudTime;
+uniform float nightSky;
 varying vec3 skyDirection;
 float hash21(vec2 p){
   vec3 q=fract(vec3(p.xyx)*vec3(.1031,.1030,.0973));
@@ -43,25 +44,43 @@ float noise21(vec2 p){
   vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
   return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1,1)),f.x),f.y);
 }
+float cloudField(vec2 p){return noise21(p)*.64+noise21(p*2.07+vec2(7.3,2.6))*.36;}
 void main(){
   vec3 d=normalize(skyDirection);
   float altitude=max(d.y,0.0);
   float clearHorizon=smoothstep(${SKY_GRADIENT.horizon.toFixed(3)},${SKY_GRADIENT.cloudFadeEnd.toFixed(3)},altitude);
   vec3 color=mix(horizonColor,zenithColor,pow(smoothstep(${SKY_GRADIENT.horizon.toFixed(3)},${SKY_GRADIENT.blue.toFixed(3)},altitude),.57));
+  float alignment=max(dot(d,sunDirection),0.0);
+  // A low sun (dawn, dusk) warms the horizon on its own side of the sky.
+  float low=(1.0-smoothstep(.12,.6,sunDirection.y))*(1.0-nightSky);
+  vec2 sunBearing=normalize(sunDirection.xz+vec2(1e-5));
+  float bearing=max(dot(normalize(d.xz+vec2(1e-5)),sunBearing),0.0);
+  color=mix(color,sunColor*1.1,low*pow(bearing,3.0)*(1.0-smoothstep(0.0,.35,altitude))*.55);
+  // Stars, only at night: a fixed field on the dome, faintly twinkling.
+  vec3 starCell=floor(d*260.0);
+  float starSeed=fract(sin(dot(starCell,vec3(12.9898,78.233,37.719)))*43758.5453);
+  color+=vec3(.86,.9,1.0)*nightSky*step(.9965,starSeed)*smoothstep(.08,.3,altitude)*(.6+.4*sin(cloudTime*1.7+starSeed*60.0));
   // A continuous layer projected above the observer, without texture seams.
   // Cloud drift is a caller-controlled clock; there is no autonomous timer.
   vec2 p=d.xz/max(d.y,${SKY_GRADIENT.projectionFloor.toFixed(3)})*1.75+vec2(cloudTime*.0022,cloudTime*.0007);
-  float clouds=noise21(p)*.64+noise21(p*2.07+vec2(7.3,2.6))*.36;
+  float clouds=cloudField(p);
   #if CLOUD_DETAIL == 1
     float detailWeight=.16*smoothstep(.15,.35,altitude);
     clouds=clouds*(1.0-detailWeight)+noise21(p*4.11+vec2(1.1,9.4))*detailWeight;
   #endif
-  float cover=smoothstep(.53,.74,clouds)*smoothstep(${SKY_GRADIENT.cloudFadeStart.toFixed(3)},${SKY_GRADIENT.cloudFadeEnd.toFixed(3)},altitude)*cloudOpacity;
-  color=mix(color,cloudColor,cover);
-  float alignment=max(dot(d,sunDirection),0.0);
-  float glow=pow(alignment,32.0)*.11+pow(alignment,160.0)*.23;
-  float disc=smoothstep(.99994,.999985,alignment)*2.8;
-  color+=sunColor*(glow+disc)*clearHorizon*(1.0-cover*.78);
+  float density=smoothstep(.53,.74,clouds);
+  float cover=density*smoothstep(${SKY_GRADIENT.cloudFadeStart.toFixed(3)},${SKY_GRADIENT.cloudFadeEnd.toFixed(3)},altitude)*cloudOpacity;
+  // Clouds lit by the sun: where the layer thickens toward the sun, this side is
+  // in its own shade; thin edges toward the sun glow, and a low sun colours them.
+  float shade=clamp((cloudField(p+sunBearing*.32)-clouds)*3.5,0.0,1.0);
+  vec3 lit=cloudColor*(1.0-.32*shade)*mix(vec3(1.0),sunColor,.12+.33*low);
+  lit+=sunColor*pow(alignment,6.0)*(1.0-density*.6)*.45*(1.0-nightSky*.7);
+  color=mix(color,lit,cover);
+  float glow=(pow(alignment,32.0)*.11+pow(alignment,160.0)*.23)*(1.0+low*1.5);
+  float disc=smoothstep(.99994,.999985,alignment)*2.8*(1.0-nightSky);
+  // By night the light is the moon: a larger, paler disc.
+  float moon=smoothstep(.99955,.99975,alignment)*1.6*nightSky;
+  color+=sunColor*(glow+disc+moon)*clearHorizon*(1.0-cover*.78);
   gl_FragColor=vec4(color,1.0);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -76,7 +95,7 @@ export function createSky(scene,profile={},options={}){
   const direction=new T.Vector3(...values);if(direction.lengthSq()<1e-8)direction.set(-16,24,-12);direction.normalize();
   const geometry=new T.SphereGeometry(700,quality==='performance'?24:32,quality==='performance'?12:16);
   const material=new T.ShaderMaterial({name:'Procedural atmospheric sky',vertexShader,fragmentShader,
-    uniforms:{horizonColor:{value:palette.horizon},zenithColor:{value:palette.zenith},cloudColor:{value:palette.cloud},sunColor:{value:palette.sun},sunDirection:{value:direction},cloudOpacity:{value:palette.cloudOpacity},cloudTime:{value:0}},
+    uniforms:{horizonColor:{value:palette.horizon},zenithColor:{value:palette.zenith},cloudColor:{value:palette.cloud},sunColor:{value:palette.sun},sunDirection:{value:direction},cloudOpacity:{value:palette.cloudOpacity},cloudTime:{value:0},nightSky:{value:profile.timeOfDay==='night'?1:0}},
     defines:{CLOUD_DETAIL:quality==='performance'?0:1},side:T.BackSide,depthWrite:false,depthTest:true,fog:false,toneMapped:true});
   const group=new T.Group();group.name='procedural atmosphere';const dome=new T.Mesh(geometry,material);dome.name='camera-centered sky dome';dome.renderOrder=-1000;dome.frustumCulled=false;dome.castShadow=false;dome.receiveShadow=false;group.add(dome);scene.add(group);
   let disposed=false,paused=!!options.reducedMotion,lastTime=null,cloudTime=0;

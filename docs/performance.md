@@ -1,8 +1,8 @@
-# 3D performance: smooth play (0.38 and 0.38.1) and the worlds and gameplay baseline
+# 3D performance: smooth play (0.38 and 0.38.1) and the worlds and gameplay releases
 
 0.38 is the first release of the world-building plan. It makes battles open and play without freezes before richer worlds add to the load; 0.38.1 finishes most of what 0.38.0 left open. This page records what changed, how to measure it, what the software benchmark found, and what is still open. Nothing here was measured on a phone, a laptop GPU or any other physical device; the figures come from headless Chromium with software rendering (SwiftShader).
 
-The [worlds and gameplay plan](worlds-and-gameplay-plan.md) starts from a fresh baseline in all twelve chapters, with the regional scenery of 0.40, and CI now holds each battle's counts below recorded ceilings ([the baseline](#the-worlds-and-gameplay-baseline), [its targets](#targets-of-the-worlds-and-gameplay-plan)).
+The [worlds and gameplay plan](worlds-and-gameplay-plan.md) starts from a fresh baseline in all twelve chapters, with the regional scenery of 0.40, and CI now holds each battle's counts below recorded ceilings ([the baseline](#the-worlds-and-gameplay-baseline), [its targets](#targets-of-the-worlds-and-gameplay-plan)). Its second release, the photographed ground, time of day, baked sun shadows and regional skylines, was measured the same way ([release 2](#release-2-ground-sky-and-light)).
 
 ## What 0.38.1 changed
 
@@ -99,6 +99,44 @@ The "Preparing" veil stays until everything the battle will draw is ready, and t
 
 ## Results (software rendering)
 
+### Release 2: ground, sky and light
+
+The [release 2 report](evidence/stage-benchmark-release2.json) repeats the baseline's 24 runs, with the same script, scenes and columns, on the production build of the plan's second release. Arrows run from the baseline to release 2; the last column gives the baseline's total, then release 2's textures plus geometry, in MB.
+
+| Battle | Quality | Ready (first frame), ms | Longest task while building, ms | Longest task in play, ms | Programs | Draw calls | Triangles | Textures + geometry, MB |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| ch1-road | performance | 5,023 | 103 | 0 | 41 → 41 | 73 → 73 | 160,767 → 157,272 | 35.3 → 26.8 + 7.8 |
+| ch1-road | balanced | 5,679 | 113 | 0 | 48 → 48 | 80 → 80 | 337,638 → 342,141 | 45.5 → 31.6 + 10.8 |
+| ch2-marsh | performance | 4,678 | 114 | 0 | 43 → 43 | 85 → 85 | 176,873 → 169,848 | 35.1 → 27.6 + 9.6 |
+| ch2-marsh | balanced | 4,278 | 120 | 0 | 51 → 51 | 82 → 82 | 292,297 → 292,750 | 48.0 → 34.4 + 13.1 |
+| ch3-station | performance | 4,222 | 103 | 0 | 41 → 41 | 76 → 76 | 167,296 → 168,006 | 29.6 → 22.8 + 6.3 |
+| ch3-station | balanced | 4,211 | 119 | 0 | 48 → 48 | 81 → 81 | 377,336 → 383,404 | 39.8 → 27.6 + 9.0 |
+| ch4-gate | performance | 5,245 | 131 | 0 | 45 → 45 | 106 → 106 | 248,750 → 251,362 | 40.2 → 28.8 + 10.9 |
+| ch4-gate | balanced | 5,638 | 153 | 0 | 51 → 51 | 106 → 106 | 494,312 → 502,722 | 52.1 → 34.6 + 14.4 |
+| ch5-mine | performance | 5,722 | 109 | 0 | 46 → 45 | 127 → 126 | 235,498 → 221,863 | 43.0 → 31.8 + 13.0 |
+| ch5-mine | balanced | 5,469 | 112 | 0 | 50 → 49 | 138 → 137 | 437,313 → 423,710 | 64.5 → 43.6 + 19.6 |
+| ch6-wells | performance | 6,060 | 137 | 0 | 44 → 43 | 113 → 112 | 219,178 → 212,754 | 44.8 → 33.1 + 13.7 |
+| ch6-wells | balanced | 5,353 | 113 | 0 | 50 → 49 | 112 → 111 | 340,503 → 334,111 | 61.6 → 42.9 + 17.7 |
+| ch7-legion | performance | 6,611 | 120 | 0 | 46 → 46 | 126 → 126 | 312,072 → 310,136 | 46.4 → 31.5 + 14.4 |
+| ch7-legion | balanced | 5,864 | 121 | 0 | 53 → 53 | 124 → 124 | 571,384 → 574,766 | 60.2 → 38.3 + 18.7 |
+| ch8-ferry | performance | 6,018 | 140 | 0 | 48 → 48 | 124 → 124 | 348,192 → 337,423 | 47.2 → 31.6 + 14.9 |
+| ch8-ferry | balanced | 6,224 | 149 | 0 | 56 → 56 | 125 → 125 | 604,485 → 598,814 | 61.3 → 38.4 + 19.4 |
+| ch9-wing | performance | 5,349 | 102 | 0 | 46 → 45 | 133 → 132 | 276,544 → 262,349 | 48.0 → 35.0 + 14.8 |
+| ch9-wing | balanced | 5,557 | 142 | 0 | 52 → 51 | 128 → 127 | 456,833 → 442,670 | 65.3 → 43.5 + 20.6 |
+| ch10-road | performance | 5,239 | 114 | 0 | 47 → 47 | 129 → 129 | 301,032 → 292,237 | 42.3 → 28.8 + 12.7 |
+| ch10-road | balanced | 5,798 | 140 | 0 | 54 → 54 | 129 → 129 | 536,916 → 533,639 | 55.1 → 34.6 + 17.0 |
+| ch11-accounts | performance | 6,904 | 104 | 0 | 49 → 48 | 116 → 115 | 148,766 → 148,766 | 58.3 → 22.8 + 32.6 |
+| ch11-accounts | balanced | 7,560 | 101 | 0 | 53 → 52 | 127 → 126 | 274,523 → 274,523 | 75.2 → 28.6 + 43.7 |
+| ch12-confrontation | performance | 5,812 | 107 | 0 | 46 → 45 | 138 → 137 | 400,354 → 385,065 | 40.0 → 25.6 + 13.4 |
+| ch12-confrontation | balanced | 6,041 | 125 | 0 | 53 → 52 | 135 → 134 | 785,732 → 770,475 | 53.3 → 31.4 + 17.9 |
+
+- **No program was compiled by the first frame or after the battle was shown, in any of the 24 runs**, every battle's figures wore their generated bodies (Chapter XI's Contest has none yet), and no page reported an error. Every run is below the ceilings recorded at release 1, which are unchanged.
+- **The counts held or fell.** Programs and draw calls are the same, or one fewer in Chapters V, VI, IX, XI and XII: the road is now painted into the ground's weight map, so its overlay, with its own program and draw, is gone, while the ridges' woods add a draw in the chapters that have them and the skyline has a program of its own. Triangles fell in fifteen runs, by up to 15,289, and rose in seven, by up to 8,410 (Chapter IV on Balanced), all in chapters where the ridges' woods add their crowns. Chapter XII on Performance is now 385,065, within the plan's 400,000.
+- **Memory fell in twenty runs**, by up to 4.0 MB, and rose by up to 2.0 MB in four (Chapters II, V, VI and IX on Performance): the compressed ground layers and the region's skyline take the place of the code-drawn ground and backdrop textures.
+- **The longest task while building rose**, from 74–141 ms (the baseline's 311 ms outlier aside) to 101–153 ms, all before the battle shows: the ground's texture arrays and the region's skyline are uploaded, and its weight map and the sun's shadows are computed, in that window. Nothing of 50 ms or more ran after the battle was shown, in any run.
+- **Ready times** stay within the baseline's spread (4.2–7.6 s, against 4.6–6.6 s), except Chapter XI's chamber, ready 0.3 s later on Performance and 1.2 s later on Balanced. Each run starts in a fresh page, so every first scene of a session also waits for the ground's layers once; a chamber still draws the outer ground.
+- **A frame costs about twice release 1's in software rendering.** Chapter V's battle drawn at 1,280 by 720 on Balanced, each frame forced to finish: release 1 took 1.3 s in both the horizon and the overview views. Release 2 as first built took 4.5 and 3.4 s, all but 1.0 s of it in the ground's layers (the skyline cost nothing measurable). The ground now samples less, which changes no count: one sample a layer from about 60 m, both copies only where they blend, no layer under 3% of the blend, relief only from layers with a quarter of it, and anisotropy 4 instead of 8. That brings both views to 2.9 s. The 24 runs above were measured before that reduction. CI's browser checks, all software-rendered, now allow for the slower frames (the changelog lists them). A GPU's cost is not measured here; the owner's device checks are.
+
 ### The worlds and gameplay baseline
 
 The [baseline report](evidence/stage-benchmark-world-baseline.json) covers one battle in each chapter on Performance and Balanced, on the production build of the plan's first release, before any of its scenery changes. Its counts are the ceilings in [`stage-ceilings.json`](../scripts/stage-ceilings.json). "In play" is the longest task after the battle was shown; memory is the estimate of the scene's textures plus geometry, in MB.
@@ -187,21 +225,21 @@ The browser reports long tasks of 50 ms or more, so 0 in the in-play column mean
 
 ## Targets of the worlds and gameplay plan
 
-| Target | Phone (Performance) | Laptop, integrated graphics (Balanced) | Baseline (software rendering) |
-| --- | --- | --- | --- |
-| Triangles per frame | at most 400,000 | at most 1,000,000 | Performance 148,766–400,354: Chapter XII's confrontation is 354 over. Balanced 274,523–785,732. |
-| Draw calls per frame | at most 150 | at most 250 | Performance 73–138, Balanced 80–138. |
-| Shader programs per battle, none compiled after it shows | at most 50 | at most 50 | Performance 41–49; Balanced 48–56, above 50 in eight chapters. None compiled late. |
-| GPU memory, textures and geometry | at most 300 MB | at most 600 MB | Estimated 29.6–58.3 MB on Performance and 39.8–75.2 MB on Balanced, without render targets. |
-| Battle ready once downloaded | about 3 s | about 2 s | Software times (4.6–6.6 s) are not device times; the performance check measures devices. |
-| Frame rate | steady 30 fps | steady 60 fps | Unmeasured: needs the performance check on real devices. |
+| Target | Phone (Performance) | Laptop, integrated graphics (Balanced) | Baseline (software rendering) | Release 2 (software rendering) |
+| --- | --- | --- | --- | --- |
+| Triangles per frame | at most 400,000 | at most 1,000,000 | Performance 148,766–400,354: Chapter XII's confrontation is 354 over. Balanced 274,523–785,732. | Performance 148,766–385,065, all within. Balanced 274,523–770,475. |
+| Draw calls per frame | at most 150 | at most 250 | Performance 73–138, Balanced 80–138. | Performance 73–137, Balanced 80–137. |
+| Shader programs per battle, none compiled after it shows | at most 50 | at most 50 | Performance 41–49; Balanced 48–56, above 50 in eight chapters. None compiled late. | Performance 41–48; Balanced 48–56, above 50 in eight chapters. None compiled late. |
+| GPU memory, textures and geometry | at most 300 MB | at most 600 MB | Estimated 29.6–58.3 MB on Performance and 39.8–75.2 MB on Balanced, without render targets. | Estimated 29.1–55.4 MB on Performance and 36.7–72.3 MB on Balanced. A session also keeps the ground's layers and up to two regions' skylines between scenes. |
+| Battle ready once downloaded | about 3 s | about 2 s | Software times (4.6–6.6 s) are not device times; the performance check measures devices. | 4.2–7.6 s in software. |
+| Frame rate | steady 30 fps | steady 60 fps | Unmeasured: needs the performance check on real devices. | Unmeasured. |
 
 ## Still open after 0.38.1
 
 - A quality change in Settings (and each step of the performance check) still rebuilds the world in one task; only a battle's first build is stepped. An automatic change in play no longer rebuilds anything.
 - A worker pool for the pure geometry work. With the build in short steps it would mainly shorten the time behind the veil, not remove freezes.
 - One renderer per session (the battle and ceremony controllers still create one per encounter). Disposing a stage frees its programs, so sharing a renderer would also mean keeping programs alive across stages. Browsers keep program caches of their own, so the gain needs measuring on devices before it is worth the change.
-- Moving the river and banner motion into vertex shaders, a cached height grid for feet and contact shadows, and one skinned mesh and skeleton per figure.
+- Moving the banner motion into vertex shaders (the distant river's waves moved in release 2 of the worlds and gameplay plan), a cached height grid for feet and contact shadows, and one skinned mesh and skeleton per figure.
 - KTX2/meshopt compression and smaller downloads for 3D players (0.39).
 
 ## What the owner can do next

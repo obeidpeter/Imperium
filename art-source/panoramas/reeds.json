@@ -1,0 +1,182 @@
+{
+ "key": "reeds",
+ "seed": 23,
+ "width": 8192,
+ "height": 320,
+ "latitude": [
+  -4.0,
+  10.0625
+ ],
+ "eye": 12.0,
+ "start": 620.0,
+ "north": "image centre; a bearing b (degrees clockwise from north) is at u = 0.5 + b / 360",
+ "samples": 64,
+ "renderer": "Cycles (CPU), no denoiser",
+ "blender": "5.2.2 LTS",
+ "haze": {
+  "colour": [
+   0.3,
+   0.34,
+   0.4
+  ],
+  "distance": 15000.0,
+  "max": 0.6
+ },
+ "buildSeconds": 13.9,
+ "renderSeconds": 126.5,
+ "region": {
+  "seed": 23,
+  "near": 3,
+  "mid": 22,
+  "ridge": 0.1,
+  "plains": [
+   [
+    0,
+    180,
+    0.6
+   ]
+  ],
+  "ranges": [
+   [
+    170,
+    90,
+    460,
+    8000
+   ],
+   [
+    40,
+    60,
+    320,
+    9000
+   ],
+   [
+    300,
+    50,
+    260,
+    9000
+   ]
+  ],
+  "forest": 0.2,
+  "lone": 0.02,
+  "fields": 0.5,
+  "rock": 0,
+  "river": "marsh",
+  "pools": 70,
+  "land": [
+   0.19,
+   0.22,
+   0.11
+  ],
+  "dry": [
+   0.3,
+   0.29,
+   0.15
+  ],
+  "wood": [
+   0.08,
+   0.11,
+   0.05
+  ],
+  "rockc": [
+   0.33,
+   0.32,
+   0.28
+  ],
+  "fieldc": [
+   [
+    0.4,
+    0.35,
+    0.16
+   ],
+   [
+    0.3,
+    0.3,
+    0.13
+   ],
+   [
+    0.34,
+    0.28,
+    0.15
+   ],
+   [
+    0.24,
+    0.26,
+    0.12
+   ]
+  ],
+  "trees": [
+   [
+    "willow",
+    0.7
+   ],
+   [
+    "broadleaf",
+    0.3
+   ]
+  ],
+  "wall": [
+   0.5,
+   0.4,
+   0.28
+  ],
+  "roof": [
+   0.3,
+   0.25,
+   0.16
+  ],
+  "thatch": [
+   0.3,
+   0.25,
+   0.16
+  ],
+  "sun": [
+   105,
+   22,
+   2.2,
+   [
+    1,
+    0.92,
+    0.82
+   ]
+  ],
+  "sky": [
+   [
+    0.55,
+    0.58,
+    0.6
+   ],
+   0.8
+  ],
+  "landmarks": [
+   [
+    "huts",
+    35,
+    2100,
+    {}
+   ],
+   [
+    "palisade",
+    70,
+    2600,
+    {}
+   ],
+   [
+    "huts",
+    300,
+    2800,
+    {}
+   ]
+  ]
+ },
+ "terrainVertices": 1146880,
+ "terrainFaces": 1142784,
+ "river": "marsh",
+ "pools": 70,
+ "treeCrowns": 2277,
+ "landmarks": 38,
+ "partVertices": 31438,
+ "png": {
+  "bytes": 1421472,
+  "sha256": "e61fcd6afdbec4187392b461824013814bee5673a1ce46ce0444296b098366dd"
+ }
+}
