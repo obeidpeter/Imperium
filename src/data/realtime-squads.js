@@ -30,7 +30,14 @@ export const EXCHANGE=freeze({everyTicks:20,scale:.1,contact:2.6,
   frontalShield:1,brace:2,wall:2,high:1,cover:1,heightRanged:1,cohesiveWall:1,lineScreen:1,neighbour:8,
   wedgeAttack:1,wedgeExposure:1,charge:1,chargeRun:20,lowCohesion:1,suppressed:1,poorVisibility:1,barricade:1,barricadeRange:2,shaken:1,
   // A braced front that survives a frontal mounted charge strikes back, at most once a round (0.38 edition 34).
-  counter:1});
+  counter:1,
+  // Each second's exchange is scaled by one draw of the combat stream: [factor, weight], 1:2:4:2:1 round 1, so
+  // a fight's average is the 0.38 exchange and no two seeds fight it alike (worlds and gameplay plan, release 3).
+  spread:freeze([freeze([.75,1]),freeze([.9,2]),freeze([1,4]),freeze([1.1,2]),freeze([1.25,1])]),
+  // A first exchange in melee against a squad that has not seen its attacker (squad-sight.js) is an ambush: a whole
+  // 0.38 hit at once, its morale loss doubled, with no Brace or cohesive shield wall. A squad lying in wait springs on
+  // the first enemy squad to come within `spring` metres.
+  ambush:freeze({scale:1,morale:2,ignores:freeze(['Brace','Cohesive shield wall']),spring:6})});
 
 // Morale (§3.9, guide): shaken at 40 or less, broken at 20 or less, when the
 // group falls back to regroup. The soldier and his companions never break.
@@ -64,8 +71,9 @@ export const ORDERS=freeze({
   withdraw:freeze({id:'withdraw',name:'Withdraw and brace',cost:1,card:3,summary:'Fall back toward you and brace.'}),
   line:freeze({id:'line',name:'Line',formation:'line',card:4,summary:'Crosses marsh at full speed, softens morale loss and screens missiles while it holds together.'}),
   'shield-wall':freeze({id:'shield-wall',name:'Shield wall',formation:'shield-wall',card:5,summary:'Two less from every frontal blow; half speed; neighbouring walls add protection.'}),
-  wedge:freeze({id:'wedge',name:'Wedge',formation:'wedge',card:6,summary:'One more damage per blow on firm open ground, one more taken; no bonus in marsh, at fords or against walls.'})});
-export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedge']);
+  wedge:freeze({id:'wedge',name:'Wedge',formation:'wedge',card:6,summary:'One more damage per blow on firm open ground, one more taken; no bonus in marsh, at fords or against walls.'}),
+  lie_in_wait:freeze({id:'lie_in_wait',name:'Lie in wait',cost:1,card:7,summary:'Halt and keep low until an enemy comes near; one that has not seen the squad takes a whole exchange at once.'})});
+export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedge','lie_in_wait']);
 // A formation order: one Command for up to three squads standing in a
 // connected group, each within `join` metres of another (§3.8 join rule).
 export const FORMATION_ORDER=freeze({cost:1,maxSquads:3,join:15});
@@ -99,6 +107,55 @@ export const SQUAD_STANDING=freeze({
     flank_guard:freeze([freeze(['withdraw_when_broken','hero']),freeze(['screen_flank','enemy_cavalry']),freeze(['screen_flank','nearest_enemy_group']),
       freeze(['advance_with_hero','hero'])])}),
   presetNames:freeze({line_of_battle:'Line of battle',reserve:'Reserve',flank_guard:'Flank guard'})});
+
+// The enemy's plan (squad-ai.js planDoctrine; worlds and gameplay plan, release 3):
+// at the start and at round boundaries the enemy draws one from the ai stream,
+// weighted by the chapter's doctrine, and keeps it at least `hold` rounds (its
+// own, if it names one). A reserve plan only opens a battle. The sides are your
+// squads' own: a flank attack turns the focus's left or right.
+export const ENEMY_PLANS=freeze({hold:2,
+  kinds:freeze({
+    fix:freeze({label:'Hold you in front',summary:'The bands fix your line in place; horse and raiders seek whichever flank is nearer.'}),
+    'flank-left':freeze({label:'Turn your left',summary:'Horse, raiders and a band of foot go round your left; the rest hold you in front.',side:-1}),
+    'flank-right':freeze({label:'Turn your right',summary:'Horse, raiders and a band of foot go round your right; the rest hold you in front.',side:1}),
+    pincer:freeze({label:'Close on both flanks',summary:'Every second band goes round a flank, the next the other.'}),
+    feint:freeze({label:'Feint and draw you out',summary:'The leading band closes, then falls back to draw a squad out; the rest strike when it follows.'}),
+    'early-reserve':freeze({label:'Commit the reserve early',summary:'The reserve joins the attack after the first round.',opening:true}),
+    'late-reserve':freeze({label:'Hold the reserve back',summary:'The reserve waits until round 5 unless it is threatened.',opening:true,hold:4})}),
+  // By the chapter's doctrine (data/command-campaign.js): [plan, weight].
+  weights:freeze({
+    approach:freeze([['fix',3],['flank-left',1],['flank-right',1],['pincer',1],['feint',1]]),
+    pursuit:freeze([['fix',2],['flank-left',2],['flank-right',2],['pincer',1],['feint',1]]),
+    screen:freeze([['fix',2],['flank-left',1],['flank-right',1],['early-reserve',2],['late-reserve',2]]),
+    siege:freeze([['fix',2],['flank-left',1],['flank-right',1],['feint',1],['early-reserve',2],['late-reserve',2]]),
+    pincer:freeze([['pincer',3],['flank-left',1],['flank-right',1],['fix',1],['feint',1]]),
+    interdiction:freeze([['fix',2],['flank-left',2],['flank-right',2],['pincer',1],['feint',1]]),
+    countercharge:freeze([['flank-left',2],['flank-right',2],['pincer',2],['feint',2],['fix',1]]),
+    reserve:freeze([['late-reserve',3],['early-reserve',2],['fix',1],['pincer',1],['feint',1]])}),
+  // The last round a reserve is held (unless threatened), by plan.
+  reserveThrough:freeze({standard:2,'early-reserve':1,'late-reserve':4}),
+  // A feint closes to `close` metres of its mark in the plan's first round, then falls back `back` metres.
+  feint:freeze({close:8,back:12}),
+  // How far round a flank a flanking band swings (metres beside the focus, and behind its front).
+  flank:freeze({wide:9,behind:2}),
+  // What each enemy band prefers to strike when the plan leaves it free, drawn once from the ai stream.
+  preferences:freeze([['focus',5],['nearest',2],['archers',1],['soldier',1]]),
+  preferenceRange:40});
+
+// How the enemy's bands fight, by faction (squad-ai.js, squads.js): the plans they favour (a factor on the
+// doctrine's weights), whether their archers loose an aimed volley once a round, and whether a band that holds
+// its ground braces.
+export const ENEMY_FACTIONS=freeze({
+  gothic:freeze({plans:freeze({fix:1.5,feint:1.5}),volley:false,brace:false}),
+  persian:freeze({plans:freeze({'flank-left':1.5,'flank-right':1.5,feint:1.5}),volley:true,brace:true}),
+  palmyrene:freeze({plans:freeze({pincer:1.5,'flank-left':1.5,'flank-right':1.5}),volley:true,brace:false}),
+  rival:freeze({plans:freeze({fix:1.5,'early-reserve':1.5,'late-reserve':1.5}),volley:true,brace:true})});
+// The enemy's techniques. An aimed volley is three tenths of a 0.38 missile exchange and a point of suppression,
+// once a round; a band holding its ground braces after `braceTicks` still. A shaken band with a steady one
+// (morale above `steady`) within `range` falls back `behind` metres behind it and is steadied 10 at each round's
+// end out of contact; a band of foot within `protect` metres of its archers meets the squad that presses them.
+export const ENEMY_TECHNIQUES=freeze({volley:freeze({scale:.3,suppression:1}),braceTicks:100,
+  pullBack:freeze({range:15,steady:60,behind:6}),protect:15});
 
 // Specialists (guide "Specialists"): a companion's action for one Command.
 export const SPECIALISTS=freeze({

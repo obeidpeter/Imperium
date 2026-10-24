@@ -66,8 +66,12 @@ export const braced=(world,actor)=>actor.braceUntil>world.tick;
 // Whether a blow is an ambush (§3.5 step 9): the defender has not noticed the
 // attacker (his notice meter for him is below 100), or a hidden attacker
 // strikes a man of the party before anyone has spotted him.
-export function unaware(defender,attacker){
+// A man of a squad (squad-sight.js) is unaware while his squad has not seen the
+// attacker and fights no one.
+export function unaware(defender,attacker,world=null){
   if(defender.ai)return (defender.ai.notice?.[attacker.id]??0)<100&&defender.ai.state!=='engage';
+  const q=defender.squadId?world?.squads?.find(s=>s.id===defender.squadId):null;
+  if(q)return (q.notice?.[attacker.squadId??attacker.id]??0)<100&&!q.contact;
   return !!attacker.hidden;
 }
 export function blowSetup(world,attacker,defender,{missile=null,from=null,profile:override=null}={}){
@@ -83,7 +87,7 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
     attack-=COMBAT.weatherMissile;
     mods.push({label:`${world.weather[0].toUpperCase()}${world.weather.slice(1)} beyond 20 m`,kind:'attack',value:-COMBAT.weatherMissile});
   }
-  const ambush=!world.practice&&unaware(defender,attacker);
+  const ambush=!world.practice&&unaware(defender,attacker,world);
   if(ambush)mods.push({label:'Ambush: he has not seen you',kind:'attack',value:0});
   // A man of a squad fights with his squad's state (squads.js): its bracing, formation, cohesion and heart.
   const squadOf=id=>id&&world.squads?world.squads.find(q=>q.id===id)??null:null,As=squadOf(attacker.squadId),Ds=squadOf(defender.squadId);
@@ -104,6 +108,8 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   if(As?.formation==='wedge'&&!missile&&!['marsh','ford'].includes(terrainAtPoint(world.map,src.x,src.z)))squadMod('Wedge',1);
   if(Ds?.formation==='wedge')squadMod('Wedge exposure',1);
   if(As&&world.chapter!==1){if(As.cohesion<40)squadMod('Disrupted cohesion',-1);if(Math.floor(As.suppression)>=2)squadMod('Suppressed',-1);if(As.morale<=40)squadMod('Shaken morale',-1);}
+  // A man of a wavering war band (bands.js) strikes as a shaken squad's man does.
+  if(!As&&world.chapter!==1&&world.band&&world.band.state!=='steady'&&world.band.members.includes(attacker.id))squadMod('Shaken morale',-1);
   if((defender.guardedBy?.until??0)>world.tick)squadMod('Guarded by a protector',-defender.guardedBy.reduction);
   if(world.objects?.some(o=>o.kind==='barricade'&&!o.done&&span(o.x-defender.x,o.z-defender.z)<=2))squadMod('Timber cover',-1);
   const profile=override??(missile?MISSILES[missile].damage:A.weapon.damage),mult=missile?1+(attacker.attributes.str-10)/COMBAT.thrownStrength

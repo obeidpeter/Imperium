@@ -22,3 +22,9 @@ export function nextRandom(streams,name){
 }
 // An integer in [min, max], both included.
 export function randomInt(streams,name,min,max){return min+Math.floor(nextRandom(streams,name)*(max-min+1));}
+// One of [value, weight] pairs, by weight: a single draw of the stream.
+export function pickWeighted(streams,name,pairs){
+  const total=pairs.reduce((n,[,w])=>n+w,0);let r=nextRandom(streams,name)*total;
+  for(const [value,weight]of pairs){r-=weight;if(r<0)return value;}
+  return pairs.at(-1)[0];
+}

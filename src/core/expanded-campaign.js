@@ -9,8 +9,12 @@ export function enableExpandedCampaign(state){
 }
 const friends=e=>e.units.filter(u=>alive(u)&&['player','ally'].includes(u.side));
 const living=e=>e.units.filter(alive);
-const valid=(e,p)=>p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height&&!['rock','river','wall'].includes(e.terrain[p.y][p.x]);
+const valid=(e,p)=>fieldTileFree(e,p);
 const coord=p=>`${p.x+1}${String.fromCharCode(65+p.y)}`;
+// Where each field object is placed: the free tile nearest its preferred one (the real-time battle may
+// take one of the next nearest instead; realtime/variety.js).
+export const FIELD_OBJECT_PLACES=Object.freeze({stores:Object.freeze({x:2,y:2}),signal:Object.freeze({x:3,y:5}),barricade:Object.freeze({x:4,y:2}),brazier:Object.freeze({x:5,y:5})});
+export const fieldTileFree=(e,p)=>p.x>=0&&p.y>=0&&p.x<e.width&&p.y<e.height&&!['rock','river','wall'].includes(e.terrain[p.y][p.x]);
 export function initializeExpanded(state){
   if(state.featureEdition!==31)return;
   const e=state.encounter;e.featureEdition=31;
@@ -36,10 +40,11 @@ export function initializeExpanded(state){
     points.sort((a,b)=>distance(a,preferred)-distance(b,preferred)||a.y-b.y||a.x-b.x);
     const p=points[0];if(p){used.add(`${p.x},${p.y}`);e.field.objects.push({id,kind,label,...p,state:status});}
   };
-  reserve('stores','stores','Abandoned supply cart',{x:2,y:2},'available');
-  reserve('signal','signal','Signal station',{x:3,y:5},'available');
-  if(state.chapter>=3){reserve('barricade','barricade','Timber barricade',{x:4,y:2},'intact');
-    reserve('brazier','brazier','Pitch brazier',{x:5,y:5},'unlit');}
+  const at=FIELD_OBJECT_PLACES;
+  reserve('stores','stores','Abandoned supply cart',at.stores,'available');
+  reserve('signal','signal','Signal station',at.signal,'available');
+  if(state.chapter>=3){reserve('barricade','barricade','Timber barricade',at.barricade,'intact');
+    reserve('brazier','brazier','Pitch brazier',at.brazier,'unlit');}
   note(e,`${theme.landmark}. Recover stores or secure the signal before turn ${e.field.deadline}; only one detachment can be spared.`);
 }
 

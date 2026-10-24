@@ -24,7 +24,7 @@ import {initialProgression,validateProgression} from './progression.js';
 import {createSoldier,validateSoldier,commitSoldierRewards,issuePromotions,rewardCapabilities,soldierCommand as soldierAct} from './soldier.js';
 import {tpAuditTotal} from './tp-audit.js';
 import {createEncounterWorld,applyRealtimeOutcome,realtimeMissionSupported} from './realtime/campaign-encounter.js';
-import {snapshotWorld,restoreWorld} from './realtime/simulation.js';
+import {WORLD_VERSION,snapshotWorld,restoreWorld} from './realtime/simulation.js';
 import {validateWorld} from './realtime/validate.js';
 import {ITEMS as REALTIME_ITEMS} from '../data/items.js';
 import {dialogueNode,reply as dialogueReply,errandList,hasNews} from './dialogue.js';
@@ -76,6 +76,8 @@ export function startEncounter(state,options={}){const optionProblem=campaignOpt
 function initializeRealtime(state){
   const e=state.encounter;if(!realtimeMissionSupported(e))return;
   const world=createEncounterWorld(state,{seed:state.rng});e.controls='realtime';e.realtime={version:1,scale:world.scale,world:JSON.parse(snapshotWorld(world))};
+  // The battle's weather, drawn within the chapter's set (realtime/variety.js), is the encounter's.
+  if(world.weather)e.weather=world.weather;
 }
 export const isRealtime=state=>state?.phase==='encounter'&&state.encounter?.controls==='realtime';
 // The fight to continue: the resume point if one was kept (a pause, a hidden
@@ -366,7 +368,15 @@ function validateState(state,allowSnapshot=true){const fail=message=>{throw new 
 export function serialize(state){validateState(state);return JSON.stringify(state);}
 // A real-time fight keeps its start and its resume point (§3.17): the finale's, with 86 people, is about 330 KB mid-fight.
 export const SAVE_LIMIT=1048576;
-export function deserialize(text){if(typeof text!=='string'||text.length>SAVE_LIMIT)throw new Error('Save data is missing or exceeds the 1 MB limit.');let state;try{state=JSON.parse(text);}catch{throw new Error('This is not a valid Imperium save.');}validateState(state);if(state.archiveReplay!==undefined)throw new Error('This code holds an Archive replay, not a chronicle. Export the chronicle itself instead.');normalizeCareer(state);if(state.snapshot)normalizeCareer(state.snapshot);const encounter=state.encounter,legacyEncounter=encounter?.kind==='contest'?!encounter.issue:encounter?.kind==='battle'&&!encounter.mission&&!encounter.scenario;if(state.phase==='encounter'&&legacyEncounter){state.encounterOptions={...state.encounterOptions,legacyLayout:true};state.snapshot.encounterOptions={...state.snapshot.encounterOptions,legacyLayout:true};}// Preserve suspended 0.6 encounters and their exact retry rules. New encounters adopt current rules.
+// A fight saved under an earlier version of the real-time rules (WORLD_VERSION) cannot go on under these: its
+// encounter restarts from its checkpoint, as Retry does, and the chronicle loads. A newer fight is refused.
+function restartOlderFight(state){
+  const e=state?.encounter,version=e?.realtime?.world?.version;
+  if(state?.phase!=='encounter'||e?.controls!=='realtime'||!Number.isInteger(version)||version<1||version>=WORLD_VERSION||!state.snapshot)return state;
+  validateState(state.snapshot,false);const restarted=clone(state),r=retry(restarted);if(!r.ok)throw new Error(`Invalid save: ${r.message}`);
+  return restarted;
+}
+export function deserialize(text){if(typeof text!=='string'||text.length>SAVE_LIMIT)throw new Error('Save data is missing or exceeds the 1 MB limit.');let state;try{state=JSON.parse(text);}catch{throw new Error('This is not a valid Imperium save.');}state=restartOlderFight(state);validateState(state);if(state.archiveReplay!==undefined)throw new Error('This code holds an Archive replay, not a chronicle. Export the chronicle itself instead.');normalizeCareer(state);if(state.snapshot)normalizeCareer(state.snapshot);const encounter=state.encounter,legacyEncounter=encounter?.kind==='contest'?!encounter.issue:encounter?.kind==='battle'&&!encounter.mission&&!encounter.scenario;if(state.phase==='encounter'&&legacyEncounter){state.encounterOptions={...state.encounterOptions,legacyLayout:true};state.snapshot.encounterOptions={...state.snapshot.encounterOptions,legacyLayout:true};}// Preserve suspended 0.6 encounters and their exact retry rules. New encounters adopt current rules.
 for(const [kind,key,hasLayout]of [['battle','combatVersion',Boolean(encounter?.mission)],['contest','politicsVersion',Boolean(encounter?.issue)]])if(state.phase==='encounter'&&encounter.kind===kind&&hasLayout&&encounter[key]!==2){state.encounterOptions={...state.encounterOptions,[key]:1};state.snapshot.encounterOptions={...state.snapshot.encounterOptions,[key]:1};}
 delete state.unlocked;delete state.unlocks;return state;}
 export function encodeSave(state){const text=serialize(state);if(typeof Buffer!=='undefined')return `SAC1J.${Buffer.from(text,'utf8').toString('base64')}`;const bytes=new TextEncoder().encode(text);return `SAC1J.${btoa(Array.from(bytes,b=>String.fromCharCode(b)).join(''))}`;}

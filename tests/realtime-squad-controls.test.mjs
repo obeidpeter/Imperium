@@ -64,12 +64,13 @@ test('41c: the right button orders the selection — ground advances, an enemy i
   assert.equal(queueCommand(poor,{actorId:'hero',kind:'order',payload:{squads:['second'],order:{kind:'hold'}}}).ok,false);assert.equal(worldHash(poor),after,'a refused order leaves the world as it was');
 });
 
-test('41c: the command card gives 1–6 and nothing for 7–0; a formation names who joins and who is left out; the pips show Command set aside',()=>{
+test('41c: the command card gives 1–7 and nothing for 8–0; a formation names who joins and who is left out; the pips show Command set aside',()=>{
   const w=field({command:4});
   const names=cardButtons(w,['first']).map(b=>[b.key,b.kind]);
-  assert.deepEqual(names,[[1,'hold'],[2,'restore'],[3,'withdraw'],[4,'line'],[5,'shield-wall'],[6,'wedge']]);
-  for(const [i,kind]of ['hold','restore','withdraw','line','shield-wall','wedge'].entries())assert.equal(cardOrder(w,['first'],i).command.payload.order.kind,kind);
-  for(const i of [6,7,8,9])assert.equal(cardOrder(w,['first'],i).command,null,`key ${i+1} gives nothing while the card shows`);
+  // Release 3 adds Lie in wait as the card's seventh order.
+  assert.deepEqual(names,[[1,'hold'],[2,'restore'],[3,'withdraw'],[4,'line'],[5,'shield-wall'],[6,'wedge'],[7,'lie_in_wait']]);
+  for(const [i,kind]of ['hold','restore','withdraw','line','shield-wall','wedge','lie_in_wait'].entries())assert.equal(cardOrder(w,['first'],i).command.payload.order.kind,kind);
+  for(const i of [7,8,9])assert.equal(cardOrder(w,['first'],i).command,null,`key ${i+1} gives nothing while the card shows`);
   assert.equal(cardOrder(w,[],0).reason,'NO_SQUAD_SELECTED');
   // first and second stand 10 m apart, third 12 m beyond second: all three join; a squad far away is left out.
   assert.deepEqual(formationPreview(w,['first','second','third']).joins,['first squad','second squad','third squad']);

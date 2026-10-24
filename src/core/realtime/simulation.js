@@ -11,12 +11,15 @@ import {exchangeWound,flyProjectiles,resolveBlows,settleLocks,regenerate} from '
 import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
 import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
+import {ENEMY_PLANS} from '../../data/realtime-squads.js';
 import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
 import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
 import {fieldProblem,fieldRound} from './field-objects.js';
 import {deploying} from './deployment.js';
+import {bandRound,bandTick} from './bands.js';
+import {squadSight} from './squad-sight.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -27,7 +30,8 @@ import {deploying} from './deployment.js';
 // from the campaign's seeded generator (rng-streams.js). Each tick runs the
 // systems in the brief's order (§3.1); they live in their own modules.
 
-export const WORLD_VERSION=2;
+// 3: release 3's war bands, squad sight, enemy plans and battle variety (game.js restarts an older fight).
+export const WORLD_VERSION=3;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);
@@ -36,10 +40,11 @@ const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','l
 // generator's state. actors: specs with metres positions.
 // squads (from Chapter IV): specs for squads.js spawnSquad; command: the
 // chapter's Command capacity when the soldier commands squads.
+// rng: the streams to go on with, when the battle's variety has already drawn from them (variety.js).
 export function createWorld({map,seed,actors,controlled='hero',options={},weather=null,timeOfDay='day',party=[],mission=null,objects=[],difficulty='standard',
-  practice=false,kind='field',scale=null,squads=null,command=null,chapter=null}){
+  practice=false,kind='field',scale=null,squads=null,command=null,chapter=null,rng=null}){
   if(!map?.terrain||!Number.isInteger(map.width)||!Number.isInteger(map.height))throw new Error('A real-time world needs a tile map.');
-  const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:splitStreams(seed>>>0),
+  const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:rng?{...rng}:splitStreams(seed>>>0),
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
@@ -230,7 +235,7 @@ function checkObjectives(world){
 const nameOf=(world,id)=>actorById(world,id)?.name??objectById(world,id)?.name??'Someone';
 const squadName=(world,id)=>squadById(world,id)?.name??'A squad';
 const ORDER_WORDS={advance:'advance',attack:'attack',hold:'hold fast',restore:'steady the men',withdraw:'withdraw and brace',line:'form line',
-  'shield-wall':'form shield wall',wedge:'form wedge'};
+  'shield-wall':'form shield wall',wedge:'form wedge',lie_in_wait:'lie in wait'};
 function logLine(world,e){
   const by=nameOf(world,e.attackerId??e.actorId),to=nameOf(world,e.defenderId??e.targetId),what=e.missile?MISSILES[e.missile].name.toLowerCase():'blow';
   const a=/^[aeiou]/.test(what)?'an':'a';
@@ -274,6 +279,17 @@ function logLine(world,e){
     case 'squad-braced':return `${squadName(world,e.squadId)} is braced.`;
     case 'order':return `${squadName(world,e.squadId)}: ${ORDER_WORDS[e.order]??e.order}.`;
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
+    case 'squad-ambush':return `${squadName(world,e.squadId)} falls on ${squadName(world,e.targetSquadId)} from ambush.`;
+    case 'squad-lying':return `${squadName(world,e.squadId)} lies in wait.`;
+    case 'squad-volley':return `${squadName(world,e.squadId)} loose an aimed volley at ${squadName(world,e.targetSquadId)}.`;
+    case 'squad-revealed':return `${squadName(world,e.squadId)} is revealed.`;
+    case 'squad-seen':return squadById(world,e.squadId)?.side==='enemy'?`${squadName(world,e.squadId)} are found lying in wait.`:`${squadName(world,e.squadId)} is seen: it lies hidden no longer.`;
+    case 'band-leader-fell':return 'Their war leader is down: the raiders lose heart.';
+    case 'band-shaken':return 'The raiders waver.';
+    case 'band-broken':return 'The raiders break and run for the edge of the field.';
+    case 'band-rallied':return 'Fresh men reach the raiders: they stand again.';
+    case 'fled':return `${e.name} escapes the field.`;
+    case 'enemy-plan':return `The enemy changes its plan: ${ENEMY_PLANS.kinds[e.plan]?.label.toLowerCase()??'a new plan'}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
     default:return null;
@@ -322,7 +338,7 @@ export function step(world){
     if(world.squads)moveSquads(world);
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
     act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
-    settleLocks(world);regenerate(world);perceive(world);
+    settleLocks(world);regenerate(world);perceive(world);if(world.squads)squadSight(world);if(world.band)bandTick(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
     if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);
@@ -331,6 +347,7 @@ export function step(world){
   if((world.tick+1)%TIME.roundTicks===0){
     // The pitch fire burns and burns down, and the opportunities close at the end of round 7 (field-objects.js).
     if(world.field&&world.status==='active')fieldRound(world);
+    if(world.band&&world.status==='active')bandRound(world);
     if(world.squads&&world.status==='active'){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
     emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
   }

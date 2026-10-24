@@ -204,11 +204,15 @@ export function autoPauseReason(world,e,options={}){
   if(e.kind==='revealed'&&options.pauseSighted&&actorById(world,e.actorId)?.side==='enemy'){
     const a=actorById(world,e.actorId),q=a.squadId?world.squads?.find(x=>x.id===a.squadId):null;return `${q?q.name:a.name} ${q?'are':'is'} revealed.`;
   }
+  if((e.kind==='squad-revealed'||e.kind==='squad-seen')&&options.pauseSighted){const q=world.squads?.find(x=>x.id===e.squadId);if(q?.side==='enemy')return `${q.name} are revealed.`;}
   if(e.kind==='reinforcements'&&options.pauseSighted)return 'Enemy reinforcements arrive.';
   if(e.kind==='down'&&options.pauseHurt&&party.has(e.defenderId))return `${name(e.defenderId)} is down.`;
   if(e.kind==='phase'&&options.pauseObjective)return `New objective: ${e.label}.`;
   if(e.kind==='rejected'&&options.pauseOrder&&party.has(e.actorId))return `${name(e.actorId)}: ${REASONS[e.reason]??'the order cannot be carried out.'}`;
   // One of our squads breaks (from Chapter IV).
   if(e.kind==='squad-broken'&&options.pauseSquad){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')return `${q.name} breaks.`;}
+  // One of our squads ambushed by a band it had not seen.
+  if(e.kind==='squad-ambush'&&options.pauseSquad){const q=world.squads?.find(x=>x.id===e.targetSquadId),by=world.squads?.find(x=>x.id===e.squadId);
+    if(q&&q.side!=='enemy')return `${q.name} is ambushed by ${by?.name??'an unseen band'}.`;}
   return null;
 }

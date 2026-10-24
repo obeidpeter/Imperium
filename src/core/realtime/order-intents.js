@@ -72,12 +72,12 @@ export function describeOrder(world,order,squads){
   }
 }
 
-// The command card (keys 1–6 while squads are selected): Hold, Restore morale,
-// Withdraw and brace, Line, Shield wall, Wedge. 7–0 do nothing while it shows.
+// The command card (keys 1–7 while squads are selected): Hold, Restore morale,
+// Withdraw and brace, Line, Shield wall, Wedge, Lie in wait. 8–0 do nothing while it shows.
 export function cardOrder(world,selection,index){
   const squads=liveSelection(world,selection),kind=CARD[index];
   if(!squads.length)return {command:null,message:REASONS.NO_SQUAD_SELECTED,reason:'NO_SQUAD_SELECTED'};
-  if(!kind)return {command:null,message:'The command card has six orders: 1 to 6.',reason:'NO_TARGET'};
+  if(!kind)return {command:null,message:`The command card has ${CARD.length} orders: 1 to ${CARD.length}.`,reason:'NO_TARGET'};
   return orderCommand(world,squads,{kind});
 }
 // Who joins a formation order and who is left out, before it is given (§3.8 "Formation preview").

@@ -5,6 +5,8 @@ import {actorById,distanceBetween,hostile} from './abilities.js';
 import {cancelAction} from './actions.js';
 import {struck} from './ai.js';
 import {memberFell,squadOf,membersOf} from './squads.js';
+import {bandMemberFell} from './bands.js';
+import {knowAttacker} from './squad-sight.js';
 
 // Systems 5 and 6 (§3.1): missiles land, then every blow released this tick
 // resolves in the order released: hits, blocks, staggers, downs and deaths.
@@ -35,8 +37,9 @@ function fall(world,attacker,defender,base){
   // Fire has no attacker: it is named as the cause.
   defender.alive=false;defender.diedAt=world.tick;defender.killedBy=attacker?.id??base.cause??null;if(attacker)attacker.kills++;
   emit(world,{kind:'fall',...base,...(defender.squadId?{squadId:defender.squadId}:{})});
-  // A man of a squad: the squad loses his share and takes the 0.38 hit.
+  // A man of a squad: the squad loses his share and takes the 0.38 hit; a man of a war band, his share of its heart.
   if(defender.squadId)memberFell(world,defender,attacker,{arc:base.arc,missile:base.missile});
+  else if(world.band)bandMemberFell(world,defender,{ambush:!!base.ambush});
 }
 
 // A squad's exchange wounds a single man (squads.js): whole points of Health,
@@ -66,7 +69,7 @@ export function resolveBlows(world){
     const setup=blowSetup(world,attacker,defender,{missile:blow.missile??null,from:blow.from??null,profile:blow.profile??null}),r=rollBlow(world,setup);
     defender.lastHitTick=world.tick;defender.lastHitBy=attacker.id;defender.calmSince=world.tick;
     if(attacker.hidden){attacker.hidden=false;emit(world,{kind:'revealed',actorId:attacker.id});}
-    if(defender.ai)struck(world,defender,attacker,setup.ambush);
+    if(defender.ai)struck(world,defender,attacker,setup.ambush);else if(defender.squadId)knowAttacker(squadOf(world,defender),attacker.squadId??attacker.id);
     const base={attackerId:attacker.id,defenderId:defender.id,missile:blow.missile??null,arc:setup.arc,roll:r.roll,critical:r.critical,ambush:!!setup.ambush,
       projectileId:blow.projectileId??null,bash:!!blow.bash};
     if(!r.hit){emit(world,{kind:'miss',...base});continue;}

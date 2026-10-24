@@ -5,6 +5,8 @@ import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalk
 import {helpless,setRoute} from './motion.js';
 import {nextRandom} from './rng-streams.js';
 import {smokeBetween} from './sight.js';
+import {flee,fleeing} from './bands.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 
 // Enemy AI (§3.10). Each enemy keeps a notice meter for every hostile actor:
 // the eye over his head. It fills with what he sees and hears and drains when
@@ -34,16 +36,19 @@ export function noticeRate(world,watcher,target){
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
   if(crossesCover(grid,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
   if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
-  return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*difficulty(world).notice;
+  // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
+  return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);
 }
 
 // System 7: perception and notice meters.
 export function perceive(world){
+  // A war band's temperament makes its men keener or slower to notice (variety.js).
+  const keen=TEMPERAMENTS.kinds[world.band?.temperament]?.notice??1;
   for(const enemy of world.actors){
-    if(!enemy.ai||!standing(enemy))continue;const ai=enemy.ai;
+    if(!enemy.ai||!standing(enemy))continue;const ai=enemy.ai,factor=world.band?.members.includes(enemy.id)?keen:1;
     for(const target of world.actors){
       if(!standing(target)||!hostile(enemy,target))continue;
-      const rate=noticeRate(world,enemy,target),before=ai.notice[target.id]??0;
+      const rate=noticeRate(world,enemy,target)*factor,before=ai.notice[target.id]??0;
       const after=rate>0?Math.min(100,before+rate*DT):Math.max(0,before-PERCEPTION.decay*DT);
       if(after!==before){ai.notice[target.id]=after;if(after===0)delete ai.notice[target.id];}
       if(before<100&&after>=100&&ai.state!=='engage'){ai.state='alert';ai.alertAt=world.tick+ticksOf(PERCEPTION.reaction+difficulty(world).reaction);ai.focus=target.id;
@@ -95,9 +100,16 @@ function chooseTarget(world,actor){
   if(actor.practice){const hero=actorById(world,world.heroId);return hero&&foes.includes(hero)&&distanceBetween(hero,anchor)<=ENEMY_AI.practiceRange?hero:null;}
   if(actor.ai.role==='guard'){const near=foes.filter(o=>distanceBetween(o,anchor)<=ENEMY_AI.guardRadius);return nearest(near,actor);}
   if(actor.ai.role==='raider'){const columns=foes.filter(o=>o.escort&&distanceBetween(o,actor)<=ENEMY_AI.raidRadius);if(columns.length)return nearest(columns,actor);}
-  // He keeps his man unless another foe is much closer.
-  const best=nearest(foes,actor),current=foes.find(o=>o.id===actor.order?.targetId);
-  return current&&distanceBetween(current,actor)<=distanceBetween(best,actor)+ENEMY_AI.stickiness?current:best;
+  // The most threatening foe (ENEMY_AI.threat): the nearest, counted nearer when he is striking this man or one of
+  // his fellows, is badly wounded, or presses one of their archers. He keeps his man unless another is much more so.
+  const t=ENEMY_AI.threat,fellows=world.actors.filter(o=>o!==actor&&o.ai&&standing(o)&&o.side===actor.side),
+    archers=fellows.filter(o=>derivedValues(o).weapon.ranged);
+  const score=o=>distanceBetween(o,actor)-(o.lock===actor.id||o.order?.targetId===actor.id?t.attacking:0)
+    -(fellows.some(f=>o.lock===f.id||o.order?.targetId===f.id)?t.band:0)-(o.side!=='neutral'&&o.hp<o.maxHp/2?t.wounded:0)
+    -(archers.some(a=>distanceBetween(a,o)<=t.guardRange)?t.archer:0);
+  let best=null,bs=Infinity;for(const o of foes){const s=score(o);if(s<bs||s===bs&&o.id<best.id){bs=s;best=o;}}
+  const current=foes.find(o=>o.id===actor.order?.targetId);
+  return current&&score(current)<=bs+ENEMY_AI.stickiness?current:best;
 }
 function goTo(world,actor,point,{run=false}={}){
   const grid=navGrid(world.map);let p=clampToMap(grid,point);if(!walkable(grid,p.x,p.z)){const i=nearestWalkable(grid,p.x,p.z);if(i<0)return;p=cellCentre(grid,i);}
@@ -107,6 +119,8 @@ function goTo(world,actor,point,{run=false}={}){
 
 export function decideEnemy(world,actor){
   if(!standing(actor)||staggered(world,actor)||world.status!=='active')return;
+  // A man of a broken war band runs for its edge of the field (bands.js).
+  if(fleeing(world,actor)){flee(world,actor);return;}
   const ai=actor.ai;
   if(ai.state==='alert'&&world.tick>=(ai.alertAt??0)){ai.state='engage';const t=actorById(world,ai.focus);if(t)rouse(world,actor,t);}
   if(ai.state==='suspicious'){

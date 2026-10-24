@@ -142,8 +142,10 @@ export const REASONS=Object.freeze({
   ALREADY_DONE:'That is already done.',OPPORTUNITY_CLOSED:'That opportunity has closed: only one could be taken, before the end of round 7.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
   NO_FRIEND_NEAR:'No friend within reach.',NOT_A_SQUAD:'Choose a squad.'});
 
-// Phase 0 enemy behaviour (§3.10 arrives in Phase 1): notice within a
-// radius, then engage, spreading round the target; skirmishers throw first.
+// How a single enemy fights (ai.js; perception is PERCEPTION's): he engages,
+// spreading round his target; skirmishers throw first; archers keep their
+// distance. Squads follow the doctrine planner (squad-ai.js, ENEMY_PLANS and
+// ENEMY_FACTIONS in realtime-squads.js).
 export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // Each engager approaches its own side of the target: 0°, ±70°, ±140° from
   // the direct line, as [cos, sin] so the rules need no trigonometry.
@@ -158,19 +160,55 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // after the last time, so a swordsman can close the gap (ai.js).
   archerClose:5,archerStep:6,archerRetreat:1,archerRetreatInterval:4,
   // An engaged enemy keeps his man unless another foe stands this much closer.
-  stickiness:3});
+  stickiness:3,
+  // Whom he strikes (worlds and gameplay plan, release 3): the nearest foe, counted this many metres nearer when he
+  // is striking this man or a man of his band, is a fighter badly wounded (below half his Health), or is pressing
+  // one of the band's archers (within `guardRange` of him).
+  threat:Object.freeze({attacking:4,band:2,wounded:3,archer:4,guardRange:6})});
+
+// War bands (Chapters I–III; worlds and gameplay plan, release 3): the single
+// raiders of an early battle share one morale, as every group does (bands.js).
+export const BAND_MORALE=Object.freeze({start:80,shaken:40,broken:20,
+  // Each man who falls costs `loss` ÷ the band's size; struck down from ambush, `ambush` more; the leader, `leader` more.
+  loss:48,ambush:8,leader:15,
+  // At a round's end: outnumbered `ratio` to one by fighters of ours, `outnumbered` less; after a whole round with no man of
+  // the band within `contact` metres of a foe, `rest` more (never above the start).
+  outnumbered:5,ratio:2,rest:10,contact:8,
+  // Reinforcements lift it; a broken band stands again only if they lift it above the broken line.
+  reinforced:15,
+  // A fleeing man leaves the field this near its edge.
+  edge:1.5});
 
 // Perception (§3.10): notice per second = base × visibility × proximity ×
 // (Per / 10) × (1 − Fieldcraft / 100). Proximity is 1 within `near` and falls
 // to 0 at a sight radius of sightBase + Per.
 export const PERCEPTION=Object.freeze({sightBase:25,near:5,run:60,walk:25,quietWalk:10,stand:10,drawn:15,
   darkness:.5,mist:.6,cover:.4,darkCloak:.8,decay:20,
+  // A squad lying in wait (its order) is half as easy to see (squad-sight.js).
+  lying:.5,
   // Seconds between full notice and the first move; a shout rouses his group this far.
   reaction:.4,shout:30,
   // An ambushed man traces his attacker with probability min(1, 10 / Fieldcraft); otherwise a noise within ±10 m.
   traceFieldcraft:10,noiseSpread:10,
   difficulty:Object.freeze({story:Object.freeze({notice:.7,reaction:.5}),standard:Object.freeze({notice:1,reaction:0}),
     veteran:Object.freeze({notice:1.3,reaction:-.25})})});
+
+// Difficulty in real time (worlds and gameplay plan, release 3), on top of 0.38's (campaign-options.js
+// difficultyRule: Story's three more rounds and later reinforcements, Veteran's earlier ones and harder
+// pressure) and the enemy's eyes (PERCEPTION.difficulty): rounds added to every deadline, and the 0.38
+// Health of a reinforcing squad (0.38's reinforcement has 7; a full enemy unit 10). A stronger
+// reinforcement brings more men, each as hardy as any other: no level adds a man's Health or damage.
+export const REALTIME_DIFFICULTY=Object.freeze({
+  story:Object.freeze({deadline:0,wave:7}),
+  standard:Object.freeze({deadline:0,wave:7}),
+  veteran:Object.freeze({deadline:-2,wave:10})});
+
+// The finale's battle (Chapter XII's confrontation on the battle and backer routes; worlds and gameplay plan,
+// release 3): the claimant holds two cohorts of his reserve back, and they march on from his side of the field
+// at the end of rounds 4 and 7 (two rounds later on Story; never earlier), so the battle runs 8 to 12 of its 16
+// rounds. Tiles of the 0.38 board, at the main field's eastern edge (on the side gate's near side).
+export const FINALE_RESERVE=Object.freeze({routes:Object.freeze(['battle','backer']),name:'Claimant’s reserve cohort',
+  waves:Object.freeze([Object.freeze({turn:4,x:7,y:2,role:'infantry'}),Object.freeze({turn:7,x:7,y:6,role:'infantry'})])});
 
 // The Phase 0 arena on the frontier road's map: a Legionary against three
 // raiders. Positions are metres from the map's north-west corner.

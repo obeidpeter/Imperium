@@ -73,7 +73,9 @@ const base=`http://127.0.0.1:${server.address().port}/`;
 const browser=await playwright.chromium.launch({headless:!process.argv.includes('--headed'),executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,
   args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const context=await browser.newContext({viewport:{width:1270,height:720},serviceWorkers:'block'}),page=await context.newPage();
-page.setDefaultTimeout(30000);
+// Software rendering takes seconds a frame over the camps, and a click waits for two still frames: in Chapter XII's
+// camp after the overview camera, one action can take 10-30 s. Each action has the screenshots' 120 s.
+page.setDefaultTimeout(120000);
 const report={method:'Production Chromium, one context, UI Restore of legal-command campaign saves, visible cameras/settings/services, read-only world and render diagnostics',
   build:build.revision,browser:browser.version(),physicalDeviceTest:false,softwareRendering:true,
   scope:partial?'partial camera and asset diagnostic; not full release acceptance':'full twelve-chapter acceptance',

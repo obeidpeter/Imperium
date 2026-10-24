@@ -1,17 +1,23 @@
-import {MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
+import {COHESION,ENEMY_FACTIONS,ENEMY_PLANS,ENEMY_TECHNIQUES,EXCHANGE,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
 import {COMMAND_CHAPTERS} from '../../data/command-campaign.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {cellCentre,clampToMap,clearLine,crossesCover,navGrid,nearestWalkable,span,walkable} from './navigation.js';
-import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,squadById,squadCentre,squadOf,squadsOf} from './squads.js';
+import {alliedSides,fielded,membersOf,memberDecisions,missileRangeOf,routeSquad,shaken,squadById,squadCentre,squadOf,squadsOf} from './squads.js';
+import {pickWeighted} from './rng-streams.js';
+import {lying,noticeOf,unseen} from './squad-sight.js';
 import {smokeBetween} from './sight.js';
+import {HIDDEN_BANDS} from '../../data/realtime-variety.js';
 
 // How squads decide (§3.7, §3.8, §3.10): ours carry out the soldier's order,
 // else the first feasible of their four standing orders; the enemy's war bands
 // follow the 0.38 doctrine planner, recomputed at each round boundary from
 // what can be seen: one exposed target focused, archers suppressing it,
 // mobile troops seeking its flank, the rest fixing it in place, and a reserve
-// held until threatened. Every squad's plan is kept as `plan` ({ intent,
+// held until threatened. Within the chapter's doctrine the enemy draws a plan
+// from the ai stream (ENEMY_PLANS: which flank, a feint, when the reserve
+// commits) and keeps it at least two rounds; each band also has a preference
+// of its own, drawn once. Every squad's plan is kept as `plan` ({ intent,
 // targetId, x, z }) for the intentions on U and the Allied plans list. Pure.
 
 const R=TIME.roundTicks;
@@ -43,18 +49,34 @@ const plan=(squad,intent,{targetId=null,x=null,z=null}={})=>{squad.plan={intent,
 // --- Our squads: orders ---------------------------------------------------------
 // An order taking effect (command.js orderEffects).
 export function carryOut(world,squad,order){
+  // Any new order of its own brings a squad lying in wait to its feet (Restore morale and a formation do not).
+  if(lying(squad)&&!['restore','line','shield-wall','wedge','lie_in_wait'].includes(order.kind))rise(world,squad);
   switch(order.kind){
     case 'restore':squad.morale=clamp(squad.morale+MORALE.restore);squad.suppression=Math.max(0,squad.suppression-1);
       if(squad.broken&&squad.morale>MORALE.broken){squad.broken=false;emit(world,{kind:'squad-rallied',squadId:squad.id});}return;
     case 'line':case 'shield-wall':case 'wedge':squad.formation=order.kind;emit(world,{kind:'formation',squadId:squad.id,formation:order.kind});return;
     case 'hold':halt(squad);squad.stillSince=Math.min(squad.stillSince,world.tick);squad.order={kind:'hold',since:world.tick};return;
+    // Lie in wait: the men keep low and still, hidden until seen or until they strike (squad-sight.js).
+    case 'lie_in_wait':halt(squad);squad.order={kind:'lie_in_wait',since:world.tick};
+      for(const m of membersOf(world,squad))if(!m.hidden){m.hidden=true;}emit(world,{kind:'squad-lying',squadId:squad.id});return;
     default:squad.order={...order,since:world.tick};
   }
 }
+// A squad lying in wait stands up: its men are seen again.
+function rise(world,squad){const hid=membersOf(world,squad).filter(m=>m.hidden);for(const m of hid)m.hidden=false;if(hid.length)emit(world,{kind:'squad-revealed',squadId:squad.id});}
 // What the soldier ordered, carried out; false once it is done.
 function followOrder(world,squad){
   const o=squad.order,hero=actorById(world,world.heroId);
   switch(o.kind){
+    case 'lie_in_wait':{
+      // In contact the exchange springs it (and shows the men); an enemy squad within reach is fallen upon.
+      if(squad.contact){squad.order=null;rise(world,squad);return false;}
+      const c=squadCentre(world,squad),prey=squadsOf(world).filter(t=>t.side==='enemy'&&fielded(world,t)&&!t.broken&&hostile(squad,t))
+        .map(t=>({t,d:span(squadCentre(world,t).x-c.x,squadCentre(world,t).z-c.z)})).filter(x=>x.d<=EXCHANGE.ambush.spring+EXCHANGE.contact).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
+      // Fallen upon before it can turn: if it had not seen the squad, the first exchange is an ambush (squads.js).
+      if(prey){squad.order={kind:'attack',targetId:prey.id,since:world.tick,from:'lie_in_wait',unseen:noticeOf(prey,squad.id)<100};return followOrder(world,squad);}
+      halt(squad);plan(squad,'Lie in wait: fall on the first enemy to come near.');return true;
+    }
     case 'hold':halt(squad);plan(squad,'Hold here; a whole round braces the line.');return true;
     case 'advance':{
       const c=squadCentre(world,squad);
@@ -94,7 +116,9 @@ export function defaultStanding(mode,role){
   if(mode==='extract')return [broken,['guard_standard','convoy'],['attack_hero_target','hero'],['advance_with_hero','hero']];
   return [broken,['attack_hero_target','hero'],['advance_with_hero','hero'],['hold_line',null]];
 }
-const enemyGroups=(world,squad)=>squadsOf(world).filter(o=>o.side==='enemy'&&fielded(world,o)&&!o.broken&&hostile(squad,o));
+// The enemy bands a squad of ours knows of: in sight, or hidden but seen all the same.
+const enemyGroups=(world,squad)=>squadsOf(world).filter(o=>o.side==='enemy'&&fielded(world,o)&&!o.broken&&hostile(squad,o)
+  &&(membersOf(world,o).some(m=>!m.hidden)||noticeOf(squad,o.id)>=100));
 function foeNear(world,squad,point,radius,filter=()=>true){
   const groups=enemyGroups(world,squad).filter(filter).map(g=>({g,c:squadCentre(world,g)})).filter(x=>span(x.c.x-point.x,x.c.z-point.z)<=radius);
   return groups.sort((a,b)=>span(a.c.x-point.x,a.c.z-point.z)-span(b.c.x-point.x,b.c.z-point.z))[0]?.g??null;
@@ -162,43 +186,100 @@ function act(world,squad,p){
 }
 
 // --- The enemy: the doctrine planner (0.38 commandDoctrine, at round boundaries) ---------
+const MOBILE=['cavalry','heavy','raider'];
+// The round a plan made now is for: the first at the start, the next at a round's end.
+const roundAhead=world=>Math.floor((world.tick+1)/R)+1;
 export function planDoctrine(world){
   const def=COMMAND_CHAPTERS.find(c=>c.id===world.chapter),enemies=squadsOf(world).filter(s=>s.side==='enemy'&&fielded(world,s)).sort((a,b)=>a.id.localeCompare(b.id));
   if(!def||!enemies.length){world.doctrine=null;return;}
-  const hero=actorById(world,world.heroId),friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s));
+  const hero=actorById(world,world.heroId),friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s));
   const escorts=(world.mission?.escorts??[]).map(id=>actorById(world,id)).filter(e=>e&&standingActor(e));
-  const pursuing=['pursuit','interdiction'].includes(def.doctrine),round=Math.floor(world.tick/R)+1;
+  const pursuing=['pursuit','interdiction'].includes(def.doctrine),round=Math.floor(world.tick/R)+1,next=roundAhead(world);
+  // The plan: drawn again once it has been kept its rounds (it may be drawn again); a reserve plan only at the start.
+  const previous=world.doctrine?.plan??null,kinds=ENEMY_PLANS.kinds;let plan=previous;
+  if(!previous||next-previous.since>=(kinds[previous.id]?.hold??ENEMY_PLANS.hold)){
+    const favour=ENEMY_FACTIONS[enemies[0].faction]?.plans??{};
+    const pool=(ENEMY_PLANS.weights[def.doctrine]??ENEMY_PLANS.weights.approach).filter(([id])=>!previous||!kinds[id].opening).map(([id,w])=>[id,w*(favour[id]??1)]);
+    plan={id:pickWeighted(world.rng,'ai',pool),since:next};
+    if(previous&&previous.id!==plan.id)emit(world,{kind:'enemy-plan',plan:plan.id});
+  }
+  // Each band's own preference, drawn once (a reinforcement's when it first stands in the plan).
+  for(const s of enemies)if(!s.pref)s.pref=pickWeighted(world.rng,'ai',ENEMY_PLANS.preferences);
   // Focus the weakest exposed target (escorts first under pursuit); the soldier if no squad of ours stands.
-  const ratio=s=>s.strength/s.maxStrength;
+  // A squad standing alone, wavering or broken is the more exposed.
+  const ratio=s=>s.strength/s.maxStrength-(friends.some(o=>o!==s&&span(o.x-s.x,o.z-s.z)<=COHESION.supportRange)?0:.25)-(s.broken?.25:shaken(s)?.15:0);
   const focus=pursuing&&escorts.length?escorts[0]:friends.length?[...friends].sort((a,b)=>ratio(a)-ratio(b)||a.id.localeCompare(b.id))[0]:hero;
-  const defensive=['screen','siege','reserve'].includes(def.doctrine);
-  const reserve=defensive&&round<=2&&enemies.length>=3?enemies.find(s=>['infantry','guard'].includes(s.role))??null:null;
-  const roles={};
+  const defensive=['screen','siege','reserve'].includes(def.doctrine),through=ENEMY_PLANS.reserveThrough[plan.id]??ENEMY_PLANS.reserveThrough.standard;
+  const reserve=defensive&&next<=through&&enemies.length>=3?enemies.find(s=>['infantry','guard'].includes(s.role))??null:null;
+  // A feint: the band of foot nearest the focus closes and falls back; the plan's other sides are forced.
+  const at=focus?centreOf(world,focus):null,foot=enemies.filter(s=>s!==reserve&&['infantry','guard'].includes(s.role));
+  const feinter=plan.id==='feint'&&at?[...foot].sort((a,b)=>span(a.x-at.x,a.z-at.z)-span(b.x-at.x,b.z-at.z)||a.id.localeCompare(b.id))[0]??null:null;
+  const forced=kinds[plan.id]?.side??null,footFlank=forced?foot.find(s=>s!==feinter)??null:null;
+  const roles={},sides={};let flankers=0;
   enemies.forEach((s,i)=>{
-    roles[s.id]=s===reserve?'Reserve':s.role==='archer'?'Suppress':['cavalry','heavy','raider'].includes(s.role)||def.doctrine==='pincer'&&i%2===1?'Flank'
-      :def.doctrine==='siege'&&['hold','supply'].includes(world.mission?.mode)?'Contest the approach':'Fix';
+    if(s===reserve){roles[s.id]='Reserve';return;}
+    if(s===feinter){roles[s.id]='Feint';return;}
+    if(s.role==='archer'){roles[s.id]='Suppress';return;}
+    if(MOBILE.includes(s.role)||s===footFlank||(plan.id==='pincer'||def.doctrine==='pincer'&&plan.id==='fix')&&i%2===1){
+      roles[s.id]='Flank';if(forced)sides[s.id]=forced;else if(plan.id==='pincer')sides[s.id]=flankers++%2?1:-1;return;}
+    roles[s.id]=def.doctrine==='siege'&&['hold','supply'].includes(world.mission?.mode)?'Contest the approach':'Fix';
   });
   // Field approaches (0.38 edition 35): engineers draw the archers onto the soldier; a diversion draws one band
   // away until round two; against a defensive advance the horse turn the shield flank.
   const approach=world.approach??null;
   if(approach==='breach')for(const s of enemies)if(s.role==='archer')roles[s.id]='Suppress engineers';
-  if(approach==='diversion'&&round<=2){const d=enemies.find(s=>roles[s.id]!=='Reserve');if(d)roles[d.id]='Investigate diversion';}
+  if(approach==='diversion'&&next<=2){const d=enemies.find(s=>roles[s.id]!=='Reserve');if(d)roles[d.id]='Investigate diversion';}
   if(approach==='advance')for(const s of enemies)if(['cavalry','heavy','raider'].includes(s.role))roles[s.id]='Turn the shield flank';
-  world.doctrine={id:def.doctrine,label:def.label,purpose:def.purpose,round,focusId:focus?.id??null,focusName:focus?.name??null,reserveId:reserve?.id??null,roles};
+  world.doctrine={id:def.doctrine,label:def.label,purpose:def.purpose,round,focusId:focus?.id??null,focusName:focus?.name??null,reserveId:reserve?.id??null,roles,
+    plan:{id:plan.id,since:plan.since},sides};
+}
+// What a band prefers to strike when its role leaves it free (ENEMY_PLANS.preferences), if near enough.
+function preferredTarget(world,squad,friends,hero,c){
+  const near=list=>nearestOf(list.map(f=>({...centreOf(world,f),ref:f})),c)?.ref??null,soldier=hero&&standingActor(hero)?hero:null;
+  const pick=squad.pref==='nearest'?near([...friends,...(soldier?[soldier]:[])]):squad.pref==='archers'?near(friends.filter(f=>f.role==='archer')):squad.pref==='soldier'?soldier:null;
+  if(!pick)return null;const p=centreOf(world,pick);return span(p.x-c.x,p.z-c.z)<=ENEMY_PLANS.preferenceRange?pick:null;
 }
 function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
+  squad.pulledBack=false;
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
-  const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
+  // A band lying in wait (variety.js) keeps still and hidden until one of ours comes near, then falls on him. It
+  // rises and joins the plan once one of ours nears the objective (as Contest the approach measures it), or at the
+  // end of round `patience`, so it never sits out the battle.
+  if(squad.lying){
+    const reach=EXCHANGE.ambush.spring+EXCHANGE.contact,prey=[...squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&hostile(squad,s)),
+      ...world.actors.filter(a=>standingActor(a)&&!a.squadId&&hostile(squad,a))].map(t=>({t,d:span(centreOf(world,t).x-c.x,centreOf(world,t).z-c.z)}))
+      .filter(x=>x.d<=reach).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
+    const goal=world.mission?.goal,waiting=Math.floor(world.tick/R)+1<=HIDDEN_BANDS.patience&&!(goal&&foeNearGoal(world,squad,goal));
+    if(!prey&&!squad.contact&&waiting&&membersOf(world,squad).every(m=>m.hidden)){halt(squad);plan(squad,'Lie in wait.');return;}
+    squad.lying=false;
+    if(prey){squad.spring={targetId:prey.id,unseen:!prey.members||noticeOf(prey,squad.id)<100};engageTarget(world,squad,prey,`Fall on ${prey.name} from hiding.`);return;}
+    rise(world,squad);
+  }
+  const friends=squadsOf(world).filter(s=>ours(s)&&fielded(world,s)&&!unseen(world,s)),foes=[...friends,...(hero&&standingActor(hero)?[hero]:[])];
+  // Pull back a wavering band behind a steady one near it, away from our nearest squad (ENEMY_TECHNIQUES.pullBack).
+  const P=ENEMY_TECHNIQUES.pullBack,near=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
+  const steady=shaken(squad)?nearestOf(squadsOf(world).filter(s=>s!==squad&&s.side===squad.side&&fielded(world,s)&&!s.broken&&s.morale>P.steady)
+    .map(s=>({...squadCentre(world,s),ref:s})).filter(s=>span(s.x-c.x,s.z-c.z)<=P.range),c):null;
+  if(steady&&near){
+    const k=span(steady.x-near.x,steady.z-near.z)||1,to={x:steady.x+(steady.x-near.x)/k*P.behind,z:steady.z+(steady.z-near.z)/k*P.behind};
+    squad.pulledBack=true;goTo(world,squad,to,{run:true});plan(squad,`Pull back behind ${steady.ref.name} to steady.`,{x:to.x,z:to.z});return;
+  }
   const focus=squadById(world,d?.focusId)??actorById(world,d?.focusId)??nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),c)?.ref??hero;
   if(!focus)return;
   const threat=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
   const threatened=threat&&span(threat.x-c.x,threat.z-c.z)<=12;
-  if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
+  if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);braceStill(world,squad);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
   if(squad.role==='guard'&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
     squad.anchor??={x:squad.x,z:squad.z};const intruder=nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),squad.anchor);
     if(intruder&&span(intruder.x-squad.anchor.x,intruder.z-squad.anchor.z)<=15){engageTarget(world,squad,intruder.ref,'Guard the approach; strike the intruder.');return;}
-    goTo(world,squad,squad.anchor);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;
+    goTo(world,squad,squad.anchor);braceStill(world,squad);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;
+  }
+  // A band of foot near its archers meets the squad that presses them.
+  if(['infantry','guard'].includes(squad.role)&&['Fix','Contest the approach'].includes(role)){
+    const pressed=squadsOf(world).find(s=>s.side===squad.side&&s.role==='archer'&&fielded(world,s)&&s.contact&&span(s.x-c.x,s.z-c.z)<=ENEMY_TECHNIQUES.protect);
+    const presser=pressed?squadById(world,pressed.contact):null;
+    if(presser&&ours(presser)&&fielded(world,presser)){engageTarget(world,squad,presser,`Protect the archers from ${presser.name}.`);return;}
   }
   if(role==='Investigate diversion'){const p={x:squad.x,z:Math.max(4,Math.min(world.map.height*2.5-4,squad.z+(squad.z<world.map.height*1.25?-12:12)))};
     goTo(world,squad,p);plan(squad,'Investigate the false approach.',{x:p.x,z:p.z});return;}
@@ -207,21 +288,36 @@ function enemyDecision(world,squad){
   // Raiders go for an exposed column first (0.38 objectiveFor).
   if(squad.role==='raider'){const col=nearestOf((world.mission?.escorts??[]).map(id=>actorById(world,id)).filter(e=>e&&standingActor(e)),c);
     if(col&&span(col.x-c.x,col.z-c.z)<=40){engageTarget(world,squad,col,'Seek the column.');return;}}
-  const target=role==='Suppress engineers'&&hero&&standingActor(hero)?hero:focus;
+  const target=role==='Suppress engineers'&&hero&&standingActor(hero)?hero:role==='Fix'?preferredTarget(world,squad,friends,hero,c)??focus:focus;
   if(role==='Suppress'||role==='Suppress engineers'||squad.role==='archer'){
     const t=centreOf(world,target),range=missileRangeOf(squad)||20,d=span(t.x-c.x,t.z-c.z),grid=navGrid(world.map);
     if(d<8){const away={x:c.x+(c.x-t.x)/(d||1)*6,z:c.z+(c.z-t.z)/(d||1)*6};goTo(world,squad,away,{run:true});plan(squad,'Step back and keep shooting.',{x:away.x,z:away.z,targetId:target.id});return;}
     if(d>range*.85||crossesCover(grid,c,t)||smokeBetween(world,c,t)){goTo(world,squad,t,{stopAt:range*.75});plan(squad,`Close to bow range of ${target.name}.`,{targetId:target.id,x:t.x,z:t.z});return;}
     halt(squad);plan(squad,`Suppress ${target.name}.`,{targetId:target.id,x:t.x,z:t.z});return;
   }
+  const first=d?.plan&&Math.floor(world.tick/R)+1<=d.plan.since;
+  if(role==='Feint'){
+    // The plan's first round: close on the mark; then fall back a fixed way, once, to draw a squad out.
+    const t=centreOf(world,target),f=ENEMY_PLANS.feint;
+    if(first){squad.feint=null;goTo(world,squad,t,{stopAt:f.close});plan(squad,`Close on ${target.name}, then fall back.`,{targetId:target.id,x:t.x,z:t.z});return;}
+    if(!squad.feint){const k=span(c.x-t.x,c.z-t.z)||1;squad.feint={x:c.x+(c.x-t.x)/k*f.back,z:c.z+(c.z-t.z)/k*f.back};}
+    goTo(world,squad,squad.feint,{run:true});plan(squad,`Fall back to draw ${target.name} out.`,{x:squad.feint.x,z:squad.feint.z});return;
+  }
+  // Under a feint the others wait out its first round, then strike.
+  if(role==='Fix'&&d?.plan?.id==='feint'&&first&&squadsOf(world).some(s=>d.roles[s.id]==='Feint')){halt(squad);plan(squad,'Wait for the feint to draw you out.');return;}
   if(role==='Flank'||role==='Turn the shield flank'){
-    // A side approach: beside the focus, away from its front (horse avoid a braced shield front).
-    const t=centreOf(world,target),fx=target.fx??-1,fz=target.fz??0,side=(c.x-t.x)*-fz+(c.z-t.z)*fx>=0?1:-1;
-    const point={x:t.x-fz*side*9-fx*2,z:t.z+fx*side*9-fz*2};
-    if(span(c.x-point.x,c.z-point.z)>4&&span(c.x-t.x,c.z-t.z)>6){goTo(world,squad,point,{run:true});plan(squad,`Seek ${target.name}’s flank.`,{targetId:target.id,x:point.x,z:point.z});return;}
+    // A side approach: beside the focus, away from its front (horse avoid a braced shield front); the plan may name the side.
+    const t=centreOf(world,target),fx=target.fx??-1,fz=target.fz??0,own=(c.x-t.x)*-fz+(c.z-t.z)*fx>=0?1:-1,side=role==='Flank'?d?.sides?.[squad.id]??own:own;
+    const {wide,behind}=ENEMY_PLANS.flank,point={x:t.x-fz*side*wide-fx*behind,z:t.z+fx*side*wide-fz*behind};
+    if(span(c.x-point.x,c.z-point.z)>4&&span(c.x-t.x,c.z-t.z)>6){goTo(world,squad,point,{run:true});plan(squad,`Seek ${target.name}’s ${side>0?'right':'left'} flank.`,{targetId:target.id,x:point.x,z:point.z});return;}
     engageTarget(world,squad,target,`Strike ${target.name} from the flank.`);return;
   }
   engageTarget(world,squad,target,`Fix ${target.name} in place.`);
+}
+// A band of a faction that braces (ENEMY_FACTIONS) braces once it has held its ground long enough.
+function braceStill(world,squad){
+  if(squad.braced||squad.moving||!ENEMY_FACTIONS[squad.faction]?.brace||world.tick-squad.stillSince<ENEMY_TECHNIQUES.braceTicks)return;
+  squad.braced=true;emit(world,{kind:'squad-braced',squadId:squad.id});
 }
 function foeNearGoal(world,squad,g){
   const hero=actorById(world,world.heroId);const list=[...squadsOf(world).filter(s=>ours(s)&&fielded(world,s)),...(hero&&standingActor(hero)?[hero]:[])];

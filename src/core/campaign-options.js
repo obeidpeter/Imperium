@@ -4,7 +4,7 @@ import {alive,clamp,distance,result} from './shared.js';
 const LEVELS=[
   {id:'story',label:'Story',description:'Three extra field turns, reinforcements two turns later, gentler objective pressure and rival speeches. The same objectives and earned promotions.'},
   {id:'standard',label:'Standard',description:'The established combat and political balance, with company planning and evolving field objectives.'},
-  {id:'veteran',label:'Veteran',description:'Reinforcements one turn earlier, stronger objective pressure and rival speeches. No extra enemy health or damage; evacuation travel time is preserved.'},
+  {id:'veteran',label:'Veteran',description:'Reinforcements one turn earlier (in real time at full strength from Chapter IV, with battle deadlines two rounds shorter), stronger objective pressure and rival speeches. No enemy is hardier or hits harder; evacuation travel time is preserved.'},
 ];
 const PACKAGES=[
   {id:'none',label:'Keep supplies',cost:0,description:'Deploy with the company’s current condition.'},
