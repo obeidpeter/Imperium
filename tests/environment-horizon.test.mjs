@@ -153,3 +153,24 @@ test('Distant river begins at the real near-water edge, and both rivers wave in 
     assert.ok(w.horizon.stats.triangles<=15000);w.dispose();
   }
 });
+
+test('Woods stand on the ridges themselves, within each quality\'s budget, the same every build, and none in deserts or cities',async()=>{
+  const {FOREST_CROWNS}=await import('../src/showcase/environment-horizon.js');
+  const down=new T.Raycaster(new T.Vector3(),new T.Vector3(0,-1,0),0,2000);
+  for(const id of ['ch1-road','ch2-marsh','ch7-legion','ch5-mine','ch9-wing','ch11-adlection'])for(const quality of ['performance','balanced','high']){
+    const w=create(id,quality),h=w.horizon,mesh=h.group.getObjectByName('distant forest stand-ins');
+    if(['siege','desert','palmyra','rome','accession'].includes(w.profile.setting)){assert.equal(mesh,undefined,`${id}: no woods`);assert.equal(h.stats.forestCrowns,0);w.dispose();continue;}
+    assert.ok(mesh,`${id} ${quality}`);assert.ok(h.stats.forestCrowns>FOREST_CROWNS[quality]/2&&h.stats.forestCrowns<=FOREST_CROWNS[quality],`${id} ${quality}: ${h.stats.forestCrowns}`);
+    assert.equal(h.stats.forestTriangles,h.stats.forestCrowns*20);assert.equal(mesh.material.fog,true);assert.equal(mesh.castShadow,false);
+    const p=mesh.geometry.attributes.position;h.group.updateMatrixWorld(true);
+    // Each crown is 60 corners; it neither floats over the ridge nor sinks into it.
+    for(let i=0;i<p.count;i+=60){
+      let x=0,z=0,low=Infinity;for(let k=i;k<i+60;k++){x+=p.getX(k)/60;z+=p.getZ(k)/60;low=Math.min(low,p.getY(k));}
+      const d=Math.hypot(x,z);assert.ok(d>=150&&d<=545,`${id}: a crown ${d.toFixed(1)} m out`);
+      down.ray.origin.set(x,1000,z);const hit=down.intersectObjects([h.ridges,h.bridge],false)[0];
+      assert.ok(hit&&low<=hit.point.y+.3&&low>=hit.point.y-3,`${id}: a crown stands on the ridge (${low.toFixed(2)} over ${hit?.point.y.toFixed(2)})`);
+    }
+    if(quality==='balanced'){const again=create(id,quality);assert.deepEqual(Array.from(again.horizon.group.getObjectByName('distant forest stand-ins').geometry.attributes.position.array),Array.from(p.array));again.dispose();}
+    w.dispose();
+  }
+});

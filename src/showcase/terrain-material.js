@@ -8,6 +8,8 @@ import {groundTextures} from './ground-textures.js';
 // out of sand and grass fills the joints of paving rather than fading evenly.
 // Each layer repeats at its real size in world space; a sloped bank keeps the
 // same projection. One program per quality: Performance skips the normal maps.
+// From about 150 m on (the outer ridges), each layer takes one sample of its
+// larger copy and no normal: the rest would be lost in the mips anyway.
 // Beyond the splat map, on the outer ground and the horizon, the region's turf
 // wears toward its worn ground with the vertex soil weight.
 export const GROUND_HEIGHT_BLEND=7;
@@ -75,21 +77,28 @@ const sample=`
     vec2 ddx=dFdx(vGroundWorld.xz),ddy=dFdy(vGroundWorld.xz);
     // A broad noise shifts each layer between its two copies, so no tile repeats in view.
     float macro=groundNoise(vGroundWorld.xz*0.045);
+    // The distance level: from about 150 m on, where the small copy and the
+    // normals are lost in the mips, one sample of the large copy per layer.
+    float groundDistant=smoothstep(130.0,190.0,distance(vGroundWorld,cameraPosition));
     float total=0.0;
     for(int i=0;i<GROUND_LAYERS;i++){
       float weight=mix(mix(groundOutside[i],groundOutsideWorn[i],soil),splat[i],inside);
       if(weight<0.004)continue;
       float scale=1.0/groundRepeat[i];
       vec3 st=vec3(vGroundWorld.xz*scale,float(i));
-      vec4 near=textureGrad(groundAlbedoMap,st,ddx*scale,ddy*scale);
-      vec4 far=textureGrad(groundAlbedoMap,vec3(GROUND_TURN*st.xy+vec2(0.37,0.19)*float(i),st.z),GROUND_TURN*ddx*scale,GROUND_TURN*ddy*scale);
-      vec4 layer=mix(near,far,clamp(macro*1.8-0.4+0.15*sin(float(i)*2.3),0.0,1.0));
+      vec4 layer=textureGrad(groundAlbedoMap,vec3(GROUND_TURN*st.xy+vec2(0.37,0.19)*float(i),st.z),GROUND_TURN*ddx*scale,GROUND_TURN*ddy*scale);
+      if(groundDistant<0.999){
+        vec4 near=textureGrad(groundAlbedoMap,st,ddx*scale,ddy*scale);
+        layer=mix(mix(near,layer,clamp(macro*1.8-0.4+0.15*sin(float(i)*2.3),0.0,1.0)),layer,groundDistant);
+      }
       // Height-weighted: where two layers meet, the higher surface shows.
       float h=weight*exp2(groundHeightBlend*layer.a);
       groundAlbedo+=layer.rgb*groundTint[i]*h;groundRough+=groundRoughness[i]*h;total+=h;
       #ifdef GROUND_NORMALS
-        vec4 n=textureGrad(groundNormalMap,st,ddx*scale,ddy*scale);
-        groundSlope+=(vec2(n.r,n.a)*2.0-1.0)*h;
+        if(groundDistant<0.999){
+          vec4 n=textureGrad(groundNormalMap,st,ddx*scale,ddy*scale);
+          groundSlope+=(vec2(n.r,n.a)*2.0-1.0)*h*(1.0-groundDistant);
+        }
       #endif
     }
     total=max(total,1e-5);groundAlbedo/=total;groundRough/=total;groundSlope/=total;
@@ -124,7 +133,7 @@ export function installTerrainMaterial(material,uniforms,{normals=true}={}){
       .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor*=groundRough;')
       .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n'+perturb);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:imperium-terrain-v1:${normals?'normals':'flat'}`;
+  material.customProgramCacheKey=()=>`${oldKey}:imperium-terrain-v2:${normals?'normals':'flat'}`;
   material.userData.terrain={uniforms,normals};
   return material;
 }
