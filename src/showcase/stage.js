@@ -10,7 +10,7 @@ import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
 import {createSceneryModels,sceneryResidency} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
-import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,landscapeFogRange} from './atmosphere.js';
+import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,installGroundMist,landscapeFogRange} from './atmosphere.js';
 import {installBakedOcclusion} from './environment-baked-occlusion.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
@@ -181,7 +181,7 @@ export class BattleStage{
     this.shadowUpdates=0;this.lastShadow=-Infinity;this.renderCounts=[];
     this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0};this.poseReset=new Set();this.visibleUnits=[];
     this.labelSizeDirty=true;this.screenPoint=new T.Vector3();this.matrix=new T.Matrix4();
-    this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);
+    this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);this.groundMist=installGroundMist(this.profile);
     this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};
     this.lookTarget=new T.Vector3(0,.25,0);this.baseTarget=new T.Vector3(0,.25,0);this.cameraKick=0;this.cameraView='overview';
     this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});yield;
