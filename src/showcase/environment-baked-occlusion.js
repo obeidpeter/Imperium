@@ -219,8 +219,10 @@ const fragmentBody=ground=>`
     reflectedLight.indirectSpecular*=mix(1.0,aoBaked,0.7);
     reflectedLight.directDiffuse*=mix(1.0,aoBaked,0.2);${ground?`
     // The scenery's static shadow on the ground, beyond the live shadow map's box.
-    vec2 aoLive=abs(vImperiumAoWorld.xz-imperiumLiveShadow.xy);
-    float aoOutside=1.0-step(0.5,imperiumLiveShadow.z)*(1.0-smoothstep(imperiumLiveShadow.z-4.0,imperiumLiveShadow.z-1.0,max(aoLive.x,aoLive.y)));
+    // The box turns with the sun and reaches at least its half-width from the
+    // centre in every direction on the ground, so a disc of that radius is covered.
+    float aoLive=distance(vImperiumAoWorld.xz,imperiumLiveShadow.xy);
+    float aoOutside=1.0-step(0.5,imperiumLiveShadow.z)*(1.0-smoothstep(imperiumLiveShadow.z-4.0,imperiumLiveShadow.z-1.0,aoLive));
     float aoSun=1.0-smoothstep(0.12,0.45,aoTexel.b*${SUN_SHADOW_RANGE.toFixed(1)}-aoAbove)*aoInside*aoOutside*imperiumSunShadow;
     reflectedLight.directDiffuse*=aoSun;
     reflectedLight.directSpecular*=aoSun;`:''}
