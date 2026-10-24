@@ -10,7 +10,8 @@ import {loadKTX2Texture} from './model-loader.js';
 let standIn=null,loaded=null,pending=null;
 const configure=(texture,colour)=>{
   texture.wrapS=texture.wrapT=T.RepeatWrapping;texture.magFilter=T.LinearFilter;
-  texture.colorSpace=colour?T.SRGBColorSpace:T.NoColorSpace;texture.anisotropy=8;texture.needsUpdate=true;return texture;
+  // Four samples at grazing angles: eight doubled the ground's cost for little a player sees.
+  texture.colorSpace=colour?T.SRGBColorSpace:T.NoColorSpace;texture.anisotropy=4;texture.needsUpdate=true;return texture;
 };
 function standInTextures(){
   const size=4,layers=GROUND_LAYERS.length,albedo=new Uint8Array(size*size*4*layers),normal=new Uint8Array(size*size*4*layers).fill(128);

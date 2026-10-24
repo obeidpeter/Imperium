@@ -8,8 +8,10 @@ import {groundTextures} from './ground-textures.js';
 // out of sand and grass fills the joints of paving rather than fading evenly.
 // Each layer repeats at its real size in world space; a sloped bank keeps the
 // same projection. One program per quality: Performance skips the normal maps.
-// From about 150 m on (the outer ridges), each layer takes one sample of its
-// larger copy and no normal: the rest would be lost in the mips anyway.
+// From about 60 m on, each layer takes one sample of its larger copy and no
+// normal: the rest would be lost in the mips anyway. Nearer, a layer samples
+// both copies only where the broad noise blends them, and a layer under 3%
+// of the blend is skipped: few samples per pixel, as phones need.
 // Beyond the splat map, on the outer ground and the horizon, the region's turf
 // wears toward its worn ground with the vertex soil weight.
 export const GROUND_HEIGHT_BLEND=7;
@@ -77,25 +79,28 @@ const sample=`
     vec2 ddx=dFdx(vGroundWorld.xz),ddy=dFdy(vGroundWorld.xz);
     // A broad noise shifts each layer between its two copies, so no tile repeats in view.
     float macro=groundNoise(vGroundWorld.xz*0.045);
-    // The distance level: from about 150 m on, where the small copy and the
+    // The distance level: from about 60 m on, where the small copy and the
     // normals are lost in the mips, one sample of the large copy per layer.
-    float groundDistant=smoothstep(130.0,190.0,distance(vGroundWorld,cameraPosition));
+    float groundDistant=smoothstep(60.0,110.0,distance(vGroundWorld,cameraPosition));
     float total=0.0;
     for(int i=0;i<GROUND_LAYERS;i++){
       float weight=mix(mix(groundOutside[i],groundOutsideWorn[i],soil),splat[i],inside);
-      if(weight<0.004)continue;
+      // A layer this faint is lost in the blend (mostly the splat map's filtering at cell edges).
+      if(weight<0.03)continue;
       float scale=1.0/groundRepeat[i];
       vec3 st=vec3(vGroundWorld.xz*scale,float(i));
-      vec4 layer=textureGrad(groundAlbedoMap,vec3(GROUND_TURN*st.xy+vec2(0.37,0.19)*float(i),st.z),GROUND_TURN*ddx*scale,GROUND_TURN*ddy*scale);
-      if(groundDistant<0.999){
-        vec4 near=textureGrad(groundAlbedoMap,st,ddx*scale,ddy*scale);
-        layer=mix(mix(near,layer,clamp(macro*1.8-0.4+0.15*sin(float(i)*2.3),0.0,1.0)),layer,groundDistant);
-      }
+      // How much of the turned copy shows: the macro noise's share, all of it in the distance.
+      // Where that is none or all, only one copy is sampled.
+      float turned=1.0-(1.0-clamp(macro*1.8-0.4+0.15*sin(float(i)*2.3),0.0,1.0))*(1.0-groundDistant);
+      vec4 layer=vec4(0.0);
+      if(turned>0.001)layer=textureGrad(groundAlbedoMap,vec3(GROUND_TURN*st.xy+vec2(0.37,0.19)*float(i),st.z),GROUND_TURN*ddx*scale,GROUND_TURN*ddy*scale);
+      if(turned<0.999)layer=mix(textureGrad(groundAlbedoMap,st,ddx*scale,ddy*scale),layer,turned);
       // Height-weighted: where two layers meet, the higher surface shows.
       float h=weight*exp2(groundHeightBlend*layer.a);
       groundAlbedo+=layer.rgb*groundTint[i]*h;groundRough+=groundRoughness[i]*h;total+=h;
       #ifdef GROUND_NORMALS
-        if(groundDistant<0.999){
+        // Relief from the layers that carry the blend: a faint one barely tilts it.
+        if(groundDistant<0.999&&weight>=0.25){
           vec4 n=textureGrad(groundNormalMap,st,ddx*scale,ddy*scale);
           groundSlope+=(vec2(n.r,n.a)*2.0-1.0)*h*(1.0-groundDistant);
         }
@@ -133,7 +138,7 @@ export function installTerrainMaterial(material,uniforms,{normals=true}={}){
       .replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor*=groundRough;')
       .replace('#include <normal_fragment_maps>','#include <normal_fragment_maps>\n'+perturb);
   };
-  material.customProgramCacheKey=()=>`${oldKey}:imperium-terrain-v2:${normals?'normals':'flat'}`;
+  material.customProgramCacheKey=()=>`${oldKey}:imperium-terrain-v3:${normals?'normals':'flat'}`;
   material.userData.terrain={uniforms,normals};
   return material;
 }
