@@ -103,6 +103,40 @@ export const SQUAD_STANDING=freeze({
       freeze(['advance_with_hero','hero'])])}),
   presetNames:freeze({line_of_battle:'Line of battle',reserve:'Reserve',flank_guard:'Flank guard'})});
 
+// The enemy's plan (squad-ai.js planDoctrine; worlds and gameplay plan, release 3):
+// at the start and at round boundaries the enemy draws one from the ai stream,
+// weighted by the chapter's doctrine, and keeps it at least `hold` rounds (its
+// own, if it names one). A reserve plan only opens a battle. The sides are your
+// squads' own: a flank attack turns the focus's left or right.
+export const ENEMY_PLANS=freeze({hold:2,
+  kinds:freeze({
+    fix:freeze({label:'Hold you in front',summary:'The bands fix your line in place; horse and raiders seek whichever flank is nearer.'}),
+    'flank-left':freeze({label:'Turn your left',summary:'Horse, raiders and a band of foot go round your left; the rest hold you in front.',side:-1}),
+    'flank-right':freeze({label:'Turn your right',summary:'Horse, raiders and a band of foot go round your right; the rest hold you in front.',side:1}),
+    pincer:freeze({label:'Close on both flanks',summary:'Every second band goes round a flank, the next the other.'}),
+    feint:freeze({label:'Feint and draw you out',summary:'The leading band closes, then falls back to draw a squad out; the rest strike when it follows.'}),
+    'early-reserve':freeze({label:'Commit the reserve early',summary:'The reserve joins the attack after the first round.',opening:true}),
+    'late-reserve':freeze({label:'Hold the reserve back',summary:'The reserve waits until round 5 unless it is threatened.',opening:true,hold:4})}),
+  // By the chapter's doctrine (data/command-campaign.js): [plan, weight].
+  weights:freeze({
+    approach:freeze([['fix',3],['flank-left',1],['flank-right',1],['pincer',1],['feint',1]]),
+    pursuit:freeze([['fix',2],['flank-left',2],['flank-right',2],['pincer',1],['feint',1]]),
+    screen:freeze([['fix',2],['flank-left',1],['flank-right',1],['early-reserve',2],['late-reserve',2]]),
+    siege:freeze([['fix',2],['flank-left',1],['flank-right',1],['feint',1],['early-reserve',2],['late-reserve',2]]),
+    pincer:freeze([['pincer',3],['flank-left',1],['flank-right',1],['fix',1],['feint',1]]),
+    interdiction:freeze([['fix',2],['flank-left',2],['flank-right',2],['pincer',1],['feint',1]]),
+    countercharge:freeze([['flank-left',2],['flank-right',2],['pincer',2],['feint',2],['fix',1]]),
+    reserve:freeze([['late-reserve',3],['early-reserve',2],['fix',1],['pincer',1],['feint',1]])}),
+  // The last round a reserve is held (unless threatened), by plan.
+  reserveThrough:freeze({standard:2,'early-reserve':1,'late-reserve':4}),
+  // A feint closes to `close` metres of its mark in the plan's first round, then falls back `back` metres.
+  feint:freeze({close:8,back:12}),
+  // How far round a flank a flanking band swings (metres beside the focus, and behind its front).
+  flank:freeze({wide:9,behind:2}),
+  // What each enemy band prefers to strike when the plan leaves it free, drawn once from the ai stream.
+  preferences:freeze([['focus',5],['nearest',2],['archers',1],['soldier',1]]),
+  preferenceRange:40});
+
 // Specialists (guide "Specialists"): a companion's action for one Command.
 export const SPECIALISTS=freeze({
   guard:freeze({id:'guard',path:'protector',name:'Guard',range:2,reduction:2,rounds:1,summary:'A friend within 2 m takes 2 less from every blow for a round; the protector braces.'}),

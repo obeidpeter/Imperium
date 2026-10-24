@@ -11,6 +11,7 @@ import {exchangeWound,flyProjectiles,resolveBlows,settleLocks,regenerate} from '
 import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
 import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
+import {ENEMY_PLANS} from '../../data/realtime-squads.js';
 import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
 import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
@@ -274,6 +275,7 @@ function logLine(world,e){
     case 'squad-braced':return `${squadName(world,e.squadId)} is braced.`;
     case 'order':return `${squadName(world,e.squadId)}: ${ORDER_WORDS[e.order]??e.order}.`;
     case 'counter':return `${squadName(world,e.squadId)}'s braced front answers the charge of ${squadName(world,e.targetSquadId)}.`;
+    case 'enemy-plan':return `The enemy changes its plan: ${ENEMY_PLANS.kinds[e.plan]?.label.toLowerCase()??'a new plan'}.`;
     case 'victory':return world.mission?'The objective is secured.':'The road is clear.';
     case 'defeat':return world.mission?.reason??`${nameOf(world,world.heroId)} has fallen.`;
     default:return null;

@@ -1,4 +1,4 @@
-import {EXCHANGE,SQUAD_STANDING} from '../../data/realtime-squads.js';
+import {ENEMY_PLANS,EXCHANGE,SQUAD_STANDING} from '../../data/realtime-squads.js';
 import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {FIELD_APPROACHES} from '../field-approaches.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
@@ -9,7 +9,7 @@ import {span} from './navigation.js';
 import {summarizeOrders} from './party.js';
 
 // What the soldier knows of the field (guide "Knowing the enemy", "Reading the
-// battlefield"): the field intelligence panel (the enemy's doctrine and focus,
+// battlefield"): the field intelligence panel (the enemy's doctrine, plan and focus,
 // the approach chosen, the chapter's opportunities and the field's objects),
 // Allied plans & visible threats in words, each visible enemy's intention as
 // an arrow (hold U while paused), and the ground an enemy could strike within
@@ -25,7 +25,8 @@ const nameOf=(world,id)=>squadsOf(world).find(q=>q.id===id)?.name??actorById(wor
 export function fieldIntelligence(world){
   const d=world.doctrine,f=world.field,approach=world.approach?FIELD_APPROACHES.find(p=>p.id===world.approach):null;
   return {
-    doctrine:d?{label:d.label,purpose:d.purpose,focus:d.focusName,reserve:d.reserveId?nameOf(world,d.reserveId):null}:null,
+    doctrine:d?{label:d.label,purpose:d.purpose,focus:d.focusName,reserve:d.reserveId?nameOf(world,d.reserveId):null,
+      plan:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.label??null:null,planSummary:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.summary??null:null}:null,
     approach:approach?{label:approach.label,description:approach.description}:null,
     opportunities:f?['stores','signal'].map(id=>{const o=(world.objects??[]).find(x=>x.field&&x.kind===id),opp=f.opportunities?.[id];
       return o&&{name:o.name,state:o.state,description:opp?.description??''};}).filter(Boolean):[],

@@ -257,7 +257,7 @@ function fieldIntelligencePanel(world){
   const objects=intel.objects.length?`<p>${intel.objects.map(o=>`${esc(o.name)}: ${esc(state(o.state))}${o.action?` (${esc(o.action)})`:''}`).join(' · ')}</p>`:'';
   const threats=plans.threats.length?`<ul>${plans.threats.map(t=>`<li><strong>${esc(t.name)}</strong>${t.role?` · ${esc(t.role)}`:''}: ${esc(t.intent)}${t.target?` Target: ${esc(t.target)}.`:''}${t.distance!==null?` ${t.distance} m away.`:''}</li>`).join('')}</ul>`:'<p>No enemy in sight.</p>';
   return `<section class="field-intel" aria-label="Field intelligence"><h3>Field intelligence</h3>
-    ${d?`<p><strong>${esc(d.label)}.</strong> ${esc(d.purpose)}${d.focus?` Their focus: ${esc(d.focus)}.`:''}${d.reserve?` Held in reserve: ${esc(d.reserve)}.`:''}</p>`:''}
+    ${d?`<p><strong>${esc(d.label)}.</strong> ${esc(d.purpose)}${d.plan?` Their plan: <strong>${esc(d.plan)}</strong> (${esc(d.planSummary)})`:''}${d.focus?` Their focus: ${esc(d.focus)}.`:''}${d.reserve?` Held in reserve: ${esc(d.reserve)}.`:''}</p>`:''}
     ${intel.approach?`<p><strong>${esc(intel.approach.label)}:</strong> ${esc(intel.approach.description)}</p>`:''}${opps}${objects}</section>
     <section class="allied-plans" aria-label="Allied plans and visible threats"><h3>Allied plans &amp; visible threats</h3>
     ${plans.ours.length?`<ul>${plans.ours.map(o=>`<li><strong>${esc(o.name)}:</strong> ${esc(o.plan)}</li>`).join('')}</ul>`:''}${threats}</section>`;

@@ -5,7 +5,7 @@ import {makeActor} from './actors.js';
 import {derivedValues} from './combat.js';
 import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
 import {sightBlocked} from './sight.js';
-import {nextRandom} from './rng-streams.js';
+import {pickWeighted} from './rng-streams.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -266,11 +266,7 @@ export function chargeReady(world,attacker,target,{rough=false}={}){
   return ['cavalry','heavy'].includes(attacker.role)&&attacker.runUp>=EXCHANGE.chargeRun&&!rough&&!target.braced;
 }
 // One exchange's spread: a factor of EXCHANGE.spread by its weight, one draw of the combat stream.
-export function exchangeSpread(world){
-  const total=EXCHANGE.spread.reduce((n,[,w])=>n+w,0);let r=nextRandom(world.rng,'combat')*total;
-  for(const [factor,weight]of EXCHANGE.spread){r-=weight;if(r<0)return factor;}
-  return EXCHANGE.spread.at(-1)[0];
-}
+export const exchangeSpread=world=>pickWeighted(world.rng,'combat',EXCHANGE.spread);
 // The nearest two men of two squads, and how far apart they stand.
 export function closest(world,a,b){
   let best=Infinity,pa=null,pb=null;const ma=membersOf(world,a),mb=membersOf(world,b);
