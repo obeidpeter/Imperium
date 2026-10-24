@@ -104,7 +104,7 @@ Main before this release (`5d0d451`, release 2) and this release were swept on t
 | X, the road | 7/9 → 10/10 | 9 → 8 | 55% → 53% | 0.77 → 0.74 ms |
 | XII, the confrontation | 4/4 → 8/8 | 12 → 8 | 8% → 13% | 0.87 → 0.94 ms |
 
-The finale's routes took 4–5 rounds on main and now take 8 (the battle and backer routes) or 3–4 (the standoffs). On these five seeds main showed no enemy plan at all; this release showed 4–6 different plans in every battle. Losses rose in eight battles of thirteen, by up to 16 points, stayed level in two and fell in three (Chapter IV's wall, Chapter VIII's ferry and Chapter X's road). The margins narrowed little on Standard, whose deadlines are unchanged; most of the narrowing is on Veteran (see [Battle by battle](#battle-by-battle)).
+The finale's routes took 4–5 rounds on main and now take 8 (the battle and backer routes) or 3–4 (the standoffs). On these five seeds main showed no enemy plan at all; this release showed 4–6 different plans in every battle. Losses rose in eight battles of thirteen, by up to 16 points, stayed level in two and fell in three (Chapter IV's wall, Chapter VIII's ferry and Chapter X's road). The margins narrowed little on these five seeds, as Standard's deadlines are unchanged; most of the narrowing is on Veteran (see [Battle by battle](#battle-by-battle)). Over 20 seeds, against the [Gate 4 sweep](evidence/realtime-gate4-sweep.json) on Standard, the least slack narrowed in 9 battles of 13, held in 3 and widened by a round in one (Chapter IX's city), and the longest win grew in 9. That sweep used the earlier bot, before item 7's fix, so this comparison is only indicative.
 
 ### Tick time
 
