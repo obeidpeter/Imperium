@@ -36,7 +36,8 @@ export function noticeRate(world,watcher,target){
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
   if(crossesCover(grid,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
   if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
-  return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*difficulty(world).notice;
+  // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
+  return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);
 }
 
 // System 7: perception and notice meters.
@@ -104,7 +105,7 @@ function chooseTarget(world,actor){
   const t=ENEMY_AI.threat,fellows=world.actors.filter(o=>o!==actor&&o.ai&&standing(o)&&o.side===actor.side),
     archers=fellows.filter(o=>derivedValues(o).weapon.ranged);
   const score=o=>distanceBetween(o,actor)-(o.lock===actor.id||o.order?.targetId===actor.id?t.attacking:0)
-    -(fellows.some(f=>o.lock===f.id||o.order?.targetId===f.id)?t.band:0)-(o.hp<o.maxHp/2?t.wounded:0)
+    -(fellows.some(f=>o.lock===f.id||o.order?.targetId===f.id)?t.band:0)-(o.side!=='neutral'&&o.hp<o.maxHp/2?t.wounded:0)
     -(archers.some(a=>distanceBetween(a,o)<=t.guardRange)?t.archer:0);
   let best=null,bs=Infinity;for(const o of foes){const s=score(o);if(s<bs||s===bs&&o.id<best.id){bs=s;best=o;}}
   const current=foes.find(o=>o.id===actor.order?.targetId);

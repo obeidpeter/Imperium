@@ -162,8 +162,8 @@ export const ENEMY_AI=Object.freeze({noticeRadius:13,
   // An engaged enemy keeps his man unless another foe stands this much closer.
   stickiness:3,
   // Whom he strikes (worlds and gameplay plan, release 3): the nearest foe, counted this many metres nearer when he
-  // is striking this man or a man of his band, is badly wounded (below half his Health), or is pressing one of the
-  // band's archers (within `guardRange` of him).
+  // is striking this man or a man of his band, is a fighter badly wounded (below half his Health), or is pressing
+  // one of the band's archers (within `guardRange` of him).
   threat:Object.freeze({attacking:4,band:2,wounded:3,archer:4,guardRange:6})});
 
 // War bands (Chapters I–III; worlds and gameplay plan, release 3): the single
@@ -192,6 +192,23 @@ export const PERCEPTION=Object.freeze({sightBase:25,near:5,run:60,walk:25,quietW
   traceFieldcraft:10,noiseSpread:10,
   difficulty:Object.freeze({story:Object.freeze({notice:.7,reaction:.5}),standard:Object.freeze({notice:1,reaction:0}),
     veteran:Object.freeze({notice:1.3,reaction:-.25})})});
+
+// Difficulty in real time (worlds and gameplay plan, release 3), on top of 0.38's (campaign-options.js
+// difficultyRule: Story's three more rounds and later reinforcements, Veteran's earlier ones and harder
+// pressure) and the enemy's eyes (PERCEPTION.difficulty): rounds added to every deadline, and the 0.38
+// Health of a reinforcing squad (0.38's reinforcement has 7; a full enemy unit 10). A stronger
+// reinforcement brings more men, each as hardy as any other: no level adds a man's Health or damage.
+export const REALTIME_DIFFICULTY=Object.freeze({
+  story:Object.freeze({deadline:0,wave:7}),
+  standard:Object.freeze({deadline:0,wave:7}),
+  veteran:Object.freeze({deadline:-2,wave:10})});
+
+// The finale's battle (Chapter XII's confrontation on the battle and backer routes; worlds and gameplay plan,
+// release 3): the claimant holds two cohorts of his reserve back, and they march on from his side of the field
+// at the end of rounds 4 and 7 (a level's reinforcement timing applies), so the battle runs 8 to 12 of its 16
+// rounds. Tiles of the 0.38 board, at the main field's eastern edge (on the side gate's near side).
+export const FINALE_RESERVE=Object.freeze({routes:Object.freeze(['battle','backer']),name:'Claimant’s reserve cohort',
+  waves:Object.freeze([Object.freeze({turn:4,x:7,y:2,role:'infantry'}),Object.freeze({turn:7,x:7,y:6,role:'infantry'})])});
 
 // The Phase 0 arena on the frontier road's map: a Legionary against three
 // raiders. Positions are metres from the map's north-west corner.

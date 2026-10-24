@@ -171,9 +171,10 @@ export function companionWatch(){
   watch.incidents=incidents;return watch;
 }
 
-// From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere.
+// From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere. A lost encounter is
+// retried from its checkpoint (Retry, a legal command) up to `retries` times before the run stops.
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null,play=playRealtime}={}){
+  ready=undefined,onEncounter=null,play=playRealtime,retries=0}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
@@ -189,7 +190,12 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){
-      const summary=G.isRealtime(state)?play(state):playEncounter(state);encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+      let summary=null;
+      for(let tries=1;;tries++){
+        summary={...(G.isRealtime(state)?play(state):playEncounter(state)),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+        if(state.encounter.status==='won'||tries>retries)break;
+        const r=G.retry(state);if(!r.ok)throw new Error(r.message);
+      }
       if(state.encounter.status!=='won')throw new Error(`Real-time autoplay lost ${state.encounter.id}: ${summary.reason??''}\n${state.encounter.log.slice(-8).join('\n')}`);
       const r=G.commitEncounter(state);if(!r.ok)throw new Error(r.message);
     }else if(state.phase==='promotion'){const r=G.advanceChapter(state);if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);}

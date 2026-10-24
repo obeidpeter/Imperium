@@ -30,7 +30,8 @@ import {squadSight} from './squad-sight.js';
 // from the campaign's seeded generator (rng-streams.js). Each tick runs the
 // systems in the brief's order (§3.1); they live in their own modules.
 
-export const WORLD_VERSION=2;
+// 3: release 3's war bands, squad sight, enemy plans and battle variety (game.js restarts an older fight).
+export const WORLD_VERSION=3;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);

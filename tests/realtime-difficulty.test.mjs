@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as G from '../src/core/game.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
-import {PERCEPTION} from '../src/data/realtime-rules.js';
+import {REALTIME_DIFFICULTY,PERCEPTION} from '../src/data/realtime-rules.js';
 import {choosePace,defaultSettings,followDifficulty,loadSettings,paceDefaults} from '../src/ui/settings.js';
 import {runRealtimeCampaign} from '../scripts/realtime-autoplay.mjs';
 
@@ -32,7 +32,9 @@ test('§3.18 in real time: deadlines, reinforcements, pressure and perception by
   const worlds=Object.fromEntries(LEVELS.map(level=>[level,['ch1-road','ch2-rearguard','ch2-marsh'].map(id=>G.realtimeWorld(started(level,id)))]));
   for(const i of [0,1,2]){
     const [story,standard,veteran]=LEVELS.map(level=>worlds[level][i]);
-    assert.equal(story.mission.deadline,standard.mission.deadline+3,'Story: three more rounds');assert.equal(veteran.mission.deadline,standard.mission.deadline);
+    assert.equal(story.mission.deadline,standard.mission.deadline+3,'Story: three more rounds');
+    // Release 3 (worlds and gameplay plan): Veteran's deadlines are two rounds shorter (REALTIME_DIFFICULTY).
+    assert.equal(veteran.mission.deadline,standard.mission.deadline+REALTIME_DIFFICULTY.veteran.deadline);assert.equal(REALTIME_DIFFICULTY.veteran.deadline,-2);
     standard.mission.waves.forEach((w,k)=>{
       assert.equal(story.mission.waves[k].round,w.round+2,'Story: reinforcements two rounds later');
       assert.equal(veteran.mission.waves[k].round,Math.max(2,w.round-1),'Veteran: one round earlier');

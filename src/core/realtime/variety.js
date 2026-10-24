@@ -8,12 +8,20 @@ import {pickWeighted,randomInt} from './rng-streams.js';
 // explicit choice keeps its own); each field object on one of the nearest free
 // tiles to the place 0.38 reserves for it; Chapter III's hidden man on one of
 // the nearest free tiles to his own; each reinforcement's entry on its tile or
-// a neighbour; and each enemy band's temperament. Pure.
+// a neighbour; and each enemy band's temperament. Every tile it moves anything
+// to is one the soldier can reach from his start. Pure.
 
 const near=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y),far=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
 const byNearness=from=>(a,b)=>near(a,from)-near(b,from)||a.y-b.y||a.x-b.x;
 const pick=(streams,list,n)=>list[randomInt(streams,'world',0,Math.min(n,list.length)-1)];
-const tiles=e=>{const out=[];for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(fieldTileFree(e,{x,y}))out.push({x,y});return out;};
+// The free tiles the soldier can reach from where he starts, a shut gate and a broken bridge counted as closed.
+function tiles(e){
+  const hero=e.units.find(u=>u.id==='hero')??e.units[0],shut=new Set((e.field?.objects??[]).filter(o=>o.kind==='gate'&&o.state==='closed'||o.kind==='bridge'&&o.state==='damaged').map(o=>`${o.x},${o.y}`));
+  const open=p=>fieldTileFree(e,p)&&!shut.has(`${p.x},${p.y}`),seen=new Set(),out=[],queue=hero&&open(hero)?[{x:hero.x,y:hero.y}]:[];
+  if(queue.length)seen.add(`${hero.x},${hero.y}`);
+  while(queue.length){const p=queue.shift();out.push(p);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const q={x:p.x+dx,y:p.y+dy},key=`${q.x},${q.y}`;if(!seen.has(key)&&open(q)){seen.add(key);queue.push(q);}}}
+  return out;
+}
 
 export function battleVariety(state,e,streams){
   const out={weather:e.weather??null,objects:{},hidden:{},waves:[],temperaments:{},band:null};
@@ -34,9 +42,9 @@ export function battleVariety(state,e,streams){
     const options=free.filter(p=>far(p,u)<=PLACES.hiddenReach&&!living.some(v=>v!==u&&v.x===p.x&&v.y===p.y)).sort(byNearness(u));
     if(options.length)out.hidden[u.id]=pick(streams,options,PLACES.hidden);
   }
-  // Reinforcements: each enters on its own tile or a free neighbour.
+  // Reinforcements: each enters on its own tile or a free neighbour the soldier could reach.
   for(const w of e.mission?.waves??[]){
-    const options=free.filter(p=>near(p,w)<=1).sort(byNearness(w));out.waves.push(options.length?pick(streams,options,PLACES.waves):{x:w.x,y:w.y});
+    const options=[{x:w.x,y:w.y},...free.filter(p=>near(p,w)===1).sort(byNearness(w))];out.waves.push(pick(streams,options,PLACES.waves));
   }
   // Temperaments: each enemy band of squads (from Chapter IV), or the one war band before it.
   const weights=TEMPERAMENTS.weights;

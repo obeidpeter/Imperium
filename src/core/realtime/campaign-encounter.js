@@ -1,4 +1,4 @@
-import {BANDAGES_PER_ENCOUNTER,MOVEMENT,STANDING,TIME} from '../../data/realtime-rules.js';
+import {BANDAGES_PER_ENCOUNTER,FINALE_RESERVE,MOVEMENT,REALTIME_DIFFICULTY,STANDING,TIME} from '../../data/realtime-rules.js';
 import {ARCHETYPES,ESCORTS,FACTION_NAMES,TRAINER,factionFor,tierFor} from '../../data/realtime-forces.js';
 import {BATTLE_OPERATIONS} from '../../data/battle-operations.js';
 import {progressionOperationDefinition} from '../../data/progression-operations.js';
@@ -265,7 +265,7 @@ function fieldFor(e,layout,fine,moved={}){
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
   // The battle's variety is drawn first from the world stream (variety.js); the world goes on with the same streams.
-  const streams=splitStreams(seed>>>0),variety=battleVariety(state,e,streams),weather=variety.weather;
+  const streams=splitStreams(seed>>>0),variety=battleVariety(state,e,streams),weather=variety.weather,hard=REALTIME_DIFFICULTY[difficulty]??REALTIME_DIFFICULTY.standard;
   // Rain makes slopes slower to climb (navigation.js reads the map's rain).
   const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine,...(weather==='rain'?{rain:true}:{})};
   const actors=[],party=partyFor(state),hero=e.units.find(u=>u.id==='hero'),squads=squadsFrom(state),squadSpecs=[];
@@ -273,7 +273,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   let enemyIndex=0,allyIndex=0;
   for(const u of e.units){
     if(u.id==='hero'||u.hp<=0)continue;
-    if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null}));continue;}
+    if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){
+      squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null}));continue;}
     if(u.side==='enemy'){const spec=enemySpec(state,e,u,enemyIndex++,k);if(variety.hidden[u.id])spec.at=pos(variety.hidden[u.id],k);actors.push(spec);}
     else if(u.side==='ally'&&state.chapter<3&&u.veteranId&&COMPANIONS[u.veteranId])actors.push(companionSpec(state,u.veteranId,pos(u,k),{unitId:u.id,preset:'shieldmate'}));
     else if(u.side==='neutral'&&u.role==='escort'){
@@ -291,16 +292,21 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     points:e.mission.points.map(p=>[p.x,p.y]),hold:e.mission.holdRequired},k)];
   // Reinforcements: a single man before Chapter IV, after it a squad of the 0.38 reinforcement's strength (7, damage 3).
   const templates=squads?Object.fromEntries(['infantry','guard','archer','raider','cavalry'].map(role=>{
-    const t=squadSpec(state,e,{id:'wave',side:'enemy',role,hp:7,maxHp:7,damage:3,x:0,y:0},k);delete t.at;delete t.anchor;delete t.unitId;return [role,t];})):null;
+    const t=squadSpec(state,e,{id:'wave',side:'enemy',role,hp:hard.wave,maxHp:hard.wave,damage:3,x:0,y:0},k);delete t.at;delete t.anchor;delete t.unitId;return [role,t];})):null;
   const current=phases[index],wave=(w,i)=>({round:w.turn,...tileCentre(variety.waves[i]??w,k),arrived:!!w.arrived,
     ...(squads?{squad:templates[w.role]??templates.infantry}:{spec:waveSpec(state,w.role,enemyIndex++)})});
   const mission={...current,phase:index,phases:op?op.phases.map(p=>({id:p.id,label:p.label,escort:p.escort??null,wave:p.wave??null})):null,phaseMissions:phases,
-    radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.turnLimit,
+    // The drill keeps its own clock on every level.
+    radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.type==='training'?e.turnLimit:Math.max(4,e.turnLimit+hard.deadline),
     waves:(e.mission.waves??[]).map(wave),escorts:[...(e.mission.escortIds??[])],
     required:(e.requiredAbilities??[]).filter(a=>!CAMP_CAPABILITIES.has(a)),defence:e.defence??100,pressure:difficultyRule(e).pressure,objectId:null,
     // The finale's standoffs: the rivals to win over, the pledges and the meeting so far.
     rivals:e.units.filter(u=>u.side==='enemy'&&u.hp>0).length,defections:e.defections??0,meeting:e.mission.envoyProgress??0,
     waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
+  // The finale's battle: the claimant's reserve cohorts march on from his side (FINALE_RESERVE).
+  if(state.chapter===12&&e.type==='confrontation'&&FINALE_RESERVE.routes.includes(e.route)&&templates)
+    for(const w of FINALE_RESERVE.waves)mission.waves.push({round:Math.max(2,w.turn+difficultyRule(e).wave),...tileCentre({x:Math.min(w.x,e.width-1),y:w.y},k),arrived:false,
+      squad:{...templates[w.role],name:FINALE_RESERVE.name}});
   const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects);
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
