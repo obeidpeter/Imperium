@@ -30,7 +30,10 @@ export const EXCHANGE=freeze({everyTicks:20,scale:.1,contact:2.6,
   frontalShield:1,brace:2,wall:2,high:1,cover:1,heightRanged:1,cohesiveWall:1,lineScreen:1,neighbour:8,
   wedgeAttack:1,wedgeExposure:1,charge:1,chargeRun:20,lowCohesion:1,suppressed:1,poorVisibility:1,barricade:1,barricadeRange:2,shaken:1,
   // A braced front that survives a frontal mounted charge strikes back, at most once a round (0.38 edition 34).
-  counter:1});
+  counter:1,
+  // Each second's exchange is scaled by one draw of the combat stream: [factor, weight], 1:2:4:2:1 round 1, so
+  // a fight's average is the 0.38 exchange and no two seeds fight it alike (worlds and gameplay plan, release 3).
+  spread:freeze([freeze([.75,1]),freeze([.9,2]),freeze([1,4]),freeze([1.1,2]),freeze([1.25,1])])});
 
 // Morale (§3.9, guide): shaken at 40 or less, broken at 20 or less, when the
 // group falls back to regroup. The soldier and his companions never break.

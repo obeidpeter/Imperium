@@ -2,10 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createWorld,queueCommand,step,snapshotWorld,restoreWorld,worldHash} from '../src/core/realtime/simulation.js';
 import {formationGroup,orderDelayTicks,reservedCommand} from '../src/core/realtime/command.js';
-import {memberFell,membersOf,squadModifiers,squadById} from '../src/core/realtime/squads.js';
+import {exchangeSpread,memberFell,membersOf,squadModifiers,squadById} from '../src/core/realtime/squads.js';
+import {splitStreams} from '../src/core/realtime/rng-streams.js';
 import {combatBreakdown} from '../src/core/battle.js';
 import {makeUnit} from '../src/core/shared.js';
-import {ROMAN_SQUADS,COHESION,MORALE} from '../src/data/realtime-squads.js';
+import {ROMAN_SQUADS,COHESION,EXCHANGE,MORALE} from '../src/data/realtime-squads.js';
 import {ARCHETYPES} from '../src/data/realtime-forces.js';
 import {ARENA,TIME} from '../src/data/realtime-rules.js';
 
@@ -145,12 +146,24 @@ test('a squad fights a single man as one body: a tenth of the 0.38 exchange a se
   const w=world([gothic('g',[22,30],{role:'guard'}),roman('far',[90,10])],{actors:[hero({at:[20,30],face:[1,0]})]});
   const band=squadById(w,'g'),soldier=w.actors.find(a=>a.id==='hero'),start=soldier.hp;
   const expected=squadModifiers(w,band,{id:'hero',side:'player',x:soldier.x,z:soldier.z,fx:1,fz:0,formation:null,braced:false,guard:null,members:['hero']}).damage*.1;
-  run(w,R*3);
-  const hits=w.log.filter(l=>/hits Hero/.test(l.text)).length,lost=start-soldier.hp;
+  const dealt=[];for(let i=0;i<R*3;i++)for(const e of step(w))if(e.kind==='exchange'&&e.targetId==='hero')dealt.push(e.damage);
+  const hits=w.log.filter(l=>/hits Hero/.test(l.text)).length,lost=start-soldier.hp,total=dealt.reduce((n,d)=>n+d,0);
   assert.ok(lost>0,'the band wounds him');
-  // 30 exchanges of a tenth of a 0.38 hit each (the frontal shield counted): whole points only, never more than they add up to.
-  assert.ok(lost<=Math.floor(expected*30+1e-9)&&lost>=Math.floor(expected*30)-1,`${lost} Health for ${expected.toFixed(2)} a second`);
+  // 30 exchanges, each a tenth of a 0.38 hit (the frontal shield counted) times one draw of the spread.
+  assert.equal(dealt.length,30);
+  assert.ok(dealt.every(d=>EXCHANGE.spread.some(([f])=>Math.abs(d-expected*f)<1e-9)),'every exchange is the tenth times a spread factor');
+  // Whole points only, never more than they add up to.
+  assert.ok(lost<=Math.floor(total+1e-9)&&lost>=Math.floor(total)-1,`${lost} Health for ${total.toFixed(2)} dealt`);
   assert.ok(!w.actors.some(a=>a.squadId==='g'&&(a.order||a.lock)),'its men give no orders of their own');assert.ok(hits>0);
+});
+
+test('each exchange is scaled by one draw of the combat stream, weighted 1:2:4:2:1 round the 0.38 exchange; no other stream moves',()=>{
+  const total=EXCHANGE.spread.reduce((n,[,w])=>n+w,0),mean=EXCHANGE.spread.reduce((n,[f,w])=>n+f*w,0)/total;
+  assert.ok(Math.abs(mean-1)<1e-12,'the spread averages the 0.38 exchange');
+  const w={rng:splitStreams(7)},{ai,world:place}=w.rng,count=new Map(),draws=20000;
+  for(let i=0;i<draws;i++){const f=exchangeSpread(w);count.set(f,(count.get(f)??0)+1);}
+  assert.deepEqual([w.rng.ai,w.rng.world],[ai,place],'only the combat stream is drawn');
+  for(const [f,weight]of EXCHANGE.spread)assert.ok(Math.abs(count.get(f)/draws-weight/total)<.015,`${f}: ${count.get(f)} of ${draws}`);
 });
 
 test('archers loose at the single man their plan names (a protected column) through the exchange, not man by man',()=>{

@@ -5,6 +5,7 @@ import {makeActor} from './actors.js';
 import {derivedValues} from './combat.js';
 import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
 import {sightBlocked} from './sight.js';
+import {nextRandom} from './rng-streams.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -15,7 +16,8 @@ import {sightBlocked} from './sight.js';
 // second it deals a tenth of a 0.38 turn's exchange (the 0.38 formula, its
 // modifiers in metres), and the men nearest the front fall as strength drops.
 // A single man's own blows strike its men one at a time. Pure and
-// deterministic: no randomness is drawn here, and every number is the rules data's.
+// deterministic: every number is the rules data's, and the only randomness is
+// each exchange's spread, one draw of the combat stream (EXCHANGE.spread).
 
 const R=TIME.roundTicks,DT=1/TIME.ticksPerSecond;
 const emit=(world,event)=>world.events.push({tick:world.tick,...event});
@@ -263,6 +265,12 @@ function wallBetween(map,a,t){
 export function chargeReady(world,attacker,target,{rough=false}={}){
   return ['cavalry','heavy'].includes(attacker.role)&&attacker.runUp>=EXCHANGE.chargeRun&&!rough&&!target.braced;
 }
+// One exchange's spread: a factor of EXCHANGE.spread by its weight, one draw of the combat stream.
+export function exchangeSpread(world){
+  const total=EXCHANGE.spread.reduce((n,[,w])=>n+w,0);let r=nextRandom(world.rng,'combat')*total;
+  for(const [factor,weight]of EXCHANGE.spread){r-=weight;if(r<0)return factor;}
+  return EXCHANGE.spread.at(-1)[0];
+}
 // The nearest two men of two squads, and how far apart they stand.
 export function closest(world,a,b){
   let best=Infinity,pa=null,pb=null;const ma=membersOf(world,a),mb=membersOf(world,b);
@@ -331,7 +339,7 @@ export function exchangeSquads(world,{wound=null}={}){
   // A squad that strikes from hiding is seen at once, as a single man is (damage.js).
   for(const {from}of [...hits,...struck])for(const m of membersOf(world,from))if(m.hidden){m.hidden=false;emit(world,{kind:'revealed',actorId:m.id});}
   for(const hit of hits){
-    const {from,to,setup}=hit,before=menOf(world,to),damage=setup.damage*EXCHANGE.scale;
+    const {from,to,setup}=hit,before=menOf(world,to),damage=setup.damage*EXCHANGE.scale*exchangeSpread(world);
     to.strength=Math.max(0,to.strength-damage);hitSquad(world,to,{flank:setup.aspect!=='front',ranged:setup.ranged,scale:EXCHANGE.scale});
     emit(world,{kind:'exchange',squadId:from.id,targetSquadId:to.id,damage,ranged:setup.ranged,x:hit.at.b?.x??to.x,z:hit.at.b?.z??to.z,fromX:hit.at.a?.x??from.x,fromZ:hit.at.a?.z??from.z});
     // Strength lost becomes men lost: those nearest the front fall.
@@ -347,7 +355,7 @@ export function exchangeSquads(world,{wound=null}={}){
   }
   // The single men's wounds mount up in tenths of a 0.38 hit; whole points of Health come off.
   for(const hit of struck){
-    const {from,to,man,setup,ranged}=hit,amount=setup.damage*EXCHANGE.scale;
+    const {from,to,man,setup,ranged}=hit,amount=setup.damage*EXCHANGE.scale*exchangeSpread(world);
     emit(world,{kind:'exchange',squadId:from.id,targetId:to.id,damage:amount,ranged,x:to.x,z:to.z,fromX:man.x,fromZ:man.z});
     to.wear=(to.wear??0)+amount;const whole=Math.floor(to.wear+1e-9);if(!whole)continue;
     to.wear=Math.max(0,to.wear-whole);wound?.(world,man,to,whole,{missile:ranged?(from.role==='raider'?'javelin':'arrow'):null,arc:setup.aspect,squadId:from.id});
