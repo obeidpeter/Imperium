@@ -11,7 +11,7 @@ import {createBattleRemains} from './battle-remains.js';
 import {createSceneryModels,sceneryResidency} from './scenery-models.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,installGroundMist,landscapeFogRange} from './atmosphere.js';
-import {installBakedOcclusion} from './environment-baked-occlusion.js';
+import {installBakedOcclusion,SCENE_OCCLUSION} from './environment-baked-occlusion.js';
 import {createWaterReflection,reflectionAvailable} from './water-reflection.js';
 import {FIGURE_STYLES} from '../ui/graphics-quality.js';
 import {actorAssetStatus} from './actor-assets.js';
@@ -370,12 +370,16 @@ export class BattleStage{
     return {at,moving:t>0&&t<1,distance:length*k,yaw:Number.isFinite(heading)?heading:0};
   }
   // Generated chapter scenery: re-placed on the rebuilt ground, absent at Performance quality.
+  // It stands in the scenery's light: cloud shadows and the scene's baked occlusion
+  // (its materials are shared between scenes, so they read the current bake).
   rebuildSceneryModels(){
     this.followGeometryDirty=true;
     this.sceneryModels?.dispose();
+    const shade=model=>model.traverse(o=>{if(o.isMesh)for(const m of [o.material].flat())if(m&&!m.transparent&&m.userData.environmentFinish!=='water'){installCloudShadows(m);installBakedOcclusion(m,SCENE_OCCLUSION);}});
     const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,
       {chapter:this.chapter,quality:this.worldQuality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
-      prepare:model=>{this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
+      prepare:model=>{shade(model);this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
+    shade(own.group);
     // Models placed at once take the cutaway now (a first build's occlusion covers the group).
     this.sceneryOcclusion?.add(own.group);
     this.canvas.dataset.sceneryModels=own.placements.length?'loading':'0';
@@ -759,8 +763,10 @@ export class BattleStage{
   // texel density, the overview keeps the whole board and nearby casters.
   fitShadow(){
     const half=Math.round(clamp(this.orbit.distance*.55+3,9,23)),x=Math.round(this.lookTarget.x*2)/2,z=Math.round(this.lookTarget.z*2)/2,fit=this.shadowFit;
-    if(Math.abs(fit.half-half)<1&&Math.hypot(fit.x-x,fit.z-z)<1.5)return;
-    fit.half=half;fit.x=x;fit.z=z;const camera=this.sun.shadow.camera;Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});
+    if(Math.abs(fit.half-half)<1&&Math.hypot(fit.x-x,fit.z-z)<1.5&&fit.environment===this.environment)return;
+    fit.half=half;fit.x=x;fit.z=z;fit.environment=this.environment;const camera=this.sun.shadow.camera;Object.assign(camera,{left:-half,right:half,top:half,bottom:-half});
+    // The ground's baked scenery shadows give way to the live map inside its box (at Performance the scenery casts none live).
+    this.environment?.occlusion?.setLiveShadow?.(x,z,this.worldQuality==='performance'?0:half);
     camera.updateProjectionMatrix();
     this.sun.target.position.set(x,0,z);this.sun.position.set(x+this.sunOffset.x,this.sunOffset.y,z+this.sunOffset.z);this.sun.target.updateMatrixWorld();
     this.shadowDirty=true;

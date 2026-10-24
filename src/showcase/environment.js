@@ -233,7 +233,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   yield;
   // Sky and contact occlusion baked from the finished static scene, sampled by
   // every environment surface on every tier (the horizon and panorama follow).
-  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
+  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,sun:profile.sunPosition,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
   yield;
   const groundSurfaces=new Set([m.ground,m.road,m.floor]),occluded=new Set();
   root.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh)return;for(const material of [o.material].flat())if(material&&!occluded.has(material)){occluded.add(material);installCloudShadows(material);if(material.userData.environmentFinish!=='water')installBakedOcclusion(material,occlusion.uniforms,{ground:groundSurfaces.has(material)||material.userData.environmentFinish==='floor'});}});

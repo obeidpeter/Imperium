@@ -42,3 +42,27 @@ test('ground mist: by weather and time, none indoors, written into the fog chunk
     assert.equal(installGroundMist(getSceneProfile({kind:'contest'},{chapter:11})),0);assert.equal(T.ShaderChunk.fog_fragment,base.fog_fragment,'an interior restores three\'s own fog');
   }finally{T.ShaderChunk.fog_fragment=original;Object.assign(T.ShaderChunk,groundMistChunks(0));}
 });
+
+test('the sun\'s static shadows fall away from the sun, as long as its height makes them, and reach the ground beyond the live map\'s box',async()=>{
+  const {createOcclusionField,sunShadowHeights,bakeEnvironmentOcclusion,installBakedOcclusion,SUN_SHADOW_RANGE}=await import('../src/showcase/environment-baked-occlusion.js');
+  // A wall 4 m high along z at x=0.
+  const field=createOcclusionField({minX:-10,minZ:-10,maxX:10,maxZ:10,resolution:4,groundAt:()=>0});field.box(-.5,.5,-10,10,4);
+  const at=(s,x,z)=>s[Math.floor((z+10)*4)*field.nx+Math.floor((x+10)*4)];
+  const high=sunShadowHeights(field,[1,1,0]),low=sunShadowHeights(field,[3,1,0]),diagonal=sunShadowHeights(field,[1,Math.SQRT2,1]);
+  assert.equal(at(high,2,0),0,'the sunward side is lit');
+  assert.ok(at(high,-2,0)>2&&at(high,-2,0)<2.8,`2 m behind the wall, the sun at 45 degrees: ${at(high,-2,0)} m`);
+  assert.equal(at(high,-5,0),0,'beyond the shadow\'s length the ground is lit');
+  assert.ok(at(low,-5,0)>2,'a low sun throws the same wall\'s shadow three times as far');
+  // Across the grid: 1.5 m from the wall along x is 2.1 m toward the sun, at 45 degrees.
+  assert.ok(Math.abs(at(diagonal,-2,0)-(4-1.5*Math.SQRT2))<.25,`from a sun across the grid too: ${at(diagonal,-2,0)} m`);
+  for(const sun of [[0,1,0],[1,-1,0],null])assert.ok(sunShadowHeights(field,sun).every(v=>v===0),'none with the sun overhead or set');
+  // The bake keeps them in its texture; ground surfaces take them, standing scenery keeps its own light.
+  const box=new T.Mesh(new T.BoxGeometry(1,4,20),new T.MeshStandardMaterial());box.position.y=2;const root=new T.Group();root.add(box);
+  const bake=bakeEnvironmentOcclusion(root,{groundAt:()=>0,bounds:{minX:-10,minZ:-10,maxX:10,maxZ:10},sun:[1,1,0]});
+  const texel=(x,z)=>bake.texture.image.data[(Math.floor((z+10)*4)*bake.field.nx+Math.floor((x+10)*4))*4+2];
+  assert.ok(texel(-2,0)>0&&texel(2,0)===0);assert.ok(bake.stats.sunShadow>0&&bake.stats.sunShadow<.5);assert.equal(SUN_SHADOW_RANGE,16);
+  const compile=material=>{const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);return shader;};
+  const ground=new T.MeshStandardMaterial(),standing=new T.MeshStandardMaterial();installBakedOcclusion(ground,bake.uniforms,{ground:true});installBakedOcclusion(standing,bake.uniforms);
+  assert.ok(compile(ground).fragmentShader.includes('reflectedLight.directDiffuse*=aoSun;'));assert.ok(!compile(standing).fragmentShader.includes('aoSun'));
+  bake.setLiveShadow(1,2,9);assert.deepEqual(bake.uniforms.imperiumLiveShadow.value.toArray(),[1,2,9]);bake.dispose();
+});
