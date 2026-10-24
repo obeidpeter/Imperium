@@ -6,6 +6,7 @@ import {helpless,setRoute} from './motion.js';
 import {nextRandom} from './rng-streams.js';
 import {smokeBetween} from './sight.js';
 import {flee,fleeing} from './bands.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 
 // Enemy AI (§3.10). Each enemy keeps a notice meter for every hostile actor:
 // the eye over his head. It fills with what he sees and hears and drains when
@@ -40,11 +41,13 @@ export function noticeRate(world,watcher,target){
 
 // System 7: perception and notice meters.
 export function perceive(world){
+  // A war band's temperament makes its men keener or slower to notice (variety.js).
+  const keen=TEMPERAMENTS.kinds[world.band?.temperament]?.notice??1;
   for(const enemy of world.actors){
-    if(!enemy.ai||!standing(enemy))continue;const ai=enemy.ai;
+    if(!enemy.ai||!standing(enemy))continue;const ai=enemy.ai,factor=world.band?.members.includes(enemy.id)?keen:1;
     for(const target of world.actors){
       if(!standing(target)||!hostile(enemy,target))continue;
-      const rate=noticeRate(world,enemy,target),before=ai.notice[target.id]??0;
+      const rate=noticeRate(world,enemy,target)*factor,before=ai.notice[target.id]??0;
       const after=rate>0?Math.min(100,before+rate*DT):Math.max(0,before-PERCEPTION.decay*DT);
       if(after!==before){ai.notice[target.id]=after;if(after===0)delete ai.notice[target.id];}
       if(before<100&&after>=100&&ai.state!=='engage'){ai.state='alert';ai.alertAt=world.tick+ticksOf(PERCEPTION.reaction+difficulty(world).reaction);ai.focus=target.id;

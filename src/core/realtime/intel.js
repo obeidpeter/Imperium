@@ -1,4 +1,5 @@
 import {ENEMY_PLANS,EXCHANGE,SQUAD_STANDING} from '../../data/realtime-squads.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {FIELD_APPROACHES} from '../field-approaches.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
@@ -28,6 +29,8 @@ export function fieldIntelligence(world){
     doctrine:d?{label:d.label,purpose:d.purpose,focus:d.focusName,reserve:d.reserveId?nameOf(world,d.reserveId):null,
       plan:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.label??null:null,planSummary:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.summary??null:null}:null,
     approach:approach?{label:approach.label,description:approach.description}:null,
+    // A war band (Chapters I–III): its temperament and how it holds (bands.js).
+    band:world.band?{temperament:TEMPERAMENTS.kinds[world.band.temperament]?.label??null,state:world.band.state}:null,
     opportunities:f?['stores','signal'].map(id=>{const o=(world.objects??[]).find(x=>x.field&&x.kind===id),opp=f.opportunities?.[id];
       return o&&{name:o.name,state:o.state,description:opp?.description??''};}).filter(Boolean):[],
     closes:f?.outcome==='pending'?f.deadline:null,outcome:f?.outcome??null,
@@ -46,7 +49,8 @@ export function alliedPlans(world){
       plan:a.id===world.controlled?'Under your control.':a.standingSlot>=0&&a.standing?.[a.standingSlot]?summarizeOrders([a.standing[a.standingSlot]],{hero:'you'}):'Holding: no standing order applies.'}))];
   const threats=[
     ...squadsOf(world).filter(q=>seenSquad(world,q)).map(q=>{const c=squadCentre(world,q);
-      return {id:q.id,name:q.name,role:roles[q.id]??null,intent:q.plan?.intent??'Holding.',target:q.plan?.targetId?nameOf(world,q.plan.targetId):null,distance:away(c)};}),
+      return {id:q.id,name:q.name,role:roles[q.id]??null,temperament:TEMPERAMENTS.kinds[q.temperament]?.label??null,intent:q.plan?.intent??'Holding.',
+        target:q.plan?.targetId?nameOf(world,q.plan.targetId):null,distance:away(c)};}),
     ...world.actors.filter(seenMan).map(a=>({id:a.id,name:a.name,role:null,intent:a.order?.flee?'Fleeing the field.':a.order?.kind==='attack'?'Attacking.':a.ai?.state==='engage'?'Engaging.':a.ai?.state==='suspicious'?'Searching.':'Holding.',
       target:a.order?.targetId?nameOf(world,a.order.targetId):null,distance:away(a)}))
   ].sort((a,b)=>(a.distance??0)-(b.distance??0)||(a.id<b.id?-1:1));

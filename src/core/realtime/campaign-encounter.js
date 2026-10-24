@@ -19,6 +19,10 @@ import {fielded,squadCentre} from './squads.js';
 import {chapterOpportunity} from '../command-campaign.js';
 import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
 import {formBand} from './bands.js';
+import {battleVariety} from './variety.js';
+import {splitStreams} from './rng-streams.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
+import {FIELD_OBJECT_PLACES} from '../expanded-campaign.js';
 
 // A campaign battle in real time (build brief §3.2 "Converting 0.38 data",
 // §3.4). The 0.38 encounter stays the record the campaign commits: its map,
@@ -206,7 +210,7 @@ function memberOf(state,role,faction){
   for(const [k,v]of Object.entries(tier.mods))attrs[k]=Math.max(k==='combat'?1:4,(attrs[k]??10)+v);
   return {name:`${FACTION_NAMES[faction]} ${a.name}`,attributes:attrs,kit:[...a.kit],ammo:{...(a.ammo??{})},mounted:!!a.mounted};
 }
-function squadSpec(state,e,unit,k,{party=[],index=0}={}){
+function squadSpec(state,e,unit,k,{party=[],index=0,temperament=null}={}){
   const enemy=unit.side==='enemy',faction=enemy?factionFor(state.chapter):'roman',role=unit.role==='heavy'?'heavy':unit.role;
   const led=!enemy&&unit.veteranId&&!party.includes(unit.veteranId),veteran=led?state.company?.find(v=>v.id===unit.veteranId):null;
   // The finale's rival bands keep their 0.38 names: the claimant's own and the civil-war cohorts.
@@ -214,7 +218,8 @@ function squadSpec(state,e,unit,k,{party=[],index=0}={}){
   const name=enemy?finale&&unit.name?unit.name:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${role==='archer'?'archers':'squad'}`
     :`${ORDINALS[index]??'Reserve'} ${role==='archer'?'archers':'squad'}`;
   return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
-    damage:unit.damage??null,morale:unit.morale??80,cohesion:unit.cohesion??80,braced:!!unit.braced,formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,
+    damage:unit.damage??null,morale:clamp((unit.morale??80)+(TEMPERAMENTS.kinds[temperament]?.morale??0)),cohesion:unit.cohesion??80,braced:!!unit.braced,
+    formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,...(temperament?{temperament}:{}),
     moraleResistance:unit.moraleResistance??0,at:pos(unit,k),face:enemy?[-1,0]:[1,0],anchor:enemy?pos(unit,k):null,member:memberOf(state,role,faction),
     standing:enemy?null:squadStanding(state,e,unit,role)};
 }
@@ -233,12 +238,13 @@ function squadStanding(state,e,unit,role){
 // ground the stage draws); a damaged footbridge's crossing is a strip of the
 // river that becomes a ford once repaired. The opportunities carry the chapter's
 // own versions (edition 34) or the defaults.
-function fieldFor(e,layout,fine){
+function fieldFor(e,layout,fine,moved={}){
   if(!e.field||e.type==='training'||!Array.isArray(e.field.objects)||!e.field.objects.length)return null;
   const ox=offsets(layout.kx),oy=offsets(layout.ky),objects=[];
   const passable=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&!['rock','river','wall'].includes(e.terrain[y][x]);
   for(const o of e.field.objects){
-    const c=tileCentre(o,layout),object={id:o.id,kind:o.kind,name:o.label,x:c.x,z:c.z,work_s:WORK_SECONDS,field:true,state:o.state,rounds:o.rounds??0,tile:{x:o.x,y:o.y}};
+    // A field object may stand on one of the nearest free tiles to its place instead (variety.js).
+    const at=moved[o.id]??o,c=tileCentre(at,layout),object={id:o.id,kind:o.kind,name:o.label,x:c.x,z:c.z,work_s:WORK_SECONDS,field:true,state:o.state,rounds:o.rounds??0,tile:{x:at.x,y:at.y}};
     if(o.kind==='gate'||o.kind==='bridge'){
       // Its passage runs east-west when the tiles either side can be crossed.
       const eastWest=passable(o.x-1,o.y)||passable(o.x+1,o.y),column=o.kind==='gate'?eastWest:!eastWest,cells=[];
@@ -258,15 +264,17 @@ function fieldFor(e,layout,fine){
 
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
+  // The battle's variety is drawn first from the world stream (variety.js); the world goes on with the same streams.
+  const streams=splitStreams(seed>>>0),variety=battleVariety(state,e,streams),weather=variety.weather;
   // Rain makes slopes slower to climb (navigation.js reads the map's rain).
-  const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine,...(e.weather==='rain'?{rain:true}:{})};
+  const fine=upsampleTerrain(e.terrain,layout,groundOf(e)),map={id:e.id,...fine,...(weather==='rain'?{rain:true}:{})};
   const actors=[],party=partyFor(state),hero=e.units.find(u=>u.id==='hero'),squads=squadsFrom(state),squadSpecs=[];
   actors.push(heroSpec(state,hero,k));
   let enemyIndex=0,allyIndex=0;
   for(const u of e.units){
     if(u.id==='hero'||u.hp<=0)continue;
-    if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0}));continue;}
-    if(u.side==='enemy')actors.push(enemySpec(state,e,u,enemyIndex++,k));
+    if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){squadSpecs.push(squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null}));continue;}
+    if(u.side==='enemy'){const spec=enemySpec(state,e,u,enemyIndex++,k);if(variety.hidden[u.id])spec.at=pos(variety.hidden[u.id],k);actors.push(spec);}
     else if(u.side==='ally'&&state.chapter<3&&u.veteranId&&COMPANIONS[u.veteranId])actors.push(companionSpec(state,u.veteranId,pos(u,k),{unitId:u.id,preset:'shieldmate'}));
     else if(u.side==='neutral'&&u.role==='escort'){
       const wounded=!u.escorted;
@@ -284,7 +292,7 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   // Reinforcements: a single man before Chapter IV, after it a squad of the 0.38 reinforcement's strength (7, damage 3).
   const templates=squads?Object.fromEntries(['infantry','guard','archer','raider','cavalry'].map(role=>{
     const t=squadSpec(state,e,{id:'wave',side:'enemy',role,hp:7,maxHp:7,damage:3,x:0,y:0},k);delete t.at;delete t.anchor;delete t.unitId;return [role,t];})):null;
-  const current=phases[index],wave=w=>({round:w.turn,...tileCentre(w,k),arrived:!!w.arrived,
+  const current=phases[index],wave=(w,i)=>({round:w.turn,...tileCentre(variety.waves[i]??w,k),arrived:!!w.arrived,
     ...(squads?{squad:templates[w.role]??templates.infantry}:{spec:waveSpec(state,w.role,enemyIndex++)})});
   const mission={...current,phase:index,phases:op?op.phases.map(p=>({id:p.id,label:p.label,escort:p.escort??null,wave:p.wave??null})):null,phaseMissions:phases,
     radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.turnLimit,
@@ -293,14 +301,14 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     // The finale's standoffs: the rivals to win over, the pledges and the meeting so far.
     rivals:e.units.filter(u=>u.side==='enemy'&&u.hp>0).length,defections:e.defections??0,meeting:e.mission.envoyProgress??0,
     waveDelay:difficultyRule(e).wave,completed:[...(e.operation?.completed??[])],...(templates?{squadTemplates:templates}:{})};
-  const objects=[],field=fieldFor(e,layout,fine);if(field)objects.push(...field.objects);
+  const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects);
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
-  const world=createWorld({map,seed,actors,controlled:'hero',party,mission,objects,difficulty,weather:e.weather??null,timeOfDay:e.timeOfDay??'day',
+  const world=createWorld({map,seed,rng:streams,actors,controlled:'hero',party,mission,objects,difficulty,weather,timeOfDay:e.timeOfDay??'day',
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;
   // Before Chapter IV the raiders who fight alone are one war band (bands.js).
-  if(!squads&&e.type!=='training')formBand(world);
+  if(!squads&&e.type!=='training')formBand(world,{temperament:variety.band});
   preparations(state,e,world);
   // From Chapter VII the battle opens with the company to deploy (deployment.js).
   if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(DEPLOYMENT.tiles,e.width)),done:false,placed:0};
@@ -400,6 +408,7 @@ function writeField(e,world){
   for(const o of world.objects??[]){
     if(!o.field)continue;const record=e.field.objects.find(r=>r.id===o.id);if(!record)continue;
     record.state=o.state;if(o.state==='burning')record.rounds=Math.max(1,Math.min(3,o.rounds));else delete record.rounds;
+    if(FIELD_OBJECT_PLACES[o.kind]){record.x=o.tile.x;record.y=o.tile.y;}
     if(o.kind==='bridge'&&o.state==='repaired')e.terrain[o.tile.y][o.tile.x]='ford';
   }
   if(f.choice&&!e.field.choice){

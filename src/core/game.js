@@ -76,6 +76,8 @@ export function startEncounter(state,options={}){const optionProblem=campaignOpt
 function initializeRealtime(state){
   const e=state.encounter;if(!realtimeMissionSupported(e))return;
   const world=createEncounterWorld(state,{seed:state.rng});e.controls='realtime';e.realtime={version:1,scale:world.scale,world:JSON.parse(snapshotWorld(world))};
+  // The battle's weather, drawn within the chapter's set (realtime/variety.js), is the encounter's.
+  if(world.weather)e.weather=world.weather;
 }
 export const isRealtime=state=>state?.phase==='encounter'&&state.encounter?.controls==='realtime';
 // The fight to continue: the resume point if one was kept (a pause, a hidden

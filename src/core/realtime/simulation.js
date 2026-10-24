@@ -39,10 +39,11 @@ const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','l
 // generator's state. actors: specs with metres positions.
 // squads (from Chapter IV): specs for squads.js spawnSquad; command: the
 // chapter's Command capacity when the soldier commands squads.
+// rng: the streams to go on with, when the battle's variety has already drawn from them (variety.js).
 export function createWorld({map,seed,actors,controlled='hero',options={},weather=null,timeOfDay='day',party=[],mission=null,objects=[],difficulty='standard',
-  practice=false,kind='field',scale=null,squads=null,command=null,chapter=null}){
+  practice=false,kind='field',scale=null,squads=null,command=null,chapter=null,rng=null}){
   if(!map?.terrain||!Number.isInteger(map.width)||!Number.isInteger(map.height))throw new Error('A real-time world needs a tile map.');
-  const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:splitStreams(seed>>>0),
+  const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:rng?{...rng}:splitStreams(seed>>>0),
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,

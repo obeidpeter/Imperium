@@ -1,5 +1,6 @@
 import {BAND_MORALE,TIME} from '../../data/realtime-rules.js';
 import {FACTION_NAMES} from '../../data/realtime-forces.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 import {actorById,hostile} from './abilities.js';
 import {cellCentre,clampToMap,navGrid,nearestWalkable,span,walkable} from './navigation.js';
 import {setRoute} from './motion.js';
@@ -28,15 +29,18 @@ export const bandShaken=(world,actor)=>inBand(world,actor)&&world.band.state!=='
 
 // The encounter's raiders form their band: every enemy who fights alone. Its
 // leader is the man with the most Health (the first by id among equals), and
-// its own edge is the side of the field nearest where it stands.
-export function formBand(world){
+// its own edge is the side of the field nearest where it stands. Its
+// temperament (variety.js) sets its heart at the start and how keenly it watches.
+export function formBand(world,{temperament=null}={}){
   const men=world.actors.filter(a=>a.side==='enemy'&&a.ai&&!a.practice&&!a.squadId&&a.alive).sort((a,b)=>a.id.localeCompare(b.id));
   if(!men.length)return null;
   const leader=[...men].sort((a,b)=>b.maxHp-a.maxHp||a.id.localeCompare(b.id))[0];
   leader.officer=true;leader.name=`${FACTION_NAMES[leader.faction]??'Enemy'} war leader`;
   const x=men.reduce((n,a)=>n+a.x,0)/men.length,z=men.reduce((n,a)=>n+a.z,0)/men.length,W=world.map.width*2.5,H=world.map.height*2.5;
   const edge=[['east',W-x],['west',x],['south',H-z],['north',z]].sort((a,b)=>a[1]-b[1])[0][0];
-  world.band={morale:B.start,size:men.length,members:men.map(a=>a.id),leaderId:leader.id,state:'steady',edge,contactTick:0,fled:[]};
+  const start=clamp(B.start+(TEMPERAMENTS.kinds[temperament]?.morale??0));
+  world.band={morale:start,start,size:men.length,members:men.map(a=>a.id),leaderId:leader.id,state:stateOf(start),edge,contactTick:0,fled:[],
+    ...(temperament?{temperament}:{})};
   return world.band;
 }
 function change(world,amount){
@@ -94,7 +98,7 @@ export function bandRound(world){
   const men=membersOf(world).length;if(!men)return;
   const ours=world.actors.filter(o=>standing(o)&&(o.side==='player'||o.side==='ally')&&o.role!=='escort'&&!o.hidden).length;
   if(ours>=B.ratio*men)change(world,-B.outnumbered);
-  if(world.tick-band.contactTick>=R-1&&band.morale<B.start)change(world,Math.min(B.rest,B.start-band.morale));
+  const start=band.start??B.start;if(world.tick-band.contactTick>=R-1&&band.morale<start)change(world,Math.min(B.rest,start-band.morale));
 }
 // A broken man's decision (ai.js): run for the band's edge.
 export function flee(world,man){

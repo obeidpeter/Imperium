@@ -2,6 +2,7 @@ import {WORLD_VERSION} from './simulation.js';
 import {STREAMS} from './rng-streams.js';
 import {ITEMS} from '../../data/realtime-rules.js';
 import {ENEMY_PLANS,ORDERS,SQUAD_STANDING} from '../../data/realtime-squads.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 
 // A saved real-time world must be well formed before the simulation runs it:
 // a save code can come from anywhere. These checks bound every list and type
@@ -62,6 +63,7 @@ function validateBand(world,fail){
   const b=world.band;if(b===undefined)return;
   if(!b||typeof b!=='object'||!num(b.morale)||b.morale<0||b.morale>100||!int(b.size,1,60)||!Array.isArray(b.members)||b.members.length>60||b.members.some(id=>!str(id,40))
     ||!['steady','shaken','broken'].includes(b.state)||!str(b.leaderId,40)||!['east','west','north','south'].includes(b.edge)||!int(b.contactTick,0,1e7)
+    ||(b.start!==undefined&&!(num(b.start)&&b.start>=0&&b.start<=100))||(b.temperament!==undefined&&!TEMPERAMENTS.kinds[b.temperament])
     ||!Array.isArray(b.fled)||b.fled.length>60||b.fled.some(f=>!f||!str(f.id,40)||!str(f.name)||!(f.unitId===null||str(f.unitId,40))||!str(f.role,20)||!num(f.x)||!num(f.z)))
     fail('real-time war band.');
 }
@@ -96,7 +98,7 @@ function validateSquads(world,fail){
       ||(q.order!==null&&(typeof q.order!=='object'||!str(q.order.kind,20)))
       // What it has seen (squad-sight.js), the band's preference and a feint's ground (squad-ai.js).
       ||(q.notice!==undefined&&(!q.notice||typeof q.notice!=='object'||Object.keys(q.notice).length>80||Object.entries(q.notice).some(([k,v])=>!str(k,40)||!num(v)||v<0||v>100)))
-      ||(q.pref!==undefined&&!ENEMY_PLANS.preferences.some(([p])=>p===q.pref))||(q.volleyRound!==undefined&&!int(q.volleyRound,1,1e5))||(q.pulledBack!==undefined&&typeof q.pulledBack!=='boolean')||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z))))fail('real-time squad.');
+      ||(q.pref!==undefined&&!ENEMY_PLANS.preferences.some(([p])=>p===q.pref))||(q.volleyRound!==undefined&&!int(q.volleyRound,1,1e5))||(q.temperament!==undefined&&!TEMPERAMENTS.kinds[q.temperament])||(q.pulledBack!==undefined&&typeof q.pulledBack!=='boolean')||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z))))fail('real-time squad.');
   }
   if(world.actors.some(a=>a.squadId!==undefined&&!world.squads.some(q=>q.id===a.squadId)))fail('real-time squad member.');
   const c=world.command;

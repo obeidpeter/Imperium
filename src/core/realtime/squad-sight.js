@@ -1,4 +1,5 @@
 import {PERCEPTION,TIME} from '../../data/realtime-rules.js';
+import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 import {hostile} from './abilities.js';
 import {noticeRate} from './ai.js';
 import {span} from './navigation.js';
@@ -7,11 +8,12 @@ import {fielded,membersOf,squadCentre,squadsOf} from './squads.js';
 // What a squad has seen (worlds and gameplay plan, release 3): one notice meter
 // for each hostile squad and each hostile man, shared by its men and kept four
 // times a second by the same perception rules as a single man's (ai.js
-// noticeRate), from the squad's man nearest the one he watches. A squad lying
-// in wait is half as easy to see. A blow or an exchange makes a squad know its
-// attacker at once. What it has not seen it cannot meet: an exchange it never
-// saw coming is an ambush (squads.js), and so is the soldier's first blow on
-// one of its men (combat.js). Pure: no clock and no random draw.
+// noticeRate), from the squad's man nearest the one he watches, keener for a
+// wary band and slower for a bold one. A squad lying in wait is half as easy
+// to see. A blow or an exchange makes a squad know its attacker at once. What
+// it has not seen it cannot meet: an exchange it never saw coming is an ambush
+// (squads.js), and so is the soldier's first blow on one of its men
+// (combat.js). Pure: no clock and no random draw.
 
 const STEP=TIME.aiInterval/TIME.ticksPerSecond;
 const emit=(world,event)=>world.events.push({tick:world.tick,...event});
@@ -35,13 +37,13 @@ export function squadSight(world){
   const squads=squadsOf(world).filter(s=>fielded(world,s));if(!squads.length)return;
   const singles=world.actors.filter(a=>standing(a)&&!a.squadId);
   for(const s of squads){
-    const men=membersOf(world,s),notice=s.notice??={},seen=new Set();
+    const men=membersOf(world,s),notice=s.notice??={},seen=new Set(),keen=TEMPERAMENTS.kinds[s.temperament]?.notice??1;
     for(const t of squads){
       if(t===s||!hostile(s,t))continue;seen.add(t.id);
       const watcher=nearestTo(men,squadCentre(world,t)),target=nearestTo(membersOf(world,t),watcher);
-      watch(world,s,t.id,watcher&&target?noticeRate(world,watcher,target)*(lying(t)?PERCEPTION.lying:1):0,t);
+      watch(world,s,t.id,watcher&&target?noticeRate(world,watcher,target)*(lying(t)?PERCEPTION.lying:1)*keen:0,t);
     }
-    for(const a of singles){if(!hostile(s,a))continue;seen.add(a.id);const watcher=nearestTo(men,a);watch(world,s,a.id,watcher?noticeRate(world,watcher,a):0,null);}
+    for(const a of singles){if(!hostile(s,a))continue;seen.add(a.id);const watcher=nearestTo(men,a);watch(world,s,a.id,watcher?noticeRate(world,watcher,a)*keen:0,null);}
     // Those gone from the field are forgotten.
     for(const id of Object.keys(notice))if(!seen.has(id))delete notice[id];
   }
