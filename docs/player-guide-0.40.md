@@ -111,7 +111,7 @@ legionary's, an officer's from Chapter IV and a commander's from Chapter
 VII. The preview shows him in a cloak of the chosen colour; the
 quartermaster sells one from Chapter I.
 **Training** sets your starting attributes (see **Your soldier**) and
-the optional errand you are offered in Chapters II to IV. It never
+the optional errand you are offered in Chapter II or III. It never
 locks kit or techniques: any soldier can learn anything later.
 
 | **Training**                        | **Starts stronger in**                                | **Starts weaker in**                   |
@@ -250,19 +250,46 @@ Backing.
 
 ## In camp
 
-Each camp is a place you walk through. Click a person to talk, click a
-door or a table to use it, and use the map (**M**) to go at once to any
-part of the camp you have already visited.
+Every chapter has a camp you walk through: the legionary base at Novae,
+a march camp on the causeway, a Euphrates fortress's staging courtyard,
+a council camp before Milan, a ferry assembly on the Danube, a
+governor's relief courtyard and a portico in Rome among them. Click a
+person to talk, click a door or a table to use it, and use the map
+(**M**) to go at once to any part of the camp you have already visited.
+Everything a camp offers is also listed beside the scene, so you never
+have to walk to it: the chapter decision, **Battle preparation**,
+**People & conversations**, **Travel to a place**, **Courses &
+trainers** and **Local report & campaign records**.
 
-| **Place**                                     | **What you do there**                                                                                                                              |
-|-----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Principia** (headquarters)                  | The commander's table: the chapter's decision, **Consult the War Council**, and the battle preparations (see **Preparing for battle**).            |
-| **Quartermaster**                             | Draw and return kit, sell what you took from the field and collect your pay in denarii.                                                            |
-| **Drill field**                               | Trainers who teach techniques and courses for training points (see **Your soldier**), and the practice post for **Practice completed encounters**. |
-| **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty.                                                               |
-| **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                               |
-| **Canabae** (the settlement outside the gate) | Traders, rumours and optional errands from civilians.                                                                                              |
-| **Camp gate**                                 | March out to the next encounter once its requirements are met.                                                                                     |
+Each camp names its places after its setting (in Chapter V the
+principia is the command shelter and the canabae the evacuation
+shelter), and the map and **Travel to a place** list them in the order
+of this table.
+
+| **Place**                                     | **What you do there**                                                                                                                                                                                                                     |
+|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Principia** (headquarters)                  | The commander's table: the chapter's decision, **Consult the War Council**, and the battle preparations (see **Preparing for battle**). From Chapter IV the duty clerk (in Chapter V, the fortress engineer) also opens the preparations. |
+| **Quartermaster**                             | Draw and return kit, sell what you took from the field and collect your pay in denarii.                                                                                                                                                   |
+| **Drill field**                               | Trainers who teach techniques and courses for training points (see **Your soldier**), and the practice post for **Practice completed encounters**. Varro teaches in Chapters I–III and V, a veteran instructor in the others.             |
+| **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty. From Chapter II Capsarius Didius teaches his medical courses here.                                                                                   |
+| **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                                                                                                                      |
+| **Canabae** (the settlement outside the gate) | In Chapters I–III, the sutler's goods, news and errands; later, the local people and the consequences of your orders. Every camp's local report stands here.                                                                              |
+| **Camp gate**                                 | March out to the next encounter once its requirements are met.                                                                                                                                                                            |
+
+- **Camps are peaceful.** Weapons stay sheathed: drawing your weapon,
+  attacking anyone, forcing an attack and the war cry are refused there,
+  and nothing is spent. Of your abilities, only **Bind wounds** (when
+  someone is hurt) and **Carry** work in camp.
+
+- **The local report** (in Chapter V, the courtyard report) states what
+  the chapter asks of you or, once you have decided, what your decision
+  set in motion, and the latest field opportunity or hearing you have
+  won in the chapter. In 3D the camp shows them too, as small details
+  beside its stores, water and shelters.
+
+- The camp's people go about their work (keeping watch, counting stores,
+  carrying water) and stop when you come near. With reduced motion they
+  stay still.
 
 - **Consult the War Council** to hear how the officers and counterparts
   who are present weigh the chapter's decision and the coming
@@ -280,9 +307,9 @@ part of the camp you have already visited.
   Contest, with weather, time and difficulty variations, without
   touching your chronicle or awarding progress.
 
-- **Errands** are optional. Once accepted they appear in the mission
-  orders (**Q**); each rewards training points, kit or standing, and
-  none ever blocks the story.
+- **Errands** are optional and offered in Chapters I–III. Once accepted
+  they appear in the mission orders (**Q**); each rewards training
+  points, kit or standing, and none ever blocks the story.
 
 - Named companions' permanent fates follow clearly signalled story
   choices. Losing an ordinary skirmish never silently kills a recurring
@@ -379,6 +406,10 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
   a person who is not hostile. Striking a neutral person makes him
   hostile and is recorded in the journal, and harming civilians costs
   Public Confidence.
+
+- In camp, weapons stay sheathed: the game refuses to draw them, to
+  attack or force an attack, or to raise the war cry, and says so in the
+  message line (see **In camp**).
 
 - Point at an enemy, or choose him with **T**, to read the **forecast**:
   your chance to hit, the damage to expect after his armour, and every
@@ -635,15 +666,15 @@ scene.
 
 Moving the camera never spends anything or changes the rules.
 
-| **Control**                | **What it does**                                                                                                                           |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| **Follow** (**F**)         | Keep the soldier you control at the centre. On by default.                                                                                 |
-| Scroll wheel, or **+ / −** | Zoom. On a touch screen, pinch.                                                                                                            |
-| Middle-drag, or **, / .**  | Turn the view around your soldier, in steps of 45° with the keys                                                                           |
-| **Overview** (**Z**)       | The wide tactical view; press again to come back                                                                                           |
-| **Horizon** (**H**)        | Lower the view to show the sky and distant scenery; drag to look in another direction. Distant scenery cannot be used or given orders.     |
-| **See through** (**X**)    | Fade the walls, roofs and trees that stand between the camera and your soldier                                                             |
-| **Switch to 2D / 3D**      | Change between the 3D scene and the 2D isometric view. Commands, saves and progress are shared, and switching never restarts an encounter. |
+| **Control**                | **What it does**                                                                                                                                                                                                                            |
+|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Follow** (**F**)         | Keep the soldier you control at the centre, with the camera moved clear of walls and buildings that would hide him. Once you turn or zoom the view yourself, it keeps your angle and distance until you choose Follow again. On by default. |
+| Scroll wheel, or **+ / −** | Zoom. On a touch screen, pinch.                                                                                                                                                                                                             |
+| Middle-drag, or **, / .**  | Turn the view around your soldier, in steps of 45° with the keys                                                                                                                                                                            |
+| **Overview** (**Z**)       | The wide tactical view; press again to come back                                                                                                                                                                                            |
+| **Horizon** (**H**)        | Lower the view to show the sky and distant scenery; drag to look in another direction. Distant scenery cannot be used or given orders.                                                                                                      |
+| **See through** (**X**)    | Fade the walls, roofs and trees that stand between the camera and your soldier                                                                                                                                                              |
+| **Switch to 2D / 3D**      | Change between the 3D scene and the 2D isometric view. Commands, saves and progress are shared, and switching never restarts an encounter.                                                                                                  |
 
 ## Watching a fight
 
@@ -743,6 +774,10 @@ in Combat and Fieldcraft, before his training.
 | **Explorator**                     | Drill field, from Chapter III        | **Quiet feet** (walking on firm ground makes no sound); **Ambush craft** (ambush blows do half as much again) |
 | **Signifer** (standard-bearer)     | Principia, from Chapter IV           | **Steady voice** (Rally reaches 5 metres farther); **Clear orders** (squads start orders at once)             |
 | **Rhetor**                         | Provincial capital, from Chapter VII | **Practised delivery** (5 more Resolve); **The long period** (Address the Chamber recovers an hour sooner)    |
+
+Beside the camp scene, **Courses & trainers** lists every trainer from
+the chapter shown, including those who do not stand in that chapter's
+camp.
 
 ## Decorations and titles
 
@@ -1244,7 +1279,8 @@ hearing.
 From Chapter III the commander's table in the principia offers
 preparations for the next field battle. Each card states its benefit and
 its trade-off; costs are paid in supplies at departure, together with
-the company's supply package.
+the company's supply package. **Battle preparation**, beside the camp
+scene, holds the same choices with their total cost.
 
 ## Operational preparations
 
@@ -1328,6 +1364,12 @@ promised and when it falls due.
 - The game saves automatically when you enter an area, when an encounter
   begins and when you record a result; look for **Chronicle saved** and
   any storage warning.
+
+- While a save is being written, or a camp is still being set up, the
+  camp's choices wait: the decision, preparations, replies and **March
+  out** are unavailable for that moment. Menus, panels and walking still
+  work. A reply at the gate that marches out waits for its save before
+  the encounter begins.
 
 - It also keeps a **resume point** whenever you pause or leave the tab,
   so a phone browser that closes the page cannot lose a fight.
@@ -1444,27 +1486,27 @@ separately.
 Optional appearance settings are under **Scene appearance**, and
 measurements under **Performance diagnostics**.
 
-| **Setting**                | **What it does**                                                                                                                                                                                                                                                                     |
-|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Game view                  | 3D scene or 2D tactical view for every chapter; commands and progress are shared.                                                                                                                                                                                                    |
-| Graphics quality           | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. Essential people, legal targets, labels and rules never change. Phones start on Performance; repeated slow rendering lowers the setting from the next encounter, never during one. |
-| Automatic resolution       | Adjusts the scene's resolution to keep frames smooth; text and controls stay sharp.                                                                                                                                                                                                  |
-| Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.                                                                                                                                                                         |
-| Damage and healing numbers | Shown over the people concerned.                                                                                                                                                                                                                                                     |
-| Character style            | **Sculpted** figures, **Painted** (the campaign's painted figures standing in the 3D scene, with a tilt-shift) or **Ink and wash** outlines. The painted and ink finishes need Balanced or High quality, and show fewer layers of kit than Sculpted figures.                         |
-| Combat close-ups           | On by default: the camera briefly closes in on critical blows.                                                                                                                                                                                                                       |
-| Battle remains             | On by default: the fallen, spent missiles and trodden ground stay on the 3D field until the encounter ends. Presentation only.                                                                                                                                                       |
-| Run performance check      | Measures this device in the current 3D battle in about a minute (each quality, three camera views), recommends a quality and can save the results as a file. Nothing is sent anywhere; Esc or Cancel stops it.                                                                       |
+| **Setting**                | **What it does**                                                                                                                                                                                                                                                                                                                                                                  |
+|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Game view                  | 3D scene or 2D tactical view for every chapter; commands and progress are shared.                                                                                                                                                                                                                                                                                                 |
+| Graphics quality           | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. On Performance, simpler drawn buildings and props stand in for the generated scenery models. Essential people, legal targets, labels and rules never change. Phones start on Performance; repeated slow rendering lowers the setting from the next encounter, never during one. |
+| Automatic resolution       | Adjusts the scene's resolution to keep frames smooth; text and controls stay sharp.                                                                                                                                                                                                                                                                                               |
+| Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.                                                                                                                                                                                                                                                                      |
+| Damage and healing numbers | Shown over the people concerned.                                                                                                                                                                                                                                                                                                                                                  |
+| Character style            | **Sculpted** figures, **Painted** (the campaign's painted figures standing in the 3D scene, with a tilt-shift) or **Ink and wash** outlines. The painted and ink finishes need Balanced or High quality, and show fewer layers of kit than Sculpted figures.                                                                                                                      |
+| Combat close-ups           | On by default: the camera briefly closes in on critical blows.                                                                                                                                                                                                                                                                                                                    |
+| Battle remains             | On by default: the fallen, spent missiles and trodden ground stay on the 3D field until the encounter ends. Presentation only.                                                                                                                                                                                                                                                    |
+| Run performance check      | Measures this device in the current 3D battle in about a minute (each quality, three camera views), recommends a quality and can save the results as a file. Nothing is sent anywhere; Esc or Cancel stops it.                                                                                                                                                                    |
 
 ## Sound
 
-| **Setting**                    | **What it does**                                                                                |
-|--------------------------------|-------------------------------------------------------------------------------------------------|
-| Sound effects                  | Optional, off by default, with an Effects volume. Every action is understandable without sound. |
-| Music                          | Original strings, reeds and percussion.                                                         |
-| Environmental ambience         | River, rain, courtyards and chambers.                                                           |
-| Voiced briefings               | Selected moments, with the complete text always shown.                                          |
-| Music, ambience & voice volume | One volume for the soundscape.                                                                  |
+| **Setting**                    | **What it does**                                                                                                                                                                                                             |
+|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Sound effects                  | Optional, off by default, with an Effects volume. Every action is understandable without sound. Your soldier's footsteps follow the ground: paving, earth or wading through water.                                           |
+| Music                          | Original strings, reeds and percussion.                                                                                                                                                                                      |
+| Environmental ambience         | River, rain, courtyards and chambers. Walking through a camp adds short sounds of the place: the river, wind, a workshop or a room. At the principia and the valetudinarium, and in the chambers, it is quieter and muffled. |
+| Voiced briefings               | Selected moments, with the complete text always shown.                                                                                                                                                                       |
+| Music, ambience & voice volume | One volume for the soundscape.                                                                                                                                                                                               |
 
 ## Saves & offline
 
@@ -1539,7 +1581,7 @@ its checkpoint.
 | Allies' intentions                                             | Four standing orders for every companion and squad                                                                                |
 | Command capacity (orders per turn)                             | Command points that refill every round, with the same number per chapter                                                          |
 | Contest turns; **Inspect**                                     | Hours of the clepsydra; walk and talk; speeches by right-click; ask about interests in conversation                               |
-| Camp menus                                                     | Camps you walk through, with trainers, a quartermaster, errands and people to talk to                                             |
+| Camp menus                                                     | A camp to walk through in every chapter, with trainers, a quartermaster, errands and people to talk to                            |
 | Character & equipment reference                                | Eight attributes, training points, trainers, decorations and layered kit with loot and pay                                        |
 | A fixed recruit                                                | Three trainings (Legionary, Explorator, Librarius) and an optional Iron discipline                                                |
 | Speeches unaffected by your soldier                            | Eloquence, Authority and decorations add to Resolve, Denounce, Rebut and Invoke Record, never taking them below their 0.38 values |

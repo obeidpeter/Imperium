@@ -166,7 +166,7 @@ export function createPanels(context){
     return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
       `conversion</h3><p class="settings-description">Turns keep every 0.38 battle and Contest. Real time opens the standalone skirmish as the real-time `+
       `arena; a chapter switches only when it is listed below and its real-time encounters exist (${REALTIME_READY_CHAPTERS.length===ALL_CHAPTERS.length?'every '+
-      'chapter’s do':`so far Chapters ${REALTIME_READY_CHAPTERS.map(roman).join(', ')}`}; Chapters I–III have walkable camps and Chapter V has a staging courtyard; the Contests of `+
+      'chapter’s do':`so far Chapters ${REALTIME_READY_CHAPTERS.map(roman).join(', ')}`}; every chapter has a walkable camp, Chapter V’s a staging courtyard; the Contests of `+
       `Chapters ${CHAMBER_READY_CHAPTERS.map(roman).join(', ')} are walked in the chamber).</p>`+
       `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
       `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
