@@ -14,3 +14,5 @@ tests/visual-results/
 art-source/models/raw/
 # CC0 downloads: the records in art-source/cc0/ keep their sources and digests.
 art-source/cc0/raw/
+# The asset pipeline's development tools (scripts/assets/setup-tools.mjs).
+.tools/
