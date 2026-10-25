@@ -73,10 +73,32 @@ test('at a round’s end the band loses 5 outnumbered two to one and regains 10 
   // Two of ours: outnumbered two to one; in contact this round, so no rest.
   spawnActor(w,{name:'Ally',side:'ally',role:'infantry',attributes:{},kit:['tunic','gladius']},{x:10,z:15},'ally');w.band.contactTick=w.tick;
   w.band.morale=60;bandRound(w);assert.equal(w.band.morale,55);
+  w.band.contactTick=0;w.band.morale=30;w.band.state='shaken';bandRound(w);
+  assert.equal(w.band.morale,35,'outnumbered men who do not break can still rest');assert.equal(w.band.state,'shaken');
   // Reinforcements: +15, and a broken band stands again above the broken line.
   w.band.morale=15;w.band.state='broken';const fresh=spawnActor(w,raider('r9',[56,15]),{x:56,z:15},'reinforce0');
   bandReinforced(w,fresh);assert.equal(w.band.morale,30);assert.equal(w.band.state,'shaken');assert.equal(w.band.size,2);assert.ok(w.band.members.includes('reinforce0'));
   assert.equal(w.events.at(-1).kind,'band-rallied');
+});
+
+test('a band broken by being outnumbered cannot rally from rest in the same round; it flees until reinforcements arrive',()=>{
+  const w=field({raiders:[raider('r1',[48,14])]});
+  spawnActor(w,{name:'Ally',side:'ally',role:'infantry',attributes:{},kit:['tunic','gladius']},{x:10,z:15},'ally');
+  const runner=man(w,'r1');runner.lock='hero';runner.order={kind:'attack',targetId:'hero'};runner.path=[{x:8,z:15}];runner.gait='run';
+  w.band.morale=23;w.band.state='shaken';w.tick=R-1;
+  bandRound(w);
+  assert.equal(w.band.morale,18,'the outnumbering loss is not undone by rest');assert.equal(w.band.state,'broken');
+  assert.deepEqual(w.events.map(e=>e.kind),['band-broken'],'no contradictory rally event');
+  assert.equal(runner.lock,null);assert.equal(runner.order,null);assert.deepEqual(runner.path,[]);assert.equal(runner.gait,null);
+  w.tick=2*R-1;bandRound(w);
+  assert.equal(w.band.morale,18);assert.equal(w.band.state,'broken','another quiet round cannot rally it');
+  assert.deepEqual(w.events.map(e=>e.kind),['band-broken']);
+  for(let t=0;t<5;t++)step(w);
+  assert.ok(runner.order?.flee,'the survivor runs for the band’s edge');assert.ok(runner.path.length);
+  assert.equal(alliedPlans(w).threats.find(t=>t.id===runner.id).intent,'Fleeing the field.');
+  const fresh=spawnActor(w,raider('r9',[56,15]),{x:56,z:15},'reinforce0');bandReinforced(w,fresh);
+  assert.equal(w.band.morale,33);assert.equal(w.band.state,'shaken');assert.equal(w.events.at(-1).kind,'band-rallied');
+  assert.equal(runner.order,null);assert.deepEqual(runner.path,[]);assert.equal(runner.ai.state,'engage','reinforcements end the retreat');
 });
 
 test('in the campaign, Chapter I’s raiders are a war band, and the men who escape are recorded as fled, with no Health and no kill training points',()=>{

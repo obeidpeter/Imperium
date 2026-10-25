@@ -27,6 +27,7 @@ import {serveRequest} from './serve.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as G from '../src/core/game.js';
 import {alive,clone,distance} from '../src/core/shared.js';
+import {SCENE_MEMORY_METHOD} from '../src/showcase/scene-memory.js';
 
 const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=(name,fallback)=>{const i=process.argv.indexOf(name);return i<0?fallback:process.argv[i+1];};
@@ -76,6 +77,7 @@ new PerformanceObserver(list=>{for(const e of list.getEntries())bench.long.push(
 <script type="application/json" id="scene">${JSON.stringify({id,quality,chapter:x.chapter,rank:x.rank,before:x.before,after:x.after,command:x.command}).replace(/</g,'\\u003c')}</script>
 <script type="module">
 import {createBattleStageController} from '/src/ui/battle-stage-controller.js';
+import {estimateSceneGpuMemory} from '/src/showcase/scene-memory.js';
 const d=JSON.parse(document.getElementById('scene').textContent),canvas=document.getElementById('battle-board'),marks=bench.marks;
 const controller=createBattleStageController({onError:error=>{bench.error=String(error);}});
 marks.mount=performance.now();
@@ -84,6 +86,7 @@ controller.mount(canvas,{encounter:d.before,selected:'hero',targets:[],target:nu
 (function watch(){const stage=controller.stage;if(!stage){if(!bench.error)requestAnimationFrame(watch);return;}
   marks.constructed??=performance.now();Promise.resolve(stage.ready).then(()=>{marks.ready=performance.now();});})();
 window.controller=controller;window.scene=d;
+window.sceneGpuMemory=()=>estimateSceneGpuMemory(controller.stage.scene,controller.stage.renderer.properties);
 </script>`;};
 
 async function loadPlaywright(){
@@ -114,23 +117,8 @@ async function run(browser,base,id,quality){
     // instead of easing there over slow software frames.
     const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames();s.setReducedMotion(true);s.home();
       while(frames()<start+3)await new Promise(done=>setTimeout(done,50));const v=s.stats();s.setReducedMotion(false);
-      // Estimated GPU bytes of the scene's own textures and geometry, each counted once
-      // (render targets, shadow maps and the compositor's buffers are not included).
-      const textures=new Set(),geometries=new Set(),buffers=new Set();
-      const addTexture=t=>{if(t?.isTexture)textures.add(t);};
-      s.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of [o.material].flat())if(m)for(const value of Object.values(m))addTexture(value);
-        for(const u of Object.values(o.material?.uniforms??{}))addTexture(u?.value);});
-      addTexture(s.scene.background);addTexture(s.scene.environment);
-      let geometryBytes=0,textureBytes=0;
-      const attribute=a=>{const array=a?.isInterleavedBufferAttribute?a.data.array:a?.array;if(array&&!buffers.has(array)){buffers.add(array);geometryBytes+=array.byteLength;}};
-      for(const g of geometries){for(const a of Object.values(g.attributes))attribute(a);attribute(g.index);for(const list of Object.values(g.morphAttributes??{}))for(const a of list)attribute(a);}
-      for(const t of textures){
-        if(t.isCompressedTexture||t.isCompressedArrayTexture)textureBytes+=(t.mipmaps??[]).reduce((n,m)=>n+(m.data?.byteLength??0),0);
-        else{const image=t.image,layers=t.isCubeTexture?6:(image?.depth??1),data=image?.data?.byteLength,w=image?.width??image?.[0]?.width??0,h=image?.height??image?.[0]?.height??0;
-          textureBytes+=(data??w*h*4*layers)*(t.generateMipmaps&&t.minFilter!==1006&&t.minFilter!==1003?4/3:1);}
-      }
       return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length,
-        gpuBytes:{textures:Math.round(textureBytes),geometry:geometryBytes,total:Math.round(textureBytes)+geometryBytes}};});
+        gpuBytes:window.sceneGpuMemory()};});
     if(imagesPath)await capture('overview');
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
     await phase('tour',async()=>{for(const view of ['focusSelected','horizon','home']){await tab.evaluate(v=>controller.stage[v](),view);await tab.waitForTimeout(2500);
@@ -163,6 +151,7 @@ const browser=await chromium.launch({...(executablePath?{executablePath}:{}),arg
 const pkg=JSON.parse(await readFile(resolve(repo,'package.json'),'utf8'));
 const report={tool:'scripts/benchmark-stage.mjs',version:pkg.version,source:dist?'production dist':'source tree',browser:`Chromium ${browser.version()}`,
   conditions:{rendering:'SwiftShader software WebGL (not a device measurement)',viewport:VIEWPORT,deviceScaleFactor:1,adaptiveResolution:false,reducedMotion:false},
+  gpuMemoryMethod:SCENE_MEMORY_METHOD,
   method:'Legal command-campaign checkpoints (feature edition 35); the encounter started and its turns ended through the rules API until the enemy strikes; mounted with the game\'s battle-stage controller; that exchange played, then the follow, horizon and overview cameras.',
   started:new Date().toISOString(),runs:[]};
 try{
@@ -184,7 +173,7 @@ if(writeCeilingsPath){
   file.note??='Stage benchmark regression ceilings: still-overview draw calls, triangles and shader programs per scene and quality, with headroom. Written on purpose by --write-ceilings; checked in CI by --ceilings.';
   file.ceilings??={};
   for(const r of report.runs)(file.ceilings[r.id]??={})[r.quality]={calls:Math.ceil(r.overview.calls*1.1),triangles:Math.ceil(r.overview.triangles*1.1/1000)*1000,programs:r.overview.programs+2,
-    recorded:{calls:r.overview.calls,triangles:r.overview.triangles,programs:r.overview.programs,gpuBytes:r.overview.gpuBytes.total,source:report.source,date:report.completed}};
+    recorded:{calls:r.overview.calls,triangles:r.overview.triangles,programs:r.overview.programs,gpuBytes:r.overview.gpuBytes.total,gpuMemoryMethodVersion:SCENE_MEMORY_METHOD.version,source:report.source,date:report.completed}};
   file.ceilings=Object.fromEntries(Object.entries(file.ceilings).sort(([a],[b])=>a.localeCompare(b,undefined,{numeric:true})));
   await mkdir(dirname(out),{recursive:true});await writeFile(out,JSON.stringify(file,null,2)+'\n');console.log(`Ceilings: ${relative(repo,out)}`);
 }

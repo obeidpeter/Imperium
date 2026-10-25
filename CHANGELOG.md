@@ -6,6 +6,12 @@ The conversion to real time with pause, following the real-time build brief (sup
 
 ### Worlds and gameplay, release 3: harder, less predictable battles ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/realtime-release3-report.md))
 
+Follow-up fixes:
+
+- A war band that breaks from being outnumbered at a round's end no longer rallies from rest in that same round. Only arriving reinforcements can rally a broken band.
+- The asset-tool setup supports native Windows Python environments and launchers, npm and the encoder's Release executable, and writes a PowerShell environment script. Unix setup keeps its shell environment script; paths are passed as literal arguments.
+- The stage benchmark includes textures supplied through custom shader uniforms, including the ground's shared texture arrays and per-scene blend map, without counting shared resources twice. Earlier recorded memory figures omit those textures and are not comparable to the corrected totals; render targets, shadow maps and compositor buffers remain outside the estimate.
+
 The third of ten releases: the real-time battles' enemies, variety and difficulty. The 0.38 turns are unchanged.
 
 - **The enemy chooses a plan.** Within its chapter's doctrine, a battle's enemy draws its plan from the simulation's own random stream for its decisions: hold you in front, turn your left or your right, close on both flanks, feint to draw a squad out, or commit its reserve early or hold it back (those two only at the start). It keeps a plan for at least two rounds; the battle log names each change and the field intelligence panel shows it. Each faction favours its own: the Goths hold and feint, the Persians flank and feint, the Palmyrenes turn the flanks, and the claimant's men hold and use their reserves. Each band also leans toward its own target (the enemy's focus, the nearest of your men, your archers or your soldier), and the focus weighs a squad that stands alone or wavers.

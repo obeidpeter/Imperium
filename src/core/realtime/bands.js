@@ -98,6 +98,8 @@ export function bandRound(world){
   const men=membersOf(world).length;if(!men)return;
   const ours=world.actors.filter(o=>standing(o)&&(o.side==='player'||o.side==='ally')&&o.role!=='escort'&&!o.hidden).length;
   if(ours>=B.ratio*men)change(world,-B.outnumbered);
+  // Breaking during this round also ends recovery: only reinforcements can rally it.
+  if(band.state==='broken')return;
   const start=band.start??B.start;if(world.tick-band.contactTick>=R-1&&band.morale<start)change(world,Math.min(B.rest,start-band.morale));
 }
 // A broken man's decision (ai.js): run for the band's edge.
