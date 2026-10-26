@@ -133,8 +133,31 @@ async function exported(){
 async function camera(mode,key){
   const previousFrame=await page.evaluate(()=>window.__chamber.stage().profileFrames);
   await page.locator('#rt-board').focus();await page.keyboard.press(key);
-  await page.waitForFunction(({expected,previousFrame})=>{try{const stage=window.__chamber.stage();return stage.cameraView===expected&&stage.cameraSettled&&stage.profileFrames>=previousFrame+2&&JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView===expected;}catch{return false;}},{expected:mode,previousFrame});
-  report.cameraEvidence.push(await page.evaluate(previousFrame=>{const stage=window.__chamber.stage();return {camp:window.__realtime.world().campId,view:stage.cameraView,settled:stage.cameraSettled,previousFrame,renderedFrames:stage.profileFrames,position:stage.camera.position.toArray(),lookTarget:stage.lookTarget.toArray()};},previousFrame));
+  try{
+    await page.waitForFunction(({expected,previousFrame})=>{try{const stage=window.__chamber.stage();return stage.cameraView===expected&&stage.cameraSettled&&stage.profileFrames>=previousFrame+2&&JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView===expected;}catch{return false;}},{expected:mode,previousFrame});
+  }catch(error){
+    // Preserve the failed readiness conditions even when a later screenshot
+    // arrives after more frames. A stalled renderer must not stall diagnostics.
+    let timer;
+    try{
+      report.cameraFailure={expected:mode,previousFrame,capturedAt:new Date().toISOString(),...await Promise.race([
+        page.evaluate(()=>{
+          const stage=window.__chamber.stage(),world=window.__realtime.world(),board=document.querySelector('#rt-board');
+          return {camp:world?.campId,tick:world?.tick,worldPaused:window.__realtime.paused(),hidden:document.hidden,
+            view:stage?.cameraView,settled:stage?.cameraSettled,renderedFrames:stage?.profileFrames,reducedMotion:stage?.reducedMotion,
+            stagePaused:stage?.paused,contextLost:stage?.contextLost,isReady:stage?.isReady,
+            renderedView:board?.dataset.renderStats?JSON.parse(board.dataset.renderStats).cameraView:null,
+            focus:document.activeElement?.id,modal:document.querySelector('dialog[open] #panel-title')?.textContent??null,
+            position:stage?.camera.position.toArray(),lookTarget:stage?.lookTarget.toArray()};
+        }),
+        new Promise(resolve=>{timer=setTimeout(()=>resolve({diagnosticUnavailable:'Renderer did not return camera diagnostics within 5 seconds'}),5000);})
+      ])};
+    }catch(diagnosticError){report.cameraFailure={expected:mode,previousFrame,diagnosticUnavailable:diagnosticError.message};}
+    finally{clearTimeout(timer);}
+    throw error;
+  }
+  report.cameraEvidence.push(await page.evaluate(previousFrame=>{const stage=window.__chamber.stage();return {camp:window.__realtime.world().campId,view:stage.cameraView,settled:stage.cameraSettled,previousFrame,renderedFrames:stage.profileFrames,reducedMotion:stage.reducedMotion,position:stage.camera.position.toArray(),lookTarget:stage.lookTarget.toArray()};},previousFrame));
+  assert.equal(report.cameraEvidence.at(-1).reducedMotion,true,'The live stage applies the static inventory capture preference');
 }
 async function screenshot(name){
   await pause();await page.locator('#rt-board').scrollIntoViewIfNeeded();
@@ -177,7 +200,14 @@ try{
   await page.goto(`${base}?dev`);await menuCommand(page,'settings');
   await (await revealControl(page,'#controls-model')).selectOption('realtime');await closePanel(page);
   await menuCommand(page,'settings');await (await revealControl(page,'#battle-view')).selectOption('3d');
-  await (await revealControl(page,'#graphics-quality')).selectOption('balanced');await closePanel(page);
+  await (await revealControl(page,'#graphics-quality')).selectOption('balanced');
+  // This is a static inventory of assets, cameras and services. Reduce motion
+  // snaps camera easing instead of spending dozens of slow software frames
+  // approaching the same composition; stage/siege checks retain dynamic motion.
+  await (await revealControl(page,'#motion-setting')).check();
+  assert.equal(await page.locator('#motion-setting').isChecked(),true);
+  report.captureSettings={reducedMotion:true,method:'Reduce motion enabled through visible Settings for the static regional inventory'};
+  await closePanel(page);
   for(const checkpoint of tour){
     await restore(checkpoint);await pause();
     assert.equal(await page.evaluate(()=>window.__realtime.world().peaceful),true);
