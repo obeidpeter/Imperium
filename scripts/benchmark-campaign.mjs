@@ -306,7 +306,8 @@ try{
   if(!base){const root=resolve(repo,'dist');await access(resolve(root,'index.html'));server=http.createServer((req,res)=>serveRequest(req,res,root));await new Promise(done=>server.listen(0,'127.0.0.1',done));base=`http://127.0.0.1:${server.address().port}/`;}
   const {chromium}=await loadPlaywright();
   const executablePath=process.env.PLAYWRIGHT_EXECUTABLE_PATH||process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE;
-  browser=await chromium.launch({...(executablePath?{executablePath}:{}),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+  report.browserLaunch={backend:executablePath?'explicit executable':'full Chromium',channel:executablePath?null:'chromium',headless:true};
+  browser=await chromium.launch({...(executablePath?{executablePath}:{channel:'chromium'}),args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
   report.browserVersion=browser.version();
   for(const [name,fn]of [['All twelve chapters render; both Chapter V encounters first',sceneInventory],['Political case preview and commit',politicalCase],['320px viewport at 200% text',narrowReadability],['Remapped keyboard action and persistence',remappedKeyboard],['Practice primary-save isolation',practiceIsolation]])await run(name,fn);
 }catch(error){report.errors.push({type:'runner',message:error.stack||error.message});console.error(error);}

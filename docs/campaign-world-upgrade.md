@@ -95,6 +95,8 @@ The resource check initially caught excess shader variants. Weather, fire/smoke,
 
 Windows verification used Chromium/SwiftShader. The headless shell repeatedly stalled during a desktop reload while the Menu was visible and enabled. Both shell revisions 1228 and 1234 reproduced it; matching full Chromium 151.0.7922.34 passed the same native clicks and unchanged timeout, including a normal full usability run without diagnostic instrumentation. No gameplay workaround was introduced. These local results do not claim a GitHub CI run or physical-device performance.
 
+The twelve-chapter benchmark defaults to Playwright's full Chromium channel in headless mode and records its selected backend. Explicit executable overrides remain supported. This follows repeated CI headless-shell screenshot timeouts on the ready Chapter V wall scene. It uses the same installed browser version, graphics quality, viewports, assertions and timeouts; Linux results still require the corresponding GitHub run rather than being inferred from Windows evidence.
+
 Camera selection changes its label before the actual camera finishes moving. Screenshot harnesses now wait for real settled/fresh-frame evidence, and prior premature captures are not accepted. The campaign benchmark also records read-only inspection of the existing stage rather than altering the camera or game state for a screenshot.
 
 CI includes the new immersive-interface and siege checks. Its usability job allows 45 minutes for the added suites; its twelve-camp job allows 75 minutes for settled camera captures, services, fallbacks and browser installation. Individual action timeouts and graphics/download ceilings are unchanged.
