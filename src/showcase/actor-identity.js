@@ -9,6 +9,11 @@ const named={
   paullus:{key:'paullus',age:57,jaw:1.03,cheek:1.04,nose:1.2,brow:.96,eyes:.96,mouth:.95,build:1.07,hair:'receding',beard:.5,grey:.9,skin:0xc39a77},
   aelia:{key:'aelia',age:35,jaw:.84,cheek:1.04,nose:.88,brow:.82,eyes:1.04,mouth:.98,build:.94,hair:'bound',beard:0,grey:.08,skin:0xbe8d6b,female:true},
   sabinus:{key:'sabinus',age:29,jaw:1.13,cheek:.98,nose:1.03,brow:1.12,eyes:.98,mouth:.96,build:1.08,hair:'cropped',beard:.45,grey:.10,skin:0xad7858}
+  ,felix:{key:'felix',age:23,jaw:.94,cheek:1.08,nose:.91,brow:.93,eyes:1.06,mouth:1.02,build:.97,hair:'wavy',beard:.12,grey:0,skin:0xb98763}
+  ,naso:{key:'naso',age:34,jaw:1.06,cheek:.96,nose:1.22,brow:1.13,eyes:.96,mouth:.94,build:1.03,hair:'receding',beard:.48,grey:.18,skin:0xb78764}
+  ,brennus:{key:'brennus',age:30,jaw:1.18,cheek:1.12,nose:1.05,brow:1.18,eyes:.96,mouth:1.07,build:1.10,hair:'long',beard:.76,grey:.08,skin:0xc69b78}
+  ,theon:{key:'theon',age:42,jaw:.92,cheek:.97,nose:1.12,brow:1.02,eyes:1.01,mouth:.94,build:.96,hair:'receding',beard:.58,grey:.3,skin:0xad7c58}
+  ,quintus:{key:'quintus',age:28,jaw:1.08,cheek:1.04,nose:.98,brow:1.08,eyes:1.02,mouth:1.04,build:1.04,hair:'cropped',beard:.22,grey:.03,skin:0xbd8d68}
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 export function actorIdentity(unit={},kit={}){

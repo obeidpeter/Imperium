@@ -76,6 +76,22 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
     if(type==='wall'){
       cells.push({type,x,y});
       const face=wallFace(e,x,y),style=wallStyle(profile),material=style==='stone'?m.stone:style==='mudbrick'?m.brick:m.wood,length=tileSize+.1,base=height(xx,zz);
+      if(e.fortifications){
+        // A solid rules cell becomes a full-height curtain wall. The continuous
+        // core is one instance; courses and crenels share its existing batches.
+        const vertical=face==='east',along=(u,y,depth=0)=>vertical?[xx+depth,base+y,zz+u]:[xx+u,base+y,zz+depth];
+        const size=(width,h,thickness)=>vertical?[thickness,h,width]:[width,h,thickness];
+        const timber=style==='timber',top=timber?2.5:3.2;
+        instance('fortified curtain core',p.masonryBlock,material,along(0,top/2),size(length,top,timber?.6:1.65),[0,0,0]);
+        for(const side of [-1,1]){
+          for(let row=0;row<(timber?4:6);row++)instance('fortified curtain courses',p.box,timber?m.darkWood:material,
+            along(0,.3+row*(top-.5)/(timber?3:5),side*(timber?.33:.85)),size(length,.045,.035),[0,0,0],tint('#b9ae98',row,x+y));
+          instance('fortified wall footing',p.masonryBlock,material,along(0,.14,side*(timber?.18:.32)),size(length,.28,timber?.5:1.35),[0,0,0]);
+        }
+        instance('fortified wall coping',p.masonryBlock,material,along(0,top+.06),size(length,.16,timber?.75:1.9),[0,0,0]);
+        for(const u of [-.85,0,.85])instance('fortified crenels',p.masonryBlock,material,along(u,top+.35),size(.5,.58,timber?.62:1.55),[0,0,0]);
+        continue;
+      }
       // Local frame: u runs along the wall, the face sits 0.36 of a cell from centre.
       const place=(u,offset,size,key,mat=material,color=null,geometry=p.masonryBlock)=>{const pos=face==='east'?[xx+tileSize*.36+offset[1],base+offset[0],zz+u]:[xx+u,base+offset[0],zz-tileSize*.36-offset[1]];const scale=face==='east'?[size[2],size[1],size[0]]:size;instance(key,geometry,mat,pos,scale,[0,0,0],color);};
       if(style==='timber'){

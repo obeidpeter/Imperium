@@ -100,6 +100,11 @@ function protectedWarning(world,keymap){
 }
 
 function opportunity(world){
+  const works=world.objects.filter(o=>['countermine','siege-engine'].includes(o.kind));
+  const siege=works.some(o=>!o.done)?`Siege works: ${works.filter(o=>o.done).length}/${works.length} secured. Two 4s actions per site; one with engineer support from a nearby detail, your approach or the previous siege. Secure both with the company intact to earn support for the next battle.`:'';
+  return [siege,fieldOpportunity(world)].filter(Boolean).join(' ');
+}
+function fieldOpportunity(world){
   const f=world.field;if(!f)return '';
   if(f.choice){const o=world.objects.find(o=>o.field&&o.kind===f.choice);return `${o?.name??'Field opportunity'} secured.`;}
   if(f.outcome!=='pending'||world.tick>=f.deadline*TIME.roundTicks)return 'Optional opportunities closed; the main objective remains.';

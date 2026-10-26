@@ -90,7 +90,7 @@ export function addCampaignScenery(ctx){
     for(const side of [-1,1]){building('rival army gatehouse',side*(hx+4),-hz-4,4.5,5,{roof:false,brick:true});for(const z of [-6,4])p.banner(root,side*(hx+2),height(side*(hx+2),z),z);}p.tent(root,-hx-7,height(-hx-7,5),5,1.1,.1);landmarks.push('opposed imperial standards');
   }
 
-  if(profile.civic){
+  if(profile.civic||profile.ceremony==='accession'){
     const title=profile.architecture,g=landmark(title.replaceAll('-',' '),p.group(root,0,0,0));
     if(title==='command-council'){
       for(const side of [-1,1])p.tent(root,side*(hx+6),height(side*(hx+6),0),0,1.2,side*Math.PI/2);

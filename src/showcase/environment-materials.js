@@ -93,14 +93,14 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   // the stage sets its splat map once built. Performance draws them without normal maps.
   const terrain=createTerrainUniforms(groundBiome(profile?.chapter??1));
   installTerrainMaterial(m.ground,terrain,{normals:quality!=='performance'});
-  const waterTime={value:0};
+  const waterTime={value:0},waterCurrent={value:new THREE.Vector2(1,0)};
   // Keep broad daylight water from reading as an opaque blue floor. Its
   // moving highlights remain, with deeper green-brown body colour.
   m.water.color.multiplyScalar(.58);m.water.roughness=.48;m.water.metalness=0;
   // Board water (marsh flood, river channel) can mirror the scene on High.
   const reflectionFallback=new THREE.DataTexture(new Uint8Array([0,0,0,255]),1,1);reflectionFallback.needsUpdate=true;textures.add(reflectionFallback);
   const waterReflection={waterReflectionMap:{value:reflectionFallback},waterReflectionMatrix:{value:new THREE.Matrix4()},waterReflectionStrength:{value:0}};
-  const finish={wet:profile?.setting==='wetland'||profile?.weather==='rain',arid:profile?.vegetation==='arid',rain:profile?.weather==='rain',waterTime};
+  const finish={wet:profile?.setting==='wetland'||profile?.weather==='rain',arid:profile?.vegetation==='arid',rain:profile?.weather==='rain',waterTime,waterCurrent};
   finishEnvironmentMaterial(m.ground,'ground',finish);
   for(const key of ['stone','marble','brick','darkStone','plaster','redMarble'])finishEnvironmentMaterial(m[key],'stone',finish);
   for(const key of ['wood','darkWood','bark'])finishEnvironmentMaterial(m[key],'wood',finish);
@@ -126,5 +126,5 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
   });
-  return {materials:m,textures,terrain,waterTime,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();terrain.groundSplatMap.value.dispose();}};
+  return {materials:m,textures,terrain,waterTime,waterCurrent,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();terrain.groundSplatMap.value.dispose();}};
 }

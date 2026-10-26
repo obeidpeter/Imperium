@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createSoundscape,foleyGain} from '../src/ui/soundscape.js';
 import {SOUND_FILES,VOICE_LINES,soundscapeFor,briefingFor} from '../src/ui/soundscape-data.js';
+import {ENVIRONMENT_SOUND_KINDS,ENVIRONMENT_BUFFER_LIMIT} from '../src/ui/environment-sound.js';
 
 const settle=async()=>{for(let i=0;i<40;i++)await Promise.resolve();};
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
@@ -44,6 +45,19 @@ test('Room transitions filter existing ambience; bounded local foley respects am
   assert.equal(s.stats().environmentBuffers,4);assert.equal(s.cue('footstep',{surface:'stone'}),false,'Paving uses the surface-aware stage foley.');
   s.configure({ambience:false});assert.equal(s.stats().effects,0);assert.equal(s.environmentCue('river'),false);
   s.dispose();assert.equal(s.stats().environmentBuffers,0);assert.equal(s.stats().sources,0);
+});
+
+test('Regional audio evicts idle synth buffers within its memory cap and respects hide, mute and contact material routing',async()=>{
+  const p=platform(),s=p.sound;s.configure({ambience:true});await s.unlock();
+  for(const kind of [...ENVIRONMENT_SOUND_KINDS,...ENVIRONMENT_SOUND_KINDS].reverse()){
+    assert.equal(s.environmentCue(kind,{pan:.4}),true);assert.ok(s.stats().synthesizedBytes<=ENVIRONMENT_BUFFER_LIMIT);
+    p.contexts[0].sources.at(-1).end();assert.equal(s.stats().effects,0);
+  }
+  assert.ok(s.stats().environmentBuffers<ENVIRONMENT_SOUND_KINDS.length,'Idle recipes yield their storage to other regions');
+  assert.equal(p.calls.length,0,'Regional synthesis needs no remote or bundled recording fetch');
+  s.configure({audio:true});await settle();assert.equal(s.cue('impact',{material:'metal'}),false,'Material hits use layered native foley');
+  assert.equal(s.environmentCue('birds'),true);p.page.hidden=true;p.listeners.get('visibilitychange')();assert.equal(s.stats().effects,0);
+  assert.equal(s.environmentCue('birds'),false);s.dispose();assert.equal(s.stats().synthesizedBytes,0);
 });
 
 test('Mute or hide during a pending resume cannot reopen the mixer or allocate a late source',async()=>{

@@ -1,3 +1,4 @@
+import {fieldReportText} from '../core/campaign-consequences.js';
 import {esc,roman} from './view-helpers.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {ITEMS} from '../data/items.js';
@@ -22,7 +23,7 @@ const chapterOf=state=>CHAPTERS.find(c=>c.id===state.chapter);
 
 export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap}){
   const e=state.encounter,chapter=chapterOf(state);
-  return `<main id="main" class="encounter-frame realtime-frame" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
+  return `<main id="main" class="encounter-frame realtime-frame world-first" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
     <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · Real time</span>
       <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
@@ -62,6 +63,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
     <header class="rt-top">
       <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2></div>
+      <label class="rt-view-control">View<select data-role="cameraSelect" aria-label="World view"><option value="follow"${chamber?'':' selected'}>Follow</option><option value="overview"${chamber?' selected':''}>Overview</option><option value="horizon">Horizon</option></select></label>
       <div class="rt-time" role="group" aria-label="Time">
         <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
         <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
@@ -184,6 +186,7 @@ export function realtimeResult(state,{keymap}={}){
   if(world.field){const f=world.field,taken=f.choice?world.objects.find(o=>o.field&&o.kind===f.choice):null;
     rows.push(['Field opportunity',taken?`${taken.name}: secured`:f.outcome==='missed'?'Both closed at the end of round '+f.deadline:'None taken']);}
   if(won)rows.push(['Training points when recorded',`${killTP} for the fallen${commendations.length?`, ${commendations.reduce((n,c)=>n+c.tp,0)} for distinguished service`:''}, and the objective’s own`]);
+  if(staged.fieldReport)rows.push(['Campaign consequences',fieldReportText(staged.fieldReport)]);
   if(spoils.length)rows.push(['Taken from the field',spoils.join(', ')]);
   const lines=world.log.slice(-6).map(l=>`<li>${esc(l.text)}</li>`).join('');
   // What the fallen still carry: searched here, the pack receives it when the result is recorded.

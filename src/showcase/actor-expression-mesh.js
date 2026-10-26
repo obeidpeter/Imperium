@@ -32,5 +32,6 @@ export function updateActorExpressionMorphs(meshes,expression,input={}){
     mesh.morphTargetInfluences[0]=clamp(expression.jawOpen);
     mesh.morphTargetInfluences[1]=input.reducedMotion?0:clamp(active?.6+expression.lidFocus:expression.lidFocus*2);
     mesh.morphTargetInfluences[2]=input.reducedMotion?0:strained?.65:0;
+    if(mesh.geometry.userData.expressionMorphs==='generated-head-correctives-v041')mesh.morphTargetInfluences[3]=input.reducedMotion?0:clamp(input.blink??0);
   }
 }

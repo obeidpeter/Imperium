@@ -1,4 +1,5 @@
 import {NEGOTIATORS} from '../data/negotiators.js';
+import {delegateRecordBonus} from './campaign-consequences.js';
 import {alive,clamp,distance,note,result} from './shared.js';
 const shift=(stance,delta)=>clamp(stance+((stance<=-3&&delta>0)||(stance>=3&&delta<0)?Math.sign(delta)*Math.max(1,Math.ceil(Math.abs(delta)/2)):delta),-6,6);
 const person=id=>NEGOTIATORS.find(x=>x.id===id);
@@ -8,7 +9,9 @@ export function applyCoalition(state,e){
   const members=e.units.filter(u=>u.role==='voter');
   for(const [index,u]of members.entries()){
     const p=NEGOTIATORS[index];if(!p)continue;const record=state.progression.negotiators[p.id];
-    Object.assign(u,{negotiatorId:p.id,name:p.name,bloc:p.bloc,interest:p.interest,stance:clamp(u.stance+record.trust,-6,6)});
+    const evidence=delegateRecordBonus(state,p);
+    Object.assign(u,{negotiatorId:p.id,name:p.name,bloc:p.bloc,interest:p.interest,stance:clamp(u.stance+record.trust+evidence.amount,-6,6)});
+    if(evidence.amount)e.log.push(`${p.name}: your ${evidence.type} record earns ${evidence.amount} starting support (${evidence.labels.join('; ')}).`);
   }
 }
 export function coalition(state){

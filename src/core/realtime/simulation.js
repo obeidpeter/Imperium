@@ -30,8 +30,9 @@ import {squadSight} from './squad-sight.js';
 // from the campaign's seeded generator (rng-streams.js). Each tick runs the
 // systems in the brief's order (§3.1); they live in their own modules.
 
-// 3: release 3's war bands, squad sight, enemy plans and battle variety (game.js restarts an older fight).
-export const WORLD_VERSION=3;
+// 4: interactive fortifications and their saved elevation/work state. An older
+// encounter restarts from its complete checkpoint; career progress is retained.
+export const WORLD_VERSION=4;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);
@@ -299,6 +300,11 @@ function logLine(world,e){
 function fieldLine(world,e){
   const o=objectById(world,e.objectId),by=e.actorId?nameOf(world,e.actorId):null,f=world.field;
   switch(e.what){
+    case 'gate-closed':return `${o.name} is closed. Both armies must find another route.`;
+    case 'wall-breached':return `${by} opens a breach in ${o.name}. The rubble passage is open to both armies.`;
+    case 'works-progress':return `${by} works on ${o.name}: ${o.progress} of ${o.required} stages complete.`;
+    case 'works-disabled':return `${by} completes ${o.name}. Its pressure on the line has stopped.`;
+    case 'siege-pressure':return `${o.name} advances: the defended line loses ${e.amount} integrity.`;
     case 'gate-open':return `${o.name} is open${by?`: ${by} opened it`:''}. The side route is clear.`;
     case 'bridge-repaired':return `${o.name} is repaired${by?` by ${by}`:''}: its crossing is a ford now.`;
     case 'barricade-dismantled':return `${by} dismantles ${o.name}.`;

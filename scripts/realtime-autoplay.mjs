@@ -11,6 +11,7 @@ import {actorById,distanceBetween,liftable} from '../src/core/realtime/abilities
 import {derivedValues} from '../src/core/realtime/combat.js';
 import {span} from '../src/core/realtime/navigation.js';
 import {playEncounter} from './autoplay.mjs';
+import {protectCoalition} from './command-autoplay.mjs';
 import {controlsFor} from '../src/core/controls-model.js';
 import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 import {fielded,membersOf,squadCentre} from '../src/core/realtime/squads.js';
@@ -206,7 +207,9 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
     }else if(state.phase==='encounter'){
       let summary=null;
       for(let tries=1;;tries++){
-        summary={...(G.isRealtime(state)?play(state,{attempt:tries}):playEncounter(state)),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+        summary={...(G.isRealtime(state)?play(state,{attempt:tries}):playEncounter(state,{beforeTurn:s=>{
+          if(s.encounter.kind==='contest')protectCoalition(s,(target,name,...args)=>{const r=G[name](target,...args);if(!r.ok)throw Error(r.message);return r;});
+        }})),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
         if(state.encounter.status==='won'||tries>retries)break;
         const r=G.retry(state);if(!r.ok)throw new Error(r.message);
       }

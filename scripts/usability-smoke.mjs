@@ -357,7 +357,21 @@ try{
   console.log(`PASS: ${report.checks.length} usability flows; evidence: ${output}report.json`);
 }catch(error){
   report.passed=false;report.failure=error.stack;
-  for(const [i,context]of browser.contexts().entries())for(const [j,page]of context.pages().entries())await page.screenshot({path:`${output}failure-${i}-${j}.png`,fullPage:true}).catch(()=>{});
+  for(const [i,context]of browser.contexts().entries())for(const [j,page]of context.pages().entries()){
+    // Keep read-only evidence even when a compositor failure prevents capture.
+    let diagnosticTimer;
+    const diagnostic=await Promise.race([page.evaluate(()=>({url:location.href,readyState:document.readyState,visibility:document.visibilityState,fonts:document.fonts.status,
+      focus:document.activeElement?.outerHTML?.slice(0,500),modal:document.querySelector('#modal')?.outerHTML?.slice(0,1200),
+      phase:document.documentElement.dataset.phase,bodyText:document.body.innerText.slice(0,1400),
+      menus:[...document.querySelectorAll('[data-cmd="menu"],[data-role="menuButton"]')].map(el=>{const r=el.getBoundingClientRect(),style=getComputedStyle(el);return {html:el.outerHTML,disabled:el.disabled,
+        inert:!!el.closest('[inert]'),rect:{x:r.x,y:r.y,w:r.width,h:r.height},display:style.display,visibility:style.visibility,pointerEvents:style.pointerEvents,transform:style.transform};}),
+      animations:document.getAnimations().map(a=>({state:a.playState,time:a.currentTime,target:a.effect?.target?.className})),
+      field:document.querySelector('.rt-scene')?.outerHTML?.slice(0,500)})).catch(e=>({captureError:e.message})),
+      new Promise(done=>{diagnosticTimer=setTimeout(()=>done({captureError:'The browser did not answer diagnostics within five seconds.'}),5000);})]);
+    clearTimeout(diagnosticTimer);
+    await writeFile(`${output}failure-${i}-${j}.json`,JSON.stringify(diagnostic,null,2)+'\n');
+    await page.screenshot({path:`${output}failure-${i}-${j}.png`,fullPage:true,timeout:10000}).catch(()=>{});
+  }
   throw error;
 }finally{
   await writeFile(`${output}report.json`,JSON.stringify(report,null,2)+'\n');await browser.close();await new Promise(resolve=>server.close(resolve));

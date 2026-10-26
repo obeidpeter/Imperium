@@ -18,7 +18,7 @@ export function actionEnvelope(motion,phase){
 }
 
 /** Local articulated pose only. No clocks, RNG, unit mutations or world movement. */
-export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,health=1,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,movementProgress,reducedMotion=false,weapon='sword',mounted=false}={}){
+export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,health=1,morale=1,variant=0,braced=false,defended=false,impactDirection=0,locomotionWeight=1,locomotionDistance,movementProgress,reducedMotion=false,weapon='sword',mounted=false}={}){
   time=reducedMotion?0:finite(time);direction=finite(direction);health=clamp(finite(health,1),0,1);
   const p=clamp(finite(phase),0,1),breath=Math.sin(time*2.1)*.003;
   const pose={yaw:direction,hipX:0,hipY:.91+breath,hipZ:0,bodyX:0,bodyY:0,bodyZ:0,headX:0,headY:0,
@@ -46,6 +46,12 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     applyActorClip(pose,motion==='throw'?'throw':weapon==='spear'?'spearAttack':mounted?'mountedAttack':'attack',p);
     if(motion!=='throw'){applyPerformance(pose,'strike',p);if(p>.48)applyPerformance(pose,'recover',(p-.48)/.52);}
     if(mounted&&weapon==='spear'){const reach=actionEnvelope(motion,p).reach;pose.bodyZ+=.045*reach;pose.headY-=.04*reach;}
+    // Three presentation accents share the exact contact/release pose and
+    // endpoints. Variation cannot change reach, the hit clock or the result.
+    const contact=motion==='throw'?ACTOR_TIMING.release:ACTOR_TIMING.contact;
+    const accent=p<=0||p>=1||p===contact?0:Math.sin(Math.PI*p)**2*Math.sin(Math.PI*(p-contact))**2;
+    const style=((Math.abs(Math.trunc(finite(variant)))%3)-1);
+    pose.rightArm[2]+=style*.19*accent;pose.bodyY+=style*.12*accent;pose.rightElbow-=Math.abs(style)*.16*accent;
   }else if(['brace','formation'].includes(motion)){
     applyActorClip(pose,'brace',phase===undefined?1:p);
     if(phase!==undefined)applyPerformance(pose,'guard',p);
@@ -90,6 +96,16 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     const fall=health<=0?1:smooth(p);pose.hipY-=.6*fall;pose.hipX=-.025*fall;pose.bodyX=.8*fall;pose.bodyZ=.09*fall;pose.headX=.35*fall;pose.rightArm[0]=-.7*fall;pose.opacity=1;
   }
   if(motion==='idle'&&!reducedMotion)applyActorClip(pose,'idle',(time%4.8)/4.8);
+  // Injury and shaken morale change bearing, not travelled distance or foot
+  // timing. Only non-contact poses receive these offsets, so the authoritative
+  // attack, blocking and throwing anchors remain unchanged.
+  if(['idle','walk','run','retreat','start','stop','camp-watch','camp-rest'].includes(motion)&&health>0){
+    const injury=clamp((.55-health)/.55,0,1),shaken=clamp((.5-finite(morale,1))/.5,0,1),moving=['walk','run','retreat'].includes(motion);
+    const cycle=Number.isFinite(locomotionDistance)?locomotionPhase(locomotionDistance,motion):finite(phase,time*.8);
+    const favour=moving?Math.sin(cycle*Math.PI*2)*.018*injury:0;
+    pose.bodyX+=injury*.065+shaken*.035;pose.bodyZ+=injury*.035+favour;pose.headX+=injury*.035+shaken*.06;
+    pose.leftArm[0]-=injury*.13;pose.leftElbow-=injury*.20;pose.rightArm[0]-=shaken*.10;
+  }
   // Two-bone sagittal IK keeps the soles on the requested ground plane even
   // while hips settle, and avoids straight-knee singularities.
   pose.legs=pose.feet.map(foot=>{
@@ -135,8 +151,8 @@ export function blendActorPose(from,to,weight){
 export function horsePose({time=0,motion='idle',phase,locomotionWeight=1,locomotionDistance,reducedMotion=false}={}){
   time=reducedMotion?0:finite(time);const physical=Number.isFinite(locomotionDistance),stride=physical?locomotionStride(motion,true):1.35,moving=['walk','run','retreat','cavalry-move'].includes(motion),cycle=physical?locomotionPhase(locomotionDistance,motion,true):phase===undefined?time*1.2:finite(phase)*.72/1.35,weight=moving?clamp(finite(locomotionWeight,1),0,1):0;
   const p=clamp(finite(phase),0,1),fall=['withdrawn','dead'].includes(motion)?smooth(p):0,attack=['attack','strike','cavalry-attack'].includes(motion)?sampleActorClip('horseStrike',p):{},idle=sampleActorClip('horseIdle',((time/6.4)%1+1)%1);
-  const bodyY=1.04+Math.cos(cycle*Math.PI*4)*.014*weight,bodyPitch=attack.bodyPitch??0,neckPitch=(idle.neckPitch??0)+(attack.neckPitch??0),tail=(idle.tail??0)+(attack.tail??0)+.08*Math.sin(cycle*Math.PI*2)*weight;
-  const offsets=motion==='run'?[0,.5,.5,0]:[0,.5,.75,.25];
+  const galloping=['run','cavalry-move'].includes(motion),bodyY=1.04+Math.cos(cycle*Math.PI*4)*.014*weight,bodyPitch=(attack.bodyPitch??0)+(galloping?Math.sin(cycle*Math.PI*2)*.025*weight:0),neckPitch=(idle.neckPitch??0)+(attack.neckPitch??0)-(galloping?.018:0)*weight,tail=(idle.tail??0)+(attack.tail??0)+.08*Math.sin(cycle*Math.PI*2)*weight;
+  const offsets=galloping?[0,.12,.55,.67]:[0,.5,.75,.25];
   const feet=offsets.map((offset,i)=>{const q=((cycle+offset)%1+1)%1,stance=q<.55,s=stance?q/.55:(q-.55)/.45,reach=stride*.275,z=stance?mix(reach,-reach,s):mix(-reach,reach,smooth(s));return {y:.075+(stance?0:Math.sin(s*Math.PI)*.14)*weight,z:z*weight+(i<2?.54:-.54),roll:stance?0:-.16*Math.sin(s*Math.PI)*weight};});
   const legs=feet.map((foot,i)=>{const y=foot.y-bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(y,z),.12,1.059),length=.53,bend=i<2?1:-1;const upper=Math.atan2(-z,-y)-bend*Math.acos(clamp(d/(2*length),-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*length*length-d*d)/(2*length*length),-1,1)));return {upper,knee,ankle:-upper-knee+foot.roll};});
   return {bodyY,bodyPitch,neckPitch,tail,feet,legs,fall,riderBob:bodyY-1.04};

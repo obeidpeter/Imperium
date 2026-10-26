@@ -22,7 +22,10 @@ import {formBand} from './bands.js';
 import {battleVariety} from './variety.js';
 import {splitStreams} from './rng-streams.js';
 import {TEMPERAMENTS} from '../../data/realtime-variety.js';
+import {realtimeAlliedRole} from '../../data/realtime-tactics.js';
 import {FIELD_OBJECT_PLACES} from '../expanded-campaign.js';
+import {installFortifications} from './fortifications.js';
+import {applyCampaignSupport,stageFieldReport} from './campaign-support.js';
 
 // A campaign battle in real time (build brief §3.2 "Converting 0.38 data",
 // §3.4). The 0.38 encounter stays the record the campaign commits: its map,
@@ -205,21 +208,22 @@ export const squadsFrom=state=>state.chapter>=4&&state.encounter?.type!=='traini
 const ORDINALS=['First','Second','Third','Fourth','Fifth','Sixth'];
 const ENEMY_SQUAD_NAMES={infantry:'warriors',guard:'shield guard',archer:'archers',raider:'raiders',cavalry:'horse',heavy:'horse'};
 function memberOf(state,role,faction){
-  if(faction==='roman'){const r=ROMAN_SQUADS[role==='archer'?'archer':'infantry'];return {name:r.name==='legionary'?'Legionary':'Auxiliary archer',attributes:{...r.attributes},kit:[...r.kit],ammo:{...r.ammo}};}
+  if(faction==='roman'){const r=ROMAN_SQUADS[role]??ROMAN_SQUADS.infantry;return {name:r.name[0].toUpperCase()+r.name.slice(1),attributes:{...r.attributes},kit:[...r.kit],ammo:{...r.ammo},mounted:!!r.mounted};}
   const tier=tierFor(state.chapter),a=ARCHETYPES[faction][ARCHETYPES[faction][role]?role:'infantry'][0],attrs={...a.attributes};
   for(const [k,v]of Object.entries(tier.mods))attrs[k]=Math.max(k==='combat'?1:4,(attrs[k]??10)+v);
   return {name:`${FACTION_NAMES[faction]} ${a.name}`,attributes:attrs,kit:[...a.kit],ammo:{...(a.ammo??{})},mounted:!!a.mounted};
 }
 function squadSpec(state,e,unit,k,{party=[],index=0,temperament=null}={}){
-  const enemy=unit.side==='enemy',faction=enemy?factionFor(state.chapter):'roman',role=unit.role==='heavy'?'heavy':unit.role;
+  const enemy=unit.side==='enemy',faction=enemy?factionFor(state.chapter):'roman',role=enemy?unit.role:realtimeAlliedRole(state.chapter,e,unit);
   const led=!enemy&&unit.veteranId&&!party.includes(unit.veteranId),veteran=led?state.company?.find(v=>v.id===unit.veteranId):null;
   // The finale's rival bands keep their 0.38 names: the claimant's own and the civil-war cohorts.
   const finale=state.chapter===12&&['confrontation','standoff'].includes(e.type);
-  const name=enemy?finale&&unit.name?unit.name:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${role==='archer'?'archers':'squad'}`
-    :`${ORDINALS[index]??'Reserve'} ${role==='archer'?'archers':'squad'}`;
+  const detail=role==='archer'?'archers':role==='cavalry'?'horse':role==='engineer'?'engineers':'squad';
+  const name=enemy?finale&&unit.name?unit.name:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${detail}`
+    :`${ORDINALS[index]??'Reserve'} ${detail}`;
   return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
     damage:unit.damage??null,morale:clamp((unit.morale??80)+(TEMPERAMENTS.kinds[temperament]?.morale??0)),cohesion:unit.cohesion??80,braced:!!unit.braced,
-    formation:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,...(temperament?{temperament}:{}),
+    formation:role==='cavalry'?null:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,...(temperament?{temperament}:{}),
     moraleResistance:unit.moraleResistance??0,at:pos(unit,k),face:enemy?[-1,0]:[1,0],anchor:enemy?pos(unit,k):null,member:memberOf(state,role,faction),
     standing:enemy?null:squadStanding(state,e,unit,role)};
 }
@@ -320,6 +324,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   // From Chapter VII the battle opens with the company to deploy (deployment.js).
   if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(DEPLOYMENT.tiles,e.width)),done:false,placed:0};
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
+  installFortifications(world,{chapter:state.chapter,encounterId:e.id});
+  applyCampaignSupport(state,e,world);
   return world;
 }
 // The camp's preparations as the world plays them (0.38 field-approaches.js,
@@ -404,6 +410,7 @@ export function applyRealtimeOutcome(state,world){
   if(world.provoked.length){e.staged.meters.public=Math.max(-100,(e.staged.meters.public??0)-PROVOKED_COST*world.provoked.length);
     e.staged.journal=world.provoked.map(p=>`You struck ${p.name}, who was no enemy, in ${e.title}.`);}
   e.status=world.status==='active'?'active':world.status;
+  stageFieldReport(state,e,world);
   e.log.push(...world.log.slice(-10).map(l=>l.text));if(e.log.length>70)e.log.splice(0,e.log.length-70);
   return e;
 }

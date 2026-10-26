@@ -1,4 +1,5 @@
 import {SOUND_FILES,VOICE_LINES,foleyFor,soundscapeFor,audioDirection} from './soundscape-data.js';
+import {ENVIRONMENT_SOUND_KINDS,ENVIRONMENT_BUFFER_LIMIT,environmentSoundSamples,environmentSoundFrequency} from './environment-sound.js';
 
 const level=(value,fallback=.5)=>Number.isFinite(Number(value))?Math.min(1,Math.max(0,Number(value))):fallback;
 const MAX_DECODED_BYTES=24*1024*1024,MAX_EFFECTS=8;
@@ -15,14 +16,14 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
   let context=null,master=null,disposed=false,unlocked=false,generation=0,powerGeneration=0,voice=null,voiceRequest=0,bytes=0,stamp=0,decodeTail=Promise.resolve();
   let settings={audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45},scene={music:null,ambience:null},sceneKey=null,direction=audioDirection(null);
   const cache=new Map(),pending=new Map(),loops=new Map(),retiring=new Map(),effects=new Set(),live=new Set(),requests=new Set(),failures=new Map();
-  const environmental=new Map();let enclosed=false;
+  const environmental=new Map();let enclosed=false,cueSequence=0;
   const active=()=>!disposed&&!page?.hidden&&unlocked&&context?.state==='running';
   const enabled=()=>[settings.audio,settings.music,settings.ambience,settings.voices].some(Boolean);
   function gain(node,value,seconds=.3){const p=node.gain,t=context.currentTime;p.cancelScheduledValues(t);p.setValueAtTime(p.value,t);p.linearRampToValueAtTime(value,t+seconds);}
   function stopNode(entry,fade=0){if(!entry)return;const fading=fade&&active();try{if(fading){gain(entry.gain,0,fade);entry.source.stop(context.currentTime+fade+.02);}else entry.source.stop();}catch{}if(!fading)entry.cleanup();}
-  function make(buffer,{id,volume=1,pan=0,loop=false,start=0,frequency}={}){
+  function make(buffer,{id,volume=1,pan=0,loop=false,start=0,frequency,playbackRate=1}={}){
     const source=context.createBufferSource(),g=context.createGain(),p=context.createStereoPanner?.(),filter=loop||frequency?context.createBiquadFilter?.():null;
-    source.buffer=buffer;source.loop=loop;g.gain.value=volume;source.connect(g);
+    source.buffer=buffer;source.loop=loop;if(source.playbackRate)source.playbackRate.value=playbackRate;g.gain.value=volume;source.connect(g);
     if(filter){filter.type='lowpass';filter.Q.value=.45;filter.frequency.value=frequency??12000;g.connect(filter);}
     const output=filter??g;
     if(p){p.pan.value=level((pan+1)/2)*2-1;output.connect(p);p.connect(master);}else output.connect(master);
@@ -109,28 +110,28 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     const cleanup=voice.source.onended;voice.source.onended=()=>{cleanup();if(voice===spoken){voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.6);}};
     const music=loops.get('music');if(music)mixLoop('music',music.entry,.15);onCaption(VOICE_LINES[id]);return true;
   }
-  function cue(kind,{intensity=.7,pan=0,surface}={}){
+  function cue(kind,{intensity=.7,pan=0,surface,material}={}){
     if(!settings.audio||!active()||effects.size>=MAX_EFFECTS)return false;
     // The stage's procedural foley distinguishes paving, soil and water.
-    if(kind==='footstep'&&surface)return false;
+    if(kind==='footstep'&&surface||kind==='impact'&&material)return false;
     const id=foleyFor(kind),record=cache.get(id),decoded=record?.buffer;if(!decoded||!record.normalization)return false;record.used=++stamp;
     // Skip leading digital silence in a short recording; the impact remains on the visual contact frame.
-    const entry=make(decoded,{id,volume:settings.audioVolume*level(intensity)*.65*record.normalization,pan,start:record.start});if(!entry)return false;effects.add(entry);return true;
+    const entry=make(decoded,{id,volume:settings.audioVolume*level(intensity)*.65*record.normalization,pan,start:record.start,playbackRate:1+((cueSequence++%5)-2)*.018});if(!entry)return false;effects.add(entry);return true;
   }
   function setSpace(space={}){const next=space.enclosed===true;if(next===enclosed)return;enclosed=next;if(active()){const loop=loops.get('ambience');if(loop)mixLoop('ambience',loop.entry,.8);}}
-  function environmentCue(kind,{intensity=.22}={}){
-    if(!settings.ambience||!active()||effects.size>=MAX_EFFECTS||!['river','wind','workshop','room'].includes(kind)||!context.createBuffer)return false;
-    // Original restrained foley, at most four short mono buffers. Never a
-    // recording download, independent timer, speech or gameplay signal.
+  function environmentCue(kind,{intensity=.22,pan=0}={}){
+    if(!settings.ambience||!active()||effects.size>=MAX_EFFECTS||!ENVIRONMENT_SOUND_KINDS.includes(kind)||!context.createBuffer)return false;
+    // Regionally directed original foley, bounded separately from decoded
+    // recordings. Muting/hiding uses the existing source cancellation path.
     if(!environmental.has(kind)){
-      const duration=kind==='workshop'?.5:1.2,rate=22050;let b;
-      try{b=context.createBuffer(1,Math.ceil(rate*duration),rate);}catch{return false;}
-      const data=b.getChannelData(0);
-      let seed=0x17c23;for(let i=0;i<data.length;i++){seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;const t=i/rate,envelope=kind==='workshop'?Math.exp(-t*35)+.55*Math.exp(-Math.abs(t-.28)*55):Math.sin(Math.PI*i/data.length)**2;
-        data[i]=(((seed>>>0)/4294967296)*2-1)*envelope*(kind==='room'?.2:1);}
+      const recipe=environmentSoundSamples(kind);if(!recipe)return false;
+      let used=[...environmental.values()].reduce((n,b)=>n+b.length*4,0);
+      for(const [key,value]of environmental){if(used+recipe.samples.byteLength<=ENVIRONMENT_BUFFER_LIMIT)break;if([...live].some(node=>node.id==='environment-'+key))continue;environmental.delete(key);used-=value.length*4;}
+      if(used+recipe.samples.byteLength>ENVIRONMENT_BUFFER_LIMIT)return false;
+      let b;try{b=context.createBuffer(1,recipe.samples.length,recipe.sampleRate);b.getChannelData(0).set(recipe.samples);}catch{return false;}
       environmental.set(kind,b);
     }
-    const entry=make(environmental.get(kind),{id:'environment-'+kind,volume:settings.soundtrackVolume*level(intensity)*.28,frequency:{river:1600,wind:480,workshop:1100,room:650}[kind]});
+    const entry=make(environmental.get(kind),{id:'environment-'+kind,volume:settings.soundtrackVolume*level(intensity)*.45,pan,frequency:environmentSoundFrequency(kind)});
     if(!entry)return false;effects.add(entry);return true;
   }
   const visibility=()=>{if(page?.hidden){stopAll();void context?.suspend().catch(()=>{});}else if(unlocked)void unlock();};page?.addEventListener('visibilitychange',visibility);

@@ -18,6 +18,8 @@
 // calls and triangles, two programs above), on purpose, keeping other scenes'.
 // --images DIR saves each run's still overview and its follow and horizon views
 // as PNGs (<scene>-<quality>-<view>.png): fixed cameras for before-and-after renders.
+// --program-details includes read-only shader names/cache keys in the report;
+// it does not change any assertions, ceilings or renderer settings.
 //   PLAYWRIGHT_MODULE=/absolute/playwright/index.js node scripts/benchmark-stage.mjs
 import http from 'node:http';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -115,9 +117,9 @@ async function run(browser,base,id,quality){
     await phase('idle',()=>tab.waitForTimeout(3000));
     // Counts from a still overview: with reduced motion the camera snaps home
     // instead of easing there over slow software frames.
-    const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames();s.setReducedMotion(true);s.home();
-      while(frames()<start+3)await new Promise(done=>setTimeout(done,50));const v=s.stats();s.setReducedMotion(false);
-      return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length,
+    const counted=await tab.evaluate(async()=>{const s=controller.stage,frames=()=>bench.frames.length,start=frames(),deadline=performance.now()+120000;s.setReducedMotion(true);s.home();
+      while(frames()<start+3||!s.cameraSettled){if(performance.now()>deadline)throw Error('Static overview camera did not settle');await new Promise(done=>setTimeout(done,50));}const v=s.stats(),cameraSettled=s.cameraSettled;s.setReducedMotion(false);
+      return {calls:v.calls,triangles:v.triangles,textures:v.textures,geometries:v.geometries,programs:s.renderer.info.programs.length,cameraSettled,cameraView:s.cameraView,
         gpuBytes:window.sceneGpuMemory()};});
     if(imagesPath)await capture('overview');
     await phase('combat',()=>tab.evaluate(()=>Promise.race([controller.stage.play(scene.before,scene.after,scene.command),new Promise(done=>setTimeout(done,30000))])));
@@ -138,7 +140,8 @@ async function run(browser,base,id,quality){
       overview:{...counted,generatedBodies:phases[2].generatedBodies,actorAssets:phases[2].actorAssets},
       programsCompiledAfterShown:late.length,lateProgramNames:late,
       // Programs the first frame had to compile itself: variants the warm-up missed.
-      firstFramePrograms:raw.firstFramePrograms,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,errors:[...errors,...(raw.error?[raw.error]:[])]};
+      firstFramePrograms:raw.firstFramePrograms,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,
+      ...(process.argv.includes('--program-details')?{programDetails:await programs()}:{}),errors:[...errors,...(raw.error?[raw.error]:[])]};
   }finally{await context.close();}
 }
 
@@ -184,6 +187,7 @@ const problems=report.runs.flatMap(r=>[
   // A Contest's senators are code-built togas: no generated body to wear yet.
   ...(check&&r.kind!=='contest'&&!(r.overview.generatedBodies>0)?['no figure wears its generated body']:[]),
   ...(check&&r.overview.programs>maxPrograms?[`${r.overview.programs} shader programs (limit ${maxPrograms})`]:[]),
+  ...(check&&(!r.overview.cameraSettled||r.overview.cameraView!=='overview')?['resource counts were sampled before the overview camera settled']:[]),
   ...(ceilings?overCeiling(r):[])
 ].map(problem=>`${r.id} ${r.quality}: ${problem}`));
 for(const problem of problems)console.error(problem);

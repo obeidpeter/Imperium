@@ -3,6 +3,7 @@ import {PROGRESSION_OPERATIONS} from '../data/progression-operations.js';
 import {NEGOTIATORS} from '../data/negotiators.js';
 import {initialNegotiators} from './progression-politics.js';
 import {VETERAN_PATHS} from './progression-veterans.js';
+import {validateFieldReports} from './campaign-consequences.js';
 
 export function initialProgression(enabled){return enabled?{progressionVersion:1,progression:{specializations:{},operationChoices:{},operationResults:[],negotiators:initialNegotiators(),agreements:[]}}:{};}
 const record=x=>x&&typeof x==='object'&&!Array.isArray(x);
@@ -16,6 +17,7 @@ export function validateProgression(state,fail){
   if(state.progressionVersion===undefined){if(state.progression!==undefined||state.encounter?.progressionVersion!==undefined)fail('unversioned progression.');return;}
   if(state.progressionVersion!==1||state.campaignRules!==2||!record(state.progression))fail('progression version.');
   const p=state.progression,ids=state.company?.map(v=>v.id)??[];
+  validateFieldReports(state,fail);
   if(!record(p.specializations)||Object.keys(p.specializations).some(id=>!ids.includes(id)||!VETERAN_PATHS.some(x=>x.id===p.specializations[id])||state.chapter<3||state.company.find(v=>v.id===id).service<2))fail('veteran specialization.');
   if(!record(p.operationChoices)||Object.entries(p.operationChoices).some(([id,choice])=>!PROGRESSION_OPERATIONS[id]?.some(x=>x.id===choice)))fail('operation selection.');
   if(!Array.isArray(p.operationResults)||p.operationResults.length>11||new Set(p.operationResults.map(x=>x?.encounterId)).size!==p.operationResults.length)fail('operation result list.');

@@ -8,7 +8,9 @@
 # scripts/realtime-polish-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
-# by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs),
+# by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
+# and immersive layout/company-story checks (scripts/immersive-interface-smoke.mjs),
+# then real-time 3D siege and rain review (scripts/campaign-world-smoke.mjs),
 # the twelve camps' regional asset, service and cache checks
 # (scripts/regional-world-smoke.mjs), and the 3D stage benchmark
 # (scripts/benchmark-stage.mjs), which fails on a shader compiled in the first
@@ -72,9 +74,10 @@ jobs:
   usability:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
-    # Usability flows and the Chapter V pilot: about 10 minutes including the
-    # browser install. Leave room for slow runners.
-    timeout-minutes: 30
+    # Usability, the Chapter V pilot and world-first/company-story checks, plus
+    # the real-time 3D siege/rain review (8–15 minutes in software rendering).
+    # Leave room for browser installation and slow runners.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -87,6 +90,10 @@ jobs:
         run: npm run smoke:usability
       - name: Chapter V courtyard and fortress pilot acceptance
         run: npm run smoke:ch5-pilot -- --river-gate
+      - name: World-first layouts, camera controls and company stories
+        run: npm run smoke:immersive
+      - name: Real-time 3D siege, bridges and rainy crossing
+        run: npm run smoke:siege
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -99,14 +106,27 @@ jobs:
           name: chapter-v-pilot
           path: tests/visual-results/ch5-pilot/
           retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: immersive-interface-smoke
+          path: tests/visual-results/immersive-interface/
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: campaign-world-smoke
+          path: tests/visual-results/campaign-world/
+          retention-days: 14
 
   world:
     name: twelve camps (Chromium)
     runs-on: ubuntu-latest
-    # Every camp's regional models, cameras, services and scenery residency in one
-    # browser: about 16 minutes of software rendering at release 1, and about
-    # twice that per frame over the photographed ground of release 2.
-    timeout-minutes: 55
+    # Every regional camp, services and residency, with cameras now required to
+    # settle and render fresh frames. Windows software rendering takes about
+    # four minutes per camp; leave room for the extra service/fallback checks
+    # and browser installation. Individual action and resource limits stay fixed.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

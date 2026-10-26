@@ -1,5 +1,5 @@
 import {ABILITIES,MOVEMENT,TIME} from '../../data/realtime-rules.js';
-import {clampToMap,clearLine,findRoute,navGrid,span,speedFactor,walkable} from './navigation.js';
+import {clampToMap,clearLine,findRoute,navGrid,span,speedFactor,traversableStep,walkable} from './navigation.js';
 import {arcOf,braced,derivedValues} from './combat.js';
 import {actorById,distanceBetween,hostile,staggered} from './abilities.js';
 // Walking only: his own choice (W), or the soldier under a march penalty (the engineer
@@ -83,6 +83,16 @@ export function moveActors(world){
       }
     }else if(order?.kind==='ability'||actor.action&&actor.action.kind!=='work'){actor.path=[];actor.gait=null;continue;}
     if(actor.action?.kind==='work'){actor.path=[];actor.gait=null;continue;}
+    // Terrain changes discard paths but preserve a Move's destination. Wait
+    // for that route to reopen, with bounded retries, instead of cancelling
+    // the player's order or accepting a new stop point on this side of a gate.
+    if(!actor.path.length&&order?.kind==='move'&&actor.goal&&span(actor.goal.x-actor.x,actor.goal.z-actor.z)>MOVEMENT.arrive){
+      if(world.tick>=actor.repathAt){
+        const goal=actor.goal,route=setRoute(world,actor,goal,{run:actor.carrying?false:null});actor.goal=goal;
+        if(route.reasonCode){actor.path=[];actor.gait=null;}
+      }
+      if(!actor.path.length)continue;
+    }
     if(!actor.path.length){if(order?.kind==='move')actor.order=null;actor.gait=null;continue;}
     const derived=derivedValues(actor),run=actor.gait==='run'&&!engaged(world,actor)&&!walksOnly(world,actor)&&!actor.carrying;
     let budget=(run?derived.run:actor.pace??MOVEMENT.walk)*speedFactor(grid,actor.x,actor.z)*DT,moved=0;
@@ -111,7 +121,7 @@ export function separateBodies(world,grid=navGrid(world.map)){
   const X=new Float64Array(n),Z=new Float64Array(n),pushed=new Uint8Array(n);for(let k=0;k<n;k++){X[k]=list[k].x;Z[k]=list[k].z;}
   const push=(k,nx,nz,amount)=>{
     const p=clampToMap(grid,{x:X[k]+nx*amount,z:Z[k]+nz*amount});
-    if(!walkable(grid,p.x,p.z))return 0;
+    if(!walkable(grid,p.x,p.z)||!traversableStep(grid,{x:X[k],z:Z[k]},p))return 0;
     const moved=Math.max(0,(p.x-X[k])*nx+(p.z-Z[k])*nz);X[k]=p.x;Z[k]=p.z;pushed[k]=1;return moved;
   };
   for(let pass=0;pass<4;pass++){

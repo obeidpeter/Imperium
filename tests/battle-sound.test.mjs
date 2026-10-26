@@ -7,8 +7,9 @@ function platform(){
   const param=()=>({value:0,events:[],setValueAtTime(...args){this.events.push(['set',...args]);},linearRampToValueAtTime(...args){this.events.push(['linear',...args]);},exponentialRampToValueAtTime(...args){this.events.push(['exponential',...args]);},setTargetAtTime(...args){this.events.push(['target',...args]);}});
   const node=()=>({disconnected:false,connect(target){this.target=target;},disconnect(){this.disconnected=true;}});
   class Context{
-    constructor(){this.state='suspended';this.sampleRate=8000;this.currentTime=4;this.destination=node();this.sources=[];this.buffers=[];this.filters=[];contexts.push(this);}
+    constructor(){this.state='suspended';this.sampleRate=8000;this.currentTime=4;this.destination=node();this.sources=[];this.buffers=[];this.filters=[];this.panners=[];contexts.push(this);}
     createGain(){return {...node(),gain:param()};}
+    createStereoPanner(){const panner={...node(),pan:param()};this.panners.push(panner);return panner;}
     createDynamicsCompressor(){return {...node(),...Object.fromEntries(['threshold','knee','ratio','attack','release'].map(key=>[key,param()]))};}
     createBuffer(channels,length,rate){const samples=new Float32Array(length),buffer={duration:length/rate,getChannelData:()=>samples};this.buffers.push(buffer);return buffer;}
     createBiquadFilter(){const filter={...node(),frequency:param(),Q:param()};this.filters.push(filter);return filter;}
@@ -69,6 +70,16 @@ test('Footing changes actual synthesis recipes and a swing does not invent a met
   assert.notDeepEqual(dirt.layers,stone.layers);assert.ok(stone.layers[0].duration<dirt.layers[0].duration);
   assert.ok(swing.layers.length>0);assert.ok(swing.layers.every(l=>l.source==='noise'&&l.duration<.2&&l.gain<.1));
   const shield=battleSoundPlan('block');assert.ok(shield.layers.some(l=>l.source==='ring'&&l.partials[0][0]<250),'Wooden shield body has a low resonant mode.');
+});
+
+test('Material contacts, weapon swings and terrain footing differ; native spatial voices disconnect their panners',async()=>{
+  const metal=battleSoundPlan('impact',{material:'metal'}),cloth=battleSoundPlan('impact',{material:'cloth'});
+  assert.ok(metal.layers.some(l=>l.source==='ring'));assert.ok(cloth.layers.every(l=>l.source==='noise'));assert.notDeepEqual(metal.layers,cloth.layers);
+  assert.notDeepEqual(battleSoundPlan('swing',{weapon:'spear'}).layers,battleSoundPlan('swing',{weapon:'knife'}).layers);
+  const footing=['sand','wood','stone','grass','gravel'].map(surface=>JSON.stringify(battleSoundPlan('footstep',{surface}).layers));assert.equal(new Set(footing).size,5);
+  const p=platform(),sound=p.create();sound.setEnabled(true);await sound.unlock();assert.equal(sound.cue('hoof',{pan:-.5}),true);
+  const c=p.contexts[0];assert.ok(c.panners.length>0);assert.ok(c.panners.every(pan=>pan.pan.value===-.5));
+  sound.stop();assert.ok(c.panners.every(pan=>pan.disconnected));sound.dispose();
 });
 
 test('Hiding the page immediately clears audio and a stale unlock cannot restart it',async()=>{

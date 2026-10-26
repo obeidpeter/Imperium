@@ -18,6 +18,7 @@ import {serveRequest} from './serve.mjs';
 import {closePanel,menuCommand,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
+import {readStageCamera,waitForSettledStage} from './read-stage-camera.mjs';
 
 const repo=fileURLToPath(new URL('../',import.meta.url));
 const arg=name=>{const i=process.argv.indexOf(name);return i<0?null:process.argv[i+1];};
@@ -113,10 +114,14 @@ async function inventory(page){
     return {scene:canvas.dataset.scene,chapter:Number(canvas.dataset.chapter),kind:canvas.dataset.kind,weather:canvas.dataset.weather,timeOfDay:canvas.dataset.timeOfDay,materials:canvas.dataset.materials,actorAssets:canvas.dataset.actorAssets,canvas:{width:canvas.width,height:canvas.height},stats};
   });
 }
-function assertCaptureObservation(observed,{quality,cameraView},label){
+function assertCaptureObservation(observed,{quality,cameraView,afterFrame},label){
   assert.equal(observed?.quality,quality,`${label}: requested graphics quality is still active`);
   assert.equal(observed.renderQuality,quality,`${label}: rendered graphics quality matches`);
   assert.equal(observed.cameraView,cameraView,`${label}: expected camera view`);
+  assert.equal(observed.cameraSettled,true,`${label}: camera is settled`);
+  assert.equal(observed.cameraAudit?.matches,1,`${label}: exactly one connected stage was inspected`);
+  assert.equal(observed.cameraAudit?.view,cameraView,`${label}: inspected stage has the expected view`);
+  assert.ok(Number.isFinite(afterFrame)&&observed.cameraAudit.renderedFrames>=afterFrame+2,`${label}: at least two fresh frames were drawn`);
   assert.equal(observed.ready,true,`${label}: 3D stage is ready`);
   assert.equal(observed.actorAssets,'imported',`${label}: imported actors are visible`);
   assert.equal(observed.actorsReady,true,`${label}: imported actor assets are ready`);
@@ -128,24 +133,27 @@ function captureEvidenceMatches(scene,chapter){
   if(scene.requestedQuality!==quality)return false;
   try{
     for(const cameraView of chapter===5?['overview','horizon']:['overview']){
-      for(const when of ['before','after'])assertCaptureObservation(scene.captureObservations?.[cameraView]?.[when],{quality,cameraView},`${cameraView} ${when}`);
+      for(const when of ['before','after'])assertCaptureObservation(scene.captureObservations?.[cameraView]?.[when],{quality,cameraView,afterFrame:scene.captureObservations?.[cameraView]?.afterFrame},`${cameraView} ${when}`);
     }
     return true;
   }catch{return false;}
 }
 async function captureObservation(page){
-  return page.evaluate(()=>{
+  const observed=await page.evaluate(()=>{
     const board=document.querySelector('#battle-board'),stats=JSON.parse(board.dataset.renderStats);
     return {quality:document.documentElement.dataset.quality,renderQuality:stats.quality,cameraView:stats.cameraView,ready:board.parentElement.dataset.ready==='true',actorAssets:board.dataset.actorAssets,actorsReady:stats.actorAssets?.ready,actorsPending:stats.actorAssets?.pending,actorsError:stats.actorAssets?.error};
   });
+  const cameraAudit=await readStageCamera(page);return {...observed,cameraSettled:cameraAudit.cameraSettled,cameraAudit};
 }
 async function captureScene(page,id,expected){
+  const afterFrame=expected.afterFrame??(await readStageCamera(page)).renderedFrames;expected={...expected,afterFrame};
+  await waitForSettledStage(page,expected.cameraView,{afterFrame});
   const path=resolve(images,`v035-${id}.png`),clip=await page.locator('.battle-stage').boundingBox();
   assert.ok(clip?.width&&clip?.height);
   const before=await captureObservation(page);assertCaptureObservation(before,expected,`${id} before capture`);
   await page.screenshot({path,clip,timeout:120000});
   const after=await captureObservation(page);assertCaptureObservation(after,expected,`${id} after capture`);
-  return {screenshot:relative(repo,path).replaceAll('\\','/'),observations:{before,after}};
+  return {screenshot:relative(repo,path).replaceAll('\\','/'),observations:{afterFrame,before,after}};
 }
 async function capture(page,id,{full=false,stage=true}={}){
   const path=resolve(images,`v035-${id}.png`);
@@ -192,9 +200,10 @@ async function sceneInventory(){
       console.log(`  capturing ${snapshot.id}`);const overviewCapture=await captureScene(page,snapshot.id,{quality:requestedQuality,cameraView:'overview'});
       const screenshot=overviewCapture.screenshot,captureObservations={overview:overviewCapture.observations};let horizon=null;
       if(snapshot.chapter===5){
+        const afterFrame=(await readStageCamera(page)).renderedFrames;
         await (await revealControl(page,'[data-cmd="camera-horizon"]')).click();
         await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#battle-board').dataset.renderStats).cameraView==='horizon';}catch{return false;}},null,{polling:300});
-        const horizonCapture=await captureScene(page,`${snapshot.id}-horizon`,{quality:requestedQuality,cameraView:'horizon'});
+        const horizonCapture=await captureScene(page,`${snapshot.id}-horizon`,{quality:requestedQuality,cameraView:'horizon',afterFrame});
         horizon=horizonCapture.screenshot;captureObservations.horizon=horizonCapture.observations;
       }
       const after=Game.serialize(await exported(page));

@@ -592,7 +592,7 @@ test('v0.29.0: the finale stands before the rising Aurelian Walls with massed le
   const g = createMassedSoldierGeometry();g.computeBoundingBox();assert.ok(g.boundingBox.max.y > 1.7 && g.boundingBox.max.y < 1.9, 'A man at distance is about 1.8 m');g.dispose();
   const world = createEnvironment(new THREE.Scene(), e, {chapter: 12, quality: 'balanced', loadTextures: false});
   assert.ok(world.group.userData.environmentLandmarks.includes('the rising Aurelian Walls'));
-  const figures = world.group.getObjectByName('massed legion figures');assert.ok(figures?.isInstancedMesh && figures.count >= 200);
+  const figures = world.group.getObjectByName('massed legion figures'),front=world.group.getObjectByName('massed legion front ranks');assert.ok(figures?.isInstancedMesh && figures.count+(front?.count??0) >= 200);
   assert.ok(world.stats().meshes < 60, 'The finale stays inside the draw-object budget');
   const m = new THREE.Matrix4(), p = new THREE.Vector3();
   for (let i = 0; i < figures.count; i++) {figures.getMatrixAt(i, m);p.setFromMatrixPosition(m);assert.ok(Math.abs(p.x) > hx || Math.abs(p.z) > hz, 'No soldier stands on the legal board');}

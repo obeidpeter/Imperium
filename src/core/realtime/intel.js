@@ -27,7 +27,8 @@ export function fieldIntelligence(world){
   const d=world.doctrine,f=world.field,approach=world.approach?FIELD_APPROACHES.find(p=>p.id===world.approach):null;
   return {
     doctrine:d?{label:d.label,purpose:d.purpose,focus:d.focusName,reserve:d.reserveId?nameOf(world,d.reserveId):null,
-      plan:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.label??null:null,planSummary:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.summary??null:null}:null,
+      plan:d.plan?ENEMY_PLANS.kinds[d.plan.id]?.label??null:null,planSummary:d.plan?[ENEMY_PLANS.kinds[d.plan.id]?.summary,d.plan.reason].filter(Boolean).join(' '):null,
+      tacticalIdentity:d.identity?.label??null}:null,
     approach:approach?{label:approach.label,description:approach.description}:null,
     // A war band (Chapters I–III): its temperament and how it holds (bands.js).
     band:world.band?{temperament:TEMPERAMENTS.kinds[world.band.temperament]?.label??null,state:world.band.state}:null,

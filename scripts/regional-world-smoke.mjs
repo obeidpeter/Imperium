@@ -81,7 +81,7 @@ const report={method:'Production Chromium, one context, UI Restore of legal-comm
   scope:partial?'partial camera and asset diagnostic; not full release acceptance':'full twelve-chapter acceptance',
   fullAcceptance:!partial,selectedChapters:tour.map(checkpoint=>checkpoint.chapter),
   checkpoint:checkpointReceipt,
-  checks:[],captures:[],residency:[],errors:[],expectedUnavailableResponses:[],expectedUnavailableConsole:[]};
+  checks:[],captures:[],cameraEvidence:[],residency:[],errors:[],expectedUnavailableResponses:[],expectedUnavailableConsole:[]};
 page.on('pageerror',error=>report.errors.push(error.message));
 let simulatingUnavailable=false;
 page.on('console',message=>{
@@ -131,8 +131,10 @@ async function exported(){
   return Game.serialize(await restoreCode(code));
 }
 async function camera(mode,key){
+  const previousFrame=await page.evaluate(()=>window.__chamber.stage().profileFrames);
   await page.locator('#rt-board').focus();await page.keyboard.press(key);
-  await page.waitForFunction(expected=>{try{return JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView===expected;}catch{return false;}},mode);
+  await page.waitForFunction(({expected,previousFrame})=>{try{const stage=window.__chamber.stage();return stage.cameraView===expected&&stage.cameraSettled&&stage.profileFrames>=previousFrame+2&&JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView===expected;}catch{return false;}},{expected:mode,previousFrame});
+  report.cameraEvidence.push(await page.evaluate(previousFrame=>{const stage=window.__chamber.stage();return {camp:window.__realtime.world().campId,view:stage.cameraView,settled:stage.cameraSettled,previousFrame,renderedFrames:stage.profileFrames,position:stage.camera.position.toArray(),lookTarget:stage.lookTarget.toArray()};},previousFrame));
 }
 async function screenshot(name){
   await pause();await page.locator('#rt-board').scrollIntoViewIfNeeded();

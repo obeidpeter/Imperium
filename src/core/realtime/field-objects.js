@@ -1,9 +1,10 @@
 import {MORALE} from '../../data/realtime-squads.js';
 import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {actorById} from './abilities.js';
-import {invalidateGrid,span} from './navigation.js';
+import {span} from './navigation.js';
 import {alliedSides,fielded,membersOf,scorchSquad,squadsOf} from './squads.js';
 import {burnActor} from './damage.js';
+import {changeStructureCells,closeFortifiedGate,fortifiedGate,gateOccupied,fortificationVerb,fortificationHint,workFortification,fortificationRound} from './fortifications.js';
 
 // The battlefield's objects in real time (guide "Field objects"; 0.38
 // expanded-campaign.js and the edition-34 chapter opportunities): a side gate
@@ -28,22 +29,22 @@ export const DEFAULT_OPPORTUNITIES=Object.freeze({
 // What working at an object does, in its state; null when nothing is left to do.
 export function fieldVerb(o){
   switch(o.kind){
-    case 'gate':return o.state==='closed'?'Open gate':null;
+    case 'gate':return o.state==='closed'?'Open gate':fortifiedGate(o)&&o.state==='open'?'Close gate':null;
     case 'bridge':return o.state==='damaged'?'Repair bridge':null;
     case 'barricade':return o.state==='intact'?'Dismantle':null;
     case 'brazier':return o.state==='unlit'?'Ignite':o.state==='burning'?'Extinguish':null;
     case 'stores':case 'signal':return o.state==='available'?'Secure objective':null;
-    default:return null;
+    default:return fortificationVerb(o);
   }
 }
 export function fieldHint(world,o){
   switch(o.kind){
-    case 'gate':return 'Opens the side route: the gate stops movement and sight while it is shut.';
+    case 'gate':return fortifiedGate(o)&&o.state==='open'?'Close the passage once everyone is clear. The closed gate stops both armies and blocks sight.':'Opens the side route: the gate stops movement and sight while it is shut.';
     case 'bridge':return 'Repairs the footbridge: its crossing becomes a ford.';
     case 'barricade':return 'Dismantles it: defenders within 2 m lose its 1 extra protection.';
     case 'brazier':return o.state==='unlit'?`Lights the pitch: its smoke blocks sight, and it hurts both sides within 3 m at each round's end for ${world.weather==='rain'?'one round (rain)':'three rounds'}.`
       :'Puts the fire out.';
-    default:{const opp=world.field?.opportunities?.[o.kind];return `${opp?.description??''} Only one opportunity can be taken; both close at the end of round ${world.field?.deadline}.`.trim();}
+    default:{const works=fortificationHint(world,o);if(works)return works;const opp=world.field?.opportunities?.[o.kind];return `${opp?.description??''} Only one opportunity can be taken; both close at the end of round ${world.field?.deadline}.`.trim();}
   }
 }
 // The current round (1-based) and whether an opportunity can still be taken.
@@ -51,13 +52,14 @@ const roundOf=world=>Math.floor(world.tick/R)+1;
 export function fieldProblem(world,o){
   if(!o?.field)return null;
   if(!fieldVerb(o))return 'ALREADY_DONE';
+  if(fortifiedGate(o)&&o.state==='open'&&gateOccupied(world,o))return 'GATE_OCCUPIED';
   if(OPPORTUNITIES.has(o.kind)&&(world.field?.outcome!=='pending'||roundOf(world)>world.field.deadline))return 'OPPORTUNITY_CLOSED';
   return null;
 }
 
 // --- Terrain: a shut gate is a wall line across its opening; a repaired bridge a ford strip ----------
 function setCells(world,o,type){
-  const t=world.map.terrain;for(const [x,y]of o.cells)t[y][x]=type;invalidateGrid(world.map);world.map.rev=(world.map.rev??0)+1;
+  changeStructureCells(world,o.cells,type);
 }
 export function openGate(world,o,by=null){
   if(o.kind!=='gate'||o.state!=='closed')return false;o.state='open';o.done=true;setCells(world,o,o.under);
@@ -103,7 +105,8 @@ export function useFieldObject(world,actor,o){
   if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});return false;}
   o.by=actor.id;o.at=world.tick;
   switch(o.kind){
-    case 'gate':openGate(world,o,actor.id);break;
+    case 'gate':if(o.state==='open')closeFortifiedGate(world,o,actor.id);else openGate(world,o,actor.id);break;
+    case 'breach':case 'countermine':case 'siege-engine':workFortification(world,actor,o);break;
     case 'bridge':repairBridge(world,o,actor.id);break;
     case 'barricade':o.state='dismantled';o.done=true;emit(world,{kind:'field',objectId:o.id,what:'barricade-dismantled',actorId:actor.id});break;
     case 'brazier':
@@ -124,6 +127,7 @@ export function useFieldObject(world,actor,o){
 // --- The round's end: the fire burns those near it and burns down; the opportunities close --------
 export function fieldRound(world){
   if(!world.field)return;
+  fortificationRound(world);
   for(const o of objectsOf(world,'brazier')){
     if(o.state!=='burning')continue;
     for(const q of squadsOf(world))if(fielded(world,q)&&membersOf(world,q).some(m=>span(m.x-o.x,m.z-o.z)<=FIRE_RADIUS))scorchSquad(world,q,FIRE_DAMAGE,o);

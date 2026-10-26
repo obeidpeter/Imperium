@@ -1,0 +1,488 @@
+{
+  "buildRevision": "70b2900b2b61",
+  "browser": "151.0.7922.34",
+  "passed": true,
+  "scope": "full twelve-chapter acceptance",
+  "physicalDeviceTest": false,
+  "softwareRendering": true,
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "checks": [
+    {
+      "name": "Chapter 1: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 12,
+      "uniqueAssets": 3,
+      "assets": [
+        "assets/models/world/legionary-cookstation.glb",
+        "assets/models/world/equipment-rack.glb",
+        "assets/models/scenery/danube-military-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 1: direct services, panel Back and peaceful controls protect the save",
+      "pass": true
+    },
+    {
+      "name": "Chapter 1: narrow viewport retains a useful unobstructed scene",
+      "pass": true,
+      "width": 390,
+      "documentWidth": 390,
+      "canvasHeight": 453.75,
+      "overlap": []
+    },
+    {
+      "name": "Chapter 2: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 14,
+      "uniqueAssets": 5,
+      "assets": [
+        "assets/models/world/casualty-litter.glb",
+        "assets/models/world/broken-baggage-cart.glb",
+        "assets/models/world/mooring-ropes.glb",
+        "assets/models/chapters/05/ch5-household-bundles.glb",
+        "assets/models/scenery/river-wetlands-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 3: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 12,
+      "uniqueAssets": 3,
+      "assets": [
+        "assets/models/world/legionary-cookstation.glb",
+        "assets/models/world/courier-table.glb",
+        "assets/models/scenery/danube-military-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 4: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 13,
+      "uniqueAssets": 4,
+      "assets": [
+        "assets/models/world/equipment-rack.glb",
+        "assets/models/world/signal-brazier.glb",
+        "assets/models/chapters/05/ch5-spoil-baskets.glb",
+        "assets/models/scenery/danube-military-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 5: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 38,
+      "uniqueAssets": 10,
+      "assets": [
+        "assets/models/chapters/05/ch5-leather-tent.glb",
+        "assets/models/chapters/05/ch5-spoil-baskets.glb",
+        "assets/models/chapters/05/ch5-storage-jars.glb",
+        "assets/models/chapters/05/ch5-gallery-timbers.glb",
+        "assets/models/chapters/05/ch5-mudbrick-stack.glb",
+        "assets/models/chapters/05/ch5-cistern.glb",
+        "assets/models/chapters/05/ch5-siege-hoist.glb",
+        "assets/models/chapters/05/ch5-damaged-masonry.glb",
+        "assets/models/chapters/05/ch5-household-bundles.glb",
+        "assets/models/scenery/ch5-fortress-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 6: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 17,
+      "uniqueAssets": 8,
+      "assets": [
+        "assets/models/world/casualty-litter.glb",
+        "assets/models/world/broken-baggage-cart.glb",
+        "assets/models/world/eagle-rally-stand.glb",
+        "assets/models/world/signal-brazier.glb",
+        "assets/models/chapters/05/ch5-leather-tent.glb",
+        "assets/models/chapters/05/ch5-storage-jars.glb",
+        "assets/models/chapters/05/ch5-cistern.glb",
+        "assets/models/scenery/italian-marching-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 7: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 14,
+      "uniqueAssets": 5,
+      "assets": [
+        "assets/models/world/legionary-cookstation.glb",
+        "assets/models/world/equipment-rack.glb",
+        "assets/models/world/courier-table.glb",
+        "assets/models/world/command-table.glb",
+        "assets/models/scenery/italian-marching-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 8: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 14,
+      "uniqueAssets": 5,
+      "assets": [
+        "assets/models/world/casualty-litter.glb",
+        "assets/models/world/river-ferry.glb",
+        "assets/models/world/mooring-ropes.glb",
+        "assets/models/chapters/05/ch5-household-bundles.glb",
+        "assets/models/scenery/river-wetlands-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 8: direct services, panel Back and peaceful controls protect the save",
+      "pass": true
+    },
+    {
+      "name": "Chapter 8: narrow viewport retains a useful unobstructed scene",
+      "pass": true,
+      "width": 390,
+      "documentWidth": 390,
+      "canvasHeight": 453.75,
+      "overlap": []
+    },
+    {
+      "name": "Chapter 9: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 17,
+      "uniqueAssets": 7,
+      "assets": [
+        "assets/models/world/caravan-trough.glb",
+        "assets/models/world/caravan-baggage.glb",
+        "assets/models/chapters/05/ch5-storage-jars.glb",
+        "assets/models/chapters/05/ch5-spoil-baskets.glb",
+        "assets/models/chapters/05/ch5-mudbrick-stack.glb",
+        "assets/models/scenery/ch5-fortress-kit.glb",
+        "assets/models/scenery/roman-monumental-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 10: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 15,
+      "uniqueAssets": 4,
+      "assets": [
+        "assets/models/world/grain-bins.glb",
+        "assets/models/world/relief-cart.glb",
+        "assets/models/chapters/05/ch5-storage-jars.glb",
+        "assets/models/scenery/provincial-civic-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 11: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 13,
+      "uniqueAssets": 4,
+      "assets": [
+        "assets/models/world/courier-table.glb",
+        "assets/models/world/archive-cabinet.glb",
+        "assets/models/world/civic-fountain.glb",
+        "assets/models/scenery/roman-monumental-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 12: every regional asset loads, all three cameras work and previous scenery retires",
+      "pass": true,
+      "placements": 13,
+      "uniqueAssets": 4,
+      "assets": [
+        "assets/models/world/eagle-rally-stand.glb",
+        "assets/models/world/command-table.glb",
+        "assets/models/world/civic-fountain.glb",
+        "assets/models/scenery/roman-monumental-kit.glb"
+      ]
+    },
+    {
+      "name": "Chapter 12: direct services, panel Back and peaceful controls protect the save",
+      "pass": true
+    },
+    {
+      "name": "Chapter 12: narrow viewport retains a useful unobstructed scene",
+      "pass": true,
+      "width": 390,
+      "documentWidth": 390,
+      "canvasHeight": 453.75,
+      "overlap": []
+    },
+    {
+      "name": "Performance quality releases every generated scenery master while retaining the playable camp",
+      "pass": true
+    },
+    {
+      "name": "Returning across all regions restores Chapter I without accumulating scenery masters",
+      "pass": true
+    },
+    {
+      "name": "With every model request unavailable, the procedural camp still renders, moves and opens its direct services",
+      "pass": true,
+      "failedRequests": 9,
+      "cache": {
+        "entries": 0,
+        "loaded": 0,
+        "loading": 0,
+        "leases": 0,
+        "idle": 0
+      }
+    }
+  ],
+  "cameraRecords": 38,
+  "mainCameraRecords": 36,
+  "allCamerasSettled": true,
+  "minimumFreshFrames": 2,
+  "screenshots": 18,
+  "residency": [
+    {
+      "chapter": 1,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 3,
+      "cache": {
+        "entries": 3,
+        "loaded": 3,
+        "loading": 0,
+        "leases": 3,
+        "idle": 0
+      },
+      "textures": 77,
+      "geometries": 184
+    },
+    {
+      "chapter": 2,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 5,
+      "cache": {
+        "entries": 5,
+        "loaded": 5,
+        "loading": 0,
+        "leases": 5,
+        "idle": 0
+      },
+      "textures": 85,
+      "geometries": 191
+    },
+    {
+      "chapter": 3,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 3,
+      "cache": {
+        "entries": 3,
+        "loaded": 3,
+        "loading": 0,
+        "leases": 3,
+        "idle": 0
+      },
+      "textures": 79,
+      "geometries": 204
+    },
+    {
+      "chapter": 4,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 4,
+      "cache": {
+        "entries": 4,
+        "loaded": 4,
+        "loading": 0,
+        "leases": 4,
+        "idle": 0
+      },
+      "textures": 93,
+      "geometries": 176
+    },
+    {
+      "chapter": 5,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 10,
+      "cache": {
+        "entries": 10,
+        "loaded": 10,
+        "loading": 0,
+        "leases": 10,
+        "idle": 0
+      },
+      "textures": 112,
+      "geometries": 185
+    },
+    {
+      "chapter": 6,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 8,
+      "cache": {
+        "entries": 8,
+        "loaded": 8,
+        "loading": 0,
+        "leases": 8,
+        "idle": 0
+      },
+      "textures": 103,
+      "geometries": 178
+    },
+    {
+      "chapter": 7,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 5,
+      "cache": {
+        "entries": 5,
+        "loaded": 5,
+        "loading": 0,
+        "leases": 5,
+        "idle": 0
+      },
+      "textures": 94,
+      "geometries": 173
+    },
+    {
+      "chapter": 8,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 5,
+      "cache": {
+        "entries": 5,
+        "loaded": 5,
+        "loading": 0,
+        "leases": 5,
+        "idle": 0
+      },
+      "textures": 96,
+      "geometries": 175
+    },
+    {
+      "chapter": 9,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 7,
+      "cache": {
+        "entries": 7,
+        "loaded": 7,
+        "loading": 0,
+        "leases": 7,
+        "idle": 0
+      },
+      "textures": 101,
+      "geometries": 174
+    },
+    {
+      "chapter": 10,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 4,
+      "cache": {
+        "entries": 4,
+        "loaded": 4,
+        "loading": 0,
+        "leases": 4,
+        "idle": 0
+      },
+      "textures": 91,
+      "geometries": 179
+    },
+    {
+      "chapter": 11,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 4,
+      "cache": {
+        "entries": 4,
+        "loaded": 4,
+        "loading": 0,
+        "leases": 4,
+        "idle": 0
+      },
+      "textures": 91,
+      "geometries": 164
+    },
+    {
+      "chapter": 12,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 4,
+      "cache": {
+        "entries": 4,
+        "loaded": 4,
+        "loading": 0,
+        "leases": 4,
+        "idle": 0
+      },
+      "textures": 93,
+      "geometries": 166
+    },
+    {
+      "chapter": 12,
+      "quality": "performance",
+      "unavailable": false,
+      "expectedUniqueAssets": 0,
+      "cache": {
+        "entries": 0,
+        "loaded": 0,
+        "loading": 0,
+        "leases": 0,
+        "idle": 0
+      },
+      "textures": 74,
+      "geometries": 159
+    },
+    {
+      "chapter": 12,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 4,
+      "cache": {
+        "entries": 4,
+        "loaded": 4,
+        "loading": 0,
+        "leases": 4,
+        "idle": 0
+      },
+      "textures": 93,
+      "geometries": 180
+    },
+    {
+      "chapter": 1,
+      "quality": "balanced",
+      "unavailable": false,
+      "expectedUniqueAssets": 3,
+      "cache": {
+        "entries": 3,
+        "loaded": 3,
+        "loading": 0,
+        "leases": 3,
+        "idle": 0
+      },
+      "textures": 77,
+      "geometries": 184
+    },
+    {
+      "chapter": 1,
+      "quality": "balanced",
+      "unavailable": true,
+      "expectedUniqueAssets": 0,
+      "cache": {
+        "entries": 0,
+        "loaded": 0,
+        "loading": 0,
+        "leases": 0,
+        "idle": 0
+      },
+      "textures": 60,
+      "geometries": 246
+    }
+  ],
+  "unexpectedErrors": 0,
+  "deliberatelyFailedModelResponses": 9,
+  "sourceReportSha256": "2b6a4c6c8dcaa873e2bcb474c38eb8ae28f484bb8bf063c3e74c12126c588997"
+}

@@ -9,6 +9,7 @@ import {createSceneLighting} from '../src/showcase/scene-lighting.js';
 import {ACTOR_CASES,ACTOR_MOTIONS,actorCase,actorResources,sampleSummary,characterReviewStep} from './actor-model-cases.js';
 
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),errors=[];
+const condition=key=>params.has(key)&&Number.isFinite(Number(params.get(key)))?Math.max(0,Math.min(1,Number(params.get(key)))):1,health=condition('health'),morale=condition('morale');
 let renderer,scene,camera,actor=null,lighting=null,lightGroup=null,floor=null,selection=actorCase(params.get('actor')),generation=0,disposed=false,raf=0,previous=0,elapsed=0,playUntil=0,sampling=null,resetPose=true,resourceStats=null;
 let disposedActors=0,createdActors=0,loadMs=0,profile=null,frameCosts=[],frameIntervals=[],sampleResult=null,sampleTimer=0;
 let sequencePlaying=false;
@@ -23,7 +24,7 @@ const dpr=Math.max(.5,Math.min(2,Number(params.get('dpr'))||devicePixelRatio||1)
 const neutral={sky:'#c2c8c9',fog:'#c2c8c9',sun:'#fff2de',ambient:'#e3eaf2',ambientGround:'#a6a49c',sunPosition:[-3,5,4],sunIntensity:2.2,ambientIntensity:1.6,exposure:1.1};
 const timeout=(promise,ms)=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(`Asset readiness exceeded ${ms/1000} seconds; reload to retry.`)),ms);promise.then(value=>{clearTimeout(timer);resolve(value);},cause=>{clearTimeout(timer);reject(cause);});});
 
-function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,detail:$('detail').value,phase:Number($('phase').value),yaw:Number($('yaw').value),gaze:Number($('gaze')?.value||0),pixelRatio:dpr,closedEyelids:$('blink').checked,wireframe:$('wireframe').checked};}
+function configuration(){return {actor:selection.id,lighting:$('lighting').value,view:$('view').value,motion:$('motion').value,quality:$('quality').value,detail:$('detail').value,phase:Number($('phase').value),yaw:Number($('yaw').value),gaze:Number($('gaze')?.value||0),health,morale,pixelRatio:dpr,closedEyelids:$('blink').checked,wireframe:$('wireframe').checked};}
 const selectedIdentity=()=>actorIdentity(selection.unit,actorKit(selection.unit,selection.options));
 function syncUrl(){const query=new URLSearchParams();for(const [key,value]of Object.entries(configuration()))query.set(key==='pixelRatio'?'dpr':key,value);history.replaceState(null,'',`${location.pathname}?${query}`);}
 function report(){
@@ -70,7 +71,7 @@ function draw(ms){
     const step=sequencePlaying?characterReviewStep(elapsed):{motion:$('motion').value,phase:Number($('phase').value)},phase=step.phase,started=performance.now();resize();
     if(sequencePlaying){$('motion').value=step.motion;$('phase').value=phase;}
     actor.group.traverse(object=>{for(const material of Array.isArray(object.material)?object.material:[object.material])if(material?.isMeshStandardMaterial)material.wireframe=$('wireframe').checked;});
-    actor.update({motion:step.motion,time:$('blink').checked?4.58-(actorKit(selection.unit,selection.options).identity%13)*.13:elapsed,phase,movementProgress:['walk','run'].includes(step.motion)?phase:undefined,direction:Number($('yaw').value)*Math.PI/180,gazeYaw:Number($('gaze')?.value||0)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:$('detail').value==='overview'?40:2,active:false});resetPose=false;
+    actor.update({motion:step.motion,health,morale,time:$('blink').checked?4.58-(actorKit(selection.unit,selection.options).identity%13)*.13:elapsed,phase,movementProgress:['walk','run'].includes(step.motion)?phase:undefined,direction:Number($('yaw').value)*Math.PI/180,gazeYaw:Number($('gaze')?.value||0)*Math.PI/180,dt:moving?delta:0,resetPose,groundHeight:()=>0,detailDistance:$('detail').value==='overview'?40:2,active:false});resetPose=false;
     frameCamera();renderer.render(scene,camera);const cost=performance.now()-started;
     $('phase-label').textContent=`${Math.round(phase*100)}%`;$('yaw-label').textContent=`${$('yaw').value}°`;if($('gaze-label'))$('gaze-label').textContent=`${$('gaze').value}°`;$('caption').textContent=`${selection.label} · ${$('lighting').selectedOptions[0].textContent} · ${$('motion').value} ${Math.round(phase*100)}%`;
     if(sampling&&sampling.warmup--<=0){frameCosts.push(cost);if(interval!==null)frameIntervals.push(interval);if(frameCosts.length>=120){sampling=null;clearTimeout(sampleTimer);playUntil=0;sampleResult={completed:true,frames:120};$('sample').disabled=false;$('play').textContent='Play 12 seconds';$('status').textContent='Completed 120 actual render samples. See scope and timings below.';resourceStats=actorResources(actor.group);report();}}

@@ -42,8 +42,9 @@ export function actorBodyId(kit={}){
   // centurion's and the commander's; a bowman of his company the archer's. The
   // game still draws his shield, weapons and cloak, and his helmet or cap over
   // the recruit's bare head (an armoured body wears its own helmet). The body
-  // brings its own hair, face and tunic: the chosen ones show on the procedural
-  // figure only, where no body loads.
+  // brings its own tunic. The renderer now retains the generated recruit head
+  // across the hero's ranks, with named identity sculpting, stubble and ageing;
+  // full haircut/tunic customization still belongs to the procedural fallback.
   if(kit.equipped){
     if(kit.faction!=='Roman')return null;
     if(kit.archer&&!kit.hero)return 'roman-archer';

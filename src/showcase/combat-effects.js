@@ -1,5 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createArrowGeometry,remainsHash} from './battle-remains.js';
+import {createParticleMaterial,installParticleAttributes} from './stage-particles.js';
 
 // Weight in combat, drawn from the timeline the stage already plays: a fading
 // ribbon behind each swung blade (or, for painted figures, a brushed arc where
@@ -55,8 +56,8 @@ export function createCombatEffects(scene,{particleMask=null,quality='balanced'}
   const matrix=new T.Matrix4(),quaternion=new T.Quaternion(),scale=new T.Vector3(),UP=new T.Vector3(0,1,0);
   // Dust: a ring of soft particles that rise, spread and fade.
   const dustPositions=new Float32Array(DUST_LIMIT*3),dustColors=new Float32Array(DUST_LIMIT*4),dust=[];let dustNext=0,dustEmitted=0;
-  const dustGeometry=new T.BufferGeometry();dustGeometry.setAttribute('position',new T.BufferAttribute(dustPositions,3).setUsage(T.DynamicDrawUsage));dustGeometry.setAttribute('color',new T.BufferAttribute(dustColors,4).setUsage(T.DynamicDrawUsage));owned.push(dustGeometry);
-  const dustMaterial=new T.PointsMaterial({name:'thrown dust',map:particleMask,size:quality==='performance'?.95:1.25,sizeAttenuation:true,vertexColors:true,transparent:true,depthWrite:false,alphaTest:.01});owned.push(dustMaterial);
+  const dustGeometry=new T.BufferGeometry();dustGeometry.setAttribute('position',new T.BufferAttribute(dustPositions,3).setUsage(T.DynamicDrawUsage));dustGeometry.setAttribute('color',new T.BufferAttribute(dustColors,4).setUsage(T.DynamicDrawUsage));installParticleAttributes(dustGeometry);owned.push(dustGeometry);
+  const dustMaterial=createParticleMaterial(particleMask,{name:'thrown dust',size:quality==='performance'?.95:1.25,alphaTest:.01});owned.push(dustMaterial);
   const dustPoints=new T.Points(dustGeometry,dustMaterial);dustPoints.name='thrown dust';dustPoints.frustumCulled=false;dustPoints.raycast=()=>{};group.add(dustPoints);
   for(let i=0;i<DUST_LIMIT;i++)dust.push({born:-Infinity,x:0,y:0,z:0,dx:0,dz:0});
   return {group,

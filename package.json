@@ -17,6 +17,8 @@
     "smoke": "node scripts/browser-smoke.mjs",
     "smoke:polish": "node scripts/realtime-polish-smoke.mjs",
     "smoke:usability": "node scripts/usability-smoke.mjs",
+    "smoke:immersive": "node scripts/immersive-interface-smoke.mjs",
+    "smoke:siege": "node scripts/campaign-world-smoke.mjs",
     "smoke:ch5-pilot": "node scripts/ch5-pilot-smoke.mjs",
     "smoke:world": "node scripts/regional-world-smoke.mjs",
     "autoplay:command": "node scripts/command-autoplay.mjs",

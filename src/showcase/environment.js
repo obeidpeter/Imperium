@@ -17,6 +17,8 @@ import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacem
 import {groundArchitecturalFoundations} from './environment-foundations.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
+import {regionalTreePlacements,sampleWorldWind,waterCurrentDirection} from './world-weather.js';
+import {createParticleMask,createFlamePlume,sampleFlamePlume} from './stage-particles.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {bakeEnvironmentOcclusion,installBakedOcclusion} from './environment-baked-occlusion.js';
 import {buildTerrainSplat} from './terrain-splat.js';
@@ -38,23 +40,24 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
   const library=createEnvironmentMaterials({loadTextures,profile,quality}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=chapterFivePilotHeight(createGroundHeight(encounter,tileSize,{profile}),encounter,tileSize);
+  const current=waterCurrentDirection(encounter);library.waterCurrent.value.set(current.x,current.z);
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
   const e={id:encounter.id,kind:encounter.kind,width:encounter.width,height:encounter.height,terrain:terrainSnapshot,
     ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{})};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
-  const wind={value:0};
+  const wind={value:0},windDirection={value:new THREE.Vector2()};
   if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves,m.foliage]){
     const previousCompile=material.onBeforeCompile,previousKey=material.customProgramCacheKey();
-    material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.vertexShader='uniform float environmentWind;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+    material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.uniforms.environmentWindDirection=windDirection;shader.vertexShader='uniform float environmentWind; uniform vec2 environmentWindDirection;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
         float phase = environmentWind * 1.15 + instanceMatrix[3].x * 0.37 + instanceMatrix[3].z * 0.23;
         float flutter = sin(phase * 2.6 + position.x * 5.4) * 0.014 * clamp(position.y, 0.0, 1.5);
-        transformed.x += sin(phase) * position.y * position.y * 0.09 + flutter;
-        transformed.z += cos(phase * 0.79) * position.y * 0.035 - flutter * 0.5;
+        transformed.xz += environmentWindDirection * (sin(phase) * position.y * position.y * 0.14 + flutter);
+        transformed.z += cos(phase * 0.79) * position.y * 0.018;
       #endif`);};
-    material.customProgramCacheKey=()=>`${previousKey}:frontier-foliage-wind-v2`;
+    material.customProgramCacheKey=()=>`${previousKey}:regional-foliage-wind-v3`;
   }
   const roads=roadSegments(e,tileSize),roadSurface=createRoadSurfaceSampler(roads,tileSize),roadDistance=roadSurface.distance;
   yield;
@@ -134,7 +137,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(const yy of [3.5,4.15])branch([fortX,yy,gateZ-gateWidth/2-.5],[fortX,yy,gateZ+gateWidth/2+.5],.21,'gate lintels',m.darkWood);
   for(let i=0;i<12;i++)instance('gate walkway',p.box,m.wood,[fortX-.15,3.56,gateZ+(i-5.5)*.43],[1.9,.12,.41]);
   const standard=p.banner(root,fortX+.35,height(fortX+.35,gateZ+4),gateZ+4);
-  if(!perf)standard.traverse(o=>{if(!o.userData.windCloth)return;const a=o.geometry.attributes.position,base=Float32Array.from(a.array);animated.push(t=>{for(let i=0;i<a.count;i++){const weight=(.9-base[i*3+1])/1.8;a.setZ(i,base[i*3+2]+Math.sin(t*1.7+base[i*3]*3.5+weight*2)*.07*weight);}a.needsUpdate=true;o.geometry.computeVertexNormals();});});
+  if(!perf)standard.traverse(o=>{if(!o.userData.windCloth)return;const a=o.geometry.attributes.position,base=Float32Array.from(a.array);animated.push(t=>{const breeze=sampleWorldWind(t,profile);for(let i=0;i<a.count;i++){const weight=(.9-base[i*3+1])/1.8,flutter=Math.sin(t*1.7+base[i*3]*3.5+weight*2)*.10*weight;a.setXYZ(i,base[i*3]+flutter*breeze.x,base[i*3+1],base[i*3+2]+flutter*breeze.z);}a.needsUpdate=true;o.geometry.computeVertexNormals();});});
   for(const [x,z,s,r]of [[fortX-6,gateZ-7,1.1,.1],[fortX-7,gateZ+5,1.05,-.13],[fortX-13,gateZ+9,.8,.04]]){p.tent(root,x,height(x,z),z,s,r);p.crate(root,x+3,height(x+3,z+1),z+1,.8);p.amphora(root,x+2.7,height(x+2.7,z+2.2),z+2.2,.9);}
   for(let i=0;i<5;i++){const x=fortX-2.3-hash(i,3)*2,z=gateZ+7+hash(i,5)*3;p.amphora(root,x,height(x,z),z,.75+hash(i,7)*.3);}
   const yardProps=[];
@@ -166,12 +169,9 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const leafGeometry=p.geo(new THREE.BufferGeometry()),leafVertices=[],leafIndices=[];
   for(let row=0;row<=5;row++)for(let col=0;col<3;col++){const t=row/5,s=col-1,w=Math.sin(Math.PI*t)*.105;leafVertices.push(s*w,t*.31,.035*t*t+.028*(1-s*s)*Math.sin(Math.PI*t));if(row<5&&col<2){const a=row*3+col;leafIndices.push(a,a+1,a+3,a+1,a+4,a+3);}}
   leafGeometry.setAttribute('position',new THREE.Float32BufferAttribute(leafVertices,3));leafGeometry.setIndex(leafIndices);leafGeometry.computeVertexNormals();
-  const trees=profile.civic||['arid','reeds'].includes(profile.vegetation)?[]:[[-8,-15,7],[-15,-19,8],[9,-17,7],[17,-12,8],[19,14,7],[-15,15,7],[-6,18,6],[28,-18,9],[-30,-17,9],[33,9,8]];
-  for(let t=0;t<trees.length;t++){
-    const [x,z,h]=trees[t];
-    if(isPlayable(x,z,e,tileSize,1.5)||precinctRoute(x,z)>.10||root.userData.inhabitedSetpieces.some(b=>x>b.min[0]-2&&x<b.max[0]+2&&z>b.min[2]-2&&z<b.max[2]+2))continue;
-    vegetation.tree('oak',x,z,h,t);
-  }
+  const trees=regionalTreePlacements({encounter:e,chapter:profile.chapter,tileSize,quality,civic:profile.civic,route:precinctRoute,height,occupied:root.userData.inhabitedSetpieces??[]});
+  for(const t of trees)vegetation.tree(t.kind,t.x,t.z,t.height,t.seed);
+  root.userData.regionalTrees=trees;
   // Grasses use crossed, tapered geometry with varying height, not a flat
   // green carpet. Board tufts are shorter and sparser than the framing meadow.
   const blade=p.geo(new THREE.BufferGeometry()),bladeVertices=[],bladeIndices=[];
@@ -219,9 +219,9 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // Its waves move in the water's vertex shader (finishEnvironmentMaterial, waves).
   river=p.mesh(root,riverGeometry,m.water,0,-1.24,riverZ);river.name='Danube';river.castShadow=false;river.receiveShadow=true;
   }
-  const flames=[];
+  const flames=[];let fireMask=null;
   function fire(x,z,scale=1){const y=height(x,z),g=p.group(root,x,y,z);for(let i=0;i<5;i++){const a=i*1.256;p.beam(g,[Math.cos(a)*.47,.09,Math.sin(a)*.47],[-Math.cos(a)*.25,.18,-Math.sin(a)*.25],.065,m.charcoal);}
-    for(let k=0;k<3;k++){const mat=ownMaterial(new THREE.MeshBasicMaterial({color:[0xf3a143,0xf5c777,0xbc502c][k],transparent:true,opacity:[.67,.6,.3][k],depthWrite:false,blending:THREE.AdditiveBlending}));const flame=p.mesh(g,p.sphere,mat,(k-1)*.11,.38,0,.12,.5,.12);flame.castShadow=false;flame.receiveShadow=false;flames.push({mesh:flame,seed:k+x,base:.40,scale});}
+    fireMask??=createParticleMask();const plume=createFlamePlume(fireMask);plume.scale.setScalar(scale);plume.position.y=.17;g.add(plume);geometries.add(plume.geometry);ownMaterial(plume.material);flames.push({mesh:plume,seed:x});
     if(!perf){const light=new THREE.PointLight(0xe99b53,1.6*scale,6,2);light.position.set(0,.9,0);g.add(light);animated.push(t=>light.intensity=scale*(1.4+Math.sin(t*7+x)*.17+Math.sin(t*11)*.12));}
   }
   if(!training&&!regional&&profile.architecture==='fort'){fire(fortX-4,gateZ+2.2,.8);fire(cartX,cartZ,1.2);}
@@ -248,8 +248,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600;wind.value=bounded;if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames){f.mesh.scale.y=f.base*f.scale*(1+.13*Math.sin(bounded*7+f.seed));f.mesh.position.x=Math.sin(bounded*2.1+f.seed)*.045;}},
-    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
+    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600,currentWind=sampleWorldWind(bounded,profile);wind.value=bounded;windDirection.value.set(currentWind.x,currentWind.z);if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames)sampleFlamePlume(f.mesh,bounded+f.seed,{chapter:profile.chapter,weather:profile.weather});},
+    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();fireMask?.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
     stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,disposed};}
   };
 }
