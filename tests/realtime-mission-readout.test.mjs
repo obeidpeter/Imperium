@@ -87,6 +87,17 @@ test('optional deadline gets one event key before it closes, while protected-all
   assert.match(missionReadout(w).warningKey,/^protected-/);
 });
 
+test('active siege works preserve the separate supply and signal opportunity and its deadline',()=>{
+  const w=field(5),before=JSON.stringify(w),readout=missionReadout(w).opportunity;
+  assert.match(readout,/Siege works:/);assert.match(readout,/engineer support/);
+  for(const o of w.objects.filter(o=>['stores','signal'].includes(o.kind)&&o.state==='available'))assert.ok(readout.includes(o.name));
+  assert.match(readout,/Optional:.*left/);assert.equal(JSON.stringify(w),before);
+  w.tick=w.field.deadline*TIME.roundTicks;
+  const expired=missionReadout(w).opportunity;assert.match(expired,/Siege works:/);assert.match(expired,/Optional opportunities closed/);
+  for(const o of w.objects.filter(o=>['countermine','siege-engine'].includes(o.kind)))o.done=true;
+  assert.doesNotMatch(missionReadout(w).opportunity,/Siege works:/);
+});
+
 test('orders distinguish queued commands, delivery time and a recorded order',()=>{
   const w=field(5),s=w.squads.find(s=>s.side!=='enemy');
   w.queue.push({kind:'order',payload:{squads:[s.id],order:{kind:'line'}}});

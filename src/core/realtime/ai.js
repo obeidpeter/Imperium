@@ -4,7 +4,7 @@ import {derivedValues} from './combat.js';
 import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalkable,cellCentre} from './navigation.js';
 import {helpless,setRoute} from './motion.js';
 import {nextRandom} from './rng-streams.js';
-import {smokeBetween} from './sight.js';
+import {smokeBetween,terrainCover} from './sight.js';
 import {flee,fleeing} from './bands.js';
 import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 
@@ -34,7 +34,7 @@ export function noticeRate(world,watcher,target){
   let visibility=1;
   if(world.timeOfDay==='night')visibility*=PERCEPTION.darkness;
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
-  if(crossesCover(grid,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
+  if(terrainCover(world,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
   if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
   // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
   return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);

@@ -106,7 +106,7 @@ test('a soldier in his own kit wears the body closest to it: the recruit\'s tuni
   assert.equal(hero(['tunic','bracae','caligae','bow','quiver'],4),'roman-recruit','The protagonist with a bow is still himself');
 });
 
-test('the recruit\'s body wears the soldier\'s own helmet or cap, fitted over its hair; armoured bodies wear their own', async () => {
+test('persistent identities keep a fitted helmet over the shared head; anonymous bodies retain their baked headwear', async () => {
   const hero=equipment=>({id:'hero',name:'Aurelius',side:'player',role:'infantry',trained:true,equipment});
   const pieces=g=>{const found={};g.traverse(o=>{if(o.isBone&&/-helmet$|arming-cap$/.test(o.name))found[o.name]=o;});return found;};
   // Vertices the figure draws on a joint: its own procedural surfaces, not the body's.
@@ -132,11 +132,63 @@ test('the recruit\'s body wears the soldier\'s own helmet or cap, fitted over it
     assert.ok(above>90,`${level}: the bowl covers the crown (${above} vertices)`);
   }
   bowl.dispose();
-  // An armoured body and the bowman's bring their own helmets: the figure's helmet and the cap under it go.
+  // The protagonist and named cast retain their fitted, equipped headwear at
+  // every rank; anonymous bodies still bring their baked head and helmet.
   for(const [unit,id,joint]of [[hero(['tunic','hamata','galea','bracae','caligae','spatha','scutum']),'roman-legionary','ridge-helmet'],
     [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'roman-archer','equipped-arming-cap']]){
     const a=createActor(unit,{chapter:2,bodyLibrary:library});assert.equal(await a.ready,true);assert.equal(a.group.userData.actor.body,id);
-    const piece=pieces(a.group)[joint];assert.ok(!piece||drawn(a.group,piece)===0,`${id} wears its own, not the figure's ${joint}`);a.dispose();
+    const piece=pieces(a.group)[joint];assert.ok(piece&&drawn(a.group,piece)>50,`${id} keeps the equipped ${joint} over the persistent head`);assert.equal(a.group.userData.actor.headSource,'roman-recruit');a.dispose();
+  }
+});
+
+test('the actual generated hero head and texture survive rank changes, and expressions move those visible vertices',async()=>{
+  const snapshots=[];
+  for(const [chapter,rank,role='infantry']of [[1,'Tiro'],[3,'Miles'],[5,'Centurio'],[8,'Praepositus'],[11,'Senator','speaker']]){
+    const unit=Object.freeze({id:'hero',name:'Marcellus',side:'player',role}),a=createActor(unit,{chapter,rank,bodyLibrary:library});await a.ready;
+    const near=a.group.getObjectByName('identity-head-near'),far=a.group.getObjectByName('identity-head-overview');assert.ok(near?.isSkinnedMesh&&far?.isSkinnedMesh);
+    if(role==='speaker'){
+      const neck=a.group.getObjectByName('identity-neck-near');assert.ok(neck?.isSkinnedMesh,'The civic neck uses the same donor skin and joint weights');
+      const p=neck.geometry.attributes.position;for(let i=0;i<p.count;i++)assert.ok(p.getX(i)>=-.12501&&p.getX(i)<=.09501,'Donor shirt shoulders never cover the toga');
+      const key=(p,i)=>[p.getX(i),p.getY(i),p.getZ(i)].map(n=>n.toFixed(5)).join(','),seam=new Map();
+      for(let i=0;i<p.count;i++)if(Math.abs(p.getY(i)-1.4)<1e-5)seam.set(key(p,i),i);
+      const h=near.geometry.attributes.position,pairs=[];for(let i=0;i<h.count;i++)if(Math.abs(h.getY(i)-1.4)<1e-5&&seam.has(key(h,i)))pairs.push([i,seam.get(key(h,i))]);
+      assert.ok(pairs.length>12,'The neck and face share a continuous seam');
+      for(const phase of [.2,.7]){a.update({motion:'speak',phase,time:2,resetPose:true});for(const [hi,ni]of pairs){const hp=new T.Vector3().fromBufferAttribute(h,hi),np=new T.Vector3().fromBufferAttribute(p,ni);near.applyBoneTransform(hi,hp);neck.applyBoneTransform(ni,np);assert.ok(hp.distanceTo(np)<.0001,'Speech keeps the joined neck closed');}}
+    }
+    assert.equal(near.material.map,library.body('roman-recruit').near.material.map,'The generated head keeps its original PBR albedo');
+    snapshots.push(Array.from(near.geometry.attributes.position.array,(n,i)=>n-(i%3===1?near.geometry.userData.identityOffsetY:0)));
+    const jaw=near.geometry.morphAttributes.position[0];assert.ok(Array.from(jaw.array).some(n=>Math.abs(n)>.001));
+    a.update({motion:'speak',phase:.4,time:2,resetPose:true});assert.ok(near.morphTargetInfluences[0]>0);assert.equal(near.morphTargetInfluences[0],far.morphTargetInfluences[0]);
+    a.update({motion:'idle',time:0,reducedMotion:true,resetPose:true});assert.deepEqual(near.morphTargetInfluences,[0,0,0,0]);
+    a.update({detailDistance:40});assert.ok(!near.visible&&far.visible);a.dispose();
+  }
+  for(const shape of snapshots.slice(1)){assert.equal(shape.length,snapshots[0].length);for(let i=0;i<shape.length;i++)assert.ok(Math.abs(shape[i]-snapshots[0][i])<1e-6,'Promotions preserve the same skull to Float32 translation precision');}
+});
+
+test('named generated heads have bounded distinct sculpting, normalized seam weights and owned resources',async()=>{
+  const signatures=[];
+  for(const name of ['Varro','Lucan','Sabinus']){
+    const a=createActor({id:name.toLowerCase(),name,role:name==='Varro'?'trainer':'infantry',side:'ally'},{chapter:3,bodyLibrary:library});await a.ready;
+    const head=a.group.getObjectByName('identity-head-near'),p=head.geometry.attributes.position,w=head.geometry.attributes.skinWeight;signatures.push(Array.from(p.array));
+    for(let i=0;i<p.count;i++){assert.ok([p.getX(i),p.getY(i),p.getZ(i)].every(Number.isFinite));assert.ok(p.getY(i)>=1.499,'Identity sculpt preserves the neck cut');assert.ok(Math.abs(w.getX(i)+w.getY(i)+w.getZ(i)+w.getW(i)-1)<.002);}
+    let disposed=0;head.geometry.addEventListener('dispose',()=>disposed++);head.material.addEventListener('dispose',()=>disposed++);a.dispose();assert.equal(disposed,2,'Identity resources are owned and released exactly once');
+  }
+  assert.notDeepEqual(signatures[0],signatures[1]);assert.notDeepEqual(signatures[1],signatures[2]);
+});
+
+test('generated trainer and officer necklines stay beneath the neckcloth through head turns',async()=>{
+  for(const [unit,options]of [[{id:'varro',name:'Varro',role:'trainer',side:'ally'},{chapter:1}],[{id:'hero',name:'Marcellus',role:'infantry',side:'player'},{chapter:5,rank:'Centurio'}]]){
+    const actor=createActor(unit,{...options,bodyLibrary:library});await actor.ready;
+    const body=actor.group.getObjectByName('generated-body'),torso=actor.group.getObjectByName('torso'),p=body.geometry.attributes.position;
+    const band=[];for(let i=0;i<p.count;i++)if(p.getY(i)>=1.461&&p.getY(i)<=1.495&&Math.abs(p.getX(i))<.18&&Math.abs(p.getZ(i))<.18)band.push(i);
+    assert.ok(band.length>100,'The regression samples the actual generated neckline');
+    for(const gazeYaw of [0,-.4,.4]){
+      actor.update({motion:'idle',time:0,phase:0,gazeYaw,resetPose:true});actor.group.updateMatrixWorld(true);const inverse=torso.matrixWorld.clone().invert();
+      for(const i of band){const point=new T.Vector3().fromBufferAttribute(p,i);body.applyBoneTransform(i,point);point.applyMatrix4(body.matrixWorld).applyMatrix4(inverse);
+        // Conservative interior of the fitted cloth, including its folds.
+        assert.ok(Math.hypot((point.x+.018)/.100,(point.z-.008)/.080)<=1.001,`${unit.id}: the generated neckline must not pierce the visible cloth at gaze ${gazeYaw}`);
+      }
+    }actor.dispose();
   }
 });
 
@@ -159,7 +211,7 @@ test('a body that fails to load, or arrives after disposal, leaves no trace; dis
   const failing=createActorBodyLibrary(async()=>{throw Error('offline');}),fallback=createActor(legionary,{chapter:3,bodyLibrary:failing});
   assert.equal(await fallback.ready,false);assert.equal(fallback.group.userData.actor.body,null);assert.ok(fallback.group.getObjectByName('near-connected-mail'),'The procedural figure stays');
   assert.match(failing.status('roman-legionary').error,/offline/);fallback.dispose();
-  let finish;const late=createActorBodyLibrary(()=>new Promise(done=>{finish=done;})),gone=createActor(legionary,{chapter:3,bodyLibrary:late}),scene=new T.Group();
+  let finish;const late=createActorBodyLibrary(id=>id==='roman-recruit'?parse(id):new Promise(done=>{finish=done;})),gone=createActor(legionary,{chapter:3,bodyLibrary:late}),scene=new T.Group();
   scene.add(gone.group);gone.dispose();finish(await parse('roman-legionary'));assert.equal(await gone.ready,false);
   assert.equal(scene.children.length,0,'A disposed figure is not put back');assert.equal(gone.group.userData.actor.body,null,'nor rebuilt in the late body');
   await library.warm('roman-legionary');const master=library.body('roman-legionary');let freed=0;master.near.geometry.addEventListener('dispose',()=>freed++);master.near.material.addEventListener('dispose',()=>freed++);
@@ -176,6 +228,22 @@ test('followers march in the generated overview and fallen bodies keep its colou
   const fallen=a.bakeFallen(),colours=fallen.attributes.color,tones=new Set();for(let i=0;i<colours.count;i+=53)tones.add(colours.getX(i).toFixed(2));
   assert.ok(tones.size>5,'The baked fallen body keeps the overview\'s colours');
   crowd.dispose();fallen.dispose();a.dispose();
+});
+
+test('generated follower bodies share the named-head shader with neutral isolated uniforms and unchanged geometry',async()=>{
+  const actor=createActor(legionary,{chapter:5,bodyLibrary:library});await actor.ready;
+  const bodySource=actor.group.getObjectByName('generated-body-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
+  const body=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='crowd-neutral'),head=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='naso');
+  assert.ok(body&&head);assert.equal(body.geometry.attributes.position,bodySource.geometry.attributes.position);assert.equal(body.material.map,bodySource.material.map);
+  assert.equal(body.material.normalMap,bodySource.material.normalMap);assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
+  assert.equal(body.material.customProgramCacheKey(),head.material.customProgramCacheKey(),'Equal PBR variants share one follower program');
+  const compile=material=>{const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);return shader;};
+  const neutral=compile(body.material),named=compile(head.material);
+  assert.equal(neutral.vertexShader,named.vertexShader);assert.equal(neutral.fragmentShader,named.fragmentShader);
+  assert.equal(neutral.uniforms.identityGrey.value,0);assert.equal(neutral.uniforms.identityBeard.value,0);assert.ok(named.uniforms.identityBeard.value>0);
+  assert.deepEqual(neutral.uniforms.actorFinishTint.value.toArray(),[1,1,1]);assert.deepEqual(neutral.uniforms.actorFinishRoughness.value.toArray(),[1,0,1]);assert.equal(neutral.uniforms.actorFinishGrazing.value,0);
+  assert.notEqual(neutral.uniforms.identityBeard,named.uniforms.identityBeard,'A named face cannot age or darken the shared body uniforms');
+  crowd.dispose();actor.dispose();
 });
 
 test('followers carry only the kit their leader shows: an archer\'s hidden sword stays hidden', async () => {

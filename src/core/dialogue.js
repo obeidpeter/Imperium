@@ -19,6 +19,7 @@ const saidKey=(treeId,nodeId,index)=>`said:${treeId}:${nodeId}:${index}`;
 
 // Whether the story allows a reply now (hidden when not): flags, errands, decisions, the oath, progress.
 function storyAllows(state,c){
+  if(c.any&&!c.any.some(branch=>storyAllows(state,branch)))return false;
   const s=state.soldier,flags=s?.flags??{};
   if(c.flag&&!flags[c.flag])return false;if(c.notFlag&&flags[c.notFlag])return false;
   for(const [id,stage]of Object.entries(c.errand??{}))if(errandStage(state,id)!==stage)return false;
@@ -56,10 +57,13 @@ export function effectsPreview(e={}){
 // A node as the conversation window shows it. Replies granting anything are listed until chosen once.
 export function dialogueNode(state,treeId,nodeId=null){
   const tree=DIALOGUE[treeId],id=nodeId??tree?.start,node=tree?.nodes[id];if(!node)return null;
+  if(!storyAllows(state,tree.conditions??{})||!storyAllows(state,node.conditions??{}))return null;
   const flags=state.soldier?.flags??{};
   const options=node.options.map((o,index)=>({index,text:o.text,next:o.next,needs:needs(state,o.conditions),preview:effectsPreview(o.effects),
     allowed:storyAllows(state,o.conditions)&&!(grants(o)&&flags[saidKey(treeId,id,index)])})).filter(o=>o.allowed);
-  return {treeId,nodeId:id,speaker:node.speaker,text:node.text,options};
+  const variant=node.variants?.find(v=>storyAllows(state,v.conditions??{}));
+  const text=[variant?.text??node.text,...(node.paragraphs??[]).filter(p=>storyAllows(state,p.conditions??{})).map(p=>p.text)].join(' ');
+  return {treeId,nodeId:id,speaker:variant?.speaker??node.speaker,text,options};
 }
 const grants=o=>!!(o.once||o.effects.tp||o.effects.denarii||o.effects.give?.length||o.effects.title||o.effects.meters||
   Object.values(o.effects.errand??{}).includes('done'));
@@ -106,5 +110,6 @@ export function errandList(state){
 // start that the story has just opened — an errand, a decision, the oath — and not yet said.
 export function hasNews(state,treeId){
   const tree=DIALOGUE[treeId],node=tree?.nodes[tree.start];if(!node)return false;
-  return node.options.some(o=>['errand','flag','decision','oath'].some(k=>o.conditions[k]!==undefined)&&storyAllows(state,o.conditions)&&!needs(state,o.conditions).length);
+  if(!storyAllows(state,tree.conditions??{})||!storyAllows(state,node.conditions??{}))return false;
+  return node.options.some(o=>o.news!==false&&['errand','flag','notFlag','decision','oath'].some(k=>o.conditions[k]!==undefined)&&storyAllows(state,o.conditions)&&!needs(state,o.conditions).length);
 }

@@ -29,6 +29,7 @@ import {simplifyActorOverview} from './actor-overview.js';
 import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
 import {ACTOR_BODIES,actorBodyId} from '../ui/actor-body-catalog.js';
 import {actorBody,warmActorBody,mountActorBody,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
+import {IDENTITY_HEAD_BODY,usesPersistentHead} from './generated-identity.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -64,7 +65,8 @@ export function createActor(unit={},options={}){
   const kit=actorKit(unit,options),identity=actorIdentity(unit,kit);
   // A generated body, where one fits the figure's kit, replaces the procedural figure once it loads.
   const bodyId=actorBodyId(kit),bodies=options.bodyLibrary;
-  const bodyReady=bodyId&&(bodies||typeof window!=='undefined')?(bodies?bodies.warm(bodyId):warmActorBody(bodyId)):Promise.resolve(false);
+  const warmBody=id=>bodies?bodies.warm(id):warmActorBody(id);
+  const bodyReady=(bodyId||usesPersistentHead(identity))&&(bodies||typeof window!=='undefined')?Promise.all([bodyId?warmBody(bodyId):warmBody(IDENTITY_HEAD_BODY),...(bodyId&&usesPersistentHead(identity)?[warmBody(IDENTITY_HEAD_BODY)]:[])]).then(([ready])=>ready):Promise.resolve(false);
   const complexion=options.complexionLibrary??defaultComplexion,preloadComplexion=!!options.complexionLibrary||typeof window!=='undefined';
   let pendingComplexion=false;
   const releasePendingComplexion=()=>{if(pendingComplexion){pendingComplexion=false;complexion.release(identity);}};
@@ -76,7 +78,7 @@ export function createActor(unit={},options={}){
   const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady,bodyReady]).then(([loaded,,hairLoaded,bodyLoaded])=>{
     if(disposed)return false;
     const built=group.userData.actor;
-    if(bodyLoaded){if(built.body)return true;}
+    if(bodyLoaded){const headLoaded=usesPersistentHead(identity)&&!!(bodies?bodies.body(IDENTITY_HEAD_BODY):actorBody(IDENTITY_HEAD_BODY));if((bodyId?built.body===bodyId:true)&&(!headLoaded||built.persistentIdentity))return true;}
     else if(!loaded)return false;
     else if(built.imported&&(!hairLoaded||built.hairImported))return true;
     const parent=group.parent;rig.dispose();group.clear();rebuilt=true;
@@ -95,7 +97,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const spear=kit.equipped?kit.weapon==='spear':raider,bladeLength=kit.weapon==='knife'?.24:kit.weapon==='gladius'?.48:kit.weapon==='spatha'?.74:.59;
   const complexion=options.complexionLibrary??defaultComplexion;
   const bodyId=actorBodyId(kit),body=bodyId?(options.bodyLibrary?options.bodyLibrary.body(bodyId):actorBody(bodyId)):null;
-  const anatomy=body?null:options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
+  const identityBody=usesPersistentHead(identity)?(options.bodyLibrary?options.bodyLibrary.body(IDENTITY_HEAD_BODY):actorBody(IDENTITY_HEAD_BODY)):null;
+  const anatomy=body||identityBody?null:options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
   const detail=options.quality!=='performance',profile=(rings,spec={})=>{const g=garmentGeometry(rings,{...spec,subdivisions:spec.subdivisions??(detail&&(spec.anatomy||spec.folds)?2:1),segments:detail?Math.min(spec.segments??18,20):Math.min(spec.segments??18,12)});return spec.anatomy?sculptActorGeometry(g,spec.anatomy,spec.side?{...identity,side:spec.side}:identity):g;};
   const wardrobe=actorWardrobe(identity,kit),factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
   const civicCloth={Veterans:0xc6aa98,Landholders:0xd8c39a,Civic:0xb8c9d7,Army:0xa9997a,Chamber:0xc4b3cf,People:0xb6c5b2};
@@ -131,7 +134,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   mesh(torso,shapeGeometry([[-.028,-.025],[.028,-.025],[.028,.025],[-.028,.025]],.006),bronze,0,.044,veteran?.165:.152);
   replacingAnatomy=true;
   const neck=mesh(torso,profile([[.466,.077,.061],[.49,.064,.057],[.535,.057,.055],[.578,.060,.058],[.60,.061,.059]],{segments:18}),skin);
-  const head=part(torso,'head',0,.575,0);
+  const head=part(torso,'head',0,(identityBody&&!body)? .475 : .575,0);
   // A continuous landmark sculpt replaces the former ellipsoid/wedge face.
   const faceSkin=skin.clone();faceSkin.vertexColors=true;materials.add(faceSkin);
   mesh(head,createHeadGeometry(identity,{detail}),faceSkin);
@@ -289,7 +292,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     for(const side of [-1,1])strip(torso,leather,[[side*.10,.10,.142],[side*.13,.31,.155],[side*.15,.44,.102]],.019);
   }
   // A bare-headed generated body wears the helmet or cap fitted to its own head.
-  const headwear=body?ACTOR_BODIES[bodyId]?.headwear:null,fitted=piece=>{if(headwear){piece.position.fromArray(headwear.position);piece.scale.fromArray(headwear.scale);}return piece;};
+  const headwear=body?ACTOR_BODIES[identityBody?IDENTITY_HEAD_BODY:bodyId]?.headwear:null,fitted=piece=>{if(headwear){piece.position.fromArray(headwear.position);piece.scale.fromArray(headwear.scale);}return piece;};
   if(kit.helmet){
     const mail=armorMaterial??metal,helmetRoot=fitted(part(head,`${kit.helmet}-helmet`));
     if(kit.helmet==='conical'){
@@ -333,6 +336,13 @@ function createActorRig(unit={},options={},reuseGroup=null){
   }
   if(kit.cap&&!kit.helmet){const cap=fitted(part(head,'equipped-arming-cap'));mesh(cap,helmetBowlGeometry({detail:false,seed:kit.identity}),clothDark);}
   mountCharacterDetail(unit,kit,{torso,head,cloth,clothDark,leather,bronze,mesh,strip,ellipsoid:faceDetail,profile});
+  if(identityBody&&body&&bodyId!==IDENTITY_HEAD_BODY){
+    // A folded military neckcloth bridges independently generated necklines.
+    // It sits over the cut seam and follows the torso rather than stretching
+    // facial vertices down into a different rank body's collar.
+    const wrap=part(torso,'identity-neck-wrap',-.018,0,.008);
+    mesh(wrap,profile([[.55,.105,.085],[.565,.106,.086],[.585,.102,.082],[.595,.101,.081]],{segments:24,folds:.035,foldCount:8}),material(wardrobe.cloak??0x874b3e,surface('wool')));
+  }
   if(kit.armored){
     // Padded neckline separates warm skin, textile and cold armor. It follows
     // the torso and has its own folded contour, not a dark line on the neck.
@@ -397,7 +407,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const simple=mesh(parent,reduced,overviewMaterial);simple.name='overview-detail';simple.userData.overview=true;simple.visible=false;farMeshes.push(simple);
   }
   // A generated body takes the place of every procedural surface on its own joints.
-  if(body){const replaced=[],replaces=headwear?BARE_HEAD_REPLACES:BODY_REPLACES;group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&replaces.test(o.parent.name))replaced.push(o);});
+  if(identityBody&&!body){neck.removeFromParent();geometries.delete(neck.geometry);neck.geometry.dispose();}
+  if(body||identityBody){const replaced=[],replaces=body?(headwear?BARE_HEAD_REPLACES:BODY_REPLACES):/^(head|(right|left)-(brow|eyelid)|facial-jaw)$/;group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&replaces.test(o.parent.name))replaced.push(o);});
     for(const item of replaced){item.removeFromParent();for(const g of [item.geometry,item.userData.overviewGeometry])if(g){geometries.delete(g);g.dispose();}}}
   overview(group);
   if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}
@@ -424,7 +435,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth:kit.equipped&&kit.padding&&!kit.armored?(kit.equipment.includes('jerkin')?leather:clothDark):cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
-  if(body){const worn=mountActorBody(group,body,{skeletons});nearMeshes.push(worn.near);farMeshes.push(worn.overview);}
+  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,geometries,materials});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?IDENTITY_HEAD_BODY:body.id;group.userData.actor.persistentIdentity=!!identityBody;}
+  const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);
   for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial)finishActorMaterial(m);
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
   let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;
@@ -439,7 +451,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;previousYaw=null;}
     if(!(Number.isFinite(input.dt)&&input.dt>0))transition=null;
     const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
-    let pose=actorPose({...mapped,weapon:spear?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
+    let pose=actorPose({...mapped,variant:kit.identity,weapon:spear?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
     applyCharacterPresence(pose,identity,kit,mapped);
     if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0,duration:performanceTransition(lastMotion,motion),settle:motion==='idle'&&['walk','run'].includes(lastMotion)};
     if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/transition.duration);if(transition.settle)applyPerformance(pose,'stop',transition.elapsed/transition.duration);if(transition.elapsed>=transition.duration)transition=null;}
@@ -464,9 +476,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
       groundHumanPose(pose,samples??pose.feet.map((f,i)=>({height:0,x:(i?1:-1)*.104,z:f.z})));
     }
     const expr=actorExpression({...mapped,seed:kit.identity,gazeYaw:input.gazeYaw,gazePitch:input.gazePitch,reducedMotion:input.reducedMotion});
-    updateActorExpressionMorphs(nearMeshes,expr,mapped);
     group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX+expr.headPitchOffset,pose.headY+expr.headYawOffset,0);skirt.rotation.x=pose.skirt;
     const seconds=Number.isFinite(input.time)?Math.max(0,input.time):0,blinkPhase=(seconds+((kit.identity%13)*.13))%4.7,blink=input.reducedMotion?0:blinkPhase>4.46?Math.sin((blinkPhase-4.46)/.24*Math.PI):0,closure=Math.min(1,blink+expr.lidFocus*(1-blink));
+    updateActorExpressionMorphs(expressionMeshes,expr,{...mapped,blink:closure});
     for(const lid of lids){if(lid.userData.closeDistance){lid.position.y=-closure*lid.userData.closeDistance;lid.position.z=closure*.0006;}else{lid.position.y=lid.userData.openY-closure*.005;lid.scale.y=1+closure*2.5;}}
     for(const brow of brows){brow.position.y=expr.browY;brow.position.z=Math.abs(expr.browY)*.25;brow.rotation.z=brow.userData.side*expr.browTilt;}
     const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0,jaw=Math.max(emphasis,expr.jawOpen);

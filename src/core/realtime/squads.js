@@ -1,10 +1,11 @@
 import {COHESION,ENEMY_FACTIONS,ENEMY_TECHNIQUES,EXCHANGE,FORMATIONS,HOLD_BRACE_TICKS,MIN_MEN,MORALE,REFERENCE_STRENGTH,SPACING,SQUAD_MEN,SUPPRESSION} from '../../data/realtime-squads.js';
 import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
+import {MOUNTED_PACE} from '../../data/realtime-tactics.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {makeActor} from './actors.js';
 import {derivedValues} from './combat.js';
-import {cellCentre,clampToMap,crossesCover,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,walkable} from './navigation.js';
-import {sightBlocked} from './sight.js';
+import {cellCentre,clampToMap,clearLine,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,traversableStep,walkable} from './navigation.js';
+import {sightBlocked,terrainCover} from './sight.js';
 import {pickWeighted} from './rng-streams.js';
 import {knowAttacker,lying,noticeOf} from './squad-sight.js';
 
@@ -33,7 +34,7 @@ export const shaken=squad=>squad.morale<=MORALE.shaken;
 export const alliedSides=(a,b)=>a===b||(a==='player'||a==='ally')&&(b==='player'||b==='ally');
 // A squad still on the field: men standing.
 export const fielded=(world,squad)=>squad.strength>0&&squad.members.some(id=>{const a=actorById(world,id);return a&&standing(a);});
-const ROLE_NAMES={infantry:'squad',guard:'guard',archer:'archers',raider:'band',cavalry:'horse',heavy:'horse',soldier:'squad'};
+const ROLE_NAMES={infantry:'squad',guard:'guard',archer:'archers',raider:'band',cavalry:'horse',heavy:'horse',soldier:'squad',engineer:'engineers'};
 
 // --- Formation --------------------------------------------------------------
 // The formation a squad stands in when no order names one.
@@ -157,7 +158,8 @@ export function squadSpeed(world,squad){
   const pace=Math.min(...men.map(m=>run?derivedValues(m).run:MOVEMENT.walk));
   const grid=navGrid(world.map),terrain=terrainAtPoint(world.map,squad.x,squad.z);
   const ground=terrain==='marsh'&&squad.formation==='line'?FORMATIONS.line.marsh:speedFactor(grid,squad.x,squad.z);
-  return pace*(FORMATIONS[squad.formation]?.march??1)*ground;
+  const mounted=['cavalry','heavy'].includes(squad.role),bonus=mounted?(['marsh','ford','rubble'].includes(terrain)?MOUNTED_PACE.rough:run?MOUNTED_PACE.run:MOUNTED_PACE.walk):1;
+  return pace*(FORMATIONS[squad.formation]?.march??1)*ground*bonus;
 }
 export function routeSquad(world,squad,point,{run=false}={}){
   const grid=navGrid(world.map),route=findRoute(grid,squad,clampToMap(grid,point,1));
@@ -177,6 +179,10 @@ export function moveSquads(world){
       let budget=squadSpeed(world,squad)*DT;
       while(budget>1e-9&&squad.path.length){
         const next=squad.path[0],dx=next.x-squad.x,dz=next.z-squad.z,d=span(dx,dz);
+        const arriving=d<=budget+MOVEMENT.arrive,point=arriving?next:{x:squad.x+dx/d*budget,z:squad.z+dz/d*budget};
+        // A restored or changed passage cannot let the standard walk through
+        // terrain that its men cannot cross. The retained order replans.
+        if(!clearLine(grid,squad,point)){squad.path=[];squad.gait=null;break;}
         if(d<=budget+MOVEMENT.arrive){squad.x=next.x;squad.z=next.z;budget-=d;moved+=d;squad.path.shift();turn(squad,dx,dz);}
         else{squad.x+=dx/d*budget;squad.z+=dz/d*budget;moved+=budget;turn(squad,dx,dz);budget=0;}
       }
@@ -207,9 +213,10 @@ export function moveSquads(world){
         else{while(m.slotPath.length>1&&span(m.slotPath[0].x-m.x,m.slotPath[0].z-m.z)<.3)m.slotPath.shift();aim=m.slotPath.length>1?m.slotPath[0]:target;}
       }
       const dx=aim.x-m.x,dz=aim.z-m.z,da=span(dx,dz)||1;
-      const run=d>2.5,pace=(run?derivedValues(m).run:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
+      const run=d>2.5,rough=['marsh','ford','rubble'].includes(terrainAtPoint(world.map,m.x,m.z)),mounted=m.mounted?(rough?MOUNTED_PACE.rough:MOUNTED_PACE.run):1;
+      const pace=(run?derivedValues(m).run*mounted:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
       const nx=m.x+dx/da*step,nz=m.z+dz/da*step;
-      if(walkable(grid,nx,nz)){m.x=nx;m.z=nz;m.moving=step>1e-6;m.gait=run?'run':'walk';m.walked+=step;turnToward(m,dx,dz);}
+      if(walkable(grid,nx,nz)&&traversableStep(grid,m,{x:nx,z:nz})){m.x=nx;m.z=nz;m.moving=step>1e-6;m.gait=run?'run':'walk';m.walked+=step;turnToward(m,dx,dz);}
       else{m.moving=false;m.gait=null;if(!m.slotPath){const route=findRoute(grid,m,target);m.slotPath=route.points.length?route.points:null;}}
     });
   }
@@ -234,7 +241,8 @@ export function squadModifiers(world,attacker,target,{ranged=false,ambush=false}
   const ground=terrainAtPoint(world.map,t.x,t.z),source=terrainAtPoint(world.map,a.x,a.z),rough=g=>['marsh','ford'].includes(g);
   add('Frontal shield',front?-EXCHANGE.frontalShield:0);add('Brace',target.braced?-EXCHANGE.brace:0);
   const high=groundHeight(grid,t.x,t.z)>groundHeight(grid,a.x,a.z);
-  add('Terrain protection',wallBetween(world.map,a,t)?-EXCHANGE.wall:high?-EXCHANGE.high:ranged&&crossesCover(grid,a,t)?-EXCHANGE.cover:0);
+  const covered=ranged&&terrainCover(world,a,t),wall=wallBetween(world.map,a,t)&&(!ranged||!world.fortifications||covered);
+  add('Terrain protection',wall?-EXCHANGE.wall:high?-EXCHANGE.high:covered?-EXCHANGE.cover:0);
   add('Height advantage',ranged&&groundHeight(grid,a.x,a.z)>groundHeight(grid,t.x,t.z)?EXCHANGE.heightRanged:0);
   const neighbour=formation=>squadsOf(world).some(o=>o!==target&&fielded(world,o)&&alliedSides(o.side,target.side)&&o.formation===formation&&
     span(o.x-target.x,o.z-target.z)<=EXCHANGE.neighbour);

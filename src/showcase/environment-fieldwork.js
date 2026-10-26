@@ -16,6 +16,7 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   const m={
     wood:material('wood',region.wood,'wood'),dark:material('end grain',region.darkWood,'wood'),
     stone:material('footings',region.stone,'stone'),cloth:material('canvas',region.cloth,'cloth'),
+    masonry:material('fortified masonry',[5,6,9].includes(chapter)?'#987451':'#827b69','stone'),
     accent:material('standard',region.accent,'cloth'),rope:material('rope','#a99773','cloth'),
     iron:material('iron','#444943','stone',.65),bronze:material('bronze','#ad8d4e','stone',.72),
     coal:material('charcoal','#302d28','stone')
@@ -109,6 +110,34 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     mesh(g,bowl,m.iron,0,.59,0);
     for(let i=0;i<7;i++)mesh(g,sphere,state==='spent'?m.stone:m.coal,Math.cos(i*2.4)*.18,.68,Math.sin(i*2.4)*.18,.09,.065,.075);
   }
+  function breach(g,state,orientation){
+    if(orientation==='horizontal')g.rotation.y=Math.PI/2;
+    if(state==='breached'){
+      // The centre is crossed on slow rubble; keep every fragment below boots.
+      for(let i=0;i<12;i++){const b=plank(g,((i*7)%11-5)*.19,.05+(i%3)*.025,((i*5)%9-4)*.23,.27+(i%3)*.09,.10,.24,m.stone);b.rotation.y=i*1.71;}
+      return;
+    }
+    plank(g,0,1.6,0,1.65,3.2,2.5,m.masonry);
+    for(let row=0;row<8;row++)for(const side of [-1,1])plank(g,side*.835,.2+row*.4,0,.025,.025,2.5,m.dark);
+    for(const z of [-.84,0,.84])plank(g,0,3.48,z,1.55,.56,.48,m.masonry);
+    for(const z of [-.75,.75])beam(g,[-1.45,.1,z],[-.85,1.45,z],.075,m.wood);
+    plank(g,-.91,.76,0,.08,.13,1.75,m.wood);
+  }
+  function siegeWork(g,object){
+    const disabled=object.state==='disabled';
+    if(object.kind==='countermine'){
+      for(const z of [-.55,.55]){plank(g,-.45,.55,z,.15,1.1,.16,m.dark);plank(g,.45,.55,z,.15,1.1,.16,m.dark);plank(g,0,1.12,z,1.2,.16,.2);}
+      for(let i=0;i<5;i++)plank(g,(i-2)*.23,1.23,0,.2,.08,1.4);
+      for(let i=0;i<6;i++)mesh(g,sphere,m.stone,(i%3-.9)*.36,.08,Math.floor(i/3)*.35-.25,.23,.10,.2);
+      if(disabled)for(const y of [.25,.5,.75])plank(g,-.56,y,0,.10,.2,1.12);
+    }else{
+      for(const z of [-.65,.65]){beam(g,[-1.1,.12,z],[1.1,1.2,z],.08,m.dark);plank(g,.95,.58,z,.15,1.16,.15,m.dark);}
+      for(let i=0;i<12;i++){const x=-1.05+i*.19,b=plank(g,x,.15+(x+1.05)*.48,0,.18,.08,1.48,disabled?m.coal:m.wood);b.rotation.z=.45;if(disabled&&i%3===0)b.rotation.y=.35;}
+      for(const z of [-.8,.8])beam(g,[-1.1,.45,z],[1.1,1.6,z],.025,m.rope);
+      if(!disabled){plank(g,.85,1.65,0,.12,.9,1.5,m.wood);plank(g,.79,1.65,0,.02,.43,.62,m.accent);}
+    }
+    if(!disabled)for(let i=0;i<(object.progress??0);i++)plank(g,-.8,.12+i*.08,-.95,.6,.06,.12,m.wood);
+  }
   function build(parent,object,ground){
     const g=group(parent,ground.x,ground.y,ground.z);g.name=`${object.kind} · ${object.state}`;
     if(object.kind==='gate')gate(g,object.state);
@@ -117,7 +146,38 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     else if(object.kind==='stores')stores(g,object.state);
     else if(object.kind==='signal')signal(g,object.state);
     else if(object.kind==='brazier')brazier(g,object.state);
+    else if(object.kind==='breach')breach(g,object.state,object.orientation);
+    else if(object.kind==='countermine'||object.kind==='siege-engine')siegeWork(g,object);
     g.userData.fieldObject={id:object.id,kind:object.kind,state:object.state};return g;
   }
-  return {build,region};
+  function platform(parent,record,point,step){
+    const g=group(parent,point.x,point.y,point.z);g.name='accessible wall fighting platform';
+    const dx=(point.x-step.x)/2.5,dz=(point.z-step.z)/2.5;
+    plank(g,0,record.height/2,0,2.44,record.height,2.44,m.masonry);
+    plank(g,0,record.height+.025,0,2.5,.05,2.5,m.masonry);
+    for(let row=0;row<6;row++)for(let block=0;block<3;block++)for(const side of [-1,1]){
+      const along=(block-1)*.81,y=(row+.5)*record.height/6;
+      plank(g,along,y,side*1.23,.78,record.height/6-.035,.085,m.masonry);
+      plank(g,side*1.23,y,along,.085,record.height/6-.035,.78,m.masonry);
+    }
+    // A small fighting tower with a clear stair entrance, low parapets and
+    // raised corner merlons. Its walkable deck is exactly the saved elevation.
+    for(const side of [-1,1]){
+      plank(g,-dz*side*1.12,record.height+.2,dx*side*1.12,dx?2.5:.25,.4,dz?2.5:.25,m.masonry);
+      for(const along of [-.95,.95])plank(g,dx*along-dz*side*1.12,record.height+.55,dz*along+dx*side*1.12,.4,.3,.4,m.masonry);
+    }
+    plank(g,dx*1.12,record.height+.2,dz*1.12,dx?.25:2.5,.4,dz?.25:2.5,m.masonry);
+    for(const y of [.55,1.1,1.65,2.2,2.75])plank(g,dx*1.255,y,dz*1.255,dx?.012:2.5,.025,dz?.012:2.5,m.dark);
+    for(let i=0;i<10;i++){
+      const distance=3.75-(i+.5)*.25,h=(i+1)*record.height/10;
+      plank(g,-dx*distance,h/2,-dz*distance,dx?.25:2.4,h,dz?.25:2.4,m.masonry);
+    }
+    for(const side of [-1,1])for(const distance of [1.4,3.6]){
+      const h=(3.75-distance)/2.5*record.height;
+      beam(g,[-dx*distance-dz*side*1.16,h,-dz*distance+dx*side*1.16],[-dx*distance-dz*side*1.16,h+.8,-dz*distance+dx*side*1.16],.035,m.wood);
+    }
+    for(const side of [-1,1])beam(g,[-dx*3.6-dz*side*1.16,.99,-dz*3.6+dx*side*1.16],[-dx*1.4-dz*side*1.16,record.height+.61,-dz*1.4+dx*side*1.16],.025,m.rope);
+    return {x:point.x,z:point.z,base:point.y,height:record.height,dx,dz};
+  }
+  return {build,platform,region};
 }

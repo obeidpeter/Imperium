@@ -16,7 +16,7 @@ function midFight(){
 }
 
 test('a fight saved by an earlier version of the real-time rules restarts from its checkpoint when the chronicle loads',()=>{
-  assert.equal(WORLD_VERSION,3);
+  assert.equal(WORLD_VERSION,4);
   const {state,start}=midFight(),older=JSON.parse(G.serialize(state));
   older.encounter.realtime.world.version=2;older.encounter.realtime.resume.version=2;
   const loaded=G.deserialize(JSON.stringify(older)),w=G.realtimeWorld(loaded);

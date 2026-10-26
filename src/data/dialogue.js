@@ -1,3 +1,5 @@
+import {CAMP_STORY_DIALOGUE,CAMP_STORY_ERRANDS} from './camp-stories.js';
+
 // Conversations as data (build brief §3.12): each tree is nodes of
 // { speaker, text, options: [{ text, conditions, effects, next, once }] }.
 // Conditions: attribute ≥ n, decoration, title, flag, item, chapter, path,
@@ -16,6 +18,7 @@ const bye=opt('Farewell.');
 // Errands (§3.12): optional, once only, never blocking the story. A path
 // errand is offered only to a soldier of that training and awards a title.
 export const ERRANDS=freeze({
+  ...CAMP_STORY_ERRANDS,
   drill_first:freeze({id:'drill_first',chapter:1,giver:'Varro',title:'First at the post',summary:'Work the practice post until Varro sees you there first.',
     reward:freeze({tp:2,title:'drill_first'})}),
   names_roll:freeze({id:'names_roll',chapter:2,giver:'Gaius Sabinus',title:'Names for the roll',
@@ -45,6 +48,7 @@ export const DEFEAT_PAGES=freeze({
 });
 
 export const DIALOGUE=freeze({
+  ...CAMP_STORY_DIALOGUE,
   // Shared service actions, with each chapter's short context supplied by
   // campConversation. These open existing tools and grant no new rewards.
   'hub:instructor':tree('greet',{

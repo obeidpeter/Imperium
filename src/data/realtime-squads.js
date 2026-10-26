@@ -11,7 +11,7 @@ const freeze=Object.freeze;
 // How many men stand in a squad at full strength, by role. Each is one actor,
 // driven by his squad (§3.4); a 0.38 unit's Health becomes the squad's
 // strength, and every man stands for an equal share of it.
-export const SQUAD_MEN=freeze({infantry:8,guard:8,archer:6,raider:6,cavalry:4,heavy:4,soldier:8});
+export const SQUAD_MEN=freeze({infantry:8,guard:8,archer:6,raider:6,cavalry:4,heavy:4,soldier:8,engineer:6});
 // Strength a full squad of each side has in 0.38 (allies 16, enemies 10): a
 // smaller unit (a reinforcement of 7) brings proportionally fewer men.
 export const REFERENCE_STRENGTH=freeze({ally:16,enemy:10});
@@ -173,4 +173,8 @@ export const ROMAN_SQUADS=freeze({
   infantry:freeze({name:'legionary',attributes:freeze({str:13,agi:12,con:13,per:9,combat:10,field:6}),
     kit:freeze(['tunic','subarmalis','hamata','galea','bracae','caligae','cingulum','scutum','gladius']),ammo:freeze({pilum:1})}),
   archer:freeze({name:'auxiliary archer',attributes:freeze({str:11,agi:14,con:10,per:13,combat:8,field:8}),
-    kit:freeze(['tunic','subarmalis','galea','caligae','bow','quiver']),ammo:freeze({arrow:16})})});
+    kit:freeze(['tunic','subarmalis','galea','caligae','bow','quiver']),ammo:freeze({arrow:16})}),
+  cavalry:freeze({name:'Roman cavalryman',mounted:true,attributes:freeze({str:13,agi:14,con:12,per:11,combat:10,field:9}),
+    kit:freeze(['tunic','subarmalis','hamata','galea','bracae','caligae','cingulum','parma','spatha']),ammo:freeze({pilum:1})}),
+  engineer:freeze({name:'Engineer legionary',attributes:freeze({str:13,agi:11,con:13,per:11,combat:8,field:14}),
+    kit:freeze(['tunic','subarmalis','galea','bracae','caligae','cingulum','parma','gladius']),ammo:freeze({pilum:1})})});

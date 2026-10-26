@@ -340,3 +340,73 @@
 .rt-target-cue{margin:.15rem 0;color:#e9ca88;font-size:.8rem;line-height:1.35}
 .rt-delegate-voice{font-size:.9rem;line-height:1.5;margin:.6rem 0;padding:.5rem .75rem;border-inline-start:2px solid #bba577;color:#f0e3c5}
 .realtime-frame:not([data-outcome="active"]) .rt-wayfinders{display:none}
+
+/* The world is the primary surface. Required decisions and every list-based
+   service remain in ordinary document flow, after the scene, rather than
+   narrowing it or occupying the first screen. Enlarged text may grow freely. */
+.site-header.world-header{min-block-size:3.25rem;padding:.3rem clamp(.65rem,2vw,1.5rem);gap:.6rem}
+.world-header .brand{gap:.5rem}.world-header .brand img{inline-size:23px;block-size:28px}
+.world-header .brand strong{font-size:calc(.85rem * var(--text-scale,1))}
+.world-header .topnav{gap:.4rem}.world-header .topnav button{min-block-size:2.75rem;padding:.4rem .65rem}
+.world-header .game-status{font-size:calc(.7rem * var(--text-scale,1))}
+.world-header~.offline-banner,.world-header~.art-loading-status{padding-block:.3rem;font-size:calc(.7rem * var(--text-scale,1));margin-block:0}
+.world-first.camp-page{max-inline-size:none;padding:.35rem clamp(.4rem,1.5vw,1.5rem) 1.5rem}
+.world-first.realtime-frame{max-inline-size:none;padding:.2rem clamp(.35rem,1vw,1rem) 1rem;gap:.25rem}
+.world-first.camp-page>.world-departure{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.4rem 1rem;
+  padding:.35rem .6rem;margin:0 0 .35rem;border:0;background:transparent}
+.world-departure-title{flex:1 1 18rem;min-inline-size:0}.world-departure-title .eyebrow{font-size:calc(.63rem * var(--text-scale,1));letter-spacing:.1em}
+.world-first .world-departure h1{font-size:calc(1.1rem * var(--text-scale,1));line-height:1.2;margin:.1rem 0}
+.world-first .world-departure-problem{font-size:calc(.78rem * var(--text-scale,1));line-height:1.4;margin:.2rem 0 0;color:var(--red,#742b30)}
+.world-camp-actions{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.world-camp-actions button{min-block-size:2.75rem;font-size:calc(.82rem * var(--text-scale,1));padding:.5rem .8rem}
+.world-service-link{display:inline-flex;align-items:center;min-block-size:2.75rem;padding:.4rem .6rem;border:1px solid var(--line,#c8bca3);
+  border-radius:.35rem;color:var(--ink,#292b26);font-size:calc(.8rem * var(--text-scale,1));text-decoration:none;font-weight:600}
+.world-service-link:hover{background:var(--plaster,#e9e0ce)}.world-service-link:focus-visible{outline:3px solid var(--selection,#23646c);outline-offset:2px}
+.world-first .rt-camp-grid{grid-template-columns:minmax(0,1fr);gap:.4rem}
+.world-first .rt-field{--rt-scene-height:clamp(24rem,62dvh,50rem);border-radius:.4rem}
+.world-first .rt-field .rt-scene{block-size:var(--rt-scene-height);min-block-size:24rem}
+.world-first .rt-top{padding:.4rem .65rem;gap:.5rem;flex-wrap:wrap}
+.world-first .rt-mission h2{font-size:calc(1.1rem * var(--text-scale,1));line-height:1.25}
+.world-first .rt-mission>.eyebrow{display:none}
+.world-first .rt-status-strip{padding:.3rem .65rem}
+.world-first .rt-chronicle-bar{padding:.15rem .5rem;font-size:calc(.7rem * var(--text-scale,1))}
+.world-first .rt-camp-note{font-size:calc(.75rem * var(--text-scale,1));margin:.35rem .2rem}
+.world-courtyard.world-first .rt-menu{display:none}
+.world-first .rt-view-control{display:flex;align-items:center;gap:.35rem;color:var(--rt-muted);font-size:calc(.75rem * var(--text-scale,1));margin:0}
+.rt-view-control select{inline-size:auto;max-inline-size:12rem;min-block-size:2.75rem;padding:.3rem .5rem;border:1px solid var(--rt-line);border-radius:.35rem;
+  background:var(--rt-panel);color:#f4ead5;font:inherit;font-size:calc(.8rem * var(--text-scale,1))}
+.rt-view-control select:focus-visible{outline:3px solid var(--rt-focus);outline-offset:2px}
+.world-first .world-camp-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem 1.2rem;scroll-margin-block-start:1rem;
+  background:var(--plaster,#e9e0ce);border-block-start:1px solid var(--line,#c8bca3);padding:.75rem 1rem}
+.world-services-heading{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;align-items:center}
+.world-services-heading h2{font-size:calc(1.2rem * var(--text-scale,1));margin:0}
+.world-camp-services>.world-preparation{grid-column:1;grid-row:2/span 5;min-inline-size:0}
+.world-camp-services>.sidebar-card{padding:0;margin:0}.world-camp-services>.camp-disclosure{margin:0;min-inline-size:0}
+.world-camp-services .world-preparation>.eyebrow{margin:.3rem 0}
+.world-camp-services .preparation{padding-block:.65rem;margin-block:.4rem}
+.world-first .rt-hud{gap:.3rem .65rem;padding:.35rem .65rem}
+.world-first .rt-support{margin-block-start:.1rem}
+@media(min-width:1050px){
+  .world-first .rt-hud{grid-template-columns:minmax(16rem,32%) minmax(0,1fr)}
+  .world-first .rt-message-area{grid-column:1/-1;grid-row:1}
+  .world-first .rt-unit-dock{grid-column:1;grid-row:2;align-self:center}
+  .world-first .rt-ability-area{grid-column:2;grid-row:2;align-self:center}
+  .world-first .rt-ability-bar{flex-basis:100%}.world-first .rt-tools{margin-inline-start:auto}
+}
+@media(max-width:700px){
+  .world-first.camp-page{padding-inline:.35rem}.world-first.camp-page>.world-departure{padding-inline:.3rem}
+  .world-departure-title{flex-basis:100%}.world-camp-actions{inline-size:100%;justify-content:space-between}
+  .world-first .rt-field{--rt-scene-height:clamp(20rem,54dvh,34rem)}.world-first .rt-field .rt-scene{min-block-size:20rem}
+  .world-first .rt-mission{flex:1 1 12rem}.world-first .rt-top{gap:.25rem .5rem}
+  .world-first .rt-view-control{order:2}.world-first .rt-time{flex:0 1 auto;margin-inline-start:auto}
+  .world-first .rt-top>.rt-menu{margin-inline-start:auto}
+  .world-first .world-camp-services{grid-template-columns:minmax(0,1fr);padding:.65rem;gap:.7rem}
+  .world-camp-services>.world-preparation{grid-column:1;grid-row:auto}
+  .world-header .game-status{flex-basis:auto;text-align:start}.world-header .topnav{flex-wrap:wrap}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .world-first .rt-field{--rt-scene-height:clamp(18rem,68dvh,30rem)}.world-first .rt-field .rt-scene{min-block-size:18rem}
+}
+/* Results keep their decision first; the larger live world does not push the
+   commit/retry controls below a second full-height battlefield. */
+.world-first.realtime-frame:not([data-outcome="active"]) .rt-field .rt-scene{block-size:15rem;min-block-size:15rem}

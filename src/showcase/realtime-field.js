@@ -50,11 +50,21 @@ export function followRealtimeCamera(stage,actor,kind='field'){
   else Object.assign(stage.orbit,{pitch,distance}); // The flat view has no 3D obstructions.
   stage.wake();
 }
+// A named camera choice is explicit (unlike the Overview keyboard toggle),
+// and changes only presentation. The same control serves camps and chambers.
+export function selectRealtimeView(stage,actor,view,kind='field'){
+  if(!stage||!['follow','overview','horizon'].includes(view)||view==='follow'&&!actor||view==='horizon'&&stage.flat)return false;
+  if(view==='follow')followRealtimeCamera(stage,actor,kind);
+  else if(view==='overview')stage.home();
+  else stage.horizon();
+  stage.wake?.();return true;
+}
 // Who the stage draws: hidden enemies stay off it until they are seen.
 // What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
 const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',')+
   // The objective's markers: the positions secured, the phase and the next wave.
-  '|'+(world.mission?`${world.mission.phase??0}:${(world.mission.points??[]).map(p=>p.secured?1:0).join('')}:${(world.mission.waves??[]).filter(w=>w.arrived).length}`:'');
+  '|'+(world.mission?`${world.mission.phase??0}:${(world.mission.points??[]).map(p=>p.secured?1:0).join('')}:${(world.mission.waves??[]).filter(w=>w.arrived).length}`:'')+
+  `|${world.map.rev??0}:${world.fortifications?.revision??0}`;
 
 export function createRealtimeField({dom,world:initial,base:initialBase,options={},keymap=DEFAULT_KEYMAP,holdDelay=()=>450,callbacks={},kind='field',appearance=()=>null}){
   let world=initial,base=initialBase,stage=null,presenter=null,input=null,disposed=false;
@@ -167,6 +177,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(ticks)showPlanned();
     if(hoverPoint&&(hoverDirty||metrics.frames%6===0))readPointer();
     if(edge&&options.edgeScroll)edgeScroll(dt);
+    if(dom.cameraSelect&&['follow','overview','horizon'].includes(stage?.cameraView)&&dom.cameraSelect.value!==stage.cameraView)dom.cameraSelect.value=stage.cameraView;
     updateHud(now);
   }
   // Edge scrolling (3D, a setting): the pointer at the scene's edge slides the view over the ground, faster when further out.
@@ -654,6 +665,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
+    if(dom.cameraSelect)dom.cameraSelect.onchange=()=>{
+      if(selectRealtimeView(stage,me(),dom.cameraSelect.value,kind)){
+        say(`${dom.cameraSelect.value==='follow'?'Following your soldier':dom.cameraSelect.value==='overview'?'Overview of the whole field':'Looking toward the horizon'}.`,{announce:true});
+        // Native select arrows must keep working through every camera choice.
+        // Tab follows document order; changing a view never steals input focus.
+      }
+    };
     if(dom.listButton)dom.listButton.onclick=()=>toggleList();
     if(dom.closeListButton)dom.closeListButton.onclick=()=>toggleList(false);
     for(const [button,point]of [[dom.locateTarget,()=>actorById(world,keyTarget)??objectById(world,keyTarget)],[dom.locateObjective,objectivePoint]])if(button)button.onclick=()=>{const p=point();if(p){stage?.focusPoint(stageTile(p.x,p.z));stage?.wake?.();canvas.focus({preventScroll:true});}};
@@ -703,7 +721,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
-    attach(next){const again=stage===next;stage=next;stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
+    attach(next){const again=stage===next;stage=next;stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();
+      const horizon=dom.cameraSelect?.querySelector('option[value="horizon"]');if(horizon){horizon.disabled=!!stage.flat;horizon.textContent=stage.flat?'Horizon (3D)':'Horizon';}},
     // The stage's encounter for this world (the page builds the stage from it).
     stageView:sceneEncounter,
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.

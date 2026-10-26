@@ -26,8 +26,8 @@ import {serveRequest} from './serve.mjs';
 import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
-import {runCommandCampaign} from './command-autoplay.mjs';
-import {playEncounter} from './autoplay.mjs';
+import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
+import {playEncounter,command} from './autoplay.mjs';
 import {tpAuditTotal} from '../src/core/tp-audit.js';
 import {sceneryPlacements} from '../src/showcase/scenery-models.js';
 
@@ -612,13 +612,19 @@ async function chamberCouncil(){
   console.log('ok - chamber: Chapter VII’s council in 3D: a seat opens the conversation, asking is free, Walk beside him and Persuade move a member, Y and Space play and skip the rivals’ hour, U names their next walks, a click on a figure talks to him, and the vote ends in the division and its result');
 }
 // Gates 3 and 4: every chamber Contest (VII, VIII, X, both of XI and XII) played through in full in the page, in
-// the 2D view: a winning 0.38 log recorded from the same camp, replayed through the Command list's
+// the 2D view: a winning legal rules log recorded from the same camp, replayed through the Command list's
 // own path (walks, speeches and yields as a player gives them), to the vote and Record the result.
 async function chamberContests(){
   const played=[];
   for(const id of ['ch7-council','ch8-parley','ch10-tribunal','ch11-accounts','ch11-adlection','ch12-legitimacy']){
     const code=battleCampCode(id),probe=Game.decodeSave(code);assert.ok(Game.startEncounter(probe).ok);
-    const trace=[],summary=playEncounter(probe,{approach:'record',trace});assert.equal(summary.status,'won',`${id}: the recorded log wins`);
+    // The existing coalition policy accounts for the rival's reply instead of
+    // protecting only this turn's vote. Every move/speech is still previewed,
+    // issued publicly and recorded for the browser's exact replay below.
+    const trace=[],summary=playEncounter(probe,{approach:'record',trace,beforeTurn:s=>protectCoalition(s,(target,name,payload)=>{
+      assert.equal(name,'act');return command(target,target.encounter.units.find(u=>u.id===payload.unitId),payload.action,
+        {x:payload.x,y:payload.y,unitId:payload.targetId});
+    })});assert.equal(summary.status,'won',`${id}: the recorded log wins`);
     const page=await open();await restoreChamber(page,code,'2d');
     const start=await page.evaluate(()=>['hero','member0','member8','rival-speaker'].map(id=>window.__chamber.unit(id)).map(u=>[u.x,u.y,u.stance??u.resolve]));
     const fresh=Game.decodeSave(code);Game.startEncounter(fresh);

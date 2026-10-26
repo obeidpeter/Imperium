@@ -5,14 +5,14 @@ export function createCeremonyController({load=()=>Promise.all([import('../showc
   let stage=null,key=null,version=0,canvas=null,host=null;
   function release(){version++;stage?.dispose();stage=null;key=null;canvas?.remove();canvas=null;if(host)delete host.dataset.ceremonyReady;host=null;}
   return {
-    mount(target,{kind,name,quality='balanced',reducedMotion=false,figureStyle='sculpted'}={}){
-      const next=`${kind}:${name}`;
+    mount(target,{kind,name,appearance=null,quality='balanced',reducedMotion=false,figureStyle='sculpted'}={}){
+      const next=`${kind}:${name}:${JSON.stringify(appearance)}`;
       if(key===next&&host===target&&canvas?.isConnected){if(stage){stage.setReducedMotion(reducedMotion);if(stage.quality!==quality)stage.applyQuality(quality);}return stage;}
       release();key=next;host=target;const ticket=++version;
       canvas=document.createElement('canvas');canvas.className='ceremony-canvas';canvas.setAttribute('aria-hidden','true');canvas.setAttribute('data-live','');target.append(canvas);
       load().then(async([{BattleStage,preloadBattleFigures},{ceremonyScene}])=>{
         if(ticket!==version||!canvas?.isConnected)return;
-        const scene=ceremonyScene(kind,{name});if(!scene){release();return;}
+        const scene=ceremonyScene(kind,{name,appearance});if(!scene){release();return;}
         // The figures' bodies and textures arrive before the tableau is built.
         await Promise.race([preloadBattleFigures?.(scene.encounter,{chapter:scene.chapter,rank:scene.rank,figureStyle}),new Promise(done=>setTimeout(done,15000))]);
         if(ticket!==version||!canvas?.isConnected)return;

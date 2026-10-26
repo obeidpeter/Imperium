@@ -42,13 +42,15 @@ export function fieldNotice(world,event){
     if(s?.side!=='enemy')return {title:'Formation lost',body:`${s?.name??'An allied formation'} has been cut down.`};
   }
   if(event.kind==='field'&&event.what!=='brazier-burns'){
-    const line=world.log.findLast(l=>l.tick===event.tick&&/gate|bridge|barricade|pitch|opportunit|secures/i.test(l.text));
+    const line=world.log.findLast(l=>l.tick===event.tick&&/gate|bridge|barricade|pitch|opportunit|secures|wall|works|siege|mine/i.test(l.text));
     if(line)return {title:event.what==='opportunities-closed'?'Opportunity closed':'The battlefield changed',body:line.text};
   }
   return null;
 }
 
 export function opportunityReadout(world){
+  const works=(world.objects??[]).filter(o=>['countermine','siege-engine'].includes(o.kind));
+  if(world.status==='active'&&works.some(o=>!o.done))return `Siege works · ${works.filter(o=>o.done).length}/${works.length} secured · protect the line`;
   const f=world.field;if(!f||f.choice||f.outcome==='missed'||world.status!=='active')return '';
   const seconds=Math.max(0,Math.ceil((f.deadline*TIME.roundTicks-world.tick)/TIME.ticksPerSecond));
   return seconds>0?`Optional opportunity · ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')} left`:'';

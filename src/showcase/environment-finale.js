@@ -1,6 +1,7 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash} from './environment-layout.js';
 import {stagingEdge} from './environment-staging.js';
+import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE} from './finale-crowd-data.js';
 
 // The finale's approach to Rome. Aurelian's new brick curtain (begun AD 271,
 // still rising in 275) runs north and south from the gate: finished stretches
@@ -9,18 +10,23 @@ import {stagingEdge} from './environment-staging.js';
 // the commander's own legions are drawn up behind the western edge.
 // Presentation only: all of it stands outside the legal board, is instanced
 // into a few shared batches and is never a picking target.
-function merge(parts){
-  const positions=[],normals=[];
-  for(const g of parts){const s=g.index?g.toNonIndexed():g;positions.push(...s.attributes.position.array);normals.push(...s.attributes.normal.array);if(s!==g)s.dispose();g.dispose();}
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('normal',new THREE.Float32BufferAttribute(normals,3));return geometry;
-}
 // A legionary at distance: legs and tunic, torso, helmeted head (about 1.75 m).
-export function createMassedSoldierGeometry(){
-  const legs=new THREE.CylinderGeometry(.19,.23,.86,7);legs.translate(0,.43,0);
-  const torso=new THREE.CylinderGeometry(.22,.19,.62,7);torso.translate(0,1.17,0);
-  const head=new THREE.SphereGeometry(.14,8,6);head.translate(0,1.6,0);
-  const crest=new THREE.BoxGeometry(.05,.1,.26);crest.translate(0,1.76,0);
-  return merge([legs,torso,head,crest]);
+export function createMassedSoldierGeometry({detail='near'}={}){
+  const data=FINALE_CROWD_DATA[detail]??FINALE_CROWD_DATA.near,geometry=new THREE.BufferGeometry();
+  for(const name of ['position','normal','color'])geometry.setAttribute(name,new THREE.Float32BufferAttribute(data[name],3));
+  geometry.setIndex(data.index);geometry.computeBoundingBox();geometry.computeBoundingSphere();geometry.userData.crowdSource=FINALE_CROWD_SOURCE;return geometry;
+}
+export function crowdBreathing(time,phase=0,height=1){const upper=Math.max(0,Math.min(1,(height-.7)/.9));if(!upper)return {x:0,z:0,y:0};return {x:Math.sin(time*.83+phase)*.009*upper,z:Math.cos(time*.67+phase)*.012*upper,y:Math.sin(time*1.8+phase)*.003*upper};}
+function crowdMaterial(source,time){
+  const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);material.color.set(0xffffff);material.vertexColors=true;
+  material.onBeforeCompile=(shader,renderer)=>{previous?.call(material,shader,renderer);shader.uniforms.massedCrowdTime=time;
+    shader.vertexShader='uniform float massedCrowdTime;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
+      float crowdPhase=dot(instanceMatrix[3].xz,vec2(.71,1.13));
+      float upper=clamp((position.y-.7)/.9,0.0,1.0);
+      transformed+=vec3(sin(massedCrowdTime*.83+crowdPhase)*.009,sin(massedCrowdTime*1.8+crowdPhase)*.003,cos(massedCrowdTime*.67+crowdPhase)*.012)*upper;
+    `);};
+  material.customProgramCacheKey=()=>`${key?.()??''}:massed-legion-v041`;return material;
 }
 export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   const hx=e.width*tileSize/2,gate=stagingEdge(e,'east',tileSize,6.8),wallX=gate.x+1.4,perf=quality==='performance';
@@ -31,7 +37,7 @@ export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   for(const z of [gate.z-15,gate.z+15])blocks.push({side:'claimant',x:hx+4.4,z,yaw:-Math.PI/2,files:perf?5:6,ranks:perf?3:4});
   return {wallX,gateZ:gate.z,gateGap:8.2,reach:58,blocks};
 }
-export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries}){
+export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries,animated=[],ownMaterial=material=>material}){
   if(profile.staging?.key!=='rome-approach')return null;
   const perf=quality==='performance',layout=finaleLayout(e,tileSize,{quality}),{wallX,gateZ,gateGap,reach}=layout;
   const tint=(hex,k)=>new THREE.Color(hex).multiplyScalar(.86+hash(k,17)*.24);
@@ -50,13 +56,16 @@ export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,in
     }
   }
   // Massed legions: bodies, shields and (above Performance) spears, instanced.
-  const body=p.geo(createMassedSoldierGeometry());
+  const body=p.geo(createMassedSoldierGeometry()),distant=p.geo(createMassedSoldierGeometry({detail:'distant'})),time={value:0},soldierMaterial=ownMaterial(crowdMaterial(m.cloth,time));
+  animated.push(t=>{time.value=t;});
+  root.userData.massedCrowd={source:FINALE_CROWD_SOURCE.path,nearTriangles:FINALE_CROWD_SOURCE.triangles.near,distantTriangles:FINALE_CROWD_SOURCE.triangles.distant,animation:'GPU breathing and weight shift; planted feet',near:0,distant:0};
   const colors={commander:{tunic:'#9b3a2c',shield:'#8e2f28'},claimant:{tunic:'#7c6f5c',shield:'#4b5e7a'}};
   for(const [b,block] of layout.blocks.entries()){
     const c=Math.cos(block.yaw),s=Math.sin(block.yaw),palette=colors[block.side];
     for(let r=0;r<block.ranks;r++)for(let f=0;f<block.files;f++){
       const lx=(f-(block.files-1)/2)*.92+(hash(b,r,f)-.5)*.12,lz=-(r-(block.ranks-1)/2)*1.05,x=block.x+c*lx+s*lz,z=block.z-s*lx+c*lz,y=height(x,z),yaw=block.yaw+(hash(f,r,b)-.5)*.16,k=b*100+r*10+f;
-      instance('massed legion figures',body,m.cloth,[x,y,z],[1,1,1],[0,yaw,0],tint(palette.tunic,k));
+      const detail=!perf&&r===0,scale=.97+hash(k,31)*.06;root.userData.massedCrowd[detail?'near':'distant']++;
+      instance(detail?'massed legion front ranks':'massed legion figures',detail?body:distant,soldierMaterial,[x,y,z],[scale,scale,scale],[0,yaw,0],tint('#ffffff',k));
       instance('massed legion shields',p.box,m.cloth,[x+Math.sin(yaw)*.3-Math.cos(yaw)*.12,y+.95,z+Math.cos(yaw)*.3+Math.sin(yaw)*.12],[.56,.86,.07],[0,yaw,0],tint(palette.shield,k+3));
       if(!perf)instance('finale timber',p.cylinder,m.wood,[x+Math.cos(yaw)*.24,y+1.25,z-Math.sin(yaw)*.24],[.03,2.4,.03]);
     }

@@ -3,6 +3,8 @@ import {terrainAt,gridToWorld,clamp,smooth} from './environment-layout.js';
 // These are place compositions, never mission markers or collision data.
 // The stage may borrow yaw/pitch, but must retain its own fit and clearance.
 const plans={
+  'ceremony-oath':['recruit-parade','The recruits before the Danube standard','south','north','parade',.36,.48],
+  'ceremony-accession':['imperial-recognition','The acclamation in the Roman tribunal court','south','north','recognition',.22,.42],
   'ch1-training':['recruit-parade','The fort parade ground','west','east','parade',.65,.68],
   'ch1-road':['boundary-watch','The watch road and baggage court','west','east','checkpoint',.82,.62],
   'ch2-marsh':['broken-causeway','A raised road through the flooded landing','west','east','causeway',.75,.67],

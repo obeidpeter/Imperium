@@ -250,6 +250,8 @@ Backing.
 
 ## In camp
 
+The world fills the main view. Camp services are below it, with a direct link back to the scene. **Company stories** offers an optional letter in Chapters IV–XII: read the two consequences before choosing, then return after a field action or hearing for the report. Choices are recorded once; their later acknowledgements remain in your career records.
+
 Every chapter has a camp you walk through: the legionary base at Novae,
 a march camp on the causeway, a Euphrates fortress's staging courtyard,
 a council camp before Milan, a ferry assembly on the Danube, a
@@ -501,6 +503,8 @@ the right mouse button uses it.
 
 ## Squads
 
+Later armies include specialist formations: engineer details in Chapters IV, V, VIII and X, and mounted cavalry in VII, IX and XII. Engineers support nearby work; they do not complete objectives automatically. Cavalry moves faster on firm ground, loses much of that advantage in rough terrain, and starts with orders to screen a flank.
+
 From Chapter IV the squads you command appear in the **squad bar** at
 the top left, each with its standard, and the same standard stands above
 the squad's men on the field.
@@ -663,6 +667,8 @@ works while paused and gives a complete alternative to pointing at the
 scene.
 
 ## The 3D camera
+
+The **View** selector offers Follow, Overview and Horizon in camps, battles and chambers. It changes only the camera, including while paused. Horizon is unavailable in the flat 2D view.
 
 Moving the camera never spends anything or changes the rules.
 
@@ -967,6 +973,10 @@ and command**.
   applies.
 
 ## Field objects
+
+Fortified fields from Chapter IV can include a weakened curtain wall and a fighting tower. Use the stairs to reach the raised deck; its height changes sight and missile advantage. A closed fortified gate stops both armies. Reopen it or close it again once the gateway is empty. Breaching a weakened wall takes two uninterrupted four-second work actions and leaves a permanent, slower rubble passage.
+
+In Chapter V, the countermine and enemy siege ramp put pressure on the defended line from round four. Securing each takes two work actions. A standing friendly engineer within eight metres, the engineering approach, or engineering support earned in the previous siege completes the work in one action. Stopping the ramp also delays the next reserve by one round when the deadline allows. Protect the main objective while choosing whether to finish both works. The result records unfinished works or withdrawn formations; securing both with the company intact earns support for the next field action.
 
 Every battle after the training drill offers two opportunities, and you
 can take only one. Their effects are shown in the field panel, and both
@@ -1322,6 +1332,8 @@ scene, holds the same choices with their total cost.
 
 ## Operational preparations
 
+Successful operations also change the next real-time field. Reconnaissance opens a side gate or reveals one concealed position; captured stores repair a damaged bridge, or extend the opportunity deadline by two rounds; a rested reserve gives protected columns four health and formations ten cohesion. A costly operation with a withdrawn veteran earns no such benefit. These changes are applied at departure, kept in the saved battle, and restored exactly by Retry. Recent field reports explain the results in camp.
+
 | **Preparation**           | **Cost**   | **Available**    |
 |---------------------------|------------|------------------|
 | Keep the company together | Free       | From Chapter III |
@@ -1343,6 +1355,8 @@ next camp starts from the free choices again. **Retry checkpoint**
 restores the complete camp checkpoint and the same departure.
 
 ## Knowing the enemy
+
+Enemy plans respond to observed braced lines, weakened or isolated formations, exposed archers and threatened objectives. The intelligence panel explains the selected plan. A plan remains in force long enough to read and counter; hidden troops do not secretly inform this assessment. Protecting an archer already under attack takes priority over a flank march.
 
 The **field intelligence** panel shows the enemy's doctrine, its
 **plan**, its current focus and the chapter's opportunities. Visible
@@ -1389,6 +1403,10 @@ the decisions that shaped them, and the obligations ledger what you
 promised and when it falls due.
 
 ## The final chapter
+
+In current campaigns, clean relief, reconnaissance and supply operations provide evidence that the civic, military and landholding representatives value in later chambers. Every two relevant successes add one starting stance, up to two. Honoured personal agreements still matter separately.
+
+In the real-time final battle, two clean reconnaissance operations intercept one rival reserve. Honoured agreements with two different military representatives keep another reserve neutral. Both can apply. The guaranteed costly-backing route remains available without either advantage.
 
 - Inspect the forecast before choosing a route. The army meter affects
   loyal formations and defections, political backing affects rival

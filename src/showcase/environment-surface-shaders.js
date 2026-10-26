@@ -21,8 +21,11 @@ function smoothstep(a,b,x){
   return t*t*(3-2*t);
 }
 
-export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false}={}){
+export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false,current={x:1,z:0}}={}){
   const t=Number.isFinite(time)?time:0;
+  const cx=Number.isFinite(current?.x)?current.x:1,cz=Number.isFinite(current?.z)?current.z:0,length=Math.hypot(cx,cz)||1;
+  const flowX=(x*-cz+z*cx)/length,flowZ=(x*cx+z*cz)/length;
+  x=flowX;z=flowZ;
   const speed=marsh?0.45:1;
   const waveA=Math.sin(x*1.45-t*1.65*speed+z*0.55);
   const waveB=Math.cos(z*2.15+t*1.25*speed-x*0.48);
@@ -55,14 +58,14 @@ export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false}={}){
 const OWN_FINISH=new Set(['water','ground','foliage','floor']);
 // `waves` lifts open water (the distant river) in its vertex shader, with matching
 // normals, from world position: no geometry rewritten on the CPU each frame.
-export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waves=false,waterTime=null,reflection=null}={}){
+export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waves=false,waterTime=null,waterCurrent=null,reflection=null}={}){
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
   const timeUniform=waterTime??{value:0},standing=!OWN_FINISH.has(kind);
   const grain={value:kind==='wood'?[7,.8]:[2.7,3.4]},roughnessRange={value:kind==='stone'&&(wet||rain)?[.58,.92]:[.91,1]};
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);
     shader.uniforms=shader.uniforms||{};
-    if(kind==='water')shader.uniforms.environmentWaterTime=timeUniform;
+    if(kind==='water')Object.assign(shader.uniforms,{environmentWaterTime:timeUniform,environmentWaterCurrent:waterCurrent??{value:[1,0]}});
     if(standing)Object.assign(shader.uniforms,{environmentGrain:grain,environmentRoughness:roughnessRange});
     const mirror=kind==='water'&&reflection;if(mirror)Object.assign(shader.uniforms,reflection);
     shader.vertexShader='varying vec3 vEnvironmentSurface;\n'+(waves?'uniform float environmentWaterTime;\n':'')+shader.vertexShader;
@@ -79,16 +82,18 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         environmentPosition=instanceMatrix*environmentPosition;
       #endif
       vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;`);
-    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime;\n':'')+(standing?'uniform vec2 environmentGrain;uniform vec2 environmentRoughness;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
+    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime; uniform vec2 environmentWaterCurrent;\n':'')+(standing?'uniform vec2 environmentGrain;uniform vec2 environmentRoughness;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
     let color='',roughness='';
     if(kind==='water'){
       // Foam belongs to shores and current, not to fixed bands: open water keeps
       // only faint streaks; shore water (vertex alpha = depth) foams at its edge.
       const speed=marsh?'.45':'1.0',amp=marsh?'.42':'1.0',foamScale=marsh?'.32':shore?'.0':'.14';
       color=`float envTime=environmentWaterTime*${speed};
-        float envWaveA=sin(vEnvironmentSurface.x*1.45-envTime*1.65+vEnvironmentSurface.z*.55);
-        float envWaveB=cos(vEnvironmentSurface.z*2.15+envTime*1.25-vEnvironmentSurface.x*.48);
-        float envCoarse=envNoise(vEnvironmentSurface.xz*.62+vec2(-envTime*.35,envTime*.22));
+        vec2 envFlowDir=normalize(environmentWaterCurrent+vec2(.00001));
+        vec2 envFlowUv=vec2(dot(vEnvironmentSurface.xz,vec2(-envFlowDir.y,envFlowDir.x)),dot(vEnvironmentSurface.xz,envFlowDir));
+        float envWaveA=sin(envFlowUv.x*1.45-envTime*1.65+envFlowUv.y*.55);
+        float envWaveB=cos(envFlowUv.y*2.15+envTime*1.25-envFlowUv.x*.48);
+        float envCoarse=envNoise(envFlowUv*.62+vec2(-envTime*.35,-envTime*.42));
         float envWave=(envWaveA*.52+envWaveB*.48)*${amp};
         float envBank=${shore?'0.0':'1.0-smoothstep(.12,.46,abs(fract(vEnvironmentSurface.z*.4)-.5))'};
         float envFoam=smoothstep(.60,.91,envCoarse+envWave*.26+envBank*.24)*${foamScale};
@@ -101,7 +106,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         vec3 envCrest=diffuseColor.rgb*vec3(1.14,1.18,1.22);
         diffuseColor.rgb=mix(envDeep,envCrest,clamp(.5+envWave*.38,0.0,1.0));
         ${shore?`float envDepth=clamp((vColor.a-.36)/.64,0.0,1.0);
-        float envStreak=smoothstep(.62,.95,envNoise(vec2(vEnvironmentSurface.x*2.4,vEnvironmentSurface.z*.32-envTime*.55)));
+        float envStreak=smoothstep(.62,.95,envNoise(vec2(envFlowUv.x*2.4,envFlowUv.y*.32-envTime*.55)));
         float envShore=(1.0-smoothstep(.0,.22,envDepth))*(.55+.45*envNoise(vEnvironmentSurface.xz*3.1+vec2(envTime*.4,-envTime*.3)));
         diffuseColor.rgb=mix(diffuseColor.rgb*vec3(1.18,1.20,1.06),diffuseColor.rgb*vec3(.62,.74,.80),envDepth);
         envFoam=clamp(envShore*.85+envStreak*.18*envDepth,0.0,1.0);`:''}
@@ -159,7 +164,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
       }`:''}`);
   };
   material.customProgramCacheKey=standing?()=>`${oldKey}:environment-finish-v5:standing`
-    :()=>`${oldKey}:environment-finish-v5:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}:${kind==='water'&&waves}`;
+    :()=>`${oldKey}:environment-finish-v6:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}:${kind==='water'&&waves}`;
   material.userData.environmentFinish=kind;
   material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh),shore:Boolean(shore),waves:Boolean(waves)};
   if(kind==='water')material.userData.waterTime=timeUniform;

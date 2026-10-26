@@ -23,7 +23,7 @@ const signed=n=>`${n>0?'+':''}${n}`;
 
 export function chamberEncounterView({state,saving,lastSaved,saveProblem,saveConflict,known=new Set()}){
   const e=state.encounter,chapter=chapterOf(state),vote=Game.voteCount(state),members=e.units.filter(u=>u.role==='voter');
-  return `<main id="main" class="encounter-frame realtime-frame chamber-frame" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
+  return `<main id="main" class="encounter-frame realtime-frame chamber-frame world-first" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
     <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · The chamber</span>
       <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>

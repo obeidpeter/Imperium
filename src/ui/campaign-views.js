@@ -13,6 +13,7 @@ import {skirmishControls} from '../core/controls-model.js';
 import {soldierCampCard} from './soldier-views.js';
 import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-view.js';
 import {campFor,campPlaceName,campPlaceHint,campPersonPresent,CAMP_PLACES} from '../data/camps.js';
+import {companyStories} from '../core/camp-stories.js';
 
 const campDisclosure=(id,label,body,{open=false}={})=>body?`<details id="${id}" class="camp-disclosure"${open?' open':''}><summary>${esc(label)}</summary>${body}</details>`:'';
 
@@ -31,11 +32,11 @@ export function quartermasterPanel(state){
 }
 
 export function createCampaignViews(context) {
-function header(){
+function header({immersive=false}={}){
   const {state,screen,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context(),landing=screen==='title';
   const ready=offline?'All chapters available offline':currentChapterOffline?'This chapter is ready offline':'';
   const offlineText=[ready,offlineProgress].filter(Boolean).join(' · ');
-  return `<header class="topbar site-header ${landing?'landing-header':'game-header'}"><button class="brand" data-cmd="home" aria-label="Imperium title screen"><img src="./icon.svg" width="35" height="42" alt=""><span><strong>IMPERIUM</strong>${landing?'<small>FROM RECRUIT TO EMPEROR</small>':''}</span></button><nav class="topnav" aria-label="${landing?'Site':'Game'} navigation">${landing?'<div class="desktop-nav"><a href="#rise">The rise</a><a href="#play">The game</a><a href="#world">The world</a><button class="ghost" data-cmd="history">History</button></div>':`<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span>${state?'<button class="ghost" data-cmd="soldier-panel" data-id="mission">Mission</button>':''}`}<button class="ghost menu-toggle" data-cmd="menu" aria-haspopup="dialog">Menu</button></nav></header>${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}<div id="offline-status" class="offline-banner" role="status" ${offlineText?'':'hidden'}>${esc(offlineText)}</div><p id="art-loading-status" class="art-loading-status" role="status" ${artProgress?'':'hidden'}>${esc(artProgress||'')}</p>`;
+  return `<header class="topbar site-header ${landing?'landing-header':'game-header'}${immersive?' world-header':''}"><button class="brand" data-cmd="home" aria-label="Imperium title screen"><img src="./icon.svg" width="35" height="42" alt=""><span><strong>IMPERIUM</strong>${landing?'<small>FROM RECRUIT TO EMPEROR</small>':''}</span></button><nav class="topnav" aria-label="${landing?'Site':'Game'} navigation">${landing?'<div class="desktop-nav"><a href="#rise">The rise</a><a href="#play">The game</a><a href="#world">The world</a><button class="ghost" data-cmd="history">History</button></div>':`<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span>${state?'<button class="ghost" data-cmd="soldier-panel" data-id="mission">Mission</button>':''}`}<button class="ghost menu-toggle" data-cmd="menu" aria-haspopup="dialog">Menu</button></nav></header>${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}<div id="offline-status" class="offline-banner" role="status" ${offlineText?'':'hidden'}>${esc(offlineText)}</div><p id="art-loading-status" class="art-loading-status" role="status" ${artProgress?'':'hidden'}>${esc(artProgress||'')}</p>`;
 }
 function footer(){if(context().screen!=='title')return `<footer class="footer game-footer"><span>IMPERIUM · ${CONFIG.version}</span><button class="ghost" data-cmd="help">Help</button></footer>`;return `<footer class="footer site-footer"><div class="footer-brand"><strong>IMPERIUM</strong><span>An original Roman tactical chronicle · c. AD 250–276</span></div><nav class="footer-links" aria-label="Help and information"><button class="ghost" data-cmd="help">How to play</button><button class="ghost" data-cmd="settings">Accessibility</button><button class="ghost" data-cmd="settings">Settings</button><button class="ghost" data-cmd="credits">Credits</button><button class="ghost" data-cmd="privacy">Privacy</button></nav><span class="footer-version">Version ${CONFIG.version} · Free browser play</span></footer>`;}
 function titleView(){
@@ -83,6 +84,17 @@ function story(){
   const oathScene=line.text===OATH?'<figure class="ceremony-scene oath-scene" data-ceremony="oath" aria-hidden="true"><img src="./assets/scenes/frontier-oath.webp" width="832" height="468" alt=""></figure>':'';
   return `${oathScene}<section class="story-card cinematic-story ${portrait?'has-speaker':'narrated'}" aria-label="Chapter dialogue">${portrait?`<figure class="story-portrait"><img src="${portrait}" width="336" height="336" decoding="async" alt="${esc(who)}"></figure>`:''}<div class="story-copy"><div class="speaker">${!portrait?'<span class="narrator-seal" aria-hidden="true">S</span>':''}<div><div class="eyebrow">THE CHRONICLE</div><strong>${esc(who)}</strong></div></div><div class="dialogue-text" aria-live="polite">${esc(line.text)}</div></div><div class="story-controls"><span class="story-dots" aria-label="Passage ${storyIndex+1} of ${lines.length}">Passage ${storyIndex+1} of ${lines.length}</span><div><button class="ghost small" data-cmd="previous-story" ${storyIndex===0?'disabled':''}>← Previous</button><button class="small" data-cmd="next-story" ${storyIndex>=lines.length-1?'disabled':''}>Read on →</button></div></div></section>`;
 }
+function companyStoryPanel(){
+  const rows=companyStories(context().state);if(!rows.length)return '';
+  const fresh=rows.filter(r=>!r.choice||r.ready&&!r.completed).length;
+  return campDisclosure('camp-company-stories',`Company stories${fresh?` · ${fresh} unread`:''}`,rows.map(row=>
+    `<article class="sidebar-card"><p class="eyebrow">CHAPTER ${roman(row.chapter)} · OPTIONAL</p><h3>${esc(row.title)}</h3><p>${esc(row.acknowledgement)}</p>`+
+    `<button class="text-link" data-cmd="conversation" data-id="${esc(row.id)}">${row.ready?'Read the report':row.choice?'Review the instruction':'Read the company’s letter'} →</button></article>`).join(''));
+}
+function fieldReports(){
+  const rows=Game.campaignDispatches(context().state);
+  return campDisclosure('recent-field-reports','Recent field reports',rows.map(row=>`<article class="sidebar-card"><h3>${esc(row.title)}</h3><p>${esc(row.text)}</p></article>`).join(''));
+}
 function effectsLabel(e={}){const labels={army:'Army',political:'Backing',public:'Public',supplies:'Supplies'};return Object.keys(labels).filter(k=>e[k]).map(k=>`${labels[k]} ${e[k]>0?'+':''}${e[k]}`).join(' · ');}
 function decisions(){
   const {state}=context(),d=Game.getChapter(state).decision,picked=state.decisions[d.id];
@@ -103,6 +115,8 @@ function campDueNotice(state){
 }
 function campOrders(state,ch,next,{realtime=false}={}){
   const problem=Game.departureCheck(state),remaining=Game.chapterRequirements(state).filter(r=>!r.done).length;
+  if(realtime)return `<section class="camp-departure world-departure" aria-labelledby="camp-next-title"><div class="world-departure-title"><span class="eyebrow">CHAPTER ${roman(ch.id)} · ${esc(state.rank)}</span><h1 id="camp-next-title">${esc(next?.title||ch.title)}</h1>${problem?`<p id="camp-departure-problem" class="world-departure-problem">${esc(problem)}</p>`:''}</div>`+
+    `<nav class="world-camp-actions" aria-label="Camp actions"><a class="world-service-link" href="#camp-services">Camp services</a><button class="primary" data-cmd="start"${problem?' aria-describedby="camp-departure-problem"':''}>${next?.kind==='contest'?'Enter the chamber':'March out'} <span aria-hidden="true">→</span></button></nav></section>`;
   return `<section class="camp-departure orders-card" aria-labelledby="camp-next-title"><div><p class="eyebrow">NEXT MISSION</p><h2 id="camp-next-title">${esc(next?.title||'Advancement')}</h2><p>${esc(next?.objective||ch.objective)}</p>`+
     `${problem?`<p id="camp-departure-problem" class="notice">${esc(problem)}</p>`:'<p class="muted">Ready to depart. Your progress saves before entry.</p>'}</div><div class="start-block">`+
     `<button class="primary full" data-cmd="start"${problem?' aria-describedby="camp-departure-problem"':''}>${next?.kind==='contest'?'Enter the chamber':realtime?'March out':'Enter the field'} <span aria-hidden="true">→</span></button>`+
@@ -120,11 +134,11 @@ function campPreparation(state){
 function camp(){
   const {state}=context(),ch=Game.getChapter(state),next=ch.encounters[state.encounterIndex];
   const chapterStory=`<figure class="camp-mural cinematic-mural"><img src="${chapterScene(state.chapter)}" width="768" height="430" decoding="async" alt="Painted impression of ${esc(ch.location)}"><figcaption class="mural-overlay"><p>${esc(ch.description)}</p></figcaption></figure>${careerBrief(state)}${story()}${voicedBriefing(state)}${warCouncilPanel(state)}`;
-  const records=profile()+commandRecord(state)+reformLedger(state)+quartermasterPanel(state)+companyPanel(Game.companyRoster(state),state.progression?.specializations)+
+  const records=profile()+fieldReports()+commandRecord(state)+reformLedger(state)+quartermasterPanel(state)+companyPanel(Game.companyRoster(state),state.progression?.specializations)+
     `<section class="sidebar-card appointment-card"><h3>Next appointment: ${esc(ch.promotion)}</h3><p>${esc(ch.promotionMeaning)}</p><p>${esc(ch.reward)}</p><p>${esc(Game.leadershipSummary(state))}</p>${state.chapter===10?Game.provinceSummary(state).map(line=>`<p>${esc(line)}</p>`).join(''):''}</section>`;
   return `${header()}<main id="main" class="frame camp-page">${chapterHeading()}${campOrders(state,ch,next)}${campDueNotice(state)}<div class="camp-grid"><div class="camp-primary"><div class="camp-story">`+
     `${decisions()}${preparations()}${operationPlanning(state)}${campPreparation(state)}${relationshipLedger(state,{compact:true})}${veteranAcademy(state)}`+
-    `${campDisclosure('camp-story','Chapter story & advice',chapterStory)}${practicePanel(state)}</div></div><aside class="camp-side camp-sidebar">${soldierCampCard(state)}`+
+    `${campDisclosure('camp-story','Chapter story & advice',chapterStory)}${companyStoryPanel()}${practicePanel(state)}</div></div><aside class="camp-side camp-sidebar">${soldierCampCard(state)}`+
     `${campDisclosure('camp-records','Career & campaign records',records)}<button class="text-link full" data-cmd="ledger">Promises & alliances →</button></aside></div></main>${footer()}`;
 }
 // The walkable camp (0.40, build brief §3.12): the camp scene, where the soldier
@@ -135,20 +149,23 @@ function realtimeCamp(){
   const decided=state.decisions[ch.decision.id],visited=new Set(Game.campVisited(state));
   const people=c.people.filter(p=>campPersonPresent(state,p)),talk=(tree,label)=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}">${esc(label)}</button>`;
   const placeName=id=>campPlaceName(state.chapter,id),placeHint=id=>campPlaceHint(state.chapter,id),presentation=Game.campPresentationFor(state);
-  return `${header()}<main id="main" class="frame camp-page realtime-camp world-courtyard${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">${chapterHeading()}${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
+  const dossier=`<p class="eyebrow">${esc(ch.year)} · ${esc(ch.location)}</p><h3>${esc(ch.title)}</h3><p>${esc(ch.description)}</p><p>${esc(state.rank)} · ${esc(ch.rankMeaning)}</p>`+
+    campDisclosure('campaign-chapters','Campaign progress',campaignStrip()+meters())+
+    campDisclosure('camp-promotion',`Promotion requirements · ${Game.chapterRequirements(state).filter(r=>!r.done).length} still to demonstrate`,requirements()+`<p>Complete ${ch.encounters.length} encounters (${state.encounterIndex}/${ch.encounters.length}). Retry restores the encounter’s starting checkpoint.</p>`)+fieldReports();
+  return `${header({immersive:true})}<main id="main" class="frame camp-page realtime-camp world-courtyard world-first${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
     <div class="rt-camp-grid">
       <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div>
-        <p class="rt-camp-note">Click a person to talk. All services are also available beside the scene.</p></div>
-      <aside class="camp-side camp-sidebar">
-        <section class="sidebar-card"><p class="eyebrow">IN CAMP</p><h3>${esc(c.title)}</h3>
-          ${presentation?`<p class="briefing" data-camp-consequence>${esc(presentation.summary)}</p>`:''}
+        <p class="rt-camp-note">Walk up to people to talk, or use the camp services below.</p></div>
+      <aside id="camp-services" class="camp-side camp-sidebar world-camp-services" aria-labelledby="camp-services-title" tabindex="-1">
+        <div class="world-services-heading"><h2 id="camp-services-title">Camp services</h2><a class="world-service-link" href="#rt-board">Return to the world ↑</a></div>
+        <section class="sidebar-card world-preparation"><p class="eyebrow">BEFORE YOU DEPART</p>
           ${talk('table',decided?'Review the chapter decision':'Make the chapter decision')}${preparations()}
           ${campPreparation(state)+campDisclosure('camp-operation','Operation & veteran training',operationPlanning(state)+veteranAcademy(state))}
           ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>`<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(p.place))}</small></span>${talk(p.talk,'Talk')}</li>`).join('')}</ul>`)}
           ${campDisclosure('camp-places','Travel to a place',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(placeName(id))} <small>${esc(placeHint(id))}${visited.has(id)||id==='gate'?'':' · Walk there once to unlock travel'}</small></span>`+
             `<button class="text-link" data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>Go</button></li>`).join('')}</ul>`)}</section>
-        ${soldierCampCard(state)}${practicePanel(state)}
-        ${campDisclosure('camp-story','Chapter story & advice',story()+warCouncilPanel(state))+campDisclosure('camp-records','Local report & campaign records',talk(c.reportTree,c.chapter===5?'Read the courtyard report':'Read the local report')+commandRecord(state)+relationshipLedger(state,{compact:true}))+`<button class="text-link full" data-cmd="ledger">Promises & alliances →</button>`}
+        ${soldierCampCard(state)}${practicePanel(state)}${companyStoryPanel()}
+        ${campDisclosure('camp-story','Chapter story & advice',story()+warCouncilPanel(state))+campDisclosure('camp-records','Local report & campaign records',dossier+(presentation?`<p class="briefing" data-camp-consequence>${esc(presentation.summary)}</p>`:'')+talk(c.reportTree,c.chapter===5?'Read the courtyard report':'Read the local report')+commandRecord(state)+relationshipLedger(state,{compact:true}))+`<button class="text-link full" data-cmd="ledger">Promises & alliances →</button>`}
       </aside>
     </div></main>${footer()}`;
 }
@@ -160,7 +177,8 @@ function promotion(){
   return `${header()}<main id="main" class="cinematic-page"><section class="promotion cinematic-promotion ceremony-${tier}" aria-labelledby="promotion-title"><div class="ceremony-scene" aria-hidden="true"><img src="${scene}" alt="" width="768" height="432"></div><div class="ceremony-tableau"><div class="ceremony-portrait">${state.soldier?figurePreview():`<img class="promotion-art" src="${portrait}" width="400" height="400" alt="${esc(state.name)}, ${esc(ch.id===12?state.rank:ch.promotion)}">`}${state.oath?'<img class="ceremony-seal" src="./assets/portraits/oath-seal.webp" width="256" height="256" alt="The worn lead seal carried since the first oath">':''}</div><div class="ceremony-title"><p class="eyebrow">CHAPTER ${roman(ch.id)} COMPLETE · EARNED THROUGH SERVICE</p><p class="ceremony-kicker">${ch.id===12?'THE LEGIONS AWAIT THEIR EMPEROR':ch.id===11?'A VOICE IN THE CURIA':ch.id===10?'THE WEIGHT OF CIVIL OFFICE':ch.id>=7?'THE STANDARD PASSES TO YOU':'THE OATH ENDURES'}</p><h1 id="promotion-title">${esc(ch.promotion)}</h1><p class="caps">${esc(ch.promotionMeaning)}</p><blockquote>${esc(ch.reward)}</blockquote></div></div><details class="ceremony-record"><summary>The appointment and your service</summary>${careerBrief(state,true)}${Game.storyLines(state).map(l=>`<p><span class="ceremony-voice">${esc(CAST[l.speaker]?.name||l.speaker)}</span>${esc(l.text)}</p>`).join('')}</details><div class="ceremony-advance">${missing.length?`<p class="notice">Before advancement, demonstrate: ${missing.map(r=>esc(actionNames[r.id]||r.id)).join(', ')}.</p><button data-cmd="replay">Replay the final encounter</button>`:`<button data-cmd="advance">${ch.id===12?'Receive the oath':'Accept the appointment'} →</button>`}</div></section></main>${footer()}`;
 }
 function ending(){
-  const {state}=context(),parts=epilogue(state),history=state.history||[],turns=history.reduce((n,h)=>n+(Number(h.turns)||0),0);
+  const {state}=context(),parts=[...epilogue(state),...(state.progressionVersion===1?[{title:'The coalition behind the accession',text:Game.finaleCareerSupport(state).description}]:[]),
+    ...Game.campaignDispatches(state),...companyStories(state).filter(s=>s.choice).map(s=>({title:s.title,text:s.acknowledgement}))],history=state.history||[],turns=history.reduce((n,h)=>n+(Number(h.turns)||0),0);
   const battles=history.filter(h=>h.kind==='battle').length,contests=history.filter(h=>h.kind==='contest').length;
   const agreements=state.progression?.agreements||[],honoured=agreements.filter(a=>a.status==='honoured').length+(state.obligations||[]).filter(o=>o.status==='honoured').length;
   const archive=Game.archiveEncounters(state);

@@ -1,4 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
+import {generatedIdentityMaterial} from './generated-identity.js';
+import {finishActorMaterial} from './actor-surface.js';
 
 // Units as formations. From Chapter IV the commander orders bodies of men,
 // so each military unit shows its leader plus followers standing in the
@@ -77,7 +79,13 @@ function crowdShader(shader,bones){
   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb *= vCrowdTint;');
 }
 function crowdMaterial(source,bones){
-  const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
+  // Body and named-head followers use identical PBR inputs. Neutral identity
+  // and finish uniforms let them share the same shader without changing the
+  // original body's colour, roughness, textures, geometry or shadow treatment.
+  const neutral=source.userData.generatedActorBody&&!source.userData.generatedIdentity;
+  const material=neutral?generatedIdentityMaterial(source,{key:'crowd-neutral',grey:0,beard:0}):source.clone();
+  if(neutral){finishActorMaterial(material,'neutral');material.name=source.name;}
+  const base=neutral?material:source,previous=base.onBeforeCompile,key=base.customProgramCacheKey?.bind(base);
   material.userData.crowdBones=bones;
   material.onBeforeCompile=(shader,renderer)=>{if(previous&&previous!==T.Material.prototype.onBeforeCompile)previous.call(material,shader,renderer);crowdShader(shader,bones);};
   material.customProgramCacheKey=()=>`${key?.()??''}:formation-crowd-v4`;

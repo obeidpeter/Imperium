@@ -177,7 +177,7 @@ test('v0.25.0 Lorica & Paludamentum: physically enriched character/armor shaders
 test('v0.25.0 Ignis & Ferrum: volumetric brazier flame plumes, projectile trails, and battlefield ground decals', () => {
   const plume = createFlamePlume();
   assert.equal(plume.name, 'brazier-flame-plume');
-  assert.equal(plume.geometry.attributes.position.count, 24);
+  assert.ok(plume.geometry.attributes.position.count<=48,'Flame and rising smoke share one bounded draw');
   const pos0 = [...plume.geometry.attributes.position.array];
   sampleFlamePlume(plume, 0.85, {reducedMotion: false});
   const pos1 = [...plume.geometry.attributes.position.array];

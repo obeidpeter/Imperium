@@ -135,6 +135,7 @@ export function evaluateActorShading(input,ndotl=0.5,ndotv=0.5){
 // is uniforms in one shared program: figures of every kit compile it once,
 // rather than once per kind. The arithmetic is the per-kind finish exactly.
 const FINISH={
+  neutral:{tint:[1,1,1],roughness:[1,0,1],grazing:0},
   skin:{tint:[1,.99,.985],roughness:[1,.46,.86],grazing:1},
   cloth:{tint:[1.04,1.04,1.04],roughness:[.96,0,1],grazing:0},
   mail:{tint:[1.03,1.03,1.03],roughness:[.9,0,1],grazing:0},
@@ -145,7 +146,7 @@ const FINISH={
 export const actorFinish=kind=>FINISH[kind]??FINISH.other;
 export function finishActorMaterial(material,kind){
   if(!material?.isMeshStandardMaterial)return material;
-  const resolved=actorSurfaceKind(kind??material.normalMap?.userData?.actorSurface??material.map?.userData?.actorSurface??material.userData?.actorFinish);
+  const resolved=kind==='neutral'?'neutral':actorSurfaceKind(kind??material.normalMap?.userData?.actorSurface??material.map?.userData?.actorSurface??material.userData?.actorFinish);
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey(),finish=actorFinish(resolved);
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);

@@ -1,0 +1,177 @@
+{
+  "buildRevision": "5767d11fb2b0",
+  "completed": "2026-10-26T08:34:24.594Z",
+  "browser": "Chromium 151.0.7922.34",
+  "rendering": "Windows Chromium with SwiftShader; resource counts, not hardware frame rates",
+  "passed": true,
+  "ceilingsChanged": false,
+  "sourceReportSha256": "cadab7cdc41faccd78afa804338fdc703f23430521ad75b977568d1b4c74d373",
+  "downloadGzipBytes": {
+    "initial": 862542,
+    "chapterOne3D": 10069348,
+    "largestChapter": 14904368,
+    "complete": 31412563
+  },
+  "runs": [
+    {
+      "scene": "ch1-road",
+      "quality": "performance",
+      "drawCalls": 76,
+      "triangles": 153807,
+      "shaderPrograms": 42,
+      "ceilings": {
+        "drawCalls": 81,
+        "triangles": 177000,
+        "shaderPrograms": 43
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch1-road",
+      "quality": "balanced",
+      "drawCalls": 83,
+      "triangles": 354657,
+      "shaderPrograms": 49,
+      "ceilings": {
+        "drawCalls": 88,
+        "triangles": 372000,
+        "shaderPrograms": 50
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch5-mine",
+      "quality": "performance",
+      "drawCalls": 137,
+      "triangles": 232336,
+      "shaderPrograms": 47,
+      "ceilings": {
+        "drawCalls": 140,
+        "triangles": 260000,
+        "shaderPrograms": 48
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch5-mine",
+      "quality": "balanced",
+      "drawCalls": 150,
+      "triangles": 458765,
+      "shaderPrograms": 52,
+      "ceilings": {
+        "drawCalls": 152,
+        "triangles": 482000,
+        "shaderPrograms": 52
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch7-legion",
+      "quality": "performance",
+      "drawCalls": 134,
+      "triangles": 307660,
+      "shaderPrograms": 47,
+      "ceilings": {
+        "drawCalls": 139,
+        "triangles": 344000,
+        "shaderPrograms": 48
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch7-legion",
+      "quality": "balanced",
+      "drawCalls": 132,
+      "triangles": 576399,
+      "shaderPrograms": 54,
+      "ceilings": {
+        "drawCalls": 137,
+        "triangles": 629000,
+        "shaderPrograms": 55
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch9-wing",
+      "quality": "performance",
+      "drawCalls": 142,
+      "triangles": 277153,
+      "shaderPrograms": 46,
+      "ceilings": {
+        "drawCalls": 147,
+        "triangles": 305000,
+        "shaderPrograms": 48
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch9-wing",
+      "quality": "balanced",
+      "drawCalls": 137,
+      "triangles": 477496,
+      "shaderPrograms": 52,
+      "ceilings": {
+        "drawCalls": 141,
+        "triangles": 503000,
+        "shaderPrograms": 54
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch12-confrontation",
+      "quality": "performance",
+      "drawCalls": 145,
+      "triangles": 372053,
+      "shaderPrograms": 47,
+      "ceilings": {
+        "drawCalls": 152,
+        "triangles": 441000,
+        "shaderPrograms": 48
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    },
+    {
+      "scene": "ch12-confrontation",
+      "quality": "balanced",
+      "drawCalls": 143,
+      "triangles": 794369,
+      "shaderPrograms": 54,
+      "ceilings": {
+        "drawCalls": 149,
+        "triangles": 865000,
+        "shaderPrograms": 55
+      },
+      "firstFrameCompiles": 0,
+      "inPlayCompiles": 0,
+      "cameraSettled": true,
+      "browserErrors": 0
+    }
+  ]
+}

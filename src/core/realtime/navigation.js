@@ -24,13 +24,15 @@ export function terrainAtPoint(map,x,z){
 const byMap=new WeakMap();
 export function navGrid(map){
   const known=byMap.get(map);if(known)return known;
-  const key=`${map.width}x${map.height}:${map.rain?'rain:':''}${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
+  const key=`${map.width}x${map.height}:${map.rain?'rain:':''}${JSON.stringify(map.elevations??[])}:${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
   if(grids.has(key)){byMap.set(map,grids.get(key));return grids.get(key);}
   const cell=MOVEMENT.cell,per=Math.round(TILE/cell),cols=map.width*per,rows=map.height*per,n=cols*rows;
   const solid=new Uint8Array(n),walk=new Uint8Array(n),speed=new Float64Array(n),height=new Float64Array(n);
+  const elevations=new Map((map.elevations??[]).map(([x,y,h])=>[`${x},${y}`,h]));
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
     const t=terrainName(map.terrain[Math.floor(r/per)][Math.floor(c/per)]),i=r*cols+c;
-    solid[i]=SOLID.has(t)?1:0;speed[i]=MOVEMENT.terrain[t]??1;height[i]=t==='high'?HIGH_GROUND:0;
+    solid[i]=SOLID.has(t)?1:0;speed[i]=t==='rubble'?.6:MOVEMENT.terrain[t]??1;
+    height[i]=elevations.get(`${Math.floor(c/per)},${Math.floor(r/per)}`)??(t==='high'?HIGH_GROUND:0);
   }
   // In rain the slopes are slower to climb (0.38: a step onto high ground costs one more):
   // the high ground's edge, within a metre of the low, is crossed at half speed.
@@ -51,7 +53,7 @@ export function navGrid(map){
     }
     walk[r*cols+c]=open;
   }
-  const grid={cell,cols,rows,width:cols*cell,depth:rows*cell,solid,walk,speed,height};
+  const grid={cell,cols,rows,width:cols*cell,depth:rows*cell,solid,walk,speed,height,elevated:elevations.size>0};
   grids.set(key,grid);byMap.set(map,grid);return grid;
 }
 
@@ -61,6 +63,10 @@ export const cellIndex=(g,x,z)=>{const c=Math.floor(x/g.cell),r=Math.floor(z/g.c
 export const cellCentre=(g,i)=>({x:(i%g.cols+.5)*g.cell,z:(Math.floor(i/g.cols)+.5)*g.cell});
 export const walkable=(g,x,z)=>{const i=cellIndex(g,x,z);return i>=0&&g.walk[i]===1;};
 export const groundHeight=(g,x,z)=>{const i=cellIndex(g,x,z);return i<0?0:g.height[i];};
+// Ordinary hills retain their 1.6 m traversable banks. A structure's sheer
+// 3.2 m face is crossed only through its 1.6 m approach stair.
+const levelStep=(g,a,b)=>!g.elevated||Math.abs(g.height[a]-g.height[b])<=1.6+1e-9;
+export const traversableStep=(g,a,b)=>!g.elevated||Math.abs(groundHeight(g,a.x,a.z)-groundHeight(g,b.x,b.z))<=1.6+1e-9;
 export const speedFactor=(g,x,z)=>{const i=cellIndex(g,x,z);return i<0?1:g.speed[i];};
 // Keep a centre inside the map, a body's radius from its edge.
 export function clampToMap(g,p,radius=MOVEMENT.radius){
@@ -90,9 +96,11 @@ export function nearestWalkable(g,x,z){
 export function clearLine(g,a,b,{fromBlocked=false}={}){
   const dx=b.x-a.x,dz=b.z-a.z,length=span(dx,dz),steps=Math.max(1,Math.ceil(length/(g.cell*.2)));
   const slowest=Math.min(speedFactor(g,a.x,a.z),speedFactor(g,b.x,b.z))-1e-9;
+  let previousHeight=g.elevated?groundHeight(g,a.x,a.z):0;
   for(let s=1;s<=steps;s++){
     const t=s/steps,x=a.x+dx*t,z=a.z+dz*t;
     if(fromBlocked&&t*length<g.cell*1.5)continue;if(!walkable(g,x,z)||speedFactor(g,x,z)<slowest)return false;
+    if(g.elevated){const h=groundHeight(g,x,z);if(Math.abs(h-previousHeight)>1.6+1e-9)return false;previousHeight=h;}
   }
   return true;
 }
@@ -128,7 +136,7 @@ function regions(g){
       const i=stack[--top],c=i%g.cols,r=(i-c)/g.cols;
       for(const [dc,dr]of NEIGHBOURS){
         const cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=g.cols||rr>=g.rows)continue;const j=rr*g.cols+cc;
-        if(!g.walk[j]||label[j]>=0||dc&&dr&&(!g.walk[r*g.cols+cc]||!g.walk[rr*g.cols+c]))continue;label[j]=next;stack[top++]=j;
+        if(!g.walk[j]||!levelStep(g,i,j)||label[j]>=0||dc&&dr&&(!g.walk[r*g.cols+cc]||!g.walk[rr*g.cols+c]||!levelStep(g,i,r*g.cols+cc)||!levelStep(g,i,rr*g.cols+c)))continue;label[j]=next;stack[top++]=j;
       }
     }
     next++;
@@ -182,10 +190,10 @@ export function findRoute(g,from,to){
     if(i===goalIndex){found=true;break;}
     const c=i%cols,r=(i-c)/cols,gi=gScore[i];
     for(let n=0;n<8;n++){
-      const dc=DC[n],dr=DR[n],cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=cols||rr>=rows)continue;const j=rr*cols+cc;if(!walk[j])continue;
+      const dc=DC[n],dr=DR[n],cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=cols||rr>=rows)continue;const j=rr*cols+cc;if(!walk[j]||!levelStep(g,i,j))continue;
       if(seen[j]!==stamp){seen[j]=stamp;gScore[j]=Infinity;parent[j]=-1;closed[j]=0;}else if(closed[j])continue;
       // No corner cutting: a diagonal needs both its orthogonal cells open.
-      if(n>3&&(!walk[r*cols+cc]||!walk[rr*cols+c]))continue;
+      if(n>3&&(!walk[r*cols+cc]||!walk[rr*cols+c]||!levelStep(g,i,r*cols+cc)||!levelStep(g,i,rr*cols+c)))continue;
       const cost=gi+STEP[n]*cell/speed[j];if(cost<gScore[j]){gScore[j]=cost;parent[j]=i;open.push(j,cost+h(cc,rr));}
     }
   }

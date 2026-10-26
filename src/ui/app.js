@@ -231,7 +231,7 @@ function render(){
   if(field&&!target)disposeField();
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
   if(ceremony3D)ceremony.mount(ceremonyHost,
-    {kind:ceremonyHost.dataset.ceremony,name:state?.name,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
+    {kind:ceremonyHost.dataset.ceremony,name:state?.name,appearance:state?.soldier?.appearance,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
   mountPainting();
   void mountIdentityPreview();
   for(const id of openPanels){const panel=document.getElementById(id);if(panel)panel.open=true;}

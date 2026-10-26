@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Campaign world upgrade
+
+- Larger camp, battle and chamber views with shared camera controls and optional records below the world.
+- Functional fortified gates, breach routes, accessible fighting towers and Chapter V countermining/sortie work. Structures share navigation, line-of-sight and rendered heights; work survives a save.
+- A consistent generated hero head across ranks, distinct named faces, injured/morale performances, coordinated cavalry gait, economical generated finale crowds and personal oath/accession staging.
+- Regional vegetation, camera-local rain/dust/mist/embers, shared wind, flowing water highlights, flame and smoke, and contextual environmental/weapon audio.
+- Observed-condition enemy plans, mission-specific pressure, friendly engineer details and mounted cavalry in later chapters.
+- Operations change later routes and logistics. Field reports distinguish intact engineering success, unfinished works and company withdrawals. Service evidence affects representatives; reconnaissance and honoured military agreements can prevent final reserves from arriving.
+- Nine optional company stories across IV–XII, each with two previewed choices, a returning report and later acknowledgement.
+- Real-time world version 4: older active real-time fights restart from their unchanged departure checkpoint when loaded. Earlier chronicles and turn-based compatibility fixtures remain supported.
+
+See [delivery and verification](docs/campaign-world-upgrade.md) for scope, evidence and remaining physical-device qualification.
+
 The conversion to real time with pause, following the real-time build brief (supplied separately, not stored here) and the [0.40 player guide](docs/player-guide-0.40.md). Real time is opt-in through the development settings until Gate 4; the 0.38 turns stay the default and play by their own rules, and every earlier save still loads exactly as saved. The original phase reports retain their validation limits; the later Windows assessment and improvements are recorded separately below. Physical phone and first-time player checks remain open.
 
 ### Worlds and gameplay, release 3: harder, less predictable battles ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/realtime-release3-report.md))

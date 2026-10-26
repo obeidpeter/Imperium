@@ -19,14 +19,18 @@ import {deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 const R=TIME.roundTicks;
 // A battle's camp checkpoint from the 0.38 command campaign (edition 35), started in real time on a copy.
 const camps=new Map();
-function battle(id){
+function battle(id,{support=true}={}){
   if(!camps.has(id)){
     const stop=new Error('reached');
     try{runCommandCampaign({featureEdition:35,onCheckpoint(s){const data=G.getChapter(s).encounters[s.encounterIndex];
       if(data?.id===id&&!camps.has(id)){camps.set(id,G.serialize(s));throw stop;}}});}catch(error){if(error!==stop)throw error;}
   }
   // From Chapter VII the company deploys first: these tests begin at the advance.
-  const state=G.deserialize(camps.get(id));assert.equal(G.startEncounter(state,{controls:'realtime'}).ok,true);const world=G.realtimeWorld(state);
+  const state=G.deserialize(camps.get(id));
+  // Object-rule fixture: omit earned operations when specifically testing the
+  // original closed/damaged state. Their real departure effects have separate coverage.
+  if(!support)state.progression.operationResults=[];
+  assert.equal(G.startEncounter(state,{controls:'realtime'}).ok,true);const world=G.realtimeWorld(state);
   if(deploying(world))soundTheAdvance(world);return {state,world};
 }
 const object=(w,id)=>w.objects.find(o=>o.id===id);
@@ -89,7 +93,7 @@ test('the barricade shields defenders within 2 m until dismantled, in the squad 
 });
 
 test('on a wide map the shut side gate is a wall until opened, and the footbridge’s crossing becomes a ford when repaired; it all survives a save',()=>{
-  const {state,world}=battle('ch8-ferry'),gate=object(world,'gate'),bridge=object(world,'bridge');
+  const {state,world}=battle('ch8-ferry',{support:false}),gate=object(world,'gate'),bridge=object(world,'bridge');
   assert.equal(gate.state,'closed');assert.equal(bridge.state,'damaged');
   const across=(o)=>findRoute(navGrid(world.map),{x:o.x-6,z:o.z},{x:o.x+6,z:o.z});
   assert.equal(across(gate).reasonCode,'PATH_BLOCKED','no way through the shut gate');assert.equal(across(bridge).reasonCode,'PATH_BLOCKED','nor across the broken bridge');

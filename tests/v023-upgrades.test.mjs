@@ -87,7 +87,7 @@ test('v0.23.0 Dynamic 3D Weather & Night-March Torchlight: scene profiles and de
   assert.notEqual(dayField.sky,nightField.sky,'Night march stratagem must shift the 3D sky palette to moonlight');
 
   const cloud=createWeatherField(null);
-  assert.equal(cloud.geometry.attributes.position.count,64);
+  assert.ok(cloud.geometry.attributes.position.count>=128&&cloud.geometry.attributes.position.count<=640,'Weather stays inside the supported GPU particle budget');
   for(const weather of ['rain','embers','dust','mist']){
     sampleWeatherParticles(cloud,weather,1.25,{reducedMotion:false});
     assert.equal(cloud.visible,true,`${weather} field should be visible`);

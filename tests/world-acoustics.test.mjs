@@ -32,3 +32,13 @@ test('Environmental sound is bounded, silent in battles and during paused simula
   w.tick++;assert.equal(s.sample(w,{now:12200}).cues.length,0);
   w.tick++;w.kind='battle';assert.equal(s.sample(w,{now:18100}).cues.length,0);
 });
+
+test('A nearby cavalry company adds one quiet panned hoof cue, without revealing hidden enemies or accumulating at pause',()=>{
+  const w=world(),s=createWorldAcoustics();w.kind='battle';w.actors[0].moving=false;
+  const cavalry={id:'escort',side:'player',role:'cavalry',x:5,z:1,alive:true,moving:true};
+  w.actors.push(cavalry,{...cavalry,id:'hidden-foe',side:'enemy',x:2,hidden:true});s.sample(w,{now:0});w.tick++;
+  assert.deepEqual(s.sample(w,{now:200}).cues,[{kind:'hoof',surface:'stone',intensity:.12,pan:.4}]);
+  w.tick++;assert.equal(s.sample(w,{now:250}).cues.length,0);w.tick++;assert.equal(s.sample(w,{now:2000,paused:true}).cues.length,0);
+  cavalry.alive=false;w.tick++;assert.equal(s.sample(w,{now:2050}).cues.length,0);s.reset();
+  w.actors=w.actors.filter(a=>a.id!=='escort');s.sample(w,{now:2100});w.tick++;assert.equal(s.sample(w,{now:2800}).cues.length,0);
+});

@@ -1,10 +1,11 @@
 import {CHAPTERS} from '../data/campaign.js';
 import {PROGRESSION_OPERATIONS} from '../data/progression-operations.js';
 import {alive,clamp,result} from './shared.js';
+import {operationImpactDescription} from './campaign-consequences.js';
 
 export function operationChoices(state){
   const id=state.encounter?.id??CHAPTERS[state.chapter-1]?.encounters[state.encounterIndex]?.id,choices=PROGRESSION_OPERATIONS[id]??[];
-  return {enabled:state.progressionVersion===1&&state.phase==='camp'&&choices.length>0,encounterId:id??null,selected:state.progression?.operationChoices[id]??choices[0]?.id??null,choices:choices.map(({id,label,description,reward,benefit})=>({id,label,description,reward:{...reward},benefit,consequence:(benefit==='reserve'?'Next field action: deployed veterans gain 2 starting health (up to their normal maximum).':benefit==='stores'?'Next field action: the commander carries one extra javelin.':'Next field action: its first announced reinforcement arrives one turn later; without one, the commander carries an extra javelin.')+' A withdrawn veteran makes this a costly victory: no operation reward or next-field benefit.'}))};
+  return {enabled:state.progressionVersion===1&&state.phase==='camp'&&choices.length>0,encounterId:id??null,selected:state.progression?.operationChoices[id]??choices[0]?.id??null,choices:choices.map(({id,label,description,reward,benefit})=>({id,label,description,reward:{...reward},benefit,consequence:(benefit==='reserve'?'Next field action: deployed veterans gain 2 starting health (up to their normal maximum).':benefit==='stores'?'Next field action: the commander carries one extra javelin.':'Next field action: its first announced reinforcement arrives one turn later; without one, the commander carries an extra javelin.')+' '+operationImpactDescription(benefit)+' A withdrawn veteran makes this a costly victory: no operation reward or next-field benefit.'}))};
 }
 export function chooseOperation(state,id){const plan=operationChoices(state);if(!plan.enabled||!plan.choices.some(x=>x.id===id))return result(false,'Choose an available operation before departure.');state.progression.operationChoices[plan.encounterId]=id;return result(true,`${plan.choices.find(x=>x.id===id).label} selected. The reward is earned only by completing the operation.`);}
 export function applyOperationConsequences(state,e){

@@ -6,13 +6,14 @@ const noise=(duration,gain,frequency,type='lowpass',offset=0,q=.7)=>({source:'no
 const ring=(duration,gain,partials,offset=0)=>({source:'ring',duration,gain,partials,offset,attack:.001,frequency:6200,type:'lowpass',q:.7});
 
 /** Event-sized sound recipes; side changes texture, never gameplay or volume. */
-export function battleSoundPlan(kind,{side='player',intensity=1,surface}={}){
+export function battleSoundPlan(kind,{side='player',intensity=1,surface,material,weapon,variant=0}={}){
   const aliases={step:'footstep',move:'footstep',block:'shield',brace:'shield',ward:'guard',rally:'inspire',order:'inspire',formation:'cornu',munitiones:'fieldwork',seal:'agreement',metal:'clash',strike:'clash',throw:'javelin',arrow:'bow',hurt:'impact'};
   const key=aliases[kind]??kind,amount=level(intensity),texture=side==='enemy'?31:side==='ally'?17:5;
   let layers=[];
   if(key==='footstep'){
-    const hard=['stone','chamber','road','wall'].includes(surface);
-    layers=[noise(hard?.075:.105,.29,hard?330:175),noise(.10,hard?.095:.06,hard?2300:1600,'bandpass',.008,.85),noise(.08,.028,2800,'highpass',.035)];
+    const hard=['stone','chamber','road','wall'].includes(surface),sand=['sand','dust'].includes(surface),loose=['rock','rubble','gravel'].includes(surface),wood=['bridge','wood'].includes(surface);
+    layers=wood?[noise(.08,.24,220),ring(.12,.07,[[217,1],[583,.4]],.005),noise(.06,.025,1400,'highpass',.02)]
+      :[noise(hard?.075:sand?.15:.105,.29,hard?330:sand?110:175),noise(loose?.16:.10,hard?.095:loose?.11:.06,hard?2300:loose?3100:sand?750:1600,'bandpass',.008,.85),noise(.08,.028,2800,'highpass',.035)];
   }
   else if(key==='hoof')layers=[noise(.075,.27,240),ring(.09,.085,[[173,1],[379,.35]],.005),noise(.065,.10,900,'bandpass',.09)];
   else if(key==='wade')layers=[{...noise(.25,.16,1700,'bandpass',0,.9),attack:.012,endFrequency:420},noise(.09,.18,180),noise(.22,.06,4200,'highpass',.035)];
@@ -28,12 +29,14 @@ export function battleSoundPlan(kind,{side='player',intensity=1,surface}={}){
   else if(key==='clash')layers=[noise(.045,.1,1700,'highpass'),ring(.28,.12,[[1523,1],[2711,.55],[4327,.24]],.003),noise(.12,.06,550,'bandpass',.01)];
   else if(key==='javelin')layers=[{...noise(.18,.07,1600,'bandpass',0,.8),attack:.035,endFrequency:4100},noise(.075,.03,700,'bandpass',.025)];
   else if(key==='bow')layers=[noise(.032,.11,1800,'highpass'),ring(.12,.06,[[163,1],[467,.35],[919,.12]],.001),{...noise(.09,.045,2800,'bandpass',.02),endFrequency:1100}];
-  else if(key==='impact')layers=[noise(.12,.28,200),noise(.085,.09,950,'bandpass',.004),noise(.13,.045,2200,'lowpass',.015)];
-  else if(key==='swing')layers=[{...noise(.11,.065,950,'bandpass',0,.65),attack:.018,endFrequency:2800}];
+  else if(key==='impact')layers=/mail|scale|metal|plate/.test(String(material??''))?[noise(.12,.25,210),ring(.16,.065,[[887,1],[1607,.4],[2213,.2]],.004),noise(.075,.065,2900,'highpass',.008)]
+    :[noise(.12,.28,200),noise(.085,.09,950,'bandpass',.004),noise(.13,.045,2200,'lowpass',.015)];
+  else if(key==='swing')layers=[{...noise(weapon==='spear'?.15:weapon==='knife'?.07:.11,.065,weapon==='spatha'?730:weapon==='knife'?1450:950,'bandpass',0,.65),attack:.018,endFrequency:weapon==='spear'?1900:2800}];
   else if(key==='cloth')layers=[{...noise(.19,.04,1300,'bandpass'),attack:.025,endFrequency:2300}];
   // A caller may request a single quiet gust. There is no self-starting loop.
   else if(key==='wind')layers=[{...noise(1.2,.027,620,'lowpass'),attack:.28,endFrequency:950}];
-  return {kind:key,texture,layers:amount?layers.map(layer=>({...layer,gain:layer.gain*amount})):[]};
+  const colour=1+(((Math.abs(Number(variant)||0)%5)-2)*.022);
+  return {kind:key,texture,layers:amount?layers.map(layer=>({...layer,gain:layer.gain*amount,frequency:layer.frequency*(variant?colour:1)})):[]};
 }
 
 function whiteNoise(context){
@@ -96,7 +99,7 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
   function cue(kind,options={}){
     if(disposed||!enabled||!volume||!ready||hidden()||context?.state!=='running')return false;
     try{if(recordedCue?.(kind,options))return true;}catch{ /* Optional recording failure retains native foley. */ }
-    const plan=battleSoundPlan(kind,options);
+    const plan=battleSoundPlan(kind,{...options,variant:sequence%5+1});
     if(!plan.layers.length)return false;
     const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech','guard','inspire','agreement','cornu','fieldwork'].includes(plan.kind)?1:0;
     // Quiet walking/rustle tails yield to a committed contact. Equal-priority
@@ -110,13 +113,13 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
     try{
       sequence++;
       for(const layer of plan.layers){
-        const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
-        const voice={source,nodes:[source,filter,gain],priority};voices.add(voice);created.push(voice);source.onended=()=>cleanup(voice);
+        const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain(),pan=context.createStereoPanner?.();
+        const voice={source,nodes:[source,filter,gain,...(pan?[pan]:[])],priority};voices.add(voice);created.push(voice);source.onended=()=>cleanup(voice);
         filter.type=layer.type;filter.frequency.setValueAtTime(layer.frequency,now+layer.offset);filter.Q.value=layer.q;
         if(layer.endFrequency)filter.frequency.exponentialRampToValueAtTime(layer.endFrequency,now+layer.offset+layer.duration);
         const start=now+layer.offset,end=start+layer.duration;
         gain.gain.setValueAtTime(.00001,start);gain.gain.linearRampToValueAtTime(layer.gain,start+layer.attack);gain.gain.exponentialRampToValueAtTime(.00001,end);
-        source.connect(filter);filter.connect(gain);gain.connect(master);
+        source.connect(filter);filter.connect(gain);if(pan){pan.pan.value=Math.max(-1,Math.min(1,Number(options.pan)||0));gain.connect(pan);pan.connect(master);}else gain.connect(master);
         if(layer.source==='ring'){
           const key=JSON.stringify([layer.duration,layer.partials]);if(!rings.has(key))rings.set(key,metalBuffer(context,layer));source.buffer=rings.get(key);source.start(start);
         }else{

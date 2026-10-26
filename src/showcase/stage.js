@@ -31,7 +31,7 @@ import {createSky} from './sky.js';
 import {createSceneLighting,readableLighting} from './scene-lighting.js';
 import {createSceneCompositor} from './scene-compositor.js';
 import {createContactShadows} from './contact-shadows.js';
-import {createParticleMask,sampleImpactParticles,createWeatherField,sampleWeatherParticles,sampleFlamePlume} from './stage-particles.js';
+import {createParticleMask,createImpactCloud,sampleImpactParticles,createWeatherField,sampleWeatherParticles,sampleFlamePlume} from './stage-particles.js';
 export {preloadBattleFigures} from './stage-preload.js';
 import {stageInput} from './stage-input.js';
 export {intersectGround,rayToUpright} from './stage-input.js';
@@ -238,15 +238,12 @@ export class BattleStage{
       new T.MeshBasicMaterial({color:'#f5e4bc',transparent:true,opacity:.34,depthWrite:false,side:T.DoubleSide,forceSinglePass:true}));
     trail.name='projectile-trail';trail.rotation.x=-Math.PI/2;trail.position.z=-.55;this.projectile.add(shaft,tip,trail);this.effectGroup.add(this.projectile);
     this.projectile.visible=false;yield;
-    this.particleMask=createParticleMask();const count=24,positions=new Float32Array(count*3);this.sparkGeometry=new T.BufferGeometry();
-    this.sparkGeometry.setAttribute('position',new T.BufferAttribute(positions,3));
-    this.sparkMaterial=new T.PointsMaterial({map:this.particleMask,alphaTest:.015,color:'#ffe4a1',size:.065,transparent:true,opacity:0,depthWrite:false,
-      blending:T.AdditiveBlending});
-    this.sparks=new T.Points(this.sparkGeometry,this.sparkMaterial);this.sparks.frustumCulled=false;this.effectGroup.add(this.sparks);
+    this.particleMask=createParticleMask();this.sparks=createImpactCloud(this.particleMask);
+    this.sparkGeometry=this.sparks.geometry;this.sparkMaterial=this.sparks.material;this.effectGroup.add(this.sparks);
     this.projectiles=[this.projectile];this.sparkClouds=[this.sparks];
     this.combat=createCombatEffects(this.scene,{particleMask:this.particleMask,quality});this.dustDebt=new Map();
-    this.weatherCloud=createWeatherField(this.particleMask);this.effectGroup.add(this.weatherCloud);
-    sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion});yield;
+    this.weatherCloud=createWeatherField(this.particleMask,{quality:this.quality});this.effectGroup.add(this.weatherCloud);
+    sampleWeatherParticles(this.weatherCloud,this.profile.weather,0,{reducedMotion:this.reducedMotion,anchor:this.lookTarget,chapter:this.chapter,indoors:this.profile.civic});yield;
     this.nightLight=new T.PointLight('#ffad5c',this.profile.torchlight?2.4:0,16,1.6);this.nightLight.position.set(0,3.2,0);
     this.effectGroup.add(this.nightLight);
     this.rebuildAtmosphere();yield;
@@ -341,6 +338,11 @@ export class BattleStage{
   // every shader through the tone mapping.
   applyQuality(quality,{world=true}={}){
     this.quality=quality in QUALITY?quality:'balanced';this.strainedFrames=0;const q=QUALITY[this.quality];
+    if(this.weatherCloud&&this.weatherCloud.userData.quality!==this.quality){
+      this.weatherCloud.removeFromParent();this.weatherCloud.geometry.dispose();this.weatherCloud.material.dispose();
+      this.weatherCloud=createWeatherField(this.particleMask,{quality:this.quality});this.effectGroup.add(this.weatherCloud);
+      sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed??0,{reducedMotion:this.reducedMotion,anchor:this.lookTarget,chapter:this.chapter,indoors:this.profile.civic});
+    }
     this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();
     this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));
     if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}
@@ -615,7 +617,7 @@ export class BattleStage{
       if(fx.at)this.updateBattleDecals(this.encounter,[fx.at]);
       if(sparkCount>=8)continue;
       if(!this.sparkClouds[sparkCount]){
-        const cloud=new T.Points(this.sparkGeometry.clone(),this.sparkMaterial.clone());cloud.frustumCulled=false;this.effectGroup.add(cloud);
+        const cloud=createImpactCloud(this.particleMask);this.effectGroup.add(cloud);
         this.sparkClouds.push(cloud);
       }
       const cloud=this.sparkClouds[sparkCount++];
@@ -631,9 +633,9 @@ export class BattleStage{
     }
     let brazier=null;
     if(this.fieldworkMeshes)for(const group of this.fieldworkMeshes.values())if(group.visible&&group.userData.flamePlume){
-      sampleFlamePlume(group.userData.flamePlume,this.elapsed,{reducedMotion:this.reducedMotion});brazier??=group;
+      sampleFlamePlume(group.userData.flamePlume,this.elapsed,{reducedMotion:this.reducedMotion,chapter:this.chapter,weather:this.profile.weather});brazier??=group;
     }
-    sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed,{reducedMotion:this.reducedMotion});
+    sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed,{reducedMotion:this.reducedMotion,anchor:this.lookTarget,chapter:this.chapter,indoors:this.profile.civic});
     CLOUD_UNIFORMS.cloudStrength.value=this.cloudLevel??0;CLOUD_UNIFORMS.cloudTime.value=this.reducedMotion?0:this.elapsed%3600;
     this.shafts?.update(this.elapsed,{reducedMotion:this.reducedMotion});
     this.combat?.volley(volleyShots);

@@ -1,6 +1,6 @@
 import * as T from '../../vendor/three/three.module.js';
 import {ACTOR_TIMING,locomotionPhase} from './actor-pose.js';
-import {sampleImpactParticles} from './stage-particles.js';
+import {createImpactCloud,sampleImpactParticles} from './stage-particles.js';
 import {positionProjectileTip} from './stage.js';
 import {ITEMS} from '../data/realtime-rules.js';
 import {EXCHANGE,MORALE} from '../data/realtime-squads.js';
@@ -82,11 +82,12 @@ export function squadUnit(world,squad){
 function stageField(world){
   const f=world.field;if(!f)return null;const tile=v=>Math.floor(v/2.5),objects=[];
   for(const o of world.objects??[]){
-    if(!o.field)continue;const base={kind:o.kind,label:o.name,state:o.state,...(o.state==='burning'?{rounds:Math.max(1,o.rounds)}:{})};
+    if(!o.field)continue;const base={kind:o.kind,label:o.name,state:o.state,orientation:o.orientation,progress:o.progress,required:o.required,
+      ...(o.state==='burning'?{rounds:Math.max(1,o.rounds)}:{})};
     if(o.cells?.length){
       const mid=Math.floor(o.cells.length/2);
       o.cells.forEach(([x,y],i)=>{
-        if(o.kind==='bridge')objects.push({...base,id:`${o.id}-${i}`,x,y,...(i===mid?{}:{section:true})});
+        if(o.kind==='bridge'||o.kind==='breach')objects.push({...base,id:`${o.id}-${i}`,x,y,...(i===mid?{}:{section:true})});
         else if(i===mid)objects.push({...base,id:o.id,x,y});
         else if(o.state==='closed')objects.push({id:`${o.id}-timber-${i}`,kind:'barricade',label:o.name,state:'intact',x,y});
       });
@@ -97,8 +98,8 @@ function stageField(world){
 // The ground the stage draws: the world's, with a shut gate's line shown as the ground under
 // it (the gate and its timber stand there instead, and open without rebuilding the ground).
 function stageTerrain(world){
-  const gates=(world.objects??[]).filter(o=>o.field&&o.kind==='gate'&&o.cells?.length);if(!gates.length)return world.map.terrain;
-  const terrain=world.map.terrain.map(row=>[...row]);for(const g of gates)for(const [x,y]of g.cells)terrain[y][x]=g.under;return terrain;
+  const gates=(world.objects??[]).filter(o=>o.field&&['gate','breach'].includes(o.kind)&&o.cells?.length);if(!gates.length)return world.map.terrain;
+  const terrain=world.map.terrain.map(row=>[...row]);for(const g of gates)for(const [x,y]of g.cells)terrain[y][x]=g.kind==='breach'?'grass':g.under;return terrain;
 }
 // The stage's encounter: the campaign map with the world's actors, and no turn-based markers.
 // A campaign battle's world walks an upsampled map (2.5 m tiles); the stage builds that one.
@@ -106,7 +107,7 @@ export function stageEncounter(encounter,world,{appearance}={}){
   const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
   return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance,campActivity:campActivityFor(world,a.id)})),...squads],...stageMission(world),
-    field:stageField(world),operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+    field:stageField(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[]};
 }
 // The objective's markers as the board shows them (stage-readout.js missionReadouts): the goal, the
 // positions to secure and the next wave, on the stage's 2.5 m tiles. A camp or chamber has none.
@@ -277,7 +278,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
     if(focusId)focusId=labelOf(w,focusId);
     return {at:{x:unit.x,y:unit.y},visible,active:motion!=='idle'&&!motion.startsWith('camp-')||a.id===w.controlled,aimHeight,focusId,lift,
       pose:{time:reducedMotion?0:time,dt,motion,phase,direction,locomotionDistance:walked,locomotionWeight,movementProgress:undefined,
-        braced:a.braceUntil>r,health:a.alive?a.hp/a.maxHp:1,impactDirection,turnSign:1,reducedMotion,selected:false}};
+        braced:a.braceUntil>r,health:a.alive?a.hp/a.maxHp:1,morale:clamp((squadOf(w,a.squadId)?.morale??(w.band?.members?.includes(a.id)?w.band.morale:100))/100,0,1),impactDirection,turnSign:1,reducedMotion,selected:false}};
   }
   // A squad's figure is its foremost man; his comrades are its crowd, each at his
   // own place and facing (unit-local slots for formation.js). Engaged, the front
@@ -378,7 +379,9 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         if(stage.sound&&['swing','hit','block','throw','brace'].includes(e.kind)){
           const kind={swing:'swing',hit:'impact',block:'shield',throw:'javelin',brace:'guard'}[e.kind],who=actorOf(w,e.defenderId??e.actorId);
           const pan=who?clamp(ground(who.x,who.z).project(stage.camera).x,-1,1):0;
-          if(stage.sound.cue(kind,{side:actorOf(w,e.attackerId??e.actorId)?.side==='enemy'?'enemy':'player',pan,intensity:e.critical?1.3:1}))stage.cuesPlayed++;
+          const attacker=actorOf(w,e.attackerId??e.actorId),kit=who?.kit??[],material=e.kind==='hit'?(kit.some(id=>['hamata','squamata'].includes(id))?'metal':kit.some(id=>['jerkin','subarmalis'].includes(id))?'cloth':'flesh'):undefined;
+          const weapon=attacker?.kit?.find(id=>['spear','spatha','gladius','knife','bow'].includes(id));
+          if(stage.sound.cue(kind,{side:attacker?.side==='enemy'?'enemy':'player',pan,material,weapon,intensity:e.critical?1.3:1}))stage.cuesPlayed++;
         }
       }
       // Readouts over the figures (name, health; a squad's strength and morale) follow the world.
@@ -415,7 +418,7 @@ export function createLivePresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       for(let i=sparks.length-1;i>=0;i--)if(now-sparks[i].start>SPARK_MS)sparks.splice(i,1);
       stage.sparkClouds.forEach(c=>c.material.opacity=0);
       sparks.slice(-8).forEach((s,i)=>{
-        if(!stage.sparkClouds[i]){const cloud=new T.Points(stage.sparkGeometry.clone(),stage.sparkMaterial.clone());cloud.frustumCulled=false;
+        if(!stage.sparkClouds[i]){const cloud=createImpactCloud(stage.particleMask);
           stage.effectGroup.add(cloud);stage.sparkClouds.push(cloud);}
         const at=ground(s.x,s.z).add(new T.Vector3(0,1.15,0)),source=s.from?ground(s.from.x,s.from.z).add(new T.Vector3(0,1.2,0)):undefined;
         sampleImpactParticles(stage.sparkClouds[i],at,(now-s.start)/SPARK_MS,{shield:s.shield,source});

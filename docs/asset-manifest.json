@@ -8377,6 +8377,29 @@
         "height": 640
       },
       "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "finale-crowd-v041",
+      "path": "src/showcase/finale-crowd-data.js",
+      "subject": "Two deterministic overview reductions of the existing generated Roman legionary for massed background formations",
+      "source": {
+        "method": "Mechanical vertex clustering of the shipped generated model; no new generation or third-party source",
+        "path": "assets/models/characters/roman-legionary.glb",
+        "sha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88",
+        "script": "scripts/build-finale-crowd.mjs",
+        "rights": "Inherits the recorded Tripo paid-account licence of roman-legionary.glb; see that asset entry",
+        "creditsSpent": 0
+      },
+      "export": {
+        "bytes": 47428,
+        "sha256": "71125d9dd739a2b884ceeac542eaf459ff8ba63b14a0dba29a57668a3e565384",
+        "format": "ES module with vertex positions, authored normals, baked vertex colours and triangle indices",
+        "triangles": {
+          "near": 940,
+          "distant": 136
+        }
+      },
+      "runtime": "Deferred with the existing 3D renderer; no external provider or new textures. Performance uses the 136-triangle silhouette; other tiers use 940 triangles only in the front rank."
     }
   ],
   "developmentAssets": [
@@ -8444,7 +8467,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-24T12:52:27.760Z",
+  "updatedAt": "2026-10-26T06:13:54.707Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -8470,6 +8493,7 @@
     "textures": 15
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 32561960,
-  "totalModelBytes": 17463759
+  "totalBundledAssetBytes": 32609388,
+  "totalModelBytes": 17463759,
+  "derivedGeometryBytes": 47428
 }

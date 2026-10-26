@@ -83,18 +83,22 @@ export function createVegetationFactory({p,m,instance,height,quality}){
   function limb(a,b,r,seed){const av=new T.Vector3(...a),bv=new T.Vector3(...b),delta=bv.sub(av),rot=new T.Euler().setFromQuaternion(new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),delta.clone().normalize()));instance(`natural bark ${seed%3}`,limbs[seed%3],m.bark,a,[r,delta.length(),r],[rot.x,rot.y,rot.z]);}
   function spray(kind,name,x,y,z,scale,rotation,seed){instance(name,sprays[kind],m.foliage,[x,y,z],scale,rotation,color(seed));}
   function tree(kind,x,z,h,seed=0){
-    const base=height(x,z),willow=kind==='willow',lean=(hash(seed,8)-.5)*.9,stem=[x+lean,base+h*.62,z+.20];
+    if(kind==='palm')return palm(x,z,h,seed);
+    if(kind==='cypress')return cypress(x,z,h,seed);
+    if(kind==='pine'||kind==='fir')return conifer(kind,x,z,h,seed);
+    const form={beech:{width:1.1,crown:.94},alder:{width:.72,crown:1.02},poplar:{width:.48,crown:1.15},umbrella:{width:1.40,crown:.80},olive:{width:1.12,crown:.72},tamarisk:{width:1.05,crown:.69}}[kind]??{width:1,crown:1};
+    const base=height(x,z),willow=kind==='willow',leafKind=willow||kind==='tamarisk'?'willow':'oak',lean=(hash(seed,8)-.5)*.9,stem=[x+lean,base+h*.62*form.crown,z+.20];
     limb([x,base-.08,z],stem,.28+hash(seed,10)*.09,seed,'natural tree trunk');
     for(let k=0;k<4;k++){const a=k*2.399+seed,xx=x+Math.cos(a)*1.15,zz=z+Math.sin(a)*1.15;limb([x,base+.38,z],[xx,height(xx,zz)-.05,zz],.16,seed+k,'root flare');}
-    const branches=willow?7:8;
+    const branches=willow?7:kind==='poplar'?6:8;
     for(let k=0;k<branches;k++){
-      const a=k*2.399+seed*.83,reach=h*(.19+hash(seed,k,51)*.13),cy=base+h*(.64+hash(k,seed,54)*.27),cx=x+lean+Math.cos(a)*reach,cz=z+Math.sin(a)*reach;
+      const a=k*2.399+seed*.83,reach=h*(.19+hash(seed,k,51)*.13)*form.width,cy=base+h*(.64+hash(k,seed,54)*.27)*form.crown,cx=x+lean+Math.cos(a)*reach,cz=z+Math.sin(a)*reach;
       limb([stem[0],base+h*(.35+k*.032),stem[2]],[cx,cy,cz],.11+hash(k,seed)*.045,seed+k,'natural tree bough');
       const count=perf?7:high?23:17;
       for(let j=0;j<count;j++){
         const angle=j*2.399+hash(seed,k)*3,r=Math.sqrt((j+.6)/count)*h*(willow?.16:.18),px=cx+Math.cos(angle)*r,pz=cz+Math.sin(angle)*r;
         const py=cy+(hash(j,k,seed)-.5)*h*.15,s=h*(willow?.22:.19)*(1+hash(j,k,19)*.35);
-        spray(kind,willow?'willow leaves':'oak leaves',px,willow?py-s:py-s*.3,pz,[s*(willow?.66:1),s, s],willow?[.12,angle,(hash(j,k)-.5)*.38]:[(hash(j,k,7)-.5)*1.2,angle,(hash(k,j,9)-.5)*1.15],seed+k*71+j);
+        spray(leafKind,leafKind==='willow'?'willow leaves':'oak leaves',px,willow?py-s:py-s*.3,pz,[s*(willow?.66:form.width),s*(kind==='umbrella'?.65:1),s],willow?[.12,angle,(hash(j,k)-.5)*.38]:[(hash(j,k,7)-.5)*1.2,angle,(hash(k,j,9)-.5)*1.15],seed+k*71+j);
       }
       if(!perf){const end=[cx+Math.cos(a+.6)*.7,cy+.35,cz+Math.sin(a+.6)*.7];limb([cx,cy,cz],end,.043,seed+k+2,'canopy twigs');}
     }
@@ -114,5 +118,17 @@ export function createVegetationFactory({p,m,instance,height,quality}){
       spray('oak','cypress foliage',x+Math.cos(a)*r,base+h*(.16+tier*.093),z+Math.sin(a)*r,[s*.67,s,s*.67],[.10,a,(hash(j,tier)-.5)*.35],seed+tier*9+j);
     }
   }
-  return {tree,palm,cypress,sprays,spray,limb};
+  function conifer(kind,x,z,h=7,seed=0){
+    const base=height(x,z),tiers=kind==='fir'?8:6;
+    limb([x,base,z],[x+.10,base+h,z],.17,seed);
+    for(let tier=0;tier<tiers;tier++){
+      const t=tier/tiers,cy=base+h*(.23+t*.72),radius=h*(kind==='fir'?.24:.28)*(1-t*.83),count=perf?4:high?9:7;
+      for(let j=0;j<count;j++){
+        const a=j*Math.PI*2/count+tier*.72,xx=x+Math.cos(a)*radius*.7,zz=z+Math.sin(a)*radius*.7;
+        if(j%2===0)limb([x,cy+.18,z],[xx,cy-radius*.12,zz],.045*(1-t*.5),seed+tier+j);
+        spray('oak','oak leaves',xx,cy-radius*.25,zz,[radius*.95,radius*.72,radius*.95],[.65,a,.28],seed+tier*17+j);
+      }
+    }
+  }
+  return {tree,palm,cypress,conifer,sprays,spray,limb};
 }

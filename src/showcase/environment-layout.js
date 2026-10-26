@@ -27,7 +27,12 @@ export function worldToGrid(x,z,e,tileSize=TILE_SIZE){return {x:Math.round(x/til
 // relief:false omits the plateaus (the surface roads follow, so a verge never climbs a bank).
 export function createGroundHeight(e,tileSize=TILE_SIZE,{profile=null,relief=true}={}){
   const high=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&['high','hill'].includes(terrainAt(e,x,y)),hills=[];
-  if(relief)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(high(x,y))hills.push({centre:gridToWorld({x,y},e,tileSize),sides:{east:high(x+1,y),west:high(x-1,y),south:high(x,y+1),north:high(x,y-1)}});
+  const elevations=new Map((e.elevations??[]).map(([x,y,h])=>[`${x},${y}`,h]));
+  if(relief)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(high(x,y)){
+    const level=elevations.get(`${x},${y}`)??HIGH_GROUND_HEIGHT;
+    const joins=(a,b)=>high(a,b)&&(elevations.get(`${a},${b}`)??HIGH_GROUND_HEIGHT)===level;
+    hills.push({height:level,structure:elevations.has(`${x},${y}`),centre:gridToWorld({x,y},e,tileSize),sides:{east:joins(x+1,y),west:joins(x-1,y),south:joins(x,y+1),north:joins(x,y-1)}});
+  }
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,riverCentre=distantRiverCentre(e,tileSize);
   const riverExits=[];for(const y of [0,e.height-1])for(let x=0;x<e.width;x++)if(terrainAt(e,x,y)==='river')riverExits.push({x:gridToWorld({x,y},e,tileSize).x,side:y===0?-1:1});
   const wet=(x,y)=>{const t=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));return t==='river'?RIVER_BED:t==='ford'?FORD_BED:t==='marsh'?-.065:0;};
@@ -40,7 +45,7 @@ export function createGroundHeight(e,tileSize=TILE_SIZE,{profile=null,relief=tru
     const gx=x/tileSize+(e.width-1)/2,gy=z/tileSize+(e.height-1)/2,ix=Math.floor(gx),iy=Math.floor(gy),u=smooth(gx-ix),v=smooth(gy-iy);
     if(Math.abs(x)<=hx&&Math.abs(z)<=hz)h+=(wet(ix,iy)*(1-u)+wet(ix+1,iy)*u)*(1-v)+(wet(ix,iy+1)*(1-u)+wet(ix+1,iy+1)*u)*v;
     for(const exit of riverExits)if(z*exit.side>hz){const channel=1-smooth((Math.abs(x-exit.x)-tileSize*.42)/(tileSize*.40));h=h*(1-channel)+RIVER_BED*channel;}
-    let rise=0;for(const hill of hills)rise=Math.max(rise,plateauWeight(x,z,hill.centre,tileSize,hill.sides));h+=HIGH_GROUND_HEIGHT*rise;
+    let rise=0;for(const hill of hills){const weight=hill.structure?Number(Math.abs(x-hill.centre.x)<=tileSize/2&&Math.abs(z-hill.centre.z)<=tileSize/2):plateauWeight(x,z,hill.centre,tileSize,hill.sides);rise=Math.max(rise,hill.height*weight);}h+=rise;
     return h;
   };
 }
