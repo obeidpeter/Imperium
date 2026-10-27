@@ -133,6 +133,9 @@ export function combatReadability(actor,tick){
   return null;
 }
 
+// A flat marker from its triangles. Its unlit material ignores normals; they keep its
+// program the one of the round rings (RingGeometry), which have them.
+function flatGeometry(pos){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));geometry.computeVertexNormals();return geometry;}
 // Allegiance at every man's feet by shape as well as colour (§3.16): a full
 // ring for friends, a spiked one for enemies, each with a chevron for his
 // facing (it decides blocks and flanks). Drawn flat in XY, facing −y, then laid
@@ -141,14 +144,14 @@ function footGeometry(spiked){
   const pos=[...new T.RingGeometry(.44,.5,40).toNonIndexed().attributes.position.array],tri=(...p)=>pos.push(p[0],p[1],0,p[2],p[3],0,p[4],p[5],0);
   tri(-.13,-.53,.13,-.53,0,-.71);
   if(spiked)for(let i=0;i<8;i++){const a=(i+.5)/8*Math.PI*2,c=Math.cos(a),s=Math.sin(a),w=.055;tri(c*.5-s*w,s*.5+c*w,c*.5+s*w,s*.5-c*w,c*.63,s*.63);}
-  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
+  return flatGeometry(pos);
 }
 // Neutrals: a dashed ring, so allegiance never rests on colour alone.
 function dashedGeometry(){
   const pos=[];for(let i=0;i<12;i++){const a0=i/12*Math.PI*2,a1=a0+Math.PI/12;
     for(let k=0;k<4;k++){const t0=a0+(a1-a0)*k/4,t1=a0+(a1-a0)*(k+1)/4,p=(r,t)=>[Math.cos(t)*r,Math.sin(t)*r,0];
       pos.push(...p(.44,t0),...p(.5,t0),...p(.5,t1),...p(.44,t0),...p(.5,t1),...p(.44,t1));}}
-  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
+  return flatGeometry(pos);
 }
 const FLAT=new T.Quaternion().setFromAxisAngle(new T.Vector3(1,0,0),-Math.PI/2),UP=new T.Vector3(0,1,0),DISC=new T.Matrix4(),ONE=new T.Vector3(1,1,1);
 // How far an enemy has noticed the party, as a quarter-filled circle over his head (the guide's eye).
@@ -160,7 +163,7 @@ function arcGeometry(arcs,inner=1.02,outer=1.16){
   const pos=[],p=(r,t)=>[Math.cos(t)*r,Math.sin(t)*r,0];
   for(const [a0,a1]of arcs){const n=Math.max(4,Math.ceil((a1-a0)/(Math.PI/24)));
     for(let k=0;k<n;k++){const t0=a0+(a1-a0)*k/n,t1=a0+(a1-a0)*(k+1)/n;pos.push(...p(inner,t0),...p(outer,t0),...p(outer,t1),...p(inner,t0),...p(outer,t1),...p(inner,t1));}}
-  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(pos,3));return geometry;
+  return flatGeometry(pos);
 }
 const SHAKEN_ARCS=[[-Math.PI/2+.24,Math.PI*1.5-.24]],BROKEN_ARCS=[[.18,Math.PI-.18],[Math.PI+.18,Math.PI*2-.18]];
 // A fixed fraction per squad (presentation only): its blows and volleys keep their own beat.

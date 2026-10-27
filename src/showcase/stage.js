@@ -154,7 +154,7 @@ export class BattleStage{
       {chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});
     // input:false leaves the pointer and keys to the page (the real-time arena binds its own).
     this.keyboardMode=keyboardMode;this.inputEnabled=input!==false;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;
-    // A real-time field (live) is drawn from its world, not the turns' overlays (stage-overlays.js).
+    // A real-time field (live) is drawn from its world; it never has the turns' fieldwork.
     this.liveField=!!live;
     this.encounter=encounter;this.onPick=onPick;
     this.onHover=onHover;this.quality=quality;this.builtQuality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
