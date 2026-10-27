@@ -5,6 +5,7 @@ import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {REALTIME_DIFFICULTY,PERCEPTION} from '../src/data/realtime-rules.js';
 import {choosePace,defaultSettings,followDifficulty,loadSettings,paceDefaults} from '../src/ui/settings.js';
 import {runRealtimeCampaign} from '../scripts/realtime-autoplay.mjs';
+import {playBattle} from '../scripts/realtime-sweep.mjs';
 
 // Difficulty in real time (build brief §3.18, guide "Difficulty"). Story: three
 // more rounds on battle deadlines (not Contest hours), reinforcements two rounds
@@ -71,6 +72,19 @@ test('Time and pace follow the difficulty until the player changes them, and the
   // Settings stored before the pace followed the difficulty (every auto-pause on) now follow it.
   const old=loadSettings(JSON.stringify({gameSpeed:1,pauseSighted:true,pauseHurt:true,pauseObjective:true,pauseSquad:true}));
   assert.equal(old.paceChosen,false);followDifficulty(old,'standard');assert.deepEqual([old.pauseSighted,old.pauseHurt,old.pauseObjective,old.pauseSquad],[false,false,false,false]);
+});
+
+test('on Veteran the calibration bot gets past Chapter VII’s council: with a Contest policy that wins, or else the patron-backed re-run',()=>{
+  // Seed 1: a policy wins the vote outright. Seed 8: every policy loses it by a vote, so the
+  // bot takes the game's own recovery after a lost Contest, with its supplies and debt.
+  for(const [seed,backed]of [[1,false],[8,true]]){
+    const council=[];
+    const {state}=runRealtimeCampaign({seed,difficulty:'veteran',throughChapter:7,retries:2,play:playBattle,
+      onEncounter:(s,summary)=>{if(s.encounter.id==='ch7-council')council.push(summary);}});
+    assert.equal(state.chapter,8,`seed ${seed}: Chapter VIII reached`);
+    assert.equal(council.length,1);assert.equal(council[0].status,'won');assert.equal(!!council[0].fallback,backed,`seed ${seed}: the patron’s backing`);
+    assert.equal(state.obligations.some(o=>o.id==='fallback:ch7-council'),backed,`seed ${seed}: the backing’s debt is recorded`);
+  }
 });
 
 test('on Story the bot completes the whole campaign in real time from New Game by legal commands, to the accession (Gate 4, automated)',()=>{

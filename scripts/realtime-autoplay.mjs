@@ -194,11 +194,16 @@ export function companionWatch(){
 // Chapter VII council on seed 275 needs the protection, Veteran's is lost with it on every seed.
 // The bot reads the debate ahead on a copy of the chronicle, as a player weighs the forecasts,
 // and plays the first policy that wins; the copy never touches the chronicle or its generator.
+// When none wins (Veteran's Chapter VII council on a few seeds, by a vote), it takes the game's
+// own recovery after the lost vote: the patron-backed re-run, at its cost in supplies and debt.
 const protect=s=>{if(s.encounter.kind==='contest')protectCoalition(s,(target,name,...args)=>{const r=G[name](target,...args);if(!r.ok)throw Error(r.message);return r;});};
 const CONTEST_POLICIES=[{beforeTurn:protect},{}];
+const contestPolicy=state=>CONTEST_POLICIES.find(policy=>playEncounter(clone(state),policy).status==='won')??CONTEST_POLICIES[0];
 function playTurnEncounter(state){
-  if(state.encounter.kind==='contest')for(const policy of CONTEST_POLICIES)if(playEncounter(clone(state),policy).status==='won')return playEncounter(state,policy);
-  return playEncounter(state,state.encounter.kind==='contest'?CONTEST_POLICIES[0]:{});
+  if(state.encounter.kind!=='contest')return playEncounter(state);
+  const summary=playEncounter(state,contestPolicy(state));
+  if(summary.status!=='lost'||state.encounter.fallback||!G.acceptFallback(state).ok)return summary;
+  return {...playEncounter(state,contestPolicy(state)),fallback:true};
 }
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
   ready=undefined,onEncounter=null,play=playRealtime,retries=0}={}){
