@@ -1,5 +1,6 @@
 import {CAMP_CONTEXT,CAMP_SCENERY_PADS} from './camp-regions.js';
 import {campStoryId,campStoryFor} from './camp-stories.js';
+import {activityObjects} from './company-activities.js';
 
 // The walkable camps and civic courts of all twelve chapters.
 // Each camp is a coarse map in the battles' tiles, upsampled for real time
@@ -27,7 +28,7 @@ const camp=data=>freeze({peaceful:true,sceneryPads:CAMP_SCENERY_PADS[data.chapte
   placeNames:CAMP_CONTEXT[data.chapter].placeNames,...(data.placeNames?{placeNames:data.placeNames}:{}),
   reportTree:data.chapter===5?'ch5:report':'hub:report',
   terrain:grid(data.map),places:freeze(data.places),people:freeze(data.people.map(p=>freeze({...p,...(p.routine?{}:routineFor(p)?{routine:routineFor(p)}:{})}))),
-  objects:freeze([...data.objects,...(data.chapter<=3?[{id:'local-report',kind:'table',name:'The local report',place:'canabae',at:[-2.5,0],talk:'hub:report'}]:[]),
+  objects:freeze([...data.objects,...activityObjects(data.chapter),...(data.chapter<=3?[{id:'local-report',kind:'table',name:'The local report',place:'canabae',at:[-2.5,0],talk:'hub:report'}]:[]),
     ...(campStoryFor(data.chapter)?[{id:'company-record',kind:'table',name:campStoryFor(data.chapter).title,place:'barracks',at:[-2,-1.5],talk:campStoryId(data.chapter)}]:[])].map(freeze))});
 
 // Later camps keep the services in a compact court. Each map follows its

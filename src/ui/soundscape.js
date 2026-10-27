@@ -1,5 +1,6 @@
 import {SOUND_FILES,VOICE_LINES,foleyFor,soundscapeFor,audioDirection} from './soundscape-data.js';
 import {ENVIRONMENT_SOUND_KINDS,ENVIRONMENT_BUFFER_LIMIT,environmentSoundSamples,environmentSoundFrequency} from './environment-sound.js';
+import {adaptiveScoreSamples} from './adaptive-score.js';
 
 const level=(value,fallback=.5)=>Number.isFinite(Number(value))?Math.min(1,Math.max(0,Number(value))):fallback;
 const MAX_DECODED_BYTES=24*1024*1024,MAX_EFFECTS=8;
@@ -17,6 +18,7 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
   let settings={audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45},scene={music:null,ambience:null},sceneKey=null,direction=audioDirection(null);
   const cache=new Map(),pending=new Map(),loops=new Map(),retiring=new Map(),effects=new Set(),live=new Set(),requests=new Set(),failures=new Map();
   const environmental=new Map();let enclosed=false,cueSequence=0;
+  let adaptive=null,scoreBuffer=null,scoreBytes=0,liveBattle=false;
   const active=()=>!disposed&&!page?.hidden&&unlocked&&context?.state==='running';
   const enabled=()=>[settings.audio,settings.music,settings.ambience,settings.voices].some(Boolean);
   function gain(node,value,seconds=.3){const p=node.gain,t=context.currentTime;p.cancelScheduledValues(t);p.setValueAtTime(p.value,t);p.linearRampToValueAtTime(value,t+seconds);}
@@ -33,12 +35,12 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
   function evict(required){
     const protectedIds=new Set([...live].map(item=>item.id));
     for(const [id,item]of [...cache].sort((a,b)=>a[1].used-b[1].used)){
-      if(bytes+required<=MAX_DECODED_BYTES)break;if(protectedIds.has(id))continue;cache.delete(id);bytes-=item.bytes;
+      if(bytes+scoreBytes+required<=MAX_DECODED_BYTES)break;if(protectedIds.has(id))continue;cache.delete(id);bytes-=item.bytes;
     }
     // A crossfade is optional. End an old tail before rejecting the incoming
     // scene when both decoded music recordings would exceed the PCM budget.
     for(const entry of [...retiring.values()]){
-      if(bytes+required<=MAX_DECODED_BYTES)break;stopNode(entry);
+      if(bytes+scoreBytes+required<=MAX_DECODED_BYTES)break;stopNode(entry);
       const item=cache.get(entry.id);if(item&&![...live].some(node=>node.id===entry.id)){cache.delete(entry.id);bytes-=item.bytes;}
     }
   }
@@ -55,7 +57,7 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
       // pending work and cannot allocate a whole campaign of PCM simultaneously.
       const task=decodeTail.then(()=>disposed?null:context.decodeAudioData(data));decodeTail=task.catch(()=>null);
       const decoded=await task;if(!decoded)return null;const size=decoded.length*decoded.numberOfChannels*4;
-      if(disposed)return null;if(!Number.isFinite(size)||size<=0||size>MAX_DECODED_BYTES)throw new Error('Decoded recording too large');evict(size);if(bytes+size>MAX_DECODED_BYTES)return null;
+      if(disposed)return null;if(!Number.isFinite(size)||size<=0||size>MAX_DECODED_BYTES)throw new Error('Decoded recording too large');evict(size);if(bytes+scoreBytes+size>MAX_DECODED_BYTES)return null;
       cache.set(id,{buffer:decoded,bytes:size,used:++stamp,...(id.startsWith('foley-')?foleyPlayback(decoded,id):{})});bytes+=size;failures.delete(id);return decoded;
     }catch{if(!disposed){const attempts=(failures.get(id)?.attempts??0)+1;failures.set(id,{attempts,retryAt:now()+Math.min(60000,1000*2**Math.min(6,attempts))});onUnavailable(id);}return null;}finally{pending.delete(id);if(controller)requests.delete(controller);}})();pending.set(id,request);return request;
   }
@@ -68,9 +70,9 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     if(entry.mixKey===key)return;entry.mixKey=key;
     gain(entry.gain,volume,seconds);parameter(entry.filter?.frequency,cutoff,seconds);parameter(entry.pan?.pan,pan,seconds);
   }
-  function stopVoice(){voiceRequest++;if(voice)stopNode(voice);voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.3);}
+  function stopVoice(retune=true){voiceRequest++;if(voice)stopNode(voice);voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.3);if(retune)syncAdaptive();}
   function stopEffects(){for(const item of [...effects])stopNode(item);effects.clear();}
-  function stopAll(){generation++;powerGeneration++;stopVoice();for(const item of [...live])stopNode(item);loops.clear();retiring.clear();effects.clear();}
+  function stopAll(){generation++;powerGeneration++;stopVoice(false);for(const item of [...live])stopNode(item);adaptive=null;loops.clear();retiring.clear();effects.clear();}
   async function syncLoop(channel,id){
     const current=loops.get(channel),enabled=settings[channel]&&id&&active();
     if(current?.id===id&&enabled){mixLoop(channel,current.entry);return;}
@@ -80,7 +82,18 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     if(!decoded||token!==generation||!active()||!settings[channel]||scene[channel]!==id||loops.has(channel))return;
     const entry=make(decoded,{id,volume:0,loop:true});if(!entry)return;loops.set(channel,{id,entry});mixLoop(channel,entry,.8);
   }
-  function sync(){if(!active())return;void syncLoop('music',scene.music);void syncLoop('ambience',scene.ambience);if(settings.audio)for(const id of ['foley-step','foley-shield','foley-impact'])void buffer(id);}
+  function syncAdaptive(){
+    const wanted=active()&&settings.music&&liveBattle&&['engaged','urgent'].includes(direction.mood);
+    if(!wanted){if(adaptive){stopNode(adaptive);adaptive=null;}return;}
+    if(!scoreBuffer){
+      const recipe=adaptiveScoreSamples('urgent'),size=recipe.samples.byteLength;evict(size);if(bytes+size>MAX_DECODED_BYTES||!context.createBuffer)return;
+      scoreBuffer=context.createBuffer(1,recipe.samples.length,recipe.sampleRate);scoreBuffer.getChannelData(0).set(recipe.samples);scoreBytes=size;
+    }
+    if(!adaptive)adaptive=make(scoreBuffer,{id:'adaptive-pulse',volume:0,loop:true,frequency:1400});
+    if(adaptive){const volume=settings.soundtrackVolume*(direction.mood==='urgent'?.12:.055)*(voice?.25:1);
+      if(adaptive.mixKey!==volume){adaptive.mixKey=volume;gain(adaptive.gain,volume,direction.transitionSeconds);}}
+  }
+  function sync(){if(!active())return;void syncLoop('music',scene.music);void syncLoop('ambience',scene.ambience);syncAdaptive();if(settings.audio)for(const id of ['foley-step','foley-shield','foley-impact'])void buffer(id);}
   function configure(next={}){
     if(disposed)return;
     const previous=settings;settings={...settings,...next,audioVolume:level(next.audioVolume??settings.audioVolume),soundtrackVolume:level(next.soundtrackVolume??settings.soundtrackVolume,.45)};
@@ -96,8 +109,8 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
       await context.resume();if(disposed||page?.hidden||!enabled()||token!==powerGeneration){if(!disposed&&(page?.hidden||!enabled()))void context.suspend().catch(()=>{});return false;}unlocked=true;sync();return true;
     }catch{return false;}
   }
-  function update(state,screen){
-    if(disposed)return;direction=audioDirection(state,screen);
+  function update(state,screen,world=null){
+    if(disposed)return;liveBattle=world?.kind==='field'&&state?.phase==='encounter';direction=audioDirection(state,screen,world);
     const next=soundscapeFor(state,screen),key=[screen??'game',state?.chapter,state?.phase,state?.encounterIndex,state?.encounter?.id].join('|');
     if(direction.ambienceOverride)next.ambience=direction.ambienceOverride;
     if(key!==sceneKey){stopVoice();sceneKey=key;}if(next.music!==scene.music||next.ambience!==scene.ambience){generation++;scene=next;}sync();
@@ -107,8 +120,8 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     if(!await unlock()||request!==voiceRequest)return false;const decoded=await buffer('voice-'+id);
     if(!decoded||request!==voiceRequest||!settings.voices||!active())return false;
     voice=make(decoded,{id:'voice-'+id,volume:settings.soundtrackVolume*.95});if(!voice)return false;const spoken=voice;
-    const cleanup=voice.source.onended;voice.source.onended=()=>{cleanup();if(voice===spoken){voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.6);}};
-    const music=loops.get('music');if(music)mixLoop('music',music.entry,.15);onCaption(VOICE_LINES[id]);return true;
+    const cleanup=voice.source.onended;voice.source.onended=()=>{cleanup();if(voice===spoken){voice=null;onCaption(null);const music=loops.get('music');if(music)mixLoop('music',music.entry,.6);syncAdaptive();}};
+    const music=loops.get('music');if(music)mixLoop('music',music.entry,.15);syncAdaptive();onCaption(VOICE_LINES[id]);return true;
   }
   function cue(kind,{intensity=.7,pan=0,surface,material}={}){
     if(!settings.audio||!active()||effects.size>=MAX_EFFECTS)return false;
@@ -135,8 +148,8 @@ export function createSoundscape({AudioContext:Context=globalThis.AudioContext??
     if(!entry)return false;effects.add(entry);return true;
   }
   const visibility=()=>{if(page?.hidden){stopAll();void context?.suspend().catch(()=>{});}else if(unlocked)void unlock();};page?.addEventListener('visibilitychange',visibility);
-  return {configure,unlock,update,speak,stopVoice,cue,setSpace,environmentCue,stopEffects,stop:stopAll,stats:()=>({decodedBytes:bytes,synthesizedBytes:[...environmental.values()].reduce((n,b)=>n+b.length*4,0),cached:cache.size,pending:pending.size,effects:effects.size,loops:loops.size,fadingLoops:retiring.size,sources:live.size,environmentBuffers:environmental.size,enclosed,voice:Boolean(voice),unlocked,direction}),
-    dispose(){if(disposed)return;stopAll();disposed=true;page?.removeEventListener('visibilitychange',visibility);for(const request of requests)request.abort();requests.clear();pending.clear();cache.clear();environmental.clear();failures.clear();bytes=0;void context?.close().catch(()=>{});}};
+  return {configure,unlock,update,speak,stopVoice,cue,setSpace,environmentCue,stopEffects,stop:stopAll,stats:()=>({decodedBytes:bytes,scoreBytes,adaptiveScore:Boolean(adaptive),synthesizedBytes:[...environmental.values()].reduce((n,b)=>n+b.length*4,0),cached:cache.size,pending:pending.size,effects:effects.size,loops:loops.size,fadingLoops:retiring.size,sources:live.size,environmentBuffers:environmental.size,enclosed,voice:Boolean(voice),unlocked,direction}),
+    dispose(){if(disposed)return;stopAll();disposed=true;page?.removeEventListener('visibilitychange',visibility);for(const request of requests)request.abort();requests.clear();pending.clear();cache.clear();environmental.clear();failures.clear();scoreBuffer=null;scoreBytes=0;bytes=0;void context?.close().catch(()=>{});}};
 }
 
 let shared;

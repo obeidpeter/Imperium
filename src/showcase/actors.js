@@ -1,6 +1,6 @@
 import {mountCharacterDetail} from './character-detail.js';
 import * as T from '../../vendor/three/three.module.js';
-import {actorPose,horsePose,groundHumanPose,groundHorsePose,blendActorPose,createFootPlanting,actionEnvelope} from './actor-pose.js';
+import {actorPose,horsePose,groundHumanPose,groundHorsePose,blendActorPose,blendHorsePose,createFootPlanting,actionEnvelope} from './actor-pose.js';
 import {actorKit} from './actor-kit.js';
 import {acquireActorSurface,releaseActorSurface} from './actor-materials.js';
 import {finishActorMaterial} from './actor-surface.js';
@@ -23,7 +23,8 @@ import {BLOC_STYLE,trimBands} from '../ui/bloc-style.js';
 import {FALLEN_POSE,MOUNTED_FALLEN_POSE,bakeFallenGeometry} from './battle-remains.js';
 import {installCloudShadows} from './atmosphere.js';
 import {actorWardrobe} from './actor-wardrobe.js';
-import {applyCharacterPresence,performanceTransition,applyPerformance} from './actor-performance.js';
+import {applyCharacterPresence,performanceTransition,applyPerformance,applyTurnPerformance} from './actor-performance.js';
+import {applyGaitTurn} from './actor-gait.js';
 import {updateActorExpressionMorphs} from './actor-expression-mesh.js';
 import {simplifyActorOverview} from './actor-overview.js';
 import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
@@ -439,7 +440,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);
   for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial)finishActorMaterial(m);
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
-  let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null;
+  let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null,pivot=null,lastHorsePose=null,horseTransition=null,lastHorseMotion=null;
   const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
   function detailLevel(input){const distance=Number.isFinite(input.detailDistance)?input.detailDistance:0,next=input.active||input.selected?false:far?distance>=14:distance>18;
     if(next!==far){far=next;for(const m of nearMeshes)m.visible=!far;for(const m of farMeshes)m.visible=far;}
@@ -448,15 +449,20 @@ function createActorRig(unit={},options={},reuseGroup=null){
   function update(input={}){
     if(disposed)return;
     detailLevel(input);
-    if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;previousYaw=null;}
-    if(!(Number.isFinite(input.dt)&&input.dt>0))transition=null;
+    if(input.resetPose){planting.reset();lastPose=null;lastMotion=null;transition=null;previousYaw=null;pivot=null;lastHorsePose=null;horseTransition=null;lastHorseMotion=null;}
+    if(!(Number.isFinite(input.dt)&&input.dt>0)){transition=null;pivot=null;horseTransition=null;}
     const mapped=civic&&['withdrawn','dead'].includes(input.motion)?{...input,motion:'yield',health:1}:civic&&['attack','strike','throw'].includes(input.motion)?{...input,motion:'speak'}:input;
-    let pose=actorPose({...mapped,variant:kit.identity,weapon:spear?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
+    let pose=actorPose({...mapped,health:kit.wounded?Math.min(mapped.health??1,.32):mapped.health,variant:kit.identity,weapon:spear?'spear':trainer?'practice':'sword',mounted});const motion=mapped.motion??'idle';
     applyCharacterPresence(pose,identity,kit,mapped);
-    if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0,duration:performanceTransition(lastMotion,motion),settle:motion==='idle'&&['walk','run'].includes(lastMotion)};
-    if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/transition.duration);if(transition.settle)applyPerformance(pose,'stop',transition.elapsed/transition.duration);if(transition.elapsed>=transition.duration)transition=null;}
+    if(lastPose&&lastMotion!==motion&&Number.isFinite(input.dt)&&input.dt>0&&(input.phase===undefined||input.phase<.12||motion==='idle'))transition={from:blendable(lastPose),elapsed:0,duration:performanceTransition(lastMotion,motion),settle:motion==='idle'&&['walk','run','retreat'].includes(lastMotion),start:lastMotion==='idle'&&['walk','run','retreat'].includes(motion)};
+    if(transition){transition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));pose=blendActorPose(transition.from,pose,transition.elapsed/transition.duration);if(transition.settle)applyPerformance(pose,'stop',transition.elapsed/transition.duration);if(transition.start&&!Number.isFinite(input.movementProgress))applyPerformance(pose,'start',transition.elapsed/transition.duration);if(transition.elapsed>=transition.duration)transition=null;}
     lastMotion=motion;
-    if(previousYaw!==null&&!input.reducedMotion&&['walk','run','retreat'].includes(motion)&&input.dt>0){const turn=Math.atan2(Math.sin(pose.yaw-previousYaw),Math.cos(pose.yaw-previousYaw)),lean=Math.max(-.18,Math.min(.18,turn/Math.max(.008,input.dt)*.028));pose.bodyY-=lean;pose.headY+=lean*.6;pose.bodyZ-=lean*.22;}
+    if(previousYaw!==null&&!input.reducedMotion&&input.dt>0){
+      const turn=Math.atan2(Math.sin(pose.yaw-previousYaw),Math.cos(pose.yaw-previousYaw));
+      if(['walk','run','retreat'].includes(motion))applyGaitTurn(pose,turn/Math.max(.008,input.dt),{mounted});
+      else if(motion==='idle'&&!mounted&&Math.abs(turn)>.008&&!pivot)pivot={elapsed:0,side:Math.sign(turn)};
+    }
+    if(pivot){if(motion==='idle'&&!input.reducedMotion){pivot.elapsed+=Math.min(.05,Math.max(0,input.dt||0));applyTurnPerformance(pose,pivot.elapsed/.32,pivot.side);if(pivot.elapsed>=.32)pivot=null;}else pivot=null;}
     previousYaw=pose.yaw;
     if(civic){if(!['yield','speak','rally','order','assent','dissent'].includes(mapped.motion)){pose.leftArm[0]=-.45;pose.leftElbow=-1.15;}if(['hit','hurt'].includes(mapped.motion)){pose.bodyX*=.35;pose.bodyZ*=.35;pose.headX*=.5;}}
     if(kit.wounded){pose.leftArm[0]=-.60;pose.leftElbow=-1.3;pose.bodyZ-=.035;}
@@ -469,11 +475,15 @@ function createActorRig(unit={},options={},reuseGroup=null){
     }
     lastPose=blendable(pose);
     let horseMotion=null;
-    if(horse){const authored=horsePose(input),samples=planting.sample({pose:authored,mounted:true,position:group.position,direction:pose.yaw,motion,phase:input.phase,groundHeight:input.groundHeight,scaleY:group.scale.y,reset:input.resetPose});horseMotion=horse.update(input,groundHorsePose(authored,samples));
-      pose.hipY=1.56+horseMotion.riderBob-.38*horseMotion.fall;pose.hipZ=-.08+pose.hipZ*.4;pose.bodyX+=horseMotion.bodyPitch;pose.bodyZ+=horseMotion.tail*.12;
+    if(horse){let authored=horsePose(input);
+      if(lastHorsePose&&input.dt>0&&(lastHorseMotion!==motion||lastHorsePose.gait!==authored.gait))horseTransition={from:lastHorsePose,elapsed:0};
+      if(horseTransition){horseTransition.elapsed+=Math.min(.05,Math.max(0,input.dt||0));authored=blendHorsePose(horseTransition.from,authored,horseTransition.elapsed/.24);if(horseTransition.elapsed>=.24)horseTransition=null;}
+      lastHorsePose={...authored,feet:authored.feet.map(f=>({...f}))};lastHorseMotion=motion;
+      const samples=planting.sample({pose:authored,mounted:true,position:group.position,direction:pose.yaw,motion,phase:input.phase,groundHeight:input.groundHeight,scaleY:group.scale.y,reset:input.resetPose});horseMotion=horse.update(input,groundHorsePose(authored,samples));
+      pose.hipY=1.56+horseMotion.riderBob+horseMotion.riderHeave-.38*horseMotion.fall;pose.hipZ=-.08+pose.hipZ*.4;pose.bodyX+=horseMotion.bodyPitch+horseMotion.riderPitch;pose.bodyZ+=horseMotion.bodyRoll+horseMotion.riderRoll;
     }else{const samples=planting.sample({pose,position:group.position,direction:pose.yaw,motion,phase:input.phase,groundHeight:input.groundHeight,scaleY:group.scale.y,reset:input.resetPose});
       // Blending feet also needs a fresh IK solve when no terrain is supplied.
-      groundHumanPose(pose,samples??pose.feet.map((f,i)=>({height:0,x:(i?1:-1)*.104,z:f.z})));
+      groundHumanPose(pose,samples??pose.feet.map((f,i)=>({height:0,x:f.x??(i?1:-1)*.104,z:f.z})));
     }
     const expr=actorExpression({...mapped,seed:kit.identity,gazeYaw:input.gazeYaw,gazePitch:input.gazePitch,reducedMotion:input.reducedMotion});
     group.rotation.y=pose.yaw;hips.position.set(pose.hipX??0,pose.hipY,pose.hipZ);hips.rotation.z=horseMotion?-horseMotion.fall*.6:0;torso.rotation.set(pose.bodyX,pose.bodyY,pose.bodyZ);head.rotation.set(pose.headX+expr.headPitchOffset,pose.headY+expr.headYawOffset,0);skirt.rotation.x=pose.skirt;
@@ -483,7 +493,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     for(const brow of brows){brow.position.y=expr.browY;brow.position.z=Math.abs(expr.browY)*.25;brow.rotation.z=brow.userData.side*expr.browTilt;}
     const speaking=!input.reducedMotion&&['speak','conversation','rally','order'].includes(motion),emphasis=speaking?Math.abs(sampleActorClip('speech',input.phase??0).rightArmX??0):0,jaw=Math.max(emphasis,expr.jawOpen);
     mouth.rotation.x=jaw*.12;mouth.position.y=.001-jaw*.0024;
-    for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05:pose.legs[i].thigh,0,mounted?(i?1:-1)*.48:pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75:pose.legs[i].knee;
+    for(let i=0;i<2;i++){legs[i].thigh.rotation.set(mounted?-1.05-(horseMotion?.riderPitch??0):pose.legs[i].thigh,0,mounted?(i?1:-1)*.48+(horseMotion?.riderRoll??0):pose.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=mounted?1.75+(horseMotion?.riderHeave??0)*1.4:pose.legs[i].knee;
       if(mounted)legs[i].ankle.rotation.set(-.60,0,0);else {ankleRotation.copy(legs[i].thigh.quaternion).multiply(legs[i].knee.quaternion).invert();footRotation.setFromEuler(footEuler.set(pose.feet[i].roll+(pose.feet[i].pitch??0),0,pose.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(footRotation));}
     }
     right.shoulder.rotation.set(...pose.rightArm);left.shoulder.rotation.set(...pose.leftArm);right.elbow.rotation.x=pose.rightElbow;left.elbow.rotation.x=pose.leftElbow;right.hand.rotation.x=pose.rightWrist;left.hand.rotation.x=pose.leftWrist;

@@ -12,8 +12,9 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {createEnvironmentHorizon} from './environment-horizon.js';
 import {createPanorama} from './environment-panorama.js';
 import {addFinaleApproach} from './environment-finale.js';
-import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads} from './environment-ch5-pilot.js';
-import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks} from './environment-regional-world.js';
+import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads,getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
+import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks,getRegionalKitPlacements,regionalComponentDimensions} from './environment-regional-world.js';
+import {createArchitecturalGroundSampler} from './environment-composition.js';
 import {groundArchitecturalFoundations} from './environment-foundations.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
@@ -46,6 +47,10 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{})};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
+  const architecturalFootprints=[...getChapterFiveKitPlacements(e,{chapter:profile.chapter,tileSize}),...getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize})]
+    .filter(p=>!Number.isFinite(p.groundY)).map(p=>{const [w,,d]=regionalComponentDimensions(p.id,p.component);return {...p,width:w*p.scale[0],depth:d*p.scale[2]};});
+  const architecturalGround=createArchitecturalGroundSampler(architecturalFootprints,{wet:profile.weather==='rain'||profile.setting==='wetland'});
+  root.userData.architecturalGround={footprints:architecturalFootprints.length,version:1};
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
   const wind={value:0},windDirection={value:new THREE.Vector2()};
   if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves,m.foliage]){
@@ -81,7 +86,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     // Steep relief near the board (plateau banks, river cuts) shows bare earth
     // rather than turf; it fades out well before the outer bridge's shared edge.
     const slope=Math.hypot(height(x+.3,z)-height(x-.3,z),height(x,z+.3)-height(x,z-.3))/.6,near=1-smooth((Math.max(Math.abs(x)-halfX,Math.abs(z)-halfZ)-16)/6);
-    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78+roadSurface.sample(x,z).verge*.61+smooth(slope*.9)*.75*near));
+    const contact=architecturalGround(x,z);
+    soilWeights.push(clamp((training?.12:profile.soilMix)+wear+damp*.42+precinctRoute(x,z)*.78+roadSurface.sample(x,z).verge*.61+smooth(slope*.9)*.75*near+contact.footing*.7+contact.wear*.6));
   }
   groundGeometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
   groundGeometry.setAttribute('soilMix',new THREE.Float32BufferAttribute(soilWeights,1));
@@ -90,7 +96,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   yield;
   // Which photographed layers lie where (terrain-splat.js): the cells, the road's
   // tread and verge, slopes, the river's bank and wear, over the whole ground.
-  const splat=yield* buildTerrainSplat({e,tileSize,biome:groundBiome(profile.chapter),height,road:roadSurface,route:precinctRoute,training,
+  const splat=yield* buildTerrainSplat({e,tileSize,biome:groundBiome(profile.chapter),height,road:roadSurface,route:precinctRoute,architecture:architecturalGround,training,
     damp:profile.distantWater?(x,z)=>smooth((riverZ-z+12)/4)*(1-smooth((riverZ-z-11)/5)):undefined,bounds:{minX:-groundRadius,minZ:-groundRadius,maxX:groundRadius,maxZ:groundRadius}});
   setTerrainSplat(library.terrain,splat);root.userData.terrainSplat={nx:splat.nx,nz:splat.nz,step:splat.step,minX:splat.minX,minZ:splat.minZ,maxX:splat.maxX,maxZ:splat.maxZ};
   yield;

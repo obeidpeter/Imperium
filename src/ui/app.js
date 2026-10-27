@@ -16,10 +16,10 @@ import {createSessionGate,commitReplacement} from './session-gate.js';
 import {createSessionControls} from './session-controls.js';
 import {watchEditionUpdates} from './offline-updates.js';
 import {FIGURE_STYLES,createGraphicsQuality,phoneLike} from './graphics-quality.js';
-import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings} from './settings.js';
+import {SETTINGS_KEY,SETTING_TOGGLES,choosePace,followDifficulty,loadSettings,newGamePlayMode,choosePlayMode,canChangePlayMode} from './settings.js';
 import {normalizeControls,controlsFor,chamberFor} from '../core/controls-model.js';
 import {realtimeEncounterView,fieldMarkup,relabelField} from './realtime-view.js';
-import {realtimeLesson} from './realtime-lessons.js';
+import {realtimeLesson,rememberLesson,lessonProgress} from './realtime-lessons.js';
 import {tpAuditTotal} from '../core/tp-audit.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
@@ -57,7 +57,7 @@ import {GUIDE_HELP} from '../data/guide-help.js';
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
   offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
-  pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null;
+  pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null,pendingNewMode=null;
 const sessionControls=createSessionControls(document);
 const sessionGate=createSessionGate({onBusyChange:syncSessionControls});
 // Camp decisions and preparations share the save transaction with departure.
@@ -213,7 +213,6 @@ function render(){
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
   syncSessionControls();
-  soundscape.update(state,screen);
   const target=fieldTarget();
   if(target)mountField(target);
   else if(uses3D()){
@@ -229,6 +228,9 @@ function render(){
         onPick:p=>{if(p)selectPoint(p);},onHover:boardHover,onFrame:cost=>graphics.recordFrame(cost,{hidden:document.hidden,active:!modal.open}),motion});
   }else battleStage.release();
   if(field&&!target)disposeField();
+  // A restore can replace the encounter while its previous field still exists.
+  // Use the reconciled runtime so old health/results cannot colour the new mix.
+  soundscape.update(state,screen,field?.runtime?.world);
   const ceremonyHost=document.querySelector('[data-ceremony]'),ceremony3D=Boolean(ceremonyHost&&settings.battleView!=='2d'&&!failed3D);
   if(ceremony3D)ceremony.mount(ceremonyHost,
     {kind:ceremonyHost.dataset.ceremony,name:state?.name,appearance:state?.soldier?.appearance,quality:graphics.mode,reducedMotion:settings.reducedMotion,figureStyle:settings.figureStyle});else ceremony.release();
@@ -320,10 +322,12 @@ function mountField(target){
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
 // chronicle like any Contest command (chamber.js checks them); the field animates what they did. ———
 // The guided opening in real time (realtime-lessons.js), while Settings → Guided opening is on.
-const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({state,world,kind,seen,keymap});
+const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({state,world,kind,
+  seen:kind==='chamber'?{...seen,talked:chamberKnown().size>0}:seen,keymap,progress:settings.lessonProgress});
+function rememberExercise(id,complete){settings.lessonProgress=rememberLesson(settings.lessonProgress,id,complete);saveSettings();}
 function chamberCallbacks(){
   return {
-    lesson:lessonFor('chamber'),onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    lesson:lessonFor('chamber'),onLessonProgress:rememberExercise,onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
     chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
       inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
   };
@@ -377,13 +381,17 @@ function showConversation(treeId,nodeId=null){
   conversation={treeId,nodeId:view.nodeId};modal.dataset.conversation=treeId;
 }
 async function replyConversation(index){
-  if(!conversation)return;const {treeId,nodeId}=conversation;
+  if(!conversation)return;const origin=conversation,{treeId,nodeId}=origin;
   const view=Game.campConversation(state,treeId,nodeId),option=view?.options.find(o=>o.index===index);
   if(option?.needs.length){toast(`Needs ${option.needs.join(', ')}.`);return;}
   let outcome=null;
   await change(()=>{outcome=Game.campReply(state,{treeId,nodeId,index});return outcome;},{tone:'click',silent:true,afterRender:()=>{
     if(!outcome?.ok)return;refreshCampMarks();
-    if(outcome.open){modal.close();if(outcome.open!=='march')followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    // Navigation remains available during persistence. Commit the reply, but
+    // do not replace a newer panel (even the same tree reopened at this node).
+    if(conversation===origin&&modal.open){
+      if(outcome.open){modal.close();if(outcome.open!=='march')followUp(outcome.open);}else if(outcome.next){showConversation(treeId,outcome.next);}else modal.close();
+    }
     if(outcome.message)toast(outcome.message);
   }});
   // The gate's March out reply explicitly starts another saved command. Finish
@@ -524,7 +532,8 @@ function saveField(world,{announced=false}={}){
 }
 function fieldCallbacks(){
   return {
-    lesson:lessonFor('field'),onSave:world=>saveField(world),
+    onHud:world=>soundscape.update(state,screen,world),
+    lesson:lessonFor('field'),onLessonProgress:rememberExercise,onSave:world=>saveField(world),
     // Play resumed: the resume point is discarded on this first tick, so it is never used twice.
     onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
     onQuickSave:()=>quickSave(),
@@ -888,6 +897,10 @@ modal.addEventListener('keydown',event=>{
   if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
 });
 modal.addEventListener('close',()=>{
+  // A reply can close this dialog and another camp desk can reopen it before
+  // the queued native close event arrives. That old event must not erase the
+  // new conversation, release its pause or move focus into the background.
+  if(modal.open)return;
   disposeSoldierPreview();
   rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
@@ -1020,6 +1033,7 @@ case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offline
 case 'home':modal.close();screen='title';loadedArtChapter=0;artRequest++;artProgress='';clearBattleCache();render();break;
 case 'new':showNew();break;
 case 'begin':{
+  const selectedMode=document.querySelector('input[name="new-play-mode"]:checked')?.value??newGamePlayMode(settings);
   const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,
     {featureEdition:35,progression:true,...recruitChoice(),difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
       ironDiscipline:!!document.querySelector('#iron-discipline')?.checked});
@@ -1029,15 +1043,15 @@ case 'begin':{
   const result=await replaceCampaign({load:async()=>candidate,save:value=>saveLocal(value,{replace:true}),
     message:'Chapter I. You are a Tiro: a recruit in training.'});
   // One chronicle per device: the new one replaces the old one's saves too.
-  if(result.ok)clearSlots();
+  if(result.ok){choosePlayMode(settings,selectedMode);saveSettings();clearSlots();render();}
   if(result.error?.code==='SAVE_UNAVAILABLE'){
-    pendingNew=candidate;
+    pendingNew=candidate;pendingNewMode=selectedMode;
     showStorageUnavailable();
   }
   break;
 }
 case 'begin-unsaved':if(pendingNew&&!sessionGate.busy){
-  const candidate=pendingNew;pendingNew=null;useRestoredState(candidate);memoryOnly=true;lastSaved='';
+  const candidate=pendingNew;pendingNew=null;choosePlayMode(settings,pendingNewMode);pendingNewMode=null;saveSettings();useRestoredState(candidate);memoryOnly=true;lastSaved='';
   saveProblem='Playing '+
   'in memory. Export a save code before closing this tab.';render();toast(saveProblem);
 }break;
@@ -1062,6 +1076,7 @@ case 'choose':await change(()=>Game.choose(state,id));break;
 case 'oath':await change(()=>Game.swearOath(state));break;
 case 'prepare':await change(()=>Game.prepare(state,id));break;
 case 'dismiss-guide':settings.guide=false;saveSettings();render();announce('Tips hidden. Turn on Learning tips in Settings → Readability.');break;
+case 'reset-lessons':settings.lessonProgress=lessonProgress();settings.guide=true;saveSettings();showSettings('general');announce('Optional exercises restored. They appear when the relevant action is available.');break;
 case 'operation-choice':await change(()=>Game.chooseOperation(state,id),{tone:null});break;
 case 'specialize-veteran':{
   const path=document.getElementById('veteran-path-'+id)?.value;if(path)await change(()=>Game.specializeVeteran(state,id,path),{tone:null});break;
@@ -1272,8 +1287,12 @@ document.addEventListener('change',async event=>{
   if(control.id==='hold-delay'){settings.holdDelay=holdDelay(control.value);saveSettings();render();return;}
   if(control.dataset.pace){const key=control.dataset.pace;choosePace(settings,key,control.type==='checkbox'?control.checked:control.value);saveSettings();
     field?.runtime?.setOption?.(key,settings[key]);return;}
-  if(control.id==='controls-model'){Object.assign(settings,normalizeControls({...settings,controlsModel:control.value}));saveSettings();render();return;}
+  if(control.id==='controls-model'){
+    if(!choosePlayMode(settings,control.value,{state})){control.value=settings.controlsModel;toast('Return to camp to change play mode. The current encounter keeps its controls.');return;}
+    saveSettings();render();showSettings('controls');modal.querySelector('#controls-model')?.focus({preventScroll:true});return;
+  }
   if(control.matches?.('.realtime-chapter')){
+    if(!canChangePlayMode(state)){showSettings('controls');toast('Return to camp to change play mode.');return;}
     const chapters=[...document.querySelectorAll('.realtime-chapter')].filter(box=>box.checked).map(box=>Number(box.value));
     Object.assign(settings,normalizeControls({...settings,realtimeChapters:chapters}));saveSettings();return;
   }

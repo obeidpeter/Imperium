@@ -4,6 +4,7 @@
 // Build first. PLAYWRIGHT_MODULE / PLAYWRIGHT_EXECUTABLE_PATH are optional.
 // USABILITY_ONLY=phone-settings diagnoses the settings/reload flow alone.
 // USABILITY_ONLY=desktop runs all desktop flows after a focused repair.
+// USABILITY_ONLY=onboarding checks ordinary-player mode choice and old saves.
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -18,7 +19,7 @@ import * as Game from '../src/core/game.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=fileURLToPath(new URL('../tests/visual-results/usability/',import.meta.url));
 const only=process.env.USABILITY_ONLY;
-assert.ok(!only||['phone-settings','desktop'].includes(only),'Unknown USABILITY_ONLY scenario');
+assert.ok(!only||['phone-settings','desktop','onboarding'].includes(only),'Unknown USABILITY_ONLY scenario');
 await access(`${root}index.html`).catch(()=>{throw new Error('Build first: node scripts/build.mjs');});
 const build=JSON.parse(await readFile(`${root}build-report.json`,'utf8'));
 let playwright;
@@ -40,8 +41,13 @@ const browser=await playwright.chromium.launch({executablePath:process.env.PLAYW
   args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const report={method:'Automated Chromium; visible categories, summaries, buttons and keyboard; legal checkpoint import; no simulation injection',scope:only||'full',
   build:build.revision,browser:browser.version(),physicalDeviceTest:false,
-  capture:{cssAnimations:'disabled during capture',timeoutMs:60000,maxAttempts:2,retries:[]},checks:[],errors:[]};
+  capture:{cssAnimations:'disabled during capture',timeoutMs:60000,maxAttempts:2,retries:[]},checks:[],errors:[],networkFailures:[]};
 const record=(name,details={})=>{report.checks.push({name,pass:true,...details});console.log(`ok - ${name}`);};
+function observeNetwork(page){
+  const keep=item=>{if(report.networkFailures.length<30)report.networkFailures.push({at:new Date().toISOString(),...item});};
+  page.on('requestfailed',request=>keep({url:request.url(),type:request.resourceType(),error:request.failure()?.errorText}));
+  page.on('response',response=>{if(response.status()>=400)keep({url:response.url(),status:response.status()});});
+}
 async function screenshot(page,options){
   for(let attempt=1;attempt<=2;attempt++){
     try{return await page.screenshot({...options,animations:'disabled',timeout:60000});}
@@ -104,8 +110,9 @@ async function exported(page){
 }
 async function setup(viewport){
   const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
+  observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
-  await page.goto(`${base}?dev`);await menuCommand(page,'settings');
+  await page.goto(base);await menuCommand(page,'settings');
   await (await revealControl(page,'#controls-model')).selectOption('realtime');await close(page);
   await menuCommand(page,'settings');
   await (await revealControl(page,'#battle-view')).selectOption('2d');
@@ -330,9 +337,10 @@ async function fieldControls(page,label){
 }
 async function campTransitions(){
   const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(30000);
+  observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   try{
-    await page.goto(`${base}?dev`);await menuCommand(page,'settings');
+    await page.goto(base);await menuCommand(page,'settings');
     await (await revealControl(page,'#controls-model')).selectOption('realtime');await close(page);
     await menuCommand(page,'settings');await (await revealControl(page,'#battle-view')).selectOption('2d');
     await (await revealControl(page,'#graphics-quality')).selectOption('performance');await close(page);
@@ -344,9 +352,49 @@ async function campTransitions(){
     record('Walkable camp: conversation to Menu permits saving; mission refresh preserves focus and Back remains Menu');
   }finally{await context.close();}
 }
+async function ordinaryModeChoice(){
+  const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage();page.setDefaultTimeout(30000);
+  observeNetwork(page);
+  page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
+  try{
+    await page.goto(base);assert.equal(new URL(page.url()).search,'');await menuCommand(page,'settings');
+    assert.equal(await page.locator('#settings-development').count(),0,'Mode selection needs no developer tools');
+    await (await revealControl(page,'#battle-view')).selectOption('2d');await close(page);
+    await page.locator('[data-cmd="new"]:visible').first().click();
+    assert.equal(await page.locator('input[name="new-play-mode"][value="realtime"]').isChecked(),true,'Fresh New Game recommends real time even after another preference was saved');
+    fits(await metrics(page,'#modal'),'phone new-game mode choice');
+    await page.locator('[data-cmd="begin"]').click();await page.waitForSelector('.realtime-camp .rt-scene[data-ready="true"]');
+    await page.waitForFunction(()=>window.__realtime?.world()?.tick>0);await pause(page);
+    const original=await exported(page);await page.reload();await page.locator('[data-cmd="continue"]:visible').first().click();
+    await page.waitForSelector('.realtime-camp .rt-scene[data-ready="true"]');await menuCommand(page,'settings');
+    assert.equal(await (await revealControl(page,'#controls-model')).inputValue(),'realtime','The ordinary New Game choice survives reload');
+    await (await revealControl(page,'#controls-model')).selectOption('turns');await close(page);
+    await page.waitForSelector('.camp-page:not(.realtime-camp)');assert.equal(await exported(page),original,'Switching in camp preserves the exact chronicle');
+    await menuCommand(page,'home');await page.locator('[data-cmd="new"]:visible').first().click();
+    assert.equal(await page.locator('input[name="new-play-mode"][value="turns"]').isChecked(),true,'The explicit turn preference stays selected for another game');
+    await close(page);await page.locator('[data-cmd="continue"]:visible').first().click();
+    await (await revealControl(page,'[data-cmd="choose"]')).click();await page.locator('[data-cmd="start"]').click();await page.waitForSelector('#battle-board');
+    const checkpoint=await exported(page);await menuCommand(page,'settings');
+    assert.equal(await (await revealControl(page,'#controls-model')).isDisabled(),true,'An active encounter cannot be converted through Settings');
+    await close(page);assert.equal(await exported(page),checkpoint,'Inspecting the locked mode preserves the complete encounter checkpoint');
+    record('Ordinary New Game: explicit mode, real-time default, persisted choice, safe camp switch and active-encounter lock',{normalUrl:true,saveUnchanged:true});
+  }finally{await context.close();}
+  const oldContext=await browser.newContext({viewport:{width:1280,height:900}}),old=await oldContext.newPage();old.setDefaultTimeout(30000);
+  observeNetwork(old);
+  old.on('pageerror',e=>report.errors.push(e.message));old.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
+  try{
+    await old.goto(base);await menuCommand(old,'settings');await (await revealControl(old,'#battle-view')).selectOption('2d');
+    await (await revealControl(old,'#modal [data-cmd="restore"]')).click();await old.locator('#restore-code').fill(code);
+    await old.locator('[data-cmd="import-code"]').click();await old.locator('[data-cmd="confirm-import"]').click();await old.waitForSelector('.camp-page:not(.realtime-camp)');
+    await menuCommand(old,'settings');assert.equal(await (await revealControl(old,'#controls-model')).inputValue(),'turns');await close(old);
+    assert.equal(await exported(old),Game.serialize(Game.decodeSave(code)),'Importing a prior chronicle preserves its exact save and legacy mode');
+    record('Existing chronicle: ordinary import retains turn controls and exact campaign state',{normalUrl:true,saveUnchanged:true});
+  }finally{await oldContext.close();}
+}
 try{
+  if(!only||only==='onboarding')await ordinaryModeChoice();
   if(!only)await campTransitions();
-  for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>!only||v.width===(only==='phone-settings'?390:1280))){
+  for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>only!=='onboarding'&&(!only||v.width===(only==='phone-settings'?390:1280)))){
     const label=viewport.width<600?'phone':'desktop',page=await setup(viewport);
     await menuAndSettings(page,label);
     if(only!=='phone-settings'){await helpAndSoldier(page,label);await saveConfirmation(page,label);await fieldControls(page,label);}

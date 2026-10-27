@@ -61,7 +61,7 @@ test('Difficulty choices, coaching and audio controls expose their actual defaul
 test('Actual app event hooks reject invalid company edits before storage, commit valid plans, and save settings separately',async t=>{
   // The actual app module and save code, on the page skeleton (inert-app.mjs): no canvas, layout, audio device or production storage.
   const {bootApp}=await import('./inert-app.mjs');
-  const app=await bootApp(t,{name:'campaign-upgrade-ui',save:clone(openingRoad)});
+  const app=await bootApp(t,{name:'campaign-upgrade-ui',save:clone(openingRoad),settings:{battleView:'2d'}});
   const saved=()=>JSON.parse(app.raw()),state=()=>app.saved(),open=async cmd=>{if(!app.doc.querySelector(`[data-cmd="${cmd}"]`))await app.click('menu');await app.click(cmd);};
   await app.click('continue');const original=saved(),count=app.storage.writes;
   // A tampered page offers a veteran the company does not have: the rules refuse it before storage.
@@ -77,6 +77,10 @@ test('Actual app event hooks reject invalid company edits before storage, commit
   const preferences=app.settings();assert.equal(preferences.music,true);assert.equal(preferences.coach,false);assert.equal(preferences.soundtrackVolume,.7);
   assert.deepEqual(saved(),good,'Presentation preferences never change the campaign checkpoint');
   await app.click('close-modal');await app.click('home');await app.click('new');
+  // This inert-DOM suite tests the classic panel controls; the real-time New
+  // Game default is exercised in the browser onboarding suite.
+  app.find('input[name="new-play-mode"][value="realtime"]').checked=false;
+  await app.change('input[name="new-play-mode"][value="turns"]',{checked:true});
   app.find('#name-input').value='Veteran <new>';app.find('input[name="campaign-difficulty"][value="veteran"]').checked=true;app.find('#new-soundscape').checked=false;
   await app.click('begin');assert.equal(state().difficulty,'veteran');assert.equal(state().phase,'camp');assert.equal(state().chapter,1);assert.equal(state().name,'Veteran <new>');
 });

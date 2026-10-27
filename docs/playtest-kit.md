@@ -12,11 +12,13 @@ Read: “Play as you normally would. Say what you are trying to do when convenie
 
 | Stage | Neutral task / observation | Record |
 | --- | --- | --- |
-| Opening | “Start a new chronicle.” Let the player locate the action and interpret the recruit's situation. | Time to first meaningful action; what oath/title/story they remember. |
-| First battle | “Complete this assignment.” Do not teach targeting unless progress has stopped and assistance is requested. | First successful move, preview, confirm and End Turn; mistaken taps; time scrolling between board and controls; assistance required. |
+| Opening | “Start a new chronicle.” Let the player choose Real-time with pause or Turn-based without recommending a mode aloud. | Whether the difference is understood; chosen mode; time to first meaningful action; what oath/title/story they remember. |
+| First battle | “Complete this assignment.” Do not teach targeting unless progress has stopped and assistance is requested. | Real-time: first move, pause, target, queued action and resume. Turn-based: preview, confirm and End Turn. Record mistaken taps, scrolling, and assistance separately by mode. |
 | Result and promotion | Ask “What changed, and what will you do next?” | Whether result commitment, new rank, equipment and next objective are understood. |
 | Choice and debt | Ask “What do you think this choice will cost you later?” before the player decides. | Expected versus actual consequence; ability to find the creditor and settlement action. |
 | Mid-campaign | Observe an ordinary save/resume and a deliberate encounter Retry after exporting a backup. | Whether the player understands current progress versus the encounter checkpoint; confidence after resume. |
+| Optional camp situation | In V, VIII or XI, ask “Is there anyone here you want to help?” Do not point out the records or supply the answer. | Discovery, understanding of evidence, ability to revisit a clue and recover from a wrong answer, recognition of the changed camp; whether the player understands it is optional. |
+| Command learning | Observe the optional deployment, squad-order, engineering and political exercises when they first appear. | Whether the action can be completed from the hint; whether Skip, pause and replay are understood; repeated or mistimed lessons. |
 | First political Contest | “Try to secure the vote.” Ask for the player's explanation after the attempt. | Whether votes, Resolve, commitment, deadline, majority and Promise cost are distinguished; avoid supplying the strategy. |
 | Governor / Senator | Ask “What responsibility is different from your earlier command?” | Whether career change reads through play, portrait and interface; confusing terms or unrelated busywork. |
 | Finale | Let the player choose their approach and read the ending without interruption. | Which early decisions they recognize; whether the oath callback lands; perceived fairness of available routes. |
@@ -65,3 +67,9 @@ Use a disposable local origin or staging subdirectory, not a valuable personal c
 7. After each failure, record whether the old release remains available, whether the current code/art revisions match, the last durable checkpoint and the exact recovery path. Stop claiming readiness if any state is lost or a false Saved/Offline-ready message appears.
 
 Record native sharing/cancellation and a downloaded 1080×1350 reign card on each supported mobile platform. Do not equate a desktop download with an iOS share-sheet result. Runtime measurements should distinguish initial transfer, full offline transfer, main-thread draw submission, actual frame cadence and user-visible input latency.
+
+## Windows candidate check and audio listening
+
+Record the candidate build hash and unmasked WebGL renderer before sampling. Stop parallel browser tests, warm the scene, and measure at least two non-overlapping 240-frame windows in Chapter V at a stated viewport, quality, camera and motion setting. Report frame cadence separately from CPU draw submission and estimated GPU resource bytes. A software-renderer capture proves rendering correctness, not hardware frame rate. Repeat after a tab hide/show and an ordinary save/resume; record failures rather than discarding slow samples.
+
+For listening, use headphones and ordinary speakers at a comfortable fixed volume. Compare camp, close combat, formation orders, urgent low health and a spoken briefing. Record intelligibility, clipping/fatigue, repetitive impacts, command-signal distinction and whether music obscures important effects. Check Music, Ambience, Effects and Voices independently, then background the tab. Sample/peak and lifecycle tests do not complete this subjective listening row. Physical phones, fresh players, a full human campaign and headphone/speaker review remain pending until separately observed.

@@ -23,8 +23,9 @@ test('Foot IK reaches its sole targets and stance gait counters exactly .72m wor
   for(const motion of ['idle','walk','run','brace','attack','hit'])for(const phase of [0,.1,.25,.45,.65,.85,1]){
     const p=actorPose({motion,phase});
     for(let i=0;i<2;i++){
-      const leg=p.legs[i],y=p.hipY-.43*Math.cos(leg.thigh)-.43*Math.cos(leg.thigh+leg.knee),z=p.hipZ-.43*Math.sin(leg.thigh)-.43*Math.sin(leg.thigh+leg.knee);
+      const leg=p.legs[i],vertical=.43*Math.cos(leg.thigh)+.43*Math.cos(leg.thigh+leg.knee),y=p.hipY-vertical*Math.cos(leg.splay),x=(i?1:-1)*.104+p.hipX+vertical*Math.sin(leg.splay),z=p.hipZ-.43*Math.sin(leg.thigh)-.43*Math.sin(leg.thigh+leg.knee);
       assert.ok(Math.abs(y-p.feet[i].y)<1e-6,`${motion}/${phase} ankle height`);
+      assert.ok(Math.abs(x-p.feet[i].x)<1e-6,`${motion}/${phase} ankle lateral target`);
       assert.ok(Math.abs(z-p.feet[i].z)<1e-6,`${motion}/${phase} ankle travel`);
     }
   }

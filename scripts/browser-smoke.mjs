@@ -104,7 +104,8 @@ async function view(page,mode){
   await page.locator('#battle-board').scrollIntoViewIfNeeded();
 }
 async function newGameDrill(page){
-  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');await page.waitForSelector('.camp-page');
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.locator('input[name="new-play-mode"][value="turns"]').check();
+  await page.click('[data-cmd="begin"]');await page.waitForSelector('.camp-page');
   const choose=page.locator('[data-cmd="choose"]');if(await choose.count())await (await revealControl(page,'[data-cmd="choose"]')).click();
   await page.click('[data-cmd="start"]');await page.waitForSelector('#battle-board');
 }

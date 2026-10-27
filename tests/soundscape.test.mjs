@@ -31,6 +31,20 @@ function platform({size=65536,fail=[],amplitude=.3}={}){
 const field=(chapter=1)=>({chapter,phase:'encounter',encounterIndex:0,encounter:{id:`ch${chapter}-field`,kind:'battle'}});
 const court=()=>({chapter:11,phase:'encounter',encounterIndex:0,encounter:{id:'ch11-accounts',kind:'contest'}});
 
+test('live battle pulse shares the PCM cap, ducks narration, and cancels on recovery, mute, hide and disposal',async()=>{
+  const p=platform(),s=p.sound,world={kind:'field',status:'active',tick:0,mission:{deadline:10},actors:[{id:'hero',hp:2,maxHp:10,x:0,z:0}]};
+  s.configure({music:true,voices:true});s.update(field(5),'game',world);await s.unlock();await settle();
+  assert.equal(s.stats().adaptiveScore,true);assert.equal(s.stats().direction.mood,'urgent');
+  assert.ok(s.stats().decodedBytes+s.stats().scoreBytes<=24*1024*1024);const pulse=p.contexts[0].sources.find(x=>x.loop&&x.buffer.sampleRate===22050),volume=pulse.target.gain.value;
+  assert.ok(volume>0);await s.speak('rally');assert.ok(pulse.target.gain.value<volume);s.stopVoice();assert.equal(pulse.target.gain.value,volume);
+  for(let i=0;i<10;i++)s.update(field(5),'game',world);assert.equal(p.contexts[0].sources.filter(x=>x.buffer.sampleRate===22050).length,1);
+  world.actors[0].hp=10;s.update(field(5),'game',world);assert.equal(s.stats().adaptiveScore,false);assert.equal(pulse.disconnected,true);
+  world.actors[0].hp=1;s.update(field(5),'game',world);assert.equal(s.stats().adaptiveScore,true);
+  s.configure({music:false});assert.equal(s.stats().adaptiveScore,false);s.configure({music:true});assert.equal(s.stats().adaptiveScore,true);
+  p.page.hidden=true;p.listeners.get('visibilitychange')();assert.equal(s.stats().sources,0);assert.equal(s.stats().adaptiveScore,false);
+  s.dispose();assert.equal(s.stats().scoreBytes,0);
+});
+
 test('Local mixer waits for explicit opt-in and a gesture; repeated updates share each load and loop',async()=>{
   const p=platform(),s=p.sound;s.update(field());assert.equal(await s.unlock(),false);assert.equal(p.contexts.length,0);assert.equal(p.calls.length,0);
   s.configure({music:true,ambience:true,audio:true});assert.equal(p.calls.length,0);await s.unlock();for(let i=0;i<10;i++)s.update(field());await settle();

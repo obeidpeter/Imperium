@@ -14,6 +14,7 @@ import {soldierCampCard} from './soldier-views.js';
 import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-view.js';
 import {campFor,campPlaceName,campPlaceHint,campPersonPresent,CAMP_PLACES} from '../data/camps.js';
 import {companyStories} from '../core/camp-stories.js';
+import {companyActivities} from '../core/company-activities.js';
 
 const campDisclosure=(id,label,body,{open=false}={})=>body?`<details id="${id}" class="camp-disclosure"${open?' open':''}><summary>${esc(label)}</summary>${body}</details>`:'';
 
@@ -85,9 +86,12 @@ function story(){
   return `${oathScene}<section class="story-card cinematic-story ${portrait?'has-speaker':'narrated'}" aria-label="Chapter dialogue">${portrait?`<figure class="story-portrait"><img src="${portrait}" width="336" height="336" decoding="async" alt="${esc(who)}"></figure>`:''}<div class="story-copy"><div class="speaker">${!portrait?'<span class="narrator-seal" aria-hidden="true">S</span>':''}<div><div class="eyebrow">THE CHRONICLE</div><strong>${esc(who)}</strong></div></div><div class="dialogue-text" aria-live="polite">${esc(line.text)}</div></div><div class="story-controls"><span class="story-dots" aria-label="Passage ${storyIndex+1} of ${lines.length}">Passage ${storyIndex+1} of ${lines.length}</span><div><button class="ghost small" data-cmd="previous-story" ${storyIndex===0?'disabled':''}>← Previous</button><button class="small" data-cmd="next-story" ${storyIndex>=lines.length-1?'disabled':''}>Read on →</button></div></div></section>`;
 }
 function companyStoryPanel(){
-  const rows=companyStories(context().state);if(!rows.length)return '';
+  const state=context().state,rows=companyStories(state),activities=companyActivities(state);if(!rows.length&&!activities.length)return '';
   const fresh=rows.filter(r=>!r.choice||r.ready&&!r.completed).length;
-  return campDisclosure('camp-company-stories',`Company stories${fresh?` · ${fresh} unread`:''}`,rows.map(row=>
+  const activityContent=activities.map(a=>`<article class="sidebar-card company-activity" data-company-activity="${esc(a.id)}"><p class="eyebrow">CHAPTER ${roman(a.chapter)} · OPTIONAL</p><h3>${esc(a.title)}</h3><p>${esc(a.summary)}</p>`+
+    (a.completed?'<p class="consequence">Completed · Your company remembers.</p>':!a.started?`<button class="text-link" data-cmd="conversation" data-id="${esc(a.id)}">Start this activity →</button>`:
+      `<p>${a.steps.filter(s=>s.done).length} / ${a.steps.length} steps complete. Walk to the stations or use these links.</p><ol>${a.steps.map(s=>`<li><button class="text-link" data-cmd="conversation" data-id="${esc(s.id)}">${s.done?'✓ ':''}${esc(s.label)}</button> <small>${esc(campPlaceName(a.chapter,s.place))}</small></li>`).join('')}</ol>`)+`</article>`).join('');
+  return campDisclosure('camp-company-stories',`Company stories${fresh?` · ${fresh} unread`:''}`,activityContent+rows.map(row=>
     `<article class="sidebar-card"><p class="eyebrow">CHAPTER ${roman(row.chapter)} · OPTIONAL</p><h3>${esc(row.title)}</h3><p>${esc(row.acknowledgement)}</p>`+
     `<button class="text-link" data-cmd="conversation" data-id="${esc(row.id)}">${row.ready?'Read the report':row.choice?'Review the instruction':'Read the company’s letter'} →</button></article>`).join(''));
 }
@@ -154,8 +158,7 @@ function realtimeCamp(){
     campDisclosure('camp-promotion',`Promotion requirements · ${Game.chapterRequirements(state).filter(r=>!r.done).length} still to demonstrate`,requirements()+`<p>Complete ${ch.encounters.length} encounters (${state.encounterIndex}/${ch.encounters.length}). Retry restores the encounter’s starting checkpoint.</p>`)+fieldReports();
   return `${header({immersive:true})}<main id="main" class="frame camp-page realtime-camp world-courtyard world-first${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
     <div class="rt-camp-grid">
-      <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div>
-        <p class="rt-camp-note">Walk up to people to talk, or use the camp services below.</p></div>
+      <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div></div>
       <aside id="camp-services" class="camp-side camp-sidebar world-camp-services" aria-labelledby="camp-services-title" tabindex="-1">
         <div class="world-services-heading"><h2 id="camp-services-title">Camp services</h2><a class="world-service-link" href="#rt-board">Return to the world ↑</a></div>
         <section class="sidebar-card world-preparation"><p class="eyebrow">BEFORE YOU DEPART</p>

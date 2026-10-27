@@ -5,7 +5,7 @@ import {stagingEdge,getEncounterStaging} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
-import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
+import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
 // The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
 // follows full rules-board bounds and real boundary roads; no scenery can add
@@ -41,7 +41,7 @@ export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=
     const {beside}=entry,along=beside?beside.side*((width(beside.slot)+width(entry.slot))/2+beside.spacing):entry.along;
     add(entry.component??plan[entry.slot],edges[entry.edge]??entry.edge,along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
   };
-  const layout=civic&&chapter>=10?REGIONAL_HEARINGS[chapter]:ENCOUNTER_LAYOUTS[e.id]??[...REGIONAL_FRONTAGE,...(REGIONAL_CHAPTER_EXTRAS[chapter]??[])];
+  const layout=civic&&chapter>=10?REGIONAL_HEARINGS[chapter]:ENCOUNTER_LAYOUTS[e.id]??[...(REGIONAL_COMPOSITIONS[chapter]?.entries??REGIONAL_FRONTAGE),...(REGIONAL_CHAPTER_EXTRAS[chapter]??[])];
   for(const entry of layout)place(entry);
   return out;
 }
@@ -138,7 +138,7 @@ export function addRegionalWorld(ctx){
     componentFallback(part,item.component,regionalComponentDimensions(item.id,item.component),p,m,profile.chapter);freezeFallback(part,geometries);
     structures.push({name:part.name,min:[b.minX,base,b.minZ],max:[b.maxX,base+regionalComponentDimensions(item.id,item.component)[1]*item.scale[1],b.maxZ]});
   }
-  root.userData.regionalWorld={chapter:profile.chapter,kit:REGIONAL_WORLD_KITS[profile.chapter],components:placements.length,revision:1};
+  root.userData.regionalWorld={chapter:profile.chapter,kit:REGIONAL_WORLD_KITS[profile.chapter],components:placements.length,composition:REGIONAL_COMPOSITIONS[profile.chapter]?.title,revision:2};
   root.userData.precinctStructures=structures;root.userData.inhabitedSetpieces=structures;root.userData.encounterStaging=profile.staging;
   root.userData.environmentLandmarks??=[];root.userData.environmentLandmarks.push(profile.staging.title,`${profile.region}: connected working courts`);
   if(profile.chapter===9)root.userData.environmentLandmarks.push('connected Palmyrene urban edge');
@@ -150,7 +150,9 @@ export function addRegionalWorld(ctx){
 function addRegionalHabitat({root,e,p,m,profile,height,tileSize,vegetation,instance,quality}){
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
   if(profile.chapter===2||profile.chapter===8){
-    for(const [i,[x,z,h]]of [[-hx-7,-hz-8,6],[hx+7,-hz-6,5.4],[-hx-8,hz+9,6.5]].entries())vegetation.tree('willow',x,z,h,i);
+    // Keep the near landing clear: the third willow used to sit directly in
+    // the low camera's foreground, despite its trunk being outside the board.
+    for(const [i,[x,z,h]]of [[-hx-12,-hz-12,6],[hx+12,-hz-12,5.4],[hx+20,-hz-3,6.5]].entries())vegetation.tree('willow',x,z,h,i);
     const reed=p.geo(new T.CylinderGeometry(.009,.018,1,5));
     for(let i=0;i<36;i++){const x=(i%2?-1:1)*(hx+1.4+(i%3)*.23),z=(Math.floor(i/2)-8.5)*Math.min(1.6,hz/9);instance('marsh reed stems',reed,m.dryGrass,[x,height(x,z)+.4,z],[1,.8+(i%3)*.1,1]);}
   }else if(profile.chapter===9){for(const [i,z]of [-hz-9,hz+8].entries())vegetation.palm(hx+13,z,5.8,i);}

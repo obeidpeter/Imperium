@@ -1,5 +1,6 @@
 import {applyActorClip,sampleActorClip} from './actor-clips.js';
-import {applyPerformance,applyLocomotionEntry} from './actor-performance.js';
+import {applyPerformance,applyLocomotionEntry,applyTurnPerformance} from './actor-performance.js';
+import {sampleHumanGait,sampleHorseGait} from './actor-gait.js';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const smooth=n=>{const t=clamp(n,0,1);return t*t*(3-2*t);};
@@ -23,19 +24,16 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
   const p=clamp(finite(phase),0,1),breath=Math.sin(time*2.1)*.003;
   const pose={yaw:direction,hipX:0,hipY:.91+breath,hipZ:0,bodyX:0,bodyY:0,bodyZ:0,headX:0,headY:0,
     leftArm:[-.2,0,-.1],rightArm:[-.1,0,.08],leftElbow:-.55,rightElbow:-.35,
-    leftWrist:0,rightWrist:0,shieldTilt:0,skirt:0,feet:[{y:.07,z:.05,roll:0},{y:.07,z:-.05,roll:0}],opacity:1};
+    leftWrist:0,rightWrist:0,shieldTilt:0,skirt:0,feet:[{x:-.104,y:.07,z:.05,roll:0},{x:.104,y:.07,z:-.05,roll:0}],opacity:1};
   const guard=()=>{pose.hipY-=.075;pose.bodyX=-.075;pose.leftArm[0]=-.7;pose.leftElbow=-1;pose.shieldTilt=-.08;pose.feet[0].z=.19;pose.feet[1].z=-.16;pose.rightElbow=-.75;};
   if((braced||defended||motion==='block')&&!['walk','run','retreat','attack','strike','throw','brace','formation','withdrawn','dead'].includes(motion))guard();
   if(['walk','run','retreat'].includes(motion)){
-    const physical=Number.isFinite(locomotionDistance),cycle=physical?locomotionPhase(locomotionDistance,motion):phase===undefined?time*(motion==='run'?2.1:1.4):finite(phase),speed=motion==='run'?1.25:1,sign=motion==='retreat'?-1:1,stride=physical?locomotionStride(motion):.72,reach=stride*.3;
-    pose.feet=[0,.5].map(offset=>{
-      const q=((cycle+offset)%1+1)%1,stance=q<.6,s=stance?q/.6:(q-.6)/.4;
-      return {y:.07+(stance?0:Math.sin(s*Math.PI)*.105*speed),z:(stance?mix(reach,-reach,s):mix(-reach,reach,smooth(s)))*sign,roll:stance?0:Math.sin(s*Math.PI)*-.15};
-    });
-    pose.hipY=.885+Math.cos(cycle*Math.PI*4)*.009;pose.hipX=-Math.sin(cycle*Math.PI*2)*.023;pose.bodyX=motion==='retreat'?.07:-.05;
+    const physical=Number.isFinite(locomotionDistance),cycle=physical?locomotionPhase(locomotionDistance,motion):phase===undefined?time*(motion==='run'?2.1:1.4):finite(phase),stride=physical?locomotionStride(motion):.72;
+    Object.assign(pose,sampleHumanGait({cycle,stride,running:motion==='run',retreat:motion==='retreat',injury:mounted?0:clamp((.55-health)/.55,0,1)}));
+    pose.bodyX=motion==='retreat'?.07:-.05;
     pose.skirt=Math.sin(cycle*Math.PI*2)*.04;
     const weight=clamp(finite(locomotionWeight,1),0,1);
-    pose.feet.forEach((foot,i)=>{foot.y=mix(.07,foot.y,weight);foot.z=mix(i?-.05:.05,foot.z,weight);foot.roll*=weight;});
+    pose.feet.forEach((foot,i)=>{foot.x=mix((i?1:-1)*.104,foot.x,weight);foot.y=mix(.07,foot.y,weight);foot.z=mix(i?-.05:.05,foot.z,weight);foot.roll*=weight;});
     pose.hipY=mix(.91+breath,pose.hipY,weight);pose.hipX*=weight;pose.bodyX*=weight;pose.bodyY*=weight;pose.bodyZ*=weight;pose.skirt*=weight;pose.rightArm[0]=mix(-.1,pose.rightArm[0],weight);pose.leftArm[0]=mix(-.2,pose.leftArm[0],weight);
     applyActorClip(pose,'walk',((cycle%1)+1)%1,weight);
     applyPerformance(pose,motion==='run'?'run':'walk',((cycle%1)+1)%1,weight);
@@ -69,8 +67,7 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
   }else if(['rally','order'].includes(motion)){
     applyPerformance(pose,motion,p);
   }else if(motion==='turn'){
-    applyPerformance(pose,'turn',p);
-    const side=Number.isFinite(turnSign)&&turnSign<0?-1:1;pose.bodyY*=side;pose.headY*=side;pose.bodyZ*=side;
+    applyTurnPerformance(pose,p,turnSign);
   }else if(motion==='start'||motion==='stop'){
     applyPerformance(pose,motion,p);
   }else if(motion==='assent'){
@@ -96,23 +93,21 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     const fall=health<=0?1:smooth(p);pose.hipY-=.6*fall;pose.hipX=-.025*fall;pose.bodyX=.8*fall;pose.bodyZ=.09*fall;pose.headX=.35*fall;pose.rightArm[0]=-.7*fall;pose.opacity=1;
   }
   if(motion==='idle'&&!reducedMotion)applyActorClip(pose,'idle',(time%4.8)/4.8);
-  // Injury and shaken morale change bearing, not travelled distance or foot
-  // timing. Only non-contact poses receive these offsets, so the authoritative
+  // Injury changes gait support as well as bearing; distance remains caller-
+  // owned. Only non-contact poses receive these offsets, so the authoritative
   // attack, blocking and throwing anchors remain unchanged.
   if(['idle','walk','run','retreat','start','stop','camp-watch','camp-rest'].includes(motion)&&health>0){
     const injury=clamp((.55-health)/.55,0,1),shaken=clamp((.5-finite(morale,1))/.5,0,1),moving=['walk','run','retreat'].includes(motion);
-    const cycle=Number.isFinite(locomotionDistance)?locomotionPhase(locomotionDistance,motion):finite(phase,time*.8);
-    const favour=moving?Math.sin(cycle*Math.PI*2)*.018*injury:0;
-    pose.bodyX+=injury*.065+shaken*.035;pose.bodyZ+=injury*.035+favour;pose.headX+=injury*.035+shaken*.06;
+    pose.bodyX+=injury*.065+shaken*.035;if(!moving)pose.bodyZ+=injury*.035;pose.headX+=injury*.035+shaken*.06;
     pose.leftArm[0]-=injury*.13;pose.leftElbow-=injury*.20;pose.rightArm[0]-=shaken*.10;
   }
   // Two-bone sagittal IK keeps the soles on the requested ground plane even
   // while hips settle, and avoids straight-knee singularities.
-  pose.legs=pose.feet.map(foot=>{
-    const y=foot.y-pose.hipY,z=foot.z-pose.hipZ,d=clamp(Math.hypot(y,z),.12,.858),upper=.43,lower=.43;
-    const thigh=Math.atan2(-z,-y)-Math.acos(clamp((upper*upper+d*d-lower*lower)/(2*upper*d),-1,1));
+  pose.legs=pose.feet.map((foot,i)=>{
+    const x=(foot.x??(i?1:-1)*.104)-(i?1:-1)*.104-pose.hipX,y=foot.y-pose.hipY,z=foot.z-pose.hipZ,d=clamp(Math.hypot(x,y,z),.12,.858),upper=.43,lower=.43;
+    const thigh=Math.atan2(-z,Math.hypot(x,y))-Math.acos(clamp((upper*upper+d*d-lower*lower)/(2*upper*d),-1,1));
     const knee=Math.PI-Math.acos(clamp((upper*upper+lower*lower-d*d)/(2*upper*lower),-1,1));
-    return {thigh,knee,ankle:-thigh-knee+foot.roll};
+    return {thigh,knee,splay:Math.atan2(x,-y),ankle:-thigh-knee+foot.roll};
   });
   return pose;
 }
@@ -141,21 +136,28 @@ export function blendActorPose(from,to,weight){
   const t=smooth(weight),result={...to};
   for(const key of ['hipX','hipY','hipZ','bodyX','bodyY','bodyZ','headX','headY','leftElbow','rightElbow','leftWrist','rightWrist','shieldTilt','skirt'])result[key]=mix(from[key]??0,to[key]??0,t);
   for(const key of ['leftArm','rightArm'])result[key]=to[key].map((n,i)=>mix(from[key][i],n,t));
-  result.feet=to.feet.map((foot,i)=>({...foot,y:mix(from.feet[i].y,foot.y,t),z:mix(from.feet[i].z,foot.z,t),roll:mix(from.feet[i].roll,foot.roll,t)}));
+  result.feet=to.feet.map((foot,i)=>({...foot,x:mix(from.feet[i].x??(i?1:-1)*.104,foot.x??(i?1:-1)*.104,t),y:mix(from.feet[i].y,foot.y,t),z:mix(from.feet[i].z,foot.z,t),roll:mix(from.feet[i].roll,foot.roll,t)}));
   return result;
 }
 
-/** Horse gait converts the stage's human .72m distance phase to a1.35m stride.
- * Four hoof targets and sagittal IK retain planted feet during each stance.
- */
-export function horsePose({time=0,motion='idle',phase,locomotionWeight=1,locomotionDistance,reducedMotion=false}={}){
+/** Four-beat walk, diagonal trot and asymmetric canter share distance-driven
+ * hoof contacts. The rider counterbalances this same sampled performance. */
+export function horsePose({time=0,motion='idle',phase,locomotionWeight=1,locomotionDistance,gait,reducedMotion=false}={}){
   time=reducedMotion?0:finite(time);const physical=Number.isFinite(locomotionDistance),stride=physical?locomotionStride(motion,true):1.35,moving=['walk','run','retreat','cavalry-move'].includes(motion),cycle=physical?locomotionPhase(locomotionDistance,motion,true):phase===undefined?time*1.2:finite(phase)*.72/1.35,weight=moving?clamp(finite(locomotionWeight,1),0,1):0;
   const p=clamp(finite(phase),0,1),fall=['withdrawn','dead'].includes(motion)?smooth(p):0,attack=['attack','strike','cavalry-attack'].includes(motion)?sampleActorClip('horseStrike',p):{},idle=sampleActorClip('horseIdle',((time/6.4)%1+1)%1);
-  const galloping=['run','cavalry-move'].includes(motion),bodyY=1.04+Math.cos(cycle*Math.PI*4)*.014*weight,bodyPitch=(attack.bodyPitch??0)+(galloping?Math.sin(cycle*Math.PI*2)*.025*weight:0),neckPitch=(idle.neckPitch??0)+(attack.neckPitch??0)-(galloping?.018:0)*weight,tail=(idle.tail??0)+(attack.tail??0)+.08*Math.sin(cycle*Math.PI*2)*weight;
-  const offsets=galloping?[0,.12,.55,.67]:[0,.5,.75,.25];
-  const feet=offsets.map((offset,i)=>{const q=((cycle+offset)%1+1)%1,stance=q<.55,s=stance?q/.55:(q-.55)/.45,reach=stride*.275,z=stance?mix(reach,-reach,s):mix(-reach,reach,smooth(s));return {y:.075+(stance?0:Math.sin(s*Math.PI)*.14)*weight,z:z*weight+(i<2?.54:-.54),roll:stance?0:-.16*Math.sin(s*Math.PI)*weight};});
-  const legs=feet.map((foot,i)=>{const y=foot.y-bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(y,z),.12,1.059),length=.53,bend=i<2?1:-1;const upper=Math.atan2(-z,-y)-bend*Math.acos(clamp(d/(2*length),-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*length*length-d*d)/(2*length*length),-1,1)));return {upper,knee,ankle:-upper-knee+foot.roll};});
-  return {bodyY,bodyPitch,neckPitch,tail,feet,legs,fall,riderBob:bodyY-1.04};
+  const fast=['run','cavalry-move'].includes(motion),selected=gait??(fast?(weight<.72?'trot':'canter'):'walk');
+  const pose=sampleHorseGait({cycle,stride,gait:selected,weight,retreat:motion==='retreat'});
+  pose.bodyPitch+=attack.bodyPitch??0;pose.neckPitch+=(idle.neckPitch??0)+(attack.neckPitch??0);
+  pose.tail=(idle.tail??0)+(attack.tail??0)+.08*Math.sin(cycle*Math.PI*2)*weight;
+  pose.fall=fall;pose.gait=selected;pose.riderBob=pose.bodyY-1.04;
+  return groundHorsePose(pose,pose.feet.map((f,i)=>({height:0,x:(i%2?-1:1)*.235,z:f.z})));
+}
+
+export function blendHorsePose(from,to,weight){
+  const t=smooth(weight),pose={...to};
+  for(const key of ['bodyY','bodyPitch','bodyRoll','neckPitch','tail','riderPitch','riderRoll','riderHeave','fall'])pose[key]=mix(finite(from[key]),finite(to[key]),t);
+  pose.feet=to.feet.map((foot,i)=>({...foot,...Object.fromEntries(['y','z','roll'].map(key=>[key,mix(from.feet[i][key],foot[key],t)]))}));
+  pose.riderBob=pose.bodyY-1.04;return pose;
 }
 
 export function groundHorsePose(pose,targets){
@@ -179,12 +181,13 @@ export function createFootPlanting(){
   return {reset(){plants=[];previous=null;},sample({pose,mounted=false,position,direction=0,motion='idle',phase,groundHeight,scaleY=1,reset=false}){
     if(typeof groundHeight!=='function'){plants=[];previous=null;return null;}
     const x=finite(position?.x),y=finite(position?.y),z=finite(position?.z),yaw=finite(direction),sy=Math.max(.1,finite(scaleY,1)),c=Math.cos(yaw),s=Math.sin(yaw),base=mounted?.075:.07;
-    const walking=['walk','run','retreat','cavalry-move'].includes(motion),canPlant=walking||['idle','brace','formation','yield'].includes(motion);
+    const walking=['walk','run','retreat','cavalry-move'].includes(motion),supported=m=>['walk','run','retreat','cavalry-move','idle','start','stop','turn','brace','formation','yield'].includes(m),canPlant=supported(motion);
     const turn=previous?Math.atan2(Math.sin(yaw-previous.yaw),Math.cos(yaw-previous.yaw)):0;
-    if(reset||!previous||previous.motion!==motion||Math.hypot(x-previous.x,z-previous.z)>.8||Math.abs(turn)>.45||Number.isFinite(phase)&&phase<(previous.phase??phase)-.1)plants=[];
+    const changed=previous&&previous.motion!==motion,continuous=changed&&supported(previous.motion)&&canPlant;
+    if(reset||!previous||changed&&!continuous||Math.hypot(x-previous.x,z-previous.z)>.8||Math.abs(turn)>.45||!walking&&!continuous&&Number.isFinite(phase)&&phase<(previous.phase??phase)-.1)plants=[];
     const sample=(wx,wz)=>{const h=groundHeight(wx,wz);return Number.isFinite(h)?h:y;};
     const targets=pose.feet.map((foot,i)=>{
-      const localX=mounted?(i%2?-1:1)*.235:(i?1:-1)*.104;
+      const localX=foot.x??(mounted?(i%2?-1:1)*.235:(i?1:-1)*.104);
       let wx=x+c*localX+s*foot.z,wz=z-s*localX+c*foot.z;
       const contact=foot.y<=base+.001,old=plants[i];
       if(!canPlant||!contact)plants[i]=null;

@@ -15,6 +15,29 @@ export function wallStyle(profile){return STONE_WALLS.has(profile.setting)?'ston
 // A run of wall cells shares one face: north-south runs face east (the usual
 // enemy side), anything else faces north. Isolated cells follow the old edge.
 export function wallFace(e,x,y){const wall=(a,b)=>terrainAt(e,a,b)==='wall'&&a>=0&&b>=0&&a<e.width&&b<e.height;const vertical=wall(x,y-1)||wall(x,y+1),horizontal=wall(x-1,y)||wall(x+1,y);return vertical&&!horizontal?'east':'north';}
+
+/** Lay complete courses across adjoining paving cells. Restarting every slab
+ * course at each tile exposed a conspicuous square grid through the material.
+ * The legal floor and height stay unchanged; only its thin surface is dressed. */
+export function authoredPavingSlabs(e,tileSize=2.5,courses=3){
+  const out=[],stone=(x,y)=>x>=0&&x<e.width&&y>=0&&y<e.height&&terrainAt(e,x,y)==='stone';
+  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++){
+    if(!stone(x,y))continue;
+    const start=x;while(x+1<e.width&&stone(x+1,y))x++;
+    const left=(start-e.width/2)*tileSize,right=(x+1-e.width/2)*tileSize,near=(y-e.height/2)*tileSize,depth=tileSize/courses;
+    for(let row=0;row<courses;row++)for(let u=left+.015;u<right-.12;){
+      const width=Math.min(right-u-.015,.86+hash(row,u*3,y)*.65),cx=u+width/2,cz=near+(row+.5)*depth;
+      const cell=Math.min(x,Math.max(start,Math.floor(cx/tileSize+e.width/2))),exposed=row===0&&!stone(cell,y-1)||row===courses-1&&!stone(cell,y+1);
+      const erosion=exposed?.035+hash(u,row,y)*.08:0;
+      // Rare missing perimeter stones reveal existing mixed soil; no repeated
+      // missing strips are cut between two otherwise connected paving cells.
+      if(!exposed||hash(u*5,row,y)<.96)out.push({x:cx,z:cz,width:width-.025,depth:depth-.025-erosion,
+        yaw:(hash(row,u,y)-.5)*.008,tone:.89+Math.sin(cx*.31+cz*.27)*.045+hash(u,row,y)*.06,exposed});
+      u+=width;
+    }
+  }
+  return out;
+}
 // A clump of tapered reed blades (double-sided, so it never reads as solid cover).
 export function createReedGeometry(blades=7){
   const vertices=[],indices=[];
@@ -106,19 +129,12 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
     }
     if(type==='stone'){
       cells.push({type,x,y});
-      // Flagstones in courses of irregular length; a few lift or go missing at the edges.
-      // The approved pilot's broader paving now carries through each region
-      // and reads from the normal follow camera without
-      // dense subpixel grout. It uses fewer instances in the same draw batch;
-      // reduced yaw keeps the narrower joints physically separated.
-      const pilot=isChapterFivePilot(e)||hasRegionalWorld(e),courses=pilot?3:4,joint=pilot?.025:.045;
-      for(let row=0;row<courses;row++){let u=-half+.02;const depth=tileSize/courses;
-        while(u<half-.12){const w=Math.min(half-u,(pilot?.75:.42)+hash(row,u*3,x+y)*.5),missing=(row===0||row===courses-1)&&hash(u*5,row,x*y)>.95;
-          if(!missing)instance('authored flagstones',p.box,m.marble,[xx+u+w/2,height(xx+u+w/2,zz-half+(row+.5)*depth)+.012+hash(u,row,y)*.012,zz-half+(row+.5)*depth],[w-joint,.034,depth-joint],[0,(hash(row,u,x)-.5)*(pilot?.012:.03),0],tint('#e4dccb',u*11+row,x*5+y));
-          u+=w;}
-      }
     }
   }
+  const paving=authoredPavingSlabs(e,tileSize,isChapterFivePilot(e)||hasRegionalWorld(e)?3:4);
+  for(const slab of paving)instance('authored flagstones',p.box,m.marble,
+    [slab.x,height(slab.x,slab.z)+.018,slab.z],[slab.width,.034,slab.depth],[0,slab.yaw,0],new THREE.Color('#e4dccb').multiplyScalar(slab.tone));
+  root.userData.pavingCourses={slabs:paving.length,continuous:true};
 
   // Rocky outcrops break each exposed plateau bank above open ground. Beside
   // a road, paving or water the bank is faced as a masonry terrace instead.

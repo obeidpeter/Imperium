@@ -19,6 +19,7 @@ const saidKey=(treeId,nodeId,index)=>`said:${treeId}:${nodeId}:${index}`;
 
 // Whether the story allows a reply now (hidden when not): flags, errands, decisions, the oath, progress.
 function storyAllows(state,c){
+  if(c.all&&!c.all.every(branch=>storyAllows(state,branch)))return false;
   if(c.any&&!c.any.some(branch=>storyAllows(state,branch)))return false;
   const s=state.soldier,flags=s?.flags??{};
   if(c.flag&&!flags[c.flag])return false;if(c.notFlag&&flags[c.notFlag])return false;

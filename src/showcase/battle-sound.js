@@ -10,7 +10,11 @@ export function battleSoundPlan(kind,{side='player',intensity=1,surface,material
   const aliases={step:'footstep',move:'footstep',block:'shield',brace:'shield',ward:'guard',rally:'inspire',order:'inspire',formation:'cornu',munitiones:'fieldwork',seal:'agreement',metal:'clash',strike:'clash',throw:'javelin',arrow:'bow',hurt:'impact'};
   const key=aliases[kind]??kind,amount=level(intensity),texture=side==='enemy'?31:side==='ally'?17:5;
   let layers=[];
-  if(key==='footstep'){
+  if(key.startsWith('order-')){
+    const notes=key==='order-hold'?[196,196]:key==='order-withdraw'?[294,245,196]:key==='order-rally'?[196,294,392]:[196,245,294];
+    layers=notes.map((frequency,i)=>ring(.22,.085,[[frequency,1],[frequency*2,.45],[frequency*3,.17]],i*.19));
+  }
+  else if(key==='footstep'){
     const hard=['stone','chamber','road','wall'].includes(surface),sand=['sand','dust'].includes(surface),loose=['rock','rubble','gravel'].includes(surface),wood=['bridge','wood'].includes(surface);
     layers=wood?[noise(.08,.24,220),ring(.12,.07,[[217,1],[583,.4]],.005),noise(.06,.025,1400,'highpass',.02)]
       :[noise(hard?.075:sand?.15:.105,.29,hard?330:sand?110:175),noise(loose?.16:.10,hard?.095:loose?.11:.06,hard?2300:loose?3100:sand?750:1600,'bandpass',.008,.85),noise(.08,.028,2800,'highpass',.035)];
@@ -30,13 +34,17 @@ export function battleSoundPlan(kind,{side='player',intensity=1,surface,material
   else if(key==='javelin')layers=[{...noise(.18,.07,1600,'bandpass',0,.8),attack:.035,endFrequency:4100},noise(.075,.03,700,'bandpass',.025)];
   else if(key==='bow')layers=[noise(.032,.11,1800,'highpass'),ring(.12,.06,[[163,1],[467,.35],[919,.12]],.001),{...noise(.09,.045,2800,'bandpass',.02),endFrequency:1100}];
   else if(key==='impact')layers=/mail|scale|metal|plate/.test(String(material??''))?[noise(.12,.25,210),ring(.16,.065,[[887,1],[1607,.4],[2213,.2]],.004),noise(.075,.065,2900,'highpass',.008)]
+    :/cloth|leather/.test(String(material??''))?[noise(.14,.26,165),noise(.12,.065,650,'bandpass',.008),noise(.16,.025,1700,'lowpass',.018)]
     :[noise(.12,.28,200),noise(.085,.09,950,'bandpass',.004),noise(.13,.045,2200,'lowpass',.015)];
   else if(key==='swing')layers=[{...noise(weapon==='spear'?.15:weapon==='knife'?.07:.11,.065,weapon==='spatha'?730:weapon==='knife'?1450:950,'bandpass',0,.65),attack:.018,endFrequency:weapon==='spear'?1900:2800}];
   else if(key==='cloth')layers=[{...noise(.19,.04,1300,'bandpass'),attack:.025,endFrequency:2300}];
   // A caller may request a single quiet gust. There is no self-starting loop.
   else if(key==='wind')layers=[{...noise(1.2,.027,620,'lowpass'),attack:.28,endFrequency:950}];
   const colour=1+(((Math.abs(Number(variant)||0)%5)-2)*.022);
-  return {kind:key,texture,layers:amount?layers.map(layer=>({...layer,gain:layer.gain*amount,frequency:layer.frequency*(variant?colour:1)})):[]};
+  return {kind:key,texture,layers:amount?layers.map(layer=>({...layer,gain:layer.gain*amount,frequency:layer.frequency*(variant?colour:1),
+    // Modal resonances as well as filters vary: successive contacts no longer
+    // replay an identical metal/wood ring. Keep command pitches recognisable.
+    ...(layer.partials&&!key.startsWith('order-')?{partials:layer.partials.map(([hz,g])=>[hz*(variant?colour:1),g])}:{})})):[]};
 }
 
 function whiteNoise(context){
@@ -101,7 +109,7 @@ export function createBattleSound({AudioContext:Context=globalThis.AudioContext?
     try{if(recordedCue?.(kind,options))return true;}catch{ /* Optional recording failure retains native foley. */ }
     const plan=battleSoundPlan(kind,{...options,variant:sequence%5+1});
     if(!plan.layers.length)return false;
-    const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:['clash','vote','speech','guard','inspire','agreement','cornu','fieldwork'].includes(plan.kind)?1:0;
+    const priority=['shield','impact','bow','javelin'].includes(plan.kind)?2:plan.kind.startsWith('order-')||['clash','vote','speech','guard','inspire','agreement','cornu','fieldwork'].includes(plan.kind)?1:0;
     // Quiet walking/rustle tails yield to a committed contact. Equal-priority
     // impacts retain the strict budget rather than stacking louder and louder.
     if(voices.size+plan.layers.length>BATTLE_SOUND_LIMITS.voices){

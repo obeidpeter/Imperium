@@ -1,13 +1,13 @@
 {
   "version": 35,
-  "sourceDigest": "fc1029c9466428acff1b394c74d41b33d8a575412cb9bea339465220413aeab6",
+  "sourceDigest": "896a05c2a7037cdc4b6c3e92c008b376b11be813ac28c6864cc2be668d227a5f",
   "method": "Code-authored garments and performances over MakeHuman CC0 anatomy; self-contained editable glTF 2.0; no purchased or commissioned assets.",
   "characters": [
     {
       "id": "marcellus",
       "path": "art-source/characters/marcellus-v035.glb",
-      "bytes": 6556876,
-      "sha256": "81c3d20e2029826ebdba0bfb9095b63ceb2668e1701cf86ec096ed4f75861bf8",
+      "bytes": 6556884,
+      "sha256": "85373e4e2fe8fe22243b4ef8b94863ebfa7e8cf04b23975a070a6b206186efc8",
       "meshes": 22,
       "skins": 15,
       "joints": 35,
@@ -35,8 +35,8 @@
     {
       "id": "lucan",
       "path": "art-source/characters/lucan-v035.glb",
-      "bytes": 6402568,
-      "sha256": "7bdce089bef4f7240f6878cc2c4b31f0ccd7224a7e5ff5aab59109d3e01113dd",
+      "bytes": 6402576,
+      "sha256": "5b45b3c3f67d8466ee7dd5181e58917f16cfb2ad597206ecca2712fd59f3ef1b",
       "meshes": 22,
       "skins": 15,
       "joints": 34,
@@ -64,8 +64,8 @@
     {
       "id": "persian-guard",
       "path": "art-source/characters/persian-guard-v035.glb",
-      "bytes": 8882388,
-      "sha256": "cf3533d1625770b0ee4a59f626c9120cf0d41f317dab1f8f0a9d3acf67bf7bc9",
+      "bytes": 8882412,
+      "sha256": "b8c13036e930b2ebdfd0b1d35268fcbe9975e0e2f33065fa516d7aea2549b9aa",
       "meshes": 23,
       "skins": 16,
       "joints": 31,

@@ -28,7 +28,12 @@ test('Pilot paving reduces distant joint density without extra draw batches or o
   const old=samples.get('unmapped-field');assert.deepEqual(samples.get('ch5-fieldwork'),old,'other Chapter V scenery retains existing paving');
   for(const id of ['ch4-gate','ch5-mine','ch5-wall','ch5-camp','ch10-camp']){
     const slabs=samples.get(id);assert.ok(slabs.length<old.length*.75,'pilot reduces geometry instead of adding a distance draw');
-    for(const slab of slabs)assert.ok(Math.abs(slab.rotation[1])<=.006&&Math.abs(slab.scale[2]-(2.5/3-.025))<1e-9);
+    for(const slab of slabs){
+      assert.ok(Math.abs(slab.rotation[1])<=.006,'small yaw preserves separated joints');
+      const depth=2.5/3-.025,erosion=depth-slab.scale[2],perimeter=Math.abs(slab.position[2])>5-2.5/3;
+      if(perimeter)assert.ok(erosion>=.035-1e-9&&erosion<=.115+1e-9,'only the exposed outer course loses its bounded weathered edge');
+      else assert.ok(Math.abs(erosion)<1e-9,'interior courses retain their complete paving depth');
+    }
     for(let i=0;i<slabs.length;i++)for(let j=i+1;j<slabs.length;j++){
       const a=slabs[i],b=slabs[j],radius=s=>{const c=Math.abs(Math.cos(s.rotation[1])),q=Math.abs(Math.sin(s.rotation[1]));return [(s.scale[0]*c+s.scale[2]*q)/2,(s.scale[0]*q+s.scale[2]*c)/2];},ra=radius(a),rb=radius(b);
       assert.ok(Math.abs(a.position[0]-b.position[0])>=ra[0]+rb[0]||Math.abs(a.position[2]-b.position[2])>=ra[1]+rb[1],'reduced grout and yaw leave every slab separated');

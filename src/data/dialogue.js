@@ -1,4 +1,5 @@
 import {CAMP_STORY_DIALOGUE,CAMP_STORY_ERRANDS} from './camp-stories.js';
+import {COMPANY_ACTIVITY_DIALOGUE} from './company-activities.js';
 
 // Conversations as data (build brief §3.12): each tree is nodes of
 // { speaker, text, options: [{ text, conditions, effects, next, once }] }.
@@ -48,6 +49,7 @@ export const DEFEAT_PAGES=freeze({
 });
 
 export const DIALOGUE=freeze({
+  ...COMPANY_ACTIVITY_DIALOGUE,
   ...CAMP_STORY_DIALOGUE,
   // Shared service actions, with each chapter's short context supplied by
   // campConversation. These open existing tools and grant no new rewards.
