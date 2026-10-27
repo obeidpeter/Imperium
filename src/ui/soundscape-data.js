@@ -1,3 +1,4 @@
+import {TIME} from '../data/realtime-rules.js';
 // Original, locally bundled recordings. No synthesis service is contacted in play.
 export const VOICE_LINES=Object.freeze({
   arrival:{speaker:'The chronicle',text:'You arrive at the edge of an empire. For now, your duty is simple: learn the ground, stand beside your comrades, and bring them home.'},
@@ -35,8 +36,13 @@ const DIRECTIONS=[
   ['The marble chamber',6000,5300,0],['The imperial threshold',8100,6400,0]
 ].map(([title,musicHz,ambienceHz,pan])=>Object.freeze({title,musicHz,ambienceHz,pan}));
 const bounded=(value,min,max)=>Math.max(min,Math.min(max,value));
-export function audioDirection(state,screen='game'){
-  const chapter=Number.isInteger(state?.chapter)?bounded(state.chapter,1,12):1,base=DIRECTIONS[chapter-1],e=state?.encounter;
+export function audioDirection(state,screen='game',world=null){
+  const chapter=Number.isInteger(state?.chapter)?bounded(state.chapter,1,12):1,base=DIRECTIONS[chapter-1];
+  // The live world is page-owned. Translate public, currently visible facts
+  // without updating the chronicle or consulting future waves/AI knowledge.
+  const live=world?.kind==='field'&&state?.phase==='encounter'&&state.encounter?.kind==='battle';
+  const e=live?{...state.encounter,status:world.status,turn:Math.floor(world.tick/TIME.roundTicks)+1,turnLimit:world.mission?.deadline,
+    defence:world.mission?.defence,units:(world.actors??[]).filter(a=>!a.hidden||a.side!=='enemy').map(a=>({...a,x:a.x/2.5,y:a.z/2.5}))}:state?.encounter;
   const playing=Boolean(state&&screen!=='title'),inEncounter=playing&&state.phase==='encounter'&&e,civic=inEncounter&&e.kind==='contest';
   const weather=civic?'clear':e?.weather??(chapter===2?'rain':[5,12].includes(chapter)?'embers':[6,9].includes(chapter)?'dust':'clear');
   let pressure=0;

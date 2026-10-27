@@ -1,6 +1,54 @@
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
 import {missionReadout} from './realtime-mission-readout.js';
-import {TIME} from '../data/realtime-rules.js';
+
+export const CONTEXT_LESSONS=Object.freeze(['deployment','orders','engineering','commitments']);
+export function lessonProgress(value){
+  const clean=list=>Array.isArray(list)?[...new Set(list.filter(id=>CONTEXT_LESSONS.includes(id)))]:[];
+  return {completed:clean(value?.completed),dismissed:clean(value?.dismissed)};
+}
+export function rememberLesson(progress,id,complete=false){
+  const next=lessonProgress(progress);if(!CONTEXT_LESSONS.includes(id))return next;
+  const key=complete?'completed':'dismissed';if(!next[key].includes(id))next[key].push(id);return next;
+}
+const exercise=(id,step,title,body,complete=false)=>({id,step:`Optional exercise · ${step}`,title,body,complete});
+
+// Progress is derived from accepted simulation commands, never from opening a
+// tip or clicking its completion button. Preferences remember acknowledgement;
+// the encounter, its RNG and its exact Retry checkpoint stay untouched.
+function contextualLesson(state,world,kind,seen,progress){
+  const tried=lessonProgress(progress),offer=id=>!tried.completed.includes(id)&&!tried.dismissed.includes(id);
+  if(kind==='chamber'&&offer('commitments')){
+    const e=state.encounter;if(!e||e.status!=='active')return null;
+    const spoke=!!(e.commandCampaign?.case||e.precedentUsed||e.policy?.motion)||(e.usedAbilities??[]).some(a=>['persuade','promise','threaten','address','rebut','record','denounce','agreement'].includes(a));
+    if(spoke){const debts=(e.staged?.obligations??[]).length+(e.staged?.agreements??[]).length,promised=!!e.promises?.length;
+      return exercise('commitments','3 / 3','Your argument is on the record',promised||debts
+        ?'You made a commitment. Open Menu → Campaign → Obligations & alliances to review its cost and due chapter. It is recorded with this encounter’s result; Retry restores the starting checkpoint.'
+        :'You used an argument without a grain promise. Watch the changed vote forecast; Persuade, evidence and political agreements have different costs. A promise is always your choice.',true);}
+    return seen.talked?exercise('commitments','2 / 3','Weigh the commitment','Compare a speech’s forecast before choosing it. Promise can gain support but creates a later cost. Try Persuade, evidence or another available argument instead if you do not want that debt. A successful speech completes this exercise.')
+      :exercise('commitments','1 / 3','Talk before you commit','Click a delegate and ask about interests for free, or use All actions to talk. Then compare the speech forecasts. This exercise never asks you to take on a debt.');
+  }
+  if(kind!=='field'||world.status!=='active')return null;
+  const used=world.used??[],deployment=world.deployment;
+  if(offer('deployment')&&deployment&&(!deployment.done||used.includes('deploy'))){
+    if(deployment.done)return exercise('deployment','3 / 3','Your formation is ready','You placed a unit and sounded the advance. Your placement changed the starting formation without spending battle time.',true);
+    return deployment.placed?exercise('deployment','2 / 3','Begin when you are ready','Your placement is recorded. Reposition another unit if useful, then choose Sound the advance. The battle stays paused until you begin.')
+      :exercise('deployment','1 / 3','Place before advancing','Select a friendly unit or standard and click marked deployment ground. Keyboard: select a unit, use arrows and Enter. Try one placement; no battle time passes.');
+  }
+  if(offer('orders')&&(world.squads??[]).some(q=>q.side!=='enemy')){
+    if(used.includes('order')||(world.log??[]).some(e=>e.kind==='order'))return exercise('orders','3 / 3','Your order reached the squad','The order is in effect. Watch its status above the field; Command refills each round. A held front gives your soldier room to flank.',true);
+    const queued=(world.queue??[]).some(c=>c.kind==='order')||(world.squads??[]).some(q=>q.side!=='enemy'&&q.pending);
+    return queued?exercise('orders','2 / 3','Let the order reach them','The order is queued or on its way. Resume time to let it arrive. The order strip confirms when the squad receives it.')
+      :exercise('orders','1 / 3','Give one clear order','Select a friendly standard, then choose Hold or another available order. You can issue it while paused. Watch Command and the order strip; selection alone does not spend a point.');
+  }
+  const works=(world.objects??[]).filter(o=>['breach','countermine','siege-engine'].includes(o.kind));
+  if(offer('engineering')&&works.length){
+    if(works.some(o=>o.done))return exercise('engineering','3 / 3','The work changed the field','Completed work now opens the wall or disables the enemy works. The result persists in the saved battle; an unfinished work action does not open a passage.',true);
+    const progress=works.some(o=>o.progress>0);
+    return progress?exercise('engineering','2 / 3','Finish under cover','The work has started. Use the same structure again if work remains. A hit interrupts an action, so hold a squad nearby while your soldier finishes.')
+      :exercise('engineering','1 / 3','Inspect the engineering option','Select weakened wall, countermine timbering or siege works through All actions or the scene. Read its work requirement, move into reach and use it under cover. It is optional unless named in the mission objective.');
+  }
+  return null;
+}
 
 // The guided opening in real time (build brief Phase 4, guide "Settings
 // reference": step-by-step lessons in the drill, including pause and slow time,
@@ -17,11 +65,12 @@ const DRILL=[
   {id:'brace',done:w=>w.used.includes('brace'),title:'Brace behind your shield',body:()=>`Click Brace or press its number once. Self abilities act immediately; while paused, they are queued for resume.`},
   {id:'throw',done:w=>w.used.includes('throw'),title:'Throw a pilum',body:()=>`Select Throw pilum, then right-click the partner. Keyboard: target him, choose Throw pilum, then Enter.`}];
 
-export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_KEYMAP}){
+export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_KEYMAP,progress}){
   // Each action by its first key, as the player has set it.
   if(!state||!world)return null;const k=action=>firstKeyLabel(action,keymap);
   if(kind==='chamber'){
-    // The opening chamber hours: the first Contest walked as a chamber.
+    const contextual=contextualLesson(state,world,kind,seen,progress);if(contextual)return contextual;
+    // The opening chamber hours after the optional commitment exercise.
     const e=state.encounter;if(!e||e.status!=='active'||state.chapter!==7)return null;
     if(e.turn===1)return {step:'1 / 2',title:'Talk before you speak',body:'Click a member. Asking about interests is free. Move closer if needed, then check the speech’s forecast before using it.'};
     if(e.turn===2)return {step:'2 / 2',title:'The rivals answer each hour',body:`Hold ${k('show_usable')} to see rival plans. ${k('yield_floor')} ends the hour. Only the final vote counts.`};
@@ -38,10 +87,7 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
     return {step:wounded||treatment?'1 / 3':carried?'2 / 3':'3 / 3',title:treatment?'Cover the treatment':wounded?'Protect before you treat':carried?'Clear the carrying route':'Leave together',
       body:`${readout.next}${wounded&&!treatment?` ${k('pause')} pauses while you plan; healing alone does not keep him safe.`:''}`};
   }
-  // The same combination applies wherever the commander brings a company.
-  // Once a command has been given, the persistent order-status strip takes over.
-  if(state.chapter>=4&&(world.squads??[]).some(q=>q.side!=='enemy')&&world.tick<TIME.roundTicks&&!(world.log??[]).some(l=>l.kind==='order'))
-    return {step:'COMMAND',title:'Screen, then flank',body:missionReadout(world,{keymap}).tactic};
+  const contextual=contextualLesson(state,world,kind,seen,progress);if(contextual)return contextual;
   if(state.chapter!==1)return null;
   const hero=world.actors.find(a=>a.id===world.heroId);
   if(world.mission?.mode==='training'){

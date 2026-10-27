@@ -53,6 +53,25 @@ export const REGIONAL_FRONTAGE=freeze([
   {slot:4,edge:'opposite',along:21,gap:4.5,camp:true}
 ]);
 
+// The entrance remains aligned with the real boundary road. Beyond it, each
+// region has a working arrangement rather than the same ring of eight props.
+// Entries reuse the chapter's exact eight-piece kit and two camp duplicates;
+// no new model, download, service location or collision cell is introduced.
+const composed=(title,rows)=>({title,entries:[...REGIONAL_FRONTAGE.slice(0,3),...rows.map(([slot,edge,along,gap,yaw=0,camp=false])=>({slot,edge,along,gap,yaw,...(camp?{camp:true}:{})}))]});
+export const REGIONAL_COMPOSITIONS=freeze({
+  1:composed('Barrack street and separate stores court',[[3,'opposite',-2,3.5],[4,'opposite',9,3.5],[5,'opposite',-13,3.5],[6,'back',2,4],[7,'front',0,17],[3,'opposite',-24,3.5,0,true],[4,'opposite',20,3.5,0,true]]),
+  2:composed('Raised riverbank work line',[[3,'back',-11,4],[4,'back',1,4],[5,'back',12,4],[6,'front',-17,4],[7,'front',16,7],[3,'back',-23,4,0,true],[4,'back',24,4,0,true]]),
+  3:composed('Road station loading court',[[3,'opposite',-3,3.3],[4,'opposite',9,7],[5,'back',2,5],[6,'front',-18,4],[7,'front',18,6],[3,'opposite',-15,3.3,0,true],[4,'opposite',21,7,0,true]]),
+  4:composed('Fort gate with a recessed supply court',[[3,'front',-17,8],[4,'front',17,8],[5,'opposite',-1,3.5],[6,'back',7,6],[7,'back',-9,5],[3,'front',-28,8,0,true],[4,'front',28,8,0,true]]),
+  6:composed('Retreat caravan and shaded water verge',[[3,'opposite',-10,5],[4,'opposite',1,5],[5,'opposite',12,5],[6,'back',-5,4],[7,'front',17,6],[3,'opposite',-22,5,0,true],[4,'opposite',23,5,0,true]]),
+  7:composed('Command tents around an open assembly approach',[[3,'back',-12,5],[4,'front',17,7],[5,'back',1,5],[6,'opposite',8,4],[7,'front',-17,7],[3,'back',16,5,0,true],[4,'front',28,7,0,true]]),
+  8:composed('Landing terraces and household staging bank',[[3,'back',-10,5],[4,'back',2,5],[5,'back',14,5],[6,'front',-24,5],[7,'opposite',0,4],[3,'back',-23,5,0,true],[4,'back',25,5,0,true]]),
+  9:composed('Receding eastern gate wings',[[3,'front',-17,8],[4,'front',17,8],[5,'front',-25,10],[6,'opposite',2,4],[7,'opposite',12,4],[3,'front',-35,9,0,true],[4,'front',28,10,0,true]]),
+  10:composed('Market wing beside the grain loading street',[[3,'opposite',-12,4],[4,'opposite',0,4],[5,'opposite',12,4],[6,'back',-7,5],[7,'front',18,7],[3,'opposite',-24,4,0,true],[4,'opposite',24,4,0,true]]),
+  11:composed('Archive wing enclosing a petitioners garden',[[3,'back',-10,5],[4,'back',3,5],[5,'front',17,8],[6,'opposite',0,4],[7,'front',-18,9],[3,'back',-35,5,0,true],[4,'back',16,5,0,true]]),
+  12:composed('Monumental north court and open standards approach',[[3,'front',-19,12],[4,'front',19,12],[5,'opposite',0,5],[6,'back',-4,5],[7,'front',0,20],[3,'front',-33,12,0,true],[4,'front',33,12,0,true]])
+});
+
 // A chapter's own additions after its frontage.
 export const REGIONAL_CHAPTER_EXTRAS=freeze({
   // The connected Palmyrene urban edge.

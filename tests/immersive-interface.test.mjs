@@ -46,6 +46,22 @@ test('camp, battle and chamber expose the same named camera choices outside the 
   assert.ok(documentFor(chamberEncounterView({state:chamber})).querySelector('main.world-first'));
 });
 
+test('camp keeps one objective above the world and moves the duplicate local briefing below it without hiding departure requirements',()=>{
+  for(let chapter=1;chapter<=12;chapter++){
+    const state=camp(chapter),shell=createCampaignViews(()=>({state,screen:'game',settings:{}})).realtimeCamp();
+    // Compare the live field independently of the host's stable identity.
+    const field=fieldMarkup({state,kind:'camp'}),doc=documentFor(field),head=doc.querySelector('.rt-top'),page=documentFor(shell);
+    assert.equal(head.querySelector('h2'),null,'there is no second title above the world');
+    assert.equal(doc.querySelector('[data-role="missionHeadline"]'),null,'the departure objective is not repeated');
+    assert.ok(field.indexOf('data-role="missionDetails"')>field.indexOf('id="rt-board"'));
+    assert.equal(doc.querySelector('[data-role="missionDetails"]').open,false);
+    assert.ok(head.querySelector('[data-role="pauseButton"]'));assert.ok(head.querySelector('[data-role="cameraSelect"]'));
+    assert.equal(page.querySelectorAll('[data-cmd="start"]').length,1);assert.ok(page.querySelector('a[href="#camp-services"]'));
+    const problem=Game.departureCheck(state);
+    if(problem){const warning=page.getElementById('camp-departure-problem');assert.equal(warning.textContent,problem);assert.equal(warning.closest('details'),null);assert.equal(warning.hidden,false);}
+  }
+});
+
 test('explicit camera choices do not toggle unexpectedly or modify the soldier',()=>{
   const actor={id:'hero',x:12,z:7},before=JSON.stringify(actor),calls=[];
   const stage={orbit:{yaw:.3,pitch:.5,distance:14},cameraView:'overview',

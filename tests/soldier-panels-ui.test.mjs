@@ -9,9 +9,18 @@ function press(app,code,key){
   app.doc.body.dispatchEvent(event);return event;
 }
 
+async function beginTurnBased(app){
+  await app.click('new');
+  // These panel tests use an inert DOM without a live canvas. Choose the
+  // classic controls explicitly; normal real-time onboarding has browser QA.
+  app.find('input[name="new-play-mode"][value="realtime"]').checked=false;
+  await app.change('input[name="new-play-mode"][value="turns"]',{checked:true});
+  await app.click('begin');
+}
+
 test('the soldier panels open from the camp card and the panel keys, and their commands go through the rules',async t=>{
-  const app=await bootApp(t,{name:'soldier-panels'});
-  await app.click('new');await app.click('begin');
+  const app=await bootApp(t,{name:'soldier-panels',settings:{battleView:'2d'}});
+  await beginTurnBased(app);
   assert.match(app.page(),/YOUR SOLDIER/,'the camp shows the soldier card');
   // I opens the kit; the pack grid and the worn places are there.
   assert.equal(press(app,'KeyI','i').defaultPrevented,true);await app.settle();
@@ -42,8 +51,8 @@ test('the soldier panels open from the camp card and the panel keys, and their c
 });
 
 test('refreshing Mission orders keeps navigation, focus and scroll while updating its contents',async t=>{
-  const app=await bootApp(t,{name:'mission-refresh-navigation'});
-  await app.click('new');await app.click('begin');
+  const app=await bootApp(t,{name:'mission-refresh-navigation',settings:{battleView:'2d'}});
+  await beginTurnBased(app);
   await app.command('soldier-panel','mission');
   const modal=app.modal(),head=app.find('.modal-head'),back=app.find('.modal-back'),close=app.find('.modal-close'),body=app.find('.modal-body');
   const objective=app.find('.mission-orders h3'),title=objective.textContent,saved=app.raw();

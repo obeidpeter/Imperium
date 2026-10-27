@@ -26,7 +26,7 @@ test('the drill teaches in order, pause and slow time among its lessons, in the 
   assert.equal(G.serialize(state),before,'lessons read the world and never write the chronicle');
 });
 
-test('patrol and chamber lessons give way to a short squad-combination lesson in later chapters',()=>{
+test('patrol and chamber hints remain available after optional exercises and squad instruction waits for a real action',()=>{
   const camps=new Map(),stop=new Error('reached');
   try{runCommandCampaign({featureEdition:35,onCheckpoint(s){const id=G.getChapter(s).encounters[s.encounterIndex]?.id;if(!camps.has(id))camps.set(id,G.serialize(s));if(id==='ch8-ferry')throw stop;}});}
   catch(error){if(error!==stop)throw error;}
@@ -34,14 +34,15 @@ test('patrol and chamber lessons give way to a short squad-combination lesson in
   assert.equal(realtimeLesson({state:road,world:w,seen:{}}).title,'Keep the objective in view');
   assert.equal(realtimeLesson({state:road,world:w,seen:{paused:true}}).title,'Read before you strike');
   const council=G.deserialize(camps.get('ch7-council'));assert.ok(G.startEncounter(council,{}).ok);
-  assert.equal(realtimeLesson({state:council,world:{},kind:'chamber'}).title,'Talk before you speak');
-  council.encounter.turn=2;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber'}).title,'The rivals answer each hour');
-  council.encounter.turn=3;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber'}),null);
+  const progress={completed:['commitments']};
+  assert.equal(realtimeLesson({state:council,world:{},kind:'chamber',progress}).title,'Talk before you speak');
+  council.encounter.turn=2;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber',progress}).title,'The rivals answer each hour');
+  council.encounter.turn=3;assert.equal(realtimeLesson({state:council,world:{},kind:'chamber',progress}),null);
   const ferry=G.deserialize(camps.get('ch8-ferry'));assert.ok(G.startEncounter(ferry,{controls:'realtime'}).ok);
   const fw=G.realtimeWorld(ferry),before=JSON.stringify(fw);
-  assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Screen, then flank');
+  assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Place before advancing');
   assert.equal(JSON.stringify(fw),before,'the squad lesson only reads the world');
-  fw.tick=200;assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}),null,'later command coaching yields to the live order strip after the first round');
+  fw.tick=200;assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Place before advancing','a timer alone never completes an exercise');
 });
 
 test('rescue teaching follows treatment, carrying and extraction instead of stopping after the heal',()=>{

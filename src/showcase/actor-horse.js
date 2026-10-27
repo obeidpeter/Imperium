@@ -58,7 +58,7 @@ export function createHorse(root,kit,b){
   }
   let lastPose=horsePose();
   const ankleRotation=new T.Quaternion(),surfaceRotation=new T.Quaternion(),surfaceEuler=new T.Euler(0,0,0,'ZXY');
-  function update(input,suppliedPose){const p=suppliedPose??horsePose(input);lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
+  function update(input,suppliedPose){const p=suppliedPose??horsePose(input);lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;body.rotation.z=p.bodyRoll;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
     const seconds=Number.isFinite(input.time)?input.time:0;
     for(let i=0;i<ears.length;i++){
       ears[i].rotation.x=input.reducedMotion?0:.07*Math.sin(seconds*.9+i*2+kit.identity%7);

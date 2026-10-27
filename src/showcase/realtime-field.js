@@ -20,6 +20,7 @@ import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
 import {missionReadout} from '../ui/realtime-mission-readout.js';
 import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
 import {fieldNotice,missionAbilities,missionAbilityHint,opportunityReadout} from '../ui/field-experience.js';
+import {commandSoundCue} from '../ui/adaptive-score.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -198,7 +199,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(metrics.clicks.length>50){metrics.clicks.shift();metrics.clickFrames.shift();}metrics.moved=null;
   }
   const nameOf=id=>actorById(world,id)?.name??'Someone';
+  let signalWorld=null,signalTick=-Infinity;
   function handleEvents(events){
+    if(signalWorld!==world){signalWorld=world;signalTick=-Infinity;}
+    const signal=commandSoundCue(events,world);
+    if(signal&&world.tick-signalTick>=TIME.ticksPerSecond*1.6&&stage?.sound?.cue(signal,{intensity:.8})){signalTick=world.tick;stage.cuesPlayed++;}
     const mine=world.controlled,party=new Set([world.heroId,...world.party]);
     let pause=null;
     for(const e of events){
@@ -307,6 +312,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function showLesson(){
     if(!dom.lesson||metrics.frames%10)return;const l=callbacks.lesson?.(world,seen)??null,key=l?`${l.step}|${l.title}|${l.body}`:'';if(key===lessonKey)return;
     lessonKey=key;dom.lesson.hidden=!l;if(!l)return;
+    if(dom.lessonContinue)dom.lessonContinue.hidden=!(l.id&&l.complete);
+    if(dom.lessonSkip)dom.lessonSkip.hidden=!l.id||!!l.complete;
     for(const [role,text]of [['lessonStep',l.step],['lessonTitle',l.title],['lessonBody',l.body]]){const el=dom.lesson.querySelector(`[data-role="${role}"]`);if(el)el.textContent=text;}
   }
   function updateHud(now){
@@ -478,7 +485,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(advanceArmed===null||now-advanceArmed>5000){advanceArmed=now;if(dom.advanceButton){dom.advanceButton.dataset.confirm='true';dom.advanceButton.textContent='Confirm: sound the advance';}
       say('Press again to sound the advance and start the battle.',{announce:true});return;}
     disarmAdvance();
-    if(soundTheAdvance(world).ok){showDeployment();setPaused(clock,false);say('The advance sounds. The battle begins.',{announce:true});squads?.clear();hoverDirty=true;}
+    if(soundTheAdvance(world).ok){
+      // Deployment commits outside step(); its signal would otherwise be
+      // cleared before handleEvents sees the next tick's events.
+      if(stage?.sound?.cue('order-advance',{intensity:.8})){signalWorld=world;signalTick=world.tick;stage.cuesPlayed++;}
+      showDeployment();setPaused(clock,false);say('The advance sounds. The battle begins.',{announce:true});squads?.clear();hoverDirty=true;}
   }
   function press(p){
     stage?.sound?.unlock();if(document.activeElement!==canvas)canvas.focus({preventScroll:true});if(!world||world.status!=='active')return;
@@ -674,6 +685,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     };
     if(dom.listButton)dom.listButton.onclick=()=>toggleList();
     if(dom.closeListButton)dom.closeListButton.onclick=()=>toggleList(false);
+    for(const [button,complete]of [[dom.lessonContinue,true],[dom.lessonSkip,false]])if(button)button.onclick=()=>{
+      const lesson=callbacks.lesson?.(world,seen);if(!lesson?.id||complete&&!lesson.complete)return;
+      callbacks.onLessonProgress?.(lesson.id,complete);lessonKey=null;
+      // The action may reveal a different exercise or remove this disclosure.
+      // Keep keyboard focus on a stable, visible control rather than the old button.
+      dom.lesson.open=false;dom.lesson.hidden=true;dom.fieldHelp?.querySelector('summary')?.focus({preventScroll:true});
+    };
     for(const [button,point]of [[dom.locateTarget,()=>actorById(world,keyTarget)??objectById(world,keyTarget)],[dom.locateObjective,objectivePoint]])if(button)button.onclick=()=>{const p=point();if(p){stage?.focusPoint(stageTile(p.x,p.z));stage?.wake?.();canvas.focus({preventScroll:true});}};
     if(dom.dismissNotice)dom.dismissNotice.onclick=()=>{dom.notice.hidden=true;noticeUntil=0;canvas.focus({preventScroll:true});};
     if(dom.menuButton)dom.menuButton.onclick=()=>callbacks.onMenu?.();

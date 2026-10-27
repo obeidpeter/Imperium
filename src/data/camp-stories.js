@@ -1,3 +1,4 @@
+import {companyActivityFor,activityFlag} from './company-activities.js';
 // Original optional company stories. Small, previewed changes use the existing
 // dialogue transaction and errand records; no story changes a companion's fate.
 const freeze=value=>Object.freeze(value);
@@ -51,10 +52,14 @@ const opt=(text,next=null,conditions={},effects={},news=true)=>freeze({text,next
 const node=(speaker,text,options,more={})=>freeze({speaker,text,options:freeze(options),...more});
 export const CAMP_STORY_DIALOGUE=freeze(Object.fromEntries(CAMP_STORIES.map(story=>{
   const {chapter,choices}=story,id=campStoryId(chapter),chosen=campStoryFlag(chapter),after={any:[{chapter:{min:chapter+1}},{chapter:{min:chapter,max:chapter},encounterIndex:{min:1}}]};
+  const activity=companyActivityFor(chapter),activityStarted=activityFlag(chapter,'started'),activityDone=activityFlag(chapter,'done');
   const recall=choices.map(c=>({conditions:{flag:campStoryFlag(chapter,c.id)},text:c.report}));
   return [id,freeze({start:'greet',conditions:freeze({chapter:{min:chapter}}),nodes:freeze({
     greet:node('The company record',story.opening,[
       opt('Read the company’s letter.','letter',{chapter:{max:chapter},notFlag:chosen}),
+      ...(activity?[opt(`Help in camp: ${activity.title}.`,'activity',{chapter:{max:chapter},notFlag:activityStarted},{flags:[activityStarted]}),
+        opt('Review the task in camp.','activity',{chapter:{max:chapter},flag:activityStarted,notFlag:activityDone},{},false),
+        opt('Read the task’s completed record.','activity-finished',{flag:activityDone},{},false)]:[]),
       opt('Read the returning report.','report',{flag:chosen,errand:{[id]:'accepted'},...after}),
       opt('Read the filed report.','report',{flag:chosen,errand:{[id]:'done'},...after},{},false),
       opt('The reply has not arrived yet.','waiting',{flag:chosen,chapter:{max:chapter},encounterIndex:{max:0}},{},false),opt('Leave the record.')]),
@@ -69,6 +74,8 @@ export const CAMP_STORY_DIALOGUE=freeze(Object.fromEntries(CAMP_STORIES.map(stor
       {conditions:freeze({flag:chosen,...after}),paragraphs:freeze([...recall,
         ...(chapter===6?[{conditions:{decision:{ch6:'save'}},text:'Varro’s later letter adds a practical correction in the margin. He is alive to disagree with the way his lessons are remembered.'},
           {conditions:{decision:{ch6:'obey'}},text:'Varro died during the retreat. His vine stick lies with the papers; the clerk records his words as a memory, never as a new letter.'}]:[])])}),
-    recorded:node('The company record','The reply is filed. You can read it in Company stories at every later camp.',[opt('Return to camp.')])
+    recorded:node('The company record','The reply is filed. You can read it in Company stories at every later camp.',[opt('Return to camp.')]),
+    ...(activity?{activity:node('The company record',`${activity.intro} ${activity.steps.map(s=>s.label).join('; ')}.`,[opt('Return to camp.')],{conditions:{flag:activityStarted}}),
+      'activity-finished':node('The company record',activity.result,[opt('Return to camp.')],{conditions:{flag:activityDone}})}:{})
   })})];
 })));

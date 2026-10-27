@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-26",
+  "build": "7397edfed55e",
+  "baseCommit": "2ca39d6e7045f4402dfc0d7305ccb92c29e54eb2",
+  "branch": "codex/player-experience-polish",
+  "published": false,
+  "localVerification": {
+    "node": "v24.19.0",
+    "method": "Exact npm verify steps invoked directly with bundled Node; npm is not installed in this runtime.",
+    "unitTests": {
+      "passed": 1371,
+      "total": 1371
+    },
+    "steps": [
+      {
+        "label": "prepare",
+        "exitCode": 0
+      },
+      {
+        "label": "unit",
+        "exitCode": 0
+      },
+      {
+        "label": "autoplay",
+        "exitCode": 0
+      },
+      {
+        "label": "expanded",
+        "exitCode": 0
+      },
+      {
+        "label": "command",
+        "exitCode": 0
+      },
+      {
+        "label": "production",
+        "exitCode": 0
+      },
+      {
+        "label": "build",
+        "exitCode": 0
+      },
+      {
+        "label": "assets",
+        "exitCode": 0
+      },
+      {
+        "label": "characters",
+        "exitCode": 0
+      },
+      {
+        "label": "authored-performance",
+        "exitCode": 0
+      },
+      {
+        "label": "production-art",
+        "exitCode": 0
+      },
+      {
+        "label": "handoff",
+        "exitCode": 0
+      }
+    ],
+    "passed": true
+  },
+  "browser": {
+    "version": "151.0.7922.34",
+    "rendering": "SwiftShader; correctness and resource checks, not physical-device FPS",
+    "checks": {
+      "usability": 11,
+      "immersive": 15,
+      "fullSmokeScenarios": 20,
+      "realtimeControls": 20,
+      "campaignScenes": 13,
+      "campaignCheckGroups": 5
+    },
+    "errors": {
+      "usability": 0,
+      "usabilityNetwork": 0,
+      "immersive": 0,
+      "campaign": 0,
+      "fullSmokePageOrConsole": 0
+    },
+    "campaignChapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "stage": {
+      "ceilings": "scripts/stage-ceilings.json (unchanged)",
+      "passed": true,
+      "runs": [
+        {
+          "id": "ch5-mine",
+          "quality": "performance",
+          "calls": 138,
+          "triangles": 238696,
+          "programs": 47,
+          "firstFramePrograms": 0,
+          "programsCompiledAfterShown": 0,
+          "errors": []
+        },
+        {
+          "id": "ch5-mine",
+          "quality": "balanced",
+          "calls": 150,
+          "triangles": 460445,
+          "programs": 52,
+          "firstFramePrograms": 0,
+          "programsCompiledAfterShown": 0,
+          "errors": []
+        },
+        {
+          "id": "ch12-confrontation",
+          "quality": "performance",
+          "calls": 146,
+          "triangles": 366557,
+          "programs": 47,
+          "firstFramePrograms": 0,
+          "programsCompiledAfterShown": 0,
+          "errors": []
+        },
+        {
+          "id": "ch12-confrontation",
+          "quality": "balanced",
+          "calls": 144,
+          "triangles": 772697,
+          "programs": 54,
+          "firstFramePrograms": 0,
+          "programsCompiledAfterShown": 0,
+          "errors": []
+        }
+      ]
+    },
+    "steps": [
+      {
+        "name": "usability",
+        "exitCode": 0,
+        "durationMs": 104411
+      },
+      {
+        "name": "immersive",
+        "exitCode": 0,
+        "durationMs": 81648
+      },
+      {
+        "name": "chromium-smoke",
+        "exitCode": 0,
+        "durationMs": 631855
+      },
+      {
+        "name": "realtime-controls",
+        "exitCode": 0,
+        "durationMs": 58136
+      },
+      {
+        "name": "twelve-chapter-benchmark",
+        "exitCode": 0,
+        "durationMs": 486907
+      },
+      {
+        "name": "stage-benchmark",
+        "exitCode": 0,
+        "durationMs": 130145
+      }
+    ],
+    "passed": true
+  },
+  "windows": {
+    "method": "Windows in-app browser, legal Chapter V checkpoint imported through the visible Restore UI. No parallel test browsers. Two non-overlapping rolling 240-frame windows during active combat, followed by a separate 240-frame window after a normal Quick save/load and resume. DOM-exposed stage telemetry; not a controlled full-screen GPU benchmark or a human campaign playtest.",
+    "device": {
+      "identity": "unmasked",
+      "maxRenderbufferSize": 16384,
+      "maxTextureSize": 16384,
+      "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "software": false,
+      "vendor": "Google Inc. (Intel)",
+      "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    },
+    "settings": {
+      "quality": "balanced",
+      "camera": "horizon",
+      "adaptiveResolution": true,
+      "reducedMotion": false,
+      "figureStyle": "sculpted"
+    },
+    "checks": {
+      "explicitNewGameChoice": true,
+      "ordinaryCampModeSwitch": true,
+      "keyboardMovement": true,
+      "keyboardTargetSelection": true,
+      "attackCommandWeaponDraw": true,
+      "pause": true,
+      "quickSaveAndLoad": true,
+      "restoredClock": "0:56",
+      "nonOverlappingInitialWindows": true
+    },
+    "samples": [
+      {
+        "label": "active combat A",
+        "viewport": {
+          "height": 704,
+          "width": 810
+        },
+        "board": {
+          "height": 434.4765625,
+          "width": 793.5
+        },
+        "frames": 1160,
+        "sampleCount": 240,
+        "meanFps": 59.52,
+        "displayIntervalMs": {
+          "meanMs": 16.800833333333383,
+          "p95Ms": 16.79999999998836,
+          "samples": 240,
+          "worstMs": 33.29999999998836
+        },
+        "cpuSubmissionMs": {
+          "meanMs": 9.857916669050852,
+          "p95Ms": 13,
+          "samples": 240,
+          "worstMs": 20.90000009536743
+        },
+        "resolutionScale": 0.9,
+        "gpuQuery": {
+          "lastMs": 13.282187,
+          "measured": 283,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency",
+          "pending": 1,
+          "supported": true
+        },
+        "firstFramePrograms": 1
+      },
+      {
+        "label": "active combat B",
+        "viewport": {
+          "height": 704,
+          "width": 810
+        },
+        "board": {
+          "height": 434.4765625,
+          "width": 793.5
+        },
+        "frames": 2313,
+        "sampleCount": 240,
+        "meanFps": 60.01,
+        "displayIntervalMs": {
+          "meanMs": 16.662916666666693,
+          "p95Ms": 16.800000000017462,
+          "samples": 240,
+          "worstMs": 16.89999999999418
+        },
+        "cpuSubmissionMs": {
+          "meanMs": 7.663749998807907,
+          "p95Ms": 9.700000047683716,
+          "samples": 240,
+          "worstMs": 12.299999952316284
+        },
+        "resolutionScale": 0.7,
+        "gpuQuery": {
+          "lastMs": 13.656406,
+          "measured": 571,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency",
+          "pending": 1,
+          "supported": true
+        },
+        "firstFramePrograms": 1
+      },
+      {
+        "label": "after quick save/load",
+        "viewport": {
+          "height": 704,
+          "width": 810
+        },
+        "board": {
+          "height": 434.4765625,
+          "width": 793.5
+        },
+        "frames": 1464,
+        "sampleCount": 240,
+        "meanFps": 56.71,
+        "displayIntervalMs": {
+          "meanMs": 17.634166666666715,
+          "p95Ms": 33.20000000001164,
+          "samples": 240,
+          "worstMs": 35.399999999965075
+        },
+        "cpuSubmissionMs": {
+          "meanMs": 6.830833335717519,
+          "p95Ms": 8.899999976158142,
+          "samples": 240,
+          "worstMs": 24.699999928474423
+        },
+        "resolutionScale": 0.65,
+        "gpuQuery": {
+          "lastMs": 15.938124,
+          "measured": 358,
+          "measurement": "GPU elapsed query; excludes CPU simulation and display latency",
+          "pending": 2,
+          "supported": true
+        },
+        "firstFramePrograms": 1
+      }
+    ],
+    "visibilityCheck": {
+      "outcome": "Inconclusive: IAB pane hide/show and a second tab retained document.visibilityState=visible; no true page-background result claimed.",
+      "pane": {
+        "paused": "Resume",
+        "visibility": "visible"
+      },
+      "tab": {
+        "paused": "Resume",
+        "visibility": "visible"
+      }
+    },
+    "console": [
+      {
+        "level": "warn",
+        "message": "THREE.WebGLProgram: Program Info Log: (90,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value\n(90,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value",
+        "timestamp": "2026-10-26T15:06:47.244Z",
+        "url": "http://127.0.0.1:54939/vendor/three/three.core.js"
+      }
+    ],
+    "limitations": [
+      "Adaptive render scale changed; frame cadence must be read with its recorded scale and small panel viewport.",
+      "Live stage reports one first-frame program; no claim that all live GPU paths are stall-free.",
+      "One ANGLE shader compiler warning was observed; no browser error was logged."
+    ]
+  },
+  "pending": [
+    "Physical phones",
+    "First-time players and full-campaign pacing",
+    "Human headphone/speaker listening",
+    "True page-background lifecycle on a physical browser"
+  ],
+  "provenance": {
+    "receipts": "work/player-experience-polish/production-7397edfed55e/ alongside the repository workspace",
+    "sourceVisualEvidence": "Separate source captures under character-source/ and environment-source/; not relabeled as production.",
+    "intermediate": "Prior unit/fixture failures, a one-off fetch failure, reproduced dialog failures and the deliberately stopped superseded 9e5b219a19db smoke are preserved in work/player-experience-polish/.",
+    "githubCI": "Not run for these unpublished changes. Local Node 24 results do not stand in for GitHub Node 20/22.",
+    "paidGeneration": "No additional Tripo calls or credits."
+  }
+}

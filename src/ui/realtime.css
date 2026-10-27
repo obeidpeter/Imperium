@@ -386,6 +386,12 @@
 .world-camp-services .preparation{padding-block:.65rem;margin-block:.4rem}
 .world-first .rt-hud{gap:.3rem .65rem;padding:.35rem .65rem}
 .world-first .rt-support{margin-block-start:.1rem}
+/* Camp has one departure objective. Its local story remains in a disclosure
+   after the world; the camera and pause share one short row above it. */
+.world-first [data-kind="camp"] .rt-top{justify-content:space-between}
+.world-first [data-kind="camp"] .rt-support>.rt-status-strip{display:block;padding:0;background:transparent}
+.world-first [data-kind="camp"] .rt-mission-details>summary{min-block-size:2.75rem;padding:.35rem .5rem}
+.world-first [data-kind="camp"] .rt-paused{display:none}
 @media(min-width:1050px){
   .world-first .rt-hud{grid-template-columns:minmax(16rem,32%) minmax(0,1fr)}
   .world-first .rt-message-area{grid-column:1/-1;grid-row:1}
@@ -395,10 +401,11 @@
 }
 @media(max-width:700px){
   .world-first.camp-page{padding-inline:.35rem}.world-first.camp-page>.world-departure{padding-inline:.3rem}
-  .world-departure-title{flex-basis:100%}.world-camp-actions{inline-size:100%;justify-content:space-between}
+  .world-departure-title{flex-basis:12rem}.world-camp-actions{flex:1 1 auto;justify-content:flex-end}
   .world-first .rt-field{--rt-scene-height:clamp(20rem,54dvh,34rem)}.world-first .rt-field .rt-scene{min-block-size:20rem}
   .world-first .rt-mission{flex:1 1 12rem}.world-first .rt-top{gap:.25rem .5rem}
   .world-first .rt-view-control{order:2}.world-first .rt-time{flex:0 1 auto;margin-inline-start:auto}
+  .world-first [data-kind="camp"] .rt-view-control{order:0}
   .world-first .rt-top>.rt-menu{margin-inline-start:auto}
   .world-first .world-camp-services{grid-template-columns:minmax(0,1fr);padding:.65rem;gap:.7rem}
   .world-camp-services>.world-preparation{grid-column:1;grid-row:auto}

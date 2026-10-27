@@ -5242,7 +5242,7 @@
           "previousSha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07"
         }
       },
-      "usage": "Chapter I recruits, and the protagonist in his own kit while unarmoured (the real-time views and the kit panel), with his helmet or cap fitted over its bare head; the game adds the practice kit.",
+      "usage": "Chapter I recruits, and the protagonist in his own kit while unarmoured (the real-time views and the kit panel), with his helmet or cap fitted over its bare head; the game adds the practice kit. The existing head is also the persistent male cast donor: src/showcase/generated-identity.js clips the neck, preserves UVs and weights, and applies original bounded face/scalp silhouette sculpting and hairline uniforms. Crown, sweep, side volume and nape variants add no geometry, texture or shader variant; they are derivatives of this generated donor, not newly captured or independently sculpted heads.",
       "loading": "Deferred local GLB in the offline groups of every chapter (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",

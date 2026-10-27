@@ -11,10 +11,11 @@ test('performance variants preserve exact action endpoints and authoritative con
   }
   assert.notDeepEqual(actorPose({motion:'attack',phase:.22,variant:0}),actorPose({motion:'attack',phase:.22,variant:2}));
 });
-test('injury and morale change bearing without slipping feet or changing combat reach',()=>{
+test('injury changes gait support while morale preserves feet and combat reach is unchanged',()=>{
   for(const motion of ['idle','walk','run','retreat']){
     const input={motion,phase:.24,locomotionDistance:.5},steady=actorPose(input),hurt=actorPose({...input,health:.2,morale:.2});
-    assert.notEqual(hurt.bodyX,steady.bodyX);assert.deepEqual(hurt.feet,steady.feet);assert.equal(hurt.yaw,steady.yaw);
+    assert.notEqual(hurt.bodyX,steady.bodyX);if(motion==='idle')assert.deepEqual(hurt.feet,steady.feet);else assert.notDeepEqual(hurt.feet,steady.feet);assert.equal(hurt.yaw,steady.yaw);
+    assert.deepEqual(actorPose({...input,morale:.2}).feet,steady.feet);
   }
   for(const motion of ['attack','throw','block'])assert.deepEqual(actorPose({motion,phase:.37,health:.2,morale:.1}),actorPose({motion,phase:.37}));
 });

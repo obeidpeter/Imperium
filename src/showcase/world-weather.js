@@ -1,3 +1,5 @@
+import {canopyRadius,treeClearsApproaches} from './environment-composition.js';
+
 // Shared presentation-only weather. Time and the chapter identify a wind field;
 // no game random stream, actor state or saved encounter is touched.
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
@@ -40,13 +42,16 @@ export function regionalTreePlacements({encounter,chapter=1,tileSize=2.5,quality
   const halfX=encounter.width*tileSize/2,halfZ=encounter.height*tileSize/2;
   const arid=[5,6,9].includes(chapter),max=quality==='performance'?(arid?4:6):quality==='high'?(arid?8:11):(arid?6:9);
   const seed=presentationSeed(`${chapter}:${encounter.id??'world'}`),species=regionalTreeSpecies(chapter),out=[];
-  for(let i=0;i<120&&out.length<max;i++){
-    const side=i%4,spread=sample(seed,i*5),gap=5+sample(seed,i*5+1)*9;
-    const x=side<2?(side===0?-1:1)*(halfX+gap):(spread*2-1)*(halfX+9);
-    const z=side>=2?(side===2?-1:1)*(halfZ+gap):(spread*2-1)*(halfZ+9);
-    if(route(x,z)>.08||height(x,z)<-.45||occupied.some(b=>x>b.min[0]-3&&x<b.max[0]+3&&z>b.min[2]-3&&z<b.max[2]+3)||out.some(p=>Math.hypot(x-p.x,z-p.z)<5.5))continue;
+  for(let i=0;i<240&&out.length<max;i++){
+    const side=i%4,spread=sample(seed,i*5),gap=8+sample(seed,i*5+1)*18;
+    const x=side<2?(side===0?-1:1)*(halfX+gap):(spread*2-1)*(halfX+18);
+    const z=side>=2?(side===2?-1:1)*(halfZ+gap):(spread*2-1)*(halfZ+18);
     const kind=species[Math.floor(sample(seed,i*5+2)*species.length)],h=(kind==='tamarisk'||kind==='olive'?3.8:5.5)+sample(seed,i*5+3)*(arid?2:3.2);
-    out.push({kind,x,z,height:h,seed:(seed+i*13)%10007});
+    const tree={kind,x,z,height:h,seed:(seed+i*13)%10007},radius=canopyRadius(kind,h);
+    if(!treeClearsApproaches(tree,{halfX,halfZ})||route(x,z)>.08||height(x,z)<-.45||
+      occupied.some(b=>x>b.min[0]-radius&&x<b.max[0]+radius&&z>b.min[2]-radius&&z<b.max[2]+radius)||
+      out.some(p=>Math.hypot(x-p.x,z-p.z)<Math.max(5.5,(radius+canopyRadius(p.kind,p.height))*.7)))continue;
+    out.push(tree);
   }
   return out;
 }

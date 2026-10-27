@@ -4,6 +4,9 @@ import {CHAPTERS} from '../../data/campaign.js';
 import {createWorld} from './simulation.js';
 import {FINE,layoutFor,upsampleTerrain,soldierSpec} from './campaign-encounter.js';
 import {actorById,distanceBetween} from './abilities.js';
+import {activityCampView,companyActivities} from '../company-activities.js';
+
+const campView=state=>{const camp=campFor(state.chapter);return camp?{...camp,...activityCampView(state,camp)}:null;};
 
 // A walkable camp (build brief §3.12): the chapter's camp map upsampled like a
 // battle's, the soldier at the gate, the camp's people as neutral men to talk
@@ -20,8 +23,13 @@ export function campPoint(layout,[x,y],[dx,dz]=[0,0]){
 // Chapter V records can change the courtyard after a battle. A preparation for
 // the next battle and a failed/retried field do not imply a completed detail.
 export function campPresentationFor(state){
+  const presentation=campPresentationBase(state);if(!presentation)return null;
+  const activities=companyActivities(state).filter(a=>a.chapter===state.chapter);
+  return activities.length?{...presentation,activities}:presentation;
+}
+function campPresentationBase(state){
   if(state.chapter!==5)return regionalCampPresentation(state);
-  const camp=campFor(5),layout=layoutFor(camp.terrain[0].length,camp.terrain.length,camp.scale);
+  const camp=campView(state),layout=layoutFor(camp.terrain[0].length,camp.terrain.length,camp.scale);
   const hx=layout.kx.reduce((a,b)=>a+b,0)*FINE/2,hz=layout.ky.reduce((a,b)=>a+b,0)*FINE/2;
   const point=(place,offset)=>{const at=campPoint(layout,camp.places[place],offset);return {x:at.x-hx,z:at.z-hz};};
   const decision=['civilians','countermine'].includes(state.decisions?.ch5)?state.decisions.ch5:'pending';
@@ -46,7 +54,7 @@ export function campPresentationFor(state){
 }
 
 function regionalCampPresentation(state){
-  const camp=campFor(state.chapter);if(!camp)return null;
+  const camp=campView(state);if(!camp)return null;
   const context=CAMP_CONTEXT[state.chapter],chapter=CHAPTERS.find(c=>c.id===state.chapter);
   const layout=layoutFor(camp.terrain[0].length,camp.terrain.length,camp.scale);
   const hx=layout.kx.reduce((a,b)=>a+b,0)*FINE/2,hz=layout.ky.reduce((a,b)=>a+b,0)*FINE/2;
@@ -84,7 +92,7 @@ function regionalCampPresentation(state){
     ambient:camp.people.filter(p=>p.routine&&campPersonPresent(state,p)).map(p=>({id:p.id,routine:p.routine,...point(p.place,p.at)}))};
 }
 export function createCampWorld(state){
-  const camp=campFor(state.chapter);if(!camp)return null;
+  const camp=campView(state);if(!camp)return null;
   const layout=layoutFor(camp.terrain[0].length,camp.terrain.length,camp.scale),fine=upsampleTerrain(camp.terrain,layout,camp.ground);
   for(const pad of camp.sceneryPads??[])for(const [x,y]of pad.cells)fine.terrain[y][x]='rock';
   const place=(id,offset)=>campPoint(layout,camp.places[id],offset);

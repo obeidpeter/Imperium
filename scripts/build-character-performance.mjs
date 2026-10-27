@@ -7,14 +7,15 @@ const sourceUrl=new URL('./character-sources/performance-v034.json',import.meta.
 const outputUrl=new URL('../src/showcase/actor-performance-data.js',import.meta.url);
 export function compileCharacterPerformance(source){
   if(source.version!==1||!source.clips||typeof source.method!=='string')throw new Error('Invalid performance source');
-  const allowed=/^(hip[XYZ]|body[XYZ]|head[XY]|(?:left|right)(?:Arm[XYZ]|Elbow|Wrist)|shieldTilt|skirt)$/;
+  const allowed=/^(hip[XYZ]|body[XYZ]|head[XY]|(?:left|right)(?:Arm[XYZ]|Elbow|Wrist|Foot(?:[XYZ]|Roll))|shieldTilt|skirt)$/;
   for(const [name,clip]of Object.entries(source.clips)){
     if(!/^[a-z]+$/.test(name)||!Array.isArray(clip.frames)||clip.frames.length<2)throw new Error(`Invalid clip ${name}`);
     let previous=-1;
     for(const [t,pose]of clip.frames){
       if(!Number.isFinite(t)||t<0||t>1||t<=previous)throw new Error(`Invalid time in ${name}`);previous=t;
       for(const [field,value]of Object.entries(pose)){
-        if(!allowed.test(field)||!Number.isFinite(value)||Math.abs(value)>(field.startsWith('hip')?.12:2.5))throw new Error(`Unbounded ${name}.${field}`);
+        const limit=field.startsWith('hip')?.12:/Foot[XYZ]$/.test(field)?.16:2.5;
+        if(!allowed.test(field)||!Number.isFinite(value)||Math.abs(value)>limit)throw new Error(`Unbounded ${name}.${field}`);
       }
     }
     if(clip.frames[0][0]!==0||clip.frames.at(-1)[0]!==1)throw new Error(`Incomplete ${name}`);

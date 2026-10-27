@@ -27,7 +27,7 @@ test('every later chapter has two distinct previewed company choices with bounde
     assert.equal(JSON.stringify([state.rng,state.decisions,state.milestones,state.history,state.company,state.supplies,state.relationships]),progress,'no invented history, death, reward or departure requirement');
     assert.equal(state.soldier.tp,tp);assert.equal(state.soldier.flags[campStoryFlag(story.chapter,choice.id)],true);
     assert.equal(state.soldier.errands[campStoryId(story.chapter)],'accepted');
-    assert.equal(Game.campHasNews(state,campStoryId(story.chapter)),false,'waiting is not falsely marked as a new reply');
+    assert.equal(Game.campHasNews(state,campStoryId(story.chapter)),[5,8,11].includes(story.chapter),'only the additional unstarted camp activity remains news while the reply is pending');
     unchanged(state,()=>choose(state,story,index));unchanged(state,()=>choose(state,story,1-index));
     const saved=Game.serialize(state),restored=Game.deserialize(saved);assert.equal(Game.serialize(restored),saved);
     unchanged(restored,()=>choose(restored,story,index));
@@ -48,7 +48,7 @@ test('a legal whole campaign takes and completes all nine stories without granti
       const reply=report.options.find(o=>o.text.startsWith('Enter the reply'));assert.ok(reply);
       assert.ok(Game.campReply(state,{treeId:id,nodeId:'report',index:reply.index}).ok);completed.add(id);
       assert.equal(state.soldier.errands[id],'done');const recorded=Game.serialize(state);
-      assert.equal(Game.campHasNews(state,id),false,'reading the filed reply again has no news or repeated reward');
+      assert.equal(Game.campHasNews(state,id),[5,8,11].includes(story.chapter),'the unstarted optional activity may remain news, while the filed reply offers no repeated reward');
       unchanged(state,()=>Game.campReply(state,{treeId:id,nodeId:'report',index:reply.index}));
       assert.equal(Game.serialize(Game.deserialize(recorded)),recorded);
     }

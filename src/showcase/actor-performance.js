@@ -24,10 +24,22 @@ export function samplePerformance(name,phase=0){
 }
 export function applyPerformance(pose,name,phase,weight=1){
   for(const [field,value]of Object.entries(samplePerformance(name,phase))){
-    const arm=/^(left|right)Arm([XYZ])$/.exec(field);
+    const arm=/^(left|right)Arm([XYZ])$/.exec(field),foot=/^(left|right)Foot([XYZ]|Roll)$/.exec(field);
     if(arm)pose[arm[1]+'Arm']['XYZ'.indexOf(arm[2])]+=value*clamp(weight);
+    else if(foot){const i=foot[1]==='right'?0:1,key=foot[2].toLowerCase();pose.feet[i][key]=(pose.feet[i][key]??(key==='x'?(i?1:-1)*.104:0))+value*clamp(weight);}
     else if(typeof pose[field]==='number')pose[field]+=value*clamp(weight);
   }return pose;
+}
+
+export function applyTurnPerformance(pose,phase,side=1,weight=1){
+  const before={hipX:pose.hipX,bodyY:pose.bodyY,headY:pose.headY,bodyZ:pose.bodyZ,feet:pose.feet.map(f=>({...f}))};
+  applyPerformance(pose,'turn',phase,weight);
+  if(side<0){
+    for(const key of ['hipX','bodyY','headY','bodyZ'])pose[key]=2*before[key]-pose[key];
+    const deltas=pose.feet.map((f,i)=>Object.fromEntries(['x','y','z','roll'].map(k=>[k,(f[k]??(i?1:-1)*.104)-(before.feet[i][k]??(i?1:-1)*.104)])));
+    pose.feet=before.feet.map((f,i)=>({...f,...Object.fromEntries(['x','y','z','roll'].map(k=>[k,(f[k]??(i?1:-1)*.104)+deltas[1-i][k]*(k==='x'?-1:1)]))}));
+  }
+  return pose;
 }
 
 /** Identity appears in posture as well as a face texture. It never changes
@@ -50,7 +62,8 @@ export function applyCharacterPresence(pose,identity,kit,input={}){
 export function performanceTransition(from,to){
   if(['hit','hurt','block'].includes(to))return .055;
   if(['attack','strike','throw'].includes(to))return .085;
-  if(to==='idle'&&['walk','run'].includes(from))return .19;
+  if(to==='idle'&&['walk','run','retreat'].includes(from))return .24;
+  if(['walk','run','retreat'].includes(to)&&from==='idle')return .22;
   if(['speak','rally','order','conversation'].includes(to))return .18;
   return .12;
 }

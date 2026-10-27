@@ -60,9 +60,19 @@ export function fieldMarkup({state,keymap,kind='field'}){
   const camp=kind==='camp',chamber=kind==='chamber',chapter=chapterOf(state),key=action=>esc(actionLabel(action,keymap));
   const e=camp?{id:`camp-${state.chapter}`,title:campFor(state.chapter)?.title??'The camp',objective:campFor(state.chapter)?.purpose??'Prepare, speak to people, and depart through the gate.'}:state.encounter;
   const {label,keys}=fieldHints({state,keymap,kind});
+  const missionStrip=`<section class="rt-status-strip" aria-label="${camp?'Camp briefing':'Current mission'}">
+      ${camp?'':`<div class="rt-mission-summary"><p class="rt-objective" data-role="missionHeadline">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
+        <span class="rt-progress" data-role="progressBadge"></span><span class="rt-deadline" data-role="deadlineBadge"></span><span class="rt-order-feedback" data-role="orderBadge"></span></div>`}
+      <p class="rt-mission-warning" data-role="missionWarning" hidden></p><p class="rt-opportunity" data-role="opportunity" hidden></p>
+      <details class="rt-mission-details" data-role="missionDetails"><summary>${camp?'Camp briefing':'Mission details'}</summary><div class="rt-detail-body">
+        ${camp?`<h3>${esc(e.title)}</h3>`:''}<p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
+        <p class="rt-progress" data-role="progress"></p><p class="rt-next" data-role="missionNext" hidden></p>
+        <div class="rt-status-facts"><p class="rt-deadline" data-role="deadlineLine" hidden></p><p data-role="orderStatus" hidden></p></div>
+        <button type="button" data-close-disclosure>Close details</button>
+      </div></details></section>`;
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
     <header class="rt-top">
-      <div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2></div>
+      ${camp?'':`<div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2></div>`}
       <label class="rt-view-control">View<select data-role="cameraSelect" aria-label="World view"><option value="follow"${chamber?'':' selected'}>Follow</option><option value="overview"${chamber?' selected':''}>Overview</option><option value="horizon">Horizon</option></select></label>
       <div class="rt-time" role="group" aria-label="Time">
         <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
@@ -72,18 +82,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
       </div>
       <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
-    <section class="rt-status-strip" aria-label="Current mission">
-      <div class="rt-mission-summary"><p class="rt-objective" data-role="missionHeadline">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
-        <span class="rt-progress" data-role="progressBadge"></span><span class="rt-deadline" data-role="deadlineBadge"></span><span class="rt-order-feedback" data-role="orderBadge"></span></div>
-      <p class="rt-mission-warning" data-role="missionWarning" hidden></p>
-      <p class="rt-opportunity" data-role="opportunity" hidden></p>
-      <details class="rt-mission-details" data-role="missionDetails"><summary>Mission details</summary><div class="rt-detail-body">
-        <p class="rt-objective" data-role="objective">${esc(chamber?e.issue??e.objective??'':e.objective??'')}</p>
-        <p class="rt-progress" data-role="progress"></p><p class="rt-next" data-role="missionNext" hidden></p>
-        <div class="rt-status-facts"><p class="rt-deadline" data-role="deadlineLine" hidden></p><p data-role="orderStatus" hidden></p></div>
-        <button type="button" data-close-disclosure>Close details</button>
-      </div></details>
-    </section>
+    ${camp?'':missionStrip}
     <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
     ${chamber?'<div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
@@ -138,14 +137,14 @@ export function fieldMarkup({state,keymap,kind='field'}){
         </div>
       </div>
     </footer>
-    <div class="rt-support"><details class="rt-help" data-role="fieldHelp"><summary>How to play</summary><div class="rt-detail-body">
+    <div class="rt-support">${camp?missionStrip:''}<details class="rt-help" data-role="fieldHelp"><summary>How to play</summary><div class="rt-detail-body">
       <p>${camp?'Click a person to talk or an object to use it.':chamber?'Click a person to talk. Click the floor to move.':'Click the ground to move. Click an enemy to attack.'}</p>
       <p>${camp?'Use <strong>All actions</strong> for a list of people and places.':`Select an action, then ${chamber?'right-click a person':'right-click a target'}. Use <strong>All actions</strong> for a text list.`}</p>
       <p class="rt-input-context" data-role="inputContext">${key('pause')} pauses from the scene or command controls.</p>
       <p>Arrow keys move. ${key('target_next_enemy')} selects a target; Enter acts.${!camp&&!chamber?' During deployment, arrows and Enter place the selected unit.':''}</p>
       <button type="button" data-close-disclosure>Close help</button></div></details>
     <details class="rt-lesson" data-role="lesson" hidden><summary><span class="rt-tip-label">Tip</span> <span data-role="lessonTitle"></span><span data-role="lessonStep" class="visually-hidden"></span></summary>
-      <div class="rt-detail-body"><p data-role="lessonBody"></p><div class="rt-toggles"><button type="button" data-close-disclosure>Close tip</button><button class="text-link" type="button" data-cmd="dismiss-guide">Hide tips</button></div></div></details>
+      <div class="rt-detail-body"><p data-role="lessonBody"></p><div class="rt-toggles"><button type="button" data-close-disclosure>Close tip</button><button type="button" data-role="lessonContinue" hidden>Continue learning</button><button type="button" data-role="lessonSkip" hidden>Skip this exercise</button><button class="text-link" type="button" data-cmd="dismiss-guide">Hide tips</button></div></div></details>
       <details class="rt-log-panel" data-role="logDetails"><summary id="rt-log-title">${chamber?'Debate log':'Battle log'}</summary>
         <div class="rt-detail-body"><p class="rt-log-note">${chamber?'Latest speech first.':'Select an event to view its location.'}</p>
         <ol data-role="log" class="rt-log"></ol><button type="button" data-close-disclosure>Close log</button></div>

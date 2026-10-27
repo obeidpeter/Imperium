@@ -36,7 +36,7 @@ export function splatGrid({minX,minZ,maxX,maxZ},resolution=SPLAT_TEXELS_PER_METR
  * - route(x,z): a staged precinct route's weight; damp(x,z): the distant river's bank;
  * - training: the fort's yard, worn all over; bounds: the ground's square.
  */
-export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=()=>0,damp=()=>0,training=false,bounds}){
+export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=()=>0,damp=()=>0,architecture=null,training=false,bounds}){
   const grid=splatGrid(bounds),{nx,nz,step,minX,minZ}=grid,data=new Uint8Array(nx*nz*SPLAT_CHANNELS);
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,w=new Float32Array(SPLAT_CHANNELS);
   // Heights at the texel corners: slopes come from neighbours, not four more samples.
@@ -55,6 +55,10 @@ export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=
       const yard=training?1-smooth(Math.max(Math.abs(x)-hx+.8,Math.abs(z)-hz+.8)/2.7):0;
       const wear=role==='turf'?(training?yard*(.72+noise(x*.23,z*.23,8)*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48):0;
       add(w,biome.worn,wear+route(x,z)*.78);add(w,biome.wet,damp(x,z)*.42);
+      if(architecture){
+        const contact=architecture(x,z);
+        add(w,biome.rubble,contact.footing*1.8);add(w,biome.worn,contact.wear*1.6);add(w,biome.wet,contact.damp);
+      }
       // Steep relief near the board shows bare earth and stone.
       const i0=ix,i1=ix+1,j0=iz,j1=iz+1,slope=Math.hypot((corner(i1,j0)+corner(i1,j1)-corner(i0,j0)-corner(i0,j1))/2,(corner(i0,j1)+corner(i1,j1)-corner(i0,j0)-corner(i1,j0))/2)/step;
       const near=1-smooth((Math.max(Math.abs(x)-hx,Math.abs(z)-hz)-16)/6),bank=smooth(slope*.9)*.75*near;

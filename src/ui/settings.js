@@ -3,6 +3,7 @@ import {audioLevel} from './audio.js';
 import {controlBindings,holdDelay} from './control-preferences.js';
 import {ALL_CHAPTERS,normalizeControls} from '../core/controls-model.js';
 import {keymapChanges,keymapFrom} from './action-map.js';
+import {lessonProgress} from './realtime-lessons.js';
 
 // The legacy key keeps existing players' preferences.
 export const SETTINGS_KEY='sacramentum.settings';
@@ -14,11 +15,12 @@ export function defaultSettings({reducedMotion=false,saveData,deviceMemory,phone
   return {
     battleView:'3d',textScale:1,
     audio:false,audioVolume:.5,music:false,ambience:false,voices:false,soundtrackVolume:.45,
-    coach:true,guide:true,
+    coach:true,guide:true,lessonProgress:lessonProgress(),
     adaptiveResolution:true,figureStyle:'sculpted',actionCamera:true,battleRemains:true,
     confirmMoves:false,fastMotion:false,reducedMotion,
-    // The 0.40 conversion's development switch (core/controls-model.js): 0.38 turns until it is changed.
-    controlsModel:'turns',realtimeChapters:[...ALL_CHAPTERS],
+    // Existing chronicles retain turns until the player chooses. New Game
+    // recommends real time separately; loading a save never changes its mode.
+    controlsModel:'turns',controlsChosen:false,realtimeChapters:[...ALL_CHAPTERS],
     // Real time (the guide's Time and pace, and Controls): game speed, the auto-pause events and the pointer's habits.
     // The pace follows the chronicle's difficulty until the player changes it (paceChosen; followDifficulty below).
     ...paceDefaults('standard'),roundPause:false,panelPause:true,paceChosen:false,
@@ -49,11 +51,20 @@ export function loadSettings(stored,device){
   settings.keyBindings=controlBindings(settings.keyBindings);
   settings.holdDelay=holdDelay(settings.holdDelay);
   Object.assign(settings,normalizeControls(settings));
+  settings.controlsChosen=typeof saved?.controlsChosen==='boolean'?saved.controlsChosen:['turns','realtime'].includes(saved?.controlsModel);
   if(![.5,.75,1].includes(settings.gameSpeed))settings.gameSpeed=defaults.gameSpeed;
   for(const key of REALTIME_FLAGS)if(typeof settings[key]!=='boolean')settings[key]=defaults[key];
   if(typeof settings.paceChosen!=='boolean')settings.paceChosen=false;
   settings.realtimeKeys=keymapChanges(keymapFrom(settings.realtimeKeys));
+  settings.lessonProgress=lessonProgress(settings.lessonProgress);
   return settings;
+}
+
+export const newGamePlayMode=settings=>settings?.controlsChosen!==false&&['turns','realtime'].includes(settings?.controlsModel)?settings.controlsModel:'realtime';
+export const canChangePlayMode=state=>state?.phase!=='encounter'&&!state?.archiveReplay;
+export function choosePlayMode(settings,value,{state=null}={}){
+  if(!['turns','realtime'].includes(value)||!canChangePlayMode(state))return false;
+  settings.controlsModel=value;settings.controlsChosen=true;return true;
 }
 
 // Time and pace by difficulty (build brief §4, guide "Difficulty"): Story starts at 75% and pauses

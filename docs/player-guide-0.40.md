@@ -61,6 +61,14 @@ to think.**
 
 ## Finding what you need
 
+**New game** offers **Real-time with pause** and **Turn-based**. Real time
+is recommended for a first game; pause whenever you want to plan. Turn-based
+play advances when you end your turn. A previous mode choice stays selected.
+Loading an existing chronicle never changes its controls automatically.
+In camp, **Settings → Controls → Campaign controls** changes the next
+encounter's mode. During an encounter the chooser is locked, preserving
+its controls and exact Retry checkpoint.
+
 The **Menu** pauses play. Choose **Resume game** to return, **Soldier &
 company** for equipment and training, **Campaign** for your mission and
 records, **Save & load**, **Settings**, or **How to play**. Historical
@@ -79,6 +87,20 @@ number keys still work and reveal the selected action. **Options → Time
 controls** contains half speed and one-round stepping. **All actions**
 offers every action as a text list. Tips, camera controls and the battle
 log expand only when you want them.
+
+In a walkable camp, the next mission and any departure requirement appear
+once above the world. **Camp services** jumps to preparations and people;
+**Camp briefing** below the world holds the local description. The camera
+selector and **Pause/Resume** remain beside the scene.
+
+Optional exercises appear when deployment, squad orders, engineering or
+political commitments become available. Open the **Tip** to follow a short
+task. Its steps advance only after the actual placement, delivered order,
+completed work or accepted speech. Political practice accepts an argument
+without a promise; it never requires a debt. **Skip this exercise** has no
+campaign cost. **Continue learning** acknowledges a completed exercise.
+**Settings → Readability → Replay optional exercises** restores them;
+progress is a device preference, separate from the chronicle and Retry.
 
 **How to play** starts with three basic actions and a search box. Search
 for a task such as attack, equipment or saving, or open a guide topic.
@@ -1543,7 +1565,7 @@ categories: **Readability**, **Controls**, **Graphics**, **Sound** and
 | High contrast     | Stronger boundaries, brighter labels and bolder symbols.                   |
 | Reduce motion     | Removes nonessential motion; action feedback stays readable.               |
 | Compact interface | A compact mission header and camera bar, with full orders still available. |
-| Learning tips     | Expandable help for the drill, patrols and opening chamber hours.          |
+| Learning tips     | Expandable help for the drill and patrols, plus optional deployment, orders, engineering and political exercises. Replay optional exercises resets their local progress. |
 | Tactical advice   | Advice for the current field or chamber position.                          |
 
 ## Controls

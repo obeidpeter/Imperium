@@ -1,4 +1,5 @@
 import {settingsView} from './settings-view.js';
+import {newGamePlayMode} from './settings.js';
 import {relationshipLedger} from './progression-views.js';
 import {controlPreferences,controlHelp,applyControlLabels,confirmMovesSetting} from './control-preferences.js';
 import * as Game from '../core/game.js';
@@ -23,13 +24,17 @@ const chronicleIdentity = state => `<div class="panel-lead"><p class="eyebrow">C
 
 export function createPanels(context){
   function showNew(){
-    const {state,showModal}=context();
+    const {state,settings,showModal}=context(),playMode=newGamePlayMode(settings);
     showModal('Your chronicle begins',`<div class="panel-lead"><p class="eyebrow">THE DANUBE FRONTIER · AD 250</p>`+
       `<p>You are twenty, newly arrived from a village near the Danube. Your first rank is <strong>Tiro</strong>: a recruit in training. Begin with Varro’s `+
       `short drill, then swear the oath that will follow you to Rome.</p></div><div class="panel-form"><label for="name-input">Your Roman name</label>`+
       `<input id="name-input" type="text" maxlength="40" value="Aurelius Marcellus" autocomplete="off" aria-describedby="name-hint">`+
       `<p id="name-hint" class="settings-description">Up to 40 characters. This name appears in your chronicle and optional reign card.</p>`+
-      `</div>${recruitChoices()}${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
+      `</div><fieldset class="play-mode-choices"><legend>How would you like to play?</legend>`+
+      `<label class="difficulty-choice"><input type="radio" name="new-play-mode" value="realtime"${playMode==='realtime'?' checked':''}><span><strong>Real-time with pause</strong><small>Recommended for a new player. Walk through the camps and battles. Pause whenever you want to plan and give orders.</small></span></label>`+
+      `<label class="difficulty-choice"><input type="radio" name="new-play-mode" value="turns"${playMode==='turns'?' checked':''}><span><strong>Turn-based</strong><small>Move and act in turns on the tactical board. Time advances when you end your turn.</small></span></label>`+
+      `<p class="settings-description">Both modes follow the same twelve-chapter chronicle. You can switch in camp through Settings → Controls.</p></fieldset>`+
+      `${recruitChoices()}${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
       `encounters, by quick save or by name; a save code copied mid-encounter carries only its checkpoint. It can be lifted later, never taken up again.</small>`+
       `</span><input id="iron-discipline" type="checkbox"></label><p class="panel-note">New chronicles include operational preparations, chapter-specific field opportunities, coordinated `+
       `enemy doctrines, documented political cases, mechanical weather, policy debates, branching operations, veteran specializations and recurring political `+
@@ -160,7 +165,7 @@ export function createPanels(context){
       check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The main Menu always pauses.')+`</details></fieldset>`;
   }
   // The development menu (npm run dev, or ?dev in the address): the 0.40
-  // conversion's controls model and its per-chapter fallback.
+  // conversion's per-chapter fallback. The play mode is an ordinary setting.
   function developmentSettings(settings,options){
     const chosen=new Set(settings.realtimeChapters??ALL_CHAPTERS);
     return `<section class="settings-group development-settings" aria-labelledby="development-title"><h3 id="development-title">Development: real-time `+
@@ -168,8 +173,6 @@ export function createPanels(context){
       `arena; a chapter switches only when it is listed below and its real-time encounters exist (${REALTIME_READY_CHAPTERS.length===ALL_CHAPTERS.length?'every '+
       'chapter’s do':`so far Chapters ${REALTIME_READY_CHAPTERS.map(roman).join(', ')}`}; every chapter has a walkable camp, Chapter V’s a staging courtyard; the Contests of `+
       `Chapters ${CHAMBER_READY_CHAPTERS.map(roman).join(', ')} are walked in the chamber).</p>`+
-      `<label class="setting" for="controls-model"><span>Controls model</span><select id="controls-model">`+
-      `${options([['turns','Turns (0.38)'],['realtime','Real time (0.40, in development)']],settings.controlsModel)}</select></label>`+
       `<fieldset class="setting realtime-chapters"><legend>Chapters in real time when ready</legend>${ALL_CHAPTERS.map(c=>`<label><input type="checkbox" `+
       `class="realtime-chapter" value="${c}" ${chosen.has(c)?'checked':''}> ${roman(c)}${REALTIME_READY_CHAPTERS.includes(c)?'':' <small class="muted">not '+
       'converted</small>'}</label>`).join('')}</fieldset>${actions('<a class="secondary" href="./showcase/arena.html">Open the real-time arena</a>')}</section>`;

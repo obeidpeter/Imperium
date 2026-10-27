@@ -2,6 +2,7 @@ import {esc} from './view-helpers.js';
 import {controlPreferences,confirmMovesSetting} from './control-preferences.js';
 import {soundscapeSettings} from './campaign-upgrade-views.js';
 import {roman} from './view-helpers.js';
+import {canChangePlayMode} from './settings.js';
 
 export const SETTINGS_PAGES=[['general','Readability'],['controls','Controls'],['graphics','Graphics'],['audio','Sound'],['saves','Saves & offline']];
 const options=(rows,value)=>rows.map(([id,label])=>`<option value="${id}"${value===id?' selected':''}>${label}</option>`).join('');
@@ -22,9 +23,12 @@ export function settingsView(context,{page='general',pace='',development=''}={})
       toggle('motion-setting','Reduce motion','Limit camera movement and animation.',s.reducedMotion)+
       toggle('compact-hud','Compact interface','Give more room to the scene.',s.compactHud!==false))+
       group('Guidance',toggle('guide-setting','Learning tips','Short help for your current task.',s.guide!==false)+
-      toggle('coach-setting','Tactical advice','Suggestions for the current position.',s.coach!==false))+
+      toggle('coach-setting','Tactical advice','Suggestions for the current position.',s.coach!==false)+
+      '<button class="text-link" data-cmd="reset-lessons">Replay optional exercises</button><p class="settings-description">Deployment, squad orders, engineering and political commitments appear when you can use them. Skip any exercise without affecting your chronicle.</p>')+
       '<button class="text-link" data-cmd="help">Learn the basics →</button>',
-    controls:controlPreferences(s,{keymap:live?keymap:null,readability:false})+
+    controls:group('Play mode',`<label class="setting" for="controls-model"><span>Campaign controls<small class="muted" id="play-mode-hint">${canChangePlayMode(state)?'Choose how to play the next encounter. Your chronicle and earned progress stay the same.':'Finish the encounter and return to camp to change modes. The current encounter keeps its controls and exact Retry checkpoint.'}</small></span>`+
+      `<select id="controls-model" aria-describedby="play-mode-hint"${canChangePlayMode(state)?'':' disabled'}>${options([['realtime','Real-time with pause'],['turns','Turn-based']],s.controlsModel)}</select></label>`)+
+      controlPreferences(s,{keymap:live?keymap:null,readability:false})+
       (live?pace:confirmMovesSetting(s))+
       (devMenu?`<details id="settings-development" class="settings-details"><summary>Developer tools</summary>${development}</details>`:''),
     graphics:group('Scene',
