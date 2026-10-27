@@ -91,7 +91,9 @@ export function blowSetup(world,attacker,defender,{missile=null,from=null,profil
   if(ambush)mods.push({label:'Ambush: he has not seen you',kind:'attack',value:0});
   // A man of a squad fights with his squad's state (squads.js): its bracing, formation, cohesion and heart.
   const squadOf=id=>id&&world.squads?world.squads.find(q=>q.id===id)??null:null,As=squadOf(attacker.squadId),Ds=squadOf(defender.squadId);
-  if(Ds&&world.engineering&&Ds.side!=='enemy'){defence+=COMBAT.engineersDefence;mods.push({label:'Engineers’ works',kind:'defence',value:COMBAT.engineersDefence});}
+  // The Engineering approach's works, paid for in camp. Siege support earned in the field
+  // (world.engineering, campaign-support.js) only speeds work (fortifications.js).
+  if(Ds&&world.approach==='breach'&&Ds.side!=='enemy'){defence+=COMBAT.engineersDefence;mods.push({label:'Engineers’ works',kind:'defence',value:COMBAT.engineersDefence});}
   // A man carrying a casualty cannot block (§3.5 step 2).
   const shield=defender.carrying?null:shieldOf(defender),guard=braced(world,defender)||!!Ds?.braced;let block=0;
   if(defender.carrying&&shieldOf(defender))mods.push({label:'Carrying a casualty: no block',kind:'block',value:0});
