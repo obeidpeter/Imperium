@@ -3,337 +3,361 @@
   "ceilings": {
     "ch1-road": {
       "performance": {
-        "calls": 81,
-        "triangles": 177000,
-        "programs": 43,
+        "calls": 85,
+        "triangles": 168000,
+        "programs": 38,
         "recorded": {
-          "calls": 73,
-          "triangles": 160767,
-          "programs": 41,
-          "gpuBytes": 36971654,
+          "calls": 77,
+          "triangles": 152355,
+          "programs": 36,
+          "gpuBytes": 45844130,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 88,
-        "triangles": 372000,
-        "programs": 50,
+        "calls": 92,
+        "triangles": 373000,
+        "programs": 41,
         "recorded": {
-          "calls": 80,
-          "triangles": 337638,
-          "programs": 48,
-          "gpuBytes": 47758620,
+          "calls": 83,
+          "triangles": 338205,
+          "programs": 39,
+          "gpuBytes": 54191122,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch2-marsh": {
       "performance": {
-        "calls": 94,
-        "triangles": 195000,
-        "programs": 45,
+        "calls": 100,
+        "triangles": 203000,
+        "programs": 40,
         "recorded": {
-          "calls": 85,
-          "triangles": 176873,
-          "programs": 43,
-          "gpuBytes": 36829182,
+          "calls": 90,
+          "triangles": 183756,
+          "programs": 38,
+          "gpuBytes": 50860486,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 91,
-        "triangles": 322000,
-        "programs": 53,
+        "calls": 97,
+        "triangles": 379000,
+        "programs": 44,
         "recorded": {
-          "calls": 82,
-          "triangles": 292297,
-          "programs": 51,
-          "gpuBytes": 50330950,
+          "calls": 88,
+          "triangles": 344253,
+          "programs": 42,
+          "gpuBytes": 61768750,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch3-station": {
       "performance": {
-        "calls": 84,
-        "triangles": 185000,
-        "programs": 43,
+        "calls": 87,
+        "triangles": 181000,
+        "programs": 38,
         "recorded": {
-          "calls": 76,
-          "triangles": 167296,
-          "programs": 41,
-          "gpuBytes": 31070552,
+          "calls": 79,
+          "triangles": 164177,
+          "programs": 36,
+          "gpuBytes": 42164216,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 90,
-        "triangles": 416000,
-        "programs": 50,
+        "calls": 93,
+        "triangles": 427000,
+        "programs": 41,
         "recorded": {
-          "calls": 81,
-          "triangles": 377336,
-          "programs": 48,
-          "gpuBytes": 41772044,
+          "calls": 84,
+          "triangles": 387532,
+          "programs": 39,
+          "gpuBytes": 50341556,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch4-gate": {
       "performance": {
-        "calls": 117,
-        "triangles": 274000,
-        "programs": 47,
+        "calls": 127,
+        "triangles": 276000,
+        "programs": 43,
         "recorded": {
-          "calls": 106,
-          "triangles": 248750,
-          "programs": 45,
-          "gpuBytes": 42172964,
+          "calls": 115,
+          "triangles": 250249,
+          "programs": 41,
+          "gpuBytes": 54382590,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 117,
-        "triangles": 544000,
-        "programs": 53,
+        "calls": 127,
+        "triangles": 568000,
+        "programs": 46,
         "recorded": {
-          "calls": 106,
-          "triangles": 494312,
-          "programs": 51,
-          "gpuBytes": 54682384,
+          "calls": 115,
+          "triangles": 515967,
+          "programs": 44,
+          "gpuBytes": 64346962,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch5-mine": {
       "performance": {
-        "calls": 140,
-        "triangles": 260000,
-        "programs": 48,
+        "calls": 152,
+        "triangles": 263000,
+        "programs": 44,
         "recorded": {
-          "calls": 127,
-          "triangles": 235498,
-          "programs": 46,
-          "gpuBytes": 45093749,
+          "calls": 138,
+          "triangles": 238696,
+          "programs": 42,
+          "gpuBytes": 63425934,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 152,
-        "triangles": 482000,
-        "programs": 52,
+        "calls": 165,
+        "triangles": 507000,
+        "programs": 46,
         "recorded": {
-          "calls": 138,
-          "triangles": 437313,
-          "programs": 50,
-          "gpuBytes": 67594293,
+          "calls": 150,
+          "triangles": 460445,
+          "programs": 44,
+          "gpuBytes": 82740306,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch6-wells": {
       "performance": {
-        "calls": 125,
-        "triangles": 242000,
-        "programs": 46,
+        "calls": 146,
+        "triangles": 258000,
+        "programs": 42,
         "recorded": {
-          "calls": 113,
-          "triangles": 219178,
-          "programs": 44,
-          "gpuBytes": 46924119,
+          "calls": 132,
+          "triangles": 233860,
+          "programs": 40,
+          "gpuBytes": 65675492,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 124,
-        "triangles": 375000,
-        "programs": 52,
+        "calls": 140,
+        "triangles": 415000,
+        "programs": 46,
         "recorded": {
-          "calls": 112,
-          "triangles": 340503,
-          "programs": 50,
-          "gpuBytes": 64621069,
+          "calls": 127,
+          "triangles": 377108,
+          "programs": 44,
+          "gpuBytes": 80198682,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch7-legion": {
       "performance": {
-        "calls": 139,
-        "triangles": 344000,
-        "programs": 48,
+        "calls": 152,
+        "triangles": 340000,
+        "programs": 42,
         "recorded": {
-          "calls": 126,
-          "triangles": 312072,
-          "programs": 46,
-          "gpuBytes": 48627916,
+          "calls": 138,
+          "triangles": 308558,
+          "programs": 40,
+          "gpuBytes": 61195950,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 137,
-        "triangles": 629000,
-        "programs": 55,
+        "calls": 149,
+        "triangles": 642000,
+        "programs": 45,
         "recorded": {
-          "calls": 124,
-          "triangles": 571384,
-          "programs": 53,
-          "gpuBytes": 63106248,
+          "calls": 135,
+          "triangles": 583405,
+          "programs": 43,
+          "gpuBytes": 73142178,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch8-ferry": {
       "performance": {
-        "calls": 137,
-        "triangles": 384000,
-        "programs": 50,
+        "calls": 146,
+        "triangles": 370000,
+        "programs": 45,
         "recorded": {
-          "calls": 124,
-          "triangles": 348192,
-          "programs": 48,
-          "gpuBytes": 49523390,
+          "calls": 132,
+          "triangles": 336267,
+          "programs": 43,
+          "gpuBytes": 61937134,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 138,
-        "triangles": 665000,
-        "programs": 58,
+        "calls": 147,
+        "triangles": 662000,
+        "programs": 50,
         "recorded": {
-          "calls": 125,
-          "triangles": 604485,
-          "programs": 56,
-          "gpuBytes": 64302432,
+          "calls": 133,
+          "triangles": 601239,
+          "programs": 48,
+          "gpuBytes": 74137148,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch9-wing": {
       "performance": {
-        "calls": 147,
+        "calls": 157,
         "triangles": 305000,
-        "programs": 48,
+        "programs": 42,
         "recorded": {
-          "calls": 133,
-          "triangles": 276544,
-          "programs": 46,
-          "gpuBytes": 50359702,
+          "calls": 142,
+          "triangles": 276759,
+          "programs": 40,
+          "gpuBytes": 65368570,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 141,
-        "triangles": 503000,
-        "programs": 54,
+        "calls": 151,
+        "triangles": 522000,
+        "programs": 45,
         "recorded": {
-          "calls": 128,
-          "triangles": 456833,
-          "programs": 52,
-          "gpuBytes": 68504510,
+          "calls": 137,
+          "triangles": 474032,
+          "programs": 43,
+          "gpuBytes": 80323214,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch10-road": {
       "performance": {
-        "calls": 142,
-        "triangles": 332000,
-        "programs": 49,
+        "calls": 157,
+        "triangles": 329000,
+        "programs": 44,
         "recorded": {
-          "calls": 129,
-          "triangles": 301032,
-          "programs": 47,
-          "gpuBytes": 44369752,
+          "calls": 142,
+          "triangles": 298416,
+          "programs": 42,
+          "gpuBytes": 56653032,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 142,
-        "triangles": 591000,
-        "programs": 56,
+        "calls": 152,
+        "triangles": 619000,
+        "programs": 48,
         "recorded": {
-          "calls": 129,
-          "triangles": 536916,
-          "programs": 54,
-          "gpuBytes": 57763282,
+          "calls": 138,
+          "triangles": 561864,
+          "programs": 46,
+          "gpuBytes": 67475574,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch11-accounts": {
       "performance": {
-        "calls": 128,
-        "triangles": 164000,
-        "programs": 51,
+        "calls": 124,
+        "triangles": 139000,
+        "programs": 45,
         "recorded": {
-          "calls": 116,
-          "triangles": 148766,
-          "programs": 49,
-          "gpuBytes": 61118821,
+          "calls": 112,
+          "triangles": 126205,
+          "programs": 43,
+          "gpuBytes": 64607500,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 140,
-        "triangles": 302000,
-        "programs": 55,
+        "calls": 136,
+        "triangles": 274000,
+        "programs": 47,
         "recorded": {
-          "calls": 127,
-          "triangles": 274523,
-          "programs": 53,
-          "gpuBytes": 78900709,
+          "calls": 123,
+          "triangles": 248992,
+          "programs": 45,
+          "gpuBytes": 81489130,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     },
     "ch12-confrontation": {
       "performance": {
-        "calls": 152,
-        "triangles": 441000,
-        "programs": 48,
+        "calls": 161,
+        "triangles": 404000,
+        "programs": 44,
         "recorded": {
-          "calls": 138,
-          "triangles": 400354,
-          "programs": 46,
-          "gpuBytes": 41989034,
+          "calls": 146,
+          "triangles": 366581,
+          "programs": 42,
+          "gpuBytes": 55027316,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       },
       "balanced": {
-        "calls": 149,
-        "triangles": 865000,
-        "programs": 55,
+        "calls": 159,
+        "triangles": 850000,
+        "programs": 48,
         "recorded": {
-          "calls": 135,
-          "triangles": 785732,
-          "programs": 53,
-          "gpuBytes": 55939062,
+          "calls": 144,
+          "triangles": 772721,
+          "programs": 46,
+          "gpuBytes": 66118756,
+          "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-24T08:32:25.565Z"
+          "date": "2026-10-27T23:44:06.307Z"
         }
       }
     }
