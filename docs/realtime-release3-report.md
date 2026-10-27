@@ -132,3 +132,36 @@ The sweeps were run after each step and again after each fix. In order:
 - **The charge is the existing one.** The plan names brace, charge and volley as the enemy's techniques. Enemy squads already charged with a run-up (`chargeReady`); this release adds the volley and the brace.
 - **Times are this container's.** The tick times are Node.js on the development container, three sweeps at a time on its four cores for the evidence files and one at a time for the comparison with main. They are not a phone's, whose budget is 4 ms at p95.
 - **Not checked:** a person playing the new battles; the morale rings, plan text and pauses on a phone, a laptop or with a screen reader; the battles in the 2D view beyond the automated smoke test.
+
+## After the campaign world upgrade (27 October 2026)
+
+After this report, three pull requests changed these battles:
+- [#31](https://github.com/obeidpeter/Imperium/pull/31): a broken war band no longer rallies after a quiet round.
+- [#32](https://github.com/obeidpeter/Imperium/pull/32):
+  - scores the enemy's plans on what it sees;
+  - adds walls, a tower and Chapter V's siege works to the fields;
+  - adds engineers and cavalry to later armies, and faster horse.
+- #34, the fixes that follow #32:
+  - lets plans within a point of the best into the draw;
+  - removes the free 10 defence of earned siege support;
+  - makes the calibration bot play each Contest the first way that wins, or take the patron's re-run.
+- [#33](https://github.com/obeidpeter/Imperium/pull/33) changed no battle.
+
+The sweeps were run again on #34's code, 20 seeds a level, one level at a time. The evidence is in `docs/evidence/realtime-release3-recheck-sweep-{story,standard,veteran}.json`. Story and Standard ran on `f5443ad` and Veteran on `c62bea6`. The later commit changes only how the bot handles a lost Contest, which no Story or Standard campaign met.
+
+| Plan's target | Story | Standard | Veteran |
+| --- | --- | --- | --- |
+| Won at the first try (Story all, Standard ≥ 90%, Veteran ≥ 70%) | 360/360 | 360/360 | 359/360 |
+| Won within the tries allowed (1, 2, 3) | 360/360 | 360/360 | 360/360 |
+| At least 3 enemy plans in each battle | 3–6 | 3–6 | 3–6 |
+| The finale's battle lasts 8–12 of 16 rounds | 10 | 8 | 8 |
+| Tick p95 rises ≤ 0.3 ms over the baseline before release 3 | +0.07 ms | +0.12 ms | +0.14 ms |
+
+- **The plans vary less than at release 3, and enough.** Each battle shows 3–6 plans across 20 seeds, against 5–6 at release 3. Strong evidence now decides more plans. Before #34, plans were drawn only among exact ties; five seeds a level then showed 2–5 plans per battle: Chapter VIII's crossing had 2 on every level, and the finale 2 on Story.
+- **Difficulty moved a little either way.**
+  - Chapter IV's gate costs 54%, 77% and 86% of the squads' strength by the median (47%, 72% and 78% at release 3).
+  - Chapter IV's wall costs 45% on every level (37%, 54% and 52% at release 3).
+  - On Veteran, Chapter IV's wall and Chapter V's wall were each won with one round left on at least one seed. Chapter X's road kept at least three rounds in hand; at release 3 it was won once on its last round.
+- **Veteran's Chapter VII council needed help on 3 of 20 seeds.** On seeds 8, 16 and 18 the bot lost the vote by one or more with every Contest policy it has. It then took the patron's costly backing, the game's recovery after a lost Contest. Before #32 the record policy won all 20. The battles before the council now go differently, so some campaigns arrive weaker. A person has more ways to argue than the bot.
+- **The costliest tick** is now Chapter XII's battle on Veteran, at 1.12 ms p95 (0.92 ms was the highest at release 3).
+- **Not re-swept:** Chapters I–III, which only #31's war band change touched. A broken band now flees until reinforcements arrive.

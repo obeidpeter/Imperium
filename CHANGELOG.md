@@ -2,6 +2,35 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Fixes after the campaign world upgrade
+
+- **Earned siege support no longer adds defence.** Only the camp's Engineering approach gives your squads its 10 extra defence, at its usual cost. Support earned in the previous siege still lets each work action finish the job at once. Before, the two shared one flag, so the support also gave the defence for free.
+- **Enemy plans vary again.** Strong evidence still decides the enemy's plan: a braced line, a wavering squad, a blocked or open flank. When its reasons are mild, it may also choose a plan within one point of the best, the best still the likelier, so the same field can open differently. Each plan still holds for at least two rounds.
+- **Each battle's tactic is shown again.** Once the optional exercises are done or skipped, each later battle with a company opens with a short tactic tip until your first order, as before the player experience polish.
+- **The guide** now says that enemy horse also move faster on firm ground.
+- **Development:** the calibration bot plays each Contest the first way that wins. It reads the debate ahead on a copy of the chronicle, protecting its coalition first and then using the record policy. When neither wins, it accepts the patron-backed re-run the game offers after a lost Contest, at its usual cost. With the protection alone it lost Veteran's Chapter VII council on every seed. A test now plays two Veteran campaigns past that council. The bot only.
+
+### Player experience polish ([#33](https://github.com/obeidpeter/Imperium/pull/33); [notes](docs/player-experience-polish.md))
+
+- **Choose how to play.** New Game offers Real-time with pause or Turn-based. Real time is recommended when this device has no saved preference; a saved preference stays selected. In camp, Settings → Controls changes the mode for the next encounter. An encounter keeps its controls, and loading a chronicle never changes them.
+- **Optional exercises** for deployment, squad orders, engineering and political commitments. They advance only on the real action and never require a debt. Their progress is a preference on this device, apart from the chronicle. Settings → Readability → Replay optional exercises restores them.
+- **A quieter camp.** The next mission and any departure requirement appear once above the world, and narrow screens repeat fewer headers.
+- **Three optional camp situations, in Chapters V, VIII and XI.** You find the evidence at marked desks and match it; a wrong answer explains itself and changes nothing. Finishing one changes the camp. They grant no reward, never block departure, and follow Lucan's and Sabinus's fates.
+- **Character motion:**
+  - full-body starts, stops and turns, with planted feet;
+  - a wounded gait;
+  - distinct horse gaits, with riders moving with the horse;
+  - varied hairlines across the cast.
+- **Scenery:** trees kept clear of the main camera views, a different arrangement around each regional camp, and paving and foundations that blend into the ground.
+- **Sound:**
+  - a percussion pulse that follows the live battle's pressure;
+  - horn signals when your squads receive orders;
+  - more varied impacts on metal, wood and cloth.
+- **Fixes:**
+  - a dialog's late close event could clear a conversation that had just opened;
+  - a reply that finished saving late could replace a newer panel;
+  - battle audio could follow a fight replaced by a restore.
+
 ### Campaign world upgrade
 
 - Larger camp, battle and chamber views with shared camera controls and optional records below the world.

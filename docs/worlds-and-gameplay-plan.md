@@ -8,14 +8,16 @@ The owner approved this plan in October 2026, after the regional worlds of [#26]
 | --- | --- | --- |
 | 1 | Foundations | merged ([#28](https://github.com/obeidpeter/Imperium/pull/28)) |
 | 2 | Ground, sky and light | merged ([#29](https://github.com/obeidpeter/Imperium/pull/29)) |
-| 3 | Harder, less predictable battles | in review ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
-| 4 | Walls, gates, towers and bridges | not started |
-| 5 | Nature, water, weather and fire | not started |
-| 6 | Faces, cast, horses and crowds | not started |
-| 7 | Sieges, cavalry and new missions | not started |
-| 8 | Living camps | not started |
-| 9 | Landmarks and the great set pieces | not started |
-| 10 | Real time by default (Gate 4) | not started |
+| 3 | Harder, less predictable battles | merged ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
+| 4 | Walls, gates, towers and bridges | in part delivered by [#32](https://github.com/obeidpeter/Imperium/pull/32); to be re-scoped |
+| 5 | Nature, water, weather and fire | in part delivered by #32 and [#33](https://github.com/obeidpeter/Imperium/pull/33); to be re-scoped |
+| 6 | Faces, cast, horses and crowds | in part delivered by #32 and #33; to be re-scoped |
+| 7 | Sieges, cavalry and new missions | in part delivered by #32; to be re-scoped |
+| 8 | Living camps | in part delivered by #32 and #33; to be re-scoped |
+| 9 | Landmarks and the great set pieces | in part delivered by #32; to be re-scoped |
+| 10 | Real time by default (Gate 4) | the mode choice delivered by #33; to be re-scoped |
+
+Between releases 3 and 4 the owner merged [#31](https://github.com/obeidpeter/Imperium/pull/31), #32 (the [campaign world upgrade](campaign-world-upgrade.md)) and #33 (the [player experience polish](player-experience-polish.md)). They cover parts of releases 4–10, as the table shows. A revised plan for those releases goes to the owner for approval. Until it is approved, the roadmap below remains the plan as first approved.
 
 ## Context
 

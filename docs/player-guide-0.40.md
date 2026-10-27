@@ -101,6 +101,8 @@ without a promise; it never requires a debt. **Skip this exercise** has no
 campaign cost. **Continue learning** acknowledges a completed exercise.
 **Settings → Readability → Replay optional exercises** restores them;
 progress is a device preference, separate from the chronicle and Retry.
+Once they are done or skipped, each later battle with a company opens
+with a short tip on its tactic until your first order.
 
 **How to play** starts with three basic actions and a search box. Search
 for a task such as attack, equipment or saving, or open a guide topic.
@@ -525,7 +527,7 @@ the right mouse button uses it.
 
 ## Squads
 
-Later armies include specialist formations: engineer details in Chapters IV, V, VIII and X, and mounted cavalry in VII, IX and XII. Engineers support nearby work; they do not complete objectives automatically. Cavalry moves faster on firm ground, loses much of that advantage in rough terrain, and starts with orders to screen a flank.
+Later armies include specialist formations: engineer details in Chapters IV, V, VIII and X, and mounted cavalry in VII, IX and XII. Engineers support nearby work; they do not complete objectives automatically. Cavalry moves faster on firm ground, loses much of that advantage in rough terrain, and starts with orders to screen a flank. Enemy horse move the same way.
 
 From Chapter IV the squads you command appear in the **squad bar** at
 the top left, each with its standard, and the same standard stands above
@@ -998,7 +1000,7 @@ and command**.
 
 Fortified fields from Chapter IV can include a weakened curtain wall and a fighting tower. Use the stairs to reach the raised deck; its height changes sight and missile advantage. A closed fortified gate stops both armies. Reopen it or close it again once the gateway is empty. Breaching a weakened wall takes two uninterrupted four-second work actions and leaves a permanent, slower rubble passage.
 
-In Chapter V, the countermine and enemy siege ramp put pressure on the defended line from round four. Securing each takes two work actions. A standing friendly engineer within eight metres, the engineering approach, or engineering support earned in the previous siege completes the work in one action. Stopping the ramp also delays the next reserve by one round when the deadline allows. Protect the main objective while choosing whether to finish both works. The result records unfinished works or withdrawn formations; securing both with the company intact earns support for the next field action.
+In Chapter V, the countermine and enemy siege ramp put pressure on the defended line from round four. Securing each takes two work actions. A standing friendly engineer within eight metres, the engineering approach, or engineering support earned in the previous siege completes the work in one action. Stopping the ramp also delays the next reserve by one round when the deadline allows. Protect the main objective while choosing whether to finish both works. The result records unfinished works or withdrawn formations; securing both with the company intact earns support for the next field action. That support only speeds the work: the 10 extra defence for your squads comes with the Engineering approach alone.
 
 Every battle after the training drill offers two opportunities, and you
 can take only one. Their effects are shown in the field panel, and both
@@ -1378,7 +1380,7 @@ restores the complete camp checkpoint and the same departure.
 
 ## Knowing the enemy
 
-Enemy plans respond to observed braced lines, weakened or isolated formations, exposed archers and threatened objectives. The intelligence panel explains the selected plan. A plan remains in force long enough to read and counter; hidden troops do not secretly inform this assessment. Protecting an archer already under attack takes priority over a flank march.
+Enemy plans respond to observed braced lines, weakened or isolated formations, exposed archers and threatened objectives. The intelligence panel explains the selected plan. Strong evidence decides the plan; when the enemy's reasons are mild, it may choose among close alternatives, so the same field can open differently. A plan remains in force long enough to read and counter; hidden troops do not secretly inform this assessment. Protecting an archer already under attack takes priority over a flank march.
 
 The **field intelligence** panel shows the enemy's doctrine, its
 **plan**, its current focus and the chapter's opportunities. Visible
