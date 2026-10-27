@@ -9,7 +9,7 @@ import {terrainAt,worldToGrid,noise,smooth,clamp,isPlayable} from './environment
 export const SPLAT_TEXELS_PER_METRE=2,SPLAT_CHANNELS=12,SPLAT_MAX_SIDE=512;
 // A cell's role in its region's mixes (GROUND_BIOMES). Roads are drawn from the
 // road's own distance field, so a road cell's ground beside the tread is turf.
-export const SPLAT_ROLES=Object.freeze({grass:'turf',road:'turf',sand:'sand',marsh:'wet',rock:'rock',rubble:'rock',ford:'bed',river:'bed',
+export const SPLAT_ROLES=Object.freeze({grass:'turf',road:'turf',sand:'sand',marsh:'wet',ditch:'wet',rock:'rock',rubble:'rock',ford:'bed',river:'bed',
   high:'turf',hill:'turf',wall:'rubble',camp:'camp',stone:'joints',floor:'slabs',bench:'slabs',chamber:'slabs'});
 const LAYERS=GROUND_LAYERS.length;
 

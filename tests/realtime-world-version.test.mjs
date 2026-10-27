@@ -16,9 +16,10 @@ function midFight(){
 }
 
 test('a fight saved by an earlier version of the real-time rules restarts from its checkpoint when the chronicle loads',()=>{
-  assert.equal(WORLD_VERSION,4);
+  // Release 4's structures (gate integrity, towers, ramparts and ditches) made it 5.
+  assert.equal(WORLD_VERSION,5);
   const {state,start}=midFight(),older=JSON.parse(G.serialize(state));
-  older.encounter.realtime.world.version=2;older.encounter.realtime.resume.version=2;
+  older.encounter.realtime.world.version=4;older.encounter.realtime.resume.version=4;
   const loaded=G.deserialize(JSON.stringify(older)),w=G.realtimeWorld(loaded);
   assert.equal(loaded.phase,'encounter');assert.equal(loaded.encounter.id,state.encounter.id);
   assert.equal(w.version,WORLD_VERSION);assert.equal(w.tick,0,'the fight starts again');assert.equal(loaded.encounter.realtime.resume,undefined);

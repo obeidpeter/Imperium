@@ -44,7 +44,12 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
   if(object&&button==='left'){
     if(object.done&&!object.toggle)return {...none,cursor:'blocked',message:`${object.name}: done.`};
     // A field object says what the work does, or why it cannot be done now (field-objects.js).
-    const problem=fieldProblem(world,object);if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
+    const problem=fieldProblem(world,object,{force:false});if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
+    // Shift demolishes a repaired fortified bridge (field-objects.js).
+    if(shift&&object.field&&object.kind==='bridge'&&fieldVerb(object,{force:true})){const problem=fieldProblem(world,object,{force:true});
+      return problem?{...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`}:{cursor:'attack',reason:null,
+        message:`${fieldVerb(object,{force:true})}: ${object.name}. ${fieldHint(world,object)} Twice as long as other work; a blow stops it.`,
+        command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id,force:true}}};}
     // Shift forces an attack on a gate or a barricade: he hacks it open or apart, taking twice as long.
     if(shift&&object.field&&['gate','barricade'].includes(object.kind))return {cursor:'attack',reason:null,
       message:`Break ${object.kind==='gate'?'open':'down'}: ${object.name}. Twice as long as using it; a blow stops the work.`,
@@ -153,8 +158,12 @@ export function commandOptions(world,{actorId=world.controlled}={}){
     if(o.side==='neutral'&&!peaceful)add('Friends',`Force an attack on ${o.name}`,order('attack',{targetId:o.id,forced:true}),{subject:o.id,detail:'He is no enemy: striking him turns him hostile and costs Public Confidence.'});
   }
   // Objects, the fallen and places.
-  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near))add('Objects',`${o.field?fieldVerb(o):'Use'}: ${o.name}`,order('interact',{objectId:o.id}),
-    {subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.field?` ${fieldHint(world,o)}`:''}`});
+  // A repaired fortified bridge offers only its forced work: demolition.
+  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near)){
+    const force=!!o.field&&!fieldVerb(o)&&!!fieldVerb(o,{force:true});if(o.field&&!force&&!fieldVerb(o))continue;
+    add('Objects',`${o.field?fieldVerb(o,{force}):'Use'}: ${o.name}`,order('interact',{objectId:o.id,...(force?{force:true}:{})}),
+      {subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.field?` ${fieldHint(world,o)}`:''}`});
+  }
   for(const b of world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near))add('The fallen',`Search ${b.name}`,order('loot',{targetId:b.id}),{subject:b.id,detail:m(distanceBetween(actor,b))});
   const places=[];
   if(world.mission?.goal)places.push({name:'The objective marker',x:world.mission.goal.x,z:world.mission.goal.z});

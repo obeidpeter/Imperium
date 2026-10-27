@@ -4,7 +4,9 @@ import {actorById} from './abilities.js';
 import {span} from './navigation.js';
 import {alliedSides,fielded,membersOf,scorchSquad,squadsOf} from './squads.js';
 import {burnActor} from './damage.js';
-import {changeStructureCells,closeFortifiedGate,fortifiedGate,gateOccupied,fortificationVerb,fortificationHint,workFortification,fortificationRound} from './fortifications.js';
+import {changeStructureCells,closeFortifiedGate,fortifiedGate,gateOccupied,fortificationVerb,fortificationHint,workFortification,fortificationRound,
+  batterGate,demolishBridge,demolishable,heldAgainst} from './fortifications.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // The battlefield's objects in real time (guide "Field objects"; 0.38
 // expanded-campaign.js and the edition-34 chapter opportunities): a side gate
@@ -27,10 +29,12 @@ export const DEFAULT_OPPORTUNITIES=Object.freeze({
   stores:Object.freeze({effect:'stores',description:'Recover 2 supplies on victory.'}),
   signal:Object.freeze({effect:'cohesion',description:'Raise friendly cohesion by 15 now and earn 2 Army Loyalty on victory.'})});
 // What working at an object does, in its state; null when nothing is left to do.
-export function fieldVerb(o){
+// Forced work (Shift) demolishes a repaired fortified bridge. A gate the enemy holds
+// is battered (fortifications.js): the soldier's side is the only one that works objects.
+export function fieldVerb(o,{force=false}={}){
   switch(o.kind){
-    case 'gate':return o.state==='closed'?'Open gate':fortifiedGate(o)&&o.state==='open'?'Close gate':null;
-    case 'bridge':return o.state==='damaged'?'Repair bridge':null;
+    case 'gate':return o.state==='closed'?(heldAgainst(o)?`Batter gate (${o.integrity})`:'Open gate'):fortifiedGate(o)&&o.state==='open'?'Close gate':null;
+    case 'bridge':return o.state==='damaged'?'Repair bridge':force&&demolishable(o)?`Demolish bridge (${o.progress??0}/${STRUCTURES.bridge.demolish})`:null;
     case 'barricade':return o.state==='intact'?'Dismantle':null;
     case 'brazier':return o.state==='unlit'?'Ignite':o.state==='burning'?'Extinguish':null;
     case 'stores':case 'signal':return o.state==='available'?'Secure objective':null;
@@ -39,8 +43,9 @@ export function fieldVerb(o){
 }
 export function fieldHint(world,o){
   switch(o.kind){
-    case 'gate':return fortifiedGate(o)&&o.state==='open'?'Close the passage once everyone is clear. The closed gate stops both armies and blocks sight.':'Opens the side route: the gate stops movement and sight while it is shut.';
-    case 'bridge':return 'Repairs the footbridge: its crossing becomes a ford.';
+    case 'gate':return heldAgainst(o)?`Barred against you. Each work action takes ${STRUCTURES.gate.batter} of its ${o.integrity} integrity, twice that with engineers near you (their ram); at 0 it is a breach for both armies.`
+      :fortifiedGate(o)&&o.state==='open'?'Close the passage once everyone is clear. Closing bars it: the closed gate stops both armies and blocks sight.':'Opens the side route: the gate stops movement and sight while it is shut.';
+    case 'bridge':return demolishable(o)?'Shift: demolish it. Two work actions, one with engineers near you; its crossing becomes deep water again, for both armies.':'Repairs the footbridge: its crossing becomes a ford.';
     case 'barricade':return 'Dismantles it: defenders within 2 m lose its 1 extra protection.';
     case 'brazier':return o.state==='unlit'?`Lights the pitch: its smoke blocks sight, and it hurts both sides within 3 m at each round's end for ${world.weather==='rain'?'one round (rain)':'three rounds'}.`
       :'Puts the fire out.';
@@ -49,9 +54,9 @@ export function fieldHint(world,o){
 }
 // The current round (1-based) and whether an opportunity can still be taken.
 const roundOf=world=>Math.floor(world.tick/R)+1;
-export function fieldProblem(world,o){
+export function fieldProblem(world,o,{force=false}={}){
   if(!o?.field)return null;
-  if(!fieldVerb(o))return 'ALREADY_DONE';
+  if(!fieldVerb(o,{force}))return 'ALREADY_DONE';
   if(fortifiedGate(o)&&o.state==='open'&&gateOccupied(world,o))return 'GATE_OCCUPIED';
   if(OPPORTUNITIES.has(o.kind)&&(world.field?.outcome!=='pending'||roundOf(world)>world.field.deadline))return 'OPPORTUNITY_CLOSED';
   return null;
@@ -63,10 +68,11 @@ function setCells(world,o,type){
 }
 export function openGate(world,o,by=null){
   if(o.kind!=='gate'||o.state!=='closed')return false;o.state='open';o.done=true;setCells(world,o,o.under);
+  if(fortifiedGate(o)){o.holder=null;o.integrity=STRUCTURES.gate.integrity;}
   emit(world,{kind:'field',objectId:o.id,what:'gate-open',actorId:by});return true;
 }
 export function repairBridge(world,o,by=null){
-  if(o.kind!=='bridge'||o.state!=='damaged')return false;o.state='repaired';o.done=true;setCells(world,o,'ford');
+  if(o.kind!=='bridge'||o.state!=='damaged')return false;o.state='repaired';o.done=true;setCells(world,o,'ford');if(o.fortified)o.toggle=true;
   emit(world,{kind:'field',objectId:o.id,what:'bridge-repaired',actorId:by});return true;
 }
 const objectsOf=(world,kind)=>(world.objects??[]).filter(o=>o.field&&o.kind===kind);
@@ -100,14 +106,14 @@ function applyOpportunity(world,effect){
 }
 
 // --- Using an object: the work has finished (actions.js) -----------------------------------------
-export function useFieldObject(world,actor,o){
-  const problem=fieldProblem(world,o);
+export function useFieldObject(world,actor,o,{force=false}={}){
+  const problem=fieldProblem(world,o,{force});
   if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});return false;}
   o.by=actor.id;o.at=world.tick;
   switch(o.kind){
-    case 'gate':if(o.state==='open')closeFortifiedGate(world,o,actor.id);else openGate(world,o,actor.id);break;
+    case 'gate':if(o.state==='open')closeFortifiedGate(world,o,actor.id);else if(heldAgainst(o,actor))batterGate(world,actor,o);else openGate(world,o,actor.id);break;
     case 'breach':case 'countermine':case 'siege-engine':workFortification(world,actor,o);break;
-    case 'bridge':repairBridge(world,o,actor.id);break;
+    case 'bridge':if(force&&demolishable(o))demolishBridge(world,actor,o);else repairBridge(world,o,actor.id);break;
     case 'barricade':o.state='dismantled';o.done=true;emit(world,{kind:'field',objectId:o.id,what:'barricade-dismantled',actorId:actor.id});break;
     case 'brazier':
       if(o.state==='unlit'){o.state='burning';o.rounds=world.weather==='rain'?1:3;emit(world,{kind:'field',objectId:o.id,what:'brazier-lit',actorId:actor.id});}

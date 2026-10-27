@@ -131,6 +131,17 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
       cells.push({type,x,y});
     }
   }
+  // A rampart's breastwork lines its face (fortifications.js): a low wattle revetment on
+  // stakes that a man scrambles over, as the rules let him climb from the ditch. The bank
+  // and the ditch are the ground itself (environment-layout.js).
+  for(const r of e.fortifications?.ramparts??[]){
+    const [dx,dz]={east:[1,0],west:[-1,0],south:[0,1],north:[0,-1]}[r.face]??[1,0];
+    for(const [x,y]of r.cells){
+      const c=gridToWorld({x,y},e,tileSize),ex=c.x+dx*tileSize*.44,ez=c.z+dz*tileSize*.44,base=height(ex,ez);cells.push({type:'rampart',x,y});
+      instance('rampart breastwork wattle',p.box,m.darkWood,dx?[ex,base+.25,c.z]:[c.x,base+.25,ez],dx?[.12,.5,tileSize+.04]:[tileSize+.04,.5,.12],[0,0,0],tint('#8a6a48',x,y));
+      for(const u of [-1.05,-.35,.35,1.05])instance('rampart breastwork stakes',p.cylinder,m.wood,dx?[ex+dx*.07,base+.32,c.z+u]:[c.x+u,base+.32,ez+dz*.07],[.05,.64,.05],[0,0,0],tint('#8a6a48',u*10,x+y));
+    }
+  }
   const paving=authoredPavingSlabs(e,tileSize,isChapterFivePilot(e)||hasRegionalWorld(e)?3:4);
   for(const slab of paving)instance('authored flagstones',p.box,m.marble,
     [slab.x,height(slab.x,slab.z)+.018,slab.z],[slab.width,.034,slab.depth],[0,slab.yaw,0],new THREE.Color('#e4dccb').multiplyScalar(slab.tone));

@@ -1,7 +1,9 @@
 import {ARCS,BASE_ATTRIBUTES,COMBAT,DAMAGE_TYPES,ITEMS,MISSILES,MOVEMENT,SHIELDS,TIME,TRAINING_PATHS,WEAPONS} from '../../data/realtime-rules.js';
 import {crossesCover,groundHeight,navGrid,span,terrainAtPoint} from './navigation.js';
 import {randomInt,nextRandom} from './rng-streams.js';
-import {smokeBetween,terrainCover} from './sight.js';
+import {coverBetween,smokeBetween} from './sight.js';
+import {behindBreastwork,onTower,rampartAt} from './fortifications.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // Character values and blow resolution (§3.5). Every division is floored,
 // constants come from the rules data, and one setup serves both the forecast
@@ -74,14 +76,19 @@ export function unaware(defender,attacker,world=null){
   if(q)return (q.notice?.[attacker.squadId??attacker.id]??0)<100&&!q.contact;
   return !!attacker.hidden;
 }
+const COVER_LABELS=Object.freeze({wall:'Behind the wall',tower:'Behind the tower',smoke:'Through smoke'});
 export function blowSetup(world,attacker,defender,{missile=null,from=null,profile:override=null}={}){
   const grid=navGrid(world.map),A=derivedValues(attacker),D=derivedValues(defender),mods=[],src=from??attacker;
   const arc=arcOf(defender,src),rise=groundHeight(grid,defender.x,defender.z)-groundHeight(grid,src.x,src.z);
   let attack=missile?A.missile:A.attack,defence=D.defence;
   if(arc==='rear'){attack+=COMBAT.rearAttack;mods.push({label:'From behind',kind:'attack',value:COMBAT.rearAttack});}
-  if(rise>=COMBAT.heightStep){defence+=COMBAT.heightDefence;mods.push({label:'He holds higher ground',kind:'defence',value:COMBAT.heightDefence});}
-  if(missile&&-rise>=COMBAT.heightStep){attack+=COMBAT.heightDefence;mods.push({label:'Thrown downhill',kind:'attack',value:COMBAT.heightDefence});}
-  if(missile&&(terrainCover(world,src,defender)||smokeBetween(world,src,defender))){attack-=COMBAT.coverMissile;mods.push({label:'Through cover',kind:'attack',value:-COMBAT.coverMissile});}
+  // Forecasts name the structure that gives a modifier (fortifications.js, sight.js).
+  if(rise>=COMBAT.heightStep){defence+=COMBAT.heightDefence;
+    mods.push({label:onTower(world,defender)?'He holds the tower':rampartAt(world,defender)?'He holds the rampart':'He holds higher ground',kind:'defence',value:COMBAT.heightDefence});}
+  if(missile&&-rise>=COMBAT.heightStep){attack+=COMBAT.heightDefence;mods.push({label:onTower(world,src)?'From the tower':'Thrown downhill',kind:'attack',value:COMBAT.heightDefence});}
+  const cover=missile?coverBetween(world,src,defender)??(smokeBetween(world,src,defender)?'smoke':null):null;
+  if(cover){attack-=COMBAT.coverMissile;mods.push({label:COVER_LABELS[cover]??'Through cover',kind:'attack',value:-COMBAT.coverMissile});}
+  else if(missile&&behindBreastwork(world,defender,src)){attack-=STRUCTURES.rampart.missile;mods.push({label:'Behind the rampart',kind:'attack',value:-STRUCTURES.rampart.missile});}
   const far=span(defender.x-src.x,defender.z-src.z)>COMBAT.weatherRange,weather=missile&&far&&['rain','mist','dust'].includes(world.weather);
   if(weather){
     attack-=COMBAT.weatherMissile;

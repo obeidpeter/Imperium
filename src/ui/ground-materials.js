@@ -5,7 +5,8 @@ import {WORLD_ASSETS} from './world-assets.js';
 export function materialIndex(type='grass',chapter=1,chamber=false){
   if(chamber||['stone','chamber'].includes(type))return 2;
   if(['water','river','deepwater','ford'].includes(type))return 3;
-  if(type==='marsh')return 4;
+  // A dug ditch (structures.js) wears the wet ground's paint.
+  if(type==='marsh'||type==='ditch')return 4;
   if(['road','gate'].includes(type))return 5;
   if(type==='sand'||[5,6,9].includes(chapter))return 1;
   return 0;

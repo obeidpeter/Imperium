@@ -90,10 +90,10 @@ function startAbility(world,actor,order){
 
 function startInteraction(world,actor,order){
   const object=objectById(world,order.targetId);if(!object||object.done&&!object.toggle){actor.order=null;return;}
-  const problem=fieldProblem(world,object);if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
+  const problem=fieldProblem(world,object,{force:!!order.force});if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
   if(distanceBetween(actor,object)>orderRange(world,actor,order,object))return;
   turnToward(actor,object.x-actor.x,object.z-actor.z);
-  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf((object.work_s??3)*(order.force?2:1))};
+  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf((object.work_s??3)*(order.force?2:1)),...(order.force?{force:true}:{})};
   emit(world,{kind:'work',actorId:actor.id,objectId:object.id,what:object.kind});
 }
 
@@ -135,7 +135,7 @@ function finishWork(world,actor,action){
   }
   const object=objectById(world,action.objectId);if(!object)return;
   // A field object changes state and the field with it (field-objects.js).
-  if(object.field){actor.order=null;useFieldObject(world,actor,object);return;}
+  if(object.field){actor.order=null;useFieldObject(world,actor,object,{force:!!action.force});return;}
   actor.order=null;object.done=true;object.by=actor.id;object.at=world.tick;
   emit(world,{kind:'used-object',actorId:actor.id,objectId:object.id,what:object.kind});
 }

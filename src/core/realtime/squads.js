@@ -8,6 +8,8 @@ import {cellCentre,clampToMap,clearLine,findRoute,groundHeight,navGrid,nearestWa
 import {sightBlocked,terrainCover} from './sight.js';
 import {pickWeighted} from './rng-streams.js';
 import {knowAttacker,lying,noticeOf} from './squad-sight.js';
+import {behindBreastwork} from './fortifications.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // Squads (build brief §3.4, from Chapter IV): a squad is a record with one
 // strength, morale, cohesion and suppression, a formation, its orders and
@@ -238,11 +240,15 @@ function turnToward(actor,dx,dz){const d=span(dx,dz);if(d<1e-6)return;actor.fx=d
 export function squadModifiers(world,attacker,target,{ranged=false,ambush=false}={}){
   const grid=navGrid(world.map),a=squadCentre(world,attacker),t=squadCentre(world,target),mods=[],add=(label,value)=>{if(value)mods.push({label,value});};
   const dx=a.x-t.x,dz=a.z-t.z,d=span(dx,dz)||1,front=(dx*target.fx+dz*target.fz)/d>=.5;
-  const ground=terrainAtPoint(world.map,t.x,t.z),source=terrainAtPoint(world.map,a.x,a.z),rough=g=>['marsh','ford'].includes(g);
+  // Rough ground breaks a charge: marsh, a ford, a ditch, or a breach's rubble.
+  const ground=terrainAtPoint(world.map,t.x,t.z),source=terrainAtPoint(world.map,a.x,a.z),rough=g=>['marsh','ford','ditch','rubble'].includes(g);
   add('Frontal shield',front?-EXCHANGE.frontalShield:0);add('Brace',target.braced?-EXCHANGE.brace:0);
   const high=groundHeight(grid,t.x,t.z)>groundHeight(grid,a.x,a.z);
   const covered=ranged&&terrainCover(world,a,t),wall=wallBetween(world.map,a,t)&&(!ranged||!world.fortifications||covered);
-  add('Terrain protection',wall?-EXCHANGE.wall:high?-EXCHANGE.high:covered?-EXCHANGE.cover:0);
+  // Named by what gives it: a curtain, a rampart's breastwork (as 0.38's wall tile), higher ground or other cover.
+  const rampart=!wall&&behindBreastwork(world,t,a);
+  if(wall)add('Behind the wall',-EXCHANGE.wall);else if(rampart)add('Behind the rampart',-STRUCTURES.rampart.squad);
+  else if(high)add('Higher ground',-EXCHANGE.high);else if(covered)add('Behind cover',-EXCHANGE.cover);
   add('Height advantage',ranged&&groundHeight(grid,a.x,a.z)>groundHeight(grid,t.x,t.z)?EXCHANGE.heightRanged:0);
   const neighbour=formation=>squadsOf(world).some(o=>o!==target&&fielded(world,o)&&alliedSides(o.side,target.side)&&o.formation===formation&&
     span(o.x-target.x,o.z-target.z)<=EXCHANGE.neighbour);
