@@ -146,7 +146,7 @@ export class BattleStage{
   }
   *build(canvas,encounter,
     {onPick=()=>{},onHover=()=>{},quality='balanced',adaptiveResolution=true,reducedMotion=false,motionSpeed=1,keyboardMode='orbit',onFrame=()=>{},chapter,rank,
-      stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false,input=true}={}){
+      stratagem,weather,timeOfDay,commendations,figureStyle='sculpted',ceremony=null,battleRemains=true,debugShaders=false,input=true,live=false}={}){
     try{
     this.chapter=chapter??Number(/^ch(\d+)/.exec(encounter.id)?.[1]??1);this.rank=rank;this.stratagem=stratagem??encounter.stratagem??null;
     this.commendations=commendations??{};
@@ -154,6 +154,8 @@ export class BattleStage{
       {chapter:this.chapter,stratagem:this.stratagem,weather:weather??encounter.weather,timeOfDay:timeOfDay??encounter.timeOfDay});
     // input:false leaves the pointer and keys to the page (the real-time arena binds its own).
     this.keyboardMode=keyboardMode;this.inputEnabled=input!==false;this.onFrame=onFrame;this.samples=[];this.paused=false;this.canvas=canvas;
+    // A real-time field (live) is drawn from its world, not the turns' overlays (stage-overlays.js).
+    this.liveField=!!live;
     this.encounter=encounter;this.onPick=onPick;
     this.onHover=onHover;this.quality=quality;this.builtQuality=quality;this.reducedMotion=reducedMotion;this.motionSpeed=Number(motionSpeed)>1?2:1;
     this.figureStyle=FIGURE_STYLES.includes(figureStyle)?figureStyle:'sculpted';this.ceremony=ceremony;this.paintedLight=paintedLight(this.profile);

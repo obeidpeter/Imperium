@@ -5,6 +5,7 @@ import {createFoliagePixels,FOLIAGE_ATLAS_URL} from './environment-foliage.js';
 import {IMAGE_DECODER} from './decoded-images.js';
 import {groundBiome} from '../ui/ground-layers.js';
 import {createTerrainUniforms,installTerrainMaterial} from './terrain-material.js';
+import {normaliseModelMaterial} from './model-materials.js';
 
 // Local neutral colour maps by surface kind, and the images a scene samples
 // (the battle preloader decodes them before the stage is built).
@@ -110,6 +111,9 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.gravel,'stone',finish);
+  // Surfaces without a finish of their own (cloth, rope, ironwork, roof tiles...)
+  // share the imported art's opaque program (model-materials.js), looking as before.
+  for(const key of ['cloth','rope','iron','terra','red','charcoal','ivory','inlay','brass'])normaliseModelMaterial(m[key]);
   // Decoded images attach at once (the battle preloader decodes them first, so
   // materials compile with their maps); one still decoding attaches on arrival.
   // Procedural surfaces remain usable on failure.

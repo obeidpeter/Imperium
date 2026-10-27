@@ -77,7 +77,8 @@ export function arrowLanding(from,to,index,seed=''){
 export function createBattleRemains(scene,{quality='balanced',ground=null,heightAt=()=>0,bounds={minX:-12,maxX:12,minZ:-12,maxZ:12},visible=true}={}){
   const group=new T.Group();group.name='battle remains';group.userData.cameraOcclusion=false;group.visible=visible;scene.add(group);
   const limit=REMAINS_LIMIT[quality]??REMAINS_LIMIT.balanced,kinds=new Map(),bodies=[],laid=new Set(),owned=new Set();
-  const bodyMaterial=new T.MeshStandardMaterial({name:'fallen figures',vertexColors:true,roughness:.96,metalness:0});owned.add(bodyMaterial);
+  // Drawn from both sides like the spent arrows among them, so the two share a program.
+  const bodyMaterial=new T.MeshStandardMaterial({name:'fallen figures',vertexColors:true,roughness:.96,metalness:0,side:T.DoubleSide});owned.add(bodyMaterial);
   const matrix=new T.Matrix4(),position=new T.Vector3(),quaternion=new T.Quaternion(),scale=new T.Vector3(1,1,1),UP=new T.Vector3(0,1,0),tilt=new T.Quaternion(),turn=new T.Quaternion(),side=new T.Vector3();
   let disposed=false,on=visible,now=0;const treads=new Map();
   // One instanced batch per figure appearance (or per painted unit).

@@ -160,10 +160,13 @@ export const stagePreparation={
   },
   // One hidden example of each thing drawn only later in a battle, so its
   // program compiles with the rest and stays alive until the stage goes.
+  // A real-time field never draws the turns' fieldwork, beacons or links.
   createWarmup(){
     const group=new T.Group();group.name='shader warm-up';group.visible=false;
-    for(const type of ['stakes','rampart','brazier'])group.add(this.fieldworkGroup(type));
-    group.add(this.beaconGroup(),this.tacticalLine('#ffffff'));
+    if(!this.liveField){
+      for(const type of ['stakes','rampart','brazier'])group.add(this.fieldworkGroup(type));
+      group.add(this.beaconGroup(),this.tacticalLine('#ffffff'));
+    }
     this.scene.add(group);return group;
   },
   fallenKinds(){

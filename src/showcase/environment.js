@@ -215,10 +215,13 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(let f=0;f<5;f++){const angle=f*1.256+i,dx=Math.cos(angle),dz=Math.sin(angle);for(let j=1;j<8;j++)for(const side of [-1,1]){const t=j/8,reach=t*.85,s=.30*(1-t*.8);instance('fern leaves',leafGeometry,m.leaves,[x+dx*reach+dz*side*s*.2,base+Math.sin(t*2.5)*.47,z+dz*reach-dx*side*s*.2],[s*1.6,s*2,s],[.4,angle+side*.9,.4],new THREE.Color(.50,.70,.42));}}
   }
   yield;
+  // Every batch has an instance colour (white where an item has none), so a
+  // material's instanced batches, tinted or not, share one shader program.
+  const white=new THREE.Color(1,1,1);
   for(const [name,batch]of batches){
     yield;
     const mesh=new THREE.InstancedMesh(batch.geometry,batch.material,batch.items.length);mesh.name=name;mesh.castShadow=!['meadow grass','dry meadow grass','fern leaves'].includes(name)&&!perf;mesh.receiveShadow=true;
-    batch.items.forEach((item,i)=>{dummy.position.set(...item.position);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);if(item.color)mesh.setColorAt(i,item.color);});mesh.instanceMatrix.needsUpdate=true;if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh);
+    batch.items.forEach((item,i)=>{dummy.position.set(...item.position);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,item.color??white);});mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh);
   }
   yield;
 

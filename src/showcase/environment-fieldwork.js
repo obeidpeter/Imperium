@@ -2,6 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {createMasonryBlockGeometry} from './environment-primitives.js';
 import {finishEnvironmentMaterial} from './environment-surface-shaders.js';
 import {regionalEnvironment} from './environment-regions.js';
+import {addNeutralMaps} from './model-materials.js';
 
 /** Original small fieldwork. Opaque detail merges by material and never
  * participates in picking. World-space grain survives transformed batching. */
@@ -9,8 +10,9 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   const region=regionalEnvironment(chapter),segments=quality==='performance'?8:12;
   const own=g=>(geometries.add(g),g);
   // finish: the stage lights field objects as it lights the scenery around them.
+  // Neutral colour and normal maps: the program of the textured stone and timber.
   const material=(name,color,surface,metalness=0)=>{
-    const m=new T.MeshStandardMaterial({color,roughness:metalness?.61:.88,metalness});
+    const m=addNeutralMaps(new T.MeshStandardMaterial({color,roughness:metalness?.61:.88,metalness}),['map','normalMap']);
     m.name=`fieldwork ${name}`;finishEnvironmentMaterial(m,surface,{arid:[5,6,9].includes(chapter),wet:[2,8].includes(chapter)});finish?.(m);materials.add(m);return m;
   };
   const m={

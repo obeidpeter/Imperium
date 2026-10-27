@@ -4,6 +4,7 @@ import {actorPose,horsePose,groundHumanPose,groundHorsePose,blendActorPose,blend
 import {actorKit} from './actor-kit.js';
 import {acquireActorSurface,releaseActorSurface} from './actor-materials.js';
 import {finishActorMaterial} from './actor-surface.js';
+import {addNeutralMaps} from './model-materials.js';
 import {createHorse} from './actor-horse.js';
 import {bindActorSurfaces,createClothRig} from './actor-skin.js';
 import {actorIdentity} from './actor-identity.js';
@@ -392,7 +393,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   // draw per rigid joint keeps the real role silhouette while dropping tiny
   // rivets, fingers and surface sampling that cannot be read at this distance.
   let farMeshes=[],nearMeshes=[];const overviewMaterial=material(0xffffff,{vertexColors:true,roughness:.86,metalness:.08,side:T.DoubleSide});installCloudShadows(overviewMaterial);
-  overviewMaterial.name='overview role colors';
+  overviewMaterial.name='overview role colors';overviewMaterial.userData.overview=true;
   function overview(parent){
     for(const child of [...parent.children])if(child.isGroup||child.isBone)overview(child);
     const all=parent.children.filter(o=>o.isMesh&&o.material.isMeshStandardMaterial);if(!all.length)return;
@@ -438,7 +439,18 @@ function createActorRig(unit={},options={},reuseGroup=null){
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
   if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,geometries,materials});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?IDENTITY_HEAD_BODY:body.id;group.userData.actor.persistentIdentity=!!identityBody;}
   const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);
-  for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial)finishActorMaterial(m);
+  // An opaque near surface missing some of the textured surfaces' four maps (eyes, lips,
+  // brows, trim, a complexion without relief) takes neutral ones, so it shares their
+  // program (model-materials.js) and looks as before. Not a bump map's only surface:
+  // a normal map, even a flat one, would replace its relief.
+  const opaque=m=>!m.transparent&&!m.alphaHash&&!(m.alphaTest>0)&&!m.alphaToCoverage;
+  for(const m of materials)if(m.isMeshStandardMaterial&&!m.isMeshPhysicalMaterial&&!m.userData.overview&&opaque(m)&&(m.normalMap||!m.bumpMap))
+    addNeutralMaps(m,['map','bumpMap','normalMap','roughnessMap']);
+  // The overview's own clones (far detail) are lit as the overview material is: cloud
+  // shadows, no near finish. A clone keeps its source's flags but not its shader hooks.
+  for(const m of materials)if(m.isMeshStandardMaterial&&m!==overviewMaterial){
+    if(m.userData.overview){delete m.userData.cloudShadows;installCloudShadows(m);}else finishActorMaterial(m);
+  }
   const planting=createFootPlanting(),ankleRotation=new T.Quaternion(),footRotation=new T.Quaternion(),footEuler=new T.Euler(0,0,0,'ZXY'),tipPosition=new T.Vector3(),shoulderPosition=new T.Vector3();
   let disposed=false,far=false,lastMotion=null,lastPose=null,transition=null,previousYaw=null,pivot=null,lastHorsePose=null,horseTransition=null,lastHorseMotion=null;
   const blendable=p=>({...p,leftArm:[...p.leftArm],rightArm:[...p.rightArm],feet:p.feet.map(f=>({...f}))});
