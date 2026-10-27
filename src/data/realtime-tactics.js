@@ -16,8 +16,11 @@ export const TACTICAL_IDENTITIES=freeze([
   freeze({chapter:12,id:'accession-reserve',label:'Keep a reserve for the claimant’s final commitment',pressure:'reserve',bias:'late-reserve',support:'cavalry'})
 ]);
 export const tacticalIdentity=chapter=>TACTICAL_IDENTITIES[Math.max(1,Math.min(12,Math.floor(chapter)||1))-1];
+// nearBest/bestLean (squad-ai.js planDoctrine): strong evidence (3 points or more) decides the
+// plan; plans within nearBest points of the best also enter the ai-stream draw, the best at
+// bestLean times its weight, so a mild preference leans the draw instead of fixing it.
 export const ADAPTIVE_TACTICS=freeze({senseRange:55,maxWatchers:8,maxTargets:16,flankProbe:9,flankSteps:5,
-  weakStrength:.68,shakenMorale:40,supportedRange:10,objectiveRange:14});
+  weakStrength:.68,shakenMorale:40,supportedRange:10,objectiveRange:14,nearBest:1,bestLean:2});
 export const MOUNTED_PACE=freeze({walk:1.35,run:1.55,rough:1.05});
 
 // Substitute a detail for one existing non-archer ally, preserving the original

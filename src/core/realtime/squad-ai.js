@@ -8,7 +8,7 @@ import {pickWeighted} from './rng-streams.js';
 import {lying,noticeOf,unseen} from './squad-sight.js';
 import {smokeBetween,terrainCover} from './sight.js';
 import {HIDDEN_BANDS} from '../../data/realtime-variety.js';
-import {tacticalIdentity} from '../../data/realtime-tactics.js';
+import {ADAPTIVE_TACTICS,tacticalIdentity} from '../../data/realtime-tactics.js';
 import {observeBattleSituation,scoreEnemyPlans} from './adaptive-doctrine.js';
 
 // How squads decide (§3.7, §3.8, §3.10): ours carry out the soldier's order,
@@ -205,8 +205,9 @@ export function planDoctrine(world){
   if(!previous||next-previous.since>=(kinds[previous.id]?.hold??ENEMY_PLANS.hold)){
     const favour=ENEMY_FACTIONS[enemies[0].faction]?.plans??{};
     const pool=(ENEMY_PLANS.weights[def.doctrine]??ENEMY_PLANS.weights.approach).filter(([id])=>!previous||!kinds[id].opening).map(([id,w])=>[id,w*(favour[id]??1)]);
-    const candidates=scoreEnemyPlans(world,pool,situation),best=Math.max(...candidates.map(p=>p.score)),ties=candidates.filter(p=>p.score===best);
-    const id=pickWeighted(world.rng,'ai',ties.map(p=>[p.id,p.weight]));
+    const candidates=scoreEnemyPlans(world,pool,situation),best=Math.max(...candidates.map(p=>p.score));
+    const near=candidates.filter(p=>p.score>=best-ADAPTIVE_TACTICS.nearBest).map(p=>[p.id,p.weight*(p.score===best?ADAPTIVE_TACTICS.bestLean:1)]);
+    const id=pickWeighted(world.rng,'ai',near);
     plan={id,since:next,reason:candidates.find(p=>p.id===id).reason};
     if(previous&&previous.id!==plan.id)emit(world,{kind:'enemy-plan',plan:plan.id});
   }
