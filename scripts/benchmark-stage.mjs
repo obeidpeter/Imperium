@@ -20,6 +20,8 @@
 // as PNGs (<scene>-<quality>-<view>.png): fixed cameras for before-and-after renders.
 // --program-details includes read-only shader names/cache keys in the report;
 // it does not change any assertions, ceilings or renderer settings.
+// --material-details lists, for each program the scene's meshes use, the
+// materials it draws (name, type, maps) and where they hang; read-only too.
 //   PLAYWRIGHT_MODULE=/absolute/playwright/index.js node scripts/benchmark-stage.mjs
 import http from 'node:http';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -105,6 +107,18 @@ async function run(browser,base,id,quality){
   const phases=[],now=()=>tab.evaluate(()=>performance.now()),programs=()=>tab.evaluate(()=>(controller.stage?.renderer.info.programs??[]).map(p=>({key:p.cacheKey,name:p.name}))),stats=()=>tab.evaluate(()=>{const s=controller.stage,r=s?.renderer,c=document.getElementById('battle-board')??s?.canvas,v=s?.stats?.()??{};
     return {programs:r?.info.programs?.length??null,calls:v.calls??null,triangles:v.triangles??null,textures:v.textures??null,geometries:v.geometries??null,actorAssets:c?.dataset.actorAssets??null,generatedBodies:Number(c?.dataset.generatedBodies??0),sceneryModels:c?.dataset.sceneryModels??null,cameraView:v.cameraView??null};});
   const phase=async(name,fn)=>{const start=await now();await fn();const end=await now();phases.push({name,start,end,...await stats()});};
+  // Each program of the scene's meshes with the materials drawn by it and where they hang
+  // (--material-details): which surfaces share a program and which compile their own.
+  const programMaterials=()=>tab.evaluate(()=>{
+    const s=controller.stage,r=s.renderer,byKey=new Map(),MAPS=['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap','alphaMap'];
+    const owner=o=>{const names=[];for(let p=o;p;p=p.parent)if(p.name)names.unshift(p.name);return names.slice(0,3).join(' / ');};
+    s.scene.traverse(o=>{for(const m of [o.material].flat().filter(Boolean)){
+      const program=r.properties.get(m)?.currentProgram,key=program?.cacheKey??'not compiled';
+      const entry=byKey.get(key)??{name:program?.name??'',key,materials:new Map()};byKey.set(key,entry);
+      entry.materials.set(m.uuid,{name:m.name,type:m.type,maps:MAPS.filter(k=>m[k]),alphaTest:m.alphaTest,transparent:m.transparent,vertexColors:m.vertexColors,owner:owner(o)});
+    }});
+    return [...byKey.values()].map(e=>({name:e.name,key:e.key,materials:[...e.materials.values()]}));
+  });
   const capture=async view=>{const out=resolve(repo,imagesPath,`${id}-${quality}-${view}.png`);await mkdir(dirname(out),{recursive:true});await tab.locator('#battle-board').screenshot({path:out});};
   try{
     await tab.goto(`${base}probe--${id}--${quality}.html`);
@@ -141,7 +155,8 @@ async function run(browser,base,id,quality){
       programsCompiledAfterShown:late.length,lateProgramNames:late,
       // Programs the first frame had to compile itself: variants the warm-up missed.
       firstFramePrograms:raw.firstFramePrograms,parallelShaderCompile:raw.parallelShaderCompile,device:raw.device,
-      ...(process.argv.includes('--program-details')?{programDetails:await programs()}:{}),errors:[...errors,...(raw.error?[raw.error]:[])]};
+      ...(process.argv.includes('--program-details')?{programDetails:await programs()}:{}),
+      ...(process.argv.includes('--material-details')?{materialDetails:await programMaterials()}:{}),errors:[...errors,...(raw.error?[raw.error]:[])]};
   }finally{await context.close();}
 }
 
