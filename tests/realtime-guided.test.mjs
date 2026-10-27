@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as G from '../src/core/game.js';
 import {realtimeLesson} from '../src/ui/realtime-lessons.js';
+import {missionReadout} from '../src/ui/realtime-mission-readout.js';
 import {keymapFrom} from '../src/ui/action-map.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 
@@ -43,6 +44,12 @@ test('patrol and chamber hints remain available after optional exercises and squ
   assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Place before advancing');
   assert.equal(JSON.stringify(fw),before,'the squad lesson only reads the world');
   fw.tick=200;assert.equal(realtimeLesson({state:ferry,world:fw,seen:{}}).title,'Place before advancing','a timer alone never completes an exercise');
+  // With the exercises done or skipped, the battle's own tactic opens it until the first order.
+  const learnt={completed:['deployment','orders'],dismissed:['engineering']};fw.tick=0;
+  const tip=realtimeLesson({state:ferry,world:fw,seen:{},progress:learnt});
+  assert.equal(tip.title,'Screen, then flank');assert.equal(tip.body,missionReadout(fw).tactic);assert.match(tip.body,/flank/);
+  fw.tick=200;assert.equal(realtimeLesson({state:ferry,world:fw,seen:{},progress:learnt}),null,'after the first round the order strip takes over');
+  assert.equal(JSON.stringify({...fw,tick:0}),before,'the tactic tip only reads the world');
 });
 
 test('rescue teaching follows treatment, carrying and extraction instead of stopping after the heal',()=>{

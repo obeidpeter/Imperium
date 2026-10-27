@@ -4,6 +4,8 @@ import * as G from '../src/core/game.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {createEncounterWorld} from '../src/core/realtime/campaign-encounter.js';
 import {applyCampaignSupport} from '../src/core/realtime/campaign-support.js';
+import {blowSetup} from '../src/core/realtime/combat.js';
+import {workFortification} from '../src/core/realtime/fortifications.js';
 import {commitFieldReport,delegateRecordBonus,fieldReportText,finaleCareerSupport,validateFieldReports} from '../src/core/campaign-consequences.js';
 import {FINALE_RESERVE} from '../src/data/realtime-rules.js';
 import {validateWorld} from '../src/core/realtime/validate.js';
@@ -53,6 +55,22 @@ test('recovered engineers offer one following field action of support, including
   assert.equal(G.realtimeWorld(s).engineering,true);const start=worldHash(G.realtimeWorld(s));
   assert.equal(worldHash(G.realtimeWorld(G.deserialize(G.serialize(s)))),start);
   assert.ok(G.retry(s).ok);assert.equal(worldHash(G.realtimeWorld(s)),start);
+});
+
+test('recovered engineers speed the next field action’s work but add none of the Engineering approach’s defence',()=>{
+  const supported=camp('ch5-wall'),plain=camp('ch5-wall');
+  supported.progression.fieldReports=[{version:1,id:'ch5-mine',works:2,engineering:2,withdrawals:0,opportunity:true,consumedBy:null}];
+  for(const s of [supported,plain])assert.ok(G.startEncounter(s,{controls:'realtime'}).ok);
+  const [ws,wp]=[supported,plain].map(s=>G.realtimeWorld(s));
+  assert.equal(ws.engineering,true);assert.notEqual(ws.approach,'breach');
+  const blow=w=>{const enemy=w.actors.find(a=>a.side==='enemy'&&a.alive&&!a.hidden),man=w.actors.find(a=>a.alive&&w.squads.some(q=>q.side==='ally'&&q.id===a.squadId));
+    return blowSetup(w,enemy,man);};
+  const [bs,bp]=[ws,wp].map(blow);
+  assert.equal(bs.defence,bp.defence,'earned support adds no defence');assert.ok(!bs.mods.some(m=>m.label==='Engineers’ works'));
+  // A worker far from the engineer detail: the support alone completes a work in one action.
+  const worker={id:'hero',x:-1000,z:-1000,effects:{}},[ms,mp]=[ws,wp].map(w=>w.objects.find(o=>o.kind==='countermine'));
+  workFortification(ws,worker,ms);workFortification(wp,worker,mp);
+  assert.equal(ms.progress,2);assert.equal(ms.done,true);assert.equal(mp.progress,1);assert.equal(mp.done,false);
 });
 
 test('representatives value relevant committed service and the final reserve reductions have independent monotonic requirements',()=>{

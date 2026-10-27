@@ -10,6 +10,7 @@ import {queueCommand,step,roundOf} from '../src/core/realtime/simulation.js';
 import {actorById,distanceBetween,liftable} from '../src/core/realtime/abilities.js';
 import {derivedValues} from '../src/core/realtime/combat.js';
 import {span} from '../src/core/realtime/navigation.js';
+import {clone} from '../src/core/shared.js';
 import {playEncounter} from './autoplay.mjs';
 import {protectCoalition} from './command-autoplay.mjs';
 import {controlsFor} from '../src/core/controls-model.js';
@@ -188,6 +189,22 @@ export function companionWatch(){
 
 // From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere. A lost encounter is
 // retried from its checkpoint (Retry, a legal command) up to `retries` times before the run stops.
+// A Contest is played by the 0.38 autoplay. Protecting the coalition against the rival's reply
+// (command-autoplay.mjs) wins councils the record policy loses, and the reverse: Standard's
+// Chapter VII council on seed 275 needs the protection, Veteran's is lost with it on every seed.
+// The bot reads the debate ahead on a copy of the chronicle, as a player weighs the forecasts,
+// and plays the first policy that wins; the copy never touches the chronicle or its generator.
+// When none wins (Veteran's Chapter VII council on a few seeds, by a vote), it takes the game's
+// own recovery after the lost vote: the patron-backed re-run, at its cost in supplies and debt.
+const protect=s=>{if(s.encounter.kind==='contest')protectCoalition(s,(target,name,...args)=>{const r=G[name](target,...args);if(!r.ok)throw Error(r.message);return r;});};
+const CONTEST_POLICIES=[{beforeTurn:protect},{}];
+const contestPolicy=state=>CONTEST_POLICIES.find(policy=>playEncounter(clone(state),policy).status==='won')??CONTEST_POLICIES[0];
+function playTurnEncounter(state){
+  if(state.encounter.kind!=='contest')return playEncounter(state);
+  const summary=playEncounter(state,contestPolicy(state));
+  if(summary.status!=='lost'||state.encounter.fallback||!G.acceptFallback(state).ok)return summary;
+  return {...playEncounter(state,contestPolicy(state)),fallback:true};
+}
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
   ready=undefined,onEncounter=null,play=playRealtime,retries=0}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty}),encounters=[];let guard=0;
@@ -207,9 +224,7 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
     }else if(state.phase==='encounter'){
       let summary=null;
       for(let tries=1;;tries++){
-        summary={...(G.isRealtime(state)?play(state,{attempt:tries}):playEncounter(state,{beforeTurn:s=>{
-          if(s.encounter.kind==='contest')protectCoalition(s,(target,name,...args)=>{const r=G[name](target,...args);if(!r.ok)throw Error(r.message);return r;});
-        }})),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
+        summary={...(G.isRealtime(state)?play(state,{attempt:tries}):playTurnEncounter(state)),tries};encounters.push({...summary,world:undefined});onEncounter?.(state,summary);
         if(state.encounter.status==='won'||tries>retries)break;
         const r=G.retry(state);if(!r.ok)throw new Error(r.message);
       }

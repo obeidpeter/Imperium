@@ -1,5 +1,6 @@
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
 import {missionReadout} from './realtime-mission-readout.js';
+import {TIME} from '../data/realtime-rules.js';
 
 export const CONTEXT_LESSONS=Object.freeze(['deployment','orders','engineering','commitments']);
 export function lessonProgress(value){
@@ -88,6 +89,10 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
       body:`${readout.next}${wounded&&!treatment?` ${k('pause')} pauses while you plan; healing alone does not keep him safe.`:''}`};
   }
   const contextual=contextualLesson(state,world,kind,seen,progress);if(contextual)return contextual;
+  // Once the exercises are done or skipped, the battle's own tactic again opens each later
+  // battle with a company, until its first order. The order-status strip then takes over.
+  if(state.chapter>=4&&(world.squads??[]).some(q=>q.side!=='enemy')&&world.tick<TIME.roundTicks&&!(world.log??[]).some(l=>l.kind==='order'))
+    return {step:'COMMAND',title:'Screen, then flank',body:missionReadout(world,{keymap}).tactic};
   if(state.chapter!==1)return null;
   const hero=world.actors.find(a=>a.id===world.heroId);
   if(world.mission?.mode==='training'){
