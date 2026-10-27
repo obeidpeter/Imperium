@@ -45,6 +45,11 @@ export const WORLD_CATALOG=Object.freeze({
   'italian-marching-kit':asset('kit',['assets/models/scenery/italian-marching-kit.glb'],[6,7]),
   'provincial-civic-kit':asset('kit',['assets/models/scenery/provincial-civic-kit.glb'],[10]),
   'roman-monumental-kit':asset('kit',['assets/models/scenery/roman-monumental-kit.glb'],[9,11,12]),
+  // The field's own structures, fitted to its cells (worlds and gameplay plan, release 4):
+  // one kit for each curtain material of the chapters whose battles are fortified.
+  'board-kit-timber':asset('kit',['assets/models/scenery/board-kit-timber.glb'],[4]),
+  'board-kit-mudbrick':asset('kit',['assets/models/scenery/board-kit-mudbrick.glb'],[5,6,9]),
+  'board-kit-stone':asset('kit',['assets/models/scenery/board-kit-stone.glb'],[8,12]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),

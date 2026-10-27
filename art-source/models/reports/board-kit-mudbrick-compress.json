@@ -1,0 +1,151 @@
+{
+  "input": "art-source/models/processed/board-kit-mudbrick.glb",
+  "output": "assets/models/scenery/board-kit-mudbrick.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 923524,
+    "gzipBytes": 586731,
+    "sha256": "e91d13268260642646b4951d441a39ec2df82c7cee64bbbc1d00af3a8a70aa1b"
+  },
+  "after": {
+    "bytes": 332432,
+    "gzipBytes": 167404,
+    "sha256": "7dcc3cd040e250698f9994e3acc3f18cbd9ad2cc9d6a6b173fea5fe383d0389f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4920,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 141597
+      },
+      "bytes": 34328,
+      "psnr": 26.404
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 140403
+      },
+      "bytes": 22790,
+      "psnr": 42.242
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 35516
+      },
+      "bytes": 7854,
+      "psnr": 45.369
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 5506
+      },
+      "bytes": 4135,
+      "psnr": 27.466
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 87503
+      },
+      "bytes": 12350,
+      "psnr": 42.79
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 5387
+      },
+      "bytes": 2995,
+      "psnr": 44.124
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 52425
+      },
+      "bytes": 9102,
+      "psnr": 42.227
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 45272
+      },
+      "bytes": 7512,
+      "psnr": 43.94
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 21917
+      },
+      "bytes": 3299,
+      "psnr": 46.108
+    }
+  ]
+}
