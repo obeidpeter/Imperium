@@ -77,19 +77,20 @@ export function squadUnit(world,squad){
     crowd:Math.max(0,squad.maxMen-1),squad:true};
 }
 // The field objects as the stage's field features draw them (battlefield-features.js), on the
-// fine map's tiles: a shut gate is its gate and timber across the rest of its line; a
-// footbridge is a section on each tile of its crossing.
+// fine map's tiles: a shut gate is its gate and timber across the rest of its line, and a
+// breached one rubble on each of its tiles; a footbridge or a breach is a section on each
+// tile of its crossing. Each carries its line (structure-registry.js) and a gate who holds it.
 function stageField(world){
   const f=world.field;if(!f)return null;const tile=v=>Math.floor(v/2.5),objects=[];
   for(const o of world.objects??[]){
     if(!o.field)continue;const base={kind:o.kind,label:o.name,state:o.state,orientation:o.orientation,progress:o.progress,required:o.required,
-      ...(o.state==='burning'?{rounds:Math.max(1,o.rounds)}:{})};
+      ...(o.state==='burning'?{rounds:Math.max(1,o.rounds)}:{}),...(o.fortified&&o.kind==='gate'?{holder:o.holder??null,integrity:o.integrity}:{})};
     if(o.cells?.length){
       const mid=Math.floor(o.cells.length/2);
       o.cells.forEach(([x,y],i)=>{
-        if(o.kind==='bridge'||o.kind==='breach')objects.push({...base,id:`${o.id}-${i}`,x,y,...(i===mid?{}:{section:true})});
-        else if(i===mid)objects.push({...base,id:o.id,x,y});
-        else if(o.state==='closed')objects.push({id:`${o.id}-timber-${i}`,kind:'barricade',label:o.name,state:'intact',x,y});
+        if(o.kind==='bridge'||o.kind==='breach'||o.kind==='gate'&&o.state==='breached')objects.push({...base,id:`${o.id}-${i}`,x,y,line:o.id,...(i===mid?{}:{section:true})});
+        else if(i===mid)objects.push({...base,id:o.id,x,y,line:o.id});
+        else if(o.state==='closed')objects.push({id:`${o.id}-timber-${i}`,kind:'barricade',label:o.name,state:'intact',x,y,line:o.id,gatePanel:true});
       });
     }else objects.push({...base,id:o.id,x:tile(o.x),y:tile(o.z)});
   }

@@ -8,7 +8,8 @@ import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
-import {createSceneryModels,sceneryResidency} from './scenery-models.js';
+import {acquireSceneryModel,createSceneryModels,sceneryResidency} from './scenery-models.js';
+import {boardKitUrl} from './board-kit.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,installGroundMist,landscapeFogRange} from './atmosphere.js';
 import {installBakedOcclusion,SCENE_OCCLUSION} from './environment-baked-occlusion.js';
@@ -199,7 +200,8 @@ export class BattleStage{
     this.rim.position.set(15,6,9);this.scene.add(this.rim);this.scene.add(this.rim.target);this.rimDirection=new T.Vector3();
     this.fill=new T.DirectionalLight(readability.fillColor,readability.fill);this.fill.castShadow=false;
     this.fill.position.set(0,8,12);this.scene.add(this.fill,this.fill.target);
-    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter});yield;
+    this.takeBoardKit(encounter,quality);
+    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter,boardKit:this.boardKit?.scene??null});yield;
     this.rebuildSceneryModels();yield;
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
     this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();
@@ -320,12 +322,25 @@ export class BattleStage{
   setAudio(enabled,volume){this.sound.setEnabled(enabled,volume);campaignSoundscape().configure({audio:enabled,audioVolume:volume});}
   setPaused(value){this.paused=!!value;if(value){this.finishMotion();this.sound.stop();}}
   setMotionSpeed(speed){this.motionSpeed=Number(speed)>1?2:1;if(this.animation)this.animation.scale=Math.min(this.animation.scale,1/this.motionSpeed);}
+  // The board kit (board-kit.js) draws the field's structures when its model is already
+  // loaded as the world is built (the loading veil preloads it), and never on Performance.
+  // The choice holds until the world is rebuilt: kit pieces and their code-built stand-ins
+  // never mix. The lease keeps the model while this stage stands.
+  takeBoardKit(encounter,quality){
+    this.boardKit?.release();this.boardKit=null;
+    const url=quality==='performance'?null:boardKitUrl(encounter);if(!url)return;
+    const lease=acquireSceneryModel(url);if(lease.scene)this.boardKit=lease;else lease.release();
+  }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked
     // occlusion, and (sync) its camera cutaway. They then share its shaders.
+    // The board kit's materials outlive the stage (its model is cached), so they
+    // read the current bake as the generated scenery's do (SCENE_OCCLUSION).
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
+    const kitFinish=material=>{installCloudShadows(material);installBakedOcclusion(material,SCENE_OCCLUSION);};
     this.fieldFeatures?.dispose();
-    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.worldQuality,finish});
+    this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.worldQuality,finish,kitFinish,
+      boardKit:this.boardKit?.scene??null});
   }
   // The tier the world (ground, scenery, sky, lighting, figures and the finishing
   // pass) was built at. It can lag behind the live tier below until a rebuild.
@@ -349,7 +364,8 @@ export class BattleStage{
     if(world&&this.worldQuality!==this.quality&&this.environment){
       this.builtQuality=this.quality;
       this.sceneryOcclusion?.dispose();this.environment.dispose();
-      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter});this.rebuildFieldFeatures();
+      this.takeBoardKit(this.encounter,this.worldQuality);
+      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter,boardKit:this.boardKit?.scene??null});this.rebuildFieldFeatures();
       this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
       this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();
       this.sky=createSky(this.scene,this.profile,{quality:this.worldQuality,reducedMotion:this.reducedMotion});this.lighting.dispose();
@@ -509,7 +525,7 @@ export class BattleStage{
       }
       if(frame.complete){this.finishMotion(false);frame=null;}
     }
-    this.environment.update(this.reducedMotion?0:this.elapsed);this.fieldFeatures?.update(this.elapsed,this.reducedMotion);
+    this.environment.update(this.reducedMotion?0:this.elapsed);this.fieldFeatures?.update(this.elapsed,this.reducedMotion,this.camera.position);
     for(const unit of this.visibleUnits){
       // A live figure's place and pose come from the real-time world (live-figures.js), not a turn's timeline.
       const lp=this.live?.pose(unit,{time:this.elapsed,dt,reducedMotion:this.reducedMotion});
@@ -788,7 +804,7 @@ export class BattleStage{
   dispose(){
     if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();
     this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());
-    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.environment.dispose();
+    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.boardKit?.release();this.boardKit=null;this.environment.dispose();
     this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();
     this.combat?.dispose();this.shafts?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();
     this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();

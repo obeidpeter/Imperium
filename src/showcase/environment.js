@@ -28,6 +28,8 @@ import {groundTextures} from './ground-textures.js';
 import {groundBiome} from '../ui/ground-layers.js';
 import {installCloudShadows} from './atmosphere.js';
 import {runSteps} from './build-steps.js';
+import {boardKitPieces} from './structure-registry.js';
+import {createBoardKitPieces} from './board-kit.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,distantRiverCentre,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -36,15 +38,18 @@ export {gridToWorld} from './environment-layout.js';
 export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
 // The same build in steps: it yields wherever a time-sliced build may give the
 // page a turn (build-steps.js); each step is a small part of the world.
-export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter}={}){
+export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
   const library=createEnvironmentMaterials({loadTextures,profile,quality}),m=library.materials,p=createPropFactory(m,geometries,{quality}),height=chapterFivePilotHeight(createGroundHeight(encounter,tileSize,{profile}),encounter,tileSize);
   const current=waterCurrentDirection(encounter);library.waterCurrent.value.set(current.x,current.z);
   const terrainSnapshot=encounter.terrain.map(row=>row.map(t=>typeof t==='string'?t:{...t}));
+  // A real-time battle's structures: its fortification record (full-height curtains, rampart
+  // breastworks). With the board kit's loaded model (board-kit.js) its pieces draw them instead.
   const e={id:encounter.id,kind:encounter.kind,width:encounter.width,height:encounter.height,terrain:terrainSnapshot,
-    ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{})};
+    ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{}),
+    ...(encounter.fortifications?{fortifications:encounter.fortifications}:{}),...(boardKit?{boardKit:true}:{})};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const architecturalFootprints=[...getChapterFiveKitPlacements(e,{chapter:profile.chapter,tileSize}),...getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize})]
@@ -239,7 +244,12 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   yield;
   // Sky and contact occlusion baked from the finished static scene, sampled by
   // every environment surface on every tier (the horizon and panorama follow).
-  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,sun:profile.sunPosition,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean))});
+  // The board kit's pieces stand with the field's objects, not here. Its lasting ones
+  // (curtains, towers, breastworks) are placed once more in a passing group, so they
+  // shade the ground as the code-built works do; gates and bridges change state.
+  const kitShade=boardKit&&e.fortifications?new THREE.Group():null,kitPieces=kitShade&&createBoardKitPieces(kitShade,boardKit,boardKitPieces(e,{tileSize,height}));
+  const occlusion=bakeEnvironmentOcclusion(root,{groundAt:height,bounds:{minX:-halfX-6,maxX:halfX+6,minZ:-halfZ-6,maxZ:halfZ+6},quality,sun:profile.sunPosition,exclude:new Set([ground,road,river,...flames.map(f=>f.mesh)].filter(Boolean)),also:kitShade?[kitShade]:[]});
+  kitPieces?.dispose();
   yield;
   const groundSurfaces=new Set([m.ground,m.road,m.floor]),occluded=new Set();
   root.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh)return;for(const material of [o.material].flat())if(material&&!occluded.has(material)){occluded.add(material);installCloudShadows(material);if(material.userData.environmentFinish!=='water')installBakedOcclusion(material,occlusion.uniforms,{ground:groundSurfaces.has(material)||material.userData.environmentFinish==='floor'});}});

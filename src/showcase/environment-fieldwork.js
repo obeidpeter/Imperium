@@ -57,6 +57,8 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   }
   function bridge(g,state,{left=0,right=0}={}){
     const deck=x=>left+(right-left)*(x+1.35)/2.7+.08;
+    // A demolished bridge leaves its posts standing in the water.
+    if(state==='demolished'){for(const z of [-.83,.83])for(const x of [-1.16,1.16])beam(g,[x,deck(x)-1.2,z],[x,deck(x)-.1,z],.05,m.dark);return;}
     for(const z of [-.65,.65])beam(g,[-1.38,deck(-1.35)-.13,z],[1.38,deck(1.35)-.13,z],.075,m.dark);
     for(let i=0;i<14;i++){
       const x=(i-6.5)*.195;if(state==='damaged'&&i>=5&&i<=8)continue;
@@ -140,7 +142,7 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   }
   function build(parent,object,ground){
     const g=group(parent,ground.x,ground.y,ground.z);g.name=`${object.kind} · ${object.state}`;
-    if(object.kind==='gate')gate(g,object.state);
+    if(object.kind==='gate')object.state==='breached'?breach(g,'breached',object.orientation):gate(g,object.state);
     else if(object.kind==='bridge')bridge(g,object.state,{left:ground.left-ground.y,right:ground.right-ground.y});
     else if(object.kind==='barricade')barricade(g,object.state);
     else if(object.kind==='stores')stores(g,object.state);

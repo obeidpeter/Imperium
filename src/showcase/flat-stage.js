@@ -9,7 +9,7 @@ import {BLOC_STYLE} from '../ui/bloc-style.js';
 const TILE=2.5,FALL_TICKS=16,FLOAT_MS=1300;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
 const GROUND={grass:'#6d7b48',road:'#a08a68',marsh:'#56685b',sand:'#c3ab79',rock:'#77736a',ford:'#6a8b8b',river:'#466a79',high:'#8b8a5c',wall:'#5f5446',
-  stone:'#b8b09d',camp:'#8d7f5f',floor:'#a99b81',bench:'#8a6e4d',chamber:'#a99b81',rubble:'#8a7963'};
+  stone:'#b8b09d',camp:'#8d7f5f',floor:'#a99b81',bench:'#8a6e4d',chamber:'#a99b81',rubble:'#8a7963',ditch:'#4c4a37'};
 const RAISED={wall:1.1,rock:.8,high:.45};
 const SIDE={player:'#9fd3d0',ally:'#9fd3d0',neutral:'#e6dfc8',enemy:'#ef8f74'};
 const BODY={player:'#c9b27c',ally:'#b7a57a',neutral:'#cdbf9f',enemy:'#9a5a45'};
