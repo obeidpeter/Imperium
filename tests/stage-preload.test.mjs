@@ -3,18 +3,20 @@ import assert from 'node:assert/strict';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {battleFigureNeeds,figureNeeds,preloadBattleFigures} from '../src/showcase/stage-preload.js';
-import {chapterBodies} from '../src/ui/actor-body-catalog.js';
+import {chapterBodies,chapterHorses} from '../src/ui/actor-body-catalog.js';
 
 const battles=[];
 runCommandCampaign({featureEdition:35,onEncounter:s=>battles.push({chapter:s.chapter,rank:s.rank,encounter:clone(s.encounter)})});
 
-test('the battle preloader asks once for every body a battle can show, hidden reinforcements included',()=>{
+test('the battle preloader asks once for every body and horse a battle can show, hidden reinforcements included',()=>{
   assert.ok(battles.length>=20);let hidden=0;
   for(const {chapter,rank,encounter}of battles){
-    const needs=battleFigureNeeds(encounter,{chapter,rank}),bodies=[...needs.values()].filter(n=>n.kind==='body').map(n=>n.id);
+    const needs=battleFigureNeeds(encounter,{chapter,rank}),bodies=[...needs.values()].filter(n=>n.kind==='body').map(n=>n.id),horses=[...needs.values()].filter(n=>n.kind==='horse').map(n=>n.id);
     // A named man's face is made from the donor's head, which is fetched with the bodies.
     assert.deepEqual(new Set(bodies),new Set(encounter.units.flatMap(u=>{const need=figureNeeds(u,{chapter,rank});return [need.bodyId,need.headId];}).filter(Boolean)),encounter.id);
+    assert.deepEqual(new Set(horses),new Set(encounter.units.map(u=>figureNeeds(u,{chapter,rank}).horseId).filter(Boolean)),`${encounter.id}: horses`);
     assert.equal(bodies.length,new Set(bodies).size,'each body once');
+    for(const id of horses)assert.ok(chapterHorses(chapter).includes(id),`${encounter.id}: ${id} is in Chapter ${chapter}'s download`);
     // What the preloader fetches is already in the chapter's offline download.
     for(const id of bodies)assert.ok(chapterBodies(chapter).includes(id),`${encounter.id}: ${id} is in Chapter ${chapter}'s download`);
     assert.ok(needs.has('materials')&&[...needs.keys()].some(key=>key.startsWith('complexion:')),`${encounter.id}: shared surfaces and skin`);

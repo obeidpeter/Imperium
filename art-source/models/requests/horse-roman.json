@@ -1,0 +1,63 @@
+{
+  "id": "horse-roman",
+  "status": "bound on its own rest pose, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    9,
+    12
+  ],
+  "use": "The Roman cavalry horse, mesh only: skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), so its hooves stay planted, its rider seated, and formations and fallen horses work as with the code-built horse, which stays the stand-in.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman cavalry horse of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A sturdy, compact riding horse about 1.45 metres at the withers, bay coat with black mane, tail and lower legs, a plain leather bridle with a bronze-studded browband and the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "overviewTriangles": 1800,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.95,
+    "minHeight": 1.7,
+    "maxHeight": 2.2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "8bbffabb-f5c9-4e59-88f6-212acfebb1da",
+    "requestedAt": "2026-10-28T17:38:39.593Z",
+    "balanceBefore": 3410,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman cavalry horse of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A sturdy, compact riding horse about 1.45 metres at the withers, bay coat with black mane, tail and lower legs, a plain leather bridle with a bronze-studded browband and the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T17:40:22.618Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/horse-roman.glb",
+    "rawBytes": 44358484,
+    "rawSha256": "e122705feb9cc7a3757b063c4655a05303094403f0b0a00595e63b359c758a1c",
+    "tripoInput": {
+      "prompt": "A Roman cavalry horse of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A sturdy, compact riding horse about 1.45 metres at the withers, bay coat with black mane, tail and lower legs, a plain leather bridle with a bronze-studded browband and the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/horse-roman-tripo-render.webp"
+  }
+}

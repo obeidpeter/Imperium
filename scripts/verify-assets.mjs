@@ -6,7 +6,7 @@ import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {BUILD_ONLY,chapterAudioAssets} from '../src/ui/art.js';
-import {chapterBodies} from '../src/ui/actor-body-catalog.js';
+import {chapterBodies,chapterHorses} from '../src/ui/actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
@@ -85,7 +85,9 @@ for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&bu
 const world=new Set(worldFiles().map(file=>'./'+file));
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path)&&!BUILD_ONLY.includes(path));
+// A generated horse belongs to the chapters whose riders ride it.
+const generatedHorse=path=>/^\.\/assets\/models\/horses\/([\w-]+)\.glb$/.exec(path)?.[1];
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path)&&!generatedHorse(path)&&!BUILD_ONLY.includes(path));
 for(const path of BUILD_ONLY)assert.ok(build.deferredAssets.includes(path)&&Object.values(build.chapterAssets).every(paths=>!paths.includes(path)),'Only the complete download carries '+path);
 for(const path of ['./vendor/three/addons/libs/basis/basis_worker.js','./vendor/three/addons/libs/basis/basis_transcoder.wasm','./vendor/three/addons/libs/meshopt_decoder.module.js'])assert.ok(shared3D.includes(path),'Every chapter decodes compressed models: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
@@ -95,6 +97,7 @@ for(const path of world){
 }
 assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/models/chapters/')&&!world.has(path)),[],'Every chapter model is in the world catalog');
 for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
+for(const path of build.showcaseAssets.filter(generatedHorse))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterHorses(Number(chapter)).includes(generatedHorse(path)),'Chapter '+chapter+' and generated horse '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');

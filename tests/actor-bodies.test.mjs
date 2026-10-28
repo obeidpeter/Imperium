@@ -11,7 +11,7 @@ import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
 import {actorKit} from '../src/showcase/actor-kit.js';
 import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
-import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies} from '../src/ui/actor-body-catalog.js';
+import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies,HORSE_BODIES,horseBodyId} from '../src/ui/actor-body-catalog.js';
 import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES} from '../src/showcase/actor-bodies.js';
 import {createActor} from '../src/showcase/actors.js';
 import {helmetBowlGeometry} from '../src/showcase/actor-helmet.js';
@@ -39,11 +39,11 @@ const library=createActorBodyLibrary(parse);
 const legionary={id:'veteran-naso',veteranId:'naso',name:'Naso',side:'ally',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body is worn in exactly the chapters that list it, from New Game through both ceremonies, in turns and in real time', () => {
+test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies, in turns and in real time', () => {
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
-    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);};
+    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);add(horseBodyId(kit),state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
     const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
     world(createCampWorld(clone(s)));
@@ -54,8 +54,8 @@ test('every generated body is worn in exactly the chapters that list it, from Ne
     if(e.kind!=='contest')world(createEncounterWorld(t));
   };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
-  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);}}
-  for(const [id,body]of Object.entries(ACTOR_BODIES))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
+  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
+  for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
   assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'}),null,'Civic figures keep the togas whose trims name their bloc');
 });
 

@@ -1,7 +1,8 @@
 import {actorKit} from './actor-kit.js';
 import {actorIdentity} from './actor-identity.js';
-import {actorBodyId} from '../ui/actor-body-catalog.js';
+import {actorBodyId,horseBodyId} from '../ui/actor-body-catalog.js';
 import {warmActorBody} from './actor-bodies.js';
+import {warmHorseBody} from './horse-bodies.js';
 import {usesPersistentHead,IDENTITY_HEAD_BODY} from './generated-identity.js';
 import {warmActorAssets} from './actor-assets.js';
 import {acquireActorComplexion,warmActorComplexion} from './actor-complexion.js';
@@ -28,7 +29,7 @@ export function figureNeeds(unit,{chapter,rank,commendations={}}={}){
   const vComm=commendations?.[unit.veteranId]??(unit.moraleResistance?6:unit.specialization?3:0);
   const kit=actorKit(unit,{chapter,rank,commendations:vComm}),identity=actorIdentity(unit,kit);
   // A named man's face is made from the donor's head, which his followers also wear.
-  return {identity,bodyId:actorBodyId(kit,identity.key),headId:usesPersistentHead(identity)?IDENTITY_HEAD_BODY:null,complexion:identity.female?'female':'male',hair:!identity.female&&!['bound','long'].includes(identity.hair)};
+  return {identity,bodyId:actorBodyId(kit,identity.key),headId:usesPersistentHead(identity)?IDENTITY_HEAD_BODY:null,horseId:horseBodyId(kit),complexion:identity.female?'female':'male',hair:!identity.female&&!['bound','long'].includes(identity.hair)};
 }
 
 /** The downloads a battle's figures need, keyed so each is fetched once:
@@ -41,6 +42,7 @@ export function battleFigureNeeds(encounter,{chapter,rank,commendations={},figur
   for(const unit of encounter?.units??[]){
     const need=figureNeeds(unit,{chapter,rank,commendations});
     for(const id of [need.bodyId,need.headId])if(id)needs.set(`body:${id}`,{kind:'body',id});
+    if(need.horseId)needs.set(`horse:${need.horseId}`,{kind:'horse',id:need.horseId});
     needs.set(`anatomy:${need.complexion}`,{kind:'anatomy',identity:need.identity});
     needs.set(`complexion:${need.complexion}`,{kind:'complexion',id:need.complexion});
     if(need.hair)needs.set('hair',{kind:'hair'});
@@ -61,6 +63,7 @@ export function preloadBattleFigures(encounter,options={}){
     // One surface kind per task: each is a sizeable piece of pixel work.
     materials:async()=>{for(const kind of Object.keys(ACTOR_SURFACE_SPEC)){hold(`surface:${kind}`,()=>acquireActorSurface(kind));await nextSlice();}return warmActorMaterials();},
     body:need=>warmActorBody(need.id),
+    horse:need=>warmHorseBody(need.id),
     anatomy:need=>warmActorAssets(need.identity),
     complexion:need=>{hold(`complexion:${need.id}`,()=>acquireActorComplexion(need.id));return warmActorComplexion(need.id);},
     hair:()=>warmActorHair()

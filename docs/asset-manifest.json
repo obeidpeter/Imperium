@@ -9800,6 +9800,55 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "horse-roman",
+      "path": "assets/models/horses/horse-roman.glb",
+      "subject": "Generated horse: a Roman cavalry horse of the mid-3rd century AD, bay with a plain bridle",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), mesh only; bound to the game's horse skeleton on its own legs' rest pose in Blender 5.2.2 LTS by scripts/assets/bind-horse.py, its colour, normals and roughness baked from the full-detail mesh; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8bbffabb-f5c9-4e59-88f6-212acfebb1da",
+        "generatedAt": "2026-10-28T17:40:22.618Z",
+        "prompt": "art-source/models/requests/horse-roman.json",
+        "rawBytes": 44358484,
+        "rawSha256": "e122705feb9cc7a3757b063c4655a05303094403f0b0a00595e63b359c758a1c",
+        "processing": {
+          "triangles": 9000,
+          "overviewTriangles": 1800,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/horse-roman.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/horse-roman-compress.json"
+        }
+      },
+      "usage": "The horses of Roman riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, IX and XII only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for Roman riders (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 434664,
+        "sha256": "5c43be3128fb1fe92c4277422761fe188b4498ec6df6808f57ca57847d9023c8",
+        "triangles": 10800,
+        "nearTriangles": 9000,
+        "overviewTriangles": 1800,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6413,
+          "height": 2.1447,
+          "depth": 2.5451
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -9867,7 +9916,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T19:43:47.236Z",
+  "updatedAt": "2026-10-28T19:45:41.852Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9889,12 +9938,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 61,
+    "models": 62,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 37494201,
-  "totalModelBytes": 22308651,
+  "totalBundledAssetBytes": 37928865,
+  "totalModelBytes": 22743315,
   "derivedGeometryBytes": 47428
 }

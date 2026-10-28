@@ -1,6 +1,7 @@
 import {applyActorClip,sampleActorClip} from './actor-clips.js';
 import {applyPerformance,applyLocomotionEntry,applyTurnPerformance} from './actor-performance.js';
 import {sampleHumanGait,sampleHorseGait} from './actor-gait.js';
+import {CODE_HORSE_FRAME,HORSE_ANKLE,HORSE_BODY_Y} from './horse-frame.js';
 const finite=(n,fallback=0)=>Number.isFinite(n)?n:fallback;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const smooth=n=>{const t=clamp(n,0,1);return t*t*(3-2*t);};
@@ -142,15 +143,32 @@ export function blendActorPose(from,to,weight){
 
 /** Four-beat walk, diagonal trot and asymmetric canter share distance-driven
  * hoof contacts. The rider counterbalances this same sampled performance. */
-export function horsePose({time=0,motion='idle',phase,locomotionWeight=1,locomotionDistance,gait,reducedMotion=false}={}){
-  time=reducedMotion?0:finite(time);const physical=Number.isFinite(locomotionDistance),stride=physical?locomotionStride(motion,true):1.35,moving=['walk','run','retreat','cavalry-move'].includes(motion),cycle=physical?locomotionPhase(locomotionDistance,motion,true):phase===undefined?time*1.2:finite(phase)*.72/1.35,weight=moving?clamp(finite(locomotionWeight,1),0,1):0;
+// A horse's gait by its speed in metres a second, as the field moves it: a walk, a trot, a
+// canter and, fastest, a gallop; a running horse at least trots. From its current gait a
+// horse changes only a little past each threshold, so one near it keeps its stride.
+export const HORSE_GAIT_SPEEDS=Object.freeze([['walk',0],['trot',2.6],['canter',4],['gallop',5.6]]);
+export function horseGaitForSpeed(speed,{current=null}={}){
+  if(!Number.isFinite(speed))return null;
+  let index=1;for(let i=1;i<HORSE_GAIT_SPEEDS.length;i++)if(speed>=HORSE_GAIT_SPEEDS[i][1])index=i;
+  const at=HORSE_GAIT_SPEEDS.findIndex(([name])=>name===current);
+  if(at>=1&&speed>=HORSE_GAIT_SPEEDS[at][1]-.3&&speed<(HORSE_GAIT_SPEEDS[at+1]?.[1]??Infinity)+.3)index=at;
+  return HORSE_GAIT_SPEEDS[index][0];
+}
+
+/** frame: the horse's legs at rest and its own gaits (horse-frame.js), the code-built horse's
+ * when absent. gait: the gait to draw, else one by speed (horseGaitForSpeed) or by the blend
+ * of a run. cycle: the stride's phase when the caller carries it across a change of gait. */
+export function horsePose({time=0,motion='idle',phase,locomotionWeight=1,locomotionDistance,gait,speed,cycle:carried,frame=null,reducedMotion=false}={}){
+  time=reducedMotion?0:finite(time);const physical=Number.isFinite(locomotionDistance),moving=['walk','run','retreat','cavalry-move'].includes(motion),weight=moving?clamp(finite(locomotionWeight,1),0,1):0;
   const p=clamp(finite(phase),0,1),fall=['withdrawn','dead'].includes(motion)?smooth(p):0,attack=['attack','strike','cavalry-attack'].includes(motion)?sampleActorClip('horseStrike',p):{},idle=sampleActorClip('horseIdle',((time/6.4)%1+1)%1);
-  const fast=['run','cavalry-move'].includes(motion),selected=gait??(fast?(weight<.72?'trot':'canter'):'walk');
-  const pose=sampleHorseGait({cycle,stride,gait:selected,weight,retreat:motion==='retreat'});
+  const fast=['run','cavalry-move'].includes(motion),selected=gait??(fast?horseGaitForSpeed(speed)??(weight<.72?'trot':'canter'):'walk');
+  const stride=physical?frame?.motion?.gaits?.[selected]?.stride??locomotionStride(motion,true):1.35;
+  const cycle=Number.isFinite(carried)?carried:physical?Math.max(0,finite(locomotionDistance))/stride:phase===undefined?time*1.2:finite(phase)*.72/1.35;
+  const pose=sampleHorseGait({cycle,stride,gait:selected,weight,retreat:motion==='retreat',frame});
   pose.bodyPitch+=attack.bodyPitch??0;pose.neckPitch+=(idle.neckPitch??0)+(attack.neckPitch??0);
   pose.tail=(idle.tail??0)+(attack.tail??0)+.08*Math.sin(cycle*Math.PI*2)*weight;
   pose.fall=fall;pose.gait=selected;pose.riderBob=pose.bodyY-1.04;
-  return groundHorsePose(pose,pose.feet.map((f,i)=>({height:0,x:(i%2?-1:1)*.235,z:f.z})));
+  return groundHorsePose(pose,pose.feet.map((f,i)=>({height:0,x:frame?frame.legs[i].rest[0]:(i%2?-1:1)*.235,z:f.z})),frame);
 }
 
 export function blendHorsePose(from,to,weight){
@@ -160,15 +178,35 @@ export function blendHorsePose(from,to,weight){
   pose.riderBob=pose.bodyY-1.04;return pose;
 }
 
-export function groundHorsePose(pose,targets){
+/** Stand the horse's legs on the ground under its hooves (targets: each hoof's ground height,
+ * place and slope). Each leg is two bones from its top, turned from the rest pose its frame
+ * (horse-frame.js) records: a generated horse stands as it was made. A leg's top may sink a
+ * little below the body (its shoulder or stifle) to reach, then the whole body lowers. */
+export function groundHorsePose(pose,targets,frame=CODE_HORSE_FRAME){
   if(!targets?.length)return pose;
+  frame??=CODE_HORSE_FRAME;const legs=frame.legs;
   const heights=targets.map(t=>clamp(finite(t.height),-.38,.38));
   pose.bodyY+=(Math.min(...heights)+Math.max(...heights))*.5;
-  pose.feet=pose.feet.map((foot,i)=>({...foot,x:finite(targets[i]?.x,(i%2?-1:1)*.235),z:finite(targets[i]?.z,foot.z),y:foot.y+heights[i],pitch:clamp(finite(targets[i]?.pitch),-.32,.32),bank:clamp(finite(targets[i]?.bank),-.25,.25)}));
-  for(const [i,foot]of pose.feet.entries())pose.bodyY=Math.min(pose.bodyY,foot.y+Math.sqrt(Math.max(.2,1.052**2-(foot.z-(i<2?.54:-.54))**2-(foot.x-(i%2?-1:1)*.235)**2)));
-  pose.legs=pose.feet.map((foot,i)=>{const x=foot.x-(i%2?-1:1)*.235,y=foot.y-pose.bodyY,z=foot.z-(i<2?.54:-.54),d=clamp(Math.hypot(x,y,z),.12,1.059),bend=i<2?1:-1,upper=Math.atan2(-z,Math.hypot(x,y))-bend*Math.acos(clamp(d/1.06,-1,1)),knee=bend*(Math.PI-Math.acos(clamp((2*.53**2-d*d)/(2*.53**2),-1,1)));return {upper,knee,splay:Math.atan2(x,-y),ankle:-upper-knee+foot.roll+foot.pitch,bank:foot.bank};});
+  pose.feet=pose.feet.map((foot,i)=>({...foot,x:finite(targets[i]?.x,legs[i].rest[0]),z:finite(targets[i]?.z,foot.z),y:foot.y+heights[i],pitch:clamp(finite(targets[i]?.pitch),-.32,.32),bank:clamp(finite(targets[i]?.bank),-.25,.25)}));
+  // What each leg reaches for: its fetlock joint, turned with the hoof about where the hoof stands.
+  const joints=pose.feet.map((foot,i)=>{
+    const pastern=legs[i].pastern;if(!pastern)return foot;
+    const tilt=foot.roll+foot.pitch,c=Math.cos(tilt),s=Math.sin(tilt),cb=Math.cos(foot.bank),sb=Math.sin(foot.bank);
+    const y=pastern[1]*c-pastern[2]*s,z=pastern[1]*s+pastern[2]*c;
+    return {x:foot.x+pastern[0]*cb-y*sb,y:foot.y-HORSE_ANKLE+pastern[0]*sb+y*cb,z:foot.z+z};
+  });
+  for(const [i,joint]of joints.entries()){const leg=legs[i],top=leg.pivot;pose.bodyY=Math.min(pose.bodyY,joint.y+Math.sqrt(Math.max(.2,leg.support**2-(joint.z-top[2])**2-(joint.x-top[0])**2))-(top[1]-HORSE_BODY_Y)+leg.sling);}
+  pose.legs=joints.map((joint,i)=>{
+    const leg=legs[i],top=leg.pivot,foot=pose.feet[i],stand=pose.bodyY+(top[1]-HORSE_BODY_Y);
+    const y0=leg.sling?Math.max(stand-leg.sling,Math.min(stand,joint.y+Math.sqrt(Math.max(.05,leg.reach**2-(joint.z-top[2])**2-(joint.x-top[0])**2)))):stand;
+    const x=joint.x-top[0],y=joint.y-y0,z=joint.z-top[2],d=clamp(Math.hypot(x,y,z),.12,leg.reach),bend=leg.bend,a=leg.a,b=leg.b;
+    const reach=a===b?Math.acos(clamp(d/(2*a),-1,1)):Math.acos(clamp((a**2+d*d-b**2)/(2*a*d),-1,1));
+    const fold=a===b?Math.acos(clamp((2*a**2-d*d)/(2*a**2),-1,1)):Math.acos(clamp((a**2+b**2-d*d)/(2*a*b),-1,1));
+    const upper=Math.atan2(-z,Math.hypot(x,y))-bend*reach-leg.upper0,knee=bend*(Math.PI-fold)-leg.knee0;
+    return {upper,knee,splay:Math.atan2(x,-y)-leg.splay0,ankle:-upper-knee+foot.roll+foot.pitch,bank:foot.bank,y:y0};
+  });
   const front=(heights[0]+heights[1])*.5,rear=(heights[2]+heights[3])*.5;
-  pose.bodyPitch-=clamp(Math.atan2(front-rear,1.08),-.18,.18)*.55;
+  pose.bodyPitch-=clamp(Math.atan2(front-rear,frame.spacing),-.18,.18)*.55;
   pose.riderBob=pose.bodyY-1.04;
   return pose;
 }

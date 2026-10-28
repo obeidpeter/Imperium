@@ -71,3 +71,20 @@ export function actorBodyId(kit={},cast=null){
 }
 /** The bodies a chapter's figures can wear, for its offline download group. */
 export const chapterBodies=chapter=>Object.keys(ACTOR_BODIES).filter(id=>ACTOR_BODIES[id].chapters.includes(chapter));
+
+// Generated horses (scripts/assets/bind-horse.py): Tripo horses skinned to the game's horse
+// skeleton on their own legs' rest pose. A mounted figure's horse wears the coat of its
+// side's horses, the code-built saddle on its back; a horse without one, or whose coat fails
+// to load, keeps its procedural look (tests/horse-bodies.test.mjs checks the chapters).
+export const HORSE_BODIES=Object.freeze({
+  'horse-roman':Object.freeze({fits:Object.freeze(['Roman']),chapters:Object.freeze([7,9,12])})
+});
+export const horseBodyUrl=id=>`assets/models/horses/${id}.glb`;
+/** The generated horse a mounted kit (actor-kit.js) rides, or null for the code-built horse. */
+export function horseBodyId(kit={}){
+  if(!kit.mounted)return null;
+  for(const [id,{fits}]of Object.entries(HORSE_BODIES))if(fits.includes(kit.faction))return id;
+  return null;
+}
+/** The horses a chapter's riders can ride, for its offline download group. */
+export const chapterHorses=chapter=>Object.keys(HORSE_BODIES).filter(id=>HORSE_BODIES[id].chapters.includes(chapter));
