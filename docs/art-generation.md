@@ -385,18 +385,18 @@ Release 5 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). The [r
 
 - **Bark** is a CC0 Poly Haven texture set, its colour darkened in its crevices by its own ambient occlusion (the ARM map's red channel) and averaged down to one cell: Bark Brown 01 and 02 (Rob Tuytel), Bark Willow (Dario Barresi, Dimitrios Savva), Chinese Cedar Bark and Palm Bark (Charlotte Baglioni), Pine Bark (Dimitrios Savva). The palm's bark is lifted by 1.4, as the photographed set reads black on a trunk. A trunk wraps its cell once round and repeats it along its length in whole segments.
 - **Leaf cards** are composed in their cells by the script: painted twigs fanning from the card's foot, carrying sprites cut from CC0 plant textures that Poly Haven publishes with its models (only their named colour and alpha maps, never the models): the fir and pine twigs of Fir Tree 01 and Pine Tree 01 (Rob Tuytel, Rico Cilliers) for fir, pine and umbrella pine, and densely for cypress; the leaves of Island Tree 01 (Rob Tuytel, Rico Cilliers) for beech and poplar; the twigs of Tree Small 02 (Rico Cilliers) for alder; the narrow leaves of Shrub 02 (Rico Cilliers) for willow and, greyer, olive; the fronds of Jacaranda Tree (Rob Tuytel, Rico Cilliers), greyed, for tamarisk. Oak and the date palm use the oak and palm cells of the game's own generated foliage atlas (`foliage-v016`), as the code-built trees do: no CC0 source the build could reach offers lobed oak leaves or a palm frond. The plan named ambientCG's leaf sets; its download host is not reachable from the build's network.
-- **Revised after the first renders.** Beside the code-built trees, the first kit's date palms were sparse and its willow bare at close range. Each palm frond is now folded into a V along its rachis, a little wider, 34 to a crown; the willow has thinner boughs and more, longer hanging cards. The other species were rebuilt unchanged.
+- **Revised after the first renders.** Beside the code-built trees, the first kit's date palms were sparse and its willow bare at close range. Each palm frond is now folded into a V along its rachis, a little wider, 34 to a crown; the willow has thinner boughs and more, longer hanging cards, in a cooler, greyer green. The other species were rebuilt unchanged.
 - **Impostors** are rendered from each near tree in Cycles (CPU, orthographic, flat white sky, specular off), halved with premultiplied alpha and lifted by 1.35 toward the near tree's brightness under the game's light.
 
 `npm run asset:cc0 -- fetch polyhaven:<id> --maps …` fetched every source with its digests (`art-source/cc0/`); the raw files stay outside the repository. The editable `.blend` files, the processed GLBs and their reports (`art-source/models/processed/trees-*.json`) are retained. The script also writes each species' crown radius to `src/showcase/tree-kit-components.js`. The runtime files were made with `scripts/assets/quantize-model.mjs` (normals as bytes, texture coordinates as shorts), then `npm run asset:compress` (meshopt geometry, ETC1S KTX2 with mipmaps):
 
 | Kit | Chapters | Species (triangles near, mid, far) | Processed GLB | Runtime file |
 | --- | --- | --- | ---: | ---: |
-| Temperate | I–IV, VIII, X | oak 1,840, 516, 4; beech 1,840, 516, 4; willow 2,056, 588, 4; alder 1,624, 588, 4; pine 1,984, 528, 4; fir 4,352, 896, 4 | 2,448,104 bytes | 578,472 bytes |
+| Temperate | I–IV, VIII, X | oak 1,840, 516, 4; beech 1,840, 516, 4; willow 2,704, 756, 4; alder 1,624, 588, 4; pine 1,984, 528, 4; fir 4,352, 896, 4 | 2,501,284 bytes | 600,284 bytes |
 | Italy | VII, XI, XII | poplar 1,936, 804, 4; cypress 1,248, 640, 4; umbrella pine 2,000, 600, 4; olive 1,848, 612, 4 | 1,577,088 bytes | 356,280 bytes |
-| Arid | V, VI, IX | date palm 416, 168, 4; tamarisk 2,064, 684, 4 | 761,604 bytes | 149,864 bytes |
+| Arid | V, VI, IX | date palm 944, 300, 4; tamarisk 2,064, 684, 4 | 786,824 bytes | 159,488 bytes |
 
-The atlas keeps 30–36 dB PSNR in ETC1S. No Tripo credit was spent on the trees.
+In ETC1S the atlases keep 30.0 dB PSNR (temperate), 32.3 dB (Italy) and 35.8 dB (arid). No Tripo credit was spent on the trees.
 
 ### Rocks
 

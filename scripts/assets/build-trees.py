@@ -139,7 +139,7 @@ CARDS = {
     'round': {'source': 'tree_small_02', 'twigs': (4, 1.0, .72), 'along': (4, .65, (.32, .42)), 'tip': .4, 'tint': (.98, 1.0, .96), 'desat': .0},
     'poplar': {'source': 'island_tree_01', 'twigs': (7, .9, .82), 'along': (13, .9, (.10, .13)), 'tip': .13, 'tint': (1.02, 1.08, .95), 'desat': .0},
     'olive': {'source': 'shrub_02', 'twigs': (7, 1.05, .82), 'along': (16, .55, (.17, .22)), 'tip': .2, 'tint': (.96, 1.0, 1.04), 'desat': .3},
-    'narrow': {'source': 'shrub_02', 'twigs': (6, .4, .94), 'along': (16, .32, (.2, .26)), 'tip': .24, 'tint': (1.0, 1.06, .92), 'desat': .0},
+    'narrow': {'source': 'shrub_02', 'twigs': (6, .4, .94), 'along': (16, .32, (.2, .26)), 'tip': .24, 'tint': (.84, .93, .86), 'desat': .22},
     'needles': {'source': 'pine_tree_01', 'twigs': (5, .95, .55), 'along': (2, .55, (.3, .36)), 'tip': .5, 'tint': (1.0, 1.06, 1.0), 'desat': .0},
     'comb': {'source': 'fir_tree_01', 'twigs': (4, .95, .62), 'along': (3, .7, (.33, .4)), 'tip': .48, 'tint': (.95, 1.0, .98), 'desat': .0},
     'scale': {'source': 'fir_tree_01', 'twigs': (7, .5, .7), 'along': (4, .5, (.22, .27)), 'tip': .3, 'tint': (.78, .86, .82), 'desat': .1},

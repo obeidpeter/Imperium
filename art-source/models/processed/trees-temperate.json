@@ -81,14 +81,14 @@
     {
       "species": "willow",
       "buildHeight": 6,
-      "top": 3.709,
+      "top": 3.964,
       "bark": "bark_willow",
       "leaf": "narrow",
-      "crownRadius": 0.3905,
-      "impostorSpan": 0.8123,
+      "crownRadius": 0.3648,
+      "impostorSpan": 0.7589,
       "triangles": {
-        "near": 2056,
-        "mid": 588,
+        "near": 2704,
+        "mid": 756,
         "far": 4
       }
     },
@@ -137,9 +137,9 @@
   ],
   "output": {
     "path": "art-source/models/processed/trees-temperate.glb",
-    "bytes": 2448104,
-    "sha256": "2b5534975b33a5498484153fcc84990d4c4da335fe63c8a6329c081b2bd01fac",
-    "triangles": 17352
+    "bytes": 2501284,
+    "sha256": "aaf2a69052e1c5fdf42b8eece664b34ee0d82b8c716afe9b5d19e225651c37e4",
+    "triangles": 18168
   },
   "runtimePath": "assets/models/scenery/trees-temperate.glb"
 }

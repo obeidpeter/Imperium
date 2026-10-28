@@ -8871,14 +8871,14 @@
           "geometryUnchanged": true
         }
       },
-      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 70 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
       "loading": "Deferred chapter packs 1, 2, 3, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
-        "bytes": 578472,
-        "gzipBytes": 487687,
-        "sha256": "93c59bececf30eb6a92c37318ded20452a3d3a05bbc9e4a8a6effe99f586f890",
-        "triangles": 17352,
+        "bytes": 600284,
+        "gzipBytes": 503678,
+        "sha256": "8c3e9dd07c6390e57cc590a7e2a9e91c0ad25992616d32b0249baa9fdc763168",
+        "triangles": 18168,
         "textures": 1,
         "textureEdge": 1024,
         "componentCount": 18
@@ -9112,7 +9112,7 @@
           "geometryUnchanged": true
         }
       },
-      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 70 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
       "loading": "Deferred chapter packs 7, 11, 12 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
@@ -9234,14 +9234,14 @@
           "geometryUnchanged": true
         }
       },
-      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 70 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
       "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
-        "bytes": 149864,
-        "gzipBytes": 128442,
-        "sha256": "70417a46e5aa3b62d9b5aea730b39158c519ff8c7d8cb5bacca3b92afa8aa17a",
-        "triangles": 3340,
+        "bytes": 159488,
+        "gzipBytes": 135878,
+        "sha256": "8436d1660acc4fda6abebfc89d9d379557f115ae27caf5268db66322b97cd37b",
+        "triangles": 4000,
         "textures": 1,
         "textureEdge": 1024,
         "componentCount": 6
@@ -9740,7 +9740,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T10:32:07.725Z",
+  "updatedAt": "2026-10-28T14:50:26.974Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9767,7 +9767,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 36245812,
-  "totalModelBytes": 21100183,
+  "totalBundledAssetBytes": 36277248,
+  "totalModelBytes": 21131619,
   "derivedGeometryBytes": 47428
 }

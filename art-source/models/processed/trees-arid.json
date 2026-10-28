@@ -34,14 +34,14 @@
     {
       "species": "palm",
       "buildHeight": 6.5,
-      "top": 6.03,
+      "top": 6.557,
       "bark": "palm_bark",
       "leaf": "frond",
-      "crownRadius": 0.3733,
-      "impostorSpan": 0.7765,
+      "crownRadius": 0.3511,
+      "impostorSpan": 0.7304,
       "triangles": {
-        "near": 416,
-        "mid": 168,
+        "near": 944,
+        "mid": 300,
         "far": 4
       }
     },
@@ -62,9 +62,9 @@
   ],
   "output": {
     "path": "art-source/models/processed/trees-arid.glb",
-    "bytes": 761604,
-    "sha256": "642c35acde957abab49fb95f0e094e05c6ff88a6139dbfdce3665cc20d59c5df",
-    "triangles": 3340
+    "bytes": 786824,
+    "sha256": "d78c84b0e88ce2f582a554a14f268e17f53d64ffa7c8c07cf520a95e6990dffc",
+    "triangles": 4000
   },
   "runtimePath": "assets/models/scenery/trees-arid.glb"
 }

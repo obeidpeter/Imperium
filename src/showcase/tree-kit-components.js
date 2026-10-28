@@ -13,8 +13,8 @@ export const TREE_KIT_COMPONENTS = {
       "buildHeight": 7.5
     },
     "willow": {
-      "crownRadius": 0.3905,
-      "impostorSpan": 0.8123,
+      "crownRadius": 0.3648,
+      "impostorSpan": 0.7589,
       "buildHeight": 6
     },
     "alder": {
@@ -57,8 +57,8 @@ export const TREE_KIT_COMPONENTS = {
   },
   "arid": {
     "palm": {
-      "crownRadius": 0.3733,
-      "impostorSpan": 0.7765,
+      "crownRadius": 0.3511,
+      "impostorSpan": 0.7304,
       "buildHeight": 6.5
     },
     "tamarisk": {

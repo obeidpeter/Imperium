@@ -67,7 +67,7 @@ test('trees take the level their distance from the camera asks for, one draw a s
   assert.ok(planter.update({x:0,z:0}));
   assert.deepEqual([meshes.near.count,meshes.mid.count,meshes.far.count],[1,1,1]);
   assert.equal(planter.update({x:1,z:0}),false,'a small step re-levels nothing');
-  assert.ok(planter.update({x:200,z:0}));assert.equal(meshes.far.count,3);
+  assert.ok(planter.update({x:TREE_KIT_LEVELS.mid*3,z:0}));assert.equal(meshes.far.count,3);
   assert.ok(group.children.every(m=>m.raycast()===undefined&&m.instanceColor),'no picks; every tree tinted');
   planter.dispose();assert.equal(group.children.length,0);
 });
