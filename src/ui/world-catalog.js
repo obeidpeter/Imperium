@@ -50,6 +50,15 @@ export const WORLD_CATALOG=Object.freeze({
   'board-kit-timber':asset('kit',['assets/models/scenery/board-kit-timber.glb'],[4]),
   'board-kit-mudbrick':asset('kit',['assets/models/scenery/board-kit-mudbrick.glb'],[5,6,9]),
   'board-kit-stone':asset('kit',['assets/models/scenery/board-kit-stone.glb'],[8,12]),
+  // The regions' trees, with near, mid and impostor levels (release 5): one kit for each
+  // group of chapters that plants the same species (tree-kit.js).
+  'trees-temperate':asset('kit',['assets/models/scenery/trees-temperate.glb'],[1,2,3,4,8,10]),
+  'trees-italy':asset('kit',['assets/models/scenery/trees-italy.glb'],[7,11,12]),
+  'trees-arid':asset('kit',['assets/models/scenery/trees-arid.glb'],[5,6,9]),
+  // Their stones: four Tripo rocks for each of the same groups (rock-kit.js).
+  'rocks-temperate':asset('kit',['assets/models/scenery/rocks-temperate.glb'],[1,2,3,4,8,10]),
+  'rocks-italy':asset('kit',['assets/models/scenery/rocks-italy.glb'],[7,11,12]),
+  'rocks-arid':asset('kit',['assets/models/scenery/rocks-arid.glb'],[5,6,9]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),

@@ -46,7 +46,7 @@ export function createReedGeometry(blades=7){
     for(let j=0;j<3;j++){const n=start+j*2;indices.push(n,n+1,n+2,n+1,n+3,n+2);}}
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);geometry.computeVertexNormals();return geometry;
 }
-export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,rockGeometry}){
+export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,rockGeometry,rocks=null}){
   const cells=[];
   if(profile.civic){
     const floor=p.mesh(root,p.geo(new THREE.PlaneGeometry(e.width*tileSize+3,e.height*tileSize+3)),m.floor,0,.018,0);floor.rotation.x=-Math.PI/2;floor.name='continuous civic stone floor';floor.castShadow=false;
@@ -168,6 +168,9 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
         continue;
       }
       for(let k=0;k<4;k++){const along=(k-1.5)*.62+(hash(k,x,y)-.5)*.2,out=half-.05+hash(y,k)*.1,rx=c.x+dx*out+(dy?along:0),rz=c.z+dy*out+(dx?along:0),s=.32+hash(k,dx,dy+x)*.18;
+        // The region's rock kit, where loaded, fits a rock to the same footprint (rock-kit.js),
+        // every other stone: its rocks carry far more detail.
+        if(rocks){if(k%2===0)rocks.place({x:rx,y:height(rx,rz),z:rz,radius:s*1.1,height:s*1.3,seed:k*31+x*7+y*13+dx*3+dy});continue;}
         instance('limestone',rockGeometry??rounded,m.stone,[rx,height(rx,rz)+s*.15,rz],[s*1.2,s*1.15,s*.8],[hash(k,1)*.4,Math.atan2(dx,dy)+hash(k,2)*.6,hash(k,3)*.3],tint('#bdb5a3',k+x,y+dx));}}
   }
 

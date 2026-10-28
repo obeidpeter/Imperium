@@ -58,7 +58,9 @@ export function sampleWaterSurface(x,z,time=0,{rain=false,marsh=false,current={x
 const OWN_FINISH=new Set(['water','ground','foliage','floor']);
 // `waves` lifts open water (the distant river) in its vertex shader, with matching
 // normals, from world position: no geometry rewritten on the CPU each frame.
-export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waves=false,waterTime=null,waterCurrent=null,reflection=null}={}){
+// bank: for open water (the distant river), {value:Vector2(centre z, half width)}: its foam
+// gathers along both banks; a zero half width keeps it off.
+export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,rain=false,marsh=false,shore=false,waves=false,waterTime=null,waterCurrent=null,reflection=null,bank=null}={}){
   const previous=material.onBeforeCompile,oldKey=material.customProgramCacheKey();
   const timeUniform=waterTime??{value:0},standing=!OWN_FINISH.has(kind);
   const grain={value:kind==='wood'?[7,.8]:[2.7,3.4]},roughnessRange={value:kind==='stone'&&(wet||rain)?[.58,.92]:[.91,1]};
@@ -66,6 +68,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
     previous.call(material,shader,...args);
     shader.uniforms=shader.uniforms||{};
     if(kind==='water')Object.assign(shader.uniforms,{environmentWaterTime:timeUniform,environmentWaterCurrent:waterCurrent??{value:[1,0]}});
+    const banked=kind==='water'&&!shore&&!marsh;if(banked)shader.uniforms.environmentWaterBank=bank??{value:[0,0]};
     if(standing)Object.assign(shader.uniforms,{environmentGrain:grain,environmentRoughness:roughnessRange});
     const mirror=kind==='water'&&reflection;if(mirror)Object.assign(shader.uniforms,reflection);
     shader.vertexShader='varying vec3 vEnvironmentSurface;\n'+(waves?'uniform float environmentWaterTime;\n':'')+shader.vertexShader;
@@ -82,7 +85,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         environmentPosition=instanceMatrix*environmentPosition;
       #endif
       vEnvironmentSurface=(modelMatrix*environmentPosition).xyz;`);
-    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime; uniform vec2 environmentWaterCurrent;\n':'')+(standing?'uniform vec2 environmentGrain;uniform vec2 environmentRoughness;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
+    shader.fragmentShader=(kind==='water'?'uniform float environmentWaterTime; uniform vec2 environmentWaterCurrent;\n'+(banked?'uniform vec2 environmentWaterBank;\n':''):'')+(standing?'uniform vec2 environmentGrain;uniform vec2 environmentRoughness;\n':'')+(mirror?'uniform sampler2D waterReflectionMap;uniform mat4 waterReflectionMatrix;uniform float waterReflectionStrength;\n':'')+fields+shader.fragmentShader;
     let color='',roughness='';
     if(kind==='water'){
       // Foam belongs to shores and current, not to fixed bands: open water keeps
@@ -95,8 +98,11 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         float envWaveB=cos(envFlowUv.y*2.15+envTime*1.25-envFlowUv.x*.48);
         float envCoarse=envNoise(envFlowUv*.62+vec2(-envTime*.35,-envTime*.42));
         float envWave=(envWaveA*.52+envWaveB*.48)*${amp};
-        float envBank=${shore?'0.0':'1.0-smoothstep(.12,.46,abs(fract(vEnvironmentSurface.z*.4)-.5))'};
-        float envFoam=smoothstep(.60,.91,envCoarse+envWave*.26+envBank*.24)*${foamScale};
+        // Foam gathers where water meets land: a marsh's shallow rim (vertex alpha), the
+        // distant river's two banks. Board rivers foam at their shore below.
+        float envBankT=${banked?'abs(vEnvironmentSurface.z-environmentWaterBank.x)/max(environmentWaterBank.y,.001)':'0.0'};
+        float envBank=${shore?'0.0':marsh?'1.0-smoothstep(.0,.38,vColor.a)':'smoothstep(.6,.97,envBankT)*(1.0-step(1.04,envBankT))'};
+        float envFoam=smoothstep(.60,.91,envCoarse+envWave*.26+envBank*${marsh?'.42':'.34'})*${foamScale};
         float envRipple=0.0;
         ${rain?`vec2 envRainCell=floor(vEnvironmentSurface.xz*1.8);
         vec2 envRainUv=fract(vEnvironmentSurface.xz*1.8)-.5;
@@ -105,6 +111,9 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
         vec3 envDeep=diffuseColor.rgb*vec3(.86,.93,.98);
         vec3 envCrest=diffuseColor.rgb*vec3(1.14,1.18,1.22);
         diffuseColor.rgb=mix(envDeep,envCrest,clamp(.5+envWave*.38,0.0,1.0));
+        ${marsh?`// Depth colour: the shallow rim shows its mud, the open pools go dark and peaty.
+        float envMarshDepth=smoothstep(.15,.9,vColor.a);
+        diffuseColor.rgb=mix(diffuseColor.rgb*vec3(1.24,1.12,.9),diffuseColor.rgb*vec3(.72,.82,.76),envMarshDepth);`:''}
         ${shore?`float envDepth=clamp((vColor.a-.36)/.64,0.0,1.0);
         float envStreak=smoothstep(.62,.95,envNoise(vec2(envFlowUv.x*2.4,envFlowUv.y*.32-envTime*.55)));
         float envShore=(1.0-smoothstep(.0,.22,envDepth))*(.55+.45*envNoise(vEnvironmentSurface.xz*3.1+vec2(envTime*.4,-envTime*.3)));
@@ -164,7 +173,7 @@ export function finishEnvironmentMaterial(material,kind,{wet=false,arid=false,ra
       }`:''}`);
   };
   material.customProgramCacheKey=standing?()=>`${oldKey}:environment-finish-v5:standing`
-    :()=>`${oldKey}:environment-finish-v6:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}:${kind==='water'&&waves}`;
+    :()=>`${oldKey}:environment-finish-v7:${kind}:${wet}:${arid}:${rain}:${marsh}:${shore}:${kind==='water'&&!!reflection}:${kind==='water'&&waves}`;
   material.userData.environmentFinish=kind;
   material.userData.environmentFinishOptions={wet:Boolean(wet),arid:Boolean(arid),rain:Boolean(rain),marsh:Boolean(marsh),shore:Boolean(shore),waves:Boolean(waves)};
   if(kind==='water')material.userData.waterTime=timeUniform;

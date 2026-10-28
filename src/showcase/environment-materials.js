@@ -5,7 +5,7 @@ import {createFoliagePixels,FOLIAGE_ATLAS_URL} from './environment-foliage.js';
 import {IMAGE_DECODER} from './decoded-images.js';
 import {groundBiome} from '../ui/ground-layers.js';
 import {createTerrainUniforms,installTerrainMaterial} from './terrain-material.js';
-import {normaliseModelMaterial} from './model-materials.js';
+import {normaliseModelMaterial,addNeutralMaps} from './model-materials.js';
 
 // Local neutral colour maps by surface kind, and the images a scene samples
 // (the battle preloader decodes them before the stage is built).
@@ -94,7 +94,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   // the stage sets its splat map once built. Performance draws them without normal maps.
   const terrain=createTerrainUniforms(groundBiome(profile?.chapter??1));
   installTerrainMaterial(m.ground,terrain,{normals:quality!=='performance'});
-  const waterTime={value:0},waterCurrent={value:new THREE.Vector2(1,0)};
+  const waterTime={value:0},waterCurrent={value:new THREE.Vector2(1,0)},waterBank={value:new THREE.Vector2(0,0)};
   // Keep broad daylight water from reading as an opaque blue floor. Its
   // moving highlights remain, with deeper green-brown body colour.
   m.water.color.multiplyScalar(.58);m.water.roughness=.48;m.water.metalness=0;
@@ -107,7 +107,7 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   for(const key of ['wood','darkWood','bark'])finishEnvironmentMaterial(m[key],'wood',finish);
   for(const key of ['leaves','foliage'])finishEnvironmentMaterial(m[key],'foliage',finish);
   finishEnvironmentMaterial(m.floor,'floor',finish);
-  finishEnvironmentMaterial(m.water,'water',{...finish,waves:true});
+  finishEnvironmentMaterial(m.water,'water',{...finish,waves:true,bank:waterBank});
   finishEnvironmentMaterial(m.marshWater,'water',{...finish,marsh:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.riverWater,'water',{...finish,shore:true,reflection:waterReflection});
   finishEnvironmentMaterial(m.gravel,'stone',finish);
@@ -130,5 +130,20 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
     // The atlas replaces only this fallback; release its GPU allocation now.
     if(textures.delete(fallback))fallback.dispose();
   });
-  return {materials:m,textures,terrain,waterTime,waterCurrent,waterReflection,reflectionFallback,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();terrain.groundSplatMap.value.dispose();}};
+  // A generated kit's own maps on one of these surfaces (a tree kit's atlas as the leaf
+  // sprays, a rock's maps as the stone): made and finished the same way, so they are
+  // drawn in that surface's shader program. The maps stay the kit's.
+  function kitMaterial(kind,{map,normalMap=null,normalScale=null}){
+    let material;
+    if(kind==='foliage'){
+      material=make({map,color:m.foliage.color.clone(),roughness:.86,side:THREE.DoubleSide,alphaTest:.42,transparent:false,depthWrite:true});
+      material.name='tree kit leaves and bark';material.userData.environmentVegetation=true;
+    }else if(kind==='stone'){
+      material=make({map,normalMap,color:0xffffff,roughness:.94,normalScale:normalScale?.clone()??new THREE.Vector2(1,1)});
+      addNeutralMaps(material,['normalMap']);material.name='rock kit stone';
+    }else throw new TypeError(`Kits are drawn as foliage or stone, not ${kind}.`);
+    finishEnvironmentMaterial(material,kind,finish);
+    return material;
+  }
+  return {materials:m,textures,terrain,waterTime,waterCurrent,waterBank,waterReflection,reflectionFallback,kitMaterial,dispose(){if(disposed)return;disposed=true;for(const material of materials)material.dispose();for(const t of textures)t.dispose();terrain.groundSplatMap.value.dispose();}};
 }

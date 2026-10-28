@@ -17,7 +17,7 @@ import {menuCommand,revealControl,settingsCommand,closePanel} from './ui-smoke-n
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
-import {sceneryPlacements} from '../src/showcase/scenery-models.js';
+import {sceneryPlacements,sceneryWorkingSet} from '../src/showcase/scenery-models.js';
 import {CONFIG} from '../src/config.js';
 
 const arg=(name,fallback)=>{const prefix=`--${name}=`,same=process.argv.find(a=>a.startsWith(prefix)),index=process.argv.indexOf(`--${name}`);return same?same.slice(prefix.length):index>=0?process.argv[index+1]:fallback;};
@@ -52,9 +52,10 @@ for(const [chapter,state]of checkpoints){
   const code=await saveCode(state);assert.equal(Game.serialize(await restoreCode(code)),Game.serialize(state));
   const world=Game.createCampWorld(state);assert.ok(world,`Chapter ${chapter} has a real camp world`);
   const scene={id:world.campId,width:world.map.width,height:world.map.height,terrain:world.map.terrain,campPresentation:world.campPresentation};
-  const placements=sceneryPlacements(scene,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
-  assert.ok(placements.length>0&&urls.length>0,`Chapter ${chapter} has authored regional scenery`);
-  chapters.push({chapter,code,expectedModels:placements.length,urls,sha256:createHash('sha256').update(code).digest('hex')});
+  // The working set adds the region's tree and rock kits to the placed scenery's models.
+  const placements=sceneryPlacements(scene,{chapter}),sceneryUrls=[...new Set(placements.map(p=>p.url))],urls=sceneryWorkingSet(scene,{chapter});
+  assert.ok(placements.length>0&&sceneryUrls.length>0,`Chapter ${chapter} has authored regional scenery`);
+  chapters.push({chapter,code,expectedModels:placements.length,urls,sceneryUrls,sha256:createHash('sha256').update(code).digest('hex')});
 }
 const tour=partial?requestedChapters.map(chapter=>chapters.find(checkpoint=>checkpoint.chapter===chapter)):chapters;
 await mkdir(output,{recursive:true});
@@ -102,10 +103,12 @@ async function pause(on=true){
   if(await page.evaluate(()=>window.__realtime.paused())!==on){await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');}
   await page.waitForFunction(value=>window.__realtime.paused()===value,on);
 }
-async function ready(checkpoint,quality='balanced',{unavailable=false}={}){
+// A world rebuilt by a quality change in camp keeps its drawn trees and stones until the
+// camp is next built, so only the placed scenery's models are leased (kits:false).
+async function ready(checkpoint,quality='balanced',{unavailable=false,kits=true}={}){
   await page.waitForFunction(ch=>window.__realtime?.world()?.campId===`ch${ch}-camp`,checkpoint.chapter,{timeout:120000});
   await page.waitForSelector('.world-courtyard .rt-scene[data-ready="true"]',{timeout:120000});
-  const count=quality==='performance'||unavailable?0:checkpoint.expectedModels,n=quality==='performance'||unavailable?0:checkpoint.urls.length;
+  const count=quality==='performance'||unavailable?0:checkpoint.expectedModels,n=quality==='performance'||unavailable?0:(kits?checkpoint.urls:checkpoint.sceneryUrls).length;
   await page.waitForFunction(({count,n,quality})=>{
     const board=document.querySelector('#rt-board');if(Number(board?.dataset.sceneryModels)!==count)return false;
     try{const stats=JSON.parse(board.dataset.renderStats),cache=stats.sceneryResidency;
@@ -227,7 +230,7 @@ try{
   await ready(last,'performance');await screenshot('chapter-12-performance.png');
   record('Performance quality releases every generated scenery master while retaining the playable camp');
   await menuCommand(page,'settings');await (await revealControl(page,'#graphics-quality')).selectOption('balanced');await closePanel(page);
-  await ready(last);await restore(chapters[0]);await pause();await camera('horizon','KeyH');
+  await ready(last,'balanced',{kits:false});await restore(chapters[0]);await pause();await camera('horizon','KeyH');
   await screenshot('chapter-01-return.png');
   assert.deepEqual(report.residency.at(-1).cache,report.residency[0].cache,'Returning to Chapter I retains only its original working set');
   record('Returning across all regions restores Chapter I without accumulating scenery masters');

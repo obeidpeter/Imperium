@@ -77,12 +77,16 @@ export function createNaturalBranchGeometry(variant=0,radial=10){
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();g.computeBoundingBox();g.computeBoundingSphere();return g;
 }
 
-export function createVegetationFactory({p,m,instance,height,quality}){
+// planter: a loaded tree kit (tree-kit.js). Trees of the species it holds are planted
+// from it instead; the code-built forms below stay for the rest and for Performance.
+export function createVegetationFactory({p,m,instance,height,quality,planter=null}){
   const perf=quality==='performance',high=quality==='high',sprays=Object.fromEntries(Object.keys(FOLIAGE_CELLS).map(k=>[k,p.geo(createFoliageSprayGeometry(k))])),limbs=[0,1,2].map(v=>p.geo(createNaturalBranchGeometry(v,perf?8:10)));
   const color=(seed,light=1)=>new T.Color().setRGB((.85+hash(seed,3)*.15)*light,(.88+hash(seed,4)*.12)*light,(.75+hash(seed,5)*.21)*light);
   function limb(a,b,r,seed){const av=new T.Vector3(...a),bv=new T.Vector3(...b),delta=bv.sub(av),rot=new T.Euler().setFromQuaternion(new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),delta.clone().normalize()));instance(`natural bark ${seed%3}`,limbs[seed%3],m.bark,a,[r,delta.length(),r],[rot.x,rot.y,rot.z]);}
   function spray(kind,name,x,y,z,scale,rotation,seed){instance(name,sprays[kind],m.foliage,[x,y,z],scale,rotation,color(seed));}
+  const planted=(kind,x,z,h,seed)=>planter?.has(kind)&&planter.plant(kind,{x,y:height(x,z)-.05,z,height:h,seed});
   function tree(kind,x,z,h,seed=0){
+    if(planted(kind,x,z,h,seed))return;
     if(kind==='palm')return palm(x,z,h,seed);
     if(kind==='cypress')return cypress(x,z,h,seed);
     if(kind==='pine'||kind==='fir')return conifer(kind,x,z,h,seed);
@@ -106,6 +110,7 @@ export function createVegetationFactory({p,m,instance,height,quality}){
     }
   }
   function palm(x,z,h=5.5,seed=0){
+    if(planted('palm',x,z,h,seed))return;
     const base=height(x,z),lean=.30+hash(x,z)*.35;
     limb([x,base,z],[x+lean,base+h,z+.13],.22,seed,'date palm stem');
     const count=perf?12:high?24:19;
@@ -114,6 +119,7 @@ export function createVegetationFactory({p,m,instance,height,quality}){
     }
   }
   function cypress(x,z,h=6,seed=0){
+    if(planted('cypress',x,z,h,seed))return;
     const base=height(x,z);limb([x,base,z],[x+.12,base+h*.93,z],.13,seed,'cypress stem');
     for(let tier=0;tier<8;tier++)for(let j=0;j<(perf?3:high?7:5);j++){
       const a=j*2.399+tier*.8,r=(1-tier/9)*.45,s=(1-tier/10)*1.45;
@@ -121,6 +127,7 @@ export function createVegetationFactory({p,m,instance,height,quality}){
     }
   }
   function conifer(kind,x,z,h=7,seed=0){
+    if(planted(kind,x,z,h,seed))return;
     const base=height(x,z),tiers=kind==='fir'?8:6;
     limb([x,base,z],[x+.10,base+h,z],.17,seed);
     for(let tier=0;tier<tiers;tier++){

@@ -83,3 +83,10 @@ test('the terrain material: one program per quality, the stand-in layers at once
   assert.equal(refreshTerrainTextures(uniforms),'ktx2');assert.equal(uniforms.groundAlbedoMap.value,groundTextures().albedo);
   assert.equal(balanced.customProgramCacheKey(),key,'the same program draws the photographed layers');
 });
+
+test('the board\'s water wets the ground for a metre and a half round it, and no farther',()=>{
+  const e=board(['........','...mm...','........','........','........','........','........','........']),splat=splatOf(e);
+  const edge=gridToWorld({x:3,y:2},e),mud=d=>splatWeights(splat,edge.x,edge.z-1.25+d).mud,far=gridToWorld({x:3,y:5},e);
+  assert.ok(mud(.3)>.15&&mud(.3)>mud(1.1),`mud beside the marsh: ${mud(.3).toFixed(2)} at 0.3 m, ${mud(1.1).toFixed(2)} at 1.1 m`);
+  assert.ok(splatWeights(splat,far.x,far.z).mud<.02,'none three cells away');
+});

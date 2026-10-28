@@ -11,7 +11,7 @@ export const SPLAT_TEXELS_PER_METRE=2,SPLAT_CHANNELS=12,SPLAT_MAX_SIDE=512;
 // road's own distance field, so a road cell's ground beside the tread is turf.
 export const SPLAT_ROLES=Object.freeze({grass:'turf',road:'turf',sand:'sand',marsh:'wet',ditch:'wet',rock:'rock',rubble:'rock',ford:'bed',river:'bed',
   high:'turf',hill:'turf',wall:'rubble',camp:'camp',stone:'joints',floor:'slabs',bench:'slabs',chamber:'slabs'});
-const LAYERS=GROUND_LAYERS.length;
+const LAYERS=GROUND_LAYERS.length,WATER_ROLES=new Set(['bed','wet']);
 
 /** The weights of a mix (role) scaled by `amount`, added into `w`. */
 function add(w,pairs,amount){if(amount<=0||!pairs)return;for(const [key,share]of pairs)w[GROUND_LAYER_INDEX[key]]+=share*amount;}
@@ -39,6 +39,15 @@ export function splatGrid({minX,minZ,maxX,maxZ},resolution=SPLAT_TEXELS_PER_METR
 export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=()=>0,damp=()=>0,architecture=null,training=false,bounds}){
   const grid=splatGrid(bounds),{nx,nz,step,minX,minZ}=grid,data=new Uint8Array(nx*nz*SPLAT_CHANNELS);
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,w=new Float32Array(SPLAT_CHANNELS);
+  // The board's water (river, ford and marsh cells) wets the ground for a metre and a half round it.
+  const water=new Set();for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(WATER_ROLES.has(SPLAT_ROLES[terrainAt(e,x,y)]))water.add(y*e.width+x);
+  const shoreline=(x,z)=>{
+    if(!water.size||!isPlayable(x,z,e,tileSize,2))return 0;
+    const c=worldToGrid(x,z,e,tileSize);let near=Infinity;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const gx=c.x+dx,gy=c.y+dy;if(gx<0||gy<0||gx>=e.width||gy>=e.height||!water.has(gy*e.width+gx))continue;
+      const cx=(gx-(e.width-1)/2)*tileSize,cz=(gy-(e.height-1)/2)*tileSize;near=Math.min(near,Math.max(Math.abs(x-cx),Math.abs(z-cz))-tileSize/2);}
+    return near<=0?0:1-smooth(near/1.5);
+  };
   // Heights at the texel corners: slopes come from neighbours, not four more samples.
   const heights=new Float32Array((nx+1)*(nz+1));
   for(let iz=0;iz<=nz;iz++){for(let ix=0;ix<=nx;ix++)heights[iz*(nx+1)+ix]=height(minX+ix*step,minZ+iz*step);if(iz%32===31)yield;}
@@ -54,7 +63,7 @@ export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=
       // Wear: scattered trodden patches, the fort's yard, staged routes and the river's bank.
       const yard=training?1-smooth(Math.max(Math.abs(x)-hx+.8,Math.abs(z)-hz+.8)/2.7):0;
       const wear=role==='turf'?(training?yard*(.72+noise(x*.23,z*.23,8)*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48):0;
-      add(w,biome.worn,wear+route(x,z)*.78);add(w,biome.wet,damp(x,z)*.42);
+      add(w,biome.worn,wear+route(x,z)*.78);add(w,biome.wet,damp(x,z)*.42+(role==='turf'||role==='camp'?shoreline(x,z)*.5:0));
       if(architecture){
         const contact=architecture(x,z);
         add(w,biome.rubble,contact.footing*1.8);add(w,biome.worn,contact.wear*1.6);add(w,biome.wet,contact.damp);
