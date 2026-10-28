@@ -240,6 +240,22 @@ test('named generated heads have bounded distinct sculpting, normalized seam wei
   assert.notDeepEqual(signatures[0],signatures[1]);assert.notDeepEqual(signatures[1],signatures[2]);
 });
 
+test('a named man\'s own head compiles as the hero\'s, and every generated body part is drawn from its front',async()=>{
+  // The head wrap exports a named man's head two-sided: drawn so, it compiled a program and a shadow program of its own.
+  for(const id of Object.keys(ACTOR_BODIES)){assert.ok(await library.warm(id),id);const b=library.body(id);
+    for(const part of [b.near,b.overview,b.head?.near,b.head?.overview].filter(Boolean))assert.equal(part.material.side,T.FrontSide,`${id} is drawn from its front`);}
+  const hero=createActor({id:'hero',name:'Marcellus',side:'player',role:'infantry'},{chapter:3,bodyLibrary:library}),lucan=createActor({id:'lucan',name:'Lucan',side:'ally',role:'infantry'},{chapter:3,bodyLibrary:library});
+  await Promise.all([hero.ready,lucan.ready]);
+  const flags=m=>({side:m.side,shadowSide:m.shadowSide,key:m.customProgramCacheKey(),maps:['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap','alphaMap'].filter(k=>m[k]),vertexColors:m.vertexColors,transparent:m.transparent,alphaTest:m.alphaTest});
+  for(const level of ['near','overview']){
+    const own=lucan.group.getObjectByName(`identity-head-${level}`),shared=hero.group.getObjectByName(`identity-head-${level}`);
+    assert.equal(own.userData.ownHead,true,'Lucan wears his own head');assert.equal(shared.userData.ownHead,false,'The hero wears the shared head');
+    assert.deepEqual(flags(own.material),flags(shared.material),`Lucan's ${level} head compiles as the hero's`);
+    assert.equal(!!own.geometry.morphAttributes.position,!!shared.geometry.morphAttributes.position);assert.equal(own.geometry.morphAttributes.position.length,shared.geometry.morphAttributes.position.length);
+  }
+  hero.dispose();lucan.dispose();
+});
+
 test('generated trainer and officer necklines stay beneath the neckcloth through head turns',async()=>{
   for(const [unit,options]of [[{id:'varro',name:'Varro',role:'trainer',side:'ally'},{chapter:1}],[{id:'hero',name:'Marcellus',role:'infantry',side:'player'},{chapter:5,rank:'Centurio'}]]){
     const actor=createActor(unit,{...options,bodyLibrary:library});await actor.ready;

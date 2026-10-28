@@ -33,7 +33,9 @@ export function createActorBodyLibrary(load=loadBody){
       const bones=mesh.skeleton.bones.map(b=>b.name);
       if(!mesh.geometry.attributes.skinWeight||bones.some(name=>!BODY_JOINTS.includes(name)))throw Error(`Body ${id} is not skinned to the game's joints`);
       // The overview's baked colours serve untextured views (fallen bodies); the texture draws the figure.
-      const material=mesh.material.clone();material.vertexColors=false;material.name=`generated body ${id}`;installCloudShadows(material);
+      // Every part is drawn from its front, as the bodies are: the head wrap exports a named man's
+      // head two-sided, which would compile a program, and a shadow program, of its own.
+      const material=mesh.material.clone();material.vertexColors=false;material.side=T.FrontSide;material.name=`generated body ${id}`;installCloudShadows(material);
       material.userData.generatedActorBody=true;
       return Object.freeze({geometry:mesh.geometry,material,bones:Object.freeze(bones)});
     };
