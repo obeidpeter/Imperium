@@ -8854,10 +8854,10 @@
       "loading": "Deferred chapter packs 1, 2, 3, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
-        "bytes": 608124,
-        "gzipBytes": 511441,
-        "sha256": "5923c63c414050e992026d0ad6f30321b50a07c530190e699af84fb898338e5d",
-        "triangles": 18168,
+        "bytes": 594256,
+        "gzipBytes": 500222,
+        "sha256": "ec5f65a315b248899c7314b8a8b67046e24e010176d8b598a4b33d10bc2003ab",
+        "triangles": 17520,
         "textures": 1,
         "textureEdge": 1024,
         "componentCount": 18
@@ -9719,7 +9719,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T15:55:28.598Z",
+  "updatedAt": "2026-10-28T16:09:02.055Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9746,7 +9746,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 36291036,
-  "totalModelBytes": 21145407,
+  "totalBundledAssetBytes": 36277168,
+  "totalModelBytes": 21131539,
   "derivedGeometryBytes": 47428
 }

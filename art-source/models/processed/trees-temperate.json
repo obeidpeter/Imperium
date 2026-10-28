@@ -87,7 +87,7 @@
       "crownRadius": 0.3648,
       "impostorSpan": 0.7589,
       "triangles": {
-        "near": 2704,
+        "near": 2056,
         "mid": 756,
         "far": 4
       }
@@ -137,9 +137,9 @@
   ],
   "output": {
     "path": "art-source/models/processed/trees-temperate.glb",
-    "bytes": 2580948,
-    "sha256": "515fd14441446f446f9bfa82f543cd99f0f5dd93030608e1d871a702c598a998",
-    "triangles": 18168
+    "bytes": 2549772,
+    "sha256": "c93475674a34ab9c6d4a51b6fc2851d27391eb38eac2eed57ac63eadb47c4720",
+    "triangles": 17520
   },
   "runtimePath": "assets/models/scenery/trees-temperate.glb"
 }

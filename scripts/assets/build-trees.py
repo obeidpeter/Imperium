@@ -494,6 +494,8 @@ def deciduous(tree, leaf, form):
     trunk_top = H * form['trunk']
     stems = form.get('stems', 1)
     trunk_sides, bough_sides, twig_sides = (8, 6, 4) if near else (6, 4, 0)
+    # The willow's hanging cards paint their own twigs; tubes would show as dark sticks.
+    if not form.get('twig_tubes', True): twig_sides = 0
     tops = []
     for s in range(stems):
         lean = Vector((rng.uniform(-1, 1), rng.uniform(-1, 1), 0)) * form.get('lean', .06) + Vector((0, 0, 1))
@@ -639,7 +641,7 @@ FORMS = {
                           'clusters': 2, 'cards': 3, 'card': .8, 'droop': .06, 'cone': True}),
     'willow': (deciduous, {'trunk': .34, 'radius': .24, 'bough_ratio': .45, 'boughs': 9, 'from': .55, 'rise': 1.15, 'reach': .32, 'twigs': 3,
                            'twig_length': .8, 'clusters': 3, 'cards': 4, 'card': .9, 'mid_clusters': 2, 'mid_card': 1.5, 'droop': .12,
-                           'twig_droop': 1.6, 'hang': True}),
+                           'twig_droop': 1.6, 'hang': True, 'twig_tubes': False}),
     'poplar': (deciduous, {'trunk': .82, 'radius': .2, 'boughs': 12, 'from': .18, 'rise': 1.25, 'reach': .26, 'twigs': 2, 'twig_length': .5,
                            'clusters': 2, 'cards': 2, 'card': .75, 'droop': -.05}),
     'olive': (deciduous, {'trunk': .36, 'radius': .24, 'stems': 3, 'splay': .25, 'twist': .2, 'boughs': 7, 'from': .55, 'rise': .7, 'reach': .3,
