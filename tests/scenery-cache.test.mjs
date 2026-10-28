@@ -53,3 +53,15 @@ test('failed loads are retryable without erasing a newer request or leaking a le
   await assert.rejects(old.ready,/offline/);assert.equal(cache.master('prop'),model.root);
   current.release();cache.clear();assert.equal(cache.stats().entries,0);assert.equal(model.freed.geometry,1);
 });
+
+test('a hold leases only a loaded model and never requests one, nor one that failed',async()=>{
+  const model=trackedModel();let calls=0;
+  const cache=createSceneryModelCache({load:url=>{calls++;return url==='down'?Promise.reject(Error('503')):Promise.resolve(model.root);}});
+  const preload=cache.acquire('down');await assert.rejects(preload.ready,/503/);preload.release();
+  assert.equal(cache.hold('down'),null);assert.equal(cache.hold('never'),null);
+  assert.equal(calls,1,'no request after the failure, and none for a model never asked for');assert.equal(cache.stats().entries,0);
+  const pending=deferred(),slow=createSceneryModelCache({load:()=>pending.promise}),loading=slow.acquire('up');
+  assert.equal(slow.hold('up'),null,'a model still loading is not held');pending.resolve(model.root);await loading.ready;
+  const held=slow.hold('up');assert.equal(held.scene,model.root);loading.release();
+  assert.equal(slow.master('up'),model.root,'the hold keeps the master');held.release();slow.clear();assert.equal(model.freed.geometry,1);
+});

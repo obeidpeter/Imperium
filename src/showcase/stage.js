@@ -8,7 +8,7 @@ import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
-import {acquireSceneryModel,createSceneryModels,sceneryResidency} from './scenery-models.js';
+import {createSceneryModels,holdSceneryModel,sceneryResidency} from './scenery-models.js';
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
@@ -335,7 +335,8 @@ export class BattleStage{
   takeWorldKits(encounter,quality){
     for(const lease of [this.boardKit,this.treeKit,this.rockKit])lease?.release();this.boardKit=this.treeKit=this.rockKit=null;
     if(quality==='performance')return;
-    const take=url=>{if(!url)return null;const lease=acquireSceneryModel(url);if(lease.scene)return lease;lease.release();return null;};
+    // Only a model already loaded: a stage never requests one, so a failed download is not asked for again.
+    const take=url=>url?holdSceneryModel(url):null;
     this.boardKit=take(boardKitUrl(encounter));this.treeKit=take(sceneTreeKitUrl(encounter,this.chapter));this.rockKit=take(sceneRockKitUrl(encounter,this.chapter));
   }
   rebuildFieldFeatures(){

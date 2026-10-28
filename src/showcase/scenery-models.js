@@ -74,6 +74,8 @@ export const sceneryMaster=url=>masters.master(url);
 export const sceneryResidency=()=>masters.stats();
 // A lease on a model a stage uses while it stands (the board kit, battlefield-features.js).
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
+// A lease on a model already loaded, or null, without a request (scenery-cache.js).
+export const holdSceneryModel=url=>masters.hold(url);
 // The board kit and the region's tree and rock kits belong to the working set wherever the scenery is drawn.
 const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter)].filter(Boolean);
 /** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
