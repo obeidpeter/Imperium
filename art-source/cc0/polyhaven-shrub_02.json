@@ -1,0 +1,39 @@
+{
+  "source": "Poly Haven",
+  "id": "shrub_02",
+  "page": "https://polyhaven.com/a/shrub_02",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:01:05.340Z",
+  "name": "Shrub 02",
+  "authors": [
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "Alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_02/shrub_02_diff_1k.png",
+      "bytes": 1737013,
+      "md5": "ec92c3af4603a2266215f58aa0096784",
+      "sha256": "d6f8bcbd221e9229bc8d831a0819717dd74d327cd7f66219de942b7d60d01876",
+      "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_diff_1k.png"
+    },
+    {
+      "map": "Alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/shrub_02/shrub_02_alpha_1k.png",
+      "bytes": 91741,
+      "md5": "64a1f609d80ea076b43412498a3d2db5",
+      "sha256": "5c2c31bac311051db77443e1780078403c2df0a832c40fe6ed7bcd982695cdf0",
+      "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_alpha_1k.png"
+    }
+  ]
+}

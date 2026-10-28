@@ -1,0 +1,40 @@
+{
+  "source": "Poly Haven",
+  "id": "jacaranda_tree",
+  "page": "https://polyhaven.com/a/jacaranda_tree",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:01:07.741Z",
+  "name": "Jacaranda Tree",
+  "authors": [
+    "Rob Tuytel",
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "leaves_diff",
+      "leaves_alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "leaves_diff",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/jacaranda_tree/jacaranda_tree_leaves_diff_1k.png",
+      "bytes": 2364526,
+      "md5": "879ef43acb3443e247a2d32713fec86c",
+      "sha256": "5729978e92649ee6cc70bdc457aac1b28b16a10bde0a55004b659a1923c8861b",
+      "path": "art-source/cc0/raw/polyhaven-jacaranda_tree/jacaranda_tree_leaves_diff_1k.png"
+    },
+    {
+      "map": "leaves_alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/jacaranda_tree/jacaranda_tree_leaves_alpha_1k.png",
+      "bytes": 506043,
+      "md5": "740214de7b900e30737009ff4ee2c01a",
+      "sha256": "c708a7e928a2e4d26981b021a22deeefc0ebb0e467f60b53cfa636a7e24d68f7",
+      "path": "art-source/cc0/raw/polyhaven-jacaranda_tree/jacaranda_tree_leaves_alpha_1k.png"
+    }
+  ]
+}

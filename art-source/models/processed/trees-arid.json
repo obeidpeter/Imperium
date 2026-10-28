@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "id": "trees-arid",
+  "generator": "scripts/assets/build-trees.py",
+  "kit": "arid",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "normalHeight": 0.5,
+  "atlas": {
+    "size": 1024,
+    "cell": 256,
+    "cells": {
+      "bark:bark_brown_01": 0,
+      "bark:palm_bark": 1,
+      "leaf:feather": 2,
+      "leaf:frond": 3,
+      "impostor:palm": 4,
+      "impostor:tamarisk": 5
+    }
+  },
+  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
+  "leaves": {
+    "feather": "art-source/cc0/polyhaven-jacaranda_tree.json",
+    "frond": "assets/showcase/foliage-v016.webp"
+  },
+  "bark": {
+    "bark_brown_01": "art-source/cc0/polyhaven-bark_brown_01.json",
+    "palm_bark": "art-source/cc0/polyhaven-palm_bark.json"
+  },
+  "species": [
+    {
+      "species": "palm",
+      "buildHeight": 6.5,
+      "top": 6.03,
+      "bark": "palm_bark",
+      "leaf": "frond",
+      "crownRadius": 0.3733,
+      "impostorSpan": 0.7765,
+      "triangles": {
+        "near": 416,
+        "mid": 168,
+        "far": 4
+      }
+    },
+    {
+      "species": "tamarisk",
+      "buildHeight": 4.2,
+      "top": 4.033,
+      "bark": "bark_brown_01",
+      "leaf": "feather",
+      "crownRadius": 0.3328,
+      "impostorSpan": 0.6922,
+      "triangles": {
+        "near": 2064,
+        "mid": 684,
+        "far": 4
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/trees-arid.glb",
+    "bytes": 761604,
+    "sha256": "642c35acde957abab49fb95f0e094e05c6ff88a6139dbfdce3665cc20d59c5df",
+    "triangles": 3340
+  },
+  "runtimePath": "assets/models/scenery/trees-arid.glb"
+}

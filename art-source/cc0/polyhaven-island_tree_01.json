@@ -1,0 +1,40 @@
+{
+  "source": "Poly Haven",
+  "id": "island_tree_01",
+  "page": "https://polyhaven.com/a/island_tree_01",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:00:59.263Z",
+  "name": "Island Tree 01",
+  "authors": [
+    "Rob Tuytel",
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "leaves_diff",
+      "leaves_alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "leaves_diff",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/island_tree_01/island_tree_01_leaves_diff_1k.png",
+      "bytes": 1638916,
+      "md5": "f5dcd85f170c154cba9cb8367af5dbdd",
+      "sha256": "63d3563a22a62151f338ceb4e992de7c31b62e8e3582e2762d5071f02d286349",
+      "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_diff_1k.png"
+    },
+    {
+      "map": "leaves_alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/island_tree_01/island_tree_01_leaves_alpha_1k.png",
+      "bytes": 57438,
+      "md5": "5ad9fb9a06e70c069bd3d3ba23577375",
+      "sha256": "f4341f147988dbe6b58d9ca841a8f0e4bcff25bc40d05f9877da82006d489c39",
+      "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_alpha_1k.png"
+    }
+  ]
+}

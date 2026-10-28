@@ -1,0 +1,39 @@
+{
+  "source": "Poly Haven",
+  "id": "tree_small_02",
+  "page": "https://polyhaven.com/a/tree_small_02",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:01:03.708Z",
+  "name": "Tree Small 02",
+  "authors": [
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "leaves_diff",
+      "leaves_alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "leaves_diff",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_diff_1k.png",
+      "bytes": 2338424,
+      "md5": "2c667193084725e8553062ddbdc73c7d",
+      "sha256": "d3fc48522c76aa1f91076c6b86f302669822ebe4e2acabd67d42c4d57eaa5ba0",
+      "path": "art-source/cc0/raw/polyhaven-tree_small_02/tree_small_02_leaves_diff_1k.png"
+    },
+    {
+      "map": "leaves_alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_alpha_1k.png",
+      "bytes": 264711,
+      "md5": "63199ba87a9e8928424bd8c3b8017bd0",
+      "sha256": "4f143e2dda8a6a572f427ac378b92255d21761e4611de0d26e21816c01aa533b",
+      "path": "art-source/cc0/raw/polyhaven-tree_small_02/tree_small_02_leaves_alpha_1k.png"
+    }
+  ]
+}

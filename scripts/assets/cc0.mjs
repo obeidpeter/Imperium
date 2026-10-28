@@ -28,12 +28,17 @@ export const SOURCES=Object.freeze({
 });
 export const CC0='CC0 1.0 Universal (public domain dedication)';
 const sha256=bytes=>createHash('sha256').update(bytes).digest('hex');
+const MODEL_FILES=['blend','gltf','fbx','usd'];
 const md5=bytes=>createHash('md5').update(bytes).digest('hex');
 
-/** The Poly Haven files to fetch: each requested map at one resolution and format. */
-export function polyHavenSelection(info,files,{resolution='1k',format='png',maps=['Diffuse','nor_gl','arm']}={}){
-  if(info?.type!==1)throw new Error(`Only texture sets are supported; this Poly Haven asset is type ${info?.type}.`);
-  return maps.map(map=>{
+/** The Poly Haven files to fetch: each requested map at one resolution and format.
+ * A model (type 2) offers its own textures' maps by name (twig_diff, leaves_alpha):
+ * only maps named in the request are taken from it, never its meshes. */
+export function polyHavenSelection(info,files,{resolution='1k',format='png',maps}={}){
+  const model=info?.type===2;
+  if(info?.type!==1&&!(model&&maps?.length))throw new Error(`Only texture sets, or the texture maps a model names, are supported; this Poly Haven asset is type ${info?.type}.`);
+  if(model&&maps.some(map=>MODEL_FILES.includes(map)))throw new Error(`Only a model's texture maps can be fetched, not its ${maps.filter(map=>MODEL_FILES.includes(map)).join(', ')} files.`);
+  return (maps??['Diffuse','nor_gl','arm']).map(map=>{
     const file=files?.[map]?.[resolution]?.[format];
     if(!file?.url)throw new Error(`Poly Haven offers no ${map} map at ${resolution} as ${format}; it has ${Object.keys(files??{}).join(', ')}.`);
     if(!/^https:\/\/dl\.polyhaven\.org\//.test(file.url))throw new Error(`Unexpected download host for ${map}: ${file.url}`);
@@ -85,7 +90,7 @@ export async function fetchCc0(spec,options={},{fetcher=globalThis.fetch,now=()=
   if(source==='polyhaven'){
     const info=await fetchJson(fetcher,`https://api.polyhaven.com/info/${id}`),list=await fetchJson(fetcher,`https://api.polyhaven.com/files/${id}`);
     const selection=polyHavenSelection(info,list,options);
-    Object.assign(record,{name:info.name,authors:Object.keys(info.authors??{}),selection:{resolution:options.resolution??'1k',format:options.format??'png',maps:selection.map(f=>f.map)}});
+    Object.assign(record,{name:info.name,authors:Object.keys(info.authors??{}),...(info.type===2?{kind:'model textures'}:{}),selection:{resolution:options.resolution??'1k',format:options.format??'png',maps:selection.map(f=>f.map)}});
     for(const file of selection){
       const data=await fetchBytes(fetcher,file.url);
       if(md5(data)!==file.md5||data.length!==file.bytes)throw new Error(`${file.name} does not match Poly Haven's digest; nothing was written.`);
@@ -111,7 +116,7 @@ export function manifestEntry(record,recordPath,shipped,{id,subject,usage,loadin
   for(const [name,value]of Object.entries({id,subject,usage,loading,processing}))if(!value)throw new Error(`record needs --${name}.`);
   const extension=/\.[a-z0-9]+$/.exec(shipped.path)?.[0];
   return {id,path:shipped.path,subject,
-    source:{method:`CC0 ${record.method?String(record.method).toLowerCase()+' ':''}texture set from ${record.source} (${record.name}), ${processing}`,generator:record.source,page:record.page,record:recordPath,authors:record.authors,retrievedAt:record.retrievedAt,
+    source:{method:`CC0 ${record.method?String(record.method).toLowerCase()+' ':''}${record.kind??'texture set'} from ${record.source} (${record.name}), ${processing}`,generator:record.source,page:record.page,record:recordPath,authors:record.authors,retrievedAt:record.retrievedAt,
       files:record.files.map(f=>({path:f.path,sha256:f.sha256}))},
     usage,loading,
     export:{format:format??FORMATS[extension]??extension,bytes:shipped.bytes,sha256:shipped.sha256},

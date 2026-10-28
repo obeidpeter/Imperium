@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "pine_bark",
+  "page": "https://polyhaven.com/a/pine_bark",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T08:34:52.834Z",
+  "name": "Pine Bark",
+  "authors": [
+    "Dimitrios Savva"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "arm"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/pine_bark/pine_bark_diff_1k.png",
+      "bytes": 5578499,
+      "md5": "55c322faf0652859b5c3357309c6eaa1",
+      "sha256": "8496fcea72b809f95d0091fb93da74ef5944033eec33ea0b58101a9bf755f042",
+      "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/pine_bark/pine_bark_nor_gl_1k.png",
+      "bytes": 5844630,
+      "md5": "f048956ac565eb88217b9e95f744cedd",
+      "sha256": "b20acff197ac8c49b5d888ab4bb10f8a4542823519c2a62d89bcf938d36d1143",
+      "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_nor_gl_1k.png"
+    },
+    {
+      "map": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/pine_bark/pine_bark_arm_1k.png",
+      "bytes": 4318907,
+      "md5": "834068153a674eadf041b9893849e547",
+      "sha256": "1d99d054e44e7a572cea4fcbd3a6e35a6b0a321f137c082cd31178226581bd1d",
+      "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_arm_1k.png"
+    }
+  ]
+}

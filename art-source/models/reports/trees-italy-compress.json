@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/scenery/trees-italy.glb",
+  "output": "assets/models/scenery/trees-italy.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 1435664,
+    "gzipBytes": 1306866,
+    "sha256": "a10540018a894811a071bcb39cbea70151d33c1ffc4334710f96eeb1ff9b11e4"
+  },
+  "after": {
+    "bytes": 356280,
+    "gzipBytes": 302049,
+    "sha256": "3a4f7c3d18b5f94b86af0c863b5405abc293e1eda3b18709c08300e51d752dca"
+  },
+  "geometryUnchanged": true,
+  "triangles": 9704,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 1128648
+      },
+      "bytes": 138542,
+      "psnr": 32.261
+    }
+  ]
+}

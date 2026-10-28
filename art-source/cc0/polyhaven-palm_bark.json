@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "palm_bark",
+  "page": "https://polyhaven.com/a/palm_bark",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T08:34:54.928Z",
+  "name": "Palm Bark",
+  "authors": [
+    "Charlotte Baglioni"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "arm"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/palm_bark/palm_bark_diff_1k.png",
+      "bytes": 5547219,
+      "md5": "83bdfb755090afd025e22fb7b3eeeedb",
+      "sha256": "97b380b64a0a12edab80f00b3b89808fb7bed276eae8bd8969ce5a013236f252",
+      "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/palm_bark/palm_bark_nor_gl_1k.png",
+      "bytes": 6024325,
+      "md5": "1ac17d2a05a47cc4e32cc8c707f6edbb",
+      "sha256": "b5f2ca2e13a7d90c7e129330c724072411ccd9eba00bb7cf37671bd69d776730",
+      "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_nor_gl_1k.png"
+    },
+    {
+      "map": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/palm_bark/palm_bark_arm_1k.png",
+      "bytes": 4124335,
+      "md5": "4c5cfeef273ce31db22ad1737d1078d6",
+      "sha256": "c12c5b2f71b3e5f00e573e1895bcb4b5071cac081bdc32a35b8fb8f5ee57a0a7",
+      "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_arm_1k.png"
+    }
+  ]
+}

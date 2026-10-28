@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "id": "trees-temperate",
+  "generator": "scripts/assets/build-trees.py",
+  "kit": "temperate",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    8,
+    10
+  ],
+  "normalHeight": 0.5,
+  "atlas": {
+    "size": 1024,
+    "cell": 256,
+    "cells": {
+      "bark:bark_brown_01": 0,
+      "bark:bark_brown_02": 1,
+      "bark:bark_willow": 2,
+      "bark:pine_bark": 3,
+      "leaf:comb": 4,
+      "leaf:lobed": 5,
+      "leaf:narrow": 6,
+      "leaf:needles": 7,
+      "leaf:oval": 8,
+      "leaf:round": 9,
+      "impostor:oak": 10,
+      "impostor:beech": 11,
+      "impostor:willow": 12,
+      "impostor:alder": 13,
+      "impostor:pine": 14,
+      "impostor:fir": 15
+    }
+  },
+  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
+  "leaves": {
+    "comb": "art-source/cc0/polyhaven-fir_tree_01.json",
+    "lobed": "assets/showcase/foliage-v016.webp",
+    "narrow": "art-source/cc0/polyhaven-shrub_02.json",
+    "needles": "art-source/cc0/polyhaven-pine_tree_01.json",
+    "oval": "art-source/cc0/polyhaven-island_tree_01.json",
+    "round": "art-source/cc0/polyhaven-tree_small_02.json"
+  },
+  "bark": {
+    "bark_brown_01": "art-source/cc0/polyhaven-bark_brown_01.json",
+    "bark_brown_02": "art-source/cc0/polyhaven-bark_brown_02.json",
+    "bark_willow": "art-source/cc0/polyhaven-bark_willow.json",
+    "pine_bark": "art-source/cc0/polyhaven-pine_bark.json"
+  },
+  "species": [
+    {
+      "species": "oak",
+      "buildHeight": 6.5,
+      "top": 5.356,
+      "bark": "bark_brown_02",
+      "leaf": "lobed",
+      "crownRadius": 0.3635,
+      "impostorSpan": 0.756,
+      "triangles": {
+        "near": 1840,
+        "mid": 516,
+        "far": 4
+      }
+    },
+    {
+      "species": "beech",
+      "buildHeight": 7.5,
+      "top": 7.277,
+      "bark": "bark_brown_01",
+      "leaf": "oval",
+      "crownRadius": 0.2548,
+      "impostorSpan": 0.5299,
+      "triangles": {
+        "near": 1840,
+        "mid": 516,
+        "far": 4
+      }
+    },
+    {
+      "species": "willow",
+      "buildHeight": 6,
+      "top": 3.709,
+      "bark": "bark_willow",
+      "leaf": "narrow",
+      "crownRadius": 0.3905,
+      "impostorSpan": 0.8123,
+      "triangles": {
+        "near": 2056,
+        "mid": 588,
+        "far": 4
+      }
+    },
+    {
+      "species": "alder",
+      "buildHeight": 6.5,
+      "top": 6.632,
+      "bark": "bark_brown_01",
+      "leaf": "round",
+      "crownRadius": 0.1966,
+      "impostorSpan": 0.52,
+      "triangles": {
+        "near": 1624,
+        "mid": 588,
+        "far": 4
+      }
+    },
+    {
+      "species": "pine",
+      "buildHeight": 8,
+      "top": 8.884,
+      "bark": "pine_bark",
+      "leaf": "needles",
+      "crownRadius": 0.1725,
+      "impostorSpan": 0.52,
+      "triangles": {
+        "near": 1984,
+        "mid": 528,
+        "far": 4
+      }
+    },
+    {
+      "species": "fir",
+      "buildHeight": 8.5,
+      "top": 8.711,
+      "bark": "pine_bark",
+      "leaf": "comb",
+      "crownRadius": 0.2102,
+      "impostorSpan": 0.52,
+      "triangles": {
+        "near": 4352,
+        "mid": 896,
+        "far": 4
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/trees-temperate.glb",
+    "bytes": 2448104,
+    "sha256": "2b5534975b33a5498484153fcc84990d4c4da335fe63c8a6329c081b2bd01fac",
+    "triangles": 17352
+  },
+  "runtimePath": "assets/models/scenery/trees-temperate.glb"
+}
