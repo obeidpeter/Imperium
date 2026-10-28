@@ -17,17 +17,17 @@
         }
       },
       "balanced": {
-        "calls": 92,
-        "triangles": 373000,
+        "calls": 105,
+        "triangles": 396000,
         "programs": 41,
         "recorded": {
-          "calls": 83,
-          "triangles": 338205,
+          "calls": 95,
+          "triangles": 359150,
           "programs": 39,
-          "gpuBytes": 54191122,
+          "gpuBytes": 59547470,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -47,17 +47,17 @@
         }
       },
       "balanced": {
-        "calls": 97,
-        "triangles": 379000,
+        "calls": 111,
+        "triangles": 377000,
         "programs": 44,
         "recorded": {
-          "calls": 88,
-          "triangles": 344253,
+          "calls": 100,
+          "triangles": 342713,
           "programs": 42,
-          "gpuBytes": 61768750,
+          "gpuBytes": 67017482,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -77,17 +77,17 @@
         }
       },
       "balanced": {
-        "calls": 93,
-        "triangles": 427000,
+        "calls": 105,
+        "triangles": 450000,
         "programs": 41,
         "recorded": {
-          "calls": 84,
-          "triangles": 387532,
+          "calls": 95,
+          "triangles": 408960,
           "programs": 39,
-          "gpuBytes": 50341556,
+          "gpuBytes": 55783276,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -107,17 +107,17 @@
         }
       },
       "balanced": {
-        "calls": 127,
-        "triangles": 568000,
+        "calls": 139,
+        "triangles": 584000,
         "programs": 46,
         "recorded": {
-          "calls": 115,
-          "triangles": 515967,
+          "calls": 126,
+          "triangles": 530748,
           "programs": 44,
-          "gpuBytes": 64346962,
+          "gpuBytes": 69901802,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -137,17 +137,17 @@
         }
       },
       "balanced": {
-        "calls": 165,
-        "triangles": 507000,
+        "calls": 174,
+        "triangles": 515000,
         "programs": 46,
         "recorded": {
-          "calls": 150,
-          "triangles": 460445,
+          "calls": 158,
+          "triangles": 467760,
           "programs": 44,
-          "gpuBytes": 82740306,
+          "gpuBytes": 88143304,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -167,17 +167,17 @@
         }
       },
       "balanced": {
-        "calls": 140,
-        "triangles": 415000,
+        "calls": 149,
+        "triangles": 428000,
         "programs": 46,
         "recorded": {
-          "calls": 127,
-          "triangles": 377108,
+          "calls": 135,
+          "triangles": 388799,
           "programs": 44,
-          "gpuBytes": 80198682,
+          "gpuBytes": 85396556,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -197,17 +197,17 @@
         }
       },
       "balanced": {
-        "calls": 149,
-        "triangles": 642000,
+        "calls": 159,
+        "triangles": 684000,
         "programs": 45,
         "recorded": {
-          "calls": 135,
-          "triangles": 583405,
+          "calls": 144,
+          "triangles": 621104,
           "programs": 43,
-          "gpuBytes": 73142178,
+          "gpuBytes": 78569494,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -227,17 +227,17 @@
         }
       },
       "balanced": {
-        "calls": 147,
-        "triangles": 662000,
+        "calls": 159,
+        "triangles": 658000,
         "programs": 50,
         "recorded": {
-          "calls": 133,
-          "triangles": 601239,
+          "calls": 144,
+          "triangles": 597665,
           "programs": 48,
-          "gpuBytes": 74137148,
+          "gpuBytes": 79382792,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -257,17 +257,17 @@
         }
       },
       "balanced": {
-        "calls": 151,
-        "triangles": 522000,
+        "calls": 160,
+        "triangles": 535000,
         "programs": 45,
         "recorded": {
-          "calls": 137,
-          "triangles": 474032,
+          "calls": 145,
+          "triangles": 485957,
           "programs": 43,
-          "gpuBytes": 80323214,
+          "gpuBytes": 85730392,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -287,17 +287,17 @@
         }
       },
       "balanced": {
-        "calls": 152,
-        "triangles": 619000,
+        "calls": 170,
+        "triangles": 635000,
         "programs": 48,
         "recorded": {
-          "calls": 138,
-          "triangles": 561864,
+          "calls": 154,
+          "triangles": 576399,
           "programs": 46,
-          "gpuBytes": 67475574,
+          "gpuBytes": 73220714,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -327,7 +327,7 @@
           "gpuBytes": 81489130,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     },
@@ -347,17 +347,17 @@
         }
       },
       "balanced": {
-        "calls": 159,
-        "triangles": 850000,
+        "calls": 170,
+        "triangles": 887000,
         "programs": 48,
         "recorded": {
-          "calls": 144,
-          "triangles": 772721,
+          "calls": 154,
+          "triangles": 805715,
           "programs": 46,
-          "gpuBytes": 66118756,
+          "gpuBytes": 71673440,
           "gpuMemoryMethodVersion": 2,
           "source": "production dist",
-          "date": "2026-10-27T23:44:06.307Z"
+          "date": "2026-10-28T11:42:07.302Z"
         }
       }
     }
