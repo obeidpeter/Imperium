@@ -8,6 +8,7 @@ import {addNeutralMaps} from './model-materials.js';
 import {createHorse} from './actor-horse.js';
 import {bindActorSurfaces,createClothRig} from './actor-skin.js';
 import {actorIdentity} from './actor-identity.js';
+import {shieldDesign,shieldDecals} from './shield-patterns.js';
 import {createHeadGeometry,createHairGeometry,faceSurfacePoint} from './actor-head.js';
 import {garmentGeometry} from './actor-geometry.js';
 import {sampleActorClip} from './actor-clips.js';
@@ -108,7 +109,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   if(kit.appearance&&!civic){p.cloth=[0xd1c6a8,0x994b42,0x456c88,0xbc9750][kit.appearance.tunic]??p.cloth;
     wardrobe.cloak=[0x665442,0x45494a,0x813c37,0x4b624a][kit.appearance.cloak]??wardrobe.cloak;}
   const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
-  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,equipment:kit.equipment??null,weapon:kit.weapon??(spear?'spear':'spatha'),identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',wardrobe:wardrobe.heraldry};
+  group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,equipment:kit.equipment??null,weapon:kit.weapon??(spear?'spear':'spatha'),identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',shieldDesign:shieldDesign(kit,identity).id};
   const material=(color,extra={})=>{const Constructor=options.quality==='high'&&extra.roughnessMap&&extra.metalness===0?T.MeshPhysicalMaterial:T.MeshStandardMaterial;const m=new Constructor({color,roughness:.84,metalness:0,...extra,...(Constructor===T.MeshPhysicalMaterial?{sheen:.18,sheenRoughness:.85,sheenColor:new T.Color(color).multiplyScalar(.25)}:{})});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
   const clothSurface=surface('cloth'),leatherSurface=surface('leather'),paintSurface=surface('paint');
@@ -230,12 +231,11 @@ function createActorRig(unit={},options={},reuseGroup=null){
     mesh(s,new T.TubeGeometry(rimCurve,64,.008,6,true),bronze);
     const boss=ellipsoid(s,metal,0,.03,.075,.061,.064,.048);
     for(let i=0;i<12;i++){const a=i/12*TAU;faceDetail(s,bronze,Math.sin(a)*.238,Math.cos(a)*.37+.03,.027,.007,.007,.004);}
-    for(const sign of [-1,1]){
-      const motif=wardrobe.heraldry==='chevron'?[[.04,.09],[.18,.20],[.18,.25],[.04,.14]]:wardrobe.heraldry==='bars'?[[.045,.13],[.20,.13],[.20,.165],[.045,.165]]:[[.025,.1],[.055,.21],[.08,.13],[.19,.25],[.12,.11],[.18,.08],[.07,.055]];
-      const em=mesh(s,shapeGeometry(motif,.002),white,0,.03,.058);em.scale.x=sign;
-      if(wardrobe.heraldry==='sun')for(let i=0;i<3;i++){const a=(i+1)*Math.PI/4;strip(s,white,[[sign*Math.sin(a)*.10,.03+Math.cos(a)*.15,.063],[sign*Math.sin(a)*.18,.03+Math.cos(a)*.28,.052]],.008);}
-      strip(s,leather,[[sign*.055,.15,-.035],[sign*.064,.03,-.065],[sign*.055,-.10,-.035]],.014);
-    }
+    // The unit's design from the faction's pattern library (shield-patterns.js), laid on the face.
+    const design=shieldDesign(kit,identity);if(design.base)shieldPaint.color.set(design.base);
+    const fieldPaint=design.field?material(design.field,paintSurface):null;if(fieldPaint)fieldPaint.name='painted shield field';
+    for(const {paint,geometry}of shieldDecals(design.id))mesh(s,geometry,paint==='field'?fieldPaint??shieldPaint:paint==='dark'?black:white);
+    for(const sign of [-1,1])strip(s,leather,[[sign*.055,.15,-.035],[sign*.064,.03,-.065],[sign*.055,-.10,-.035]],.014);
     strip(s,bronze,[[-.07,.03,-.045],[.07,.03,-.045]],.012);return s;
   }
   const shield=archer||!armed||kit.shield===false?null:makeShield();
