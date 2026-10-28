@@ -16,8 +16,14 @@ const named={
   ,quintus:{key:'quintus',age:28,jaw:1.08,cheek:1.04,nose:.98,brow:1.08,eyes:1.02,mouth:1.04,build:1.04,hair:'cropped',beard:.22,grey:.03,skin:0xbd8d68}
 };
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+// A name draws the person it names, never those he leads or keeps: "Lucan’s squad",
+// "Felix’s archers" and "Crispus’s advocate" are not Lucan, Felix or Crispus.
+export function castMember(text=''){
+  for(const word of String(text).toLowerCase().split(/[^a-z’']+/))if(word&&!/[’']s$/.test(word)&&Object.hasOwn(named,word))return word;
+  return null;
+}
 export function actorIdentity(unit={},kit={}){
-  const chapter=clamp(Math.trunc(Number(kit.chapter)||1),1,12),elapsed=years[chapter-1],name=String(unit.veteranId??unit.name??'').toLowerCase(),key=Object.keys(named).find(k=>name.includes(k));
+  const chapter=clamp(Math.trunc(Number(kit.chapter)||1),1,12),elapsed=years[chapter-1],key=castMember(unit.veteranId??unit.name);
   if(unit.id==='hero')return Object.freeze({key:'marcellus',age:20+elapsed,jaw:1,cheek:1,nose:1,brow:1.04,eyes:1,mouth:1,build:1,
     hair:unit.appearance?['cropped','curly','shaved','long'][unit.appearance.hair]??'cropped':'curly',
     beard:unit.appearance?[0,.4,.85][unit.appearance.beard]??0:elapsed<3?0:elapsed<10?.24:.62,
