@@ -12,7 +12,9 @@
 // from the procedural head (head-joint metres) to cover its head and hair.
 const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),scale:Object.freeze(scale)});
 // The chapters each named man appears in, in 3D (tests/actor-bodies.test.mjs checks them).
-const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,5,6]});
+const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,5,6],
+  // Sabinus takes Lucan's place from Chapter II when Lucan leaves.
+  sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3],crispus:[3]});
 const body=(fits,chapters,{headwear=null,cast=null}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast});
 // The recruit's head is the one every named man's face is made from, so a named man's
 // own body wears the game's helmet or cap as the recruit does.
@@ -21,7 +23,7 @@ export const ACTOR_BODIES=Object.freeze({
   'roman-recruit':body([{faction:'Roman',role:'recruit'}],[1,2,3,4,5,6,7,8,9,10,11,12],{headwear:SHARED_HEAD}),
   'roman-trainer':body([{faction:'Roman',role:'trainer'}],[1]),
   'roman-legionary':body([{faction:'Roman',role:'veteran'}],[1,2,3,4,5,6,7,8,9,10,12]),
-  'roman-archer':body([{faction:'Roman',role:'archer'}],[3,4,5,6,7,8,9,10,12]),
+  'roman-archer':body([{faction:'Roman',role:'archer'}],[4,5,6,7,8,9,10,12]),
   // The protagonist's command shows in his armour: a centurion's mail, then a commander's cuirass.
   'roman-officer':body([{faction:'Roman',role:'officer',command:false}],[4,5,6]),
   'roman-commander':body([{faction:'Roman',role:'officer',command:true}],[7,8,9,10,11,12]),
@@ -38,7 +40,12 @@ export const ACTOR_BODIES=Object.freeze({
   // Named men in their own generated bodies, the shared head wrapped onto each man's own
   // generated head (scripts/assets/wrap-cast-head.py). Chosen by who he is, never by kit.
   'cast-lucan':body([],CAST_CHAPTERS.lucan,{headwear:SHARED_HEAD,cast:'lucan'}),
-  'cast-varro':body([],CAST_CHAPTERS.varro,{headwear:SHARED_HEAD,cast:'varro'})
+  'cast-varro':body([],CAST_CHAPTERS.varro,{headwear:SHARED_HEAD,cast:'varro'}),
+  'cast-sabinus':body([],CAST_CHAPTERS.sabinus,{headwear:SHARED_HEAD,cast:'sabinus'}),
+  'cast-naso':body([],CAST_CHAPTERS.naso,{headwear:SHARED_HEAD,cast:'naso'}),
+  'cast-felix':body([],CAST_CHAPTERS.felix,{headwear:SHARED_HEAD,cast:'felix'}),
+  'cast-brennus':body([],CAST_CHAPTERS.brennus,{headwear:SHARED_HEAD,cast:'brennus'}),
+  'cast-crispus':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus'})
 });
 /** A named man's own body by his identity key (actor-identity.js). */
 export const CAST_BODIES=Object.freeze(Object.fromEntries(Object.entries(ACTOR_BODIES).filter(([,b])=>b.cast).map(([id,b])=>[b.cast,id])));

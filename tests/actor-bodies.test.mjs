@@ -36,10 +36,11 @@ async function parse(id){
   return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
 const library=createActorBodyLibrary(parse);
-const legionary={id:'veteran-naso',veteranId:'naso',name:'Naso',side:'ally',role:'infantry'};
+// A named legionary without a body of his own (Quintus wears the legionary's mail and the shared head).
+const legionary={id:'veteran-quintus',veteranId:'quintus',name:'Quintus',side:'ally',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies, in turns and in real time', () => {
+test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies and both sides of Chapter II\'s decision, in turns and in real time', () => {
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
@@ -54,6 +55,9 @@ test('every generated body and horse is worn or ridden in exactly the chapters t
     if(e.kind!=='contest')world(createEncounterWorld(t));
   };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
+  // The other side of Chapter II's decision: Lucan leaves, and Sabinus stands in his place from then on.
+  seen.clear();
+  runProgressionCampaign({featureEdition:31,onCheckpoint:collect,beforeCamp:s=>{if(s.chapter===2&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,'leave').ok);}});
   for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
   for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
   assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'}),null,'Civic figures keep the togas whose trims name their bloc');
@@ -138,9 +142,12 @@ test('persistent identities keep a fitted helmet over the shared head; anonymous
   // The protagonist and named cast retain their fitted, equipped headwear at
   // every rank; anonymous bodies still bring their baked head and helmet.
   for(const [unit,id,joint]of [[hero(['tunic','hamata','galea','bracae','caligae','spatha','scutum']),'roman-legionary','ridge-helmet'],
-    [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'roman-archer','equipped-arming-cap']]){
+    // Felix wears his own body in every kit, the game's cap fitted over the shared head as on the recruit's.
+    [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'cast-felix','equipped-arming-cap']]){
     const a=createActor(unit,{chapter:2,bodyLibrary:library});assert.equal(await a.ready,true);assert.equal(a.group.userData.actor.body,id);
-    const piece=pieces(a.group)[joint];assert.ok(piece&&drawn(a.group,piece)>50,`${id} keeps the equipped ${joint} over the persistent head`);assert.equal(a.group.userData.actor.headSource,'roman-recruit');a.dispose();
+    const piece=pieces(a.group)[joint];assert.ok(piece&&drawn(a.group,piece)>50,`${id} keeps the equipped ${joint} over the persistent head`);
+    // A named man's own body brings the shared head wrapped onto his own (wrap-cast-head.py).
+    assert.equal(a.group.userData.actor.headSource,id.startsWith('cast-')?id:'roman-recruit');a.dispose();
   }
 });
 
@@ -236,13 +243,13 @@ test('followers march in the generated overview and fallen bodies keep its colou
 test('followers never wear their leader\'s face: body and head followers share one shader with neutral uniforms', async()=>{
   const actor=createActor(legionary,{chapter:5,bodyLibrary:library});await actor.ready;
   const bodySource=actor.group.getObjectByName('generated-body-overview'),headSource=actor.group.getObjectByName('identity-head-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
-  assert.equal(headSource.material.userData.generatedIdentity,'naso','The leader is Naso');
-  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='naso'),'No follower wears Naso\'s face');
+  assert.equal(headSource.material.userData.generatedIdentity,'quintus','The leader is Quintus');
+  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='quintus'),'No follower wears Quintus\'s face');
   const body=crowd.meshes.find(m=>m.geometry.attributes.position===bodySource.geometry.attributes.position),neutralHead=followerHeadOf(headSource);
   const head=crowd.meshes.find(m=>m.geometry.attributes.position===neutralHead?.attributes.position);
   assert.ok(body&&head,'Followers wear the body and the donor\'s neutral head');assert.equal(neutralHead.userData.identity,'crowd-neutral');
   const named=headSource.geometry.attributes.position,plain=neutralHead.attributes.position;let moved=0;for(let i=0;i<plain.count;i++)if(Math.abs(plain.getZ(i)-named.getZ(i))>1e-4)moved++;
-  assert.ok(moved>0,'Naso\'s sculpted features stay on the leader');
+  assert.ok(moved>0,'Quintus\'s sculpted features stay on the leader');
   for(const m of [body,head])assert.equal(m.material.userData.generatedIdentity,'crowd-neutral');
   assert.equal(body.material.map,bodySource.material.map);assert.equal(head.material.map,headSource.material.map,'The head keeps the donor\'s painted maps');
   assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);

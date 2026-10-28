@@ -1,0 +1,64 @@
+{
+  "id": "horse-northern",
+  "status": "generated: awaiting review",
+  "chapters": [
+    7
+  ],
+  "use": "The Gothic riders' horse, mesh only: skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), so its hooves stay planted, its rider seated, and formations and fallen horses work as with the code-built horse, which stays the stand-in.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Gothic warrior's horse of the mid-3rd century AD from the lands north of the Danube, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A small, stocky, hardy northern horse about 1.35 metres at the withers, with a deep chest, short strong legs and a thick neck; dun coat with a dark dorsal stripe, a thick dark mane and tail and dark lower legs; a simple leather bridle without ornament, the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, saddle cloth, rider, person, armour, horse armour, horns, wings, extra legs, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "overviewTriangles": 1800,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.85,
+    "minHeight": 1.6,
+    "maxHeight": 2.1
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "3175b256-3e46-4153-9293-07005c18e4d7",
+    "requestedAt": "2026-10-28T20:57:11.110Z",
+    "balanceBefore": 3120,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Gothic warrior's horse of the mid-3rd century AD from the lands north of the Danube, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A small, stocky, hardy northern horse about 1.35 metres at the withers, with a deep chest, short strong legs and a thick neck; dun coat with a dark dorsal stripe, a thick dark mane and tail and dark lower legs; a simple leather bridle without ornament, the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, saddle cloth, rider, person, armour, horse armour, horns, wings, extra legs, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:58:58.708Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/horse-northern.glb",
+    "rawBytes": 45589836,
+    "rawSha256": "4c252622d068ccea8876ca87b4cf7a1892c4639d0acf84865485055ac9c17f07",
+    "tripoInput": {
+      "prompt": "A Gothic warrior's horse of the mid-3rd century AD from the lands north of the Danube, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A small, stocky, hardy northern horse about 1.35 metres at the withers, with a deep chest, short strong legs and a thick neck; dun coat with a dark dorsal stripe, a thick dark mane and tail and dark lower legs; a simple leather bridle without ornament, the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "saddle, saddle cloth, rider, person, armour, horse armour, horns, wings, extra legs, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/horse-northern-tripo-render.webp"
+  }
+}

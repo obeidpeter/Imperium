@@ -65,7 +65,15 @@ EYE_HALF, EYE_FEATHER, ORIGIN_OFFSET = (0.015, 0.0075), 1.6, (0.5, 0.5, -1.0)
 # The eye finder, in half-heights and half-widths of millimetres: the dark spot that finds
 # an eye's height and its surround; the dark opening, as wide as an eye, that finds its
 # middle on that line, and its surround; and how far from the line the opening may lie.
+# A face the finder misreads (light eyes under heavy brows, say) takes its landmarks from
+# review instead (--his-eyes, --his-mouth), read off the pictures the report keeps.
 EYE_SPOT, EYE_SPOT_SURROUND, EYE_BOX, EYE_SURROUND, EYE_ROWS = (2, 3), (6, 9), (2, 7), (7, 15), 0.003
+# The mouth finder: from how far to how far below the nose tip it looks (beneath the shadow
+# under the nose); which rows count as the lips (those
+# within this share of the window's range of redness from its reddest, when that range is
+# at least the contrast given); how far beyond the lips it looks for the line where they
+# meet; and how far above and below that line it must be brighter (metres).
+MOUTH_FROM_NOSE, MOUTH_BELOW_NOSE, MOUTH_LIP_SHARE, MOUTH_LIP_CONTRAST, MOUTH_LIP_MARGIN, MOUTH_VALLEY = 0.018, 0.045, 0.35, 0.04, 0.003, 0.0025
 # The bake's rays start this far outside the wrapped head and reach this far, as a bald
 # head may lie well inside the scalp held near the shared head's; and the share of the
 # head's map they may leave unpainted.
@@ -88,6 +96,10 @@ def parse_args():
     p.add_argument('--scalp-in', type=float, default=0.006, help='farthest the scalp may sink below it, in metres')
     p.add_argument('--max-scale', type=float, default=0.15, help='largest change of his head\'s size, as a fraction')
     p.add_argument('--samples', type=int, default=4, help='Cycles samples per bake')
+    p.add_argument('--bake-cage', type=float, default=CAGE, help='how far outside the wrapped head the bake\'s rays start, in metres (long hair may stand farther off)')
+    p.add_argument('--bake-reach', type=float, default=REACH, help='how far the bake\'s rays reach, in metres')
+    p.add_argument('--his-eyes', help='his eyes from review, as right x,left x,height (metres, as in the report pictures), in place of the finder\'s')
+    p.add_argument('--his-mouth', type=float, help='the line of his mouth from review, as a height in metres, in place of the finder\'s')
     p.add_argument('--max-unpainted', type=float, default=UNPAINTED, help='largest share of the head\'s map the bake may leave unpainted')
     p.add_argument('--eyes', choices=('shared', 'his'), default='shared',
                    help='paint inside the eyes: the shared head\'s own (made for its lids and blinks) or his')
@@ -272,10 +284,31 @@ def landmarks(surface, picture=None):
                     top = (value, xs[j], zs[i])
         return {'x': round(float(top[1]), 4), 'height': round(float(top[2]), 4)}
     brows = {side: band(line + 0.006, line + 0.035, lambda off, s=sign: 0.015 <= off * s <= 0.05, 1, 6) for side, sign in (('right', -1), ('left', 1))}
-    mouth = band(nose.z - 0.07, nose.z - 0.012, lambda off: abs(off) <= 0.004, 1, 9)
+    # The mouth: the line where the lips meet is a thin dark valley across the centre, with
+    # lip or skin brighter just above and below it, where a moustache's or a beard's edge is
+    # dark on one side. It lies among the lips, the reddest rows below the nose (redder than
+    # skin, far redder than a beard), or anywhere below the nose when the lips are no redder
+    # than the skin round them.
+    centre_column = int(np.argmin(np.abs(xs - cx)))
+    shade = means(filled, 1, 9)[:, centre_column]
+    red = means(rgb[..., 0] - 0.5 * (rgb[..., 1] + rgb[..., 2]), 1, 9)[:, centre_column]
+    window = (zs >= nose.z - MOUTH_BELOW_NOSE) & (zs <= nose.z - MOUTH_FROM_NOSE)
+    top, bottom = red[window].max(), red[window].min()
+    lips = window & (red >= top - MOUTH_LIP_SHARE * (top - bottom)) if top - bottom > MOUTH_LIP_CONTRAST else window
+    lip_rows = np.nonzero(lips)[0]
+    reach = int(round(MOUTH_LIP_MARGIN / step))
+    rows = window & (np.arange(len(zs)) >= lip_rows.min() - reach) & (np.arange(len(zs)) <= lip_rows.max() + reach)
+    side = int(round(MOUTH_VALLEY / step))
+    valley = np.full(len(zs), -np.inf)
+    for i in np.nonzero(rows)[0]:
+        if side <= i < len(zs) - side:
+            valley[i] = min(shade[i - side], shade[i + side]) - shade[i]
+    i = int(np.argmax(valley))
+    mouth = {'x': round(float(cx), 4), 'height': round(float(zs[i]), 4)}
+    lips = round(float(zs[lip_rows].mean()), 4)
     if picture:
         save_picture(picture, rgb, xs, zs, cx, nose, {**eyes, **{f'brow-{k}': v for k, v in brows.items()}, 'mouth': mouth})
-    return {'centreX': round(float(cx), 4), 'crown': round(float(crown), 4), 'nose': [round(float(nose.z), 4), round(float(-nose.y), 4)], 'eyes': eyes,
+    return {'lips': round(lips, 4), 'centreX': round(float(cx), 4), 'crown': round(float(crown), 4), 'nose': [round(float(nose.z), 4), round(float(-nose.y), 4)], 'eyes': eyes,
             'eyeLine': round(line, 4), 'eyeDepth': round((eyes['left']['depth'] + eyes['right']['depth']) / 2, 4),
             'brows': brows, 'browLine': round((brows['left']['height'] + brows['right']['height']) / 2, 4), 'mouth': mouth,
             'eyeLevelGap': round(abs(eyes['left']['height'] - eyes['right']['height']), 4)}
@@ -308,6 +341,26 @@ def save_picture(path, rgb, xs, zs, cx, nose, eyes):
     bpy.data.images.remove(out)
 
 
+def review(found, surface, eyes, mouth):
+    """Landmarks set from review in place of the finder's: his eyes (right x, left x, the
+    height of both) and the line of his mouth. Returns what was replaced, for the report."""
+    replaced = {}
+    if eyes:
+        right, left, height = (float(v) for v in eyes.split(','))
+        replaced['eyes'] = {side: dict(found['eyes'][side]) for side in ('right', 'left')}
+        for side, x in (('right', right), ('left', left)):
+            loc, _ = surface.front(x, height)
+            if loc is None:
+                sys.exit(f'--his-eyes: nothing of his face at {x}, {height}')
+            found['eyes'][side] = {'x': round(x, 4), 'height': round(height, 4), 'depth': round(-loc.y, 4), 'contrast': None}
+        found['eyeLine'] = round(height, 4)
+        found['eyeDepth'] = round((found['eyes']['left']['depth'] + found['eyes']['right']['depth']) / 2, 4)
+    if mouth is not None:
+        replaced['mouth'] = dict(found['mouth'])
+        found['mouth'] = {'x': found['centreX'], 'height': round(mouth, 4)}
+    return replaced
+
+
 def align(o, his, shared, max_scale):
     """Scale his head uniformly so his eyes stand as far apart as the shared head's (the
     steadiest of a face's measures: a long nose or chin stays his own), then move it so his
@@ -325,12 +378,12 @@ def align(o, his, shared, max_scale):
     return s
 
 
-def fit_mouth(o, his, shared, limit=0.2):
-    """Bring his mouth to the shared head's lip line, where its jaw opens and its lips
-    meet (generated-identity.js HEAD_FEATURES): his face between his eyes and his mouth
-    is shortened or lengthened to fit, and below his mouth the move fades out by the neck.
-    His eyes, brows and scalp stay where the alignment put them. Returns the factor."""
-    eye, mouth, target = his['eyeLine'], his['mouth']['height'], shared['mouth']['height']
+def fit_mouth(o, eye, mouth, target, limit=0.2):
+    """Bring his mouth (at height mouth, his eyes aligned on the line eye) to the shared
+    head's lip line (target), where its jaw opens and its lips meet (generated-identity.js
+    HEAD_FEATURES): his face between his eyes and his mouth is shortened or lengthened to
+    fit, and below his mouth the move fades out by the neck. His eyes, brows and scalp stay
+    where the alignment put them. Returns the factor."""
     k = (eye - target) / (eye - mouth)
     if abs(k - 1) > limit:
         sys.exit(f'His mouth would move by {round((target - mouth) * 1000)} mm: the landmarks disagree (see the report pictures)')
@@ -508,12 +561,12 @@ def finish_colour(head, material, donor_image, eyes, samples, shared, picture, l
     return result
 
 
-def bake_head(head, source, size, detail, samples):
+def bake_head(head, source, size, detail, samples, cage=CAGE, reach=REACH):
     """A fresh unwrap of the wrapped head, and his colour, normals and roughness baked onto
     it, from rays that start CAGE outside it: his hair may stand that far off the scalp held
     near the shared head's, and a bald scalp lie well inside it."""
     maps.unwrap(head, keep=('donor',))
-    return maps.bake_maps(head, source, 'head', colour=size, detail=detail, samples=samples, cage=CAGE, distance=REACH)
+    return maps.bake_maps(head, source, 'head', colour=size, detail=detail, samples=samples, cage=cage, distance=reach)
 
 
 def transfer_uvs(target, source):
@@ -549,8 +602,12 @@ def main():
     cut(source, HEAD_FROM, keep_above=True)
     found = {'his': landmarks(Surface(source), pictures + '-his-face.png'),
              'shared': landmarks(Surface(shared['body']), pictures + '-shared-face.png')}
+    reviewed = review(found['his'], Surface(source), a.his_eyes, a.his_mouth)
     scale = align(source, found['his'], found['shared'], a.max_scale)
-    mouth = fit_mouth(source, landmarks(Surface(source)), found['shared'])
+    # The alignment put his eyes on the shared head's line; his mouth, as found or reviewed
+    # on his own head, is carried there like the rest of it.
+    line = found['shared']['eyeLine']
+    mouth = fit_mouth(source, line, line + (found['his']['mouth']['height'] - found['his']['eyeLine']) * scale, found['shared']['mouth']['height'])
     found['hisAligned'] = landmarks(Surface(source), pictures + '-his-aligned-face.png')
     heads, fits = {}, {}
     for level, mesh_name in (('cast-head', 'body'), ('cast-head-overview', 'body-overview')):
@@ -562,7 +619,7 @@ def main():
             remember(head)
         fits[level] = wrap(head, source, a.reach, a.scalp_out, a.scalp_in)
         heads[level] = head
-    material = bake_head(heads['cast-head'], source, a.texture, a.detail_texture, a.samples)
+    material = bake_head(heads['cast-head'], source, a.texture, a.detail_texture, a.samples, a.bake_cage, a.bake_reach)
     finish = finish_colour(heads['cast-head'], material, donor_image, found['shared']['eyes'], a.samples, a.eyes == 'shared', pictures + '-unpainted.png', a.max_unpainted)
     near = heads['cast-head'].data
     near.uv_layers.remove(near.uv_layers['donor'])
@@ -601,11 +658,13 @@ def main():
         'output': {'path': character.shown(output), 'bytes': os.path.getsize(output), 'sha256': character.digest(output),
                    'triangles': {o.name: character.triangles([o]) for o in (his['body'], his['body-overview'], heads['cast-head'], heads['cast-head-overview'])}},
         'settings': {'texture': a.texture, 'detailTexture': a.detail_texture, 'webpQuality': a.quality, 'reach': a.reach, 'scalpOut': a.scalp_out, 'scalpIn': a.scalp_in,
-                     'maxScale': a.max_scale, 'samples': a.samples, 'bakeCage': CAGE, 'bakeReach': REACH, 'eyes': a.eyes, 'eyeHalf': EYE_HALF, 'eyeFeather': EYE_FEATHER,
-                     'eyeFinder': {'spot': EYE_SPOT, 'spotSurround': EYE_SPOT_SURROUND, 'opening': EYE_BOX, 'openingSurround': EYE_SURROUND, 'rows': EYE_ROWS}, 'neck': NECK, 'headFrom': HEAD_FROM, 'bodyTo': BODY_TO,
+                     'maxScale': a.max_scale, 'samples': a.samples, 'bakeCage': a.bake_cage, 'bakeReach': a.bake_reach, 'eyes': a.eyes, 'eyeHalf': EYE_HALF, 'eyeFeather': EYE_FEATHER,
+                     'eyeFinder': {'spot': EYE_SPOT, 'spotSurround': EYE_SPOT_SURROUND, 'opening': EYE_BOX, 'openingSurround': EYE_SURROUND, 'rows': EYE_ROWS},
+                     'mouthFinder': {'fromNose': MOUTH_FROM_NOSE, 'belowNose': MOUTH_BELOW_NOSE, 'lipShare': MOUTH_LIP_SHARE, 'lipContrast': MOUTH_LIP_CONTRAST, 'lipMargin': MOUTH_LIP_MARGIN, 'valley': MOUTH_VALLEY}, 'neck': NECK, 'headFrom': HEAD_FROM, 'bodyTo': BODY_TO,
                      'wrapFrom': WRAP_FROM, 'wrapFull': WRAP_FULL, 'scalp': SCALP},
         'landmarks': found,
         'fit': {'scale': round(scale, 4), 'mouthFit': round(mouth, 4), **fits, **finish},
+        'review': {'replaced': reviewed, 'by': 'landmarks set from the report pictures in place of the finder\'s'} if reviewed else None,
         'pictures': [character.shown(pictures + f'-{k}-face.png') for k in ('his', 'shared', 'his-aligned', 'wrapped')],
     }
     with open(report_path, 'w', encoding='utf-8') as f:

@@ -28,8 +28,8 @@
   },
   "output": {
     "path": "intermediate: cast-varro with the wrapped head, before quantizing (not kept)",
-    "bytes": 947968,
-    "sha256": "c25c221a07603e4e71fe69d5c63d25b9f9712d486ba1774cb8dc07514739cb3a",
+    "bytes": 940832,
+    "sha256": "baede3bbeb42dd8baee90fb386e565643162919a1d55db24a6faac7c349b53a7",
     "triangles": {
       "body": 10818,
       "body-overview": 2408,
@@ -73,6 +73,14 @@
       ],
       "rows": 0.003
     },
+    "mouthFinder": {
+      "fromNose": 0.018,
+      "belowNose": 0.045,
+      "lipShare": 0.35,
+      "lipContrast": 0.04,
+      "lipMargin": 0.003,
+      "valley": 0.0025
+    },
     "neck": 1.5,
     "headFrom": 1.45,
     "bodyTo": 1.55,
@@ -82,6 +90,7 @@
   },
   "landmarks": {
     "his": {
+      "lips": 1.5511,
       "centreX": -0.028,
       "crown": 1.7396,
       "nose": [
@@ -116,12 +125,13 @@
       },
       "browLine": 1.6386,
       "mouth": {
-        "x": -0.025,
+        "x": -0.028,
         "height": 1.5556
       },
       "eyeLevelGap": 0.001
     },
     "shared": {
+      "lips": 1.5651,
       "centreX": -0.019,
       "crown": 1.7566,
       "nose": [
@@ -156,12 +166,13 @@
       },
       "browLine": 1.6411,
       "mouth": {
-        "x": -0.016,
+        "x": -0.019,
         "height": 1.5676
       },
       "eyeLevelGap": 0
     },
     "hisAligned": {
+      "lips": 1.5633,
       "centreX": -0.019,
       "crown": 1.7368,
       "nose": [
@@ -173,13 +184,13 @@
           "x": -0.051,
           "height": 1.6318,
           "depth": 0.1147,
-          "contrast": 0.1293
+          "contrast": 0.1294
         },
         "left": {
           "x": 0.007,
           "height": 1.6308,
           "depth": 0.115,
-          "contrast": 0.1643
+          "contrast": 0.1633
         }
       },
       "eyeLine": 1.6313,
@@ -197,11 +208,12 @@
       "browLine": 1.6393,
       "mouth": {
         "x": -0.019,
-        "height": 1.5678
+        "height": 1.5668
       },
       "eyeLevelGap": 0.001
     },
     "wrapped": {
+      "lips": 1.5629,
       "centreX": -0.019,
       "crown": 1.7544,
       "nose": [
@@ -213,17 +225,17 @@
           "x": -0.049,
           "height": 1.6314,
           "depth": 0.1134,
-          "contrast": 0.1635
+          "contrast": 0.1654
         },
         "left": {
           "x": 0.008,
           "height": 1.6304,
-          "depth": 0.1142,
-          "contrast": 0.1196
+          "depth": 0.1143,
+          "contrast": 0.12
         }
       },
       "eyeLine": 1.6309,
-      "eyeDepth": 0.1138,
+      "eyeDepth": 0.1139,
       "brows": {
         "right": {
           "x": -0.045,
@@ -236,15 +248,15 @@
       },
       "browLine": 1.6399,
       "mouth": {
-        "x": -0.016,
-        "height": 1.5684
+        "x": -0.019,
+        "height": 1.5674
       },
       "eyeLevelGap": 0.001
     }
   },
   "fit": {
     "scale": 0.9524,
-    "mouthFit": 0.9035,
+    "mouthFit": 0.9143,
     "cast-head": {
       "scalpHeld": 151,
       "missed": 23,
@@ -255,16 +267,17 @@
       "missed": 10,
       "largestMove": 0.017
     },
-    "unpainted": 0,
+    "unpainted": 0.00001,
     "sharedEyes": {
-      "changed": 0.0093,
+      "changed": 0.0115,
       "toneGain": [
-        0.893,
-        0.949,
-        0.943
+        0.907,
+        0.951,
+        0.938
       ]
     }
   },
+  "review": null,
   "pictures": [
     "art-source/models/reports/char-cast-varro-faces/cast-varro-his-face.png",
     "art-source/models/reports/char-cast-varro-faces/cast-varro-shared-face.png",
