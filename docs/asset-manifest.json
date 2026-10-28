@@ -8592,11 +8592,11 @@
       "license": "Created for the Imperium project; no third-party source assets"
     },
     {
-      "id": "finale-crowd-v041",
+      "id": "finale-crowd-v042",
       "path": "src/showcase/finale-crowd-data.js",
-      "subject": "Two deterministic overview reductions of the existing generated Roman legionary for massed background formations",
+      "subject": "Two deterministic overview reductions of the existing generated Roman legionary for massed background formations, each with the spear he holds, and two of the game's own motions baked on its rig for them to play",
       "source": {
-        "method": "Mechanical vertex clustering of the shipped generated model; no new generation or third-party source",
+        "method": "Mechanical vertex clustering of the shipped generated model, each vertex following the two strongest joints of its nearest source vertex; a code-built spear held upright through the right hand's grip, on a joint of its own that never turns; the game's camp-watch and rally motions sampled on its own rig (24 frames each over 4.8 s). No new generation or third-party source",
         "path": "assets/models/characters/roman-legionary.glb",
         "sha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88",
         "script": "scripts/build-finale-crowd.mjs",
@@ -8604,15 +8604,15 @@
         "creditsSpent": 0
       },
       "export": {
-        "bytes": 47428,
-        "sha256": "71125d9dd739a2b884ceeac542eaf459ff8ba63b14a0dba29a57668a3e565384",
-        "format": "ES module with vertex positions, authored normals, baked vertex colours and triangle indices",
+        "bytes": 87349,
+        "sha256": "cb07ee83e6b828190e714873653095ba7a8a9e3d0efad69eb7566b513a2ea217",
+        "format": "ES module with vertex positions, authored normals, baked vertex colours, triangle indices, two joints and weights per vertex, and each clip frame's joint quaternions and translations",
         "triangles": {
-          "near": 940,
-          "distant": 136
+          "near": 964,
+          "distant": 148
         }
       },
-      "runtime": "Deferred with the existing 3D renderer; no external provider or new textures. Performance uses the 136-triangle silhouette; other tiers use 940 triangles only in the front rank."
+      "runtime": "Deferred with the existing 3D renderer; no external provider or new textures. The clips play on the GPU from a small float texture in the crowd's one shader program. Performance uses the 148-triangle silhouette; other tiers use 964 triangles only in the front rank."
     },
     {
       "id": "trees-temperate",
@@ -9719,7 +9719,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T16:09:02.055Z",
+  "updatedAt": "2026-10-28T19:42:08.175Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9746,7 +9746,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 36277168,
+  "totalBundledAssetBytes": 36317089,
   "totalModelBytes": 21131539,
   "derivedGeometryBytes": 47428
 }
