@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-italy-travertine.glb",
+    "bytes": 47277592,
+    "sha256": "926644fd87b89de0ba5542947096601536723b133a755241f24b847b86e51b03",
+    "triangles": 1495772
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-italy-travertine.glb",
+    "bytes": 132804,
+    "sha256": "bfb5c3e4735b7497d692b17df3e4fdbe617dc27380fb4e2196c574c0c065ca1a",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.3075641224829744,
+  "sizeMetres": {
+    "width": 1.2385,
+    "height": 1.0,
+    "depth": 1.265
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e82508a9-dc9c-41df-90a7-d38fc588de4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e82508a9-dc9c-41df-90a7-d38fc588de4f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e82508a9-dc9c-41df-90a7-d38fc588de4f",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

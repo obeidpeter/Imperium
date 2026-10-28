@@ -1,0 +1,61 @@
+{
+  "id": "rock-italy-tuff",
+  "status": "Release 5: processed, assembled into rocks-italy and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A rounded block of dark grey and brown volcanic tuff from the Roman Campagna, soft porous stone with small embedded pumice fragments and gently eroded edges. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.1,
+    "minHeight": 1.045,
+    "maxHeight": 1.155
+  },
+  "provenance": {
+    "taskId": "ea45fe20-a81a-49f1-9703-041c1727b920",
+    "requestedAt": "2026-10-28T08:47:28.753Z",
+    "balanceBefore": 3620,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A rounded block of dark grey and brown volcanic tuff from the Roman Campagna, soft porous stone with small embedded pumice fragments and gently eroded edges. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:49:53.038Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-italy-tuff.glb",
+    "rawBytes": 46486932,
+    "rawSha256": "76b952d1e7214f8512195c0246e553a0bf15d02dad30640716bd65e6ee19d189",
+    "tripoInput": {
+      "prompt": "A rounded block of dark grey and brown volcanic tuff from the Roman Campagna, soft porous stone with small embedded pumice fragments and gently eroded edges. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-italy-tuff-tripo-render.webp"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source": "Poly Haven",
+  "id": "fir_tree_01",
+  "page": "https://polyhaven.com/a/fir_tree_01",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:00:53.065Z",
+  "name": "Fir Tree 01",
+  "authors": [
+    "Rob Tuytel",
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "twig_diff",
+      "twig_alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "twig_diff",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fir_tree_01/fir_tree_01_twig_diff_1k.png",
+      "bytes": 3411459,
+      "md5": "3791a2e595b63410ed0bd054633373de",
+      "sha256": "76f6d0c0044d76bac08fbbd3d2ac1c9b66bb046de7d0b1a22aa9b319308f3833",
+      "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_diff_1k.png"
+    },
+    {
+      "map": "twig_alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/fir_tree_01/fir_tree_01_twig_alpha_1k.png",
+      "bytes": 371026,
+      "md5": "02ab808c8b2ff77ad9fdb2f92892db80",
+      "sha256": "3f399629337e7ac3af27a01b08ffb9c0d60224a9dd374a1427761a5c2eea9d6e",
+      "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_alpha_1k.png"
+    }
+  ]
+}

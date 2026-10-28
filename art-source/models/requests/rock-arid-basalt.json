@@ -1,0 +1,61 @@
+{
+  "id": "rock-arid-basalt",
+  "status": "Release 5: processed, assembled into rocks-arid and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A dark basalt boulder of the Syrian steppe with a glossy brown desert varnish, rough vesicular surface and rounded edges, pale dust in its pits. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.9,
+    "minHeight": 0.855,
+    "maxHeight": 0.945
+  },
+  "provenance": {
+    "taskId": "dad0d542-1d96-44b8-a292-048c81de014d",
+    "requestedAt": "2026-10-28T08:30:43.037Z",
+    "balanceBefore": 3760,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A dark basalt boulder of the Syrian steppe with a glossy brown desert varnish, rough vesicular surface and rounded edges, pale dust in its pits. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:32:52.663Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-arid-basalt.glb",
+    "rawBytes": 45583336,
+    "rawSha256": "6eebf3fcb6ca04277e610d0aa17ef01fccbc3d2eab630ceaad063ed9cb17bab0",
+    "tripoInput": {
+      "prompt": "A dark basalt boulder of the Syrian steppe with a glossy brown desert varnish, rough vesicular surface and rounded edges, pale dust in its pits. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-arid-basalt-tripo-render.webp"
+  }
+}

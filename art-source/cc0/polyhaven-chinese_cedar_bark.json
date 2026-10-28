@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "chinese_cedar_bark",
+  "page": "https://polyhaven.com/a/chinese_cedar_bark",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T08:35:06.779Z",
+  "name": "Chinese Cedar Bark",
+  "authors": [
+    "Charlotte Baglioni"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "arm"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/chinese_cedar_bark/chinese_cedar_bark_diff_1k.png",
+      "bytes": 5514223,
+      "md5": "cea95ad464e0c5ef972d8d39dfc7d050",
+      "sha256": "d6d6fe4000eb55cec03287d79914a642365248fec46d9350f01b54cadd865ffd",
+      "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/chinese_cedar_bark/chinese_cedar_bark_nor_gl_1k.png",
+      "bytes": 5685003,
+      "md5": "1301d3d71a8365170bf9b36d8c1462a8",
+      "sha256": "a42cd1bf341be6503c618c8d3db5bae682f719ef6eac143f826fa58796e47e84",
+      "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_nor_gl_1k.png"
+    },
+    {
+      "map": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/chinese_cedar_bark/chinese_cedar_bark_arm_1k.png",
+      "bytes": 3949190,
+      "md5": "2b1b444ff880754d6aaff3ed579d9958",
+      "sha256": "20b41c6a8411cca9a36026a97b8bfc55835cccd4c54854c798679170fbbf5c91",
+      "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_arm_1k.png"
+    }
+  ]
+}

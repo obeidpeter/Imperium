@@ -1,0 +1,47 @@
+{
+  "source": "Poly Haven",
+  "id": "bark_brown_02",
+  "page": "https://polyhaven.com/a/bark_brown_02",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T08:34:51.283Z",
+  "name": "Bark Brown 02",
+  "authors": [
+    "Rob Tuytel"
+  ],
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "Diffuse",
+      "nor_gl",
+      "arm"
+    ]
+  },
+  "files": [
+    {
+      "map": "Diffuse",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/bark_brown_02/bark_brown_02_diff_1k.png",
+      "bytes": 2334535,
+      "md5": "54c7735e62b91d06144ebe412778bbed",
+      "sha256": "22144dbe0e9f1cfd44de3f3c8311c898fe672f087c1e81a18baab77476dc046f",
+      "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_diff_1k.png"
+    },
+    {
+      "map": "nor_gl",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/bark_brown_02/bark_brown_02_nor_gl_1k.png",
+      "bytes": 2436328,
+      "md5": "00616c5620413e714ea8a35848c6b2fc",
+      "sha256": "45c632c61b642759ee935a4300b71aa1e6097d2b2d8aae42376c4661ecc518eb",
+      "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_nor_gl_1k.png"
+    },
+    {
+      "map": "arm",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/bark_brown_02/bark_brown_02_arm_1k.png",
+      "bytes": 1594332,
+      "md5": "ae9f6dbdf21957d76503cb18c0fd82de",
+      "sha256": "3a6c5b088129c8cc12187a02f9352c77dc80e7789ca97bd67c81649267f42bdd",
+      "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_arm_1k.png"
+    }
+  ]
+}

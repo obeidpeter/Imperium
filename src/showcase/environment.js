@@ -30,6 +30,9 @@ import {installCloudShadows} from './atmosphere.js';
 import {runSteps} from './build-steps.js';
 import {boardKitPieces} from './structure-registry.js';
 import {createBoardKitPieces} from './board-kit.js';
+import {createTreeKitPlanter,treeKitFor} from './tree-kit.js';
+import {createRockKitPlacer,rockKitFor} from './rock-kit.js';
+import {createGroundCover} from './ground-cover.js';
 import {TILE_SIZE,hash,noise,smooth,clamp,gridToWorld,terrainAt,worldToGrid,createGroundHeight,roadSegments,isPlayable,isTrainingGround,distantRiverCentre,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 export {gridToWorld} from './environment-layout.js';
 
@@ -38,7 +41,7 @@ export {gridToWorld} from './environment-layout.js';
 export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
 // The same build in steps: it yields wherever a time-sliced build may give the
 // page a turn (build-steps.js); each step is a small part of the world.
-export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null}={}){
+export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null,treeKit=null,rockKit=null}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
@@ -51,14 +54,25 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     ...(encounter.campPresentation?{campPresentation:encounter.campPresentation}:{}),
     ...(encounter.fortifications?{fortifications:encounter.fortifications}:{}),...(boardKit?{boardKit:true}:{})};
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
+  // The distant river's banks (its plane is 16 m wide), where its foam gathers.
+  if(profile.distantWater)library.waterBank.value.set(riverZ,8);
   const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
   const architecturalFootprints=[...getChapterFiveKitPlacements(e,{chapter:profile.chapter,tileSize}),...getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize})]
     .filter(p=>!Number.isFinite(p.groundY)).map(p=>{const [w,,d]=regionalComponentDimensions(p.id,p.component);return {...p,width:w*p.scale[0],depth:d*p.scale[2]};});
   const architecturalGround=createArchitecturalGroundSampler(architecturalFootprints,{wet:profile.weather==='rain'||profile.setting==='wetland'});
   root.userData.architecturalGround={footprints:architecturalFootprints.length,version:1};
   const ownMaterial=material=>{extraMaterials.add(material);return material;};
+  // The region's tree kit (tree-kit.js), when its model is loaded and not on Performance:
+  // its atlas drawn as the leaf sprays are, so its trees sway in the same wind and program.
+  let kitAtlas=null;if(treeKit&&!perf)treeKit.traverse(o=>{if(o.isMesh&&o.material?.map&&!kitAtlas)kitAtlas=o.material.map;});
+  const kitLeaves=kitAtlas&&treeKitFor(profile.chapter)?library.kitMaterial('foliage',{map:kitAtlas}):null;
+  const planter=kitLeaves?createTreeKitPlanter(treeKit,treeKitFor(profile.chapter),kitLeaves):null;
+  // The region's rock kit (rock-kit.js) likewise: each rock's own maps drawn as the field's stone.
+  const rockMaterials=new Map();
+  if(rockKit&&!perf&&rockKitFor(profile.chapter))rockKit.traverse(o=>{const k=o.isMesh&&o.material;if(k?.map&&!rockMaterials.has(k))rockMaterials.set(k,library.kitMaterial('stone',{map:k.map,normalMap:k.normalMap,normalScale:k.normalScale}));});
+  const rocks=rockMaterials.size?createRockKitPlacer(rockKit,rockKitFor(profile.chapter),rockMaterials):null;
   const wind={value:0},windDirection={value:new THREE.Vector2()};
-  if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves,m.foliage]){
+  if(!perf)for(const material of [m.grass,m.dryGrass,m.leaves,m.foliage,kitLeaves].filter(Boolean)){
     const previousCompile=material.onBeforeCompile,previousKey=material.customProgramCacheKey();
     material.onBeforeCompile=shader=>{previousCompile.call(material,shader);shader.uniforms.environmentWind=wind;shader.uniforms.environmentWindDirection=windDirection;shader.vertexShader='uniform float environmentWind; uniform vec2 environmentWindDirection;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       #ifdef USE_INSTANCING
@@ -118,9 +132,11 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const rockGeometry=p.geo(new THREE.IcosahedronGeometry(1,2));
   const rockPos=rockGeometry.attributes.position;
   for(let i=0;i<rockPos.count;i++){const x=rockPos.getX(i),y=rockPos.getY(i),z=rockPos.getZ(i),k=.83+noise(x*3+5,z*3+2,y*3)*.3;rockPos.setXYZ(i,x*k,y*(.85+hash(x,z,y)*.12),z*k);}smoothCoincidentNormals(rockGeometry);
-  function boulder(x,z,scale=1,seed=0){instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
+  // A rock cell holds a boulder and three smaller stones, or with the region's rock kit, whose
+  // rocks carry far more detail, a boulder and one: the field keeps its triangle budget.
+  function boulder(x,z,scale=1,seed=0){if(rocks?.place({x,y:height(x,z),z,radius:scale,height:scale*1.04,seed}))return;instance('limestone',rockGeometry,m.stone,[x,height(x,z)+scale*.32,z],[scale,scale*.72,scale*.83],[.1*hash(x,z),seed*.7,.1*hash(z,x)],new THREE.Color().setRGB(.72+hash(x,z)*.24,.74+hash(z,x)*.2,.68+hash(x,z,3)*.2));}
   const serviceRockCells=new Set([...chapterFiveServicePads(e,tileSize),...regionalServicePads(e,tileSize)].flatMap(pad=>pad.cells.map(c=>`${c.x},${c.y}`)));
-  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))&&!serviceRockCells.has(`${x},${y}`)){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<3;k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
+  for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(['rock','rubble'].includes(terrainAt(e,x,y))&&!serviceRockCells.has(`${x},${y}`)){const point=gridToWorld({x,y},e,tileSize);boulder(point.x,point.z,tileSize*.43,x+y);for(let k=0;k<(rocks?1:3);k++)boulder(point.x+(hash(k,x,y)-.5)*tileSize*.78,point.z+(hash(y,k,x)-.5)*tileSize*.78,tileSize*(.15+hash(k,y)*.16),k);}
   for(let i=0;i<(profile.civic?0:45);i++){const x=(hash(i,1)-.5)*67,z=(hash(i,2)-.5)*58;if(isPlayable(x,z,e,tileSize,3)||z< -19&&z> -41||precinctRoute(x,z)>.12)continue;boulder(x,z,.35+hash(i,3)*1.15,i);}
   yield;
 
@@ -161,8 +177,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   root.userData.trainingProps=yardProps.map(g=>{g.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});
   }
   yield;
-  const vegetation=createVegetationFactory({p,m,instance,height,quality});
-  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry,geometries,regionalWorld:regional};
+  const vegetation=createVegetationFactory({p,m,instance,height,quality,planter});
+  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry,rocks,geometries,regionalWorld:regional};
   const pilot=isChapterFivePilot(e)&&profile.chapter===5;
   if(pilot||regional){root.userData.environmentLandmarks=[];root.userData.inhabitedSetpieces=[];}
   for(const add of [addCampaignTerrain,addCampaignScenery,addEnvironmentDepth,addEncounterPrecinct,addFinaleApproach,addInhabitedEnvironment,
@@ -215,6 +231,15 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     for(let f=0;f<5;f++){const angle=f*1.256+i,dx=Math.cos(angle),dz=Math.sin(angle);for(let j=1;j<8;j++)for(const side of [-1,1]){const t=j/8,reach=t*.85,s=.30*(1-t*.8);instance('fern leaves',leafGeometry,m.leaves,[x+dx*reach+dz*side*s*.2,base+Math.sin(t*2.5)*.47,z+dz*reach-dx*side*s*.2],[s*1.6,s*2,s],[.4,angle+side*.9,.4],new THREE.Color(.50,.70,.42));}}
   }
   yield;
+  // Ground cover round the view (ground-cover.js): denser grass, flowers, scrub, reeds and
+  // grain near what the camera looks at, in the meadow's own materials; none on Performance.
+  const cover=createGroundCover(root,{e,tileSize,profile,quality,height,roadDistance,route:precinctRoute,architecture:architecturalGround,
+    occupied:root.userData.inhabitedSetpieces??[],riverZ:profile.distantWater?riverZ:null,fortX:profile.architecture==='fort'&&(!regional||training)?fortX:null,m,scrub:vegetation.sprays.meadow});
+  if(cover)root.userData.groundCover=cover.stats();
+  yield;
+  // The kit's trees, once every plan has planted them: one instanced draw a species and level.
+  if(planter){planter.build(root,{castShadow:!perf});root.userData.treeKit=planter.stats();}
+  if(rocks){rocks.build(root,{castShadow:!perf});root.userData.rockKit=rocks.stats();}
   // Every batch has an instance colour (white where an item has none), so a
   // material's instanced batches, tinted or not, share one shader program.
   const white=new THREE.Color(1,1,1);
@@ -267,8 +292,10 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   let lastTime=-1;
   return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),
-    update(time=0){if(disposed||!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600,currentWind=sampleWorldWind(bounded,profile);wind.value=bounded;windDirection.value.set(currentWind.x,currentWind.z);if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames)sampleFlamePlume(f.mesh,bounded+f.seed,{chapter:profile.chapter,weather:profile.weather});},
-    dispose(){if(disposed)return;disposed=true;scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();fireMask?.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
-    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,disposed};}
+    // camera: its position, so the kit's trees and rocks take the level their distance asks
+    // for; focus: the point it looks at, round which the ground cover grows.
+    update(time=0,camera=null,focus=null){if(disposed)return;planter?.update(camera);rocks?.update(camera);cover?.update(focus??camera);if(!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600,currentWind=sampleWorldWind(bounded,profile);wind.value=bounded;windDirection.value.set(currentWind.x,currentWind.z);if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames)sampleFlamePlume(f.mesh,bounded+f.seed,{chapter:profile.chapter,weather:profile.weather});},
+    dispose(){if(disposed)return;disposed=true;planter?.dispose();rocks?.dispose();cover?.dispose();scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();fireMask?.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
+    stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,trees:planter?.stats()??null,rocks:rocks?.stats()??null,groundCover:cover?.stats()??null,disposed};}
   };
 }

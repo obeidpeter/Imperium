@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-temperate-outcrop.glb",
+    "bytes": 46128260,
+    "sha256": "c9966dcc94f89ca5a6b2054ea81477866233d916ec4102c2709b3a0d3ff3dcc0",
+    "triangles": 1435432
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-temperate-outcrop.glb",
+    "bytes": 225360,
+    "sha256": "5bf420efff7f00da9587a3d6fade145e0f8d1775abe9f6b39101933f4c0cac22",
+    "triangles": 2935
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.302357627874506,
+  "sizeMetres": {
+    "width": 2.286,
+    "height": 1.6,
+    "depth": 1.4071
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_523a9ab4-f3b6-4607-ab7b-db2216307420",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_523a9ab4-f3b6-4607-ab7b-db2216307420",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_523a9ab4-f3b6-4607-ab7b-db2216307420",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

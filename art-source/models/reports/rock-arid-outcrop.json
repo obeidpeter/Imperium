@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-arid-outcrop.glb",
+    "bytes": 46356176,
+    "sha256": "aafec64466191fff520382724cc57623d5a848bacd895d59ed10a3476c871e51",
+    "triangles": 1484944
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-arid-outcrop.glb",
+    "bytes": 135092,
+    "sha256": "ca34a4758d6c0a0262e978215e74f22d4552ec3168e9ad883c378a28b8fda07e",
+    "triangles": 1958
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 6.339081818849476,
+  "sizeMetres": {
+    "width": 6.3198,
+    "height": 1.4,
+    "depth": 4.6999
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -53,7 +53,10 @@ export function createSceneryModelCache({maxIdle=12,load}={}){
     return {get scene(){return entry.scene;},ready:entry.promise,
       release({discard=false}={}){if(released)return;released=true;entry.refs--;entry.used=++clock;if(discard&&!entry.refs)retire(entry);trim();}};
   };
-  return {acquire,
+  // A lease on a model already loaded, or null: it never makes a request. A stage that
+  // draws a model only when it is ready asks for no download, nor again for one that failed.
+  const hold=url=>entries.get(url)?.scene?acquire(url):null;
+  return {acquire,hold,
     warm(url,loader){const lease=acquire(url,loader);workingSet?.add(url);return lease.ready.finally(()=>lease.release());},
     master:url=>entries.get(url)?.scene??null,
     setWorkingSet(urls){workingSet=new Set(urls);trim();},

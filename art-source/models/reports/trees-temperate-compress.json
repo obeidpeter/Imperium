@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/scenery/trees-temperate.glb",
+  "output": "assets/models/scenery/trees-temperate.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 2293228,
+    "gzipBytes": 2069285,
+    "sha256": "a7807c3c900cbba1287f446d0898b8abdece26a0318591e98b4251359dc0e7dd"
+  },
+  "after": {
+    "bytes": 594256,
+    "gzipBytes": 500222,
+    "sha256": "ec5f65a315b248899c7314b8a8b67046e24e010176d8b598a4b33d10bc2003ab"
+  },
+  "geometryUnchanged": true,
+  "triangles": 17520,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 1741486
+      },
+      "bytes": 208186,
+      "psnr": 29.526
+    }
+  ]
+}

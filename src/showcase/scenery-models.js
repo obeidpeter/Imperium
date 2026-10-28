@@ -5,6 +5,8 @@ import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
 import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements} from './environment-regional-world.js';
 import {boardKitUrl} from './board-kit.js';
+import {sceneTreeKitUrl} from './tree-kit.js';
+import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
 
 /** Presentation-only generated scenery. Exterior positions follow the actual
@@ -72,8 +74,13 @@ export const sceneryMaster=url=>masters.master(url);
 export const sceneryResidency=()=>masters.stats();
 // A lease on a model a stage uses while it stands (the board kit, battlefield-features.js).
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
-// The board kit belongs to the working set wherever the scenery is drawn.
-const boardKitUrls=(e,quality)=>{const url=quality==='performance'?null:boardKitUrl(e);return url?[url]:[];};
+// A lease on a model already loaded, or null, without a request (scenery-cache.js).
+export const holdSceneryModel=url=>masters.hold(url);
+// The board kit and the region's tree and rock kits belong to the working set wherever the scenery is drawn.
+const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter)].filter(Boolean);
+/** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
+ * them: its placed scenery and the world kits. None on Performance. */
+export const sceneryWorkingSet=(e,{chapter,quality='balanced'}={})=>quality==='performance'?[]:[...new Set([...sceneryPlacements(e,{chapter}).map(p=>p.url),...worldKitUrls(e,quality,chapter)])];
 let preload=null;
 const preloadKey=urls=>[...urls].sort().join('\n');
 const releasePreload=()=>{const previous=preload;preload=null;for(const lease of previous?.leases??[])lease.release();};
@@ -81,8 +88,7 @@ const releasePreload=()=>{const previous=preload;preload=null;for(const lease of
  * subsequent preload replaces it. Thus LRU pressure cannot evict a model in
  * the gap between the loading veil's preload and stage construction. */
 export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set([...placements.map(p=>p.url),...boardKitUrls(e,quality)])];
-  const leases=urls.map(url=>masters.acquire(url,load));releasePreload();
+  const urls=sceneryWorkingSet(e,{chapter,quality}),leases=urls.map(url=>masters.acquire(url,load));releasePreload();
   preload={key:preloadKey(urls),leases};masters.setWorkingSet(urls);
   return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
@@ -92,7 +98,7 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
   const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
   const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
   const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
-  const kept=[...urls,...boardKitUrls(e,quality)];library.setWorkingSet(kept);
+  const kept=[...urls,...worldKitUrls(e,quality,chapter)];library.setWorkingSet(kept);
   if(library===masters&&preload?.key===preloadKey(kept))releasePreload();
   let disposed=false;
   const fallbacks=new Map(),release=state=>{if(state.released||state.preparing)return;state.released=true;state.lease.release({discard:!state.used});};

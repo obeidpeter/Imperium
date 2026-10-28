@@ -8,13 +8,13 @@ import * as G from '../src/core/game.js';
 import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {chapterOfflineAssets} from '../src/ui/art.js';
-import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels,warmSceneryModel,sceneryMaster,preloadSceneryModels,sceneryResidency} from '../src/showcase/scenery-models.js';
+import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels,warmSceneryModel,sceneryMaster,preloadSceneryModels,sceneryResidency,sceneryWorkingSet} from '../src/showcase/scenery-models.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
 import {createModelLoader} from '../src/showcase/model-loader.js';
 import {useNodeWorkers} from './node-workers.mjs';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
-import {WORLD_CATALOG} from '../src/ui/world-catalog.js';
+import {WORLD_CATALOG,worldModelUrl} from '../src/ui/world-catalog.js';
 
 const root=new URL('../',import.meta.url),file=path=>readFile(new URL(path,root));
 const manifest=JSON.parse(await file('docs/asset-manifest.json'));
@@ -157,6 +157,9 @@ test('the camera cutaway covers the generated models like the rest of the scener
 
 test('preloaded scenery is synchronous, shared across stages, and evicted after leaving its chapter', async () => {
   const [e]=chapterFiveStarts(),placements=sceneryPlacements(e,{chapter:5});
+  assert.deepEqual(sceneryWorkingSet(e,{chapter:5}).sort(),[...new Set([...placements.map(p=>p.url),...['trees-arid','rocks-arid'].map(worldModelUrl)])].sort(),
+    'the placed scenery and the region\'s tree and rock kits');
+  assert.deepEqual(sceneryWorkingSet(e,{chapter:5,quality:'performance'}),[]);
   assert.deepEqual(await preloadSceneryModels(e,{chapter:5,quality:'performance'}),[],'Performance quality loads no scenery');
   assert.ok((await preloadSceneryModels(e,{chapter:5,load:loadFile})).every(Boolean));
   const masters=placements.map(p=>sceneryMaster(p.url));
@@ -174,7 +177,9 @@ test('preloaded scenery is synchronous, shared across stages, and evicted after 
   models.dispose();assert.equal(freed,0,'the current chapter retains its bounded warm masters');
   const next=createSceneryModels(new T.Scene(),e,{chapter:5});assert.equal(next.group.children.length,placements.length,'the next stage reuses them');await next.ready;
   await preloadSceneryModels({id:'ch6-eagle'},{chapter:6});assert.equal(freed,0,'an active stage owns its geometry even when the next chapter preloads');
-  next.dispose();assert.ok(freed>0,'closing the old stage frees its no-longer-needed resources');assert.equal(sceneryResidency().entries,0);
+  // Chapter VI plants Chapter V's region's trees and stones: its preload keeps those two kits.
+  next.dispose();assert.ok(freed>0,'closing the old stage frees its no-longer-needed resources');assert.equal(sceneryResidency().entries,2);
+  await preloadSceneryModels({id:'ch7-council'},{chapter:7,quality:'performance'});assert.equal(sceneryResidency().entries,0);
 });
 
 test('component instances replace only their matching fallback after successful preparation',async()=>{
@@ -206,8 +211,8 @@ test('a preload stays pinned under unrelated warm-up pressure and needs no late 
   let prepared=0;const models=createSceneryModels(new T.Scene(),e,{chapter:5,prepare:async()=>{prepared++;}});
   assert.equal(models.group.children.length,placements.length,'all preloaded instances exist immediately behind the veil');
   assert.equal((await models.ready).length,placements.length);assert.equal(prepared,0,'the stage can compile everything together before its first frame');
-  assert.equal(sceneryResidency().entries,10,'unrelated warm-up models are evicted when the stage claims its working set');
-  await preloadSceneryModels({id:'ch6-eagle'},{chapter:6});models.dispose();assert.equal(sceneryResidency().entries,0);
+  assert.equal(sceneryResidency().entries,12,'unrelated warm-up models are evicted when the stage claims its working set (the ten pilot assets and the region\'s tree and rock kits)');
+  await preloadSceneryModels({id:'ch7-council'},{chapter:7,quality:'performance'});models.dispose();assert.equal(sceneryResidency().entries,0);
 });
 
 test('cancelled preparation retains geometry until compilation settles, but cancels unowned loads immediately',async()=>{

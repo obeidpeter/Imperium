@@ -1,0 +1,61 @@
+{
+  "id": "rock-arid-slab",
+  "status": "Release 5: processed, assembled into rocks-arid and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A flat layered sandstone slab of the desert, buff and red bands, its upper layer flaking away at the edges, wind-polished top. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.4,
+    "minHeight": 0.38,
+    "maxHeight": 0.42
+  },
+  "provenance": {
+    "taskId": "80753f25-5510-4085-995b-37efd57bad68",
+    "requestedAt": "2026-10-28T08:37:42.699Z",
+    "balanceBefore": 3700,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A flat layered sandstone slab of the desert, buff and red bands, its upper layer flaking away at the edges, wind-polished top. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:40:03.281Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-arid-slab.glb",
+    "rawBytes": 46349468,
+    "rawSha256": "5ea23a5ececba4c4dfeaf3d7c3124ffb521f5eb7e3348dcb8653b8cc9dbe3671",
+    "tripoInput": {
+      "prompt": "A flat layered sandstone slab of the desert, buff and red bands, its upper layer flaking away at the edges, wind-polished top. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-arid-slab-tripo-render.webp"
+  }
+}

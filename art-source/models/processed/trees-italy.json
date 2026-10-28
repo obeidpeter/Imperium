@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "id": "trees-italy",
+  "generator": "scripts/assets/build-trees.py",
+  "kit": "italy",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "normalHeight": 0.5,
+  "atlas": {
+    "size": 1024,
+    "cell": 256,
+    "cells": {
+      "bark:bark_brown_01": 0,
+      "bark:bark_willow": 1,
+      "bark:chinese_cedar_bark": 2,
+      "bark:pine_bark": 3,
+      "leaf:needles": 4,
+      "leaf:olive": 5,
+      "leaf:poplar": 6,
+      "leaf:scale": 7,
+      "impostor:poplar": 8,
+      "impostor:cypress": 9,
+      "impostor:umbrella": 10,
+      "impostor:olive": 11
+    }
+  },
+  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
+  "leaves": {
+    "needles": "art-source/cc0/polyhaven-pine_tree_01.json",
+    "olive": "art-source/cc0/polyhaven-shrub_02.json",
+    "poplar": "art-source/cc0/polyhaven-island_tree_01.json",
+    "scale": "art-source/cc0/polyhaven-fir_tree_01.json"
+  },
+  "bark": {
+    "bark_brown_01": "art-source/cc0/polyhaven-bark_brown_01.json",
+    "bark_willow": "art-source/cc0/polyhaven-bark_willow.json",
+    "chinese_cedar_bark": "art-source/cc0/polyhaven-chinese_cedar_bark.json",
+    "pine_bark": "art-source/cc0/polyhaven-pine_bark.json"
+  },
+  "species": [
+    {
+      "species": "poplar",
+      "buildHeight": 8.5,
+      "top": 10.103,
+      "bark": "bark_willow",
+      "leaf": "poplar",
+      "crownRadius": 0.0844,
+      "impostorSpan": 0.52,
+      "triangles": {
+        "near": 1936,
+        "mid": 804,
+        "far": 4
+      }
+    },
+    {
+      "species": "cypress",
+      "buildHeight": 7,
+      "top": 7.351,
+      "bark": "chinese_cedar_bark",
+      "leaf": "scale",
+      "crownRadius": 0.0716,
+      "impostorSpan": 0.52,
+      "triangles": {
+        "near": 1248,
+        "mid": 640,
+        "far": 4
+      }
+    },
+    {
+      "species": "umbrella",
+      "buildHeight": 7,
+      "top": 8.992,
+      "bark": "pine_bark",
+      "leaf": "needles",
+      "crownRadius": 0.2739,
+      "impostorSpan": 0.5696,
+      "triangles": {
+        "near": 2000,
+        "mid": 600,
+        "far": 4
+      }
+    },
+    {
+      "species": "olive",
+      "buildHeight": 4.5,
+      "top": 3.782,
+      "bark": "bark_brown_01",
+      "leaf": "olive",
+      "crownRadius": 0.3631,
+      "impostorSpan": 0.7552,
+      "triangles": {
+        "near": 1848,
+        "mid": 612,
+        "far": 4
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/trees-italy.glb",
+    "bytes": 1577088,
+    "sha256": "1b4ca6f683d4717444dc805c98228c6677870b48908bf6255cfc9458ef7563f7",
+    "triangles": 9704
+  },
+  "runtimePath": "assets/models/scenery/trees-italy.glb"
+}

@@ -1,0 +1,139 @@
+{
+  "scope": "The worlds and gameplay plan (docs/worlds-and-gameplay-plan.md): Tripo generation for releases 4–10",
+  "authorization": {
+    "credits": 2500,
+    "approvedBy": "Owner",
+    "source": "docs/worlds-and-gameplay-plan.md, the owner's decisions: up to 2,500 credits"
+  },
+  "pricing": {
+    "model": "v3.1-20260211",
+    "textWithStandardTextures": 20,
+    "source": "each task's reported consumed_credit"
+  },
+  "releases": [
+    {
+      "release": 5,
+      "title": "Nature and water, modelled",
+      "date": "2026-10-28",
+      "plannedCredits": 240,
+      "spentCredits": 240,
+      "reservedCredits": 0,
+      "startingBalance": 3760,
+      "endingBalance": 3520,
+      "tasks": [
+        {
+          "id": "rock-arid-basalt",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "dad0d542-1d96-44b8-a292-048c81de014d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-arid-outcrop",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-arid-sandstone",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fb1ba3b2-1f82-4e24-8dcb-f4a0bd321032",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-arid-slab",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "80753f25-5510-4085-995b-37efd57bad68",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-italy-outcrop",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2a4a1db3-d732-4aab-a699-904c66f830bc",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-italy-slab",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e8a4adff-dec0-4e85-adea-fcd5b15048e8",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-italy-travertine",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e82508a9-dc9c-41df-90a7-d38fc588de4f",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-italy-tuff",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "ea45fe20-a81a-49f1-9703-041c1727b920",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-temperate-boulder",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "41c1b4df-4837-4d03-a91b-e9e9d9688496",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-temperate-outcrop",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "523a9ab4-f3b6-4607-ab7b-db2216307420",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-temperate-river-stones",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "cac5c18a-fa00-4e80-806b-dd2510628056",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "rock-temperate-slab",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "72744aaa-efa8-4945-9469-8c6e5f67429e",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "reconciliation": "Twelve successful text-to-model tasks each reported 20 credits. The wallet balance fell from 3760 to 3520, matching 240 credits. All twelve rocks were selected; no paid revision."
+    }
+  ],
+  "spentCredits": 240,
+  "remainingAuthorization": 2260,
+  "note": "Release 4 spent no credits (its board kit is original Blender work); the balance read 3760 before and after it."
+}

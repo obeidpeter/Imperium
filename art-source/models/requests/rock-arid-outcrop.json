@@ -1,0 +1,61 @@
+{
+  "id": "rock-arid-outcrop",
+  "status": "Release 5: processed, assembled into rocks-arid and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A cracked outcrop of pale desert limestone above the Euphrates valley, blocky joints, sharp edges, sun-bleached cream and buff colours with darker weathered seams. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.4,
+    "minHeight": 1.33,
+    "maxHeight": 1.47
+  },
+  "provenance": {
+    "taskId": "5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+    "requestedAt": "2026-10-28T08:32:54.975Z",
+    "balanceBefore": 3740,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A cracked outcrop of pale desert limestone above the Euphrates valley, blocky joints, sharp edges, sun-bleached cream and buff colours with darker weathered seams. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:35:10.722Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-arid-outcrop.glb",
+    "rawBytes": 46356176,
+    "rawSha256": "aafec64466191fff520382724cc57623d5a848bacd895d59ed10a3476c871e51",
+    "tripoInput": {
+      "prompt": "A cracked outcrop of pale desert limestone above the Euphrates valley, blocky joints, sharp edges, sun-bleached cream and buff colours with darker weathered seams. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-arid-outcrop-tripo-render.webp"
+  }
+}

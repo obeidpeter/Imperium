@@ -1,0 +1,137 @@
+{
+  "input": "assets/models/scenery/rocks-italy.glb",
+  "output": "assets/models/scenery/rocks-italy.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 528872,
+    "gzipBytes": 399814,
+    "sha256": "db426c123fd9832214bddd4cf4652f64250b17bc237c1cfe3c0dc084fac1d55c"
+  },
+  "after": {
+    "bytes": 528780,
+    "gzipBytes": 499918,
+    "sha256": "fe99875667c731d2177c1e9fd19a3e2c9d9da0edcfbf55e182490bcf16a334b8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 9148,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 28720
+      },
+      "bytes": 34044,
+      "psnr": 35.736
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 40428
+      },
+      "bytes": 51655,
+      "psnr": 32.231
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33580
+      },
+      "bytes": 37839,
+      "psnr": 32.773
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 28528
+      },
+      "bytes": 43855,
+      "psnr": 34.37
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12496
+      },
+      "bytes": 23250,
+      "psnr": 41.688
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 24066
+      },
+      "bytes": 45359,
+      "psnr": 36.768
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 18092
+      },
+      "bytes": 28201,
+      "psnr": 39.648
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33140
+      },
+      "bytes": 50068,
+      "psnr": 35.066
+    }
+  ]
+}

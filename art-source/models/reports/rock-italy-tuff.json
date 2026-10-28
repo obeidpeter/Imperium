@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-italy-tuff.glb",
+    "bytes": 46486932,
+    "sha256": "76b952d1e7214f8512195c0246e553a0bf15d02dad30640716bd65e6ee19d189",
+    "triangles": 1454310
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-italy-tuff.glb",
+    "bytes": 173796,
+    "sha256": "3e9e38925c52079a5d55b8af709bad61dd6c468c02f7ceccbfc4766d3917e944",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.1,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9220384612079933,
+  "sizeMetres": {
+    "width": 1.7194,
+    "height": 1.1,
+    "depth": 1.9198
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_ea45fe20-a81a-49f1-9703-041c1727b920",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_ea45fe20-a81a-49f1-9703-041c1727b920",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_ea45fe20-a81a-49f1-9703-041c1727b920",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

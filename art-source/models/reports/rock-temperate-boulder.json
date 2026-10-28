@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-temperate-boulder.glb",
+    "bytes": 47436812,
+    "sha256": "9de753f3539e9c9296a807e50b54892a319a26bf9b190faef6b023525ca82987",
+    "triangles": 1486605
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-temperate-boulder.glb",
+    "bytes": 132320,
+    "sha256": "8e38ae92b93657f9bf27ff00e3453a7f76b89a99219adb53ec4ca2fdd822dc50",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.552552309879973,
+  "sizeMetres": {
+    "width": 1.5418,
+    "height": 1.2,
+    "depth": 1.5362
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_41c1b4df-4837-4d03-a91b-e9e9d9688496",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_41c1b4df-4837-4d03-a91b-e9e9d9688496",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_41c1b4df-4837-4d03-a91b-e9e9d9688496",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "rock-temperate-boulder",
+  "status": "Release 5: processed, assembled into rocks-temperate and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    8,
+    10
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A large rounded granite boulder of the lower Danube hills, grey with darker speckles, worn smooth by weather, with soft patches of green moss and pale grey lichen on its upper face and a few frost cracks. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.2,
+    "minHeight": 1.14,
+    "maxHeight": 1.26
+  },
+  "provenance": {
+    "taskId": "41c1b4df-4837-4d03-a91b-e9e9d9688496",
+    "requestedAt": "2026-10-28T08:49:55.711Z",
+    "balanceBefore": 3600,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A large rounded granite boulder of the lower Danube hills, grey with darker speckles, worn smooth by weather, with soft patches of green moss and pale grey lichen on its upper face and a few frost cracks. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:52:04.864Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-temperate-boulder.glb",
+    "rawBytes": 47436812,
+    "rawSha256": "9de753f3539e9c9296a807e50b54892a319a26bf9b190faef6b023525ca82987",
+    "tripoInput": {
+      "prompt": "A large rounded granite boulder of the lower Danube hills, grey with darker speckles, worn smooth by weather, with soft patches of green moss and pale grey lichen on its upper face and a few frost cracks. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-temperate-boulder-tripo-render.webp"
+  }
+}

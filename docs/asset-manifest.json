@@ -8613,6 +8613,1045 @@
         }
       },
       "runtime": "Deferred with the existing 3D renderer; no external provider or new textures. Performance uses the 136-triangle silhouette; other tiers use 940 triangles only in the front rank."
+    },
+    {
+      "id": "trees-temperate",
+      "path": "assets/models/scenery/trees-temperate.glb",
+      "subject": "The trees of the Danube frontier, Moesia, Thrace and the Rhine (oak, beech, willow, alder, pine, fir), each near, mid and as a two-card impostor, normalised to 0.5 units tall for the runtime to scale",
+      "source": {
+        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for oak and willow, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
+        "builder": "scripts/assets/build-trees.py",
+        "sourceBlend": "art-source/models/trees-temperate.blend",
+        "report": "art-source/models/processed/trees-temperate.json",
+        "components": [
+          "oak",
+          "oak_mid",
+          "oak_far",
+          "beech",
+          "beech_mid",
+          "beech_far",
+          "willow",
+          "willow_mid",
+          "willow_far",
+          "alder",
+          "alder_mid",
+          "alder_far",
+          "pine",
+          "pine_mid",
+          "pine_far",
+          "fir",
+          "fir_mid",
+          "fir_far"
+        ],
+        "cc0": [
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Brown 01",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_brown_01",
+            "record": "art-source/cc0/polyhaven-bark_brown_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-28T08:35:12.131Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_diff_1k.png",
+                "sha256": "37be9755b9eb02e9df1a1e5a06ea17d5a58161ce76024b5d9ad85b8bca3606e1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_nor_gl_1k.png",
+                "sha256": "1d35617ca492eef42b85d877ef99a3a78389920858e37ffadf8f874fa3f18983"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_arm_1k.png",
+                "sha256": "c3fe5b27155bf7f9d69581550295a4f1c927106bf091ede0f01ad762b47bafee"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Brown 02",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_brown_02",
+            "record": "art-source/cc0/polyhaven-bark_brown_02.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-28T08:34:51.283Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_diff_1k.png",
+                "sha256": "22144dbe0e9f1cfd44de3f3c8311c898fe672f087c1e81a18baab77476dc046f"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_nor_gl_1k.png",
+                "sha256": "45c632c61b642759ee935a4300b71aa1e6097d2b2d8aae42376c4661ecc518eb"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_02/bark_brown_02_arm_1k.png",
+                "sha256": "3a6c5b088129c8cc12187a02f9352c77dc80e7789ca97bd67c81649267f42bdd"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Willow",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_willow",
+            "record": "art-source/cc0/polyhaven-bark_willow.json",
+            "authors": [
+              "Dario Barresi",
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-28T08:35:01.999Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_diff_1k.png",
+                "sha256": "002a5c88826d34c96f32a5a8f72c372fb172cc1129bd7fa2b70c0e087cb2e4b7"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_nor_gl_1k.png",
+                "sha256": "cfcba7785407ba0b3fa3cba115ad3dbc8c1c5f62ee0d4b0c63dbc0e550109fc1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_arm_1k.png",
+                "sha256": "eb7267fbc3de8ee558b819849ec86bd1c54b4c590e9db055427be8351d77a3b1"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Pine Bark",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/pine_bark",
+            "record": "art-source/cc0/polyhaven-pine_bark.json",
+            "authors": [
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-28T08:34:52.834Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_diff_1k.png",
+                "sha256": "8496fcea72b809f95d0091fb93da74ef5944033eec33ea0b58101a9bf755f042"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_nor_gl_1k.png",
+                "sha256": "b20acff197ac8c49b5d888ab4bb10f8a4542823519c2a62d89bcf938d36d1143"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_arm_1k.png",
+                "sha256": "1d99d054e44e7a572cea4fcbd3a6e35a6b0a321f137c082cd31178226581bd1d"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Fir Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/fir_tree_01",
+            "record": "art-source/cc0/polyhaven-fir_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:53.065Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_diff_1k.png",
+                "sha256": "76f6d0c0044d76bac08fbbd3d2ac1c9b66bb046de7d0b1a22aa9b319308f3833"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_alpha_1k.png",
+                "sha256": "3f399629337e7ac3af27a01b08ffb9c0d60224a9dd374a1427761a5c2eea9d6e"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Pine Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/pine_tree_01",
+            "record": "art-source/cc0/polyhaven-pine_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:55.448Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_diff_1k.png",
+                "sha256": "d02c031de64b8ad671f3dd0da19870fa4783d912ae6674aeab0702871deeaeaa"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_alpha_1k.png",
+                "sha256": "6f91aa99f2c27108d6f817f874954aa7df8bfbb4dea2673e9322555a6ae79d99"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Island Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/island_tree_01",
+            "record": "art-source/cc0/polyhaven-island_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:59.263Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_diff_1k.png",
+                "sha256": "63d3563a22a62151f338ceb4e992de7c31b62e8e3582e2762d5071f02d286349"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_alpha_1k.png",
+                "sha256": "f4341f147988dbe6b58d9ca841a8f0e4bcff25bc40d05f9877da82006d489c39"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Tree Small 02",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/tree_small_02",
+            "record": "art-source/cc0/polyhaven-tree_small_02.json",
+            "authors": [
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:01:03.708Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-tree_small_02/tree_small_02_leaves_diff_1k.png",
+                "sha256": "d3fc48522c76aa1f91076c6b86f302669822ebe4e2acabd67d42c4d57eaa5ba0"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-tree_small_02/tree_small_02_leaves_alpha_1k.png",
+                "sha256": "4f143e2dda8a6a572f427ac378b92255d21761e4611de0d26e21816c01aa533b"
+              }
+            ]
+          }
+        ],
+        "derivedFrom": [
+          "assets/showcase/foliage-v016.webp"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/trees-temperate-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 594256,
+        "gzipBytes": 500222,
+        "sha256": "ec5f65a315b248899c7314b8a8b67046e24e010176d8b598a4b33d10bc2003ab",
+        "triangles": 17520,
+        "textures": 1,
+        "textureEdge": 1024,
+        "componentCount": 18
+      },
+      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Dario Barresi, Dimitrios Savva, Rico Cilliers on Poly Haven. The oak and willow cells come from the project's generated foliage atlas (see foliage-v016)."
+    },
+    {
+      "id": "trees-italy",
+      "path": "assets/models/scenery/trees-italy.glb",
+      "subject": "The trees of Italy and Rome (poplar, cypress, umbrella, olive), each near, mid and as a two-card impostor, normalised to 0.5 units tall for the runtime to scale",
+      "source": {
+        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures; impostors rendered from the near trees in Cycles",
+        "builder": "scripts/assets/build-trees.py",
+        "sourceBlend": "art-source/models/trees-italy.blend",
+        "report": "art-source/models/processed/trees-italy.json",
+        "components": [
+          "poplar",
+          "poplar_mid",
+          "poplar_far",
+          "cypress",
+          "cypress_mid",
+          "cypress_far",
+          "umbrella",
+          "umbrella_mid",
+          "umbrella_far",
+          "olive",
+          "olive_mid",
+          "olive_far"
+        ],
+        "cc0": [
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Brown 01",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_brown_01",
+            "record": "art-source/cc0/polyhaven-bark_brown_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-28T08:35:12.131Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_diff_1k.png",
+                "sha256": "37be9755b9eb02e9df1a1e5a06ea17d5a58161ce76024b5d9ad85b8bca3606e1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_nor_gl_1k.png",
+                "sha256": "1d35617ca492eef42b85d877ef99a3a78389920858e37ffadf8f874fa3f18983"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_arm_1k.png",
+                "sha256": "c3fe5b27155bf7f9d69581550295a4f1c927106bf091ede0f01ad762b47bafee"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Willow",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_willow",
+            "record": "art-source/cc0/polyhaven-bark_willow.json",
+            "authors": [
+              "Dario Barresi",
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-28T08:35:01.999Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_diff_1k.png",
+                "sha256": "002a5c88826d34c96f32a5a8f72c372fb172cc1129bd7fa2b70c0e087cb2e4b7"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_nor_gl_1k.png",
+                "sha256": "cfcba7785407ba0b3fa3cba115ad3dbc8c1c5f62ee0d4b0c63dbc0e550109fc1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_willow/bark_willow_arm_1k.png",
+                "sha256": "eb7267fbc3de8ee558b819849ec86bd1c54b4c590e9db055427be8351d77a3b1"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Chinese Cedar Bark",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/chinese_cedar_bark",
+            "record": "art-source/cc0/polyhaven-chinese_cedar_bark.json",
+            "authors": [
+              "Charlotte Baglioni"
+            ],
+            "retrievedAt": "2026-10-28T08:35:06.779Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_diff_1k.png",
+                "sha256": "d6d6fe4000eb55cec03287d79914a642365248fec46d9350f01b54cadd865ffd"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_nor_gl_1k.png",
+                "sha256": "a42cd1bf341be6503c618c8d3db5bae682f719ef6eac143f826fa58796e47e84"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-chinese_cedar_bark/chinese_cedar_bark_arm_1k.png",
+                "sha256": "20b41c6a8411cca9a36026a97b8bfc55835cccd4c54854c798679170fbbf5c91"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Pine Bark",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/pine_bark",
+            "record": "art-source/cc0/polyhaven-pine_bark.json",
+            "authors": [
+              "Dimitrios Savva"
+            ],
+            "retrievedAt": "2026-10-28T08:34:52.834Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_diff_1k.png",
+                "sha256": "8496fcea72b809f95d0091fb93da74ef5944033eec33ea0b58101a9bf755f042"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_nor_gl_1k.png",
+                "sha256": "b20acff197ac8c49b5d888ab4bb10f8a4542823519c2a62d89bcf938d36d1143"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_bark/pine_bark_arm_1k.png",
+                "sha256": "1d99d054e44e7a572cea4fcbd3a6e35a6b0a321f137c082cd31178226581bd1d"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Pine Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/pine_tree_01",
+            "record": "art-source/cc0/polyhaven-pine_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:55.448Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_diff_1k.png",
+                "sha256": "d02c031de64b8ad671f3dd0da19870fa4783d912ae6674aeab0702871deeaeaa"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_alpha_1k.png",
+                "sha256": "6f91aa99f2c27108d6f817f874954aa7df8bfbb4dea2673e9322555a6ae79d99"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Shrub 02",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/shrub_02",
+            "record": "art-source/cc0/polyhaven-shrub_02.json",
+            "authors": [
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:01:05.340Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_diff_1k.png",
+                "sha256": "d6f8bcbd221e9229bc8d831a0819717dd74d327cd7f66219de942b7d60d01876"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_alpha_1k.png",
+                "sha256": "5c2c31bac311051db77443e1780078403c2df0a832c40fe6ed7bcd982695cdf0"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Island Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/island_tree_01",
+            "record": "art-source/cc0/polyhaven-island_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:59.263Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_diff_1k.png",
+                "sha256": "63d3563a22a62151f338ceb4e992de7c31b62e8e3582e2762d5071f02d286349"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-island_tree_01/island_tree_01_leaves_alpha_1k.png",
+                "sha256": "f4341f147988dbe6b58d9ca841a8f0e4bcff25bc40d05f9877da82006d489c39"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Fir Tree 01",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/fir_tree_01",
+            "record": "art-source/cc0/polyhaven-fir_tree_01.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:00:53.065Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_diff_1k.png",
+                "sha256": "76f6d0c0044d76bac08fbbd3d2ac1c9b66bb046de7d0b1a22aa9b319308f3833"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-fir_tree_01/fir_tree_01_twig_alpha_1k.png",
+                "sha256": "3f399629337e7ac3af27a01b08ffb9c0d60224a9dd374a1427761a5c2eea9d6e"
+              }
+            ]
+          }
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/trees-italy-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "loading": "Deferred chapter packs 7, 11, 12 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 356280,
+        "gzipBytes": 302049,
+        "sha256": "3a4f7c3d18b5f94b86af0c863b5405abc293e1eda3b18709c08300e51d752dca",
+        "triangles": 9704,
+        "textures": 1,
+        "textureEdge": 1024,
+        "componentCount": 12
+      },
+      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Dario Barresi, Dimitrios Savva, Charlotte Baglioni, Rico Cilliers on Poly Haven."
+    },
+    {
+      "id": "trees-arid",
+      "path": "assets/models/scenery/trees-arid.glb",
+      "subject": "The trees of Syria, Egypt and the Euphrates (palm, tamarisk), each near, mid and as a two-card impostor, normalised to 0.5 units tall for the runtime to scale",
+      "source": {
+        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for date palm, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
+        "builder": "scripts/assets/build-trees.py",
+        "sourceBlend": "art-source/models/trees-arid.blend",
+        "report": "art-source/models/processed/trees-arid.json",
+        "components": [
+          "palm",
+          "palm_mid",
+          "palm_far",
+          "tamarisk",
+          "tamarisk_mid",
+          "tamarisk_far"
+        ],
+        "cc0": [
+          {
+            "generator": "Poly Haven",
+            "name": "Bark Brown 01",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/bark_brown_01",
+            "record": "art-source/cc0/polyhaven-bark_brown_01.json",
+            "authors": [
+              "Rob Tuytel"
+            ],
+            "retrievedAt": "2026-10-28T08:35:12.131Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_diff_1k.png",
+                "sha256": "37be9755b9eb02e9df1a1e5a06ea17d5a58161ce76024b5d9ad85b8bca3606e1"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_nor_gl_1k.png",
+                "sha256": "1d35617ca492eef42b85d877ef99a3a78389920858e37ffadf8f874fa3f18983"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-bark_brown_01/bark_brown_01_arm_1k.png",
+                "sha256": "c3fe5b27155bf7f9d69581550295a4f1c927106bf091ede0f01ad762b47bafee"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Palm Bark",
+            "kind": "texture set",
+            "page": "https://polyhaven.com/a/palm_bark",
+            "record": "art-source/cc0/polyhaven-palm_bark.json",
+            "authors": [
+              "Charlotte Baglioni"
+            ],
+            "retrievedAt": "2026-10-28T08:34:54.928Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_diff_1k.png",
+                "sha256": "97b380b64a0a12edab80f00b3b89808fb7bed276eae8bd8969ce5a013236f252"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_nor_gl_1k.png",
+                "sha256": "b5f2ca2e13a7d90c7e129330c724072411ccd9eba00bb7cf37671bd69d776730"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-palm_bark/palm_bark_arm_1k.png",
+                "sha256": "c12c5b2f71b3e5f00e573e1895bcb4b5071cac081bdc32a35b8fb8f5ee57a0a7"
+              }
+            ]
+          },
+          {
+            "generator": "Poly Haven",
+            "name": "Jacaranda Tree",
+            "kind": "model textures",
+            "page": "https://polyhaven.com/a/jacaranda_tree",
+            "record": "art-source/cc0/polyhaven-jacaranda_tree.json",
+            "authors": [
+              "Rob Tuytel",
+              "Rico Cilliers"
+            ],
+            "retrievedAt": "2026-10-28T09:01:07.741Z",
+            "files": [
+              {
+                "path": "art-source/cc0/raw/polyhaven-jacaranda_tree/jacaranda_tree_leaves_diff_1k.png",
+                "sha256": "5729978e92649ee6cc70bdc457aac1b28b16a10bde0a55004b659a1923c8861b"
+              },
+              {
+                "path": "art-source/cc0/raw/polyhaven-jacaranda_tree/jacaranda_tree_leaves_alpha_1k.png",
+                "sha256": "c708a7e928a2e4d26981b021a22deeefc0ebb0e467f60b53cfa636a7e24d68f7"
+              }
+            ]
+          }
+        ],
+        "derivedFrom": [
+          "assets/showcase/foliage-v016.webp"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/trees-arid-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "Every tree the chapter's world plans plant (world-weather.js and the scenery that plants trees), on Balanced and High: one instanced draw a species and level, near within 30 m of the camera, mid within 150 m, the impostor beyond, in the environment's cut-out foliage program and its wind (src/showcase/tree-kit.js). Each crown is kept inside the clearance its plan reserved. Decorative only: no tree takes picks or changes a route.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 165436,
+        "gzipBytes": 141860,
+        "sha256": "c1180f07c643faa5062c5dbef28b5b6cda58430adb54e974c05e5c26729534df",
+        "triangles": 4000,
+        "textures": 1,
+        "textureEdge": 1024,
+        "componentCount": 6
+      },
+      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Charlotte Baglioni, Rico Cilliers on Poly Haven. The date palm cells come from the project's generated foliage atlas (see foliage-v016)."
+    },
+    {
+      "id": "rocks-temperate",
+      "path": "assets/models/scenery/rocks-temperate.glb",
+      "subject": "The field stones of the Danube frontier, Moesia, Thrace and the Rhine: boulder, outcrop, river stones, slab, each near and far",
+      "source": {
+        "method": "Tripo H3.1 from original text prompts only, each processed in Blender 5.2.2 LTS (scripts/assets/process-model.py: decimated to 2,000 triangles, 512-pixel textures, scaled to its height) and assembled by scripts/assets/build-rock-kits.py with a far level decimated toward a tenth of its triangles; the game draws each with one roughness, so the roughness-metalness maps are left out. No reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "builder": "scripts/assets/build-rock-kits.py",
+        "report": "art-source/models/processed/rocks-temperate.json",
+        "rocks": [
+          {
+            "id": "rock-temperate-boulder",
+            "prompt": "art-source/models/requests/rock-temperate-boulder.json",
+            "taskId": "41c1b4df-4837-4d03-a91b-e9e9d9688496",
+            "generatedAt": "2026-10-28T08:52:04.864Z",
+            "credits": 20,
+            "rawSha256": "9de753f3539e9c9296a807e50b54892a319a26bf9b190faef6b023525ca82987",
+            "processed": "art-source/models/processed/rock-temperate-boulder.glb",
+            "processedSha256": "8e38ae92b93657f9bf27ff00e3453a7f76b89a99219adb53ec4ca2fdd822dc50",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.2,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 437
+            }
+          },
+          {
+            "id": "rock-temperate-outcrop",
+            "prompt": "art-source/models/requests/rock-temperate-outcrop.json",
+            "taskId": "523a9ab4-f3b6-4607-ab7b-db2216307420",
+            "generatedAt": "2026-10-28T08:54:42.841Z",
+            "credits": 20,
+            "rawSha256": "c9966dcc94f89ca5a6b2054ea81477866233d916ec4102c2709b3a0d3ff3dcc0",
+            "processed": "art-source/models/processed/rock-temperate-outcrop.glb",
+            "processedSha256": "5bf420efff7f00da9587a3d6fade145e0f8d1775abe9f6b39101933f4c0cac22",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.6,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 2935,
+              "far": 452
+            }
+          },
+          {
+            "id": "rock-temperate-river-stones",
+            "prompt": "art-source/models/requests/rock-temperate-river-stones.json",
+            "taskId": "cac5c18a-fa00-4e80-806b-dd2510628056",
+            "generatedAt": "2026-10-28T08:57:15.698Z",
+            "credits": 20,
+            "rawSha256": "8c0dfdcf89432c2df55191199e454f7bc98cafafbdfda1718f8907088c06a994",
+            "processed": "art-source/models/processed/rock-temperate-river-stones.glb",
+            "processedSha256": "7329ba68d3d6c4b7036be78854d756b8880937e00ea3e98cfaafab8cf147ff30",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 0.55,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 347
+            }
+          },
+          {
+            "id": "rock-temperate-slab",
+            "prompt": "art-source/models/requests/rock-temperate-slab.json",
+            "taskId": "72744aaa-efa8-4945-9469-8c6e5f67429e",
+            "generatedAt": "2026-10-28T08:59:38.070Z",
+            "credits": 20,
+            "rawSha256": "36b9492e527ebd81748578d0ceb787b6bd7526692c21314c89bcffadcc51fc10",
+            "processed": "art-source/models/processed/rock-temperate-slab.glb",
+            "processedSha256": "fb14d4221c64e1fe8fb2bd6f349457704fed4331692ff716fd4c85ea206579b6",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 0.45,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 217
+            }
+          }
+        ],
+        "components": [
+          "rock-temperate-boulder",
+          "rock-temperate-boulder_far",
+          "rock-temperate-outcrop",
+          "rock-temperate-outcrop_far",
+          "rock-temperate-river-stones",
+          "rock-temperate-river-stones_far",
+          "rock-temperate-slab",
+          "rock-temperate-slab_far"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/rocks-temperate-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The field's stones on Balanced and High, where the code-built field drew noise spheres: a boulder and one smaller rock on each rock and rubble cell (in place of four stones), the scattered boulders, and every other stone along the plateaus' rims. Each rock is fitted to that stone's footprint and height, one instanced draw a rock and level (near within 18 m), in the field's stone program (src/showcase/rock-kit.js). Decorative only: no rock takes picks or changes a route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built stones.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 566552,
+        "gzipBytes": 537368,
+        "sha256": "401a5e18912fc7f775bed1374f5f8f98785719c1b40236cfb18644d4ed439287",
+        "triangles": 10268,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 8
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "rocks-italy",
+      "path": "assets/models/scenery/rocks-italy.glb",
+      "subject": "The field stones of Italy and Rome: outcrop, slab, travertine, tuff, each near and far",
+      "source": {
+        "method": "Tripo H3.1 from original text prompts only, each processed in Blender 5.2.2 LTS (scripts/assets/process-model.py: decimated to 2,000 triangles, 512-pixel textures, scaled to its height) and assembled by scripts/assets/build-rock-kits.py with a far level decimated toward a tenth of its triangles; the game draws each with one roughness, so the roughness-metalness maps are left out. No reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "builder": "scripts/assets/build-rock-kits.py",
+        "report": "art-source/models/processed/rocks-italy.json",
+        "rocks": [
+          {
+            "id": "rock-italy-outcrop",
+            "prompt": "art-source/models/requests/rock-italy-outcrop.json",
+            "taskId": "2a4a1db3-d732-4aab-a699-904c66f830bc",
+            "generatedAt": "2026-10-28T08:42:35.627Z",
+            "credits": 20,
+            "rawSha256": "56ab9e7d3afc3f351411e6862ba47e415eda6006e644eeffcb3dd07d4cdfc67c",
+            "processed": "art-source/models/processed/rock-italy-outcrop.glb",
+            "processedSha256": "9d04f7ec15f37591817690d722a257acbfbe4c588b1a57c8f9a5c2ddaddda04b",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.5,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 436
+            }
+          },
+          {
+            "id": "rock-italy-slab",
+            "prompt": "art-source/models/requests/rock-italy-slab.json",
+            "taskId": "e8a4adff-dec0-4e85-adea-fcd5b15048e8",
+            "generatedAt": "2026-10-28T08:44:42.886Z",
+            "credits": 20,
+            "rawSha256": "bc3591465276c0c047a8badf6f1ff962a282c2cc7577d4169079bd1545ed9f81",
+            "processed": "art-source/models/processed/rock-italy-slab.glb",
+            "processedSha256": "8a415067ed7a3b2bd663539520b408ac694b2390b91e322ff59efd3adde4ce97",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 0.4,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1959,
+              "far": 195
+            }
+          },
+          {
+            "id": "rock-italy-travertine",
+            "prompt": "art-source/models/requests/rock-italy-travertine.json",
+            "taskId": "e82508a9-dc9c-41df-90a7-d38fc588de4f",
+            "generatedAt": "2026-10-28T08:47:26.159Z",
+            "credits": 20,
+            "rawSha256": "926644fd87b89de0ba5542947096601536723b133a755241f24b847b86e51b03",
+            "processed": "art-source/models/processed/rock-italy-travertine.glb",
+            "processedSha256": "bfb5c3e4735b7497d692b17df3e4fdbe617dc27380fb4e2196c574c0c065ca1a",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 395
+            }
+          },
+          {
+            "id": "rock-italy-tuff",
+            "prompt": "art-source/models/requests/rock-italy-tuff.json",
+            "taskId": "ea45fe20-a81a-49f1-9703-041c1727b920",
+            "generatedAt": "2026-10-28T08:49:53.038Z",
+            "credits": 20,
+            "rawSha256": "76b952d1e7214f8512195c0246e553a0bf15d02dad30640716bd65e6ee19d189",
+            "processed": "art-source/models/processed/rock-italy-tuff.glb",
+            "processedSha256": "3e9e38925c52079a5d55b8af709bad61dd6c468c02f7ceccbfc4766d3917e944",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.1,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1960,
+              "far": 283
+            }
+          }
+        ],
+        "components": [
+          "rock-italy-outcrop",
+          "rock-italy-outcrop_far",
+          "rock-italy-slab",
+          "rock-italy-slab_far",
+          "rock-italy-travertine",
+          "rock-italy-travertine_far",
+          "rock-italy-tuff",
+          "rock-italy-tuff_far"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/rocks-italy-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The field's stones on Balanced and High, where the code-built field drew noise spheres: a boulder and one smaller rock on each rock and rubble cell (in place of four stones), the scattered boulders, and every other stone along the plateaus' rims. Each rock is fitted to that stone's footprint and height, one instanced draw a rock and level (near within 18 m), in the field's stone program (src/showcase/rock-kit.js). Decorative only: no rock takes picks or changes a route.",
+      "loading": "Deferred chapter packs 7, 11, 12 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built stones.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 528780,
+        "gzipBytes": 499918,
+        "sha256": "fe99875667c731d2177c1e9fd19a3e2c9d9da0edcfbf55e182490bcf16a334b8",
+        "triangles": 9148,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 8
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "rocks-arid",
+      "path": "assets/models/scenery/rocks-arid.glb",
+      "subject": "The field stones of Syria, Egypt and the Euphrates: basalt, outcrop, sandstone, slab, each near and far",
+      "source": {
+        "method": "Tripo H3.1 from original text prompts only, each processed in Blender 5.2.2 LTS (scripts/assets/process-model.py: decimated to 2,000 triangles, 512-pixel textures, scaled to its height) and assembled by scripts/assets/build-rock-kits.py with a far level decimated toward a tenth of its triangles; the game draws each with one roughness, so the roughness-metalness maps are left out. No reference images or third-party models supplied",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "builder": "scripts/assets/build-rock-kits.py",
+        "report": "art-source/models/processed/rocks-arid.json",
+        "rocks": [
+          {
+            "id": "rock-arid-basalt",
+            "prompt": "art-source/models/requests/rock-arid-basalt.json",
+            "taskId": "dad0d542-1d96-44b8-a292-048c81de014d",
+            "generatedAt": "2026-10-28T08:32:52.663Z",
+            "credits": 20,
+            "rawSha256": "6eebf3fcb6ca04277e610d0aa17ef01fccbc3d2eab630ceaad063ed9cb17bab0",
+            "processed": "art-source/models/processed/rock-arid-basalt.glb",
+            "processedSha256": "9c87dd01643ad36f471182ee4148653c1f657b58f33055267c357bba54034d9a",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 0.9,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1990,
+              "far": 550
+            }
+          },
+          {
+            "id": "rock-arid-outcrop",
+            "prompt": "art-source/models/requests/rock-arid-outcrop.json",
+            "taskId": "5b4eab6d-3e0a-4a77-b8ee-e397c72b2b97",
+            "generatedAt": "2026-10-28T08:35:10.722Z",
+            "credits": 20,
+            "rawSha256": "aafec64466191fff520382724cc57623d5a848bacd895d59ed10a3476c871e51",
+            "processed": "art-source/models/processed/rock-arid-outcrop.glb",
+            "processedSha256": "ca34a4758d6c0a0262e978215e74f22d4552ec3168e9ad883c378a28b8fda07e",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.4,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1958,
+              "far": 194
+            }
+          },
+          {
+            "id": "rock-arid-sandstone",
+            "prompt": "art-source/models/requests/rock-arid-sandstone.json",
+            "taskId": "fb1ba3b2-1f82-4e24-8dcb-f4a0bd321032",
+            "generatedAt": "2026-10-28T08:37:39.976Z",
+            "credits": 20,
+            "rawSha256": "78af3e4401912ea9d4c007aa131319acfbc8b4692eb13ce25202903aab3cc380",
+            "processed": "art-source/models/processed/rock-arid-sandstone.glb",
+            "processedSha256": "98f1e4158ea13a6a9360dbddc4daea8f63fafd73cc6a9ef8685f338afdfa5eb3",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 1.3,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 2486,
+              "far": 678
+            }
+          },
+          {
+            "id": "rock-arid-slab",
+            "prompt": "art-source/models/requests/rock-arid-slab.json",
+            "taskId": "80753f25-5510-4085-995b-37efd57bad68",
+            "generatedAt": "2026-10-28T08:40:03.281Z",
+            "credits": 20,
+            "rawSha256": "5ea23a5ececba4c4dfeaf3d7c3124ffb521f5eb7e3348dcb8653b8cc9dbe3671",
+            "processed": "art-source/models/processed/rock-arid-slab.glb",
+            "processedSha256": "db2525ef34e514f6b47d9bbe8f5aa103986fa3181754e528141c97ed0b0a13c9",
+            "processing": {
+              "triangles": 2000,
+              "texture": 512,
+              "webpQuality": 80,
+              "height": 0.4,
+              "sharpAngle": 35,
+              "mergeDistance": 0.0001,
+              "keepSkin": false
+            },
+            "triangles": {
+              "near": 1959,
+              "far": 194
+            }
+          }
+        ],
+        "components": [
+          "rock-arid-basalt",
+          "rock-arid-basalt_far",
+          "rock-arid-outcrop",
+          "rock-arid-outcrop_far",
+          "rock-arid-sandstone",
+          "rock-arid-sandstone_far",
+          "rock-arid-slab",
+          "rock-arid-slab_far"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes, texture coordinates as normalized shorts",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/rocks-arid-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The field's stones on Balanced and High, where the code-built field drew noise spheres: a boulder and one smaller rock on each rock and rubble cell (in place of four stones), the scattered boulders, and every other stone along the plateaus' rims. Each rock is fitted to that stone's footprint and height, one instanced draw a rock and level (near within 18 m), in the field's stone program (src/showcase/rock-kit.js). Decorative only: no rock takes picks or changes a route.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built stones.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 505740,
+        "gzipBytes": 476280,
+        "sha256": "3e1333b1989ecbecb858495c9feebecf87f0d510eb5297c1ea6f44df8160002a",
+        "triangles": 10009,
+        "textures": 8,
+        "textureEdge": 512,
+        "componentCount": 8
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -8680,7 +9719,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T07:48:08.000Z",
+  "updatedAt": "2026-10-28T16:09:02.055Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -8702,11 +9741,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 53,
-    "textures": 15
+    "models": 59,
+    "textures": 15,
+    "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 33560124,
-  "totalModelBytes": 18414495,
+  "totalBundledAssetBytes": 36277168,
+  "totalModelBytes": 21131539,
   "derivedGeometryBytes": 47428
 }

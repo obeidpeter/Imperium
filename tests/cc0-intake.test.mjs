@@ -28,6 +28,9 @@ test('Poly Haven: each requested map at one resolution, from Poly Haven’s own 
   const picked=polyHavenSelection(polyHaven.info,polyHaven.files);
   assert.deepEqual(picked.map(f=>[f.map,f.name]),[['Diffuse','ground_01_diff_1k.png'],['nor_gl','ground_01_nor_gl_1k.png'],['arm','ground_01_arm_1k.png']]);
   assert.throws(()=>polyHavenSelection({...polyHaven.info,type:2},polyHaven.files),/Only texture sets/);
+  // A model's own texture maps, named; never its meshes.
+  assert.deepEqual(polyHavenSelection({...polyHaven.info,type:2},polyHaven.files,{maps:['Diffuse']}).map(f=>f.map),['Diffuse']);
+  assert.throws(()=>polyHavenSelection({...polyHaven.info,type:2},{...polyHaven.files,gltf:{'1k':{}}},{maps:['Diffuse','gltf']}),/not its gltf files/);
   assert.throws(()=>polyHavenSelection(polyHaven.info,polyHaven.files,{maps:['Rough']}),/no Rough map at 1k as png/);
   const elsewhere={Diffuse:{'1k':{png:{...polyHaven.files.Diffuse['1k'].png,url:'https://example.com/diff.png'}}}};
   assert.throws(()=>polyHavenSelection(polyHaven.info,elsewhere,{maps:['Diffuse']}),/Unexpected download host/);

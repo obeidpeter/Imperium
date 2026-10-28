@@ -1,0 +1,40 @@
+{
+  "source": "Poly Haven",
+  "id": "pine_tree_01",
+  "page": "https://polyhaven.com/a/pine_tree_01",
+  "licence": "CC0 1.0 Universal (public domain dedication)",
+  "licenceUrl": "https://polyhaven.com/license",
+  "retrievedAt": "2026-10-28T09:00:55.448Z",
+  "name": "Pine Tree 01",
+  "authors": [
+    "Rob Tuytel",
+    "Rico Cilliers"
+  ],
+  "kind": "model textures",
+  "selection": {
+    "resolution": "1k",
+    "format": "png",
+    "maps": [
+      "twig_diff",
+      "twig_alpha"
+    ]
+  },
+  "files": [
+    {
+      "map": "twig_diff",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_tree_01/pine_tree_01_twig_diff_1k.png",
+      "bytes": 3208228,
+      "md5": "a4fa4a55aab9231915a4023ea9841577",
+      "sha256": "d02c031de64b8ad671f3dd0da19870fa4783d912ae6674aeab0702871deeaeaa",
+      "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_diff_1k.png"
+    },
+    {
+      "map": "twig_alpha",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/pine_tree_01/pine_tree_01_twig_alpha_1k.png",
+      "bytes": 351928,
+      "md5": "641911a5a3f543911dad04ebb26e7bca",
+      "sha256": "6f91aa99f2c27108d6f817f874954aa7df8bfbb4dea2673e9322555a6ae79d99",
+      "path": "art-source/cc0/raw/polyhaven-pine_tree_01/pine_tree_01_twig_alpha_1k.png"
+    }
+  ]
+}

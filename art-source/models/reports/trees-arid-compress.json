@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/scenery/trees-arid.glb",
+  "output": "assets/models/scenery/trees-arid.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 791988,
+    "gzipBytes": 729065,
+    "sha256": "6d494d2980a3c58b46bd9226b044cb55acc84513bd84551c30ed1486dcef21ee"
+  },
+  "after": {
+    "bytes": 165436,
+    "gzipBytes": 141860,
+    "sha256": "c1180f07c643faa5062c5dbef28b5b6cda58430adb54e974c05e5c26729534df"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4000,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 671950
+      },
+      "bytes": 79592,
+      "psnr": 35.114
+    }
+  ]
+}

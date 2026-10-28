@@ -1,0 +1,64 @@
+{
+  "id": "rock-temperate-river-stones",
+  "status": "Release 5: processed, assembled into rocks-temperate and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    8,
+    10
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A low cluster of three river-rounded grey and brown cobbles and boulders pressed together, smoothed by water, damp dark lower edges, faint green algae stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.55,
+    "minHeight": 0.522,
+    "maxHeight": 0.578
+  },
+  "provenance": {
+    "taskId": "cac5c18a-fa00-4e80-806b-dd2510628056",
+    "requestedAt": "2026-10-28T08:54:45.335Z",
+    "balanceBefore": 3560,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A low cluster of three river-rounded grey and brown cobbles and boulders pressed together, smoothed by water, damp dark lower edges, faint green algae stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:57:15.698Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-temperate-river-stones.glb",
+    "rawBytes": 46616208,
+    "rawSha256": "8c0dfdcf89432c2df55191199e454f7bc98cafafbdfda1718f8907088c06a994",
+    "tripoInput": {
+      "prompt": "A low cluster of three river-rounded grey and brown cobbles and boulders pressed together, smoothed by water, damp dark lower edges, faint green algae stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-temperate-river-stones-tripo-render.webp"
+  }
+}

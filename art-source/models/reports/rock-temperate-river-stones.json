@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-temperate-river-stones.glb",
+    "bytes": 46616208,
+    "sha256": "8c0dfdcf89432c2df55191199e454f7bc98cafafbdfda1718f8907088c06a994",
+    "triangles": 1475668
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-temperate-river-stones.glb",
+    "bytes": 136372,
+    "sha256": "7329ba68d3d6c4b7036be78854d756b8880937e00ea3e98cfaafab8cf147ff30",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.55,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 0.8837843202674722,
+  "sizeMetres": {
+    "width": 0.807,
+    "height": 0.55,
+    "depth": 0.8809
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_cac5c18a-fa00-4e80-806b-dd2510628056",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_cac5c18a-fa00-4e80-806b-dd2510628056",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_cac5c18a-fa00-4e80-806b-dd2510628056",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
