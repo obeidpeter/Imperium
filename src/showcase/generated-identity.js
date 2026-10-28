@@ -97,10 +97,21 @@ export function sculptGeneratedHead(geometry,identity){
   geometry.userData={...geometry.userData,identity:identity.key,expressionMorphs:'generated-head-correctives-v041',headSource:IDENTITY_HEAD_BODY,hairSilhouette:identity.hair??'cropped',headMethod:'Original bounded sculpt of the existing donor head and scalp; preserved UVs and skin weights.'};return geometry;
 }
 
+// A named head's follower stand-in: the donor's head and material with no one's features,
+// which a formation's followers wear in place of their leader's face (formation.js).
+export const FOLLOWER_IDENTITY=Object.freeze({key:'crowd-neutral',jaw:1,cheek:1,nose:1,brow:1,hair:'cropped',grey:0,beard:0});
+const identitySources=new WeakMap(),followerHeads=new WeakMap();
+/** The donor material and vertical offset a named head's material was made from. */
+export const identitySourceOf=material=>identitySources.get(material)??null;
+/** The neutral head a named head's followers wear, or null for any other surface. */
+export const followerHeadOf=mesh=>followerHeads.get(mesh)??null;
+export function setFollowerHead(mesh,geometry){followerHeads.set(mesh,geometry);return mesh;}
+
 /** Per-person hairline, ageing and stubble over the existing painted head.
  * Uniforms share one program across the cast; the donor PBR maps remain. */
 export function generatedIdentityMaterial(source,identity,{offsetY=0}={}){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);
+  identitySources.set(material,{source,offsetY});
   material.name=`generated identity ${identity.key}`;
   material.userData.generatedIdentity=identity.key;
   material.onBeforeCompile=(shader,renderer)=>{

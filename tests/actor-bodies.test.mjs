@@ -19,6 +19,7 @@ import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
 import {createCampWorld} from '../src/core/realtime/camp-world.js';
 import {createEncounterWorld} from '../src/core/realtime/campaign-encounter.js';
 import {createSkinnedCrowd} from '../src/showcase/formation.js';
+import {followerHeadOf} from '../src/showcase/generated-identity.js';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 
@@ -230,19 +231,27 @@ test('followers march in the generated overview and fallen bodies keep its colou
   crowd.dispose();fallen.dispose();a.dispose();
 });
 
-test('generated follower bodies share the named-head shader with neutral isolated uniforms and unchanged geometry',async()=>{
+test('followers never wear their leader\'s face: body and head followers share one shader with neutral uniforms', async()=>{
   const actor=createActor(legionary,{chapter:5,bodyLibrary:library});await actor.ready;
-  const bodySource=actor.group.getObjectByName('generated-body-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
-  const body=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='crowd-neutral'),head=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='naso');
-  assert.ok(body&&head);assert.equal(body.geometry.attributes.position,bodySource.geometry.attributes.position);assert.equal(body.material.map,bodySource.material.map);
-  assert.equal(body.material.normalMap,bodySource.material.normalMap);assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
+  const bodySource=actor.group.getObjectByName('generated-body-overview'),headSource=actor.group.getObjectByName('identity-head-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
+  assert.equal(headSource.material.userData.generatedIdentity,'naso','The leader is Naso');
+  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='naso'),'No follower wears Naso\'s face');
+  const body=crowd.meshes.find(m=>m.geometry.attributes.position===bodySource.geometry.attributes.position),neutralHead=followerHeadOf(headSource);
+  const head=crowd.meshes.find(m=>m.geometry.attributes.position===neutralHead?.attributes.position);
+  assert.ok(body&&head,'Followers wear the body and the donor\'s neutral head');assert.equal(neutralHead.userData.identity,'crowd-neutral');
+  const named=headSource.geometry.attributes.position,plain=neutralHead.attributes.position;let moved=0;for(let i=0;i<plain.count;i++)if(Math.abs(plain.getZ(i)-named.getZ(i))>1e-4)moved++;
+  assert.ok(moved>0,'Naso\'s sculpted features stay on the leader');
+  for(const m of [body,head])assert.equal(m.material.userData.generatedIdentity,'crowd-neutral');
+  assert.equal(body.material.map,bodySource.material.map);assert.equal(head.material.map,headSource.material.map,'The head keeps the donor\'s painted maps');
+  assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
   assert.equal(body.material.customProgramCacheKey(),head.material.customProgramCacheKey(),'Equal PBR variants share one follower program');
   const compile=material=>{const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);return shader;};
-  const neutral=compile(body.material),named=compile(head.material);
-  assert.equal(neutral.vertexShader,named.vertexShader);assert.equal(neutral.fragmentShader,named.fragmentShader);
-  assert.equal(neutral.uniforms.identityGrey.value,0);assert.equal(neutral.uniforms.identityBeard.value,0);assert.ok(named.uniforms.identityBeard.value>0);
-  assert.deepEqual(neutral.uniforms.actorFinishTint.value.toArray(),[1,1,1]);assert.deepEqual(neutral.uniforms.actorFinishRoughness.value.toArray(),[1,0,1]);assert.equal(neutral.uniforms.actorFinishGrazing.value,0);
-  assert.notEqual(neutral.uniforms.identityBeard,named.uniforms.identityBeard,'A named face cannot age or darken the shared body uniforms');
+  const bodyShader=compile(body.material),headShader=compile(head.material);
+  assert.equal(bodyShader.vertexShader,headShader.vertexShader);assert.equal(bodyShader.fragmentShader,headShader.fragmentShader);
+  for(const shader of [bodyShader,headShader]){assert.equal(shader.uniforms.identityGrey.value,0);assert.equal(shader.uniforms.identityBeard.value,0);assert.equal(shader.uniforms.identityGroom.value.w,0,'No groom of anyone\'s');}
+  assert.equal(headShader.uniforms.identityVerticalOffset.value,neutralHead.userData.identityOffsetY);
+  assert.deepEqual(bodyShader.uniforms.actorFinishTint.value.toArray(),[1,1,1]);assert.deepEqual(bodyShader.uniforms.actorFinishRoughness.value.toArray(),[1,0,1]);assert.equal(bodyShader.uniforms.actorFinishGrazing.value,0);
+  assert.notEqual(bodyShader.uniforms.identityBeard,headShader.uniforms.identityBeard,'Each follower material has its own uniforms');
   crowd.dispose();actor.dispose();
 });
 

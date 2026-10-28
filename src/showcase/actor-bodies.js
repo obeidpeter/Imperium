@@ -2,7 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
 import {installCloudShadows} from './atmosphere.js';
 import {actorBodyUrl} from '../ui/actor-body-catalog.js';
-import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck} from './generated-identity.js';
+import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead} from './generated-identity.js';
 
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
@@ -67,7 +67,13 @@ function bodyBone(bones,name){
 
 /** Skin a figure's body to its own bones, in the rig's bind pose. The figure owns
  * the skinned meshes and their skeleton; geometry and materials stay the master's. */
-const headlessBodies=new WeakMap();
+const headlessBodies=new WeakMap(),neutralHeads=new WeakMap();
+// The donor's overview head with no one's features, shared by every named leader's followers.
+function neutralHead(part,offsetY){
+  if(!neutralHeads.has(part))neutralHeads.set(part,new Map());const cache=neutralHeads.get(part);
+  if(!cache.has(offsetY)){const geometry=sculptGeneratedHead(clipBodyAtNeck(part.geometry,{above:true}),FOLLOWER_IDENTITY);geometry.translate(0,offsetY,0);geometry.userData.identityOffsetY=offsetY;cache.set(offsetY,geometry);}
+  return cache.get(offsetY);
+}
 export function mountActorBody(group,body,{skeletons,identity=null,headBody=null,geometries=null,materials=null}){
   const identityOffsetY=body?0:-.10;
   const all=[];group.traverse(o=>{if(o.isBone)all.push(o);});
@@ -100,6 +106,7 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
   if(headBody&&identity)for(const level of ['near','overview']){
     const geometry=sculptGeneratedHead(clipBodyAtNeck(headBody[level].geometry,{above:true}),identity);geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
     const head=skin({...headBody[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;result.heads.push(head);
+    if(level==='overview')setFollowerHead(head,neutralHead(headBody.overview,identityOffsetY));
   }
   return result;
 }
