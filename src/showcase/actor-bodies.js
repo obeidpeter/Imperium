@@ -2,7 +2,8 @@ import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
 import {installCloudShadows} from './atmosphere.js';
 import {actorBodyUrl} from '../ui/actor-body-catalog.js';
-import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead} from './generated-identity.js';
+import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead,IDENTITY_HEAD_BODY} from './generated-identity.js';
+import {castAgeing} from './actor-identity.js';
 
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
@@ -40,7 +41,12 @@ export function createActorBodyLibrary(load=loadBody){
     if(!meshes.body||!meshes['body-overview'])throw Error(`Body ${id} needs skinned body and body-overview meshes`);
     const near=part(meshes.body),overview=part(meshes['body-overview']);
     if(overview.bones.join()!==near.bones.join())throw Error(`Body ${id} levels disagree on joints`);
-    return Object.freeze({id,near,overview});
+    // A named man's own body brings his head: the shared head wrapped onto his (wrap-cast-head.py).
+    const own=meshes['cast-head'],ownOverview=meshes['cast-head-overview'];
+    if(!!own!==!!ownOverview)throw Error(`Body ${id} needs both head levels or neither`);
+    const head=own?Object.freeze({near:part(own),overview:part(ownOverview)}):null;
+    if(head&&[head.near,head.overview].some(level=>level.bones.join()!==near.bones.join()))throw Error(`Body ${id} head disagrees on joints`);
+    return Object.freeze({id,near,overview,head});
   }
   return {
     warm(id){
@@ -74,7 +80,9 @@ function neutralHead(part,offsetY){
   if(!cache.has(offsetY)){const geometry=sculptGeneratedHead(clipBodyAtNeck(part.geometry,{above:true}),FOLLOWER_IDENTITY);geometry.translate(0,offsetY,0);geometry.userData.identityOffsetY=offsetY;cache.set(offsetY,geometry);}
   return cache.get(offsetY);
 }
-export function mountActorBody(group,body,{skeletons,identity=null,headBody=null,geometries=null,materials=null}){
+/** headBody: what the head comes from, a named man's own body (its head) or the donor; donor:
+ * the donor body, whose plain head a named leader's followers wear. */
+export function mountActorBody(group,body,{skeletons,identity=null,headBody=null,donor=headBody,geometries=null,materials=null}){
   const identityOffsetY=body?0:-.10;
   const all=[];group.traverse(o=>{if(o.isBone)all.push(o);});
   group.updateMatrixWorld(true);
@@ -89,11 +97,14 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
   };
   let worn=body;
   if(body&&headBody&&identity){
-    if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==headBody.id)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));
+    // Every generated neck but the donor's own is seated under the shared head's.
+    if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==IDENTITY_HEAD_BODY)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));
     worn=headlessBodies.get(body);
   }
   const result={near:worn?skin(worn.near,'generated-body',false):null,overview:worn?skin(worn.overview,'generated-body-overview',true):null,heads:[]};
-  const headMaterial=headBody&&identity?generatedIdentityMaterial(headBody.near.material,identity,{offsetY:identityOffsetY}):null;if(headMaterial)materials?.add(headMaterial);
+  // A named man's own head (cast) is already his shape and paint: it takes the morphs and his ageing only.
+  const cast=!!headBody?.head,heads=cast?headBody.head:headBody;
+  const headMaterial=headBody&&identity?generatedIdentityMaterial(heads.near.material,identity,{offsetY:identityOffsetY,follower:(donor??headBody).near.material,ageing:cast?castAgeing(identity):null}):null;if(headMaterial)materials?.add(headMaterial);
   // Civic garments retain their own torso but need the donor's full neck: its
   // seam and head/torso weights must match the head while the speaker turns.
   if(!body&&headBody&&identity)for(const level of ['near','overview']){
@@ -104,9 +115,9 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     result[level==='near'?'near':'overview']=neck;
   }
   if(headBody&&identity)for(const level of ['near','overview']){
-    const geometry=sculptGeneratedHead(clipBodyAtNeck(headBody[level].geometry,{above:true}),identity);geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
-    const head=skin({...headBody[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;result.heads.push(head);
-    if(level==='overview')setFollowerHead(head,neutralHead(headBody.overview,identityOffsetY));
+    const geometry=sculptGeneratedHead(clipBodyAtNeck(heads[level].geometry,{above:true}),identity,{shape:!cast});geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
+    const head=skin({...heads[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;head.userData.ownHead=cast;result.heads.push(head);
+    if(level==='overview'&&(donor??headBody))setFollowerHead(head,neutralHead((donor??headBody).overview,identityOffsetY));
   }
   return result;
 }

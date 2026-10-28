@@ -22,6 +22,12 @@ export function castMember(text=''){
   for(const word of String(text).toLowerCase().split(/[^a-z’']+/))if(word&&!/[’']s$/.test(word)&&Object.hasOwn(named,word))return word;
   return null;
 }
+/** How much a named man has greyed and grown a beard since his own generated head was made
+ * (at his first age): what the shared head's shader adds to his paint. */
+export function castAgeing(identity){
+  const p=named[identity?.key];if(!p)return {grey:0,beard:0};
+  return {grey:Math.max(0,identity.grey-p.grey),beard:Math.max(0,identity.beard-Math.min(.9,p.beard+(p.age>27?.12:0)))};
+}
 export function actorIdentity(unit={},kit={}){
   const chapter=clamp(Math.trunc(Number(kit.chapter)||1),1,12),elapsed=years[chapter-1],key=castMember(unit.veteranId??unit.name);
   if(unit.id==='hero')return Object.freeze({key:'marcellus',age:20+elapsed,jaw:1,cheek:1,nose:1,brow:1.04,eyes:1,mouth:1,build:1,

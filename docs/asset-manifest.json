@@ -9652,6 +9652,154 @@
         "componentCount": 8
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-lucan",
+      "path": "assets/models/characters/cast-lucan.glb",
+      "subject": "Generated character body and head: Lucan, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7b83a35b-4c59-4363-be03-ee164bf5738c",
+        "generatedAt": "2026-10-28T17:31:53.660Z",
+        "rigTaskId": "bac7f968-3b27-4d51-a280-092804b6c31b",
+        "riggedAt": "2026-10-28T17:34:24.030Z",
+        "prompt": "art-source/models/requests/char-cast-lucan.json",
+        "rawBytes": 45907856,
+        "rawSha256": "3c2a3018eff2b31704d5a74a5dbf50ac62e6b9904663cd5279d7fd3bd05124ee",
+        "riggedBytes": 61187580,
+        "riggedSha256": "4b21107f52528c871d0a58806b473641b0ab8e6b110cd849ba4f2b969b4694eb",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-lucan.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-lucan-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-lucan-faces/",
+          "settings": {
+            "texture": 512,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 1.0484
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-cast-lucan-compress.json"
+        }
+      },
+      "usage": "Lucan, the protagonist's tent-mate, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Lucan himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 607048,
+        "sha256": "1b5072f28c0df41a38705e5c51af73c9962e46033ec0d81073fd9df6531b6099",
+        "triangles": 14217,
+        "textures": 6,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6291,
+          "height": 1.7841,
+          "depth": 0.387
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-varro",
+      "path": "assets/models/characters/cast-varro.glb",
+      "subject": "Generated character body and head: Varro, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3ff363f9-4600-405d-acb4-615ada7702e5",
+        "generatedAt": "2026-10-28T17:36:51.480Z",
+        "rigTaskId": "7f595fea-3dbd-4d58-9984-9ce852ba8b1a",
+        "riggedAt": "2026-10-28T17:38:14.475Z",
+        "prompt": "art-source/models/requests/char-cast-varro.json",
+        "rawBytes": 44722144,
+        "rawSha256": "6ef56f37068581345348ab48323990617534858df54551b9eaeb75f71fef5490",
+        "riggedBytes": 59934608,
+        "riggedSha256": "fa3bd32d303a5f3a58fb5193b9ea1dfd589e59a04da6dde696176f43bbe32129",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-varro.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-varro-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-varro-faces/",
+          "settings": {
+            "texture": 512,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 1.0484
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-cast-varro-compress.json"
+        }
+      },
+      "usage": "Varro, the drill instructor, wherever he is drawn until his fate in Chapter VI: the game adds his helmet or cap, staff or weapons and cloak.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 570064,
+        "sha256": "33942db04eedd8cc449db3af1b9f469404736485aba926ff6d974e803bb30e11",
+        "triangles": 15232,
+        "textures": 6,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6017,
+          "height": 1.7733,
+          "depth": 0.4285
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -9719,7 +9867,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T19:42:08.175Z",
+  "updatedAt": "2026-10-28T19:43:47.236Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9741,12 +9889,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 59,
+    "models": 61,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 36317089,
-  "totalModelBytes": 21131539,
+  "totalBundledAssetBytes": 37494201,
+  "totalModelBytes": 22308651,
   "derivedGeometryBytes": 47428
 }

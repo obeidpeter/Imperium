@@ -9,6 +9,7 @@ import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
 import {actorKit} from '../src/showcase/actor-kit.js';
+import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
 import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies} from '../src/ui/actor-body-catalog.js';
 import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES} from '../src/showcase/actor-bodies.js';
@@ -42,7 +43,7 @@ test('every generated body is worn in exactly the chapters that list it, from Ne
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
-    const look=(unit,state=s)=>add(actorBodyId(actorKit(unit,{chapter:state.chapter,rank:state.rank})),state.chapter);
+    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
     const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
     world(createCampWorld(clone(s)));
@@ -53,7 +54,7 @@ test('every generated body is worn in exactly the chapters that list it, from Ne
     if(e.kind!=='contest')world(createEncounterWorld(t));
   };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
-  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units)add(actorBodyId(actorKit(u,{chapter:scene.chapter,rank:scene.rank})),scene.chapter);}
+  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);}}
   for(const [id,body]of Object.entries(ACTOR_BODIES))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
   assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'}),null,'Civic figures keep the togas whose trims name their bloc');
 });
@@ -71,7 +72,8 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
     // Shipped compressed (scripts/assets/compress.mjs): KTX2 textures and meshopt geometry over quantized vertices.
     assert.deepEqual([...info.extensionsRequired].sort(),['EXT_meshopt_compression','KHR_mesh_quantization','KHR_texture_basisu'],id);
-    assert.ok(info.textures.length===3&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
+    // A named man's own body brings his head, with its own three maps.
+    assert.ok(info.textures.length===(ACTOR_BODIES[id].cast?6:3)&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
     // Soles on the game's sole plane, seven centimetres under the ankle joints.
     assert.ok(Math.abs(info.base-(-.02))<.006,`${id} stands on the game's sole plane (${info.base})`);
     const gltf=await parse(id),near=gltf.scene.getObjectByName('body'),overview=gltf.scene.getObjectByName('body-overview');

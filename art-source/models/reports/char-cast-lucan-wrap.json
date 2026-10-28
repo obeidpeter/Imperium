@@ -1,0 +1,219 @@
+{
+  "tool": "scripts/assets/wrap-cast-head.py",
+  "blender": "5.2.2 LTS",
+  "body": {
+    "path": "intermediate: char-cast-lucan bound by bind-character.py (not kept)",
+    "sha256": "3b8744ad68530f1b7a4215ea5bcbd2e078d7897280465444b47138a0edb3a149"
+  },
+  "donor": {
+    "path": "intermediate: char-roman-recruit bound by bind-character.py, unquantized (not kept)",
+    "sha256": "d4464a916814762b72535d7aebaf461150dc339f2d194b950c815b0c1f52accc"
+  },
+  "output": {
+    "path": "intermediate: cast-lucan with the wrapped head, before quantizing (not kept)",
+    "bytes": 879344,
+    "sha256": "bf378dd05a04626c34cbccbaaae565f1414a5afad66154c2652219e1141f3e98",
+    "triangles": {
+      "body": 9989,
+      "body-overview": 2222,
+      "cast-head": 1607,
+      "cast-head-overview": 399
+    }
+  },
+  "settings": {
+    "texture": 512,
+    "webpQuality": 80,
+    "reach": 0.03,
+    "scalpOut": 0.008,
+    "scalpIn": 0.006,
+    "maxScale": 0.15,
+    "samples": 4,
+    "neck": 1.5,
+    "headFrom": 1.45,
+    "bodyTo": 1.55,
+    "wrapFrom": 1.52,
+    "wrapFull": 1.57,
+    "scalp": 1.69
+  },
+  "landmarks": {
+    "his": {
+      "centreX": -0.022,
+      "crown": 1.7504,
+      "nose": [
+        1.5734,
+        0.1147
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.055,
+          "height": 1.6094,
+          "depth": 0.0818,
+          "contrast": 0.2758
+        },
+        "left": {
+          "x": 0.007,
+          "height": 1.6124,
+          "depth": 0.081,
+          "contrast": 0.1135
+        }
+      },
+      "eyeLine": 1.6109,
+      "eyeDepth": 0.0814,
+      "brows": {
+        "right": {
+          "x": -0.056,
+          "height": 1.6274
+        },
+        "left": {
+          "x": 0.027,
+          "height": 1.6454
+        }
+      },
+      "browLine": 1.6364,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5474
+      },
+      "eyeLevelGap": 0.003
+    },
+    "shared": {
+      "centreX": -0.019,
+      "crown": 1.7566,
+      "nose": [
+        1.5946,
+        0.1472
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.054,
+          "height": 1.6306,
+          "depth": 0.1131,
+          "contrast": 0.2096
+        },
+        "left": {
+          "x": 0.011,
+          "height": 1.6306,
+          "depth": 0.1148,
+          "contrast": 0.1789
+        }
+      },
+      "eyeLine": 1.6306,
+      "eyeDepth": 0.1139,
+      "brows": {
+        "right": {
+          "x": -0.044,
+          "height": 1.6416
+        },
+        "left": {
+          "x": 0.004,
+          "height": 1.6406
+        }
+      },
+      "browLine": 1.6411,
+      "mouth": {
+        "x": -0.016,
+        "height": 1.5676
+      },
+      "eyeLevelGap": 0.0
+    },
+    "hisAligned": {
+      "centreX": -0.019,
+      "crown": 1.7768,
+      "nose": [
+        1.5908,
+        0.1491
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.053,
+          "height": 1.6288,
+          "depth": 0.1145,
+          "contrast": 0.2806
+        },
+        "left": {
+          "x": 0.011,
+          "height": 1.6328,
+          "depth": 0.1141,
+          "contrast": 0.1086
+        }
+      },
+      "eyeLine": 1.6308,
+      "eyeDepth": 0.1143,
+      "brows": {
+        "right": {
+          "x": -0.056,
+          "height": 1.6488
+        },
+        "left": {
+          "x": 0.01,
+          "height": 1.6468
+        }
+      },
+      "browLine": 1.6478,
+      "mouth": {
+        "x": -0.016,
+        "height": 1.5638
+      },
+      "eyeLevelGap": 0.004
+    },
+    "wrapped": {
+      "centreX": -0.019,
+      "crown": 1.7641,
+      "nose": [
+        1.5961,
+        0.1476
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.053,
+          "height": 1.6291,
+          "depth": 0.1144,
+          "contrast": 0.2291
+        },
+        "left": {
+          "x": 0.011,
+          "height": 1.6301,
+          "depth": 0.1141,
+          "contrast": 0.1099
+        }
+      },
+      "eyeLine": 1.6296,
+      "eyeDepth": 0.1142,
+      "brows": {
+        "right": {
+          "x": -0.054,
+          "height": 1.6481
+        },
+        "left": {
+          "x": 0.018,
+          "height": 1.6461
+        }
+      },
+      "browLine": 1.6471,
+      "mouth": {
+        "x": -0.016,
+        "height": 1.5641
+      },
+      "eyeLevelGap": 0.001
+    }
+  },
+  "fit": {
+    "scale": 1.0484,
+    "cast-head": {
+      "scalpHeld": 153,
+      "missed": 0,
+      "largestMove": 0.0159
+    },
+    "cast-head-overview": {
+      "scalpHeld": 32,
+      "missed": 0,
+      "largestMove": 0.0105
+    }
+  },
+  "pictures": [
+    "art-source/models/reports/char-cast-lucan-faces/cast-lucan-his-face.png",
+    "art-source/models/reports/char-cast-lucan-faces/cast-lucan-shared-face.png",
+    "art-source/models/reports/char-cast-lucan-faces/cast-lucan-his-aligned-face.png",
+    "art-source/models/reports/char-cast-lucan-faces/cast-lucan-wrapped-face.png"
+  ]
+}

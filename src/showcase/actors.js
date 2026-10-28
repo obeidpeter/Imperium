@@ -67,7 +67,7 @@ export function createActor(unit={},options={}){
   const contacts=rig.contacts,source=options.assetLibrary;
   const kit=actorKit(unit,options),identity=actorIdentity(unit,kit);
   // A generated body, where one fits the figure's kit, replaces the procedural figure once it loads.
-  const bodyId=actorBodyId(kit),bodies=options.bodyLibrary;
+  const bodyId=actorBodyId(kit,identity.key),bodies=options.bodyLibrary;
   const warmBody=id=>bodies?bodies.warm(id):warmActorBody(id);
   const bodyReady=(bodyId||usesPersistentHead(identity))&&(bodies||typeof window!=='undefined')?Promise.all([bodyId?warmBody(bodyId):warmBody(IDENTITY_HEAD_BODY),...(bodyId&&usesPersistentHead(identity)?[warmBody(IDENTITY_HEAD_BODY)]:[])]).then(([ready])=>ready):Promise.resolve(false);
   const complexion=options.complexionLibrary??defaultComplexion,preloadComplexion=!!options.complexionLibrary||typeof window!=='undefined';
@@ -99,8 +99,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const kit=actorKit(unit,options),{role,trainer,archer,mounted,civic,escort}=kit,veteran=kit.armored,raider=['Gothic','Persian','Palmyrene'].includes(kit.faction),armed=kit.armed,identity=actorIdentity(unit,kit);
   const spear=kit.equipped?kit.weapon==='spear':raider,bladeLength=kit.weapon==='knife'?.24:kit.weapon==='gladius'?.48:kit.weapon==='spatha'?.74:.59;
   const complexion=options.complexionLibrary??defaultComplexion;
-  const bodyId=actorBodyId(kit),body=bodyId?(options.bodyLibrary?options.bodyLibrary.body(bodyId):actorBody(bodyId)):null;
-  const identityBody=usesPersistentHead(identity)?(options.bodyLibrary?options.bodyLibrary.body(IDENTITY_HEAD_BODY):actorBody(IDENTITY_HEAD_BODY)):null;
+  const bodyId=actorBodyId(kit,identity.key),body=bodyId?(options.bodyLibrary?options.bodyLibrary.body(bodyId):actorBody(bodyId)):null;
+  // The donor head every named man's face is made from; a named man's own body brings his own.
+  const donorBody=usesPersistentHead(identity)?(options.bodyLibrary?options.bodyLibrary.body(IDENTITY_HEAD_BODY):actorBody(IDENTITY_HEAD_BODY)):null;
+  const identityBody=usesPersistentHead(identity)?(body?.head?body:donorBody):null;
   const anatomy=body||identityBody?null:options.assetLibrary?.anatomy(identity,{quality:options.quality})??actorAnatomy(identity,{quality:options.quality}),facePoint=(x,y,id,offset=0)=>anatomy?anatomy.facePoint(x,y,offset):faceSurfacePoint(x,y,id,offset);
   const detail=options.quality!=='performance',profile=(rings,spec={})=>{const g=garmentGeometry(rings,{...spec,subdivisions:spec.subdivisions??(detail&&(spec.anatomy||spec.folds)?2:1),segments:detail?Math.min(spec.segments??18,20):Math.min(spec.segments??18,12)});return spec.anatomy?sculptActorGeometry(g,spec.anatomy,spec.side?{...identity,side:spec.side}:identity):g;};
   const wardrobe=actorWardrobe(identity,kit),factionColors={Gothic:{cloth:0x82704f,hair:0x493526,shield:0x85392e},Persian:{cloth:0x9d8e72,hair:0x2c2521,shield:0x8b553f},Palmyrene:{cloth:0xd1bb90,hair:0x33251e,shield:0x7e4035},Civilian:{cloth:0xb8ae91,shield:0x8f714a}};
@@ -437,7 +439,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth:kit.equipped&&kit.padding&&!kit.armored?(kit.equipment.includes('jerkin')?leather:clothDark):cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
-  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,geometries,materials});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?IDENTITY_HEAD_BODY:body.id;group.userData.actor.persistentIdentity=!!identityBody;}
+  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,donor:donorBody,geometries,materials});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?(identityBody.head?identityBody.id:IDENTITY_HEAD_BODY):body.id;group.userData.actor.persistentIdentity=!!identityBody;}
   const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);
   // An opaque near surface missing some of the textured surfaces' four maps (eyes, lips,
   // brows, trim, a complexion without relief) takes neutral ones, so it shares their
