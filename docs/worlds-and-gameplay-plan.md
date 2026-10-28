@@ -18,8 +18,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 2 | Ground, sky and light | merged ([#29](https://github.com/obeidpeter/Imperium/pull/29)) |
 | 3 | Harder, less predictable battles | merged ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
 | 4 | Fortifications, modelled | merged ([#35](https://github.com/obeidpeter/Imperium/pull/35); [report](fortifications-release4-report.md)); mudbrick re-baked ([#36](https://github.com/obeidpeter/Imperium/pull/36)) |
-| 5 | Nature and water, modelled | in review ([report](nature-release5-report.md)) |
-| 6 | The cast in person | planned |
+| 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
+| 6 | The cast in person | in review ([report](cast-release6-report.md)) |
 | 7 | Missions and cavalry | planned |
 | 8 | Living camps | planned |
 | 9 | Landmarks and set pieces | planned |
@@ -147,6 +147,17 @@ Already done (#32, #33): the soldier's head at every rank, named men sculpted fr
 - **Shields:** per-unit designs from a pattern library.
 - **Dropped from the first plan:** four rank bodies for the soldier, since #32 keeps his head at every rank.
 
+**As approved on 28 October 2026.** Before any credit was spent, the owner approved release 6's detailed plan: "Approve 840, option A, move them to release 8". In full:
+- **The named cast:** Varro, Lucan, Sabinus, Felix, Naso, Crispus and Brennus, each with his own generated body and the shared head wrapped onto his own generated head, so the game's blinks and expressions stay on his face.
+- **Moved to release 8:** Aelia, Severianus, Paullus, Theon and Quintus.
+- **Senators:** three senators in plain togas, with each bloc's colour and trim shape drawn by the game on top.
+- **Staff:** the clerk, Capsarius Didius, Syra (a woman) and a Roman cavalry rider.
+- **Horses, option A:** the three horses as meshes only, skinned to the game's own horse skeleton, with a gallop and gaits chosen by speed, in place of Tripo's rigs and clips.
+- **Credits:** 45 for each figure, 20 for each horse, and up to 150 for retries, a cap of 840 in all. Spending began with a gate of Lucan, Varro and the Roman horse, to stop and report if the head wrap or the horse binding failed. Neither failed.
+- **Without credits:** the shields' pattern library, the finale crowd's clips, followers who don't wear their leader's face, and the fixes the owner asked for: faces chosen by whole names, not by a name inside a label, and Varro's wound no longer drawn from his name.
+
+The release spent 755 credits; the [ledger](../art-source/models/worlds-plan-credits.json) and the [report](cast-release6-report.md) record each task.
+
 #### 7. Missions and cavalry
 
 Already done (#32): Chapter V's countermine, engineer and cavalry formations, and enemies that intercept columns and contest objectives.
@@ -172,7 +183,7 @@ Already done (#32, #33): nine company stories, three playable situations, field 
   - Varro until his Chapter VI fate;
   - Lucan or Sabinus;
   - Felix, Naso, Crispus and Brennus;
-  - Severianus, Aelia, Paullus, Theon and Quintus.
+  - Severianus, Aelia, Paullus, Theon and Quintus, whose generated bodies and heads release 6 moved here (about 225 credits).
 - **Errands:**
   - two or three in each of Chapters IV–XII, with training points within a raised, audited ceiling (`src/core/tp-audit.js`);
   - the five titles never awarded become their rewards;

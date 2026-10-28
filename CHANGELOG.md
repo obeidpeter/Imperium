@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 6: the cast in person ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/cast-release6-report.md))
+
+The sixth of ten releases: the named men, the chamber's members, the camp's staff and the horses in generated bodies, each faction's own shields and a moving finale crowd. The rules are unchanged.
+
+- **The named men in person.** Lucan, Varro, Sabinus, Naso, Felix, Brennus and Crispus each wear a generated body of their own and their own face, made from their own generated head, which keeps the game's blinks and expressions. They wear them wherever they appear in 3D: Lucan in every chapter, Varro until Chapter VI, Sabinus from Chapter II, Naso and Felix with the company, and Brennus and the tribune Crispus in Chapter III. Lucan, Sabinus, Naso and Felix wear mail over the long-sleeved tunics of the mid-third century, Varro an instructor's brown wool, Brennus a scout's wool, and Crispus a tribune's white tunic with purple bands. Aelia, Severianus, Paullus, Theon and Quintus keep their sculpted faces until release 8.
+- **A name draws only its own person.** "Lucan's squad", "Felix's archers" and "Crispus's advocate" no longer wear Lucan's, Felix's or Crispus's face, and a named leader's followers no longer wear his. Varro no longer wears a sling and limps in every camp from Chapter I: only those the story wounds are drawn wounded.
+- **The chamber's members** wear plain white togas, as three different senators. A member's bloc still shows twice, never by colour alone: by its trim, in its colour and shape, across his toga's folded band from the left shoulder, and by the letter on his stance marker. You and the named keep the drawn toga.
+- **The camp's staff look their part:** the clerks and quartermasters, the capsarius and the orderlies, and Syra the sutler, now a woman. They no longer carry a traveller's bundle.
+- **Horses.** Roman riders ride a bay, Gothic riders a dun, and the Persian and Palmyrene heavy cavalry a grey under a trapper of iron scales, its tail short. Roman cavalrymen wear a body of their own. A horse walks, trots, canters and now gallops as its speed over the ground calls for, its hooves planted as before. A horse whose model does not load keeps the drawn horse.
+- **Shields by faction.** Each faction paints its shields from its own designs: Roman wreaths, rosettes, rings, rays and wings; Gothic boards in two colours, halved, quartered, banded or rimmed; Persian wicker under raw hide; Palmyrene rosettes and rings. A unit and its followers share one design.
+- **The finale's massed legions move.** They stand watch, heads turning, and about one man in six now and then raises his spear to cheer.
+- **Downloads.** The new bodies and horses add 8.6 MB to the complete download (43.0 MB) and 2.4–5.8 MB to each chapter's pack in 3D, which holds only the bodies and horses its own figures wear (Chapter I in 3D: 13.6 MB; the largest chapter, VII with its 2D art: 21.3 MB, within its 24).
+
 ### Worlds and gameplay, release 5: nature and water, modelled ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/nature-release5-report.md))
 
 The fifth of ten releases: the regions' trees, stones and ground cover on Balanced and High, and their water on every quality. Performance keeps the drawn trees, stones and grass, and the rules are unchanged.

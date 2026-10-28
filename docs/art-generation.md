@@ -474,3 +474,236 @@ A low cluster of three river-rounded grey and brown cobbles and boulders pressed
 ```text
 A flat weathered slab of grey schist lying almost level, split into two thick plates along its bedding, chipped edges, lichen spots on top. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.
 ```
+
+## The cast, the chamber and the horses · 28 October 2026
+
+Release 6 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). The [release report](cast-release6-report.md) has how they are drawn and what they cost, and [the asset pipeline](asset-pipeline.md#the-cast-the-chamber-and-the-horses--2026-10-28) how they are made.
+
+Seventeen models were generated with Tripo's text-to-model API (`v3.1-20260211`, textured PBR, standard geometry, 20 credits each) on 2026-10-28, from the text prompts below only: no reference image or third-party model. The fourteen figures were rigged by Tripo's biped auto-rig (25 credits each); the three horses are meshes only, skinned in Blender to the game's own horse skeleton. Lucan took three attempts (see below). The balance read 3,520 credits before and 2,765 after: 755 spent of the 840 the owner approved, reconciled task by task in the plan's credit ledger, [`worlds-plan-credits.json`](../art-source/models/worlds-plan-credits.json). The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+The prompts follow [the historical notes](historical-research.md): soldiers in mail shirts or tunics with long sleeves, dark trousers and closed boots, with broad belts and ring buckles; no segmented plate for AD 250–275; senators in plain white togas, the game drawing each bloc's trim on top; and the eastern horse in the scale trapper found at Dura-Europos. Negative prompts (Tripo's `negative_prompt`) ruled out plate, segmented armour and fantasy details; Varro's and the Roman horse's requests have none.
+
+| Model | Who | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| char-cast-lucan | Lucan, the protagonist's tent-mate | I–XII | `c42bdf1f-4341-4a24-91d7-124553a84da0` | `761da6b9-87d8-459e-90b8-125aaacd94d5` | 13,197 | 653,468 bytes |
+| char-cast-varro | Varro, the drill instructor | I–III, V, VI | `3ff363f9-4600-405d-acb4-615ada7702e5` | `7f595fea-3dbd-4d58-9984-9ce852ba8b1a` | 15,232 | 655,692 bytes |
+| char-cast-sabinus | Sabinus, who stands in Lucan's place | II–XII | `4e5eea65-2f80-4f9a-884f-8e5badb7dad8` | `3f05e132-4705-4b24-91ee-38b388dc7ca7` | 14,739 | 688,812 bytes |
+| char-cast-naso | Naso, the file's shield-mate | II–X, XII | `9230d938-a07d-4689-875a-a1b79e5ed97d` | `9adf2885-3124-462c-b3c7-05ca5e56340a` | 15,363 | 693,068 bytes |
+| char-cast-felix | Felix, archer and scout | III–X, XII | `c2d196f1-f898-4e79-867c-a7aa3f66b3c1` | `8623dfac-8622-4fbd-a6d1-34ee9bd966a2` | 14,054 | 673,688 bytes |
+| char-cast-brennus | Brennus, the explorator | III | `14503529-6861-4472-9671-92c85359b75a` | `2a063a5f-6286-4225-b3a1-b8f4980f9043` | 15,125 | 659,252 bytes |
+| char-cast-crispus | Crispus, the young tribune | III | `3628a5dc-9ef5-4773-a94d-9a76f513b7c0` | `c5fbdaaf-b98a-4aca-a693-db7954111b5e` | 15,006 | 662,200 bytes |
+| char-senator-elder | a senator, about sixty-five | VII, VIII, X–XII | `d27a4bfb-309e-4f38-8a1d-c60f380215e5` | `17c4817a-a6ce-41c6-b0b8-3cd5a4927ab5` | 13,927 | 425,516 bytes |
+| char-senator-bearded | a senator, about fifty | VII, VIII, X–XII | `139c681b-c38b-424f-bba1-bbb3403bc121` | `4d7e0050-ed61-40c3-8290-572a405b432c` | 14,046 | 409,524 bytes |
+| char-senator-younger | a senator, about forty | VII, VIII, X–XII | `98b5e5d7-9598-44d1-b884-6f7bc49d6987` | `d3146006-8a1b-4bff-b763-e8b380ba5e1a` | 13,905 | 401,184 bytes |
+| char-camp-clerk | the camp's clerks and quartermasters | I–XII | `055018e0-8912-4736-be7e-f74cc2938a1f` | `f2bbc6b7-ca6a-4319-a609-cd04c57b2192` | 13,674 | 395,512 bytes |
+| char-camp-capsarius | Capsarius Didius and the orderlies | I–XII | `4ba61fec-b221-460e-93c0-4072c5490722` | `72b45b3e-b9df-45a9-949b-5305866deb5e` | 13,731 | 411,120 bytes |
+| char-camp-sutler | Syra the sutler | I–III | `c9e83ec4-14ba-4112-a34c-64a443a5f59b` | `d6167b0f-9eff-40fd-8f7c-3e3822646a19` | 13,750 | 410,352 bytes |
+| char-roman-cavalry | Roman cavalrymen | VII, IX, XII | `6f7475c7-3a1e-413c-b7e5-937f0a99dfae` | `d5dff328-7898-42ee-aa80-1cbf502a5a5a` | 13,824 | 417,964 bytes |
+| horse-roman | Roman riders' horse, a bay | VII, IX, XII | `8bbffabb-f5c9-4e59-88f6-212acfebb1da` | — | 10,800 | 433,300 bytes |
+| horse-northern | Gothic riders' horse, a dun | VII | `3175b256-3e46-4153-9293-07005c18e4d7` | — | 10,800 | 421,324 bytes |
+| horse-eastern | Persian and Palmyrene heavy cavalry's horse, a grey in scale armour | V, VI, IX | `e082a6db-94f6-46a1-a3c0-6d73f031ad61` | — | 10,859 | 550,740 bytes |
+
+Triangles count both levels of detail and, for the named men, both of their heads; the near bodies have 11,155–11,363 triangles, the near horses 8,929–9,000. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within 900,000 bytes, its request's triangles and 1,024-pixel textures. The raw files stay outside the repository; their digests, the task ids and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding, head-wrap and compression reports in `art-source/models/reports/`, with each named man's face as the head wrap's finders saw it (`char-cast-<who>-faces/`).
+
+### Reviewed before shipping
+
+Each model was compared with its Tripo render and then, bound, with the game's own figure in software-rendered close-ups and full views (see the [release report](cast-release6-report.md)). What it showed, and what was kept:
+
+- **Lucan's first two attempts** came back in segmented plate, the first with shoulder plates and a studded belt apron, the second a cuirass of iron hoops with laminated shoulder guards despite a prompt that ruled them out. Both were rejected (65 credits from the retry allowance); the second had been rigged, bound and wrapped for the spending gate before it was replaced. The third, with a negative prompt and the mail described as a chainmail shirt of small interlocking rings, wears mail over his red-brown tunic, as his portrait does.
+- **The named men's faces** are their own generated heads' shape and paint on the shared head, which keeps the game's blinks and expressions; every one was checked to blink and to differ from the others. Inside the eyes they all keep the shared head's own paint, which its lids were made for. Each head was scaled to the shared head's eye spacing, by 0.88 (Sabinus and Felix) to 1.02 (Lucan and Crispus). Brennus's long hair needed a longer bake, his beard is trimmed to his jaw, and his light eyes under heavy brows were set from his report picture, as the finder read his brows as eyes.
+- **Sleeves.** Crispus's and the clerk's tunics came out short-sleeved, though tunics of the 250s and 260s were long-sleeved; they were kept.
+- **Senators** wear sandals and knee-length togas. In the third century a senator's toga reached his feet and he wore closed shoes (calcei); and the trims that name a bloc are the game's own convention, not a senator's marks of rank, which the prompts kept off the togas (no purple stripe).
+- **Syra** wears a long dress and headscarf, and her own head, as do the staff and the senators: only the named men wear the shared head.
+- **The eastern horse's** trapper of iron scales leaves a raised seat on its back, under the game's saddle, and its ground-length tail was cut at 0.55 m in binding: whole, it swept the ground and the legs as it swung. Sasanian reliefs show war horses' tails tied up short.
+- **The northern horse** came out larger than the prompt's stocky breed: the binder scales every horse to the game's horse skeleton.
+
+#### Exact prompts
+
+**char-cast-lucan, attempt 1 (rejected)**
+
+```text
+Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a neutral A-pose for rigging: arms straight and held about 40 degrees away from the body, legs straight and slightly apart, hands in loose fists, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved red-brown wool tunic, a leather belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+
+**char-cast-lucan, attempt 2 (rejected)**
+
+```text
+Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved shirt of fine iron ring mail (lorica hamata) reaching mid-thigh over a long-sleeved red-brown wool tunic, a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No plate armour, no segmented armour, no shoulder plates, no studded straps or apron, no helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+
+**char-cast-lucan** (third attempt, shipped)
+
+```text
+Full-body young late Roman soldier of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved red-brown wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour
+```
+
+**char-cast-varro**
+
+```text
+Full-body Roman army drill instructor of the mid-3rd century AD, a veteran about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed brown wool tunic to the knee, a broad leather military belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thinning close-cropped grey hair and a close grey beard, a stocky square face with a heavy jaw, a broad prominent nose, a heavy brow and a weathered, lined face. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no armour, no shield, no weapons, no staff, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+
+**char-cast-sabinus**
+
+```text
+Full-body late Roman soldier of the mid-3rd century AD, a sturdy broad-shouldered man about thirty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved dark olive-green wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with dark, tightly curled cropped hair, a thick short curly black beard, a broad sturdy face with a strong jaw, a warm olive complexion and an alert, dependable expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour
+```
+
+**char-cast-naso**
+
+```text
+Full-body late Roman legionary of the mid-3rd century AD, a strong man in his mid-thirties, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved off-white wool tunic with narrow dark red bands at the cuffs; a plain broad leather belt with a bronze ring buckle, dark brown wool trousers and closed leather boots. Bare head with short dark hair receding at the temples, a short dark beard with a little grey, a long prominent hooked nose, heavy brows, a weathered olive complexion and a steady, dry expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour
+```
+
+**char-cast-felix**
+
+```text
+Full-body young late Roman archer of the mid-3rd century AD, about twenty-three years old, lean and wiry, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to the hips like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved light ochre wool tunic to the knee; a leather bracer on the left forearm, a plain leather belt with a bronze ring buckle, close-fitting dark wool trousers and soft leather ankle boots. Bare head with wavy dark-brown hair, light stubble, a narrow lively face with high cheekbones and watchful eyes, a warm tanned complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no bow, no quiver, no arrows, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour, bow, quiver
+```
+
+**char-cast-brennus**
+
+```text
+Full-body frontier scout serving the Roman army in the mid-3rd century AD, a big broad-shouldered man about thirty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved dark green-brown wool tunic to the knee with a woven border at the hem, a broad leather belt with a bronze ring buckle, loose grey-brown wool trousers bound with leather straps below the knee, and soft leather shoes. Bare head with long reddish-brown hair tied back at the nape, a full thick beard, a broad face with a heavy jaw, a fair weathered complexion and a patient, watchful expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no hood, no fur, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+chainmail, plate armour, lorica segmentata, breastplate, cuirass, shoulder plates, pauldrons, fur, horned helmet, helmet, shield, weapon, cloak, hood, viking, fantasy armour
+```
+
+**char-cast-crispus**
+
+```text
+Full-body young Roman military tribune of the mid-3rd century AD, an aristocratic officer of about twenty-seven, slender, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an expensive long-sleeved white wool tunic to the knee with narrow purple stripes from the shoulders and purple bands at the cuffs, a broad military belt with ornate bronze fittings and a ring buckle, close-fitting dark trousers and fine closed leather boots. Bare head with neat dark hair brushed forward, clean-shaven, a narrow elegant face with a straight aquiline nose, a pale olive complexion and a composed, challenging expression. Realistic proportions, historically accurate, refined but restrained, muted colours. No armour, no helmet, no shield, no weapons, no cloak, no sash, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+chainmail, plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, helmet, shield, weapon, cloak, toga, gold armour, fantasy armour
+```
+
+**char-senator-elder**
+
+```text
+Full-body Roman senator of the mid-3rd century AD, a thin elderly man about sixty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with thin white hair receding high, clean-shaven, a long lined face with an aquiline nose and a dry, judging expression, a pale olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon
+```
+
+**char-senator-bearded**
+
+```text
+Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, as many third-century senators wore, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon
+```
+
+**char-senator-younger**
+
+```text
+Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon
+```
+
+**char-camp-clerk**
+
+```text
+Full-body Roman army clerk of the mid-3rd century AD, a thin, stooped man about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the knee with narrow dark blue bands at the cuffs, a plain leather belt with a bronze ring buckle and a small leather pouch, dark wool trousers and closed leather shoes. Bare head with short dark hair greying at the temples, clean-shaven, a narrow careful face with deep lines and tired, attentive eyes, an olive complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no hat, no backpack, no tablets or scrolls, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+chainmail, plate armour, lorica segmentata, breastplate, cuirass, helmet, shield, weapon, cloak, toga, hat, glasses, backpack, fantasy armour
+```
+
+**char-camp-capsarius**
+
+```text
+Full-body Roman army medical orderly (capsarius) of the mid-3rd century AD, a solid man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed light brown wool tunic to the knee, a broad leather belt with a bronze ring buckle, a small cylindrical leather case for bandages on a strap at his left hip, dark wool trousers and closed leather boots. Bare head with short dark hair, a short dark beard, a calm practical face with kind eyes and a tanned complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no blood, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+chainmail, plate armour, lorica segmentata, breastplate, cuirass, helmet, shield, weapon, cloak, toga, blood, apron, backpack, fantasy armour
+```
+
+**char-camp-sutler**
+
+```text
+Full-body provincial woman of the mid-3rd century AD, a trader from Syria who keeps a stall outside a Roman army camp on the Danube, about thirty-five, standing in a T-pose for rigging: her arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool dress in faded madder red, belted at the waist with a woven girdle and a small leather purse, and closed leather shoes. Her dark hair is bound up under a simple undyed wool headscarf; a shrewd, good-humoured face with dark eyes and a weathered olive complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no weapons, no cloak, no basket, no jewellery but small bronze earrings, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, chainmail, helmet, weapon, cloak, veil over the face, crown, jewellery, gold, low neckline, modern dress, fantasy, cartoon
+```
+
+**char-roman-cavalry**
+
+```text
+Full-body Roman cavalryman of the mid-3rd century AD, about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved red-brown wool tunic; a broad leather belt with a bronze ring buckle, close-fitting dark wool trousers and closed leather riding boots, and a plain iron cavalry helmet with a deep bowl, large cheek guards covering the ears and a short neck guard. A short dark beard and a weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no face mask, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, shoulder plates, pauldrons, crest, plume, face mask, shield, weapon, cloak, horse, fantasy armour
+```
+
+**horse-roman**
+
+```text
+A Roman cavalry horse of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A sturdy, compact riding horse about 1.45 metres at the withers, bay coat with black mane, tail and lower legs, a plain leather bridle with a bronze-studded browband and the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.
+```
+
+**horse-northern**
+
+```text
+A Gothic warrior's horse of the mid-3rd century AD from the lands north of the Danube, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A small, stocky, hardy northern horse about 1.35 metres at the withers, with a deep chest, short strong legs and a thick neck; dun coat with a dark dorsal stripe, a thick dark mane and tail and dark lower legs; a simple leather bridle without ornament, the reins resting on the neck. Realistic proportions, anatomically accurate. No saddle, no saddle cloth, no rider, no armour, no harness beyond the bridle, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+saddle, saddle cloth, rider, person, armour, horse armour, horns, wings, extra legs, fantasy, cartoon
+```
+
+**horse-eastern**
+
+```text
+An armoured cavalry horse of the Sasanian Persian and Palmyrene heavy cavalry of the mid-3rd century AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, grey coat with a dark mane and tail. It wears a close-fitting armour trapper of small overlapping iron scales sewn on leather, covering the neck, chest and body down to the belly, with an open space on the back where a saddle sits, like the scale horse armour found at Dura-Europos, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, fantasy, cartoon
+```

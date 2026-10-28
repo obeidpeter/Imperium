@@ -21,8 +21,10 @@ hoof, the knee at the carpus or the hock, and the top of the leg at the body's h
 mark where each hoof stands (fore-right-sole and so on); find the tail where it hangs at
 the middle across at the rear and put the tail joint at its root; weight every vertex to
 the skeleton by where it lies: each leg within its own width of its line, by segment, its
-hoof rigid, blended into the body below the belly; the neck and head ahead of the withers;
-the tail; the rest to the body. It is decimated to the triangle budget, unwrapped afresh
+hoof rigid, blended into the body below the belly, and below the hocks and knees all of
+the leg's own piece of the mesh; a tail that hangs free between the hocks all to the tail
+(--tail-above cuts that piece at a height and closes the cut); the neck and head ahead of
+the withers; the rest to the body. It is decimated to the triangle budget, unwrapped afresh
 and given its colour, normals and roughness baked from the full-detail mesh, and exported
 as one GLB whose skin uses the game's joint names (fore-right-knee and so on: the game's
 own rig repeats horse-knee and horse-fetlock on every leg, and maps these onto them), plus
