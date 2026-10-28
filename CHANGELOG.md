@@ -2,6 +2,22 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 4: fortifications, modelled ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/fortifications-release4-report.md))
+
+The fourth of ten releases: the real-time battles' structures, modelled, with rules of their own. The 0.38 turns are unchanged.
+
+- **Fortifications, modelled.** On Balanced and High, the real-time battles' walls, towers and their stairs, gates (open, closed, barred and battered), breaches, bridges (repaired, damaged and demolished) and rampart breastworks are models from a new board kit, built in Blender in stone, mudbrick or timber to fit the board's 2.5-metre cells, with a simpler version for distant pieces. On Performance, or when the kit cannot be downloaded, the code-built works stand in. The code-built curtains, drawn as low breastworks before, also stand at full height: 3.2 metres, or 2.5 in timber.
+- **Structures placed by each battle's history.** Chapter IV's gateway has a tower on each side of the gap and a ditch before its walls, which the road crosses on a causeway. Chapter V's fortress has towers flanking the gap in its wall, Chapter VIII's crossing a bridgehead rampart behind its ditch, and Palmyra and Rome two towers each, a weakened stretch of wall and gates the enemy holds barred. Fields whose history gives no tower have none: the fighting platform is no longer added beside every fortified wall.
+- **Towers.** From the deck a man sees 15 metres farther, and his javelins and arrows reach three tenths farther (a fifth from other high ground). The tower's masonry stops missiles shot past it from below.
+- **Gates.** Closing a fortified gate bars it for your side, at 120 integrity. A gate barred against you cannot be opened: each work action batters it for 15, or 30 with a friendly engineer detail within eight metres as the ram, and at 0 it becomes a breach, slower rubble open to both armies.
+- **Ramparts and ditches.** A rampart is a 1.2-metre bank with a breastwork, behind a ditch that halves speed and breaks a charge. A man on it holds higher ground; missiles from beyond its face lose 10, and a squad behind it takes 2 less in each exchange.
+- **Demolish a bridge.** **Shift**+click a repaired bridge on a fortified field: two work actions, one with engineers near you, each twice as long as ordinary work. The crossing becomes deep water for both armies.
+- **Forecasts name the structure:** From the tower, He holds the tower, Behind the tower, Behind the wall, He holds the rampart, Behind the rampart.
+- **Rain slows climbing in real time.** The guide's rule now applies there too: the real-time map had dropped the weather's slope cost.
+- **Fewer shaders to prepare.** Generated models share one shader program, and code-built props, fieldwork, plain figure surfaces and the fallen share their neighbours', with the same look. On Balanced the fortified real-time battles need 9–13 fewer programs (the finale 50 instead of 63), and the turn-based stages 8–11 fewer. Distant figures now darken under passing cloud, as near ones always did.
+- **Saves.** Real-time fights record world version 5. One saved by an earlier version restarts from its checkpoint when the chronicle loads, as Retry checkpoint would.
+- **Downloads.** The three kits add 0.96 MB, and each chapter's pack holds only its own (about a third of a megabyte).
+
 ### Fixes after the campaign world upgrade
 
 - **Earned siege support no longer adds defence.** Only the camp's Engineering approach gives your squads its 10 extra defence, at its usual cost. Support earned in the previous siege still lets each work action finish the job at once. Before, the two shared one flag, so the support also gave the defence for free.
