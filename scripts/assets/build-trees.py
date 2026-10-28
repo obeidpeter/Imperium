@@ -115,9 +115,9 @@ class Painter:
 # leaves, needle twigs or fronds cut from CC0 Poly Haven plant textures (art-source/cc0/, the maps a
 # model's own textures name). A source's sprites are its connected shapes (alpha above .5 at 256 px),
 # kept by area (in those pixels), by length over width and, where asked, by being greener than red.
-# Oak and the date palm use cells of the game's own foliage atlas (assets/showcase/foliage-v016.webp,
+# Oak, willow and the date palm use cells of the game's own foliage atlas (assets/showcase/foliage-v016.webp,
 # generated art recorded in docs/asset-manifest.json), as the code-built trees do: no CC0 source
-# reachable from the build offers lobed oak leaves or a palm frond.
+# reachable from the build offers lobed oak leaves, hanging willow strands or a palm frond.
 SPRITES = {
     'fir_tree_01': {'diff': 'twig_diff', 'alpha': 'twig_alpha', 'area': (100, 2000), 'aspect': 4, 'green': True},
     'pine_tree_01': {'diff': 'twig_diff', 'alpha': 'twig_alpha', 'area': (800, 1500), 'aspect': 4, 'green': False},
@@ -128,18 +128,20 @@ SPRITES = {
 }
 GAME_ATLAS = os.path.join(REPO, 'assets', 'showcase', 'foliage-v016.webp')
 # The game atlas's 384-pixel cells used whole: (column, row), and the spray's foot and tip in the cell.
-GAME_CELLS = {'oak': ((0, 0), (192, 378), (192, 6)), 'palm': ((0, 1), (22, 362), (362, 22))}
+# The willow's foot is its strands' ends, so a hanging card hangs them from the branch at its top.
+GAME_CELLS = {'oak': ((0, 0), (192, 378), (192, 6)), 'willow': ((1, 0), (192, 372), (192, 12)), 'palm': ((0, 1), (22, 362), (362, 22))}
 # Each leaf kind's card: its sprites, its twigs (count, fan in radians, length as a share of the cell),
 # sprites along each twig (count, angle off the twig, length as a share of the cell), one at the tip,
-# and the colour's tint and desaturation. `game` copies a game atlas cell instead.
+# and the colour's tint and desaturation. `game` copies a game atlas cell instead, `stretch` times as
+# wide across its length: the palm's frond lies on the cell's diagonal and fills a third of a card.
 CARDS = {
     'lobed': {'game': 'oak'},
-    'frond': {'game': 'palm'},
+    'frond': {'game': 'palm', 'stretch': 1.8},
+    'narrow': {'game': 'willow'},
     'oval': {'source': 'island_tree_01', 'twigs': (6, 1.05, .8), 'along': (12, .9, (.13, .17)), 'tip': .17, 'tint': (1.0, 1.04, 1.0), 'desat': .0},
     'round': {'source': 'tree_small_02', 'twigs': (4, 1.0, .72), 'along': (4, .65, (.32, .42)), 'tip': .4, 'tint': (.98, 1.0, .96), 'desat': .0},
     'poplar': {'source': 'island_tree_01', 'twigs': (7, .9, .82), 'along': (13, .9, (.10, .13)), 'tip': .13, 'tint': (1.02, 1.08, .95), 'desat': .0},
     'olive': {'source': 'shrub_02', 'twigs': (7, 1.05, .82), 'along': (16, .55, (.17, .22)), 'tip': .2, 'tint': (.96, 1.0, 1.04), 'desat': .3},
-    'narrow': {'source': 'shrub_02', 'twigs': (6, .4, .94), 'along': (16, .32, (.2, .26)), 'tip': .24, 'tint': (.84, .93, .86), 'desat': .22},
     'needles': {'source': 'pine_tree_01', 'twigs': (5, .95, .55), 'along': (2, .55, (.3, .36)), 'tip': .5, 'tint': (1.0, 1.06, 1.0), 'desat': .0},
     'comb': {'source': 'fir_tree_01', 'twigs': (4, .95, .62), 'along': (3, .7, (.33, .4)), 'tip': .48, 'tint': (.95, 1.0, .98), 'desat': .0},
     'scale': {'source': 'fir_tree_01', 'twigs': (7, .5, .7), 'along': (4, .5, (.22, .27)), 'tip': .3, 'tint': (.78, .86, .82), 'desat': .1},
@@ -224,29 +226,33 @@ def game_sprites():
     return out
 
 
-def paste(painter, spr, foot, angle, length, clip, tint=(1, 1, 1), desat=0.):
+def paste(painter, spr, foot, angle, length, clip, tint=(1, 1, 1), desat=0., stretch=1.):
     """Draw a sprite over the atlas, its foot at `foot`, pointing at `angle` (image radians), `length`
-    pixels from foot to tip; sampled with premultiplied alpha after a box reduction toward its size."""
+    pixels from foot to tip and `stretch` times as wide across; sampled with premultiplied alpha after
+    a box reduction toward its size."""
     k = length / max(spr['length'], 1)
     src, f0 = spr['rgba'], spr['foot']
-    step = max(1, int(1 / k))
+    step = max(1, int(1 / (k * max(1., stretch))))
     if step > 1:
         hh, ww = src.shape[0] // step * step, src.shape[1] // step * step
         pre = np.concatenate([src[:hh, :ww, :3] * src[:hh, :ww, 3:], src[:hh, :ww, 3:]], 2)
         pre = pre.reshape(hh // step, step, ww // step, step, 4).mean(axis=(1, 3))
         src = np.concatenate([pre[..., :3] / np.maximum(pre[..., 3:], 1e-4), pre[..., 3:]], 2)
         f0, k = f0 / step, k * step
-    turn = angle - spr['angle']
-    c, s_ = math.cos(turn), math.sin(turn)
+    # Offsets split along and across the sprite's length (its own angle) and the placed one's.
+    sa, ta = spr['angle'], angle
     h, w = src.shape[:2]
     corners = np.array([[0, 0], [w, 0], [0, h], [w, h]], np.float32) - f0
-    placed = np.stack([corners[:, 0] * c - corners[:, 1] * s_, corners[:, 0] * s_ + corners[:, 1] * c], 1) * k + np.asarray(foot)
+    along = corners[:, 0] * math.cos(sa) + corners[:, 1] * math.sin(sa)
+    across = -corners[:, 0] * math.sin(sa) + corners[:, 1] * math.cos(sa)
+    placed = np.stack([along * math.cos(ta) - across * stretch * math.sin(ta), along * math.sin(ta) + across * stretch * math.cos(ta)], 1) * k + np.asarray(foot)
     x0, y0 = max(clip[0], int(placed[:, 0].min())), max(clip[1], int(placed[:, 1].min()))
     x1, y1 = min(clip[2], int(placed[:, 0].max()) + 1), min(clip[3], int(placed[:, 1].max()) + 1)
     if x1 <= x0 or y1 <= y0: return
     X, Y = np.meshgrid(np.arange(x0, x1) + .5 - foot[0], np.arange(y0, y1) + .5 - foot[1])
-    u = (X * c + Y * s_) / k + f0[0] - .5
-    v = (-X * s_ + Y * c) / k + f0[1] - .5
+    a_, b_ = (X * math.cos(ta) + Y * math.sin(ta)) / k, (-X * math.sin(ta) + Y * math.cos(ta)) / (k * stretch)
+    u = a_ * math.cos(sa) - b_ * math.sin(sa) + f0[0] - .5
+    v = a_ * math.sin(sa) + b_ * math.cos(sa) + f0[1] - .5
     inside = (u >= 0) & (v >= 0) & (u <= w - 1) & (v <= h - 1)
     ui, vi = np.clip(u.astype(int), 0, w - 2), np.clip(v.astype(int), 0, h - 2)
     fu, fv = np.clip(u - ui, 0, 1)[..., None], np.clip(v - vi, 0, 1)[..., None]
@@ -274,7 +280,7 @@ def paint_leaf_cell(painter, kind, ox, oy, seed, sprites):
     foot = (ox + s * .5, oy + s * .965)
     if 'game' in card:
         spr = sprites['game'][card['game']]
-        paste(painter, spr, foot, -math.pi / 2, s * .92, clip)
+        paste(painter, spr, foot, -math.pi / 2, s * .92, clip, stretch=card.get('stretch', 1.))
         fade_cell_edge(painter, ox, oy)
         return
     pool = sprites[card['source']]
@@ -831,7 +837,7 @@ def build_kit(kit):
     report = {'version': 1, 'id': f'trees-{kit}', 'generator': 'scripts/assets/build-trees.py', 'kit': kit, 'chapters': KITS[kit]['chapters'],
               'normalHeight': NORMAL_HEIGHT, 'atlas': {'size': ATLAS, 'cell': CELL, 'cells': {f'{what}:{key}': i for (what, key), i in cells.items()}},
               'authorship': 'Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven '
-                            'plant textures and, for oak and the palm, cells of the game\'s generated foliage atlas; CC0 Poly Haven bark '
+                            'plant textures and, for oak, willow and the palm, cells of the game\'s generated foliage atlas; CC0 Poly Haven bark '
                             '(colour and ambient occlusion)',
               'leaves': {k: (f'art-source/cc0/polyhaven-{CARDS[k]["source"]}.json' if 'source' in CARDS[k] else 'assets/showcase/foliage-v016.webp')
                          for k in sorted({LEAF[x] for x in species})},

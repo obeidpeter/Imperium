@@ -8619,7 +8619,7 @@
       "path": "assets/models/scenery/trees-temperate.glb",
       "subject": "The trees of the Danube frontier, Moesia, Thrace and the Rhine (oak, beech, willow, alder, pine, fir), each near, mid and as a two-card impostor, normalised to 0.5 units tall for the runtime to scale",
       "source": {
-        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the date palm, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
+        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for oak and willow, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
         "builder": "scripts/assets/build-trees.py",
         "sourceBlend": "art-source/models/trees-temperate.blend",
         "report": "art-source/models/processed/trees-temperate.json",
@@ -8769,27 +8769,6 @@
           },
           {
             "generator": "Poly Haven",
-            "name": "Shrub 02",
-            "kind": "model textures",
-            "page": "https://polyhaven.com/a/shrub_02",
-            "record": "art-source/cc0/polyhaven-shrub_02.json",
-            "authors": [
-              "Rico Cilliers"
-            ],
-            "retrievedAt": "2026-10-28T09:01:05.340Z",
-            "files": [
-              {
-                "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_diff_1k.png",
-                "sha256": "d6f8bcbd221e9229bc8d831a0819717dd74d327cd7f66219de942b7d60d01876"
-              },
-              {
-                "path": "art-source/cc0/raw/polyhaven-shrub_02/shrub_02_alpha_1k.png",
-                "sha256": "5c2c31bac311051db77443e1780078403c2df0a832c40fe6ed7bcd982695cdf0"
-              }
-            ]
-          },
-          {
-            "generator": "Poly Haven",
             "name": "Pine Tree 01",
             "kind": "model textures",
             "page": "https://polyhaven.com/a/pine_tree_01",
@@ -8875,15 +8854,15 @@
       "loading": "Deferred chapter packs 1, 2, 3, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
-        "bytes": 600284,
-        "gzipBytes": 503678,
-        "sha256": "8c3e9dd07c6390e57cc590a7e2a9e91c0ad25992616d32b0249baa9fdc763168",
+        "bytes": 608124,
+        "gzipBytes": 511441,
+        "sha256": "5923c63c414050e992026d0ad6f30321b50a07c530190e699af84fb898338e5d",
         "triangles": 18168,
         "textures": 1,
         "textureEdge": 1024,
         "componentCount": 18
       },
-      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Dario Barresi, Dimitrios Savva, Rico Cilliers on Poly Haven. The oak and palm cells come from the project's generated foliage atlas (see foliage-v016)."
+      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Dario Barresi, Dimitrios Savva, Rico Cilliers on Poly Haven. The oak and willow cells come from the project's generated foliage atlas (see foliage-v016)."
     },
     {
       "id": "trees-italy",
@@ -9131,7 +9110,7 @@
       "path": "assets/models/scenery/trees-arid.glb",
       "subject": "The trees of Syria, Egypt and the Euphrates (palm, tamarisk), each near, mid and as a two-card impostor, normalised to 0.5 units tall for the runtime to scale",
       "source": {
-        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the date palm, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
+        "method": "Original Blender-authored trunks, boughs, twigs and leaf cards (scripts/assets/build-trees.py, Blender 5.2.2) in one 1,024-pixel atlas: CC0 Poly Haven bark, its colour darkened by its own ambient occlusion; leaf cards composed from CC0 Poly Haven plant textures and, for date palm, cells of the game's generated foliage atlas (foliage-v016); impostors rendered from the near trees in Cycles",
         "builder": "scripts/assets/build-trees.py",
         "sourceBlend": "art-source/models/trees-arid.blend",
         "report": "art-source/models/processed/trees-arid.json",
@@ -9238,15 +9217,15 @@
       "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built trees (environment-foliage.js).",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
-        "bytes": 159488,
-        "gzipBytes": 135878,
-        "sha256": "8436d1660acc4fda6abebfc89d9d379557f115ae27caf5268db66322b97cd37b",
+        "bytes": 165436,
+        "gzipBytes": 141860,
+        "sha256": "c1180f07c643faa5062c5dbef28b5b6cda58430adb54e974c05e5c26729534df",
         "triangles": 4000,
         "textures": 1,
         "textureEdge": 1024,
         "componentCount": 6
       },
-      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Charlotte Baglioni, Rico Cilliers on Poly Haven. The oak and palm cells come from the project's generated foliage atlas (see foliage-v016)."
+      "license": "Created for the Imperium project from CC0 1.0 Universal (public domain dedication) sources (https://polyhaven.com/license); no attribution is required, and the bark and plant textures are credited to Rob Tuytel, Charlotte Baglioni, Rico Cilliers on Poly Haven. The date palm cells come from the project's generated foliage atlas (see foliage-v016)."
     },
     {
       "id": "rocks-temperate",
@@ -9740,7 +9719,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T14:50:26.974Z",
+  "updatedAt": "2026-10-28T15:55:28.598Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9767,7 +9746,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 36277248,
-  "totalModelBytes": 21131619,
+  "totalBundledAssetBytes": 36291036,
+  "totalModelBytes": 21145407,
   "derivedGeometryBytes": 47428
 }

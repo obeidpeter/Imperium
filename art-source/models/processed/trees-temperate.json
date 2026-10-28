@@ -34,11 +34,11 @@
       "impostor:fir": 15
     }
   },
-  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
+  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak, willow and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
   "leaves": {
     "comb": "art-source/cc0/polyhaven-fir_tree_01.json",
     "lobed": "assets/showcase/foliage-v016.webp",
-    "narrow": "art-source/cc0/polyhaven-shrub_02.json",
+    "narrow": "assets/showcase/foliage-v016.webp",
     "needles": "art-source/cc0/polyhaven-pine_tree_01.json",
     "oval": "art-source/cc0/polyhaven-island_tree_01.json",
     "round": "art-source/cc0/polyhaven-tree_small_02.json"
@@ -137,8 +137,8 @@
   ],
   "output": {
     "path": "art-source/models/processed/trees-temperate.glb",
-    "bytes": 2501284,
-    "sha256": "aaf2a69052e1c5fdf42b8eece664b34ee0d82b8c716afe9b5d19e225651c37e4",
+    "bytes": 2580948,
+    "sha256": "515fd14441446f446f9bfa82f543cd99f0f5dd93030608e1d871a702c598a998",
     "triangles": 18168
   },
   "runtimePath": "assets/models/scenery/trees-temperate.glb"

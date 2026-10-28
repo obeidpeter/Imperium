@@ -21,7 +21,7 @@
       "impostor:tamarisk": 5
     }
   },
-  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
+  "authorship": "Original Blender-authored geometry and impostors rendered from it; leaf cards composed from CC0 Poly Haven plant textures and, for oak, willow and the palm, cells of the game's generated foliage atlas; CC0 Poly Haven bark (colour and ambient occlusion)",
   "leaves": {
     "feather": "art-source/cc0/polyhaven-jacaranda_tree.json",
     "frond": "assets/showcase/foliage-v016.webp"
@@ -62,8 +62,8 @@
   ],
   "output": {
     "path": "art-source/models/processed/trees-arid.glb",
-    "bytes": 786824,
-    "sha256": "d78c84b0e88ce2f582a554a14f268e17f53d64ffa7c8c07cf520a95e6990dffc",
+    "bytes": 845392,
+    "sha256": "6b01fa7f0ed2ad1a1a952d22a006224bb25c588471759790b0a291ad2bfbfa8d",
     "triangles": 4000
   },
   "runtimePath": "assets/models/scenery/trees-arid.glb"
