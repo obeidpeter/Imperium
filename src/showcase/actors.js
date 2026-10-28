@@ -379,7 +379,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
     if(body?.band){
       // A senator's own toga: the bands lie on the one fitted across it, from the left
       // shoulder to the right of the waist, and follow his skin (mountActorBody).
-      for(const band of trimBands(unit.bloc)){const geometry=blocTrimGeometry(body.band,band);geometries.add(geometry);blocTrims.push({geometry,material:trimMaterial(band)});}
+      // One mesh for each material at each level: the trims cost a draw or two, not one a band.
+      const bands=trimBands(unit.bloc);
+      for(const gilt of [false,true]){const specs=bands.filter(band=>!!band.gilt===gilt);if(!specs.length)continue;
+        for(const overview of [false,true]){const geometry=blocTrimGeometry(body.band,specs,{lift:overview?.012:0});geometries.add(geometry);blocTrims.push({geometry,material:trimMaterial(specs[0]),overview});}}
     }else{
       const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide});
       const rows=[[.49,.18,.15,.15],[.37,.08,.38,.205],[.19,-.015,.46,.225],[.02,-.025,.48,.215],[-.22,.025,.49,.22],[-.40,.06,.42,.205],[-.54,.08,.34,.185]];
@@ -456,7 +459,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth:kit.equipped&&kit.padding&&!kit.armored?(kit.equipment.includes('jerkin')?leather:clothDark):cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
-  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,donor:donorBody,geometries,materials,trims:blocTrims});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview),...worn.trims].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?(identityBody.head?identityBody.id:IDENTITY_HEAD_BODY):body.id;group.userData.actor.persistentIdentity=!!identityBody;}
+  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,donor:donorBody,geometries,materials,trims:blocTrims});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview),...worn.trims.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview),...worn.trims.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?(identityBody.head?identityBody.id:IDENTITY_HEAD_BODY):body.id;group.userData.actor.persistentIdentity=!!identityBody;}
   if(horse&&horseCoat){const coat=mountHorseBody(group,horse,horseCoat,{skeletons});nearMeshes.push(coat.near);farMeshes.push(coat.overview);}
   group.userData.actor.horse=horse&&horseCoat?horseCoat.id:null;
   const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);

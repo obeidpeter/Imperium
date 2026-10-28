@@ -143,16 +143,22 @@ test('the chamber\'s members wear the senators\' togas, each bloc\'s trims drawn
     assert.equal(await a.ready,true);const g=a.group;assert.ok(SENATOR_BODIES.includes(g.userData.actor.body));
     assert.equal(g.getObjectByName('draped-civic-robe'),undefined,'The senator wears his own toga, not the procedural one');
     const trims=[];g.traverse(o=>{if(/^bloc-trim-/.test(o.name))trims.push(o);});
-    assert.equal(trims.length,trimBands(bloc).length,`${bloc}: one strip per band of its trim`);
+    // One mesh for each of the trim's materials (its colour, and gilt) at each level.
+    const bands=trimBands(bloc),materials=bands.some(band=>band.gilt)?2:1,near=trims.filter(t=>!t.userData.overview),far=trims.filter(t=>t.userData.overview);
+    assert.equal(near.length,materials,`${bloc}: one near mesh for each material`);assert.equal(far.length,materials,`${bloc}: one overview mesh for each material`);
+    const strips=bands.reduce((sum,band)=>sum+(band.rows?band.rows[1]-band.rows[0]+1:7)*17,0);
+    assert.equal(near.reduce((sum,t)=>sum+t.geometry.attributes.position.count,0),strips,`${bloc}: every band of its trim`);
+    assert.deepEqual(near.map(t=>t.material.color.getHex()).sort(),[...new Set(bands.map(band=>new T.Color(band.gilt?0xc9a64a:BLOC_TRIM[bloc]).getHex()))].sort(),`${bloc} trim colours`);
     const body=g.getObjectByName('generated-body');
-    for(const [i,trim]of trims.entries()){
+    for(const trim of trims){
       assert.ok(trim.isSkinnedMesh&&trim.skeleton===body.skeleton,'The trims follow the senator\'s own skin');
-      const band=trimBands(bloc)[i];assert.equal(trim.material.color.getHex(),new T.Color(band.gilt?0xc9a64a:BLOC_TRIM[bloc]).getHex(),`${bloc} trim colour`);
+      if(trim.userData.overview)continue;
       // On the toga's front, a few millimetres outside it.
-      const p=trim.geometry.attributes.position,b=body.geometry.attributes.position,at=new T.Vector3(),near=new T.Vector3();
-      for(let k=0;k<p.count;k+=5){at.fromBufferAttribute(p,k);let best=Infinity;for(let m=0;m<b.count;m++)best=Math.min(best,near.fromBufferAttribute(b,m).distanceToSquared(at));assert.ok(Math.sqrt(best)<.03,`${bloc} trim lies on the toga (${Math.sqrt(best).toFixed(3)} m)`);assert.ok(at.z>0,'On the front');}
+      const p=trim.geometry.attributes.position,b=body.geometry.attributes.position,at=new T.Vector3(),onBody=new T.Vector3();
+      for(let k=0;k<p.count;k+=5){at.fromBufferAttribute(p,k);let best=Infinity;for(let m=0;m<b.count;m++)best=Math.min(best,onBody.fromBufferAttribute(b,m).distanceToSquared(at));assert.ok(Math.sqrt(best)<.03,`${bloc} trim lies on the toga (${Math.sqrt(best).toFixed(3)} m)`);assert.ok(at.z>0,'On the front');}
     }
-    a.update({detailDistance:40});assert.ok(trims.every(t=>!t.visible),'At a distance the stance marker names the bloc');a.update({detailDistance:8});assert.ok(trims.every(t=>t.visible));
+    // At a distance the overview's trims show the bloc, as the stance marker's letter does.
+    a.update({detailDistance:40});assert.ok(near.every(t=>!t.visible)&&far.every(t=>t.visible));a.update({detailDistance:8});assert.ok(near.every(t=>t.visible)&&far.every(t=>!t.visible));
     a.dispose();
   }
   // A broken trim's lengths span only their rows of the band.

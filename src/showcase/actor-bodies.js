@@ -80,21 +80,25 @@ function blocBand(mesh,bones){
 // which bind-character.py lifts off the toga itself, a trim lies on the band and a gilt line
 // the difference above it.
 const DRAPE_TRIM_OFFSET=.009;
-/** One of a bloc's trims (bloc-style.js trimBands) as a skinned strip on a body's band:
- * across it from `from` to `to`, along the rows given (all of them by default). */
-export function blocTrimGeometry(band,{from=0,to=1,rows=null,offset=DRAPE_TRIM_OFFSET}={}){
-  const {position,normal,skinIndex,skinWeight}=band.geometry.attributes,{columns,grid}=band,n=16,lift=offset-DRAPE_TRIM_OFFSET;
-  const [first,last]=rows??[0,band.rows-1],p=[],uv=[],joints=[],weights=[],indices=[],a=new T.Vector3(),b=new T.Vector3(),na=new T.Vector3(),nb=new T.Vector3();
-  for(let j=first;j<=last;j++)for(let s=0;s<=n;s++){
-    const u=from+(to-from)*s/n,q=Math.min(columns-1,Math.max(0,u*(columns-1))),i=Math.min(columns-2,Math.floor(q)),t=q-i,ka=grid[j*columns+i],kb=grid[j*columns+i+1];
-    a.fromBufferAttribute(position,ka).lerp(b.fromBufferAttribute(position,kb),t);
-    na.fromBufferAttribute(normal,ka).lerp(nb.fromBufferAttribute(normal,kb),t).normalize();
-    p.push(a.x+na.x*lift,a.y+na.y*lift,a.z+na.z*lift);uv.push(s/n,(j-first)/Math.max(1,last-first));
-    // The skin of the band's two vertices either side, blended, its four strongest joints kept.
-    const mix=new Map();for(const [k,share]of [[ka,1-t],[kb,t]])for(let c=0;c<4;c++){const w=skinWeight.getComponent(k,c)*share;if(w>0)mix.set(skinIndex.getComponent(k,c),(mix.get(skinIndex.getComponent(k,c))??0)+w);}
-    const top=[...mix].sort((x,y)=>y[1]-x[1]).slice(0,4),total=top.reduce((sum,[,w])=>sum+w,0)||1;
-    for(let c=0;c<4;c++){joints.push(top[c]?.[0]??0);weights.push(top[c]?top[c][1]/total:0);}
-    if(j>first&&s){const k=(j-first)*(n+1)+s;indices.push(k-n-2,k-1,k,k-n-2,k,k-n-1);}
+/** A bloc's trims (bloc-style.js trimBands) as skinned strips on a body's band, in one
+ * geometry: each across the band from `from` to `to`, along the rows given (all of them by
+ * default). `lift` raises them all off the band, as the overview's coarser toga needs. */
+export function blocTrimGeometry(band,specs,{lift:extra=0}={}){
+  const {position,normal,skinIndex,skinWeight}=band.geometry.attributes,{columns,grid}=band,n=16;
+  const p=[],uv=[],joints=[],weights=[],indices=[],a=new T.Vector3(),b=new T.Vector3(),na=new T.Vector3(),nb=new T.Vector3();
+  for(const {from=0,to=1,rows=null,offset=DRAPE_TRIM_OFFSET} of [specs].flat()){
+    const [first,last]=rows??[0,band.rows-1],lift=offset-DRAPE_TRIM_OFFSET+extra,base=p.length/3;
+    for(let j=first;j<=last;j++)for(let s=0;s<=n;s++){
+      const u=from+(to-from)*s/n,q=Math.min(columns-1,Math.max(0,u*(columns-1))),i=Math.min(columns-2,Math.floor(q)),t=q-i,ka=grid[j*columns+i],kb=grid[j*columns+i+1];
+      a.fromBufferAttribute(position,ka).lerp(b.fromBufferAttribute(position,kb),t);
+      na.fromBufferAttribute(normal,ka).lerp(nb.fromBufferAttribute(normal,kb),t).normalize();
+      p.push(a.x+na.x*lift,a.y+na.y*lift,a.z+na.z*lift);uv.push(s/n,(j-first)/Math.max(1,last-first));
+      // The skin of the band's two vertices either side, blended, its four strongest joints kept.
+      const mix=new Map();for(const [k,share]of [[ka,1-t],[kb,t]])for(let c=0;c<4;c++){const w=skinWeight.getComponent(k,c)*share;if(w>0)mix.set(skinIndex.getComponent(k,c),(mix.get(skinIndex.getComponent(k,c))??0)+w);}
+      const top=[...mix].sort((x,y)=>y[1]-x[1]).slice(0,4),total=top.reduce((sum,[,w])=>sum+w,0)||1;
+      for(let c=0;c<4;c++){joints.push(top[c]?.[0]??0);weights.push(top[c]?top[c][1]/total:0);}
+      if(j>first&&s){const k=base+(j-first)*(n+1)+s;indices.push(k-n-2,k-1,k,k-n-2,k,k-n-1);}
+    }
   }
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
   g.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));g.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));g.setIndex(indices);g.computeVertexNormals();
@@ -140,9 +144,9 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     worn=headlessBodies.get(body);
   }
   const result={near:worn?skin(worn.near,'generated-body',false):null,overview:worn?skin(worn.overview,'generated-body-overview',true):null,heads:[]};
-  // A senator's bloc trims, on his body's band (blocTrimGeometry): the near level only, as the
-  // stance marker's letter names his bloc at a distance.
-  result.trims=trims.map(({geometry,material},i)=>skin({geometry,material},`bloc-trim-${i}`,false));
+  // A senator's bloc trims, on his body's band (blocTrimGeometry): one mesh for each of their
+  // materials at each level, the overview's lifted clear of its coarser toga.
+  result.trims=trims.map(({geometry,material,overview},i)=>skin({geometry,material},`bloc-trim-${i}`,!!overview));
   // A named man's own head (cast) is already his shape and paint: it takes the morphs and his ageing only.
   const cast=!!headBody?.head,heads=cast?headBody.head:headBody;
   const headMaterial=headBody&&identity?generatedIdentityMaterial(heads.near.material,identity,{offsetY:identityOffsetY,follower:(donor??headBody).near.material,ageing:cast?castAgeing(identity):null}):null;if(headMaterial)materials?.add(headMaterial);
