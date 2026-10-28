@@ -17,8 +17,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 1 | Foundations | merged ([#28](https://github.com/obeidpeter/Imperium/pull/28)) |
 | 2 | Ground, sky and light | merged ([#29](https://github.com/obeidpeter/Imperium/pull/29)) |
 | 3 | Harder, less predictable battles | merged ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
-| 4 | Fortifications, modelled | in review ([report](fortifications-release4-report.md)) |
-| 5 | Nature and water, modelled | planned |
+| 4 | Fortifications, modelled | merged ([#35](https://github.com/obeidpeter/Imperium/pull/35); [report](fortifications-release4-report.md)); mudbrick re-baked ([#36](https://github.com/obeidpeter/Imperium/pull/36)) |
+| 5 | Nature and water, modelled | in review ([report](nature-release5-report.md)) |
 | 6 | The cast in person | planned |
 | 7 | Missions and cavalry | planned |
 | 8 | Living camps | planned |
