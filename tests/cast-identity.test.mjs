@@ -22,3 +22,22 @@ test('a wound shows only where the story gives it: never on Varro in the camps',
   assert.equal(actorKit({name:'Wounded Lucan',role:'escort',side:'ally'},{chapter:2}).wounded,true,'Lucan in the marsh');
   assert.equal(actorKit({name:'The eagle-bearer',role:'escort',side:'ally'},{chapter:6}).wounded,false);
 });
+
+test('the shared head blinks over its painted eyes, and frowns at its brows', async () => {
+  const T=await import('../vendor/three/three.module.js'),{readFile}=await import('node:fs/promises');
+  const {GLTFLoader}=await import('../vendor/three/addons/loaders/GLTFLoader.js'),{MeshoptDecoder}=await import('../vendor/three/addons/libs/meshopt_decoder.module.js');
+  const {clipBodyAtNeck,sculptGeneratedHead,HEAD_FEATURES,IDENTITY_HEAD_BODY}=await import('../src/showcase/generated-identity.js');
+  const bytes=await readFile(new URL(`../assets/models/characters/${IDENTITY_HEAD_BODY}.glb`,import.meta.url)),loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  loader.register(()=>({name:'NODE_IMAGE_PLACEHOLDER',loadTexture:async()=>new T.Texture()}));loader.pluginCallbacks.unshift(loader.pluginCallbacks.pop());
+  const gltf=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
+  const head=sculptGeneratedHead(clipBodyAtNeck(gltf.scene.getObjectByName('body').geometry,{above:true}),actorIdentity({name:'Naso'},{chapter:5}));
+  const p=head.attributes.position,[,focus,,blink]=head.morphAttributes.position;
+  // Where each morph moves the face most: the blink's lids meet on the eyes' own line, the frown's brows lie just above them.
+  const peak=a=>{let best=0,at=0;for(let i=0;i<a.count;i++){const d=Math.hypot(a.getX(i),a.getY(i),a.getZ(i));if(d>best){best=d;at=p.getY(i);}}return {at,best};};
+  const lids=peak(blink),brows=peak(focus);
+  assert.ok(Math.abs(lids.at-HEAD_FEATURES.eyes)<.012&&lids.best>.004,`the lids close on the eyes (${lids.at.toFixed(3)} m)`);
+  assert.ok(brows.at>HEAD_FEATURES.eyes&&brows.at<HEAD_FEATURES.brows+.025,`the frown sits at the brows (${brows.at.toFixed(3)} m)`);
+  let above=0;for(let i=0;i<p.count;i++)if(p.getY(i)>HEAD_FEATURES.brows+.012)above=Math.max(above,Math.abs(blink.getY(i)));
+  assert.ok(above<.001,`the forehead stays still in a blink (${above.toFixed(4)} m)`);
+  head.dispose();
+});

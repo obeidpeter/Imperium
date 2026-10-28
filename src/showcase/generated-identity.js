@@ -6,6 +6,12 @@ import * as T from '../../vendor/three/three.module.js';
 export const IDENTITY_NECK_HEIGHT=1.50;
 export const IDENTITY_HEAD_BODY='roman-recruit';
 export const usesPersistentHead=identity=>!!identity&&!identity.female&&!identity.key.startsWith('figure-');
+// The shared head's own features, where its paint puts them: the eyes, brows and mouth on
+// the face, and the nose tip, in metres (scripts/assets/wrap-cast-head.py finds them). Its
+// blinks, expressions, sculpting and shading lie on them, and each cast member's wrapped
+// head is aligned to the same eyes and nose.
+export const HEAD_FEATURES=Object.freeze({eyes:1.631,brows:1.641,mouth:1.568,nose:1.595});
+const F=HEAD_FEATURES;
 const clamp=n=>Math.max(0,Math.min(1,n));
 const bell=(x,c,w)=>Math.exp(-(((x-c)/w)**2));
 
@@ -67,12 +73,12 @@ export function generatedGroomProfile(identity={}){return {...(groomProfiles[ide
 export function sculptGeneratedHead(geometry,identity){
   const p=geometry.attributes.position,jaw=[],focus=[],concern=[],blink=[],groom=generatedGroomProfile(identity);
   for(let i=0;i<p.count;i++){
-    let x=p.getX(i),y=p.getY(i),z=p.getZ(i),front=clamp((z-.03)/.07),face=bell(y,1.62,.12)*front;
-    const jawField=bell(y,1.565,.043),cheek=bell(y,1.63,.04),centre=-.018;
+    let x=p.getX(i),y=p.getY(i),z=p.getZ(i),front=clamp((z-.03)/.07),face=bell(y,F.eyes-.041,.12)*front;
+    const jawField=bell(y,F.mouth-.023,.043),cheek=bell(y,F.eyes-.032,.04),centre=-.018;
     if(identity.key!=='marcellus'){
       x=centre+(x-centre)*(1+((identity.jaw??1)-1)*jawField*.55+((identity.cheek??1)-1)*cheek*.55);
-      z+=((identity.nose??1)-1)*.055*bell(x,centre,.028)*bell(y,1.625,.045)*face;
-      y+=((identity.brow??1)-1)*.018*bell(y,1.68,.024)*front;
+      z+=((identity.nose??1)-1)*.055*bell(x,centre,.028)*bell(y,F.nose,.045)*face;
+      y+=((identity.brow??1)-1)*.018*bell(y,F.brows+.008,.024)*front;
     }
     // Reshape the existing continuous scalp, preserving its UVs and skinning.
     // Distinct crowns, side volume, swept parting and rear nape are actual
@@ -84,10 +90,11 @@ export function sculptGeneratedHead(geometry,identity){
     y+=top*(groom.crown+waves)-groom.nape*nape*.65;
     z-=groom.nape*nape;
     p.setXYZ(i,x,y,z);
-    const lower=bell(y,1.56,.026)*bell(x,centre,.052)*front,brow=bell(y,1.68,.019)*bell(Math.abs(x-centre),.037,.031)*front;
+    const lower=bell(y,F.mouth-.028,.026)*bell(x,centre,.052)*front,brow=bell(y,F.brows+.008,.019)*bell(Math.abs(x-centre),.037,.031)*front;
     jaw.push(0,-.008*lower,.0015*lower);focus.push(Math.sign(centre-x)*.001*brow,-.0025*brow,.0005*brow);concern.push(0,.002*brow-.001*lower,0);
-    const eye=bell(Math.abs(x-centre),.036,.018)*bell(y,1.662,.012)*front;
-    blink.push(0,(1.662-y)*.88*eye,.0008*eye);
+    // The lids close onto the painted eyes' line.
+    const eye=bell(Math.abs(x-centre),.036,.018)*bell(y,F.eyes,.012)*front;
+    blink.push(0,(F.eyes-y)*.88*eye,.0008*eye);
   }
   // Keep the authored smooth normals. Recomputing split UV vertices makes the
   // compressed generated head visibly faceted, even where its shape is unchanged.
@@ -136,8 +143,8 @@ export function generatedIdentityMaterial(source,identity,{offsetY=0}={}){
       float nape=exp(-pow((identityPosition.y-1.65)/.06,2.0))*(1.0-smoothstep(-.035,.025,identityPosition.z));
       diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.035,.024,.016),nape*min(1.0,identityGroom.y*26.0)*.70);
       diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.34,.31,.27),hairDark*scalp*(1.0-max(retreat,shaved))*identityGrey*.8);
-      float beard=exp(-pow((identityPosition.y-1.565)/.035,2.0))*smoothstep(.045,.085,identityPosition.z);
-      float lip=exp(-pow((identityPosition.x+.018)/.028,4.0)-pow((identityPosition.y-1.588)/.012,2.0));
+      float beard=exp(-pow((identityPosition.y-${(F.mouth-.023).toFixed(3)})/.035,2.0))*smoothstep(.045,.085,identityPosition.z);
+      float lip=exp(-pow((identityPosition.x+.018)/.028,4.0)-pow((identityPosition.y-${F.mouth.toFixed(3)})/.012,2.0));
       diffuseColor.rgb*=1.0-identityBeard*beard*(1.0-lip)*.30;
       }
     `);
