@@ -95,8 +95,10 @@ def bake(name, kind, base, size=512):
         tone = .86 + b * .2 + (n2 - .5) * .1; h = h * (.86 + n2 * .14); rough = .9 - b * .08
     elif kind == 'mudbrick':
         h, b = courses(size, 14, 23, .02)
-        plaster = np.clip((n1 - .55) * 6, 0, 1)
-        tone = (.84 + b * .18) * (1 - plaster) + 1.18 * plaster + (n2 - .5) * .08
+        # Worn mud plaster survives in a few soft patches near the bricks' own colour (bright, hard-edged
+        # patches read as camouflage), and the joints read a shade darker where it has gone.
+        plaster = np.clip((n1 - .66) * 3.5, 0, 1) ** 2 * .6
+        tone = ((.84 + b * .18) * (1 - plaster) + .98 * plaster + (n2 - .5) * .07) * (.9 + .1 * np.clip(h + plaster, 0, 1))
         h = h * (1 - plaster) * .7 + plaster * (.9 + n2 * .1); rough = .95 - plaster * .05
     elif kind == 'revetment':
         h, b = courses(size, 10, 31, .016)

@@ -586,8 +586,8 @@
   ],
   "output": {
     "path": "art-source/models/processed/board-kit-mudbrick.glb",
-    "bytes": 923524,
-    "sha256": "e91d13268260642646b4951d441a39ec2df82c7cee64bbbc1d00af3a8a70aa1b",
+    "bytes": 853184,
+    "sha256": "45fb4e08281d41ced079a9f60bbb942e49a978ec9f121e678aca7c53f2804ffc",
     "triangles": 4920
   },
   "runtimePath": "assets/models/scenery/board-kit-mudbrick.glb"
