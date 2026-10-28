@@ -524,11 +524,12 @@ def deciduous(tree, leaf, form):
             else:
                 for p in tpts: tree.crown = max(tree.crown, math.hypot(p.x, p.y))
             # Leaf cards along the twig's outer half and at its tip.
-            for c in range(form['clusters'] if near else 1):
-                ct = .5 + .5 * (c + 1) / (form['clusters'] if near else 1)
+            clusters = form['clusters'] if near else form.get('mid_clusters', 1)
+            for c in range(clusters):
+                ct = .5 + .5 * (c + 1) / clusters
                 at = tpts[0].lerp(tpts[-1], ct)
                 outward = (at - Vector((0, 0, at.z * .6))).normalized()
-                size = form['card'] * (1 if near else 1.9)
+                size = form['card'] * (1 if near else form.get('mid_card', 1.9))
                 tree.cluster(at, outward, size, leaf, form['cards'] if near else 3, form['card'] * .5,
                              hang=form.get('hang', False), bend=.25)
 
@@ -607,17 +608,20 @@ def palm(tree, leaf, form):
         p = top.copy()
         for s in range(segs + 1):
             t = s / segs
-            w = L * .2 * math.sin(math.pi * (.12 + t * .8)) ** .6
+            w = L * form.get('width', .2) * math.sin(math.pi * (.12 + t * .8)) ** .6
             dd = (d + Vector((0, 0, -1.3 * t))).normalized()
             if s: p = p + dd * (L / segs)
-            # A shallow V: the leaflets rise a little from the rachis.
-            for sgn in (-1, 1):
-                tree.leaves.verts.append(p + side * sgn * w + Vector((0, 0, .08 * L * .2)))
+            # A V along the rachis: the leaflets rise from it on both sides, so a frond keeps
+            # its breadth seen from the side instead of thinning to an edge.
+            lift = Vector((0, 0, form.get('fold', .08) * w))
+            tree.leaves.verts.extend([p - side * w + lift, p.copy(), p + side * w + lift])
             tree.crown = max(tree.crown, math.hypot(p.x, p.y) + w)
+        um = (u0 + u1) / 2
         for s in range(segs):
-            a0, a1, b0, b1 = base + s * 2, base + s * 2 + 1, base + s * 2 + 2, base + s * 2 + 3
+            r0, r1 = base + s * 3, base + s * 3 + 3
             va, vb = v0 + (v1 - v0) * s / segs, v0 + (v1 - v0) * (s + 1) / segs
-            tree.leaves.add_face([a0, a1, b1, b0], [(u0, va), (u1, va), (u1, vb), (u0, vb)])
+            tree.leaves.add_face([r0, r0 + 1, r1 + 1, r1], [(u0, va), (um, va), (um, vb), (u0, vb)])
+            tree.leaves.add_face([r0 + 1, r0 + 2, r1 + 2, r1 + 1], [(um, va), (u1, va), (u1, vb), (um, vb)])
 
 
 FORMS = {
@@ -627,8 +631,9 @@ FORMS = {
                           'clusters': 2, 'cards': 3, 'card': .9, 'droop': .08}),
     'alder': (deciduous, {'trunk': .75, 'radius': .17, 'boughs': 9, 'from': .30, 'rise': .55, 'reach': .26, 'twigs': 2, 'twig_length': .55,
                           'clusters': 2, 'cards': 3, 'card': .8, 'droop': .06, 'cone': True}),
-    'willow': (deciduous, {'trunk': .34, 'radius': .28, 'boughs': 9, 'from': .55, 'rise': 1.15, 'reach': .32, 'twigs': 3, 'twig_length': .8,
-                           'clusters': 2, 'cards': 3, 'card': .8, 'droop': .12, 'twig_droop': 1.6, 'hang': True}),
+    'willow': (deciduous, {'trunk': .34, 'radius': .24, 'bough_ratio': .45, 'boughs': 9, 'from': .55, 'rise': 1.15, 'reach': .32, 'twigs': 3,
+                           'twig_length': .8, 'clusters': 3, 'cards': 4, 'card': .9, 'mid_clusters': 2, 'mid_card': 1.5, 'droop': .12,
+                           'twig_droop': 1.6, 'hang': True}),
     'poplar': (deciduous, {'trunk': .82, 'radius': .2, 'boughs': 12, 'from': .18, 'rise': 1.25, 'reach': .26, 'twigs': 2, 'twig_length': .5,
                            'clusters': 2, 'cards': 2, 'card': .75, 'droop': -.05}),
     'olive': (deciduous, {'trunk': .36, 'radius': .24, 'stems': 3, 'splay': .25, 'twist': .2, 'boughs': 7, 'from': .55, 'rise': .7, 'reach': .3,
@@ -643,7 +648,7 @@ FORMS = {
                            'cards_per': 2, 'cards': 4, 'card': 1.05, 'droop': -.02, 'crown_top': 36, 'lift': .6}),
     'cypress': (conifer, {'stem': .95, 'radius': .15, 'whorls': 0, 'per': 0, 'from': .1, 'to': .95, 'rise': .9, 'reach': .11, 'bough': .2,
                           'cards_per': 0, 'cards': 0, 'card': .45, 'column': 140}),
-    'palm': (palm, {'lean': .12, 'radius': .2, 'fronds': 24, 'frond': .56}),
+    'palm': (palm, {'lean': .12, 'radius': .2, 'fronds': 34, 'frond': .56, 'width': .26, 'fold': .5}),
 }
 assert set(FORMS) == set(BARK) == set(LEAF) == set(BUILD_HEIGHT)
 
