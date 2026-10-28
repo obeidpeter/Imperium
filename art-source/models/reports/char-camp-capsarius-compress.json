@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-capsarius.glb",
+  "output": "assets/models/characters/camp-capsarius.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 471020,
+    "gzipBytes": 332802,
+    "sha256": "18de2d4d04ee73dbe3f08f71f34e1a7b847d8d31e1e6af1d3754490f4c8bcd85"
+  },
+  "after": {
+    "bytes": 411120,
+    "gzipBytes": 390355,
+    "sha256": "82af520f9622c96cec8be7d5720cc4d3821235276166a652fc3a533c70dcb31e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13731,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7830
+      },
+      "bytes": 17021,
+      "psnr": 41.736
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 50152
+      },
+      "bytes": 134643,
+      "psnr": 38.197
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23818
+      },
+      "bytes": 41501,
+      "psnr": 34.712
+    }
+  ]
+}

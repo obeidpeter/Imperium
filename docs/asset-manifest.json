@@ -5354,7 +5354,7 @@
           "previousSha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b"
         }
       },
-      "usage": "Roman line infantry, from Lucan and the oath's recruits to the legions at the accession; the game adds the shield, sword, cloak and crests.",
+      "usage": "Roman line infantry, from the oath's recruits to the legions at the accession; the named men wear their own bodies (body-cast-*). The game adds the shield, sword, cloak and crests.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
@@ -5411,7 +5411,7 @@
         }
       },
       "usage": "Roman archers, and the bowmen of the protagonist's company in their own kit; the game adds the bow, arrows and quiver.",
-      "loading": "Deferred local GLB in the offline groups of Chapters III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI, VII, VIII, IX, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 436028,
@@ -6082,7 +6082,7 @@
           "previousSha256": "efdb2701c1d3296c28177369a3ad60434395fd3ae30eb08986260293e68e4fc3"
         }
       },
-      "usage": "Civilians, the wounded and escorts on the march; the game adds the travel bundle and sling.",
+      "usage": "Civilians, the wounded and escorts on the march, and the camp's people who have no body of their own role; the game adds the travel bundle to escorts on the march and the sling to the wounded.",
       "loading": "Deferred civilian body shared by all twelve chapter packs. Peaceful service roles, civic residents and protected escorts use their existing gameplay identities.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
@@ -9917,8 +9917,8 @@
       "loading": "Deferred local GLB in the offline groups of Chapters VII, IX and XII only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for Roman riders (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 434664,
-        "sha256": "5c43be3128fb1fe92c4277422761fe188b4498ec6df6808f57ca57847d9023c8",
+        "bytes": 433300,
+        "sha256": "a74e893ce45fcea9919b9f9a8fa73d545af4de2b3eca174cdf1a0ccae4bdf49e",
         "triangles": 10800,
         "nearTriangles": 9000,
         "overviewTriangles": 1800,
@@ -10368,7 +10368,7 @@
         }
       },
       "usage": "Brennus, the explorator of the Chapter III camp, in a scout's plain wool clothes: the game adds his cloak.",
-      "loading": "Deferred local GLB in the offline groups of Chapters III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapter III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 659252,
@@ -10481,7 +10481,7 @@
         }
       },
       "usage": "Crispus, the young tribune and the protagonist's rival, in the Chapter III camp, in an officer's tunic and belt: the game adds his cloak. In the chamber he keeps the procedural toga whose trims name his bloc.",
-      "loading": "Deferred local GLB in the offline groups of Chapters III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapter III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 662200,
@@ -10493,6 +10493,322 @@
           "width": 0.5886,
           "height": 1.7757,
           "depth": 0.3676
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-camp-clerk",
+      "path": "assets/models/characters/camp-clerk.glb",
+      "subject": "Generated character body: a Roman army clerk of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "055018e0-8912-4736-be7e-f74cc2938a1f",
+        "generatedAt": "2026-10-28T20:59:05.093Z",
+        "rigTaskId": "f2bbc6b7-ca6a-4319-a609-cd04c57b2192",
+        "riggedAt": "2026-10-28T21:01:35.952Z",
+        "prompt": "art-source/models/requests/char-camp-clerk.json",
+        "rawBytes": 45075628,
+        "rawSha256": "3c9f6bc8954fe9399ab6fb44a095921d302ee591f0911983fc356e65e22b58aa",
+        "riggedBytes": 60304504,
+        "riggedSha256": "4eef5f41eef35ff45907aefa097cd43c32d22914aba1e44403fb7be623656be7",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-camp-clerk.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-camp-clerk-compress.json"
+        }
+      },
+      "usage": "The camp's clerks and stewards (the duty clerk, Clerk Tertius, the local steward and the petitions clerk, the fortress engineer, the evacuation officer) and its quartermasters, chosen by their camp role (actor-kit.js staff).",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 395512,
+        "sha256": "8871b6d6e8e4c703038060b0e808cf0f6d93a86062a68faaf646d1bb8456b25e",
+        "triangles": 13674,
+        "nearTriangles": 11174,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6105,
+          "height": 1.753,
+          "depth": 0.3708
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-camp-capsarius",
+      "path": "assets/models/characters/camp-capsarius.glb",
+      "subject": "Generated character body: a Roman army medical orderly (capsarius) of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4ba61fec-b221-460e-93c0-4072c5490722",
+        "generatedAt": "2026-10-28T20:58:49.428Z",
+        "rigTaskId": "72b45b3e-b9df-45a9-949b-5305866deb5e",
+        "riggedAt": "2026-10-28T21:02:28.135Z",
+        "prompt": "art-source/models/requests/char-camp-capsarius.json",
+        "rawBytes": 44601328,
+        "rawSha256": "d7ad0cac16a2424485937bc5521f2a500a18b3300553a5ac8c489b804c3b9bd6",
+        "riggedBytes": 59614420,
+        "riggedSha256": "6dff1876ad70eb35098f71bba5c71e49d791914c45b9f391d5a2eb279b0fe168",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-camp-capsarius.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-camp-capsarius-compress.json"
+        }
+      },
+      "usage": "Capsarius Didius and the camp's orderlies, chosen by their camp role.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 411120,
+        "sha256": "82af520f9622c96cec8be7d5720cc4d3821235276166a652fc3a533c70dcb31e",
+        "triangles": 13731,
+        "nearTriangles": 11231,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5989,
+          "height": 1.7564,
+          "depth": 0.4006
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-camp-sutler",
+      "path": "assets/models/characters/camp-sutler.glb",
+      "subject": "Generated character body: a provincial woman trader of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c9e83ec4-14ba-4112-a34c-64a443a5f59b",
+        "generatedAt": "2026-10-28T20:59:45.106Z",
+        "rigTaskId": "d6167b0f-9eff-40fd-8f7c-3e3822646a19",
+        "riggedAt": "2026-10-28T21:02:44.301Z",
+        "prompt": "art-source/models/requests/char-camp-sutler.json",
+        "rawBytes": 44779164,
+        "rawSha256": "d537a00e7782a97f62d9f2ba7343fd801bffd66719590434b57a98b6b4da0d59",
+        "riggedBytes": 59666084,
+        "riggedSha256": "d86278662e5c0e634a4ab272e6e8090a02216276fffd8a30aaa9318369d9cb0a",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-camp-sutler.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-camp-sutler-compress.json"
+        }
+      },
+      "usage": "Syra the sutler, who trades in the canabae outside the camp, chosen by her camp role; drawn as a man until release 6.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II and III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 410352,
+        "sha256": "85a87eda3bf370bf5055dc0c3639380a78082e35b9650b41f8b31e00755619a0",
+        "triangles": 13750,
+        "nearTriangles": 11250,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6038,
+          "height": 1.7735,
+          "depth": 0.3998
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-cavalry",
+      "path": "assets/models/characters/roman-cavalry.glb",
+      "subject": "Generated character body: a Roman cavalryman of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "6f7475c7-3a1e-413c-b7e5-937f0a99dfae",
+        "generatedAt": "2026-10-28T20:59:04.401Z",
+        "rigTaskId": "d5dff328-7898-42ee-aa80-1cbf502a5a5a",
+        "riggedAt": "2026-10-28T21:01:46.257Z",
+        "prompt": "art-source/models/requests/char-roman-cavalry.json",
+        "rawBytes": 46573800,
+        "rawSha256": "b5e163a9002dda931392c0ec99893f6b9177dbf2922859909d08018aeeb28676",
+        "riggedBytes": 61747464,
+        "riggedSha256": "0c1be693b9dbbf3e5c12b13958f45a062c9cd03d8e334be6adf52204b8a14e4e",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-cavalry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-roman-cavalry-compress.json"
+        }
+      },
+      "usage": "Mounted Roman riders: the game adds the shield, weapons and cloak and seats him on his horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, IX and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 417964,
+        "sha256": "18c5abc35e3221c0a7a7f4c3990afc10ca8e337727323d2c826da80b4b2b7303",
+        "triangles": 13824,
+        "nearTriangles": 11325,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6054,
+          "height": 1.7662,
+          "depth": 0.3848
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "horse-northern",
+      "path": "assets/models/horses/horse-northern.glb",
+      "subject": "Generated horse: a Gothic warrior's horse of the mid-3rd century AD, a stocky dun with a dark mane and a plain bridle",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), mesh only; bound to the game's horse skeleton on its own legs' rest pose in Blender 5.2.2 LTS by scripts/assets/bind-horse.py, its colour, normals and roughness baked from the full-detail mesh; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3175b256-3e46-4153-9293-07005c18e4d7",
+        "generatedAt": "2026-10-28T20:58:58.708Z",
+        "prompt": "art-source/models/requests/horse-northern.json",
+        "rawBytes": 45589836,
+        "rawSha256": "4c252622d068ccea8876ca87b4cf7a1892c4639d0acf84865485055ac9c17f07",
+        "processing": {
+          "triangles": 9000,
+          "overviewTriangles": 1800,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/horse-northern.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/horse-northern-compress.json"
+        }
+      },
+      "usage": "The horses of Gothic riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VII only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 421324,
+        "sha256": "dbb37fb8d6109946c382530b00d43695e6042e0c4cfa0c618c498cead860a0b2",
+        "triangles": 10800,
+        "nearTriangles": 9000,
+        "overviewTriangles": 1800,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6483,
+          "height": 2.1383,
+          "depth": 2.4123
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "horse-eastern",
+      "path": "assets/models/horses/horse-eastern.glb",
+      "subject": "Generated horse: an armoured horse of the Sasanian and Palmyrene heavy cavalry of the mid-3rd century AD, grey under a trapper of iron scales",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), mesh only; bound to the game's horse skeleton on its own legs' rest pose in Blender 5.2.2 LTS by scripts/assets/bind-horse.py, its colour, normals and roughness baked from the full-detail mesh; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e082a6db-94f6-46a1-a3c0-6d73f031ad61",
+        "generatedAt": "2026-10-28T20:59:25.280Z",
+        "prompt": "art-source/models/requests/horse-eastern.json",
+        "rawBytes": 46332944,
+        "rawSha256": "49bbd1652214105cba657c4685e61cbc2c4178c3bda0ae34c4f9ebbbffe624af",
+        "processing": {
+          "triangles": 9000,
+          "overviewTriangles": 1800,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "sharpAngle": 60,
+          "tailAbove": 0.55,
+          "tailVerticesTrimmed": 28
+        },
+        "report": "art-source/models/reports/horse-eastern.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/horse-eastern-compress.json"
+        }
+      },
+      "usage": "The horses of Persian and Palmyrene riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent.",
+      "loading": "Deferred local GLB in the offline groups of Chapters V, VI and IX only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 550740,
+        "sha256": "05729967f5a23e10a0a14e863b089770d4140d261dac46533e38fe91c78811b2",
+        "triangles": 10859,
+        "nearTriangles": 8929,
+        "overviewTriangles": 1930,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5463,
+          "height": 1.9956,
+          "depth": 2.138
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -10563,7 +10879,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T21:09:44.779Z",
+  "updatedAt": "2026-10-28T22:16:21.718Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -10585,12 +10901,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 67,
+    "models": 73,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 41437933,
-  "totalModelBytes": 26252383,
+  "totalBundledAssetBytes": 44043581,
+  "totalModelBytes": 28858031,
   "derivedGeometryBytes": 47428
 }

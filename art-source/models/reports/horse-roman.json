@@ -10,7 +10,7 @@
   "output": {
     "path": "assets/models/horses/horse-roman.glb (before compression)",
     "bytes": 507456,
-    "sha256": "eefae88bc6c719a04678f6e6b84e622ca8a991be663132e5ba14280669254f77",
+    "sha256": "0adbfbc9a09f58a953f41b13d61043dc7315d4193b666dedd1a653a3b763f045",
     "triangles": 9000,
     "overviewTriangles": 1800,
     "unquantizedBytes": 760216,
@@ -385,6 +385,16 @@
       -0.92
     ],
     "tailVertices": 86,
+    "pieces": {
+      "legs": {
+        "fore-right": 243,
+        "fore-left": 236,
+        "hind-right": 243,
+        "hind-left": 241
+      },
+      "freeTail": 189,
+      "freeTailBelow": 1
+    },
     "joints": {
       "horse": [
         0,
@@ -484,15 +494,15 @@
     },
     "verticesByJoint": {
       "horse-neck": 1269,
-      "hind-left-knee": 115,
-      "horse-tail": 300,
-      "hind-right-knee": 112,
-      "horse-body": 1790,
-      "hind-left-leg": 80,
+      "hind-left-knee": 133,
+      "horse-tail": 299,
+      "hind-right-knee": 132,
+      "horse-body": 1724,
+      "hind-left-leg": 99,
       "fore-left-leg": 92,
       "fore-left-fetlock": 91,
       "hind-right-fetlock": 83,
-      "hind-right-leg": 74,
+      "hind-right-leg": 87,
       "hind-left-fetlock": 81,
       "fore-right-knee": 112,
       "fore-right-fetlock": 89,

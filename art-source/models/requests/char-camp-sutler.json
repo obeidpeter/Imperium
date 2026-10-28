@@ -1,7 +1,11 @@
 {
   "id": "char-camp-sutler",
-  "status": "generated: awaiting review",
-  "chapters": [],
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3
+  ],
   "use": "Syra the sutler, who trades in the canabae outside the camp: her own face, hair and build in a provincial woman's long dress and headscarf.",
   "generator": {
     "service": "Tripo",

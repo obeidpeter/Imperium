@@ -37,6 +37,7 @@ import os
 import sys
 
 import bpy  # Blender's Python module provides mathutils once bpy is loaded.
+import bmesh
 from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -108,6 +109,7 @@ def parse_args():
     p.add_argument('--detail-texture', type=int, default=512, help='longest edge of the normal and roughness/metal maps in pixels')
     p.add_argument('--quality', type=int, default=80, help='WebP quality, 1-100')
     p.add_argument('--sharp-angle', type=float, default=60.0, help='edges sharper than this stay hard, in degrees')
+    p.add_argument('--tail-above', type=float, help='keep the tail only above this height, in metres (a tail hanging near the ground sweeps into it as it swings; war horses\' tails were often tied up)')
     a = p.parse_args(argv)
     if a.triangles < 500 or a.overview_triangles < 100 or not 16 <= a.texture <= 8192 or not 16 <= a.detail_texture <= 8192 or not 1 <= a.quality <= 100:
         p.error('budgets out of range')
@@ -222,10 +224,13 @@ def smooth(t):
     return t * t * (3 - 2 * t)
 
 
-def belly_line(co):
-    """The underline: the lowest point of the body at the middle across, along its length."""
+def belly_line(co, tail=()):
+    """The underline: the lowest point of the body at the middle across, along its length,
+    leaving out a tail that hangs free (leg_pieces) between the hocks."""
     import numpy as np
-    middle = co[np.abs(co[:, 0]) < 0.07]
+    body = np.ones(len(co), dtype=bool)
+    body[list(tail)] = False
+    middle = co[body & (np.abs(co[:, 0]) < 0.07)]
     edges = np.linspace(co[:, 1].min(), co[:, 1].max(), 41)
     line = []
     for a, b in zip(edges, edges[1:]):
@@ -361,12 +366,67 @@ def find_tail(o):
     return {'root': root, 'rear': rear, 'vertices': int(len(strand))}
 
 
-def weights(o, lines, legs, belly, tail):
+# Below this height (metres) a leg is all there is.
+LOW_LEG = 0.6
+
+
+def low_pieces(o, height):
+    """The connected pieces of what lies below a height, by the faces wholly below it: a
+    list of sets of vertex indices."""
+    co = coords(o)
+    parent = list(range(len(co)))
+
+    def find(a):
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+    for poly in o.data.polygons:
+        corners = list(poly.vertices)
+        if all(co[v][2] < height for v in corners):
+            first = find(corners[0])
+            for v in corners[1:]:
+                parent[find(v)] = first
+    found = {}
+    for i in range(len(co)):
+        if co[i][2] < height:
+            found.setdefault(find(i), set()).add(i)
+    return list(found.values())
+
+
+def leg_pieces(o, legs):
+    """What belongs to each leg and to a free-hanging tail, by how the mesh is joined: below
+    LOW_LEG each leg stands apart, the piece its sole is in; and a tail that hangs free
+    between the hind legs is a piece of its own at the middle across, from the highest height
+    at which it does. A leg whose piece holds another's sole is left to weights()' measures."""
+    import numpy as np
+    co = coords(o)
+    mid = (co[:, 1].max() + co[:, 1].min()) / 2
+    soles = {leg: int(np.argmin(np.linalg.norm(co - np.array(gltf_to_blender(j['sole'])), axis=1))) for leg, j in legs.items()}
+    owner = {}
+    for piece in low_pieces(o, LOW_LEG):
+        held = [leg for leg, v in soles.items() if v in piece]
+        if len(held) == 1:
+            owner.update({v: held[0] for v in piece})
+    tail, top = set(), None
+    for height in [round(1.0 - 0.05 * i, 2) for i in range(15)]:
+        for piece in low_pieces(o, height):
+            index = np.array(sorted(piece))
+            if (len(piece) >= 30 and not any(v in piece for v in soles.values()) and (co[index, 1] > mid).all()
+                    and np.abs(co[index, 0]).mean() < 0.06):
+                tail, top = piece, height
+                break
+        if tail:
+            break
+    return {'legs': owner, 'tail': tail, 'tailTop': top}
+
+
+def weights(o, lines, legs, belly, tail, pieces):
     """Every vertex's joints and weights by where it lies. A leg takes what lies within its
     own half-width of its line, below the belly: the hoof, the cannon and pastern below the
-    knee, and above it the forearm or gaskin, blending into the body. The head and ears ride
-    with the neck: the game turns neither on its own, and this horse's are not where its
-    joints are."""
+    knee, and above it the forearm or gaskin, blending into the body; and all of its own piece
+    below LOW_LEG (leg_pieces). The head and ears ride with the neck: the game turns neither
+    on its own, and this horse's are not where its joints are."""
     import numpy as np
     co = coords(o)
     mid = (co[:, 1].max() + co[:, 1].min()) / 2
@@ -374,11 +434,11 @@ def weights(o, lines, legs, belly, tail):
     marks = {leg: leg_marks(j) for leg, j in legs.items()}
     neck_from = legs['fore-right']['sole'][2] - 0.15
     result = []
-    for x, y, z in co:
+    for i, (x, y, z) in enumerate(co):
         w = {}
         v = np.array((x, z, -y))
         forward = -y  # glTF z
-        leg = ('fore' if y < mid else 'hind') + ('-right' if x > 0 else '-left')
+        leg = pieces['legs'].get(i) or ('fore' if y < mid else 'hind') + ('-right' if x > 0 else '-left')
         distance, along_line = nearest_on_leg(v, legs[leg])
         share = (1 - smooth((distance - line_at(lines[leg], z)[2] - 0.015) / 0.05)) * smooth((belly_at(belly, y) + 0.05 - z) / 0.2)
         # The tail: near the middle across in the last quarter metre, below the root, and
@@ -387,9 +447,24 @@ def weights(o, lines, legs, belly, tail):
         clear = min(nearest_on_leg(v, legs[h])[0] - line_at(lines[h], z)[2] for h in ('hind-right', 'hind-left'))
         hanging = ((1 - smooth((abs(x) - 0.11) / 0.03)) * (1 - smooth((forward - tail['rear'] - 0.25) / 0.04))
                    * (1 - smooth((z - root[1]) / 0.05)) * smooth((clear + 0.01) / 0.04))
+        if pieces['tail']:
+            # Where it hangs free the tail is all tail, however near a hock it passes, and
+            # nothing else is.
+            free = smooth((pieces['tailTop'] - z) / 0.08)
+            if i in pieces['tail']:
+                hanging, share = max(hanging, free), share * (1 - free)
+            else:
+                hanging *= 1 - free
+        if i in pieces['legs']:
+            # Below the hocks and the knees nothing but its own leg is there to move: all of
+            # its piece, though its measured width (the hoof's toe) may fall short.
+            hanging, share = 0.0, max(share, smooth((LOW_LEG - z) / 0.1))
+        elif i not in pieces['tail']:
+            # A leg whose piece is joined to another's: what lies within a hand of its line.
+            share = max(share, smooth((LOW_LEG - z) / 0.1) * (1 - smooth((distance - 0.10) / 0.03)))
         # The middle line between a pair of legs (chest, belly, groin) stays with the body,
         # so the legs do not pull it apart as they swing.
-        share *= (1 - hanging) * smooth((abs(x) - 0.03) / 0.04)
+        share *= (1 - hanging) * max(smooth((abs(x) - 0.03) / 0.04), smooth((LOW_LEG - 0.05 - z) / 0.1))
         if share > 0:
             coronet, knee = marks[leg]
             lower = smooth((knee + 0.04 - along_line) / 0.08)
@@ -408,6 +483,27 @@ def weights(o, lines, legs, belly, tail):
         total = sum(value for _, value in top) or 1
         result.append([(j, value / total) for j, value in top] or [('horse-body', 1.0)])
     return result
+
+
+def trim_tail(o, folded, above, tail):
+    """Remove the free-hanging tail (leg_pieces) below a height, and close the cut: a tail
+    hanging near the ground sweeps into it when the game swings it. Only the tail's own
+    piece goes, so the cut is the tail's alone. Returns the kept vertices' weights and how
+    many vertices went."""
+    co = coords(o)
+    gone = {i for i in tail if co[i][2] < above}
+    if not gone:
+        return folded, 0
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bm.verts.ensure_lookup_table()
+    kept = {bm.verts[i] for i in tail} - {bm.verts[i] for i in gone}
+    bmesh.ops.delete(bm, geom=[bm.verts[i] for i in sorted(gone)], context='VERTS')
+    bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary and all(v in kept for v in e.verts)], sides=0)
+    bm.to_mesh(o.data)
+    bm.free()
+    o.data.update()
+    return [ws for i, ws in enumerate(folded) if i not in gone], len(gone)
 
 
 def assign(o, folded, joints):
@@ -471,8 +567,14 @@ def main():
     legs = anatomy(lines)
     tail = find_tail(horse)
     joints = horse_joints(legs, tail['root'])
-    folded = weights(horse, lines, legs, belly_line(coords(horse)), tail)
+    pieces = leg_pieces(horse, legs)
+    if a.tail_above is not None and not pieces['tail']:
+        sys.exit('--tail-above: no tail hangs free between the hind legs')
+    folded = weights(horse, lines, legs, belly_line(coords(horse), pieces['tail']), tail, pieces)
     assign(horse, folded, joints)
+    trimmed = 0
+    if a.tail_above is not None:
+        folded, trimmed = trim_tail(horse, folded, a.tail_above, pieces['tail'])
     overview = horse.copy()
     overview.data = horse.data.copy()
     overview.name = overview.data.name = 'horse-coat-overview'
@@ -502,11 +604,14 @@ def main():
         'output': {'path': shown(output), 'bytes': os.path.getsize(output), 'sha256': digest(output),
                    'triangles': triangles([horse]), 'overviewTriangles': triangles([overview])},
         'settings': {'triangles': a.triangles, 'overviewTriangles': a.overview_triangles, 'texture': a.texture,
-                     'detailTexture': a.detail_texture, 'webpQuality': a.quality, 'sharpAngle': a.sharp_angle},
+                     'detailTexture': a.detail_texture, 'webpQuality': a.quality, 'sharpAngle': a.sharp_angle,
+                     **({'tailAbove': a.tail_above, 'tailVerticesTrimmed': trimmed} if a.tail_above is not None else {})},
         'fit': {'turnDegrees': turn, 'scale': round(scale, 5), **stance, 'legSpacing': round(2 * leg_z, 4), 'legZ': round(leg_z, 4), 'bakedFromFullDetail': True,
                 'legs': legs,
                 'legLines': {leg: [[round(v, 4) for v in sample] for sample in line[::4]] for leg, line in lines.items()},
                 'tailRoot': [round(v, 4) for v in tail['root']], 'tailVertices': tail['vertices'],
+                'pieces': {'legs': {leg: sum(1 for v in pieces['legs'].values() if v == leg) for leg in LEGS},
+                           'freeTail': len(pieces['tail']), 'freeTailBelow': pieces['tailTop']},
                 'joints': {name: list(p) for name, p in joints.items()},
                 'verticesByJoint': counts, 'overviewVertexColours': coloured},
         'bounds': character.bounds([horse]),

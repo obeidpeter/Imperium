@@ -113,6 +113,20 @@ test('a soldier in his own kit wears the body closest to it: the recruit\'s tuni
   assert.equal(hero(['tunic','bracae','caligae','bow','quiver'],4),'roman-recruit','The protagonist with a bow is still himself');
 });
 
+test('the camp\'s people wear their role\'s body, and only escorts on the march carry a traveller\'s bundle', async () => {
+  const person=(role,name,chapter=2)=>({id:role,name,side:'neutral',role,chapter});
+  const body=unit=>actorBodyId(actorKit(unit,{chapter:unit.chapter??2}));
+  assert.equal(body(person('clerk','The duty clerk')),'camp-clerk');assert.equal(body(person('quartermaster','Quartermaster Aper')),'camp-clerk');
+  assert.equal(body(person('capsarius','Capsarius Didius')),'camp-capsarius');assert.equal(body(person('orderly','Orderly Mamertus',1)),'camp-capsarius');
+  assert.equal(body(person('trader','Syra the sutler',1)),'camp-sutler');
+  assert.equal(body(person('sentry','The gate sentry')),'civilian-escort','A role without a body of its own keeps the civilian dress');
+  assert.equal(body({id:'escort-1',name:'Refugee family',side:'neutral',role:'escort'}),'civilian-escort');
+  assert.equal(body({id:'rider',name:'Roman horse',side:'ally',role:'cavalry',chapter:7}),'roman-cavalry');
+  const bundle=unit=>{const a=createActor(unit,{chapter:unit.chapter??2}),found=!!a.group.getObjectByName('travel-bundle');a.dispose();return found;};
+  assert.equal(bundle(person('clerk','The duty clerk')),false,'The camp\'s staff are at work, not on the road');
+  assert.equal(bundle({id:'escort-1',name:'Refugee family',side:'ally',role:'escort'}),true);
+});
+
 test('persistent identities keep a fitted helmet over the shared head; anonymous bodies retain their baked headwear', async () => {
   const hero=equipment=>({id:'hero',name:'Aurelius',side:'player',role:'infantry',trained:true,equipment});
   const pieces=g=>{const found={};g.traverse(o=>{if(o.isBone&&/-helmet$|arming-cap$/.test(o.name))found[o.name]=o;});return found;};

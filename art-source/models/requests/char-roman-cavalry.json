@@ -1,7 +1,11 @@
 {
   "id": "char-roman-cavalry",
-  "status": "generated: awaiting review",
-  "chapters": [],
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    9,
+    12
+  ],
   "use": "The Roman cavalryman: mounted Roman riders wear his mail and helmet; the game adds his shield, weapons and cloak and seats him on his horse.",
   "generator": {
     "service": "Tripo",

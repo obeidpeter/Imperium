@@ -1,6 +1,6 @@
 {
   "id": "horse-northern",
-  "status": "generated: awaiting review",
+  "status": "bound on its own rest pose, quantized and compressed: shipped",
   "chapters": [
     7
   ],
@@ -22,9 +22,10 @@
     "overviewTriangles": 1800,
     "texture": 1024,
     "bytes": 900000,
-    "heightMetres": 1.85,
-    "minHeight": 1.6,
-    "maxHeight": 2.1
+    "heightMetres": 1.95,
+    "minHeight": 1.7,
+    "maxHeight": 2.2,
+    "note": "The binder fits every horse to the game's horse skeleton, so its size follows the skeleton rather than the prompt's smaller breed."
   },
   "provenance": {
     "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",

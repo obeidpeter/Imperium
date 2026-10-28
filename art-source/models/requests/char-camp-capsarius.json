@@ -1,7 +1,20 @@
 {
   "id": "char-camp-capsarius",
-  "status": "generated: awaiting review",
-  "chapters": [],
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
   "use": "Capsarius Didius, the camp's medical orderly: his own face, hair and build in a tunic, with the case of bandages his title names.",
   "generator": {
     "service": "Tripo",

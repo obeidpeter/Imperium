@@ -1,6 +1,6 @@
 {
   "id": "horse-eastern",
-  "status": "generated: awaiting review",
+  "status": "bound on its own rest pose, quantized and compressed: shipped",
   "chapters": [
     5,
     6,
@@ -21,12 +21,20 @@
   },
   "budget": {
     "triangles": 9000,
-    "overviewTriangles": 1800,
+    "overviewTriangles": 2000,
     "texture": 1024,
     "bytes": 900000,
     "heightMetres": 2.05,
     "minHeight": 1.8,
-    "maxHeight": 2.3
+    "maxHeight": 2.3,
+    "note": "The far mesh keeps 1,930 triangles: the scale trapper's many loose pieces stop the decimation short of 1,800."
+  },
+  "binding": {
+    "options": [
+      "--tail-above",
+      "0.55"
+    ],
+    "note": "Its generated tail hangs to the ground. The binder cuts it where it hangs free between the hocks, at 0.55 m, and closes the cut: whole, it swept the ground and the legs as it swung in a gallop. Sasanian reliefs show war horses with their tails tied up short."
   },
   "provenance": {
     "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",

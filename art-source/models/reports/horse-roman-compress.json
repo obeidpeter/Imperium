@@ -1,5 +1,5 @@
 {
-  "input": "assets/models/horses/horse-roman.glb (before compression)",
+  "input": "assets/models/horses/horse-roman.glb",
   "output": "assets/models/horses/horse-roman.glb",
   "encoder": {
     "basisu": "v1.16.4",
@@ -10,13 +10,13 @@
   },
   "before": {
     "bytes": 507456,
-    "gzipBytes": 325967,
-    "sha256": "eefae88bc6c719a04678f6e6b84e622ca8a991be663132e5ba14280669254f77"
+    "gzipBytes": 325450,
+    "sha256": "0adbfbc9a09f58a953f41b13d61043dc7315d4193b666dedd1a653a3b763f045"
   },
   "after": {
-    "bytes": 434664,
-    "gzipBytes": 414502,
-    "sha256": "5c43be3128fb1fe92c4277422761fe188b4498ec6df6808f57ca57847d9023c8"
+    "bytes": 433300,
+    "gzipBytes": 413320,
+    "sha256": "a74e893ce45fcea9919b9f9a8fa73d545af4de2b3eca174cdf1a0ccae4bdf49e"
   },
   "geometryUnchanged": true,
   "triangles": 10800,

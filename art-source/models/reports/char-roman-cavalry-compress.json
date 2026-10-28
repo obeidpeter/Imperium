@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-cavalry.glb",
+  "output": "assets/models/characters/roman-cavalry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 543556,
+    "gzipBytes": 414028,
+    "sha256": "e93dc91ab24b26584c60e95577f942182d3cef00eab1f006799fc0bbdce27e0c"
+  },
+  "after": {
+    "bytes": 417964,
+    "gzipBytes": 396687,
+    "sha256": "18c5abc35e3221c0a7a7f4c3990afc10ca8e337727323d2c826da80b4b2b7303"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13824,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26568
+      },
+      "bytes": 29966,
+      "psnr": 35.449
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 113866
+      },
+      "bytes": 134733,
+      "psnr": 29.859
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23768
+      },
+      "bytes": 42322,
+      "psnr": 31.689
+    }
+  ]
+}

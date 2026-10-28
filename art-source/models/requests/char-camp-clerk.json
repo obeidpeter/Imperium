@@ -1,7 +1,20 @@
 {
   "id": "char-camp-clerk",
-  "status": "generated: awaiting review",
-  "chapters": [],
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
   "use": "The camp's clerks and stewards (the duty clerk, Clerk Tertius, the local steward and the petitions clerk, the fortress engineer and the evacuation officer): his own face, hair and build in a clerk's plain tunic.",
   "generator": {
     "service": "Tripo",

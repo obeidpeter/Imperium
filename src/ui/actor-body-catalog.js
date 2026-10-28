@@ -36,6 +36,11 @@ export const ACTOR_BODIES=Object.freeze({
   'palmyrene-infantry':body([{faction:'Palmyrene',role:'raider'}],[9]),
   'palmyrene-archer':body([{faction:'Palmyrene',role:'archer'}],[9]),
   'palmyrene-cavalry':body([{faction:'Palmyrene',role:'cavalry'}],[9]),
+  'roman-cavalry':body([{faction:'Roman',role:'cavalry'}],[7,9,12]),
+  // The camp's staff by their camp role (actor-kit.js), ahead of the escorts' civilian dress.
+  'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
+  'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
+  'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3]),
   'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // Named men in their own generated bodies, the shared head wrapped onto each man's own
   // generated head (scripts/assets/wrap-cast-head.py). Chosen by who he is, never by kit.
@@ -84,7 +89,10 @@ export const chapterBodies=chapter=>Object.keys(ACTOR_BODIES).filter(id=>ACTOR_B
 // side's horses, the code-built saddle on its back; a horse without one, or whose coat fails
 // to load, keeps its procedural look (tests/horse-bodies.test.mjs checks the chapters).
 export const HORSE_BODIES=Object.freeze({
-  'horse-roman':Object.freeze({fits:Object.freeze(['Roman']),chapters:Object.freeze([7,9,12])})
+  'horse-roman':Object.freeze({fits:Object.freeze(['Roman']),chapters:Object.freeze([7,9,12])}),
+  'horse-northern':Object.freeze({fits:Object.freeze(['Gothic']),chapters:Object.freeze([7])}),
+  // The scale-armoured horse of the Persian and Palmyrene heavy cavalry.
+  'horse-eastern':Object.freeze({fits:Object.freeze(['Persian','Palmyrene']),chapters:Object.freeze([5,6,9])})
 });
 export const horseBodyUrl=id=>`assets/models/horses/${id}.glb`;
 /** The generated horse a mounted kit (actor-kit.js) rides, or null for the code-built horse. */

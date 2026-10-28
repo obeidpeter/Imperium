@@ -382,7 +382,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
     let gilt=null;
     for(const band of trimBands(unit.bloc))mesh(toga,drape(band.rows?rows.slice(band.rows[0],band.rows[1]+1):rows,{from:band.from,to:band.to,offset:band.offset??.009}),band.gilt?(gilt??=material(0xc9a64a,{...clothSurface,side:T.DoubleSide})):stripe);
     const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
-  }else if(escort){
+  }else if(escort&&!kit.staff){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
     for(const x of [-.10,.10])strip(torso,leather,[[x,-.02,.13],[x,.43,.14],[x,.48,-.13],[x,.06,-.27]],.012);
     if(kit.wounded){const wrap=part(torso,'wounded-arm-sling');mesh(wrap,drape([[.32,-.15,.045,.17],[.18,0,.21,.24],[.13,.05,.22,.21]]),white);}
