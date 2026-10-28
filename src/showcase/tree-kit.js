@@ -20,7 +20,9 @@ export const treeKitUrl=chapter=>{const kit=treeKitFor(chapter);return kit?world
 // The kit a scene's world plants from: none indoors, where no tree stands.
 export const sceneTreeKitUrl=(encounter,chapter)=>{const profile=getSceneProfile(encounter,{chapter});return profile.civic?null:treeKitUrl(profile.chapter);};
 // A tree shows its near level within this distance (metres), its mid level within the second.
-export const TREE_KIT_LEVELS=Object.freeze({near:30,mid:70});
+// A field plants only a dozen or so trees, so the mid level reaches far: the two crossed
+// cards read as an X from the high cameras, and are left to the skyline.
+export const TREE_KIT_LEVELS=Object.freeze({near:30,mid:150});
 export const TREE_KIT_HEIGHT=.5;
 const LEVELS=['','_mid','_far'],MOVE=3;
 
