@@ -10,7 +10,7 @@ The fifth of ten releases: the regions' trees, stones and ground cover on Balanc
 - **Stones, modelled.** The field's boulders, outcrops, slabs and river stones are twelve generated rocks, four for each region, each fitted to the ground the old drawn stone covered.
 - **Ground cover round the view.** Grass grows thicker where you look, with flowers, low scrub, reeds by the water and, in the Danube provinces and Italy, rows of grain beyond the field. On the board it stays short and sparse, so its cells read as before.
 - **Water.** Marshes show their depth, muddy at the rim and dark in the pools, with scum at the edge instead of stripes; the distant river foams along its banks; and the ground beside the board's water is wet. On Balanced and High, mist lies over water at dawn, at night and in rain or mist.
-- **Downloads.** The six kits add 2.45 MB to the complete download and 0.62–1.04 MB to each chapter's pack in 3D, which holds only its own region's (Chapter I in 3D: 11.15 MB; the largest chapter, VIII with its 2D art: 15.80 MB; the complete campaign: 34.37 MB).
+- **Downloads.** The six kits add 2.46 MB to the complete download and 0.61–1.04 MB to each chapter's pack in 3D, which holds only its own region's (Chapter I in 3D: 11.16 MB; the largest chapter, VIII with its 2D art: 15.82 MB; the complete campaign: 34.40 MB).
 
 ### After release 4: the mudbrick re-baked
 
