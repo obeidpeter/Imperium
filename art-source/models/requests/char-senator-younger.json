@@ -1,7 +1,13 @@
 {
   "id": "char-senator-younger",
-  "status": "generated: awaiting review",
-  "chapters": [],
+  "status": "bound with its bloc band, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    8,
+    10,
+    11,
+    12
+  ],
   "use": "A senator of the chamber, a younger member: the game draws his bloc's colour and trim along the band of his toga.",
   "generator": {
     "service": "Tripo",

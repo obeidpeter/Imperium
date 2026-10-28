@@ -32,7 +32,7 @@ import {updateActorExpressionMorphs} from './actor-expression-mesh.js';
 import {simplifyActorOverview} from './actor-overview.js';
 import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
 import {ACTOR_BODIES,actorBodyId,horseBodyId} from '../ui/actor-body-catalog.js';
-import {actorBody,warmActorBody,mountActorBody,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
+import {actorBody,warmActorBody,mountActorBody,blocTrimGeometry,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
 import {IDENTITY_HEAD_BODY,usesPersistentHead} from './generated-identity.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
@@ -117,7 +117,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const p={...DEFAULTS,...factionColors[kit.faction],skin:identity.skin,...(kit.officer?{cloth:0xb8b097,shield:0x7b3034}:{}),...(civic?{cloth:unit.id==='hero'?0xe4dbc3:civicCloth[unit.bloc]??0xc2bba4}:{}),...(trainer?{cloth:0xb8aa86,hair:0x594739,shield:0x875c41,skin:0xb98364}:{}),...wardrobe.palette,...(kit.linen?{cloth:0xe1d8bc}:{}),...options.palette};
   if(kit.appearance&&!civic){p.cloth=[0xd1c6a8,0x994b42,0x456c88,0xbc9750][kit.appearance.tunic]??p.cloth;
     wardrobe.cloak=[0x665442,0x45494a,0x813c37,0x4b624a][kit.appearance.cloak]??wardrobe.cloak;}
-  const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
+  const geometries=new Set(),materials=new Set(),skeletons=new Set(),clothRigs=[],blocTrims=[],surfaces=new Map(),group=reuseGroup??new T.Group(),root=new T.Group();group.add(root);group.scale.y=1.05;
   group.name=`actor:${unit.id??role}`;group.userData.actor={unitId:unit.id,role,faction:kit.faction,veteranTier:kit.veteranTier,height:mounted?2.68:kit.officer?2.02:kit.eastern?1.97:1.86,forward:'+Z',mounted,armor:kit.armor,helmet:kit.helmet,equipment:kit.equipment??null,weapon:kit.weapon??(spear?'spear':'spatha'),identity:identity.key,age:identity.age,model:body?`generated body ${body.id}`:anatomy?'MakeHuman CC0 adapted anatomy':'original-landmark-sculpt',body:body?.id??null,imported:!!anatomy,hairImported:!!anatomy?.importedHair,clips:'authored-keyframes-v017-through-v035',shieldDesign:shieldDesign(kit,identity).id};
   const material=(color,extra={})=>{const Constructor=options.quality==='high'&&extra.roughnessMap&&extra.metalness===0?T.MeshPhysicalMaterial:T.MeshStandardMaterial;const m=new Constructor({color,roughness:.84,metalness:0,...extra,...(Constructor===T.MeshPhysicalMaterial?{sheen:.18,sheenRoughness:.85,sheenColor:new T.Color(color).multiplyScalar(.25)}:{})});materials.add(m);return m;};
   const surface=kind=>{if(!surfaces.has(kind))surfaces.set(kind,acquireActorSurface(kind));return surfaces.get(kind);};
@@ -373,14 +373,21 @@ function createActorRig(unit={},options={},reuseGroup=null){
     ellipsoid(torso,bronze,-.178,.41,.126,.024,.024,.009);
   }
   if(civic){
-    const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide}),stripe=material(BLOC_TRIM[unit.bloc]??0x764653,{...clothSurface,side:T.DoubleSide});
-    const rows=[[.49,.18,.15,.15],[.37,.08,.38,.205],[.19,-.015,.46,.225],[.02,-.025,.48,.215],[-.22,.025,.49,.22],[-.40,.06,.42,.205],[-.54,.08,.34,.185]];
-    mesh(toga,drape(rows),ivory);
-    // The colored edging follows the same fold surface with a small outward
-    // offset. Independent flat chest stripes formerly cut through the drape.
+    const stripe=material(BLOC_TRIM[unit.bloc]??0x764653,{...clothSurface,side:T.DoubleSide});let gilt=null;
+    const trimMaterial=band=>band.gilt?(gilt??=material(0xc9a64a,{...clothSurface,side:T.DoubleSide})):stripe;
     // Its bands (broad, double, broken or gilt-lined) name the bloc without colour.
-    let gilt=null;
-    for(const band of trimBands(unit.bloc))mesh(toga,drape(band.rows?rows.slice(band.rows[0],band.rows[1]+1):rows,{from:band.from,to:band.to,offset:band.offset??.009}),band.gilt?(gilt??=material(0xc9a64a,{...clothSurface,side:T.DoubleSide})):stripe);
+    if(body?.band){
+      // A senator's own toga: the bands lie on the one fitted across it, from the left
+      // shoulder to the right of the waist, and follow his skin (mountActorBody).
+      for(const band of trimBands(unit.bloc)){const geometry=blocTrimGeometry(body.band,band);geometries.add(geometry);blocTrims.push({geometry,material:trimMaterial(band)});}
+    }else{
+      const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide});
+      const rows=[[.49,.18,.15,.15],[.37,.08,.38,.205],[.19,-.015,.46,.225],[.02,-.025,.48,.215],[-.22,.025,.49,.22],[-.40,.06,.42,.205],[-.54,.08,.34,.185]];
+      mesh(toga,drape(rows),ivory);
+      // The colored edging follows the same fold surface with a small outward
+      // offset. Independent flat chest stripes formerly cut through the drape.
+      for(const band of trimBands(unit.bloc))mesh(toga,drape(band.rows?rows.slice(band.rows[0],band.rows[1]+1):rows,{from:band.from,to:band.to,offset:band.offset??.009}),trimMaterial(band));
+    }
     const scroll=part(left.hand,'rolled-petition',0,-.045,.035);mesh(scroll,new T.CylinderGeometry(.019,.019,.16,10),white,0,0,0).rotation.z=Math.PI/2;
   }else if(escort&&!kit.staff){
     const pack=part(torso,'travel-bundle',0,.23,-.20);mesh(pack,profile([[-.17,.15,.065],[-.08,.17,.09],[.15,.14,.08],[.20,.10,.055]],{segments:16,folds:.06}),clothDark);
@@ -449,7 +456,7 @@ function createActorRig(unit={},options={},reuseGroup=null){
   const costume=body?{nearMeshes:[],farMeshes:[]}:mountActorCostume(group,{kit,cloth:kit.equipped&&kit.padding&&!kit.armored?(kit.equipment.includes('jerkin')?leather:clothDark):cloth,armor:armorMaterial,quality:options.quality,hem,identity,geometries,materials,skeletons});
   nearMeshes.push(...costume.nearMeshes);farMeshes.push(...costume.farMeshes);
   if(anatomy){const fittedHair=hair.clone();materials.add(fittedHair);if(anatomy.importedHair)Object.assign(fittedHair,acquireActorHairSurface(identity));else fittedHair.alphaHash=true;const beardHair=hair.clone();beardHair.color.lerp(new T.Color(0x86725c),.18);beardHair.roughness=.92;beardHair.alphaHash=true;materials.add(beardHair);nearMeshes.push(...mountActorAnatomy(group,anatomy,{skin:importedSkin,hair:fittedHair,beardHair,geometries,materials,skeletons}));}
-  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,donor:donorBody,geometries,materials});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview)].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?(identityBody.head?identityBody.id:IDENTITY_HEAD_BODY):body.id;group.userData.actor.persistentIdentity=!!identityBody;}
+  if(body||identityBody){const worn=mountActorBody(group,body,{skeletons,identity,headBody:identityBody,donor:donorBody,geometries,materials,trims:blocTrims});nearMeshes.push(...[worn.near,...worn.heads.filter(m=>!m.userData.overview),...worn.trims].filter(Boolean));farMeshes.push(...[worn.overview,...worn.heads.filter(m=>m.userData.overview)].filter(Boolean));group.userData.actor.headSource=identityBody?(identityBody.head?identityBody.id:IDENTITY_HEAD_BODY):body.id;group.userData.actor.persistentIdentity=!!identityBody;}
   if(horse&&horseCoat){const coat=mountHorseBody(group,horse,horseCoat,{skeletons});nearMeshes.push(coat.near);farMeshes.push(coat.overview);}
   group.userData.actor.horse=horse&&horseCoat?horseCoat.id:null;
   const expressionMeshes=[...nearMeshes,...farMeshes].filter(m=>m.geometry.userData.expressionMorphs);

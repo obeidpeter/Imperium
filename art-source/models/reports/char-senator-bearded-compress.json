@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/senator-bearded.glb",
+  "output": "assets/models/characters/senator-bearded.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 467320,
+    "gzipBytes": 328343,
+    "sha256": "cdc5b988284e095362cc05dd675c030b96200371b2565365e26e9d76cf50648c"
+  },
+  "after": {
+    "bytes": 409524,
+    "gzipBytes": 385088,
+    "sha256": "c4d54388d1d167c3046cdf90e7c4999cd9451a0165c133a67af304a8d43c07ef"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14046,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9560
+      },
+      "bytes": 19536,
+      "psnr": 39.721
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 47394
+      },
+      "bytes": 128454,
+      "psnr": 37.985
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11054
+      },
+      "bytes": 29995,
+      "psnr": 40.778
+    }
+  ]
+}

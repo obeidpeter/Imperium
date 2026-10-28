@@ -10812,6 +10812,171 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-senator-elder",
+      "path": "assets/models/characters/senator-elder.glb",
+      "subject": "Generated character body: an elderly Roman senator of the mid-3rd century AD in a plain white toga",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d27a4bfb-309e-4f38-8a1d-c60f380215e5",
+        "generatedAt": "2026-10-28T20:59:00.030Z",
+        "rigTaskId": "17c4817a-a6ce-41c6-b0b8-3cd5a4927ab5",
+        "riggedAt": "2026-10-28T21:01:15.167Z",
+        "prompt": "art-source/models/requests/char-senator-elder.json",
+        "rawBytes": 44640676,
+        "rawSha256": "3c8bd7a7c758b976e06db474d45e4abfc7e8d04d0b25ee7b078358da42034648",
+        "riggedBytes": 59699180,
+        "riggedSha256": "ffeb561a59929c23ac911d71f4b99ec257abb6e9d50554f25e1e7ae4531c6e11",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60,
+          "blocBand": true
+        },
+        "report": "art-source/models/reports/char-senator-elder.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-senator-elder-compress.json"
+        }
+      },
+      "usage": "The members of the Senate nobody names, in the chamber, chosen by who each is (src/ui/actor-body-catalog.js): the game draws the trims that name his bloc, in its colour and shape, on the band fitted across the toga (bind-character.py --bloc-band), and adds his hands and the rolled petition. The protagonist and the named keep the procedural toga.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 425516,
+        "sha256": "7c8e32be0141d8d6a571c973ac6690e4b8317b382bd2a23beaa1638c59b40dc0",
+        "triangles": 13927,
+        "nearTriangles": 11235,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6252,
+          "height": 1.7754,
+          "depth": 0.414
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-senator-bearded",
+      "path": "assets/models/characters/senator-bearded.glb",
+      "subject": "Generated character body: a heavy-set bearded Roman senator of the mid-3rd century AD in a plain white toga",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "139c681b-c38b-424f-bba1-bbb3403bc121",
+        "generatedAt": "2026-10-28T20:58:58.938Z",
+        "rigTaskId": "4d7e0050-ed61-40c3-8290-572a405b432c",
+        "riggedAt": "2026-10-28T21:02:13.086Z",
+        "prompt": "art-source/models/requests/char-senator-bearded.json",
+        "rawBytes": 45338056,
+        "rawSha256": "5787f64046ff3b88d33a73e6c62fe4c1dd5e2eafcc16f8457c8344289979e3e6",
+        "riggedBytes": 60718356,
+        "riggedSha256": "6f9812e2b0c4540a2b31d42b3e4329424ea9a873d774a4461447f6732704ebf3",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60,
+          "blocBand": true
+        },
+        "report": "art-source/models/reports/char-senator-bearded.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-senator-bearded-compress.json"
+        }
+      },
+      "usage": "The members of the Senate nobody names, in the chamber, chosen by who each is (src/ui/actor-body-catalog.js): the game draws the trims that name his bloc, in its colour and shape, on the band fitted across the toga (bind-character.py --bloc-band), and adds his hands and the rolled petition. The protagonist and the named keep the procedural toga.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 409524,
+        "sha256": "c4d54388d1d167c3046cdf90e7c4999cd9451a0165c133a67af304a8d43c07ef",
+        "triangles": 14046,
+        "nearTriangles": 11354,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6353,
+          "height": 1.7583,
+          "depth": 0.4573
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-senator-younger",
+      "path": "assets/models/characters/senator-younger.glb",
+      "subject": "Generated character body: a Roman senator of about forty, of the mid-3rd century AD, in a plain white toga",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "98b5e5d7-9598-44d1-b884-6f7bc49d6987",
+        "generatedAt": "2026-10-28T20:58:53.685Z",
+        "rigTaskId": "d3146006-8a1b-4bff-b763-e8b380ba5e1a",
+        "riggedAt": "2026-10-28T21:02:02.380Z",
+        "prompt": "art-source/models/requests/char-senator-younger.json",
+        "rawBytes": 42868824,
+        "rawSha256": "21daf6e0af4f041a02985e8afca1a249535660af6eea29b1d219e4cc7911dccb",
+        "riggedBytes": 57402320,
+        "riggedSha256": "c17da0c9fe21282edb4441d391798ff43f19782e78fd10512a4d5d363e6f2fc5",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60,
+          "blocBand": true
+        },
+        "report": "art-source/models/reports/char-senator-younger.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-28",
+          "report": "art-source/models/reports/char-senator-younger-compress.json"
+        }
+      },
+      "usage": "The members of the Senate nobody names, in the chamber, chosen by who each is (src/ui/actor-body-catalog.js): the game draws the trims that name his bloc, in its colour and shape, on the band fitted across the toga (bind-character.py --bloc-band), and adds his hands and the rolled petition. The protagonist and the named keep the procedural toga.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 401184,
+        "sha256": "5a1f95fd8e7e9debd4197c9333ccaff77628d8b927a6cc172e31920c10c81633",
+        "triangles": 13905,
+        "nearTriangles": 11213,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6167,
+          "height": 1.7608,
+          "depth": 0.3921
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -10879,7 +11044,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T22:16:21.718Z",
+  "updatedAt": "2026-10-28T22:33:17.282Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -10901,12 +11066,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 73,
+    "models": 76,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 44043581,
-  "totalModelBytes": 28858031,
+  "totalBundledAssetBytes": 45279805,
+  "totalModelBytes": 30094255,
   "derivedGeometryBytes": 47428
 }

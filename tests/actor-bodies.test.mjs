@@ -11,9 +11,10 @@ import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
 import {actorKit} from '../src/showcase/actor-kit.js';
 import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
-import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies,HORSE_BODIES,horseBodyId} from '../src/ui/actor-body-catalog.js';
-import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES} from '../src/showcase/actor-bodies.js';
-import {createActor} from '../src/showcase/actors.js';
+import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies,HORSE_BODIES,horseBodyId,SENATOR_BODIES} from '../src/ui/actor-body-catalog.js';
+import {trimBands} from '../src/ui/bloc-style.js';
+import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES,blocTrimGeometry} from '../src/showcase/actor-bodies.js';
+import {createActor,BLOC_TRIM} from '../src/showcase/actors.js';
 import {helmetBowlGeometry} from '../src/showcase/actor-helmet.js';
 import {stageUnit,squadUnit} from '../src/showcase/live-figures.js';
 import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
@@ -60,7 +61,10 @@ test('every generated body and horse is worn or ridden in exactly the chapters t
   runProgressionCampaign({featureEdition:31,onCheckpoint:collect,beforeCamp:s=>{if(s.chapter===2&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,'leave').ok);}});
   for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
   for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
-  assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'}),null,'Civic figures keep the togas whose trims name their bloc');
+  // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
+  assert.ok(SENATOR_BODIES.includes(actorBodyId({civic:true,faction:'Roman',role:'speaker',identity:7},'figure-7')));
+  assert.equal(actorBodyId({civic:true,hero:true,faction:'Roman',role:'speaker'},'marcellus'),null);
+  assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'},'crispus'),null);
 });
 
 test('every body has its Tripo task, rig, licence, manifest entry and budget, and is bound in the game bind pose', async () => {
@@ -125,6 +129,36 @@ test('the camp\'s people wear their role\'s body, and only escorts on the march 
   const bundle=unit=>{const a=createActor(unit,{chapter:unit.chapter??2}),found=!!a.group.getObjectByName('travel-bundle');a.dispose();return found;};
   assert.equal(bundle(person('clerk','The duty clerk')),false,'The camp\'s staff are at work, not on the road');
   assert.equal(bundle({id:'escort-1',name:'Refugee family',side:'ally',role:'escort'}),true);
+});
+
+test('the chamber\'s members wear the senators\' togas, each bloc\'s trims drawn in its own shape on the band fitted across the toga', async () => {
+  // Every member nobody names wears a senator's toga, and a full chamber shows all three men.
+  const members=[];
+  for(let i=0;i<12;i++)members.push({id:`member${i}`,name:`${['Veterans','Landholders','Civic'][i%3]} delegate ${Math.floor(i/3)+1}`,side:'neutral',role:'voter',bloc:['Veterans','Landholders','Civic'][i%3]});
+  const worn=members.map(u=>{const kit=actorKit(u,{chapter:11});return actorBodyId(kit,actorIdentity(u,kit).key);});
+  assert.ok(worn.every(id=>SENATOR_BODIES.includes(id)));assert.equal(new Set(worn).size,3,'All three senators sit in a full chamber');
+  for(const id of SENATOR_BODIES){assert.equal(await library.warm(id),true);const band=library.body(id).band;assert.ok(band,`${id} carries its bloc band`);assert.equal(band.rows,7);assert.equal(band.columns,17);}
+  for(const bloc of ['Veterans','Landholders','Civic','Chamber','Army']){
+    const unit={id:'member1',name:'Landholders delegate 1',side:'neutral',role:'voter',bloc},a=createActor(unit,{chapter:11,bodyLibrary:library});
+    assert.equal(await a.ready,true);const g=a.group;assert.ok(SENATOR_BODIES.includes(g.userData.actor.body));
+    assert.equal(g.getObjectByName('draped-civic-robe'),undefined,'The senator wears his own toga, not the procedural one');
+    const trims=[];g.traverse(o=>{if(/^bloc-trim-/.test(o.name))trims.push(o);});
+    assert.equal(trims.length,trimBands(bloc).length,`${bloc}: one strip per band of its trim`);
+    const body=g.getObjectByName('generated-body');
+    for(const [i,trim]of trims.entries()){
+      assert.ok(trim.isSkinnedMesh&&trim.skeleton===body.skeleton,'The trims follow the senator\'s own skin');
+      const band=trimBands(bloc)[i];assert.equal(trim.material.color.getHex(),new T.Color(band.gilt?0xc9a64a:BLOC_TRIM[bloc]).getHex(),`${bloc} trim colour`);
+      // On the toga's front, a few millimetres outside it.
+      const p=trim.geometry.attributes.position,b=body.geometry.attributes.position,at=new T.Vector3(),near=new T.Vector3();
+      for(let k=0;k<p.count;k+=5){at.fromBufferAttribute(p,k);let best=Infinity;for(let m=0;m<b.count;m++)best=Math.min(best,near.fromBufferAttribute(b,m).distanceToSquared(at));assert.ok(Math.sqrt(best)<.03,`${bloc} trim lies on the toga (${Math.sqrt(best).toFixed(3)} m)`);assert.ok(at.z>0,'On the front');}
+    }
+    a.update({detailDistance:40});assert.ok(trims.every(t=>!t.visible),'At a distance the stance marker names the bloc');a.update({detailDistance:8});assert.ok(trims.every(t=>t.visible));
+    a.dispose();
+  }
+  // A broken trim's lengths span only their rows of the band.
+  const band=library.body(SENATOR_BODIES[0]).band,short=blocTrimGeometry(band,{from:.1,to:.2,rows:[2,3]});
+  assert.equal(short.attributes.position.count,2*17);assert.equal(short.index.count,16*6);
+  const w=short.attributes.skinWeight;for(let k=0;k<w.count;k++)assert.ok(Math.abs(w.getX(k)+w.getY(k)+w.getZ(k)+w.getW(k)-1)<1e-5);
 });
 
 test('persistent identities keep a fitted helmet over the shared head; anonymous bodies retain their baked headwear', async () => {

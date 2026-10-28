@@ -91,6 +91,7 @@ def parse_args():
     p.add_argument('--quality', type=int, default=80, help='WebP quality, 1-100')
     p.add_argument('--clavicle', type=float, default=10.0, help='share of the arm drop taken by the clavicle, in degrees')
     p.add_argument('--sharp-angle', type=float, default=60.0, help='edges sharper than this stay hard, in degrees')
+    p.add_argument('--bloc-band', action='store_true', help="also export the band the game draws a senator's bloc trims on (bloc_band)")
     a = p.parse_args(argv)
     if a.triangles < 500 or a.overview_triangles < 0 or not 16 <= a.texture <= 8192 or not 16 <= a.detail_texture <= 8192 or not 1 <= a.quality <= 100:
         p.error('budgets out of range')
@@ -357,6 +358,94 @@ def fit_to_game(meshes, folded_by_mesh, source):
     return {joint: round(d, 4) for joint, d in drop.items()}
 
 
+# The band a senator's bloc trims are drawn on (actors.js, bloc-style.js): from the left
+# shoulder by the neck across the chest to the right side of the waist, as the folded band of
+# a 3rd-century toga runs, in glTF metres across and up the front. Rows run along it and
+# columns across it, as the rows and across coordinate of the code-built toga's drape do.
+BAND_FROM, BAND_TO, BAND_WIDTH, BAND_ROWS, BAND_COLUMNS = (0.12, 1.38), (-0.14, 1.00), 0.14, 7, 17
+# How far outside the surface it lies, and how far around each point it looks for the
+# surface's front, so that it rides over the folds rather than into them.
+BAND_LIFT, BAND_REACH = 0.005, 0.012
+
+
+def bloc_band(meshes):
+    """A grid laid on the front of the body along the band, BAND_LIFT outside the frontmost
+    surface within BAND_REACH of each point, each vertex skinned as the surface under it
+    is. Its texture coordinates are its place in the grid (u across, v along), which the
+    game reads back. Returns the band and how many of its points found no surface."""
+    from mathutils.bvhtree import BVHTree
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    trees = [(o, BVHTree.FromObject(o, depsgraph), o.matrix_world.inverted()) for o in meshes]
+    (x0, y0), (x1, y1) = BAND_FROM, BAND_TO
+    length = math.hypot(x1 - x0, y1 - y0)
+    across = ((y1 - y0) / length, -(x1 - x0) / length)
+    if across[1] > 0:
+        across = (-across[0], -across[1])
+    world = meshes[0].matrix_world
+
+    def hit(x, up):
+        """The frontmost surface at a point of the front plane: its Blender depth, mesh and face."""
+        best = None
+        for o, tree, inverse in trees:
+            origin, toward = inverse @ Vector((x, -2.0, up)), (inverse.to_3x3() @ Vector((0, 1, 0))).normalized()
+            location, _, face, _ = tree.ray_cast(origin, toward, 4.0)
+            if location is not None:
+                depth = (o.matrix_world @ location).y
+                if best is None or depth < best[0]:
+                    best = (depth, o, face, o.matrix_world @ location)
+        return best
+
+    verts, groups, coordinates, misses = [], [], [], 0
+    for j in range(BAND_ROWS):
+        v = j / (BAND_ROWS - 1)
+        cx, cy = x0 + (x1 - x0) * v, y0 + (y1 - y0) * v
+        for i in range(BAND_COLUMNS):
+            u = i / (BAND_COLUMNS - 1)
+            # u = 0 on the band's upper edge, toward the right shoulder.
+            x, up = cx + across[0] * (u - 0.5) * BAND_WIDTH, cy + across[1] * (u - 0.5) * BAND_WIDTH
+            found = [h for h in (hit(x + dx, up + dz) for dx, dz in ((0, 0), (BAND_REACH, 0), (-BAND_REACH, 0), (0, BAND_REACH), (0, -BAND_REACH))) if h]
+            centre = hit(x, up)
+            if not found or centre is None:
+                misses += 1
+                centre = centre or (found[0] if found else None)
+            if centre is None:
+                sys.exit(f'The bloc band finds no surface at {x:.3f}, {up:.3f}')
+            front = min(h[0] for h in found) if found else centre[0]
+            verts.append(world.inverted() @ Vector((x, front - BAND_LIFT, up)))
+            coordinates.append((u, v))
+            # The surface's own weights where the band lies on it, by distance to its corners.
+            _, o, face, at = centre
+            mix = {}
+            corners = o.data.polygons[face].vertices
+            near = [1.0 / max((o.matrix_world @ o.data.vertices[k].co - at).length, 1e-4) for k in corners]
+            for k, share in zip(corners, near):
+                for g in o.data.vertices[k].groups:
+                    name = o.vertex_groups[g.group].name
+                    mix[name] = mix.get(name, 0.0) + g.weight * share
+            top = sorted(mix.items(), key=lambda item: -item[1])[:4]
+            total = sum(w for _, w in top) or 1.0
+            groups.append([(name, w / total) for name, w in top])
+    # Wound to face out from the body, so its normals point the way the trims are lifted.
+    faces = [(j * BAND_COLUMNS + i, (j + 1) * BAND_COLUMNS + i, (j + 1) * BAND_COLUMNS + i + 1, j * BAND_COLUMNS + i + 1)
+             for j in range(BAND_ROWS - 1) for i in range(BAND_COLUMNS - 1)]
+    data = bpy.data.meshes.new('bloc-band')
+    data.from_pydata([tuple(p) for p in verts], [], faces)
+    layer = data.uv_layers.new(name='band')
+    for loop in data.loops:
+        layer.data[loop.index].uv = coordinates[loop.vertex_index]
+    data.shade_smooth()
+    band = bpy.data.objects.new('bloc-band', data)
+    band.matrix_world = world.copy()
+    bpy.context.scene.collection.objects.link(band)
+    named = {}
+    for k, weights in enumerate(groups):
+        for name, w in weights:
+            if name not in named:
+                named[name] = band.vertex_groups.new(name=name)
+            named[name].add([k], w, 'REPLACE')
+    return band, misses
+
+
 def remove_hands(meshes, folded_by_mesh):
     """The game draws its own gripping hands on the hand joints; drop the generated ones."""
     import bmesh
@@ -486,8 +575,9 @@ def main():
             bpy.context.scene.collection.objects.link(copy)
             lods.append(copy)
         decimate(lods, a.overview_triangles)
+    band, band_misses = bloc_band(meshes) if a.bloc_band else (None, None)
     skeleton = game_armature()
-    for o in meshes + lods:
+    for o in meshes + lods + ([band] if band else []):
         skin(o, skeleton)
     textures = shrink_textures(a.texture, a.detail_texture)
     coloured = [bake_vertex_colours(o) for o in lods]
@@ -505,10 +595,13 @@ def main():
         'output': {'path': shown(output), 'bytes': os.path.getsize(output), 'sha256': digest(output),
                    'triangles': triangles(meshes), 'overviewTriangles': triangles(lods) if lods else None},
         'settings': {'triangles': a.triangles, 'overviewTriangles': a.overview_triangles, 'texture': a.texture, 'detailTexture': a.detail_texture,
-                     'webpQuality': a.quality, 'clavicleDegrees': a.clavicle, 'sharpAngle': a.sharp_angle},
+                     'webpQuality': a.quality, 'clavicleDegrees': a.clavicle, 'sharpAngle': a.sharp_angle,
+                     **({'blocBand': True} if band else {})},
         'fit': {'turnDegrees': round(turn, 2), 'scale': round(scale, 5), 'posedJoints': posed,
                 'gameJoints': {name: list(p) for name, p in GAME_JOINTS.items()}, 'soleDrop': soles,
-                'handVerticesRemoved': hands, 'heelVerticesToAnkles': heels, 'overviewVertexColours': all(coloured) if coloured else None},
+                'handVerticesRemoved': hands, 'heelVerticesToAnkles': heels, 'overviewVertexColours': all(coloured) if coloured else None,
+                **({'blocBand': {'from': list(BAND_FROM), 'to': list(BAND_TO), 'width': BAND_WIDTH, 'rows': BAND_ROWS, 'columns': BAND_COLUMNS,
+                                 'lift': BAND_LIFT, 'reach': BAND_REACH, 'pointsWithoutSurface': band_misses}} if band else {})},
         'bounds': bounds(meshes),
         'textures': textures,
     }
