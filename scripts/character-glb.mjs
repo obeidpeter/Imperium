@@ -29,7 +29,8 @@ export function exportCharacterGlb(actor,{name='Imperium character',motions=['id
     doc.accessors.push(d);return doc.accessors.length-1;
   }
   function texture(t,roughness=false){
-    if(!t?.image?.data)return undefined;
+    // A neutral 1×1 map (model-materials.js) only lets the game share a shader program; it is not art.
+    if(!t?.image?.data||t.userData.neutral)return undefined;
     const key=t.uuid+(roughness?':roughness':'');let i=texIndex.get(key);
     if(i===undefined){
       const {data,width,height}=t.image,image=doc.images.length;doc.images.push({bufferView:view(png(data,width,height,{flip:t.flipY,roughness})),mimeType:'image/png',name:t.userData.source??'Original material field'});
