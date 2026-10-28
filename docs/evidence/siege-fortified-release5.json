@@ -1,0 +1,3241 @@
+{
+  "source": false,
+  "build": "b75ead3339d3",
+  "browser": "141.0.7390.37",
+  "method": "Legal earned campaign checkpoints; visible import/settings/camera controls; read-only browser diagnostics.",
+  "physicalDeviceTest": false,
+  "captureSettings": {
+    "reducedMotion": true,
+    "method": "Normal-motion camera movement verified first; Reduce motion then enabled through visible Settings for static whole-body captures"
+  },
+  "normalMotion": [
+    {
+      "id": "ch4-gate",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 5,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -27.5,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.5458384927304055,
+          -1.3193940863781133,
+          0.9835823756198239
+        ],
+        "headNdc": [
+          -0.6516768263264514,
+          -1.1257812182132292,
+          0.9803505095628152
+        ],
+        "position": [
+          -27.715182700089194,
+          12.888698243096082,
+          2.5745820162977857
+        ],
+        "lookTarget": [
+          -18.7657823232,
+          0.659435250688,
+          -2.5589703168
+        ],
+        "tick": 18,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 8,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -27.5,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.1237480548238617,
+          -0.23358355628217328,
+          0.9983316044166921
+        ],
+        "headNdc": [
+          -0.1256071631976501,
+          -0.18279647965113796,
+          0.9983027832493401
+        ],
+        "position": [
+          -89.57419691676435,
+          70.1566028455209,
+          44.071481223455535
+        ],
+        "lookTarget": [
+          -10.296076164799292,
+          0.6777436537774397,
+          -1.4040103861089945
+        ],
+        "tick": 18,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 10,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -27.5,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.650862243979919,
+          -1.5732964639408424,
+          0.9827810026965343
+        ],
+        "headNdc": [
+          -0.7843771983694581,
+          -1.4205496053968856,
+          0.9791974847207411
+        ],
+        "position": [
+          -26.512413969677265,
+          12.97976772682993,
+          2.7385959340812307
+        ],
+        "lookTarget": [
+          -17.56301359278807,
+          0.7505047344218492,
+          -2.394956399016555
+        ],
+        "tick": 18,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 12,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -27.5,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.3893799811554911,
+          -0.977565095195336,
+          0.9849726491341999
+        ],
+        "headNdc": [
+          -0.457481845708431,
+          -0.7431410025370293,
+          0.9823006622365882
+        ],
+        "position": [
+          -29.65174646338935,
+          13.011200669112442,
+          2.310505139484128
+        ],
+        "lookTarget": [
+          -20.702346086500157,
+          0.7819376767043615,
+          -2.823047193613658
+        ],
+        "tick": 18,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch4-wall",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 3,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.1360667011857792,
+          0.9419946222510887,
+          0.9916715644072731
+        ],
+        "headNdc": [
+          -1.2396904056330174,
+          1.2393393877576793,
+          0.9908890993352855
+        ],
+        "position": [
+          -7.700038413451995,
+          12.666900003608083,
+          8.2298333945603
+        ],
+        "lookTarget": [
+          -10.945492320000055,
+          0.4376370112000009,
+          -1.5636417600000079
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 5,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.2121066555979869,
+          0.14000074847652927,
+          0.9989066183444045
+        ],
+        "headNdc": [
+          -0.2143867092691021,
+          0.1787843617698904,
+          0.9988921772438767
+        ],
+        "position": [
+          27.81060513811113,
+          86.51370303373089,
+          102.0956719969942
+        ],
+        "lookTarget": [
+          -6.322116364032032,
+          0.5484591376691205,
+          -0.9031594805760045
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 7,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.8554000837058578,
+          0.6781635923164028,
+          0.9908701503340698
+        ],
+        "headNdc": [
+          -0.9414457104985055,
+          0.9795419916583423,
+          0.9899266178884202
+        ],
+        "position": [
+          -15.190200505316842,
+          12.905092990325766,
+          7.159810238579608
+        ],
+        "lookTarget": [
+          -18.435654411864903,
+          0.6758299979176839,
+          -2.6336649159807
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 10,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.49703692339784533,
+          0.3561605651798576,
+          0.9897667136695897
+        ],
+        "headNdc": [
+          -0.553585205275228,
+          0.6603917804636733,
+          0.9885740183790357
+        ],
+        "position": [
+          -23.142779926314702,
+          12.98871239846629,
+          6.023727464151342
+        ],
+        "lookTarget": [
+          -26.388233832862763,
+          0.7594494060582094,
+          -3.769747690408966
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch5-mine",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.8027660077342011,
+          -4.341237529701821,
+          0.9724458853301753
+        ],
+        "headNdc": [
+          -2.4726686237334383,
+          -5.0930998308596065,
+          0.9621139454056243
+        ],
+        "position": [
+          -33.688431416889195,
+          12.82851990120808,
+          2.2230780930977856
+        ],
+        "lookTarget": [
+          -24.73903104,
+          0.5992569088,
+          -2.91047424
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.1430634005443712,
+          -0.2732557087309337,
+          0.9988608753599065
+        ],
+        "headNdc": [
+          -0.14461330272464412,
+          -0.23706176874989382,
+          0.9988458256984232
+        ],
+        "position": [
+          -125.99675543746918,
+          98.54157142803082,
+          62.39652728859231
+        ],
+        "lookTarget": [
+          -14.289264328704,
+          0.6418107905228799,
+          -1.6810899210240002
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 8,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.4764686400078133,
+          -3.5950467867845655,
+          0.9754290192500442
+        ],
+        "headNdc": [
+          -1.947476145887112,
+          -4.002465251443775,
+          0.9675108809025358
+        ],
+        "position": [
+          -35.154879453148624,
+          12.959012905014097,
+          2.050554794714323
+        ],
+        "lookTarget": [
+          -26.20547907625943,
+          0.7297499126060154,
+          -3.082997538383463
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 11,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.6958380167545972,
+          -1.742113033184304,
+          0.982200409200737
+        ],
+        "headNdc": [
+          -0.8443356101053879,
+          -1.6192330005664413,
+          0.9783484704287105
+        ],
+        "position": [
+          -40.88908486550116,
+          13.001330117357899,
+          1.375942393261084
+        ],
+        "lookTarget": [
+          -31.939684488611963,
+          0.7720671249498172,
+          -3.7576099398367018
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch5-wall",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -46.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.9946731451900394,
+          0.7328320674678858,
+          0.9910142189486126
+        ],
+        "headNdc": [
+          -1.0930396427981282,
+          1.0345300702121683,
+          0.9901008591042951
+        ],
+        "position": [
+          -23.67643281345194,
+          12.82851990120808,
+          6.883000914560308
+        ],
+        "lookTarget": [
+          -26.92188672,
+          0.5992569088,
+          -2.91047424
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -46.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.213772262842535,
+          0.12427664955504417,
+          0.9990003527380398
+        ],
+        "headNdc": [
+          -0.2158534075123038,
+          0.16067129065413707,
+          0.9989881866985938
+        ],
+        "position": [
+          21.882107771449537,
+          91.10315894678999,
+          111.27420964744906
+        ],
+        "lookTarget": [
+          -15.550081769471998,
+          0.6418107905228799,
+          -1.6810899210240002
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 8,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -46.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.9266479711292981,
+          0.6677644492234941,
+          0.9908715061800327
+        ],
+        "headNdc": [
+          -1.0198456717431172,
+          0.9680490086747091,
+          0.9899282602017689
+        ],
+        "position": [
+          -25.272273323498965,
+          12.959012905014097,
+          6.710477616176846
+        ],
+        "lookTarget": [
+          -28.517727230047026,
+          0.7297499126060154,
+          -3.082997538383463
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 11,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -46.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.6230904939527081,
+          0.41938480140066825,
+          0.9900082434273396
+        ],
+        "headNdc": [
+          -0.6921656746057295,
+          0.7228386291247935,
+          0.9888728492090101
+        ],
+        "position": [
+          -32.08613306658864,
+          13.005220587482487,
+          5.973844130437422
+        ],
+        "lookTarget": [
+          -35.331586973136694,
+          0.7759575950744065,
+          -3.819631024122886
+        ],
+        "tick": 12,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch6-wells",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -36.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -7.019290389991603,
+          -15.927483855727315,
+          0.9290284988194601
+        ],
+        "headNdc": [
+          -22.937424893459937,
+          -46.790861879818934,
+          0.7675144610969071
+        ],
+        "position": [
+          -18.971800376889192,
+          12.645150992408082,
+          3.751152333097786
+        ],
+        "lookTarget": [
+          -10.0224,
+          0.415888,
+          -1.3823999999999999
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -36.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.17059177919397572,
+          -0.3140615247877851,
+          0.9987596762935923
+        ],
+        "headNdc": [
+          -0.17260242587087016,
+          -0.2760386284694544,
+          0.9987421105160236
+        ],
+        "position": [
+          -110.70638582687624,
+          94.40811996281212,
+          59.384240261537364
+        ],
+        "lookTarget": [
+          -5.788938239999999,
+          0.5358969088,
+          -0.79847424
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -36.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.7754641178101311,
+          -4.121372288882021,
+          0.9733955768265885
+        ],
+        "headNdc": [
+          -2.4046999085003526,
+          -4.760530489034421,
+          0.9638781871504908
+        ],
+        "position": [
+          -27.605091104313196,
+          12.897837046930961,
+          2.5603536120737855
+        ],
+        "lookTarget": [
+          -18.655690727424002,
+          0.66857405452288,
+          -2.573198721024
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 9,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -36.25,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.6801899164061398,
+          -1.6347157785122792,
+          0.9825507301900291
+        ],
+        "headNdc": [
+          -0.8219435914016899,
+          -1.4923358085092602,
+          0.9788621412972187
+        ],
+        "position": [
+          -34.97234215057158,
+          12.97380538793984,
+          1.5441810539691816
+        ],
+        "lookTarget": [
+          -26.022941773682383,
+          0.7445423955317586,
+          -3.589371279128604
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch8-ferry",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.379103708029249,
+          1.0814553562188498,
+          0.9921745609362195
+        ],
+        "headNdc": [
+          -1.4968897523904299,
+          1.371787332626704,
+          0.9914848537738511
+        ],
+        "position": [
+          -8.504946093451938,
+          12.645150992408082,
+          8.411075154560308
+        ],
+        "lookTarget": [
+          -11.750399999999999,
+          0.415888,
+          -1.3823999999999999
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.2619141885282927,
+          0.1660549525152035,
+          0.998929515948472
+        ],
+        "headNdc": [
+          -0.26471631515891175,
+          0.20418082466596574,
+          0.998915388225479
+        ],
+        "position": [
+          27.285892847098605,
+          88.1277166867899,
+          102.01991207516649
+        ],
+        "lookTarget": [
+          -6.78703104,
+          0.5358969088,
+          -0.79847424
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 7,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.9125318786271726,
+          0.677539718427474,
+          0.9908823286462904
+        ],
+        "headNdc": [
+          -1.0041933054510206,
+          0.9784248541018781,
+          0.9899413675607804
+        ],
+        "position": [
+          -21.714718509589037,
+          12.924996510968887,
+          6.85698428207359
+        ],
+        "lookTarget": [
+          -24.960172416137098,
+          0.6957335185608057,
+          -2.936490872486718
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 10,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.6727343077367911,
+          0.47572633515330415,
+          0.9901869945697774
+        ],
+        "headNdc": [
+          -0.7458698161776354,
+          0.7794332779917647,
+          0.989093003530687
+        ],
+        "position": [
+          -27.217362348255453,
+          12.973393423626405,
+          6.209614418701071
+        ],
+        "lookTarget": [
+          -30.462816254803514,
+          0.7441304312183231,
+          -3.583860735859237
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch8-crossing",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -13.17831520079777,
+          -32.505287299506406,
+          0.8674830377547824
+        ],
+        "headNdc": [
+          44.87329161384842,
+          100.47269042586575,
+          1.4523330119083289
+        ],
+        "position": [
+          -19.663000376889194,
+          12.645150992408082,
+          4.096752333097786
+        ],
+        "lookTarget": [
+          -10.7136,
+          0.415888,
+          -1.0368
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.1745330770368099,
+          -0.35749681519416465,
+          0.9987360465418443
+        ],
+        "headNdc": [
+          -0.17667727955973478,
+          -0.32014850139453455,
+          0.9987174466873389
+        ],
+        "position": [
+          -109.06364550924016,
+          96.4422742165467,
+          58.41254034234853
+        ],
+        "lookTarget": [
+          -6.188175360000001,
+          0.5358969088,
+          -0.59885568
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 7,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -1.581244707987806,
+          -4.002041938744677,
+          0.9738669883847252
+        ],
+        "headNdc": [
+          -2.1284063186165665,
+          -4.584805532749376,
+          0.9647376055911162
+        ],
+        "position": [
+          -30.770580685040553,
+          12.915961498884128,
+          3.021825206502493
+        ],
+        "lookTarget": [
+          -21.82118030815136,
+          0.6866985064760459,
+          -2.1117271265952926
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 10,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.8660588601103478,
+          -2.2328547051283953,
+          0.9803661206877419
+        ],
+        "headNdc": [
+          -1.0741793247034148,
+          -2.212415059957295,
+          0.9755878672738457
+        ],
+        "position": [
+          -35.39676690542542,
+          12.960587357795752,
+          2.5741297658200852
+        ],
+        "lookTarget": [
+          -26.447366528536232,
+          0.7313243653876715,
+          -2.5594225672777005
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch9-wing",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -13.17831520079777,
+          -32.505287299506406,
+          0.8674830377547824
+        ],
+        "headNdc": [
+          44.87329161384842,
+          100.47269042586575,
+          1.4523330119083289
+        ],
+        "position": [
+          -19.663000376889194,
+          12.645150992408082,
+          4.096752333097786
+        ],
+        "lookTarget": [
+          -10.7136,
+          0.415888,
+          -1.0368
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.17933410422012994,
+          -0.35408641510140315,
+          0.998694400099341
+        ],
+        "headNdc": [
+          -0.18151260886153078,
+          -0.31448424456513946,
+          0.9986755026915932
+        ],
+        "position": [
+          -109.42002192982336,
+          91.00765461315551,
+          58.61696487676431
+        ],
+        "lookTarget": [
+          -6.188175360000001,
+          0.5358969088,
+          -0.59885568
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -2.0256462671424877,
+          -5.101377960827636,
+          0.96982856321568
+        ],
+        "headNdc": [
+          -2.879080816231411,
+          -6.274093548131146,
+          0.9570115515394746
+        ],
+        "position": [
+          -28.891690464825196,
+          12.897837046930961,
+          3.203653292329786
+        ],
+        "lookTarget": [
+          -19.942290087936,
+          0.66857405452288,
+          -1.929899040768
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 9,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -38.75,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.6488049531893285,
+          -1.6954239943297358,
+          0.9823403793907315
+        ],
+        "headNdc": [
+          -0.7859645878060243,
+          -1.5638280859170828,
+          0.9785542163943024
+        ],
+        "position": [
+          -37.46695369581927,
+          12.98055712538136,
+          2.373789108685198
+        ],
+        "lookTarget": [
+          -28.517553318930073,
+          0.7512941329732791,
+          -2.7597632244125876
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch9-city",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -80.43108186979482,
+          -189.7410985313486,
+          0.2837416192393062
+        ],
+        "headNdc": [
+          13.446324663068493,
+          29.01516297192468,
+          1.120034628300165
+        ],
+        "position": [
+          -20.699800376889193,
+          12.645150992408082,
+          3.751152333097786
+        ],
+        "lookTarget": [
+          -11.750399999999999,
+          0.415888,
+          -1.3823999999999999
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -0.18245380135250197,
+          -0.357178000045635,
+          0.9988505605430312
+        ],
+        "headNdc": [
+          -0.18452384700509636,
+          -0.32268305227662153,
+          0.998834682724978
+        ],
+        "position": [
+          -118.11365999032259,
+          104.32092617787903,
+          63.06067293366723
+        ],
+        "lookTarget": [
+          -6.78703104,
+          0.5358969088,
+          -0.79847424
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -2.618796756545712,
+          -6.297876748400283,
+          0.9654735603999984
+        ],
+        "headNdc": [
+          -3.961038623291172,
+          -8.337774182253227,
+          0.9476491778697026
+        ],
+        "position": [
+          -30.82158950559319,
+          12.897837046930961,
+          2.5603536120737855
+        ],
+        "lookTarget": [
+          -21.872189128703997,
+          0.66857405452288,
+          -2.573198721024
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 9,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -42.5,
+          0,
+          -5
+        ],
+        "feetNdc": [
+          -1.1336118589805646,
+          -2.7774881752471887,
+          0.9783828695125482
+        ],
+        "headNdc": [
+          -1.4405554714850513,
+          -2.9019261003535486,
+          0.97246198436395
+        ],
+        "position": [
+          -37.248730970206545,
+          12.954365111116156,
+          1.8042193221192737
+        ],
+        "lookTarget": [
+          -28.29933059331735,
+          0.7251021187080747,
+          -3.329333010978512
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    },
+    {
+      "id": "ch12-confrontation",
+      "initial": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 2,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -6.0215482081649805,
+          -14.559231904363294,
+          0.9341081643785872
+        ],
+        "headNdc": [
+          -16.937524365332937,
+          -36.75052948161731,
+          0.8142049406823026
+        ],
+        "position": [
+          -18.626200376889194,
+          12.645150992408082,
+          4.096752333097786
+        ],
+        "lookTarget": [
+          -9.6768,
+          0.415888,
+          -1.0368
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "overview": {
+        "view": "overview",
+        "settled": false,
+        "renderedFrames": 4,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.18243964008245322,
+          -0.3623438241778079,
+          0.9985245867224678
+        ],
+        "headNdc": [
+          -0.1849662086672711,
+          -0.3193352883483261,
+          0.9985006914004533
+        ],
+        "position": [
+          -96.9423018664279,
+          83.97242405679154,
+          51.80301428769379
+        ],
+        "lookTarget": [
+          -5.58931968,
+          0.5358969088,
+          -0.59885568
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followStart": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 6,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -1.608815091690198,
+          -3.9807798625191784,
+          0.9739073035571404
+        ],
+        "headNdc": [
+          -2.164372505526432,
+          -4.555003203943128,
+          0.964810610128418
+        ],
+        "position": [
+          -26.961791424057196,
+          12.897837046930961,
+          3.203653292329786
+        ],
+        "lookTarget": [
+          -18.012391047168002,
+          0.66857405452288,
+          -1.929899040768
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      },
+      "followEnd": {
+        "view": "follow",
+        "settled": false,
+        "renderedFrames": 9,
+        "reducedMotion": false,
+        "controlled": "hero",
+        "selected": "hero",
+        "actorVisible": true,
+        "actor": [
+          -35,
+          0,
+          -3.75
+        ],
+        "feetNdc": [
+          -0.7379392683966199,
+          -1.8748836708960201,
+          0.9816637976164692
+        ],
+        "headNdc": [
+          -0.9011389698368191,
+          -1.776905537187773,
+          0.9775533404143224
+        ],
+        "position": [
+          -32.90566236480393,
+          12.961316987410706,
+          2.566809977249779
+        ],
+        "lookTarget": [
+          -23.956261987914733,
+          0.7320539950026247,
+          -2.5667423558480067
+        ],
+        "tick": 0,
+        "worldPaused": true,
+        "stagePaused": false,
+        "hidden": false,
+        "isReady": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "id": "ch4-gate",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch4-gate",
+      "weather": "rain",
+      "version": 5,
+      "works": [],
+      "platforms": [
+        {
+          "x": 10,
+          "y": 7,
+          "height": 3.2,
+          "steps": [
+            9,
+            7
+          ],
+          "orientation": "vertical"
+        },
+        {
+          "x": 10,
+          "y": 14,
+          "height": 3.2,
+          "steps": [
+            9,
+            14
+          ],
+          "orientation": "vertical"
+        }
+      ],
+      "engineers": 1,
+      "tick": 18,
+      "gates": [],
+      "boardKit": {
+        "pieces": {
+          "pieces": 3,
+          "drawn": 4,
+          "instances": 28
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 43
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 20,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -27.5,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            0,
+            -0.09044615018447046,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401669086,
+            0.9866434813251872
+          ],
+          "position": [
+            -36.449400376889194,
+            13.079262992408081,
+            1.3835523330977857
+          ],
+          "lookTarget": [
+            -27.5,
+            0.85,
+            -3.75
+          ],
+          "tick": 18,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 36,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -27.5,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -0.21104620705151364,
+            -0.3897852148778548,
+            0.9982032132476422
+          ],
+          "headNdc": [
+            -0.21443242370922236,
+            -0.33805090652995257,
+            0.9981703722441247
+          ],
+          "position": [
+            -79.27812075196506,
+            70.17885919174346,
+            45.47549160956453
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 18,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 55,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -27.5,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -4.2845904058171638e-16,
+            -0.18859948314748043,
+            0.9903455284594632
+          ],
+          "headNdc": [
+            -4.361437353911043e-16,
+            0.15769961415558084,
+            0.9901678846849015
+          ],
+          "position": [
+            -44.67872706939117,
+            4.19086229288473,
+            6.104056217493444
+          ],
+          "lookTarget": [
+            -27.5,
+            1.4,
+            -3.75
+          ],
+          "tick": 18,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch4-wall",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch4-wall",
+      "weather": "dust",
+      "version": 5,
+      "works": [],
+      "platforms": [],
+      "engineers": 1,
+      "tick": 0,
+      "gates": [],
+      "boardKit": {
+        "pieces": {
+          "pieces": 1,
+          "drawn": 4,
+          "instances": 72
+        },
+        "materials": 2,
+        "cutaway": 2,
+        "programs": 43
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 18,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.09044615018446957,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.2048753440166918,
+            0.9866434813251872
+          ],
+          "position": [
+            -31.75454609345194,
+            13.079262992408081,
+            4.7934751545603085
+          ],
+          "lookTarget": [
+            -35,
+            0.85,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 34,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.2548862190271361,
+            0.16780111744945045,
+            0.9989272725437718
+          ],
+          "headNdc": [
+            -0.257583563869201,
+            0.2062763435735923,
+            0.9989132743904087
+          ],
+          "position": [
+            34.13272150214316,
+            86.66524389606177,
+            102.9988314775702
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 55,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.18859948314748043,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            0,
+            0.15769961415558076,
+            0.9901678846849014
+          ],
+          "position": [
+            -28.77022319608656,
+            4.19086229288473,
+            13.798961903136465
+          ],
+          "lookTarget": [
+            -35,
+            1.4,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch5-mine",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch5-mine",
+      "weather": "embers",
+      "version": 5,
+      "works": [
+        {
+          "id": "fort-countermine",
+          "state": "active",
+          "x": 3.75,
+          "z": 28.75
+        },
+        {
+          "id": "fort-siege-engine",
+          "state": "active",
+          "x": 28.75,
+          "z": 23.75
+        }
+      ],
+      "platforms": [
+        {
+          "x": 16,
+          "y": 10,
+          "height": 3.2,
+          "steps": [
+            15,
+            10
+          ],
+          "orientation": "vertical"
+        },
+        {
+          "x": 15,
+          "y": 15,
+          "height": 3.2,
+          "steps": [
+            14,
+            15
+          ],
+          "orientation": "vertical"
+        }
+      ],
+      "engineers": 1,
+      "tick": 12,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "open",
+          "holder": null,
+          "integrity": 100
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 6,
+          "drawn": 8,
+          "instances": 54
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 43
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 22,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.09044615018447164,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401668953,
+            0.9866434813251872
+          ],
+          "position": [
+            -51.449400376889194,
+            13.079262992408081,
+            0.1335523330977857
+          ],
+          "lookTarget": [
+            -42.5,
+            0.85,
+            -5
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 39,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.23018066266748322,
+            -0.435322628741756,
+            0.9987664314754615
+          ],
+          "headNdc": [
+            -0.23284586601514967,
+            -0.3985160283127387,
+            0.9987492532509734
+          ],
+          "position": [
+            -111.70749110876518,
+            98.59976063750794,
+            64.0776172096163
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 52,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -6.426885608725746e-16,
+            -0.18859948314748057,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            -6.542156030866565e-16,
+            0.15769961415558081,
+            0.9901678846849014
+          ],
+          "position": [
+            -59.67872706939117,
+            4.19086229288473,
+            4.854056217493444
+          ],
+          "lookTarget": [
+            -42.5,
+            1.4,
+            -5
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch5-wall",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch5-wall",
+      "weather": "dust",
+      "version": 5,
+      "works": [
+        {
+          "id": "fort-countermine",
+          "state": "active",
+          "x": 3.75,
+          "z": 33.75
+        },
+        {
+          "id": "fort-siege-engine",
+          "state": "active",
+          "x": 36.25,
+          "z": 41.25
+        }
+      ],
+      "platforms": [
+        {
+          "x": 18,
+          "y": 10,
+          "height": 3.2,
+          "steps": [
+            17,
+            10
+          ],
+          "orientation": "vertical"
+        },
+        {
+          "x": 18,
+          "y": 22,
+          "height": 3.2,
+          "steps": [
+            17,
+            22
+          ],
+          "orientation": "vertical"
+        }
+      ],
+      "engineers": 1,
+      "tick": 12,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "open",
+          "holder": null,
+          "integrity": 100
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 6,
+          "drawn": 11,
+          "instances": 61
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 43
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 21,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -46.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -5.197027771090779e-16,
+            -0.09044615018446842,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            -5.886059551981641e-16,
+            0.20487534401669286,
+            0.9866434813251873
+          ],
+          "position": [
+            -43.00454609345194,
+            13.079262992408081,
+            4.7934751545603085
+          ],
+          "lookTarget": [
+            -46.25,
+            0.85,
+            -5
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 38,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -46.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.3119191126517992,
+            0.1848668004564376,
+            0.9990396716583193
+          ],
+          "headNdc": [
+            -0.3148593068146841,
+            0.22067668627648157,
+            0.9990282626356798
+          ],
+          "position": [
+            37.432189540921534,
+            91.16134815626711,
+            112.95529956847305
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 52,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -46.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            4.284590405817164e-16,
+            -0.18859948314748057,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            4.3614373539110436e-16,
+            0.1576996141555807,
+            0.9901678846849014
+          ],
+          "position": [
+            -40.02022319608656,
+            4.19086229288473,
+            13.798961903136465
+          ],
+          "lookTarget": [
+            -46.25,
+            1.4,
+            -5
+          ],
+          "tick": 12,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch6-wells",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch6-wells",
+      "weather": "mist",
+      "version": 5,
+      "works": [],
+      "platforms": [],
+      "engineers": 0,
+      "tick": 0,
+      "gates": [],
+      "boardKit": {
+        "pieces": {
+          "pieces": 1,
+          "drawn": 1,
+          "instances": 10
+        },
+        "materials": 1,
+        "cutaway": 1,
+        "programs": 43
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 21,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -36.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            2.5985138855453897e-16,
+            -0.09044615018447104,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            2.9430297759908204e-16,
+            0.2048753440166902,
+            0.9866434813251872
+          ],
+          "position": [
+            -45.199400376889194,
+            13.079262992408081,
+            0.1335523330977857
+          ],
+          "lookTarget": [
+            -36.25,
+            0.85,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 38,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -36.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.20853124376870807,
+            -0.3849427637435051,
+            0.9987191560860673
+          ],
+          "headNdc": [
+            -0.21105668954429113,
+            -0.34673198688279266,
+            0.9987006162157069
+          ],
+          "position": [
+            -104.91744758687625,
+            94.57222305401213,
+            60.18271450153736
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 57,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -36.25,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -4.2845904058171638e-16,
+            -0.18859948314748037,
+            0.9903455284594632
+          ],
+          "headNdc": [
+            -4.361437353911043e-16,
+            0.15769961415558095,
+            0.9901678846849015
+          ],
+          "position": [
+            -53.42872706939117,
+            4.19086229288473,
+            4.854056217493444
+          ],
+          "lookTarget": [
+            -36.25,
+            1.4,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch8-ferry",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch8-ferry",
+      "weather": "mist",
+      "version": 5,
+      "works": [],
+      "platforms": [],
+      "engineers": 1,
+      "tick": 0,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "closed",
+          "holder": null,
+          "integrity": 100
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 4,
+          "drawn": 5,
+          "instances": 9
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 46
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 17,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.09044615018446871,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401669252,
+            0.9866434813251873
+          ],
+          "position": [
+            -39.25454609345194,
+            13.079262992408081,
+            4.7934751545603085
+          ],
+          "lookTarget": [
+            -42.5,
+            0.85,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 33,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.3069224030693605,
+            0.19372573607763663,
+            0.9989497118912292
+          ],
+          "headNdc": [
+            -0.31015530742451014,
+            0.23155383427933796,
+            0.9989360152431884
+          ],
+          "position": [
+            34.072923887098604,
+            88.2918197779899,
+            102.81838631516649
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 50,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.18859948314748043,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            0,
+            0.15769961415558081,
+            0.9901678846849014
+          ],
+          "position": [
+            -36.27022319608656,
+            4.19086229288473,
+            13.798961903136465
+          ],
+          "lookTarget": [
+            -42.5,
+            1.4,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch8-crossing",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch8-crossing",
+      "weather": "mist",
+      "version": 5,
+      "works": [],
+      "platforms": [],
+      "engineers": 1,
+      "tick": 0,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "closed",
+          "holder": null,
+          "integrity": 100
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 5,
+          "drawn": 6,
+          "instances": 23
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 46
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 18,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            0,
+            -0.0904461501844705,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401669094,
+            0.9866434813251871
+          ],
+          "position": [
+            -47.699400376889194,
+            13.079262992408081,
+            1.3835523330977857
+          ],
+          "lookTarget": [
+            -38.75,
+            0.85,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 35,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -0.21391780751936726,
+            -0.4392055838155491,
+            0.998690738325233
+          ],
+          "headNdc": [
+            -0.2166255098370416,
+            -0.40175966246180883,
+            0.9986710013004109
+          ],
+          "position": [
+            -102.87547014924016,
+            96.60637730774671,
+            59.01139602234853
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 51,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -6.426885608725746e-16,
+            -0.18859948314748057,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            -6.542156030866565e-16,
+            0.15769961415558081,
+            0.9901678846849014
+          ],
+          "position": [
+            -55.92872706939117,
+            4.19086229288473,
+            6.104056217493444
+          ],
+          "lookTarget": [
+            -38.75,
+            1.4,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch9-wing",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch9-wing",
+      "weather": "clear",
+      "version": 5,
+      "works": [],
+      "platforms": [],
+      "engineers": 0,
+      "tick": 0,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "closed",
+          "holder": null,
+          "integrity": 100
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 4,
+          "drawn": 5,
+          "instances": 10
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 49
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 18,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            0,
+            -0.0904461501844705,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401669094,
+            0.9866434813251871
+          ],
+          "position": [
+            -47.699400376889194,
+            13.079262992408081,
+            1.3835523330977857
+          ],
+          "lookTarget": [
+            -38.75,
+            0.85,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 34,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -0.22015578316533047,
+            -0.43577932642980033,
+            0.998645268378496
+          ],
+          "headNdc": [
+            -0.22291570378858905,
+            -0.39593483512240873,
+            0.9986251507232086
+          ],
+          "position": [
+            -103.23184656982336,
+            91.17175770435551,
+            59.21582055676431
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 49,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -38.75,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -6.426885608725746e-16,
+            -0.18859948314748057,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            -6.542156030866565e-16,
+            0.15769961415558081,
+            0.9901678846849014
+          ],
+          "position": [
+            -55.92872706939117,
+            4.19086229288473,
+            6.104056217493444
+          ],
+          "lookTarget": [
+            -38.75,
+            1.4,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch9-city",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch9-city",
+      "weather": "clear",
+      "version": 5,
+      "works": [
+        {
+          "id": "fort-wall",
+          "state": "intact",
+          "x": 38.75,
+          "z": 13.75
+        }
+      ],
+      "platforms": [
+        {
+          "x": 17,
+          "y": 10,
+          "height": 3.2,
+          "steps": [
+            18,
+            10
+          ],
+          "orientation": "vertical"
+        },
+        {
+          "x": 17,
+          "y": 16,
+          "height": 3.2,
+          "steps": [
+            18,
+            16
+          ],
+          "orientation": "vertical"
+        }
+      ],
+      "engineers": 0,
+      "tick": 0,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "closed",
+          "holder": "enemy",
+          "integrity": 120
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 7,
+          "drawn": 8,
+          "instances": 43
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 49
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 18,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            0,
+            -0.09044615018447164,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            0,
+            0.20487534401668953,
+            0.9866434813251872
+          ],
+          "position": [
+            -51.449400376889194,
+            13.079262992408081,
+            0.1335523330977857
+          ],
+          "lookTarget": [
+            -42.5,
+            0.85,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 35,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -0.22364614356487938,
+            -0.43877610788572574,
+            0.998808548875683
+          ],
+          "headNdc": [
+            -0.2262606028745374,
+            -0.40418742220790344,
+            0.9987916977153485
+          ],
+          "position": [
+            -111.32662895032259,
+            104.48502926907904,
+            63.859147173667225
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 51,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -42.5,
+            0,
+            -5
+          ],
+          "feetNdc": [
+            -6.426885608725746e-16,
+            -0.18859948314748057,
+            0.9903455284594631
+          ],
+          "headNdc": [
+            -6.542156030866565e-16,
+            0.15769961415558081,
+            0.9901678846849014
+          ],
+          "position": [
+            -59.67872706939117,
+            4.19086229288473,
+            4.854056217493444
+          ],
+          "lookTarget": [
+            -42.5,
+            1.4,
+            -5
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    },
+    {
+      "id": "ch12-confrontation",
+      "quality": "balanced",
+      "width": 1254,
+      "height": 556,
+      "three": true,
+      "world": "ch12-confrontation",
+      "weather": "clear",
+      "version": 5,
+      "works": [
+        {
+          "id": "fort-wall",
+          "state": "intact",
+          "x": 41.25,
+          "z": 8.75
+        }
+      ],
+      "platforms": [
+        {
+          "x": 17,
+          "y": 7,
+          "height": 3.2,
+          "steps": [
+            18,
+            7
+          ],
+          "orientation": "vertical"
+        },
+        {
+          "x": 17,
+          "y": 14,
+          "height": 3.2,
+          "steps": [
+            18,
+            14
+          ],
+          "orientation": "vertical"
+        }
+      ],
+      "engineers": 0,
+      "tick": 0,
+      "gates": [
+        {
+          "id": "gate",
+          "state": "closed",
+          "holder": "enemy",
+          "integrity": 120
+        }
+      ],
+      "boardKit": {
+        "pieces": {
+          "pieces": 7,
+          "drawn": 8,
+          "instances": 21
+        },
+        "materials": 3,
+        "cutaway": 3,
+        "programs": 50
+      },
+      "cameras": [
+        {
+          "view": "follow",
+          "settled": true,
+          "renderedFrames": 23,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            2.59851388554539e-16,
+            -0.09044615018447107,
+            0.9882362863667212
+          ],
+          "headNdc": [
+            2.943029775990821e-16,
+            0.20487534401669022,
+            0.9866434813251872
+          ],
+          "position": [
+            -43.949400376889194,
+            13.079262992408081,
+            1.3835523330977857
+          ],
+          "lookTarget": [
+            -35,
+            0.85,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "overview",
+          "settled": true,
+          "renderedFrames": 39,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -0.22379997043560595,
+            -0.4456818798160954,
+            0.9984714289657418
+          ],
+          "headNdc": [
+            -0.22699617883093068,
+            -0.40251960309668305,
+            0.9984460277847037
+          ],
+          "position": [
+            -91.3529821864279,
+            84.13652714799154,
+            52.40186996769379
+          ],
+          "lookTarget": [
+            0,
+            0.7,
+            0
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        },
+        {
+          "view": "horizon",
+          "settled": true,
+          "renderedFrames": 55,
+          "reducedMotion": true,
+          "controlled": "hero",
+          "selected": "hero",
+          "actorVisible": true,
+          "actor": [
+            -35,
+            0,
+            -3.75
+          ],
+          "feetNdc": [
+            -4.2845904058171638e-16,
+            -0.18859948314748043,
+            0.9903455284594632
+          ],
+          "headNdc": [
+            -4.361437353911043e-16,
+            0.15769961415558084,
+            0.9901678846849015
+          ],
+          "position": [
+            -52.17872706939117,
+            4.19086229288473,
+            6.104056217493444
+          ],
+          "lookTarget": [
+            -35,
+            1.4,
+            -3.75
+          ],
+          "tick": 0,
+          "worldPaused": true,
+          "stagePaused": false,
+          "hidden": false,
+          "isReady": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
