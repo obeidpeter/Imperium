@@ -23,7 +23,7 @@
     ]
   },
   "method": "Legal command-campaign checkpoints (feature edition 35); the encounter started and its turns ended through the rules API until the enemy strikes; mounted with the game's battle-stage controller; that exchange played, then the follow, horizon and overview cameras.",
-  "started": "2026-10-28T11:03:10.822Z",
+  "started": "2026-10-28T16:56:19.298Z",
   "runs": [
     {
       "id": "ch1-road",
@@ -33,20 +33,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3746,
-        "readyMs": 7173,
-        "firstFrameMs": 7172,
-        "settledMs": 11255,
+        "constructedMs": 2912,
+        "readyMs": 6354,
+        "firstFrameMs": 6353,
+        "settledMs": 10440,
         "longTasks": {
           "construct": {
-            "count": 4,
-            "totalMs": 394,
-            "maxMs": 175
+            "count": 3,
+            "totalMs": 369,
+            "maxMs": 163
           },
           "prepare": {
-            "count": 1,
-            "totalMs": 60,
-            "maxMs": 60
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
           },
           "firstFrame": {
             "count": 0,
@@ -58,24 +58,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 7206,
+          "durationMs": 6397,
           "longTasks": {
-            "count": 5,
-            "totalMs": 454,
-            "maxMs": 175
+            "count": 3,
+            "totalMs": 369,
+            "maxMs": 163
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 17.1,
-              "p95": 17.1,
-              "max": 55.4
+              "p50": 14.9,
+              "p95": 14.9,
+              "max": 47.1
             },
             "interval": {
               "samples": 1,
-              "p50": 29.4,
-              "p95": 29.4,
-              "max": 29.4
+              "p50": 31.9,
+              "p95": 31.9,
+              "max": 31.9
             }
           },
           "programs": 36,
@@ -85,7 +85,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4020,
+          "durationMs": 4016,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -94,25 +94,25 @@
           "frames": {
             "cpu": {
               "samples": 10,
-              "p50": 11.1,
-              "p95": 15.5,
-              "max": 17.7
+              "p50": 8.8,
+              "p95": 21.1,
+              "max": 26.1
             },
             "interval": {
               "samples": 9,
-              "p50": 283.7,
-              "p95": 788.7,
-              "max": 811.7
+              "p50": 66.3,
+              "p95": 633.3,
+              "max": 750.6
             }
           },
           "programs": 36,
-          "calls": 125,
-          "triangles": 188689,
+          "calls": 77,
+          "triangles": 152355,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3020,
+          "durationMs": 3005,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -133,13 +133,13 @@
             }
           },
           "programs": 36,
-          "calls": 125,
-          "triangles": 188689,
+          "calls": 77,
+          "triangles": 152355,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 4059,
+          "durationMs": 6752,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -148,9 +148,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 16.4,
-              "p95": 16.4,
-              "max": 16.4
+              "p50": 13.4,
+              "p95": 13.4,
+              "max": 13.4
             },
             "interval": {
               "samples": 0,
@@ -166,7 +166,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7579,
+          "durationMs": 7559,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -175,20 +175,20 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 10.8,
-              "p95": 10.8,
-              "max": 17
+              "p50": 8.3,
+              "p95": 8.3,
+              "max": 13.6
             },
             "interval": {
               "samples": 1,
-              "p50": 3679.1,
-              "p95": 3679.1,
-              "max": 3679.1
+              "p50": 3366.5,
+              "p95": 3366.5,
+              "max": 3366.5
             }
           },
           "programs": 36,
-          "calls": 168,
-          "triangles": 259837,
+          "calls": 125,
+          "triangles": 188693,
           "cameraView": "overview"
         }
       ],
@@ -231,20 +231,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 4288,
-        "readyMs": 7593,
-        "firstFrameMs": 7592,
-        "settledMs": 11695,
+        "constructedMs": 3576,
+        "readyMs": 6423,
+        "firstFrameMs": 6422,
+        "settledMs": 10529,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 480,
-            "maxMs": 147
+            "totalMs": 382,
+            "maxMs": 130
           },
           "prepare": {
             "count": 1,
-            "totalMs": 54,
-            "maxMs": 54
+            "totalMs": 55,
+            "maxMs": 55
           },
           "firstFrame": {
             "count": 0,
@@ -256,34 +256,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 7633,
+          "durationMs": 6463,
           "longTasks": {
             "count": 6,
-            "totalMs": 534,
-            "maxMs": 147
+            "totalMs": 437,
+            "maxMs": 130
           },
           "frames": {
             "cpu": {
               "samples": 4,
-              "p50": 10.4,
-              "p95": 15.5,
-              "max": 51.3
+              "p50": 11.1,
+              "p95": 12.5,
+              "max": 52
             },
             "interval": {
               "samples": 3,
-              "p50": 12.1,
-              "p95": 12.1,
-              "max": 19
+              "p50": 14.4,
+              "p95": 14.4,
+              "max": 16.3
             }
           },
           "programs": 39,
-          "calls": 164,
-          "triangles": 468496,
+          "calls": 95,
+          "triangles": 359150,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4025,
+          "durationMs": 4035,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -292,15 +292,15 @@
           "frames": {
             "cpu": {
               "samples": 5,
-              "p50": 11.9,
-              "p95": 12.4,
-              "max": 12.5
+              "p50": 9.6,
+              "p95": 10,
+              "max": 14
             },
             "interval": {
               "samples": 4,
-              "p50": 582.8,
-              "p95": 668,
-              "max": 2385.9
+              "p50": 223.5,
+              "p95": 650.3,
+              "max": 2160.8
             }
           },
           "programs": 39,
@@ -310,7 +310,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3004,
+          "durationMs": 3006,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -319,15 +319,15 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 11.6,
-              "p95": 11.6,
-              "max": 16.8
+              "p50": 9.8,
+              "p95": 9.8,
+              "max": 12.1
             },
             "interval": {
               "samples": 1,
-              "p50": 1554.3,
-              "p95": 1554.3,
-              "max": 1554.3
+              "p50": 594.6,
+              "p95": 594.6,
+              "max": 594.6
             }
           },
           "programs": 39,
@@ -337,7 +337,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 6037,
+          "durationMs": 5970,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -345,26 +345,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 12.8,
-              "p95": 12.8,
-              "max": 14.9
+              "samples": 3,
+              "p50": 11.8,
+              "p95": 11.8,
+              "max": 13.6
             },
             "interval": {
-              "samples": 1,
-              "p50": 16.4,
-              "p95": 16.4,
-              "max": 16.4
+              "samples": 2,
+              "p50": 10.9,
+              "p95": 10.9,
+              "max": 5592.8
             }
           },
           "programs": 39,
-          "calls": 96,
-          "triangles": 359166,
+          "calls": 167,
+          "triangles": 471340,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7596,
+          "durationMs": 7575,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -373,9 +373,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 13.5,
-              "p95": 13.5,
-              "max": 13.5
+              "p50": 11.9,
+              "p95": 11.9,
+              "max": 11.9
             },
             "interval": {
               "samples": 0,
@@ -385,8 +385,8 @@
             }
           },
           "programs": 39,
-          "calls": 122,
-          "triangles": 441588,
+          "calls": 167,
+          "triangles": 471340,
           "cameraView": "overview"
         }
       ],
@@ -400,8 +400,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 45537492,
-          "geometry": 14009978,
-          "total": 59547470
+          "geometry": 14021246,
+          "total": 59558738
         },
         "generatedBodies": 4,
         "actorAssets": "imported"
@@ -429,20 +429,20 @@
       "turnPlayed": 3,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3172,
-        "readyMs": 7551,
-        "firstFrameMs": 7550,
-        "settledMs": 11579,
+        "constructedMs": 2810,
+        "readyMs": 6462,
+        "firstFrameMs": 6460,
+        "settledMs": 10540,
         "longTasks": {
           "construct": {
-            "count": 4,
-            "totalMs": 391,
-            "maxMs": 143
+            "count": 3,
+            "totalMs": 305,
+            "maxMs": 153
           },
           "prepare": {
-            "count": 3,
-            "totalMs": 1551,
-            "maxMs": 1296
+            "count": 2,
+            "totalMs": 1168,
+            "maxMs": 1018
           },
           "firstFrame": {
             "count": 0,
@@ -454,34 +454,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 7549,
+          "durationMs": 6500,
           "longTasks": {
-            "count": 7,
-            "totalMs": 1942,
-            "maxMs": 1296
+            "count": 5,
+            "totalMs": 1473,
+            "maxMs": 1018
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 89.3,
-              "p95": 89.3,
-              "max": 89.3
+              "samples": 2,
+              "p50": 12.5,
+              "p95": 12.5,
+              "max": 44.6
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 33.2,
+              "p95": 33.2,
+              "max": 33.2
             }
           },
           "programs": 38,
-          "calls": 201,
-          "triangles": 326861,
+          "calls": 88,
+          "triangles": 183408,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4008,
+          "durationMs": 4015,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -489,16 +489,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 10,
-              "p50": 10,
-              "p95": 13.1,
-              "max": 14.8
+              "samples": 8,
+              "p50": 7.8,
+              "p95": 9.6,
+              "max": 17.3
             },
             "interval": {
-              "samples": 9,
-              "p50": 432,
-              "p95": 619.5,
-              "max": 1130.1
+              "samples": 7,
+              "p50": 419.2,
+              "p95": 566,
+              "max": 777.6
             }
           },
           "programs": 38,
@@ -508,7 +508,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3014,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -535,7 +535,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 4258,
+          "durationMs": 6995,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -544,9 +544,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 13.5,
-              "p95": 13.5,
-              "max": 13.5
+              "p50": 14.2,
+              "p95": 14.2,
+              "max": 14.2
             },
             "interval": {
               "samples": 0,
@@ -562,7 +562,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7553,
+          "durationMs": 7550,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -571,9 +571,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 10.5,
-              "p95": 10.5,
-              "max": 10.5
+              "p50": 9.4,
+              "p95": 9.4,
+              "max": 9.4
             },
             "interval": {
               "samples": 0,
@@ -583,8 +583,8 @@
             }
           },
           "programs": 38,
-          "calls": 144,
-          "triangles": 236041,
+          "calls": 114,
+          "triangles": 224441,
           "cameraView": "overview"
         }
       ],
@@ -627,20 +627,20 @@
       "turnPlayed": 3,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3424,
-        "readyMs": 7634,
-        "firstFrameMs": 7630,
-        "settledMs": 11693,
+        "constructedMs": 3157,
+        "readyMs": 6981,
+        "firstFrameMs": 6980,
+        "settledMs": 11065,
         "longTasks": {
           "construct": {
-            "count": 3,
-            "totalMs": 327,
-            "maxMs": 165
+            "count": 4,
+            "totalMs": 451,
+            "maxMs": 168
           },
           "prepare": {
-            "count": 3,
-            "totalMs": 1439,
-            "maxMs": 1139
+            "count": 1,
+            "totalMs": 1157,
+            "maxMs": 1157
           },
           "firstFrame": {
             "count": 0,
@@ -652,34 +652,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 7666,
+          "durationMs": 7031,
           "longTasks": {
-            "count": 6,
-            "totalMs": 1766,
-            "maxMs": 1139
+            "count": 5,
+            "totalMs": 1608,
+            "maxMs": 1157
           },
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 17.7,
-              "p95": 17.7,
-              "max": 81.6
+              "p50": 11.6,
+              "p95": 11.6,
+              "max": 44
             },
             "interval": {
               "samples": 2,
-              "p50": 17,
-              "p95": 17,
-              "max": 25.3
+              "p50": 12.2,
+              "p95": 12.2,
+              "max": 15.3
             }
           },
           "programs": 42,
           "calls": 100,
-          "triangles": 342713,
+          "triangles": 343553,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4007,
+          "durationMs": 4012,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -687,26 +687,53 @@
           },
           "frames": {
             "cpu": {
-              "samples": 5,
-              "p50": 15.5,
-              "p95": 18.4,
-              "max": 38
+              "samples": 8,
+              "p50": 10.3,
+              "p95": 12,
+              "max": 15.7
             },
             "interval": {
-              "samples": 4,
-              "p50": 60.3,
-              "p95": 179,
-              "max": 2836.3
+              "samples": 7,
+              "p50": 131,
+              "p95": 897,
+              "max": 2248
             }
           },
           "programs": 42,
           "calls": 168,
-          "triangles": 514146,
+          "triangles": 515826,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3004,
+          "durationMs": 3003,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 2,
+              "p50": 8.9,
+              "p95": 8.9,
+              "max": 9.6
+            },
+            "interval": {
+              "samples": 1,
+              "p50": 748.8,
+              "p95": 748.8,
+              "max": 748.8
+            }
+          },
+          "programs": 42,
+          "calls": 168,
+          "triangles": 515826,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 5689,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -715,52 +742,25 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 11.4,
-              "p95": 11.4,
-              "max": 18.3
+              "p50": 11.7,
+              "p95": 11.7,
+              "max": 19.8
             },
             "interval": {
               "samples": 2,
-              "p50": 358.4,
-              "p95": 358.4,
-              "max": 1384.7
+              "p50": 9.4,
+              "p95": 9.4,
+              "max": 5340.6
             }
           },
           "programs": 42,
-          "calls": 168,
-          "triangles": 514146,
-          "cameraView": "overview"
-        },
-        {
-          "name": "combat",
-          "durationMs": 6053,
-          "longTasks": {
-            "count": 0,
-            "totalMs": 0,
-            "maxMs": 0
-          },
-          "frames": {
-            "cpu": {
-              "samples": 2,
-              "p50": 6.5,
-              "p95": 6.5,
-              "max": 15.9
-            },
-            "interval": {
-              "samples": 1,
-              "p50": 7.7,
-              "p95": 7.7,
-              "max": 7.7
-            }
-          },
-          "programs": 42,
-          "calls": 101,
-          "triangles": 342729,
+          "calls": 166,
+          "triangles": 503832,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7590,
+          "durationMs": 7633,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -768,27 +768,27 @@
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 6.6,
-              "p95": 6.6,
-              "max": 8
+              "samples": 1,
+              "p50": 7.9,
+              "p95": 7.9,
+              "max": 7.9
             },
             "interval": {
-              "samples": 1,
-              "p50": 12.7,
-              "p95": 12.7,
-              "max": 12.7
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
             }
           },
           "programs": 42,
-          "calls": 108,
-          "triangles": 380381,
+          "calls": 166,
+          "triangles": 503832,
           "cameraView": "overview"
         }
       ],
       "overview": {
         "calls": 100,
-        "triangles": 342713,
+        "triangles": 343553,
         "textures": 113,
         "geometries": 206,
         "programs": 42,
@@ -796,8 +796,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 50522784,
-          "geometry": 16494698,
-          "total": 67017482
+          "geometry": 16505966,
+          "total": 67028750
         },
         "generatedBodies": 5,
         "actorAssets": "imported"
@@ -825,20 +825,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3448,
-        "readyMs": 6866,
-        "firstFrameMs": 6865,
-        "settledMs": 10935,
+        "constructedMs": 3168,
+        "readyMs": 6077,
+        "firstFrameMs": 6075,
+        "settledMs": 10160,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 545,
-            "maxMs": 166
+            "totalMs": 552,
+            "maxMs": 190
           },
           "prepare": {
-            "count": 2,
-            "totalMs": 917,
-            "maxMs": 854
+            "count": 1,
+            "totalMs": 792,
+            "maxMs": 792
           },
           "firstFrame": {
             "count": 0,
@@ -850,24 +850,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 6884,
+          "durationMs": 6134,
           "longTasks": {
-            "count": 7,
-            "totalMs": 1462,
-            "maxMs": 854
+            "count": 6,
+            "totalMs": 1344,
+            "maxMs": 792
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 12.4,
-              "p95": 12.4,
-              "max": 60.2
+              "samples": 3,
+              "p50": 12.7,
+              "p95": 12.7,
+              "max": 32.2
             },
             "interval": {
-              "samples": 1,
-              "p50": 18.3,
-              "p95": 18.3,
-              "max": 18.3
+              "samples": 2,
+              "p50": 29.2,
+              "p95": 29.2,
+              "max": 30.5
             }
           },
           "programs": 36,
@@ -877,7 +877,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4017,
+          "durationMs": 4007,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -886,15 +886,15 @@
           "frames": {
             "cpu": {
               "samples": 9,
-              "p50": 10.4,
-              "p95": 11.8,
-              "max": 13.7
+              "p50": 7,
+              "p95": 11.4,
+              "max": 11.7
             },
             "interval": {
               "samples": 8,
-              "p50": 248.2,
-              "p95": 617.6,
-              "max": 813.8
+              "p50": 47.5,
+              "p95": 481.1,
+              "max": 849.7
             }
           },
           "programs": 36,
@@ -931,7 +931,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 7562,
+          "durationMs": 7456,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -940,9 +940,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 14.5,
-              "p95": 14.5,
-              "max": 14.5
+              "p50": 9,
+              "p95": 9,
+              "max": 9
             },
             "interval": {
               "samples": 0,
@@ -958,7 +958,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7556,
+          "durationMs": 7628,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -967,20 +967,20 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 6.5,
-              "p95": 6.5,
-              "max": 12.2
+              "p50": 8,
+              "p95": 8,
+              "max": 10.4
             },
             "interval": {
               "samples": 1,
-              "p50": 3563.4,
-              "p95": 3563.4,
-              "max": 3563.4
+              "p50": 3622,
+              "p95": 3622,
+              "max": 3622
             }
           },
           "programs": 36,
-          "calls": 151,
-          "triangles": 246755,
+          "calls": 152,
+          "triangles": 246799,
           "cameraView": "overview"
         }
       ],
@@ -1023,20 +1023,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3490,
-        "readyMs": 7062,
-        "firstFrameMs": 7060,
-        "settledMs": 11144,
+        "constructedMs": 3318,
+        "readyMs": 6681,
+        "firstFrameMs": 6680,
+        "settledMs": 10757,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 435,
-            "maxMs": 148
+            "totalMs": 445,
+            "maxMs": 171
           },
           "prepare": {
-            "count": 2,
-            "totalMs": 1182,
-            "maxMs": 970
+            "count": 3,
+            "totalMs": 1091,
+            "maxMs": 834
           },
           "firstFrame": {
             "count": 0,
@@ -1048,24 +1048,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 7109,
+          "durationMs": 6724,
           "longTasks": {
-            "count": 6,
-            "totalMs": 1617,
-            "maxMs": 970
+            "count": 7,
+            "totalMs": 1536,
+            "maxMs": 834
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 17.4,
-              "p95": 17.4,
-              "max": 41.8
+              "samples": 3,
+              "p50": 8.8,
+              "p95": 8.8,
+              "max": 49.9
             },
             "interval": {
-              "samples": 1,
-              "p50": 22.4,
-              "p95": 22.4,
-              "max": 22.4
+              "samples": 2,
+              "p50": 10.1,
+              "p95": 10.1,
+              "max": 12.4
             }
           },
           "programs": 39,
@@ -1075,7 +1075,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4009,
+          "durationMs": 4008,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1084,15 +1084,15 @@
           "frames": {
             "cpu": {
               "samples": 8,
-              "p50": 10.1,
-              "p95": 12,
-              "max": 17.9
+              "p50": 8.1,
+              "p95": 10.9,
+              "max": 11.3
             },
             "interval": {
               "samples": 7,
-              "p50": 22,
-              "p95": 459.9,
-              "max": 2523.6
+              "p50": 19.3,
+              "p95": 468,
+              "max": 1913.1
             }
           },
           "programs": 39,
@@ -1102,7 +1102,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3010,
+          "durationMs": 3009,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1110,16 +1110,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 9,
-              "p95": 9,
-              "max": 13.6
+              "samples": 2,
+              "p50": 8.5,
+              "p95": 8.5,
+              "max": 17.3
             },
             "interval": {
-              "samples": 2,
-              "p50": 700.8,
-              "p95": 700.8,
-              "max": 850.7
+              "samples": 1,
+              "p50": 1287.9,
+              "p95": 1287.9,
+              "max": 1287.9
             }
           },
           "programs": 39,
@@ -1129,7 +1129,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 13530,
+          "durationMs": 7156,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1137,26 +1137,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 4,
-              "p50": 10.4,
-              "p95": 14.1,
-              "max": 19.1
+              "samples": 3,
+              "p50": 20.9,
+              "p95": 20.9,
+              "max": 23.1
             },
             "interval": {
-              "samples": 3,
-              "p50": 256.6,
-              "p95": 256.6,
-              "max": 12834
+              "samples": 2,
+              "p50": 14.3,
+              "p95": 14.3,
+              "max": 6308.1
             }
           },
           "programs": 39,
-          "calls": 160,
-          "triangles": 505294,
+          "calls": 164,
+          "triangles": 511346,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7619,
+          "durationMs": 7614,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1164,10 +1164,10 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 10.2,
-              "p95": 10.2,
-              "max": 10.2
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
             },
             "interval": {
               "samples": 0,
@@ -1177,8 +1177,8 @@
             }
           },
           "programs": 39,
-          "calls": 134,
-          "triangles": 488882,
+          "calls": 164,
+          "triangles": 511346,
           "cameraView": "overview"
         }
       ],
@@ -1221,20 +1221,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3534,
-        "readyMs": 9090,
-        "firstFrameMs": 9088,
-        "settledMs": 13147,
+        "constructedMs": 2887,
+        "readyMs": 8376,
+        "firstFrameMs": 8374,
+        "settledMs": 12459,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 451,
-            "maxMs": 141
+            "totalMs": 392,
+            "maxMs": 162
           },
           "prepare": {
             "count": 3,
-            "totalMs": 2018,
-            "maxMs": 1724
+            "totalMs": 2073,
+            "maxMs": 1763
           },
           "firstFrame": {
             "count": 0,
@@ -1246,24 +1246,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9117,
+          "durationMs": 8411,
           "longTasks": {
             "count": 7,
-            "totalMs": 2469,
-            "maxMs": 1724
+            "totalMs": 2465,
+            "maxMs": 1763
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 15.2,
-              "p95": 15.2,
-              "max": 62.8
+              "p50": 21.9,
+              "p95": 21.9,
+              "max": 72.5
             },
             "interval": {
               "samples": 1,
-              "p50": 33.7,
-              "p95": 33.7,
-              "max": 33.7
+              "p50": 41.2,
+              "p95": 41.2,
+              "max": 41.2
             }
           },
           "programs": 41,
@@ -1273,7 +1273,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4007,
+          "durationMs": 4016,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1281,16 +1281,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 8,
-              "p50": 16.5,
-              "p95": 22.2,
-              "max": 22.7
+              "samples": 9,
+              "p50": 19.7,
+              "p95": 24.6,
+              "max": 27.2
             },
             "interval": {
-              "samples": 7,
-              "p50": 291.3,
-              "p95": 487.8,
-              "max": 730.8
+              "samples": 8,
+              "p50": 71.6,
+              "p95": 409.5,
+              "max": 866.1
             }
           },
           "programs": 41,
@@ -1300,7 +1300,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3011,
+          "durationMs": 3004,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1327,7 +1327,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 4381,
+          "durationMs": 7578,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1336,9 +1336,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 17,
-              "p95": 17,
-              "max": 17
+              "p50": 16.9,
+              "p95": 16.9,
+              "max": 16.9
             },
             "interval": {
               "samples": 0,
@@ -1354,7 +1354,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7565,
+          "durationMs": 7574,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1363,9 +1363,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 14.1,
-              "p95": 14.1,
-              "max": 14.1
+              "p50": 10.7,
+              "p95": 10.7,
+              "max": 10.7
             },
             "interval": {
               "samples": 0,
@@ -1419,20 +1419,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3484,
-        "readyMs": 8420,
-        "firstFrameMs": 8419,
-        "settledMs": 12505,
+        "constructedMs": 3235,
+        "readyMs": 8009,
+        "firstFrameMs": 8008,
+        "settledMs": 12073,
         "longTasks": {
           "construct": {
-            "count": 4,
-            "totalMs": 424,
-            "maxMs": 188
+            "count": 3,
+            "totalMs": 330,
+            "maxMs": 178
           },
           "prepare": {
             "count": 3,
-            "totalMs": 1955,
-            "maxMs": 1662
+            "totalMs": 1846,
+            "maxMs": 1551
           },
           "firstFrame": {
             "count": 0,
@@ -1444,24 +1444,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 8454,
+          "durationMs": 8047,
           "longTasks": {
-            "count": 7,
-            "totalMs": 2379,
-            "maxMs": 1662
+            "count": 6,
+            "totalMs": 2176,
+            "maxMs": 1551
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 25.9,
-              "p95": 25.9,
-              "max": 57.4
+              "samples": 3,
+              "p50": 25.4,
+              "p95": 25.4,
+              "max": 55.9
             },
             "interval": {
-              "samples": 1,
-              "p50": 29.3,
-              "p95": 29.3,
-              "max": 29.3
+              "samples": 2,
+              "p50": 13.4,
+              "p95": 13.4,
+              "max": 28.6
             }
           },
           "programs": 44,
@@ -1471,7 +1471,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4019,
+          "durationMs": 4006,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1479,26 +1479,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 4,
-              "p50": 28.2,
-              "p95": 30.7,
-              "max": 35
+              "samples": 2,
+              "p50": 15.6,
+              "p95": 15.6,
+              "max": 31.5
             },
             "interval": {
-              "samples": 3,
-              "p50": 652.9,
-              "p95": 652.9,
-              "max": 2513.9
+              "samples": 1,
+              "p50": 2526.1,
+              "p95": 2526.1,
+              "max": 2526.1
             }
           },
           "programs": 44,
-          "calls": 126,
-          "triangles": 530748,
+          "calls": 221,
+          "triangles": 804821,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3005,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1506,16 +1506,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 4,
-              "p50": 14.5,
-              "p95": 17.6,
-              "max": 23.1
+              "samples": 3,
+              "p50": 18.6,
+              "p95": 18.6,
+              "max": 20.6
             },
             "interval": {
-              "samples": 3,
-              "p50": 778.8,
-              "p95": 778.8,
-              "max": 924.3
+              "samples": 2,
+              "p50": 754.9,
+              "p95": 754.9,
+              "max": 1481.3
             }
           },
           "programs": 44,
@@ -1525,7 +1525,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 7129,
+          "durationMs": 13453,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1533,26 +1533,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 13.9,
-              "p95": 13.9,
-              "max": 18.8
+              "samples": 3,
+              "p50": 21.1,
+              "p95": 21.1,
+              "max": 25.4
             },
             "interval": {
-              "samples": 1,
-              "p50": 16,
-              "p95": 16,
-              "max": 16
+              "samples": 2,
+              "p50": 16.8,
+              "p95": 16.8,
+              "max": 11897.3
             }
           },
           "programs": 44,
-          "calls": 127,
-          "triangles": 530764,
+          "calls": 222,
+          "triangles": 804837,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7597,
+          "durationMs": 7592,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1561,9 +1561,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 24.9,
-              "p95": 24.9,
-              "max": 24.9
+              "p50": 18.8,
+              "p95": 18.8,
+              "max": 18.8
             },
             "interval": {
               "samples": 0,
@@ -1617,20 +1617,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3318,
-        "readyMs": 8859,
-        "firstFrameMs": 8857,
-        "settledMs": 12947,
+        "constructedMs": 3055,
+        "readyMs": 7830,
+        "firstFrameMs": 7829,
+        "settledMs": 11922,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 383,
-            "maxMs": 161
+            "totalMs": 369,
+            "maxMs": 158
           },
           "prepare": {
             "count": 3,
-            "totalMs": 2005,
-            "maxMs": 1694
+            "totalMs": 1762,
+            "maxMs": 1518
           },
           "firstFrame": {
             "count": 0,
@@ -1642,24 +1642,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 8917,
+          "durationMs": 7895,
           "longTasks": {
             "count": 7,
-            "totalMs": 2388,
-            "maxMs": 1694
+            "totalMs": 2131,
+            "maxMs": 1518
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 28.1,
-              "p95": 28.1,
-              "max": 75
+              "p50": 36.1,
+              "p95": 36.1,
+              "max": 67.3
             },
             "interval": {
               "samples": 1,
-              "p50": 44.8,
-              "p95": 44.8,
-              "max": 44.8
+              "p50": 51.7,
+              "p95": 51.7,
+              "max": 51.7
             }
           },
           "programs": 42,
@@ -1669,7 +1669,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4011,
+          "durationMs": 4009,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1677,26 +1677,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 8,
-              "p50": 17.9,
-              "p95": 24.3,
-              "max": 25.6
+              "samples": 9,
+              "p50": 15.8,
+              "p95": 19.8,
+              "max": 24.3
             },
             "interval": {
-              "samples": 7,
-              "p50": 92.5,
-              "p95": 766.9,
-              "max": 1056.3
+              "samples": 8,
+              "p50": 334.3,
+              "p95": 563.3,
+              "max": 701.3
             }
           },
           "programs": 42,
-          "calls": 138,
-          "triangles": 238696,
+          "calls": 244,
+          "triangles": 402651,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3006,
+          "durationMs": 3012,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1717,13 +1717,13 @@
             }
           },
           "programs": 42,
-          "calls": 138,
-          "triangles": 238696,
+          "calls": 244,
+          "triangles": 402651,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 4895,
+          "durationMs": 3491,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1732,9 +1732,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 27.2,
-              "p95": 27.2,
-              "max": 27.2
+              "p50": 23,
+              "p95": 23,
+              "max": 23
             },
             "interval": {
               "samples": 0,
@@ -1750,7 +1750,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7571,
+          "durationMs": 7552,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1759,9 +1759,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 18.4,
-              "p95": 18.4,
-              "max": 18.4
+              "p50": 21.3,
+              "p95": 21.3,
+              "max": 21.3
             },
             "interval": {
               "samples": 0,
@@ -1771,8 +1771,8 @@
             }
           },
           "programs": 42,
-          "calls": 233,
-          "triangles": 398667,
+          "calls": 179,
+          "triangles": 384668,
           "cameraView": "overview"
         }
       ],
@@ -1815,20 +1815,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 4103,
-        "readyMs": 9408,
-        "firstFrameMs": 9406,
-        "settledMs": 13503,
+        "constructedMs": 3742,
+        "readyMs": 8370,
+        "firstFrameMs": 8369,
+        "settledMs": 12483,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 758,
-            "maxMs": 236
+            "totalMs": 611,
+            "maxMs": 204
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1775,
-            "maxMs": 1686
+            "totalMs": 1586,
+            "maxMs": 1523
           },
           "firstFrame": {
             "count": 0,
@@ -1840,34 +1840,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9445,
+          "durationMs": 8414,
           "longTasks": {
             "count": 7,
-            "totalMs": 2533,
-            "maxMs": 1686
+            "totalMs": 2197,
+            "maxMs": 1523
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 37.7,
-              "p95": 37.7,
-              "max": 84.6
+              "samples": 3,
+              "p50": 21.9,
+              "p95": 21.9,
+              "max": 58.6
             },
             "interval": {
-              "samples": 1,
-              "p50": 43.5,
-              "p95": 43.5,
-              "max": 43.5
+              "samples": 2,
+              "p50": 16.4,
+              "p95": 16.4,
+              "max": 26.1
             }
           },
           "programs": 44,
-          "calls": 290,
-          "triangles": 840650,
+          "calls": 158,
+          "triangles": 468420,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4013,
+          "durationMs": 4009,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1876,20 +1876,20 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 23.7,
-              "p95": 23.7,
-              "max": 32.1
+              "p50": 16.4,
+              "p95": 16.4,
+              "max": 16.7
             },
             "interval": {
               "samples": 2,
-              "p50": 26.1,
-              "p95": 26.1,
-              "max": 613.6
+              "p50": 596,
+              "p95": 596,
+              "max": 648.7
             }
           },
           "programs": 44,
           "calls": 290,
-          "triangles": 840650,
+          "triangles": 841970,
           "cameraView": "overview"
         },
         {
@@ -1902,26 +1902,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 22.2,
-              "p95": 22.2,
-              "max": 23.3
+              "samples": 5,
+              "p50": 17.9,
+              "p95": 18.3,
+              "max": 20.4
             },
             "interval": {
-              "samples": 2,
-              "p50": 728.2,
-              "p95": 728.2,
-              "max": 1279.1
+              "samples": 4,
+              "p50": 634,
+              "p95": 723.8,
+              "max": 937.9
             }
           },
           "programs": 44,
           "calls": 290,
-          "triangles": 840650,
+          "triangles": 841970,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 13976,
+          "durationMs": 6352,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1930,9 +1930,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 33.2,
-              "p95": 33.2,
-              "max": 33.2
+              "p50": 16.9,
+              "p95": 16.9,
+              "max": 16.9
             },
             "interval": {
               "samples": 0,
@@ -1943,12 +1943,12 @@
           },
           "programs": 44,
           "calls": 292,
-          "triangles": 837250,
+          "triangles": 838570,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7583,
+          "durationMs": 7565,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -1956,27 +1956,27 @@
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 10,
-              "p95": 10,
-              "max": 12.4
+              "samples": 3,
+              "p50": 13.2,
+              "p95": 13.2,
+              "max": 19.8
             },
             "interval": {
-              "samples": 1,
-              "p50": 11.3,
-              "p95": 11.3,
-              "max": 11.3
+              "samples": 2,
+              "p50": 11.8,
+              "p95": 11.8,
+              "max": 6650.5
             }
           },
           "programs": 44,
-          "calls": 130,
-          "triangles": 490267,
+          "calls": 380,
+          "triangles": 1130438,
           "cameraView": "overview"
         }
       ],
       "overview": {
         "calls": 158,
-        "triangles": 467760,
+        "triangles": 468420,
         "textures": 170,
         "geometries": 309,
         "programs": 44,
@@ -1984,8 +1984,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 63800008,
-          "geometry": 24343296,
-          "total": 88143304
+          "geometry": 24356976,
+          "total": 88156984
         },
         "generatedBodies": 8,
         "actorAssets": "imported"
@@ -2013,20 +2013,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3209,
-        "readyMs": 8653,
-        "firstFrameMs": 8652,
-        "settledMs": 12721,
+        "constructedMs": 2833,
+        "readyMs": 8426,
+        "firstFrameMs": 8425,
+        "settledMs": 12470,
         "longTasks": {
           "construct": {
-            "count": 5,
-            "totalMs": 567,
-            "maxMs": 203
+            "count": 4,
+            "totalMs": 353,
+            "maxMs": 138
           },
           "prepare": {
-            "count": 2,
-            "totalMs": 2005,
-            "maxMs": 1932
+            "count": 3,
+            "totalMs": 2319,
+            "maxMs": 2016
           },
           "firstFrame": {
             "count": 0,
@@ -2038,34 +2038,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 8685,
+          "durationMs": 8423,
           "longTasks": {
             "count": 7,
-            "totalMs": 2572,
-            "maxMs": 1932
+            "totalMs": 2672,
+            "maxMs": 2016
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 23.9,
-              "p95": 23.9,
-              "max": 68.9
+              "samples": 1,
+              "p50": 101.6,
+              "p95": 101.6,
+              "max": 101.6
             },
             "interval": {
-              "samples": 1,
-              "p50": 34.2,
-              "p95": 34.2,
-              "max": 34.2
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
             }
           },
           "programs": 40,
-          "calls": 133,
-          "triangles": 233956,
+          "calls": 357,
+          "triangles": 592237,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4009,
+          "durationMs": 4016,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2074,25 +2074,25 @@
           "frames": {
             "cpu": {
               "samples": 10,
-              "p50": 16.2,
-              "p95": 23.2,
-              "max": 23.9
+              "p50": 13.8,
+              "p95": 16.9,
+              "max": 31
             },
             "interval": {
               "samples": 9,
-              "p50": 78.7,
-              "p95": 750.6,
-              "max": 759.7
+              "p50": 275.9,
+              "p95": 400.4,
+              "max": 799.9
             }
           },
           "programs": 40,
-          "calls": 132,
-          "triangles": 233860,
+          "calls": 242,
+          "triangles": 399025,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3006,
+          "durationMs": 3011,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2113,13 +2113,13 @@
             }
           },
           "programs": 40,
-          "calls": 132,
-          "triangles": 233860,
+          "calls": 242,
+          "triangles": 399025,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 3797,
+          "durationMs": 3493,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2128,9 +2128,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 28.7,
-              "p95": 28.7,
-              "max": 28.7
+              "p50": 33.1,
+              "p95": 33.1,
+              "max": 33.1
             },
             "interval": {
               "samples": 0,
@@ -2146,7 +2146,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7551,
+          "durationMs": 7570,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2154,21 +2154,21 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 15.3,
-              "p95": 15.3,
-              "max": 15.3
+              "samples": 2,
+              "p50": 16,
+              "p95": 16,
+              "max": 21.9
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 3809,
+              "p95": 3809,
+              "max": 3809
             }
           },
           "programs": 40,
-          "calls": 181,
-          "triangles": 381957,
+          "calls": 246,
+          "triangles": 399401,
           "cameraView": "overview"
         }
       ],
@@ -2211,20 +2211,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3329,
-        "readyMs": 9122,
-        "firstFrameMs": 9120,
-        "settledMs": 13214,
+        "constructedMs": 3297,
+        "readyMs": 8272,
+        "firstFrameMs": 8271,
+        "settledMs": 12364,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 405,
-            "maxMs": 186
+            "totalMs": 435,
+            "maxMs": 188
           },
           "prepare": {
             "count": 3,
-            "totalMs": 2337,
-            "maxMs": 2011
+            "totalMs": 2170,
+            "maxMs": 1896
           },
           "firstFrame": {
             "count": 0,
@@ -2236,34 +2236,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9171,
+          "durationMs": 8290,
           "longTasks": {
             "count": 7,
-            "totalMs": 2742,
-            "maxMs": 2011
+            "totalMs": 2605,
+            "maxMs": 1896
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 25.8,
-              "p95": 25.8,
-              "max": 69.7
+              "samples": 2,
+              "p50": 21.1,
+              "p95": 21.1,
+              "max": 47.2
             },
             "interval": {
-              "samples": 2,
-              "p50": 26.6,
-              "p95": 26.6,
-              "max": 30.1
+              "samples": 1,
+              "p50": 24.8,
+              "p95": 24.8,
+              "max": 24.8
             }
           },
           "programs": 44,
           "calls": 135,
-          "triangles": 388799,
+          "triangles": 389063,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4018,
+          "durationMs": 4028,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2271,26 +2271,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 26.9,
-              "p95": 26.9,
-              "max": 31.4
+              "samples": 3,
+              "p50": 17.4,
+              "p95": 17.4,
+              "max": 19.4
             },
             "interval": {
-              "samples": 1,
-              "p50": 2824.8,
-              "p95": 2824.8,
-              "max": 2824.8
+              "samples": 2,
+              "p50": 568.3,
+              "p95": 568.3,
+              "max": 2032.3
             }
           },
           "programs": 44,
           "calls": 243,
-          "triangles": 690141,
+          "triangles": 690669,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3004,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2298,26 +2298,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 18.3,
-              "p95": 18.3,
-              "max": 22.5
+              "samples": 5,
+              "p50": 18.7,
+              "p95": 21.4,
+              "max": 22.1
             },
             "interval": {
-              "samples": 2,
-              "p50": 578.5,
-              "p95": 578.5,
-              "max": 1478.2
+              "samples": 4,
+              "p50": 630.9,
+              "p95": 692,
+              "max": 705.5
             }
           },
           "programs": 44,
           "calls": 243,
-          "triangles": 690141,
+          "triangles": 690669,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 11884,
+          "durationMs": 4554,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2326,25 +2326,25 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 27,
-              "p95": 27,
-              "max": 27
+              "p50": 19.4,
+              "p95": 19.4,
+              "max": 23.2
             },
             "interval": {
               "samples": 2,
-              "p50": 24.3,
-              "p95": 24.3,
-              "max": 11582
+              "p50": 21.2,
+              "p95": 21.2,
+              "max": 4200.8
             }
           },
           "programs": 44,
           "calls": 241,
-          "triangles": 677420,
+          "triangles": 677948,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7565,
+          "durationMs": 7548,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2353,9 +2353,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 15.8,
-              "p95": 15.8,
-              "max": 15.8
+              "p50": 16.1,
+              "p95": 16.1,
+              "max": 16.1
             },
             "interval": {
               "samples": 0,
@@ -2366,13 +2366,13 @@
           },
           "programs": 44,
           "calls": 242,
-          "triangles": 682318,
+          "triangles": 682846,
           "cameraView": "overview"
         }
       ],
       "overview": {
         "calls": 135,
-        "triangles": 388799,
+        "triangles": 389063,
         "textures": 171,
         "geometries": 323,
         "programs": 44,
@@ -2380,8 +2380,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 62886028,
-          "geometry": 22510528,
-          "total": 85396556
+          "geometry": 22524208,
+          "total": 85410236
         },
         "generatedBodies": 9,
         "actorAssets": "imported"
@@ -2409,20 +2409,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3698,
-        "readyMs": 9402,
-        "firstFrameMs": 9401,
-        "settledMs": 13501,
+        "constructedMs": 3193,
+        "readyMs": 7902,
+        "firstFrameMs": 7901,
+        "settledMs": 11940,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 638,
-            "maxMs": 201
+            "totalMs": 579,
+            "maxMs": 202
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1556,
-            "maxMs": 1494
+            "totalMs": 1639,
+            "maxMs": 1554
           },
           "firstFrame": {
             "count": 0,
@@ -2434,18 +2434,18 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9448,
+          "durationMs": 7910,
           "longTasks": {
             "count": 7,
-            "totalMs": 2194,
-            "maxMs": 1494
+            "totalMs": 2218,
+            "maxMs": 1554
           },
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 57.9,
-              "p95": 57.9,
-              "max": 57.9
+              "p50": 82,
+              "p95": 82,
+              "max": 82
             },
             "interval": {
               "samples": 0,
@@ -2461,7 +2461,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4013,
+          "durationMs": 4009,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2470,25 +2470,25 @@
           "frames": {
             "cpu": {
               "samples": 11,
-              "p50": 17.7,
-              "p95": 30.9,
-              "max": 31.6
+              "p50": 19.3,
+              "p95": 24.4,
+              "max": 25
             },
             "interval": {
               "samples": 10,
-              "p50": 37.2,
-              "p95": 483.8,
-              "max": 1226.9
+              "p50": 41,
+              "p95": 457.5,
+              "max": 1010.5
             }
           },
           "programs": 40,
-          "calls": 137,
-          "triangles": 308510,
+          "calls": 248,
+          "triangles": 495601,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3006,
+          "durationMs": 3005,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2509,13 +2509,13 @@
             }
           },
           "programs": 40,
-          "calls": 137,
-          "triangles": 308510,
+          "calls": 248,
+          "triangles": 495601,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 3983,
+          "durationMs": 4080,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2524,9 +2524,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 26.4,
-              "p95": 26.4,
-              "max": 26.4
+              "p50": 22.3,
+              "p95": 22.3,
+              "max": 22.3
             },
             "interval": {
               "samples": 0,
@@ -2542,7 +2542,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7569,
+          "durationMs": 7583,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2551,9 +2551,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 14.7,
-              "p95": 14.7,
-              "max": 14.7
+              "p50": 14.6,
+              "p95": 14.6,
+              "max": 14.6
             },
             "interval": {
               "samples": 0,
@@ -2607,20 +2607,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3458,
-        "readyMs": 9008,
-        "firstFrameMs": 9007,
-        "settledMs": 13076,
+        "constructedMs": 3079,
+        "readyMs": 7905,
+        "firstFrameMs": 7904,
+        "settledMs": 11964,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 401,
-            "maxMs": 162
+            "totalMs": 357,
+            "maxMs": 150
           },
           "prepare": {
             "count": 3,
-            "totalMs": 1850,
-            "maxMs": 1579
+            "totalMs": 1736,
+            "maxMs": 1483
           },
           "firstFrame": {
             "count": 0,
@@ -2632,24 +2632,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9038,
+          "durationMs": 7944,
           "longTasks": {
             "count": 7,
-            "totalMs": 2251,
-            "maxMs": 1579
+            "totalMs": 2093,
+            "maxMs": 1483
           },
           "frames": {
             "cpu": {
-              "samples": 2,
-              "p50": 24.9,
-              "p95": 24.9,
-              "max": 63.8
+              "samples": 3,
+              "p50": 18.3,
+              "p95": 18.3,
+              "max": 58.4
             },
             "interval": {
-              "samples": 1,
-              "p50": 29.4,
-              "p95": 29.4,
-              "max": 29.4
+              "samples": 2,
+              "p50": 17.6,
+              "p95": 17.6,
+              "max": 21.5
             }
           },
           "programs": 43,
@@ -2659,7 +2659,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4008,
+          "durationMs": 4006,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2667,10 +2667,10 @@
           },
           "frames": {
             "cpu": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 19.5,
+              "p95": 19.5,
+              "max": 19.5
             },
             "interval": {
               "samples": 0,
@@ -2680,13 +2680,13 @@
             }
           },
           "programs": 43,
-          "calls": 143,
-          "triangles": 615224,
+          "calls": 262,
+          "triangles": 948458,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3004,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2694,16 +2694,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 4,
-              "p50": 20.5,
-              "p95": 22,
-              "max": 23.3
+              "samples": 3,
+              "p50": 17.7,
+              "p95": 17.7,
+              "max": 21.8
             },
             "interval": {
-              "samples": 3,
-              "p50": 451.4,
-              "p95": 451.4,
-              "max": 1250.9
+              "samples": 2,
+              "p50": 653.3,
+              "p95": 653.3,
+              "max": 1138.4
             }
           },
           "programs": 43,
@@ -2713,7 +2713,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 14696,
+          "durationMs": 12109,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2721,26 +2721,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 5,
-              "p50": 27.4,
-              "p95": 35.8,
-              "max": 45.4
+              "samples": 4,
+              "p50": 15.4,
+              "p95": 25.3,
+              "max": 40.5
             },
             "interval": {
-              "samples": 4,
-              "p50": 305.1,
-              "p95": 855.9,
-              "max": 13160.5
+              "samples": 3,
+              "p50": 286.6,
+              "p95": 286.6,
+              "max": 11265.4
             }
           },
           "programs": 43,
-          "calls": 261,
-          "triangles": 960756,
+          "calls": 256,
+          "triangles": 954028,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7653,
+          "durationMs": 7645,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2748,10 +2748,10 @@
           },
           "frames": {
             "cpu": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 20.8,
+              "p95": 20.8,
+              "max": 20.8
             },
             "interval": {
               "samples": 0,
@@ -2762,7 +2762,7 @@
           },
           "programs": 43,
           "calls": 261,
-          "triangles": 960756,
+          "triangles": 950214,
           "cameraView": "overview"
         }
       ],
@@ -2805,20 +2805,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3598,
-        "readyMs": 9486,
-        "firstFrameMs": 9484,
-        "settledMs": 13573,
+        "constructedMs": 3502,
+        "readyMs": 8689,
+        "firstFrameMs": 8688,
+        "settledMs": 12761,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 645,
-            "maxMs": 237
+            "totalMs": 622,
+            "maxMs": 178
           },
           "prepare": {
             "count": 2,
-            "totalMs": 2112,
-            "maxMs": 2050
+            "totalMs": 1547,
+            "maxMs": 1494
           },
           "firstFrame": {
             "count": 0,
@@ -2830,24 +2830,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9538,
+          "durationMs": 8736,
           "longTasks": {
             "count": 7,
-            "totalMs": 2757,
-            "maxMs": 2050
+            "totalMs": 2169,
+            "maxMs": 1494
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 19.6,
-              "p95": 19.6,
-              "max": 57.6
+              "p50": 24.1,
+              "p95": 24.1,
+              "max": 50.5
             },
             "interval": {
               "samples": 1,
-              "p50": 62.6,
-              "p95": 62.6,
-              "max": 62.6
+              "p50": 29.8,
+              "p95": 29.8,
+              "max": 29.8
             }
           },
           "programs": 43,
@@ -2857,7 +2857,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4008,
+          "durationMs": 4007,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2865,16 +2865,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 10,
+              "samples": 11,
               "p50": 16.2,
-              "p95": 28.4,
-              "max": 30.1
+              "p95": 31,
+              "max": 42.8
             },
             "interval": {
-              "samples": 9,
-              "p50": 36.2,
-              "p95": 503.1,
-              "max": 814.3
+              "samples": 10,
+              "p50": 46.5,
+              "p95": 746.8,
+              "max": 1036.2
             }
           },
           "programs": 43,
@@ -2884,7 +2884,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3003,
+          "durationMs": 3016,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2911,7 +2911,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 5184,
+          "durationMs": 4785,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -2920,9 +2920,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 28.8,
-              "p95": 28.8,
-              "max": 28.8
+              "p50": 18.4,
+              "p95": 18.4,
+              "max": 18.4
             },
             "interval": {
               "samples": 0,
@@ -2947,9 +2947,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 19.7,
-              "p95": 19.7,
-              "max": 19.7
+              "p50": 18.5,
+              "p95": 18.5,
+              "max": 18.5
             },
             "interval": {
               "samples": 0,
@@ -2959,8 +2959,8 @@
             }
           },
           "programs": 43,
-          "calls": 203,
-          "triangles": 513479,
+          "calls": 230,
+          "triangles": 522255,
           "cameraView": "overview"
         }
       ],
@@ -3003,20 +3003,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3945,
-        "readyMs": 9740,
-        "firstFrameMs": 9738,
-        "settledMs": 13830,
+        "constructedMs": 3494,
+        "readyMs": 8304,
+        "firstFrameMs": 8303,
+        "settledMs": 12402,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 707,
-            "maxMs": 266
+            "totalMs": 583,
+            "maxMs": 231
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1998,
-            "maxMs": 1912
+            "totalMs": 1624,
+            "maxMs": 1572
           },
           "firstFrame": {
             "count": 0,
@@ -3028,34 +3028,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9789,
+          "durationMs": 8352,
           "longTasks": {
             "count": 7,
-            "totalMs": 2705,
-            "maxMs": 1912
+            "totalMs": 2207,
+            "maxMs": 1572
           },
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 36.3,
-              "p95": 36.3,
-              "max": 81.9
+              "p50": 17.4,
+              "p95": 17.4,
+              "max": 49.6
             },
             "interval": {
               "samples": 2,
-              "p50": 16.5,
-              "p95": 16.5,
-              "max": 40.7
+              "p50": 14.5,
+              "p95": 14.5,
+              "max": 20.3
             }
           },
           "programs": 48,
           "calls": 144,
-          "triangles": 597665,
+          "triangles": 598505,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4010,
+          "durationMs": 4013,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3063,21 +3063,21 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 19.9,
-              "p95": 19.9,
-              "max": 19.9
+              "samples": 2,
+              "p50": 17.1,
+              "p95": 17.1,
+              "max": 18.5
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 245.8,
+              "p95": 245.8,
+              "max": 245.8
             }
           },
           "programs": 48,
           "calls": 250,
-          "triangles": 931735,
+          "triangles": 933415,
           "cameraView": "overview"
         },
         {
@@ -3091,25 +3091,25 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 26.8,
-              "p95": 26.8,
-              "max": 30.8
+              "p50": 21.5,
+              "p95": 21.5,
+              "max": 35.5
             },
             "interval": {
               "samples": 2,
-              "p50": 756.3,
-              "p95": 756.3,
-              "max": 1539.8
+              "p50": 787.3,
+              "p95": 787.3,
+              "max": 1005.3
             }
           },
           "programs": 48,
           "calls": 250,
-          "triangles": 931735,
+          "triangles": 933415,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 1766,
+          "durationMs": 12357,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3118,25 +3118,25 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 24.5,
-              "p95": 24.5,
-              "max": 30.5
+              "p50": 27.4,
+              "p95": 27.4,
+              "max": 44
             },
             "interval": {
               "samples": 1,
-              "p50": 1234.7,
-              "p95": 1234.7,
-              "max": 1234.7
+              "p50": 11409.2,
+              "p95": 11409.2,
+              "max": 11409.2
             }
           },
           "programs": 48,
           "calls": 249,
-          "triangles": 939705,
+          "triangles": 941385,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7624,
+          "durationMs": 7634,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3144,10 +3144,10 @@
           },
           "frames": {
             "cpu": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 25.6,
+              "p95": 25.6,
+              "max": 25.6
             },
             "interval": {
               "samples": 0,
@@ -3157,14 +3157,14 @@
             }
           },
           "programs": 48,
-          "calls": 249,
-          "triangles": 939705,
+          "calls": 250,
+          "triangles": 942925,
           "cameraView": "overview"
         }
       ],
       "overview": {
         "calls": 144,
-        "triangles": 597665,
+        "triangles": 598505,
         "textures": 156,
         "geometries": 324,
         "programs": 48,
@@ -3172,8 +3172,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 55005776,
-          "geometry": 24377016,
-          "total": 79382792
+          "geometry": 24388284,
+          "total": 79394060
         },
         "generatedBodies": 11,
         "actorAssets": "imported"
@@ -3201,20 +3201,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3631,
-        "readyMs": 8910,
-        "firstFrameMs": 8909,
-        "settledMs": 12971,
+        "constructedMs": 3314,
+        "readyMs": 8423,
+        "firstFrameMs": 8422,
+        "settledMs": 12488,
         "longTasks": {
           "construct": {
-            "count": 5,
-            "totalMs": 726,
-            "maxMs": 258
+            "count": 4,
+            "totalMs": 525,
+            "maxMs": 218
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1645,
-            "maxMs": 1557
+            "totalMs": 1500,
+            "maxMs": 1435
           },
           "firstFrame": {
             "count": 0,
@@ -3226,18 +3226,18 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 8922,
+          "durationMs": 8455,
           "longTasks": {
-            "count": 7,
-            "totalMs": 2371,
-            "maxMs": 1557
+            "count": 6,
+            "totalMs": 2025,
+            "maxMs": 1435
           },
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 84.9,
-              "p95": 84.9,
-              "max": 84.9
+              "p50": 61.6,
+              "p95": 61.6,
+              "max": 61.6
             },
             "interval": {
               "samples": 0,
@@ -3253,7 +3253,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4008,
+          "durationMs": 4016,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3261,26 +3261,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 11,
-              "p50": 21,
-              "p95": 23.5,
-              "max": 31.7
+              "samples": 12,
+              "p50": 16.9,
+              "p95": 24.5,
+              "max": 25.5
             },
             "interval": {
-              "samples": 10,
-              "p50": 38.9,
-              "p95": 642.5,
-              "max": 671.2
+              "samples": 11,
+              "p50": 43.1,
+              "p95": 391.7,
+              "max": 697.1
             }
           },
           "programs": 40,
-          "calls": 142,
-          "triangles": 276759,
+          "calls": 259,
+          "triangles": 479967,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3008,
+          "durationMs": 3006,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3301,40 +3301,13 @@
             }
           },
           "programs": 40,
-          "calls": 142,
-          "triangles": 276759,
+          "calls": 259,
+          "triangles": 479967,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 4129,
-          "longTasks": {
-            "count": 0,
-            "totalMs": 0,
-            "maxMs": 0
-          },
-          "frames": {
-            "cpu": {
-              "samples": 2,
-              "p50": 18.5,
-              "p95": 18.5,
-              "max": 20.3
-            },
-            "interval": {
-              "samples": 1,
-              "p50": 4043.8,
-              "p95": 4043.8,
-              "max": 4043.8
-            }
-          },
-          "programs": 40,
-          "calls": 257,
-          "triangles": 479899,
-          "cameraView": "overview"
-        },
-        {
-          "name": "tour",
-          "durationMs": 7559,
+          "durationMs": 3853,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3343,9 +3316,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 15.2,
-              "p95": 15.2,
-              "max": 15.2
+              "p50": 36.1,
+              "p95": 36.1,
+              "max": 36.1
             },
             "interval": {
               "samples": 0,
@@ -3355,8 +3328,35 @@
             }
           },
           "programs": 40,
-          "calls": 240,
-          "triangles": 478327,
+          "calls": 260,
+          "triangles": 479983,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7580,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 20.1,
+              "p95": 20.1,
+              "max": 20.1
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 40,
+          "calls": 260,
+          "triangles": 479983,
           "cameraView": "overview"
         }
       ],
@@ -3399,20 +3399,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 4574,
-        "readyMs": 9965,
-        "firstFrameMs": 9964,
-        "settledMs": 14088,
+        "constructedMs": 3944,
+        "readyMs": 9773,
+        "firstFrameMs": 9772,
+        "settledMs": 13915,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 772,
-            "maxMs": 253
+            "totalMs": 609,
+            "maxMs": 212
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1804,
-            "maxMs": 1746
+            "totalMs": 1728,
+            "maxMs": 1667
           },
           "firstFrame": {
             "count": 0,
@@ -3424,34 +3424,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 10036,
+          "durationMs": 9871,
           "longTasks": {
-            "count": 7,
-            "totalMs": 2576,
-            "maxMs": 1746
+            "count": 8,
+            "totalMs": 2400,
+            "maxMs": 1667
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 25.4,
-              "p95": 25.4,
-              "max": 55.8
+              "p50": 58.4,
+              "p95": 58.4,
+              "max": 61.6
             },
             "interval": {
               "samples": 1,
-              "p50": 28.4,
-              "p95": 28.4,
-              "max": 28.4
+              "p50": 68.4,
+              "p95": 68.4,
+              "max": 68.4
             }
           },
           "programs": 43,
           "calls": 264,
-          "triangles": 876223,
+          "triangles": 879127,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4009,
+          "durationMs": 4013,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3459,21 +3459,21 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 26.1,
-              "p95": 26.1,
-              "max": 26.1
+              "samples": 2,
+              "p50": 33.5,
+              "p95": 33.5,
+              "max": 34.5
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 1084.6,
+              "p95": 1084.6,
+              "max": 1084.6
             }
           },
           "programs": 43,
           "calls": 264,
-          "triangles": 876223,
+          "triangles": 879127,
           "cameraView": "overview"
         },
         {
@@ -3486,53 +3486,53 @@
           },
           "frames": {
             "cpu": {
-              "samples": 4,
-              "p50": 15.8,
-              "p95": 17.8,
-              "max": 18.4
+              "samples": 5,
+              "p50": 25.1,
+              "p95": 26.2,
+              "max": 29
             },
             "interval": {
-              "samples": 3,
-              "p50": 673.1,
-              "p95": 673.1,
-              "max": 1233.3
+              "samples": 4,
+              "p50": 447.2,
+              "p95": 536.9,
+              "max": 695.8
             }
           },
           "programs": 43,
           "calls": 264,
-          "triangles": 876223,
+          "triangles": 879127,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 12963,
+          "durationMs": 6398,
           "longTasks": {
-            "count": 1,
-            "totalMs": 51,
-            "maxMs": 51
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 18.8,
-              "p95": 18.8,
-              "max": 48.1
+              "samples": 2,
+              "p50": 10.7,
+              "p95": 10.7,
+              "max": 20.4
             },
             "interval": {
-              "samples": 2,
-              "p50": 17.8,
-              "p95": 17.8,
-              "max": 12795.7
+              "samples": 1,
+              "p50": 12,
+              "p95": 12,
+              "max": 12
             }
           },
           "programs": 43,
-          "calls": 261,
-          "triangles": 867863,
+          "calls": 146,
+          "triangles": 487425,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7570,
+          "durationMs": 7561,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3541,9 +3541,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 18.6,
-              "p95": 18.6,
-              "max": 18.6
+              "p50": 26.6,
+              "p95": 26.6,
+              "max": 26.6
             },
             "interval": {
               "samples": 0,
@@ -3553,14 +3553,14 @@
             }
           },
           "programs": 43,
-          "calls": 223,
-          "triangles": 796691,
+          "calls": 218,
+          "triangles": 796091,
           "cameraView": "overview"
         }
       ],
       "overview": {
         "calls": 145,
-        "triangles": 485957,
+        "triangles": 487409,
         "textures": 170,
         "geometries": 356,
         "programs": 43,
@@ -3568,8 +3568,8 @@
         "cameraView": "overview",
         "gpuBytes": {
           "textures": 60353128,
-          "geometry": 25377264,
-          "total": 85730392
+          "geometry": 25390944,
+          "total": 85744072
         },
         "generatedBodies": 10,
         "actorAssets": "imported"
@@ -3597,20 +3597,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3411,
-        "readyMs": 8978,
-        "firstFrameMs": 8977,
-        "settledMs": 13055,
+        "constructedMs": 3048,
+        "readyMs": 8551,
+        "firstFrameMs": 8550,
+        "settledMs": 12628,
         "longTasks": {
           "construct": {
             "count": 4,
-            "totalMs": 488,
-            "maxMs": 183
+            "totalMs": 362,
+            "maxMs": 120
           },
           "prepare": {
             "count": 3,
-            "totalMs": 1855,
-            "maxMs": 1569
+            "totalMs": 1944,
+            "maxMs": 1689
           },
           "firstFrame": {
             "count": 0,
@@ -3622,18 +3622,18 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9013,
+          "durationMs": 8585,
           "longTasks": {
             "count": 7,
-            "totalMs": 2343,
-            "maxMs": 1569
+            "totalMs": 2306,
+            "maxMs": 1689
           },
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 59,
-              "p95": 59,
-              "max": 59
+              "p50": 60.6,
+              "p95": 60.6,
+              "max": 60.6
             },
             "interval": {
               "samples": 0,
@@ -3649,7 +3649,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4017,
+          "durationMs": 4024,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3658,15 +3658,15 @@
           "frames": {
             "cpu": {
               "samples": 10,
-              "p50": 16.6,
-              "p95": 24.5,
-              "max": 29.3
+              "p50": 16.2,
+              "p95": 24,
+              "max": 25.6
             },
             "interval": {
               "samples": 9,
-              "p50": 36.9,
-              "p95": 557,
-              "max": 875.5
+              "p50": 35.9,
+              "p95": 388.9,
+              "max": 1120.4
             }
           },
           "programs": 42,
@@ -3676,7 +3676,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3004,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3703,7 +3703,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 4075,
+          "durationMs": 3737,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3712,9 +3712,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 18.6,
-              "p95": 18.6,
-              "max": 18.6
+              "p50": 19.8,
+              "p95": 19.8,
+              "max": 19.8
             },
             "interval": {
               "samples": 0,
@@ -3730,7 +3730,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7561,
+          "durationMs": 7552,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3739,9 +3739,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 27.8,
-              "p95": 27.8,
-              "max": 27.8
+              "p50": 30.9,
+              "p95": 30.9,
+              "max": 30.9
             },
             "interval": {
               "samples": 0,
@@ -3795,20 +3795,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3231,
-        "readyMs": 8363,
-        "firstFrameMs": 8362,
-        "settledMs": 12432,
+        "constructedMs": 3370,
+        "readyMs": 8010,
+        "firstFrameMs": 8009,
+        "settledMs": 12087,
         "longTasks": {
           "construct": {
-            "count": 4,
-            "totalMs": 389,
-            "maxMs": 150
+            "count": 5,
+            "totalMs": 538,
+            "maxMs": 198
           },
           "prepare": {
-            "count": 3,
-            "totalMs": 1860,
-            "maxMs": 1589
+            "count": 2,
+            "totalMs": 1671,
+            "maxMs": 1598
           },
           "firstFrame": {
             "count": 0,
@@ -3820,24 +3820,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 8406,
+          "durationMs": 8049,
           "longTasks": {
             "count": 7,
-            "totalMs": 2249,
-            "maxMs": 1589
+            "totalMs": 2209,
+            "maxMs": 1598
           },
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 18.9,
-              "p95": 18.9,
-              "max": 52.1
+              "p50": 25.4,
+              "p95": 25.4,
+              "max": 68.8
             },
             "interval": {
               "samples": 2,
-              "p50": 15.7,
-              "p95": 15.7,
-              "max": 22.1
+              "p50": 20.5,
+              "p95": 20.5,
+              "max": 29.2
             }
           },
           "programs": 46,
@@ -3847,7 +3847,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4008,
+          "durationMs": 4011,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3856,15 +3856,15 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 20.2,
-              "p95": 20.2,
-              "max": 20.3
+              "p50": 28.9,
+              "p95": 28.9,
+              "max": 34.1
             },
             "interval": {
               "samples": 1,
-              "p50": 317,
-              "p95": 317,
-              "max": 317
+              "p50": 305.3,
+              "p95": 305.3,
+              "max": 305.3
             }
           },
           "programs": 46,
@@ -3874,7 +3874,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3003,
+          "durationMs": 3004,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3883,15 +3883,15 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 19.2,
-              "p95": 19.2,
-              "max": 19.2
+              "p50": 15.7,
+              "p95": 15.7,
+              "max": 20
             },
             "interval": {
               "samples": 2,
-              "p50": 592.8,
-              "p95": 592.8,
-              "max": 982.3
+              "p50": 614.2,
+              "p95": 614.2,
+              "max": 1121.5
             }
           },
           "programs": 46,
@@ -3901,7 +3901,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 12392,
+          "durationMs": 10773,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3910,9 +3910,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 21.8,
-              "p95": 21.8,
-              "max": 21.8
+              "p50": 17.2,
+              "p95": 17.2,
+              "max": 17.2
             },
             "interval": {
               "samples": 0,
@@ -3928,7 +3928,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7594,
+          "durationMs": 7573,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -3936,21 +3936,21 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 22.1,
-              "p95": 22.1,
-              "max": 22.1
+              "samples": 2,
+              "p50": 10.9,
+              "p95": 10.9,
+              "max": 13.8
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 1,
+              "p50": 11.9,
+              "p95": 11.9,
+              "max": 11.9
             }
           },
           "programs": 46,
-          "calls": 218,
-          "triangles": 840133,
+          "calls": 170,
+          "triangles": 645594,
           "cameraView": "overview"
         }
       ],
@@ -3993,20 +3993,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3457,
-        "readyMs": 9832,
-        "firstFrameMs": 9830,
-        "settledMs": 13898,
+        "constructedMs": 3186,
+        "readyMs": 9000,
+        "firstFrameMs": 8999,
+        "settledMs": 13054,
         "longTasks": {
           "construct": {
-            "count": 5,
-            "totalMs": 788,
-            "maxMs": 430
+            "count": 4,
+            "totalMs": 696,
+            "maxMs": 409
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1376,
-            "maxMs": 1313
+            "totalMs": 988,
+            "maxMs": 914
           },
           "firstFrame": {
             "count": 0,
@@ -4018,24 +4018,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9863,
+          "durationMs": 9023,
           "longTasks": {
-            "count": 7,
-            "totalMs": 2164,
-            "maxMs": 1313
+            "count": 6,
+            "totalMs": 1684,
+            "maxMs": 914
           },
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 28.5,
-              "p95": 28.5,
-              "max": 60.1
+              "p50": 19.9,
+              "p95": 19.9,
+              "max": 70
             },
             "interval": {
               "samples": 1,
-              "p50": 39.2,
-              "p95": 39.2,
-              "max": 39.2
+              "p50": 27.1,
+              "p95": 27.1,
+              "max": 27.1
             }
           },
           "programs": 43,
@@ -4054,15 +4054,15 @@
           "frames": {
             "cpu": {
               "samples": 7,
-              "p50": 14.9,
-              "p95": 19,
-              "max": 19.2
+              "p50": 15.3,
+              "p95": 20.5,
+              "max": 26.7
             },
             "interval": {
               "samples": 6,
-              "p50": 577.3,
-              "p95": 956.8,
-              "max": 1012.7
+              "p50": 557.1,
+              "p95": 695.7,
+              "max": 708.9
             }
           },
           "programs": 43,
@@ -4072,7 +4072,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3011,
+          "durationMs": 3008,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4081,9 +4081,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 24.8,
-              "p95": 24.8,
-              "max": 24.8
+              "p50": 21.4,
+              "p95": 21.4,
+              "max": 21.4
             },
             "interval": {
               "samples": 0,
@@ -4099,34 +4099,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 5946,
-          "longTasks": {
-            "count": 0,
-            "totalMs": 0,
-            "maxMs": 0
-          },
-          "frames": {
-            "cpu": {
-              "samples": 2,
-              "p50": 17.3,
-              "p95": 17.3,
-              "max": 26.8
-            },
-            "interval": {
-              "samples": 1,
-              "p50": 5248.9,
-              "p95": 5248.9,
-              "max": 5248.9
-            }
-          },
-          "programs": 43,
-          "calls": 209,
-          "triangles": 213593,
-          "cameraView": "overview"
-        },
-        {
-          "name": "tour",
-          "durationMs": 7549,
+          "durationMs": 1665,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4135,9 +4108,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 21.3,
-              "p95": 21.3,
-              "max": 21.3
+              "p50": 15.2,
+              "p95": 15.2,
+              "max": 15.2
             },
             "interval": {
               "samples": 0,
@@ -4149,6 +4122,33 @@
           "programs": 43,
           "calls": 209,
           "triangles": 213593,
+          "cameraView": "overview"
+        },
+        {
+          "name": "tour",
+          "durationMs": 7545,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 1,
+              "p50": 13.5,
+              "p95": 13.5,
+              "max": 13.5
+            },
+            "interval": {
+              "samples": 0,
+              "p50": null,
+              "p95": null,
+              "max": null
+            }
+          },
+          "programs": 43,
+          "calls": 168,
+          "triangles": 206371,
           "cameraView": "overview"
         }
       ],
@@ -4191,20 +4191,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3781,
-        "readyMs": 10232,
-        "firstFrameMs": 10231,
-        "settledMs": 14293,
+        "constructedMs": 3541,
+        "readyMs": 9400,
+        "firstFrameMs": 9399,
+        "settledMs": 13481,
         "longTasks": {
           "construct": {
-            "count": 4,
+            "count": 5,
             "totalMs": 805,
-            "maxMs": 465
+            "maxMs": 410
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1114,
-            "maxMs": 1031
+            "totalMs": 1001,
+            "maxMs": 897
           },
           "firstFrame": {
             "count": 0,
@@ -4216,24 +4216,24 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 10257,
+          "durationMs": 9451,
           "longTasks": {
-            "count": 6,
-            "totalMs": 1919,
-            "maxMs": 1031
+            "count": 7,
+            "totalMs": 1806,
+            "maxMs": 897
           },
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 15.9,
-              "p95": 15.9,
-              "max": 79.9
+              "p50": 33.5,
+              "p95": 33.5,
+              "max": 99
             },
             "interval": {
               "samples": 2,
-              "p50": 14.1,
-              "p95": 14.1,
-              "max": 19.5
+              "p50": 19.9,
+              "p95": 19.9,
+              "max": 38.5
             }
           },
           "programs": 45,
@@ -4243,7 +4243,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4011,
+          "durationMs": 4008,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4252,15 +4252,15 @@
           "frames": {
             "cpu": {
               "samples": 5,
-              "p50": 16.7,
-              "p95": 24.9,
-              "max": 26.1
+              "p50": 16.5,
+              "p95": 17.1,
+              "max": 18.6
             },
             "interval": {
               "samples": 4,
-              "p50": 359.8,
-              "p95": 924.1,
-              "max": 2058.5
+              "p50": 514.4,
+              "p95": 913,
+              "max": 1418.6
             }
           },
           "programs": 45,
@@ -4270,7 +4270,7 @@
         },
         {
           "name": "idle",
-          "durationMs": 3003,
+          "durationMs": 3002,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4279,15 +4279,15 @@
           "frames": {
             "cpu": {
               "samples": 3,
-              "p50": 20.7,
-              "p95": 20.7,
-              "max": 21.2
+              "p50": 16.1,
+              "p95": 16.1,
+              "max": 27.7
             },
             "interval": {
               "samples": 2,
-              "p50": 1063.2,
-              "p95": 1063.2,
-              "max": 1577.7
+              "p50": 921.5,
+              "p95": 921.5,
+              "max": 1678.5
             }
           },
           "programs": 45,
@@ -4297,7 +4297,7 @@
         },
         {
           "name": "combat",
-          "durationMs": 6948,
+          "durationMs": 6763,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4305,16 +4305,16 @@
           },
           "frames": {
             "cpu": {
-              "samples": 1,
-              "p50": 29.4,
-              "p95": 29.4,
-              "max": 29.4
+              "samples": 3,
+              "p50": 19.1,
+              "p95": 19.1,
+              "max": 20.1
             },
             "interval": {
-              "samples": 0,
-              "p50": null,
-              "p95": null,
-              "max": null
+              "samples": 2,
+              "p50": 13.6,
+              "p95": 13.6,
+              "max": 6635.3
             }
           },
           "programs": 45,
@@ -4324,7 +4324,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7539,
+          "durationMs": 7560,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4333,20 +4333,20 @@
           "frames": {
             "cpu": {
               "samples": 2,
-              "p50": 12.6,
-              "p95": 12.6,
-              "max": 13.3
+              "p50": 12.9,
+              "p95": 12.9,
+              "max": 21.3
             },
             "interval": {
               "samples": 1,
-              "p50": 14.7,
-              "p95": 14.7,
-              "max": 14.7
+              "p50": 6696.1,
+              "p95": 6696.1,
+              "max": 6696.1
             }
           },
           "programs": 45,
-          "calls": 223,
-          "triangles": 456531,
+          "calls": 532,
+          "triangles": 1076709,
           "cameraView": "overview"
         }
       ],
@@ -4389,20 +4389,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 3256,
-        "readyMs": 9961,
-        "firstFrameMs": 9960,
-        "settledMs": 14015,
+        "constructedMs": 3008,
+        "readyMs": 8275,
+        "firstFrameMs": 8274,
+        "settledMs": 12353,
         "longTasks": {
           "construct": {
-            "count": 5,
-            "totalMs": 416,
-            "maxMs": 154
+            "count": 4,
+            "totalMs": 374,
+            "maxMs": 139
           },
           "prepare": {
             "count": 3,
-            "totalMs": 2280,
-            "maxMs": 1955
+            "totalMs": 1806,
+            "maxMs": 1533
           },
           "firstFrame": {
             "count": 0,
@@ -4414,18 +4414,18 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 9986,
+          "durationMs": 8316,
           "longTasks": {
-            "count": 8,
-            "totalMs": 2696,
-            "maxMs": 1955
+            "count": 7,
+            "totalMs": 2180,
+            "maxMs": 1533
           },
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 64.5,
-              "p95": 64.5,
-              "max": 64.5
+              "p50": 51.3,
+              "p95": 51.3,
+              "max": 51.3
             },
             "interval": {
               "samples": 0,
@@ -4441,7 +4441,7 @@
         },
         {
           "name": "settle",
-          "durationMs": 4010,
+          "durationMs": 4018,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4449,26 +4449,26 @@
           },
           "frames": {
             "cpu": {
-              "samples": 11,
-              "p50": 22.6,
-              "p95": 30.9,
-              "max": 46.6
+              "samples": 12,
+              "p50": 15.6,
+              "p95": 20.3,
+              "max": 22
             },
             "interval": {
-              "samples": 10,
-              "p50": 30.7,
-              "p95": 472,
-              "max": 728.6
+              "samples": 11,
+              "p50": 38.7,
+              "p95": 467.5,
+              "max": 647.5
             }
           },
           "programs": 42,
-          "calls": 146,
-          "triangles": 366581,
+          "calls": 254,
+          "triangles": 598339,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3008,
+          "durationMs": 3003,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4489,13 +4489,13 @@
             }
           },
           "programs": 42,
-          "calls": 146,
-          "triangles": 366581,
+          "calls": 254,
+          "triangles": 598339,
           "cameraView": "overview"
         },
         {
           "name": "combat",
-          "durationMs": 5181,
+          "durationMs": 5022,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4504,9 +4504,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 29,
-              "p95": 29,
-              "max": 29
+              "p50": 26.4,
+              "p95": 26.4,
+              "max": 26.4
             },
             "interval": {
               "samples": 0,
@@ -4522,7 +4522,7 @@
         },
         {
           "name": "tour",
-          "durationMs": 7604,
+          "durationMs": 7573,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4531,9 +4531,9 @@
           "frames": {
             "cpu": {
               "samples": 1,
-              "p50": 22.1,
-              "p95": 22.1,
-              "max": 22.1
+              "p50": 20.2,
+              "p95": 20.2,
+              "max": 20.2
             },
             "interval": {
               "samples": 0,
@@ -4543,8 +4543,8 @@
             }
           },
           "programs": 42,
-          "calls": 147,
-          "triangles": 366597,
+          "calls": 248,
+          "triangles": 597887,
           "cameraView": "overview"
         }
       ],
@@ -4587,20 +4587,20 @@
       "turnPlayed": 2,
       "enemyBlows": "player",
       "startup": {
-        "constructedMs": 4737,
-        "readyMs": 10426,
-        "firstFrameMs": 10425,
-        "settledMs": 14563,
+        "constructedMs": 3747,
+        "readyMs": 9390,
+        "firstFrameMs": 9389,
+        "settledMs": 13457,
         "longTasks": {
           "construct": {
             "count": 5,
-            "totalMs": 713,
-            "maxMs": 262
+            "totalMs": 591,
+            "maxMs": 198
           },
           "prepare": {
             "count": 2,
-            "totalMs": 1619,
-            "maxMs": 1556
+            "totalMs": 1726,
+            "maxMs": 1650
           },
           "firstFrame": {
             "count": 0,
@@ -4612,34 +4612,34 @@
       "phases": [
         {
           "name": "build",
-          "durationMs": 10485,
+          "durationMs": 9429,
           "longTasks": {
             "count": 7,
-            "totalMs": 2332,
-            "maxMs": 1556
+            "totalMs": 2317,
+            "maxMs": 1650
           },
           "frames": {
             "cpu": {
-              "samples": 3,
-              "p50": 29.4,
-              "p95": 29.4,
-              "max": 59.6
+              "samples": 2,
+              "p50": 34.8,
+              "p95": 34.8,
+              "max": 72
             },
             "interval": {
-              "samples": 2,
-              "p50": 30.1,
-              "p95": 30.1,
-              "max": 30.7
+              "samples": 1,
+              "p50": 39.8,
+              "p95": 39.8,
+              "max": 39.8
             }
           },
           "programs": 46,
-          "calls": 154,
-          "triangles": 805715,
+          "calls": 153,
+          "triangles": 806311,
           "cameraView": "overview"
         },
         {
           "name": "settle",
-          "durationMs": 4011,
+          "durationMs": 4010,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4660,40 +4660,13 @@
             }
           },
           "programs": 46,
-          "calls": 154,
-          "triangles": 805715,
+          "calls": 153,
+          "triangles": 806311,
           "cameraView": "overview"
         },
         {
           "name": "idle",
-          "durationMs": 3004,
-          "longTasks": {
-            "count": 0,
-            "totalMs": 0,
-            "maxMs": 0
-          },
-          "frames": {
-            "cpu": {
-              "samples": 2,
-              "p50": 21.9,
-              "p95": 21.9,
-              "max": 33.3
-            },
-            "interval": {
-              "samples": 1,
-              "p50": 1055.6,
-              "p95": 1055.6,
-              "max": 1055.6
-            }
-          },
-          "programs": 46,
-          "calls": 277,
-          "triangles": 1351658,
-          "cameraView": "overview"
-        },
-        {
-          "name": "combat",
-          "durationMs": 1918,
+          "durationMs": 3005,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4702,25 +4675,52 @@
           "frames": {
             "cpu": {
               "samples": 4,
-              "p50": 27.5,
-              "p95": 36.7,
-              "max": 38.7
+              "p50": 21,
+              "p95": 26.5,
+              "max": 33.1
             },
             "interval": {
               "samples": 3,
-              "p50": 590.3,
-              "p95": 590.3,
-              "max": 675.6
+              "p50": 919.1,
+              "p95": 919.1,
+              "max": 1022
+            }
+          },
+          "programs": 46,
+          "calls": 275,
+          "triangles": 1352850,
+          "cameraView": "overview"
+        },
+        {
+          "name": "combat",
+          "durationMs": 2612,
+          "longTasks": {
+            "count": 0,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "frames": {
+            "cpu": {
+              "samples": 5,
+              "p50": 25.3,
+              "p95": 27.5,
+              "max": 28.3
+            },
+            "interval": {
+              "samples": 4,
+              "p50": 257.8,
+              "p95": 665.4,
+              "max": 1322.6
             }
           },
           "programs": 46,
           "calls": 271,
-          "triangles": 1341073,
+          "triangles": 1344121,
           "cameraView": "overview"
         },
         {
           "name": "tour",
-          "durationMs": 7624,
+          "durationMs": 7571,
           "longTasks": {
             "count": 0,
             "totalMs": 0,
@@ -4742,13 +4742,13 @@
           },
           "programs": 46,
           "calls": 271,
-          "triangles": 1341073,
+          "triangles": 1344121,
           "cameraView": "overview"
         }
       ],
       "overview": {
-        "calls": 154,
-        "triangles": 805715,
+        "calls": 153,
+        "triangles": 806311,
         "textures": 153,
         "geometries": 360,
         "programs": 46,
@@ -4778,5 +4778,5 @@
       "errors": []
     }
   ],
-  "completed": "2026-10-28T11:42:07.302Z"
+  "completed": "2026-10-28T17:33:17.827Z"
 }

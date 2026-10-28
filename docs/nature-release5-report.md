@@ -95,24 +95,24 @@ Every battle compiles exactly the programs it did on main; the finale's 50 is st
 
 ### The turn-based stages
 
-The stage benchmark (`npm run benchmark:stage -- --dist --check --max-programs 50`), the still overview of each chapter's turn-based battle, on this release ([report](evidence/stage-benchmark-release5.json)). Main's counts are those recorded at release 4 (`scripts/stage-ceilings.json`): its one later change, the mudbrick re-bake, changed textures only, in a board kit that draws only in real time. On Performance every count (programs, draw calls, triangles) equals main's in all twelve stages. On Balanced:
+The stage benchmark (`npm run benchmark:stage -- --dist --check --max-programs 50`), the still overview of each chapter's turn-based battle, on this release after the trees were revised ([report](evidence/stage-benchmark-release5.json)). Main's counts are those measured at release 4 ([report](evidence/stage-benchmark-release4.json)): its one later change, the mudbrick re-bake, changed textures only, in a board kit that draws only in real time. On Performance every count (programs, draw calls, triangles) equals main's in all twelve stages. On Balanced:
 
 | Battle | Programs | Draw calls | Triangles | Textures and geometry |
 | --- | ---: | ---: | ---: | ---: |
-| I, the road | 39 → 39 | 83 → 95 | 338,205 → 359,150 | 54.2 → 59.5 MB |
-| II, the marsh | 42 → 42 | 88 → 100 | 344,253 → 342,713 | 61.8 → 67.0 MB |
+| I, the road | 39 → 39 | 83 → 95 | 338,205 → 359,150 | 54.2 → 59.6 MB |
+| II, the marsh | 42 → 42 | 88 → 100 | 344,253 → 343,553 | 61.8 → 67.0 MB |
 | III, the station | 39 → 39 | 84 → 95 | 387,532 → 408,960 | 50.3 → 55.8 MB |
 | IV, the gate | 44 → 44 | 115 → 126 | 515,967 → 530,748 | 64.3 → 69.9 MB |
-| V, the mine | 44 → 44 | 150 → 158 | 460,445 → 467,760 | 82.7 → 88.1 MB |
-| VI, the wells | 44 → 44 | 127 → 135 | 377,108 → 388,799 | 80.2 → 85.4 MB |
+| V, the mine | 44 → 44 | 150 → 158 | 460,445 → 468,420 | 82.7 → 88.2 MB |
+| VI, the wells | 44 → 44 | 127 → 135 | 377,108 → 389,063 | 80.2 → 85.4 MB |
 | VII, the legion | 43 → 43 | 135 → 144 | 583,405 → 621,104 | 73.1 → 78.6 MB |
-| VIII, the ferry | 48 → 48 | 133 → 144 | 601,239 → 597,665 | 74.1 → 79.4 MB |
-| IX, the wing | 43 → 43 | 137 → 145 | 474,032 → 485,957 | 80.3 → 85.7 MB |
+| VIII, the ferry | 48 → 48 | 133 → 144 | 601,239 → 598,505 | 74.1 → 79.4 MB |
+| IX, the wing | 43 → 43 | 137 → 145 | 474,032 → 487,409 | 80.3 → 85.7 MB |
 | X, the road | 46 → 46 | 138 → 154 | 561,864 → 576,399 | 67.5 → 73.2 MB |
 | XI, the accounts | 45 → 45 | 123 → 123 | 248,992 → 248,992 | 81.5 → 81.5 MB |
-| XII, the confrontation | 46 → 46 | 144 → 154 | 772,721 → 805,715 | 66.1 → 71.7 MB |
+| XII, the confrontation | 46 → 46 | 144 → 153 | 772,721 → 806,311 | 66.1 → 71.7 MB |
 
-No stage compiled a program in its first frame or after it was shown. The draw calls rise by 8 to 16 in every field: the ground cover draws one batch for each kind of plant in view, the tree and rock kits one for each species or rock and level in view, and a mist bank lies over water at dawn, at night and in mist or rain. The council chamber of Chapter XI has none of them. The kits' textures and geometry, with the ground cover's, add 5.2–5.7 MB to each field's estimated memory. Chapters I, II, III and X went above their recorded draw-call ceilings, so the Balanced ceilings were written again from this run, on purpose; the Performance ceilings stand. Chapters V and XII, the two that CI checks against the ceilings, were within them before they were written again.
+No stage compiled a program in its first frame or after it was shown. The draw calls rise by 8 to 16 in every field: the ground cover draws one batch for each kind of plant in view, the tree and rock kits one for each species or rock and level in view, and a mist bank lies over water at dawn, at night and in mist or rain. The council chamber of Chapter XI has none of them. The kits' textures and geometry, with the ground cover's, add 5.2–5.7 MB to each field's estimated memory. In the first run, before the trees were revised, Chapters I, II, III and X went above their recorded draw-call ceilings, so the Balanced ceilings were written again from it, on purpose; the Performance ceilings stand. Chapters V and XII, the two that CI checks against the ceilings, were within them before they were written again. This run, after the revision, is within every ceiling in all twelve stages, so they were left as written.
 
 ## Calibration
 
