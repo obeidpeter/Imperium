@@ -75,9 +75,10 @@ test('Time and pace follow the difficulty until the player changes them, and the
 });
 
 test('on Veteran the calibration bot gets past Chapter VII’s council: with a Contest policy that wins, or else the patron-backed re-run',()=>{
-  // Seed 1: a policy wins the vote outright. Seed 8: every policy loses it by a vote, so the
-  // bot takes the game's own recovery after a lost Contest, with its supplies and debt.
-  for(const [seed,backed]of [[1,false],[8,true]]){
+  // Seed 1: a policy wins the vote outright. Seed 10: every policy loses it by a vote, so the
+  // bot takes the game's own recovery after a lost Contest, with its supplies and debt. Which
+  // seed needs the backing follows the earlier battles' outcomes (seed 8 until release 4).
+  for(const [seed,backed]of [[1,false],[10,true]]){
     const council=[];
     const {state}=runRealtimeCampaign({seed,difficulty:'veteran',throughChapter:7,retries:2,play:playBattle,
       onEncounter:(s,summary)=>{if(s.encounter.id==='ch7-council')council.push(summary);}});

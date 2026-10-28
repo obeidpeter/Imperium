@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Nine 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below. The Chapter V sixteen-component fortress kit is original project-authored Blender geometry and procedural surface textures; its source and builder are retained. The approved regional rollout adds sixteen original-prompt Tripo props and five original Blender architecture kits (sixty components), with requests, exact task charges, sources and compression reports retained.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Nine 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below. The Chapter V sixteen-component fortress kit is original project-authored Blender geometry and procedural surface textures; its source and builder are retained. The approved regional rollout adds sixteen original-prompt Tripo props and five original Blender architecture kits (sixty components), with requests, exact task charges, sources and compression reports retained. The three fortification board kits (stone, mudbrick and timber, fourteen pieces each with a far level) are original project-authored Blender geometry and procedural surface textures; their builder, sources and compression reports are retained.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -7535,6 +7535,219 @@
       "license": "Created for the Imperium project; no third-party source assets"
     },
     {
+      "id": "board-kit-timber",
+      "path": "assets/models/scenery/board-kit-timber.glb",
+      "subject": "The board kit's timber-faced earth curtain with a palisade, timber towers and gates, fitted to the rules' 2.5 m cell, with breach rubble, footbridges and rampart breastworks; each piece near and far",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-board-kit.py",
+        "sourceBlend": "art-source/models/board-kit-timber.blend",
+        "report": "art-source/models/processed/board-kit-timber.json",
+        "components": [
+          "wall_block",
+          "wall_block_far",
+          "tower",
+          "tower_far",
+          "tower_stair",
+          "tower_stair_far",
+          "gate_frame",
+          "gate_frame_far",
+          "gate_closed",
+          "gate_closed_far",
+          "gate_barred",
+          "gate_barred_far",
+          "gate_open",
+          "gate_open_far",
+          "gate_battered",
+          "gate_battered_far",
+          "gate_panel",
+          "gate_panel_far",
+          "breach_rubble",
+          "breach_rubble_far",
+          "bridge_deck",
+          "bridge_deck_far",
+          "bridge_damaged",
+          "bridge_damaged_far",
+          "bridge_stumps",
+          "bridge_stumps_far",
+          "breastwork",
+          "breastwork_far"
+        ],
+        "materialFamilies": [
+          "Board timber masonry",
+          "Board timber timber",
+          "Board timber iron"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/board-kit-timber-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The real-time battlefield's own structures (src/showcase/structure-registry.js): curtain, tower and stair cells, gates by state, breaches, bridges and rampart breastworks. Each piece is instanced per cell at the rules' heights; none takes picks or changes a route.",
+      "loading": "Deferred chapter pack 4 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built fieldwork (environment-fieldwork.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 308544,
+        "gzipBytes": 158994,
+        "sha256": "b06d8637ef351c5922be30adeccd9d1abe665013c33b815985a6178c459471e6",
+        "triangles": 4228,
+        "textures": 9,
+        "textureEdge": 512,
+        "componentCount": 28
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "board-kit-mudbrick",
+      "path": "assets/models/scenery/board-kit-mudbrick.glb",
+      "subject": "The board kit's mudbrick curtain with stepped merlons, towers and gates, fitted to the rules' 2.5 m cell, with breach rubble, footbridges and rampart breastworks; each piece near and far",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-board-kit.py",
+        "sourceBlend": "art-source/models/board-kit-mudbrick.blend",
+        "report": "art-source/models/processed/board-kit-mudbrick.json",
+        "components": [
+          "wall_block",
+          "wall_block_far",
+          "tower",
+          "tower_far",
+          "tower_stair",
+          "tower_stair_far",
+          "gate_frame",
+          "gate_frame_far",
+          "gate_closed",
+          "gate_closed_far",
+          "gate_barred",
+          "gate_barred_far",
+          "gate_open",
+          "gate_open_far",
+          "gate_battered",
+          "gate_battered_far",
+          "gate_panel",
+          "gate_panel_far",
+          "breach_rubble",
+          "breach_rubble_far",
+          "bridge_deck",
+          "bridge_deck_far",
+          "bridge_damaged",
+          "bridge_damaged_far",
+          "bridge_stumps",
+          "bridge_stumps_far",
+          "breastwork",
+          "breastwork_far"
+        ],
+        "materialFamilies": [
+          "Board mudbrick masonry",
+          "Board mudbrick timber",
+          "Board mudbrick iron"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/board-kit-mudbrick-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The real-time battlefield's own structures (src/showcase/structure-registry.js): curtain, tower and stair cells, gates by state, breaches, bridges and rampart breastworks. Each piece is instanced per cell at the rules' heights; none takes picks or changes a route.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built fieldwork (environment-fieldwork.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 332432,
+        "gzipBytes": 167404,
+        "sha256": "7dcc3cd040e250698f9994e3acc3f18cbd9ad2cc9d6a6b173fea5fe383d0389f",
+        "triangles": 4920,
+        "textures": 9,
+        "textureEdge": 512,
+        "componentCount": 28
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "board-kit-stone",
+      "path": "assets/models/scenery/board-kit-stone.glb",
+      "subject": "The board kit's ashlar curtain with merlons, towers and gates, fitted to the rules' 2.5 m cell, with breach rubble, footbridges and rampart breastworks; each piece near and far",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-board-kit.py",
+        "sourceBlend": "art-source/models/board-kit-stone.blend",
+        "report": "art-source/models/processed/board-kit-stone.json",
+        "components": [
+          "wall_block",
+          "wall_block_far",
+          "tower",
+          "tower_far",
+          "tower_stair",
+          "tower_stair_far",
+          "gate_frame",
+          "gate_frame_far",
+          "gate_closed",
+          "gate_closed_far",
+          "gate_barred",
+          "gate_barred_far",
+          "gate_open",
+          "gate_open_far",
+          "gate_battered",
+          "gate_battered_far",
+          "gate_panel",
+          "gate_panel_far",
+          "breach_rubble",
+          "breach_rubble_far",
+          "bridge_deck",
+          "bridge_deck_far",
+          "bridge_damaged",
+          "bridge_damaged_far",
+          "bridge_stumps",
+          "bridge_stumps_far",
+          "breastwork",
+          "breastwork_far"
+        ],
+        "materialFamilies": [
+          "Board stone masonry",
+          "Board stone timber",
+          "Board stone iron"
+        ],
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/board-kit-stone-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The real-time battlefield's own structures (src/showcase/structure-registry.js): curtain, tower and stair cells, gates by state, breaches, bridges and rampart breastworks. Each piece is instanced per cell at the rules' heights; none takes picks or changes a route.",
+      "loading": "Deferred chapter packs 8, 12 at Balanced/High, preloaded with the battle's scenery. Performance and a failed download keep the code-built fieldwork (environment-fieldwork.js).",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 322900,
+        "gzipBytes": 161654,
+        "sha256": "a318378bd62566352d168e10f8db5983c75a09335f2778b625a32aa6283048f2",
+        "triangles": 4788,
+        "textures": 9,
+        "textureEdge": 512,
+        "componentCount": 28
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
       "id": "ground-albedo",
       "path": "assets/textures/ground/ground-albedo-v1.ktx2",
       "subject": "The ground's 11 layers: colour, with the height in alpha",
@@ -8467,7 +8680,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-26T06:13:54.707Z",
+  "updatedAt": "2026-10-27T20:46:59.252Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -8489,11 +8702,11 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 50,
+    "models": 53,
     "textures": 15
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 32609388,
-  "totalModelBytes": 17463759,
+  "totalBundledAssetBytes": 33573264,
+  "totalModelBytes": 18427635,
   "derivedGeometryBytes": 47428
 }

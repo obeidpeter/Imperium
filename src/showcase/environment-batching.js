@@ -55,6 +55,8 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set(),instan
       if(instances.length<instanceThreshold||mirrored){remaining.push(...instances);continue;}
       const first=instances[0],batch=new THREE.InstancedMesh(first.geometry,first.material,instances.length);batch.name='static repeated environment';
       for(let i=0;i<instances.length;i++)batch.setMatrixAt(i,inverse.clone().multiply(instances[i].matrixWorld));
+      // A white instance colour: the program of the material's tinted instanced batches.
+      batch.instanceColor=new THREE.InstancedBufferAttribute(new Float32Array(instances.length*3).fill(1),3);
       batch.instanceMatrix.needsUpdate=true;batch.computeBoundingBox();batch.computeBoundingSphere();configure(batch,first,instances);
       instancedSources+=instances.length;instancedBatches++;
     }

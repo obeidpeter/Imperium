@@ -32,7 +32,7 @@ import {squadSight} from './squad-sight.js';
 
 // 4: interactive fortifications and their saved elevation/work state. An older
 // encounter restarts from its complete checkpoint; career progress is retained.
-export const WORLD_VERSION=4;
+export const WORLD_VERSION=5;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);
@@ -46,7 +46,9 @@ export function createWorld({map,seed,actors,controlled='hero',options={},weathe
   practice=false,kind='field',scale=null,squads=null,command=null,chapter=null,rng=null}){
   if(!map?.terrain||!Number.isInteger(map.width)||!Number.isInteger(map.height))throw new Error('A real-time world needs a tile map.');
   const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:rng?{...rng}:splitStreams(seed>>>0),
-    map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass'))},scale,
+    // Rain (slower slopes, navigation.js) and structure heights belong to the map the world walks.
+    map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass')),
+      ...(map.rain?{rain:true}:{}),...(map.elevations?{elevations:map.elevations.map(e=>[...e])}:{})},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
     queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[],provoked:[]};
@@ -93,7 +95,7 @@ export function commandProblem(world,command){
     case 'attack':return actor.carrying?'CARRYING':validate(world,actor.id,'strike',{actorId:p.targetId,forced:!!p.forced});
     case 'ability':return ABILITIES[p.abilityId]&&!ABILITIES[p.abilityId].enemyOnly
       ?validate(world,actor.id,p.abilityId,{actorId:p.targetId,x:p.x,z:p.z,forced:!!p.forced}):'NO_TARGET';
-    case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o)??(actor.carrying?'CARRYING':null);}
+    case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o,{force:!!p.force})??(actor.carrying?'CARRYING':null);}
     case 'talk':{const o=actorById(world,p.targetId);return o?.alive&&!hostile(actor,o)&&o.talk?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     case 'loot':{const o=actorById(world,p.targetId);return o&&!o.alive&&o.loot?.length?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     // Taking from a body the soldier stands by: the items chosen so far (one queued take carries them all).

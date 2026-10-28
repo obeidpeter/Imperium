@@ -167,9 +167,12 @@ export const SCENE_OCCLUSION=Object.freeze({imperiumAoMap:{value:null},imperiumA
   imperiumAoStrength:{value:0},imperiumSunShadow:{value:0},imperiumLiveShadow:{value:new T.Vector3(0,0,0)}});
 let sceneBake=null;
 const pointScene=uniforms=>{for(const key of Object.keys(SCENE_OCCLUSION))SCENE_OCCLUSION[key].value=uniforms[key].value;};
-export function bakeEnvironmentOcclusion(root,{groundAt,bounds,quality='balanced',exclude,sun=null}={}){
+// also: further roots whose meshes shade the ground but are drawn elsewhere (the board kit's pieces).
+export function bakeEnvironmentOcclusion(root,{groundAt,bounds,quality='balanced',exclude,sun=null,also=[]}={}){
   const started=globalThis.performance?.now?.()??Date.now();
-  const field=createOcclusionField({...bounds,groundAt}),raster=rasterizeOccluders(field,root,{exclude}),ao=field.finish(),shadow=sunShadowHeights(field,sun);
+  const field=createOcclusionField({...bounds,groundAt}),raster=rasterizeOccluders(field,root,{exclude});
+  for(const extra of also){const more=rasterizeOccluders(field,extra);raster.meshes+=more.meshes;raster.instances+=more.instances;}
+  const ao=field.finish(),shadow=sunShadowHeights(field,sun);
   const {texture,low,range}=occlusionTexture(field,ao,shadow);
   const uniforms={
     imperiumAoMap:{value:texture},

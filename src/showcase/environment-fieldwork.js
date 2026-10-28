@@ -2,6 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {createMasonryBlockGeometry} from './environment-primitives.js';
 import {finishEnvironmentMaterial} from './environment-surface-shaders.js';
 import {regionalEnvironment} from './environment-regions.js';
+import {addNeutralMaps} from './model-materials.js';
 
 /** Original small fieldwork. Opaque detail merges by material and never
  * participates in picking. World-space grain survives transformed batching. */
@@ -9,8 +10,9 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   const region=regionalEnvironment(chapter),segments=quality==='performance'?8:12;
   const own=g=>(geometries.add(g),g);
   // finish: the stage lights field objects as it lights the scenery around them.
+  // Neutral colour and normal maps: the program of the textured stone and timber.
   const material=(name,color,surface,metalness=0)=>{
-    const m=new T.MeshStandardMaterial({color,roughness:metalness?.61:.88,metalness});
+    const m=addNeutralMaps(new T.MeshStandardMaterial({color,roughness:metalness?.61:.88,metalness}),['map','normalMap']);
     m.name=`fieldwork ${name}`;finishEnvironmentMaterial(m,surface,{arid:[5,6,9].includes(chapter),wet:[2,8].includes(chapter)});finish?.(m);materials.add(m);return m;
   };
   const m={
@@ -57,6 +59,8 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   }
   function bridge(g,state,{left=0,right=0}={}){
     const deck=x=>left+(right-left)*(x+1.35)/2.7+.08;
+    // A demolished bridge leaves its posts standing in the water.
+    if(state==='demolished'){for(const z of [-.83,.83])for(const x of [-1.16,1.16])beam(g,[x,deck(x)-1.2,z],[x,deck(x)-.1,z],.05,m.dark);return;}
     for(const z of [-.65,.65])beam(g,[-1.38,deck(-1.35)-.13,z],[1.38,deck(1.35)-.13,z],.075,m.dark);
     for(let i=0;i<14;i++){
       const x=(i-6.5)*.195;if(state==='damaged'&&i>=5&&i<=8)continue;
@@ -140,7 +144,7 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
   }
   function build(parent,object,ground){
     const g=group(parent,ground.x,ground.y,ground.z);g.name=`${object.kind} · ${object.state}`;
-    if(object.kind==='gate')gate(g,object.state);
+    if(object.kind==='gate')object.state==='breached'?breach(g,'breached',object.orientation):gate(g,object.state);
     else if(object.kind==='bridge')bridge(g,object.state,{left:ground.left-ground.y,right:ground.right-ground.y});
     else if(object.kind==='barricade')barricade(g,object.state);
     else if(object.kind==='stores')stores(g,object.state);

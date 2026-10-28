@@ -4,6 +4,7 @@ import {ITEMS} from '../../data/realtime-rules.js';
 import {ENEMY_PLANS,ORDERS,SQUAD_STANDING} from '../../data/realtime-squads.js';
 import {TEMPERAMENTS} from '../../data/realtime-variety.js';
 import {validateFortifications} from './fortifications.js';
+import {STRUCTURE_HEIGHTS} from '../../data/structures.js';
 
 // A saved real-time world must be well formed before the simulation runs it:
 // a save code can come from anywhere. These checks bound every list and type
@@ -11,7 +12,7 @@ import {validateFortifications} from './fortifications.js';
 
 const SIDES=new Set(['player','ally','enemy','neutral']),STATUS=new Set(['active','won','lost']);
 const num=n=>typeof n==='number'&&Number.isFinite(n),int=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max,str=(s,max=120)=>typeof s==='string'&&s.length<=max;
-const TERRAIN=new Set(['grass','marsh','sand','road','rock','ford','high','wall','chamber','river','stone','camp','floor','bench','rubble']);
+const TERRAIN=new Set(['grass','marsh','sand','road','rock','ford','high','wall','chamber','river','stone','camp','floor','bench','rubble','ditch']);
 
 export function validateWorld(world,fail){
   if(!world||typeof world!=='object'||world.version!==WORLD_VERSION)fail('real-time world version.');
@@ -43,8 +44,8 @@ export function validateWorld(world,fail){
   if(doctrine?.plan?.reason!==undefined&&!str(doctrine.plan.reason,240)||
     doctrine?.pressureTargetId!==undefined&&doctrine.pressureTargetId!==null&&!str(doctrine.pressureTargetId,40)||
     doctrine?.identity!==undefined&&(!doctrine.identity||!str(doctrine.identity.id,60)||!str(doctrine.identity.label,120)))fail('adaptive doctrine evidence.');
-  if(m.elevations!==undefined&&(!Array.isArray(m.elevations)||m.elevations.length>32||m.elevations.some(c=>!Array.isArray(c)||c.length!==3||
-    !int(c[0],0,m.width-1)||!int(c[1],0,m.height-1)||![1.6,3.2].includes(c[2]))))fail('real-time structure elevation.');
+  if(m.elevations!==undefined&&(!Array.isArray(m.elevations)||m.elevations.length>256||m.elevations.some(c=>!Array.isArray(c)||c.length!==3||
+    !int(c[0],0,m.width-1)||!int(c[1],0,m.height-1)||!STRUCTURE_HEIGHTS.includes(c[2]))))fail('real-time structure elevation.');
   // Deployment (deployment.js): the zone and whether the advance has sounded.
   const d=world.deployment;
   if(d!==undefined&&(!d||typeof d.done!=='boolean'||!int(d.placed,0,1000)||!d.zone||!['x0','x1','z0','z1'].every(k=>num(d.zone[k]))))fail('real-time deployment.');
@@ -81,7 +82,7 @@ export function squadSlotProblem(slot){
   const t=slot[1];return SQUAD_TARGETS.has(t)||(typeof t==='string'&&/^squad:[\w-]{1,40}$/.test(t))?null:'NO_TARGET';
 }
 // The field objects and the opportunity record (field-objects.js).
-const FIELD_STATES={gate:['closed','open'],bridge:['damaged','repaired'],barricade:['intact','dismantled'],brazier:['unlit','burning','spent'],
+const FIELD_STATES={gate:['closed','open','breached'],bridge:['damaged','repaired','demolished'],barricade:['intact','dismantled'],brazier:['unlit','burning','spent'],
   stores:['available','secured','forgone','missed'],signal:['available','secured','forgone','missed'],
   breach:['intact','breached'],countermine:['active','disabled'],'siege-engine':['active','disabled']};
 function validateField(world,fail){

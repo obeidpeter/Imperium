@@ -1,6 +1,12 @@
 // Actual campaign 3D integration on an isolated local origin. Checkpoints come
 // from legal commands; the browser imports them through the player's dialog.
 // Software screenshots establish correctness, not a physical-device FPS claim.
+// The sieges and the rainy crossing are drawn on Performance (code-built works);
+// Palmyra's walls on Balanced, where the generated board kit draws the curtains,
+// towers, barred gates and breach: every piece must take the camera cutaway and
+// the battle keep to the shader program budget (MAX_PROGRAMS).
+// --fortified checks every battle with authored structures (battle-structures.js)
+// that way instead, in the weather each draws.
 // --output=DIR keeps an accepted build's review evidence separate.
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -11,12 +17,16 @@ import {serveRequest} from './serve.mjs';
 import {menuCommand,revealControl,closePanel} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as G from '../src/core/game.js';
+import {BATTLE_STRUCTURES} from '../src/data/battle-structures.js';
 const source=process.argv.includes('--source'),repo=fileURLToPath(new URL('../',import.meta.url)),root=source?repo:resolve(repo,'dist');
 const build=source?null:JSON.parse(await readFile(resolve(root,'build-report.json'),'utf8')).revision;
 const out=resolve(repo,process.argv.find(arg=>arg.startsWith('--output='))?.slice(9)??'tests/visual-results/campaign-world');await mkdir(out,{recursive:true});
-const cases=[['ch5-mine','dust'],['ch5-wall','clear'],['ch8-ferry','rain']],codes=new Map(),wanted=new Set(cases.map(x=>x[0])),stop=Error('earned');
+const cases=process.argv.includes('--fortified')?Object.keys(BATTLE_STRUCTURES).map(id=>[id,null,'balanced'])
+  :[['ch5-mine','dust','performance'],['ch5-wall','clear','performance'],['ch8-ferry','rain','performance'],['ch9-city','clear','balanced']];
+const codes=new Map(),wanted=new Set(cases.map(x=>x[0])),stop=Error('earned');
+const MAX_PROGRAMS=50;
 try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{const id=G.getChapter(s).encounters[s.encounterIndex].id;if(wanted.has(id)&&!codes.has(id)){
-  const field=G.deserialize(G.serialize(s));assert.ok(G.startEncounter(field,{controls:'realtime',weather:cases.find(x=>x[0]===id)[1]}).ok);codes.set(id,G.encodeSave(field));
+  const weather=cases.find(x=>x[0]===id)[1],field=G.deserialize(G.serialize(s));assert.ok(G.startEncounter(field,{controls:'realtime',...(weather?{weather}:{})}).ok);codes.set(id,G.encodeSave(field));
   if(codes.size===wanted.size)throw stop;
 }}});}catch(error){if(error!==stop)throw error;}
 const spec=process.env.PLAYWRIGHT_MODULE??'playwright',pw=await import(spec.startsWith('C:')?pathToFileURL(spec).href:spec);
@@ -43,14 +53,15 @@ async function changingCamera(page,view,before){
   return cameraState(page);
 }
 try{
-  for(const [id,weather]of cases){
-    const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(120000);
+  for(const [id,weather,quality]of cases){
+    // Balanced draws far more in software rendering than Performance.
+    const wait=quality==='balanced'?240000:120000,context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(wait);
     activePage=page;activeCondition={id,phase:'restore'};
     page.on('pageerror',e=>report.errors.push(`${id}: ${e.message}`));
     page.on('console',m=>{if(m.type()==='error')report.errors.push(`${id}: ${m.text().slice(0,500)}`);});
     await page.goto(`http://127.0.0.1:${server.address().port}/?dev`);await menuCommand(page,'settings');
     await (await revealControl(page,'#controls-model')).selectOption('realtime');await closePanel(page);await menuCommand(page,'settings');
-    await (await revealControl(page,'#battle-view')).selectOption('3d');await (await revealControl(page,'#graphics-quality')).selectOption('performance');
+    await (await revealControl(page,'#battle-view')).selectOption('3d');await (await revealControl(page,'#graphics-quality')).selectOption(quality);
     await (await revealControl(page,'#motion-setting')).uncheck();assert.equal(await page.locator('#motion-setting').isChecked(),false);
     await (await revealControl(page,'#modal [data-cmd="restore"]')).click();await page.locator('#restore-code').fill(codes.get(id));
     await page.locator('[data-cmd="import-code"]').click();await page.locator('[data-cmd="confirm-import"]').click();
@@ -60,9 +71,11 @@ try{
       width:c.width,height:c.height,three:Boolean(c.getContext('webgl2')),world:w.encounterId,weather:w.weather,version:w.version,
       works:w.objects.filter(o=>['breach','countermine','siege-engine'].includes(o.kind)).map(o=>({id:o.id,state:o.state,x:o.x,z:o.z})),
       platforms:w.fortifications?.platforms??[],engineers:w.squads?.filter(q=>q.role==='engineer').length??0,tick:w.tick,
+      gates:w.objects.filter(o=>o.kind==='gate'&&o.fortified).map(o=>({id:o.id,state:o.state,holder:o.holder,integrity:o.integrity})),
     };});
-    assert.equal(measured.world,id);assert.equal(measured.three,true,'3D did not silently fall back to a flat canvas');assert.equal(measured.weather,weather);
+    assert.equal(measured.world,id);assert.equal(measured.three,true,'3D did not silently fall back to a flat canvas');if(weather)assert.equal(measured.weather,weather);
     if(id==='ch5-mine'){assert.ok(measured.works.some(o=>o.id==='fort-countermine'));assert.ok(measured.works.some(o=>o.id==='fort-siege-engine'));assert.ok(measured.engineers>0);}
+    if(id==='ch9-city'){assert.equal(measured.platforms.length,2,'two towers');assert.ok(measured.gates.some(g=>g.state==='closed'&&g.holder==='enemy'),'a gate the enemy holds barred');}
     // Exercise actual normal-motion camera interpolation before using static
     // captures. Only visible controls change views/settings; poses are read-only.
     activeCondition={id,phase:'normal-motion'};
@@ -95,10 +108,19 @@ try{
       },{view,previousFrame});
       const camera=await cameraState(page);assert.equal(camera.reducedMotion,true);
       cameras.push(camera);
-      await page.screenshot({path:resolve(out,`${id}-${view}.png`),timeout:120000});
+      await page.screenshot({path:resolve(out,`${id}-${view}.png`),timeout:wait});
       assert.equal(await page.evaluate(()=>window.__realtime.world().tick),measured.tick,'camera selection preserves paused simulation');
     }
-    report.checks.push({id,...measured,cameras});console.log(`PASS ${id}: actual 3D ${weather}, ${measured.works.length} works, ${measured.platforms.length} platforms`);await context.close();
+    if(quality==='balanced'){
+      // The kit, not its code-built stand-in, draws the structures; the cutaway covers it.
+      const kit=await page.evaluate(()=>{const stage=window.__chamber.stage(),materials=new Set();
+        stage.scene.traverse(o=>{if(o.isInstancedMesh&&o.name.startsWith('board kit'))for(const m of [o.material].flat())materials.add(m);});
+        return {pieces:stage.stats().fieldFeatures?.boardKit??null,materials:materials.size,cutaway:[...materials].filter(m=>m.userData.sceneryCutaway).length,programs:stage.renderer.info.programs.length};});
+      assert.ok(kit.pieces?.instances>0&&kit.materials>0,'the board kit draws the field’s structures');assert.equal(kit.cutaway,kit.materials,'every kit piece takes the camera cutaway');
+      assert.ok(kit.programs<=MAX_PROGRAMS,`${kit.programs} shader programs, at most ${MAX_PROGRAMS}`);measured.boardKit=kit;
+    }
+    report.checks.push({id,quality,...measured,cameras});
+    console.log(`PASS ${id}: actual 3D ${measured.weather} (${quality}), ${measured.works.length} works, ${measured.platforms.length} platforms${measured.boardKit?`, board kit ${measured.boardKit.pieces.instances} pieces, ${measured.boardKit.programs} programs`:''}`);await context.close();
   }
   assert.deepEqual(report.errors,[]);
   if(!source)assert.equal(JSON.parse(await readFile(resolve(root,'build-report.json'),'utf8')).revision,build,'The tested production build remains unchanged');

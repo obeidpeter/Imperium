@@ -7,6 +7,8 @@ import {nextRandom} from './rng-streams.js';
 import {smokeBetween,terrainCover} from './sight.js';
 import {flee,fleeing} from './bands.js';
 import {TEMPERAMENTS} from '../../data/realtime-variety.js';
+import {onTower} from './fortifications.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // Enemy AI (§3.10). Each enemy keeps a notice meter for every hostile actor:
 // the eye over his head. It fills with what he sees and hears and drains when
@@ -26,7 +28,8 @@ const difficulty=world=>PERCEPTION.difficulty[world.difficulty]??PERCEPTION.diff
 // How fast `watcher` notices `target` this second (§3.10): base for what the
 // target does × visibility × proximity × Per/10 × (1 − Fieldcraft/100).
 export function noticeRate(world,watcher,target){
-  const grid=navGrid(world.map),d=distanceBetween(watcher,target),per=watcher.attributes.per,sight=PERCEPTION.sightBase+per;
+  // A watcher on a tower's deck sees further (structures.js).
+  const grid=navGrid(world.map),d=distanceBetween(watcher,target),per=watcher.attributes.per,sight=PERCEPTION.sightBase+per+(onTower(world,watcher)?STRUCTURES.tower.sight:0);
   const proximity=d<=PERCEPTION.near?1:d>=sight?0:1-(d-PERCEPTION.near)/(sight-PERCEPTION.near);if(proximity<=0)return 0;
   const firm=!['marsh','ford'].includes(terrainAtPoint(world.map,target.x,target.z));
   let base=target.moving?target.gait==='run'?PERCEPTION.run:(target.effects?.quietFeet&&firm?PERCEPTION.quietWalk:PERCEPTION.walk):PERCEPTION.stand;

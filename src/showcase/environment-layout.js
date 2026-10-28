@@ -1,4 +1,5 @@
 // Pure presentation planning. Never consumes the campaign RNG or edits terrain.
+import {STRUCTURES} from '../data/structures.js';
 export const TILE_SIZE=2.5;
 // Keep the scenic river beyond the entire rules rectangle on expanded maps.
 // The original twenty-metre battle boards retain their established datum.
@@ -8,6 +9,9 @@ export const distantRiverCentre=(e,tileSize=TILE_SIZE)=>-Math.max(29,e.height*ti
 // level. Rivers sit in a channel below one water level; a ford is a shallow bar.
 // A marsh flood lies just under the ground's surface.
 export const HIGH_GROUND_HEIGHT=1.6,RIVER_WATER_LEVEL=-.42,RIVER_BED=-1.3,FORD_BED=-.62,MARSH_WATER_LEVEL=-.027;
+// A tower's deck (structures.js) is masonry with sheer sides; a lower saved height (a rampart)
+// is an earth bank shaped like high ground. A ditch's floor lies at its saved depth.
+const MASONRY_HEIGHT=STRUCTURES.tower.deck,DITCH_FLOOR=STRUCTURES.ditch.depth;
 // Rounded-square plateau weight: a flat top 0.85 m either side of the centre
 // (room for every cell ring), a bank to 0 by 1.55 m. Sides joined to another
 // high cell run flat to the shared edge, so adjoining high ground is one plateau.
@@ -31,11 +35,11 @@ export function createGroundHeight(e,tileSize=TILE_SIZE,{profile=null,relief=tru
   if(relief)for(let y=0;y<e.height;y++)for(let x=0;x<e.width;x++)if(high(x,y)){
     const level=elevations.get(`${x},${y}`)??HIGH_GROUND_HEIGHT;
     const joins=(a,b)=>high(a,b)&&(elevations.get(`${a},${b}`)??HIGH_GROUND_HEIGHT)===level;
-    hills.push({height:level,structure:elevations.has(`${x},${y}`),centre:gridToWorld({x,y},e,tileSize),sides:{east:joins(x+1,y),west:joins(x-1,y),south:joins(x,y+1),north:joins(x,y-1)}});
+    hills.push({height:level,structure:elevations.has(`${x},${y}`)&&level>=MASONRY_HEIGHT,centre:gridToWorld({x,y},e,tileSize),sides:{east:joins(x+1,y),west:joins(x-1,y),south:joins(x,y+1),north:joins(x,y-1)}});
   }
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,riverCentre=distantRiverCentre(e,tileSize);
   const riverExits=[];for(const y of [0,e.height-1])for(let x=0;x<e.width;x++)if(terrainAt(e,x,y)==='river')riverExits.push({x:gridToWorld({x,y},e,tileSize).x,side:y===0?-1:1});
-  const wet=(x,y)=>{const t=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));return t==='river'?RIVER_BED:t==='ford'?FORD_BED:t==='marsh'?-.065:0;};
+  const wet=(x,y)=>{const t=terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)));return t==='river'?RIVER_BED:t==='ford'?FORD_BED:t==='marsh'?-.065:t==='ditch'?DITCH_FLOOR:0;};
   return (x,z)=>{
     if(!Number.isFinite(x)||!Number.isFinite(z))return 0;
     const distance=Math.max(Math.abs(x)-hx,Math.abs(z)-hz,0),outside=smooth(distance/7);

@@ -1,6 +1,14 @@
 # Imperium: worlds, buildings and gameplay — the approved plan
 
-The owner approved this plan in October 2026, after the regional worlds of [#26](https://github.com/obeidpeter/Imperium/pull/26) and the documentation follow-up of [#27](https://github.com/obeidpeter/Imperium/pull/27). It is kept here as written, with second-person wording turned to name the owner, so that later releases can follow it. Each release's changelog entry records what it actually delivered and measured; where the two differ, the changelog and the code are authoritative.
+The owner approved this plan in October 2026, after the regional worlds of [#26](https://github.com/obeidpeter/Imperium/pull/26) and the documentation follow-up of [#27](https://github.com/obeidpeter/Imperium/pull/27). On 27 October 2026, after [#31](https://github.com/obeidpeter/Imperium/pull/31)–[#34](https://github.com/obeidpeter/Imperium/pull/34), the owner approved a revision of releases 4–10.
+
+Both are kept here as written, with second-person wording turned to name the owner, so that later releases can follow them:
+- the revision comes first;
+- the plan as first approved follows it, as releases 1–3 followed it.
+
+The revision replaces the first plan's releases 4–10. The first plan's targets, rules and implementation notes still hold wherever neither the revision nor the code has changed them.
+
+Each release's changelog entry records what it actually delivered and measured. Where it and the plan differ, the changelog and the code are authoritative.
 
 ## Status
 
@@ -9,17 +17,244 @@ The owner approved this plan in October 2026, after the regional worlds of [#26]
 | 1 | Foundations | merged ([#28](https://github.com/obeidpeter/Imperium/pull/28)) |
 | 2 | Ground, sky and light | merged ([#29](https://github.com/obeidpeter/Imperium/pull/29)) |
 | 3 | Harder, less predictable battles | merged ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
-| 4 | Walls, gates, towers and bridges | in part delivered by [#32](https://github.com/obeidpeter/Imperium/pull/32); to be re-scoped |
-| 5 | Nature, water, weather and fire | in part delivered by #32 and [#33](https://github.com/obeidpeter/Imperium/pull/33); to be re-scoped |
-| 6 | Faces, cast, horses and crowds | in part delivered by #32 and #33; to be re-scoped |
-| 7 | Sieges, cavalry and new missions | in part delivered by #32; to be re-scoped |
-| 8 | Living camps | in part delivered by #32 and #33; to be re-scoped |
-| 9 | Landmarks and the great set pieces | in part delivered by #32; to be re-scoped |
-| 10 | Real time by default (Gate 4) | the mode choice delivered by #33; to be re-scoped |
+| 4 | Fortifications, modelled | in review ([report](fortifications-release4-report.md)) |
+| 5 | Nature and water, modelled | planned |
+| 6 | The cast in person | planned |
+| 7 | Missions and cavalry | planned |
+| 8 | Living camps | planned |
+| 9 | Landmarks and set pieces | planned |
+| 10 | Gate 4 and 0.40.0 | planned |
 
-Between releases 3 and 4 the owner merged [#31](https://github.com/obeidpeter/Imperium/pull/31), #32 (the [campaign world upgrade](campaign-world-upgrade.md)) and #33 (the [player experience polish](player-experience-polish.md)). They cover parts of releases 4–10, as the table shows. A revised plan for those releases goes to the owner for approval. Until it is approved, the roadmap below remains the plan as first approved.
+## The revision of releases 4–10 (approved 27 October 2026)
 
-## Context
+### Why a revision
+
+Releases 1–3 of the first plan are merged.
+
+Between releases 3 and 4 the owner merged three pull requests written by Codex:
+- #31: fixes to morale recovery, Windows asset setup and GPU memory reporting.
+- [#32](https://github.com/obeidpeter/Imperium/pull/32): the [campaign world upgrade](campaign-world-upgrade.md).
+- [#33](https://github.com/obeidpeter/Imperium/pull/33): the [player experience polish](player-experience-polish.md).
+
+They delivered parts of releases 4–10, mostly as code-built geometry and rules. #34 then corrected three side effects and restored the calibration bot.
+
+The revision keeps every approved decision and the release routine. It re-scopes releases 4–10 so they build on what is already in the game instead of redoing it.
+
+### What is already in the game
+
+| Area | Delivered | By |
+| --- | --- | --- |
+| Fortifications | Gates that close again; a breachable wall; a 3.2 m fighting platform beside each fortified wall; height-aware sight and cover; step limits; Chapter V's countermine against the siege works. All drawn with code-built pieces | #32 |
+| Enemy | Plans scored on what the enemy sees, with near-best plans in the draw; columns intercepted; objectives contested | #32, #34 |
+| Army | Engineer details (IV, V, VIII, X) and cavalry (VII, IX, XII); mounted men move faster, ours and the enemy's | #32 |
+| Campaign | Operations that pay off in the next battle; siege field reports; Senate support from the soldier's record; finale reserves the player can stop | #32 |
+| Camps | Nine optional company stories (IV–XII); three playable camp situations (V, VIII, XI); regional surroundings for each camp | #32, #33 |
+| Nature and weather | Regional tree species as code-built forms; one wind; currents; rain, dust and mist around the camera; flame and smoke | #32, #33 |
+| Figures | The soldier's head at every rank; named faces sculpted from one generated head, with blinks; wounded and morale bearing; horse gaits; a reduced generated finale crowd | #32, #33 |
+| Set pieces | Separate settings for the oath (the Novae parade ground) and the accession | #32 |
+| Sound | Regional ambience; weapons that sound by material; a battle pressure pulse; horn signals for orders | #32, #33 |
+| Real time | New Game offers both modes and recommends real time; Settings → Controls switches between encounters; exercises shown in context | #33 |
+| Layout | The world fills the main view in camp, battle and chamber, with a Follow / Overview / Horizon camera choice | #32 |
+
+### The owner's decisions (unchanged)
+
+| Topic | Decision |
+| --- | --- |
+| Downloads | 2 MB first load, 16 MB Chapter I in 3D, 24 MB per chapter, 80 MB complete. Measured on main on 27 October 2026: 0.87, 10.1, 14.9 (the largest chapter) and 31.4 MB. |
+| Tripo | Up to 2,500 credits. None spent by 27 October 2026, when the balance was 3,760. |
+| Gameplay | Harder, less predictable battles; living camps in every chapter; new mechanics; real time as the default after the owner's Gate 4 play-through. |
+| 2D view | Kept as a working fallback. |
+| Devices | Steady 30 fps on mid-range 2021+ phones (Performance) and 60 fps on integrated-graphics laptops (Balanced); battles ready in about 3 s once downloaded. |
+
+### Rules added
+
+The first plan's rules stand unchanged. The revision adds three:
+
+- **Start from main and build on it.** Each release starts from the latest main and first checks what other contributors have merged in its area. It builds on that work.
+- **Keep the calibration whole.** The sweeps must complete on Story, Standard and Veteran. CI plays a Veteran campaign through Chapter VII's council.
+- **Simulation budget.** In each release, no battle's tick at p95 may rise by more than 0.3 ms over the previous release. It is measured on the same seeds, one sweep at a time.
+
+### Roadmap
+
+| # | Release | What the player will see |
+| --- | --- | --- |
+| 4 | Fortifications, modelled | The board's walls, towers, gates, bridges and ramparts built in Blender to fit its cells, replacing the code-built pieces. Gates that can be battered, ramparts with ditches, tower bonuses shown in forecasts, and structures placed per battle |
+| 5 | Nature and water, modelled | Trees with real detail levels, dense grass and scrub, generated rocks, foam and wet banks at fords and marshes, mist banks |
+| 6 | The cast in person | Generated, recognisable heads and bodies for the named cast, senators in togas, camp staff and a Roman cavalry rider; generated rigged horses; animated crowds; varied shields |
+| 7 | Missions and cavalry | Five new mission types in place of repeated escort and hold; cavalry charge and feigned retreat; ladders and a ram as enemy siege works |
+| 8 | Living camps | A distinct camp for every chapter, the named cast in camp, errands with training points, the five missing titles, a trader everywhere, replies that depend on who the soldier is |
+| 9 | Landmarks and set pieces | Each region's landmarks, the Curia in marble, the Aurelian Walls for the finale, staged ceremonies, life in towns and camps |
+| 10 | Gate 4 and 0.40.0 | The owner's play-through, Practice and the skirmish in real time, the owner's decision on the turn-based mode, and the 0.40.0 release |
+
+#### 4. Fortifications, modelled
+
+Already done (#32): the rules for gates, breaches, the fighting platform, height-aware sight, step limits and Chapter V's works, in `src/core/realtime/fortifications.js`, `field-objects.js`, `navigation.js` and `sight.js`, drawn with code-built pieces.
+
+- **Shader headroom first.**
+  - Most battles already exceed the 50-program target on Balanced: up to 56 at the last full measurement. Chapter V's mine is at its CI ceiling of 52.
+  - A model-material normaliser gives all imported art one opaque and one cut-out program.
+  - A program-count test keeps every battle at 50 or under, and the stage ceilings are lowered to match.
+- **The board kit** (`scripts/assets/build-board-kit.py`, Blender):
+  - curtain-wall runs, corners and ends in stone, mudbrick and timber, at the rules' 3.2 m and 2.5 m heights;
+  - towers with stairs; gatehouses open, closed and battered; breach rubble;
+  - timber and stone bridges, damaged and repaired; palisades; ramparts with ditches;
+  - trim-sheet textures with normal maps and two levels of detail, about 1–1.5 MB per material family.
+  - #32's code-built pieces (`environment-fieldwork.js`, drawn by `battlefield-features.js`) become the stand-in for Performance and failed downloads.
+- **A structure registry** (`src/showcase/structure-registry.js`):
+  - It maps each saved wall cell, platform, gate and field-object state (`world.fortifications`, `field-objects.js`) to kit pieces, instanced per material.
+  - The regional kits' unused gate, bridge and wall pieces join it.
+- **Rules that complete #32's:**
+  - a gate's integrity: a ram wears it down, barring adds to it, and at 0 it becomes a breach;
+  - ramparts with ditches;
+  - the tower's extra sight and missile range;
+  - bridge demolition;
+  - forecasts that name each modifier ("From the tower", "Behind the wall");
+  - structures authored per battle where the history calls for them (`src/data/battle-structures.js`), instead of one generic wall section and platform in every walled field.
+- **Checks:**
+  - no model stands on a walkable cell;
+  - the cutaway covers every new piece;
+  - the stage benchmark stays within its ceilings;
+  - sweeps on all three levels;
+  - `WORLD_VERSION` 5, so older fights restart from their checkpoint.
+
+#### 5. Nature and water, modelled
+
+Already done (#32, #33): regional species as code-built forms, one wind, currents, weather around the camera, flame and smoke, and trees kept clear of the main camera views.
+
+- **Trees** (`scripts/assets/build-trees.py`, Blender):
+  - the regional species, each with three levels of detail, an impostor and wind;
+  - CC0 bark and leaf textures;
+  - the code-built forms stay the stand-in.
+- **Ground cover:** instanced grass around the camera, plus reeds, scrub, flowers and crops. Density follows the quality tier.
+- **Rocks:** 12 Tripo rocks, 4 per biome group (240 credits), replacing the noise spheres.
+- **Water:** depth colour at fords and marshes, foam, wet banks and mist banks. High keeps the mirror.
+- **Dropped from the first plan:** fire flipbooks, since #32's flame and smoke particles do that job.
+
+#### 6. The cast in person
+
+Already done (#32, #33): the soldier's head at every rank, named men sculpted from one generated head with blinks and expressions, better motion, horse gaits on the code-built horse, and the reduced finale crowd.
+
+- **Named cast:**
+  - Each named character gets a generated head and body, so faces differ in shape, not only in proportions.
+  - Varro, Lucan, Sabinus, Felix, Aelia and Severianus come first.
+  - Naso, Brennus, Theon, Quintus and Paullus follow from the reserve if results allow.
+  - About 45 credits each. The absence branches are unchanged.
+- **Senators and staff:** three senators in togas for the chamber, a clerk and a capsarius, a Roman cavalry rider and a female civilian.
+- **Horses:**
+  - Three Tripo horses (Roman, northern and eastern armoured), rigged with walk, trot, gallop and idle clips, about 85 credits each.
+  - The code-built horse stays the stand-in.
+- **Crowds:** the finale's and the formations' followers are animated from baked clips on the GPU.
+- **Shields:** per-unit designs from a pattern library.
+- **Dropped from the first plan:** four rank bodies for the soldier, since #32 keeps his head at every rank.
+
+#### 7. Missions and cavalry
+
+Already done (#32): Chapter V's countermine, engineer and cavalry formations, and enemies that intercept columns and contest objectives.
+
+- **New mission types,** each keeping its chapter's required capability:
+  - a sortie (V);
+  - a rearguard with fallback lines (VI);
+  - a crossing under fire (VIII);
+  - a feigned retreat and pursuit (IX);
+  - a relief convoy with a route choice (X).
+  - They are added as operation data (`src/data/battle-operations.js`). Escort and hold, counting rescues and withdrawals, fall from 10 of 18 battles to at most 6.
+- **Cavalry orders:** charge, and the feigned retreat, as squad orders.
+- **Enemy siege works:** ladders and a ram, which release 4's gate integrity and breach rules give their meaning.
+- **Varied field objects:** opportunity pairs chosen by mission instead of the same pair everywhere.
+- **Checks:** the bot and sweeps updated for the new missions, and tests for siege progress, gates and cavalry orders.
+
+#### 8. Living camps
+
+Already done (#32, #33): nine company stories, three playable situations, field reports, and regional surroundings for each camp.
+
+- **A camp of its own for each chapter.** #33 changed only the surroundings, and the interiors of IV–XII still share templates (`src/data/camps.js`). Each chapter gets its own interior, with reachability tests.
+- **The named cast in camp,** each with an absence branch:
+  - Varro until his Chapter VI fate;
+  - Lucan or Sabinus;
+  - Felix, Naso, Crispus and Brennus;
+  - Severianus, Aelia, Paullus, Theon and Quintus.
+- **Errands:**
+  - two or three in each of Chapters IV–XII, with training points within a raised, audited ceiling (`src/core/tp-audit.js`);
+  - the five titles never awarded become their rewards;
+  - the existing company stories and situations stay reward-free.
+- **A trader in every chapter** with regional goods, and defeat pages for every encounter.
+- **Replies that depend on who the soldier is:** dialogue gated by attributes, decorations, titles and meters, using the conditions the engine already has (`src/core/dialogue.js`).
+
+#### 9. Landmarks and set pieces
+
+Already done (#32): separate settings for the oath and the accession.
+
+- **Landmarks:** about 35 Tripo landmarks across the regions, placed by the layout data. Historical details are checked first against `docs/historical-research.md`.
+- **The Curia** rebuilt in Blender, in marble, for every Contest.
+- **The Aurelian Walls and gate** for the finale, in Blender.
+- **Ceremonies:** story beats in place of a slow orbit, in the new settings.
+- **Life:** about 15 Tripo props (market goods, wagons, laundry), cloth banners and awnings, roof smoke and birds.
+
+#### 10. Gate 4 and 0.40.0
+
+Already done (#33): New Game offers both modes and recommends real time, and Settings → Controls switches between encounters.
+
+- **The owner's play-through** on Story and Standard, using the playtest kit #33 extended to both modes. What it finds is fixed.
+- **Practice and the standalone skirmish** in real time.
+- **The owner's decision** on the turn-based mode: keep it as an option, or retire it after 0.40.0.
+- **Release 0.40.0:** the changelog, README and guide, with the owner's Performance-check files from a phone and a laptop recorded as device evidence.
+
+### Order
+
+- Release 4 comes first: its material normaliser frees the shader budget every later release needs.
+- Releases 5 and 6 are independent of each other.
+- Release 7 needs release 4's gate rules.
+- Release 8 is content and could move earlier if the owner prefers.
+- Release 9 follows releases 4 and 6, for the kit materials and the crowds.
+- Release 10 comes last.
+
+### Credits and downloads
+
+| Use | Credits |
+| --- | ---: |
+| Release 5: 12 rocks | 240 |
+| Release 6: 13 figures at about 45 each (six named cast, three senators, a clerk, a capsarius, a rider and a civilian) | about 585 |
+| Release 6: 3 rigged horses with clips | about 255 |
+| Release 9: about 35 landmarks and 15 life props | about 1,000 |
+| Reserve: retries for poor or anachronistic results, and up to five more named cast (225) if results allow | about 420 |
+| **Total** | **within 2,500** |
+
+**Estimated downloads after the plan:**
+- each chapter with its 2D art at about 18–22 MB, within 24;
+- Chapter I in 3D at about 14–15 MB, within 16;
+- the complete campaign at about 60–70 MB, within 80.
+
+If a chapter nears its limit, textures go down a level or more is shared before any limit is raised.
+
+### Verification, every release
+
+As first approved:
+- `npm run verify`, which now includes the Veteran campaign test;
+- every browser check;
+- the stage benchmark against its ceilings, and the twelve-chapter benchmark;
+- sweeps on Story, Standard and Veteran, 20 seeds each, with the simulation budget above;
+- before-and-after renders sent to the owner;
+- reports that keep software-rendered checks apart from devices.
+
+### What the owner provides
+
+1. **Performance-check files** from a phone and a laptop (Settings → Performance check). They are still outstanding from releases 1 and 2, and the tiers are tuned from them.
+2. **The Gate 4 play-through** after release 8, as first approved. Release 9 is built meanwhile.
+3. **Content review** of release 8's errands and cast lines (optional).
+4. **Parallel work:** if Codex keeps working on the game, which areas it takes, so the releases don't collide. Each release stands alone, apart from the order above.
+5. **Tripo:** the key stays available as a network secret in this environment.
+
+### Risks and fallbacks
+
+The first plan's risks stand, plus two:
+- **Overlapping work:** each release re-checks main before it starts. The plan is revised again if large parts land elsewhere.
+- **The simulation budget:** new per-tick rules (gate integrity, ladders, new missions) are profiled before they merge. If a battle's tick nears the limit, cheaper sight or route checks come first.
+
+## The plan as first approved
+
+Releases 1–3 followed this plan. Its releases 4–10 are kept as first written; the revision above replaces them.
+
+### Context
 
 The last releases made the game smooth and gave it a production pipeline:
 - **0.38:** smooth play.
@@ -29,7 +264,7 @@ The last releases made the game smooth and gave it a production pipeline:
 
 A survey of main at `842084c` shows that most of the world and much of the play are still first-pass. The owner asked for a plan that improves every aspect, especially environments and buildings, and the gameplay.
 
-### World (`src/showcase/`)
+#### World (`src/showcase/`)
 - **Ground:**
   - One noise-coloured plane. Its turf is a 128 px code texture repeating every 2 m (`environment-materials.js`).
   - The board's terrain cells don't drive it: sand and camp cells look like grass.
@@ -56,7 +291,7 @@ A survey of main at `842084c` shows that most of the world and much of the play 
   - Unnamed units share one shield colour and motif per faction.
 - **Quality:** a quality drop rebuilds the whole world mid-battle (`graphics-quality.js`). The last full benchmark predates PR #26: 46–56 shader programs and up to 270 draw calls and 1.34 M triangles.
 
-### Gameplay (`src/core/realtime/`, `src/data/realtime-rules.js`)
+#### Gameplay (`src/core/realtime/`, `src/data/realtime-rules.js`)
 - **Too easy:** a simple bot wins every Chapter IV–XII battle on all 20 seeds, on Story and Standard (`docs/evidence/realtime-gate4-sweep.json`), and wins the finale in 4–5 of 16 rounds. Veteran keeps Standard's deadlines and has never been tested.
 - **Predictable:** squad battles draw no randomness (`squads.js`, `squad-ai.js`), so every seed plays the same.
 - **Thin enemy AI:**
@@ -78,7 +313,7 @@ A survey of main at `842084c` shows that most of the world and much of the play 
   - Real time is opt-in until Gate 4.
   - Nobody has played a Contest in the chamber.
 
-## The owner's decisions
+### The owner's decisions
 
 | Topic | Decision |
 | --- | --- |
@@ -88,7 +323,7 @@ A survey of main at `842084c` shows that most of the world and much of the play 
 | 2D view | Kept as a working fallback; its art is not redrawn. |
 | Devices | Unchanged targets: steady 30 fps on mid-range 2021+ phones (Performance) and 60 fps on integrated-graphics laptops (Balanced); battles ready in about 3 s once downloaded; no freezes in play. |
 
-## Rules that hold throughout
+### Rules that hold throughout
 
 - **The rules core stays deterministic** (`src/core/`).
   - New gameplay draws randomness only from the simulation's named streams (`ai`, `combat`, `world`; `src/core/realtime/rng-streams.js`).
@@ -116,7 +351,7 @@ A survey of main at `842084c` shows that most of the world and much of the play 
   - Each release is verified, pushed to `claude/hopeful-faraday-x8zvuo` and opened as a pull request, then merged when CI is green, as with #25 and #27. Approving this plan approves that routine.
   - Reports keep software-rendered automated checks apart from the owner's real-device runs and play.
 
-## Targets
+### Targets
 
 | | Phone (Performance) | Laptop, integrated graphics (Balanced) |
 | --- | --- | --- |
@@ -127,7 +362,7 @@ A survey of main at `842084c` shows that most of the world and much of the play 
 | Battle ready, downloaded | ≤ 3 s, with the progress veil | ≤ 2 s |
 | Downloads | first load ≤ 2 MB; Chapter I in 3D ≤ 16 MB; any chapter with its 2D art ≤ 24 MB; complete ≤ 80 MB | same |
 
-## Roadmap
+### Roadmap
 
 Ten releases, each shippable on its own. World and gameplay alternate where they share foundations.
 
@@ -144,7 +379,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 | 9 | Landmarks and the great set pieces | The landmarks of each region, the Curia in marble, the Aurelian Walls for the finale, both ceremonies staged in their real settings, life in towns and camps |
 | 10 | Real time by default (Gate 4) | After the owner's play-through, real time becomes the default; Practice and the skirmish play in real time; version 0.40.0 is released |
 
-### 1. Foundations
+#### 1. Foundations
 - **Download limits** (`src/ui/presentation-budget.js`, its tests and `docs/asset-pipeline.md`): 2 / 16 / 24 / 80 MB. Refresh the out-of-date budget table.
 - **Fresh baseline and CI gates:**
   - Re-run `npm run benchmark:stage` across all twelve chapters on Performance and Balanced, now with PR #26's scenery.
@@ -158,7 +393,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - **One-command tools** (`scripts/assets/setup-tools.mjs` and docs): rebuild the Blender Python module, basisu and glTF-Transform in a fresh session. Today they live only in this session's scratch space.
 - **CI time:** the usability job already takes 28 of its 45 minutes. Move the twelve-camp check into its own job.
 
-### 2. Ground, sky and light
+#### 2. Ground, sky and light
 - **Ground material** (new `src/showcase/terrain-material.js`; changes to `environment.js` and `environment-materials.js`):
   - Splat-blended layers: grass, dry grass, dirt, mud, sand, gravel, rock and paving.
   - Weights come from the board's terrain cells (`camp`, `sand`, `stone`, `road`, `marsh`, `high`), slope, wetness and wear.
@@ -177,7 +412,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - The horizon ring gets distance levels and forest stand-ins.
 - **Water:** the distant Danube moves in its shader instead of on the CPU every frame.
 
-### 3. Harder, less predictable battles (`src/core/realtime/`, `src/data/realtime-rules.js`)
+#### 3. Harder, less predictable battles (`src/core/realtime/`, `src/data/realtime-rules.js`)
 - **Varied enemy plans** (`squad-ai.js`):
   - At the start, and at round boundaries, the enemy draws its plan from the `ai` stream: flank side, reserve timing, focus target, feint or press. Same seed, same battle; different seed, different battle.
   - The combat formula is unchanged, so the 0.38 parity tests (`tests/realtime-squads.test.mjs`) keep checking it.
@@ -193,7 +428,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - Standard is retuned so the sweep bot still wins every battle, but with losses and narrower margins.
   - Sweeps on all three difficulties (20 seeds each) with a calibration report; Story stays easy.
 
-### 4. Walls, gates, towers and bridges (world and rules together)
+#### 4. Walls, gates, towers and bridges (world and rules together)
 - **Board kit** (`scripts/assets/build-board-kit.py`, Blender):
   - Pieces fitted to the 2.5 m cell: curtain-wall runs, corners and ends in stone, brick, mudbrick and timber.
   - Towers; gatehouses open, closed and broken; timber and stone bridges damaged and repaired.
@@ -212,7 +447,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - Saved encounter state gets an edition flag for the new structure states. Encounter layouts (`src/data/encounters.js`) gain towers and gates where the history and the chapter call for them.
 - **Readability:** the cutaway covers the new pieces; a test checks that no model stands on a walkable cell the rules leave open.
 
-### 5. Nature, water, weather and fire
+#### 5. Nature, water, weather and fire
 - **Trees** (`scripts/assets/build-trees.py`, Blender):
   - Species by region, each with three levels of detail, an impostor and wind:
     - Danube: oak, beech, willow, alder.
@@ -230,7 +465,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - **Fire and smoke:** flipbooks rendered in Blender for braziers, torches, campfires and burning siege works, replacing the glowing spheres. Torch models are code-built.
 - **Sound:** regional ambience follows the new world (water, wind in trees, birds), synthesized in code as PR #26 does, or CC0 with licences recorded.
 
-### 6. Faces, cast, horses and crowds
+#### 6. Faces, cast, horses and crowds
 - **Your soldier's own face:**
   - Four rank bodies (recruit, legionary, officer, commander) generated from one face reference, so he looks the same throughout.
   - `actor-body-catalog.js` `actorBodyId` picks the hero's set.
@@ -249,7 +484,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - Formation followers use the same path.
 - **Shields:** per-unit shield designs from a pattern library: legion emblems, and enemy patterns per faction.
 
-### 7. Sieges, cavalry and new missions
+#### 7. Sieges, cavalry and new missions
 - **Chapter V siege** (the fictional fortress inspired by Dura-Europos, 256): the Persian ramp and mine as field objects with progress.
   - Your countermine, or a sortie to burn the works, against their advance.
   - Ladders and a ram as enemy siege works; breach rules from release 4.
@@ -265,7 +500,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - **Varied field objects:** opportunity pairs and objects vary by mission instead of the same pair everywhere (`expanded-campaign.js`). Weather can vary by encounter within each chapter's season.
 - **Checks:** autoplay bots and sweeps updated for the new missions; tests for siege progress, gates and cavalry orders.
 
-### 8. Living camps
+#### 8. Living camps
 - **A camp of its own for each chapter:** the four layouts shared by eight chapters are replaced (`src/data/camps.js`, `camp-regions.js`), and reachability tests cover each.
 - **The named cast in camp:**
   - Varro until his Chapter VI fate, and Lucan or Sabinus, Felix, Naso, Crispus and Brennus.
@@ -283,7 +518,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - Saves get an edition flag for the new errands and titles.
   - A chronicle from 0.38 keeps its audited grant; errands in chapters it has already finished are not granted after the fact.
 
-### 9. Landmarks and the great set pieces
+#### 9. Landmarks and the great set pieces
 - **Landmarks per region**, about 35 Tripo models placed by the layout data from release 1:
   - Danube: principia, granary, bathhouse, river boats.
   - Marsh: stilt huts.
@@ -303,14 +538,14 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
   - Both get story beats instead of a slow orbit, using the regional kits rather than the old stockade.
 - **Life:** about 15 Tripo props (market goods, wagons, laundry), cloth banners and awnings, roof smoke and birds.
 
-### 10. Real time by default (Gate 4)
+#### 10. Real time by default (Gate 4)
 - **The owner's play-through** on Story and Standard with a checklist per chapter (camps, battles, Contests and the finale's routes). What it finds is fixed before the switch.
 - **The switch:**
   - Real time becomes the default (`src/core/controls-model.js`), and Practice and the standalone skirmish play in real time (`src/ui/app.js` archive practice).
   - The 0.38 turns stay selectable in Settings for this release; whether to retire them afterwards is the owner's decision.
 - **Release 0.40.0:** changelog, README and guide, with the owner's Performance-check files from a phone and a laptop recorded as device evidence.
 
-## Credits and downloads
+### Credits and downloads
 
 **Tripo, within 2,500 credits:**
 
@@ -329,7 +564,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - The first load stays under 2 MB.
 - If a chapter nears its limit, textures go down a level or more is shared, before any limit is raised again.
 
-## Verification, every release
+### Verification, every release
 
 - **Automated checks:**
   - `npm run verify`, `npm run smoke`, `smoke:polish`, `smoke:usability`, `smoke:ch5-pilot` and `smoke:world`; the stage benchmark against the CI ceilings; the twelve-chapter benchmark.
@@ -347,14 +582,14 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - **Renders:** before-and-after renders from fixed cameras for every chapter touched, sent to the owner.
 - **Reports** keep software-rendered checks apart from real devices. No device result is claimed without the owner's file.
 
-## What the owner provides
+### What the owner provides
 
 1. **Real-device checks:** after releases 1, 2, 5 and 9, run Settings → Performance check on a phone and a laptop and send the exported files. The tiers are tuned from them.
 2. **Gate 4 play-through:** after release 8, play on Story and Standard with the checklist from release 10.
 3. **Content review:** optional, but useful. Read the new errands and cast lines in release 8 before they ship.
 4. **Tripo:** keep the key available as a network secret in this environment, as before.
 
-## Risks and fallbacks
+### Risks and fallbacks
 
 - **A chapter outgrows 24 MB:** lower texture levels, share more between chapters, or move a landmark to its neighbouring chapter's set.
 - **Phones miss the frame rate:** Performance keeps the code-built stand-ins and the lowest detail levels; the owner's device files decide the tier settings before more content lands.
@@ -364,7 +599,7 @@ Ten releases, each shippable on its own. World and gameplay alternate where they
 - **Tools lost with the session:** the setup script in release 1.
 - **CI time:** the twelve-camp check moves to its own job; further browser checks get their own jobs instead of longer limits.
 
-## Implementation notes from the design review (for later releases)
+### Implementation notes from the design review (for later releases)
 
 Code facts verified by the review, to use when each release starts:
 

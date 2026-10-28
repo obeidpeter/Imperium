@@ -21,8 +21,11 @@
 // enemy plans seen across seeds, its rounds and slack, the share of our squads'
 // strength lost, and the tick times on this machine (Node, headless, not a
 // phone). Release 3's targets are checked at the end. Development only:
-//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--write]
-// --write saves docs/evidence/realtime-release3-sweep-<difficulty>.json.
+//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--baseline=FILE] [--label=release4] [--write]
+// --baseline names an earlier sweep's report whose tick p95 each battle must not
+// exceed by more than 0.3 ms (default: the Gate 4 sweep); it is fair only from the
+// same machine, one sweep at a time. --write saves
+// docs/evidence/realtime-<label>-sweep-<difficulty>.json.
 import {writeFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {performance} from 'node:perf_hooks';
@@ -170,7 +173,9 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   for(const b of report.battles)console.log(`${b.id.padEnd(19)} ${String(b.firstTry).padStart(2)}/${b.seeds} ${String(b.within2).padStart(3)} ${String(b.within3).padStart(3)}  ${String(b.roundsMedian).padStart(6)}/${b.roundsMax}`+
     `       ${String(b.deadline).padStart(3)} ${String(b.slackMin).padStart(5)}  ${b.lossMedian===null?'  —  ':b.lossMedian.toFixed(2)}  ${b.plans.join(',').padEnd(34)}  ${b.tickP95.toFixed(2)}/${b.tickMax.toFixed(1)}  hidden ${b.hidden}, ambushes ${b.ambushes.enemy}:${b.ambushes.ours}`);
   for(const f of report.finale??[])console.log(`route ${f.route.padEnd(10)} ${f.firstTry}/${f.seeds} first try, ${f.within} won (${f.injected} injected), rounds ${f.roundsMin}–${f.roundsMax} (median ${f.roundsMedian}), plans ${f.plans.join(',')}`);
-  let baseline=null;try{baseline=JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../docs/evidence/realtime-gate4-sweep.json',import.meta.url),'utf8'));}catch{}
+  const baselineFile=arg('baseline',null);let baseline=null;
+  try{baseline=JSON.parse(await (await import('node:fs/promises')).readFile(baselineFile??new URL('../docs/evidence/realtime-gate4-sweep.json',import.meta.url),'utf8'));}
+  catch(error){if(baselineFile)throw error;}
   const checks=targets(report,{baseline});console.log('\nTargets');for(const c of checks)console.log(`${c.met?'met    ':'NOT MET'} ${c.target}: ${c.value}`);
   if(process.argv.includes('--write')){
     const fixed=t=>t&&{p50:+t.p50.toFixed(3),p95:+t.p95.toFixed(3),max:+t.max.toFixed(2)};
@@ -178,7 +183,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
       variants:report.variants.map(r=>({...r,tick:fixed(r.tick)})),losses:report.losses.map(r=>({...r,tick:fixed(r.tick)})),
       battles:report.battles.map(b=>({...b,tickP95:+b.tickP95.toFixed(3),tickMax:+b.tickMax.toFixed(2)}))};
     if(out.routes)out.routes=out.routes.map(r=>({...r,tick:fixed(r.tick)}));
-    const file=`realtime-release3-sweep-${DIFFICULTY}.json`;
+    const file=`realtime-${arg('label','release4')}-sweep-${DIFFICULTY}.json`;
     await writeFile(new URL(`../docs/evidence/${file}`,import.meta.url),`${JSON.stringify(out,null,1)}\n`);console.log(`Wrote docs/evidence/${file}`);
   }
   if(checks.some(c=>!c.met))process.exitCode=1;

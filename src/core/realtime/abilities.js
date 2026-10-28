@@ -2,6 +2,8 @@ import {ABILITIES,COMBAT,MISSILES,REASONS} from '../../data/realtime-rules.js';
 import {blowForecast,blowSetup,derivedValues,shieldOf} from './combat.js';
 import {groundHeight,navGrid,span} from './navigation.js';
 import {SPECIAL,validateSpecial} from './specialists.js';
+import {onTower} from './fortifications.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // Abilities (§3.6): validate() and forecast() are pure, for the UI and the
 // simulation alike; neither ever changes the world or draws a random number.
@@ -22,7 +24,8 @@ export const distanceBetween=(a,b)=>span(b.x-a.x,b.z-a.z);
 // The range of a thrown missile: a fifth farther downhill (§3.5 step 8).
 export function missileRange(world,actor,missile,point){
   const grid=navGrid(world.map),drop=groundHeight(grid,actor.x,actor.z)-groundHeight(grid,point.x,point.z);
-  return MISSILES[missile].range*(drop>=COMBAT.heightStep?1.2:1);
+  // From a tower's deck further than from any other rise (structures.js).
+  return MISSILES[missile].range*(drop>=COMBAT.heightStep?onTower(world,actor)?STRUCTURES.tower.range:1.2:1);
 }
 
 const recovering=(world,actor,id)=>(actor.cooldowns?.[id]??0)>world.tick;

@@ -18,7 +18,8 @@ export const MOVEMENT=Object.freeze({walk:1.6,run:4,runMin:2.4,runRestriction:20
   radius:.35,cell:.5,
   // Blocked ground is widened by this many cells so a body never clips a rock.
   clearance:1,
-  arrive:.05,repathTicks:10,terrain:Object.freeze({marsh:.6,ford:.5}),
+  // A ditch (structures.js) is as slow as a ford.
+  arrive:.05,repathTicks:10,terrain:Object.freeze({marsh:.6,ford:.5,ditch:.5}),
   // Close enough to talk to a man or search a body.
   talkRange:1.8});
 

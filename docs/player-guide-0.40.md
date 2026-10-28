@@ -431,7 +431,8 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
 - **Shift**+click forces an attack on anything: a gate, a barricade, or
   a person who is not hostile. Striking a neutral person makes him
   hostile and is recorded in the journal, and harming civilians costs
-  Public Confidence.
+  Public Confidence. On a fortified field it also demolishes a repaired
+  bridge (see **Field objects**).
 
 - In camp, weapons stay sheathed: the game refuses to draw them, to
   attack or force an attack, or to raise the war cry, and says so in the
@@ -998,7 +999,17 @@ and command**.
 
 ## Field objects
 
-Fortified fields from Chapter IV can include a weakened curtain wall and a fighting tower. Use the stairs to reach the raised deck; its height changes sight and missile advantage. A closed fortified gate stops both armies. Reopen it or close it again once the gateway is empty. Breaching a weakened wall takes two uninterrupted four-second work actions and leaves a permanent, slower rubble passage.
+Fortified fields from Chapter IV have their walls, towers and gates where their history puts them: the ditched gateway of Chapter IV, the towers of Chapter V's river fortress, the bridgehead rampart at Chapter VIII's crossing, and the towers and barred gates of Palmyra (Chapter IX) and Rome (Chapter XII).
+
+- **Towers.** Climb the stair to the deck, 3.2 metres up. A man on the deck sees 15 metres farther, and his javelins and arrows reach three tenths farther (from other high ground, a fifth). His missiles hit more often (**From the tower**), and he holds off blows from below (**He holds the tower**). The tower's masonry stops missiles shot past it from below (**Behind the tower**).
+
+- **Gates.** A closed fortified gate stops both armies. You can reopen it, or close it again once the gateway is empty: closing it bars it for your side, at 120 integrity. A gate barred against you cannot be opened. Each work action at it batters it instead, taking 15 integrity, or 30 with a friendly engineer detail within eight metres as the ram. At 0 it is a breach: rubble, slower ground, open to both armies for the rest of the battle. In Chapters IX and XII the enemy holds the gates barred.
+
+- **Weakened walls.** Breaching one takes two uninterrupted four-second work actions and leaves a permanent, slower rubble passage.
+
+- **Ramparts and ditches.** A rampart is a bank 1.2 metres high with a timber breastwork on its face, behind a ditch 0.4 metres deep. The ditch halves speed and breaks a charge; a road crosses it on a causeway. A man on the rampart holds higher ground against those below (**He holds the rampart**), missiles from beyond its face lose 10 (**Behind the rampart**), and a squad behind it takes 2 less in each exchange.
+
+- **Bridges.** **Shift**+click a repaired bridge on a fortified field to demolish it: two work actions, or one with engineers near you, each twice as long as ordinary work. The crossing becomes deep water for both armies.
 
 In Chapter V, the countermine and enemy siege ramp put pressure on the defended line from round four. Securing each takes two work actions. A standing friendly engineer within eight metres, the engineering approach, or engineering support earned in the previous siege completes the work in one action. Stopping the ramp also delays the next reserve by one round when the deadline allows. Protect the main objective while choosing whether to finish both works. The result records unfinished works or withdrawn formations; securing both with the company intact earns support for the next field action. That support only speeds the work: the 10 extra defence for your squads comes with the Engineering approach alone.
 

@@ -10,12 +10,14 @@
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
 # by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
 # and immersive layout/company-story checks (scripts/immersive-interface-smoke.mjs),
-# then real-time 3D siege and rain review (scripts/campaign-world-smoke.mjs),
+# then real-time 3D siege and rain review, with Palmyra's generated walls on
+# Balanced held to 50 shader programs (scripts/campaign-world-smoke.mjs),
 # the twelve camps' regional asset, service and cache checks
 # (scripts/regional-world-smoke.mjs), and the 3D stage benchmark
 # (scripts/benchmark-stage.mjs), which fails on a shader compiled in the first
-# frame or in play, or on draw calls, triangles or shader programs above the
-# ceilings recorded in scripts/stage-ceilings.json, and whose report is uploaded.
+# frame or in play, on more than 50 shader programs, or on draw calls, triangles
+# or shader programs above the ceilings recorded in scripts/stage-ceilings.json,
+# and whose report is uploaded.
 # Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
@@ -75,7 +77,8 @@ jobs:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
     # Usability, the Chapter V pilot and world-first/company-story checks, plus
-    # the real-time 3D siege/rain review (8–15 minutes in software rendering).
+    # the real-time 3D siege/rain review and Palmyra on Balanced (10–18 minutes
+    # in software rendering).
     # Leave room for browser installation and slow runners.
     timeout-minutes: 45
     steps:
@@ -92,7 +95,7 @@ jobs:
         run: npm run smoke:ch5-pilot -- --river-gate
       - name: World-first layouts, camera controls and company stories
         run: npm run smoke:immersive
-      - name: Real-time 3D siege, bridges and rainy crossing
+      - name: Real-time 3D siege, bridges, rainy crossing and Palmyra's generated walls
         run: npm run smoke:siege
       - uses: actions/upload-artifact@v7
         if: always()
@@ -177,7 +180,7 @@ jobs:
       - run: npm install --no-save --no-package-lock playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm run benchmark:stage -- --dist --scenes ch5-mine,ch12-confrontation --check --ceilings scripts/stage-ceilings.json --report tests/visual-results/stage-benchmark.json
+      - run: npm run benchmark:stage -- --dist --scenes ch5-mine,ch12-confrontation --check --max-programs 50 --ceilings scripts/stage-ceilings.json --report tests/visual-results/stage-benchmark.json
       - uses: actions/upload-artifact@v7
         if: always()
         with:
