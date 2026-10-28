@@ -20,22 +20,22 @@
     "texture": 1024,
     "detailTexture": 512,
     "webpQuality": 80,
-    "clavicleDegrees": 10.0,
-    "sharpAngle": 60.0
+    "clavicleDegrees": 10,
+    "sharpAngle": 60
   },
   "fit": {
     "turnDegrees": -91.89,
     "scale": 1.66483,
     "posedJoints": {
       "hips": [
-        0.0,
+        0,
         0.87676,
-        0.0
+        0
       ],
       "torso": [
-        0.0,
+        0,
         0.87676,
-        0.0
+        0
       ],
       "head": [
         0.01147,
@@ -105,79 +105,79 @@
     },
     "gameJoints": {
       "hips": [
-        0.0,
+        0,
         0.91,
-        0.0
+        0
       ],
       "torso": [
-        0.0,
+        0,
         0.91,
-        0.0
+        0
       ],
       "head": [
-        0.0,
+        0,
         1.485,
-        0.0
+        0
       ],
       "right-shoulder": [
         -0.24,
         1.329,
-        0.0
+        0
       ],
       "right-elbow": [
         -0.24,
         1.029,
-        0.0
+        0
       ],
       "right-hand": [
         -0.24,
         0.771,
-        0.0
+        0
       ],
       "left-shoulder": [
         0.24,
         1.329,
-        0.0
+        0
       ],
       "left-elbow": [
         0.24,
         1.029,
-        0.0
+        0
       ],
       "left-hand": [
         0.24,
         0.771,
-        0.0
+        0
       ],
       "right-thigh": [
         -0.104,
         0.91,
-        0.0
+        0
       ],
       "right-knee": [
         -0.104,
         0.48,
-        0.0
+        0
       ],
       "right-ankle": [
         -0.104,
         0.05,
-        0.0
+        0
       ],
       "left-thigh": [
         0.104,
         0.91,
-        0.0
+        0
       ],
       "left-knee": [
         0.104,
         0.48,
-        0.0
+        0
       ],
       "left-ankle": [
         0.104,
         0.05,
-        0.0
+        0
       ]
     },
     "soleDrop": {

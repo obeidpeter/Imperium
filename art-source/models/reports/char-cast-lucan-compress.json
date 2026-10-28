@@ -9,17 +9,17 @@
     "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
   },
   "before": {
-    "bytes": 612336,
-    "gzipBytes": 450069,
-    "sha256": "65043af77e0fd52af4f9a2e18585e24e366981cc20af191c7d772a87d5f2f43d"
+    "bytes": 659980,
+    "gzipBytes": 522323,
+    "sha256": "282a4dbe62a698594f81787005c2dcfe650bb0b278018912009fb8b697b75a67"
   },
   "after": {
-    "bytes": 607048,
-    "gzipBytes": 578599,
-    "sha256": "1b5072f28c0df41a38705e5c51af73c9962e46033ec0d81073fd9df6531b6099"
+    "bytes": 648400,
+    "gzipBytes": 621536,
+    "sha256": "e72474ff9275f94af2749cab86f2a88e3ac05359c9e427ef98d6992cf9af172d"
   },
   "geometryUnchanged": true,
-  "triangles": 14217,
+  "triangles": 13197,
   "textures": [
     {
       "slots": [
@@ -30,10 +30,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 16668
+        "bytes": 19778
       },
-      "bytes": 26658,
-      "psnr": 36.541
+      "bytes": 27323,
+      "psnr": 38.641
     },
     {
       "slots": [
@@ -44,10 +44,10 @@
       "height": 1024,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 70186
+        "bytes": 117522
       },
-      "bytes": 147400,
-      "psnr": 36.173
+      "bytes": 141549,
+      "psnr": 31.149
     },
     {
       "slots": [
@@ -58,10 +58,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 28938
+        "bytes": 28868
       },
-      "bytes": 46144,
-      "psnr": 28.495
+      "bytes": 46237,
+      "psnr": 32.92
     },
     {
       "slots": [
@@ -72,24 +72,24 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 23876
+        "bytes": 28256
       },
-      "bytes": 55045,
-      "psnr": 34.159
+      "bytes": 57762,
+      "psnr": 33.123
     },
     {
       "slots": [
         "baseColorTexture"
       ],
       "kind": "srgb",
-      "width": 512,
-      "height": 512,
+      "width": 1024,
+      "height": 1024,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 21776
+        "bytes": 59902
       },
-      "bytes": 46858,
-      "psnr": 36.942
+      "bytes": 122859,
+      "psnr": 37.695
     },
     {
       "slots": [
@@ -100,10 +100,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 22854
+        "bytes": 26030
       },
-      "bytes": 37149,
-      "psnr": 36.944
+      "bytes": 37052,
+      "psnr": 34.908
     }
   ]
 }

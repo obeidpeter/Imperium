@@ -9,14 +9,14 @@
     "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
   },
   "before": {
-    "bytes": 601080,
-    "gzipBytes": 421602,
-    "sha256": "6e3cf6a96915ec62550e0a6a323e11ff0c862f9e62296790ba120c81706c1115"
+    "bytes": 655828,
+    "gzipBytes": 474868,
+    "sha256": "c3ec1613a2c90380bd1a563eea3eb61a66b4c1f4b6b648eaf3055b877c458ba4"
   },
   "after": {
-    "bytes": 570064,
-    "gzipBytes": 540227,
-    "sha256": "33942db04eedd8cc449db3af1b9f469404736485aba926ff6d974e803bb30e11"
+    "bytes": 660412,
+    "gzipBytes": 630484,
+    "sha256": "ef78cacb8fa797f9843ea723b854c29c8a530605d9a0b4041c1ad970bbb8e9f2"
   },
   "geometryUnchanged": true,
   "triangles": 15232,
@@ -72,24 +72,24 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 21658
+        "bytes": 23738
       },
-      "bytes": 54491,
-      "psnr": 34.098
+      "bytes": 55255,
+      "psnr": 33.656
     },
     {
       "slots": [
         "baseColorTexture"
       ],
       "kind": "srgb",
-      "width": 512,
-      "height": 512,
+      "width": 1024,
+      "height": 1024,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 22376
+        "bytes": 69770
       },
-      "bytes": 46836,
-      "psnr": 36.158
+      "bytes": 132907,
+      "psnr": 37.104
     },
     {
       "slots": [
@@ -100,10 +100,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 19890
+        "bytes": 23314
       },
-      "bytes": 34764,
-      "psnr": 38.029
+      "bytes": 37093,
+      "psnr": 36.767
     }
   ]
 }

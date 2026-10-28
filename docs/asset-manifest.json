@@ -9661,15 +9661,19 @@
         "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.1-20260211",
-        "taskId": "7b83a35b-4c59-4363-be03-ee164bf5738c",
-        "generatedAt": "2026-10-28T17:31:53.660Z",
-        "rigTaskId": "bac7f968-3b27-4d51-a280-092804b6c31b",
-        "riggedAt": "2026-10-28T17:34:24.030Z",
+        "taskId": "c42bdf1f-4341-4a24-91d7-124553a84da0",
+        "generatedAt": "2026-10-28T20:00:01.044Z",
+        "rigTaskId": "761da6b9-87d8-459e-90b8-125aaacd94d5",
+        "riggedAt": "2026-10-28T20:01:19.626Z",
+        "rejectedTaskIds": [
+          "1b2e4f0c-476f-41b8-b1f3-3042bed298fc",
+          "7b83a35b-4c59-4363-be03-ee164bf5738c"
+        ],
         "prompt": "art-source/models/requests/char-cast-lucan.json",
-        "rawBytes": 45907856,
-        "rawSha256": "3c2a3018eff2b31704d5a74a5dbf50ac62e6b9904663cd5279d7fd3bd05124ee",
-        "riggedBytes": 61187580,
-        "riggedSha256": "4b21107f52528c871d0a58806b473641b0ab8e6b110cd849ba4f2b969b4694eb",
+        "rawBytes": 45948404,
+        "rawSha256": "024d12f222631c4672753556b0828a7a0cdf6f3f59e2ac7a2a8cc1468cead32c",
+        "riggedBytes": 60875920,
+        "riggedSha256": "edf5729a36cf405ad454c72c93640b32ead00ea7be93dca3a2d69045ae8295f9",
         "processing": {
           "triangles": 12000,
           "overviewTriangles": 2500,
@@ -9686,13 +9690,41 @@
           "report": "art-source/models/reports/char-cast-lucan-wrap.json",
           "pictures": "art-source/models/reports/char-cast-lucan-faces/",
           "settings": {
-            "texture": 512,
+            "texture": 1024,
+            "detailTexture": 512,
             "webpQuality": 80,
             "reach": 0.03,
             "scalpOut": 0.008,
             "scalpIn": 0.006,
             "maxScale": 0.15,
             "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
             "neck": 1.5,
             "headFrom": 1.45,
             "bodyTo": 1.55,
@@ -9700,7 +9732,10 @@
             "wrapFull": 1.57,
             "scalp": 1.69
           },
-          "eyeScale": 1.0484
+          "eyeScale": 1.0169,
+          "mouthFit": 0.9,
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 1024 pixels",
+          "unpainted": 0
         },
         "compression": {
           "tool": "scripts/assets/compress.mjs",
@@ -9714,15 +9749,15 @@
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Lucan himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 607048,
-        "sha256": "1b5072f28c0df41a38705e5c51af73c9962e46033ec0d81073fd9df6531b6099",
-        "triangles": 14217,
+        "bytes": 648400,
+        "sha256": "e72474ff9275f94af2749cab86f2a88e3ac05359c9e427ef98d6992cf9af172d",
+        "triangles": 13197,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
-          "width": 0.6291,
-          "height": 1.7841,
-          "depth": 0.387
+          "width": 0.6089,
+          "height": 1.783,
+          "depth": 0.394
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -9760,13 +9795,41 @@
           "report": "art-source/models/reports/char-cast-varro-wrap.json",
           "pictures": "art-source/models/reports/char-cast-varro-faces/",
           "settings": {
-            "texture": 512,
+            "texture": 1024,
+            "detailTexture": 512,
             "webpQuality": 80,
             "reach": 0.03,
             "scalpOut": 0.008,
             "scalpIn": 0.006,
             "maxScale": 0.15,
             "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
             "neck": 1.5,
             "headFrom": 1.45,
             "bodyTo": 1.55,
@@ -9774,7 +9837,10 @@
             "wrapFull": 1.57,
             "scalp": 1.69
           },
-          "eyeScale": 1.0484
+          "eyeScale": 0.9524,
+          "mouthFit": 0.9035,
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 1024 pixels",
+          "unpainted": 0
         },
         "compression": {
           "tool": "scripts/assets/compress.mjs",
@@ -9788,14 +9854,14 @@
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 570064,
-        "sha256": "33942db04eedd8cc449db3af1b9f469404736485aba926ff6d974e803bb30e11",
+        "bytes": 660412,
+        "sha256": "ef78cacb8fa797f9843ea723b854c29c8a530605d9a0b4041c1ad970bbb8e9f2",
         "triangles": 15232,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
           "width": 0.6017,
-          "height": 1.7733,
+          "height": 1.7757,
           "depth": 0.4285
         }
       },
@@ -9916,7 +9982,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T19:45:41.852Z",
+  "updatedAt": "2026-10-28T20:25:50.606Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -9943,7 +10009,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 37928865,
-  "totalModelBytes": 22743315,
+  "totalBundledAssetBytes": 38060565,
+  "totalModelBytes": 22875015,
   "derivedGeometryBytes": 47428
 }

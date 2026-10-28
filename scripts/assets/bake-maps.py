@@ -10,9 +10,10 @@ import math
 import bpy  # Blender's Python module.
 
 
-def unwrap(target, angle=66, margin=0.02):
-    """A fresh unwrap of the target in place of its own coordinates; returns its layer's name."""
-    old = [layer.name for layer in target.data.uv_layers]
+def unwrap(target, angle=66, margin=0.02, keep=()):
+    """A fresh unwrap of the target in place of its own coordinates (but for the layers named
+    in keep); returns its layer's name."""
+    old = [layer.name for layer in target.data.uv_layers if layer.name not in keep]
     # Names, not references: adding a layer reallocates the collection. And the name Blender
     # gives back: another of the mesh's names may already hold 'baked'.
     baked = target.data.uv_layers.new(name='baked').name
