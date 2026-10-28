@@ -1,0 +1,61 @@
+{
+  "id": "rock-italy-slab",
+  "status": "Release 5: processed, assembled into rocks-italy and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A flat pale limestone slab of the Italian countryside, lying almost level, cracked across its top, rounded worn edges and grey weathering stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.4,
+    "minHeight": 0.38,
+    "maxHeight": 0.42
+  },
+  "provenance": {
+    "taskId": "e8a4adff-dec0-4e85-adea-fcd5b15048e8",
+    "requestedAt": "2026-10-28T08:42:38.312Z",
+    "balanceBefore": 3660,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A flat pale limestone slab of the Italian countryside, lying almost level, cracked across its top, rounded worn edges and grey weathering stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:44:42.886Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-italy-slab.glb",
+    "rawBytes": 46843920,
+    "rawSha256": "bc3591465276c0c047a8badf6f1ff962a282c2cc7577d4169079bd1545ed9f81",
+    "tripoInput": {
+      "prompt": "A flat pale limestone slab of the Italian countryside, lying almost level, cracked across its top, rounded worn edges and grey weathering stains. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-italy-slab-tripo-render.webp"
+  }
+}

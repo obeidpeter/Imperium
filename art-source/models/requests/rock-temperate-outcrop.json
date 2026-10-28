@@ -1,0 +1,64 @@
+{
+  "id": "rock-temperate-outcrop",
+  "status": "Release 5: processed, assembled into rocks-temperate and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    8,
+    10
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A tilted outcrop of layered grey limestone breaking through the ground, stepped beds with sharp broken edges, frost-shattered corners, rain streaks and thin moss in the joints. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.6,
+    "minHeight": 1.52,
+    "maxHeight": 1.68
+  },
+  "provenance": {
+    "taskId": "523a9ab4-f3b6-4607-ab7b-db2216307420",
+    "requestedAt": "2026-10-28T08:52:07.512Z",
+    "balanceBefore": 3580,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A tilted outcrop of layered grey limestone breaking through the ground, stepped beds with sharp broken edges, frost-shattered corners, rain streaks and thin moss in the joints. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:54:42.841Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-temperate-outcrop.glb",
+    "rawBytes": 46128260,
+    "rawSha256": "c9966dcc94f89ca5a6b2054ea81477866233d916ec4102c2709b3a0d3ff3dcc0",
+    "tripoInput": {
+      "prompt": "A tilted outcrop of layered grey limestone breaking through the ground, stepped beds with sharp broken edges, frost-shattered corners, rain streaks and thin moss in the joints. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-temperate-outcrop-tripo-render.webp"
+  }
+}

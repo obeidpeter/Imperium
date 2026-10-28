@@ -1,0 +1,61 @@
+{
+  "id": "rock-italy-outcrop",
+  "status": "Release 5: processed, assembled into rocks-italy and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Mediterranean limestone outcrop, pale ivory stone with grey weathering, sharp karst ridges and small solution pits, a little dry orange lichen. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.5,
+    "minHeight": 1.425,
+    "maxHeight": 1.575
+  },
+  "provenance": {
+    "taskId": "2a4a1db3-d732-4aab-a699-904c66f830bc",
+    "requestedAt": "2026-10-28T08:40:05.894Z",
+    "balanceBefore": 3680,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Mediterranean limestone outcrop, pale ivory stone with grey weathering, sharp karst ridges and small solution pits, a little dry orange lichen. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:42:35.627Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-italy-outcrop.glb",
+    "rawBytes": 47551376,
+    "rawSha256": "56ab9e7d3afc3f351411e6862ba47e415eda6006e644eeffcb3dd07d4cdfc67c",
+    "tripoInput": {
+      "prompt": "A Mediterranean limestone outcrop, pale ivory stone with grey weathering, sharp karst ridges and small solution pits, a little dry orange lichen. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-italy-outcrop-tripo-render.webp"
+  }
+}

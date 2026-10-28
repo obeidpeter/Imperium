@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-temperate-slab.glb",
+    "bytes": 47361760,
+    "sha256": "36b9492e527ebd81748578d0ceb787b6bd7526692c21314c89bcffadcc51fc10",
+    "triangles": 1450906
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-temperate-slab.glb",
+    "bytes": 181944,
+    "sha256": "fb14d4221c64e1fe8fb2bd6f349457704fed4331692ff716fd4c85ea206579b6",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.45,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.2228587158508812,
+  "sizeMetres": {
+    "width": 1.2158,
+    "height": 0.45,
+    "depth": 1.1278
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_72744aaa-efa8-4945-9469-8c6e5f67429e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_72744aaa-efa8-4945-9469-8c6e5f67429e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_72744aaa-efa8-4945-9469-8c6e5f67429e",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

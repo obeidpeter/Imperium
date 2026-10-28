@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-arid-basalt.glb",
+    "bytes": 45583336,
+    "sha256": "6eebf3fcb6ca04277e610d0aa17ef01fccbc3d2eab630ceaad063ed9cb17bab0",
+    "triangles": 1450068
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-arid-basalt.glb",
+    "bytes": 109836,
+    "sha256": "9c87dd01643ad36f471182ee4148653c1f657b58f33055267c357bba54034d9a",
+    "triangles": 1990
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.9,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.021232465282598,
+  "sizeMetres": {
+    "width": 0.9323,
+    "height": 0.9,
+    "depth": 1.0207
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_dad0d542-1d96-44b8-a292-048c81de014d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_dad0d542-1d96-44b8-a292-048c81de014d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_dad0d542-1d96-44b8-a292-048c81de014d",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

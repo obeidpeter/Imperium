@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "rocks-italy",
+  "generator": "scripts/assets/build-rock-kits.py",
+  "kit": "italy",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "farRatio": 0.1,
+  "rocks": [
+    {
+      "id": "rock-italy-outcrop",
+      "source": "art-source/models/processed/rock-italy-outcrop.glb",
+      "sourceSha256": "9d04f7ec15f37591817690d722a257acbfbe4c588b1a57c8f9a5c2ddaddda04b",
+      "min": [
+        -0.8254,
+        0.0,
+        -0.8365
+      ],
+      "max": [
+        0.8254,
+        1.5,
+        0.8365
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 436
+      }
+    },
+    {
+      "id": "rock-italy-slab",
+      "source": "art-source/models/processed/rock-italy-slab.glb",
+      "sourceSha256": "8a415067ed7a3b2bd663539520b408ac694b2390b91e322ff59efd3adde4ce97",
+      "min": [
+        -0.7472,
+        0.0,
+        -1.1261
+      ],
+      "max": [
+        0.7472,
+        0.4,
+        1.1261
+      ],
+      "triangles": {
+        "near": 1959,
+        "far": 195
+      }
+    },
+    {
+      "id": "rock-italy-travertine",
+      "source": "art-source/models/processed/rock-italy-travertine.glb",
+      "sourceSha256": "bfb5c3e4735b7497d692b17df3e4fdbe617dc27380fb4e2196c574c0c065ca1a",
+      "min": [
+        -0.6193,
+        0.0,
+        -0.6325
+      ],
+      "max": [
+        0.6193,
+        1.0,
+        0.6325
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 395
+      }
+    },
+    {
+      "id": "rock-italy-tuff",
+      "source": "art-source/models/processed/rock-italy-tuff.glb",
+      "sourceSha256": "3e9e38925c52079a5d55b8af709bad61dd6c468c02f7ceccbfc4766d3917e944",
+      "min": [
+        -0.8597,
+        0.0,
+        -0.9599
+      ],
+      "max": [
+        0.8597,
+        1.1,
+        0.9599
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 283
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/rocks-italy.glb",
+    "bytes": 674656,
+    "sha256": "5472992afcf1da14049f67aefff980498e589b56ec8c00753cdbd06a0952e5bb",
+    "triangles": 9148
+  },
+  "runtimePath": "assets/models/scenery/rocks-italy.glb"
+}

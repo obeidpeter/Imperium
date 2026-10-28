@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "id": "rocks-arid",
+  "generator": "scripts/assets/build-rock-kits.py",
+  "kit": "arid",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "farRatio": 0.1,
+  "rocks": [
+    {
+      "id": "rock-arid-basalt",
+      "source": "art-source/models/processed/rock-arid-basalt.glb",
+      "sourceSha256": "9c87dd01643ad36f471182ee4148653c1f657b58f33055267c357bba54034d9a",
+      "min": [
+        -0.4662,
+        0.0,
+        -0.5103
+      ],
+      "max": [
+        0.4662,
+        0.9,
+        0.5103
+      ],
+      "triangles": {
+        "near": 1990,
+        "far": 550
+      }
+    },
+    {
+      "id": "rock-arid-outcrop",
+      "source": "art-source/models/processed/rock-arid-outcrop.glb",
+      "sourceSha256": "ca34a4758d6c0a0262e978215e74f22d4552ec3168e9ad883c378a28b8fda07e",
+      "min": [
+        -3.1599,
+        0.0,
+        -2.35
+      ],
+      "max": [
+        3.1599,
+        1.4,
+        2.35
+      ],
+      "triangles": {
+        "near": 1958,
+        "far": 194
+      }
+    },
+    {
+      "id": "rock-arid-sandstone",
+      "source": "art-source/models/processed/rock-arid-sandstone.glb",
+      "sourceSha256": "98f1e4158ea13a6a9360dbddc4daea8f63fafd73cc6a9ef8685f338afdfa5eb3",
+      "min": [
+        -0.6524,
+        0.0,
+        -0.5853
+      ],
+      "max": [
+        0.6524,
+        1.3,
+        0.5853
+      ],
+      "triangles": {
+        "near": 2486,
+        "far": 678
+      }
+    },
+    {
+      "id": "rock-arid-slab",
+      "source": "art-source/models/processed/rock-arid-slab.glb",
+      "sourceSha256": "db2525ef34e514f6b47d9bbe8f5aa103986fa3181754e528141c97ed0b0a13c9",
+      "min": [
+        -0.6523,
+        0.0,
+        -0.9859
+      ],
+      "max": [
+        0.6523,
+        0.4,
+        0.9859
+      ],
+      "triangles": {
+        "near": 1959,
+        "far": 194
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/rocks-arid.glb",
+    "bytes": 627680,
+    "sha256": "81ba329477caf205de0b66bab40176be467fe51444bcd24b0bbcb6dcebcea5d0",
+    "triangles": 10009
+  },
+  "runtimePath": "assets/models/scenery/rocks-arid.glb"
+}

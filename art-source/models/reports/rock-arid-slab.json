@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-arid-slab.glb",
+    "bytes": 46349468,
+    "sha256": "5ea23a5ececba4c4dfeaf3d7c3124ffb521f5eb7e3348dcb8653b8cc9dbe3671",
+    "triangles": 1479104
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-arid-slab.glb",
+    "bytes": 143348,
+    "sha256": "db2525ef34e514f6b47d9bbe8f5aa103986fa3181754e528141c97ed0b0a13c9",
+    "triangles": 1959
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9650811237417758,
+  "sizeMetres": {
+    "width": 1.3047,
+    "height": 0.4,
+    "depth": 1.9719
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_80753f25-5510-4085-995b-37efd57bad68",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_80753f25-5510-4085-995b-37efd57bad68",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_80753f25-5510-4085-995b-37efd57bad68",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

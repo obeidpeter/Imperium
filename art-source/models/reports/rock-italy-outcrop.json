@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/rock-italy-outcrop.glb",
+    "bytes": 47551376,
+    "sha256": "56ab9e7d3afc3f351411e6862ba47e415eda6006e644eeffcb3dd07d4cdfc67c",
+    "triangles": 1489012
+  },
+  "output": {
+    "path": "art-source/models/processed/rock-italy-outcrop.glb",
+    "bytes": 162896,
+    "sha256": "9d04f7ec15f37591817690d722a257acbfbe4c588b1a57c8f9a5c2ddaddda04b",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.6781733642696615,
+  "sizeMetres": {
+    "width": 1.6508,
+    "height": 1.5,
+    "depth": 1.673
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_2a4a1db3-d732-4aab-a699-904c66f830bc",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_2a4a1db3-d732-4aab-a699-904c66f830bc",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_2a4a1db3-d732-4aab-a699-904c66f830bc",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

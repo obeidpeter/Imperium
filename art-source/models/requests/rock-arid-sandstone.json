@@ -1,0 +1,61 @@
+{
+  "id": "rock-arid-sandstone",
+  "status": "Release 5: processed, assembled into rocks-arid and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A wind-eroded ochre and rust sandstone boulder of the Syrian desert, smooth scooped hollows and fine horizontal bedding lines, sand-polished surfaces. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.3,
+    "minHeight": 1.235,
+    "maxHeight": 1.365
+  },
+  "provenance": {
+    "taskId": "fb1ba3b2-1f82-4e24-8dcb-f4a0bd321032",
+    "requestedAt": "2026-10-28T08:35:13.588Z",
+    "balanceBefore": 3720,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A wind-eroded ochre and rust sandstone boulder of the Syrian desert, smooth scooped hollows and fine horizontal bedding lines, sand-polished surfaces. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:37:39.976Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-arid-sandstone.glb",
+    "rawBytes": 45080328,
+    "rawSha256": "78af3e4401912ea9d4c007aa131319acfbc8b4692eb13ce25202903aab3cc380",
+    "tripoInput": {
+      "prompt": "A wind-eroded ochre and rust sandstone boulder of the Syrian desert, smooth scooped hollows and fine horizontal bedding lines, sand-polished surfaces. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-arid-sandstone-tripo-render.webp"
+  }
+}

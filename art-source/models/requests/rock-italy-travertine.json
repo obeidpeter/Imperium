@@ -1,0 +1,61 @@
+{
+  "id": "rock-italy-travertine",
+  "status": "Release 5: processed, assembled into rocks-italy and reviewed against its Tripo render; in the game on Balanced and High",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "use": "Off-board and rock-cell scenery: boulders, outcrops and slabs replacing the code-built noise spheres on Balanced and High; decorative, never a game cell of its own.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A pale cream travertine boulder from central Italy, its surface pitted and porous with small cavities and fine horizontal banding, warm grey weathering on the exposed side. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1,
+    "minHeight": 0.95,
+    "maxHeight": 1.05
+  },
+  "provenance": {
+    "taskId": "e82508a9-dc9c-41df-90a7-d38fc588de4f",
+    "requestedAt": "2026-10-28T08:44:45.638Z",
+    "balanceBefore": 3640,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A pale cream travertine boulder from central Italy, its surface pitted and porous with small cavities and fine horizontal banding, warm grey weathering on the exposed side. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T08:47:26.159Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/rock-italy-travertine.glb",
+    "rawBytes": 47277592,
+    "rawSha256": "926644fd87b89de0ba5542947096601536723b133a755241f24b847b86e51b03",
+    "tripoInput": {
+      "prompt": "A pale cream travertine boulder from central Italy, its surface pitted and porous with small cavities and fine horizontal banding, warm grey weathering on the exposed side. Realistic weathered PBR, a single isolated rock with real thickness and interesting geometry from every angle, its underside roughly flat so it sits on the ground. No ground plane, base slab or pedestal, no grass or plants growing on it, no people, animals, text, carvings, tools or modern objects.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/rock-italy-travertine-tripo-render.webp"
+  }
+}

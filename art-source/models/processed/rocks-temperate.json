@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "id": "rocks-temperate",
+  "generator": "scripts/assets/build-rock-kits.py",
+  "kit": "temperate",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    8,
+    10
+  ],
+  "farRatio": 0.1,
+  "rocks": [
+    {
+      "id": "rock-temperate-boulder",
+      "source": "art-source/models/processed/rock-temperate-boulder.glb",
+      "sourceSha256": "8e38ae92b93657f9bf27ff00e3453a7f76b89a99219adb53ec4ca2fdd822dc50",
+      "min": [
+        -0.7709,
+        0.0,
+        -0.7681
+      ],
+      "max": [
+        0.7709,
+        1.2,
+        0.7681
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 437
+      }
+    },
+    {
+      "id": "rock-temperate-outcrop",
+      "source": "art-source/models/processed/rock-temperate-outcrop.glb",
+      "sourceSha256": "5bf420efff7f00da9587a3d6fade145e0f8d1775abe9f6b39101933f4c0cac22",
+      "min": [
+        -1.143,
+        0.0,
+        -0.7035
+      ],
+      "max": [
+        1.143,
+        1.6,
+        0.7035
+      ],
+      "triangles": {
+        "near": 2935,
+        "far": 452
+      }
+    },
+    {
+      "id": "rock-temperate-river-stones",
+      "source": "art-source/models/processed/rock-temperate-river-stones.glb",
+      "sourceSha256": "7329ba68d3d6c4b7036be78854d756b8880937e00ea3e98cfaafab8cf147ff30",
+      "min": [
+        -0.4035,
+        0.0,
+        -0.4404
+      ],
+      "max": [
+        0.4035,
+        0.55,
+        0.4404
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 347
+      }
+    },
+    {
+      "id": "rock-temperate-slab",
+      "source": "art-source/models/processed/rock-temperate-slab.glb",
+      "sourceSha256": "fb14d4221c64e1fe8fb2bd6f349457704fed4331692ff716fd4c85ea206579b6",
+      "min": [
+        -0.6079,
+        0.0,
+        -0.5639
+      ],
+      "max": [
+        0.6079,
+        0.45,
+        0.5639
+      ],
+      "triangles": {
+        "near": 1960,
+        "far": 217
+      }
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/rocks-temperate.glb",
+    "bytes": 729820,
+    "sha256": "917f212171dac7b0b745f6752bf7e4d51f033acbaa1c9f33f35d97ff7123303e",
+    "triangles": 10268
+  },
+  "runtimePath": "assets/models/scenery/rocks-temperate.glb"
+}
