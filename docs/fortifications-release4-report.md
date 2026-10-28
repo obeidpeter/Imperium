@@ -179,3 +179,11 @@ The chapters with fortified battles each grow by about 0.18 MB in 3D: Chapter IV
 - **A late kit waits.** The kit is used if it has arrived when the world is built. A battle whose download is slower than the loading veil's wait, or one switched from Performance to Balanced mid-battle, keeps the code-built works until the world is next built, normally the next battle.
 - **Software rendering.** Program counts, draw calls, triangles and the cutaway's coverage are counts, which depend little on the device; the times in these checks are SwiftShader's and say nothing of a phone's or a laptop's frame rate.
 - **Not checked:** a person playing the new battles; the kit on a phone, a laptop or with a screen reader; the battles in the 2D view beyond the automated smoke tests.
+
+## Addendum: the mudbrick re-baked (28 October 2026)
+
+The before-and-after renders showed the mudbrick kit's worn plaster as large pale patches, 16–40% brighter than the bricks, which read as camouflage at close range. The kit was re-baked with a few soft patches near the bricks' own colour, covering about a tenth of the surface instead of four tenths, and joints a shade darker where no plaster covers them ([art record](art-generation.md#fortification-board-kits--27-october-2026)). Geometry, seeds, placement and the stone and timber kits are unchanged, and so are the program counts: the kit's materials keep their maps.
+
+- **Downloads.** The mudbrick kit is 319,292 bytes instead of 332,432, so the three kits add 950,736 bytes. Chapters V, VI and IX in 3D are 12.89, 12.18 and 12.41 MB; the largest chapter (V, with its 2D art) is 15.09 MB and the complete campaign 31.92 MB.
+- **Checks.** The kit check (`npm run asset:check`), the asset and board-kit tests, and renders of Chapter V's mine, Chapter VI's wells and Palmyra from the same cameras as before.
+

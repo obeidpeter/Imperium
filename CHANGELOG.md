@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### After release 4: the mudbrick re-baked
+
+- **Mudbrick walls without the blotches.** The mudbrick kit of Chapters V, VI and IX no longer shows large pale patches of plaster that read as camouflage up close: a few soft patches remain, near the bricks' own colour, and the joints read a shade darker. The three chapters' packs are 13 KB smaller.
+
 ### Worlds and gameplay, release 4: fortifications, modelled ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/fortifications-release4-report.md))
 
 The fourth of ten releases: the real-time battles' structures, modelled, with rules of their own. The 0.38 turns are unchanged.
