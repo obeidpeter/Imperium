@@ -21,8 +21,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
 | 6 | The cast in person | merged ([#38](https://github.com/obeidpeter/Imperium/pull/38); [report](cast-release6-report.md)) |
 | 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
-| 8 | Living camps | in progress ([report](camps-release8-report.md)) |
-| 9 | Landmarks and set pieces | planned |
+| 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); the five figures await the owner's credit approval |
+| 9 | Landmarks and set pieces | in progress; its credits await the owner's approval |
 | 10 | Gate 4 and 0.40.0 | planned |
 
 ## The revision of releases 4–10 (approved 27 October 2026)
