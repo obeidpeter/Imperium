@@ -551,7 +551,9 @@ the squad's men on the field.
 - The selected squads' **command card** replaces your ability bar until
   you clear the selection. Its keys **1–7** give **Hold**, **Restore
   morale**, **Withdraw and brace**, **Line**, **Shield wall**, **Wedge**
-  and **Lie in wait**; **8–0** do nothing while it is shown.
+  and **Lie in wait**. With a squad of horse selected, **8** and **9**
+  give **Charge** and **Feigned retreat**. The other keys do nothing
+  while the card is shown.
 
 - From the keyboard, while squads are selected the arrow keys move an
   **order marker** instead of your soldier; **Enter** sends the squads
@@ -943,6 +945,47 @@ arming cap under the helmet; a cloak over everything.
   second; each exchange varies by up to a quarter either way, so a fight
   averages what its forecast says but no two go alike.
 
+## Missions
+
+Every new campaign plays six of its battles as missions of their own. A
+campaign begun before these missions keeps the battles it started with.
+Each battle's phases appear in the mission header, one after another.
+
+| **Battle**         | **Mission**             | **What it asks**                                                                                                                                                                                                                                                                                                                     |
+|--------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| IV, the gate       | **The escalade**        | The Goths have raised two ladders against the wall either side of the barred gate, and climbers hold the wall walk at the head of each. Hold each ladder's head with no enemy beside it to throw the ladder down. Then bring the rear files out, or hold the gate for the baggage train if you chose that in camp.                     |
+| V, the wall        | **The sortie**          | The Persians' ram batters the river gate. Go out by the postern and hold the ram's ground with no enemy beside it to burn it, then hold the river gate.                                                                                                                                                                              |
+| VI, the wells      | **The rearguard**       | Hold the first line beside the stranded party, fall back to the second, then follow the column out. The column walks west on its own. In camp you can choose to stand a third line instead.                                                                                                                                        |
+| VIII, the crossing | **Crossing under fire** | Take the far landing past the ford and hold it while the last ferry party lands. At the end of each round the far bank's archers loose a volley at everyone of yours in the water or on the landing, until the enemy's archers are beaten.                                                                                         |
+| IX, the wing       | **The feigned retreat** | Draw the armoured horse onto the line waiting at the marker. They keep their ground until drawn out, or until one of your squads comes close: ride your horse at them and order a **Feigned retreat**, and they follow it onto the marker. Then turn and break the field. The phase also ends if none of the armoured horse is left. |
+| X, the road        | **The relief convoy**   | Choose the north or the south road in camp. Clear its ford and its east end; then the grain wagons follow the road to the stores on their own. Keep the road ahead of them clear, and meet them at the stores.                                                                                                                    |
+
+- **Siege works.** While a ladder or the ram stands, the defended line
+  loses the battle's objective pressure at the end of each round: 6 on
+  Story, 10 on Standard, 14 on Veteran. The ram also batters the river
+  gate, 30 of its 120 integrity a round; at 0 the gate is a breach,
+  open to both armies. You cannot work a siege work: hold its ground.
+
+- **Convoys** walk their road point by point at a walk, going around
+  anyone in the way. A convoy halts while an enemy is within eight
+  metres, and waits for anyone who cannot walk.
+
+- **Fallback lines.** When a line is given up, squads you ordered to
+  hold or advance there fall back to the next line on their own. Squads
+  on their standing orders follow the objective in any case.
+
+- Each of these battles has its own pair of field opportunities in
+  place of its chapter's.
+
+- **Turn-based battles** play the same missions, with these
+  differences:
+  - a ladder's climber, a single man of 7 Health, stands at its head;
+  - the line loses the pressure every turn while any work stands;
+  - a convoy walks two tiles a turn, three with its road cleared, and
+    halts beside an enemy;
+  - the far bank's volleys and the armoured horse holding back are real
+    time's alone.
+
 ## Techniques
 
 | **Technique**   | **From**    | **Cost**                        | **Use**                                                                                                                                                                                                                                     |
@@ -1199,10 +1242,13 @@ start of every round**. Your own soldier's actions never spend them.
 | **Withdraw and brace** | Command card **3**, or right-click your own soldier | Fall back toward you and brace.                                                                                                                                                                                   |
 | **Formation**          | Command card **4–6**: Line, Shield wall, Wedge      | Up to three selected squads, each standing within 15 metres of another, form up together and keep the formation until ordered otherwise. Before you commit, the command card names who joins and who is left out. |
 | **Lie in wait**        | Command card **7**                                  | Halt and keep low: half as easy to see, and left out of the enemy's plans while unseen. The squad falls on the first enemy squad to come within six metres; one that has not seen it takes a whole exchange at once. Another order, or an enemy who sees it, ends it. |
+| **Charge**             | Command card **8** (horse), or **Charge** in the Command list | At the gallop into the nearest enemy group in sight, or the one chosen in the Command list. From closer than the 20-metre run-up a charge needs, the squad wheels away first. |
+| **Feigned retreat**    | Command card **9** (horse), or in the Command list  | Ride at the nearest enemy horse or raiders until they see the squad, then away as if routed: to the objective marker when the mission is to draw the enemy there, otherwise 30 metres back. Enemy horse and raiders within 30 metres who see the flight give chase; when the squad turns they are strung out (20 cohesion lost) and it charges the nearest. |
 
-Advance, Attack, Hold, Restore morale, Withdraw and Lie in wait cost one
-point of Command for each squad that receives them. A Formation costs
-one point for up to three squads.
+Advance, Attack, Hold, Restore morale, Withdraw, Lie in wait, Charge and
+Feigned retreat cost one point of Command for each squad that receives
+them; only horse take Charge and Feigned retreat. A Formation costs one
+point for up to three squads.
 
 ## Formations
 
@@ -1230,7 +1276,9 @@ portrait, or **Home**, **\[** and **\]**). Then click marked ground in
 your deployment zone to place him there, or drag the standard; from the
 keyboard, move the marker with the arrow keys and press **Enter**.
 **Sound the advance** starts the battle clock once you confirm it; until
-then **P** and **N** do nothing. Deployment spends no Command.
+then **P** and **N** do nothing. Deployment spends no Command. Where
+the new missions cross a river, the company deploys on its own bank: the
+first two tiles in Chapter VIII, three on Chapter X's road.
 
 # Political Contests
 
