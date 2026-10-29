@@ -18,3 +18,5 @@ art-source/cc0/raw/
 art-source/panoramas/*.png
 # The asset pipeline's development tools (scripts/assets/setup-tools.mjs).
 .tools/
+# Python's bytecode cache: the Blender builders import kitlib.py beside them.
+__pycache__/

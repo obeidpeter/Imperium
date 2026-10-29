@@ -1315,6 +1315,13 @@ first two tiles in Chapter VIII, three on Chapter X's road.
   allied speaker, are your party there, and you switch between them as
   you do with companions.
 
+- In Chapters XI and XII the Senate meets in the **Curia**, a marble
+  hall around the floor. The senators' benches stand on three low steps
+  along each side, and the presiding magistrates' tribunal and the
+  gilded Victory at the far end. A wall stands aside while the camera is
+  beyond it, so it never hides the floor. On Performance, or if the hall
+  cannot be downloaded, a simpler hall stands in its place.
+
 - The session is measured in **hours** by the **clepsydra**, the
   chamber's water clock. In each hour each of your speakers may walk
   anywhere inside the pale circle that shows his reach, and deliver

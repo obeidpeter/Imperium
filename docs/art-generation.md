@@ -707,3 +707,49 @@ Negative prompt:
 ```text
 saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, fantasy, cartoon
 ```
+
+## The Curia · 29 October 2026
+
+Release 9 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). No paid generation, external model, photograph or prompt was used, and no Tripo credit was spent.
+
+[build-curia.py](../scripts/assets/build-curia.py), run in Blender 5.2.2 LTS (the `bpy` module that `npm run asset:setup` installs), authors the Senate house of Chapters XI and XII around the 8 × 8 chamber board. Its nine pieces are built in place in the hall's own frame, so each stands at the board's centre:
+
+- the floor;
+- the senators' steps on each side;
+- the west, east and north walls;
+- the entrance wall;
+- the tribunal;
+- the Victory with her altar and lampstands.
+
+The design follows [the historical note on the Curia](historical-research.md):
+
+- the hall of the 270s, as Domitian restored it;
+- three wide, low steps carrying the senators' benches;
+- the presiding magistrates at the far end;
+- three windows over bronze doors;
+- the Victory on her globe with a palm and a wreath, and her altar.
+
+It is widened to hold the board: 28 by 31 metres inside instead of about 18 by 27. It keeps the real height of 21 metres. Its marbles, the patterns of its dado and floor, its niches and the windows of its far wall are the game's own. The script also writes each piece's bounds to `src/showcase/curia-kit-components.js`, which the tests and the placement read.
+
+Five materials carry deterministic procedural bakes made by the script from seeded noise: a base colour, a glTF roughness-metalness map and a tangent-space normal map, at 512 pixels. They are white Luna marble, the dado's opus sectile (pavonazzetto and cipollino slabs framed in giallo antico, small porphyry roundels), the floor's opus sectile (porphyry and serpentine roundels, one square to a board tile), ashlar-ruled stucco and oiled bench wood. Gilded bronze, dark bronze and madder wool are plain material factors with no texture. The geometry is built with `bmesh`, one mesh per piece and material. On every run the triangles, positions and textures are the same, but the exported file is not byte-identical: the Victory's triangles can come out in a different order, and two of its normals can differ in the fifth decimal place.
+
+The editable `.blend` file, the processed GLB and its report (`art-source/models/processed/roman-curia-kit.*`) and the compression report (`art-source/models/reports/roman-curia-kit-compress.json`) are retained. As for the tree kits, `quantize-model.mjs` stored the normals as signed bytes (the tiled texture coordinates stay floats), then `npm run asset:compress` (meshopt geometry, ETC1S KTX2 textures with mipmaps) made the runtime file:
+
+| Kit | Chapters | Triangles | Processed GLB | Runtime file |
+| --- | --- | ---: | ---: | ---: |
+| `roman-curia-kit` | XI, XII | 18,760 | 2,145,904 bytes | 680,196 bytes |
+
+Quantizing took the runtime file from 771,380 to 680,196 bytes; most of what remains is geometry, whose positions and texture coordinates the meshopt codec keeps as stored. ETC1S keeps the colour maps at 34.6–49.0 dB PSNR but the normal maps only at 23.5–30.3 dB, so the joints' fine relief is soft at close range.
+
+### Reviewed before shipping
+
+The hall was first reviewed in Blender's Cycles renderer from the game's overview, horizon and close cameras (not the game's own lighting). Three faults were fixed before any in-game render:
+
+- **The first dado** repeated a strong yellow panel with a dark red roundel every 3.3 metres, which read as a row of playing cards. It now alternates veined pavonazzetto and cipollino slabs in thin giallo frames, with a small roundel on every second slab.
+- **The Victory's first wings** were a zigzag surface that rendered as crumpled foil. They are now a smooth, cupped surface with separate tapered feathers along the trailing edge, longest at the tip. A girdle and the overfold of her peplos were added. Her rounded parts are smooth-shaded.
+- **The stucco's ruled joints** were dark enough to read as brickwork. They are now light incisions.
+
+The first in-game render (the stage benchmark, in software rendering) showed one more fault. The paving lay exactly on the level terrain, and the two flickered through each other around the board and before the door. The paving now stands 12 millimetres above the ground, and none lies under the board's own floor. The frame round the board reaches down to the ground, so the placed floor keeps its foot at 0.
+
+The Curia draws only on Balanced and High. On Performance, or when it cannot be downloaded, the code-built audience hall and the chamber's colonnades stand in. In Chapters XI and XII those stand-ins are batched within their own groups so the Curia can hide them whole.
+

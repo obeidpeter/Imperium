@@ -1,0 +1,235 @@
+{
+  "input": "assets/models/scenery/roman-curia-kit.glb",
+  "output": "assets/models/scenery/roman-curia-kit.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 1887364,
+    "gzipBytes": 1170069,
+    "sha256": "ecd8d59e8ad9aefcba35440a9aa81b5801f5ee6fc52f992f099cca096ad1a296"
+  },
+  "after": {
+    "bytes": 680196,
+    "gzipBytes": 354227,
+    "sha256": "3a0bb190aabe3e859420ca15acdbb72fd1ee6e9070158080fd467d69134f4f1f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 18760,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 4588
+      },
+      "bytes": 966,
+      "psnr": 100
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 129719
+      },
+      "bytes": 19715,
+      "psnr": 44.521
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 4588
+      },
+      "bytes": 966,
+      "psnr": 45.912
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 12781
+      },
+      "bytes": 5753,
+      "psnr": 24.743
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 146115
+      },
+      "bytes": 27443,
+      "psnr": 34.645
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 8771
+      },
+      "bytes": 4171,
+      "psnr": 39.472
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 5887
+      },
+      "bytes": 2700,
+      "psnr": 28.146
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 79086
+      },
+      "bytes": 11087,
+      "psnr": 49.046
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 5196
+      },
+      "bytes": 1897,
+      "psnr": 41.096
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 32614
+      },
+      "bytes": 12754,
+      "psnr": 23.452
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 133712
+      },
+      "bytes": 31532,
+      "psnr": 36.357
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 17156
+      },
+      "bytes": 7589,
+      "psnr": 37.674
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 217640
+      },
+      "bytes": 31717,
+      "psnr": 30.331
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 116228
+      },
+      "bytes": 18924,
+      "psnr": 39.007
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/png",
+        "bytes": 61885
+      },
+      "bytes": 10994,
+      "psnr": 44.186
+    }
+  ]
+}

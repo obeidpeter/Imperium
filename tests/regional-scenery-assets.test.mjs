@@ -32,6 +32,9 @@ test('All shipped regional models load completely and keep their true geometry o
       if(p.pad){
         const pad=pads.find(pad=>pad.id===p.padId);assert.ok(pad);
         assert.ok(b.min.x>=pad.x-1.401&&b.max.x<=pad.x+2.201&&b.min.z>=pad.z-2.201&&b.max.z<=pad.z+2.201,`${e.id}/${p.id} leaves the left strip clear for visible outcomes`);
+      }else if(p.floor){
+        // The Curia's floor lies flat under the board, below the board's own floor (0.018 m).
+        assert.ok(b.max.y<=.03&&b.min.y>=-.001,`${e.id}/${p.key} is a flat floor (${b.min.y}–${b.max.y} m)`);
       }else assert.ok(b.max.x < -hx||b.min.x > hx||b.max.z < -hz||b.min.z > hz,`${e.id}/${p.key??p.id} actual silhouette stays outside the full board`);
       model.traverse(o=>{if(o.isMesh)assert.equal(o.raycast(),undefined,'decorative models never take movement or target picks');});
     }

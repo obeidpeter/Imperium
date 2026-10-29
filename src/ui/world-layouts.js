@@ -81,17 +81,48 @@ export const REGIONAL_CHAPTER_EXTRAS=freeze({
   10:[{component:'olive_press_frame',edge:'west',along:15,gap:5},{component:'farm_courtyard_wall',edge:'south',along:0,gap:9}]
 });
 
-// The hearings of Chapters X–XII keep the code-built audience hall: shallow
-// pieces line its open entrance and the outer service courts, clear of its walls.
-const romanHearing=[
-  {component:'tribunal_dais',edge:'north',along:0,gap:1.1},{component:'archive_stalls',edge:'south',along:-8,gap:3.2},
-  {component:'civic_fountain',edge:'south',along:8,gap:3.2},{slot:0,edge:'north',along:0,gap:13},
-  {slot:1,edge:'west',along:0,gap:12},{slot:2,edge:'east',along:0,gap:12}];
+// Chapter X's hearing keeps the code-built audience hall: shallow pieces line its
+// open entrance and the outer service courts, clear of its walls. In Chapters XI
+// and XII the Curia (below) stands in the hall's place, and only the city's
+// buildings beyond its walls remain.
+const romanHearing=[{slot:0,edge:'north',along:0,gap:13},{slot:1,edge:'west',along:0,gap:12},{slot:2,edge:'east',along:0,gap:12}];
 export const REGIONAL_HEARINGS=freeze({
   10:[{component:'tally_counter',edge:'north',along:0,gap:1.1},{component:'market_stall',edge:'south',along:-8,gap:3.2},
     {component:'public_fountain',edge:'south',along:8,gap:3.2},{slot:0,edge:'north',along:0,gap:13},
     {slot:1,edge:'west',along:0,gap:12},{slot:2,edge:'east',along:0,gap:12}],
   11:romanHearing,12:romanHearing
+});
+
+// The Curia of Chapters XI and XII (worlds and gameplay plan, release 9): the Senate
+// house in marble, built in Blender around the 8 x 8 chamber board
+// (scripts/assets/build-curia.py). Its pieces are authored in place, so each stands
+// at the board's centre. Presentation only: every solid stays outside the board.
+// - `floor`: the paving round the board's own floor, flat and just above the ground.
+// - `replaces`: the code-built stand-ins it hides once it has loaded (the audience
+//   hall, environment-depth.js; the chamber's colonnades, arches and dais,
+//   environment-campaign-scenery.js). Performance and a failed download keep them.
+// - `cutaway`: a wall stands down while the camera is beyond its inner face (the
+//   plane normal·(x, z) = face), so no wall stands between the camera and the board.
+//   Walls cast no shadow, so none darkens the board.
+// - `props`: where the chapter's generated props stand in the Curia's scenes: the
+//   clerks' tables beside the tribunal, the fountain and the army's eagle outside the
+//   doors.
+export const CURIA_LAYOUT=freeze({
+  chapters:[11,12],kit:'roman-curia-kit',board:8,
+  replaces:['enclosed Roman audience hall','senate','imperial court'],
+  pieces:[
+    {component:'curia_floor',floor:true},{component:'curia_steps_west'},{component:'curia_steps_east'},
+    {component:'curia_tribunal'},{component:'curia_victory'},
+    {component:'curia_wall_west',shadow:false,cutaway:{normal:[-1,0],face:14}},
+    {component:'curia_wall_east',shadow:false,cutaway:{normal:[1,0],face:14}},
+    {component:'curia_wall_north',shadow:false,cutaway:{normal:[0,-1],face:17}},
+    {component:'curia_facade',shadow:false,cutaway:{normal:[0,1],face:14}}
+  ],
+  props:{
+    'courier-table':{x:-8,z:-13.6,yaw:Math.PI/2},'command-table':{x:-8,z:-13.6,yaw:Math.PI/2},
+    'archive-cabinet':{x:8.2,z:-14.6,yaw:-Math.PI/2},
+    'civic-fountain':{x:-9.5,z:19.4,yaw:0},'eagle-rally-stand':{x:7,z:19,yaw:0}
+  }
 });
 
 // Encounters composed on their own instead of the shared frontage.

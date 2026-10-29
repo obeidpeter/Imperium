@@ -749,6 +749,8 @@ export class BattleStage{
       this.fill.position.copy(this.lookTarget).addScaledVector(this.rimDirection,-12);this.fill.position.y+=8;
       this.fill.target.position.copy(this.lookTarget);this.fill.target.updateMatrixWorld();
     }
+    // The Curia's walls stand down while the camera is beyond them.
+    this.sceneryModels?.updateCutaway?.(this.camera);
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
     this.sceneryOcclusion?.update(this.camera,
       {targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),

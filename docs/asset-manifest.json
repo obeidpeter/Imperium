@@ -10977,6 +10977,65 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "roman-curia-kit",
+      "path": "assets/models/scenery/roman-curia-kit.glb",
+      "subject": "The Curia: the Senate house in marble around the chamber board of Chapters XI and XII, in nine original pieces authored in place (floor, senators’ steps and benches, walls with aediculae, windows and open bronze doors, the tribunal, and the gilded Victory with her altar)",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-curia.py",
+        "sourceBlend": "art-source/models/roman-curia-kit.blend",
+        "report": "art-source/models/processed/roman-curia-kit.json",
+        "components": [
+          "curia_floor",
+          "curia_steps_west",
+          "curia_steps_east",
+          "curia_wall_west",
+          "curia_wall_east",
+          "curia_wall_north",
+          "curia_facade",
+          "curia_tribunal",
+          "curia_victory"
+        ],
+        "materialFamilies": [
+          "Curia Luna marble",
+          "Curia dado opus sectile",
+          "Curia floor opus sectile",
+          "Curia ashlar stucco",
+          "Curia oiled bench wood",
+          "Curia gilded bronze",
+          "Curia dark bronze",
+          "Curia madder wool"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes (the tiled texture coordinates stay floats)",
+        "historicalBasis": "docs/historical-research.md, The Curia: the Curia Julia as Domitian restored it, widened to hold the game’s chamber board",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/roman-curia-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The Senate’s Contests of Chapters XI and XII (src/showcase/environment-curia.js, CURIA_LAYOUT in src/ui/world-layouts.js). Each piece stands at the board’s centre, every solid outside the board; a wall stands down while the camera is beyond it and casts no shadow. No piece takes picks or changes a route.",
+      "loading": "Shared deferred chapter packs 11, 12 at Balanced/High. Performance and a failed download keep the code-built audience hall and chamber colonnades.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 680196,
+        "gzipBytes": 354227,
+        "sha256": "3a0bb190aabe3e859420ca15acdbb72fd1ee6e9070158080fd467d69134f4f1f",
+        "triangles": 18760,
+        "textures": 15,
+        "textureEdge": 512,
+        "componentCount": 9
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
     }
   ],
   "developmentAssets": [
@@ -11044,7 +11103,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T22:33:17.282Z",
+  "updatedAt": "2026-10-29T16:59:25.888Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -11066,12 +11125,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 76,
+    "models": 77,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 45279805,
-  "totalModelBytes": 30094255,
+  "totalBundledAssetBytes": 45960001,
+  "totalModelBytes": 30774451,
   "derivedGeometryBytes": 47428
 }

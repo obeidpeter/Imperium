@@ -2,6 +2,21 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md))
+
+The ninth of ten releases, in progress: the great buildings of the story, built in Blender.
+
+- **The Curia in marble.** The Senate's Contests of Chapters XI and XII take place in the Curia, the Senate house as Domitian restored it ([historical note](docs/historical-research.md)), built in Blender around the chamber floor:
+  - the senators' benches on three wide, low steps along each side;
+  - walls with a revetted dado of veined marbles, niches framed by columns, and arched windows with bronze grilles high in the end walls;
+  - the bronze doors standing open;
+  - the presiding magistrates' tribunal, with two curule chairs, at the board's north edge;
+  - the gilded Victory on her globe above her altar, between two bronze lampstands.
+  - A wall stands aside while the camera is beyond it, and no wall shades the floor.
+  - The clerks' tables stand beside the tribunal; the fountain and, in Chapter XII, the army's eagle stand outside the doors.
+  - On Performance, or if it cannot be downloaded, the code-built hall stands in its place.
+  - It adds 0.68 MB to the packs of Chapters XI and XII.
+
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 
 The eighth of ten releases: every chapter's camp is a place of its own, with the story's people in it, errands that pay in training, a trader, and replies that depend on who your soldier is. The battles are unchanged.

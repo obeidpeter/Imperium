@@ -8,6 +8,7 @@ import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
+import {curiaPlacements,updateInteriorCutaway} from './environment-curia.js';
 
 /** Presentation-only generated scenery. Exterior positions follow the actual
  * board bounds, including real-time maps. Interior camp props use authored
@@ -50,7 +51,8 @@ function campPad(e,id,tileSize){
  * Bundles face the departure side after the civilian-priority decision while
  * retaining the same fixed collision pocket. */
 export function sceneryPlacements(e,{chapter,tileSize=2.5}={}){
-  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize}).map(p=>({...p,url:sceneryModelUrl(p.id)}))];
+  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
+    ...curiaPlacements(e,{chapter,tileSize})];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -121,12 +123,15 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
         const centre=box.getCenter(new T.Vector3());model.position.x+=p.x-centre.x;model.position.z+=p.z-centre.z;model.updateMatrixWorld(true);
       }
     }
-    model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.raycast=()=>{};}});
+    // A piece that must not shade the board (the Curia's walls) casts no shadow.
+    model.traverse(o=>{if(o.isMesh){o.castShadow=p.shadow!==false;o.receiveShadow=true;o.raycast=()=>{};}});
+    if(p.cutaway)model.userData.interiorCutaway=p.cutaway;
     ground(model,p.groundY);return model;
   };
   const add=(p,model)=>{
     group.add(model);leases.get(p.url).used=true;
-    if(p.fallbackName){const fallback=scene.getObjectByName(p.fallbackName);if(fallback&&!fallbacks.has(fallback)){fallbacks.set(fallback,fallback.visible);fallback.visible=false;}}
+    // A placement stands for one code-built piece, or several (the Curia for its hall).
+    for(const name of [p.fallbackName,...(p.fallbackNames??[])].filter(Boolean)){const fallback=scene.getObjectByName(name);if(fallback&&!fallbacks.has(fallback)){fallbacks.set(fallback,fallback.visible);fallback.visible=false;}}
     return p.key??p.id;
   };
   const placed=[],pending=[];
@@ -148,6 +153,8 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     return add(p,model);
   })).then(ids=>[...placed,...ids.filter(Boolean)]);
   return {group,placements,ready,
+    // The Curia's walls stand down while the camera is beyond them (environment-curia.js).
+    updateCutaway:camera=>updateInteriorCutaway(group,camera),
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const [fallback,visible]of fallbacks)fallback.visible=visible;fallbacks.clear();for(const state of leases.values())release(state);}
   };
 }
