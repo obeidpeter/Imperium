@@ -12,7 +12,7 @@ import {esc,roman,actionNames,companyPanel} from './view-helpers.js';
 import {skirmishControls} from '../core/controls-model.js';
 import {soldierCampCard} from './soldier-views.js';
 import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-view.js';
-import {campFor,campPlaceName,campPlaceHint,campPersonPresent,CAMP_PLACES} from '../data/camps.js';
+import {campFor,campPlaceName,campPlaceHint,campPersonPresent,campPersonSpot,CAMP_PLACES} from '../data/camps.js';
 import {companyStories} from '../core/camp-stories.js';
 import {companyActivities} from '../core/company-activities.js';
 
@@ -164,7 +164,7 @@ function realtimeCamp(){
         <section class="sidebar-card world-preparation"><p class="eyebrow">BEFORE YOU DEPART</p>
           ${talk('table',decided?'Review the chapter decision':'Make the chapter decision')}${preparations()}
           ${campPreparation(state)+campDisclosure('camp-operation','Operation & veteran training',operationPlanning(state)+veteranAcademy(state))}
-          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>`<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(p.place))}</small></span>${talk(p.talk,'Talk')}</li>`).join('')}</ul>`)}
+          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>{const spot=campPersonSpot(state,p);return `<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(spot.place))}${spot.recovering?' · recovering':''}</small></span>${talk(p.talk,'Talk')}</li>`;}).join('')}</ul>`)}
           ${campDisclosure('camp-places','Travel to a place',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(placeName(id))} <small>${esc(placeHint(id))}${visited.has(id)||id==='gate'?'':' · Walk there once to unlock travel'}</small></span>`+
             `<button class="text-link" data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>Go</button></li>`).join('')}</ul>`)}</section>
         ${soldierCampCard(state)}${practicePanel(state)}${companyStoryPanel()}

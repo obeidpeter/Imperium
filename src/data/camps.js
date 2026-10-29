@@ -1,3 +1,4 @@
+import {storyWhen} from './campaign.js';
 import {CAMP_CONTEXT,CAMP_SCENERY_PADS} from './camp-regions.js';
 import {campStoryId,campStoryFor} from './camp-stories.js';
 import {activityObjects} from './company-activities.js';
@@ -186,7 +187,14 @@ export const CAMPS=freeze({
       {id:'gate',kind:'gate',name:'The field gate',place:'gate',at:[0,1.6],talk:'gate'}]})
 });
 export const campFor=chapter=>CAMPS[chapter]??null;
-export const campPersonPresent=(state,p)=>(!p.requires||state.decisions?.[p.requires[0]]===p.requires[1])&&!(p.absentAfter&&state.decisions?.[p.absentAfter[0]]===p.absentAfter[1]);
+// Who stands in camp now: a person may need an earlier decision (`requires`), leave after
+// one (`absentAfter`), follow the scenes' own conditions (`when`: mentorAlive, patronSupport
+// and the rest, campaign.js) or stand there only before the chapter's nth encounter (`before`).
+export const campPersonPresent=(state,p)=>(!p.requires||state.decisions?.[p.requires[0]]===p.requires[1])&&!(p.absentAfter&&state.decisions?.[p.absentAfter[0]]===p.absentAfter[1])&&
+  storyWhen(state,p.when)&&(p.before===undefined||(state.encounterIndex??0)<p.before);
+// Where a present person stands: a companion still recovering on the company roll
+// (career.js) waits at the valetudinarium, at his `ward` offset, until he is fit.
+export const campPersonSpot=(state,p)=>p.ward&&(state.company??[]).some(v=>v.id===p.veteran&&v.recovery>0)?{place:'valetudinarium',at:p.ward,recovering:true}:{place:p.place,at:p.at};
 export const campPlaceName=(chapter,id)=>campFor(chapter)?.placeNames?.[id]??PLACE_NAMES[id];
 export const campPlaceHint=(chapter,id)=>campFor(chapter)?.placeHints?.[id]??({
   gate:'Depart for the next encounter when the required orders are ready.',principia:'Your chapter decision and officers’ advice.',

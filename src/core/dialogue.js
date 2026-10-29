@@ -17,7 +17,7 @@ const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n));
 export const errandStage=(state,id)=>state.soldier?.errands?.[id]??'none';
 const saidKey=(treeId,nodeId,index)=>`said:${treeId}:${nodeId}:${index}`;
 
-// Whether the story allows a reply now (hidden when not): flags, errands, decisions, the oath, progress.
+// Whether the story allows a reply now (hidden when not): flags, errands, decisions, the oath, progress, recovery.
 function storyAllows(state,c){
   if(c.all&&!c.all.every(branch=>storyAllows(state,branch)))return false;
   if(c.any&&!c.any.some(branch=>storyAllows(state,branch)))return false;
@@ -29,6 +29,9 @@ function storyAllows(state,c){
   if(c.encounterIndex&&!((state.encounterIndex??0)>=(c.encounterIndex.min??0)&&(state.encounterIndex??0)<=(c.encounterIndex.max??99)))return false;
   if(c.history&&(state.history?.length??0)<(c.history.min??0))return false;
   if(c.chapter&&!(state.chapter>=(c.chapter.min??1)&&state.chapter<=(c.chapter.max??12)))return false;
+  // A companion still recovering on the company roll (career.js), or fit again.
+  const recovering=id=>(state.company??[]).some(v=>v.id===id&&v.recovery>0);
+  if(c.recovering&&!recovering(c.recovering))return false;if(c.fit&&recovering(c.fit))return false;
   return true;
 }
 // What a reply needs that the soldier lacks, in the guide's bracket words: [] when he has it all.

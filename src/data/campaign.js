@@ -389,20 +389,25 @@ function present(state, person) {
   return true;
 }
 
+// Whether a story condition holds: who is alive, and where the patron stands.
+// The scenes' lines and the camps' people (camps.js) read the same words.
+export function storyWhen(state, when) {
+  if (!when) return true;
+  if (when === 'comradeAlive') return present(state, 'comrade');
+  if (when === 'comradeAbsent') return !present(state, 'comrade');
+  if (when === 'mentorAlive') return present(state, 'mentor');
+  if (when === 'mentorAbsent') return !present(state, 'mentor');
+  if (when === 'patronSupport') return (state?.relationships?.patron || 0) >= 10;
+  if (when === 'patronNeutral') return (state?.relationships?.patron || 0) >= 0 && (state?.relationships?.patron || 0) < 10;
+  if (when === 'patronHostile') return (state?.relationships?.patron || 0) < 0;
+  return false;
+}
+
 // Call this accessor instead of rendering conditional arrays directly.
 export function sceneLines(chapter, stage, state) {
   const data = typeof chapter === 'number' ? CHAPTERS.find(c => c.id === chapter) : chapter;
-  return (data?.[stage] || []).filter(line => {
-    if (!line.when) return true;
-    if (line.when === 'comradeAlive') return present(state, 'comrade');
-    if (line.when === 'comradeAbsent') return !present(state, 'comrade');
-    if (line.when === 'mentorAlive') return present(state, 'mentor');
-    if (line.when === 'mentorAbsent') return !present(state, 'mentor');
-    if (line.when === 'patronSupport') return (state?.relationships?.patron || 0) >= 10;
-    if (line.when === 'patronNeutral') return (state?.relationships?.patron || 0) >= 0 && (state?.relationships?.patron || 0) < 10;
-    if (line.when === 'patronHostile') return (state?.relationships?.patron || 0) < 0;
-    return false;
-  }).map(({ speaker, text }) => ({ speaker, text: text.replaceAll('Aurelius Marcellus', state?.name || 'Aurelius Marcellus') }));
+  return (data?.[stage] || []).filter(line => storyWhen(state, line.when))
+    .map(({ speaker, text }) => ({ speaker, text: text.replaceAll('Aurelius Marcellus', state?.name || 'Aurelius Marcellus') }));
 }
 
 // Each persistent decision has an explicit, later reader. The journal and
