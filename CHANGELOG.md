@@ -15,7 +15,7 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - A wall stands aside while the camera is beyond it, and no wall shades the floor.
   - The clerks' tables stand beside the tribunal; the fountain and, in Chapter XII, the army's eagle stand outside the doors.
   - On Performance, or if it cannot be downloaded, the code-built hall stands in its place.
-  - It adds 0.68 MB to the packs of Chapters XI and XII.
+  - Its 0.68 MB file (0.35 MB gzipped, as the build report counts downloads) is in the packs of Chapters XI and XII only.
 - **Aurelian's walls before the finale.** Beyond the east edge of the last battle's field stand Rome's new walls, begun in 271 and still rising ([historical note](docs/historical-research.md)), built in Blender:
   - brick-faced stretches 3.5 metres thick, with a wall walk, parapet and merlons;
   - stretches still building, at three heights, behind scaffolds and ladders, with new bricks stacked at their foot;
@@ -23,7 +23,7 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - the double gateway faced in travertine between two semicircular brick towers, where the regional gate arch stood.
   - The walls take the code-built curtain's line and pattern, and keep clear of the claimant's cohorts drawn up before them.
   - On Performance, or if they cannot be downloaded, the code-built curtain stands in their place.
-  - They add 0.43 MB to the pack of Chapter XII.
+  - Their 0.43 MB file (0.31 MB gzipped) is in Chapter XII's pack only.
 - **The oath and the accession in story beats.** The 3D ceremonies no longer circle slowly round their tableaux. The camera frames their moments in turn, holding each for five or six seconds before moving to the next ([`ceremony.js`](src/showcase/ceremony.js)):
   - at the oath on the Novae parade ground: the recruits drawn up, the view over their shoulders to Varro and the standard, Varro holding out the words, the recruits reciting, and your own soldier;
   - at the accession: the legions before the tribunal, the herald, the Senate's witness, the acclamation, and the new Augustus.
