@@ -2,6 +2,7 @@ import * as THREE from '../../vendor/three/three.module.js';
 import {hash} from './environment-layout.js';
 import {stagingEdge} from './environment-staging.js';
 import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE,FINALE_CROWD_CLIPS} from './finale-crowd-data.js';
+import {aurelianWallBounds,aurelianWallPieces} from './aurelian-walls.js';
 
 // The finale's approach to Rome. Aurelian's new brick curtain (begun AD 271,
 // still rising in 275) runs north and south from the gate: finished stretches
@@ -69,6 +70,8 @@ function crowdMaterial(source,time,clips){
   };
   material.customProgramCacheKey=()=>`${key?.()??''}:massed-legion-v042`;return material;
 }
+// The spacing of a block's files and of its ranks, in metres.
+const FILE_GAP=.92,RANK_GAP=1.05;
 export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   const hx=e.width*tileSize/2,gate=stagingEdge(e,'east',tileSize,6.8),wallX=gate.x+1.4,perf=quality==='performance';
   const files=perf?6:8,ranks=perf?4:5,blocks=[];
@@ -76,15 +79,26 @@ export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   for(const [i,z] of [-13.5,-4.5,4.5,13.5].entries())blocks.push({side:'commander',x:-hx-12-(i%2)*1.5,z,yaw:Math.PI/2,files,ranks});
   // The claimant's cohorts before the walls, either side of the gate road.
   for(const z of [gate.z-15,gate.z+15])blocks.push({side:'claimant',x:hx+4.4,z,yaw:-Math.PI/2,files:perf?5:6,ranks:perf?3:4});
+  // Each block's ground, to the shoulders of its outer men: the walls' works keep off it.
+  for(const b of blocks){
+    const across=(b.files-1)/2*FILE_GAP+.3,deep=(b.ranks-1)/2*RANK_GAP+.3,turned=Math.abs(Math.sin(b.yaw))>.5,hx=turned?deep:across,hz=turned?across:deep;
+    b.footprint={minX:b.x-hx,maxX:b.x+hx,minZ:b.z-hz,maxZ:b.z+hz};
+  }
   return {wallX,gateZ:gate.z,gateGap:8.2,reach:58,blocks};
 }
-export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries,animated=[],ownMaterial=material=>material}){
+export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries,animated=[],ownMaterial=material=>material,wallsKit=null}){
   if(profile.staging?.key!=='rome-approach')return null;
   const perf=quality==='performance',layout=finaleLayout(e,tileSize,{quality}),{wallX,gateZ,gateGap,reach}=layout;
   const tint=(hex,k)=>new THREE.Color(hex).multiplyScalar(.86+hash(k,17)*.24);
   const wall='squared mudbrick masonry';
-  // The curtain, in four-metre stretches north and south of the gate towers.
-  for(const sign of [-1,1])for(let along=gateGap;along<reach;along+=4){
+  // Trees and ground cover keep off the walls' ground (environment.js), kit or code-built:
+  // the curtain stands within the kit's footprint.
+  const pieces=aurelianWallPieces(layout,{height});root.userData.finaleOccupied=pieces.map(aurelianWallBounds);
+  // Aurelian's walls and gate built in Blender (aurelian-walls.js) when their kit has
+  // loaded, placed once the scene's own lighting is set (environment.js); otherwise the
+  // code-built curtain, in four-metre stretches north and south of the gate towers.
+  if(wallsKit&&!perf)root.userData.finaleWalls={pieces};
+  else for(const sign of [-1,1])for(let along=gateGap;along<reach;along+=4){
     const z=gateZ+sign*(along+2),k=Math.round(along*sign),base=height(wallX,z),tower=Math.abs(((along-gateGap)%30)-15)<2.1;
     const finished=hash(k,5)>.42||along<gateGap+6,top=tower?9.2:finished?7.2:2.6+hash(k,9)*2.6;
     for(let row=0;row<(perf?2:4);row++){const h=top/(perf?2:4);instance(wall,p.masonryBlock,m.brick,[wallX,base+h*(row+.5),z],[tower?4.6:2.6,h-.04,3.96],[0,0,0],tint('#b9785a',k*7+row));}
@@ -105,13 +119,13 @@ export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,in
   for(const [b,block] of layout.blocks.entries()){
     const c=Math.cos(block.yaw),s=Math.sin(block.yaw),palette=colors[block.side];
     for(let r=0;r<block.ranks;r++)for(let f=0;f<block.files;f++){
-      const lx=(f-(block.files-1)/2)*.92+(hash(b,r,f)-.5)*.12,lz=-(r-(block.ranks-1)/2)*1.05,x=block.x+c*lx+s*lz,z=block.z-s*lx+c*lz,y=height(x,z),yaw=block.yaw+(hash(f,r,b)-.5)*.16,k=b*100+r*10+f;
+      const lx=(f-(block.files-1)/2)*FILE_GAP+(hash(b,r,f)-.5)*.12,lz=-(r-(block.ranks-1)/2)*RANK_GAP,x=block.x+c*lx+s*lz,z=block.z-s*lx+c*lz,y=height(x,z),yaw=block.yaw+(hash(f,r,b)-.5)*.16,k=b*100+r*10+f;
       const detail=!perf&&r===0,scale=.97+hash(k,31)*.06;root.userData.massedCrowd[detail?'near':'distant']++;
       instance(detail?'massed legion front ranks':'massed legion figures',detail?body:distant,soldierMaterial,[x,y,z],[scale,scale,scale],[0,yaw,0],tint('#ffffff',k));
       instance('massed legion shields',p.box,m.cloth,[x+Math.sin(yaw)*.3-Math.cos(yaw)*.12,y+.95,z+Math.cos(yaw)*.3+Math.sin(yaw)*.12],[.56,.86,.07],[0,yaw,0],tint(palette.shield,k+3));
     }
     // One vexillum per block, its cloth in the block's colours.
-    const sx=block.x+s*((block.ranks-1)/2*1.05+.9),sz=block.z+c*((block.ranks-1)/2*1.05+.9),sy=height(sx,sz);
+    const sx=block.x+s*((block.ranks-1)/2*RANK_GAP+.9),sz=block.z+c*((block.ranks-1)/2*RANK_GAP+.9),sy=height(sx,sz);
     instance('finale timber',p.cylinder,m.wood,[sx,sy+1.9,sz],[.05,3.8,.05]);
     instance('massed legion shields',p.box,m.cloth,[sx,sy+3.2,sz],[.07,.8,.9],[0,block.yaw,0],tint(palette.shield,b+40));
   }

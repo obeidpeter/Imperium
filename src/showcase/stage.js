@@ -12,6 +12,7 @@ import {createSceneryModels,holdSceneryModel,sceneryResidency} from './scenery-m
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
+import {aurelianWallsUrl} from './aurelian-walls.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,installGroundMist,landscapeFogRange} from './atmosphere.js';
 import {createMistBanks} from './water-mist.js';
@@ -56,6 +57,9 @@ const QUALITY=STAGE_QUALITY;
 const SHADOW_REFRESH_MS={performance:250,balanced:125,high:100};
 // The resolution budget's floor, and how many late frames there make a battle strained.
 const STRAIN_SCALE=.66,STRAINED_FRAMES=180;
+// The world kits' materials outlive a stage (their models are cached), so they take cloud
+// shadows and read the current bake as the generated scenery's do (SCENE_OCCLUSION).
+const kitFinish=material=>{installCloudShadows(material);installBakedOcclusion(material,SCENE_OCCLUSION);};
 // Presentation styles for the figures (FIGURE_STYLES). Painted stands the 2D
 // campaign's own figure paintings in the diorama (HD-2D) with a tilt-shift
 // finish; inked keeps sculpted figures with ink outlines and washes.
@@ -206,7 +210,7 @@ export class BattleStage{
     this.fill=new T.DirectionalLight(readability.fillColor,readability.fill);this.fill.castShadow=false;
     this.fill.position.set(0,8,12);this.scene.add(this.fill,this.fill.target);
     this.takeWorldKits(encounter,quality);
-    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter,boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null});yield;
+    this.environment=yield* buildEnvironment(this.scene,encounter,{tileSize:2.5,quality,chapter:this.chapter,...this.worldKits()});yield;
     this.rebuildSceneryModels();yield;
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
     this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();
@@ -331,21 +335,29 @@ export class BattleStage{
   // loaded as the world is built (the loading veil preloads it), and never on Performance.
   // The choice holds until the world is rebuilt: kit pieces and their code-built stand-ins
   // never mix. The lease keeps the model while this stage stands.
-  // The region's tree and rock kits (tree-kit.js, rock-kit.js) likewise plant its trees and stones.
+  // The region's tree and rock kits (tree-kit.js, rock-kit.js) likewise plant its trees and stones,
+  // and the walls kit (aurelian-walls.js) builds Aurelian's walls before the finale.
   takeWorldKits(encounter,quality){
-    for(const lease of [this.boardKit,this.treeKit,this.rockKit])lease?.release();this.boardKit=this.treeKit=this.rockKit=null;
+    this.releaseWorldKits();
     if(quality==='performance')return;
     // Only a model already loaded: a stage never requests one, so a failed download is not asked for again.
     const take=url=>url?holdSceneryModel(url):null;
     this.boardKit=take(boardKitUrl(encounter));this.treeKit=take(sceneTreeKitUrl(encounter,this.chapter));this.rockKit=take(sceneRockKitUrl(encounter,this.chapter));
+    this.wallsKit=take(aurelianWallsUrl(encounter,{chapter:this.chapter}));
+  }
+  releaseWorldKits(){
+    for(const lease of [this.boardKit,this.treeKit,this.rockKit,this.wallsKit])lease?.release();this.boardKit=this.treeKit=this.rockKit=this.wallsKit=null;
+  }
+  // The kits' models for the world's build, with the finish their cached materials take.
+  worldKits(){
+    return {boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null,wallsKit:this.wallsKit?.scene??null,kitFinish};
   }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked
     // occlusion, and (sync) its camera cutaway. They then share its shaders.
     // The board kit's materials outlive the stage (its model is cached), so they
-    // read the current bake as the generated scenery's do (SCENE_OCCLUSION).
+    // read the current bake as the generated scenery's do (kitFinish).
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
-    const kitFinish=material=>{installCloudShadows(material);installBakedOcclusion(material,SCENE_OCCLUSION);};
     this.fieldFeatures?.dispose();
     this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.worldQuality,finish,kitFinish,
       boardKit:this.boardKit?.scene??null});
@@ -373,7 +385,7 @@ export class BattleStage{
       this.builtQuality=this.quality;
       this.sceneryOcclusion?.dispose();this.environment.dispose();
       this.takeWorldKits(this.encounter,this.worldQuality);
-      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter,boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null});this.rebuildFieldFeatures();
+      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter,...this.worldKits()});this.rebuildFieldFeatures();
       this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
       this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();
       this.sky=createSky(this.scene,this.profile,{quality:this.worldQuality,reducedMotion:this.reducedMotion});this.lighting.dispose();
@@ -403,7 +415,7 @@ export class BattleStage{
     this.sceneryModels?.dispose();
     const shade=model=>model.traverse(o=>{if(o.isMesh)for(const m of [o.material].flat())if(m&&!m.transparent&&m.userData.environmentFinish!=='water'){installCloudShadows(m);installBakedOcclusion(m,SCENE_OCCLUSION);}});
     const own=this.sceneryModels=createSceneryModels(this.scene,this.encounter,
-      {chapter:this.chapter,quality:this.worldQuality,heightAt:(x,z)=>this.environment.groundHeight(x,z),
+      {chapter:this.chapter,quality:this.worldQuality,heightAt:(x,z)=>this.environment.groundHeight(x,z),withoutGate:!!this.environment?.group?.userData.finaleWalls,
       prepare:model=>{shade(model);this.sceneryOcclusion?.add(model);return this.compositor?.compile(this.scene,{object:model});}});
     shade(own.group);
     // Models placed at once take the cutaway now (a first build's occlusion covers the group).
@@ -817,7 +829,7 @@ export class BattleStage{
   dispose(){
     if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();
     this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());
-    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();for(const lease of [this.boardKit,this.treeKit,this.rockKit])lease?.release();this.boardKit=this.treeKit=this.rockKit=null;this.environment.dispose();
+    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.releaseWorldKits();this.environment.dispose();
     this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();
     this.combat?.dispose();this.shafts?.dispose();this.mist?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();
     this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();

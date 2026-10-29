@@ -129,8 +129,9 @@ export const CURIA_LAYOUT=freeze({
 export const ENCOUNTER_LAYOUTS=freeze({
   // The authored Aurelian curtain and distant cohorts stay. New civic
   // buildings belong to the city behind it, not the occupied army verge.
+  // `gate`: Aurelian's gate (aurelian-walls.js) stands here instead once its kit has loaded.
   'ch12-confrontation':[
-    {component:'checkpoint_arch',edge:'east',along:0,gap:6.4},
+    {component:'checkpoint_arch',edge:'east',along:0,gap:6.4,gate:true},
     {component:'administrative_portico',edge:'east',along:-18,gap:19},{component:'apsidal_hall',edge:'east',along:18,gap:21},
     {component:'colonnade_bay',edge:'north',along:-5,gap:9},{component:'colonnade_bay',edge:'north',along:5,gap:9},
     {component:'statue_plinth',edge:'south',along:-7,gap:7},{component:'garden_exedra',edge:'south',along:7,gap:11}]

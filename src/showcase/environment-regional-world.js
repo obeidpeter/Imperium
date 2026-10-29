@@ -24,7 +24,7 @@ export function regionalPlacementBounds(p){
 
 // Different mission approaches rotate the frontage toward their existing
 // landmark road, without turning the map.
-export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5}={}){
+export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5,withoutGate=false}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height))return [];
   const kit=REGIONAL_WORLD_KITS[chapter],plan=REGIONAL_PLANS[chapter],staging=getEncounterStaging(e,{chapter,civic:e.kind==='contest'}),camp=e.id===`ch${chapter}-camp`,civic=e.kind==='contest';
   const front=camp?'north':staging.landmarkEdge,edges={front,opposite:front==='east'?'north':'east',back:front==='east'?'south':'west'},out=[];
@@ -38,7 +38,7 @@ export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=
   };
   const width=slot=>regionalComponentDimensions(kit,plan[slot])[0];
   const place=entry=>{
-    if(entry.camp&&!camp)return;
+    if(entry.camp&&!camp||entry.gate&&withoutGate)return;
     const {beside}=entry,along=beside?beside.side*((width(beside.slot)+width(entry.slot))/2+beside.spacing):entry.along;
     add(entry.component??plan[entry.slot],edges[entry.edge]??entry.edge,along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
   };
@@ -136,7 +136,7 @@ const freezeFallback=(g,geometries)=>{batchStaticEnvironment(g,{geometries,insta
 export function addRegionalWorld(ctx){
   const {root,e,p,m,profile,height,tileSize,geometries}=ctx;if(!hasRegionalWorld(e))return;
   const g=p.group(root,0,0,0);g.name=`Chapter ${profile.chapter} regional world`;
-  const placements=getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize}),structures=[];
+  const placements=getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize,withoutGate:!!root.userData.finaleWalls}),structures=[];
   for(const item of placements){
     const b=regionalPlacementBounds(item),base=Math.min(...[[item.x,item.z],[b.minX,b.minZ],[b.maxX,b.minZ],[b.minX,b.maxZ],[b.maxX,b.maxZ]].map(([x,z])=>height(x,z)));
     const part=p.group(g,item.x,base,item.z,item.yaw);part.name=item.fallbackName;part.scale.fromArray(item.scale);part.userData.regionalFallback=true;

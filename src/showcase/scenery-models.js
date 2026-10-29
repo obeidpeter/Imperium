@@ -9,6 +9,7 @@ import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
 import {curiaPlacements,updateInteriorCutaway} from './environment-curia.js';
+import {aurelianWallsUrl} from './aurelian-walls.js';
 
 /** Presentation-only generated scenery. Exterior positions follow the actual
  * board bounds, including real-time maps. Interior camp props use authored
@@ -50,8 +51,8 @@ function campPad(e,id,tileSize){
 /** Only confirmed campaign presentation metadata changes a camp placement.
  * Bundles face the departure side after the civilian-priority decision while
  * retaining the same fixed collision pocket. */
-export function sceneryPlacements(e,{chapter,tileSize=2.5}={}){
-  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
+export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false}={}){
+  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
     ...curiaPlacements(e,{chapter,tileSize})];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
@@ -78,8 +79,9 @@ export const sceneryResidency=()=>masters.stats();
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
 // A lease on a model already loaded, or null, without a request (scenery-cache.js).
 export const holdSceneryModel=url=>masters.hold(url);
-// The board kit and the region's tree and rock kits belong to the working set wherever the scenery is drawn.
-const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter)].filter(Boolean);
+// The board kit, the region's tree and rock kits and, before Rome, Aurelian's walls belong
+// to the working set wherever the scenery is drawn.
+const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter})].filter(Boolean);
 /** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
  * them: its placed scenery and the world kits. None on Performance. */
 export const sceneryWorkingSet=(e,{chapter,quality='balanced'}={})=>quality==='performance'?[]:[...new Set([...sceneryPlacements(e,{chapter}).map(p=>p.url),...worldKitUrls(e,quality,chapter)])];
@@ -95,10 +97,11 @@ export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
   return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
 
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters}={}){
+// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside.
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false}={}){
   const group=new T.Group();group.name='generated scenery';scene.add(group);
   const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate}),urls=[...new Set(placements.map(p=>p.url))];
   const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
   const kept=[...urls,...worldKitUrls(e,quality,chapter)];library.setWorkingSet(kept);
   if(library===masters&&preload?.key===preloadKey(kept))releasePreload();

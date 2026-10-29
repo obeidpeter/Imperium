@@ -47,6 +47,8 @@ export const WORLD_CATALOG=Object.freeze({
   'roman-monumental-kit':asset('kit',['assets/models/scenery/roman-monumental-kit.glb'],[9,11,12]),
   // The Senate's Curia in marble, around the chamber board of Chapters XI and XII (release 9).
   'roman-curia-kit':asset('kit',['assets/models/scenery/roman-curia-kit.glb'],[11,12]),
+  // Aurelian's walls and gate before the finale's field (release 9).
+  'aurelian-walls-kit':asset('kit',['assets/models/scenery/aurelian-walls-kit.glb'],[12]),
   // The field's own structures, fitted to its cells (worlds and gameplay plan, release 4):
   // one kit for each curtain material of the chapters whose battles are fortified.
   'board-kit-timber':asset('kit',['assets/models/scenery/board-kit-timber.glb'],[4]),

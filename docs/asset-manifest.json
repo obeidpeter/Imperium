@@ -11036,6 +11036,60 @@
         "componentCount": 9
       },
       "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "aurelian-walls-kit",
+      "path": "assets/models/scenery/aurelian-walls-kit.glb",
+      "subject": "Aurelian’s walls of Rome before the finale’s field, in six original pieces on the wall’s centre line (a finished stretch with its walk and merlons, three stretches still building behind scaffolds, a square tower, and the double gateway faced in travertine between its two semicircular towers)",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-aurelian-walls.py",
+        "sharedBuilders": "scripts/assets/kitlib.py",
+        "sourceBlend": "art-source/models/aurelian-walls-kit.blend",
+        "report": "art-source/models/processed/aurelian-walls-kit.json",
+        "components": [
+          "wall_curtain",
+          "wall_rising_low",
+          "wall_rising_mid",
+          "wall_rising_high",
+          "wall_tower",
+          "wall_gate"
+        ],
+        "materialFamilies": [
+          "Walls brick facing",
+          "Walls travertine ashlar",
+          "Walls concrete core",
+          "Walls scaffold timber",
+          "Walls shadowed interior"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes (the tiled texture coordinates stay floats)",
+        "historicalBasis": "docs/historical-research.md, Aurelian’s walls: brick-faced concrete 3.5 m thick, a square tower every 100 Roman feet, the principal gates’ two arched passages faced in travertine between semicircular towers",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/aurelian-walls-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The finale’s approach to Rome, Chapter XII (src/showcase/aurelian-walls.js, placed along finaleLayout in src/showcase/environment-finale.js), beyond the field’s east edge. Its pieces follow the code-built curtain’s pattern and are merged into one mesh per material; they take no picks and change no route.",
+      "loading": "Shared deferred chapter pack 12 at Balanced/High. Performance and a failed download keep the code-built curtain and the regional kit’s gate arch.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 428656,
+        "gzipBytes": 310434,
+        "sha256": "e29cce20c98d2e7b13d5829ce751430c4b6e4697e9e42c0c1dc8cb48d96a16ef",
+        "triangles": 5712,
+        "textures": 12,
+        "textureEdge": 512,
+        "componentCount": 6
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
     }
   ],
   "developmentAssets": [
@@ -11103,7 +11157,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-29T16:59:25.888Z",
+  "updatedAt": "2026-10-29T16:48:52.981Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -11125,12 +11179,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 77,
+    "models": 78,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 45960001,
-  "totalModelBytes": 30774451,
+  "totalBundledAssetBytes": 46388657,
+  "totalModelBytes": 31203107,
   "derivedGeometryBytes": 47428
 }

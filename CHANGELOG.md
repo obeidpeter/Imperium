@@ -16,6 +16,14 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - The clerks' tables stand beside the tribunal; the fountain and, in Chapter XII, the army's eagle stand outside the doors.
   - On Performance, or if it cannot be downloaded, the code-built hall stands in its place.
   - It adds 0.68 MB to the packs of Chapters XI and XII.
+- **Aurelian's walls before the finale.** Beyond the east edge of the last battle's field stand Rome's new walls, begun in 271 and still rising ([historical note](docs/historical-research.md)), built in Blender:
+  - brick-faced stretches 3.5 metres thick, with a wall walk, parapet and merlons;
+  - stretches still building, at three heights, behind scaffolds and ladders, with new bricks stacked at their foot;
+  - a square tower about every thirty metres;
+  - the double gateway faced in travertine between two semicircular brick towers, where the regional gate arch stood.
+  - The walls take the code-built curtain's line and pattern, and keep clear of the claimant's cohorts drawn up before them.
+  - On Performance, or if they cannot be downloaded, the code-built curtain stands in their place.
+  - They add 0.43 MB to the pack of Chapter XII.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 

@@ -1541,6 +1541,12 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   rounds 4 and 7 (two rounds later on Story), and the field is not won
   until they are beaten too.
 
+- The confrontation is fought before **Aurelian's walls**, beyond the
+  field's east edge: brick stretches still rising behind scaffolds,
+  square towers, and the double gate between its round towers. They are
+  scenery and change no route. On Performance, or if they cannot be
+  downloaded, a simpler wall stands in their place.
+
 - Higher standing keeps more routes open and improves your position. A
   minimum relief force and a costly backer remain available even after a
   hard campaign, but costly backing creates a serious debt.

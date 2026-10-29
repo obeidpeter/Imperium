@@ -753,3 +753,40 @@ The first in-game render (the stage benchmark, in software rendering) showed one
 
 The Curia draws only on Balanced and High. On Performance, or when it cannot be downloaded, the code-built audience hall and the chamber's colonnades stand in. In Chapters XI and XII those stand-ins are batched within their own groups so the Curia can hide them whole.
 
+## Aurelian's walls · 29 October 2026
+
+[build-aurelian-walls.py](../scripts/assets/build-aurelian-walls.py), run in Blender 5.2.2 LTS like the Curia's builder, authors Rome's new walls beyond the east edge of the finale's field (Chapter XII). Its six pieces each stand on the wall's centre line, with the outer face toward the field:
+
+- a finished 4-metre stretch, with its wall walk, parapet and merlons;
+- three stretches still building, at 2.8, 4.2 and 5.6 metres, each with its scaffold, ladder and a stack of new bricks;
+- a square tower with its upper chamber;
+- the double gateway between its two semicircular towers, 24.4 metres along the wall.
+
+The design follows [the historical note on Aurelian's walls](historical-research.md): brick-faced concrete 3.5 metres thick, a wall walk 6.6 metres up, a square tower every thirty metres and two passages faced in travertine. At runtime the pieces follow the code-built curtain's own pattern of finished and rising stretches (`src/showcase/aurelian-walls.js`). A stretch whose scaffold would stand among the claimant's cohorts is finished instead. The script also writes each piece's bounds to `src/showcase/aurelian-walls-components.js`, which the placement and the tests read.
+
+Four materials carry deterministic procedural bakes from seeded noise, at 512 pixels, as the Curia's do:
+
+- the brick facing (*opus testaceum*): thin bricks in thick mortar, a bonding course of large tiles and an open putlog hole;
+- the travertine ashlar of the gate, its faces streaked with pores;
+- the concrete core (*opus caementicium*) of tufa and grey rubble, seen where a stretch is unfinished;
+- the scaffold timber.
+
+The towers' and the gate's dark interiors are a plain material with no texture. The geometry is built with `bmesh` through the builders shared with the Curia in `kitlib.py`. One of them now welds near-coincident points after cutting openings. An arch's springing used to meet its jamb within rounding, which left 52 zero-area triangles in the walls and made the compressor's geometry check fail. The Curia's triangles are unchanged by the weld: the same set, compared vertex by vertex.
+
+| Kit | Chapters | Triangles | Processed GLB | Runtime file |
+| --- | --- | ---: | ---: | ---: |
+| `aurelian-walls-kit` | XII | 5,712 | 1,410,024 bytes | 428,656 bytes |
+
+As for the Curia, `quantize-model.mjs` stored the normals as signed bytes, then `npm run asset:compress` made the runtime file. Quantizing took it from 454,496 to 428,656 bytes. ETC1S keeps the colour maps at 37.4–40.2 dB PSNR and the normal maps at 24.4–35.3 dB.
+
+### Reviewed before shipping
+
+The walls were reviewed in Blender's Cycles renderer, assembled along the finale's line from the gate outward (not the game's own lighting). These faults were fixed before any in-game render:
+
+- **The gate's merlons** stood at the curtain's height on the taller gate. They now take the gate's own height.
+- **The tower windows** sat off their curve, facing the wrong way. They are now dark arched panels tangent to the curve, just proud of it.
+- **Two dark boxes** meant to shade the passages hung inside them like lintels. They were removed.
+- **The brick** was too saturated and its putlog holes too large. The brick is toned down and the holes are smaller.
+- **Zero-area triangles** at the arches' springings failed the compressor's geometry check. The weld above removes them.
+
+The pieces are merged into one mesh for each of the kit's five materials, since the walls never change and are never picked. The finale therefore draws five walls meshes, not one for each piece and material. The walls draw only on Balanced and High. On Performance, or when the kit cannot be downloaded, the code-built curtain and the regional kit's gate arch stand in. When the walls draw, that arch steps aside for Aurelian's gate.
