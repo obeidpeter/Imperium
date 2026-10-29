@@ -2,6 +2,48 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
+
+The eighth of ten releases: every chapter's camp is a place of its own, with the story's people in it, errands that pay in training, a trader, and replies that depend on who your soldier is. The battles are unchanged.
+
+- **A camp of its own in every chapter.** Chapters IV–XII each have their own layout, with their own gate, courts, tent lines and water, and the seven places in their own arrangement. The fort above the Danube ford opens a postern on the reeds; the halt on the retreat west is a broken mudbrick enclosure entered from the western road; the camp before Milan opens east toward the city; the ferry assembly lies open to the river; the governor's courtyard has planted strips between its rooms; the house in Rome is built round a garden court.
+- **The cast in camp.**
+  - **Varro** teaches at the Danube fort and stands by the eagle until his fate is decided in Chapter VI.
+  - **Crispus** writes the fort's report, leaves for Rome after the council at Milan and is waiting for you there.
+  - **Quintus**, who held the standards at your oath, teaches at the fort and gathers the legions' standards in the last camp.
+  - **Brennus** counts the raiders' rafts at the fort.
+  - **Severianus** keeps his ledger from the retreat to the purple, though in the last camp only while he backs you: otherwise his messenger or the treasury's envoy stands there.
+  - **Aelia Dacia** keeps her households' names at the ferry, in the province and before the final march.
+  - **Paullus** reads your record in Rome and visits the last camp before the legitimacy Contest.
+  - **Theon** teaches speaking before the council, the tribunal and the Senate.
+  - Lucan or Sabinus, Naso and Felix stand with the company, and a man still recovering waits at the valetudinarium.
+- **Errands with training points.** Chapters IV–XII have two errands each, worth 2 training points each:
+  - Chapter IV: braces for the gate, and the raiders' rafts to count;
+  - Chapter V: a bowl of water on the paving, and a letter downriver;
+  - Chapter VI: water to the west, and leather for the eagle's pole;
+  - Chapter VII: boots for the march, and the order of a speech;
+  - Chapter VIII: the depth at the landing, and a seed jar;
+  - Chapter IX: the wing's recall signal, and a city's granaries;
+  - Chapter X: the diverted grain, and a frightened witness;
+  - Chapter XI: your first report, and a question in writing;
+  - Chapter XII: the seal at the standards, and seed for next spring.
+
+  Some ask for the right answer; a wrong one costs nothing. The most training a campaign can give rises from 237 to 273 points ([audit](docs/tp-audit.md)), and a chronicle begun before 0.40 that now chooses its soldier's training receives the larger total for the chapters it has completed.
+- **The five titles nobody could earn** are each an errand's reward: **Shield of the cohort** (+1 Constitution), **Pathfinder** (+1 Agility), **Advocate of the ranks** (+1 Eloquence), **River scout** (+1 Fieldcraft) and **Scribe of the council** (+1 Authority).
+- **A trader in every chapter**, with the region's goods:
+  - smoked fish on the Danube;
+  - dates and leather in the East;
+  - oil and fish sauce in Italy;
+  - honey in Dacia;
+  - incense, and an eye amulet against envy (+1 Perception), in Syria;
+  - papyrus in Rome;
+  - seed grain before the last march.
+
+  Syra the sutler follows the legion to the Danube fort and to the end.
+- **Replies that depend on who your soldier is.** Every camp from Chapter IV has replies that need an attribute, a decoration, a title, or the army's or the public's confidence. They are listed dimmed with what they need. Where an errand needs persuading, there is always another way.
+- **A page of history for every defeat.** Every encounter now has one. A lost Contest and a battle lost on the turn-based board show it in their result too, as a lost real-time battle already did.
+- **Named people without a generated body of their own** (Severianus, Aelia, Paullus, Theon and Quintus) are drawn with their own faces, never in a stranger's body.
+
 ### Worlds and gameplay, release 7: missions and cavalry ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/missions-release7-report.md))
 
 The seventh of ten releases: six battles become missions of their own, the enemy brings siege works, and your horse has two orders of its own. Campaigns begun before this release keep the battles they started with; New Game plays the new ones, in real time and in turns.
