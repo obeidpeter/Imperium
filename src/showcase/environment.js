@@ -31,6 +31,7 @@ import {runSteps} from './build-steps.js';
 import {boardKitPieces} from './structure-registry.js';
 import {createBoardKitPieces} from './board-kit.js';
 import {createAurelianWalls} from './aurelian-walls.js';
+import {animateClothBanners,createEnvironmentLife,lifeSources} from './environment-life.js';
 import {createTreeKitPlanter,treeKitFor} from './tree-kit.js';
 import {createRockKitPlacer,rockKitFor} from './rock-kit.js';
 import {createGroundCover} from './ground-cover.js';
@@ -164,8 +165,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }
   for(const yy of [3.5,4.15])branch([fortX,yy,gateZ-gateWidth/2-.5],[fortX,yy,gateZ+gateWidth/2+.5],.21,'gate lintels',m.darkWood);
   for(let i=0;i<12;i++)instance('gate walkway',p.box,m.wood,[fortX-.15,3.56,gateZ+(i-5.5)*.43],[1.9,.12,.41]);
-  const standard=p.banner(root,fortX+.35,height(fortX+.35,gateZ+4),gateZ+4);
-  if(!perf)standard.traverse(o=>{if(!o.userData.windCloth)return;const a=o.geometry.attributes.position,base=Float32Array.from(a.array);animated.push(t=>{const breeze=sampleWorldWind(t,profile);for(let i=0;i<a.count;i++){const weight=(.9-base[i*3+1])/1.8,flutter=Math.sin(t*1.7+base[i*3]*3.5+weight*2)*.10*weight;a.setXYZ(i,base[i*3]+flutter*breeze.x,base[i*3+1],base[i*3+2]+flutter*breeze.z);}a.needsUpdate=true;o.geometry.computeVertexNormals();});});
+  // The fort's standard stirs in the wind with every other banner (environment-life.js).
+  p.banner(root,fortX+.35,height(fortX+.35,gateZ+4),gateZ+4);
   for(const [x,z,s,r]of [[fortX-6,gateZ-7,1.1,.1],[fortX-7,gateZ+5,1.05,-.13],[fortX-13,gateZ+9,.8,.04]]){p.tent(root,x,height(x,z),z,s,r);p.crate(root,x+3,height(x+3,z+1),z+1,.8);p.amphora(root,x+2.7,height(x+2.7,z+2.2),z+2.2,.9);}
   for(let i=0;i<5;i++){const x=fortX-2.3-hash(i,3)*2,z=gateZ+7+hash(i,5)*3;p.amphora(root,x,height(x,z),z,.75+hash(i,7)*.3);}
   const yardProps=[];
@@ -290,6 +291,11 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // (kitFinish), as the board kit's do.
   const walls=root.userData.finaleWalls&&wallsKit?createAurelianWalls(root,wallsKit,root.userData.finaleWalls.pieces,{finish:kitFinish}):null;
   if(walls)root.userData.finaleWalls.drawn=walls.stats();
+  // Life about the field (environment-life.js): birds by day and hearth smoke in one mesh,
+  // and every banner's cloth in the wind; none of it on Performance.
+  const life=createEnvironmentLife(root,{sources:lifeSources(e,profile,{tileSize,quality,height,withoutGate:!!root.userData.finaleWalls}),profile,animated});
+  if(life)root.userData.fieldLife=life.stats();
+  if(!perf)root.userData.clothBanners=animateClothBanners(root,{profile,animated});
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
@@ -303,7 +309,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
     // camera: its position, so the kit's trees and rocks take the level their distance asks
     // for; focus: the point it looks at, round which the ground cover grows.
     update(time=0,camera=null,focus=null){if(disposed)return;planter?.update(camera);rocks?.update(camera);cover?.update(focus??camera);if(!Number.isFinite(time)||time===lastTime)return;lastTime=time;if(library.terrain.groundAlbedoMap.value!==groundTextures().albedo)refreshTerrainTextures(library.terrain);const bounded=time%3600,currentWind=sampleWorldWind(bounded,profile);wind.value=bounded;windDirection.value.set(currentWind.x,currentWind.z);if(library.waterTime)library.waterTime.value=bounded;for(const fn of animated)fn(bounded);horizon.update(bounded);for(const f of flames)sampleFlamePlume(f.mesh,bounded+f.seed,{chapter:profile.chapter,weather:profile.weather});},
-    dispose(){if(disposed)return;disposed=true;walls?.dispose();planter?.dispose();rocks?.dispose();cover?.dispose();scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();fireMask?.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
+    dispose(){if(disposed)return;disposed=true;walls?.dispose();life?.dispose();planter?.dispose();rocks?.dispose();cover?.dispose();scene.remove(root);horizon.dispose();backdrop.dispose();occlusion.dispose();fireMask?.dispose();for(const g of geometries)g.dispose();for(const material of extraMaterials)material.dispose();library.dispose();root.clear();},
     stats(){let meshes=0,instances=0;root.traverse(o=>{if(o.isMesh)meshes++;if(o.isInstancedMesh)instances+=o.count;});return {meshes,instances,geometries:geometries.size,quality,mode:training?'training':profile.setting,batching,horizon:horizon.stats,backdrop:backdrop.stats,occlusion:occlusion.stats,trees:planter?.stats()??null,rocks:rocks?.stats()??null,groundCover:cover?.stats()??null,disposed};}
   };
 }

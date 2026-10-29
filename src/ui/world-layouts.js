@@ -125,6 +125,19 @@ export const CURIA_LAYOUT=freeze({
   }
 });
 
+// Life about the field (worlds and gameplay plan, release 9; environment-life.js). Presentation only.
+// - `hearths`: the regional pieces whose smoke rises, and from where: a fraction of the piece's
+//   height above its foot, and of its depth from its centre (its front is +).
+// - `birds` and `puffs`: the birds wheeling over an outdoor scene by day, and the puffs in each
+//   hearth's plume, at each tier above Performance; `hearths` caps the plumes in one scene.
+export const LIFE_LAYOUT=freeze({
+  hearths:{
+    barrack_gable:{height:.95,depth:-.2},forge_shelter:{height:.8,depth:-.25},
+    field_kitchen:{height:.55,depth:0},fish_drying_rack:{height:.3,depth:0}
+  },
+  birds:{balanced:9,high:14},puffs:{balanced:6,high:9},maxHearths:4
+});
+
 // Encounters composed on their own instead of the shared frontage.
 export const ENCOUNTER_LAYOUTS=freeze({
   // The authored Aurelian curtain and distant cohorts stay. New civic

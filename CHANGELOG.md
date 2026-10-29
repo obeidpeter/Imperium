@@ -28,6 +28,11 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - at the oath on the Novae parade ground: the recruits drawn up, the view over their shoulders to Varro and the standard, Varro holding out the words, the recruits reciting, and your own soldier;
   - at the accession: the legions before the tribunal, the herald, the Senate's witness, the acclamation, and the new Augustus.
   - With reduced motion the camera keeps the first view. If you turn or zoom the view yourself, it stays where you put it.
+- **Life about the field** ([`environment-life.js`](src/showcase/environment-life.js)), on Balanced and High:
+  - birds wheel high beyond the board by day, though not in rain or dust storms;
+  - smoke rises and drifts with the wind from the hearths of barracks, forges, field kitchens and the fish smokers' racks;
+  - every banner's cloth stirs in the wind at its own pace, no longer only the fort's standard.
+  - Birds and smoke share one mesh and one shader program, placed from the encounter's presentation seed and the layout data (`LIFE_LAYOUT`). None of it is on Performance, and reduced motion holds it still.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 
