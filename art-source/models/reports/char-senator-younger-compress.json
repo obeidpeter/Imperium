@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/senator-younger.glb",
+  "output": "assets/models/characters/senator-younger.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 455740,
+    "gzipBytes": 322919,
+    "sha256": "604df6f443dc91f6fce7ef1f3fba4b3c55f719fd491a0fd03c2c4eb832eeefb4"
+  },
+  "after": {
+    "bytes": 401184,
+    "gzipBytes": 376959,
+    "sha256": "5a1f95fd8e7e9debd4197c9333ccaff77628d8b927a6cc172e31920c10c81633"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13905,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9904
+      },
+      "bytes": 22023,
+      "psnr": 40.936
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 43806
+      },
+      "bytes": 127241,
+      "psnr": 38.023
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15372
+      },
+      "bytes": 31826,
+      "psnr": 36.862
+    }
+  ]
+}

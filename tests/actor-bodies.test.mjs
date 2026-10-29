@@ -9,16 +9,19 @@ import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {runProgressionCampaign} from '../scripts/progression-autoplay.mjs';
 import {actorKit} from '../src/showcase/actor-kit.js';
+import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
-import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies} from '../src/ui/actor-body-catalog.js';
-import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES} from '../src/showcase/actor-bodies.js';
-import {createActor} from '../src/showcase/actors.js';
+import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies,HORSE_BODIES,horseBodyId,SENATOR_BODIES} from '../src/ui/actor-body-catalog.js';
+import {trimBands} from '../src/ui/bloc-style.js';
+import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES,blocTrimGeometry} from '../src/showcase/actor-bodies.js';
+import {createActor,BLOC_TRIM} from '../src/showcase/actors.js';
 import {helmetBowlGeometry} from '../src/showcase/actor-helmet.js';
 import {stageUnit,squadUnit} from '../src/showcase/live-figures.js';
 import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
 import {createCampWorld} from '../src/core/realtime/camp-world.js';
 import {createEncounterWorld} from '../src/core/realtime/campaign-encounter.js';
 import {createSkinnedCrowd} from '../src/showcase/formation.js';
+import {followerHeadOf} from '../src/showcase/generated-identity.js';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 
@@ -34,14 +37,15 @@ async function parse(id){
   return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
 const library=createActorBodyLibrary(parse);
-const legionary={id:'veteran-naso',veteranId:'naso',name:'Naso',side:'ally',role:'infantry'};
+// A named legionary without a body of his own (Quintus wears the legionary's mail and the shared head).
+const legionary={id:'veteran-quintus',veteranId:'quintus',name:'Quintus',side:'ally',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body is worn in exactly the chapters that list it, from New Game through both ceremonies, in turns and in real time', () => {
+test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies and both sides of Chapter II\'s decision, in turns and in real time', () => {
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
-    const look=(unit,state=s)=>add(actorBodyId(actorKit(unit,{chapter:state.chapter,rank:state.rank})),state.chapter);
+    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);add(horseBodyId(kit),state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
     const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
     world(createCampWorld(clone(s)));
@@ -52,9 +56,15 @@ test('every generated body is worn in exactly the chapters that list it, from Ne
     if(e.kind!=='contest')world(createEncounterWorld(t));
   };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
-  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units)add(actorBodyId(actorKit(u,{chapter:scene.chapter,rank:scene.rank})),scene.chapter);}
-  for(const [id,body]of Object.entries(ACTOR_BODIES))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
-  assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'}),null,'Civic figures keep the togas whose trims name their bloc');
+  // The other side of Chapter II's decision: Lucan leaves, and Sabinus stands in his place from then on.
+  seen.clear();
+  runProgressionCampaign({featureEdition:31,onCheckpoint:collect,beforeCamp:s=>{if(s.chapter===2&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,'leave').ok);}});
+  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
+  for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
+  // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
+  assert.ok(SENATOR_BODIES.includes(actorBodyId({civic:true,faction:'Roman',role:'speaker',identity:7},'figure-7')));
+  assert.equal(actorBodyId({civic:true,hero:true,faction:'Roman',role:'speaker'},'marcellus'),null);
+  assert.equal(actorBodyId({civic:true,faction:'Roman',role:'speaker'},'crispus'),null);
 });
 
 test('every body has its Tripo task, rig, licence, manifest entry and budget, and is bound in the game bind pose', async () => {
@@ -70,7 +80,8 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
     // Shipped compressed (scripts/assets/compress.mjs): KTX2 textures and meshopt geometry over quantized vertices.
     assert.deepEqual([...info.extensionsRequired].sort(),['EXT_meshopt_compression','KHR_mesh_quantization','KHR_texture_basisu'],id);
-    assert.ok(info.textures.length===3&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
+    // A named man's own body brings his head, with its own three maps.
+    assert.ok(info.textures.length===(ACTOR_BODIES[id].cast?6:3)&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
     // Soles on the game's sole plane, seven centimetres under the ankle joints.
     assert.ok(Math.abs(info.base-(-.02))<.006,`${id} stands on the game's sole plane (${info.base})`);
     const gltf=await parse(id),near=gltf.scene.getObjectByName('body'),overview=gltf.scene.getObjectByName('body-overview');
@@ -106,6 +117,56 @@ test('a soldier in his own kit wears the body closest to it: the recruit\'s tuni
   assert.equal(hero(['tunic','bracae','caligae','bow','quiver'],4),'roman-recruit','The protagonist with a bow is still himself');
 });
 
+test('the camp\'s people wear their role\'s body, and only escorts on the march carry a traveller\'s bundle', async () => {
+  const person=(role,name,chapter=2)=>({id:role,name,side:'neutral',role,chapter});
+  const body=unit=>actorBodyId(actorKit(unit,{chapter:unit.chapter??2}));
+  assert.equal(body(person('clerk','The duty clerk')),'camp-clerk');assert.equal(body(person('quartermaster','Quartermaster Aper')),'camp-clerk');
+  assert.equal(body(person('capsarius','Capsarius Didius')),'camp-capsarius');assert.equal(body(person('orderly','Orderly Mamertus',1)),'camp-capsarius');
+  assert.equal(body(person('trader','Syra the sutler',1)),'camp-sutler');
+  assert.equal(body(person('sentry','The gate sentry')),'civilian-escort','A role without a body of its own keeps the civilian dress');
+  assert.equal(body({id:'escort-1',name:'Refugee family',side:'neutral',role:'escort'}),'civilian-escort');
+  assert.equal(body({id:'rider',name:'Roman horse',side:'ally',role:'cavalry',chapter:7}),'roman-cavalry');
+  const bundle=unit=>{const a=createActor(unit,{chapter:unit.chapter??2}),found=!!a.group.getObjectByName('travel-bundle');a.dispose();return found;};
+  assert.equal(bundle(person('clerk','The duty clerk')),false,'The camp\'s staff are at work, not on the road');
+  assert.equal(bundle({id:'escort-1',name:'Refugee family',side:'ally',role:'escort'}),true);
+});
+
+test('the chamber\'s members wear the senators\' togas, each bloc\'s trims drawn in its own shape on the band fitted across the toga', async () => {
+  // Every member nobody names wears a senator's toga, and a full chamber shows all three men.
+  const members=[];
+  for(let i=0;i<12;i++)members.push({id:`member${i}`,name:`${['Veterans','Landholders','Civic'][i%3]} delegate ${Math.floor(i/3)+1}`,side:'neutral',role:'voter',bloc:['Veterans','Landholders','Civic'][i%3]});
+  const worn=members.map(u=>{const kit=actorKit(u,{chapter:11});return actorBodyId(kit,actorIdentity(u,kit).key);});
+  assert.ok(worn.every(id=>SENATOR_BODIES.includes(id)));assert.equal(new Set(worn).size,3,'All three senators sit in a full chamber');
+  for(const id of SENATOR_BODIES){assert.equal(await library.warm(id),true);const band=library.body(id).band;assert.ok(band,`${id} carries its bloc band`);assert.equal(band.rows,7);assert.equal(band.columns,17);}
+  for(const bloc of ['Veterans','Landholders','Civic','Chamber','Army']){
+    const unit={id:'member1',name:'Landholders delegate 1',side:'neutral',role:'voter',bloc},a=createActor(unit,{chapter:11,bodyLibrary:library});
+    assert.equal(await a.ready,true);const g=a.group;assert.ok(SENATOR_BODIES.includes(g.userData.actor.body));
+    assert.equal(g.getObjectByName('draped-civic-robe'),undefined,'The senator wears his own toga, not the procedural one');
+    const trims=[];g.traverse(o=>{if(/^bloc-trim-/.test(o.name))trims.push(o);});
+    // One mesh for each of the trim's materials (its colour, and gilt) at each level.
+    const bands=trimBands(bloc),materials=bands.some(band=>band.gilt)?2:1,near=trims.filter(t=>!t.userData.overview),far=trims.filter(t=>t.userData.overview);
+    assert.equal(near.length,materials,`${bloc}: one near mesh for each material`);assert.equal(far.length,materials,`${bloc}: one overview mesh for each material`);
+    const strips=bands.reduce((sum,band)=>sum+(band.rows?band.rows[1]-band.rows[0]+1:7)*17,0);
+    assert.equal(near.reduce((sum,t)=>sum+t.geometry.attributes.position.count,0),strips,`${bloc}: every band of its trim`);
+    assert.deepEqual(near.map(t=>t.material.color.getHex()).sort(),[...new Set(bands.map(band=>new T.Color(band.gilt?0xc9a64a:BLOC_TRIM[bloc]).getHex()))].sort(),`${bloc} trim colours`);
+    const body=g.getObjectByName('generated-body');
+    for(const trim of trims){
+      assert.ok(trim.isSkinnedMesh&&trim.skeleton===body.skeleton,'The trims follow the senator\'s own skin');
+      if(trim.userData.overview)continue;
+      // On the toga's front, a few millimetres outside it.
+      const p=trim.geometry.attributes.position,b=body.geometry.attributes.position,at=new T.Vector3(),onBody=new T.Vector3();
+      for(let k=0;k<p.count;k+=5){at.fromBufferAttribute(p,k);let best=Infinity;for(let m=0;m<b.count;m++)best=Math.min(best,onBody.fromBufferAttribute(b,m).distanceToSquared(at));assert.ok(Math.sqrt(best)<.03,`${bloc} trim lies on the toga (${Math.sqrt(best).toFixed(3)} m)`);assert.ok(at.z>0,'On the front');}
+    }
+    // At a distance the overview's trims show the bloc, as the stance marker's letter does.
+    a.update({detailDistance:40});assert.ok(near.every(t=>!t.visible)&&far.every(t=>t.visible));a.update({detailDistance:8});assert.ok(near.every(t=>t.visible)&&far.every(t=>!t.visible));
+    a.dispose();
+  }
+  // A broken trim's lengths span only their rows of the band.
+  const band=library.body(SENATOR_BODIES[0]).band,short=blocTrimGeometry(band,{from:.1,to:.2,rows:[2,3]});
+  assert.equal(short.attributes.position.count,2*17);assert.equal(short.index.count,16*6);
+  const w=short.attributes.skinWeight;for(let k=0;k<w.count;k++)assert.ok(Math.abs(w.getX(k)+w.getY(k)+w.getZ(k)+w.getW(k)-1)<1e-5);
+});
+
 test('persistent identities keep a fitted helmet over the shared head; anonymous bodies retain their baked headwear', async () => {
   const hero=equipment=>({id:'hero',name:'Aurelius',side:'player',role:'infantry',trained:true,equipment});
   const pieces=g=>{const found={};g.traverse(o=>{if(o.isBone&&/-helmet$|arming-cap$/.test(o.name))found[o.name]=o;});return found;};
@@ -135,9 +196,12 @@ test('persistent identities keep a fitted helmet over the shared head; anonymous
   // The protagonist and named cast retain their fitted, equipped headwear at
   // every rank; anonymous bodies still bring their baked head and helmet.
   for(const [unit,id,joint]of [[hero(['tunic','hamata','galea','bracae','caligae','spatha','scutum']),'roman-legionary','ridge-helmet'],
-    [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'roman-archer','equipped-arming-cap']]){
+    // Felix wears his own body in every kit, the game's cap fitted over the shared head as on the recruit's.
+    [{id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},'cast-felix','equipped-arming-cap']]){
     const a=createActor(unit,{chapter:2,bodyLibrary:library});assert.equal(await a.ready,true);assert.equal(a.group.userData.actor.body,id);
-    const piece=pieces(a.group)[joint];assert.ok(piece&&drawn(a.group,piece)>50,`${id} keeps the equipped ${joint} over the persistent head`);assert.equal(a.group.userData.actor.headSource,'roman-recruit');a.dispose();
+    const piece=pieces(a.group)[joint];assert.ok(piece&&drawn(a.group,piece)>50,`${id} keeps the equipped ${joint} over the persistent head`);
+    // A named man's own body brings the shared head wrapped onto his own (wrap-cast-head.py).
+    assert.equal(a.group.userData.actor.headSource,id.startsWith('cast-')?id:'roman-recruit');a.dispose();
   }
 });
 
@@ -174,6 +238,22 @@ test('named generated heads have bounded distinct sculpting, normalized seam wei
     let disposed=0;head.geometry.addEventListener('dispose',()=>disposed++);head.material.addEventListener('dispose',()=>disposed++);a.dispose();assert.equal(disposed,2,'Identity resources are owned and released exactly once');
   }
   assert.notDeepEqual(signatures[0],signatures[1]);assert.notDeepEqual(signatures[1],signatures[2]);
+});
+
+test('a named man\'s own head compiles as the hero\'s, and every generated body part is drawn from its front',async()=>{
+  // The head wrap exports a named man's head two-sided: drawn so, it compiled a program and a shadow program of its own.
+  for(const id of Object.keys(ACTOR_BODIES)){assert.ok(await library.warm(id),id);const b=library.body(id);
+    for(const part of [b.near,b.overview,b.head?.near,b.head?.overview].filter(Boolean))assert.equal(part.material.side,T.FrontSide,`${id} is drawn from its front`);}
+  const hero=createActor({id:'hero',name:'Marcellus',side:'player',role:'infantry'},{chapter:3,bodyLibrary:library}),lucan=createActor({id:'lucan',name:'Lucan',side:'ally',role:'infantry'},{chapter:3,bodyLibrary:library});
+  await Promise.all([hero.ready,lucan.ready]);
+  const flags=m=>({side:m.side,shadowSide:m.shadowSide,key:m.customProgramCacheKey(),maps:['map','normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap','alphaMap'].filter(k=>m[k]),vertexColors:m.vertexColors,transparent:m.transparent,alphaTest:m.alphaTest});
+  for(const level of ['near','overview']){
+    const own=lucan.group.getObjectByName(`identity-head-${level}`),shared=hero.group.getObjectByName(`identity-head-${level}`);
+    assert.equal(own.userData.ownHead,true,'Lucan wears his own head');assert.equal(shared.userData.ownHead,false,'The hero wears the shared head');
+    assert.deepEqual(flags(own.material),flags(shared.material),`Lucan's ${level} head compiles as the hero's`);
+    assert.equal(!!own.geometry.morphAttributes.position,!!shared.geometry.morphAttributes.position);assert.equal(own.geometry.morphAttributes.position.length,shared.geometry.morphAttributes.position.length);
+  }
+  hero.dispose();lucan.dispose();
 });
 
 test('generated trainer and officer necklines stay beneath the neckcloth through head turns',async()=>{
@@ -230,19 +310,27 @@ test('followers march in the generated overview and fallen bodies keep its colou
   crowd.dispose();fallen.dispose();a.dispose();
 });
 
-test('generated follower bodies share the named-head shader with neutral isolated uniforms and unchanged geometry',async()=>{
+test('followers never wear their leader\'s face: body and head followers share one shader with neutral uniforms', async()=>{
   const actor=createActor(legionary,{chapter:5,bodyLibrary:library});await actor.ready;
-  const bodySource=actor.group.getObjectByName('generated-body-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
-  const body=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='crowd-neutral'),head=crowd.meshes.find(m=>m.material.userData.generatedIdentity==='naso');
-  assert.ok(body&&head);assert.equal(body.geometry.attributes.position,bodySource.geometry.attributes.position);assert.equal(body.material.map,bodySource.material.map);
-  assert.equal(body.material.normalMap,bodySource.material.normalMap);assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
+  const bodySource=actor.group.getObjectByName('generated-body-overview'),headSource=actor.group.getObjectByName('identity-head-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
+  assert.equal(headSource.material.userData.generatedIdentity,'quintus','The leader is Quintus');
+  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='quintus'),'No follower wears Quintus\'s face');
+  const body=crowd.meshes.find(m=>m.geometry.attributes.position===bodySource.geometry.attributes.position),neutralHead=followerHeadOf(headSource);
+  const head=crowd.meshes.find(m=>m.geometry.attributes.position===neutralHead?.attributes.position);
+  assert.ok(body&&head,'Followers wear the body and the donor\'s neutral head');assert.equal(neutralHead.userData.identity,'crowd-neutral');
+  const named=headSource.geometry.attributes.position,plain=neutralHead.attributes.position;let moved=0;for(let i=0;i<plain.count;i++)if(Math.abs(plain.getZ(i)-named.getZ(i))>1e-4)moved++;
+  assert.ok(moved>0,'Quintus\'s sculpted features stay on the leader');
+  for(const m of [body,head])assert.equal(m.material.userData.generatedIdentity,'crowd-neutral');
+  assert.equal(body.material.map,bodySource.material.map);assert.equal(head.material.map,headSource.material.map,'The head keeps the donor\'s painted maps');
+  assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
   assert.equal(body.material.customProgramCacheKey(),head.material.customProgramCacheKey(),'Equal PBR variants share one follower program');
   const compile=material=>{const shader={uniforms:{},vertexShader:T.ShaderLib.standard.vertexShader,fragmentShader:T.ShaderLib.standard.fragmentShader};material.onBeforeCompile(shader);return shader;};
-  const neutral=compile(body.material),named=compile(head.material);
-  assert.equal(neutral.vertexShader,named.vertexShader);assert.equal(neutral.fragmentShader,named.fragmentShader);
-  assert.equal(neutral.uniforms.identityGrey.value,0);assert.equal(neutral.uniforms.identityBeard.value,0);assert.ok(named.uniforms.identityBeard.value>0);
-  assert.deepEqual(neutral.uniforms.actorFinishTint.value.toArray(),[1,1,1]);assert.deepEqual(neutral.uniforms.actorFinishRoughness.value.toArray(),[1,0,1]);assert.equal(neutral.uniforms.actorFinishGrazing.value,0);
-  assert.notEqual(neutral.uniforms.identityBeard,named.uniforms.identityBeard,'A named face cannot age or darken the shared body uniforms');
+  const bodyShader=compile(body.material),headShader=compile(head.material);
+  assert.equal(bodyShader.vertexShader,headShader.vertexShader);assert.equal(bodyShader.fragmentShader,headShader.fragmentShader);
+  for(const shader of [bodyShader,headShader]){assert.equal(shader.uniforms.identityGrey.value,0);assert.equal(shader.uniforms.identityBeard.value,0);assert.equal(shader.uniforms.identityGroom.value.w,0,'No groom of anyone\'s');}
+  assert.equal(headShader.uniforms.identityVerticalOffset.value,neutralHead.userData.identityOffsetY);
+  assert.deepEqual(bodyShader.uniforms.actorFinishTint.value.toArray(),[1,1,1]);assert.deepEqual(bodyShader.uniforms.actorFinishRoughness.value.toArray(),[1,0,1]);assert.equal(bodyShader.uniforms.actorFinishGrazing.value,0);
+  assert.notEqual(bodyShader.uniforms.identityBeard,headShader.uniforms.identityBeard,'Each follower material has its own uniforms');
   crowd.dispose();actor.dispose();
 });
 

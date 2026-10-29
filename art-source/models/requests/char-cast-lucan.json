@@ -1,0 +1,199 @@
+{
+  "id": "char-cast-lucan",
+  "status": "bound, his head wrapped onto the shared head, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Aurelius Lucan, the soldier's comrade from the first patrol: his own face, hair and build, in the mail of a legionary; the game adds his helmet when his kit calls for one, his shield, sword and cloak.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body young late Roman soldier of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved red-brown wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "rejectedAttempts": [
+      {
+        "taskId": "1b2e4f0c-476f-41b8-b1f3-3042bed298fc",
+        "requestedAt": "2026-10-28T17:26:41.761Z",
+        "balanceBefore": 3520,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a neutral A-pose for rigging: arms straight and held about 40 degrees away from the body, legs straight and slightly apart, hands in loose fists, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved red-brown wool tunic, a leather belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-28T17:28:15.308Z",
+        "output": "pbr_model",
+        "rawBytes": 43713828,
+        "rawSha256": "907ef0d95120bf456a510e530ca778a7f03dfe35389d745b811e563576db911b",
+        "tripoInput": {
+          "prompt": "Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a neutral A-pose for rigging: arms straight and held about 40 degrees away from the body, legs straight and slightly apart, hands in loose fists, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved red-brown wool tunic, a leather belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "raw": "art-source/models/raw/char-cast-lucan-attempt1.glb",
+        "tripoRender": "art-source/models/raw/char-cast-lucan-attempt1-tripo-render.webp",
+        "rejected": "Segmented plate armour with shoulder plates and a studded belt apron instead of the ring mail asked for: the art direction rules out lorica segmentata for AD 250-275 (docs/art-generation.md). The bare head and face were as asked."
+      },
+      {
+        "taskId": "7b83a35b-4c59-4363-be03-ee164bf5738c",
+        "requestedAt": "2026-10-28T17:30:15.382Z",
+        "balanceBefore": 3500,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved shirt of fine iron ring mail (lorica hamata) reaching mid-thigh over a long-sleeved red-brown wool tunic, a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No plate armour, no segmented armour, no shoulder plates, no studded straps or apron, no helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-28T17:31:53.660Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/char-cast-lucan-attempt2.glb",
+        "rawBytes": 45907856,
+        "rawSha256": "3c2a3018eff2b31704d5a74a5dbf50ac62e6b9904663cd5279d7fd3bd05124ee",
+        "tripoInput": {
+          "prompt": "Full-body young Roman legionary of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved shirt of fine iron ring mail (lorica hamata) reaching mid-thigh over a long-sleeved red-brown wool tunic, a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No plate armour, no segmented armour, no shoulder plates, no studded straps or apron, no helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/char-cast-lucan-attempt2-tripo-render.webp",
+        "rig": {
+          "check": {
+            "riggable": true,
+            "rig_type": "biped",
+            "topology": "biped"
+          },
+          "taskId": "bac7f968-3b27-4d51-a280-092804b6c31b",
+          "requestedAt": "2026-10-28T17:33:27.362Z",
+          "balanceBefore": 3480,
+          "requestBody": {
+            "type": "animate_rig",
+            "original_model_task_id": "7b83a35b-4c59-4363-be03-ee164bf5738c",
+            "out_format": "glb"
+          },
+          "status": "success",
+          "generatedAt": "2026-10-28T17:34:24.030Z",
+          "output": "model",
+          "raw": "art-source/models/raw/char-cast-lucan-attempt2-rigged.glb",
+          "rawBytes": 61187580,
+          "rawSha256": "4b21107f52528c871d0a58806b473641b0ab8e6b110cd849ba4f2b969b4694eb",
+          "tripoInput": {
+            "model_version": "v1.0-20240301",
+            "original_model_id": "7b83a35b-4c59-4363-be03-ee164bf5738c",
+            "out_format": "glb",
+            "topology": "biped"
+          },
+          "creditsSpent": 25
+        },
+        "rejected": "Segmented plate again: a cuirass of iron hoops with laminated shoulder guards over the red tunic, despite the prompt asking for ring mail and ruling out plate, segments and shoulder plates. The art direction rules out lorica segmentata for AD 250-275 (docs/art-generation.md), and his portrait wears mail. It was rigged, bound and wrapped for the release 6 spending gate, then replaced before release. The face, hair and build were as asked."
+      }
+    ],
+    "taskId": "c42bdf1f-4341-4a24-91d7-124553a84da0",
+    "requestedAt": "2026-10-28T19:58:23.282Z",
+    "balanceBefore": 3390,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body young late Roman soldier of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved red-brown wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:00:01.044Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-lucan.glb",
+    "rawBytes": 45948404,
+    "rawSha256": "024d12f222631c4672753556b0828a7a0cdf6f3f59e2ac7a2a8cc1468cead32c",
+    "tripoInput": {
+      "prompt": "Full-body young late Roman soldier of the mid-3rd century AD, about twenty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved red-brown wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-lucan-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "761da6b9-87d8-459e-90b8-125aaacd94d5",
+      "requestedAt": "2026-10-28T20:00:24.267Z",
+      "balanceBefore": 3370,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "c42bdf1f-4341-4a24-91d7-124553a84da0",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T20:01:19.626Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-lucan-rigged.glb",
+      "rawBytes": 60875920,
+      "rawSha256": "edf5729a36cf405ad454c72c93640b32ead00ea7be93dca3a2d69045ae8295f9",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "c42bdf1f-4341-4a24-91d7-124553a84da0",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

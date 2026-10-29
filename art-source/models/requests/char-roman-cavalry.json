@@ -1,0 +1,94 @@
+{
+  "id": "char-roman-cavalry",
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    9,
+    12
+  ],
+  "use": "The Roman cavalryman: mounted Roman riders wear his mail and helmet; the game adds his shield, weapons and cloak and seats him on his horse.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman cavalryman of the mid-3rd century AD, about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved red-brown wool tunic; a broad leather belt with a bronze ring buckle, close-fitting dark wool trousers and closed leather riding boots, and a plain iron cavalry helmet with a deep bowl, large cheek guards covering the ears and a short neck guard. A short dark beard and a weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no face mask, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, shoulder plates, pauldrons, crest, plume, face mask, shield, weapon, cloak, horse, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "6f7475c7-3a1e-413c-b7e5-937f0a99dfae",
+    "requestedAt": "2026-10-28T20:57:11.344Z",
+    "balanceBefore": 3120,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman cavalryman of the mid-3rd century AD, about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved red-brown wool tunic; a broad leather belt with a bronze ring buckle, close-fitting dark wool trousers and closed leather riding boots, and a plain iron cavalry helmet with a deep bowl, large cheek guards covering the ears and a short neck guard. A short dark beard and a weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no face mask, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, shoulder plates, pauldrons, crest, plume, face mask, shield, weapon, cloak, horse, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:59:04.401Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-roman-cavalry.glb",
+    "rawBytes": 46573800,
+    "rawSha256": "b5e163a9002dda931392c0ec99893f6b9177dbf2922859909d08018aeeb28676",
+    "tripoInput": {
+      "prompt": "Full-body Roman cavalryman of the mid-3rd century AD, about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved red-brown wool tunic; a broad leather belt with a bronze ring buckle, close-fitting dark wool trousers and closed leather riding boots, and a plain iron cavalry helmet with a deep bowl, large cheek guards covering the ears and a short neck guard. A short dark beard and a weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no face mask, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, shoulder plates, pauldrons, crest, plume, face mask, shield, weapon, cloak, horse, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-roman-cavalry-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "d5dff328-7898-42ee-aa80-1cbf502a5a5a",
+      "requestedAt": "2026-10-28T21:00:23.774Z",
+      "balanceBefore": 2940,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "6f7475c7-3a1e-413c-b7e5-937f0a99dfae",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T21:01:46.257Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-roman-cavalry-rigged.glb",
+      "rawBytes": 61747464,
+      "rawSha256": "0c1be693b9dbbf3e5c12b13958f45a062c9cd03d8e334be6adf52204b8a14e4e",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "6f7475c7-3a1e-413c-b7e5-937f0a99dfae",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

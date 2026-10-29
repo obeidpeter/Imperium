@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {actorPose,ACTOR_TIMING,horsePose} from '../src/showcase/actor-pose.js';
-import {createMassedSoldierGeometry,crowdBreathing} from '../src/showcase/environment-finale.js';
+import {createMassedSoldierGeometry,crowdClip,crowdFrame,crowdJointTransform} from '../src/showcase/environment-finale.js';
+import {FINALE_CROWD_CLIPS} from '../src/showcase/finale-crowd-data.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
 
@@ -27,8 +28,29 @@ test('finale crowd uses generated legionary silhouettes with a bounded Performan
   const near=createMassedSoldierGeometry(),far=createMassedSoldierGeometry({detail:'distant'});
   assert.ok(near.index.count/3<=1000);assert.ok(far.index.count/3<=150);assert.ok(far.attributes.color.count>0);
   assert.equal(near.userData.crowdSource.path,'assets/models/characters/roman-legionary.glb');
-  for(const time of [0,.3,4,70])assert.deepEqual(crowdBreathing(time,2,.5),{x:0,z:0,y:0});
-  assert.notDeepEqual(crowdBreathing(1,0,1.5),crowdBreathing(1,3,1.5));near.dispose();far.dispose();
+  for(const g of [near,far]){const w=g.attributes.crowdWeight,j=g.attributes.crowdJoint;assert.equal(w.count,g.attributes.position.count);
+    for(let i=0;i<w.count;i++){assert.ok(Math.abs(w.getX(i)+w.getY(i)-1)<1e-3,'Weights sum to one');assert.ok(j.getX(i)>=0&&j.getX(i)<FINALE_CROWD_CLIPS.joints&&j.getY(i)>=0&&j.getY(i)<FINALE_CROWD_CLIPS.joints);}}
+  near.dispose();far.dispose();
+});
+test('finale crowd moves in the game\'s own baked clips: soles planted, heads turning, now and then a raised spear',()=>{
+  const rotate=([x,y,z,w],[vx,vy,vz])=>{const tx=2*(y*vz-z*vy),ty=2*(z*vx-x*vz),tz=2*(x*vy-y*vx);return [vx+w*tx+(y*tz-z*ty),vy+w*ty+(z*tx-x*tz),vz+w*tz+(x*ty-y*tx)];};
+  const apply=(clip,frame,joint,p)=>{const {quaternion,translation}=crowdJointTransform(clip,frame,joint),r=rotate(quaternion,p);return r.map((v,i)=>v+translation[i]);};
+  const joint=name=>FINALE_CROWD_CLIPS.jointNames.indexOf(name),ANKLE=joint('right-ankle'),HEAD=joint('head'),HAND=joint('right-hand'),SPEAR=joint('spear');
+  const heel=[-.104,.03,-.04],nose=[0,1.62,.09],grip=FINALE_CROWD_CLIPS.grip,butt=[grip[0],.04,grip[2]];
+  let turn=0,lift=0;const planted=apply('stand',0,ANKLE,heel);assert.ok(planted[1]>-.03&&planted[1]<.08,'the heel stands on the ground');
+  for(let f=0;f<24;f++){
+    for(const clip of ['stand','cheer']){const p=apply(clip,f,ANKLE,heel);assert.ok(Math.hypot(p[0]-planted[0],p[1]-planted[1],p[2]-planted[2])<.002,`${clip} ${f}: the sole stays planted`);
+      // The spear never tilts, and its shaft runs through the hand's grip.
+      const {quaternion}=crowdJointTransform(clip,f,SPEAR),hand=apply(clip,f,HAND,grip),foot=apply(clip,f,SPEAR,butt);assert.deepEqual(quaternion,[0,0,0,1],`${clip} ${f}: the spear stands upright`);
+      assert.ok(Math.hypot(hand[0]-foot[0],hand[2]-foot[2])<.005&&hand[1]>foot[1],`${clip} ${f}: the hand holds the shaft`);
+      if(clip==='stand')assert.ok(Math.abs(foot[1]-butt[1])<.01,`stand ${f}: the spear's butt stays on the ground`);else lift=Math.max(lift,foot[1]-butt[1]);}
+    turn=Math.max(turn,Math.abs(apply('stand',f,HEAD,nose)[0]-nose[0]));
+  }
+  assert.ok(turn>.01,`the head turns (${turn.toFixed(3)} m)`);assert.ok(lift>.6,`the cheer raises the spear (${lift.toFixed(2)} m)`);
+  const places=Array.from({length:600},(_,i)=>crowdClip(i*.92,(i%7)*1.05)),cheer=places.filter(p=>p.clip==='cheer').length/places.length;
+  assert.ok(cheer>.1&&cheer<.25,`about one in six cheers (${cheer.toFixed(2)})`);
+  assert.deepEqual(crowdFrame(3.3,4,5),crowdFrame(3.3,4,5),'deterministic');assert.notDeepEqual(crowdFrame(3.3,4,5),crowdFrame(3.3,9,5),'each man at his own moment');
+  for(const t of [0,1.7,4.79,700]){const f=crowdFrame(t,2,3);assert.ok(f.from>=0&&f.from<24&&f.to===(f.from+1)%24&&f.blend>=0&&f.blend<1);}
 });
 test('oath and accession have separate parade and Roman court settings with preserved personal appearance',()=>{
   const appearance={hair:1,beard:2,tunic:2,cloak:3},before=JSON.stringify(appearance),oath=ceremonyScene('oath',{appearance}),accession=ceremonyScene('accession',{appearance});

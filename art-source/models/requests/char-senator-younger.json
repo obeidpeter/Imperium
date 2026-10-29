@@ -1,0 +1,96 @@
+{
+  "id": "char-senator-younger",
+  "status": "bound with its bloc band, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    8,
+    10,
+    11,
+    12
+  ],
+  "use": "A senator of the chamber, a younger member: the game draws his bloc's colour and trim along the band of his toga.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "98b5e5d7-9598-44d1-b884-6f7bc49d6987",
+    "requestedAt": "2026-10-28T20:57:11.272Z",
+    "balanceBefore": 3120,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:58:53.685Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-senator-younger.glb",
+    "rawBytes": 42868824,
+    "rawSha256": "21daf6e0af4f041a02985e8afca1a249535660af6eea29b1d219e4cc7911dccb",
+    "tripoInput": {
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved white tunic that shows on both arms; reddish-brown closed shoes. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "purple stripe, coloured border, red stripe, armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-senator-younger-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "d3146006-8a1b-4bff-b763-e8b380ba5e1a",
+      "requestedAt": "2026-10-28T21:00:23.713Z",
+      "balanceBefore": 2940,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "98b5e5d7-9598-44d1-b884-6f7bc49d6987",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T21:02:02.380Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-senator-younger-rigged.glb",
+      "rawBytes": 57402320,
+      "rawSha256": "c17da0c9fe21282edb4441d391798ff43f19782e78fd10512a4d5d363e6f2fc5",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "98b5e5d7-9598-44d1-b884-6f7bc49d6987",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

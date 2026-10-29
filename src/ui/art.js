@@ -2,7 +2,7 @@ import {createAssetLoader,constrainedConnection,prefetchFiles} from './asset-loa
 import {paintedJourneyMap} from './campaign-map.js';
 import {PRESENTATION_BUDGET} from './presentation-budget.js';
 import {animationAssets} from './sprite-frames.js';
-import {chapterBodies,actorBodyUrl} from './actor-body-catalog.js';
+import {chapterBodies,actorBodyUrl,chapterHorses,horseBodyUrl} from './actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from './world-catalog.js';
 // Presentation assets never infer or award campaign milestones.
 const artLoader=createAssetLoader({maxEntries:PRESENTATION_BUDGET.decodedEntries,maxBytes:PRESENTATION_BUDGET.decodedBytes});
@@ -85,10 +85,11 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // Cold chapter restores need only active artwork and anatomy. Aelia's model
   // is deferred until Chapter VIII; the complete inventory retains it always.
   // A world asset belongs to the chapters the world catalog names, and a
-  // generated character body to the chapters whose figures wear it.
-  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id));
+  // generated character body to the chapters whose figures wear it, a generated horse to those
+  // whose riders ride it.
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id)),horses=chapterHorses(n).map(id=>'./'+horseBodyUrl(id));
   const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n).map(file=>'./'+file));
-  const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
+  const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(path.startsWith('./assets/models/horses/')&&!horses.includes(path))&&!(n<8&&['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'].includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter).filter(path=>!isFlatArt(path)),...shared3D,...chapterAudioAssets(chapter)])];
 }
 export const chapterFlatAssets=chapter=>chapterAssets(chapter).filter(isFlatArt);

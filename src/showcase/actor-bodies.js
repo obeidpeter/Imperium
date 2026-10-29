@@ -2,7 +2,8 @@ import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
 import {installCloudShadows} from './atmosphere.js';
 import {actorBodyUrl} from '../ui/actor-body-catalog.js';
-import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck} from './generated-identity.js';
+import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead,IDENTITY_HEAD_BODY} from './generated-identity.js';
+import {castAgeing} from './actor-identity.js';
 
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
@@ -32,7 +33,9 @@ export function createActorBodyLibrary(load=loadBody){
       const bones=mesh.skeleton.bones.map(b=>b.name);
       if(!mesh.geometry.attributes.skinWeight||bones.some(name=>!BODY_JOINTS.includes(name)))throw Error(`Body ${id} is not skinned to the game's joints`);
       // The overview's baked colours serve untextured views (fallen bodies); the texture draws the figure.
-      const material=mesh.material.clone();material.vertexColors=false;material.name=`generated body ${id}`;installCloudShadows(material);
+      // Every part is drawn from its front, as the bodies are: the head wrap exports a named man's
+      // head two-sided, which would compile a program, and a shadow program, of its own.
+      const material=mesh.material.clone();material.vertexColors=false;material.side=T.FrontSide;material.name=`generated body ${id}`;installCloudShadows(material);
       material.userData.generatedActorBody=true;
       return Object.freeze({geometry:mesh.geometry,material,bones:Object.freeze(bones)});
     };
@@ -40,7 +43,14 @@ export function createActorBodyLibrary(load=loadBody){
     if(!meshes.body||!meshes['body-overview'])throw Error(`Body ${id} needs skinned body and body-overview meshes`);
     const near=part(meshes.body),overview=part(meshes['body-overview']);
     if(overview.bones.join()!==near.bones.join())throw Error(`Body ${id} levels disagree on joints`);
-    return Object.freeze({id,near,overview});
+    // A named man's own body brings his head: the shared head wrapped onto his (wrap-cast-head.py).
+    const own=meshes['cast-head'],ownOverview=meshes['cast-head-overview'];
+    if(!!own!==!!ownOverview)throw Error(`Body ${id} needs both head levels or neither`);
+    const head=own?Object.freeze({near:part(own),overview:part(ownOverview)}):null;
+    if(head&&[head.near,head.overview].some(level=>level.bones.join()!==near.bones.join()))throw Error(`Body ${id} head disagrees on joints`);
+    // A senator's toga carries the band its bloc's trims are drawn on (bind-character.py --bloc-band).
+    const band=meshes['bloc-band']?blocBand(meshes['bloc-band'],near.bones):null;
+    return Object.freeze({id,near,overview,head,band});
   }
   return {
     warm(id){
@@ -57,6 +67,46 @@ export const warmActorBody=id=>library.warm(id);
 export const actorBody=id=>library.body(id);
 export const actorBodyStatus=id=>library.status(id);
 
+/** A body's bloc band as a grid of its vertices, rows along it and columns across, read back
+ * from its texture coordinates (u across, v along), which bind-character.py sets. */
+function blocBand(mesh,bones){
+  const names=mesh.skeleton.bones.map(b=>b.name);
+  if(names.join()!==bones.join()||!mesh.geometry.attributes.skinWeight)throw Error('The bloc band disagrees with its body on joints');
+  const {uv}=mesh.geometry.attributes,steps=get=>[...new Set(Array.from({length:uv.count},(_,k)=>Math.round(get(k)*1000)))].length;
+  const columns=steps(k=>uv.getX(k)),rows=steps(k=>uv.getY(k)),grid=new Int32Array(rows*columns).fill(-1);
+  for(let k=0;k<uv.count;k++){const i=Math.round(uv.getX(k)*(columns-1)),j=Math.round(uv.getY(k)*(rows-1));if(grid[j*columns+i]<0)grid[j*columns+i]=k;}
+  if(rows<2||columns<2||grid.includes(-1))throw Error('The bloc band is not a whole grid');
+  return Object.freeze({geometry:mesh.geometry,rows,columns,grid});
+}
+// The code-built toga's trims lie this far outside its drape (actors.js); on a senator's band,
+// which bind-character.py lifts off the toga itself, a trim lies on the band and a gilt line
+// the difference above it.
+const DRAPE_TRIM_OFFSET=.009;
+/** A bloc's trims (bloc-style.js trimBands) as skinned strips on a body's band, in one
+ * geometry: each across the band from `from` to `to`, along the rows given (all of them by
+ * default). `lift` raises them all off the band, as the overview's coarser toga needs. */
+export function blocTrimGeometry(band,specs,{lift:extra=0}={}){
+  const {position,normal,skinIndex,skinWeight}=band.geometry.attributes,{columns,grid}=band,n=16;
+  const p=[],uv=[],joints=[],weights=[],indices=[],a=new T.Vector3(),b=new T.Vector3(),na=new T.Vector3(),nb=new T.Vector3();
+  for(const {from=0,to=1,rows=null,offset=DRAPE_TRIM_OFFSET} of [specs].flat()){
+    const [first,last]=rows??[0,band.rows-1],lift=offset-DRAPE_TRIM_OFFSET+extra,base=p.length/3;
+    for(let j=first;j<=last;j++)for(let s=0;s<=n;s++){
+      const u=from+(to-from)*s/n,q=Math.min(columns-1,Math.max(0,u*(columns-1))),i=Math.min(columns-2,Math.floor(q)),t=q-i,ka=grid[j*columns+i],kb=grid[j*columns+i+1];
+      a.fromBufferAttribute(position,ka).lerp(b.fromBufferAttribute(position,kb),t);
+      na.fromBufferAttribute(normal,ka).lerp(nb.fromBufferAttribute(normal,kb),t).normalize();
+      p.push(a.x+na.x*lift,a.y+na.y*lift,a.z+na.z*lift);uv.push(s/n,(j-first)/Math.max(1,last-first));
+      // The skin of the band's two vertices either side, blended, its four strongest joints kept.
+      const mix=new Map();for(const [k,share]of [[ka,1-t],[kb,t]])for(let c=0;c<4;c++){const w=skinWeight.getComponent(k,c)*share;if(w>0)mix.set(skinIndex.getComponent(k,c),(mix.get(skinIndex.getComponent(k,c))??0)+w);}
+      const top=[...mix].sort((x,y)=>y[1]-x[1]).slice(0,4),total=top.reduce((sum,[,w])=>sum+w,0)||1;
+      for(let c=0;c<4;c++){joints.push(top[c]?.[0]??0);weights.push(top[c]?top[c][1]/total:0);}
+      if(j>first&&s){const k=base+(j-first)*(n+1)+s;indices.push(k-n-2,k-1,k,k-n-2,k,k-n-1);}
+    }
+  }
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
+  g.setAttribute('skinIndex',new T.Uint16BufferAttribute(joints,4));g.setAttribute('skinWeight',new T.Float32BufferAttribute(weights,4));g.setIndex(indices);g.computeVertexNormals();
+  return g;
+}
+
 function bodyBone(bones,name){
   if(!/^(right|left)-(elbow|hand|knee|ankle)$/.test(name))return bones.find(b=>b.name===name);
   const [side,joint]=name.split('-'),chain=joint==='elbow'?['elbow']:joint==='hand'?['elbow','hand']:joint==='knee'?['knee']:['knee','ankle'];
@@ -67,8 +117,16 @@ function bodyBone(bones,name){
 
 /** Skin a figure's body to its own bones, in the rig's bind pose. The figure owns
  * the skinned meshes and their skeleton; geometry and materials stay the master's. */
-const headlessBodies=new WeakMap();
-export function mountActorBody(group,body,{skeletons,identity=null,headBody=null,geometries=null,materials=null}){
+const headlessBodies=new WeakMap(),neutralHeads=new WeakMap();
+// The donor's overview head with no one's features, shared by every named leader's followers.
+function neutralHead(part,offsetY){
+  if(!neutralHeads.has(part))neutralHeads.set(part,new Map());const cache=neutralHeads.get(part);
+  if(!cache.has(offsetY)){const geometry=sculptGeneratedHead(clipBodyAtNeck(part.geometry,{above:true}),FOLLOWER_IDENTITY);geometry.translate(0,offsetY,0);geometry.userData.identityOffsetY=offsetY;cache.set(offsetY,geometry);}
+  return cache.get(offsetY);
+}
+/** headBody: what the head comes from, a named man's own body (its head) or the donor; donor:
+ * the donor body, whose plain head a named leader's followers wear. */
+export function mountActorBody(group,body,{skeletons,identity=null,headBody=null,donor=headBody,geometries=null,materials=null,trims=[]}){
   const identityOffsetY=body?0:-.10;
   const all=[];group.traverse(o=>{if(o.isBone)all.push(o);});
   group.updateMatrixWorld(true);
@@ -83,11 +141,17 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
   };
   let worn=body;
   if(body&&headBody&&identity){
-    if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==headBody.id)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));
+    // Every generated neck but the donor's own is seated under the shared head's.
+    if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==IDENTITY_HEAD_BODY)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));
     worn=headlessBodies.get(body);
   }
   const result={near:worn?skin(worn.near,'generated-body',false):null,overview:worn?skin(worn.overview,'generated-body-overview',true):null,heads:[]};
-  const headMaterial=headBody&&identity?generatedIdentityMaterial(headBody.near.material,identity,{offsetY:identityOffsetY}):null;if(headMaterial)materials?.add(headMaterial);
+  // A senator's bloc trims, on his body's band (blocTrimGeometry): one mesh for each of their
+  // materials at each level, the overview's lifted clear of its coarser toga.
+  result.trims=trims.map(({geometry,material,overview},i)=>skin({geometry,material},`bloc-trim-${i}`,!!overview));
+  // A named man's own head (cast) is already his shape and paint: it takes the morphs and his ageing only.
+  const cast=!!headBody?.head,heads=cast?headBody.head:headBody;
+  const headMaterial=headBody&&identity?generatedIdentityMaterial(heads.near.material,identity,{offsetY:identityOffsetY,follower:(donor??headBody).near.material,ageing:cast?castAgeing(identity):null}):null;if(headMaterial)materials?.add(headMaterial);
   // Civic garments retain their own torso but need the donor's full neck: its
   // seam and head/torso weights must match the head while the speaker turns.
   if(!body&&headBody&&identity)for(const level of ['near','overview']){
@@ -98,8 +162,9 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     result[level==='near'?'near':'overview']=neck;
   }
   if(headBody&&identity)for(const level of ['near','overview']){
-    const geometry=sculptGeneratedHead(clipBodyAtNeck(headBody[level].geometry,{above:true}),identity);geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
-    const head=skin({...headBody[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;result.heads.push(head);
+    const geometry=sculptGeneratedHead(clipBodyAtNeck(heads[level].geometry,{above:true}),identity,{shape:!cast});geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
+    const head=skin({...heads[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;head.userData.ownHead=cast;result.heads.push(head);
+    if(level==='overview'&&(donor??headBody))setFollowerHead(head,neutralHead((donor??headBody).overview,identityOffsetY));
   }
   return result;
 }

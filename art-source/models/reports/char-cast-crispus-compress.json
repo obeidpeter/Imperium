@@ -1,0 +1,109 @@
+{
+  "input": "assets/models/characters/cast-crispus.glb",
+  "output": "assets/models/characters/cast-crispus.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 672376,
+    "gzipBytes": 491078,
+    "sha256": "188048739fc9704bd1d7275c5e6c8d6be483f01fa0dce9215814f8f6c00ed3dc"
+  },
+  "after": {
+    "bytes": 662200,
+    "gzipBytes": 632408,
+    "sha256": "c29f989421dec3a4bae70a7977d1999b2c3508bd4d4f87539e35470410f7ce62"
+  },
+  "geometryUnchanged": true,
+  "triangles": 15006,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9110
+      },
+      "bytes": 17686,
+      "psnr": 39.164
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 55418
+      },
+      "bytes": 123803,
+      "psnr": 35.574
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27398
+      },
+      "bytes": 41602,
+      "psnr": 33.497
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 24564
+      },
+      "bytes": 55210,
+      "psnr": 34.217
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 68928
+      },
+      "bytes": 120087,
+      "psnr": 35.893
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25232
+      },
+      "bytes": 36984,
+      "psnr": 36.29
+    }
+  ]
+}

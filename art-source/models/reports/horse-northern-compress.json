@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/horses/horse-northern.glb",
+  "output": "assets/models/horses/horse-northern.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 489392,
+    "gzipBytes": 319618,
+    "sha256": "d33152268335b419ee8940ad59df05dcf8f57f3d798e8be9cffbd82bd953acc3"
+  },
+  "after": {
+    "bytes": 421324,
+    "gzipBytes": 401686,
+    "sha256": "dbb37fb8d6109946c382530b00d43695e6042e0c4cfa0c618c498cead860a0b2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 10800,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25516
+      },
+      "bytes": 46610,
+      "psnr": 32.649
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 70272
+      },
+      "bytes": 138506,
+      "psnr": 36.912
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20246
+      },
+      "bytes": 33686,
+      "psnr": 36.914
+    }
+  ]
+}

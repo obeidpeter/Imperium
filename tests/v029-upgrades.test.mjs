@@ -583,13 +583,17 @@ test('v0.29.0: the finale stands before the rising Aurelian Walls with massed le
   const {readFile} = await import('node:fs/promises');
   const {createEnvironment} = await import('../src/showcase/environment.js');
   const {finaleLayout, createMassedSoldierGeometry} = await import('../src/showcase/environment-finale.js');
+  const {FINALE_CROWD_CLIPS} = await import('../src/showcase/finale-crowd-data.js');
   const fixture = JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json', import.meta.url), 'utf8'));
   const s = fixture.scenes.find(s => s.id === 'ch12-confrontation'), e = s.state.encounter, before = JSON.stringify(s.state);
   const layout = finaleLayout(e), hx = e.width * 2.5 / 2, hz = e.height * 2.5 / 2;
   assert.ok(layout.wallX > hx + 6, 'The curtain stands beyond the gate, east of the board');
   for (const b of layout.blocks) assert.ok(Math.abs(b.x) > hx + 1, `${b.side} legions stand off the board`);
   assert.deepEqual([...new Set(layout.blocks.map(b => b.side))].sort(), ['claimant', 'commander']);
-  const g = createMassedSoldierGeometry();g.computeBoundingBox();assert.ok(g.boundingBox.max.y > 1.7 && g.boundingBox.max.y < 1.9, 'A man at distance is about 1.8 m');g.dispose();
+  // The man himself, without the spear on its own joint, is about 1.8 m.
+  const g = createMassedSoldierGeometry(), y = g.attributes.position, joint = g.attributes.crowdJoint, spearJoint = FINALE_CROWD_CLIPS.jointNames.indexOf('spear');let top = 0, spear = 0;
+  for (let i = 0; i < y.count; i++) if (joint.getX(i) === spearJoint) spear = Math.max(spear, y.getY(i)); else top = Math.max(top, y.getY(i));
+  assert.ok(top > 1.7 && top < 1.9, 'A man at distance is about 1.8 m');assert.ok(spear > 2.2 && spear < 2.6, 'His spear stands above him');g.dispose();
   const world = createEnvironment(new THREE.Scene(), e, {chapter: 12, quality: 'balanced', loadTextures: false});
   assert.ok(world.group.userData.environmentLandmarks.includes('the rising Aurelian Walls'));
   const figures = world.group.getObjectByName('massed legion figures'),front=world.group.getObjectByName('massed legion front ranks');assert.ok(figures?.isInstancedMesh && figures.count+(front?.count??0) >= 200);

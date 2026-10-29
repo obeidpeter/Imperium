@@ -1,9 +1,12 @@
 import * as T from '../../vendor/three/three.module.js';
 import {horsePose} from './actor-pose.js';
+import {CODE_HORSE_FRAME} from './horse-frame.js';
 
 // A real quadruped mesh, with independent leg joints and a separate saddle.
 // Uses the actor's resource registry and static-joint batching/disposal.
-export function createHorse(root,kit,b){
+// frame (horse-frame.js): where its joints stand at rest. A generated horse's coat
+// (horse-bodies.js) replaces these surfaces on its own frame; the saddle stays.
+export function createHorse(root,kit,b,{frame=CODE_HORSE_FRAME}={}){
   const {part,mesh,profile,ellipsoid,strip,material,surface,leather,metal,hair,cloth}=b;
   const coat=material([0x6b4937,0x8b694b,0x5e5349][kit.identity%3],{...surface('horse'),vertexColors:true}),hoof=material(0x322e29),mark=material(0xbdb39c),horse=part(root,'horse'),body=part(horse,'horse-body',0,1.04,0);
   const trunk=mesh(body,profile([[-.86,.075,.17],[-.72,.28,.29],[-.53,.350,.345],[-.26,.356,.373],[.05,.35,.385],[.31,.335,.37],[.53,.29,.325],[.68,.16,.20]],{segments:24,anatomy:'horse-barrel'}),coat);trunk.rotation.x=Math.PI/2;
@@ -39,7 +42,7 @@ export function createHorse(root,kit,b){
   strip(head,leather,[[-.103,-.20,.21],[0,-.19,.293],[.103,-.20,.21]],.012);
   if(kit.identity%3!==1)strip(head,mark,[[0,.17,.047],[0,.04,.177],[0,kit.identity%3===0?-.13:-.02,.23]],kit.identity%3===0?.014:.006);
   for(let i=0;i<12;i++)strip(neck,hair,[[0,.73-i*.053,.75-i*.029],[-.023,.66-i*.053,.69-i*.029],[-.033,.58-i*.053,.65-i*.029]],.013);
-  const tail=part(body,'horse-tail',0,.04,-.78);strip(tail,hair,[[0,0,0],[.03,-.27,-.18],[.01,-.67,-.24]],.055);
+  const tail=part(body,'horse-tail',...frame.tail);strip(tail,hair,[[0,0,0],[.03,-.27,-.18],[.01,-.67,-.24]],.055);
   for(let strand=0;strand<3;strand++){const x=(strand-1)*.024;strip(tail,hair,[[x,-.12,-.10],[x+.035,-.44,-.23],[x-.015,-.76+Math.abs(x)*1.3,-.30]],.011);}
   const saddle=part(body,'saddle');
   const blanket=mesh(saddle,profile([[-.30,.25,.39],[-.24,.36,.40],[.16,.37,.38],[.29,.22,.25]],{segments:20}),cloth,0,.34,-.1);blanket.rotation.x=Math.PI/2;
@@ -50,23 +53,26 @@ export function createHorse(root,kit,b){
   for(const side of [-1,1])strip(body,leather,[[side*.1,.53,.85],[side*.28,.44,.44],[side*.24,.55,.0]],.009);
   const legs=[];
   for(let i=0;i<4;i++){
-    const front=i<2,side=i%2?-1:1,pivot=part(horse,`${front?'fore':'hind'}-${side<0?'left':'right'}-leg`,side*.235,1.04,front?.54:-.54);
+    const front=i<2,side=i%2?-1:1,joints=frame.legs[i],pivot=part(horse,`${front?'fore':'hind'}-${side<0?'left':'right'}-leg`,...joints.pivot);
     mesh(pivot,profile([[.04,front?.12:.15,.15],[-.10,front?.105:.13,.135],[-.25,.074,.097],[-.40,.051,.066],[-.55,.043,.052]],{segments:16}),coat);
-    const knee=part(pivot,'horse-knee',0,-.53,0);mesh(knee,profile([[.035,.050,.059],[-.07,.052,.059],[-.26,.035,.043],[-.41,.033,.039],[-.53,.043,.045]],{segments:14}),coat);
-    const ankle=part(knee,'horse-fetlock',0,-.53,0);mesh(ankle,profile([[.03,.043,.058],[-.018,.054,.071,.015],[-.075,.071,.096,.025]],{segments:14}),hoof);
+    const knee=part(pivot,'horse-knee',...joints.knee);mesh(knee,profile([[.035,.050,.059],[-.07,.052,.059],[-.26,.035,.043],[-.41,.033,.039],[-.53,.043,.045]],{segments:14}),coat);
+    const ankle=part(knee,'horse-fetlock',...joints.fetlock);mesh(ankle,profile([[.03,.043,.058],[-.018,.054,.071,.015],[-.075,.071,.096,.025]],{segments:14}),hoof);
     legs.push({pivot,knee,ankle});
   }
   let lastPose=horsePose();
   const ankleRotation=new T.Quaternion(),surfaceRotation=new T.Quaternion(),surfaceEuler=new T.Euler(0,0,0,'ZXY');
-  function update(input,suppliedPose){const p=suppliedPose??horsePose(input);lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;body.rotation.z=p.bodyRoll;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
+  function update(input,suppliedPose){const p=suppliedPose??horsePose({...input,frame});lastPose=p;horse.rotation.z=p.fall*-.84;horse.position.y=-.44*p.fall;body.position.y=p.bodyY;body.rotation.x=p.bodyPitch;body.rotation.z=p.bodyRoll;neck.rotation.x=p.neckPitch;tail.rotation.z=p.tail;
     const seconds=Number.isFinite(input.time)?input.time:0;
     for(let i=0;i<ears.length;i++){
       ears[i].rotation.x=input.reducedMotion?0:.07*Math.sin(seconds*.9+i*2+kit.identity%7);
       ears[i].rotation.y=input.reducedMotion?0:(i?1:-1)*.10*Math.sin(seconds*.57+i*1.4+kit.identity%5);
     }
-    for(let i=0;i<4;i++){legs[i].pivot.position.y=p.bodyY;legs[i].pivot.rotation.set(p.legs[i].upper,0,p.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=p.legs[i].knee;
+    for(let i=0;i<4;i++){legs[i].pivot.position.y=p.legs[i].y??p.bodyY;legs[i].pivot.rotation.set(p.legs[i].upper,0,p.legs[i].splay??0,'ZXY');legs[i].knee.rotation.x=p.legs[i].knee;
       ankleRotation.copy(legs[i].pivot.quaternion).multiply(legs[i].knee.quaternion).invert();surfaceRotation.setFromEuler(surfaceEuler.set(p.feet[i].roll+(p.feet[i].pitch??0),0,p.feet[i].bank??0,'ZXY'));legs[i].ankle.quaternion.copy(ankleRotation.multiply(surfaceRotation));}
     return p;
   }
-  update({});return {group:horse,update,feet:legs.map(l=>l.ankle),get pose(){return lastPose;}};
+  // Every joint at rest, as a generated coat is bound to it (horse-bodies.js).
+  const restPose=[];horse.traverse(o=>{if(o.isBone)restPose.push([o,o.position.clone(),o.quaternion.clone()]);});
+  function rest(){for(const [bone,position,quaternion]of restPose){bone.position.copy(position);bone.quaternion.copy(quaternion);}horse.position.set(0,0,0);horse.quaternion.identity();}
+  update({});return {group:horse,update,rest,frame,feet:legs.map(l=>l.ankle),get pose(){return lastPose;}};
 }

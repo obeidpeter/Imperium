@@ -1,0 +1,102 @@
+{
+  "id": "char-cast-sabinus",
+  "status": "bound, his head wrapped onto the shared head, quantized and compressed: shipped",
+  "chapters": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Gaius Sabinus, the file-leader of the Danube camps, who stands in Lucan's place when Lucan leaves: his own face, hair and build, in the mail of a legionary; the game adds his helmet when his kit calls for one, his shield, sword and cloak.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body late Roman soldier of the mid-3rd century AD, a sturdy broad-shouldered man about thirty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved dark olive-green wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with dark, tightly curled cropped hair, a thick short curly black beard, a broad sturdy face with a strong jaw, a warm olive complexion and an alert, dependable expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "4e5eea65-2f80-4f9a-884f-8e5badb7dad8",
+    "requestedAt": "2026-10-28T20:35:12.563Z",
+    "balanceBefore": 3345,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body late Roman soldier of the mid-3rd century AD, a sturdy broad-shouldered man about thirty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved dark olive-green wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with dark, tightly curled cropped hair, a thick short curly black beard, a broad sturdy face with a strong jaw, a warm olive complexion and an alert, dependable expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:37:11.022Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-sabinus.glb",
+    "rawBytes": 47302136,
+    "rawSha256": "fd2ff71e999f32b2fa5eb8de902c41d1632fd0fa7edc189494c9c977ef140edb",
+    "tripoInput": {
+      "prompt": "Full-body late Roman soldier of the mid-3rd century AD, a sturdy broad-shouldered man about thirty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, grey and slightly rusty, over a long-sleeved dark olive-green wool tunic; a plain broad leather belt with a bronze ring buckle, dark wool trousers and closed leather boots. Bare head with dark, tightly curled cropped hair, a thick short curly black beard, a broad sturdy face with a strong jaw, a warm olive complexion and an alert, dependable expression. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, helmet, shield, weapon, cloak, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-sabinus-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "3f05e132-4705-4b24-91ee-38b388dc7ca7",
+      "requestedAt": "2026-10-28T20:38:06.145Z",
+      "balanceBefore": 3245,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "4e5eea65-2f80-4f9a-884f-8e5badb7dad8",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T20:40:15.786Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-sabinus-rigged.glb",
+      "rawBytes": 62654888,
+      "rawSha256": "971fd2a1a88c46e2cc0a8bff1dcfc4f56894c508b9df89d8b4d77886e3d5eb6c",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "4e5eea65-2f80-4f9a-884f-8e5badb7dad8",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

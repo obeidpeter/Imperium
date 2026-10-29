@@ -1,0 +1,103 @@
+{
+  "id": "char-camp-capsarius",
+  "status": "bound, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Capsarius Didius, the camp's medical orderly: his own face, hair and build in a tunic, with the case of bandages his title names.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman army medical orderly (capsarius) of the mid-3rd century AD, a solid man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed light brown wool tunic to the knee, a broad leather belt with a bronze ring buckle, a small cylindrical leather case for bandages on a strap at his left hip, dark wool trousers and closed leather boots. Bare head with short dark hair, a short dark beard, a calm practical face with kind eyes and a tanned complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no blood, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "chainmail, plate armour, lorica segmentata, breastplate, cuirass, helmet, shield, weapon, cloak, toga, blood, apron, backpack, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "4ba61fec-b221-460e-93c0-4072c5490722",
+    "requestedAt": "2026-10-28T20:57:11.228Z",
+    "balanceBefore": 3120,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman army medical orderly (capsarius) of the mid-3rd century AD, a solid man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed light brown wool tunic to the knee, a broad leather belt with a bronze ring buckle, a small cylindrical leather case for bandages on a strap at his left hip, dark wool trousers and closed leather boots. Bare head with short dark hair, a short dark beard, a calm practical face with kind eyes and a tanned complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no blood, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "chainmail, plate armour, lorica segmentata, breastplate, cuirass, helmet, shield, weapon, cloak, toga, blood, apron, backpack, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T20:58:49.428Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-camp-capsarius.glb",
+    "rawBytes": 44601328,
+    "rawSha256": "d7ad0cac16a2424485937bc5521f2a500a18b3300553a5ac8c489b804c3b9bd6",
+    "tripoInput": {
+      "prompt": "Full-body Roman army medical orderly (capsarius) of the mid-3rd century AD, a solid man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed light brown wool tunic to the knee, a broad leather belt with a bronze ring buckle, a small cylindrical leather case for bandages on a strap at his left hip, dark wool trousers and closed leather boots. Bare head with short dark hair, a short dark beard, a calm practical face with kind eyes and a tanned complexion. Realistic proportions, historically accurate, worn and practical, earthy colours. No armour, no helmet, no shield, no weapons, no cloak, no blood, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "chainmail, plate armour, lorica segmentata, breastplate, cuirass, helmet, shield, weapon, cloak, toga, blood, apron, backpack, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-camp-capsarius-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "72b45b3e-b9df-45a9-949b-5305866deb5e",
+      "requestedAt": "2026-10-28T21:00:24.406Z",
+      "balanceBefore": 2840,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "4ba61fec-b221-460e-93c0-4072c5490722",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T21:02:28.135Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-camp-capsarius-rigged.glb",
+      "rawBytes": 59614420,
+      "rawSha256": "6dff1876ad70eb35098f71bba5c71e49d791914c45b9f391d5a2eb279b0fe168",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "4ba61fec-b221-460e-93c0-4072c5490722",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

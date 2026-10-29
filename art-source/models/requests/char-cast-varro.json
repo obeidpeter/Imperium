@@ -1,0 +1,93 @@
+{
+  "id": "char-cast-varro",
+  "status": "bound, his head wrapped onto the shared head, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    5,
+    6
+  ],
+  "use": "Titus Flavius Varro, the campidoctor who drills the recruits: his own face, beard and build, in the tunic and belt he wears in camp; the game adds his vine stick, helmet or weapons where his kit calls for them.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman army drill instructor of the mid-3rd century AD, a veteran about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed brown wool tunic to the knee, a broad leather military belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thinning close-cropped grey hair and a close grey beard, a stocky square face with a heavy jaw, a broad prominent nose, a heavy brow and a weathered, lined face. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no armour, no shield, no weapons, no staff, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2.0
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "3ff363f9-4600-405d-acb4-615ada7702e5",
+    "requestedAt": "2026-10-28T17:35:13.500Z",
+    "balanceBefore": 3455,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman army drill instructor of the mid-3rd century AD, a veteran about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed brown wool tunic to the knee, a broad leather military belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thinning close-cropped grey hair and a close grey beard, a stocky square face with a heavy jaw, a broad prominent nose, a heavy brow and a weathered, lined face. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no armour, no shield, no weapons, no staff, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-28T17:36:51.480Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-varro.glb",
+    "rawBytes": 44722144,
+    "rawSha256": "6ef56f37068581345348ab48323990617534858df54551b9eaeb75f71fef5490",
+    "tripoInput": {
+      "prompt": "Full-body Roman army drill instructor of the mid-3rd century AD, a veteran about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved undyed brown wool tunic to the knee, a broad leather military belt with bronze plates, dark wool trousers and closed leather boots. Bare head with thinning close-cropped grey hair and a close grey beard, a stocky square face with a heavy jaw, a broad prominent nose, a heavy brow and a weathered, lined face. Realistic proportions, historically accurate, worn and practical, earthy colours. No helmet, no armour, no shield, no weapons, no staff, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-varro-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "7f595fea-3dbd-4d58-9984-9ce852ba8b1a",
+      "requestedAt": "2026-10-28T17:37:18.105Z",
+      "balanceBefore": 3435,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "3ff363f9-4600-405d-acb4-615ada7702e5",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-28T17:38:14.475Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-varro-rigged.glb",
+      "rawBytes": 59934608,
+      "rawSha256": "fa3bd32d303a5f3a58fb5193b9ea1dfd589e59a04da6dde696176f43bbe32129",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "3ff363f9-4600-405d-acb4-615ada7702e5",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

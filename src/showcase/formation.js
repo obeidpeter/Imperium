@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {generatedIdentityMaterial} from './generated-identity.js';
+import {generatedIdentityMaterial,identitySourceOf,followerHeadOf,FOLLOWER_IDENTITY} from './generated-identity.js';
 import {finishActorMaterial} from './actor-surface.js';
 
 // Units as formations. From Chapter IV the commander orders bodies of men,
@@ -79,11 +79,12 @@ function crowdShader(shader,bones){
   shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\n diffuseColor.rgb *= vCrowdTint;');
 }
 function crowdMaterial(source,bones){
-  // Body and named-head followers use identical PBR inputs. Neutral identity
-  // and finish uniforms let them share the same shader without changing the
-  // original body's colour, roughness, textures, geometry or shadow treatment.
-  const neutral=source.userData.generatedActorBody&&!source.userData.generatedIdentity;
-  const material=neutral?generatedIdentityMaterial(source,{key:'crowd-neutral',grey:0,beard:0}):source.clone();
+  // Body and head followers use identical PBR inputs. Neutral identity and finish
+  // uniforms let them share the same shader without changing the original body's
+  // colour, roughness, textures, geometry or shadow treatment. Followers never wear
+  // their leader's face: a named head's followers take its donor with no one's features.
+  const named=identitySourceOf(source),neutral=!!named||source.userData.generatedActorBody&&!source.userData.generatedIdentity;
+  const material=neutral?generatedIdentityMaterial(named?.source??source,FOLLOWER_IDENTITY,{offsetY:named?.offsetY??0}):source.clone();
   if(neutral){finishActorMaterial(material,'neutral');material.name=source.name;}
   const base=neutral?material:source,previous=base.onBeforeCompile,key=base.customProgramCacheKey?.bind(base);
   material.userData.crowdBones=bones;
@@ -166,7 +167,7 @@ export function createSkinnedCrowd(group,{max=8}={}){
     mesh.bind(history.skeleton,bindMatrix);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),6);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;mesh.customDepthMaterial=depth;mesh.raycast=()=>{};
     owned.push(mesh.geometry);group.add(mesh);meshes.push(mesh);
   };
-  for(const source of skinned)add(source.geometry,source,source.skeleton,source.bindMatrix);
+  for(const source of skinned)add(followerHeadOf(source)??source.geometry,source,source.skeleton,source.bindMatrix);
   // Rigid parts ride the skeleton holding every joint; a generated body's own skin holds only the body's.
   const primary=skinned.reduce((a,b)=>b.skeleton.bones.length>a.skeleton.bones.length?b:a);
   const rigidGeometry=rigidAsSkinned(group,rigid,primary.skeleton,primary.bindMatrix);

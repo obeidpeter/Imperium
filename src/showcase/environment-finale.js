@@ -1,7 +1,7 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash} from './environment-layout.js';
 import {stagingEdge} from './environment-staging.js';
-import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE} from './finale-crowd-data.js';
+import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE,FINALE_CROWD_CLIPS} from './finale-crowd-data.js';
 
 // The finale's approach to Rome. Aurelian's new brick curtain (begun AD 271,
 // still rising in 275) runs north and south from the gate: finished stretches
@@ -14,19 +14,60 @@ import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE} from './finale-crowd-data.js';
 export function createMassedSoldierGeometry({detail='near'}={}){
   const data=FINALE_CROWD_DATA[detail]??FINALE_CROWD_DATA.near,geometry=new THREE.BufferGeometry();
   for(const name of ['position','normal','color'])geometry.setAttribute(name,new THREE.Float32BufferAttribute(data[name],3));
+  // The two joints each vertex follows through the baked clips, and their weights.
+  geometry.setAttribute('crowdJoint',new THREE.Float32BufferAttribute(data.skinIndex,2));geometry.setAttribute('crowdWeight',new THREE.Float32BufferAttribute(data.skinWeight,2));
   geometry.setIndex(data.index);geometry.computeBoundingBox();geometry.computeBoundingSphere();geometry.userData.crowdSource=FINALE_CROWD_SOURCE;return geometry;
 }
-export function crowdBreathing(time,phase=0,height=1){const upper=Math.max(0,Math.min(1,(height-.7)/.9));if(!upper)return {x:0,z:0,y:0};return {x:Math.sin(time*.83+phase)*.009*upper,z:Math.cos(time*.67+phase)*.012*upper,y:Math.sin(time*1.8+phase)*.003*upper};}
-function crowdMaterial(source,time){
+// Each man's clip and his place in it, from where he stands: about one in six cheers now and
+// then, the rest stand watch, each at his own moment. The shader reads the same values.
+const fract=x=>x-Math.floor(x);
+export function crowdClip(x,z){const seed=fract(Math.sin(x*12.9898+z*78.233)*43758.5453);return {clip:seed>.83?'cheer':'stand',offset:fract(seed*7.31)};}
+/** The frames a man at (x, z) blends at `time` (seconds): CPU mirror of the crowd's shader. */
+export function crowdFrame(time,x=0,z=0){
+  const {frames,duration}=FINALE_CROWD_CLIPS,{clip,offset}=crowdClip(x,z),f=fract(time/duration+offset)*frames,from=Math.floor(f)%frames;
+  return {clip,from,to:(from+1)%frames,blend:f-Math.floor(f)};
+}
+/** A joint's baked transform: quaternion [x,y,z,w] and translation, for tests and tools. */
+export function crowdJointTransform(clip,frame,joint){
+  const {frames,joints,clips,data}=FINALE_CROWD_CLIPS,at=((clips.indexOf(clip)*frames+frame)*joints+joint)*7;
+  return {quaternion:data.slice(at,at+4),translation:data.slice(at+4,at+7)};
+}
+// One texel row per frame: each joint's quaternion, then its translation.
+function crowdClipTexture(){
+  const {frames,joints,clips,data}=FINALE_CROWD_CLIPS,width=joints*2,height=frames*clips.length,texels=new Float32Array(width*height*4);
+  for(let row=0;row<height;row++)for(let j=0;j<joints;j++){const at=(row*joints+j)*7,o=(row*width+j*2)*4;texels.set(data.slice(at,at+4),o);texels.set([...data.slice(at+4,at+7),1],o+4);}
+  const texture=new THREE.DataTexture(texels,width,height,THREE.RGBAFormat,THREE.FloatType);texture.magFilter=texture.minFilter=THREE.NearestFilter;texture.generateMipmaps=false;texture.needsUpdate=true;
+  texture.name='massed legion clips';return texture;
+}
+function crowdMaterial(source,time,clips){
   const material=source.clone(),previous=source.onBeforeCompile,key=source.customProgramCacheKey?.bind(source);material.color.set(0xffffff);material.vertexColors=true;
-  material.onBeforeCompile=(shader,renderer)=>{previous?.call(material,shader,renderer);shader.uniforms.massedCrowdTime=time;
-    shader.vertexShader='uniform float massedCrowdTime;\n'+shader.vertexShader;
+  const {frames,duration}=FINALE_CROWD_CLIPS;
+  material.onBeforeCompile=(shader,renderer)=>{previous?.call(material,shader,renderer);shader.uniforms.massedCrowdTime=time;shader.uniforms.massedCrowdClips={value:clips};
+    shader.vertexShader=`uniform float massedCrowdTime;
+      uniform sampler2D massedCrowdClips;
+      attribute vec2 crowdJoint;
+      attribute vec2 crowdWeight;
+      vec3 crowdRotate(vec4 q,vec3 v){return v+2.0*cross(q.xyz,cross(q.xyz,v)+q.w*v);}
+      vec3 crowdPose(float row,float joint,vec3 v,bool point){
+        vec4 q=texelFetch(massedCrowdClips,ivec2(int(joint)*2,int(row)),0),t=texelFetch(massedCrowdClips,ivec2(int(joint)*2+1,int(row)),0);
+        return crowdRotate(q,v)+(point?t.xyz:vec3(0.0));
+      }
+      vec3 crowdSkin(float clip,float frame,vec3 v,bool point){
+        float row=clip*${frames.toFixed(1)}+frame;
+        return crowdPose(row,crowdJoint.x,v,point)*crowdWeight.x+crowdPose(row,crowdJoint.y,v,point)*crowdWeight.y;
+      }
+      `+shader.vertexShader;
+    // The same choice of clip and moment as crowdClip()/crowdFrame() above.
+    const place=`vec2 crowdAt=instanceMatrix[3].xz;float crowdSeed=fract(sin(crowdAt.x*12.9898+crowdAt.y*78.233)*43758.5453);
+      float crowdClipRow=crowdSeed>.83?1.0:0.0,crowdF=fract(massedCrowdTime/${duration.toFixed(2)}+fract(crowdSeed*7.31))*${frames.toFixed(1)};
+      float crowdFrom=mod(floor(crowdF),${frames.toFixed(1)}),crowdTo=mod(crowdFrom+1.0,${frames.toFixed(1)}),crowdBlend=fract(crowdF);`;
+    shader.vertexShader=shader.vertexShader.replace('#include <beginnormal_vertex>',`#include <beginnormal_vertex>
+      ${place}
+      objectNormal=normalize(mix(crowdSkin(crowdClipRow,crowdFrom,objectNormal,false),crowdSkin(crowdClipRow,crowdTo,objectNormal,false),crowdBlend));`);
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
-      float crowdPhase=dot(instanceMatrix[3].xz,vec2(.71,1.13));
-      float upper=clamp((position.y-.7)/.9,0.0,1.0);
-      transformed+=vec3(sin(massedCrowdTime*.83+crowdPhase)*.009,sin(massedCrowdTime*1.8+crowdPhase)*.003,cos(massedCrowdTime*.67+crowdPhase)*.012)*upper;
-    `);};
-  material.customProgramCacheKey=()=>`${key?.()??''}:massed-legion-v041`;return material;
+      transformed=mix(crowdSkin(crowdClipRow,crowdFrom,transformed,true),crowdSkin(crowdClipRow,crowdTo,transformed,true),crowdBlend);`);
+  };
+  material.customProgramCacheKey=()=>`${key?.()??''}:massed-legion-v042`;return material;
 }
 export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   const hx=e.width*tileSize/2,gate=stagingEdge(e,'east',tileSize,6.8),wallX=gate.x+1.4,perf=quality==='performance';
@@ -56,9 +97,10 @@ export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,in
     }
   }
   // Massed legions: bodies, shields and (above Performance) spears, instanced.
-  const body=p.geo(createMassedSoldierGeometry()),distant=p.geo(createMassedSoldierGeometry({detail:'distant'})),time={value:0},soldierMaterial=ownMaterial(crowdMaterial(m.cloth,time));
+  const clips=crowdClipTexture(),body=p.geo(createMassedSoldierGeometry()),distant=p.geo(createMassedSoldierGeometry({detail:'distant'})),time={value:0},soldierMaterial=ownMaterial(crowdMaterial(m.cloth,time,clips));
+  soldierMaterial.addEventListener?.('dispose',()=>clips.dispose());
   animated.push(t=>{time.value=t;});
-  root.userData.massedCrowd={source:FINALE_CROWD_SOURCE.path,nearTriangles:FINALE_CROWD_SOURCE.triangles.near,distantTriangles:FINALE_CROWD_SOURCE.triangles.distant,animation:'GPU breathing and weight shift; planted feet',near:0,distant:0};
+  root.userData.massedCrowd={source:FINALE_CROWD_SOURCE.path,nearTriangles:FINALE_CROWD_SOURCE.triangles.near,distantTriangles:FINALE_CROWD_SOURCE.triangles.distant,animation:`the game's own ${FINALE_CROWD_CLIPS.clips.join(' and ')} clips baked on its rig, played on the GPU; planted feet`,near:0,distant:0};
   const colors={commander:{tunic:'#9b3a2c',shield:'#8e2f28'},claimant:{tunic:'#7c6f5c',shield:'#4b5e7a'}};
   for(const [b,block] of layout.blocks.entries()){
     const c=Math.cos(block.yaw),s=Math.sin(block.yaw),palette=colors[block.side];
@@ -67,7 +109,6 @@ export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,in
       const detail=!perf&&r===0,scale=.97+hash(k,31)*.06;root.userData.massedCrowd[detail?'near':'distant']++;
       instance(detail?'massed legion front ranks':'massed legion figures',detail?body:distant,soldierMaterial,[x,y,z],[scale,scale,scale],[0,yaw,0],tint('#ffffff',k));
       instance('massed legion shields',p.box,m.cloth,[x+Math.sin(yaw)*.3-Math.cos(yaw)*.12,y+.95,z+Math.cos(yaw)*.3+Math.sin(yaw)*.12],[.56,.86,.07],[0,yaw,0],tint(palette.shield,k+3));
-      if(!perf)instance('finale timber',p.cylinder,m.wood,[x+Math.cos(yaw)*.24,y+1.25,z-Math.sin(yaw)*.24],[.03,2.4,.03]);
     }
     // One vexillum per block, its cloth in the block's colours.
     const sx=block.x+s*((block.ranks-1)/2*1.05+.9),sz=block.z+c*((block.ranks-1)/2*1.05+.9),sy=height(sx,sz);

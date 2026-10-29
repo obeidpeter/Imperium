@@ -1,0 +1,220 @@
+{
+  "tool": "scripts/assets/bind-character.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/char-cast-brennus-rigged.glb",
+    "bytes": 61036096,
+    "sha256": "df125e8afc10e29e144cfbb9bbe1e6426c7c1502e8b9511af5bb4335141e84d2",
+    "triangles": 1493641
+  },
+  "output": {
+    "path": "intermediate: char-cast-brennus bound by bind-character.py (not kept)",
+    "bytes": 741636,
+    "sha256": "df1679b94755115baa959c515f9c5016dece75bc139a65792caf935a21ad56d5",
+    "triangles": 11329,
+    "overviewTriangles": 2500
+  },
+  "settings": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "detailTexture": 512,
+    "webpQuality": 80,
+    "clavicleDegrees": 10,
+    "sharpAngle": 60
+  },
+  "fit": {
+    "turnDegrees": -89.06,
+    "scale": 1.56915,
+    "posedJoints": {
+      "hips": [
+        0,
+        0.88154,
+        0
+      ],
+      "torso": [
+        0,
+        0.88154,
+        0
+      ],
+      "head": [
+        0.00603,
+        1.38556,
+        -0.02489
+      ],
+      "right-shoulder": [
+        -0.21786,
+        1.28435,
+        -0.0215
+      ],
+      "right-elbow": [
+        -0.21786,
+        1.06807,
+        -0.0215
+      ],
+      "right-hand": [
+        -0.21786,
+        0.88519,
+        -0.0215
+      ],
+      "left-shoulder": [
+        0.22891,
+        1.28744,
+        -0.02153
+      ],
+      "left-elbow": [
+        0.22891,
+        1.0774,
+        -0.02153
+      ],
+      "left-hand": [
+        0.22891,
+        0.88034,
+        -0.02153
+      ],
+      "right-thigh": [
+        -0.10168,
+        0.88288,
+        0.00563
+      ],
+      "right-knee": [
+        -0.10168,
+        0.43321,
+        0.00563
+      ],
+      "right-ankle": [
+        -0.10168,
+        0.04215,
+        0.00563
+      ],
+      "left-thigh": [
+        0.10169,
+        0.87932,
+        -0.00569
+      ],
+      "left-knee": [
+        0.10168,
+        0.43282,
+        -0.00569
+      ],
+      "left-ankle": [
+        0.10169,
+        0.06286,
+        -0.00569
+      ]
+    },
+    "gameJoints": {
+      "hips": [
+        0,
+        0.91,
+        0
+      ],
+      "torso": [
+        0,
+        0.91,
+        0
+      ],
+      "head": [
+        0,
+        1.485,
+        0
+      ],
+      "right-shoulder": [
+        -0.24,
+        1.329,
+        0
+      ],
+      "right-elbow": [
+        -0.24,
+        1.029,
+        0
+      ],
+      "right-hand": [
+        -0.24,
+        0.771,
+        0
+      ],
+      "left-shoulder": [
+        0.24,
+        1.329,
+        0
+      ],
+      "left-elbow": [
+        0.24,
+        1.029,
+        0
+      ],
+      "left-hand": [
+        0.24,
+        0.771,
+        0
+      ],
+      "right-thigh": [
+        -0.104,
+        0.91,
+        0
+      ],
+      "right-knee": [
+        -0.104,
+        0.48,
+        0
+      ],
+      "right-ankle": [
+        -0.104,
+        0.05,
+        0
+      ],
+      "left-thigh": [
+        0.104,
+        0.91,
+        0
+      ],
+      "left-knee": [
+        0.104,
+        0.48,
+        0
+      ],
+      "left-ankle": [
+        0.104,
+        0.05,
+        0
+      ]
+    },
+    "soleDrop": {
+      "left-ankle": 0.037,
+      "right-ankle": 0.0557
+    },
+    "handVerticesRemoved": 322,
+    "heelVerticesToAnkles": 119,
+    "overviewVertexColours": true
+  },
+  "bounds": {
+    "min": [
+      -0.32286,
+      -0.02,
+      -0.16716
+    ],
+    "max": [
+      0.31797,
+      1.71293,
+      0.18572
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_14503529-6861-4472-9671-92c85359b75a",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "NormalGL_14503529-6861-4472-9671-92c85359b75a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_14503529-6861-4472-9671-92c85359b75a",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -131,9 +131,366 @@
         }
       ],
       "reconciliation": "Twelve successful text-to-model tasks each reported 20 credits. The wallet balance fell from 3760 to 3520, matching 240 credits. All twelve rocks were selected; no paid revision."
+    },
+    {
+      "release": 6,
+      "title": "The cast in person",
+      "date": "2026-10-28",
+      "plannedCredits": 840,
+      "spentCredits": 755,
+      "reservedCredits": 0,
+      "startingBalance": 3520,
+      "endingBalance": 2765,
+      "approval": "The owner approved release 6's plan before any credit was spent: \"Approve 840, option A, move them to release 8\" (2026-10-28): seven named men (Varro, Lucan, Sabinus, Felix, Naso, Crispus and Brennus), three senators in plain togas, the clerk, Capsarius Didius, Syra and a Roman cavalryman at 45 credits each (text-to-model 20, biped rig 25), three horses at 20 (option A: meshes only, skinned to the game's horse skeleton), and up to 150 for retries; a cap of 840. Aelia, Severianus, Paullus, Theon and Quintus moved to release 8. Spending began with a gate (Lucan, Varro and the Roman horse) to stop if the head wrap or the horse binding failed; neither did.",
+      "tasks": [
+        {
+          "id": "char-cast-lucan (attempt 1)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "1b2e4f0c-476f-41b8-b1f3-3042bed298fc",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: Segmented plate armour with shoulder plates and a studded belt apron instead of the ring mail asked for"
+        },
+        {
+          "id": "char-cast-lucan (attempt 2)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7b83a35b-4c59-4363-be03-ee164bf5738c",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: Segmented plate again"
+        },
+        {
+          "id": "char-cast-lucan (attempt 2) rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "bac7f968-3b27-4d51-a280-092804b6c31b",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25,
+          "note": "rigged for the spending gate, then replaced"
+        },
+        {
+          "id": "char-cast-lucan",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c42bdf1f-4341-4a24-91d7-124553a84da0",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-lucan rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "761da6b9-87d8-459e-90b8-125aaacd94d5",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-varro",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3ff363f9-4600-405d-acb4-615ada7702e5",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-varro rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "7f595fea-3dbd-4d58-9984-9ce852ba8b1a",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-sabinus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "4e5eea65-2f80-4f9a-884f-8e5badb7dad8",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-sabinus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "3f05e132-4705-4b24-91ee-38b388dc7ca7",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-naso",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "9230d938-a07d-4689-875a-a1b79e5ed97d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-naso rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "9adf2885-3124-462c-b3c7-05ca5e56340a",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-felix",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c2d196f1-f898-4e79-867c-a7aa3f66b3c1",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-felix rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "8623dfac-8622-4fbd-a6d1-34ee9bd966a2",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-brennus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "14503529-6861-4472-9671-92c85359b75a",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-brennus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "2a063a5f-6286-4225-b3a1-b8f4980f9043",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-crispus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3628a5dc-9ef5-4773-a94d-9a76f513b7c0",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-crispus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "c5fbdaaf-b98a-4aca-a693-db7954111b5e",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-senator-elder",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d27a4bfb-309e-4f38-8a1d-c60f380215e5",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-senator-elder rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "17c4817a-a6ce-41c6-b0b8-3cd5a4927ab5",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-senator-bearded",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "139c681b-c38b-424f-bba1-bbb3403bc121",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-senator-bearded rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "4d7e0050-ed61-40c3-8290-572a405b432c",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-senator-younger",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "98b5e5d7-9598-44d1-b884-6f7bc49d6987",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-senator-younger rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "d3146006-8a1b-4bff-b763-e8b380ba5e1a",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-camp-clerk",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "055018e0-8912-4736-be7e-f74cc2938a1f",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-camp-clerk rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "f2bbc6b7-ca6a-4319-a609-cd04c57b2192",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-camp-capsarius",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "4ba61fec-b221-460e-93c0-4072c5490722",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-camp-capsarius rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "72b45b3e-b9df-45a9-949b-5305866deb5e",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-camp-sutler",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c9e83ec4-14ba-4112-a34c-64a443a5f59b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-camp-sutler rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "d6167b0f-9eff-40fd-8f7c-3e3822646a19",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-roman-cavalry",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "6f7475c7-3a1e-413c-b7e5-937f0a99dfae",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-roman-cavalry rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "d5dff328-7898-42ee-aa80-1cbf502a5a5a",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "horse-roman",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8bbffabb-f5c9-4e59-88f6-212acfebb1da",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "horse-northern",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3175b256-3e46-4153-9293-07005c18e4d7",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "horse-eastern",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e082a6db-94f6-46a1-a3c0-6d73f031ad61",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "reconciliation": "19 text-to-model tasks reported 20 credits each and 15 biped rigs 25 each: 755 credits. The wallet balance fell from 3520 to 2765, matching. Lucan's first two attempts came back in segmented plate and were rejected (65 credits of the 150 allowed for retries); every other model was selected at its first attempt. 85 credits of the cap were not spent."
     }
   ],
-  "spentCredits": 240,
-  "remainingAuthorization": 2260,
-  "note": "Release 4 spent no credits (its board kit is original Blender work); the balance read 3760 before and after it."
+  "spentCredits": 995,
+  "remainingAuthorization": 1505,
+  "note": "Release 4 spent no credits (its board kit is original Blender work); the balance read 3760 before and after it. Each release's tasks reconcile with the wallet balance, read through the Tripo API before and after."
 }

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-sutler.glb",
+  "output": "assets/models/characters/camp-sutler.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 467652,
+    "gzipBytes": 333528,
+    "sha256": "a310288a591f39177b80572629b821d5339692f492661f316c64514d3616ac8b"
+  },
+  "after": {
+    "bytes": 410352,
+    "gzipBytes": 389197,
+    "sha256": "85a87eda3bf370bf5055dc0c3639380a78082e35b9650b41f8b31e00755619a0"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13750,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9784
+      },
+      "bytes": 19632,
+      "psnr": 39.756
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 49092
+      },
+      "bytes": 129526,
+      "psnr": 38.255
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22630
+      },
+      "bytes": 43451,
+      "psnr": 37.864
+    }
+  ]
+}
