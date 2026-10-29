@@ -88,6 +88,11 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 - shrinks textures to the size limit;
 - writes one GLB with WebP textures (`EXT_texture_webp`, read natively by the vendored three.js), plus a JSON report of inputs, digests, settings, counts, bounds and textures.
 
+Two options are for models seen only from afar, such as the horizon's landmarks:
+
+- `--colour-only` keeps each material's colour map alone. The normal map is unlinked, and the roughness-metalness map becomes its mean, a constant on the material (glTF keeps roughness in green and metalness in blue). Nodes left feeding nothing are removed, so their images are not exported. The report records the constants. At 115 metres and more the normal map's relief is smaller than a pixel.
+- `--turn <degrees>` turns a static model about the vertical axis, counter-clockwise seen from above, before it is stood on its base. The game expects a model's front at +Z: a gate's passages, a temple's porch, a bridge's or an aqueduct's length across the view.
+
 `--keep-skin` keeps a model's own rig, skin weights, morphs and clips and changes only scale and textures. The game's characters do not use it: they are bound to the game's own skeleton instead (next section).
 
 Limitations:
@@ -409,7 +414,7 @@ Release 9 models Rome's walls and gate before the finale's field (see [art-gener
 
 ## Landmarks · 2026-10-29
 
-Release 9 gives every chapter three landmarks at the middle distance (see the [historical note](historical-research.md)). Their generated models are not made yet, so for now only their code-built outlines are in the game.
+Release 9 gives every chapter three landmarks at the middle distance (see the [historical note](historical-research.md)): generated models on Balanced and High where they were made, and code-built outlines on Performance, for the Colosseum and wherever a model is missing.
 
 - **Slots.** `LANDMARK_LAYOUT` in [`world-layouts.js`](../src/ui/world-layouts.js) names each chapter's three landmarks, nearest first. Each entry has a world catalog id (`landmark-<name>`), a description and a stand-in kind. `landmarkSlots` in [`environment-horizon.js`](../src/showcase/environment-horizon.js) sets them on the horizon's three bearings:
   - 115, 143 and 171 metres out;
@@ -423,15 +428,16 @@ Release 9 gives every chapter three landmarks at the middle distance (see the [h
   - Each kind has a footprint, which is its outline's whole extent, and a height.
   - Each landmark's foundation record names it and counts the silhouette vertices it emitted (`distantFoundations`), so the horizon's tests can tell a landmark from the city's roofline.
   - [`horizon-landmarks.test.mjs`](../tests/horizon-landmarks.test.mjs) holds every outline to its footprint and height, and checks with rays from all round and from above that no part is turned inside out.
-- **A generated model** will need three things:
-  - a world catalog entry under its slot's id in [`world-catalog.js`](../src/ui/world-catalog.js), with the chapters that show it;
-  - its file;
-  - its manifest record;
-  - a check of its materials against the program budget. The horizon places the cached model as it was loaded, without the kits' shared finish (`kitFinish`).
-- **How it will stand.** `landmarkModelUrls` adds it to the chapter's world kits, and the stage takes it only when it is already loaded, on Balanced and High. The horizon then:
-  - stands it in its slot in place of the outline, turned to the slot's facing (its front is +Z);
-  - scales it to its kind's height and centres it on the slot;
-  - stands it on the lowest ground under the square of its footprint's longer side, since its turn is not a quarter turn.
-  - It casts no shadow and takes no pick. Disposing the world leaves the cached model whole.
+- **Generated models.** A landmark with a generated model has:
+  - a world catalog entry under its slot's id (`LANDMARK_CHAPTERS` in [`world-catalog.js`](../src/ui/world-catalog.js)), with the chapters whose layout names it, which a test holds to the layout;
+  - its file in `assets/models/landmarks/`, its request in `art-source/models/requests/` and its manifest record.
+  - It is processed with `--colour-only` at 256 pixels, and with `--turn` where Tripo set its front elsewhere (a request's `processing`), then compressed. Its budget is about 36 bytes a triangle and 30 KB.
+- **How it stands.** `landmarkModelUrls` adds it to the chapter's world kits, and the stage takes it only when it is already loaded, on Balanced and High. The horizon fits it before the city is drawn:
+  - a clone of the cached model, turned to the slot's facing (its front is +Z), scaled to its kind's height and centred on the slot;
+  - its own extent, which may outgrow its outline's, is kept clear of the city's rooftops, and it stands on the lowest ground under that extent;
+  - its materials are clones that take the haze as an unlit share of their colour (`landmarkHaze`: half the share the horizon's distant colours take at that distance), keeping the cached model's program.
+  - It casts no shadow and takes no pick. Disposing the world disposes the hazed clones and leaves the cached model whole.
   - On Performance, or if it fails to load, the outline stands.
+- **Life props.** `LIFE_PROP_CHAPTERS` in [`world-catalog.js`](../src/ui/world-catalog.js) lists the generated life props (`life-<name>`) with the chapters that set each out; their files are in `assets/models/world/`. `regionalPropPlacements` in [`environment-regional-world.js`](../src/showcase/environment-regional-world.js) places them after the regional props, in the same line beyond the board, but never on a camp's service pad and never round a contest's board (a council's, a tribunal's or the Senate's). Seen near, they keep all three maps at 512 pixels. They have no code-built stand-in: on Performance, or without its model, a prop's place stays empty.
+- **Warm between stages.** A scene's working set (its placed scenery, the world kits and its landmarks) is at most 16 models since these were added. The scenery cache keeps 20 idle masters between stages (`SCENERY_IDLE_MASTERS` in [`scenery-models.js`](../src/showcase/scenery-models.js)), up from 12, so a chapter's next stage finds its models still loaded; a test holds every scene's working set within it.
 

@@ -790,3 +790,407 @@ The walls were reviewed in Blender's Cycles renderer, assembled along the finale
 - **Zero-area triangles** at the arches' springings failed the compressor's geometry check. The weld above removes them.
 
 The pieces are merged into one mesh for each of the kit's five materials, since the walls never change and are never picked. The finale therefore draws five walls meshes, not one for each piece and material. The walls draw only on Balanced and High. On Performance, or when the kit cannot be downloaded, the code-built curtain and the regional kit's gate arch stand in. When the walls draw, that arch steps aside for Aurelian's gate.
+
+## Landmarks and life · 29 October 2026
+
+Release 9 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). The [release report](landmarks-release9-report.md) has how they stand in the game, and [the asset pipeline](asset-pipeline.md#landmarks--2026-10-29) how they are made.
+
+Fifty-three models were generated with Tripo's text-to-model API (`v3.1-20260211`, textured PBR, standard geometry, 20 credits each) on 2026-10-29, from the text prompts below only: no reference image or third-party model. Forty-six are in the game: 32 landmarks for the chapters' horizons and 14 props of life about the camps and towns. The owner approved a cap of 1,150 credits, opened by a gate of five models (a signal tower, a tower tomb, the bridge over the Adda, the Colosseum and a laundry line), to stop and report if they came out poorly at the game's distances; four passed and the rest followed. The balance read 2,765 credits before and 1,705 after: 1,060 spent, 140 of them on seven rejected attempts, reconciled task by task in the plan's credit ledger, [`worlds-plan-credits.json`](../art-source/models/worlds-plan-credits.json). The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+The prompts follow [the historical notes](historical-research.md): each building as it stood in the third century, in its region's stone or mudbrick, and each prop in a Roman form. Where a name calls up a later state, the prompt describes the thing instead: the Mausoleum of Hadrian as a drum, mound and chariot group rather than the castle it became, and the Milvian Bridge with no tower. Two retries carried a negative prompt (Tripo's `negative_prompt`): the walls of Mediolanum, ruling out machicolations and corbels after a first attempt came back as a medieval castle, and the travelling carriage, ruling out animals, four wheels and a folding hood. Tripo refuses a prompt over 1,024 characters without charging; the script now checks before asking.
+
+The landmarks were processed by `scripts/assets/process-model.py` to their budgets (3,000–7,000 triangles), scaled to their outlines' heights, with `--colour-only` at 256 pixels: seen at 115 metres and more, a normal map's relief is below a pixel, so each keeps its colour map alone, with a constant roughness and metalness, the means of its roughness-metalness map. Measured on two of them, processed again with all three maps: the colour map alone halves the maps' bytes, but at 256 pixels they are a small share of the file, so the signal tower's and the city gate's runtime files are 13% and 10% smaller (140,628 against 160,832 bytes, and 137,420 against 152,216); most of what remains is geometry. Where Tripo set a model's front on its side, or a bridge's or an aqueduct's length along its depth, `--turn` turned it to the side the game shows (each request's `processing` says why): seventeen landmarks and four props. The life props, seen near, keep all three maps at 512 pixels. Every runtime file is compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within its request's bytes, triangles and texture size.
+
+Eight budgets were raised after processing, each with a note in its request. The pile hut's thatch keeps more vertices for each triangle than the stone landmarks (200,000 bytes, from 180,000). Five props came out at 223,000–234,000 bytes against an estimate of 220,000 and were allowed 240,000: the camel gear, the handcart, the woodpile, the loom and the carriage. The decimation stops short of the ox cart's and the hay rick's triangle budgets whatever the target, held by the non-manifold edges of their wheels and straw, so they have 3,400 triangles and 270,000 bytes, and 4,200 and 300,000. The fishing nets were not shipped: both attempts were past any such allowance (see below).
+
+| Model | What | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| landmark-novae-gate | the stone gate of Novae | I | `d778db71-dcec-4496-937d-ba8320ff16f5` | 4,900 | 144,520 bytes |
+| landmark-signal-tower | a stone signal tower | I, IV | `f7e9f600-c655-46ef-8908-07a5d604e376` | 3,920 | 140,628 bytes |
+| landmark-burial-mound | a Thracian burial mound | I, IV | `26145aa2-98b2-4375-970a-cb24f9ca49d5` | 2,940 | 115,292 bytes |
+| landmark-pile-hut | a reed hut on piles | II | `498307d9-8f39-466e-aa56-d0a6b54c841f` | 3,919 | 181,944 bytes |
+| landmark-bridge-piers | the piers of an old bridge, standing without its deck | II | `8d691066-0e74-4388-bde5-7b2f86191c2f` | 4,900 | 151,948 bytes |
+| landmark-river-quay | a harbour quay and its warehouse | II | `8a681fe3-61ec-4186-8bb7-2eb69e0f476b` | 4,900 | 160,284 bytes |
+| landmark-road-station | a road station | III, IV | `5280c147-0a8a-4041-af56-21696c787fc5` | 4,900 | 195,432 bytes |
+| landmark-small-temple | a small temple | III | `d3055cb5-21da-4013-9625-61e616ace846` | 3,920 | 117,516 bytes |
+| landmark-burned-farmstead | a burned farmstead | III | `51a7a1d8-7094-416a-add9-a068ec96528c` | 3,919 | 171,188 bytes |
+| landmark-river-citadel | a citadel on the river cliff | V | `3004fea2-8b58-4398-b10d-3e421cc78e67` | 5,880 | 186,612 bytes |
+| landmark-ruined-watchtower | a ruined watchtower | V | `7ee8d35f-56af-47b5-8947-b3897bc47824` | 2,940 | 128,916 bytes |
+| landmark-necropolis-tower-tomb | a tower tomb of the necropolis | V | `7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba` | 3,918 | 125,040 bytes |
+| landmark-caravan-station | a mudbrick caravan station | VI | `155c82c5-6ff2-4326-a217-a2f429ef382e` | 4,900 | 169,704 bytes |
+| landmark-syrian-temple-court | a Syrian temple court | VI | `e7b28dd3-8123-4a28-9ccb-deb4ba79d616` | 5,880 | 191,316 bytes |
+| landmark-rock-cut-tombs | chamber tombs cut in the hillside | VI | `50d816cb-a25d-4c53-a165-4a93f565d31c` | 4,900 | 166,804 bytes |
+| landmark-adda-bridge | the bridge over the Adda | VII | `0e051b37-8e0f-4b46-a906-b6f93cd76ff2` | 4,899 | 168,120 bytes |
+| landmark-mediolanum-walls | the walls of Mediolanum | VII | `b8417128-09c9-44ab-8b02-c39ba9592eba` | 4,900 | 143,996 bytes |
+| landmark-roadside-tomb | a tall tomb beside the road | VII | `8389b598-ae00-47a4-a42c-d4788c18fb3c` | 3,920 | 116,664 bytes |
+| landmark-fort-gate | the stone gate of a frontier fort | VIII | `2ad1b885-0c0b-4bb9-ab38-f857806a5d07` | 4,900 | 164,068 bytes |
+| landmark-river-warehouses | river warehouses | VIII | `09049267-e949-45b3-b875-3206a0028b45` | 4,900 | 173,732 bytes |
+| landmark-dacian-sanctuary | the ruined Dacian hill sanctuary | VIII | `f04f0ab7-6912-41c7-a314-48797c113904` | 3,919 | 160,880 bytes |
+| landmark-tetrapylon | a tetrapylon with its colonnades | IX | `2841d856-a096-4af6-a583-cbdc3022bae2` | 5,880 | 176,520 bytes |
+| landmark-walled-sanctuary | a sanctuary in its walled court | IX | `48e613f0-4696-4cbf-a768-ea552e766395` | 5,880 | 197,832 bytes |
+| landmark-city-gate | the city gate | IX | `b386d333-6f58-4e96-ace6-f5e5327ddd14` | 4,900 | 137,420 bytes |
+| landmark-villa | a villa | X | `45b81e06-fead-4568-bae0-41d0d5c72529` | 4,900 | 179,704 bytes |
+| landmark-provincial-basilica | the province’s basilica | X | `5d734b09-749d-444e-8e56-58a7a2a66a69` | 4,900 | 171,956 bytes |
+| landmark-aqueduct | an aqueduct | X | `e444f709-d297-456a-9413-c6ae036032b9` | 3,920 | 127,792 bytes |
+| landmark-pantheon | the Pantheon | XI | `18e58742-fe2b-4476-ba4a-81f50b3c607b` | 5,879 | 182,664 bytes |
+| landmark-arch-of-severus | the Arch of Septimius Severus | XI | `a9d57b7c-1708-4ae2-989a-54e46d7e4750` | 5,880 | 201,648 bytes |
+| landmark-mausoleum-of-hadrian | the Mausoleum of Hadrian | XII | `1508fe16-c798-4275-9a09-0ff9e8f18acd` | 6,859 | 195,376 bytes |
+| landmark-temple-of-sol | Aurelian’s Temple of the Sun | XII | `54648116-8681-4d46-a5e1-88f9aef8050d` | 5,880 | 198,200 bytes |
+| landmark-milvian-bridge | the Milvian Bridge | XII | `0a6ab405-35e4-47dd-a716-b6116ded7aa8` | 4,900 | 120,028 bytes |
+| life-amphora-rack | wine and oil amphorae | VII, XI, XII | `f06d3916-999b-4f41-a86f-e7ac58e98159` | 2,940 | 191,972 bytes |
+| life-beehives | a farm's beehives | III, VII | `e13d0ca4-508f-4096-a4ac-bafae5cba3da` | 2,940 | 212,912 bytes |
+| life-bread-oven | a bread oven | I, III, VI, IX | `f131e451-d6ed-48c0-af44-f019d8e30101` | 2,940 | 159,016 bytes |
+| life-camel-gear | a caravan's saddles and baggage | VI, IX | `f20ca161-6ea7-4692-b061-208111c6aa43` | 2,938 | 223,344 bytes |
+| life-grindstone | the camp's grindstone | I, IV | `72f25faa-3ff6-4090-9bef-9c2035038223` | 2,940 | 192,556 bytes |
+| life-handcart | a handcart of the camp's stores | III, IV | `03893e85-bb2c-472a-a3ce-539f57d733e6` | 2,939 | 230,004 bytes |
+| life-hay-rick | a haystack of the farms | II, VIII, X | `8d338609-f930-4fe7-b5d4-a8f20452bce3` | 4,117 | 289,420 bytes |
+| life-laundry-line | washing hung out to dry | I, III, VIII, X | `3499f8ff-b499-4b72-a516-5638b678e40e` | 2,939 | 209,340 bytes |
+| life-loom | a household loom | VIII, X | `4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1` | 2,938 | 233,636 bytes |
+| life-market-stall | a market stall of the towns | IX, X, XI, XII | `b554acaa-3e37-4d98-8d30-86165384bac7` | 2,940 | 199,364 bytes |
+| life-ox-cart | a farm cart of the frontier villages | VIII, X | `5023d43b-dd97-442b-9b4e-f3a0b1848699` | 3,388 | 267,232 bytes |
+| life-pottery-stall | a potter's wares | VI, IX, XI, XII | `d9688685-809d-4fa4-8900-b5bff4e49c44` | 2,938 | 205,704 bytes |
+| life-travel-carriage | a traveller's covered carriage | VII, XI, XII | `09dac9c4-f026-4219-936f-0c32b49b0650` | 2,940 | 234,324 bytes |
+| life-woodpile | firewood for the camp | I, II, IV | `69bdb762-598b-4a66-a126-7a6e47d8191d` | 2,939 | 223,716 bytes |
+
+Triangles and bytes are the runtime files'. The raw files stay outside the repository; their digests, the task ids and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`.
+
+### Reviewed before shipping
+
+Each model was compared with its Tripo render and with a sheet of four views of its processed file beside a 1.8-metre figure (`scripts/assets/preview-model.mjs`), and then in the game's own scenes in software rendering (see the [release report](landmarks-release9-report.md)). Seven attempts were rejected:
+
+- **The Colosseum** (three attempts, 60 credits) came back as a curved fragment of the outer wall, then as the monument stands today, its outer ring fallen away on one side, then as a cutaway with no near wall. In 275 the amphitheatre stood whole; its outer ring fell in medieval earthquakes. It keeps its code-built outline, which stands whole.
+- **The walls of Mediolanum**: the first attempt was medieval, round brick towers under corbelled, machicolated parapets like the Sforza castle's. The second, with its negative prompt, is a curtain of grey stone with courses of red brick and square merlons between two round towers with arched windows.
+- **The travelling carriage**: the first attempt was a four-wheeled buggy under a folding hood, a later form than the light two-wheeled cisium asked for, with a mule drawn collapsed flat between the shafts. The second asked for a carpentum standing unharnessed, and is one: a barrel roof of dark leather on hoops over a wooden body, two spoked wheels with iron tyres, its shafts on the ground.
+- **The fishing nets** were not shipped. The first attempt was an open knotted net, 12,329 triangles and 592,536 bytes after processing. The second, asked for in closed folds, was a net hung over a frame like ragged cloth that the decimation left at 5,395 triangles; at the camp's distance it read as cloth on a frame, as the laundry line already does. The river camps keep their mooring ropes and the ferry.
+
+The models in the game depart from their prompts in these ways, kept because they are a few pixels at the game's distance or are true to the period:
+
+- **The Danube (I–IV).** Novae's gate has one wide passage where a double gateway was asked. The old bridge's five piers keep broken arches between them where one surviving arch was asked. The burned farmstead's fence is of rails, not wattle.
+- **Mesopotamia and Syria (V, VI, IX).** The citadel's corner towers are round where square were asked. The caravan station's gate arch is slightly pointed, a later form. The Syrian temple court shows its walls, merlons and gateway, but no temple inside. The rock-cut tombs are a block of rock, not a hillside. The tetrapylon is one pavilion of tall columns on a platform, not four groups at a crossing. The walled sanctuary shows a colonnade without its temple's cella.
+- **Italy and Rome (VII, XI, XII).** The roadside tomb's round temple has a dome where a cone was asked. The Milvian Bridge has five arches where four were asked. The Mausoleum of Hadrian's statues stand round the drum's face, not on its top edge.
+- **The new Dacia (VIII, X).** The fort gate's timber gates stand open. The river warehouses are one storehouse with a wharf and hoist beam, not three. The aqueduct has five arches where eight were asked. The villa's roofs carry small windows like dormers. The Dacian sanctuary stands on a raised paved platform, though none was asked; Sarmizegetusa's sanctuaries stood on paved terraces.
+- **Life about the camps and towns.** The grindstone reads more as a hand mill than a sharpening stone. The amphorae are more decorated, with bands and studs, than transport amphorae were. The ox cart rides on four spoked wheels where two solid disc wheels were asked, its pole on the ground without the trestle. The hay rick has no stone weights or loose bundles. The loom's half-woven cloth has a zigzag pattern where stripes were asked. The pottery stall's oil lamps and small amphorae are not to be seen. The woodpile stands on a low square patch of earth.
+
+#### Exact prompts
+
+**landmark-novae-gate**
+
+```text
+The stone gate of the Roman legionary fortress of Novae on the lower Danube in the third century: a double gateway of two round-arched passages between two projecting square towers of rough grey limestone ashlar, each tower three storeys high with small arched windows and a crenellated top, a straight stretch of crenellated curtain wall with its wall walk on each side, and heavy closed timber gates. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-signal-tower**
+
+```text
+A Roman stone signal tower of the Danube frontier in the third century, as shown on Trajan's Column: a square tower of rough whitewashed limestone about ten metres high, two storeys with small windows and a single door at the foot, a timber balcony gallery with a railing running round the upper storey, a low tiled pyramid roof, and a tall wooden beacon pole for signal fires beside the roof. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-burial-mound**
+
+```text
+A Thracian burial mound of the lower Danube: a smooth round dome-shaped earthen tumulus about twenty metres across and four metres high, covered in short dry grass with a few bare patches of earth, a ring of rough kerb stones half sunk round its foot, and a small weathered standing stone on its top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-pile-hut**
+
+```text
+A fisherman's reed hut on timber piles in a Danube marsh: a small one-room hut of reed bundles and wattle daubed with mud under a steep thatched reed roof, raised about two metres on a dozen rough wooden piles, with a short ladder up to a narrow plank platform at its door and fishing nets hung on a pole beside it. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-bridge-piers**
+
+```text
+The ruins of an old Roman bridge across the lower Danube: a straight row of five massive rectangular piers of grey stone ashlar, each with a pointed cutwater at both ends, standing apart at equal spacing, only the first round arch between two of them still standing and the rest of the roadway long gone, their tops broken and uneven, darkened and mossy at the foot. Seen broadside, the row running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-river-quay**
+
+```text
+A Roman river harbour on the lower Danube in the third century: a long straight quay wall of large squared stone blocks with iron mooring rings and stone steps down at one end, and standing on the quay a long single-storey warehouse of whitewashed stone under a low red tiled roof, a row of wide doorways facing the quay edge, a few barrels and crates by the doors. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-road-station**
+
+```text
+A Roman road station (mansio) on a frontier highway in the third century: a two-storey rectangular inn of whitewashed stone and timber built round a small courtyard, under red tiled roofs, with an arched carriage entrance in the middle of its long front, small shuttered windows, a stable lean-to along one side and a stone milestone by the entrance. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-small-temple**
+
+```text
+A small Roman temple of the Danube provinces in the third century: a rectangular cella of plastered stone raised on a podium with a flight of steps at the front, a porch of four plain columns under a triangular pediment, a red tiled gable roof and a small stone altar before the steps. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-burned-farmstead**
+
+```text
+The burned ruin of a small farmstead of the Danube frontier after a raid: the low blackened stone walls of a rectangular farmhouse with an empty doorway, its roof fallen in, a few charred roof beams leaning across the walls, a collapsed wattle fence and a broken cart wheel beside it, soot streaking the stones. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-river-citadel**
+
+```text
+The citadel of a Roman frontier city on the Euphrates in the third century, like the citadel of Dura-Europos: a massive compact fortress of pale buff limestone and mudbrick with tall plain walls, three square towers and a single arched gate reached by a ramp, its walls standing on a base of rough rock. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-ruined-watchtower**
+
+```text
+A ruined square watchtower of the Syrian desert frontier: the lower half of a small tower of rough buff limestone and mudbrick, its upper storey fallen and its walls broken off unevenly at different heights, a doorway at the foot and a heap of tumbled stones against one side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-necropolis-tower-tomb**
+
+```text
+A tall square funerary tower of the Syrian desert and the Euphrates valley, of the kind built at Palmyra and Dura-Europos in the first to third centuries: four storeys of plain buff limestone ashlar rising from a low stepped base, a narrow doorway low on one face, a projecting stone balcony slab with a recessed panel above it high on the front face, a few narrow slit windows, a flat top with a simple projecting cornice, weathered and dusty. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-caravan-station**
+
+```text
+A caravan station of the Syrian steppe in the third century: a square walled caravanserai of sun-dried mudbrick on a stone footing, plastered in pale earth colours, with one tall arched gateway in the middle of its front, small high windows, flat roofs behind low parapets and a square tower at one corner. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-syrian-temple-court**
+
+```text
+A temple of the Syrian Euphrates in the third century in its walled court: a rectangular court wall of buff limestone with a monumental gateway in the front, and inside it a temple with a tall plain cella and a porch of columns, a row of stepped merlons along its roof line, and a stone altar in the court. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-rock-cut-tombs**
+
+```text
+A low cliff face of pale limestone with a row of Roman-period family chamber tombs cut into it, like those in the hills of Edessa: five rectangular rock-cut doorways with simple carved frames, a few small niches, one doorway under a carved pediment, a rough rock ledge before them, weathered and dusty. Seen from the front, the row running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-adda-bridge**
+
+```text
+A Roman stone road bridge of the third century over a north Italian river, about forty metres long: a level roadway carried on six round stone arches of grey ashlar, sturdy piers with pointed cutwaters, plain low parapets along both sides, its ends running into short sloping approach ramps, seen broadside with its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-mediolanum-walls, attempt 1 (rejected)**
+
+```text
+A stretch of the walls of a north Italian city in the third century: a straight curtain wall of brick-faced concrete about eight metres high with a crenellated parapet and wall walk, and two projecting round towers rising above it, each with arched windows near its top. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-mediolanum-walls**
+
+```text
+A stretch of the stone walls of a Roman provincial city in the third century, ancient Roman work: a straight curtain wall of small squared grey stones with courses of flat red bricks, about eight metres high, with a plain parapet of simple square merlons and a wall walk, and two projecting round towers rising a storey above it, built in the same masonry with small round-arched windows near their tops and flat roofs. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+Negative prompt: `medieval castle, machicolations, corbels, corbelled parapet, swallowtail merlons, Gothic, pointed arches, conical roofs, plaster, render`
+
+**landmark-roadside-tomb**
+
+```text
+A tall Roman funerary monument beside a road in north Italy, like the mausoleum of the Julii at Glanum: a square stone base with plain relief panels, above it an arched storey open on all four sides, and on top a round temple of slender columns under a conical stone roof, in pale weathered limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-fort-gate**
+
+```text
+The stone gateway of a Roman auxiliary fort on the Dacian frontier in the third century: one round-arched passage between two square towers of rough grey stone, the towers two storeys high with small windows and crenellated tops, short stretches of crenellated wall on either side, and closed timber gates. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-river-warehouses**
+
+```text
+A row of Roman river warehouses on the bank of the lower Danube: three adjoining long stone storehouses with tall plain walls, small high windows and red tiled gable roofs, their wide doorways opening onto a timber wharf along the front, with a wooden crane beam over one door. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-dacian-sanctuary**
+
+```text
+The burned ruins of a large Dacian circular sanctuary of the first century: a ring of low flat andesite blocks about eighteen metres across, inside it a ring of short squared stone posts and charred wooden post stumps, and within that a horseshoe of posts, all broken off low among scattered stones. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-tetrapylon**
+
+```text
+A tetrapylon at the crossing of a colonnaded street in a Syrian city of the third century: four square stone platforms at the corners of the crossing, each carrying four tall columns under a moulded entablature, and a stretch of colonnaded street running out on each side. Seen from the front, the street running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-walled-sanctuary**
+
+```text
+A great sanctuary of a Syrian city in the third century: a temple with a colonnade of tall fluted columns all round its cella and a row of stepped merlons along its roof line, standing in the middle of a square walled court with a colonnaded gateway, all in warm golden limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-city-gate**
+
+```text
+The main gate of a Syrian caravan city of the third century: a monumental triple archway of golden limestone, a tall central arch between two smaller ones, framed by pilasters under a richly moulded cornice, set in a plain stretch of city wall with a square tower on each side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-villa**
+
+```text
+A Roman country villa of the lower Danube in the third century: a long single-storey farmhouse of whitewashed stone under red tiled roofs, with a colonnaded porch along its front and two short wings projecting forward at its ends round a small yard, a few small windows. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-provincial-basilica**
+
+```text
+The basilica of a Roman provincial town in the third century: a long rectangular hall of plastered stone with a tall nave lit by a row of arched clerestory windows, lower side aisles under lean-to tiled roofs, a semicircular apse at one end and a porch of columns on its long front. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-aqueduct**
+
+```text
+A straight run of a Roman provincial aqueduct: one row of eight round arches on plain square piers of grey stone, carrying a covered water channel along its top. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-colosseum, attempt 1 (rejected)**
+
+```text
+The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-colosseum, attempt 2 (rejected)**
+
+```text
+The whole Flavian Amphitheatre of Rome, the Colosseum, complete and undamaged as it stood in the third century, shown entire from a high three-quarter view as one closed elliptical ring: its oval outer wall of pale warm travertine runs unbroken all the way round, with three tiers of round arches between half-columns and a plain attic storey above, and within the ring the tiers of seating step down on every side to the oval sand floor of the arena, open to the sky. The far side of the ring is as complete as the near side. One isolated freestanding building for a painterly-realistic historical game, to be seen from far away: a clear, strong silhouette, simple surface detail, physically based aged stone, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no ruined, broken or missing section, no cutaway, no city, water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-colosseum, attempt 3 (rejected)**
+
+```text
+A huge Roman amphitheatre newly finished in the third century, whole and intact: one closed elliptical ring of pale travertine whose outer wall is the same full height all the way round, three storeys of round arches between engaged half-columns and a solid top storey with small square windows, under a level cornice unbroken round the whole oval. Inside, tiers of seating rise evenly on every side from an oval sand arena, open to the sky. Seen from a high three-quarter view, the far side stands exactly as tall as the near side and every arch is whole. One isolated freestanding building for a painterly-realistic historical game, seen from far away: a clear, strong silhouette, simple surface detail, clean lightly weathered stone, a level base, complete from every side. No ruin, collapse or missing wall, no cutaway, landscape, ground plane, base slab or plinth, no city, water, trees, people, scaffolding, modern materials, text or logos.
+```
+
+**landmark-pantheon**
+
+```text
+The Pantheon in Rome as Hadrian rebuilt it, as it stood in the third century: a great round brick rotunda under a low stepped dome, joined to a deep rectangular porch of sixteen granite columns, eight across its front, under a triangular pediment, with marble facing on the porch. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-arch-of-severus**
+
+```text
+The Arch of Septimius Severus in Rome as it stood in the third century: a triumphal arch of white marble with a tall central archway between two smaller side arches, four columns on tall pedestals across each face, carved relief panels over the side arches, a tall plain attic and a bronze chariot group on top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-mausoleum-of-hadrian**
+
+```text
+A great Roman imperial tomb of the second century beside the Tiber, whole as it stood in the third century: a huge round drum faced with white marble on a low square base faced with marble, a ring of marble statues along the drum's top edge, a grassy earth mound on the drum, and at its centre a smaller round tower crowned by a bronze chariot group. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-temple-of-sol**
+
+```text
+A new Roman temple of the Sun of the 270s: a grand white marble temple with a deep porch of tall Corinthian columns under a pediment, raised on a podium with broad steps, standing in a long rectangular court enclosed by a colonnade, a gilded statue on the pediment's top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**landmark-milvian-bridge**
+
+```text
+A long Roman stone road bridge over the Tiber north of Rome in the third century: four large round arches of grey tufa and travertine, small flood arches through the piers above their pointed cutwaters, a level roadway with low parapets, and no tower or gatehouse. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.
+```
+
+**life-amphora-rack**
+
+```text
+A wooden rack of Roman transport amphorae: a dozen tall red clay wine and oil amphorae with pointed feet leaning in two rows against a timber frame, a few more lying stacked on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-beehives**
+
+```text
+Three Roman beehives: tall bell-shaped wicker skeps plastered with clay, standing in a row on a low wooden bench under a small lean-to shelter of planks. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-bread-oven**
+
+```text
+A Roman domed bread oven: a round clay dome on a low stone base with an arched mouth, a long wooden baker's peel leaning against it and a neat stack of kindling beside it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-camel-gear**
+
+```text
+A desert caravan's resting gear on the ground: a wooden camel saddle frame, two striped woven saddle bags, rope-tied bundles of goods wrapped in cloth and two goatskin water bags. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-fishing-nets, attempt 1 (rejected)**
+
+```text
+Fishing nets drying on a riverside frame: three tall wooden poles with a crossbar hung with brown knotted nets and cork floats, a coiled net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-fishing-nets, attempt 2 (rejected)**
+
+```text
+Fishermen's nets drying by a river: a wooden frame of three poles and a crossbar with heavy brown hemp nets folded over the bar and hanging in thick closed folds like sacking, their mesh shown only as a pattern on the cloth-like surface, a few cork floats, a heap of folded net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-grindstone**
+
+```text
+A Roman soldier's sharpening grindstone: a round sandstone wheel turning on an iron axle in a sturdy wooden frame with a hand crank, a small wooden water trough under the wheel and a whetstone on the frame. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-handcart**
+
+```text
+A Roman two-wheeled wooden handcart: a plank bed on two spoked wooden wheels with iron tyres, loaded with tied grain sacks and a coil of rope, its two long handles resting on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-hay-rick**
+
+```text
+A conical haystack built round a tall wooden pole, the hay combed down its sides and tied with ropes weighted by stones, a few loose bundles of hay at its foot. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-laundry-line**
+
+```text
+A Roman camp laundry line: two rough wooden posts about two metres tall with a sagging hemp cord between them, about four metres apart, three plain undyed wool tunics, a faded red military cloak and a linen cloth hanging from the cord, a wicker laundry basket and a wooden bucket on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-loom**
+
+```text
+A Roman warp-weighted loom standing outdoors: two upright wooden posts leaning against a beam, a half-woven striped wool cloth hanging from the top bar, the warp threads tied to rows of clay loom weights near the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-market-stall**
+
+```text
+A Roman market stall: a timber trestle table under a plain linen awning on four poles, laden with wicker baskets of apples, figs, onions and cabbages, round loaves of bread and a few small jugs, more baskets on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-ox-cart**
+
+```text
+A heavy Roman farm cart (plaustrum): a plank bed with low slatted sides on two solid wooden disc wheels, loaded with hay, sacks and two amphorae, its long yoke pole resting on a wooden trestle. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-pottery-stall**
+
+```text
+A Roman potter's wares set out for sale: two plank shelves on trestles and the ground before them stacked with red-slip bowls and plates, clay jugs, oil lamps and small amphorae. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-travel-carriage, attempt 1 (rejected)**
+
+```text
+A light Roman two-wheeled travelling carriage (cisium): a small wicker seat with a footboard on a wooden frame, two large spoked wheels with iron tyres, and a pair of shafts for a single mule resting on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+**life-travel-carriage**
+
+```text
+A Roman two-wheeled covered travelling carriage (carpentum) standing unharnessed: a boxy wooden body with a barrel-vaulted roof of dark leather stretched over wooden hoops, a small open seat at the front, two large spoked wooden wheels with iron tyres on a single axle, and two long shafts resting on the ground in front. No horse, mule or other animal. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```
+
+Negative prompt: `horse, mule, donkey, ox, animal, four wheels, folding hood, buggy, stagecoach, coach lamps, leaf springs`
+
+**life-woodpile**
+
+```text
+A Roman camp woodpile: split firewood logs stacked neatly between pairs of upright stakes, about one metre high and two metres long, beside a round chopping block with an iron axe driven into it and a scatter of wood chips. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
+```

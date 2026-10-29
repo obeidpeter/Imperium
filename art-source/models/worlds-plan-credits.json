@@ -488,9 +488,560 @@
         }
       ],
       "reconciliation": "19 text-to-model tasks reported 20 credits each and 15 biped rigs 25 each: 755 credits. The wallet balance fell from 3520 to 2765, matching. Lucan's first two attempts came back in segmented plate and were rejected (65 credits of the 150 allowed for retries); every other model was selected at its first attempt. 85 credits of the cap were not spent."
+    },
+    {
+      "release": 9,
+      "title": "Landmarks and set pieces",
+      "date": "2026-10-29",
+      "plannedCredits": 1150,
+      "spentCredits": 1060,
+      "reservedCredits": 0,
+      "startingBalance": 2765,
+      "endingBalance": 1705,
+      "approval": "The owner approved release 9’s plan before any credit was spent: \"Approve 1,150, start with the 100-credit gate\" (2026-10-29): about 35 landmarks and 15 life props at 20 credits each, and up to 150 for retries; a cap of 1,150. Spending began with a gate of five (the Colosseum, the bridge over the Adda, a tower tomb, a signal tower and a laundry line), to stop and report before the rest if they came out poorly at the game’s distances. Release 8’s five figures were not approved and are not part of it.",
+      "reconciliation": "Two tasks ran at a time, so each task's charge is taken from its own report (consumed_credit), not from the wallet: 53 tasks at 20 credits, 1,060 in all, which is the wallet's fall from 2,765 to 1,705 (checked after the last task). Of them, 46 models shipped and 7 attempts were rejected: three for the Colosseum, one each for the walls of Mediolanum and the travelling carriage, and two for the fishing nets, which are not shipped.",
+      "tasks": [
+        {
+          "id": "landmark-colosseum (attempt 1)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "ac0a5033-2611-44b0-816d-135782c0d3b0",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: A curved fragment of the outer wall, its four storeys of arcades and the attic as asked, standing alone on a slab"
+        },
+        {
+          "id": "landmark-colosseum (attempt 2)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c2d130d2-aa2d-462d-bb35-69489a48d944",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: The whole ring with its seating and arena, but as the monument stands today"
+        },
+        {
+          "id": "landmark-colosseum (attempt 3)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "ec95ceb1-198a-4226-a760-09180e372061",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: A cutaway"
+        },
+        {
+          "id": "landmark-adda-bridge",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-necropolis-tower-tomb",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-signal-tower",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f7e9f600-c655-46ef-8908-07a5d604e376",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-laundry-line",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3499f8ff-b499-4b72-a516-5638b678e40e",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-aqueduct",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e444f709-d297-456a-9413-c6ae036032b9",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-arch-of-severus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-bridge-piers",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8d691066-0e74-4388-bde5-7b2f86191c2f",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-burial-mound",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "26145aa2-98b2-4375-970a-cb24f9ca49d5",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-burned-farmstead",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "51a7a1d8-7094-416a-add9-a068ec96528c",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-caravan-station",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "155c82c5-6ff2-4326-a217-a2f429ef382e",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-city-gate",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b386d333-6f58-4e96-ace6-f5e5327ddd14",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-dacian-sanctuary",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f04f0ab7-6912-41c7-a314-48797c113904",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-fort-gate",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2ad1b885-0c0b-4bb9-ab38-f857806a5d07",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-mausoleum-of-hadrian",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "1508fe16-c798-4275-9a09-0ff9e8f18acd",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-mediolanum-walls (attempt 1)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "6641daf9-835b-4228-bb78-a4a370ec6e6d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: Medieval"
+        },
+        {
+          "id": "landmark-mediolanum-walls",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b8417128-09c9-44ab-8b02-c39ba9592eba",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-milvian-bridge",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0a6ab405-35e4-47dd-a716-b6116ded7aa8",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-novae-gate",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d778db71-dcec-4496-937d-ba8320ff16f5",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-pantheon",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "18e58742-fe2b-4476-ba4a-81f50b3c607b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-pile-hut",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "498307d9-8f39-466e-aa56-d0a6b54c841f",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-provincial-basilica",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5d734b09-749d-444e-8e56-58a7a2a66a69",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-river-citadel",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3004fea2-8b58-4398-b10d-3e421cc78e67",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-river-quay",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-river-warehouses",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "09049267-e949-45b3-b875-3206a0028b45",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-road-station",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5280c147-0a8a-4041-af56-21696c787fc5",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-roadside-tomb",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8389b598-ae00-47a4-a42c-d4788c18fb3c",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-rock-cut-tombs",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "50d816cb-a25d-4c53-a165-4a93f565d31c",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-ruined-watchtower",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7ee8d35f-56af-47b5-8947-b3897bc47824",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-small-temple",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d3055cb5-21da-4013-9625-61e616ace846",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-syrian-temple-court",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-temple-of-sol",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "54648116-8681-4d46-a5e1-88f9aef8050d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-tetrapylon",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2841d856-a096-4af6-a583-cbdc3022bae2",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-villa",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "45b81e06-fead-4568-bae0-41d0d5c72529",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "landmark-walled-sanctuary",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "48e613f0-4696-4cbf-a768-ea552e766395",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-amphora-rack",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f06d3916-999b-4f41-a86f-e7ac58e98159",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-beehives",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-bread-oven",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f131e451-d6ed-48c0-af44-f019d8e30101",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-camel-gear",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f20ca161-6ea7-4692-b061-208111c6aa43",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-fishing-nets (attempt 1)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0c31faf1-d45c-4c51-ab18-0a84a2bbed9d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: Past its budget"
+        },
+        {
+          "id": "life-fishing-nets (attempt 2)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fdaa0778-f10e-4a93-bc4b-58ebefc3f2c7",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: A frame of three poles with a net hung over its bar like ragged cloth, above a heap of folded nets on a dark block"
+        },
+        {
+          "id": "life-grindstone",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "72f25faa-3ff6-4090-9bef-9c2035038223",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-handcart",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "03893e85-bb2c-472a-a3ce-539f57d733e6",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-hay-rick",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8d338609-f930-4fe7-b5d4-a8f20452bce3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-loom",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-market-stall",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b554acaa-3e37-4d98-8d30-86165384bac7",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-ox-cart",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5023d43b-dd97-442b-9b4e-f3a0b1848699",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-pottery-stall",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d9688685-809d-4fa4-8900-b5bff4e49c44",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-travel-carriage (attempt 1)",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2a64382e-6b4f-4887-932b-791aa4ceb5e6",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20,
+          "note": "rejected: A four-wheeled buggy under a folding hood, a later form than the two-wheeled cisium asked for, with a mule drawn collapsed flat between the shafts"
+        },
+        {
+          "id": "life-travel-carriage",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "09dac9c4-f026-4219-936f-0c32b49b0650",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "life-woodpile",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "69bdb762-598b-4a66-a126-7a6e47d8191d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ]
     }
   ],
-  "spentCredits": 995,
-  "remainingAuthorization": 1505,
+  "spentCredits": 2055,
+  "remainingAuthorization": 445,
   "note": "Release 4 spent no credits (its board kit is original Blender work); the balance read 3760 before and after it. Each release's tasks reconcile with the wallet balance, read through the Tripo API before and after."
 }
