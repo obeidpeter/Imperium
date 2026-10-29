@@ -102,8 +102,8 @@ function followOrder(world,squad){
         plan(squad,`Wheel away for the run-up at ${t.name}.`,{targetId:t.id,x:o.back.x,z:o.back.z});return true;}
       o.wheeled=true;goTo(world,squad,p,{run:true,stopAt:1.5});plan(squad,`Charge ${t.name}.`,{targetId:t.id,x:p.x,z:p.z});return true;
     }
-    // A feigned retreat: ride at the nearest enemy horse or raiders until they see it, then away as if routed; those
-    // who see the flight give chase, and when it turns they are strung out and it charges the nearest.
+    // A feigned retreat: ride at the nearest enemy horse or raiders in sight until within `draw` of them, then away as if
+    // routed; those in sight within `draw` of the flight give chase, and when it turns they are strung out and it charges the nearest.
     case 'feigned_retreat':{
       const F=HORSE_ORDERS.feint,c=squadCentre(world,squad);
       const chasers=squadsOf(world).filter(t=>t.side==='enemy'&&fielded(world,t)&&!t.broken&&HORSE_ORDERS.pursuers.includes(t.role)&&membersOf(world,t).some(m=>!m.hidden))

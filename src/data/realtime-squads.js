@@ -80,8 +80,8 @@ export const ORDERS=freeze({
 export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedge','lie_in_wait','charge','feigned_retreat']);
 // The horse's orders (worlds and gameplay plan, release 7): only cavalry take them. A charge from closer than the
 // run-up it needs (EXCHANGE.chargeRun) wheels away first. A feigned retreat rides `distance` metres (toward the
-// marker when the mission is to draw the enemy's horse there); enemy horse and raiders within `draw` metres who can
-// see it give chase, and when it turns they are strung out: `strungOut` cohesion lost.
+// marker when the mission is to draw the enemy's horse there); enemy horse and raiders in sight that come within
+// `draw` metres of the flight give chase, and when it turns they are strung out: `strungOut` cohesion lost.
 export const HORSE_ORDERS=freeze({roles:freeze(['cavalry','heavy']),pursuers:freeze(['cavalry','heavy','raider']),feint:freeze({distance:30,draw:30,strungOut:20})});
 // A formation order: one Command for up to three squads standing in a
 // connected group, each within `join` metres of another (§3.8 join rule).
