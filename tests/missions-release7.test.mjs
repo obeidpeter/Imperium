@@ -8,7 +8,7 @@ import {deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 import {checkBattle} from '../src/core/battle.js';
 import {convoyStep} from '../src/core/operations.js';
 import {difficultyRule} from '../src/core/campaign-options.js';
-import {fallBack,farBankVolley,lureMet,worksRound,worksSecured} from '../src/core/realtime/field-missions.js';
+import {climbersBeaten,fallBack,farBankVolley,lureMet,worksRound,worksSecured} from '../src/core/realtime/field-missions.js';
 import {decideSquad,carryOut} from '../src/core/realtime/squad-ai.js';
 import {squadById,squadCentre} from '../src/core/realtime/squads.js';
 import {cardButtons,cardOrder,squadOrderOptions} from '../src/core/realtime/order-intents.js';
@@ -71,16 +71,23 @@ test('New Game with the missions plays version 3 of the six re-authored battles,
   const mixed=structuredClone(json);delete mixed.encounter.missionsVersion;assert.throws(()=>G.deserialize(JSON.stringify(mixed)));
 });
 
-test('turn-based escalade: climbers hold each ladder\'s head, the line pays the pressure every turn while a ladder stands, and beaten climbers lose their ladder',()=>{
+test('turn-based escalade: climbers hold each ladder\'s head, the line pays the pressure at each turn\'s end while a ladder stands, and beaten climbers lose their ladder',()=>{
   const s=turnBased('ch4-gate'),e=s.encounter;
   for(const id of ['ladder-north','ladder-south']){const u=e.units.find(x=>x.id===`${id}-climbers`);assert.ok(u,id);assert.equal(u.side,'enemy');assert.equal(u.hp,4);assert.equal(u.works,id);}
   const before=e.defence;assert.ok(G.endTurn(s).ok);
   assert.ok(e.log.some(l=>/siege works still stand/.test(l)));
   assert.equal(e.defence,before-difficultyRule(e).pressure,'the works cost the pressure, no more');
-  // Injected: the north ladder's climbers struck down, wherever our men stand.
-  const climbers=e.units.find(u=>u.id==='ladder-north-climbers');if(climbers.hp>0){climbers.hp=0;checkBattle(s);}
-  assert.ok(e.operation.index===1||e.mission.points[0].secured,'its ladder is thrown down');
-  assert.ok(e.log.some(l=>/ladder at 4B is thrown down/.test(l)));
+  // Injected: the company off the field but for the soldier, four tiles from either ladder's head, so no point can be
+  // held; and the climbers of each ladder still standing struck down. Their ladders fall at the turn's end, before the
+  // works are counted, so the line pays nothing more.
+  const works=missionOperationDefinition('ch4-gate').phases[0].works,standing=works.filter((w,i)=>!e.mission.points[i].secured);
+  assert.ok(standing.length,'a ladder still stands after the first turn');
+  e.units=e.units.filter(u=>u.side!=='ally');
+  for(const w of standing)e.units.find(u=>u.id===`${w.id}-climbers`).hp=0;
+  const line=e.defence,from=e.log.length;assert.ok(G.endTurn(s).ok);
+  for(const w of standing)assert.ok(e.log.slice(from).some(l=>l.includes(`The ladder at ${w.at[0]+1}${String.fromCharCode(65+w.at[1])} is thrown down.`)),w.id);
+  assert.equal(e.operation.index,1,'both ladders down: the rear files come out');
+  assert.ok(!e.log.slice(from).some(l=>/siege works still stand/.test(l)));assert.equal(e.defence,line,'no work stands at the turn\'s end');
 });
 
 test('turn-based feigned retreat: the phase ends when the armoured horse reaches the marker, or when none of it is left (injected positions)',()=>{
@@ -128,7 +135,7 @@ test('real time: the ram batters the barred river gate and the line pays the pre
   validateWorld(w,fail);
 });
 
-test('real time: the ladders stand against the wall and their climbers hold the wall walk at each head',()=>{
+test('real time: the ladders stand against the wall and their climbers hold the wall walk at each head; beaten, they lose their ladder',()=>{
   const {world:w}=realtime('ch4-gate');
   for(const id of ['ladder-north','ladder-south']){
     const ladder=w.objects.find(o=>o.id===id),climbers=w.squads.find(q=>q.unitId===`${id}-climbers`);
@@ -136,7 +143,14 @@ test('real time: the ladders stand against the wall and their climbers hold the 
     assert.ok(climbers,`${id}: its climbers`);assert.equal(climbers.side,'enemy');assert.equal(climbers.name,'Gothic climbers');
     const i=w.mission.works.findIndex(x=>x.id===id),p=w.mission.points[i],c=squadCentre(w,climbers);
     assert.ok(span(c.x-p.x,c.z-p.z)<=w.mission.radius,'at the head of its ladder');
+    assert.equal(climbers.holds,true,'they hold the head as a guard holds his approach');assert.equal(climbersBeaten(w,i),false);
   }
+  // Injected: the north ladder's climbers broken while our men are still far off; at the next tick their ladder is thrown down.
+  w.squads.find(q=>q.unitId==='ladder-north-climbers').broken=true;assert.equal(climbersBeaten(w,0),true);
+  step(w);assert.equal(w.mission.points[0].secured,true);assert.equal(w.objects.find(o=>o.id==='ladder-north').state,'thrown');
+  assert.equal(w.mission.points[1].secured,false,'the south ladder still stands');
+  validateWorld(w,fail);
+  const south=w.squads.find(q=>q.unitId==='ladder-south-climbers');decideSquad(w,south);assert.equal(south.plan.intent,'Guard this approach.');
 });
 
 test('real time: the armoured horse keeps its ground until a feigned retreat draws it out; the pursuers are strung out when the horse turns',()=>{

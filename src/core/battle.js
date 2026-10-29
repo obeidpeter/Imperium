@@ -282,10 +282,12 @@ export function endBattleTurn(state){if(!state.encounter.mission)return Legacy.e
  const convoy=operationPhaseSpec(e)?.convoy;
  for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(convoy){if(operationEscortsMove(e)&&escort.escorted&&alive(escort))convoyStep(e,escort,convoy.route);}else if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1){if(e.featureEdition===31)moveProtectedColumn(e,escort,hero);else stepToward(e,escort,e.goal,2);}
  for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<e.height&&p.x>=0&&p.x<e.width&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
- // Release 7's siege works: while any stands, the defended line gives way (data/mission-operations.js).
- if(operationPhaseSpec(e)?.works&&e.mission.points.some(p=>!p.secured)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`The siege works still stand: the defended line loses ${pressure} this round.`);}
  if(e.combatVersion===2&&['hold','supply'].includes(e.mission?.mode)&&foes(e).some(u=>distance(u,e.goal)<=1)&&!friendly(e).some(u=>distance(u,e.goal)<=1)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`Unopposed enemy occupation damages the objective (−${pressure} integrity this round).`);}
- advanceExpandedBattle(e);progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
+ advanceExpandedBattle(e);progressMission(e);
+ // Release 7's siege works: while any still stands once the turn's points are settled (a ladder whose climbers fell
+ // this turn is already down), the defended line gives way, as at a real-time round's end (data/mission-operations.js).
+ if(operationPhaseSpec(e)?.works&&e.mission.points.some(p=>!p.secured)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`The siege works still stand: the defended line loses ${pressure} this round.`);}
+ checkBattle(state,true);delete e.collectTurnEvents;
  if(e.status==='active'){e.turn++;advanceFieldApproach(e);e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;delete u.moveOrigin;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
  return result(true,e.status==='active'?'The enemy turn ends.':e.status==='won'?'Objective secured. Commit the encounter to preserve its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
