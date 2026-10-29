@@ -12,6 +12,8 @@ import {climbersBeaten,fallBack,farBankVolley,lureMet,worksRound,worksSecured} f
 import {decideSquad,carryOut} from '../src/core/realtime/squad-ai.js';
 import {squadById,squadCentre} from '../src/core/realtime/squads.js';
 import {cardButtons,cardOrder,squadOrderOptions} from '../src/core/realtime/order-intents.js';
+import {missionReadout,missionDefeatCause,missionDefeatHelp} from '../src/ui/realtime-mission-readout.js';
+import {compactMissionReadout} from '../src/ui/realtime-hud.js';
 import {span} from '../src/core/realtime/navigation.js';
 import {missionOperationDefinition,MISSION_OPPORTUNITIES} from '../src/data/mission-operations.js';
 import {BATTLE_OPERATIONS} from '../src/data/battle-operations.js';
@@ -225,6 +227,39 @@ test('real time: squads holding a line by order fall back to the next when it is
   const moved=ours.filter(q=>q.order.kind==='advance');assert.ok(moved.length>=1);
   for(const q of moved){assert.equal(q.order.x,next.x);assert.equal(q.order.from,'lines');}
   assert.ok(w.events.some(e=>e.kind==='fall-back'));
+});
+
+test('the mission readouts name each mission\'s own task, and read the world without changing it',()=>{
+  const read=w=>{const before=JSON.stringify(w),full=missionReadout(w),small=compactMissionReadout(w,full);
+    assert.equal(JSON.stringify(w),before,'presentation changes nothing');return {full,small};};
+  // The escalade: two ladders stand, and the line pays for them at each round's end.
+  {const {world:w}=realtime('ch4-gate'),{full,small}=read(w);
+    assert.match(small.headline,/^Throw down the ladders/);assert.match(small.progress,/^0\/2 ladders down · line \d+$/);
+    assert.match(full.next,/2 ladders stand against the wall: beat their climbers, or hold each head/);
+    assert.match(full.next,new RegExp(`the line loses ${w.mission.pressure} at each round`));
+    for(let t=0;t<R&&w.status==='active';t++)step(w);
+    assert.ok(w.mission.points.some(p=>!p.secured),'a ladder still stands after the first round');
+    assert.ok(w.log.some(l=>/siege works still stand/.test(l.text)));
+    // Injected: the line broken. The works are named as the cause, and the help says what to do about them.
+    w.mission.defence=0;assert.match(missionDefeatCause(w),/siege works stood too long/);assert.match(missionDefeatHelp(w),/siege works at once/);}
+  // The sortie: the ram, and the barred gate it batters.
+  {const {world:w}=realtime('ch5-wall'),{full,small}=read(w);
+    assert.match(small.headline,/^Burn the ram/);assert.match(small.progress,/^Ram standing · line \d+$/);
+    assert.match(full.next,new RegExp(`Persian ram batters River gate \\(${STRUCTURES.gate.integrity+STRUCTURES.gate.bar} integrity left\\): hold its ground`));}
+  // The crossing under fire, and the feigned retreat.
+  {const {world:w}=realtime('ch8-crossing'),{full}=read(w);assert.match(full.next,/far bank’s archers strike your group most exposed/);}
+  {const {world:w}=realtime('ch9-wing'),{full,small}=read(w);
+    assert.match(small.headline,/^Draw the enemy’s horse onto the marker/);assert.match(full.next,/Feigned retreat to the marker/);}
+  // The rearguard's first line, where the stranded party is rescued; then (a presentation fixture: the same world read
+  // as its other phases) the second line, and the convoy at the last, walking and halted.
+  {const {world:w}=realtime('ch6-wells',{obey:true}),{full,small}=read(w);
+    assert.match(small.headline,/rescue the stranded party/);assert.match(full.next,/seconds of control remain\. The column withdraws on its own/);
+    w.mission.rescue=false;assert.match(read(w).small.headline,/^Hold the line while the column withdraws/);
+    w.mission.mode='extract';const walking=read(w);
+    assert.match(walking.small.headline,/convoy’s road clear/);assert.match(walking.small.progress,/columns at marker/);assert.match(walking.full.next,/walks its road to the marker on its own/);
+    assert.match(missionDefeatHelp(w),/ahead of the convoy/);
+    const bearer=w.actors.find(a=>w.mission.escorts.includes(a.id)),foe=w.actors.find(a=>a.side==='enemy'&&a.alive&&!a.down);
+    Object.assign(foe,{x:bearer.x+2,z:bearer.z,hidden:false});assert.match(read(w).full.next,/has halted: an enemy is within 8 m/);}
 });
 
 test('each re-authored battle has its own opportunity pair; a crossing deploys on its own bank',()=>{

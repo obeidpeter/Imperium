@@ -1,6 +1,7 @@
 import {ESCORT_RULES,TIME,capabilityTasks} from '../data/realtime-rules.js';
 import {ORDERS} from '../data/realtime-squads.js';
 import {missionProgress} from '../core/realtime/mission.js';
+import {lureMet} from '../core/realtime/field-missions.js';
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
 
 // Presentation derived from the live world. Nothing here changes a mission,
@@ -34,6 +35,28 @@ function objective(world,base){
   return realtimeMissionText(m.objective??m.label??base,world);
 }
 
+// Release 7's missions (data/mission-operations.js): what each asks, in the readout's words.
+const standingWorks=m=>(m.works??[]).filter((w,i)=>!m.points[i]?.secured);
+function worksNext(world){
+  const m=world.mission,left=standingWorks(m),ram=left.find(w=>w.kind==='ram'),ladders=left.filter(w=>w.kind==='ladder').length;
+  const gate=ram?.gateId?world.objects.find(o=>o.id===ram.gateId):null,parts=[];
+  if(ram)parts.push(`${ram.name} batters ${gate?.state==='closed'?`${ram.gateName??'the gate'} (${gate.integrity} integrity left)`:'the breach'}: hold its ground with no enemy beside it to burn it.`);
+  if(ladders)parts.push(`${ladders===1?'A ladder stands':`${ladders} ladders stand`} against the wall: beat ${ladders===1?'its':'their'} climbers, or hold ${ladders===1?'its head':'each head'} with no enemy there.`);
+  return `${parts.join(' ')} While any stands, the line loses ${m.pressure} at each round's end.`;
+}
+const LURE_NEXT='Ride your horse at the enemy’s horse and order a Feigned retreat to the marker: they keep their ground until drawn out, or until one of your squads comes close.';
+const VOLLEY=' Until the enemy’s archers are beaten, the far bank’s archers strike your group most exposed in the water or on the landing at each round’s end.';
+const holdNext=world=>{const m=world.mission;return `Keep a friend inside the marker and enemies outside it. ${seconds(Math.max(0,m.holdRequired*TIME.roundTicks-m.heldTicks))} seconds of control remain.`;};
+function convoyNext(world){
+  const party=escorts(world).filter(a=>a.alive),hero=world.actors.find(a=>a.id===world.heroId);
+  const halted=party.find(a=>!atGoal(world,a)&&enemies(world).some(e=>distance(e,a)<=ESCORT_RULES.halt));
+  if(halted)return `${halted.name} has halted: an enemy is within ${ESCORT_RULES.halt} m. Clear the road to let the ${world.mission.mode==='hold'?'column':'convoy'} walk on.`;
+  if(party.some(a=>!atGoal(world,a)))return world.mission.mode==='hold'?`The column withdraws on its own and halts while an enemy is within ${ESCORT_RULES.halt} m.`
+    :`The convoy walks its road to the marker on its own and halts while an enemy is within ${ESCORT_RULES.halt} m. Keep the road ahead of it clear.`;
+  if(hero&&!atGoal(world,hero))return 'The convoy is in. Bring your soldier inside the marker too.';
+  return 'Keep the convoy safe until the objective is recorded.';
+}
+
 function rescueNext(world){
   const m=world.mission,party=escorts(world),hero=world.actors.find(a=>a.id===world.heroId);
   const wounded=party.find(a=>a.alive&&!a.carriedBy&&(!a.escort?.escorted||a.down));
@@ -44,6 +67,7 @@ function rescueNext(world){
   }
   const carried=party.find(a=>a.carriedBy);
   if(carried)return `Carry ${carried.name} to the marker. You can only walk and cannot block; a clear route matters more than pursuit.`;
+  if(m.convoy)return m.mode==='hold'?`${holdNext(world)} ${convoyNext(world)}`:convoyNext(world);
   if(m.pauseEscorts)return 'The rescued party waits here until this approach is secure. Clear enemies from the marked ground.';
   const behind=party.find(a=>a.alive&&!atGoal(world,a));
   if(behind)return `Escort ${behind.name} to the marker; stay within ${Math.round(m.followRange)} m. Keep a protector within ${ESCORT_RULES.cover} m when enemies approach.`;
@@ -58,13 +82,16 @@ function nextStep(world){
   if(world.status==='lost')return missionDefeatHelp(world);
   if(m.toldMissing&&needed(world).length)return `The ground is held: now ${capabilityTasks(needed(world))}.`;
   if(m.mode==='extract'||m.rescue)return rescueNext(world);
+  if(m.lure)return lureMet(world)?'The enemy’s horse is at the marker.':LURE_NEXT;
+  if(standingWorks(m).length)return worksNext(world);
+  const volley=m.fire?VOLLEY:'',column=m.convoy?` The column withdraws on its own and halts while an enemy is within ${ESCORT_RULES.halt} m.`:'';
   if(m.gather)return `Bring your soldier and companion together within ${Math.round(m.gather)} m of the marker before pursuing enemies.`;
   switch(m.mode){
     case 'training':return 'Practise Move, Strike, Brace and Throw pilum. Pause whenever you need time to choose.';
     case 'clear':return 'Fight together. Account for arriving reinforcements; do not send your soldier alone into a group.';
     case 'recover':return world.used.includes('scout')?'Reach and recover the records chest. You do not need to defeat every enemy.':'Use Scout before approaching the records chest.';
-    case 'hold':return `Keep a friend inside the marker and enemies outside it. ${seconds(Math.max(0,m.holdRequired*TIME.roundTicks-m.heldTicks))} seconds of control remain.`;
-    case 'capture':case 'supply':return `${m.points.filter(p=>!p.secured).length} marked positions remain.${m.commander?' Your soldier must also stand at the main marker.':''}${m.mode==='supply'?' Keep enemies away from the stores.':''}`;
+    case 'hold':return `${holdNext(world)}${column}${volley}`;
+    case 'capture':case 'supply':return `${m.points.filter(p=>!p.secured).length} marked positions remain.${m.commander?' Your soldier must also stand at the main marker.':''}${m.mode==='supply'?' Keep enemies away from the stores.':''}${volley}`;
     case 'defection':return 'Rally near a rival band to weaken its morale and win its pledge. Three pledges, or clearing the opposition, resolves the field.';
     case 'settlement':return 'Escort the envoy to the claimant, bring your soldier near, and Rally. Keep the meeting together for two rounds.';
     case 'surrender':return m.points.every(p=>p.secured)?'Bring your soldier to the claimant’s standard.':'Secure both gate approaches before taking your soldier to the claimant’s standard.';
@@ -87,7 +114,7 @@ function protectedWarning(world,keymap){
   }
   if(danger.length){
     danger.sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp||a.id.localeCompare(b.id));const a=danger[0],low=a.hp<=a.maxHp*.35;
-    return {warning:`${a.name} ${low?'is critically hurt and in danger':'is in danger'} (${a.hp}/${a.maxHp} Health). Pause (${pause}); intercept the attacker and cover the rescue.`,
+    return {warning:`${a.name} ${low?'is critically hurt and in danger':'is in danger'} (${a.hp}/${a.maxHp} Health). Pause (${pause}); intercept the attacker and cover the ${world.mission.convoy?'convoy':'rescue'}.`,
       // Switching between two endangered survivors at the same severity is a
       // text update, not a reason to interrupt a screen reader again.
       warningKey:`protected-${low?'critical':'danger'}`};
@@ -128,6 +155,7 @@ function orderStatus(world){
 
 function tactic(world){
   const m=world.mission,hero=world.actors.find(a=>a.id===world.heroId),squads=(world.squads??[]).some(s=>s.side!=='enemy');
+  if(m?.convoy)return 'Send a squad ahead of the convoy to clear its road; it halts at every enemy near it, and waits for no one.';
   if(m?.mode==='extract'||m?.rescue)return squads?'Screen the rescue with a squad, bind wounds under its cover, then move the column and commander together.':'Pause to plan the rescue. Intercept the nearest raider before treating the casualty; healing is not protection. Keep close and leave together.';
   if(squads)return 'Hold a squad in front of the enemy, then bring your soldier around the flank. A side or rear strike bypasses the shield; withdraw before you are surrounded.';
   if(hero?.ammo?.pilum>0&&!world.used.includes('throw'))return 'Open with Throw pilum against a shield, then close together. A pilum stuck in the shield halves its blocking chance.';
@@ -146,6 +174,7 @@ export function missionDefeatCause(world){
   if(hero&&(!hero.alive||hero.down)){const by=world.actors.find(a=>a.id===hero.killedBy);return by?`You fell to ${by.name}.`:'Your soldier fell before the objective was secured.';}
   const lost=escorts(world).find(a=>!a.alive);
   if(lost){const by=world.actors.find(a=>a.id===lost.killedBy&&!a.hidden);return `${lost.name} was lost${by?` to ${by.name}`:''}. Every protected survivor must reach safety; your soldier’s remaining Health cannot replace that objective.`;}
+  if(m?.defence<=0&&(world.log??[]).some(l=>/siege works still stand/.test(l.text)))return 'The siege works stood too long, and the defended line broke.';
   if(m?.defence<=0)return 'Enemy occupation exhausted the defended line. The marked ground needed a friendly screen.';
   if(m&&world.tick>=m.deadline*TIME.roundTicks){
     if(needed(world).length)return `The deadline passed before you could ${capabilityTasks(needed(world))}.`;
@@ -163,7 +192,9 @@ export function missionDefeatCause(world){
 export function missionDefeatHelp(world,keymap=DEFAULT_KEYMAP){
   const m=world.mission,hero=world.actors.find(a=>a.id===world.heroId),pause=firstKeyLabel('pause',keymap);
   if(m?.mode==='settlement')return `Pause (${pause}) and follow the envoy to the claimant’s marker. Keep your soldier within ${Math.round(m.radius*2)} m, use Rally, and sustain the meeting for two round endings. The envoy is protected by parley; he needs your presence and reassurance, not a rescue treatment.`;
+  if(m?.convoy&&m.escorts?.length)return `Retry restores the checkpoint. Pause (${pause}) and send a squad ahead of the convoy: it halts while an enemy is within ${ESCORT_RULES.halt} m of it, and a protected column lost ends the battle.`;
   if(m?.escorts?.length)return `Retry restores the rescue checkpoint. Pause (${pause}) to identify the casualty, the nearest raider and the rally marker. Cover the approach before Bind wounds (3s, interrupted by a hit), or sheathe your weapon and Carry. Healing does not make him safe: keep a protector within ${ESCORT_RULES.cover} m of a threatened survivor, then escort every survivor and your soldier into the marker. No permanent companion fate is changed by this failed attempt.`;
+  if(m?.defence<=0&&(world.log??[]).some(l=>/siege works still stand/.test(l.text)))return `Pause (${pause}) and go for the siege works at once: beat a ladder’s climbers, or hold a work’s ground with no enemy there. Every round one stands costs the line.`;
   if(m?.defence<=0)return `Pause (${pause}) and put a friendly screen on the marked ground. Chasing enemies away leaves the stores or line exposed; hold the position while another group handles the flank.`;
   if(m&&world.tick>=m.deadline*TIME.roundTicks)return `Pause (${pause}) at the start and follow the objective strip. ${nextStep({...world,status:'active'})} Optional opportunities never replace the main objective.`;
   const log=(world.log??[]).map(l=>l.text).join('\n');
