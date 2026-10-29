@@ -3,6 +3,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {newGame,getChapter,choose,startEncounter,getActions,getTargets,act,endTurn,commitEncounter,advanceChapter,prepare,selectStratagem,negotiate,allocate,judge,swearOath,serialize,chapterRequirements,preview,acceptFallback} from '../src/core/game.js';
 import {alive,distance,pathDistance,reachable} from '../src/core/shared.js';
 import {damagePreview,planBattleUnit} from '../src/core/battle.js';
+import {operationPhaseSpec} from '../src/core/operations.js';
 import {shiftedStance,speechStrength} from '../src/core/contest.js';
 
 let activeCommandTrace=null;
@@ -25,6 +26,9 @@ function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.
  let goal=enemies().sort((a,b)=>pathDistance(e,hero,a,hero.id)-pathDistance(e,hero,b,hero.id))[0]??e.goal;
  if(['extract','settlement'].includes(m.mode)&&!unescorted){const lag=escorts.filter(u=>distance(u,e.goal)>1).sort((a,b)=>distance(hero,b)-distance(hero,a))[0],meeting=m.mode==='settlement'&&e.combatVersion===2?{x:e.goal.x-2,y:e.goal.y}:e.goal;goal=lag&&distance(hero,lag)>3?lag:meeting;}
  const threatenedEscort=escorts.find(u=>u.hp<u.maxHp*.7&&enemies().some(v=>distance(v,u)<=3));if(threatenedEscort&&tactical)goal=threatenedEscort;
+ // A convoy (release 7's missions) walks on its own: clear the enemy nearest it, else meet it at the marker.
+ const convoy=operationPhaseSpec(e)?.convoy&&m.mode==='extract'?escorts.find(u=>u.escorted):null;
+ if(convoy&&tactical)goal=enemies().filter(v=>distance(v,convoy)<=3).sort((a,b)=>distance(a,convoy)-distance(b,convoy)||pathDistance(e,hero,a,hero.id)-pathDistance(e,hero,b,hero.id))[0]??e.goal;
  if(m.mode==='clear'&&state.chapter>=6&&tactical){const screen=e.units.filter(u=>u.side==='ally'&&alive(u)).sort((a,b)=>a.x-b.x)[0];if(screen&&enemies().some(u=>distance(u,hero)<=4))goal=screen;}
  if(m.mode==='recover')goal=e.goal;
  if(['capture','supply','surrender'].includes(m.mode)){const point=m.points?.filter(p=>!p.secured).sort((a,b)=>pathDistance(e,hero,a,hero.id)-pathDistance(e,hero,b,hero.id))[0];goal=point??e.goal;}
@@ -40,7 +44,7 @@ function battleTurn(state,style){const e=state.encounter,hero=e.units.find(u=>u.
    if(capNeeded(state,'strike')&&distance(hero,goal)>1)move(goal);
  }
  const travelling=['extract','recover','capture','supply','surrender','settlement','hold'].includes(m.mode);
- if(!unescorted&&m.mode!=='defection'&&getActions(state,hero.id).includes('move')&&distance(hero,goal)>(m.mode==='settlement'&&e.combatVersion===2?0:1)&&(travelling||!getTargets(state,hero.id,'strike').length||!tactical))move(goal,['extract','settlement'].includes(m.mode));
+ if(!unescorted&&m.mode!=='defection'&&getActions(state,hero.id).includes('move')&&distance(hero,goal)>(m.mode==='settlement'&&e.combatVersion===2?0:1)&&(travelling||!getTargets(state,hero.id,'strike').length||!tactical))move(goal,['extract','settlement'].includes(m.mode)&&!convoy);
  if(threatenedEscort&&distance(hero,threatenedEscort)<=1)issue(state,hero,'assist',(a,b)=>(a.unitId===threatenedEscort.id?-1:b.unitId===threatenedEscort.id?1:0));
  if(capNeeded(state,'assist'))issue(state,hero,'assist');
  if(e.featureEdition===31){const finish=getTargets(state,hero.id,'strike').find(p=>{const target=e.units.find(u=>u.id===p.unitId);return target&&damagePreview(e,hero,target)>=target.hp;});if(finish)command(state,hero,'strike',finish);}

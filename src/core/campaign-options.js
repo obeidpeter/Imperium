@@ -90,6 +90,9 @@ export function tacticalAdvice(state){
   return advice.slice(0,3);
 }
 export function validateCampaignOptions(state,fail){
+  // Release 7's missions (data/mission-operations.js) belong to modern campaigns begun with them, and so do their battles.
+  if(state.missionsVersion!==undefined&&(state.missionsVersion!==1||state.campaignRules!==2))fail('missions version.');
+  if(state.phase==='encounter'&&state.encounter?.kind==='battle'&&state.encounter.missionsVersion!==state.missionsVersion)fail('encounter missions version.');
   if(state.campaignRules===undefined){if(state.difficulty!==undefined||state.companyOrders!==undefined)fail('campaign options require a rules version.');return;}
   if(state.campaignRules!==2||!LEVELS.some(d=>d.id===state.difficulty))fail('campaign difficulty or rules version.');
   if(campaignOptionsProblem(state,state.encounterOptions))fail('encounter checkpoint options.');

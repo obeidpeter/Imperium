@@ -7,8 +7,8 @@ const hash=s=>createHash('sha256').update(G.serialize(s)).digest('hex');
 
 // This policy begins at New Game and uses the same public commands as the UI.
 // It neither grants wins nor injects progression, skills, supplies or positions.
-export function runProgressionCampaign({alternate=false,difficulty='standard',seed=275,settlement='honour',featureEdition,beforeExpandedTurn=null,onCheckpoint=null,beforeCamp=null,onEncounter=null}={}){
-  const state=G.newGame('Progression witness',seed,{difficulty,progression:true,featureEdition}),encounters=[],checks=[],choices=[],skills=[],agreements=[],specialistActions=new Set();
+export function runProgressionCampaign({alternate=false,difficulty='standard',seed=275,settlement='honour',featureEdition,missions=false,beforeExpandedTurn=null,onCheckpoint=null,beforeCamp=null,onEncounter=null}={}){
+  const state=G.newGame('Progression witness',seed,{difficulty,progression:true,featureEdition,missions}),encounters=[],checks=[],choices=[],skills=[],agreements=[],specialistActions=new Set();
   const call=(name,...args)=>{const r=G[name](state,...args);if(!r.ok)throw new Error(`${name}: ${r.message}`);G.deserialize(G.serialize(state));return r;};
   let guard=0;
   while(state.phase!=='epilogue'&&guard++<100){
