@@ -43,7 +43,7 @@ export {gridToWorld} from './environment-layout.js';
 export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
 // The same build in steps: it yields wherever a time-sliced build may give the
 // page a turn (build-steps.js); each step is a small part of the world.
-export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null,treeKit=null,rockKit=null,wallsKit=null,kitFinish=null}={}){
+export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null,treeKit=null,rockKit=null,wallsKit=null,kitFinish=null,landmarkModels=null}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
@@ -299,7 +299,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // The board's own water (river channel or marsh flood) is the mirror plane on High.
   const riverWater=root.getObjectByName('authored river channel water'),marshWater=root.getObjectByName('continuous irregular marsh water');
   const reflectionLevel=riverWater?RIVER_WATER_LEVEL:marshWater?MARSH_WATER_LEVEL:null;
-  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water,riverZ});root.add(horizon.group);
+  const horizon=createEnvironmentHorizon({ground,profile,height,quality,innerRadius:groundRadius,waterMaterial:m.water,riverZ,landmarkModels});root.add(horizon.group);
   yield;
   // The far skyline: the region's panorama, or the painted backdrop until it loads.
   const backdrop=createPanorama(profile,{quality});root.add(backdrop.group);

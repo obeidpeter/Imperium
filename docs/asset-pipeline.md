@@ -406,3 +406,31 @@ Release 9 models Rome's walls and gate before the finale's field (see [art-gener
 - **Drawing.** The environment merges every placement into one mesh per material after its own material hooks, so the walls take the kit's shared finish (cloud shadows and the scene's bake) and draw in five meshes. Disposing the world frees the merged copies and leaves the cached kit whole. No piece takes picks or changes a route.
 - **Stand-ins.** The stage takes the kit only when it is already loaded (the loading veil preloads it on Balanced and High). Then the code-built curtain and its scaffolds are not built, and the regional kit's gate arch steps aside (`gate: true` in its layout entry, `withoutGate`). On Performance, or if the kit fails, the code-built curtain and the arch stand.
 
+## Landmarks · 2026-10-29
+
+Release 9 gives every chapter three landmarks at the middle distance (see the [historical note](historical-research.md)). Their generated models are not made yet, so for now only their code-built outlines are in the game.
+
+- **Slots.** `LANDMARK_LAYOUT` in [`world-layouts.js`](../src/ui/world-layouts.js) names each chapter's three landmarks, nearest first. Each entry has a world catalog id (`landmark-<name>`), a description and a stand-in kind. `landmarkSlots` in [`environment-horizon.js`](../src/showcase/environment-horizon.js) sets them on the horizon's three bearings:
+  - 115, 143 and 171 metres out;
+  - 195, 223 and 251 metres round a city.
+  - Where the horizon has its river, a bridge and its piers stand across it and a quay on its near bank, its front to the water, at the same distance on their own side of the board. A bridge with no river has a strip of stream beneath it.
+  - The distant woods keep 34 metres clear of each slot.
+  - In a city, no rooftop stands on a landmark's footprint.
+  - Each slot has a facing (`yaw`): toward the board, or for a quay toward the water.
+- **Stand-ins.** [`horizon-landmarks.js`](../src/showcase/horizon-landmarks.js) builds each kind as closed volumes in the horizon's distant vertex-colour batch. They add no draw call and no shader program.
+  - Each builder works in a frame turned by quarter turns toward the board, so the horizon's boxes stay axis-aligned.
+  - Each kind has a footprint, which is its outline's whole extent, and a height.
+  - Each landmark's foundation record names it and counts the silhouette vertices it emitted (`distantFoundations`), so the horizon's tests can tell a landmark from the city's roofline.
+  - [`horizon-landmarks.test.mjs`](../tests/horizon-landmarks.test.mjs) holds every outline to its footprint and height, and checks with rays from all round and from above that no part is turned inside out.
+- **A generated model** will need three things:
+  - a world catalog entry under its slot's id in [`world-catalog.js`](../src/ui/world-catalog.js), with the chapters that show it;
+  - its file;
+  - its manifest record;
+  - a check of its materials against the program budget. The horizon places the cached model as it was loaded, without the kits' shared finish (`kitFinish`).
+- **How it will stand.** `landmarkModelUrls` adds it to the chapter's world kits, and the stage takes it only when it is already loaded, on Balanced and High. The horizon then:
+  - stands it in its slot in place of the outline, turned to the slot's facing (its front is +Z);
+  - scales it to its kind's height and centres it on the slot;
+  - stands it on the lowest ground under the square of its footprint's longer side, since its turn is not a quarter turn.
+  - It casts no shadow and takes no pick. Disposing the world leaves the cached model whole.
+  - On Performance, or if it fails to load, the outline stands.
+

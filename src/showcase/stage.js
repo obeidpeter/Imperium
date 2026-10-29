@@ -8,7 +8,7 @@ import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
-import {createSceneryModels,holdSceneryModel,sceneryResidency} from './scenery-models.js';
+import {createSceneryModels,holdSceneryModel,landmarkModelUrls,sceneryResidency} from './scenery-models.js';
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
@@ -337,7 +337,8 @@ export class BattleStage{
   // The choice holds until the world is rebuilt: kit pieces and their code-built stand-ins
   // never mix. The lease keeps the model while this stage stands.
   // The region's tree and rock kits (tree-kit.js, rock-kit.js) likewise plant its trees and stones,
-  // and the walls kit (aurelian-walls.js) builds Aurelian's walls before the finale.
+  // the walls kit (aurelian-walls.js) builds Aurelian's walls before the finale, and the
+  // chapter's generated landmarks stand at the horizon's middle distance (environment-horizon.js).
   takeWorldKits(encounter,quality){
     this.releaseWorldKits();
     if(quality==='performance')return;
@@ -345,13 +346,16 @@ export class BattleStage{
     const take=url=>url?holdSceneryModel(url):null;
     this.boardKit=take(boardKitUrl(encounter));this.treeKit=take(sceneTreeKitUrl(encounter,this.chapter));this.rockKit=take(sceneRockKitUrl(encounter,this.chapter));
     this.wallsKit=take(aurelianWallsUrl(encounter,{chapter:this.chapter}));
+    this.landmarkKits=landmarkModelUrls(encounter,{chapter:this.chapter}).map(([model,url])=>[model,take(url)]).filter(([,lease])=>lease);
   }
   releaseWorldKits(){
-    for(const lease of [this.boardKit,this.treeKit,this.rockKit,this.wallsKit])lease?.release();this.boardKit=this.treeKit=this.rockKit=this.wallsKit=null;
+    for(const lease of [this.boardKit,this.treeKit,this.rockKit,this.wallsKit,...(this.landmarkKits??[]).map(([,l])=>l)])lease?.release();
+    this.boardKit=this.treeKit=this.rockKit=this.wallsKit=null;this.landmarkKits=[];
   }
   // The kits' models for the world's build, with the finish their cached materials take.
   worldKits(){
-    return {boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null,wallsKit:this.wallsKit?.scene??null,kitFinish};
+    return {boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null,wallsKit:this.wallsKit?.scene??null,kitFinish,
+      landmarkModels:new Map((this.landmarkKits??[]).filter(([,lease])=>lease.scene).map(([model,lease])=>[model,lease.scene]))};
   }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked

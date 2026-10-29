@@ -138,6 +138,32 @@ export const LIFE_LAYOUT=freeze({
   birds:{balanced:9,high:14},puffs:{balanced:6,high:9},maxHearths:4
 });
 
+// Each chapter's landmarks at the middle distance (worlds and gameplay plan, release 9), on the
+// horizon's three bearings (environment-horizon.js; nearest first). `model` is the world catalog
+// id of the generated model that will stand there; until it is generated, on Performance, or if
+// it cannot be downloaded, the code-built silhouette `kind` stands in (horizon-landmarks.js).
+// The Danube chapters share theirs. Historical basis: docs/historical-research.md, landmarks.
+const landmark=(model,name,kind)=>({model:`landmark-${model}`,name,kind});
+const DANUBE=Object.freeze({
+  gate:landmark('novae-gate','the stone gate of Novae','gate'),tower:landmark('signal-tower','a stone signal tower','tower'),
+  mound:landmark('burial-mound','a Thracian burial mound','mound'),hut:landmark('pile-hut','a reed hut on piles','stilts'),
+  piers:landmark('bridge-piers','the piers of an old bridge, standing without its deck','piers'),quay:landmark('river-quay','a harbour quay and its warehouse','quay'),
+  station:landmark('road-station','a road station','station'),temple:landmark('small-temple','a small temple','temple'),farm:landmark('burned-farmstead','a burned farmstead','ruin')});
+export const LANDMARK_LAYOUT=freeze({
+  1:[DANUBE.gate,DANUBE.tower,DANUBE.mound],
+  2:[DANUBE.hut,DANUBE.piers,DANUBE.quay],
+  3:[DANUBE.station,DANUBE.temple,DANUBE.farm],
+  4:[DANUBE.tower,DANUBE.mound,DANUBE.station],
+  5:[landmark('river-citadel','a citadel on the river cliff','citadel'),landmark('ruined-watchtower','a ruined watchtower','ruined tower'),landmark('necropolis-tower-tomb','a tower tomb of the necropolis','tomb tower')],
+  6:[landmark('caravan-station','a mudbrick caravan station','station'),landmark('syrian-temple-court','a Syrian temple court','court temple'),landmark('rock-cut-tombs','chamber tombs cut in the hillside','tombs')],
+  7:[landmark('adda-bridge','the bridge over the Adda','bridge'),landmark('mediolanum-walls','the walls of Mediolanum','walls'),landmark('roadside-tomb','a tall tomb beside the road','tomb tower')],
+  8:[landmark('fort-gate','the stone gate of a frontier fort','gate'),landmark('river-warehouses','river warehouses','quay'),landmark('dacian-sanctuary','the ruined Dacian hill sanctuary','ring')],
+  9:[landmark('tetrapylon','a tetrapylon with its colonnades','tetrapylon'),landmark('walled-sanctuary','a sanctuary in its walled court','court temple'),landmark('city-gate','the city gate','gate')],
+  10:[landmark('villa','a villa','villa'),landmark('provincial-basilica','the province’s basilica','hall'),landmark('aqueduct','an aqueduct','aqueduct')],
+  11:[landmark('colosseum','the Colosseum','arena'),landmark('pantheon','the Pantheon','rotunda'),landmark('arch-of-severus','the Arch of Septimius Severus','arch')],
+  12:[landmark('mausoleum-of-hadrian','the Mausoleum of Hadrian','mausoleum'),landmark('temple-of-sol','Aurelian’s Temple of the Sun','court temple'),landmark('milvian-bridge','the Milvian Bridge','bridge')]
+});
+
 // Encounters composed on their own instead of the shared frontage.
 export const ENCOUNTER_LAYOUTS=freeze({
   // The authored Aurelian curtain and distant cohorts stay. New civic

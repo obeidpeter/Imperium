@@ -61,12 +61,18 @@ test('Ground and water face upward; distant built surfaces face outward rather t
   }
 });
 
+// The vertices of each landmark, with its stream, in the distant silhouettes (foundation records).
+const landmarkVertices=h=>{const set=new Set();for(const f of h.group.userData.distantFoundations)if(f.landmark)for(let i=0;i<f.vertices+f.streamVertices;i++)set.add(f.firstVertex+i);return set;};
 test('Distant urban scenery remains a low roofline rather than filling the sky',()=>{
-  for(const id of ['ch9-wing','ch11-adlection']){
-    const w=create(id),p=w.horizon.group.getObjectByName('regional distant silhouettes').geometry.attributes.position;
+  for(const id of ['ch9-wing','ch11-adlection','ch12-legitimacy','ch12-confrontation']){
+    const w=create(id),p=w.horizon.group.getObjectByName('regional distant silhouettes').geometry.attributes.position,landmarks=landmarkVertices(w.horizon);
+    assert.ok(landmarks.size>0);
     for(let i=0;i<p.count;i++){
-      const distance=Math.hypot(p.getX(i),p.getZ(i));assert.ok(distance>180,'City buildings are distant scenery');
-      assert.ok(Math.atan2(p.getY(i)-2.7,distance)<5*Math.PI/180,'Roofline stays within five degrees of a level horizon');
+      const distance=Math.hypot(p.getX(i),p.getZ(i)),rise=Math.atan2(p.getY(i)-2.7,distance);
+      // The city's three landmarks (the Colosseum, Hadrian's tomb) rise above its roofline, but stay low and distant too.
+      if(landmarks.has(i)){assert.ok(distance>170&&rise<8*Math.PI/180,`${id}: a landmark at ${distance.toFixed(0)} m rises ${(rise*180/Math.PI).toFixed(1)} degrees`);continue;}
+      assert.ok(distance>180,'City buildings are distant scenery');
+      assert.ok(rise<5*Math.PI/180,'Roofline stays within five degrees of a level horizon');
     }
     w.dispose();
   }
@@ -79,16 +85,24 @@ test('Distant silhouettes share the supporting ground fog and their actual found
     const w=createEnvironment(new T.Scene(),e,{chapter,quality:'performance',loadTextures:false}),h=w.horizon,mesh=h.group.getObjectByName('regional distant silhouettes');
     assert.equal(mesh.material.fog,w.ground.material.fog,`chapter ${chapter}: no unfogged tower after its ground disappears`);assert.equal(mesh.material.fog,true);
     h.group.updateWorldMatrix(true,true);const positions=mesh.geometry.attributes.position,foundations=h.group.userData.distantFoundations;assert.ok(foundations.length>=3);
+    assert.equal(foundations.filter(f=>f.landmark).length,3,`chapter ${chapter}: three landmarks`);
     for(const f of foundations){
-      const bounds=new T.Box3();for(let i=f.firstVertex;i<f.firstVertex+30;i++)bounds.expandByPoint(new T.Vector3().fromBufferAttribute(positions,i));
-      assert.ok(Math.abs(bounds.min.y-f.base)<.00001,'metadata identifies an actual emitted foundation, not only its intended placement');
-      assert.ok(Math.abs(bounds.min.x-(f.x-f.width/2))<.00005);assert.ok(Math.abs(bounds.max.z-(f.z+f.depth/2))<.00005);
+      // A building's first box is its foundation; a landmark's whole outline stands within its footprint,
+      // from its foundation (the mound's rim buried a little deeper).
+      const bounds=new T.Box3();for(let i=f.firstVertex;i<f.firstVertex+(f.landmark?f.vertices:30);i++)bounds.expandByPoint(new T.Vector3().fromBufferAttribute(positions,i));
+      if(f.landmark){
+        assert.ok(f.vertices>0&&bounds.min.y<=f.base+.00001&&bounds.min.y>=f.base-.5,`chapter ${chapter}: ${f.landmark} stands on its foundation`);
+        assert.ok(bounds.min.x>=f.x-f.width/2-.00005&&bounds.max.x<=f.x+f.width/2+.00005&&bounds.min.z>=f.z-f.depth/2-.00005&&bounds.max.z<=f.z+f.depth/2+.00005,`chapter ${chapter}: ${f.landmark} within its footprint`);
+      }else{
+        assert.ok(Math.abs(bounds.min.y-f.base)<.00001,'metadata identifies an actual emitted foundation, not only its intended placement');
+        assert.ok(Math.abs(bounds.min.x-(f.x-f.width/2))<.00005);assert.ok(Math.abs(bounds.max.z-(f.z+f.depth/2))<.00005);
+      }
       let lowest=Infinity;
       for(const [x,z]of [[f.x,f.z],[f.x-f.width/2,f.z-f.depth/2],[f.x+f.width/2,f.z-f.depth/2],[f.x-f.width/2,f.z+f.depth/2],[f.x+f.width/2,f.z+f.depth/2]]){
         ray.ray.origin.set(x,1000,z);const hit=ray.intersectObjects([h.bridge,h.ridges],false)[0];assert.ok(hit,'visible terrain supports every footprint sample');lowest=Math.min(lowest,hit.point.y);
-        assert.ok(bounds.min.y<=hit.point.y-.039,`chapter ${chapter}: foundation cannot float over a coarsely interpolated ridge`);
+        assert.ok(f.base<=hit.point.y-.039,`chapter ${chapter}: foundation cannot float over a coarsely interpolated ridge`);
       }
-      assert.ok(Math.abs(bounds.min.y-(lowest-.04))<.00001,'grounding preserves the intended silhouette instead of burying it arbitrarily');
+      assert.ok(Math.abs(f.base-(lowest-.04))<.00001,'grounding preserves the intended silhouette instead of burying it arbitrarily');
     }
     w.dispose();
   }

@@ -33,6 +33,18 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - smoke rises and drifts with the wind from the hearths of barracks, forges, field kitchens and the fish smokers' racks;
   - every banner's cloth stirs in the wind at its own pace, no longer only the fort's standard.
   - Birds and smoke share one mesh and one shader program, placed from the encounter's presentation seed and the layout data (`LIFE_LAYOUT`). None of it is on Performance, and reduced motion holds it still.
+- **Each chapter's own landmarks on its horizon** ([`horizon-landmarks.js`](src/showcase/horizon-landmarks.js), [historical note](docs/historical-research.md)). Three landmarks stand at the middle distance of every chapter, in place of the watchtowers, temples and aqueducts that stood in every region before:
+  - Chapters I–IV, on the Danube: the stone gate of Novae, a signal tower, a Thracian burial mound, a reed hut on piles, the piers of an old bridge without its deck, a harbour quay, a road station, a small temple and a burned farmstead;
+  - Chapter V: a citadel on the river cliff, a ruined watchtower and a tower tomb of the necropolis;
+  - Chapter VI: a mudbrick caravan station, a Syrian temple court and chamber tombs cut in the hillside;
+  - Chapter VII: the bridge over the Adda, the walls of Mediolanum and a tall tomb beside the road;
+  - Chapter VIII: a frontier fort's stone gate, river warehouses and a ruined Dacian sanctuary;
+  - Chapter IX: a tetrapylon with its colonnades, a sanctuary in its walled court and the city gate;
+  - Chapter X: a villa, the province's basilica and an aqueduct;
+  - Chapter XI: the Colosseum, the Pantheon and the Arch of Septimius Severus;
+  - Chapter XII: the Mausoleum of Hadrian, Aurelian's Temple of the Sun and the Milvian Bridge.
+  - Where a horizon has its river (Chapters II and VIII), the old bridge's piers stand across it and the quays on its near bank, facing the water. The bridges over the Adda and the Tiber, whose horizons have no river, each have a stream beneath them.
+  - They are drawn as code-built outlines in the horizon's distant batch, which the woods and the city's rooftops keep clear of. Each has a slot for a generated model (`LANDMARK_LAYOUT`), which will stand there on Balanced and High once it is made. None is made yet, so nothing more is downloaded.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 

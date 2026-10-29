@@ -10,6 +10,7 @@ import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
 import {curiaPlacements,updateInteriorCutaway} from './environment-curia.js';
 import {aurelianWallsUrl} from './aurelian-walls.js';
+import {LANDMARK_LAYOUT} from '../ui/world-layouts.js';
 
 /** Presentation-only generated scenery. Exterior positions follow the actual
  * board bounds, including real-time maps. Interior camp props use authored
@@ -79,9 +80,13 @@ export const sceneryResidency=()=>masters.stats();
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
 // A lease on a model already loaded, or null, without a request (scenery-cache.js).
 export const holdSceneryModel=url=>masters.hold(url);
-// The board kit, the region's tree and rock kits and, before Rome, Aurelian's walls belong
-// to the working set wherever the scenery is drawn.
-const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter})].filter(Boolean);
+/** The chapter's generated landmarks that exist (LANDMARK_LAYOUT; environment-horizon.js), as
+ * [world catalog id, model url] pairs: none until their models are generated. */
+export const landmarkModelUrls=(e,{chapter}={})=>e?(LANDMARK_LAYOUT[chapter]??[]).map(slot=>[slot.model,worldModelUrl(slot.model)]).filter(([,url])=>url):[];
+// The board kit, the region's tree and rock kits, before Rome Aurelian's walls, and the
+// chapter's generated landmarks belong to the working set wherever the scenery is drawn.
+const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter}),
+  ...landmarkModelUrls(e,{chapter}).map(([,url])=>url)].filter(Boolean);
 /** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
  * them: its placed scenery and the world kits. None on Performance. */
 export const sceneryWorkingSet=(e,{chapter,quality='balanced'}={})=>quality==='performance'?[]:[...new Set([...sceneryPlacements(e,{chapter}).map(p=>p.url),...worldKitUrls(e,quality,chapter)])];
