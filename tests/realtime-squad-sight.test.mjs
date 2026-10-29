@@ -4,6 +4,7 @@ import {createWorld,queueCommand,step,worldHash} from '../src/core/realtime/simu
 import {decideSquad,planDoctrine} from '../src/core/realtime/squad-ai.js';
 import {squadById,squadModifiers,membersOf} from '../src/core/realtime/squads.js';
 import {noticeOf,squadSight,unseen} from '../src/core/realtime/squad-sight.js';
+import {noticeRate} from '../src/core/realtime/ai.js';
 import {battleVariety} from '../src/core/realtime/variety.js';
 import {splitStreams} from '../src/core/realtime/rng-streams.js';
 import {blowSetup} from '../src/core/realtime/combat.js';
@@ -37,6 +38,15 @@ test('a squad’s notice of each hostile fills by the perception rules when near
   look(R);assert.equal(noticeOf(goths,'near'),100,'in plain sight it fills');
   // Out of sight it drains.
   for(const m of membersOf(w,squadById(w,'near'))){m.x+=80;}squadById(w,'near').x+=80;look(R);assert.equal(noticeOf(goths,'near'),0,'gone from sight, forgotten');
+});
+
+test('a meter already full asks only whether the notice rate is above zero, which cover cannot change',()=>{
+  // A rock between a raider and the soldier, 11 m apart (injected placements).
+  const map=grass();for(let y=10;y<14;y++)map.terrain[y][10]='rock';
+  const w=createWorld({map,seed:3,actors:[hero({at:[20,30]}),{id:'r',name:'Raider',side:'enemy',role:'raider',attributes:goth.attributes,kit:goth.kit,at:[31,30],face:[-1,0]}]});
+  const soldier=w.actors.find(a=>a.id==='hero'),raider=w.actors.find(a=>a.id==='r'),covered=noticeRate(w,raider,soldier),full=noticeRate(w,raider,soldier,{full:true});
+  assert.ok(covered>0&&full>covered,'behind the rock he is seen more slowly, and seen either way');
+  soldier.x=-100;assert.equal(noticeRate(w,raider,soldier),0);assert.equal(noticeRate(w,raider,soldier,{full:true}),0,'beyond sight both are nothing');
 });
 
 test('a squad that has not seen its attacker takes a whole hit at once, double the morale loss, and no Brace',()=>{

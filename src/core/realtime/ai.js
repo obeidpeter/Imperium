@@ -26,8 +26,10 @@ const emit=(world,event)=>world.events.push({tick:world.tick,...event});
 const difficulty=world=>PERCEPTION.difficulty[world.difficulty]??PERCEPTION.difficulty.standard;
 
 // How fast `watcher` notices `target` this second (§3.10): base for what the
-// target does × visibility × proximity × Per/10 × (1 − Fieldcraft/100).
-export function noticeRate(world,watcher,target){
+// target does × visibility × proximity × Per/10 × (1 − Fieldcraft/100). With
+// `full`, for a meter already full, whose next value asks only whether the rate is
+// above zero, cover is not looked for: every factor is positive, so it cannot say.
+export function noticeRate(world,watcher,target,{full=false}={}){
   // A watcher on a tower's deck sees further (structures.js).
   const grid=navGrid(world.map),d=distanceBetween(watcher,target),per=watcher.attributes.per,sight=PERCEPTION.sightBase+per+(onTower(world,watcher)?STRUCTURES.tower.sight:0);
   const proximity=d<=PERCEPTION.near?1:d>=sight?0:1-(d-PERCEPTION.near)/(sight-PERCEPTION.near);if(proximity<=0)return 0;
@@ -37,7 +39,7 @@ export function noticeRate(world,watcher,target){
   let visibility=1;
   if(world.timeOfDay==='night')visibility*=PERCEPTION.darkness;
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
-  if(terrainCover(world,watcher,target)||smokeBetween(world,watcher,target))visibility*=PERCEPTION.cover;
+  if(!full&&(terrainCover(world,watcher,target)||smokeBetween(world,watcher,target)))visibility*=PERCEPTION.cover;
   if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
   // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
   return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);

@@ -198,6 +198,8 @@ Already done (#32): Chapter V's countermine, engineer and cavalry formations, an
 - **Convoys remember their road.** The wagons walk point by point and pass a point within a tile of them, in both paths; judged by their nearest point instead, they turned back at the ford.
 - **The far bank's volley strikes one group.** Loosed at every squad of ours with a man in the water or on the landing, it cost the bot a median 77% of its squads' strength at Standard's crossing, against 50% before the missions; it now strikes the group most exposed there, the squad with the most men in the water or on the landing.
 
+**The simulation's cost.** The escalade's tick, and on Story and Veteran the sortie's, came near the 0.3 ms budget. As the [risks](#risks-and-fallbacks) provide, cheaper checks came first: a squad's pace and its formation's places are found once, route searches work out each cell's moves once per grid and try a straight line's every eighth sample first, whether a man is out of combat is asked only of the other side, and a squad's sight finds each squad's men once and looks for cover only while its notice is not yet full. Every battle plays exactly as before.
+
 #### 8. Living camps
 
 Already done (#32, #33): nine company stories, three playable situations, field reports, and regional surroundings for each camp.
