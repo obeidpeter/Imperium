@@ -170,7 +170,7 @@ test('courtyard consequences describe only recorded decisions and committed fiel
     const p=Game.campPresentationFor(variant);
     assert.equal(p.civilianOutcome,choice==='civilians'?'departing':'delayed');
     assert.equal(p.stores,choice==='civilians'?'transport':'secured');
-    assert.deepEqual(p.ambient.map(a=>a.routine).sort(),['carry','rest','watch','work']);
+    assert.deepEqual(p.ambient.map(a=>a.routine).sort(),['carry','carry','rest','watch','work'],'the water steward and the date-seller carry');
     assert.equal(p.waterDetail,false);assert.equal(p.engineeringRecovered,false);
     variant.commandCampaign.plan='engineers';assert.equal(Game.campPresentationFor(variant).engineeringRecovered,false,'a chosen preparation is not a recovered field opportunity');
     variant.commandCampaign.records.push({id:'ch5-mine',opportunity:'signal'});

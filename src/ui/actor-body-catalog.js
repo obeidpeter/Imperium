@@ -13,9 +13,10 @@
 // from the procedural head (head-joint metres) to cover its head and hair.
 const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),scale:Object.freeze(scale)});
 // The chapters each named man appears in, in 3D (tests/actor-bodies.test.mjs checks them).
-const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,5,6],
+// Since the living camps (release 8) Varro, Crispus and Brennus also stand in later camps.
+const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,4,5,6],
   // Sabinus takes Lucan's place from Chapter II when Lucan leaves.
-  sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3],crispus:[3]});
+  sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3,4],crispus:[3,4,7,11]});
 // The chapters whose chamber the members of the Senate sit in.
 const SENATOR_CHAPTERS=[7,8,10,11,12];
 const body=(fits,chapters,{headwear=null,cast=null,senator=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator});
@@ -43,7 +44,8 @@ export const ACTOR_BODIES=Object.freeze({
   // The camp's staff by their camp role (actor-kit.js), ahead of the escorts' civilian dress.
   'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
-  'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3]),
+  // Syra the sutler follows the legion from Novae to the Danube fort, and to the final march.
+  'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3,4,12]),
   'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // The chamber's members in plain togas, each with the band its bloc's trims are drawn on
   // (bind-character.py --bloc-band). Chosen by the member's identity, never by kit.
@@ -73,6 +75,9 @@ export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 export function actorBodyId(kit={},cast=null){
   if(kit.civic)return kit.hero||cast&&!String(cast).startsWith('figure-')?null:SENATOR_BODIES[(kit.identity>>>0)%SENATOR_BODIES.length];
   if(cast&&Object.hasOwn(CAST_BODIES,cast))return CAST_BODIES[cast];
+  // A named person in camp dress with no body of their own (Severianus, Aelia and the rest of
+  // the cast, release 8) keeps the procedural figure and their own face, never a stranger's body.
+  if(kit.escort&&cast&&!String(cast).startsWith('figure-'))return null;
   // A soldier drawn in his own kit (the real-time views and the kit panel)
   // wears the body closest to it: the protagonist the recruit's tunic until he
   // wears armour, then the legionary's mail and, as his rank rises, the

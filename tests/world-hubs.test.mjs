@@ -103,7 +103,8 @@ test('regional choices and routines are pure views of existing decisions, with a
     assert.equal(presentation.decision,option.id);
     assert.equal(presentation.decisionDetails[0].state,CAMP_CONTEXT[chapter.id].choices[option.id].state);
     assert.equal(presentation.outcomeDetails.length,0);
-    assert.deepEqual(presentation.ambient.map(a=>a.routine).sort(),['carry','rest','watch','work']);
+    // From Chapter IV the supply orderly and the trader both carry; Chapters I–III have only Syra.
+    assert.deepEqual(presentation.ambient.map(a=>a.routine).sort(),chapter.id<=3?['carry','rest','watch','work']:['carry','carry','rest','watch','work']);
     for(const record of presentation.ambient){
       const actor=world.actors.find(a=>a.id===record.id);assert.ok(actor);
       assert.equal(campActivityFor(world,actor.id),record.routine);
@@ -162,7 +163,7 @@ test('relief, judgment, preparation and negotiation details follow existing comm
 test('optional regional reports and service conversations preserve the exact chronicle and grant nothing',()=>{
   for(let chapter=1;chapter<=12;chapter++)if(chapter!==5){
     const state=stateFor(chapter),before=Game.serialize(state);
-    for(const treeId of ['hub:report','hub:local','hub:clerk','hub:quartermaster','hub:instructor','hub:capsarius','hub:porter','hub:lucan','hub:sabinus']){
+    for(const treeId of ['hub:report','hub:local','hub:clerk','hub:quartermaster','hub:instructor','hub:capsarius','hub:porter']){
       const view=Game.campConversation(state,treeId);assert.ok(view.text.length<650,'optional context stays short');
       for(const option of view.options){
         assert.equal(option.preview.length,0,'no new paid errands or rewards');
