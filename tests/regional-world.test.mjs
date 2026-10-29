@@ -8,7 +8,7 @@ import {createGroundHeight,distantRiverCentre} from '../src/showcase/environment
 import {createEnvironment} from '../src/showcase/environment.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
 import {createSceneryModels,sceneryPlacements} from '../src/showcase/scenery-models.js';
-import {WORLD_CATALOG,chapterWorldFiles} from '../src/ui/world-catalog.js';
+import {LIFE_PROP_CHAPTERS,WORLD_CATALOG,chapterWorldFiles} from '../src/ui/world-catalog.js';
 const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
 const graphics=JSON.parse(await readFile(new URL('./fixtures/graphics-scenes.json',import.meta.url),'utf8'));
 const field=(id,width=8,height=8,kind='battle')=>({id,width,height,kind,terrain:Array.from({length:height},()=>Array(width).fill('sand')),units:[]});
@@ -51,6 +51,19 @@ test('Offline packs contain each regional asset only where the renderer can use 
   }
   for(const [id,chapters]of Object.entries(REGIONAL_PROP_CHAPTERS))for(let chapter=1;chapter<=12;chapter++)assert.equal(chapterWorldFiles(chapter).includes(`assets/models/world/${id}.glb`),chapters.includes(chapter));
   assert.equal(Object.keys(REGIONAL_PROP_CHAPTERS).length,16);
+  for(const [id,chapters]of Object.entries(LIFE_PROP_CHAPTERS))for(let chapter=1;chapter<=12;chapter++){
+    assert.equal(chapterWorldFiles(chapter).includes(`assets/models/world/${id}.glb`),chapters.includes(chapter),`${id} in Chapter ${chapter}`);
+    assert.equal(sceneryPlacements(field(`ch${chapter}-camp`,20,16),{chapter}).filter(p=>p.id===id).length,chapters.includes(chapter)?1:0,`${id} set out in Chapter ${chapter}`);
+    assert.equal(sceneryPlacements(field(`ch${chapter}-council`,20,16,'contest'),{chapter}).filter(p=>p.id===id).length,0,`${id} stays outdoors in Chapter ${chapter}`);
+  }
+  // Life has no code-built stand-in: without its model, on Performance, the place stays empty.
+  for(let chapter=1;chapter<=12;chapter++){
+    const e=field(`ch${chapter}-camp`,20,16),life=regionalPropPlacements(e,{chapter}).filter(p=>LIFE_PROP_CHAPTERS[p.id]);
+    for(const p of life)assert.equal(p.fallbackName,undefined,`${p.id} draws nothing in its place without its model`);
+    const world=createEnvironment(new T.Scene(),e,{chapter,quality:'performance',loadTextures:false});
+    for(const p of life)assert.equal(world.group.getObjectByName(`regional-prop:${p.id}`),undefined,`${p.id} has no stand-in in Chapter ${chapter}`);
+    world.dispose();
+  }
 });
 
 test('Scenic rivers move outside expanded maps without changing any authored walking height',()=>{
@@ -96,7 +109,11 @@ test('Failed and partial model downloads keep only the matching fallback owner v
   const model=createSceneryModels(scene,e,{chapter:3,load:async url=>url.endsWith(`${chosen.id}.glb`)?source:Promise.reject(new Error('offline'))});
   await model.ready;
   assert.equal(world.group.getObjectByName(chosen.fallbackName).visible,false,'the loaded component hides its own fallback');
-  for(const p of placements.filter(p=>p.component!==chosen.component))assert.equal(world.group.getObjectByName(p.fallbackName)?.visible,true,p.fallbackName+' missing download keeps fallback');
+  for(const p of placements.filter(p=>p.component!==chosen.component)){
+    // Life alone has no stand-in to keep (its own test above).
+    if(!p.fallbackName){assert.ok(LIFE_PROP_CHAPTERS[p.id],`${p.id} has a fallback`);continue;}
+    assert.equal(world.group.getObjectByName(p.fallbackName)?.visible,true,p.fallbackName+' missing download keeps fallback');
+  }
   model.dispose();assert.equal(world.group.getObjectByName(chosen.fallbackName).visible,true);world.dispose();
 });
 

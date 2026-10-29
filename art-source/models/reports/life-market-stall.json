@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-market-stall.glb",
+    "bytes": 44710140,
+    "sha256": "9fd606490524b8bb76c32a9f09bb728edc8f3ce9ed6fe5457b41c054bd197c8f",
+    "triangles": 1461650
+  },
+  "output": {
+    "path": "assets/models/world/life-market-stall.glb",
+    "bytes": 188328,
+    "sha256": "f3e77ffbfb319bc5f38e0f721ef5ce17b9d1854754081ffbb1300e7345633575",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0
+  },
+  "scale": 2.569299026072485,
+  "sizeMetres": {
+    "width": 2.5648,
+    "height": 2.3,
+    "depth": 1.5279
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_b554acaa-3e37-4d98-8d30-86165384bac7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_b554acaa-3e37-4d98-8d30-86165384bac7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_b554acaa-3e37-4d98-8d30-86165384bac7",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

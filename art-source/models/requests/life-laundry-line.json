@@ -1,15 +1,13 @@
 {
   "id": "life-laundry-line",
-  "status": "Release 9 gate: requested",
+  "status": "Release 9 gate: processed, compressed and reviewed; in the game on Balanced and High",
   "chapters": [
     1,
-    2,
     3,
-    4,
     8,
     10
   ],
-  "use": "A life prop for the camps and their surroundings (release 9's life about the field): washing hung out to dry, on Balanced and High.",
+  "use": "Life about the camps and towns: washing hung out to dry, set out beyond the board in Chapters I, III, VIII and X (LIFE_PROP_CHAPTERS) on Balanced and High.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",
@@ -33,6 +31,36 @@
     "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
     "program": "release-9-landmarks-and-life",
     "creditCeiling": 1150,
-    "expectedCredits": 20
+    "expectedCredits": 20,
+    "taskId": "3499f8ff-b499-4b72-a516-5638b678e40e",
+    "requestedAt": "2026-10-29T20:25:01.042Z",
+    "balanceBefore": 2685,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman camp laundry line: two rough wooden posts about two metres tall with a sagging hemp cord between them, about four metres apart, three plain undyed wool tunics, a faded red military cloak and a linen cloth hanging from the cord, a wicker laundry basket and a wooden bucket on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T20:27:06.779Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-laundry-line.glb",
+    "rawBytes": 44823732,
+    "rawSha256": "f9805bb6201338bd9f6c5319a4eafd54067577a92f390145da358ddcb1801bad",
+    "tripoInput": {
+      "prompt": "A Roman camp laundry line: two rough wooden posts about two metres tall with a sagging hemp cord between them, about four metres apart, three plain undyed wool tunics, a faded red military cloak and a linen cloth hanging from the cord, a wicker laundry basket and a wooden bucket on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-laundry-line-tripo-render.webp"
   }
 }

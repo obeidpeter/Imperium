@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-grindstone.glb",
+    "bytes": 44379116,
+    "sha256": "8808ea3604c109cbf736a9090430361cc5dee217c62c1bd3284ab96d9099d421",
+    "triangles": 1441080
+  },
+  "output": {
+    "path": "assets/models/world/life-grindstone.glb",
+    "bytes": 176180,
+    "sha256": "da1f8b3b6671309837f9478bddeda079901096b9527123f9ee3cbe3e05fae7da",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.1,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.1134097887361885,
+  "sizeMetres": {
+    "width": 0.9641,
+    "height": 1.1,
+    "depth": 1.1146
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_72f25faa-3ff6-4090-9bef-9c2035038223",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_72f25faa-3ff6-4090-9bef-9c2035038223",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_72f25faa-3ff6-4090-9bef-9c2035038223",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

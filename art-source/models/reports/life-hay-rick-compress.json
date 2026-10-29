@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-hay-rick.glb",
+  "output": "assets/models/world/life-hay-rick.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 309540,
+    "gzipBytes": 198478,
+    "sha256": "0c22dd8e3f21f4c0e284416b4b98675c7aeb0bf017ed63b1faf99b58ad72e446"
+  },
+  "after": {
+    "bytes": 289420,
+    "gzipBytes": 278856,
+    "sha256": "9e98a005b971da62ee14b6c401842a326c34a4179e08f3a813d3336ec626ea6d"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4117,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27976
+      },
+      "bytes": 34595,
+      "psnr": 36.734
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 47830
+      },
+      "bytes": 55659,
+      "psnr": 31.732
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13930
+      },
+      "bytes": 30501,
+      "psnr": 40.99
+    }
+  ]
+}

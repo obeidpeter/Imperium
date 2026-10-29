@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-woodpile.glb",
+  "output": "assets/models/world/life-woodpile.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 217776,
+    "gzipBytes": 140489,
+    "sha256": "1e77ea4b68683cddcd3b98b812ce28ddca15c8075513f80dc9d6d79ca47e3c72"
+  },
+  "after": {
+    "bytes": 223716,
+    "gzipBytes": 214986,
+    "sha256": "d88e40ca62ba39a9d40fe9165b05045075e8b05b93cf6ab3a8127748ad6a636c"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2939,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7478
+      },
+      "bytes": 16488,
+      "psnr": 44.252
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 39596
+      },
+      "bytes": 55514,
+      "psnr": 33.082
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13038
+      },
+      "bytes": 29389,
+      "psnr": 35.898
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-camel-gear.glb",
+  "output": "assets/models/world/life-camel-gear.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 212152,
+    "gzipBytes": 145619,
+    "sha256": "6ac90389c3716c5bb0c62c09f2eae27f76af8f070867e80d0fce3917779b6784"
+  },
+  "after": {
+    "bytes": 223344,
+    "gzipBytes": 215780,
+    "sha256": "a19c27d118ad7f3dca22258d4a88c32503d74787f5122fb97ac2af765181bc76"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16346
+      },
+      "bytes": 27106,
+      "psnr": 39.484
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 40838
+      },
+      "bytes": 59505,
+      "psnr": 32.96
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9658
+      },
+      "bytes": 25126,
+      "psnr": 38.771
+    }
+  ]
+}

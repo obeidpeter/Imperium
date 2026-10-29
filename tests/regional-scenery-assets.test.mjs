@@ -8,6 +8,7 @@ import * as G from '../src/core/game.js';
 import {createSceneryModels,sceneryPlacements} from '../src/showcase/scenery-models.js';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
 import {REGIONAL_PROP_CHAPTERS,regionalServicePads} from '../src/showcase/environment-regional-world.js';
+import {LIFE_PROP_CHAPTERS} from '../src/ui/world-catalog.js';
 const root=new URL('../',import.meta.url);
 const campaign=JSON.parse(await readFile(new URL('tests/fixtures/campaign-3d.json',root),'utf8'));
 const graphics=JSON.parse(await readFile(new URL('tests/fixtures/graphics-scenes.json',root),'utf8'));
@@ -28,6 +29,7 @@ test('All shipped regional models load completely and keep their true geometry o
     assert.equal((await models.ready).length,models.placements.length,`${e.id} loads every named component and prop`);
     for(const p of models.placements){
       used.add(p.id);const model=models.group.getObjectByName(p.key??p.id);assert.ok(model,p.key??p.id);
+      if(LIFE_PROP_CHAPTERS[p.id])assert.ok(!p.pad,`${e.id}/${p.id}: life stands beyond the board, off the service pads`);
       const b=new T.Box3().setFromObject(model,true);assert.ok(!b.isEmpty(),p.id+' contains visible geometry');
       if(p.pad){
         const pad=pads.find(pad=>pad.id===p.padId);assert.ok(pad);
@@ -40,7 +42,7 @@ test('All shipped regional models load completely and keep their true geometry o
     }
     assert.equal(JSON.stringify(e),before);models.dispose();assert.equal(scene.children.length,0);
   }
-  for(const id of Object.keys(REGIONAL_PROP_CHAPTERS))assert.ok(used.has(id),`${id} has an authored scene`);
+  for(const id of [...Object.keys(REGIONAL_PROP_CHAPTERS),...Object.keys(LIFE_PROP_CHAPTERS)])assert.ok(used.has(id),`${id} has an authored scene`);
   cache.clear();assert.equal(cache.stats().entries,0);
 });
 

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-market-stall.glb",
+  "output": "assets/models/world/life-market-stall.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 188328,
+    "gzipBytes": 121569,
+    "sha256": "f3e77ffbfb319bc5f38e0f721ef5ce17b9d1854754081ffbb1300e7345633575"
+  },
+  "after": {
+    "bytes": 199364,
+    "gzipBytes": 191467,
+    "sha256": "90df140e2501a874b3069323100a3392cb4e49d87245ee878acd123252df058e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3434
+      },
+      "bytes": 7516,
+      "psnr": 47.393
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31154
+      },
+      "bytes": 55608,
+      "psnr": 33.898
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7718
+      },
+      "bytes": 24525,
+      "psnr": 44.292
+    }
+  ]
+}

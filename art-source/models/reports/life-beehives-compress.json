@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-beehives.glb",
+  "output": "assets/models/world/life-beehives.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 201156,
+    "gzipBytes": 138459,
+    "sha256": "d72e9916540ce2e351402cafb8d537194414b61b75021e924bcbea558a883dc3"
+  },
+  "after": {
+    "bytes": 212912,
+    "gzipBytes": 205444,
+    "sha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16724
+      },
+      "bytes": 26274,
+      "psnr": 40.017
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 35096
+      },
+      "bytes": 52004,
+      "psnr": 34.25
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9144
+      },
+      "bytes": 27524,
+      "psnr": 43.736
+    }
+  ]
+}

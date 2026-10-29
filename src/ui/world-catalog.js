@@ -28,6 +28,15 @@ export const REGIONAL_REUSED_PROP_CHAPTERS=Object.freeze({
   'ch5-spoil-baskets':Object.freeze([4,5,9]),'ch5-mudbrick-stack':Object.freeze([5,9])
 });
 const reused=id=>asset('prop',[`assets/models/chapters/05/${id}.glb`],REGIONAL_REUSED_PROP_CHAPTERS[id]);
+// Life about the camps and towns (release 9): Tripo props set out beyond the board like the
+// regional ones (environment-regional-world.js), but never on a camp's service pad.
+export const LIFE_PROP_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
+  'life-laundry-line':[1,3,8,10],'life-camel-gear':[6,9],'life-amphora-rack':[7,11,12],
+  'life-beehives':[3,7],'life-bread-oven':[1,3,6,9],'life-handcart':[3,4],'life-grindstone':[1,4],
+  'life-hay-rick':[2,8,10],'life-ox-cart':[8,10],'life-woodpile':[1,2,4],'life-loom':[8,10],
+  'life-travel-carriage':[7,11,12],'life-market-stall':[9,10,11,12],
+  'life-pottery-stall':[6,9,11,12]
+}).map(([id,chapters])=>[id,Object.freeze(chapters)])));
 // The generated landmarks on the chapters' horizons (release 9), with the chapters whose
 // LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
 export const LANDMARK_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
@@ -80,6 +89,7 @@ export const WORLD_CATALOG=Object.freeze({
   'rocks-italy':asset('kit',['assets/models/scenery/rocks-italy.glb'],[7,11,12]),
   'rocks-arid':asset('kit',['assets/models/scenery/rocks-arid.glb'],[5,6,9]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
+  ...Object.fromEntries(Object.entries(LIFE_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),

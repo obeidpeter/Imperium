@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-handcart.glb",
+  "output": "assets/models/world/life-handcart.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 223280,
+    "gzipBytes": 156270,
+    "sha256": "f41e8012820e2176eae7abf8f015d0f7b70c36b65ed2c58b4ca81694556e67e1"
+  },
+  "after": {
+    "bytes": 230004,
+    "gzipBytes": 222520,
+    "sha256": "a207203ddf3265147592510478c6e3e8326372249779427f84f1cc51b4a54522"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2939,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14994
+      },
+      "bytes": 25697,
+      "psnr": 39.397
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36448
+      },
+      "bytes": 55017,
+      "psnr": 33.86
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26074
+      },
+      "bytes": 36905,
+      "psnr": 29.931
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": "life-amphora-rack",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    7,
+    11,
+    12
+  ],
+  "use": "Life about the camps and towns: wine and oil amphorae, set out beyond the board in Chapters VII, XI, XII (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A wooden rack of Roman transport amphorae: a dozen tall red clay wine and oil amphorae with pointed feet leaning in two rows against a timber frame, a few more lying stacked on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.6,
+    "minHeight": 1.52,
+    "maxHeight": 1.68
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "f06d3916-999b-4f41-a86f-e7ac58e98159",
+    "requestedAt": "2026-10-29T21:32:25.816Z",
+    "balanceBefore": 2025,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A wooden rack of Roman transport amphorae: a dozen tall red clay wine and oil amphorae with pointed feet leaning in two rows against a timber frame, a few more lying stacked on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:35:00.768Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-amphora-rack.glb",
+    "rawBytes": 46213996,
+    "rawSha256": "ed5ec4f21d83265d3b8e3bdf5e1294f737f97eb0a8362206fd510c8ef915e5fb",
+    "tripoInput": {
+      "prompt": "A wooden rack of Roman transport amphorae: a dozen tall red clay wine and oil amphorae with pointed feet leaning in two rows against a timber frame, a few more lying stacked on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-amphora-rack-tripo-render.webp"
+  }
+}

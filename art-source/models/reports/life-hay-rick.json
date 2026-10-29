@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-hay-rick.glb",
+    "bytes": 46932164,
+    "sha256": "3a57b845b3e6a5647c23e3becdff0ee2341e1ff673b14009d04efa54c93f0225",
+    "triangles": 1427620
+  },
+  "output": {
+    "path": "assets/models/world/life-hay-rick.glb",
+    "bytes": 309540,
+    "sha256": "0c22dd8e3f21f4c0e284416b4b98675c7aeb0bf017ed63b1faf99b58ad72e446",
+    "triangles": 4117
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 3.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 4.441038010115262,
+  "sizeMetres": {
+    "width": 4.0,
+    "height": 3.2,
+    "depth": 4.3508
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8d338609-f930-4fe7-b5d4-a8f20452bce3",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_8d338609-f930-4fe7-b5d4-a8f20452bce3",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_8d338609-f930-4fe7-b5d4-a8f20452bce3",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

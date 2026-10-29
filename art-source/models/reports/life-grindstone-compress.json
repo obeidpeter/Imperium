@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-grindstone.glb",
+  "output": "assets/models/world/life-grindstone.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 176180,
+    "gzipBytes": 118045,
+    "sha256": "da1f8b3b6671309837f9478bddeda079901096b9527123f9ee3cbe3e05fae7da"
+  },
+  "after": {
+    "bytes": 192556,
+    "gzipBytes": 185514,
+    "sha256": "f949b1cc4569acc741c98ebc8a447919eeded322a1b875d337f9fb605359719a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3494
+      },
+      "bytes": 8476,
+      "psnr": 47.013
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 25734
+      },
+      "bytes": 51647,
+      "psnr": 36.594
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10878
+      },
+      "bytes": 28971,
+      "psnr": 41.31
+    }
+  ]
+}

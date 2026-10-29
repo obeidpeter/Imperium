@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-travel-carriage.glb",
+    "bytes": 46455748,
+    "sha256": "495c18dd569785b9723ef15f12c9187acbcf4a25d95d782cac77dd01ff9127c0",
+    "triangles": 1480434
+  },
+  "output": {
+    "path": "assets/models/world/life-travel-carriage.glb",
+    "bytes": 235692,
+    "sha256": "5aec998a49045b5056563d81a22a7af426fbefb82801ac752a97d1c14ef7a823",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.8471448829455794,
+  "sizeMetres": {
+    "width": 2.8426,
+    "height": 2.2,
+    "depth": 1.7292
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_09dac9c4-f026-4219-936f-0c32b49b0650",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_09dac9c4-f026-4219-936f-0c32b49b0650",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_09dac9c4-f026-4219-936f-0c32b49b0650",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -13131,6 +13131,788 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-laundry-line",
+      "path": "assets/models/world/life-laundry-line.glb",
+      "subject": "Release 9 life prop: washing hung out to dry",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3499f8ff-b499-4b72-a516-5638b678e40e",
+        "generatedAt": "2026-10-29T20:27:06.779Z",
+        "prompt": "art-source/models/requests/life-laundry-line.json",
+        "rawBytes": 44823732,
+        "rawSha256": "f9805bb6201338bd9f6c5319a4eafd54067577a92f390145da358ddcb1801bad",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.9,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-laundry-line.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-laundry-line-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: washing hung out to dry, set out beyond the board with the baggage of Chapters I, III, VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 209340,
+        "gzipBytes": 201654,
+        "sha256": "bc564c5af4570675400c457287fbb86ab1a800f05bf70390e253fa67ed2bb97f",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5099,
+          "height": 1.9,
+          "depth": 1.8883
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-camel-gear",
+      "path": "assets/models/world/life-camel-gear.glb",
+      "subject": "Release 9 life prop: a caravan's saddles and baggage",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f20ca161-6ea7-4692-b061-208111c6aa43",
+        "generatedAt": "2026-10-29T21:39:28.744Z",
+        "prompt": "art-source/models/requests/life-camel-gear.json",
+        "rawBytes": 45368916,
+        "rawSha256": "be1c31dde692b99b86e89e9740f61a615338efd1d7e1ee13e8e569d5718b46aa",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-camel-gear.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-camel-gear-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a caravan's saddles and baggage, set out beyond the board with the baggage of Chapters VI and IX (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 6 and 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 223344,
+        "gzipBytes": 215780,
+        "sha256": "a19c27d118ad7f3dca22258d4a88c32503d74787f5122fb97ac2af765181bc76",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5731,
+          "height": 1.2,
+          "depth": 0.9822
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-amphora-rack",
+      "path": "assets/models/world/life-amphora-rack.glb",
+      "subject": "Release 9 life prop: wine and oil amphorae",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f06d3916-999b-4f41-a86f-e7ac58e98159",
+        "generatedAt": "2026-10-29T21:35:00.768Z",
+        "prompt": "art-source/models/requests/life-amphora-rack.json",
+        "rawBytes": 46213996,
+        "rawSha256": "ed5ec4f21d83265d3b8e3bdf5e1294f737f97eb0a8362206fd510c8ef915e5fb",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-amphora-rack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-amphora-rack-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: wine and oil amphorae, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 191972,
+        "gzipBytes": 183859,
+        "sha256": "4c480f77e02ead7414f47ab5a5f1edb814ba3976ade0ac61770e05de1ad0fd6f",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.826,
+          "height": 1.6,
+          "depth": 1.6449
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-beehives",
+      "path": "assets/models/world/life-beehives.glb",
+      "subject": "Release 9 life prop: a farm's beehives",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+        "generatedAt": "2026-10-29T21:37:16.545Z",
+        "prompt": "art-source/models/requests/life-beehives.json",
+        "rawBytes": 47042048,
+        "rawSha256": "67dc22d4168d2ed04fdb0bc87ab3089a5c60da6548a4740f4bc00ed2eb740039",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-beehives.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-beehives-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a farm's beehives, set out beyond the board with the baggage of Chapters III and VII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3 and 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 212912,
+        "gzipBytes": 205444,
+        "sha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.0448,
+          "height": 1.4,
+          "depth": 1.3581
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-bread-oven",
+      "path": "assets/models/world/life-bread-oven.glb",
+      "subject": "Release 9 life prop: a bread oven",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f131e451-d6ed-48c0-af44-f019d8e30101",
+        "generatedAt": "2026-10-29T21:37:30.472Z",
+        "prompt": "art-source/models/requests/life-bread-oven.json",
+        "rawBytes": 45240188,
+        "rawSha256": "98620bf1a78cbc2410f3e0d31742e6ff71fc761009668a18157dbc97bdefe694",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-bread-oven.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-bread-oven-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a bread oven, set out beyond the board with the baggage of Chapters I, III, VI and IX (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 6 and 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 159016,
+        "gzipBytes": 152499,
+        "sha256": "46bf0472bd9458b97c8b26fce7f04aa9f9d3998f4a0ac2bf121f9b167d0a630b",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.6173,
+          "height": 1.6,
+          "depth": 2.1346
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-handcart",
+      "path": "assets/models/world/life-handcart.glb",
+      "subject": "Release 9 life prop: a handcart of the camp's stores",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "03893e85-bb2c-472a-a3ce-539f57d733e6",
+        "generatedAt": "2026-10-29T21:41:43.033Z",
+        "prompt": "art-source/models/requests/life-handcart.json",
+        "rawBytes": 46114664,
+        "rawSha256": "d0819e7f7e456d7bb08bf53de40a3eccbb0937af55099e2633d786e1ee808143",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-handcart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-handcart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a handcart of the camp's stores, set out beyond the board with the baggage of Chapters III and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 230004,
+        "gzipBytes": 222520,
+        "sha256": "a207203ddf3265147592510478c6e3e8326372249779427f84f1cc51b4a54522",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.447,
+          "height": 1.2,
+          "depth": 1.8271
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-grindstone",
+      "path": "assets/models/world/life-grindstone.glb",
+      "subject": "Release 9 life prop: the camp's grindstone",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "72f25faa-3ff6-4090-9bef-9c2035038223",
+        "generatedAt": "2026-10-29T21:41:52.267Z",
+        "prompt": "art-source/models/requests/life-grindstone.json",
+        "rawBytes": 44379116,
+        "rawSha256": "8808ea3604c109cbf736a9090430361cc5dee217c62c1bd3284ab96d9099d421",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.1,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-grindstone.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-grindstone-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: the camp's grindstone, set out beyond the board with the baggage of Chapters I and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 192556,
+        "gzipBytes": 185514,
+        "sha256": "f949b1cc4569acc741c98ebc8a447919eeded322a1b875d337f9fb605359719a",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9641,
+          "height": 1.1,
+          "depth": 1.1146
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-hay-rick",
+      "path": "assets/models/world/life-hay-rick.glb",
+      "subject": "Release 9 life prop: a haystack of the farms",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8d338609-f930-4fe7-b5d4-a8f20452bce3",
+        "generatedAt": "2026-10-29T21:44:32.508Z",
+        "prompt": "art-source/models/requests/life-hay-rick.json",
+        "rawBytes": 46932164,
+        "rawSha256": "3a57b845b3e6a5647c23e3becdff0ee2341e1ff673b14009d04efa54c93f0225",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 3.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-hay-rick.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-hay-rick-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a haystack of the farms, set out beyond the board with the baggage of Chapters II, VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 2, 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 289420,
+        "gzipBytes": 278856,
+        "sha256": "9e98a005b971da62ee14b6c401842a326c34a4179e08f3a813d3336ec626ea6d",
+        "triangles": 4117,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 4,
+          "height": 3.2,
+          "depth": 4.3508
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-ox-cart",
+      "path": "assets/models/world/life-ox-cart.glb",
+      "subject": "Release 9 life prop: a farm cart of the frontier villages",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5023d43b-dd97-442b-9b4e-f3a0b1848699",
+        "generatedAt": "2026-10-29T21:47:37.723Z",
+        "prompt": "art-source/models/requests/life-ox-cart.json",
+        "rawBytes": 46714292,
+        "rawSha256": "fc5dde49406e9f8f48ca27cf2090537addc473ce3e21dc312465ecd199cf3c1e",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-ox-cart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-ox-cart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a farm cart of the frontier villages, set out beyond the board with the baggage of Chapters VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 267232,
+        "gzipBytes": 257622,
+        "sha256": "96eace817ebbfebd7a941c1a11c2d954ef7c14ab4e3ee4df1456bb8c59feeca5",
+        "triangles": 3388,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.6941,
+          "height": 2,
+          "depth": 1.6077
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-woodpile",
+      "path": "assets/models/world/life-woodpile.glb",
+      "subject": "Release 9 life prop: firewood for the camp",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "69bdb762-598b-4a66-a126-7a6e47d8191d",
+        "generatedAt": "2026-10-29T21:52:04.564Z",
+        "prompt": "art-source/models/requests/life-woodpile.json",
+        "rawBytes": 45413172,
+        "rawSha256": "62a4798c26e02e6fab21147f70741b005d11a3673e3d965366d14786bbadeb8d",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-woodpile.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-woodpile-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: firewood for the camp, set out beyond the board with the baggage of Chapters I, II and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 223716,
+        "gzipBytes": 214986,
+        "sha256": "d88e40ca62ba39a9d40fe9165b05045075e8b05b93cf6ab3a8127748ad6a636c",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.3243,
+          "height": 1.3,
+          "depth": 2.2696
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-loom",
+      "path": "assets/models/world/life-loom.glb",
+      "subject": "Release 9 life prop: a household loom",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+        "generatedAt": "2026-10-29T21:43:53.761Z",
+        "prompt": "art-source/models/requests/life-loom.json",
+        "rawBytes": 46602568,
+        "rawSha256": "6c7f7ad1642aa162d3dcac236774accc8b10f0551fd42da8a2cd137069316efc",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-loom.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-loom-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a household loom, set out beyond the board with the baggage of Chapters VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 233636,
+        "gzipBytes": 225708,
+        "sha256": "2ee9cf7b56465ead3c83f375da1fa475c685ffd7ab5b2e684e08ee765b2cd7f5",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5777,
+          "height": 2,
+          "depth": 2.1282
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-travel-carriage",
+      "path": "assets/models/world/life-travel-carriage.glb",
+      "subject": "Release 9 life prop: a traveller's covered carriage",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "09dac9c4-f026-4219-936f-0c32b49b0650",
+        "generatedAt": "2026-10-29T21:57:06.151Z",
+        "prompt": "art-source/models/requests/life-travel-carriage.json",
+        "rawBytes": 46455748,
+        "rawSha256": "495c18dd569785b9723ef15f12c9187acbcf4a25d95d782cac77dd01ff9127c0",
+        "credits": 20,
+        "rejectedAttempts": [
+          {
+            "taskId": "2a64382e-6b4f-4887-932b-791aa4ceb5e6",
+            "credits": 20,
+            "rawSha256": "bdf34f71995d2c9a5faf9f34544b56c1c8c044aa1d7bbc4d5956368f4af3d417",
+            "rejected": "A four-wheeled buggy under a folding hood, a later form than the two-wheeled cisium asked for, with a mule drawn collapsed flat between the shafts."
+          }
+        ],
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-travel-carriage.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-travel-carriage-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a traveller's covered carriage, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 234324,
+        "gzipBytes": 227056,
+        "sha256": "803e078eee2f0768161d8bb3997471a8fdfa013ee6fcf0be35cedb2e6a076c91",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.8426,
+          "height": 2.2,
+          "depth": 1.7292
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-market-stall",
+      "path": "assets/models/world/life-market-stall.glb",
+      "subject": "Release 9 life prop: a market stall of the towns",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b554acaa-3e37-4d98-8d30-86165384bac7",
+        "generatedAt": "2026-10-29T21:46:47.976Z",
+        "prompt": "art-source/models/requests/life-market-stall.json",
+        "rawBytes": 44710140,
+        "rawSha256": "9fd606490524b8bb76c32a9f09bb728edc8f3ce9ed6fe5457b41c054bd197c8f",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-market-stall.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-market-stall-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a market stall of the towns, set out beyond the board with the baggage of Chapters IX, X, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 9, 10, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 199364,
+        "gzipBytes": 191467,
+        "sha256": "90df140e2501a874b3069323100a3392cb4e49d87245ee878acd123252df058e",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.5648,
+          "height": 2.3,
+          "depth": 1.5279
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-pottery-stall",
+      "path": "assets/models/world/life-pottery-stall.glb",
+      "subject": "Release 9 life prop: a potter's wares",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d9688685-809d-4fa4-8900-b5bff4e49c44",
+        "generatedAt": "2026-10-29T21:49:10.354Z",
+        "prompt": "art-source/models/requests/life-pottery-stall.json",
+        "rawBytes": 45199336,
+        "rawSha256": "35b638bb43ac990e991fb2bba7466780c2100cbd8c79c35ff264d8238e5831b9",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-pottery-stall.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-pottery-stall-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a potter's wares, set out beyond the board with the baggage of Chapters VI, IX, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 6, 9, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 205704,
+        "gzipBytes": 198846,
+        "sha256": "d3eaea81b94b7893b6c9a82da5eb51d7896f875bed023f097a1566c1785dc49b",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.4065,
+          "height": 1.4,
+          "depth": 0.8396
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -13198,7 +13980,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-29T22:18:35.172Z",
+  "updatedAt": "2026-10-29T22:20:30.582Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -13220,12 +14002,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 110,
+    "models": 124,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 51552401,
-  "totalModelBytes": 36366851,
+  "totalBundledAssetBytes": 54624941,
+  "totalModelBytes": 39439391,
   "derivedGeometryBytes": 47428
 }

@@ -1,0 +1,65 @@
+{
+  "id": "life-handcart",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    3,
+    4
+  ],
+  "use": "Life about the camps and towns: a handcart of the camp's stores, set out beyond the board in Chapters III and IV (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman two-wheeled wooden handcart: a plank bed on two spoked wooden wheels with iron tyres, loaded with tied grain sacks and a coil of rope, its two long handles resting on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 1.2,
+    "minHeight": 1.14,
+    "maxHeight": 1.26,
+    "note": "Raised from 220,000, as for the camel gear: 230,004 bytes compressed, 117,619 of them its three 512-pixel maps."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "03893e85-bb2c-472a-a3ce-539f57d733e6",
+    "requestedAt": "2026-10-29T21:39:50.578Z",
+    "balanceBefore": 1905,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman two-wheeled wooden handcart: a plank bed on two spoked wooden wheels with iron tyres, loaded with tied grain sacks and a coil of rope, its two long handles resting on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:41:43.033Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-handcart.glb",
+    "rawBytes": 46114664,
+    "rawSha256": "d0819e7f7e456d7bb08bf53de40a3eccbb0937af55099e2633d786e1ee808143",
+    "tripoInput": {
+      "prompt": "A Roman two-wheeled wooden handcart: a plank bed on two spoked wooden wheels with iron tyres, loaded with tied grain sacks and a coil of rope, its two long handles resting on the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-handcart-tripo-render.webp"
+  }
+}

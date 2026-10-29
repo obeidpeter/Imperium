@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-handcart.glb",
+    "bytes": 46114664,
+    "sha256": "d0819e7f7e456d7bb08bf53de40a3eccbb0937af55099e2633d786e1ee808143",
+    "triangles": 1464902
+  },
+  "output": {
+    "path": "assets/models/world/life-handcart.glb",
+    "bytes": 223280,
+    "sha256": "f41e8012820e2176eae7abf8f015d0f7b70c36b65ed2c58b4ca81694556e67e1",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.4325751650871164,
+  "sizeMetres": {
+    "width": 2.447,
+    "height": 1.2,
+    "depth": 1.8271
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_03893e85-bb2c-472a-a3ce-539f57d733e6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_03893e85-bb2c-472a-a3ce-539f57d733e6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_03893e85-bb2c-472a-a3ce-539f57d733e6",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

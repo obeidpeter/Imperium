@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-bread-oven.glb",
+  "output": "assets/models/world/life-bread-oven.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 150056,
+    "gzipBytes": 105784,
+    "sha256": "f1c7a65f392525c10ec7394eec65a7bcfd9617feca5455d08ad34d485b2cb31c"
+  },
+  "after": {
+    "bytes": 159016,
+    "gzipBytes": 152499,
+    "sha256": "46bf0472bd9458b97c8b26fce7f04aa9f9d3998f4a0ac2bf121f9b167d0a630b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3620
+      },
+      "bytes": 8769,
+      "psnr": 46.771
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23704
+      },
+      "bytes": 48901,
+      "psnr": 36.493
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4074
+      },
+      "bytes": 14552,
+      "psnr": 45.779
+    }
+  ]
+}

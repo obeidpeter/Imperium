@@ -1,0 +1,70 @@
+{
+  "id": "life-bread-oven",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    1,
+    3,
+    6,
+    9
+  ],
+  "use": "Life about the camps and towns: a bread oven, set out beyond the board in Chapters I, III, VI, IX (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman domed bread oven: a round clay dome on a low stone base with an arched mouth, a long wooden baker's peel leaning against it and a neat stack of kindling beside it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.6,
+    "minHeight": 1.52,
+    "maxHeight": 1.68
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "f131e451-d6ed-48c0-af44-f019d8e30101",
+    "requestedAt": "2026-10-29T21:35:04.260Z",
+    "balanceBefore": 1985,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman domed bread oven: a round clay dome on a low stone base with an arched mouth, a long wooden baker's peel leaning against it and a neat stack of kindling beside it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:37:30.472Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-bread-oven.glb",
+    "rawBytes": 45240188,
+    "rawSha256": "98620bf1a78cbc2410f3e0d31742e6ff71fc761009668a18157dbc97bdefe694",
+    "tripoInput": {
+      "prompt": "A Roman domed bread oven: a round clay dome on a low stone base with an arched mouth, a long wooden baker's peel leaning against it and a neat stack of kindling beside it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-bread-oven-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the oven’s mouth on the model’s side (+X); turned to the front (+Z) that the game’s camera sees"
+  }
+}

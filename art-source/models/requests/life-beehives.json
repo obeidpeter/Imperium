@@ -1,0 +1,64 @@
+{
+  "id": "life-beehives",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    3,
+    7
+  ],
+  "use": "Life about the camps and towns: a farm's beehives, set out beyond the board in Chapters III and VII (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Three Roman beehives: tall bell-shaped wicker skeps plastered with clay, standing in a row on a low wooden bench under a small lean-to shelter of planks. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.4,
+    "minHeight": 1.33,
+    "maxHeight": 1.47
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+    "requestedAt": "2026-10-29T21:34:39.940Z",
+    "balanceBefore": 2005,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Three Roman beehives: tall bell-shaped wicker skeps plastered with clay, standing in a row on a low wooden bench under a small lean-to shelter of planks. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:37:16.545Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-beehives.glb",
+    "rawBytes": 47042048,
+    "rawSha256": "67dc22d4168d2ed04fdb0bc87ab3089a5c60da6548a4740f4bc00ed2eb740039",
+    "tripoInput": {
+      "prompt": "Three Roman beehives: tall bell-shaped wicker skeps plastered with clay, standing in a row on a low wooden bench under a small lean-to shelter of planks. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-beehives-tripo-render.webp"
+  }
+}

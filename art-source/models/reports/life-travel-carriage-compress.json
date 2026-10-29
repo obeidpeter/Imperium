@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-travel-carriage.glb",
+  "output": "assets/models/world/life-travel-carriage.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 235692,
+    "gzipBytes": 170085,
+    "sha256": "5aec998a49045b5056563d81a22a7af426fbefb82801ac752a97d1c14ef7a823"
+  },
+  "after": {
+    "bytes": 234324,
+    "gzipBytes": 227056,
+    "sha256": "803e078eee2f0768161d8bb3997471a8fdfa013ee6fcf0be35cedb2e6a076c91"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12038
+      },
+      "bytes": 22023,
+      "psnr": 40.487
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36730
+      },
+      "bytes": 55389,
+      "psnr": 33.913
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 42498
+      },
+      "bytes": 45758,
+      "psnr": 27.87
+    }
+  ]
+}

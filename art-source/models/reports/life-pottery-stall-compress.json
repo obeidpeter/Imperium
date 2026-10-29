@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-pottery-stall.glb",
+  "output": "assets/models/world/life-pottery-stall.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 189768,
+    "gzipBytes": 135810,
+    "sha256": "b6000a3afeead3836c38dd1c30e5b02fb908b474a58bc23f83a56ef18e6c6fb3"
+  },
+  "after": {
+    "bytes": 205704,
+    "gzipBytes": 198846,
+    "sha256": "d3eaea81b94b7893b6c9a82da5eb51d7896f875bed023f097a1566c1785dc49b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 6608
+      },
+      "bytes": 15553,
+      "psnr": 43.635
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29678
+      },
+      "bytes": 55492,
+      "psnr": 34.659
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22192
+      },
+      "bytes": 35926,
+      "psnr": 36.122
+    }
+  ]
+}

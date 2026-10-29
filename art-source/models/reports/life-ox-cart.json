@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-ox-cart.glb",
+    "bytes": 46714292,
+    "sha256": "fc5dde49406e9f8f48ca27cf2090537addc473ce3e21dc312465ecd199cf3c1e",
+    "triangles": 1461323
+  },
+  "output": {
+    "path": "assets/models/world/life-ox-cart.glb",
+    "bytes": 283464,
+    "sha256": "221cc371c4ba7fcf4660f52af8779e940309b3187b7cd5e7bb854d5a4c0af0ee",
+    "triangles": 3388
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.7660812596152864,
+  "sizeMetres": {
+    "width": 3.6941,
+    "height": 2.0,
+    "depth": 1.6077
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5023d43b-dd97-442b-9b4e-f3a0b1848699",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_5023d43b-dd97-442b-9b4e-f3a0b1848699",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_5023d43b-dd97-442b-9b4e-f3a0b1848699",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

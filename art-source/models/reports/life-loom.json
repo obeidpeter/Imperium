@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-loom.glb",
+    "bytes": 46602568,
+    "sha256": "6c7f7ad1642aa162d3dcac236774accc8b10f0551fd42da8a2cd137069316efc",
+    "triangles": 1478284
+  },
+  "output": {
+    "path": "assets/models/world/life-loom.glb",
+    "bytes": 225716,
+    "sha256": "98a04059b8a3edd41a0124c022a1f2da16af3924a0536f3ad8e685c1d78d3f37",
+    "triangles": 2938
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0
+  },
+  "scale": 2.128595816964051,
+  "sizeMetres": {
+    "width": 1.5777,
+    "height": 2.0,
+    "depth": 2.1282
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

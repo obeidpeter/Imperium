@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-amphora-rack.glb",
+  "output": "assets/models/world/life-amphora-rack.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 183084,
+    "gzipBytes": 120203,
+    "sha256": "66af74aef274c8071266bf57330edb8ee44056f641cee4c15a32b534d11b8af8"
+  },
+  "after": {
+    "bytes": 191972,
+    "gzipBytes": 183859,
+    "sha256": "4c480f77e02ead7414f47ab5a5f1edb814ba3976ade0ac61770e05de1ad0fd6f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7222
+      },
+      "bytes": 16353,
+      "psnr": 44.423
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29446
+      },
+      "bytes": 53603,
+      "psnr": 35.374
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4588
+      },
+      "bytes": 14779,
+      "psnr": 44.839
+    }
+  ]
+}

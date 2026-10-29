@@ -1,0 +1,102 @@
+{
+  "id": "life-fishing-nets",
+  "status": "rejected after two attempts: not shipped",
+  "chapters": [
+    2,
+    8
+  ],
+  "use": "Life about the camps and towns: fishermen's nets by the river, set out beyond the board in Chapters II and VIII (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Fishermen's nets drying by a river: a wooden frame of three poles and a crossbar with heavy brown hemp nets folded over the bar and hanging in thick closed folds like sacking, their mesh shown only as a pattern on the cloth-like surface, a few cork floats, a heap of folded net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 2,
+    "minHeight": 1.9,
+    "maxHeight": 2.1
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "rejectedAttempts": [
+      {
+        "taskId": "0c31faf1-d45c-4c51-ab18-0a84a2bbed9d",
+        "requestedAt": "2026-10-29T21:37:33.453Z",
+        "balanceBefore": 1945,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "Fishing nets drying on a riverside frame: three tall wooden poles with a crossbar hung with brown knotted nets and cork floats, a coiled net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T21:39:47.308Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/life-fishing-nets-attempt1.glb",
+        "rawBytes": 47094684,
+        "rawSha256": "4118fbcc32cb5f8a398fa0c9f01b1aeddd9236412219c6ec8bb88457ae540187",
+        "tripoInput": {
+          "prompt": "Fishing nets drying on a riverside frame: three tall wooden poles with a crossbar hung with brown knotted nets and cork floats, a coiled net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/life-fishing-nets-attempt1-tripo-render.webp",
+        "rejected": "Past its budget: the net was modelled as open knotted mesh, which the decimation cannot thin, 12,329 triangles and 592,536 bytes against 3,000 and 220,000. The retry asks for the nets folded and heaped, with their mesh in the texture."
+      },
+      {
+        "taskId": "fdaa0778-f10e-4a93-bc4b-58ebefc3f2c7",
+        "requestedAt": "2026-10-29T21:45:20.524Z",
+        "balanceBefore": 1805,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "Fishermen's nets drying by a river: a wooden frame of three poles and a crossbar with heavy brown hemp nets folded over the bar and hanging in thick closed folds like sacking, their mesh shown only as a pattern on the cloth-like surface, a few cork floats, a heap of folded net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T21:48:33.111Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/life-fishing-nets-attempt2.glb",
+        "rawBytes": 48328164,
+        "rawSha256": "79c6746339ddd2ab57808671cfc72620745aaeee5fc7889e807ba634e13e9adc",
+        "tripoInput": {
+          "prompt": "Fishermen's nets drying by a river: a wooden frame of three poles and a crossbar with heavy brown hemp nets folded over the bar and hanging in thick closed folds like sacking, their mesh shown only as a pattern on the cloth-like surface, a few cork floats, a heap of folded net, two wicker fish traps and an oar on the ground beneath. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/life-fishing-nets-attempt2-tripo-render.webp",
+        "rejected": "A frame of three poles with a net hung over its bar like ragged cloth, above a heap of folded nets on a dark block: the decimation stopped at 5,395 triangles of the 3,000 asked (355,420 bytes compressed), and at the camp’s distance it reads as cloth on a frame, as the laundry line already does. After two attempts the prop is not shipped; the river camps keep their mooring ropes and the ferry."
+      }
+    ]
+  }
+}
