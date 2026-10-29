@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-ruined-watchtower.glb",
+    "bytes": 45533468,
+    "sha256": "3d15fc84db2f2cffd65ed0cb47267fd0546a4f7f3ad7e556ad6c60f15d28a304",
+    "triangles": 1439412
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-ruined-watchtower.glb",
+    "bytes": 162004,
+    "sha256": "00d9911383d5086246adce40eafea95de93e841e1b14cc0df5fa799016ecbe11",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 6.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 6.233233701457325,
+  "sizeMetres": {
+    "width": 5.5269,
+    "height": 6.2,
+    "depth": 5.517
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_7ee8d35f-56af-47b5-8947-b3897bc47824",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_7ee8d35f-56af-47b5-8947-b3897bc47824",
+      "roughness": 0.9591,
+      "metallic": 0.0092
+    }
+  ]
+}

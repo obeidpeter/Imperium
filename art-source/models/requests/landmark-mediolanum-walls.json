@@ -1,0 +1,102 @@
+{
+  "id": "landmark-mediolanum-walls",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    7
+  ],
+  "use": "The walls of Mediolanum, on the horizon of Chapter VII (LANDMARK_LAYOUT, kind walls): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A stretch of the stone walls of a Roman provincial city in the third century, ancient Roman work: a straight curtain wall of small squared grey stones with courses of flat red bricks, about eight metres high, with a plain parapet of simple square merlons and a wall walk, and two projecting round towers rising a storey above it, built in the same masonry with small round-arched windows near their tops and flat roofs. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "negative_prompt": "medieval castle, machicolations, corbels, corbelled parapet, swallowtail merlons, Gothic, pointed arches, conical roofs, plaster, render"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 10.8,
+    "minHeight": 10.26,
+    "maxHeight": 11.34,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "rejectedAttempts": [
+      {
+        "taskId": "6641daf9-835b-4228-bb78-a4a370ec6e6d",
+        "requestedAt": "2026-10-29T21:09:02.517Z",
+        "balanceBefore": 2425,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "A stretch of the walls of a north Italian city in the third century: a straight curtain wall of brick-faced concrete about eight metres high with a crenellated parapet and wall walk, and two projecting round towers rising above it, each with arched windows near its top. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T21:11:13.436Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/landmark-mediolanum-walls-attempt1.glb",
+        "rawBytes": 46838984,
+        "rawSha256": "2adad9d871d51e1947a1b66c36fda346d3b4f800b320df2c6065c90f3550009f",
+        "tripoInput": {
+          "prompt": "A stretch of the walls of a north Italian city in the third century: a straight curtain wall of brick-faced concrete about eight metres high with a crenellated parapet and wall walk, and two projecting round towers rising above it, each with arched windows near its top. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/landmark-mediolanum-walls-attempt1-tripo-render.webp",
+        "rejected": "Medieval: a cluster of round towers in brick and plaster with corbelled, machicolated parapets, like the Sforza castle of Milan, not a Roman city wall of the third century. The retry describes Roman masonry and rules out the medieval forms."
+      }
+    ],
+    "taskId": "b8417128-09c9-44ab-8b02-c39ba9592eba",
+    "requestedAt": "2026-10-29T21:12:28.571Z",
+    "balanceBefore": 2345,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A stretch of the stone walls of a Roman provincial city in the third century, ancient Roman work: a straight curtain wall of small squared grey stones with courses of flat red bricks, about eight metres high, with a plain parapet of simple square merlons and a wall walk, and two projecting round towers rising a storey above it, built in the same masonry with small round-arched windows near their tops and flat roofs. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "negative_prompt": "medieval castle, machicolations, corbels, corbelled parapet, swallowtail merlons, Gothic, pointed arches, conical roofs, plaster, render"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:14:01.645Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-mediolanum-walls.glb",
+    "rawBytes": 46434536,
+    "rawSha256": "c83be70336a66a4ef7b2badf5abd4440b8f0af647589fa916d7509535addfce2",
+    "tripoInput": {
+      "prompt": "A stretch of the stone walls of a Roman provincial city in the third century, ancient Roman work: a straight curtain wall of small squared grey stones with courses of flat red bricks, about eight metres high, with a plain parapet of simple square merlons and a wall walk, and two projecting round towers rising a storey above it, built in the same masonry with small round-arched windows near their tops and flat roofs. Seen from the front, the wall running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "negative_prompt": "medieval castle, machicolations, corbels, corbelled parapet, swallowtail merlons, Gothic, pointed arches, conical roofs, plaster, render",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-mediolanum-walls-tripo-render.webp"
+  }
+}

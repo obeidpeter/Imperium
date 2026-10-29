@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-pantheon.glb",
+    "bytes": 45330444,
+    "sha256": "dfa41741ae37cb1785335a5ddd2d02d29895fc0c64d077977ea4ed1b5cf2e174",
+    "triangles": 1418784
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-pantheon.glb",
+    "bytes": 242300,
+    "sha256": "dddcfa509cbd7f18a462065f9beb18ab899265c49d42f7d09103aa44d1ecd8dc",
+    "triangles": 5879
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 19.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 27.53195169642756,
+  "sizeMetres": {
+    "width": 21.8928,
+    "height": 19.5,
+    "depth": 27.2405
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_18e58742-fe2b-4476-ba4a-81f50b3c607b",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_18e58742-fe2b-4476-ba4a-81f50b3c607b",
+      "roughness": 0.8651,
+      "metallic": 0.0403
+    }
+  ]
+}

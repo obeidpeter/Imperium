@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-roadside-tomb.glb",
+    "bytes": 47185332,
+    "sha256": "118df4fe9659e6269308239ddfa71d1c7f9a33939fb3b9d3243a0ee0de522014",
+    "triangles": 1484438
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-roadside-tomb.glb",
+    "bytes": 151812,
+    "sha256": "55cd09e276899393eeeae5c1edf39df5cd038cc895cfbf7f5f2958ea8216179b",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 15.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 15.394530272784468,
+  "sizeMetres": {
+    "width": 10.0763,
+    "height": 15.4,
+    "depth": 9.8975
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8389b598-ae00-47a4-a42c-d4788c18fb3c",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_8389b598-ae00-47a4-a42c-d4788c18fb3c",
+      "roughness": 0.9665,
+      "metallic": 0.0212
+    }
+  ]
+}

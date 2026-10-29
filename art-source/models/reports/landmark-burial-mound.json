@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-burial-mound.glb",
+    "bytes": 46726756,
+    "sha256": "e38ff4828d3796e0a1b7e1e9bab96db92eed74d64766e576582176d10762f51d",
+    "triangles": 1452370
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-burial-mound.glb",
+    "bytes": 146908,
+    "sha256": "27417beb5f270c6571dbef183a59f05b84ce49dde8b094e2fb4a11c321269abc",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 4.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 10.750560525227751,
+  "sizeMetres": {
+    "width": 10.7785,
+    "height": 4.3,
+    "depth": 9.8004
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_26145aa2-98b2-4375-970a-cb24f9ca49d5",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_26145aa2-98b2-4375-970a-cb24f9ca49d5",
+      "roughness": 0.9694,
+      "metallic": 0.0089
+    }
+  ]
+}

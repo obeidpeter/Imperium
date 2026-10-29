@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-mediolanum-walls.glb",
+  "output": "assets/models/landmarks/landmark-mediolanum-walls.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 192372,
+    "gzipBytes": 131629,
+    "sha256": "10bb8b93b9f3898514b926b2194e149e7afa2ad691bafe257afa985662c6bdfc"
+  },
+  "after": {
+    "bytes": 143996,
+    "gzipBytes": 137744,
+    "sha256": "d5baf046084b9da3030bdb6fd683d7b77dda1ef0c21654ff47cde35018e2b8a8"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12886
+      },
+      "bytes": 14184,
+      "psnr": 31.794
+    }
+  ]
+}

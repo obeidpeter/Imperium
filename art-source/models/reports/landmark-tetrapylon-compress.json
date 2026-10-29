@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-tetrapylon.glb",
+  "output": "assets/models/landmarks/landmark-tetrapylon.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 233828,
+    "gzipBytes": 156437,
+    "sha256": "ada12601e18bbd89687b82901cc5ace94f0bdd46ad51329ebac4dbbc954cfbf2"
+  },
+  "after": {
+    "bytes": 176520,
+    "gzipBytes": 168722,
+    "sha256": "6f97859fe80ca9e9a0b25b9836cd8d091b4648f7747f9bd94fd0de0af6ae10c6"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10864
+      },
+      "bytes": 13692,
+      "psnr": 32.952
+    }
+  ]
+}

@@ -28,6 +28,22 @@ export const REGIONAL_REUSED_PROP_CHAPTERS=Object.freeze({
   'ch5-spoil-baskets':Object.freeze([4,5,9]),'ch5-mudbrick-stack':Object.freeze([5,9])
 });
 const reused=id=>asset('prop',[`assets/models/chapters/05/${id}.glb`],REGIONAL_REUSED_PROP_CHAPTERS[id]);
+// The generated landmarks on the chapters' horizons (release 9), with the chapters whose
+// LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
+export const LANDMARK_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
+  'landmark-novae-gate':[1],'landmark-signal-tower':[1,4],'landmark-burial-mound':[1,4],
+  'landmark-pile-hut':[2],'landmark-bridge-piers':[2],'landmark-river-quay':[2],
+  'landmark-road-station':[3,4],'landmark-small-temple':[3],'landmark-burned-farmstead':[3],
+  'landmark-river-citadel':[5],'landmark-ruined-watchtower':[5],
+  'landmark-necropolis-tower-tomb':[5],'landmark-caravan-station':[6],
+  'landmark-syrian-temple-court':[6],'landmark-rock-cut-tombs':[6],'landmark-adda-bridge':[7],
+  'landmark-mediolanum-walls':[7],'landmark-roadside-tomb':[7],'landmark-fort-gate':[8],
+  'landmark-river-warehouses':[8],'landmark-dacian-sanctuary':[8],'landmark-tetrapylon':[9],
+  'landmark-walled-sanctuary':[9],'landmark-city-gate':[9],'landmark-villa':[10],
+  'landmark-provincial-basilica':[10],'landmark-aqueduct':[10],'landmark-pantheon':[11],
+  'landmark-arch-of-severus':[11],'landmark-mausoleum-of-hadrian':[12],
+  'landmark-temple-of-sol':[12],'landmark-milvian-bridge':[12]
+}).map(([id,chapters])=>[id,Object.freeze(chapters)])));
 export const WORLD_CATALOG=Object.freeze({
   // Chapter V's supply camp: Tripo models processed in Blender.
   'ch5-leather-tent':reused('ch5-leather-tent'),
@@ -64,6 +80,7 @@ export const WORLD_CATALOG=Object.freeze({
   'rocks-italy':asset('kit',['assets/models/scenery/rocks-italy.glb'],[7,11,12]),
   'rocks-arid':asset('kit',['assets/models/scenery/rocks-arid.glb'],[5,6,9]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
+  ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),
   // Each region's far skyline (panoramas.js), in the packs of its chapters.

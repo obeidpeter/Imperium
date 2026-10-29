@@ -84,6 +84,22 @@ export function landmarkSlots(profile,{city=false,river=null}={}){
     return {...slot,x:along,z:centre+toBoard*(river.width(along)+depth/2),yaw:toBoard>0?Math.PI:0,stream:false};
   });
 }
+// The share of the haze a generated landmark takes at its distance: half of what the horizon's
+// own distant colours take there (tint, below), as the landmark is lit and they are not.
+export const landmarkHaze=distance=>.5*clamp(.32+smooth((distance-60)/490)*.6);
+// A generated landmark fitted to its slot: a clone of the cached model, turned to the board and
+// scaled to its kind's height, with its box there (centred on the origin's bearing, not yet placed).
+// Its materials are clones that take the haze as an unlit share of its colour, so it sits as far off
+// as the hills round it; they keep the cached model's program, and the horizon disposes them.
+function fitLandmark(source,slot,haze,materials){
+  const model=source.clone(),k=landmarkHaze(Math.hypot(slot.x,slot.z)),hazed=new Map();
+  const tint=m=>{if(!hazed.has(m)){const c=m.clone();c.color.multiplyScalar(1-k);c.emissive.copy(haze).multiplyScalar(k);materials.add(c);hazed.set(m,c);}return hazed.get(m);};
+  model.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(tint):tint(o.material);});
+  model.name=`landmark: ${slot.name}`;model.rotation.y=slot.yaw;model.updateMatrixWorld(true);
+  const box=new T.Box3().setFromObject(model,true);
+  model.scale.setScalar(LANDMARK_HEIGHTS[slot.kind]/Math.max(box.getSize(new T.Vector3()).y,1e-3));model.updateMatrixWorld(true);box.setFromObject(model,true);
+  return {model,box,size:box.getSize(new T.Vector3()),centre:box.getCenter(new T.Vector3())};
+}
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
 // landmarkModels: generated landmarks already loaded (world catalog id -> model), which stand
@@ -199,9 +215,12 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     const p=[[-1,0,-1],[1,0,-1],[1,0,1],[-1,0,1],[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]].map(([a,b,c])=>[x+a*w/2,y+b*h,z+c*d/2]);
     for(const [face,[a,b,c,d]]of [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]].entries()){const shade=color.clone().multiplyScalar([.94,1.02,.88,.98,1.05][face]);triangle(p[a],p[b],p[c],shade);triangle(p[a],p[c],p[d],shade);}
   }
-  // The chapter's landmarks (placed below) keep their ground clear of the city's rooflines.
+  // The chapter's landmarks (placed below) keep their ground clear of the city's rooflines: a
+  // generated one, fitted first, its own extent, which may outgrow its outline's.
   const slots=landmarkSlots(profile,{city,river:profile.distantWater?{centre:riverCentre,width:riverWidth}:null}),placedLandmarks=[];
-  const onLandmark=(x,z,w,d)=>slots.some(slot=>{const [fw,fd]=landmarkFootprint(slot.kind);return Math.hypot(x-slot.x,z-slot.z)<Math.hypot(fw,fd)/2+Math.hypot(w,d)/2;});
+  const fitted=new Map(slots.map(slot=>{const source=quality==='performance'?null:landmarkModels?.get(slot.model);return [slot,source?fitLandmark(source,slot,haze,materials):null];}));
+  const reach=slot=>{const fit=fitted.get(slot),[w,d]=fit?[fit.size.x,fit.size.z]:landmarkFootprint(slot.kind);return Math.hypot(w,d)/2;};
+  const onLandmark=(x,z,w,d)=>slots.some(slot=>Math.hypot(x-slot.x,z-slot.z)<reach(slot)+Math.hypot(w,d)/2);
   if(city){
     for(let i=0;i<(quality==='performance'?45:70);i++){
       const angle=i*2.39996,r=190+hash(i,seed)*175,x=Math.cos(angle)*r,z=Math.sin(angle)*r,w=5+hash(i,31)*11,d=5+hash(i,33)*9;
@@ -221,14 +240,12 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   // loaded stands in its slot instead, scaled to its kind's height and turned to the board.
   // Each landmark's foundation record names it and counts the silhouette vertices it emitted.
   for(const slot of slots){
-    const source=quality==='performance'?null:landmarkModels?.get(slot.model),first=silhouettePositions.length/3;let base;
-    if(!source)base=buildLandmarkStandIn(slot.kind,{cx:slot.x,cz:slot.z,yaw:slot.yaw,box,triangle,foundation,tint});
+    const fit=fitted.get(slot),first=silhouettePositions.length/3;let base;
+    if(!fit)base=buildLandmarkStandIn(slot.kind,{cx:slot.x,cz:slot.z,yaw:slot.yaw,box,triangle,foundation,tint});
     else{
-      const model=source.clone(),[fw,fd]=landmarkFootprint(slot.kind);model.name=`landmark: ${slot.name}`;model.rotation.y=slot.yaw;
-      model.updateMatrixWorld(true);const box3=new T.Box3().setFromObject(model,true),size=box3.getSize(new T.Vector3());
-      model.scale.setScalar(LANDMARK_HEIGHTS[slot.kind]/Math.max(size.y,1e-3));model.updateMatrixWorld(true);box3.setFromObject(model,true);
-      const centre=box3.getCenter(new T.Vector3());base=foundation(slot.x,slot.z,Math.max(fw,fd),Math.max(fw,fd));
-      model.position.set(slot.x-centre.x,base-box3.min.y,slot.z-centre.z);
+      // It stands on the lowest ground under its own extent.
+      const {model,size,centre}=fit;base=foundation(slot.x,slot.z,size.x,size.z);
+      model.position.set(slot.x-centre.x,base-fit.box.min.y,slot.z-centre.z);
       model.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=false;o.raycast=()=>{};}});group.add(model);placedLandmarks.push(model);
     }
     const record=Object.assign(foundations.at(-1),{landmark:slot.model,vertices:silhouettePositions.length/3-first,streamVertices:0});
@@ -262,6 +279,6 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   return {group,bridge,ridges,stats,cameraGroundHeight,
     // The water's waves move in its shader (world position), joined with the near river's.
     update(){},
-    // A placed landmark's geometry and materials are its cached model's, left whole.
+    // A placed landmark's geometry is its cached model's, left whole; its hazed materials are ours.
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const m of placedLandmarks)m.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.clear();}};
 }

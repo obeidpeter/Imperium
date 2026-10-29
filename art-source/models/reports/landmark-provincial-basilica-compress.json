@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-provincial-basilica.glb",
+  "output": "assets/models/landmarks/landmark-provincial-basilica.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 223244,
+    "gzipBytes": 138809,
+    "sha256": "0f05424316d029bd2c0f09c915afbefd52aa3480ac51ab255c20ec36d98cab22"
+  },
+  "after": {
+    "bytes": 171956,
+    "gzipBytes": 164038,
+    "sha256": "8da680b70abf7b4bd43a5c70414d3f6a9c83eac56702e251d5c72cfab919ba32"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10960
+      },
+      "bytes": 13723,
+      "psnr": 33.145
+    }
+  ]
+}

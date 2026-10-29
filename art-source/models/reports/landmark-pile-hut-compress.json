@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-pile-hut.glb",
+  "output": "assets/models/landmarks/landmark-pile-hut.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 235276,
+    "gzipBytes": 132009,
+    "sha256": "feac3da91a800b8051369b87bdb1609ffd3610318e889cdcbaa448417d2d4272"
+  },
+  "after": {
+    "bytes": 181944,
+    "gzipBytes": 173630,
+    "sha256": "2475b4e20e5d39919e12b95f7509a9694127a5ad53bf87b57654bcb952380b18"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3919,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 18662
+      },
+      "bytes": 15339,
+      "psnr": 28.381
+    }
+  ]
+}

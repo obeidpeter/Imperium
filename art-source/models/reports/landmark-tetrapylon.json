@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-tetrapylon.glb",
+    "bytes": 45045648,
+    "sha256": "a454597fdb2013059907d69cfc28eff492d582bd352beb832afa092d0ad63399",
+    "triangles": 1413200
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-tetrapylon.glb",
+    "bytes": 233828,
+    "sha256": "ada12601e18bbd89687b82901cc5ace94f0bdd46ad51329ebac4dbbc954cfbf2",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 10.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 10.207912444912782,
+  "sizeMetres": {
+    "width": 9.5863,
+    "height": 10.2,
+    "depth": 10.0969
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_2841d856-a096-4af6-a583-cbdc3022bae2",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_2841d856-a096-4af6-a583-cbdc3022bae2",
+      "roughness": 0.8644,
+      "metallic": 0.0391
+    }
+  ]
+}

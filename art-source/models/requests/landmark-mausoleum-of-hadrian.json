@@ -1,0 +1,64 @@
+{
+  "id": "landmark-mausoleum-of-hadrian",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    12
+  ],
+  "use": "The Mausoleum of Hadrian, on the horizon of Chapter XII (LANDMARK_LAYOUT, kind mausoleum): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A great Roman imperial tomb of the second century beside the Tiber, whole as it stood in the third century: a huge round drum faced with white marble on a low square base faced with marble, a ring of marble statues along the drum's top edge, a grassy earth mound on the drum, and at its centre a smaller round tower crowned by a bronze chariot group. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 7000,
+    "texture": 256,
+    "bytes": 290000,
+    "heightMetres": 24,
+    "minHeight": 22.8,
+    "maxHeight": 25.2,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "1508fe16-c798-4275-9a09-0ff9e8f18acd",
+    "requestedAt": "2026-10-29T21:06:27.801Z",
+    "balanceBefore": 2445,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A great Roman imperial tomb of the second century beside the Tiber, whole as it stood in the third century: a huge round drum faced with white marble on a low square base faced with marble, a ring of marble statues along the drum's top edge, a grassy earth mound on the drum, and at its centre a smaller round tower crowned by a bronze chariot group. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:09:29.419Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-mausoleum-of-hadrian.glb",
+    "rawBytes": 46767840,
+    "rawSha256": "86c1d84867b1bd71acfb2198a9d64acc4970ac2977f7506b417fbb3f4e640b72",
+    "tripoInput": {
+      "prompt": "A great Roman imperial tomb of the second century beside the Tiber, whole as it stood in the third century: a huge round drum faced with white marble on a low square base faced with marble, a ring of marble statues along the drum's top edge, a grassy earth mound on the drum, and at its centre a smaller round tower crowned by a bronze chariot group. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-mausoleum-of-hadrian-tripo-render.webp"
+  }
+}

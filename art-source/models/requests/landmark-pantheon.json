@@ -1,0 +1,68 @@
+{
+  "id": "landmark-pantheon",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    11
+  ],
+  "use": "The Pantheon, on the horizon of Chapter XI (LANDMARK_LAYOUT, kind rotunda): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The Pantheon in Rome as Hadrian rebuilt it, as it stood in the third century: a great round brick rotunda under a low stepped dome, joined to a deep rectangular porch of sixteen granite columns, eight across its front, under a triangular pediment, with marble facing on the porch. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 19.5,
+    "minHeight": 18.525,
+    "maxHeight": 20.475,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "18e58742-fe2b-4476-ba4a-81f50b3c607b",
+    "requestedAt": "2026-10-29T21:11:17.358Z",
+    "balanceBefore": 2385,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The Pantheon in Rome as Hadrian rebuilt it, as it stood in the third century: a great round brick rotunda under a low stepped dome, joined to a deep rectangular porch of sixteen granite columns, eight across its front, under a triangular pediment, with marble facing on the porch. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:13:55.406Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-pantheon.glb",
+    "rawBytes": 45330444,
+    "rawSha256": "dfa41741ae37cb1785335a5ddd2d02d29895fc0c64d077977ea4ed1b5cf2e174",
+    "tripoInput": {
+      "prompt": "The Pantheon in Rome as Hadrian rebuilt it, as it stood in the third century: a great round brick rotunda under a low stepped dome, joined to a deep rectangular porch of sixteen granite columns, eight across its front, under a triangular pediment, with marble facing on the porch. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-pantheon-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the porch on the model’s side (+X); turned so that it faces the board"
+  }
+}

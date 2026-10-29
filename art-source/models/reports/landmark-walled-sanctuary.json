@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-walled-sanctuary.glb",
+    "bytes": 44395520,
+    "sha256": "c1d8a5c2ef904cf39694f2393f41bc3fc8389808f09fd94fb1e07c8d0757732f",
+    "triangles": 1399854
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-walled-sanctuary.glb",
+    "bytes": 255200,
+    "sha256": "c86af7bcc94334f57c2f5806bc782d14f40acb3594e0571ceb93337410f231ee",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 11.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 33.935050155435185,
+  "sizeMetres": {
+    "width": 32.1219,
+    "height": 11.6,
+    "depth": 33.9095
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_48e613f0-4696-4cbf-a768-ea552e766395",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_48e613f0-4696-4cbf-a768-ea552e766395",
+      "roughness": 0.9592,
+      "metallic": 0.0213
+    }
+  ]
+}

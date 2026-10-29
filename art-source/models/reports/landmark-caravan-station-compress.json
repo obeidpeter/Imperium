@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-caravan-station.glb",
+  "output": "assets/models/landmarks/landmark-caravan-station.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 218500,
+    "gzipBytes": 135686,
+    "sha256": "7720d5252e8f2423b39246ddf00eb3f83f2451c8fa036e5a2542630346f80607"
+  },
+  "after": {
+    "bytes": 169704,
+    "gzipBytes": 161833,
+    "sha256": "2f01125ea8dccb912ef36f9035d3f29858180949d6b140fcba8d30a15b3af585"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9674
+      },
+      "bytes": 13902,
+      "psnr": 33.605
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-pantheon.glb",
+  "output": "assets/models/landmarks/landmark-pantheon.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 242300,
+    "gzipBytes": 158147,
+    "sha256": "dddcfa509cbd7f18a462065f9beb18ab899265c49d42f7d09103aa44d1ecd8dc"
+  },
+  "after": {
+    "bytes": 182664,
+    "gzipBytes": 174607,
+    "sha256": "0cde6f2483109ee14a2dac6e7d6f3fc22cb0ce01c3c3dc844c8adca8e722a973"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5879,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10966
+      },
+      "bytes": 14487,
+      "psnr": 32.98
+    }
+  ]
+}

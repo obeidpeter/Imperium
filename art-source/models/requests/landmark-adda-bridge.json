@@ -1,6 +1,6 @@
 {
   "id": "landmark-adda-bridge",
-  "status": "Release 9 gate: requested",
+  "status": "Release 9 gate: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
   "chapters": [
     7
   ],
@@ -18,16 +18,47 @@
   },
   "budget": {
     "triangles": 5000,
-    "texture": 512,
-    "bytes": 300000,
+    "texture": 256,
+    "bytes": 210000,
     "heightMetres": 6.5,
     "minHeight": 6.175,
-    "maxHeight": 6.825
+    "maxHeight": 6.825,
+    "maps": "colour"
   },
   "provenance": {
     "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
     "program": "release-9-landmarks-and-life",
     "creditCeiling": 1150,
-    "expectedCredits": 20
+    "expectedCredits": 20,
+    "taskId": "0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+    "requestedAt": "2026-10-29T20:17:05.859Z",
+    "balanceBefore": 2745,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman stone road bridge of the third century over a north Italian river, about forty metres long: a level roadway carried on six round stone arches of grey ashlar, sturdy piers with pointed cutwaters, plain low parapets along both sides, its ends running into short sloping approach ramps, seen broadside with its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T20:18:34.113Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-adda-bridge.glb",
+    "rawBytes": 45969932,
+    "rawSha256": "ac55874212384a464f942a812c4ec0e671404fe1152b4ddc61830e9810985dab",
+    "tripoInput": {
+      "prompt": "A Roman stone road bridge of the third century over a north Italian river, about forty metres long: a level roadway carried on six round stone arches of grey ashlar, sturdy piers with pointed cutwaters, plain low parapets along both sides, its ends running into short sloping approach ramps, seen broadside with its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-adda-bridge-tripo-render.webp"
   }
 }

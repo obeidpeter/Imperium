@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-river-warehouses.glb",
+    "bytes": 46389580,
+    "sha256": "c93702e70f5326188b2d5decb6c824fa01baa0c165f6b4ef4b2b5aaa2786dd05",
+    "triangles": 1440711
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-river-warehouses.glb",
+    "bytes": 223576,
+    "sha256": "7a9972e888bfeafd2535f5b7e24c70578c5869cbae2e1983aab2a10d01d828c0",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 8.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 15.069561944389317,
+  "sizeMetres": {
+    "width": 15.0666,
+    "height": 8.4,
+    "depth": 13.0763
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_09049267-e949-45b3-b875-3206a0028b45",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_09049267-e949-45b3-b875-3206a0028b45",
+      "roughness": 0.7004,
+      "metallic": 0.0347
+    }
+  ]
+}

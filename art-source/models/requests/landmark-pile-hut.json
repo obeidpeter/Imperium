@@ -1,0 +1,69 @@
+{
+  "id": "landmark-pile-hut",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    2
+  ],
+  "use": "A reed hut on piles, on the horizon of Chapter II (LANDMARK_LAYOUT, kind stilts): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A fisherman's reed hut on timber piles in a Danube marsh: a small one-room hut of reed bundles and wattle daubed with mud under a steep thatched reed roof, raised about two metres on a dozen rough wooden piles, with a short ladder up to a narrow plank platform at its door and fishing nets hung on a pole beside it. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 256,
+    "bytes": 200000,
+    "heightMetres": 7.15,
+    "minHeight": 6.7925,
+    "maxHeight": 7.5075,
+    "maps": "colour",
+    "note": "Raised from 180,000: its ragged thatch keeps more vertices for each triangle than the stone landmarks (181,944 bytes compressed)."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "498307d9-8f39-466e-aa56-d0a6b54c841f",
+    "requestedAt": "2026-10-29T21:13:19.138Z",
+    "balanceBefore": 2325,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A fisherman's reed hut on timber piles in a Danube marsh: a small one-room hut of reed bundles and wattle daubed with mud under a steep thatched reed roof, raised about two metres on a dozen rough wooden piles, with a short ladder up to a narrow plank platform at its door and fishing nets hung on a pole beside it. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:16:05.814Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-pile-hut.glb",
+    "rawBytes": 46797480,
+    "rawSha256": "595e45b55ffb0ada6f6d12b8fcdd6e2413e11882f990b38b09f878077fb2cb3f",
+    "tripoInput": {
+      "prompt": "A fisherman's reed hut on timber piles in a Danube marsh: a small one-room hut of reed bundles and wattle daubed with mud under a steep thatched reed roof, raised about two metres on a dozen rough wooden piles, with a short ladder up to a narrow plank platform at its door and fishing nets hung on a pole beside it. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-pile-hut-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the door and ladder on the model’s side (+X); turned so that they face the board"
+  }
+}

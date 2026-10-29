@@ -1,0 +1,68 @@
+{
+  "id": "landmark-small-temple",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    3
+  ],
+  "use": "A small temple, on the horizon of Chapter III (LANDMARK_LAYOUT, kind temple): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A small Roman temple of the Danube provinces in the third century: a rectangular cella of plastered stone raised on a podium with a flight of steps at the front, a porch of four plain columns under a triangular pediment, a red tiled gable roof and a small stone altar before the steps. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 256,
+    "bytes": 180000,
+    "heightMetres": 13,
+    "minHeight": 12.35,
+    "maxHeight": 13.65,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "d3055cb5-21da-4013-9625-61e616ace846",
+    "requestedAt": "2026-10-29T21:24:52.784Z",
+    "balanceBefore": 2145,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A small Roman temple of the Danube provinces in the third century: a rectangular cella of plastered stone raised on a podium with a flight of steps at the front, a porch of four plain columns under a triangular pediment, a red tiled gable roof and a small stone altar before the steps. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:27:17.419Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-small-temple.glb",
+    "rawBytes": 45442884,
+    "rawSha256": "052ac6a9ed3376b6ac94145ec74dedb81600c0866fd9668dce6129c62f10a568",
+    "tripoInput": {
+      "prompt": "A small Roman temple of the Danube provinces in the third century: a rectangular cella of plastered stone raised on a podium with a flight of steps at the front, a porch of four plain columns under a triangular pediment, a red tiled gable roof and a small stone altar before the steps. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-small-temple-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its porch on the model’s side (+X); turned so that it faces the board"
+  }
+}

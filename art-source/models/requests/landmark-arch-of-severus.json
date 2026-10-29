@@ -1,0 +1,68 @@
+{
+  "id": "landmark-arch-of-severus",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    11
+  ],
+  "use": "The Arch of Septimius Severus, on the horizon of Chapter XI (LANDMARK_LAYOUT, kind arch): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The Arch of Septimius Severus in Rome as it stood in the third century: a triumphal arch of white marble with a tall central archway between two smaller side arches, four columns on tall pedestals across each face, carved relief panels over the side arches, a tall plain attic and a bronze chariot group on top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 19,
+    "minHeight": 18.05,
+    "maxHeight": 19.95,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+    "requestedAt": "2026-10-29T20:55:56.211Z",
+    "balanceBefore": 2625,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The Arch of Septimius Severus in Rome as it stood in the third century: a triumphal arch of white marble with a tall central archway between two smaller side arches, four columns on tall pedestals across each face, carved relief panels over the side arches, a tall plain attic and a bronze chariot group on top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T20:58:16.925Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-arch-of-severus.glb",
+    "rawBytes": 45356892,
+    "rawSha256": "0b71b4140836c4e51742a7954deedae40e2a4da3047fc599c25ed3773e30d98d",
+    "tripoInput": {
+      "prompt": "The Arch of Septimius Severus in Rome as it stood in the third century: a triumphal arch of white marble with a tall central archway between two smaller side arches, four columns on tall pedestals across each face, carved relief panels over the side arches, a tall plain attic and a bronze chariot group on top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-arch-of-severus-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the arch’s face on the model’s side (+X); turned so that it faces the board"
+  }
+}

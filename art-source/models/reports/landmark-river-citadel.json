@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-river-citadel.glb",
+    "bytes": 47784736,
+    "sha256": "028ca5f9c0b16f6e5780582531574a5a8eb34a435571a54b5b8b19d760235cff",
+    "triangles": 1495772
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-river-citadel.glb",
+    "bytes": 246400,
+    "sha256": "8569627717a6a1b1f6570dc84584fa6cb6a7565105c8c7668741b0a50b30c72e",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 15.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 41.50649107178337,
+  "sizeMetres": {
+    "width": 35.6955,
+    "height": 15.3,
+    "depth": 41.5979
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_3004fea2-8b58-4398-b10d-3e421cc78e67",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_3004fea2-8b58-4398-b10d-3e421cc78e67",
+      "roughness": 0.8835,
+      "metallic": 0.0299
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "landmark-villa",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    10
+  ],
+  "use": "A villa, on the horizon of Chapter X (LANDMARK_LAYOUT, kind villa): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman country villa of the lower Danube in the third century: a long single-storey farmhouse of whitewashed stone under red tiled roofs, with a colonnaded porch along its front and two short wings projecting forward at its ends round a small yard, a few small windows. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 6.4,
+    "minHeight": 6.08,
+    "maxHeight": 6.72,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "45b81e06-fead-4568-bae0-41d0d5c72529",
+    "requestedAt": "2026-10-29T21:29:42.600Z",
+    "balanceBefore": 2065,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman country villa of the lower Danube in the third century: a long single-storey farmhouse of whitewashed stone under red tiled roofs, with a colonnaded porch along its front and two short wings projecting forward at its ends round a small yard, a few small windows. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:32:22.627Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-villa.glb",
+    "rawBytes": 44385732,
+    "rawSha256": "6c8c2e22657ac534e94b470e5e700765c5b4fc5c43b09a352829ed4a99573041",
+    "tripoInput": {
+      "prompt": "A Roman country villa of the lower Danube in the third century: a long single-storey farmhouse of whitewashed stone under red tiled roofs, with a colonnaded porch along its front and two short wings projecting forward at its ends round a small yard, a few small windows. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-villa-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its long front on the model’s side (+X); turned so that it faces the board"
+  }
+}

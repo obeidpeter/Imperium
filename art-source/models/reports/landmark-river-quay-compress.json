@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-river-quay.glb",
+  "output": "assets/models/landmarks/landmark-river-quay.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 209424,
+    "gzipBytes": 133512,
+    "sha256": "9676b772ccf931db231c05cb145f8042f177eb8a70388fd47e7def55c0d0b327"
+  },
+  "after": {
+    "bytes": 160284,
+    "gzipBytes": 153129,
+    "sha256": "3c157a93c2b97dafa779200899dabdded548ecb23db3374f5916952e4de1b219"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12814
+      },
+      "bytes": 15603,
+      "psnr": 31.386
+    }
+  ]
+}

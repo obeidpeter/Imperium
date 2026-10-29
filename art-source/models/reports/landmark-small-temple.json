@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-small-temple.glb",
+    "bytes": 45442884,
+    "sha256": "052ac6a9ed3376b6ac94145ec74dedb81600c0866fd9668dce6129c62f10a568",
+    "triangles": 1476412
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-small-temple.glb",
+    "bytes": 153264,
+    "sha256": "533f7175f65c625652cfa911500c72325ed86a034df92a19a4fa826bf2d2ab60",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 13.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 16.491225796514755,
+  "sizeMetres": {
+    "width": 11.6911,
+    "height": 13.0,
+    "depth": 16.4291
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d3055cb5-21da-4013-9625-61e616ace846",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_d3055cb5-21da-4013-9625-61e616ace846",
+      "roughness": 0.8579,
+      "metallic": 0.0275
+    }
+  ]
+}

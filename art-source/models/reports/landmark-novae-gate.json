@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-novae-gate.glb",
+    "bytes": 46582488,
+    "sha256": "0203ea16bee0da0f7f869eb6cf62f20374acc6d8c5b1ac7cff17d6413dffda4b",
+    "triangles": 1448620
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-novae-gate.glb",
+    "bytes": 189660,
+    "sha256": "e1009d2ab8bdf18a192e3f0e351e6debd97cebb0ec07f31d5e4a26fc9bd74184",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 12.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 22.55509943434846,
+  "sizeMetres": {
+    "width": 22.5485,
+    "height": 12.8,
+    "depth": 6.5819
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d778db71-dcec-4496-937d-ba8320ff16f5",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_d778db71-dcec-4496-937d-ba8320ff16f5",
+      "roughness": 0.8489,
+      "metallic": 0.0344
+    }
+  ]
+}

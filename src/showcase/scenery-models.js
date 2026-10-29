@@ -8,7 +8,7 @@ import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
-import {curiaPlacements,updateInteriorCutaway} from './environment-curia.js';
+import {curiaPlacements,hasCuria,updateInteriorCutaway} from './environment-curia.js';
 import {aurelianWallsUrl} from './aurelian-walls.js';
 import {LANDMARK_LAYOUT} from '../ui/world-layouts.js';
 
@@ -72,7 +72,10 @@ export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false}={})
 
 // Each master's materials share the imported art's programs (model-materials.js).
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(gltf.scene));
-const masters=createSceneryModelCache({load:loadScene});
+/** Idle masters kept between stages: enough for any one scene's working set (at most 16 since
+ * release 9's landmarks and life), so a chapter's next stage finds its models still warm. */
+export const SCENERY_IDLE_MASTERS=20;
+const masters=createSceneryModelCache({maxIdle:SCENERY_IDLE_MASTERS,load:loadScene});
 export const warmSceneryModel=(url,load)=>masters.warm(url,load);
 export const sceneryMaster=url=>masters.master(url);
 export const sceneryResidency=()=>masters.stats();
@@ -80,9 +83,9 @@ export const sceneryResidency=()=>masters.stats();
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
 // A lease on a model already loaded, or null, without a request (scenery-cache.js).
 export const holdSceneryModel=url=>masters.hold(url);
-/** The chapter's generated landmarks that exist (LANDMARK_LAYOUT; environment-horizon.js), as
- * [world catalog id, model url] pairs: none until their models are generated. */
-export const landmarkModelUrls=(e,{chapter}={})=>e?(LANDMARK_LAYOUT[chapter]??[]).map(slot=>[slot.model,worldModelUrl(slot.model)]).filter(([,url])=>url):[];
+/** The chapter's generated landmarks (LANDMARK_LAYOUT; environment-horizon.js), as [world catalog
+ * id, model url] pairs: those whose models exist, and none in the Curia, whose walls hide them. */
+export const landmarkModelUrls=(e,{chapter}={})=>e&&!hasCuria(e,{chapter})?(LANDMARK_LAYOUT[chapter]??[]).map(slot=>[slot.model,worldModelUrl(slot.model)]).filter(([,url])=>url):[];
 // The board kit, the region's tree and rock kits, before Rome Aurelian's walls, and the
 // chapter's generated landmarks belong to the working set wherever the scenery is drawn.
 const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter}),

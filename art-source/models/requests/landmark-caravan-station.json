@@ -1,0 +1,68 @@
+{
+  "id": "landmark-caravan-station",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    6
+  ],
+  "use": "A mudbrick caravan station, on the horizon of Chapter VI (LANDMARK_LAYOUT, kind station): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A caravan station of the Syrian steppe in the third century: a square walled caravanserai of sun-dried mudbrick on a stone footing, plastered in pale earth colours, with one tall arched gateway in the middle of its front, small high windows, flat roofs behind low parapets and a square tower at one corner. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 8.3,
+    "minHeight": 7.885,
+    "maxHeight": 8.715,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "155c82c5-6ff2-4326-a217-a2f429ef382e",
+    "requestedAt": "2026-10-29T21:01:06.069Z",
+    "balanceBefore": 2525,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A caravan station of the Syrian steppe in the third century: a square walled caravanserai of sun-dried mudbrick on a stone footing, plastered in pale earth colours, with one tall arched gateway in the middle of its front, small high windows, flat roofs behind low parapets and a square tower at one corner. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:03:26.994Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-caravan-station.glb",
+    "rawBytes": 46784400,
+    "rawSha256": "1fd3a9f75db2272c4995d1bc4c3078659e8b997107e26daf045e3c1db5866ed3",
+    "tripoInput": {
+      "prompt": "A caravan station of the Syrian steppe in the third century: a square walled caravanserai of sun-dried mudbrick on a stone footing, plastered in pale earth colours, with one tall arched gateway in the middle of its front, small high windows, flat roofs behind low parapets and a square tower at one corner. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-caravan-station-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its gateway on the model’s side (+X); turned so that it faces the board"
+  }
+}

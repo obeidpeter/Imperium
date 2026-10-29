@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-fort-gate.glb",
+    "bytes": 46986160,
+    "sha256": "f171d33b7bfd99b2d0facbbf5c241bf2be31e3592b36f66e6af1bf17e6272376",
+    "triangles": 1475150
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-fort-gate.glb",
+    "bytes": 214188,
+    "sha256": "e71835169adaf35acfbef936a15fb0d87fb3458328e276a5dc97240357a967bb",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 12.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 21.660796584759822,
+  "sizeMetres": {
+    "width": 21.6263,
+    "height": 12.8,
+    "depth": 18.0652
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_2ad1b885-0c0b-4bb9-ab38-f857806a5d07",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_2ad1b885-0c0b-4bb9-ab38-f857806a5d07",
+      "roughness": 0.9226,
+      "metallic": 0.0283
+    }
+  ]
+}

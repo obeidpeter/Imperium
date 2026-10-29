@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-aqueduct.glb",
+  "output": "assets/models/landmarks/landmark-aqueduct.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 160316,
+    "gzipBytes": 103419,
+    "sha256": "a43d3f27462c2fdba53c65678515c7efa19e62ab98aff62a520682196b0d6cd0"
+  },
+  "after": {
+    "bytes": 127792,
+    "gzipBytes": 121662,
+    "sha256": "94d4911ecdb89fd520af9d1aa13a8238a3e15dbed229803fba45b9a28fb60e3d"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3920,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 6842
+      },
+      "bytes": 12787,
+      "psnr": 36.286
+    }
+  ]
+}

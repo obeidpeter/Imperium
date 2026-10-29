@@ -4,15 +4,16 @@ import {readFile} from 'node:fs/promises';
 import * as T from '../vendor/three/three.module.js';
 import {LANDMARK_LAYOUT} from '../src/ui/world-layouts.js';
 import {LANDMARK_HEIGHTS,LANDMARK_KINDS,LANDMARK_WATER,buildLandmarkStandIn,landmarkFootprint} from '../src/showcase/horizon-landmarks.js';
-import {landmarkSlots} from '../src/showcase/environment-horizon.js';
+import {landmarkHaze,landmarkSlots} from '../src/showcase/environment-horizon.js';
 import {landmarkModelUrls} from '../src/showcase/scenery-models.js';
+import {LANDMARK_CHAPTERS,WORLD_CATALOG} from '../src/ui/world-catalog.js';
 import {createEnvironment} from '../src/showcase/environment.js';
 
 // Each chapter's landmarks at the middle distance (worlds and gameplay plan, release 9).
 const campaign=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
 const scene=id=>campaign.scenes.find(s=>s.id===id);
 
-test('every chapter names three landmarks, each with a known stand-in and a model id to come',()=>{
+test('every chapter names three landmarks, each with a known stand-in and a model id, generated or to come',()=>{
   const all=new Map();
   for(let chapter=1;chapter<=12;chapter++){
     const slots=LANDMARK_LAYOUT[chapter];assert.equal(slots.length,3,`Chapter ${chapter}`);
@@ -25,8 +26,21 @@ test('every chapter names three landmarks, each with a known stand-in and a mode
   }
   assert.ok(all.size>=33,`${all.size} distinct landmarks`);
   assert.deepEqual(LANDMARK_LAYOUT[11].map(s=>s.kind),['arena','rotunda','arch']);
-  // None is generated yet: until then the silhouettes stand alone and nothing is downloaded.
-  for(let chapter=1;chapter<=12;chapter++)assert.deepEqual(landmarkModelUrls({id:'x'},{chapter}),[]);
+  // A generated landmark downloads with the chapters that name it, and only those; the rest
+  // stand as silhouettes and download nothing.
+  const generated=Object.entries(WORLD_CATALOG).filter(([,entry])=>entry.kind==='landmark');
+  assert.deepEqual(generated.map(([id])=>id).sort(),Object.keys(LANDMARK_CHAPTERS).sort());
+  for(const [id,entry] of generated){
+    assert.ok(all.has(id),`${id} stands in a layout`);
+    assert.deepEqual([...entry.chapters],Object.keys(LANDMARK_LAYOUT).map(Number).filter(chapter=>LANDMARK_LAYOUT[chapter].some(slot=>slot.model===id)),id);
+    assert.deepEqual(entry.files,[`assets/models/landmarks/${id}.glb`]);
+  }
+  for(let chapter=1;chapter<=12;chapter++)assert.deepEqual(landmarkModelUrls({id:'x'},{chapter}),
+    LANDMARK_LAYOUT[chapter].filter(slot=>WORLD_CATALOG[slot.model]).map(slot=>[slot.model,`assets/models/landmarks/${slot.model}.glb`]),`Chapter ${chapter}`);
+  assert.deepEqual(landmarkModelUrls(null,{chapter:1}),[]);
+  // In the Curia its walls hide the horizon: its outlines stand there, and nothing more is loaded.
+  const senate=scene('ch11-accounts').state.encounter;assert.equal(senate.kind,'contest');
+  assert.ok(landmarkModelUrls({id:'ch11-camp'},{chapter:11}).length>0);assert.deepEqual(landmarkModelUrls(senate,{chapter:11}),[]);
 });
 
 // Records the triangles a builder makes, with the horizon's own helpers' conventions.
@@ -102,8 +116,18 @@ test('the horizon sets each chapter\'s landmarks on its bearings, and a generate
   assert.ok(Math.abs(size.y-LANDMARK_HEIGHTS.gate)<1e-6,'scaled to the gate\'s height');
   assert.ok(Math.hypot(centre.x-slot.x,centre.z-slot.z)<1e-6,'centred on its bearing');
   assert.ok(Math.abs(placed.rotation.y-Math.atan2(-slot.x,-slot.z))<1e-9&&placed.rotation.y===slot.yaw,'turned to the board');
+  // Its foundation is its own extent's, and it stands on it, emitting no silhouette.
+  const record=world.horizon.group.userData.distantFoundations.find(f=>f.landmark===gate.model);
+  assert.ok(Math.abs(record.width-size.x)<1e-6&&Math.abs(record.depth-size.z)<1e-6&&record.x===slot.x&&record.z===slot.z,'on the ground under its own extent');
+  assert.ok(Math.abs(box.min.y-record.base)<1e-6,'its foot on that ground');assert.equal(record.vertices,0);
   placed.traverse(o=>{if(o.isMesh){assert.equal(o.castShadow,false);assert.equal(o.raycast(),undefined);}});
-  world.dispose();assert.equal(freed,false,'the cached model stays whole');
+  // It takes the haze in clones of its materials, as an unlit share of its colour; the cached
+  // model's own are untouched, and the world disposes only the clones.
+  const own=source.children[0].material,hazed=placed.children[0].material,k=landmarkHaze(Math.hypot(slot.x,slot.z));
+  assert.ok(hazed!==own&&k>.15&&k<.3,`a share of ${k}`);assert.ok(own.emissive.equals(new T.Color(0,0,0))&&own.color.equals(new T.Color(1,1,1)));
+  assert.ok(hazed.color.equals(new T.Color(1,1,1).multiplyScalar(1-k))&&hazed.emissive.equals(new T.Color(world.profile.fog).multiplyScalar(k)));
+  let clone=false,original=false;hazed.addEventListener('dispose',()=>{clone=true;});own.addEventListener('dispose',()=>{original=true;});
+  world.dispose();assert.equal(freed,false,'the cached model stays whole');assert.ok(clone&&!original,'only the hazed clones are disposed');
   const performance=createEnvironment(new T.Scene(),road.state.encounter,{chapter:1,quality:'performance',loadTextures:false,landmarkModels:new Map([[gate.model,source]])});
   assert.ok(performance.horizon.stats.landmarks.every(l=>!l.generated),'Performance keeps the silhouettes');performance.dispose();
 });

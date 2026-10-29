@@ -27,8 +27,8 @@ test('every world asset names its kind, its chapters and files with provenance',
 });
 
 test('no world model sits outside the catalog, and every placed model is catalogued for its chapter',async()=>{
-  const models=(await Promise.all(['assets/models/chapters/','assets/models/scenery/','assets/models/world/'].map(paths))).flat();
-  assert.deepEqual(models.filter(path=>!worldFiles().includes(path)),[],'A model in assets/models/chapters/ must be in the world catalog');
+  const models=(await Promise.all(['assets/models/chapters/','assets/models/scenery/','assets/models/world/','assets/models/landmarks/'].map(paths))).flat();
+  assert.deepEqual(models.filter(path=>!worldFiles().includes(path)),[],'A world model must be in the world catalog');
   for(const [chapter,set]of Object.entries(SCENERY_MODELS))for(const {id}of set.models){
     assert.ok(worldModelUrl(id),`${id} is in the world catalog`);
     assert.ok(WORLD_CATALOG[id].chapters.includes(Number(chapter)),`${id} downloads with Chapter ${chapter}, where it stands`);

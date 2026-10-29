@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-ruined-watchtower.glb",
+  "output": "assets/models/landmarks/landmark-ruined-watchtower.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 162004,
+    "gzipBytes": 93665,
+    "sha256": "00d9911383d5086246adce40eafea95de93e841e1b14cc0df5fa799016ecbe11"
+  },
+  "after": {
+    "bytes": 128916,
+    "gzipBytes": 122587,
+    "sha256": "c6bc22ae8d6efeb7a6d522ab2a37d3f09a9fb0c25aaac20979832c2da069f122"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15114
+      },
+      "bytes": 14873,
+      "psnr": 29.709
+    }
+  ]
+}

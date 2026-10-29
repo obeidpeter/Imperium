@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-roadside-tomb.glb",
+  "output": "assets/models/landmarks/landmark-roadside-tomb.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 151812,
+    "gzipBytes": 104901,
+    "sha256": "55cd09e276899393eeeae5c1edf39df5cd038cc895cfbf7f5f2958ea8216179b"
+  },
+  "after": {
+    "bytes": 116664,
+    "gzipBytes": 111470,
+    "sha256": "8e6e523b2e74d4af05b7ec751ba5fdbb01b3ec2e11a6839e79eafb89bb561d46"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3920,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9408
+      },
+      "bytes": 13483,
+      "psnr": 33.738
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "id": "landmark-temple-of-sol",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    12
+  ],
+  "use": "Aurelian’s Temple of the Sun, on the horizon of Chapter XII (LANDMARK_LAYOUT, kind court temple): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A new Roman temple of the Sun of the 270s: a grand white marble temple with a deep porch of tall Corinthian columns under a pediment, raised on a podium with broad steps, standing in a long rectangular court enclosed by a colonnade, a gilded statue on the pediment's top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 11.6,
+    "minHeight": 11.02,
+    "maxHeight": 12.18,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "54648116-8681-4d46-a5e1-88f9aef8050d",
+    "requestedAt": "2026-10-29T21:27:20.046Z",
+    "balanceBefore": 2105,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A new Roman temple of the Sun of the 270s: a grand white marble temple with a deep porch of tall Corinthian columns under a pediment, raised on a podium with broad steps, standing in a long rectangular court enclosed by a colonnade, a gilded statue on the pediment's top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:29:39.029Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-temple-of-sol.glb",
+    "rawBytes": 44465568,
+    "rawSha256": "97d69e2d896e5e72f8a4f4062885c093acee51536b2b6e7c21dc95b991b6d7b0",
+    "tripoInput": {
+      "prompt": "A new Roman temple of the Sun of the 270s: a grand white marble temple with a deep porch of tall Corinthian columns under a pediment, raised on a podium with broad steps, standing in a long rectangular court enclosed by a colonnade, a gilded statue on the pediment's top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-temple-of-sol-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its porch on the model’s side (+X); turned so that it faces the board"
+  }
+}

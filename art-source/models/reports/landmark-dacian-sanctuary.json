@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-dacian-sanctuary.glb",
+    "bytes": 47885680,
+    "sha256": "d784b9072eabe210cc0763f3becc0b16d9e20d06674596dc024f210f08628b0a",
+    "triangles": 1496569
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-dacian-sanctuary.glb",
+    "bytes": 205144,
+    "sha256": "ef4d2bd83e0897424b45be77db98760e62329b15b565e4afcd92b3e67a6c181f",
+    "triangles": 3919
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 3.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 14.025197270228457,
+  "sizeMetres": {
+    "width": 13.9788,
+    "height": 3.2,
+    "depth": 14.0157
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f04f0ab7-6912-41c7-a314-48797c113904",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_f04f0ab7-6912-41c7-a314-48797c113904",
+      "roughness": 0.9255,
+      "metallic": 0.0238
+    }
+  ]
+}

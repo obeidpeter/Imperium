@@ -1,0 +1,68 @@
+{
+  "id": "landmark-city-gate",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    9
+  ],
+  "use": "The city gate, on the horizon of Chapter IX (LANDMARK_LAYOUT, kind gate): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The main gate of a Syrian caravan city of the third century: a monumental triple archway of golden limestone, a tall central arch between two smaller ones, framed by pilasters under a richly moulded cornice, set in a plain stretch of city wall with a square tower on each side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 12.8,
+    "minHeight": 12.16,
+    "maxHeight": 13.44,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "b386d333-6f58-4e96-ace6-f5e5327ddd14",
+    "requestedAt": "2026-10-29T21:02:14.267Z",
+    "balanceBefore": 2505,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The main gate of a Syrian caravan city of the third century: a monumental triple archway of golden limestone, a tall central arch between two smaller ones, framed by pilasters under a richly moulded cornice, set in a plain stretch of city wall with a square tower on each side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:04:50.162Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-city-gate.glb",
+    "rawBytes": 44144460,
+    "rawSha256": "22251f7a67008418ffd6c8cc906c71a2928ad3763263b4e3e318c9d477ee44fe",
+    "tripoInput": {
+      "prompt": "The main gate of a Syrian caravan city of the third century: a monumental triple archway of golden limestone, a tall central arch between two smaller ones, framed by pilasters under a richly moulded cornice, set in a plain stretch of city wall with a square tower on each side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-city-gate-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its archway’s face on the model’s side (+X); turned so that it faces the board"
+  }
+}

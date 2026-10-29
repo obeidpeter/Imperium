@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-signal-tower.glb",
+    "bytes": 45762288,
+    "sha256": "5aa92c01e65421e2c63678704c5bf1494f036c4d894b2fe100ddb21c27d506b6",
+    "triangles": 1448798
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-signal-tower.glb",
+    "bytes": 180456,
+    "sha256": "51bd0e515e853d1fe864e89eabad800215a5dcd8ab77096c9a0b12605a0c7360",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 10.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 10.345056868970453,
+  "sizeMetres": {
+    "width": 6.6299,
+    "height": 10.3,
+    "depth": 6.6236
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f7e9f600-c655-46ef-8908-07a5d604e376",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_f7e9f600-c655-46ef-8908-07a5d604e376",
+      "roughness": 0.618,
+      "metallic": 0.0403
+    }
+  ]
+}

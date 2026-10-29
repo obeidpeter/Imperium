@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-burial-mound.glb",
+  "output": "assets/models/landmarks/landmark-burial-mound.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 146908,
+    "gzipBytes": 89984,
+    "sha256": "27417beb5f270c6571dbef183a59f05b84ce49dde8b094e2fb4a11c321269abc"
+  },
+  "after": {
+    "bytes": 115292,
+    "gzipBytes": 109902,
+    "sha256": "ccdebb6688fdc1e670d294c53e1c7f227b64adc592286cd145b44796c8b333da"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11188
+      },
+      "bytes": 13697,
+      "psnr": 31.726
+    }
+  ]
+}

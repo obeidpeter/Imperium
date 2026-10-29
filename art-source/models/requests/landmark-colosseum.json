@@ -1,6 +1,6 @@
 {
   "id": "landmark-colosseum",
-  "status": "Release 9 gate: requested",
+  "status": "rejected after three attempts: the code-built outline stands",
   "chapters": [
     11
   ],
@@ -8,7 +8,7 @@
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",
-    "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "prompt": "A huge Roman amphitheatre newly finished in the third century, whole and intact: one closed elliptical ring of pale travertine whose outer wall is the same full height all the way round, three storeys of round arches between engaged half-columns and a solid top storey with small square windows, under a level cornice unbroken round the whole oval. Inside, tiers of seating rise evenly on every side from an oval sand arena, open to the sky. Seen from a high three-quarter view, the far side stands exactly as tall as the near side and every arch is whole. One isolated freestanding building for a painterly-realistic historical game, seen from far away: a clear, strong silhouette, simple surface detail, clean lightly weathered stone, a level base, complete from every side. No ruin, collapse or missing wall, no cutaway, landscape, ground plane, base slab or plinth, no city, water, trees, people, scaffolding, modern materials, text or logos.",
     "options": {
       "model_version": "v3.1-20260211",
       "texture": true,
@@ -18,27 +18,118 @@
   },
   "budget": {
     "triangles": 8000,
-    "texture": 512,
-    "bytes": 450000,
+    "texture": 256,
+    "bytes": 320000,
     "heightMetres": 23.5,
     "minHeight": 22.325,
-    "maxHeight": 24.675
+    "maxHeight": 24.675,
+    "maps": "colour"
   },
   "provenance": {
     "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
     "program": "release-9-landmarks-and-life",
     "creditCeiling": 1150,
     "expectedCredits": 20,
-    "taskId": "ac0a5033-2611-44b0-816d-135782c0d3b0",
-    "requestedAt": "2026-10-29T20:13:50.691Z",
-    "balanceBefore": 2765,
-    "requestBody": {
-      "type": "text_to_model",
-      "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
-      "model_version": "v3.1-20260211",
-      "texture": true,
-      "pbr": true,
-      "geometry_quality": "standard"
-    }
+    "rejectedAttempts": [
+      {
+        "taskId": "ac0a5033-2611-44b0-816d-135782c0d3b0",
+        "requestedAt": "2026-10-29T20:13:50.691Z",
+        "balanceBefore": 2765,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T20:17:03.301Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/landmark-colosseum-attempt1.glb",
+        "rawBytes": 47013500,
+        "rawSha256": "11252ae13e0f1760dfea3db384f996b55c30b8bb48f5c60ba97137052dea54c8",
+        "tripoInput": {
+          "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/landmark-colosseum-attempt1-tripo-render.webp",
+        "rejected": "A curved fragment of the outer wall, its four storeys of arcades and the attic as asked, standing alone on a slab: not the whole amphitheatre, which the horizon needs as a closed ring with its seating and arena. The retry leads with the whole building and its far side."
+      },
+      {
+        "taskId": "c2d130d2-aa2d-462d-bb35-69489a48d944",
+        "requestedAt": "2026-10-29T20:32:37.857Z",
+        "balanceBefore": 2665,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "The whole Flavian Amphitheatre of Rome, the Colosseum, complete and undamaged as it stood in the third century, shown entire from a high three-quarter view as one closed elliptical ring: its oval outer wall of pale warm travertine runs unbroken all the way round, with three tiers of round arches between half-columns and a plain attic storey above, and within the ring the tiers of seating step down on every side to the oval sand floor of the arena, open to the sky. The far side of the ring is as complete as the near side. One isolated freestanding building for a painterly-realistic historical game, to be seen from far away: a clear, strong silhouette, simple surface detail, physically based aged stone, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no ruined, broken or missing section, no cutaway, no city, water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T20:35:29.490Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/landmark-colosseum-attempt2.glb",
+        "rawBytes": 48010608,
+        "rawSha256": "1bbbe5a03f5e1e0b4cf2f50ad5736d4a24318aef43ade4402ecc5d57e8c664d2",
+        "tripoInput": {
+          "prompt": "The whole Flavian Amphitheatre of Rome, the Colosseum, complete and undamaged as it stood in the third century, shown entire from a high three-quarter view as one closed elliptical ring: its oval outer wall of pale warm travertine runs unbroken all the way round, with three tiers of round arches between half-columns and a plain attic storey above, and within the ring the tiers of seating step down on every side to the oval sand floor of the arena, open to the sky. The far side of the ring is as complete as the near side. One isolated freestanding building for a painterly-realistic historical game, to be seen from far away: a clear, strong silhouette, simple surface detail, physically based aged stone, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no ruined, broken or missing section, no cutaway, no city, water, trees, people, animals, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/landmark-colosseum-attempt2-tripo-render.webp",
+        "rejected": "The whole ring with its seating and arena, but as the monument stands today: the outer wall full height with its attic on one side only and fallen away elsewhere, leaving the lower inner ring. In 275 the amphitheatre stood whole (its outer ring fell in medieval earthquakes), so the stepped ruin is an anachronism at the horizon. The next attempt describes an intact amphitheatre without naming the monument, whose name calls up the ruin."
+      },
+      {
+        "taskId": "ec95ceb1-198a-4226-a760-09180e372061",
+        "requestedAt": "2026-10-29T20:38:17.415Z",
+        "balanceBefore": 2645,
+        "requestBody": {
+          "type": "text_to_model",
+          "prompt": "A huge Roman amphitheatre newly finished in the third century, whole and intact: one closed elliptical ring of pale travertine whose outer wall is the same full height all the way round, three storeys of round arches between engaged half-columns and a solid top storey with small square windows, under a level cornice unbroken round the whole oval. Inside, tiers of seating rise evenly on every side from an oval sand arena, open to the sky. Seen from a high three-quarter view, the far side stands exactly as tall as the near side and every arch is whole. One isolated freestanding building for a painterly-realistic historical game, seen from far away: a clear, strong silhouette, simple surface detail, clean lightly weathered stone, a level base, complete from every side. No ruin, collapse or missing wall, no cutaway, landscape, ground plane, base slab or plinth, no city, water, trees, people, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "geometry_quality": "standard"
+        },
+        "status": "success",
+        "generatedAt": "2026-10-29T20:41:09.018Z",
+        "output": "pbr_model",
+        "raw": "art-source/models/raw/landmark-colosseum-attempt3.glb",
+        "rawBytes": 45115720,
+        "rawSha256": "6add2e4ca7e87f3469c5cade53ab79840f90fc1a5c0419bb4652ad64d90e4023",
+        "tripoInput": {
+          "prompt": "A huge Roman amphitheatre newly finished in the third century, whole and intact: one closed elliptical ring of pale travertine whose outer wall is the same full height all the way round, three storeys of round arches between engaged half-columns and a solid top storey with small square windows, under a level cornice unbroken round the whole oval. Inside, tiers of seating rise evenly on every side from an oval sand arena, open to the sky. Seen from a high three-quarter view, the far side stands exactly as tall as the near side and every arch is whole. One isolated freestanding building for a painterly-realistic historical game, seen from far away: a clear, strong silhouette, simple surface detail, clean lightly weathered stone, a level base, complete from every side. No ruin, collapse or missing wall, no cutaway, landscape, ground plane, base slab or plinth, no city, water, trees, people, scaffolding, modern materials, text or logos.",
+          "model_version": "v3.1-20260211",
+          "texture": true,
+          "pbr": true,
+          "texture_alignment": "geometry",
+          "export_uv": true,
+          "geometry_quality": "standard"
+        },
+        "modelVersion": "v3.1-20260211",
+        "creditsSpent": 20,
+        "creditSource": "task.consumed_credit",
+        "tripoRender": "art-source/models/raw/landmark-colosseum-attempt3-tripo-render.webp",
+        "rejected": "A cutaway: the far half of the ring stands in three storeys with its seating and the sand arena, but the near half has no outer wall, opened as if to show the inside. The horizon needs the closed ring. Three attempts gave a fragment, the modern ruin and a cutaway, so the Colosseum keeps its code-built outline, which stands whole."
+      }
+    ]
   }
 }

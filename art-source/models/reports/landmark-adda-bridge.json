@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-adda-bridge.glb",
+    "bytes": 45969932,
+    "sha256": "ac55874212384a464f942a812c4ec0e671404fe1152b4ddc61830e9810985dab",
+    "triangles": 1447166
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-adda-bridge.glb",
+    "bytes": 218664,
+    "sha256": "b795e3e8d590caca84d59b89b9381bd2bf2004b7543fb0939359f79c474b61da",
+    "triangles": 4899
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 6.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 34.72595897241774,
+  "sizeMetres": {
+    "width": 34.6833,
+    "height": 6.5,
+    "depth": 11.854
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+      "roughness": 0.871,
+      "metallic": 0.0295
+    }
+  ]
+}

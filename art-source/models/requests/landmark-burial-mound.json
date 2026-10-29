@@ -1,0 +1,65 @@
+{
+  "id": "landmark-burial-mound",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    1,
+    4
+  ],
+  "use": "A Thracian burial mound, on the horizon of Chapters I and IV (LANDMARK_LAYOUT, kind mound): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Thracian burial mound of the lower Danube: a smooth round dome-shaped earthen tumulus about twenty metres across and four metres high, covered in short dry grass with a few bare patches of earth, a ring of rough kerb stones half sunk round its foot, and a small weathered standing stone on its top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 256,
+    "bytes": 140000,
+    "heightMetres": 4.3,
+    "minHeight": 4.085,
+    "maxHeight": 4.515,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "26145aa2-98b2-4375-970a-cb24f9ca49d5",
+    "requestedAt": "2026-10-29T20:58:20.382Z",
+    "balanceBefore": 2565,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Thracian burial mound of the lower Danube: a smooth round dome-shaped earthen tumulus about twenty metres across and four metres high, covered in short dry grass with a few bare patches of earth, a ring of rough kerb stones half sunk round its foot, and a small weathered standing stone on its top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:01:02.876Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-burial-mound.glb",
+    "rawBytes": 46726756,
+    "rawSha256": "e38ff4828d3796e0a1b7e1e9bab96db92eed74d64766e576582176d10762f51d",
+    "tripoInput": {
+      "prompt": "A Thracian burial mound of the lower Danube: a smooth round dome-shaped earthen tumulus about twenty metres across and four metres high, covered in short dry grass with a few bare patches of earth, a ring of rough kerb stones half sunk round its foot, and a small weathered standing stone on its top. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-burial-mound-tripo-render.webp"
+  }
+}

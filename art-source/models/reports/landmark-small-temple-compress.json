@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-small-temple.glb",
+  "output": "assets/models/landmarks/landmark-small-temple.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 153264,
+    "gzipBytes": 106442,
+    "sha256": "533f7175f65c625652cfa911500c72325ed86a034df92a19a4fa826bf2d2ab60"
+  },
+  "after": {
+    "bytes": 117516,
+    "gzipBytes": 112105,
+    "sha256": "54c8c5e932209ec7d72649aa176821683311901865495f558e8bae974321ce6b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3920,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11516
+      },
+      "bytes": 15656,
+      "psnr": 32.244
+    }
+  ]
+}

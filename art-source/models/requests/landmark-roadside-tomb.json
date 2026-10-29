@@ -1,0 +1,64 @@
+{
+  "id": "landmark-roadside-tomb",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    7
+  ],
+  "use": "A tall tomb beside the road, on the horizon of Chapter VII (LANDMARK_LAYOUT, kind tomb tower): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A tall Roman funerary monument beside a road in north Italy, like the mausoleum of the Julii at Glanum: a square stone base with plain relief panels, above it an arched storey open on all four sides, and on top a round temple of slender columns under a conical stone roof, in pale weathered limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 256,
+    "bytes": 180000,
+    "heightMetres": 15.4,
+    "minHeight": 14.63,
+    "maxHeight": 16.17,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "8389b598-ae00-47a4-a42c-d4788c18fb3c",
+    "requestedAt": "2026-10-29T21:21:08.163Z",
+    "balanceBefore": 2205,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A tall Roman funerary monument beside a road in north Italy, like the mausoleum of the Julii at Glanum: a square stone base with plain relief panels, above it an arched storey open on all four sides, and on top a round temple of slender columns under a conical stone roof, in pale weathered limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:24:26.004Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-roadside-tomb.glb",
+    "rawBytes": 47185332,
+    "rawSha256": "118df4fe9659e6269308239ddfa71d1c7f9a33939fb3b9d3243a0ee0de522014",
+    "tripoInput": {
+      "prompt": "A tall Roman funerary monument beside a road in north Italy, like the mausoleum of the Julii at Glanum: a square stone base with plain relief panels, above it an arched storey open on all four sides, and on top a round temple of slender columns under a conical stone roof, in pale weathered limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-roadside-tomb-tripo-render.webp"
+  }
+}

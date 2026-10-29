@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-rock-cut-tombs.glb",
+  "output": "assets/models/landmarks/landmark-rock-cut-tombs.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 217432,
+    "gzipBytes": 136518,
+    "sha256": "1d9a3e213fb79f3147fbf41403062ef1d66393aca1abc50618434281941d35d8"
+  },
+  "after": {
+    "bytes": 166804,
+    "gzipBytes": 158759,
+    "sha256": "e0946a5684c78c79c7fc184a7edc7d260332e7b245441b5ca8415df8fcd8588c"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9326
+      },
+      "bytes": 13101,
+      "psnr": 34.465
+    }
+  ]
+}

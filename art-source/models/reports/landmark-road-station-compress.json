@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-road-station.glb",
+  "output": "assets/models/landmarks/landmark-road-station.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 248764,
+    "gzipBytes": 139037,
+    "sha256": "99b12c3c93fbdaa9fb74ea1516cad5ab2da1707dc75e6bccdf4f0c6932fd5e2c"
+  },
+  "after": {
+    "bytes": 195432,
+    "gzipBytes": 186222,
+    "sha256": "80661b1e7d46a2adf551d8a306627dd0758195084cd9ff3675448d8eca6707bc"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13664
+      },
+      "bytes": 15598,
+      "psnr": 30.179
+    }
+  ]
+}
