@@ -172,6 +172,18 @@ test('real time: the armoured horse keeps its ground until a feigned retreat dra
   assert.ok(enemyHorse.every(q=>!q.drawnBy),'the chase is over once they turn');
 });
 
+test('real time: the lured horse waits no longer than its patience, and a broken horse counts as beaten (injected clock and morale)',()=>{
+  const {world:w}=realtime('ch9-wing'),enemyHorse=w.squads.filter(q=>q.side==='enemy'&&HORSE_ORDERS.roles.includes(q.role));
+  const last=HORSE_ORDERS.lure.patience*R;
+  for(const q of enemyHorse){
+    w.tick=last-1;decideSquad(w,q);assert.equal(q.plan?.intent,'Wait for an opening.',`${q.id}: it waits through round ${HORSE_ORDERS.lure.patience}`);
+    w.tick=last;decideSquad(w,q);assert.notEqual(q.plan?.intent,'Wait for an opening.',`${q.id}: and rides in after it`);
+  }
+  w.tick=0;assert.equal(lureMet(w),false);
+  for(const q of enemyHorse)q.broken=true;
+  assert.equal(lureMet(w),true,'none of the horse is left unbroken');
+});
+
 test('the horse\'s orders: horse only, on keys 8 and 9 of its card and in its Command list; a charge from close range wheels away first (labelled field)',()=>{
   // A labelled small field: one squad of horse, one of foot, a Palmyrene band of horse.
   const grass={id:'open',width:40,height:24,terrain:Array.from({length:24},()=>Array(40).fill('grass'))};

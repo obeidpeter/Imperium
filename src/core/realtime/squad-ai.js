@@ -337,9 +337,10 @@ function enemyDecision(world,squad){
   const threat=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
   const threatened=threat&&span(threat.x-c.x,threat.z-c.z)<=12;
   if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);braceStill(world,squad);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
-  // A lure (release 7's missions): the horse it names keeps its ground, until drawn out or until one of ours comes close.
+  // A lure (release 7's missions): the horse it names keeps its ground, until drawn out or until one of ours comes close,
+  // and no longer than the end of round `patience` (HORSE_ORDERS.lure), so it never sits out the battle.
   const lure=world.mission?.lure;
-  if(lure&&(lure==='cavalry'?HORSE_ORDERS.roles:[lure]).includes(squad.role)&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});
+  if(lure&&(lure==='cavalry'?HORSE_ORDERS.roles:[lure]).includes(squad.role)&&!threatened&&Math.floor(world.tick/R)+1<=HORSE_ORDERS.lure.patience){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});
     goTo(world,squad,a);plan(squad,'Wait for an opening.',{x:a.x,z:a.z});return;}
   if((squad.role==='guard'||squad.holds)&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
     squad.anchor??={x:squad.x,z:squad.z};const intruder=nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),squad.anchor);

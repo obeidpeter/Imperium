@@ -11,7 +11,9 @@
 //   on its point and batters the gate at `gate` (real time). While any stands, the defended
 //   line loses the battle's pressure each round (both paths).
 // - lure: the phase's objective is the named enemy horse at the marker, drawn there by a
-//   feigned flight (both paths), not our men; it is also done once none of that horse is left.
+//   feigned flight (both paths), not our men; it is also done once none of that horse is left
+//   (in real time, none unbroken). In real time that horse keeps its ground until drawn out, until
+//   one of ours comes close, or until the end of round 3 (HORSE_ORDERS.lure).
 // - convoy: protected columns walk the route on their own, through each point in turn
 //   (both paths), halting when threatened (real time).
 // - lines: a fallback line; our squads holding the objective follow it back.

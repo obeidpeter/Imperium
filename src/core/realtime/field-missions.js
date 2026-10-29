@@ -54,10 +54,11 @@ export function worksRound(world){
   if(m.pressure){m.defence-=m.pressure;emit(world,{kind:'pressure',amount:m.pressure,defence:m.defence,works:true});}
 }
 
-// The lure (mission.js objectiveMet): the named horse at the marker, or none of it left in the saddle.
+// The lure (mission.js objectiveMet): the named horse at the marker, or none of it left in the saddle unbroken
+// (a broken band is beaten, as a ladder's climbers are).
 export function lureMet(world){
   const m=world.mission,roles=m.lure==='cavalry'?HORSE_ORDERS.roles:[m.lure],near=a=>standing(a)&&span(a.x-m.goal.x,a.z-m.goal.z)<=m.radius;
-  const horse=[...squadsOf(world).filter(q=>q.side==='enemy'&&roles.includes(q.role)&&fielded(world,q)).map(q=>membersOf(world,q)),
+  const horse=[...squadsOf(world).filter(q=>q.side==='enemy'&&roles.includes(q.role)&&fielded(world,q)&&!q.broken).map(q=>membersOf(world,q)),
     ...world.actors.filter(a=>a.side==='enemy'&&!a.squadId&&roles.includes(a.role)&&standing(a)).map(a=>[a])];
   return !horse.length||horse.some(men=>men.some(near));
 }

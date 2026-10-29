@@ -82,7 +82,10 @@ export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedg
 // run-up it needs (EXCHANGE.chargeRun) wheels away first. A feigned retreat rides `distance` metres (toward the
 // marker when the mission is to draw the enemy's horse there); enemy horse and raiders in sight that come within
 // `draw` metres of the flight give chase, and when it turns they are strung out: `strungOut` cohesion lost.
-export const HORSE_ORDERS=freeze({roles:freeze(['cavalry','heavy']),pursuers:freeze(['cavalry','heavy','raider']),feint:freeze({distance:30,draw:30,strungOut:20})});
+// The horse a mission's lure names keeps its ground until drawn out or until one of ours comes close, but no longer
+// than the end of round `lure.patience`: like a band lying in wait, it never sits out the battle.
+export const HORSE_ORDERS=freeze({roles:freeze(['cavalry','heavy']),pursuers:freeze(['cavalry','heavy','raider']),feint:freeze({distance:30,draw:30,strungOut:20}),
+  lure:freeze({patience:3})});
 // A formation order: one Command for up to three squads standing in a
 // connected group, each within `join` metres of another (§3.8 join rule).
 export const FORMATION_ORDER=freeze({cost:1,maxSquads:3,join:15});

@@ -1,5 +1,5 @@
 import {ESCORT_RULES,TIME,capabilityTasks} from '../data/realtime-rules.js';
-import {ORDERS} from '../data/realtime-squads.js';
+import {HORSE_ORDERS,ORDERS} from '../data/realtime-squads.js';
 import {missionProgress} from '../core/realtime/mission.js';
 import {lureMet} from '../core/realtime/field-missions.js';
 import {DEFAULT_KEYMAP,firstKeyLabel} from './action-map.js';
@@ -44,7 +44,7 @@ function worksNext(world){
   if(ladders)parts.push(`${ladders===1?'A ladder stands':`${ladders} ladders stand`} against the wall: beat ${ladders===1?'its':'their'} climbers, or hold ${ladders===1?'its head':'each head'} with no enemy there.`);
   return `${parts.join(' ')} While any stands, the line loses ${m.pressure} at each round's end.`;
 }
-const LURE_NEXT='Ride your horse at the enemy’s horse and order a Feigned retreat to the marker: they keep their ground until drawn out, or until one of your squads comes close.';
+const LURE_NEXT=`Ride your horse at the enemy’s horse and order a Feigned retreat to the marker: they keep their ground until drawn out or until one of your squads comes close, and ride in anyway once round ${HORSE_ORDERS.lure.patience} is over.`;
 const VOLLEY=' Until the enemy’s archers are beaten, the far bank’s archers strike your group most exposed in the water or on the landing at each round’s end.';
 const holdNext=world=>{const m=world.mission;return `Keep a friend inside the marker and enemies outside it. ${seconds(Math.max(0,m.holdRequired*TIME.roundTicks-m.heldTicks))} seconds of control remain.`;};
 function convoyNext(world){
