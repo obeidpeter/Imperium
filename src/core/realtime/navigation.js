@@ -92,15 +92,21 @@ export function nearestWalkable(g,x,z){
 // lies on walkable ground no slower than both ends (so a smoothed route never
 // cuts through marsh that the search went round). Samples near `a` are
 // skipped when it starts on blocked ground (a body nudged against a rock can
-// still step away from it).
+// still step away from it). Every eighth sample is tried first: a wall or slower
+// ground across the line is usually met there, and one failing sample fails the
+// line, so the answer is the same.
 export function clearLine(g,a,b,{fromBlocked=false}={}){
   const dx=b.x-a.x,dz=b.z-a.z,length=span(dx,dz),steps=Math.max(1,Math.ceil(length/(g.cell*.2)));
-  const slowest=Math.min(speedFactor(g,a.x,a.z),speedFactor(g,b.x,b.z))-1e-9;
+  const slowest=Math.min(speedFactor(g,a.x,a.z),speedFactor(g,b.x,b.z))-1e-9,{walk,speed,height}=g;
+  for(let s=8;s<=steps;s+=8){
+    const t=s/steps,x=a.x+dx*t,z=a.z+dz*t;
+    if(fromBlocked&&t*length<g.cell*1.5)continue;const i=cellIndex(g,x,z);if(i<0||walk[i]!==1||speed[i]<slowest)return false;
+  }
   let previousHeight=g.elevated?groundHeight(g,a.x,a.z):0;
   for(let s=1;s<=steps;s++){
     const t=s/steps,x=a.x+dx*t,z=a.z+dz*t;
-    if(fromBlocked&&t*length<g.cell*1.5)continue;if(!walkable(g,x,z)||speedFactor(g,x,z)<slowest)return false;
-    if(g.elevated){const h=groundHeight(g,x,z);if(Math.abs(h-previousHeight)>1.6+1e-9)return false;previousHeight=h;}
+    if(fromBlocked&&t*length<g.cell*1.5)continue;const i=cellIndex(g,x,z);if(i<0||walk[i]!==1||speed[i]<slowest)return false;
+    if(g.elevated){const h=height[i];if(Math.abs(h-previousHeight)>1.6+1e-9)return false;previousHeight=h;}
   }
   return true;
 }
@@ -125,30 +131,46 @@ function heap(capacity){
 }
 const NEIGHBOURS=[[1,0,1],[-1,0,1],[0,1,1],[0,-1,1],[1,1,SQRT2],[1,-1,SQRT2],[-1,1,SQRT2],[-1,-1,SQRT2]];
 const DC=Int8Array.from(NEIGHBOURS,n=>n[0]),DR=Int8Array.from(NEIGHBOURS,n=>n[1]),STEP=Float64Array.from(NEIGHBOURS,n=>n[2]);
+// The moves the search may make from each cell, one bit per neighbour: onto open
+// ground no more than a bank's step up or down, and a diagonal only with both its
+// orthogonal cells open (no corner cutting). Worked out once per grid.
+function moves(g){
+  if(g.moves)return g.moves;
+  const {cols,rows,walk}=g,out=new Uint8Array(cols*rows);
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const i=r*cols+c;let bits=0;
+    for(let n=0;n<8;n++){
+      const cc=c+DC[n],rr=r+DR[n];if(cc<0||rr<0||cc>=cols||rr>=rows)continue;const j=rr*cols+cc;if(!walk[j]||!levelStep(g,i,j))continue;
+      if(n>3&&(!walk[r*cols+cc]||!walk[rr*cols+c]||!levelStep(g,i,r*cols+cc)||!levelStep(g,i,rr*cols+c)))continue;
+      bits|=1<<n;
+    }
+    out[i]=bits;
+  }
+  g.moves=out;return out;
+}
 // The grid's walkable regions, each one a body can cross (the search's own
-// moves: eight ways, no corner cutting), labelled once per grid.
+// moves), labelled once per grid.
 function regions(g){
   if(g.region)return g.region;
-  const n=g.cols*g.rows,label=new Int32Array(n).fill(-1),stack=new Int32Array(n);let next=0;
+  const n=g.cols*g.rows,label=new Int32Array(n).fill(-1),stack=new Int32Array(n),step=moves(g);let next=0;
   for(let s=0;s<n;s++){
     if(!g.walk[s]||label[s]>=0)continue;let top=0;stack[top++]=s;label[s]=next;
     while(top){
-      const i=stack[--top],c=i%g.cols,r=(i-c)/g.cols;
-      for(const [dc,dr]of NEIGHBOURS){
-        const cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=g.cols||rr>=g.rows)continue;const j=rr*g.cols+cc;
-        if(!g.walk[j]||!levelStep(g,i,j)||label[j]>=0||dc&&dr&&(!g.walk[r*g.cols+cc]||!g.walk[rr*g.cols+c]||!levelStep(g,i,r*g.cols+cc)||!levelStep(g,i,rr*g.cols+c)))continue;label[j]=next;stack[top++]=j;
-      }
+      const i=stack[--top],m=step[i];
+      for(let k=0;k<8;k++){if(!(m>>k&1))continue;const j=i+DR[k]*g.cols+DC[k];if(label[j]>=0)continue;label[j]=next;stack[top++]=j;}
     }
     next++;
   }
   g.region=label;return label;
 }
-// The cell of a region nearest a point (rings outward from it), or -1.
+// The cell of a region nearest a point (rings outward from it), or -1. Each ring is
+// walked along its edge only, row by row as the square it bounds would be: the same
+// cells in the same order, without visiting the square's inside on every ring.
 function nearestInRegion(g,label,region,p){
   const c0=Math.floor(p.x/g.cell),r0=Math.floor(p.z/g.cell),limit=Math.max(g.cols,g.rows);let best=-1,bestD=Infinity,stop=limit;
   for(let d=0;d<=Math.min(stop,limit);d++){
-    for(let r=r0-d;r<=r0+d;r++)for(let c=c0-d;c<=c0+d;c++){
-      if(Math.max(Math.abs(r-r0),Math.abs(c-c0))!==d||c<0||r<0||c>=g.cols||r>=g.rows)continue;const i=r*g.cols+c;if(label[i]!==region)continue;
+    for(let r=r0-d;r<=r0+d;r++)for(let c=c0-d,edge=r===r0-d||r===r0+d;c<=c0+d;c+=edge?1:2*d){
+      if(c<0||r<0||c>=g.cols||r>=g.rows)continue;const i=r*g.cols+c;if(label[i]!==region)continue;
       const e=span((c+.5)*g.cell-p.x,(r+.5)*g.cell-p.z);if(e<bestD-1e-9||Math.abs(e-bestD)<=1e-9&&i<best){bestD=e;best=i;}
     }
     if(best>=0&&stop===limit)stop=Math.ceil(d*SQRT2)+1;
@@ -182,18 +204,16 @@ export function findRoute(g,from,to){
   const w=scratch(g),{gScore,parent,closed,seen,open}=w;w.stamp=(w.stamp+1)>>>0||1;const stamp=w.stamp;open.clear();
   const touch=i=>{if(seen[i]!==stamp){seen[i]=stamp;gScore[i]=Infinity;parent[i]=-1;closed[i]=0;}};
   // The octile distance to the goal, in metres.
-  const target=reachable?goalPoint:cellCentre(g,goalIndex),gc=target.x/g.cell-.5,gr=target.z/g.cell-.5,cols=g.cols,rows=g.rows,walk=g.walk,speed=g.speed,cell=g.cell,
+  const target=reachable?goalPoint:cellCentre(g,goalIndex),gc=target.x/g.cell-.5,gr=target.z/g.cell-.5,cols=g.cols,speed=g.speed,cell=g.cell,step=moves(g),
     h=(c,r)=>{const dx=Math.abs(c-gc),dz=Math.abs(r-gr);return (Math.max(dx,dz)+(SQRT2-1)*Math.min(dx,dz))*cell;};
   touch(start);gScore[start]=0;open.push(start,h(start%cols,(start-start%cols)/cols));let found=false;
   while(open.size){
     const i=open.pop();if(closed[i])continue;closed[i]=1;
     if(i===goalIndex){found=true;break;}
-    const c=i%cols,r=(i-c)/cols,gi=gScore[i];
+    const c=i%cols,r=(i-c)/cols,gi=gScore[i],m=step[i];
     for(let n=0;n<8;n++){
-      const dc=DC[n],dr=DR[n],cc=c+dc,rr=r+dr;if(cc<0||rr<0||cc>=cols||rr>=rows)continue;const j=rr*cols+cc;if(!walk[j]||!levelStep(g,i,j))continue;
+      if(!(m>>n&1))continue;const cc=c+DC[n],rr=r+DR[n],j=rr*cols+cc;
       if(seen[j]!==stamp){seen[j]=stamp;gScore[j]=Infinity;parent[j]=-1;closed[j]=0;}else if(closed[j])continue;
-      // No corner cutting: a diagonal needs both its orthogonal cells open.
-      if(n>3&&(!walk[r*cols+cc]||!walk[rr*cols+c]||!levelStep(g,i,r*cols+cc)||!levelStep(g,i,rr*cols+c)))continue;
       const cost=gi+STEP[n]*cell/speed[j];if(cost<gScore[j]){gScore[j]=cost;parent[j]=i;open.push(j,cost+h(cc,rr));}
     }
   }

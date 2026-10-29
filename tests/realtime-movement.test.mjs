@@ -76,6 +76,14 @@ test('B10: marsh slows to 0.6 and a ford to 0.5, and the route weighs them',()=>
   assert.ok(r.points.some(p=>p.z<2.5||p.z>5),'the route leaves the marsh rows');assert.ok(around>through&&around<through/.6);
 });
 
+test('a straight line that clips slower ground for a single sample is still not clear',()=>{
+  const g=navGrid(flat(['......','......','..m...','......','......','......']));
+  // z = x − 2.4 cuts the marsh tile's corner (x 7.4–7.5, z 5.0–5.1): one sample of the
+  // 71 lands there, and it is not one of every eighth that the check tries first.
+  assert.equal(clearLine(g,{x:5,z:2.6},{x:10,z:7.6}),false,'the corner of the marsh blocks it');
+  assert.equal(clearLine(g,{x:5,z:2.4},{x:10,z:7.4}),true,'a line just clear of the corner is open');
+});
+
 test('a click moves the soldier on the very next tick (50 ms of battle time)',()=>{
   const w=createWorld({map,seed:1,actors:[hero([1.25,16]),idle()]});
   queueCommand(w,{actorId:'hero',kind:'move',payload:{x:6,z:16}});const x=by(w,'hero').x;step(w);

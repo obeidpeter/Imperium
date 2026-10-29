@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createShowcaseSession} from '../src/showcase/session.js';
 import {createArenaWorld} from '../src/core/realtime/arena.js';
 import {createWorld,queueCommand,step,worldHash} from '../src/core/realtime/simulation.js';
+import {regenerate} from '../src/core/realtime/damage.js';
 import {blowForecast,blowSetup,derivedValues,hitRolls,rollBlow,startingAttributes} from '../src/core/realtime/combat.js';
 import {forecast,validate} from '../src/core/realtime/abilities.js';
 import {nextRandom,randomInt,splitStreams} from '../src/core/realtime/rng-streams.js';
@@ -199,4 +200,17 @@ test('a forecast never changes the world',()=>{
   const w=createArenaWorld(map,{seed:7}),hash=worldHash(w);
   for(const e of w.actors.filter(a=>a.side==='enemy'))for(const ability of ['strike','throw_pilum'])forecast(w,'hero',ability,{actorId:e.id});
   forecast(w,'hero','brace',{});assert.equal(worldHash(w),hash);
+});
+
+test('Health returns only out of combat: a visible enemy standing within 30 m breaks the calm, an envoy never does',()=>{
+  // Injected placements on a 40 m field, with the regeneration step alone.
+  const field={id:'calm',width:16,height:4,terrain:Array.from({length:4},()=>Array(16).fill('grass'))};
+  const w=createWorld({map:field,seed:3,actors:[{...legionary,at:[2,5]},{...raider(),id:'n',name:'Escort',side:'neutral',at:[2,8]},raider({at:[31.5,5]})]});
+  const calm=()=>['hero','n','r'].map(id=>by(w,id).calmSince),r=by(w,'r'),at=(tick,set={})=>{w.tick=tick;Object.assign(r,set);regenerate(w);return calm();};
+  assert.deepEqual(at(500),[500,500,500],'29.5 m from the soldier and 29.7 m from the escort: no one is calm');
+  assert.deepEqual(at(501,{x:32.5}),[500,500,500],'30.5 m and 30.6 m: everyone is');
+  assert.deepEqual(at(502,{x:20,hidden:true}),[500,500,502],'a hidden enemy breaks no one’s calm, though he is not calm himself');
+  assert.deepEqual(at(503,{hidden:false,parley:true}),[500,500,502],'an envoy is no one’s enemy');
+  assert.deepEqual(at(504,{parley:false,down:true}),[500,500,502],'a man down breaks no one’s calm');
+  assert.deepEqual(at(505,{down:false}),[505,505,505],'on his feet again, he is in reach of both');
 });
