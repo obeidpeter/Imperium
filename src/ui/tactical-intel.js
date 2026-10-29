@@ -2,6 +2,7 @@ import {alive} from '../core/shared.js';
 import {coalitionWhipForecast} from '../core/contest.js';
 import {fieldAt,fieldMoveCost} from '../core/field-geometry.js';
 import {MISSION_GUIDANCE} from '../data/campaign-guidance.js';
+import {DEFEAT_PAGES} from '../data/dialogue.js';
 import {esc,actionNames} from './view-helpers.js';
 
 const tile=u=>`${u.x+1}${String.fromCharCode(65+u.y)}`;
@@ -76,6 +77,12 @@ export function encounterDebrief(e){
   return {distinguished,turningPoints,diagnostic};
 }
 
+// How history remembers a lost encounter (dialogue.js), behind a disclosure on every
+// result screen; each caller shows it only for a defeat.
+export function defeatPage(e){
+  const page=e?DEFEAT_PAGES[e.id]:null;
+  return page?`<details class="rt-history-note"><summary>Historical context</summary><blockquote class="rt-defeat-page"><p>${esc(page)}</p></blockquote><button type="button" data-close-disclosure>Close context</button></details>`:'';
+}
 export function resultRecord(e){
   const friends=e.units.filter(u=>['player','ally'].includes(u.side)),withdrawn=friends.filter(u=>!alive(u)).length;
   const debrief=encounterDebrief(e);

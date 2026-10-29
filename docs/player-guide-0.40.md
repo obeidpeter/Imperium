@@ -276,11 +276,13 @@ Backing.
 
 The world fills the main view. Camp services are below it, with a direct link back to the scene. **Company stories** offers an optional letter in Chapters IV–XII: read the two consequences before choosing, then return after a field action or hearing for the report. Choices are recorded once; their later acknowledgements remain in your career records.
 
-Every chapter has a camp you walk through: the legionary base at Novae,
-a march camp on the causeway, a Euphrates fortress's staging courtyard,
-a council camp before Milan, a ferry assembly on the Danube, a
-governor's relief courtyard and a portico in Rome among them. Click a
-person to talk, click a door or a table to use it, and use the map
+Every chapter has a camp you walk through, each laid out after its own
+setting: the legionary base at Novae, a march camp on the causeway, a
+fort above a Danube ford, a Euphrates fortress's staging courtyard, a
+broken halt on the retreat west, a council camp before Milan, a ferry
+assembly on the Danube, a governor's relief courtyard and a portico in
+Rome among them. The people of the story stand in the camps of their
+chapters, each with something to say about it. Click a person to talk, click a door or a table to use it, and use the map
 (**M**) to go at once to any part of the camp you have already visited.
 Everything a camp offers is also listed beside the scene, so you never
 have to walk to it: the chapter decision, **Battle preparation**,
@@ -296,10 +298,10 @@ of this table.
 |-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Principia** (headquarters)                  | The commander's table: the chapter's decision, **Consult the War Council**, and the battle preparations (see **Preparing for battle**). From Chapter IV the duty clerk (in Chapter V, the fortress engineer) also opens the preparations. |
 | **Quartermaster**                             | Draw and return kit, sell what you took from the field and collect your pay in denarii.                                                                                                                                                   |
-| **Drill field**                               | Trainers who teach techniques and courses for training points (see **Your soldier**), and the practice post for **Practice completed encounters**. Varro teaches in Chapters I–III and V, a veteran instructor in the others.             |
+| **Drill field**                               | Trainers who teach techniques and courses for training points (see **Your soldier**), and the practice post for **Practice completed encounters**. Varro teaches in Chapters I–V, a veteran instructor from Chapter VI.                    |
 | **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty. From Chapter II Capsarius Didius teaches his medical courses here.                                                                                   |
 | **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                                                                                                                      |
-| **Canabae** (the settlement outside the gate) | In Chapters I–III, the sutler's goods, news and errands; later, the local people and the consequences of your orders. Every camp's local report stands here.                                                                              |
+| **Canabae** (the settlement outside the gate) | A trader with the region's goods and news in every chapter, the local people, their errands and the consequences of your orders. Every camp's local report stands here.                                                                   |
 | **Camp gate**                                 | March out to the next encounter once its requirements are met.                                                                                                                                                                            |
 
 - **Camps are peaceful.** Weapons stay sheathed: drawing your weapon,
@@ -323,7 +325,17 @@ of this table.
 
 - The **company roll** names the small group whose service follows the
   campaign. Safe returns earn commendations; a wounded man spends a few
-  encounters in the valetudinarium.
+  encounters in the valetudinarium, and in camp you find him there, not
+  in the barracks, until he is fit.
+
+- **The cast in camp** follow the story. Varro stands in the camps until
+  his fate is decided in Chapter VI; Lucan or Sabinus, whichever the
+  marsh left you; Crispus at the Danube fort, before the council at
+  Milan and in Rome; Severianus from Chapter VI, though in the last camp
+  only while he backs you (otherwise his messenger or the treasury's
+  envoy stands in his place); Aelia Dacia wherever her households are;
+  Paullus in Rome, and in the last camp only before the legitimacy
+  Contest. What they say follows your decisions.
 
 - The **journal** (**J**) records the decisions that shaped your
   standing, and its **obligations ledger** records what you promised, to
@@ -333,9 +345,19 @@ of this table.
   Contest, with weather, time and difficulty variations, without
   touching your chronicle or awarding progress.
 
-- **Errands** are optional and offered in Chapters I–III. Once accepted
-  they appear in the mission orders (**Q**); each rewards training
-  points, kit or standing, and none ever blocks the story.
+- **Errands** are optional and offered in every chapter: in Chapters
+  I–III one to three each (some only for one training path), from
+  Chapter IV two each. Once accepted they
+  appear in the mission orders (**Q**). An errand may ask you to carry
+  something, read a tally or a track, or bring back the right answer: a
+  wrong answer costs nothing, and you can look again. Each rewards
+  training points, kit or standing, once; five award titles no other
+  deed gives. None ever blocks the story.
+
+- **Some replies depend on who your soldier is**: his attributes,
+  decorations, titles, training and the army's or the public's
+  confidence. They are listed dimmed with what they need until he has
+  it, and where an errand needs persuading, there is always another way.
 
 - Named companions' permanent fates follow clearly signalled story
   choices. Losing an ordinary skirmish never silently kills a recurring
@@ -806,11 +828,14 @@ in Combat and Fieldcraft, before his training.
 | **Capsarius** (orderly)            | Valetudinarium, from Chapter II      | **Field dressing** (Bind wounds restores a third instead of a quarter); **Hardening** (a tenth more Health)   |
 | **Explorator**                     | Drill field, from Chapter III        | **Quiet feet** (walking on firm ground makes no sound); **Ambush craft** (ambush blows do half as much again) |
 | **Signifer** (standard-bearer)     | Principia, from Chapter IV           | **Steady voice** (Rally reaches 5 metres farther); **Clear orders** (squads start orders at once)             |
-| **Rhetor**                         | Provincial capital, from Chapter VII | **Practised delivery** (5 more Resolve); **The long period** (Address the Chamber recovers an hour sooner)    |
+| **Rhetor**                         | Canabae, from Chapter VII            | **Practised delivery** (5 more Resolve); **The long period** (Address the Chamber recovers an hour sooner)    |
 
 Beside the camp scene, **Courses & trainers** lists every trainer from
 the chapter shown, including those who do not stand in that chapter's
-camp.
+camp. In person, Varro teaches in the camps of Chapters I–V and the
+veteran instructor from Chapter VI; Explorator Brennus stands in the
+camps of Chapters III and IV, Signifer Quintus in those of IV and XII,
+and Rhetor Theon in those of VII, X and XI.
 
 ## Decorations and titles
 
@@ -820,9 +845,9 @@ camp.
   civica** for saving a citizen's life adds 2 Eloquence, and a **corona
   muralis** for being first over a wall adds 2 Combat.
 
-- **Titles** follow your rank and your earlier choices. Some open
-  conversation replies, and in the Senate your decorations count as part
-  of your record.
+- **Titles** reward errands, each with a small stated benefit (a
+  **Pathfinder** adds 1 Agility). Some open conversation replies, and in
+  the Senate your decorations count as part of your record.
 
 - Companions rise through the ranks as they earn commendations: **Miles
   gregarius**, **Immunis** (1+), **Optio cohortis** (3+) and **Evocatus
@@ -1521,8 +1546,9 @@ In the real-time final battle, two clean reconnaissance operations intercept one
 
 ## When an encounter goes wrong
 
-- If your soldier falls, the chronicle shows a page telling how history
-  remembers the day. Then choose **Retry checkpoint** or **Load a
+- When an encounter is lost, in real time, on the board or in a
+  chamber, its result keeps a page telling how history remembers the day
+  (**Historical context**). Then choose **Retry checkpoint** or **Load a
   save**.
 
 - **Retry checkpoint** restores the encounter exactly as it began,

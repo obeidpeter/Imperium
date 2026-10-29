@@ -209,7 +209,8 @@ export function trainerPanel(state,trainerId){
 }
 // The courses outlive their first instructor. Varro is at the early camps
 // and the Chapter V courtyard; later courts use the resident instructor.
-export const trainerName=(state,id)=>id==='campidoctor'&&(state.chapter===4||state.chapter>=6)?'The veteran instructor':TRAINERS[id]?.name??'Trainer';
+// Varro teaches in the camps through Chapter V; from Chapter VI the veteran instructor does.
+export const trainerName=(state,id)=>id==='campidoctor'&&state.chapter>=6?'The veteran instructor':TRAINERS[id]?.name??'Trainer';
 
 // The one-time choice of training and appearance (a chronicle begun before 0.40 makes it here).
 // The recruit's training and appearance (guide "Your recruit"): at New Game, and once for a chronicle begun

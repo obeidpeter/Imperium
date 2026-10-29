@@ -6,8 +6,8 @@ const choice=(text,kind,place,state)=>Object.freeze({text,kind,place,state});
 // Authored 2×2 fine-cell pockets (5×5 m). Reachability tests protect all
 // conversations, service arrivals and the gate from these solid footprints.
 const PAD_CORNERS={1:[[20,7],[21,12],[20,20]],2:[[20,5],[20,13],[17,20]],3:[[22,5],[21,12],[18,20]],
-  4:[[15,1],[12,9],[16,13]],6:[[13,1],[1,6],[13,12]],7:[[1,1],[15,6],[9,12]],8:[[6,3],[13,7],[9,7]],
-  9:[[15,1],[12,9],[16,13]],10:[[13,1],[1,6],[13,12]],11:[[1,1],[15,6],[9,12]],12:[[6,3],[13,7],[9,7]]};
+  4:[[14,1],[1,7],[12,13]],6:[[7,1],[3,13],[6,4]],7:[[6,7],[6,4],[12,7]],8:[[11,8],[8,1],[8,8]],
+  9:[[6,7],[16,13],[12,13]],10:[[1,1],[16,13],[8,13]],11:[[14,6],[14,1],[6,1]],12:[[16,13],[8,1],[3,13]]};
 export const CAMP_SCENERY_PADS=Object.freeze(Object.fromEntries(Object.entries(PAD_CORNERS).map(([chapter,corners])=>[chapter,Object.freeze(corners.map(([x,y],i)=>
   Object.freeze({id:['world-supply','world-water','world-local'][i],kind:['supplies','water','local'][i],cells:Object.freeze([[x,y],[x+1,y],[x,y+1],[x+1,y+1]].map(Object.freeze))})))])));
 export const CAMP_CONTEXT=Object.freeze({

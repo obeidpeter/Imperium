@@ -20,8 +20,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 4 | Fortifications, modelled | merged ([#35](https://github.com/obeidpeter/Imperium/pull/35); [report](fortifications-release4-report.md)); mudbrick re-baked ([#36](https://github.com/obeidpeter/Imperium/pull/36)) |
 | 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
 | 6 | The cast in person | merged ([#38](https://github.com/obeidpeter/Imperium/pull/38); [report](cast-release6-report.md)) |
-| 7 | Missions and cavalry | in review ([report](missions-release7-report.md)) |
-| 8 | Living camps | planned |
+| 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
+| 8 | Living camps | in progress ([report](camps-release8-report.md)) |
 | 9 | Landmarks and set pieces | planned |
 | 10 | Gate 4 and 0.40.0 | planned |
 
@@ -216,6 +216,12 @@ Already done (#32, #33): nine company stories, three playable situations, field 
   - the existing company stories and situations stay reward-free.
 - **A trader in every chapter** with regional goods, and defeat pages for every encounter.
 - **Replies that depend on who the soldier is:** dialogue gated by attributes, decorations, titles and meters, using the conditions the engine already has (`src/core/dialogue.js`).
+
+**As built.** The [report](camps-release8-report.md) records the details.
+- **The camps** of Chapters IV and VI–XII each have their own map, places, pads and errand objects in `src/data/camps.js`, and the shared template is gone. Chapter V's pilot courtyard keeps its layout and gains a trader and two errands through its own people.
+- **Presence** follows the scenes' own conditions (`storyWhen` in `src/data/campaign.js`): a camp person may stand only after or until a decision, while Varro or the patron's standing allows, or before a chapter's next encounter. A companion still recovering stands at the valetudinarium (`campPersonSpot`).
+- **The conversations, errands and defeat pages** of the later camps are data in `src/data/living-camps.js`: 18 errands, two a chapter from IV, each worth 2 training points, five of them awarding the titles no deed awarded. The audited ceiling rises from 237 to 273 training points.
+- **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The camp's women are drawn as women (`actor-kit.js`): a body fits only a figure of its own sex, and the woman's figure is in every chapter's pack. The five figures moved here from release 6 are generated only after the owner approves their credits.
 
 #### 9. Landmarks and set pieces
 

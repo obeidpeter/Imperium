@@ -6,7 +6,7 @@ import {agreementConversation} from './progression-views.js';
 import * as Game from '../core/game.js';
 import {operationBanner,tacticalCoaching,voicedBriefing} from './campaign-upgrade-views.js';
 import {esc, roman, actionNames, actionSymbols} from './view-helpers.js';
-import {missionBrief, coalitionPanel, fieldIntel, selectedGround, resultRecord, terrainLabel, fieldLabel} from './tactical-intel.js';
+import {missionBrief, coalitionPanel, defeatPage, fieldIntel, selectedGround, resultRecord, terrainLabel, fieldLabel} from './tactical-intel.js';
 import {politicalPosition} from '../core/contest.js';
 import {FORMATION_RULES} from '../data/battle-balance.js';
 import {turnScrubberItems} from './turn-replay.js';
@@ -80,7 +80,7 @@ function outcome(e, archiveReplay = null) {
   return `<section class="result command-result ${won ? 'result-won' : 'result-lost'}" role="status">
     <span class="eyebrow">${won ? 'OBJECTIVE ACHIEVED' : 'A CHANCE TO REGROUP'}</span>
     <h2>${won ? (e.kind === 'contest' ? 'The motion carries.' : 'The day is yours.') : (e.kind === 'contest' ? 'The motion is defeated.' : 'The field is lost.')}</h2>
-    <p>${esc(e.log?.at(-1) || '')}</p>${resultRecord(e)}
+    <p>${esc(e.log?.at(-1) || '')}</p>${resultRecord(e)}${won ? '' : defeatPage(e)}
     ${won ? '<button class="primary" data-cmd="commit">Record the result →</button>' : '<button class="primary" data-cmd="retry">Retry the complete checkpoint</button>'}
     ${!won && e.kind === 'contest' && !e.fallback ? '<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><button data-cmd="fallback">Accept backing and re-run the vote</button>' : ''}
   </section>`;

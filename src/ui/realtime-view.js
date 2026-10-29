@@ -6,7 +6,7 @@ import {TP} from '../data/soldier.js';
 import {TIME} from '../data/realtime-rules.js';
 import {actionLabel} from './action-map.js';
 import {campFor} from '../data/camps.js';
-import {DEFEAT_PAGES} from '../data/dialogue.js';
+import {defeatPage} from './tactical-intel.js';
 import {missionDefeatCause as defeatCause,missionDefeatHelp as defeatHelp} from './realtime-mission-readout.js';
 import {victoryReason} from './field-experience.js';
 import {commitSoldierRewards} from '../core/soldier.js';
@@ -206,7 +206,7 @@ export function realtimeResult(state,{keymap}={}){
       ${commendations.length?`<ul class="rt-commendations">${commendations.map(c=>`<li>${esc(c.label)} (+${c.tp} TP)</li>`).join('')}</ul>`:''}
       <button type="button" data-close-disclosure>Close details</button>
     </details>
-    ${!won&&DEFEAT_PAGES[e.id]?`<details class="rt-history-note"><summary>Historical context</summary><blockquote class="rt-defeat-page"><p>${esc(DEFEAT_PAGES[e.id])}</p></blockquote><button type="button" data-close-disclosure>Close context</button></details>`:''}
+    ${won?'':defeatPage(e)}
     <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol><button type="button" data-close-disclosure>Close log</button></details>
     <p class="result-save-note">${won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
   </section>`;

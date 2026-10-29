@@ -1,5 +1,6 @@
 import {CAMP_STORY_DIALOGUE,CAMP_STORY_ERRANDS} from './camp-stories.js';
 import {COMPANY_ACTIVITY_DIALOGUE} from './company-activities.js';
+import {LIVING_DIALOGUE,LIVING_ERRANDS,LIVING_DEFEAT_PAGES} from './living-camps.js';
 
 // Conversations as data (build brief §3.12): each tree is nodes of
 // { speaker, text, options: [{ text, conditions, effects, next, once }] }.
@@ -20,6 +21,7 @@ const bye=opt('Farewell.');
 // errand is offered only to a soldier of that training and awards a title.
 export const ERRANDS=freeze({
   ...CAMP_STORY_ERRANDS,
+  ...LIVING_ERRANDS,
   drill_first:freeze({id:'drill_first',chapter:1,giver:'Varro',title:'First at the post',summary:'Work the practice post until Varro sees you there first.',
     reward:freeze({tp:2,title:'drill_first'})}),
   names_roll:freeze({id:'names_roll',chapter:2,giver:'Gaius Sabinus',title:'Names for the roll',
@@ -40,6 +42,7 @@ export const ERRANDS=freeze({
 
 // How history remembers the day, when an encounter is lost (§3.12). Retry restores the checkpoint.
 export const DEFEAT_PAGES=freeze({
+  ...LIVING_DEFEAT_PAGES,
   'ch1-training':'Varro writes nothing on his tablet about the morning a recruit went down in the drill yard. That is the only mercy of the yard: the post does not remember, and tomorrow the sand is raked smooth.',
   'ch1-road':'The boundary road burned that night. The cart was found at dawn, empty, and the watch report names no one who held the bend. The raiders were across the river before the cavalry saddled.',
   'ch2-marsh':'The causeway kept what it took. When the rolls were written again at the rally point, the wounded from the broken wagon were entered as lost in the marsh, without names.',
@@ -51,6 +54,7 @@ export const DEFEAT_PAGES=freeze({
 export const DIALOGUE=freeze({
   ...COMPANY_ACTIVITY_DIALOGUE,
   ...CAMP_STORY_DIALOGUE,
+  ...LIVING_DIALOGUE,
   // Shared service actions, with each chapter's short context supplied by
   // campConversation. These open existing tools and grant no new rewards.
   'hub:instructor':tree('greet',{
@@ -72,14 +76,6 @@ export const DIALOGUE=freeze({
   'hub:quartermaster':tree('greet',{
     greet:node('Quartermaster Aper','The stores are counted. Equipment, pay and anything you brought from the field are on the same account.',[
       opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
-  }),
-  'hub:lucan':tree('greet',{
-    greet:node('Aurelius Lucan','I still remember the marsh. Let us see who is ready for the next road.',[
-      opt('Review our company.',null,{effects:{open:'company'}}),bye])
-  }),
-  'hub:sabinus':tree('greet',{
-    greet:node('Gaius Sabinus','Lucan’s name stays on the roll. I will look after the people standing beside us now.',[
-      opt('Review our company.',null,{effects:{open:'company'}}),bye])
   }),
   'hub:local':tree('greet',{
     greet:node('The local steward','The local report is ready.',[opt('What is this place?','inspect'),bye]),
@@ -290,17 +286,28 @@ export const DIALOGUE=freeze({
   'ch5:varro':tree('greet',{
     greet:node('Varro','A clear route and a steady formation. Get those right before you think about the tower.',[
       opt('Train with Varro.',null,{effects:{open:'trainer:campidoctor'}}),
-      opt('Review my company.',null,{effects:{open:'company'}}),opt('How should I prepare?','formation'),bye]),
+      opt('Review my company.',null,{effects:{open:'company'}}),opt('How should I prepare?','formation'),
+      opt('The fort on the Danube gave me the corona vallaris.','crown',{conditions:{decoration:'corona_vallaris'}}),bye]),
+    crown:node('Varro','Then you know what a wall feels like from the outside. Remember it from the inside; it is the same wall, and the men climbing it are just as frightened.',[opt('I will remember.')]),
     formation:node('Varro','Check your company and supplies before departure. In the field, select your squads and give a Formation order. Keep the narrow approach clear for those who must pass through it.',[opt('Understood.')])
   }),
   'ch5:engineer':tree('greet',{
     greet:node('The fortress engineer','The cracked tower lies beyond this court. At the commander’s table you decide whether the century supports the countermine or the households leaving for the river.',[
-      opt('What do the engineers’ plans change?','plans'),opt('Review battle preparation.',null,{effects:{open:'preparation'}}),bye]),
+      opt('What do the engineers’ plans change?','plans'),opt('Review battle preparation.',null,{effects:{open:'preparation'}}),
+      opt('How do you know where the miners are?','listening',{conditions:{errand:{listening_bowl:'none'}}}),
+      opt('I have read ground before. A mine is a road dug in the dark.','spoil',{conditions:{attribute:{field:12}}}),
+      opt('Here is the water steward’s bowl.','bowl-set',{conditions:{errand:{listening_bowl:'accepted'},item:'bronze_bowl'},effects:{take:['bronze_bowl'],errand:{listening_bowl:'done'}}}),bye]),
+    spoil:node('The fortress engineer','A road somebody else is building under your feet. Count the baskets of spoil they carry out at night and you know how many yards they have dug. I count them every morning.',[opt('So will I.')]),
+    listening:node('The fortress engineer','By listening, and by a trick older than this fortress: a bronze bowl of water set on the paving trembles when they strike below it. The water steward keeps the bowls. Bring me one and I will show you.',[
+      opt('I will fetch a bowl.','greet',{effects:{errand:{listening_bowl:'accepted'}}}),opt('Another time.','greet')]),
+    'bowl-set':node('The fortress engineer','Set it here, by the tower’s footing, and watch. There: the water shivers, and stops, and shivers again. They are close, and they are working the night shift.',[opt('I see it.')]),
     plans:node('The fortress engineer','Recover the engineers’ plans in the field to open the side gate and repair the footbridge. That creates alternatives to the central approach. The water detail is the other field opportunity; you cannot assign the same detachment to both.',[opt('Understood.')])
   }),
   'ch5:water':tree('greet',{
     greet:node('The water steward','Water stays under shade until the detail is called. The crews here do not change your supplies or heal the company by themselves.',[
-      opt('What does the water detail do?','detail'),bye]),
+      opt('What does the water detail do?','detail'),
+      opt('The engineer needs a bronze bowl.','bowl',{conditions:{errand:{listening_bowl:'accepted'},notFlag:'bronze_bowl_lent'},effects:{give:['bronze_bowl'],flags:['bronze_bowl_lent']}}),bye]),
+    bowl:node('The water steward','The engineer and his bowls. Here; bring it back with water still in it, or bring it back at all.',[opt('I will.')]),
     detail:node('The water steward','Organise it in the field to extinguish the burning pitch braziers and restore two health to living friendly formations and protected columns. Choose it instead of recovering the engineers’ plans.',[opt('Understood.')])
   }),
   'ch5:capsarius':tree('greet',{
@@ -311,19 +318,21 @@ export const DIALOGUE=freeze({
     greet:node('Quartermaster Aper','The stores and the transport have separate tallies. Check your kit now; the field gate is no place to discover an empty belt.',[
       opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
   }),
-  'ch5:lucan':tree('greet',{
-    greet:node('Aurelius Lucan','You carried me out of the marsh. I remember that when I look at the people waiting for this gate.',[
-      opt('Review our company.',null,{effects:{open:'company'}}),bye])
-  }),
-  'ch5:sabinus':tree('greet',{
-    greet:node('Gaius Sabinus','Lucan is still on the roll of those lost in the marsh. I will keep the names here too, whatever route you choose.',[
-      opt('Review our company.',null,{effects:{open:'company'}}),bye])
-  }),
+  ...Object.fromEntries([['lucan','Aurelius Lucan','You carried me out of the marsh. I remember that when I look at the people waiting for this gate.','Only this: a letter to my mother. She will want to know I am alive. The evacuation officer’s boats carry the households’ letters downriver to the coast. Will you take it to him?'],
+    ['sabinus','Gaius Sabinus','Lucan is still on the roll of those lost in the marsh. I will keep the names here too, whatever route you choose.','Only this: a letter to Lucan’s mother. Somebody who was in the marsh should write to her. The evacuation officer’s boats carry letters downriver. Will you take it to him?']].map(([id,name,text,ask])=>
+    [`ch5:${id}`,tree('greet',{
+      greet:node(name,text,[opt('Review our company.',null,{effects:{open:'company'}}),
+        opt('Do you need anything before the gate?','letter',{conditions:{errand:{letter_home:'none'}}}),
+        opt('Your letter is on the boats.','sent',{conditions:{errand:{letter_home:'accepted'},flag:'company_letter_sent'},effects:{errand:{letter_home:'done'}}}),bye]),
+      letter:node(name,ask,[opt('I will take it.','greet',{effects:{errand:{letter_home:'accepted'},give:['company_letter']}}),opt('Another time.','greet')]),
+      sent:node(name,'Then it will reach the coast before we reach anywhere. Thank you. It is a small thing to carry, and it weighed more than my shield.',[opt('Glad to.')])})])),
   'ch5:evacuation':tree('greet',{
     greet:node('The evacuation officer','This court holds the households waiting for the river route. Your decision is made at the commander’s table.',[
       opt('The households have priority.','departing',{conditions:{decision:{ch5:'civilians'}}}),
       opt('The century is committed to the countermine.','delayed',{conditions:{decision:{ch5:'countermine'}}}),
-      opt('I have not given the order yet.','waiting',{conditions:{decision:{ch5:null}}}),bye]),
+      opt('I have not given the order yet.','waiting',{conditions:{decision:{ch5:null}}}),
+      opt('A letter for the boats.','letter',{conditions:{errand:{letter_home:'accepted'},item:'company_letter',notFlag:'company_letter_sent'},effects:{take:['company_letter'],flags:['company_letter_sent']}}),bye]),
+    letter:node('The evacuation officer','It will go downriver with the households’ mail. Letters are the one cargo that never argues about its place in the boat.',[opt('Thank you.')]),
     departing:node('The evacuation officer','We are gathering the households for transport. The fortress still has to hold through both encounters; an order to depart is not a safe crossing.',[opt('Keep the route clear.')]),
     delayed:node('The evacuation officer','The households remain under shelter while the century secures the stores and works below ground. They know whose order made them wait.',[opt('I understand.')]),
     waiting:node('The evacuation officer','The engineer needs the same soldiers. We can wait for your decision, but we cannot send the century to both places.',[opt('I will decide.')])

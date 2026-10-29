@@ -36,5 +36,8 @@ export function actorIdentity(unit={},kit={}){
     customAppearance:!!unit.appearance,grey:clamp((elapsed-12)/26,0,.55),skin:0xbe8966,scar:chapter>=5});
   if(key){const p=named[key],age=p.age+(key==='lucan'?elapsed:Math.max(0,elapsed-10));return Object.freeze({...p,age,grey:clamp(p.grey+Math.max(0,age-p.age)*.012,0,1),beard:p.female?0:Math.min(.9,p.beard+(age>27?.12:0))});}
   const seed=kit.identity??0,variation=n=>((seed>>>n)&7)/7,age=24+Math.round(variation(9)*22),eastern=kit.eastern;
+  // A woman the cast does not name (actor-kit.js) has a woman's features, her hair bound and no beard.
+  if(kit.female)return Object.freeze({key:`figure-${seed}`,age,jaw:.82+variation(0)*.1,cheek:.98+variation(3)*.1,nose:.86+variation(6)*.12,brow:.8+variation(12)*.1,eyes:1+variation(15)*.06,mouth:.94+variation(18)*.08,build:.92+variation(21)*.04,
+    hair:'bound',beard:0,grey:Math.max(0,age-35)/42,skin:eastern?0xb07e59:0xbe8d6b,female:true});
   return Object.freeze({key:`figure-${seed}`,age,jaw:.91+variation(0)*.23,cheek:.94+variation(3)*.16,nose:.9+variation(6)*.22,brow:.92+variation(12)*.18,eyes:.95+variation(15)*.1,mouth:.92+variation(18)*.16,build:.96+variation(21)*.09,hair:kit.faction==='Gothic'?'long':eastern?'wavy':age>40?'receding':'cropped',beard:kit.trainer?.4:eastern?.75:kit.faction==='Gothic'?.85:variation(6)>.5?.5:.1,grey:Math.max(0,age-35)/42,skin:eastern?0xb07e59:kit.faction==='Gothic'?0xc49a76:0xbb8966});
 }

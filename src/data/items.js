@@ -113,6 +113,8 @@ export const ITEMS=freeze(Object.fromEntries([
     description:'Your patron’s seal opens doors. +1 Authority.'}),
   item('signaculum',{name:'Lead identity seal',slot:'charm',value:0,shape:[1,1],bonus:freeze({}),kind:'charm',keep:true,
     description:'The signaculum you received with the oath.'}),
+  item('eye_amulet',{name:'Eye amulet',slot:'charm',value:14,shape:[1,1],bonus:freeze({per:1}),kind:'charm',
+    description:'A blue glass eye on a cord, worn against envy. +1 Perception.'}),
   // Trophies and goods: sold to the quartermaster or traders.
   item('gothic_torc',{name:'Gothic torc',slot:null,value:30,shape:[1,1],kind:'trophy',description:'Twisted silver from a raider’s neck.'}),
   item('silver_brooch',{name:'Silver brooch',slot:null,value:18,shape:[1,1],kind:'trophy',description:'A fibula worth more than its weight.'}),
@@ -121,8 +123,25 @@ export const ITEMS=freeze(Object.fromEntries([
   item('wax_tablet',{name:'Wax tablet',slot:null,value:1,shape:[1,1],kind:'goods',description:'Notes in a clerk’s hand.'}),
   item('wine_skin',{name:'Wine skin',slot:null,value:3,shape:[1,2],kind:'goods',description:'Sour posca for the march.'}),
   item('medicine_box',{name:'Medicine box',slot:null,value:16,shape:[2,1],kind:'goods',description:'Linen, salves and a probe.'}),
+  // The later camps' traders' regional goods (camps.js TRADER_STOCK).
+  item('smoked_fish',{name:'Smoked fish',slot:null,value:4,shape:[2,1],kind:'goods',description:'River fish, smoked hard enough to march.'}),
+  item('dates',{name:'Dates',slot:null,value:3,shape:[1,1],kind:'goods',description:'A cake of pressed dates, the eastern march’s ration.'}),
+  item('leather_thongs',{name:'Leather thongs',slot:null,value:4,shape:[1,1],kind:'goods',description:'A hank of thongs cut from old harness.'}),
+  item('olive_oil',{name:'Olive oil',slot:null,value:6,shape:[1,2],kind:'goods',description:'A small flask of oil for the lamp, the bread and the skin.'}),
+  item('garum',{name:'Fish sauce',slot:null,value:8,shape:[1,1],kind:'goods',description:'Garum in a sealed jar: dear, pungent and much loved.'}),
+  item('honey_jar',{name:'Honey',slot:null,value:6,shape:[1,1],kind:'goods',description:'Hill honey in a waxed pot.'}),
+  item('incense',{name:'Incense',slot:null,value:14,shape:[1,1],kind:'goods',description:'Frankincense from the caravan roads, sold by the pinch.'}),
+  item('papyrus_roll',{name:'Papyrus roll',slot:null,value:6,shape:[1,2],kind:'goods',description:'Egyptian papyrus, for letters worth more than a wax tablet.'}),
+  item('seed_grain',{name:'Seed grain',slot:null,value:10,shape:[2,2],kind:'goods',description:'A sack of seed barley for next year’s fields.'}),
   item('legion_records',{name:'Legion records',slot:null,value:0,shape:[2,2],kind:'quest',keep:true,description:'The cohort’s rolls, saved from the station.'}),
-  item('lost_javelin',{name:'Marked javelin',slot:null,value:0,shape:[1,3],kind:'quest',keep:true,description:'A training javelin with Lucan’s mark.'})
+  item('lost_javelin',{name:'Marked javelin',slot:null,value:0,shape:[1,3],kind:'quest',keep:true,description:'A training javelin with Lucan’s mark.'}),
+  // Carried on the later camps' errands (living-camps.js), given and taken by conversations.
+  item('gate_brace',{name:'Gate brace',slot:null,value:0,shape:[1,4],kind:'quest',keep:true,description:'An iron-shod timber for the rack inside the gate.'}),
+  item('bronze_bowl',{name:'Bronze bowl',slot:null,value:0,shape:[2,1],kind:'quest',keep:true,description:'The water steward’s bowl, for listening at the paving.'}),
+  item('company_letter',{name:'Letter home',slot:null,value:0,shape:[1,1],kind:'quest',keep:true,description:'A folded letter for the households’ boats.'}),
+  item('seed_jar',{name:'The Ulpii’s seed jar',slot:null,value:0,shape:[1,2],kind:'quest',keep:true,description:'A sealed jar with a blue thread round its neck.'}),
+  item('report_copy',{name:'Copy of the station report',slot:null,value:0,shape:[1,1],kind:'quest',keep:true,description:'A fair copy of your first report.'}),
+  item('accounts_copy',{name:'Provincial accounts',slot:null,value:0,shape:[2,1],kind:'quest',keep:true,description:'A copy of your province’s audited accounts.'})
 ].map(i=>[i.id,i])));
 
 // The kit a soldier of each kind wears into his first fight.

@@ -1,4 +1,4 @@
-import {campFor,CAMP_PLACES,campPlaceName,campPersonPresent} from '../../data/camps.js';
+import {campFor,CAMP_PLACES,campPlaceName,campPersonPresent,campPersonSpot} from '../../data/camps.js';
 import {CAMP_CONTEXT,CAMP_FIELD_DETAILS} from '../../data/camp-regions.js';
 import {CHAPTERS} from '../../data/campaign.js';
 import {createWorld} from './simulation.js';
@@ -49,10 +49,12 @@ function campPresentationBase(state){
         width:(maxX-minX)*FINE,depth:(maxZ-minZ)*FINE,yaw:0,ground:'stone',fallbackName:`ch5-service-pad:${p.id}`};}),
     // Existing service actors perform these in place. Coordinates are centred
     // presentation metres for nearby scenery; they never drive navigation.
-    ambient:camp.people.filter(p=>p.routine&&campPersonPresent(state,p)).map(p=>({id:p.id,routine:p.routine,...point(p.place,p.at)}))
+    ambient:ambientOf(state,camp,point)
   };
 }
 
+// The routines the camp's present people perform where they stand.
+const ambientOf=(state,camp,point)=>camp.people.filter(p=>p.routine&&campPersonPresent(state,p)).map(p=>{const spot=campPersonSpot(state,p);return {id:p.id,routine:p.routine,...point(spot.place,spot.at)};});
 function regionalCampPresentation(state){
   const camp=campView(state);if(!camp)return null;
   const context=CAMP_CONTEXT[state.chapter],chapter=CHAPTERS.find(c=>c.id===state.chapter);
@@ -89,7 +91,7 @@ function regionalCampPresentation(state){
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
         width:(maxX-minX)*FINE,depth:(maxZ-minZ)*FINE,yaw:0,ground:camp.ground,fallbackName:`world-service-pad:${state.chapter}:${p.id}`};}),
-    ambient:camp.people.filter(p=>p.routine&&campPersonPresent(state,p)).map(p=>({id:p.id,routine:p.routine,...point(p.place,p.at)}))};
+    ambient:ambientOf(state,camp,point)};
 }
 export function createCampWorld(state){
   const camp=campView(state);if(!camp)return null;
@@ -99,7 +101,7 @@ export function createCampWorld(state){
   const entry=place(camp.entry,[0,-3]);
   const actors=[{...soldierSpec(state,{at:[entry.x,entry.z],face:[0,-1]}),standingPreset:null}];
   for(const p of camp.people.filter(p=>campPersonPresent(state,p))){
-    const at=place(p.place,p.at);
+    const spot=campPersonSpot(state,p),at=place(spot.place,spot.at);
     actors.push({id:p.id,name:p.name,side:'neutral',role:p.role,attributes:{str:10,agi:10,con:10,per:10,combat:5,field:5},kit:['tunic','caligae'],
       at:[at.x,at.z],face:[0,1],talk:{tree:p.talk},drawn:false,camp:true});
   }

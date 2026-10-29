@@ -99,7 +99,7 @@ assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/mod
 for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
 for(const path of build.showcaseAssets.filter(generatedHorse))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterHorses(Number(chapter)).includes(generatedHorse(path)),'Chapter '+chapter+' and generated horse '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
-  for(const path of femaleAssets)assert.equal(paths.includes(path),Number(chapter)>=8,'Female resources are requested only for Chapter VIII and later: '+path);
+  for(const path of femaleAssets)assert.ok(paths.includes(path),'Every chapter carries the woman\'s figure (Syra keeps the camp from Chapter I): '+path);
   assert.ok(!paths.includes(retiredCharacterAtlas),'Chapter '+chapter+' still downloads the superseded atlas');
   for(const path of activeAtlases)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted active atlas: '+path);
 }
