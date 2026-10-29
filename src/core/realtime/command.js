@@ -1,4 +1,4 @@
-import {COMMAND,FORMATION_ORDER,ORDERS} from '../../data/realtime-squads.js';
+import {COMMAND,FORMATION_ORDER,HORSE_ORDERS,ORDERS} from '../../data/realtime-squads.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,hostile} from './abilities.js';
 import {fielded,squadById,squadOf,squadsOf} from './squads.js';
@@ -82,7 +82,10 @@ export function orderProblem(world,payload){
   const order=payload.order,kind=order?.kind,def=ORDERS[kind];if(!def)return 'NO_TARGET';
   if(def.formation){if(ids.length>FORMATION_ORDER.maxSquads)return 'SQUADS_TOO_FAR_APART';if(formationGroup(world,ids).left.length)return 'SQUADS_TOO_FAR_APART';}
   if(kind==='advance'&&!(Number.isFinite(order.x)&&Number.isFinite(order.z)))return 'NO_TARGET';
-  if(kind==='attack'){
+  // The horse's orders (release 7): cavalry only; a feigned retreat may name where it rides.
+  if(def.horse&&ids.some(id=>!HORSE_ORDERS.roles.includes(squadById(world,id).role)))return 'NOT_HORSE';
+  if(kind==='feigned_retreat'&&(order.x!==undefined||order.z!==undefined)&&!(Number.isFinite(order.x)&&Number.isFinite(order.z)))return 'NO_TARGET';
+  if(kind==='attack'||kind==='charge'){
     const t=squadById(world,order.targetId)??actorById(world,order.targetId),side=t?.side;
     if(!t||(t.members?!fielded(world,t):!t.alive||t.down))return 'NO_TARGET';
     if(!hostile({side:'ally'},{side}))return 'FRIENDLY';

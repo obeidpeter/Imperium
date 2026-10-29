@@ -32,7 +32,7 @@ import {squadSight} from './squad-sight.js';
 
 // 4: interactive fortifications and their saved elevation/work state. An older
 // encounter restarts from its complete checkpoint; career progress is retained.
-export const WORLD_VERSION=5;
+export const WORLD_VERSION=6;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);
@@ -237,8 +237,10 @@ function checkObjectives(world){
 // The battle log: the events worth reading, with their battle time and place.
 const nameOf=(world,id)=>actorById(world,id)?.name??objectById(world,id)?.name??'Someone';
 const squadName=(world,id)=>squadById(world,id)?.name??'A squad';
+// Release 7's siege works by name: "The North ladder and the South ladder".
+const theWorks=names=>{const l=names.map(n=>`the ${n}`),s=l.length>1?`${l.slice(0,-1).join(', ')} and ${l.at(-1)}`:l[0]??'the siege works';return s[0].toUpperCase()+s.slice(1);};
 const ORDER_WORDS={advance:'advance',attack:'attack',hold:'hold fast',restore:'steady the men',withdraw:'withdraw and brace',line:'form line',
-  'shield-wall':'form shield wall',wedge:'form wedge',lie_in_wait:'lie in wait'};
+  'shield-wall':'form shield wall',wedge:'form wedge',lie_in_wait:'lie in wait',charge:'charge',feigned_retreat:'ride away as if routed'};
 function logLine(world,e){
   const by=nameOf(world,e.attackerId??e.actorId),to=nameOf(world,e.defenderId??e.targetId),what=e.missile?MISSILES[e.missile].name.toLowerCase():'blow';
   const a=/^[aeiou]/.test(what)?'an':'a';
@@ -250,9 +252,14 @@ function logLine(world,e){
     case 'stuck':return `The pilum sticks in ${to}'s shield.`;
     case 'miss':return `${by} misses ${to}.`;
     case 'fall':return e.cause==='fire'?`${to}${e.squadId?` of ${squadName(world,e.squadId)}`:''} dies in the pitch fire.`
+      :e.cause==='arrows'?`${to}${e.squadId?` of ${squadName(world,e.squadId)}`:''} falls to the arrows from the far bank.`
       :e.squadId?`${to} of ${squadName(world,e.squadId)} falls${e.exchange||!e.attackerId?'':` to ${by}`}.`:`${to} falls.`;
-    case 'burn':return `${to} is burnt by the pitch fire: ${e.damage}.`;
-    case 'scorch':return `The pitch fire scorches ${squadName(world,e.squadId)}.`;
+    case 'burn':return e.cause==='arrows'?`Arrows from the far bank strike ${to}: ${e.damage}.`:`${to} is burnt by the pitch fire: ${e.damage}.`;
+    case 'scorch':return e.cause==='arrows'?`Arrows from the far bank strike ${squadName(world,e.squadId)}.`:`The pitch fire scorches ${squadName(world,e.squadId)}.`;
+    case 'far-bank':return null;
+    case 'fall-back':return `${squadName(world,e.squadId)} falls back to the next line.`;
+    case 'drawn':return `${squadName(world,e.squadId)} gives chase to ${squadName(world,e.by)}.`;
+    case 'strung-out':return `${squadName(world,e.squadId)} gave chase and is strung out: cohesion ${e.cohesion}.`;
     case 'field':return fieldLine(world,e);
     case 'down':return `${to} is down. Bind his wounds or carry him.`;
     case 'stagger':return `${to} staggers.`;
@@ -266,7 +273,7 @@ function logLine(world,e){
     case 'revealed':return `${by} is revealed${e.how==='scout'?' by scouting':''}.`;
     case 'reinforcements':return 'Enemy reinforcements arrive.';
     case 'secured':return 'A position is secured.';
-    case 'pressure':return `Enemies hold the objective: the line weakens to ${e.defence}.`;
+    case 'pressure':return e.works?`${theWorks(e.works)} still ${e.works.length>1?'stand':'stands'}: the line weakens to ${e.defence}.`:`Enemies hold the objective: the line weakens to ${e.defence}.`;
     case 'oath-heard':return `${e.name} hears the soldier’s oath: its morale falls to ${e.morale}.`;
     case 'pledge':return `${e.name} pledges itself to the soldier${e.joined?' and joins his side':' and leaves the field'}.`;
     case 'meeting':return `The meeting holds: ${e.rounds} of 2 rounds.`;
@@ -315,6 +322,11 @@ function fieldLine(world,e){
     case 'brazier-burns':return null;
     case 'opportunity':{const opp=f?.opportunities?.[o.kind];return `${by} secures ${o.name}. ${opp?.description??''} The other opportunity is gone.`.trim();}
     case 'opportunities-closed':return 'The spare detachment is recalled: the field opportunities have closed.';
+    // Release 7's siege works (field-missions.js): the enemy's ram batters a gate, and works are destroyed.
+    case 'gate-battered':return by?null:`The ram batters ${o.name}: ${e.integrity} integrity left.`;
+    case 'gate-breached':return by?null:`${o.name} gives way to the ram: the breach is open to both armies.`;
+    case 'ram-burnt':return `${o.name} burns.`;
+    case 'ladder-thrown':return `${o.name} is thrown down from the wall.`;
     default:return null;
   }
 }

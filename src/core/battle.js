@@ -8,7 +8,7 @@ import {BATTLE_SCENARIOS} from '../data/encounters.js';
 import {BATTLE_BALANCE as B,FORMATION_RULES,ROUGH_TERRAIN} from '../data/battle-balance.js';
 export {FORMATION_RULES};
 import {deploymentVeteran,applyCompanyKit,difficultyRule} from './campaign-options.js';
-import {initializeOperation,operationEscortsMove,operationQualified,advanceOperation,operationGather} from './operations.js';
+import {initializeOperation,operationEscortsMove,operationQualified,advanceOperation,operationGather,operationPhaseSpec,convoyStep} from './operations.js';
 import {applyVeteranSpecializations,veteranActions,veteranTargets,veteranPreview,applyVeteranAction,guardProtection} from './progression-veterans.js';
 import {applyOperationConsequences} from './progression-operations.js';
 
@@ -42,7 +42,7 @@ export function createBattle(state,data,options={}){
  if(c>=6){e.condition=state.supplies>=4?'supplied':state.supplies>0?'strained':'exhausted';e.staged.supplies=-1;if(!state.supplies)e.units.filter(u=>u.side==='ally').forEach(u=>{u.hp=Math.max(8,u.hp-2);u.morale=Math.min(u.morale,60);});note(e,`Troop condition: ${e.condition}. One supply convoy is spent on commit.`);}
  if(c===12&&data.type==='confrontation')configureFinale(state,e,options.forecast,options.combatVersion!==1);
  for(const unit of e.units)if(blocked(e.terrain[unit.y][unit.x])||e.units.some(other=>other!==unit&&other.x===unit.x&&other.y===unit.y&&e.units.indexOf(other)<e.units.indexOf(unit))){const safe=[];for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(!blocked(e.terrain[y][x])&&!unitAt(e,x,y))safe.push({x,y});safe.sort((a,b)=>distance(a,unit)-distance(b,unit));if(safe[0])Object.assign(unit,safe[0]);}
- applyCompanyKit(state,e);applyVeteranSpecializations(state,e);initializeOperation(state,e);if(e.campaignRules===2&&e.type!=='training'){const difficulty=difficultyRule(e);e.turnLimit=Math.min(30,Math.max(8,e.turnLimit+difficulty.turns));for(const wave of e.mission.waves)wave.turn=Math.max(2,wave.turn+difficulty.wave);note(e,`${state.difficulty} field rules: deadline ${e.turnLimit}; objective pressure ${difficulty.pressure} per unopposed round.`);}applyOperationConsequences(state,e);
+ applyCompanyKit(state,e);applyVeteranSpecializations(state,e);if(state.missionsVersion===1)e.missionsVersion=1;initializeOperation(state,e);if(e.campaignRules===2&&e.type!=='training'){const difficulty=difficultyRule(e);e.turnLimit=Math.min(30,Math.max(8,e.turnLimit+difficulty.turns));for(const wave of e.mission.waves)wave.turn=Math.max(2,wave.turn+difficulty.wave);note(e,`${state.difficulty} field rules: deadline ${e.turnLimit}; objective pressure ${difficulty.pressure} per unopposed round.`);}applyOperationConsequences(state,e);
  if(options.combatVersion!==1){e.combatVersion=2;for(const u of e.units)u.lastMoveDistance=0;refreshBattleIntents(e);}
  updateBattleProgress(e);e.objective+=` ${e.mission.variant??''} ${missionDescription(e)} Finish by turn ${e.turnLimit}.`;note(e,e.objective);return e;
 }
@@ -268,7 +268,9 @@ function executeBattlePlan(e,unit,plan){if(!alive(unit)||unit.moved&&unit.acted)
  }unit.moved=true;unit.intent=plan.intent;
 }
 function progressMission(e){const m=e.mission;if(!m)return;const allies=friendly(e),enemies=foes(e);
- for(const p of m.points)if(!p.secured&&allies.some(u=>distance(u,p)<=1)&&!enemies.some(u=>distance(u,p)<=1)){p.secured=true;note(e,`Position ${p.x+1}${String.fromCharCode(65+p.y)} secured.`);}
+ // A ladder (release 7's missions) is also thrown down once its climber is beaten.
+ const works=operationPhaseSpec(e)?.works,beaten=w=>w?.kind==='ladder'&&!enemies.some(u=>u.id===`${w.id}-climbers`);
+ for(const [i,p]of m.points.entries())if(!p.secured&&(allies.some(u=>distance(u,p)<=1)&&!enemies.some(u=>distance(u,p)<=1)||beaten(works?.[i]))){p.secured=true;note(e,works?.[i]?(works[i].kind==='ram'?'The ram burns.':`The ladder at ${works[i].at[0]+1}${String.fromCharCode(65+works[i].at[1])} is thrown down.`):`Position ${p.x+1}${String.fromCharCode(65+p.y)} secured.`);}
  if((m.mode==='hold'||m.holdRequired)&&allies.some(u=>distance(u,e.goal)<=1)&&!enemies.some(u=>distance(u,e.goal)<=1))m.holdProgress++;
  if(m.mode==='settlement'){const envoy=e.units.find(u=>u.id==='envoy'),hero=e.units.find(u=>u.id==='hero');if(envoy&&alive(envoy)&&distance(envoy,e.goal)<=1&&distance(hero,e.goal)<=2&&m.rallyProgress>0)m.envoyProgress++;}
  updateBattleProgress(e);
@@ -277,10 +279,17 @@ export function endBattleTurn(state){if(!state.encounter.mission)return Legacy.e
  for(const u of e.units)delete u.moveOrigin;
  for(const u of e.units.filter(u=>u.side==='ally'))actAlly(e,u);
  for(const enemy of foes(e)){if(enemy.hidden&&!e.scouted&&distance(enemy,hero)>2)continue;enemy.hidden=false;enemyTurn(state,e,enemy);}
- for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1){if(e.featureEdition===31)moveProtectedColumn(e,escort,hero);else stepToward(e,escort,e.goal,2);}
+ const convoy=operationPhaseSpec(e)?.convoy;
+ for(const escort of e.units.filter(u=>u.role==='escort'&&u.side==='neutral'))if(convoy){if(operationEscortsMove(e)&&escort.escorted&&alive(escort))convoyStep(e,escort,convoy.route);}else if(operationEscortsMove(e)&&escort.escorted&&alive(escort)&&distance(escort,hero)<=4&&distance(escort,e.goal)>1){if(e.featureEdition===31)moveProtectedColumn(e,escort,hero);else stepToward(e,escort,e.goal,2);}
  for(const wave of e.mission?.waves??[])if(!wave.arrived&&e.turn>=wave.turn){let location=point([wave.x,wave.y]);if(unitAt(e,location.x,location.y)){location=[{x:wave.x,y:wave.y-1},{x:wave.x,y:wave.y+1},{x:wave.x-1,y:wave.y}].find(p=>p.y>=0&&p.y<e.height&&p.x>=0&&p.x<e.width&&!blocked(e.terrain[p.y][p.x])&&!unitAt(e,p.x,p.y));}if(location){wave.arrived=true;e.units.push(enemyUnit(state,`reinforce${e.reinforcements++}`,location.x,location.y,wave.role,{hp:7,damage:3}));note(e,`Reinforcements enter at ${location.x+1}${String.fromCharCode(65+location.y)}.`);}}
  if(e.combatVersion===2&&['hold','supply'].includes(e.mission?.mode)&&foes(e).some(u=>distance(u,e.goal)<=1)&&!friendly(e).some(u=>distance(u,e.goal)<=1)){const pressure=difficultyRule(e).pressure;e.defence-=pressure;note(e,`Unopposed enemy occupation damages the objective (−${pressure} integrity this round).`);}
- advanceExpandedBattle(e);progressMission(e);checkBattle(state,true);delete e.collectTurnEvents;
+ advanceExpandedBattle(e);progressMission(e);
+ // Release 7's siege works: while any still stands once the turn's points are settled (a ladder whose climbers fell
+ // this turn is already down), the defended line gives way, as at a real-time round's end (data/mission-operations.js).
+ const standing=(operationPhaseSpec(e)?.works??[]).filter((w,i)=>!e.mission.points[i]?.secured);
+ if(standing.length){const pressure=difficultyRule(e).pressure,names=standing.map(w=>`the ${w.name}`);e.defence-=pressure;
+  note(e,`${names.join(' and ').replace(/^t/,'T')} still ${names.length>1?'stand':'stands'}: the defended line loses ${pressure} this round.`);}
+ checkBattle(state,true);delete e.collectTurnEvents;
  if(e.status==='active'){e.turn++;advanceFieldApproach(e);e.commandsLeft=e.commandCapacity;for(const u of e.units){u.moved=false;u.acted=false;u.ordered=false;delete u.moveOrigin;if(e.progressionVersion===1)delete u.guardTargetId;if(e.combatVersion!==2||u.side!=='enemy'){u.braced=false;u.formation=null;}if(e.combatVersion===2)u.lastMoveDistance=0;}note(e,`Turn ${e.turn}. ${e.commandsLeft} commands available. ${e.objectiveProgress??''}`);refreshBattleIntents(e);}
  return result(true,e.status==='active'?'The enemy turn ends.':e.status==='won'?'Objective secured. Commit the encounter to preserve its rewards.':'The mission failed. Retry restores the complete encounter-start checkpoint.');
 }
@@ -299,6 +308,7 @@ export function checkBattle(state,atTurnEnd=false){if(!state.encounter.mission)r
  else if(m.mode==='defection')objective=(e.defections??0)>=Math.min(3,e.units.filter(u=>u.id.startsWith('enemy')).length)||foes(e).length===0;
  else if(m.mode==='settlement')objective=m.envoyProgress>=2;
  else if(m.mode==='surrender')objective=m.points.every(p=>p.secured)&&nearGoal;
+ const lure=operationPhaseSpec(e)?.lure;if(lure)objective=foes(e).some(u=>u.role===lure&&distance(u,e.goal)<=1)||!foes(e).some(u=>u.role===lure);
  const gathering=operationGather(e);if(gathering)objective=gathering.complete;
  updateBattleProgress(e);
  if(objective&&operationQualified(e)&&advanceOperation(e)){updateBattleProgress(e);if(atTurnEnd&&e.turn>=e.turnLimit){e.status='lost';note(e,'Deadline: the next operation phase is still unfinished. Retry the complete checkpoint.');}return;}

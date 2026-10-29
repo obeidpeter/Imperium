@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 7: missions and cavalry ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/missions-release7-report.md))
+
+The seventh of ten releases: six battles become missions of their own, the enemy brings siege works, and your horse has two orders of its own. Campaigns begun before this release keep the battles they started with; New Game plays the new ones, in real time and in turns.
+
+- **Six new missions.** Chapter IV's gate is an **escalade**: throw down the Goths' two ladders, whose climbers hold the wall walk, then bring the rear files out. Chapter V's wall is a **sortie**: out by the postern to burn the Persians' ram as it batters the river gate, then back to hold the gate. Chapter VI's wells are a **rearguard** with fallback lines while the column walks west on its own. Chapter VIII's crossing is taken **under fire**, the far bank's archers striking the group of yours most exposed in the water or on the landing at each round's end, until the enemy's archers are beaten. Chapter IX's wing is a **feigned retreat**: the armoured horse keep their ground, for three rounds at most, until drawn onto the line at the marker. Chapter X's road is a **relief convoy** by the road chosen in camp, the grain wagons walking it on their own. Battles that open with an escort or a hold fall from ten of eighteen to six.
+- **Siege works.** While a ladder or the ram stands, the defended line loses the battle's pressure at each round's end, and the ram batters the river gate 30 a round until it is a breach. Hold a work's ground with no enemy beside it to destroy it, or beat a ladder's climbers.
+- **The horse's orders.** With a squad of horse selected, the command card's **8** gives **Charge** (at the nearest enemy group, wheeling away first for the run-up a charge needs) and **9** gives **Feigned retreat** (ride at the enemy's horse, then away as if routed; those who give chase are strung out when it turns, and it charges them). Both are in the Command list too.
+- **Each mission's own opportunities**, in place of its chapter's: the sortie's postern and fire pots, the rearguard's water skins and cleared road, a footbridge upstream of the crossing, and more.
+- **A crossing deploys on its own bank:** the first two tiles in Chapter VIII, three on Chapter X's road.
+- **The mission strip names each mission's task:** the ladders or the ram still standing and what they cost the line, the horse to draw onto the marker, the line to hold while the column withdraws, and a convoy halted by an enemy near it. When the siege works break the line, the defeat says so. Chapter V's Persian siege ramp, worked as before, now offers **Disable the siege ramp**, so it is not taken for the ram.
+- **A cheaper simulation.** Squads' movement and sight, route searches and the check on whether a man is out of combat take less computing. Every battle plays exactly as before.
+- **Real-time fights saved before this release** restart from their checkpoint when the chronicle loads, as Retry would.
+
 ### Worlds and gameplay, release 6: the cast in person ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/cast-release6-report.md))
 
 The sixth of ten releases: the named men, the chamber's members, the camp's staff and the horses in generated bodies, each faction's own shields and a moving finale crowd. The rules are unchanged.

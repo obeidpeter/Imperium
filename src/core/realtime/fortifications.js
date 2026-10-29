@@ -49,11 +49,16 @@ function engineerSupport(world,actor){
 }
 export function batterGate(world,actor,gate){
   if(!heldAgainst(gate,actor))return false;
-  gate.integrity=Math.max(0,gate.integrity-STRUCTURES.gate.batter*(engineerSupport(world,actor)?STRUCTURES.gate.ram:1));
-  if(gate.integrity>0){emit(world,{kind:'field',objectId:gate.id,what:'gate-battered',actorId:actor.id,integrity:gate.integrity});return true;}
+  breakGate(world,gate,STRUCTURES.gate.batter*(engineerSupport(world,actor)?STRUCTURES.gate.ram:1),actor.id);return true;
+}
+// A blow on a closed gate: its integrity falls, and at 0 it is a breach for both armies (rubble).
+// The soldier's battering above, or the enemy's ram (field-missions.js), whose blows have no actor.
+export function breakGate(world,gate,amount,actorId=null){
+  gate.integrity=Math.max(0,gate.integrity-amount);
+  if(gate.integrity>0){emit(world,{kind:'field',objectId:gate.id,what:'gate-battered',actorId,integrity:gate.integrity});return;}
   gate.state='breached';gate.done=true;gate.toggle=false;gate.holder=null;changeStructureCells(world,gate.cells,'rubble');
   if(world.fortifications)world.fortifications.revision++;
-  emit(world,{kind:'field',objectId:gate.id,what:'gate-breached',actorId:actor.id});return true;
+  emit(world,{kind:'field',objectId:gate.id,what:'gate-breached',actorId});
 }
 export function demolishBridge(world,actor,bridge){
   if(!demolishable(bridge))return false;
@@ -66,13 +71,13 @@ export function demolishBridge(world,actor,bridge){
 export function fortificationVerb(o){
   if(o.kind==='breach'&&o.state==='intact')return `Breach wall (${o.progress??0}/${o.required})`;
   if(o.kind==='countermine'&&o.state==='active')return `Shore the countermine (${o.progress??0}/${o.required})`;
-  if(o.kind==='siege-engine'&&o.state==='active')return `Disable siege works (${o.progress??0}/${o.required})`;
+  if(o.kind==='siege-engine'&&o.state==='active')return `Disable the siege ramp (${o.progress??0}/${o.required})`;
   return null;
 }
 export function fortificationHint(world,o){
   if(o.kind==='breach')return 'Up to two uninterrupted work actions open a permanent rubble passage for both armies. Engineer support completes it in one.';
   if(o.kind==='countermine')return 'Up to two work actions stop the enemy mine and protect the line. Engineer support completes it in one. A hit interrupts work.';
-  if(o.kind==='siege-engine')return 'Up to two work actions stop these works and can delay the next reserve. Engineer support completes it in one.';
+  if(o.kind==='siege-engine')return 'Up to two work actions stop the ramp and can delay the next reserve. Engineer support completes it in one.';
   return null;
 }
 export function workFortification(world,actor,o){

@@ -8,6 +8,13 @@ export function drawFieldFeature(c,g,p,o){
   else if(o.kind==='bridge'){c.strokeStyle='#927450';for(let y=-10;y<=10;y+=4){if(o.state==='damaged'&&Math.abs(y)<5)continue;c.beginPath();c.moveTo(-21,y);c.lineTo(21,y);c.stroke();}}
   else if(o.kind==='barricade'){for(let x=-16;x<=16;x+=8){c.beginPath();c.moveTo(x-5,o.state==='intact'?-23:-5);c.lineTo(x+5,2);c.stroke();}}
   else if(o.kind==='signal'){c.fillRect(-2,-48,4,48);c.fillStyle=o.state==='secured'?'#d4b36b':'#9d4b43';c.fillRect(2,-46,22,14);}
+  // Release 7's siege works: a ram's shed on its wheels with the beam's head toward the gate, and a ladder
+  // against the wall (thrown down, it lies flat).
+  else if(o.kind==='ram'){const burnt=o.state==='burnt';c.fillStyle=burnt?'#3a3530':'#69543c';c.fillRect(-18,-24,36,16);c.fillStyle=burnt?'#2c2925':'#8a7a5c';
+    c.beginPath();c.moveTo(-21,-24);c.lineTo(0,-36);c.lineTo(21,-24);c.fill();if(!burnt){c.fillStyle='#4a4038';c.fillRect(-30,-17,40,4);c.fillStyle='#5b5f5a';c.fillRect(-33,-18,5,6);}
+    c.fillStyle='#3d3127';for(const x of [-12,12]){c.beginPath();c.ellipse(x,-6,5,5,0,0,7);c.fill();}}
+  else if(o.kind==='ladder'){c.strokeStyle='#8a6a43';if(o.state==='thrown'){for(const y of [-4,4]){c.beginPath();c.moveTo(4,y);c.lineTo(36,y);c.stroke();}for(let x=8;x<36;x+=6){c.beginPath();c.moveTo(x,-4);c.lineTo(x,4);c.stroke();}}
+    else{for(const dx of [-4,4]){c.beginPath();c.moveTo(14+dx,0);c.lineTo(dx,-46);c.stroke();}for(let i=1;i<8;i++){const t=i/8;c.beginPath();c.moveTo(14*(1-t)-4,-46*t);c.lineTo(14*(1-t)+4,-46*t);c.stroke();}}}
   else if(o.kind==='stores'){c.fillRect(-17,-16,34,16);c.fillStyle='#bcaa80';if(o.state==='available')c.fillRect(-12,-28,24,13);for(const x of [-18,18]){c.beginPath();c.ellipse(x,-2,5,8,0,0,7);c.fill();}}
   else{c.fillRect(-10,-16,20,10);if(o.state==='burning'){c.fillStyle='#f0b856';c.beginPath();c.moveTo(-9,-16);c.lineTo(3,-42);c.lineTo(9,-16);c.fill();c.fillStyle='#6b6b6480';for(let i=0;i<3;i++){c.beginPath();c.ellipse(i*3,-45-i*15,10+i*3,12,0,0,7);c.fill();}}}
   c.restore();

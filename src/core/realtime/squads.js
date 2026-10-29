@@ -47,7 +47,15 @@ export function shapeOf(squad,{marching=false}={}){
 }
 // Places in a formation for `count` men, in the squad's own frame (x to its
 // right, z forward, metres from the front centre), front rank and centre first.
+// They depend on nothing else, so each shape's places for a count are found once
+// and shared, frozen: callers read them, never edit them.
+const SLOTS=new Map();
 export function formationSlots(shape,count){
+  const key=`${shape}:${count}`;let out=SLOTS.get(key);
+  if(!out){out=Object.freeze(placeSlots(shape,count).map(Object.freeze));SLOTS.set(key,out);}
+  return out;
+}
+function placeSlots(shape,count){
   const out=[];if(count<=0)return out;
   const spacing=SPACING[shape]??(shape==='mounted'?1.8:SPACING.line);
   if(shape==='wedge'){
@@ -88,7 +96,7 @@ export function spawnSquad(world,spec){
     moraleResistance:spec.moraleResistance??0,damage:spec.damage??null,formation:spec.formation??null,braced:!!spec.braced,broken:false,
     x:spec.at[0],z:spec.at[1],fx:fx0/n,fz:fz0/n,path:[],goal:null,gait:null,moving:false,stillSince:world.tick,runUp:0,
     order:null,pending:null,standing:spec.standing?spec.standing.map(s=>[...s]):null,standingSlot:-1,plan:null,
-    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{}),...(spec.lying?{lying:true}:{})};
+    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{}),...(spec.lying?{lying:true}:{}),...(spec.holds?{holds:true}:{})};
   const slots=formationSlots(shapeOf(squad),men),grid=navGrid(world.map);
   for(let i=0;i<men;i++){
     let p=clampToMap(grid,slotPoint(squad,slots[i]));if(!walkable(grid,p.x,p.z)){const c=nearestWalkable(grid,p.x,p.z);if(c>=0)p=cellCentre(grid,c);}
@@ -114,16 +122,17 @@ export function memberFell(world,member,attacker,{arc='front',missile=null}={}){
 // The pitch fire scorches a squad (field-objects.js): strength lost as men
 // fall, those nearest the fire first; the 0.38 fire also costs cohesion and
 // adds suppression (as a missile hit does) but no morale.
-export function scorchSquad(world,squad,points,fire){
+// A squad struck where it stands: by a pitch fire, or (cause 'arrows') the far bank's volley (field-missions.js).
+export function scorchSquad(world,squad,points,fire,cause='fire'){
   if(!fielded(world,squad))return;const before=menOf(world,squad);
   squad.strength=Math.max(0,squad.strength-points);squad.cohesion=clamp(squad.cohesion-COHESION.ranged);
   squad.suppression=Math.min(SUPPRESSION.max,squad.suppression+SUPPRESSION.ranged);
   const keep=Math.max(0,Math.ceil(squad.strength/squad.perMan-1e-9)),men=membersOf(world,squad).sort((a,b)=>span(a.x-fire.x,a.z-fire.z)-span(b.x-fire.x,b.z-fire.z)||a.slot-b.slot);
   for(const m of men.slice(0,Math.max(0,before-keep))){
-    m.alive=false;m.diedAt=world.tick;m.killedBy='fire';m.order=null;m.lock=null;m.path=[];m.action=null;
-    emit(world,{kind:'fall',attackerId:null,defenderId:m.id,squadId:squad.id,cause:'fire'});
+    m.alive=false;m.diedAt=world.tick;m.killedBy=cause;m.order=null;m.lock=null;m.path=[];m.action=null;
+    emit(world,{kind:'fall',attackerId:null,defenderId:m.id,squadId:squad.id,cause});
   }
-  emit(world,{kind:'scorch',squadId:squad.id,damage:points});afterLoss(world,squad,null);
+  emit(world,{kind:'scorch',squadId:squad.id,damage:points,...(cause==='fire'?{}:{cause})});afterLoss(world,squad,null);
 }
 // Morale, cohesion and suppression after a hit worth `scale` of a 0.38 hit.
 function hitSquad(world,squad,{flank=false,ranged=false,scale=1,morale=1}){
@@ -201,6 +210,8 @@ export function moveSquads(world){
     const men=membersOf(world,squad),marching=squad.path.length>0&&span(squad.goal.x-squad.x,squad.goal.z-squad.z)>12&&!squad.contact;
     const slots=formationSlots(shapeOf(squad,{marching}),men.length);
     men.sort((a,b)=>a.slot-b.slot);
+    // The squad's pace is the same for every man this tick (it reads only the squad and which men stand): found once.
+    let walkPace=null;
     men.forEach((m,i)=>{
       m.slotIndex=i;
       if(m.action||m.order||m.staggerUntil>world.tick)return;
@@ -216,7 +227,7 @@ export function moveSquads(world){
       }
       const dx=aim.x-m.x,dz=aim.z-m.z,da=span(dx,dz)||1;
       const run=d>2.5,rough=['marsh','ford','rubble'].includes(terrainAtPoint(world.map,m.x,m.z)),mounted=m.mounted?(rough?MOUNTED_PACE.rough:MOUNTED_PACE.run):1;
-      const pace=(run?derivedValues(m).run*mounted:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
+      const pace=(run?derivedValues(m).run*mounted:walkPace??=Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
       const nx=m.x+dx/da*step,nz=m.z+dz/da*step;
       if(walkable(grid,nx,nz)&&traversableStep(grid,m,{x:nx,z:nz})){m.x=nx;m.z=nz;m.moving=step>1e-6;m.gait=run?'run':'walk';m.walked+=step;turnToward(m,dx,dz);}
       else{m.moving=false;m.gait=null;if(!m.slotPath){const route=findRoute(grid,m,target);m.slotPath=route.points.length?route.points:null;}}

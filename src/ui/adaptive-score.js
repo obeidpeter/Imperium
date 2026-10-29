@@ -28,9 +28,10 @@ export function commandSoundCue(events,world){
     if(e.kind==='rally')return 'order-rally';
     if(e.kind!=='order')continue;
     const squad=world.squads?.find(q=>q.id===e.squadId);if(!squad||squad.side==='enemy')continue;
-    return e.order==='withdraw'?'order-withdraw':e.order==='restore'?'order-rally':
+    // The horse's orders (release 7): the charge sounds the advance, the feigned retreat the withdrawal.
+    return ['withdraw','feigned_retreat'].includes(e.order)?'order-withdraw':e.order==='restore'?'order-rally':
       ['hold','line','shield-wall','lie_in_wait'].includes(e.order)?'order-hold':
-      ['advance','attack','wedge'].includes(e.order)?'order-advance':null;
+      ['advance','attack','wedge','charge'].includes(e.order)?'order-advance':null;
   }
   return null;
 }

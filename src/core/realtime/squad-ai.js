@@ -1,4 +1,4 @@
-import {COHESION,ENEMY_FACTIONS,ENEMY_PLANS,ENEMY_TECHNIQUES,EXCHANGE,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
+import {COHESION,ENEMY_FACTIONS,ENEMY_PLANS,ENEMY_TECHNIQUES,EXCHANGE,HORSE_ORDERS,MORALE,SQUAD_STANDING,SUPPRESSION} from '../../data/realtime-squads.js';
 import {COMMAND_CHAPTERS} from '../../data/command-campaign.js';
 import {TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
@@ -91,6 +91,40 @@ function followOrder(world,squad){
       const p=centreOf(world,t);goTo(world,squad,p,{run:span(p.x-squad.x,p.z-squad.z)>12&&squad.formation!=='shield-wall',stopAt:1.5});
       plan(squad,`Engage ${t.name}.`,{targetId:t.id,x:p.x,z:p.z});return true;
     }
+    // The horse's orders (release 7; HORSE_ORDERS). A charge from closer than its run-up wheels away first.
+    case 'charge':{
+      const t=squadById(world,o.targetId)??actorById(world,o.targetId);
+      if(!t||(t.members?!fielded(world,t)||t.broken:!standingActor(t))){squad.order=null;return false;}
+      const p=centreOf(world,t),c=squadCentre(world,squad),d=span(p.x-c.x,p.z-c.z);
+      if(!o.wheeled&&!o.back&&d<EXCHANGE.chargeRun){const k=d||1,far=EXCHANGE.chargeRun-d+4;o.back=clampToMap(navGrid(world.map),{x:c.x+(c.x-p.x)/k*far,z:c.z+(c.z-p.z)/k*far},2);}
+      // It wheels for a round at most: a squad with no room to wheel charges from where it stands.
+      if(!o.wheeled&&o.back&&span(c.x-o.back.x,c.z-o.back.z)>3&&d<EXCHANGE.chargeRun&&world.tick-o.since<R){goTo(world,squad,o.back,{run:true});
+        plan(squad,`Wheel away for the run-up at ${t.name}.`,{targetId:t.id,x:o.back.x,z:o.back.z});return true;}
+      o.wheeled=true;goTo(world,squad,p,{run:true,stopAt:1.5});plan(squad,`Charge ${t.name}.`,{targetId:t.id,x:p.x,z:p.z});return true;
+    }
+    // A feigned retreat: ride at the nearest enemy horse or raiders in sight until within `draw` of them, then away as if
+    // routed; those in sight within `draw` of the flight give chase, and when it turns they are strung out and it charges the nearest.
+    case 'feigned_retreat':{
+      const F=HORSE_ORDERS.feint,c=squadCentre(world,squad);
+      const chasers=squadsOf(world).filter(t=>t.side==='enemy'&&fielded(world,t)&&!t.broken&&HORSE_ORDERS.pursuers.includes(t.role)&&membersOf(world,t).some(m=>!m.hidden))
+        .map(t=>({t,d:span(squadCentre(world,t).x-c.x,squadCentre(world,t).z-c.z)})).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1));
+      if(!o.fleeing){
+        if(!chasers.length){squad.order=null;return false;}
+        const near=chasers[0];
+        if(near.d>F.draw){const p=squadCentre(world,near.t);goTo(world,squad,p,{run:true,stopAt:F.draw*.8});plan(squad,`Ride at ${near.t.name} to draw it out.`,{targetId:near.t.id,x:p.x,z:p.z});return true;}
+        o.fleeing=true;o.fledAt=world.tick;o.to=retreatPoint(world,squad,near.t,o);
+      }
+      for(const {t,d}of chasers)if(d<=F.draw&&!t.drawnBy){t.drawnBy=squad.id;emit(world,{kind:'drawn',squadId:t.id,by:squad.id});}
+      // It turns at its place, or after two rounds of flight if it cannot reach it.
+      if(span(c.x-o.to.x,c.z-o.to.z)<=3&&!squad.path.length||world.tick-o.fledAt>=2*R){
+        const drawn=squadsOf(world).filter(t=>t.drawnBy===squad.id);
+        for(const t of drawn){t.drawnBy=null;if(!fielded(world,t))continue;t.cohesion=clamp(t.cohesion-F.strungOut);emit(world,{kind:'strung-out',squadId:t.id,cohesion:Math.round(t.cohesion)});}
+        const prey=drawn.filter(t=>fielded(world,t)&&!t.broken).map(t=>({t,d:span(squadCentre(world,t).x-c.x,squadCentre(world,t).z-c.z)})).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;
+        if(prey){squad.order={kind:'charge',targetId:prey.id,since:world.tick,from:'feigned_retreat',wheeled:true};return followOrder(world,squad);}
+        squad.order={kind:'hold',since:world.tick,from:'feigned_retreat'};plan(squad,'Turned: no one followed.');return true;
+      }
+      goTo(world,squad,o.to,{run:true});plan(squad,'Ride away as if routed.',{x:o.to.x,z:o.to.z});return true;
+    }
     case 'withdraw':{
       if(!hero){squad.order=null;return false;}
       const back=behind(world,hero,squad);
@@ -100,6 +134,14 @@ function followOrder(world,squad){
     }
   }
   return false;
+}
+// Where a feigned retreat rides: the place it was given, the marker where the enemy's horse is to be drawn,
+// or straight away from the horse it drew out.
+function retreatPoint(world,squad,from,o){
+  if(Number.isFinite(o.x)&&Number.isFinite(o.z))return {x:o.x,z:o.z};
+  if(world.mission?.lure&&world.mission.goal)return {x:world.mission.goal.x,z:world.mission.goal.z};
+  const c=squadCentre(world,squad),f=squadCentre(world,from),k=span(c.x-f.x,c.z-f.z)||1,far=HORSE_ORDERS.feint.distance;
+  return clampToMap(navGrid(world.map),{x:c.x+(c.x-f.x)/k*far,z:c.z+(c.z-f.z)/k*far},2);
 }
 // A place beside and a little behind the soldier, on the squad's own side of him.
 function behind(world,hero,squad){
@@ -264,6 +306,10 @@ function enemyDecision(world,squad){
   const d=world.doctrine,role=d?.roles?.[squad.id]??'Fix',hero=actorById(world,world.heroId),c=squadCentre(world,squad);
   squad.pulledBack=false;
   if(squad.broken){const to=rear(world,squad);goTo(world,squad,to,{run:true});plan(squad,'Broken: fall back to regroup.',{x:to.x,z:to.z});return;}
+  // Drawn after a feigned retreat (release 7): it rides the fleeing horse down until they turn.
+  if(squad.drawnBy){const lure=squadById(world,squad.drawnBy);
+    if(lure&&fielded(world,lure)&&lure.order?.kind==='feigned_retreat'){engageTarget(world,squad,lure,`Ride down ${lure.name} as it flees.`);return;}
+    squad.drawnBy=null;}
   // A band lying in wait (variety.js) keeps still and hidden until one of ours comes near, then falls on him. It
   // rises and joins the plan once one of ours nears the objective (as Contest the approach measures it), or at the
   // end of round `patience`, so it never sits out the battle.
@@ -291,7 +337,12 @@ function enemyDecision(world,squad){
   const threat=nearestOf(friends.map(f=>({...squadCentre(world,f),ref:f})),c);
   const threatened=threat&&span(threat.x-c.x,threat.z-c.z)<=12;
   if(role==='Reserve'&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});goTo(world,squad,a);braceStill(world,squad);plan(squad,'Held in reserve until threatened.',{x:a.x,z:a.z});return;}
-  if(squad.role==='guard'&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
+  // A lure (release 7's missions): the horse it names keeps its ground, until drawn out or until one of ours comes close,
+  // and no longer than the end of round `patience` (HORSE_ORDERS.lure), so it never sits out the battle.
+  const lure=world.mission?.lure;
+  if(lure&&(lure==='cavalry'?HORSE_ORDERS.roles:[lure]).includes(squad.role)&&!threatened&&Math.floor(world.tick/R)+1<=HORSE_ORDERS.lure.patience){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});
+    goTo(world,squad,a);plan(squad,'Wait for an opening.',{x:a.x,z:a.z});return;}
+  if((squad.role==='guard'||squad.holds)&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
     squad.anchor??={x:squad.x,z:squad.z};const intruder=nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),squad.anchor);
     if(intruder&&span(intruder.x-squad.anchor.x,intruder.z-squad.anchor.z)<=15){engageTarget(world,squad,intruder.ref,'Guard the approach; strike the intruder.');return;}
     goTo(world,squad,squad.anchor);braceStill(world,squad);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;

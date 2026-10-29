@@ -18,7 +18,7 @@ import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.
 import {fielded,membersOf,squadCentre} from '../src/core/realtime/squads.js';
 import {formationGroup} from '../src/core/realtime/command.js';
 import {rallyRadius} from '../src/core/realtime/specialists.js';
-import {MORALE} from '../src/data/realtime-squads.js';
+import {HORSE_ORDERS,MORALE} from '../src/data/realtime-squads.js';
 import {ESCORT_RULES} from '../src/data/realtime-rules.js';
 
 const standing=o=>o.alive&&!o.down&&!o.carriedBy;
@@ -137,6 +137,9 @@ export function commandDecision(world,memo={}){
   const near=ours.filter(q=>{const c=squadCentre(world,q);return span(c.x-hero.x,c.z-hero.z)<=rallyRadius(hero);});
   if(near.length&&!hero.action&&(near.some(q=>q.broken||q.morale<MORALE.shaken+20||q.suppression>=2)||owed('rally'))&&issue(world,'ability',{abilityId:'rally'}))return;
   for(const q of ours)if(q.morale<=MORALE.shaken&&!q.pending&&order([q.id],{kind:'restore'}))return;
+  // A lure (release 7's missions): the horse feign a retreat to the marker, to draw the enemy's horse onto the line there.
+  if(world.mission?.lure){const horse=ours.find(q=>HORSE_ORDERS.roles.includes(q.role)&&!q.broken&&!q.pending&&!['feigned_retreat','charge'].includes(q.order?.kind));
+    if(horse&&order([horse.id],{kind:'feigned_retreat'}))return;}
   // Read from the world, not remembered, so a battle reloaded from its save plays on exactly as before.
   if(world.chapter>=5&&!world.used.includes('formation')&&!ours.some(q=>q.pending)&&(owed('formation')||!ours.some(q=>q.formation))){const group=formationGroup(world,ours.map(q=>q.id)).joins;if(group.length&&order(group,{kind:'line'}))return;}
   // In an evacuation the squads keep screening the column (their standing orders); elsewhere a free one meets a band that closes.
@@ -187,7 +190,8 @@ export function companionWatch(){
   watch.incidents=incidents;return watch;
 }
 
-// From New Game: real-time battles where the chapter has them, the 0.38 turns elsewhere. A lost encounter is
+// From New Game (with release 7's missions, as the game's New Game begins; `missions:false` plays an earlier
+// campaign's operations): real-time battles where the chapter has them, the 0.38 turns elsewhere. A lost encounter is
 // retried from its checkpoint (Retry, a legal command) up to `retries` times before the run stops.
 // A Contest is played by the 0.38 autoplay. Protecting the coalition against the rival's reply
 // (command-autoplay.mjs) wins councils the record policy loses, and the reverse: Standard's
@@ -206,8 +210,8 @@ function playTurnEncounter(state){
   return {...playEncounter(state,contestPolicy(state)),fallback:true};
 }
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null,play=playRealtime,retries=0}={}){
-  const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty}),encounters=[];let guard=0;
+  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={}}={}){
+  const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty,missions}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
     if(state.phase==='camp'){
@@ -219,6 +223,8 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
       if(state.chapter===8&&!state.negotiation)G.negotiate(state,'safe-passage');
       if(state.chapter===9&&!state.stratagem)G.selectStratagem(state,'flank');
       if(state.chapter===10){if(!state.allocation)G.allocate(state,{river:2,farms:2,town:2});if(!state.judgment)G.judge(state,state.decisions.ch10);}
+      // An operation chosen in camp other than the first, by its battle (`operations`: { 'ch10-road':'south' }).
+      const plan=G.operationChoices(state);if(plan.enabled&&operations[plan.encounterId]){const r=G.chooseOperation(state,operations[plan.encounterId]);if(!r.ok)throw new Error(r.message);}
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){

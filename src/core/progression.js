@@ -1,5 +1,5 @@
 import {CHAPTERS} from '../data/campaign.js';
-import {PROGRESSION_OPERATIONS} from '../data/progression-operations.js';
+import {operationBranches} from './operations.js';
 import {NEGOTIATORS} from '../data/negotiators.js';
 import {initialNegotiators} from './progression-politics.js';
 import {VETERAN_PATHS} from './progression-veterans.js';
@@ -19,9 +19,10 @@ export function validateProgression(state,fail){
   const p=state.progression,ids=state.company?.map(v=>v.id)??[];
   validateFieldReports(state,fail);
   if(!record(p.specializations)||Object.keys(p.specializations).some(id=>!ids.includes(id)||!VETERAN_PATHS.some(x=>x.id===p.specializations[id])||state.chapter<3||state.company.find(v=>v.id===id).service<2))fail('veteran specialization.');
-  if(!record(p.operationChoices)||Object.entries(p.operationChoices).some(([id,choice])=>!PROGRESSION_OPERATIONS[id]?.some(x=>x.id===choice)))fail('operation selection.');
+  const branches=operationBranches(state);
+  if(!record(p.operationChoices)||Object.entries(p.operationChoices).some(([id,choice])=>!branches[id]?.some(x=>x.id===choice)))fail('operation selection.');
   if(!Array.isArray(p.operationResults)||p.operationResults.length>11||new Set(p.operationResults.map(x=>x?.encounterId)).size!==p.operationResults.length)fail('operation result list.');
-  for(const r of p.operationResults){const branch=PROGRESSION_OPERATIONS[r?.encounterId]?.find(x=>x.id===r.choice);if(!record(r)||!branch||r.label!==branch.label||r.benefit!==branch.benefit||!['clean','costly'].includes(r.outcome)||!state.history.some(x=>x.id===r.encounterId)||r.consumedBy!==null&&!state.history.some(x=>x.id===r.consumedBy&&x.kind==='battle'))fail('operation result.');}
+  for(const r of p.operationResults){const branch=branches[r?.encounterId]?.find(x=>x.id===r.choice);if(!record(r)||!branch||r.label!==branch.label||r.benefit!==branch.benefit||!['clean','costly'].includes(r.outcome)||!state.history.some(x=>x.id===r.encounterId)||r.consumedBy!==null&&!state.history.some(x=>x.id===r.consumedBy&&x.kind==='battle'))fail('operation result.');}
   if(!record(p.negotiators)||Object.keys(p.negotiators).length!==NEGOTIATORS.length)fail('coalition identities.');
   for(const person of NEGOTIATORS){const n=p.negotiators[person.id];if(!record(n)||!bounded(n.trust,-3,3)||!bounded(n.fulfilled,0,6)||!bounded(n.broken,0,6))fail('coalition relationship.');}
   if(!Array.isArray(p.agreements)||p.agreements.length>12||new Set(p.agreements.map(a=>a?.id)).size!==p.agreements.length)fail('agreement list.');

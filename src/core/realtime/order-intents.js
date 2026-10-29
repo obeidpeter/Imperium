@@ -1,4 +1,4 @@
-import {CARD,FORMATION_ORDER,ORDERS} from '../../data/realtime-squads.js';
+import {CARD,FORMATION_ORDER,HORSE_ORDERS,ORDERS} from '../../data/realtime-squads.js';
 import {REASONS} from '../../data/realtime-rules.js';
 import {actorById,hostile} from './abilities.js';
 import {commandable,formationGroup,orderCosts,orderProblem,reservedCommand} from './command.js';
@@ -60,7 +60,7 @@ function orderCommand(world,squads,order){
   const payload={squads,order},reason=orderProblem(world,payload),cost=Object.values(orderCosts(order,squads)).reduce((a,b)=>a+b,0);
   const what=describeOrder(world,order,squads);
   if(reason)return {command:null,cursor:'blocked',message:`${what}: ${REASONS[reason]??reason}`,reason,order};
-  return {command:{actorId:world.heroId,kind:'order',payload},cursor:order.kind==='attack'?'order_attack':'order_advance',
+  return {command:{actorId:world.heroId,kind:'order',payload},cursor:['attack','charge'].includes(order.kind)?'order_attack':'order_advance',
     message:`${what} (${cost} Command).`,reason:null,order};
 }
 export function describeOrder(world,order,squads){
@@ -68,16 +68,27 @@ export function describeOrder(world,order,squads){
   switch(order.kind){
     case 'advance':return `${who}: advance${order.objectId?` to ${objectById(world,order.objectId)?.name??'the object'} and hold`:' here'}`;
     case 'attack':{const t=squadById(world,order.targetId)??actorById(world,order.targetId);return `${who}: attack ${t?.name??'him'}`;}
+    case 'charge':{const t=squadById(world,order.targetId)??actorById(world,order.targetId);return `${who}: charge ${t?.name??'the nearest enemy'}`;}
     default:return `${who}: ${(ORDERS[order.kind]?.name??order.kind).toLowerCase()}`;
   }
 }
 
 // The command card (keys 1–7 while squads are selected): Hold, Restore morale,
-// Withdraw and brace, Line, Shield wall, Wedge, Lie in wait. 8–0 do nothing while it shows.
+// Withdraw and brace, Line, Shield wall, Wedge, Lie in wait; and for horse (release 7)
+// 8 and 9, Charge the nearest enemy group in sight and Feigned retreat. 0 does nothing.
+const horse=squad=>HORSE_ORDERS.roles.includes(squad?.role);
+function nearestEnemyGroup(world,squad){
+  if(!squad)return null;const c=squadCentre(world,squad);
+  return squadsOf(world).filter(q=>q.side==='enemy'&&fielded(world,q)&&!q.broken&&membersOf(world,q).some(a=>!a.hidden))
+    .map(q=>({q,d:span(squadCentre(world,q).x-c.x,squadCentre(world,q).z-c.z)})).sort((a,b)=>a.d-b.d||(a.q.id<b.q.id?-1:1))[0]?.q??null;
+}
 export function cardOrder(world,selection,index){
   const squads=liveSelection(world,selection),kind=CARD[index];
   if(!squads.length)return {command:null,message:REASONS.NO_SQUAD_SELECTED,reason:'NO_SQUAD_SELECTED'};
   if(!kind)return {command:null,message:`The command card has ${CARD.length} orders: 1 to ${CARD.length}.`,reason:'NO_TARGET'};
+  if(kind==='charge'){const t=nearestEnemyGroup(world,squadById(world,squads[0]));
+    if(!t)return {command:null,cursor:'blocked',message:`${describeOrder(world,{kind},squads)}: ${REASONS.NO_TARGET}`,reason:'NO_TARGET',order:{kind}};
+    return orderCommand(world,squads,{kind,targetId:t.id});}
   return orderCommand(world,squads,{kind});
 }
 // Who joins a formation order and who is left out, before it is given (§3.8 "Formation preview").
@@ -88,8 +99,9 @@ export function formationPreview(world,selection){
 }
 // The card's buttons as the HUD shows them.
 export function cardButtons(world,selection){
-  const squads=liveSelection(world,selection),preview=formationPreview(world,selection);
-  return CARD.map((kind,i)=>{
+  const squads=liveSelection(world,selection),preview=formationPreview(world,selection),mounted=squads.some(id=>horse(squadById(world,id)));
+  // The horse's orders show only while a squad of horse is selected; their keys stay 8 and 9.
+  return CARD.map((kind,i)=>[kind,i]).filter(([kind])=>!ORDERS[kind].horse||mounted).map(([kind,i])=>{
     const r=cardOrder(world,squads,i),def=ORDERS[kind];
     const note=def.formation?(preview.left.length?`${preview.joins.join(', ')} join; ${preview.left.join(', ')} left out`
       :preview.joins.length>1?`${preview.joins.length} squads, 1 Command`:'1 Command'):`${squads.length} Command`;
@@ -133,10 +145,14 @@ export function squadOrderOptions(world,{squadId}={}){
   };
   const group=formationGroup(world,[squad.id,...commandSquads(world).filter(s=>s.id!==squad.id).sort((a,b)=>away(a)-away(b)).map(s=>s.id)]).joins;
   for(const kind of CARD){
-    const def=ORDERS[kind];
+    const def=ORDERS[kind];if(def.horse&&!horse(squad))continue;
     if(def.formation&&group.length>1)add('Orders',`${def.name} with ${group.slice(1).map(id=>squadById(world,id).name).join(' and ')}`,group,{kind},{detail:def.summary});
+    if(kind==='charge')continue;
     add('Orders',def.name,[squad.id],{kind},{detail:kind===CARD[0]?squadState(world,squad):def.summary});
   }
+  // A feigned retreat toward the objective marker: where the enemy's horse is to be drawn.
+  if(horse(squad)&&world.mission?.goal)add('Orders','Feigned retreat to the objective marker',[squad.id],{kind:'feigned_retreat',x:world.mission.goal.x,z:world.mission.goal.z},
+    {detail:`${m(away(world.mission.goal))}. ${ORDERS.feigned_retreat.summary}`});
   const places=[];
   if(world.mission?.goal)places.push({name:'the objective marker',x:world.mission.goal.x,z:world.mission.goal.z});
   for(const p of world.mission?.points??[])if(!p.secured)places.push({name:'a position to secure',x:p.x,z:p.z});
@@ -145,7 +161,8 @@ export function squadOrderOptions(world,{squadId}={}){
   for(const p of places)add('Advance',`Advance to ${p.name}`,[squad.id],{kind:'advance',x:p.x,z:p.z,...(p.objectId?{objectId:p.objectId}:{})},{detail:m(away(p))});
   const foes=[...squadsOf(world).filter(q=>q.side==='enemy'&&fielded(world,q)&&membersOf(world,q).some(a=>!a.hidden)).map(q=>({id:q.id,name:q.name,at:squadCentre(world,q)})),
     ...world.actors.filter(a=>!a.squadId&&a.alive&&!a.down&&!a.hidden&&hostile({side:'ally'},a)).map(a=>({id:a.id,name:a.name,at:a}))].sort((a,b)=>away(a.at)-away(b.at));
-  for(const f of foes)add('Attack',`Attack ${f.name}`,[squad.id],{kind:'attack',targetId:f.id},{subject:f.id,detail:m(away(f.at))});
+  for(const f of foes){add('Attack',`Attack ${f.name}`,[squad.id],{kind:'attack',targetId:f.id},{subject:f.id,detail:m(away(f.at))});
+    if(horse(squad))add('Attack',`Charge ${f.name}`,[squad.id],{kind:'charge',targetId:f.id},{subject:f.id,detail:`${m(away(f.at))}. ${ORDERS.charge.summary}`});}
   return out;
 }
 export {fielded};

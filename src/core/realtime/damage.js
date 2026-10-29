@@ -54,10 +54,11 @@ export function exchangeWound(world,attacker,defender,points,{missile=null,arc='
   if(defender.hp<=0)fall(world,attacker,defender,base);
 }
 // The pitch fire burns a single man (field-objects.js): no attacker, no roll.
-export function burnActor(world,defender,points){
+// A man struck where he stands: by a pitch fire, or (cause 'arrows') the far bank's volley (field-missions.js).
+export function burnActor(world,defender,points,cause='fire'){
   if(!defender.alive||defender.down||points<=0)return;
   defender.lastHitTick=world.tick;defender.calmSince=world.tick;
-  const base={attackerId:null,defenderId:defender.id,cause:'fire'};
+  const base={attackerId:null,defenderId:defender.id,cause};
   defender.hp=Math.max(defender.practice?1:0,defender.hp-points);emit(world,{kind:'burn',...base,damage:points});
   if(defender.action?.kind==='work'){cancelAction(world,defender);defender.order=null;}
   if(defender.hp<=0)fall(world,null,defender,base);
@@ -114,11 +115,14 @@ export function settleLocks(world){
 // Stamina always; Health only out of combat (no hostile within 30 m for 10 s).
 export function regenerate(world){
   const calm=ticksOf(COMBAT.regen.calmSeconds),DT=1/TIME.ticksPerSecond;
+  // Who can break a man's calm, found once a tick and split as hostile() pairs them:
+  // the enemy against every other side, and no envoy either way.
+  const seen=world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&!o.parley),enemies=seen.filter(o=>o.side==='enemy'),others=seen.filter(o=>o.side!=='enemy');
   for(const a of world.actors){
     if(!a.alive||a.down)continue;const d=derivedValues(a);
     if(a.stamina<a.maxStamina){a.staminaGain+=d.staminaPerSecond*DT;const whole=Math.floor(a.staminaGain);a.staminaGain-=whole;a.stamina=Math.min(a.maxStamina,a.stamina+whole);}
     else a.staminaGain=0;
-    if(world.actors.some(o=>o.alive&&!o.down&&!o.hidden&&hostile(a,o)&&distanceBetween(a,o)<=COMBAT.regen.calmRange))a.calmSince=world.tick;
+    if(!a.parley&&(a.side==='enemy'?others:enemies).some(o=>distanceBetween(a,o)<=COMBAT.regen.calmRange))a.calmSince=world.tick;
     if(a.hp<a.maxHp&&world.tick-a.calmSince>=calm){a.hpGain+=d.healthPerSecond*DT;const whole=Math.floor(a.hpGain);a.hpGain-=whole;a.hp=Math.min(a.maxHp,a.hp+whole);}
     else if(a.hp>=a.maxHp)a.hpGain=0;
   }

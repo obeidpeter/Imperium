@@ -1,5 +1,6 @@
 import {capabilityTasks,FIELD_BAR,TIME} from '../data/realtime-rules.js';
 import {coalitionView,hourView} from '../core/chamber.js';
+import {lureMet} from '../core/realtime/field-missions.js';
 
 // Presentation only: reduce the first view without changing action order, keys,
 // mission conditions or the detailed forecasts available to the player.
@@ -17,17 +18,23 @@ export function compactMissionReadout(world,full={}){
     case 'clear':{headline='Defeat the enemy force.';const n=world.actors.filter(a=>a.side==='enemy'&&a.alive&&!a.hidden).length;progress=`${n} ${n===1?'enemy':'enemies'} in sight`;break;}
     case 'recover':headline=world.used.includes('scout')?'Recover the records chest.':'Scout the ground, then recover the chest.';break;
     case 'extract':{
-      headline='Bring everyone, including your soldier, to the rally marker.';
+      // A convoy (release 7's missions) walks its road on its own.
+      headline=m.convoy?'Keep the convoy’s road clear and meet it at the rally marker.':'Bring everyone, including your soldier, to the rally marker.';
       const party=(m.escorts??[]).map(id=>world.actors.find(a=>a.id===id)).filter(Boolean);
-      progress=`${party.filter(a=>a.alive&&Math.hypot(a.x-m.goal.x,a.z-m.goal.z)<=m.radius).length}/${party.length} survivors at marker`;
+      progress=`${party.filter(a=>a.alive&&Math.hypot(a.x-m.goal.x,a.z-m.goal.z)<=m.radius).length}/${party.length} ${m.convoy?'columns':'survivors'} at marker`;
       if(m.holdRequired>0){
         headline+=` Keep the marker clear for ${m.holdRequired} rounds.`;
         progress+=` · ${Math.min(m.holdRequired,Math.floor((m.heldTicks??0)/TIME.roundTicks))}/${m.holdRequired} rounds held`;
       }
       break;
     }
-    case 'hold':headline='Hold the marked ground and keep enemies out.';progress=`${Math.min(m.holdRequired,Math.floor(m.heldTicks/TIME.roundTicks))}/${m.holdRequired} rounds held`;break;
+    case 'hold':headline=m.convoy?'Hold the line while the column withdraws.':'Hold the marked ground and keep enemies out.';progress=`${Math.min(m.holdRequired,Math.floor(m.heldTicks/TIME.roundTicks))}/${m.holdRequired} rounds held`;break;
     case 'capture':case 'supply':
+      // Release 7's missions: the enemy's siege works, and the horse to draw onto the marker.
+      if(m.works?.length){const ram=m.works.some(w=>w.kind==='ram');
+        headline=ram?'Burn the ram: hold its ground with no enemy beside it.':'Throw down the ladders: beat their climbers, or hold each ladder’s head.';
+        progress=`${ram?(secured?'Ram burnt':'Ram standing'):`${secured}/${m.works.length} ladders down`} · line ${m.defence}`;break;}
+      if(m.lure){headline='Draw the enemy’s horse onto the marker with a Feigned retreat.';progress=lureMet(world)?'The horse is at the marker':'';break;}
       headline=m.gather?'Gather your soldier and companion at the marker.':m.commander&&secured===points.length?'Bring your soldier to the main marker.':m.mode==='supply'?'Secure the marked positions and protect the stores.':'Secure the marked positions.';
       progress=`${secured}/${points.length} positions`;break;
     case 'defection':headline='Win three pledges or defeat the opposition.';progress=`${m.defections??0}/${Math.min(3,m.rivals??3)} pledges`;break;

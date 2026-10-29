@@ -6,6 +6,7 @@ import {fielded,membersOf,spawnSquad} from './squads.js';
 import {defaultStanding} from './squad-ai.js';
 import {bandReinforced} from './bands.js';
 import {span} from './navigation.js';
+import {climbersBeaten,fallBack,farBankVolley,installWorks,lureMet,moveConvoy,worksRound,worksSecured} from './field-missions.js';
 
 // A campaign encounter's objective in real time (§3.2 "Converting 0.38
 // data"): turns become rounds of 200 ticks, tiles become metres, and the 0.38
@@ -38,6 +39,8 @@ const capable=world=>world.mission.required.every(a=>world.used.includes(a));
 // a column is covered by any of ours beside it: the soldier, a companion, or a
 // man of a squad screening it.
 function moveEscorts(world){
+  // A convoy (release 7's missions) walks its road on its own (field-missions.js).
+  if(world.mission.convoy){moveConvoy(world);return;}
   const m=world.mission,leaders=world.actors.filter(o=>standing(o)&&(o.id===world.heroId||world.party.includes(o.id)));
   const guards=world.actors.filter(o=>standing(o)&&o.squadId&&friendly(o));
   for(const e of escortsOf(world)){
@@ -93,8 +96,13 @@ function qualified(world){
 function advancePhase(world){
   const m=world.mission;if(!m.phases||m.phase>=m.phases.length-1)return false;
   m.completed.push(m.phases[m.phase].id);m.phase++;const next=m.phaseMissions[m.phase],spec=m.phases[m.phase],round=Math.floor(world.tick/R)+1;
+  // A fallback line: the squads holding the line just left fall back to the next (field-missions.js).
+  if(m.lines)fallBack(world,m.goal,next.goal);
   Object.assign(m,{mode:next.mode,goal:next.goal,goalTile:next.goalTile,points:next.points.map(p=>({...p})),holdRequired:next.holdRequired,gather:next.gather,
-    commander:next.commander,rescue:next.rescue,pauseEscorts:next.pauseEscorts,label:next.label,objective:next.objective,id:next.id,heldTicks:0,phaseWave:!!spec.wave});
+    commander:next.commander,rescue:next.rescue,pauseEscorts:next.pauseEscorts,label:next.label,objective:next.objective,id:next.id,heldTicks:0,phaseWave:!!spec.wave,
+    works:next.works.map(w=>({...w})),lure:next.lure,convoy:next.convoy?.map(p=>({...p}))??null,lines:next.lines,fire:next.fire});
+  for(const id of m.escorts){const e=actorById(world,id);if(e)delete e.convoyLeg;}
+  installWorks(world);
   if(spec.escort&&!world.actors.some(a=>a.id===spec.escort.id)){
     const at=tilePoint(world,{x:spec.escort.at[0],y:spec.escort.at[1]});
     const actor=spawnActor(world,{name:spec.escort.name,side:'neutral',role:'escort',attributes:{str:10,agi:9,con:12,per:9,combat:2,field:4},kit:['tunic','paenula'],
@@ -145,6 +153,7 @@ const nearGoal=(world,o,tiles=1)=>!!o&&span(o.x-world.mission.goal.x,o.z-world.m
 
 export function objectiveMet(world){
   const m=world.mission;
+  if(m.lure)return lureMet(world);
   if(m.gather)return gathered(world);
   switch(m.mode){
     case 'training':return ['move','strike','brace','throw'].every(a=>world.used.includes(a));
@@ -170,7 +179,7 @@ export function missionTick(world){
   const goal=control(world,m.goal,m.radius);
   if(m.holdRequired>0&&goal.friends>0&&goal.foes===0)m.heldTicks++;
   if(goal.foes>0&&goal.friends===0)m.occupiedTicks++;
-  for(const p of m.points)if(!p.secured){const c=control(world,p,m.radius);if(c.friends>0&&c.foes===0){p.secured=true;emit(world,{kind:'secured',x:p.x,z:p.z});}}
+  for(const [i,p]of m.points.entries())if(!p.secured){const c=control(world,p,m.radius);if(c.friends>0&&c.foes===0||climbersBeaten(world,i)){p.secured=true;emit(world,{kind:'secured',x:p.x,z:p.z});worksSecured(world,i);}}
   if(roundEnd(world)){
     const round=(world.tick+1)/R;
     if(m.mode==='settlement'){const envoy=escortsOf(world).find(e=>e.parley);
@@ -178,6 +187,8 @@ export function missionTick(world){
     m.waves.forEach((w,i)=>{if(!w.arrived&&round>=w.round)arrive(world,w,i);});
     if(['hold','supply'].includes(m.mode)&&m.pressure&&m.occupiedTicks>=R/2){m.defence-=m.pressure;emit(world,{kind:'pressure',amount:m.pressure,defence:m.defence});}
     m.occupiedTicks=0;
+    // Release 7's missions: the siege works and the far bank's archers (field-missions.js).
+    worksRound(world);if(m.fire)farBankVolley(world);
   }
   const hero=actorById(world,world.heroId);
   if(!hero?.alive||hero.down){world.status='lost';m.reason='The soldier falls.';emit(world,{kind:'defeat'});return;}
@@ -206,7 +217,9 @@ export function missionProgress(world){
     case 'extract':{const e=escortsOf(world),there=e.filter(x=>atGoal(world,x)).length;
       return `Columns at the rally point ${there} of ${e.length}${m.holdRequired?`; held ${held} of ${m.holdRequired} rounds`:''}. ${deadline}.`;}
     case 'hold':return `Ground held ${held} of ${m.holdRequired} rounds; line ${m.defence}. ${deadline}.`;
-    case 'capture':case 'supply':return `${m.gather?'Gather at the marker':`Positions secured ${m.points.filter(p=>p.secured).length} of ${m.points.length}`}`+
+    case 'capture':case 'supply':if(m.lure)return `Draw the enemy horse onto the marker${lureMet(world)?': it is there':''}. ${deadline}.`;
+      if(m.works?.length)return `Siege works destroyed ${m.points.filter(p=>p.secured).length} of ${m.works.length}; line ${m.defence}. ${deadline}.`;
+      return `${m.gather?'Gather at the marker':`Positions secured ${m.points.filter(p=>p.secured).length} of ${m.points.length}`}`+
       `${m.commander?'; the soldier must stand at the marker':''}${m.mode==='supply'?`; stores ${m.defence}`:''}. ${deadline}.`;
     case 'defection':return `Pledges ${m.defections??0} of ${Math.min(3,m.rivals??3)}: Rally within ${Math.round(PLEDGE.hear*m.radius)} m of a rival band. ${deadline}.`;
     case 'settlement':return `The meeting: ${m.meeting??0} of 2 rounds, the envoy beside the claimant, the soldier near and the parley reassured by a Rally. ${deadline}.`;

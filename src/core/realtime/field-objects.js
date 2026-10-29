@@ -56,6 +56,8 @@ export function fieldHint(world,o){
 const roundOf=world=>Math.floor(world.tick/R)+1;
 export function fieldProblem(world,o,{force=false}={}){
   if(!o?.field)return null;
+  // The enemy's siege works are destroyed by holding their ground, not worked (field-missions.js).
+  if(['ram','ladder'].includes(o.kind))return o.done?'ALREADY_DONE':'WORKS_SECURE';
   if(!fieldVerb(o,{force}))return 'ALREADY_DONE';
   if(fortifiedGate(o)&&o.state==='open'&&gateOccupied(world,o))return 'GATE_OCCUPIED';
   if(OPPORTUNITIES.has(o.kind)&&(world.field?.outcome!=='pending'||roundOf(world)>world.field.deadline))return 'OPPORTUNITY_CLOSED';
@@ -97,7 +99,8 @@ function applyOpportunity(world,effect){
       for(const w of world.mission?.waves??[])if(!w.arrived)w.round+=1;break;
     case 'disrupt':for(const q of squadsOf(world))if(q.side==='enemy'&&fielded(world,q)&&membersOf(world,q).some(m=>!m.hidden))q.cohesion=clamp(q.cohesion-15);break;
     case 'integrity':if(world.mission)world.mission.defence=Math.max(world.mission.defence,Math.min(100,world.mission.defence+20));break;
-    case 'engineering':for(const o of objectsOf(world,'gate'))openGate(world,o);for(const o of objectsOf(world,'bridge'))repairBridge(world,o);break;
+    // A ram's gate (field-missions.js) is our own wall's, and stays shut.
+    case 'engineering':for(const o of objectsOf(world,'gate'))if(!o.works)openGate(world,o);for(const o of objectsOf(world,'bridge'))repairBridge(world,o);break;
     case 'standard':for(const q of friendlySquads(world)){q.cohesion=clamp(q.cohesion+20);q.morale=clamp(q.morale+10);if(q.broken&&q.morale>MORALE.broken){q.broken=false;emit(world,{kind:'squad-rallied',squadId:q.id});}}break;
     case 'command':if(world.command){const before=world.command.capacity;world.command.capacity=Math.min(8,before+1);world.command.left+=world.command.capacity-before;}break;
     case 'anti-charge':f.cavalryDenied=true;break;

@@ -37,14 +37,17 @@ export function squadSight(world){
   if(world.tick%TIME.aiInterval!==0)return;
   const squads=squadsOf(world).filter(s=>fielded(world,s));if(!squads.length)return;
   const singles=world.actors.filter(a=>standing(a)&&!a.squadId);
+  // Each squad's men and centre, found once: nothing here moves or fells a man. A
+  // meter already full stays full at any rate above zero (noticeRate's `full`).
+  const menOf=new Map(squads.map(s=>[s,membersOf(world,s)])),centreOf=new Map(squads.map(s=>[s,squadCentre(world,s)]));
   for(const s of squads){
-    const men=membersOf(world,s),notice=s.notice??={},seen=new Set(),keen=TEMPERAMENTS.kinds[s.temperament]?.notice??1;
+    const men=menOf.get(s),notice=s.notice??={},seen=new Set(),keen=TEMPERAMENTS.kinds[s.temperament]?.notice??1;
     for(const t of squads){
       if(t===s||!hostile(s,t))continue;seen.add(t.id);
-      const watcher=nearestTo(men,squadCentre(world,t)),target=nearestTo(membersOf(world,t),watcher);
-      watch(world,s,t.id,watcher&&target?noticeRate(world,watcher,target)*(lying(t)?PERCEPTION.lying:1)*keen:0,t);
+      const watcher=nearestTo(men,centreOf.get(t)),target=nearestTo(menOf.get(t),watcher);
+      watch(world,s,t.id,watcher&&target?noticeRate(world,watcher,target,{full:noticeOf(s,t.id)>=100})*(lying(t)?PERCEPTION.lying:1)*keen:0,t);
     }
-    for(const a of singles){if(!hostile(s,a))continue;seen.add(a.id);const watcher=nearestTo(men,a);watch(world,s,a.id,watcher?noticeRate(world,watcher,a)*keen:0,null);}
+    for(const a of singles){if(!hostile(s,a))continue;seen.add(a.id);const watcher=nearestTo(men,a);watch(world,s,a.id,watcher?noticeRate(world,watcher,a,{full:noticeOf(s,a.id)>=100})*keen:0,null);}
     // Those gone from the field are forgotten.
     for(const id of Object.keys(notice))if(!seen.has(id))delete notice[id];
   }

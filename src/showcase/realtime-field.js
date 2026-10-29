@@ -583,7 +583,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(squads&&deploying(world)&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
       squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
     if(squads&&deploying(world)&&action==='act_on_target'){if(!squads.sendMarker())say('Move the marker with the arrow keys first.');return true;}
-    // While squads are selected the arrows move the order marker, 1–6 are the command card and 7–0 do nothing.
+    // While squads are selected the arrows move the order marker, 1–9 are the command card (8 and 9 the horse's) and 0 does nothing.
     if(squads?.active&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
       squads.moveMarker((rx*sx-fx*sy)*2,(rz*sx-fz*sy)*2);return true;}
     if(squads?.active&&/^ability_\d+$/.test(action)){const n=Number(action.slice(8));if(n<=CARD.length)squads.card(n-1);else say(`The command card has ${CARD.length} orders: 1 to ${CARD.length}. Clear the selection (Esc) for your abilities.`);return true;}

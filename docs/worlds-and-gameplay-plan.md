@@ -19,8 +19,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 3 | Harder, less predictable battles | merged ([#30](https://github.com/obeidpeter/Imperium/pull/30); [report](realtime-release3-report.md)) |
 | 4 | Fortifications, modelled | merged ([#35](https://github.com/obeidpeter/Imperium/pull/35); [report](fortifications-release4-report.md)); mudbrick re-baked ([#36](https://github.com/obeidpeter/Imperium/pull/36)) |
 | 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
-| 6 | The cast in person | in review ([report](cast-release6-report.md)) |
-| 7 | Missions and cavalry | planned |
+| 6 | The cast in person | merged ([#38](https://github.com/obeidpeter/Imperium/pull/38); [report](cast-release6-report.md)) |
+| 7 | Missions and cavalry | in review ([report](missions-release7-report.md)) |
 | 8 | Living camps | planned |
 | 9 | Landmarks and set pieces | planned |
 | 10 | Gate 4 and 0.40.0 | planned |
@@ -173,6 +173,32 @@ Already done (#32): Chapter V's countermine, engineer and cavalry formations, an
 - **Enemy siege works:** ladders and a ram, which release 4's gate integrity and breach rules give their meaning.
 - **Varied field objects:** opportunity pairs chosen by mission instead of the same pair everywhere.
 - **Checks:** the bot and sweeps updated for the new missions, and tests for siege progress, gates and cavalry orders.
+
+**Release 7's design (29 October 2026).** The missions are operations in the data, as planned. A campaign begun from this release plays version 3 of the operations; saves begun earlier keep versions 1 and 2, unchanged, and the turn-based path plays the new ones with its own modes. Each new mission is built from the modes both paths already play (capture, hold, extract, clear), so the turn-based path stays playable; the new rules below are real time's own.
+
+| Battle | Before | After |
+| --- | --- | --- |
+| IV, the gate | hold the gate, then bring the rear files out | **The escalade:** throw down the Goths' ladders before their climbers gain the wall walk, then bring the rear files out |
+| V, the wall | hold the wall for five rounds | **A sortie:** out by the postern to burn the Persians' ram at the river gate before the gate gives, then back in to hold it |
+| VI, the wells | rescue the stranded party, then withdraw | **A rearguard with fallback lines:** hold two lines in turn while the rescued party withdraws, then follow it out |
+| VIII, the crossing | hold the bridgehead, then bring the last ferry party in | **A crossing under fire:** take the ford's far landing under the archers' volleys, hold it, then bring the last ferry party in |
+| IX, the wing | defeat the field | **A feigned retreat and pursuit:** draw the armoured horse after a feigned flight, then turn and break it |
+| X, the road | secure both grain routes, then hold the stores | **A relief convoy:** the convoy takes the route chosen in camp on its own; keep its road open ahead of it |
+
+- **Escort and hold** (the battles whose first objective is to escort a column or hold one marker) fall from 10 of 18 battles to 6. The plan's five types replace only three of them, as the feigned retreat (IX) and the convoy (X) replace a field battle and a supply battle; the escalade at the gate (IV) is the sixth new mission, and uses the plan's ladders.
+- **Siege works:** a ram batters the gate it reaches (the gate's integrity, release 4) and ladders put climbers on the wall walk (its fighting platform). Each is destroyed when our men secure it, as a capture point is secured in both paths.
+- **Cavalry orders:** *Charge*, at an enemy group, with the run-up the mounted charge already needs; and *Feigned retreat*, a flight that draws enemy horse and raiders after the squad, who are strung out (cohesion lost) when it turns and charges them. Our horse only; one Command each.
+- **Opportunity pairs by mission:** each re-authored battle gets its own pair in place of its chapter's (for the sortie, say, fire pots or the postern held open).
+- **New campaigns only:** the operation version and a campaign's missions version, checked on load; `WORLD_VERSION` 6, so real-time battles saved before it restart from their checkpoint.
+
+**As built.** Play-testing the design with the bots changed five things; the [report](missions-release7-report.md) has the measurements.
+- **The armoured horse holds back during the feint.** Left to the enemy's ordinary plans, the horse charged the line at the marker in the first round, and the feint asked nothing. Now the horse a lure names keeps its ground until drawn out by a feigned retreat, or until one of ours comes close. A Story sweep then found a horse that, having destroyed ours, rode back to its place and waited out the deadline; so it waits no longer than three rounds, and the phase also ends once none of it is left unbroken.
+- **Climbers in the turn-based path too, and fewer of them.** With nothing at their heads the ladders were thrown down on the first turn, so a ladder puts its first climbers on the wall walk in both paths: a single man of 4 Health in turns, a band of 4 strength in real time, holding the ladder's head. Beating them throws the ladder down. With 7, and the ladder down only when no enemy stood at its head, the escalade cost the bot all its squads in 14 of 20 Standard runs in real time.
+- **A crossing deploys on its own bank** (an operation's `deploy`): Chapter VIII's landing and Chapter X's ford lay inside the usual four-tile deployment zone, and were taken in the first round.
+- **Convoys remember their road.** The wagons walk point by point and pass a point within a tile of them, in both paths; judged by their nearest point instead, they turned back at the ford.
+- **The far bank's volley strikes one group.** Loosed at every squad of ours with a man in the water or on the landing, it cost the bot a median 77% of its squads' strength at Standard's crossing, against 50% before the missions; it now strikes the group most exposed there, the squad with the most men in the water or on the landing.
+
+**The simulation's cost.** The escalade's tick, and on Story and Veteran the sortie's, came near the 0.3 ms budget or over it. As the [risks](#risks-and-fallbacks) provide, cheaper checks came first: a squad's pace and its formation's places are found once, route searches work out each cell's moves once per grid and try a straight line's every eighth sample first, whether a man is out of combat is asked only of the other side, and a squad's sight finds each squad's men once and looks for cover only while its notice is not yet full. Every battle plays exactly as before, and in the final sweeps no battle's tick rose by more than 0.02 ms on any level.
 
 #### 8. Living camps
 

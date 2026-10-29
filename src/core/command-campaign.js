@@ -1,3 +1,4 @@
+import {MISSION_OPPORTUNITIES} from '../data/mission-operations.js';
 import {fieldApproachCost,approachAssignment,fieldApproachSummary} from './field-approaches.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {COMMAND_CHAPTERS,OPERATIONAL_PLANS,ISSUE_CASES} from '../data/command-campaign.js';
@@ -49,14 +50,16 @@ function companionWitness(state){
   const id=state.decisions.ch2==='leave'?'sabinus':'lucan',member=state.company?.find(v=>v.id===id);
   return member&&member.service>=2?{id,name:member.name,description:state.decisions.ch2==='leave'?'Sabinus carries the survivors’ account; Lucan remains absent.':'Lucan can testify because you brought him out of the marsh.'}:null;
 }
+// A battle's opportunity pair: its own under release 7's missions (data/mission-operations.js), else its chapter's.
+const opportunityPair=(state,id)=>(state.missionsVersion===1?MISSION_OPPORTUNITIES[id]:null)??definition(state).opportunities;
 export function initializeCommandCampaign(state){
   if(!enabled(state))return;
   const e=state.encounter;e.campaignEdition=34;
   const witness=companionWitness(state);
   e.commandCampaign={plan:e.kind==='battle'&&e.type!=='training'?state.commandCampaign.plan:'balanced',opportunity:null,case:null,escortPace:2,cavalryDenied:false,witness:witness?.id??null};
   if(e.kind==='contest')return;
-  const chapter=definition(state);
-  for(const [i,id]of ['stores','signal'].entries()){const o=e.field?.objects.find(o=>o.id===id);if(o)o.label=chapter.opportunities[i].label;}
+  const chapter=definition(state),pair=opportunityPair(state,e.id);
+  for(const [i,id]of ['stores','signal'].entries()){const o=e.field?.objects.find(o=>o.id===id);if(o)o.label=pair[i].label;}
   if(e.type==='training')return;
   const plan=planById(e.commandCampaign.plan),hero=e.units.find(u=>u.id==='hero');
   if(plan.id==='recon'){for(const u of e.units)u.hidden=false;delayWaves(e);for(const u of commandFriends(e))u.cohesion=clamp(u.cohesion-10);}
@@ -68,7 +71,8 @@ export function initializeCommandCampaign(state){
 }
 export function chapterOpportunity(e,id){
   if(!enabled(e)||!['stores','signal'].includes(id))return null;
-  return definition(e)?.opportunities[id==='stores'?0:1]??null;
+  // A battle re-authored by release 7's missions has its own pair (data/mission-operations.js).
+  return (e.missionsVersion===1?MISSION_OPPORTUNITIES[e.id]:null)?.[id==='stores'?0:1]??definition(e)?.opportunities[id==='stores'?0:1]??null;
 }
 export function applyChapterOpportunity(e,id){
   const opportunity=chapterOpportunity(e,id);if(!opportunity)return false;
@@ -114,8 +118,8 @@ export function commandAssignment(e,unit){
 }
 export function commandBriefing(state){
   if(!enabled(state))return {enabled:false};
-  const chapter=definition(state),e=state.encounter,witness=companionWitness(state);
-  return {enabled:true,chapter:state.chapter,title:chapter.label,purpose:chapter.purpose,approach:fieldApproachSummary(e),doctrine:e?commandDoctrine(e):{id:chapter.doctrine,label:chapter.label,description:chapter.purpose},witness,opportunities:chapter.opportunities.map((o,i)=>({...o,id:i?'signal':'stores'})),records:state.commandCampaign.records.map(r=>({...r})),reaction:'A surviving braced defender answers a frontal mounted charge with 1 damage, once per round. Flanks and ranged attacks avoid the reaction; the attack preview includes it.'};
+  const chapter=definition(state),e=state.encounter,witness=companionWitness(state),battle=e?.id??CHAPTERS[state.chapter-1]?.encounters[state.encounterIndex]?.id;
+  return {enabled:true,chapter:state.chapter,title:chapter.label,purpose:chapter.purpose,approach:fieldApproachSummary(e),doctrine:e?commandDoctrine(e):{id:chapter.doctrine,label:chapter.label,description:chapter.purpose},witness,opportunities:opportunityPair(state,battle).map((o,i)=>({...o,id:i?'signal':'stores'})),records:state.commandCampaign.records.map(r=>({...r})),reaction:'A surviving braced defender answers a frontal mounted charge with 1 damage, once per round. Flanks and ranged attacks avoid the reaction; the attack preview includes it.'};
 }
 
 function availableEvidence(state,requirement){
