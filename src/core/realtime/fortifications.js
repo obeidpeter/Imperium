@@ -71,13 +71,13 @@ export function demolishBridge(world,actor,bridge){
 export function fortificationVerb(o){
   if(o.kind==='breach'&&o.state==='intact')return `Breach wall (${o.progress??0}/${o.required})`;
   if(o.kind==='countermine'&&o.state==='active')return `Shore the countermine (${o.progress??0}/${o.required})`;
-  if(o.kind==='siege-engine'&&o.state==='active')return `Disable siege works (${o.progress??0}/${o.required})`;
+  if(o.kind==='siege-engine'&&o.state==='active')return `Disable the siege ramp (${o.progress??0}/${o.required})`;
   return null;
 }
 export function fortificationHint(world,o){
   if(o.kind==='breach')return 'Up to two uninterrupted work actions open a permanent rubble passage for both armies. Engineer support completes it in one.';
   if(o.kind==='countermine')return 'Up to two work actions stop the enemy mine and protect the line. Engineer support completes it in one. A hit interrupts work.';
-  if(o.kind==='siege-engine')return 'Up to two work actions stop these works and can delay the next reserve. Engineer support completes it in one.';
+  if(o.kind==='siege-engine')return 'Up to two work actions stop the ramp and can delay the next reserve. Engineer support completes it in one.';
   return null;
 }
 export function workFortification(world,actor,o){

@@ -46,7 +46,7 @@ function contextualLesson(state,world,kind,seen,progress){
     if(works.some(o=>o.done))return exercise('engineering','3 / 3','The work changed the field','Completed work now opens the wall or disables the enemy works. The result persists in the saved battle; an unfinished work action does not open a passage.',true);
     const progress=works.some(o=>o.progress>0);
     return progress?exercise('engineering','2 / 3','Finish under cover','The work has started. Use the same structure again if work remains. A hit interrupts an action, so hold a squad nearby while your soldier finishes.')
-      :exercise('engineering','1 / 3','Inspect the engineering option','Select weakened wall, countermine timbering or siege works through All actions or the scene. Read its work requirement, move into reach and use it under cover. It is optional unless named in the mission objective.');
+      :exercise('engineering','1 / 3','Inspect the engineering option','Select weakened wall, countermine timbering or the siege ramp through All actions or the scene. Read its work requirement, move into reach and use it under cover. It is optional unless named in the mission objective.');
   }
   return null;
 }
