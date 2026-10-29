@@ -1555,6 +1555,14 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   **reign card**: a picture of your ruler's name, choices and route to
   share.
 
+- With the 3D view on, the oath at the start and the accession at the
+  end are staged in 3D over their paintings. The camera frames their
+  moments in turn: the recruits before the standard, Varro holding out
+  the words and your own soldier swearing; the legions before the
+  tribunal, the herald, the Senate's witness and the new Augustus. With
+  reduced motion it keeps the first view. If you turn or zoom the view
+  yourself, it stays where you put it.
+
 # Defeat, retry and saving
 
 ## When an encounter goes wrong

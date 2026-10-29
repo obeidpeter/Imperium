@@ -24,6 +24,10 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - The walls take the code-built curtain's line and pattern, and keep clear of the claimant's cohorts drawn up before them.
   - On Performance, or if they cannot be downloaded, the code-built curtain stands in their place.
   - They add 0.43 MB to the pack of Chapter XII.
+- **The oath and the accession in story beats.** The 3D ceremonies no longer circle slowly round their tableaux. The camera frames their moments in turn, holding each for five or six seconds before moving to the next ([`ceremony.js`](src/showcase/ceremony.js)):
+  - at the oath on the Novae parade ground: the recruits drawn up, the view over their shoulders to Varro and the standard, Varro holding out the words, the recruits reciting, and your own soldier;
+  - at the accession: the legions before the tribunal, the herald, the Senate's witness, the acclamation, and the new Augustus.
+  - With reduced motion the camera keeps the first view. If you turn or zoom the view yourself, it stays where you put it.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 

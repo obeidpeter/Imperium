@@ -13,6 +13,7 @@ import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {aurelianWallsUrl} from './aurelian-walls.js';
+import {ceremonyShot} from './ceremony.js';
 import {createCombatEffects} from './combat-effects.js';
 import {CLOUD_UNIFORMS,cloudStrength,cloudWind,createLightShafts,installCloudShadows,installGroundMist,landscapeFogRange} from './atmosphere.js';
 import {createMistBanks} from './water-mist.js';
@@ -695,6 +696,12 @@ export class BattleStage{
       }
       else light.intensity=0;}
     this.refreshFollowCamera(selected?.group.position,!!selected?.group.userData.actor?.mounted);
+    // A ceremony's story beats (ceremony.js) frame its moments in turn. Reduced motion keeps
+    // the first; once the viewer moves the view (stage-input.js), it stays where they put it.
+    if(this.ceremony?.beats&&!this.ceremonyHeld){
+      const shot=ceremonyShot(this.ceremony.beats,this.reducedMotion?0:this.elapsed),focus=this.world(shot.focus);
+      Object.assign(this.orbit,{yaw:shot.yaw,pitch:shot.pitch,distance:shot.distance});this.baseTarget.set(focus.x,focus.y+shot.lift,focus.z);
+    }
     const conversation=this.conversationFrame(),target=conversation?.target??(this.live&&this.cameraView==='horizon'?this.live.cameraTarget?.()??this.baseTarget.clone():
       this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone());
     let actionGoal=0;
@@ -715,7 +722,6 @@ export class BattleStage{
     }
     this.actionBlend=(this.actionBlend??0)+(actionGoal-(this.actionBlend??0))*Math.min(1,dt*4);
     if(this.reducedMotion||!this.animation&&this.actionBlend<.002)this.actionBlend=0;
-    if(this.ceremony&&!this.reducedMotion&&!this.drag)this.orbit.yaw+=dt*.045; // a slow, steady circuit of the tableau
     if(this.figureStyle==='painted'&&!this.drag&&this.cameraView==='overview'){
       const goal=diagonalYaw(this.orbit.yaw);this.orbit.yaw+=(goal-this.orbit.yaw)*(this.reducedMotion?1:Math.min(1,dt*5));
     }

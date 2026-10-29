@@ -37,7 +37,8 @@ export const stageCamera={
   home(){
     this.followCollision=null;
     if(this.ceremony){
-      const focus=this.world(this.ceremony.focus??{x:3.5,y:3.5});this.focusMode=false;this.cameraView='ceremony';this.orbit.yaw=this.ceremony.yaw??-.62;
+      // Home also gives the view back to the ceremony's story beats (stage.js).
+      const focus=this.world(this.ceremony.focus??{x:3.5,y:3.5});this.focusMode=false;this.cameraView='ceremony';this.ceremonyHeld=false;this.orbit.yaw=this.ceremony.yaw??-.62;
       this.orbit.pitch=this.ceremony.pitch??.3;this.orbit.distance=this.ceremony.distance??17;this.baseTarget.set(focus.x,focus.y+1.1,focus.z);return;
     }
     this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.profile?.staging?.camera.yaw??(this.encounter.kind==='contest'?-.28:-.55);
