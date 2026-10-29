@@ -21,7 +21,7 @@
 // enemy plans seen across seeds, its rounds and slack, the share of our squads'
 // strength lost, and the tick times on this machine (Node, headless, not a
 // phone). Release 3's targets are checked at the end. Development only:
-//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--baseline=FILE] [--label=release4] [--missions=0] [--write]
+//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--baseline=FILE] [--label=release4] [--missions=0] [--operations=other] [--write]
 // New Game's campaigns play release 7's missions; --missions=0 plays a campaign begun before them.
 // --baseline names an earlier sweep's report whose tick p95 each battle must not
 // exceed by more than 0.3 ms (default: the Gate 4 sweep); it is fair only from the
@@ -36,6 +36,8 @@ import {roundOf,step} from '../src/core/realtime/simulation.js';
 import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 import {TIME} from '../src/data/realtime-rules.js';
 import {CHAPTERS} from '../src/data/campaign.js';
+import {MISSION_BRANCHES} from '../src/data/mission-operations.js';
+import {PROGRESSION_OPERATIONS} from '../src/data/progression-operations.js';
 
 const arg=(name,fallback)=>process.argv.find(a=>a.startsWith(`--${name}=`))?.split('=')[1]??fallback;
 const SEEDS=Number(arg('seeds',20)),DIFFICULTY=arg('difficulty','standard'),FIRST=4,LAST=Number(arg('last',12)),R=TIME.roundTicks,MAX_SEEDS=60;
@@ -50,6 +52,10 @@ export const ROUTES=Object.freeze(['backer','battle','defection','settlement','s
 // The meters each standoff route needs, as the archive's practice opens it (game.js).
 const ROUTE_METERS={defection:{army:55},settlement:{political:50},surrender:{public:60,political:40}};
 export const OTHER_DECISIONS=Object.freeze({ch6:'obey',ch8:'soldiers'});
+// With --operations=other, pass 2 also takes each battle's second operation in camp (Chapter IV's hold for the
+// baggage train, X's south road and the rest), so every operation is played in real time.
+const OTHER=arg('operations','first')==='other';
+export const otherOperations=missions=>Object.fromEntries(Object.entries(missions?MISSION_BRANCHES:PROGRESSION_OPERATIONS).filter(([,b])=>b.length>1).map(([id,b])=>[id,b[1].id]));
 const percentile=(list,p)=>{if(!list.length)return null;const s=[...list].sort((a,b)=>a-b);return s[Math.min(s.length-1,Math.floor(p*s.length))];};
 const lostOnDeadline=r=>r.status!=='won'&&/deadline/i.test(r.reason??'');
 
@@ -77,14 +83,14 @@ export function playBattle(state,{maxRounds=40,attempt=1}={}){
 }
 
 // One seed's campaign in real time: every try of the battles of IV–XII it played.
-export function campaign(seed,{difficulty=DIFFICULTY,choices={},camps=null,retries=RETRIES}={}){
+export function campaign(seed,{difficulty=DIFFICULTY,choices={},operations={},camps=null,retries=RETRIES}={}){
   const runs=[],ready=Array.from({length:LAST},(_,i)=>i+1);let stopped=null;
-  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,retries,missions:MISSIONS,play:playBattle,onEncounter(state,summary){
+  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,operations,retries,missions:MISSIONS,play:playBattle,onEncounter(state,summary){
     // Pass 3's Chapter XII camp, kept on the way: the Senate's recognition recorded, the confrontation ahead.
     if(camps&&state.encounter?.id==='ch12-legitimacy'&&!camps.has(seed)&&state.encounter.status==='won'){
       const copy=G.deserialize(G.serialize(state));if(G.commitEncounter(copy).ok)camps.set(seed,G.serialize(copy));}
     if(!summary.realtime)return;
-    if(state.chapter>=FIRST)runs.push({seed,decision:state.decisions[G.getChapter(state).decision.id],...summary});
+    if(state.chapter>=FIRST)runs.push({seed,decision:state.decisions[G.getChapter(state).decision.id],operation:state.encounter?.operation?.branch??null,...summary});
     else if(summary.status!=='won'&&summary.tries>retries)stopped={seed,id:summary.id,chapter:state.chapter,status:summary.status,reason:summary.reason,rounds:summary.rounds,deadline:summary.deadline};}});}
   catch(error){if(!stopped&&!runs.some(r=>r.status!=='won'&&r.tries>retries))stopped={seed,id:null,status:'error',reason:error.message.split('\n')[0]};}
   return {runs,stopped};
@@ -113,7 +119,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
       for(const r of out.runs.filter(r=>r.id===id)){runs.push(r);onResult?.(r,1);}}
   }
   // Pass 2: the other decisions.
-  for(let s=1;s<=seeds;s++){const out=campaign(s,{difficulty,choices:OTHER_DECISIONS,retries});if(out.stopped)stopped.push({pass:2,...out.stopped});for(const r of out.runs){variants.push(r);onResult?.(r,2);}}
+  for(let s=1;s<=seeds;s++){const out=campaign(s,{difficulty,choices:OTHER_DECISIONS,operations:OTHER?otherOperations(MISSIONS):{},retries});if(out.stopped)stopped.push({pass:2,...out.stopped});for(const r of out.runs){variants.push(r);onResult?.(r,2);}}
   // Pass 3 (with the finale): every route from each seed's Chapter XII camp, retried as a battle is.
   const routes=[];
   if(LAST>=12)for(let s=1;s<=seeds;s++){
@@ -134,7 +140,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
       plans:[...new Set(list.flatMap(r=>r.plans??[]))].sort(),
       roundsMedian:percentile(firstWins.map(o=>o.first.rounds),.5),roundsMax:firstWins.length?Math.max(...firstWins.map(o=>o.first.rounds)):null,
       slackMin:firstWins.length?Math.min(...firstWins.map(o=>o.first.slack)):null,lossMedian:percentile(seen.map(o=>o.won?.loss).filter(n=>n!==null&&n!==undefined),.5),
-      otherDecision:other.length?{decision:variants.find(r=>r.id===id).decision,seeds:other.length,firstTry:other.filter(o=>o.first.status==='won').length,
+      otherDecision:other.length?{decision:variants.find(r=>r.id===id).decision,operation:variants.find(r=>r.id===id).operation,seeds:other.length,firstTry:other.filter(o=>o.first.status==='won').length,
         within:other.filter(o=>o.tries!==null).length}:null,
       hidden:list.filter(r=>r.hidden>0).length,ambushes:{enemy:list.reduce((n,r)=>n+(r.ambushes?.enemy??0),0),ours:list.reduce((n,r)=>n+(r.ambushes?.ours??0),0)},
       actorsMax:Math.max(...list.map(r=>r.actors)),squadsMax:Math.max(...list.map(r=>r.squads)),
@@ -144,7 +150,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
     return {route,seeds:seen.length,firstTry:firstWins.length,within:seen.filter(o=>o.tries!==null).length,injected:seen.filter(o=>o.first.injected).length,
       roundsMedian:percentile(firstWins.map(o=>o.first.rounds),.5),roundsMin:firstWins.length?Math.min(...firstWins.map(o=>o.first.rounds)):null,
       roundsMax:firstWins.length?Math.max(...firstWins.map(o=>o.first.rounds)):null,plans:[...new Set(seen.flatMap(o=>o.first.plans??[]))].sort()};}).filter(f=>f.seeds);
-  return {source:`New Game${MISSIONS?' with release 7\'s missions':' as campaigns begun before release 7\'s missions'}; the campaign in real time through Chapter ${LAST===12?'XII':'IX'} by legal commands (Contests by the 0.38 autoplay); each real-time battle played by the heuristic bot through legal Commands, a lost battle retried from its checkpoint up to ${retries} times`,
+  return {source:`New Game${MISSIONS?' with release 7\'s missions':' as campaigns begun before release 7\'s missions'}${OTHER?'; pass 2 with each battle\'s second operation':''}; the campaign in real time through Chapter ${LAST===12?'XII':'IX'} by legal commands (Contests by the 0.38 autoplay); each real-time battle played by the heuristic bot through legal Commands, a lost battle retried from its checkpoint up to ${retries} times`,
     difficulty,seeds,retries,seedsUsed:seed,chapters:[FIRST,LAST],otherDecisions:OTHER_DECISIONS,battles,...(finale.length?{finale}:{}),
     losses:[...runs,...variants,...routes].filter(r=>r.status!=='won'),stopped,runs,variants,...(routes.length?{routes}:{})};
 }

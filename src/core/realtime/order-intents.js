@@ -60,7 +60,7 @@ function orderCommand(world,squads,order){
   const payload={squads,order},reason=orderProblem(world,payload),cost=Object.values(orderCosts(order,squads)).reduce((a,b)=>a+b,0);
   const what=describeOrder(world,order,squads);
   if(reason)return {command:null,cursor:'blocked',message:`${what}: ${REASONS[reason]??reason}`,reason,order};
-  return {command:{actorId:world.heroId,kind:'order',payload},cursor:order.kind==='attack'?'order_attack':'order_advance',
+  return {command:{actorId:world.heroId,kind:'order',payload},cursor:['attack','charge'].includes(order.kind)?'order_attack':'order_advance',
     message:`${what} (${cost} Command).`,reason:null,order};
 }
 export function describeOrder(world,order,squads){

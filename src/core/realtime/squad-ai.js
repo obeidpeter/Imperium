@@ -97,7 +97,9 @@ function followOrder(world,squad){
       if(!t||(t.members?!fielded(world,t)||t.broken:!standingActor(t))){squad.order=null;return false;}
       const p=centreOf(world,t),c=squadCentre(world,squad),d=span(p.x-c.x,p.z-c.z);
       if(!o.wheeled&&!o.back&&d<EXCHANGE.chargeRun){const k=d||1,far=EXCHANGE.chargeRun-d+4;o.back=clampToMap(navGrid(world.map),{x:c.x+(c.x-p.x)/k*far,z:c.z+(c.z-p.z)/k*far},2);}
-      if(!o.wheeled&&o.back&&span(c.x-o.back.x,c.z-o.back.z)>3&&d<EXCHANGE.chargeRun){goTo(world,squad,o.back,{run:true});plan(squad,`Wheel away for the run-up at ${t.name}.`,{targetId:t.id,x:o.back.x,z:o.back.z});return true;}
+      // It wheels for a round at most: a squad with no room to wheel charges from where it stands.
+      if(!o.wheeled&&o.back&&span(c.x-o.back.x,c.z-o.back.z)>3&&d<EXCHANGE.chargeRun&&world.tick-o.since<R){goTo(world,squad,o.back,{run:true});
+        plan(squad,`Wheel away for the run-up at ${t.name}.`,{targetId:t.id,x:o.back.x,z:o.back.z});return true;}
       o.wheeled=true;goTo(world,squad,p,{run:true,stopAt:1.5});plan(squad,`Charge ${t.name}.`,{targetId:t.id,x:p.x,z:p.z});return true;
     }
     // A feigned retreat: ride at the nearest enemy horse or raiders until they see it, then away as if routed; those
@@ -110,10 +112,11 @@ function followOrder(world,squad){
         if(!chasers.length){squad.order=null;return false;}
         const near=chasers[0];
         if(near.d>F.draw){const p=squadCentre(world,near.t);goTo(world,squad,p,{run:true,stopAt:F.draw*.8});plan(squad,`Ride at ${near.t.name} to draw it out.`,{targetId:near.t.id,x:p.x,z:p.z});return true;}
-        o.fleeing=true;o.to=retreatPoint(world,squad,near.t,o);
+        o.fleeing=true;o.fledAt=world.tick;o.to=retreatPoint(world,squad,near.t,o);
       }
       for(const {t,d}of chasers)if(d<=F.draw&&!t.drawnBy){t.drawnBy=squad.id;emit(world,{kind:'drawn',squadId:t.id,by:squad.id});}
-      if(span(c.x-o.to.x,c.z-o.to.z)<=3&&!squad.path.length){
+      // It turns at its place, or after two rounds of flight if it cannot reach it.
+      if(span(c.x-o.to.x,c.z-o.to.z)<=3&&!squad.path.length||world.tick-o.fledAt>=2*R){
         const drawn=squadsOf(world).filter(t=>t.drawnBy===squad.id);
         for(const t of drawn){t.drawnBy=null;if(!fielded(world,t))continue;t.cohesion=clamp(t.cohesion-F.strungOut);emit(world,{kind:'strung-out',squadId:t.id,cohesion:Math.round(t.cohesion)});}
         const prey=drawn.filter(t=>fielded(world,t)&&!t.broken).map(t=>({t,d:span(squadCentre(world,t).x-c.x,squadCentre(world,t).z-c.z)})).sort((a,b)=>a.d-b.d||(a.t.id<b.t.id?-1:1))[0]?.t;

@@ -210,7 +210,7 @@ function playTurnEncounter(state){
   return {...playEncounter(state,contestPolicy(state)),fallback:true};
 }
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true}={}){
+  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={}}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty,missions}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
@@ -223,6 +223,8 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
       if(state.chapter===8&&!state.negotiation)G.negotiate(state,'safe-passage');
       if(state.chapter===9&&!state.stratagem)G.selectStratagem(state,'flank');
       if(state.chapter===10){if(!state.allocation)G.allocate(state,{river:2,farms:2,town:2});if(!state.judgment)G.judge(state,state.decisions.ch10);}
+      // An operation chosen in camp other than the first, by its battle (`operations`: { 'ch10-road':'south' }).
+      const plan=G.operationChoices(state);if(plan.enabled&&operations[plan.encounterId]){const r=G.chooseOperation(state,operations[plan.encounterId]);if(!r.ok)throw new Error(r.message);}
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){
