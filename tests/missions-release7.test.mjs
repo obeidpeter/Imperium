@@ -77,7 +77,7 @@ test('turn-based escalade: climbers hold each ladder\'s head, the line pays the 
   const s=turnBased('ch4-gate'),e=s.encounter;
   for(const id of ['ladder-north','ladder-south']){const u=e.units.find(x=>x.id===`${id}-climbers`);assert.ok(u,id);assert.equal(u.side,'enemy');assert.equal(u.hp,4);assert.equal(u.works,id);}
   const before=e.defence;assert.ok(G.endTurn(s).ok);
-  assert.ok(e.log.some(l=>/siege works still stand/.test(l)));
+  assert.ok(e.log.some(l=>/ladder still stands?: the defended line loses \d+ this round/.test(l)),'the standing works are named');
   assert.equal(e.defence,before-difficultyRule(e).pressure,'the works cost the pressure, no more');
   // Injected: the company off the field but for the soldier, four tiles from either ladder's head, so no point can be
   // held; and the climbers of each ladder still standing struck down. Their ladders fall at the turn's end, before the
@@ -89,7 +89,7 @@ test('turn-based escalade: climbers hold each ladder\'s head, the line pays the 
   const line=e.defence,from=e.log.length;assert.ok(G.endTurn(s).ok);
   for(const w of standing)assert.ok(e.log.slice(from).some(l=>l.includes(`The ladder at ${w.at[0]+1}${String.fromCharCode(65+w.at[1])} is thrown down.`)),w.id);
   assert.equal(e.operation.index,1,'both ladders down: the rear files come out');
-  assert.ok(!e.log.slice(from).some(l=>/siege works still stand/.test(l)));assert.equal(e.defence,line,'no work stands at the turn\'s end');
+  assert.ok(!e.log.slice(from).some(l=>/still stands?: the defended line loses/.test(l)));assert.equal(e.defence,line,'no work stands at the turn\'s end');
 });
 
 test('turn-based feigned retreat: the phase ends when the armoured horse reaches the marker, or when none of it is left (injected positions)',()=>{
@@ -130,7 +130,7 @@ test('real time: the ram batters the barred river gate and the line pays the pre
   for(const [x,y]of gate.cells)assert.equal(w.map.terrain[y][x],'wall','the shut gate closes its road');
   validateWorld(w,fail);
   const defence=m.defence;worksRound(w);
-  assert.equal(gate.integrity,STRUCTURES.gate.integrity+STRUCTURES.gate.bar-STRUCTURES.gate.batter*STRUCTURES.gate.ram);assert.equal(m.defence,defence-m.pressure);
+  assert.equal(gate.integrity,STRUCTURES.gate.integrity+STRUCTURES.gate.bar-STRUCTURES.gate.batter*STRUCTURES.gate.ram);assert.equal(m.defence,defence-m.pressure);assert.equal(m.worksLoss,m.pressure);
   // The ram's ground held (its point secured, as missionTick finds it): it burns, and the works cost nothing more.
   m.points[0].secured=true;worksSecured(w,0);assert.equal(ram.state,'burnt');assert.equal(ram.done,true);
   const after=m.defence,integrity=gate.integrity;worksRound(w);assert.equal(m.defence,after);assert.equal(gate.integrity,integrity);
@@ -251,9 +251,11 @@ test('the mission readouts name each mission\'s own task, and read the world wit
     assert.match(full.next,new RegExp(`the line loses ${w.mission.pressure} at each round`));
     for(let t=0;t<R&&w.status==='active';t++)step(w);
     assert.ok(w.mission.points.some(p=>!p.secured),'a ladder still stands after the first round');
-    assert.ok(w.log.some(l=>/siege works still stand/.test(l.text)));
+    assert.ok(w.log.some(l=>/ladder still stands?: the line weakens to \d+\./.test(l.text)),'the standing ladders are named');
+    assert.equal(w.mission.worksLoss,w.mission.pressure,'what they cost the line is kept');
     // Injected: the line broken. The works are named as the cause, and the help says what to do about them.
-    w.mission.defence=0;assert.match(missionDefeatCause(w),/siege works stood too long/);assert.match(missionDefeatHelp(w),/siege works at once/);}
+    w.mission.defence=0;assert.match(missionDefeatCause(w),new RegExp(`^The ladders cost the line ${w.mission.pressure} while they stood`));
+    assert.match(missionDefeatHelp(w),/go for the works at once: beat a ladder’s climbers/);}
   // The sortie: the ram, and the barred gate it batters.
   {const {world:w}=realtime('ch5-wall'),{full,small}=read(w);
     assert.match(small.headline,/^Burn the ram/);assert.match(small.progress,/^Ram standing · line \d+$/);

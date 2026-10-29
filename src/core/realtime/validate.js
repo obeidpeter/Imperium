@@ -58,7 +58,7 @@ export function validateWorld(world,fail){
   if(mission!==null&&mission!==undefined){
     if(typeof mission!=='object'||!str(mission.mode,20)||!mission.goal||!num(mission.goal.x)||!num(mission.goal.z)||!num(mission.radius)||!int(mission.deadline,1,40)
       ||!Array.isArray(mission.waves)||mission.waves.length>30||!Array.isArray(mission.points)||mission.points.length>16||!Array.isArray(mission.escorts)
-      ||!int(mission.heldTicks,0,1e7)||!num(mission.defence))fail('real-time mission.');
+      ||!int(mission.heldTicks,0,1e7)||!num(mission.defence)||(mission.worksLoss!==undefined&&!int(mission.worksLoss,1,1e4)))fail('real-time mission.');
     // Release 7's missions (field-missions.js): each phase's works, lure, convoy road, line and volleys.
     for(const p of [mission,...(Array.isArray(mission.phaseMissions)?mission.phaseMissions:[])])
       if(p.works!==undefined&&(!Array.isArray(p.works)||p.works.length>4||p.works.some(w=>!w||!str(w.id,40)||!['ram','ladder'].includes(w.kind)||!str(w.name)||!num(w.x)||!num(w.z)

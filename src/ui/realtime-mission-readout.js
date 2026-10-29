@@ -36,6 +36,7 @@ function objective(world,base){
 }
 
 // Release 7's missions (data/mission-operations.js): what each asks, in the readout's words.
+const worksKinds=m=>{const kinds=new Set((m.phaseMissions??[m]).flatMap(p=>p.works??[]).map(w=>w.kind));return {ram:kinds.has('ram'),ladder:kinds.has('ladder')};};
 const standingWorks=m=>(m.works??[]).filter((w,i)=>!m.points[i]?.secured);
 function worksNext(world){
   const m=world.mission,left=standingWorks(m),ram=left.find(w=>w.kind==='ram'),ladders=left.filter(w=>w.kind==='ladder').length;
@@ -174,7 +175,7 @@ export function missionDefeatCause(world){
   if(hero&&(!hero.alive||hero.down)){const by=world.actors.find(a=>a.id===hero.killedBy);return by?`You fell to ${by.name}.`:'Your soldier fell before the objective was secured.';}
   const lost=escorts(world).find(a=>!a.alive);
   if(lost){const by=world.actors.find(a=>a.id===lost.killedBy&&!a.hidden);return `${lost.name} was lost${by?` to ${by.name}`:''}. Every protected survivor must reach safety; your soldier’s remaining Health cannot replace that objective.`;}
-  if(m?.defence<=0&&(world.log??[]).some(l=>/siege works still stand/.test(l.text)))return 'The siege works stood too long, and the defended line broke.';
+  if(m?.defence<=0&&m.worksLoss>0){const w=worksKinds(m);return `${w.ram&&w.ladder?'The ram and the ladders':w.ram?'The ram':'The ladders'} cost the line ${m.worksLoss} while ${w.ladder?'they':'it'} stood, and the defended line broke.`;}
   if(m?.defence<=0)return 'Enemy occupation exhausted the defended line. The marked ground needed a friendly screen.';
   if(m&&world.tick>=m.deadline*TIME.roundTicks){
     if(needed(world).length)return `The deadline passed before you could ${capabilityTasks(needed(world))}.`;
@@ -194,7 +195,8 @@ export function missionDefeatHelp(world,keymap=DEFAULT_KEYMAP){
   if(m?.mode==='settlement')return `Pause (${pause}) and follow the envoy to the claimant’s marker. Keep your soldier within ${Math.round(m.radius*2)} m, use Rally, and sustain the meeting for two round endings. The envoy is protected by parley; he needs your presence and reassurance, not a rescue treatment.`;
   if(m?.convoy&&m.escorts?.length)return `Retry restores the checkpoint. Pause (${pause}) and send a squad ahead of the convoy: it halts while an enemy is within ${ESCORT_RULES.halt} m of it, and a protected column lost ends the battle.`;
   if(m?.escorts?.length)return `Retry restores the rescue checkpoint. Pause (${pause}) to identify the casualty, the nearest raider and the rally marker. Cover the approach before Bind wounds (3s, interrupted by a hit), or sheathe your weapon and Carry. Healing does not make him safe: keep a protector within ${ESCORT_RULES.cover} m of a threatened survivor, then escort every survivor and your soldier into the marker. No permanent companion fate is changed by this failed attempt.`;
-  if(m?.defence<=0&&(world.log??[]).some(l=>/siege works still stand/.test(l.text)))return `Pause (${pause}) and go for the siege works at once: beat a ladder’s climbers, or hold a work’s ground with no enemy there. Every round one stands costs the line.`;
+  if(m?.defence<=0&&m.worksLoss>0){const w=worksKinds(m);
+    return `Pause (${pause}) and go for the works at once: ${[w.ram?'hold the ram’s ground with no enemy beside it to burn it':'',w.ladder?'beat a ladder’s climbers, or hold its head with no enemy there':''].filter(Boolean).join('; ')}. Every round one stands costs the line ${m.pressure}.`;}
   if(m?.defence<=0)return `Pause (${pause}) and put a friendly screen on the marked ground. Chasing enemies away leaves the stores or line exposed; hold the position while another group handles the flank.`;
   if(m&&world.tick>=m.deadline*TIME.roundTicks)return `Pause (${pause}) at the start and follow the objective strip. ${nextStep({...world,status:'active'})} Optional opportunities never replace the main objective.`;
   const log=(world.log??[]).map(l=>l.text).join('\n');

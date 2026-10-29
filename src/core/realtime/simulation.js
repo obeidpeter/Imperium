@@ -237,6 +237,8 @@ function checkObjectives(world){
 // The battle log: the events worth reading, with their battle time and place.
 const nameOf=(world,id)=>actorById(world,id)?.name??objectById(world,id)?.name??'Someone';
 const squadName=(world,id)=>squadById(world,id)?.name??'A squad';
+// Release 7's siege works by name: "The North ladder and the South ladder".
+const theWorks=names=>{const l=names.map(n=>`the ${n}`),s=l.length>1?`${l.slice(0,-1).join(', ')} and ${l.at(-1)}`:l[0]??'the siege works';return s[0].toUpperCase()+s.slice(1);};
 const ORDER_WORDS={advance:'advance',attack:'attack',hold:'hold fast',restore:'steady the men',withdraw:'withdraw and brace',line:'form line',
   'shield-wall':'form shield wall',wedge:'form wedge',lie_in_wait:'lie in wait',charge:'charge',feigned_retreat:'ride away as if routed'};
 function logLine(world,e){
@@ -271,7 +273,7 @@ function logLine(world,e){
     case 'revealed':return `${by} is revealed${e.how==='scout'?' by scouting':''}.`;
     case 'reinforcements':return 'Enemy reinforcements arrive.';
     case 'secured':return 'A position is secured.';
-    case 'pressure':return e.works?`The siege works still stand: the line weakens to ${e.defence}.`:`Enemies hold the objective: the line weakens to ${e.defence}.`;
+    case 'pressure':return e.works?`${theWorks(e.works)} still ${e.works.length>1?'stand':'stands'}: the line weakens to ${e.defence}.`:`Enemies hold the objective: the line weakens to ${e.defence}.`;
     case 'oath-heard':return `${e.name} hears the soldier’s oath: its morale falls to ${e.morale}.`;
     case 'pledge':return `${e.name} pledges itself to the soldier${e.joined?' and joins his side':' and leaves the field'}.`;
     case 'meeting':return `The meeting holds: ${e.rounds} of 2 rounds.`;

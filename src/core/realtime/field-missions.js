@@ -51,7 +51,8 @@ export function worksRound(world){
     const ram=w.kind==='ram'?world.objects.find(o=>o.id===w.id):null,gate=ram?.gateId?world.objects.find(o=>o.id===ram.gateId):null;
     if(gate?.state==='closed')breakGate(world,gate,STRUCTURES.gate.batter*STRUCTURES.gate.ram,null);
   }
-  if(m.pressure){m.defence-=m.pressure;emit(world,{kind:'pressure',amount:m.pressure,defence:m.defence,works:true});}
+  // What the works cost the line is kept (`worksLoss`) for the defeat's explanation: the log keeps only its last lines.
+  if(m.pressure){m.defence-=m.pressure;m.worksLoss=(m.worksLoss??0)+m.pressure;emit(world,{kind:'pressure',amount:m.pressure,defence:m.defence,works:standingWorks.map(w=>w.name)});}
 }
 
 // The lure (mission.js objectiveMet): the named horse at the marker, or none of it left in the saddle unbroken
