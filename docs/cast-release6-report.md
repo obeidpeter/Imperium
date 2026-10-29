@@ -117,7 +117,51 @@ The stage benchmark (`npm run benchmark:stage -- --dist --check --max-programs 5
 
 <!--FILL: stage explanations-->
 
-<!--FILL: calibration-->
+## Calibration
+
+The sweeps ([Story](evidence/realtime-release6-sweep-story.json), [Standard](evidence/realtime-release6-sweep-standard.json), [Veteran](evidence/realtime-release6-sweep-veteran.json)) play as at release 5. Each plays the seed's campaign from New Game in three passes: each chapter's first decision; the decisions that change a field the other way; and every finale route from the seed's Chapter XII camp. A lost battle is retried from its checkpoint by the legal Retry command, up to once on Story, twice on Standard and three times on Veteran.
+
+### Against the plan's targets
+
+Each target counts the 13 battles of pass 1 and the 5 finale routes of pass 3 on each of 20 seeds: 360 battles a level.
+
+| Target | Story | Standard | Veteran |
+| --- | --- | --- | --- |
+| Won on the first try: Story every one, Standard ≥ 90%, Veteran ≥ 70% | 360 of 360 | 360 of 360 | 359 of 360 |
+| Won within the tries allowed (one, two, three) | 360 of 360 | 360 of 360 | 360 of 360 |
+| At least three enemy plans in each battle across the seeds | every battle | every battle | every battle |
+| The finale's battle lasts 8–12 of its 16 rounds | 10 rounds | 8 rounds | 8 rounds |
+| The simulation's tick rises by at most 0.3 ms at p95 | see [Tick time](#tick-time) | | |
+
+Every battle and finale route on all three levels, retries included, played exactly as in [release 5's sweeps](nature-release5-report.md#calibration). Results, rounds, slack, losses, plans, hidden squads and ambushes were the same, and only the tick times differ. Veteran's one first-try loss is the same one: Chapter VI's wells on seed 15, where a protected column was lost in round 4 and the retry won.
+
+### Compared with main
+
+Main (`aeb5a10`) and this release were swept on the same 20 seeds on Standard, with the same bot. The four runs went one after the other with nothing else running, main and this release twice each. Every battle and route played identically in all four. That is expected: no file under `src/core/` changed, and the figures are presentation only.
+
+### Tick time
+
+The simulation's tick at p95, as the mean of the two runs on each side:
+
+| Battle | Main | This release | Change |
+| --- | ---: | ---: | ---: |
+| IV, the gate | 0.59 ms | 0.60 ms | +0.01 |
+| IV, the wall | 0.80 ms | 0.76 ms | −0.04 |
+| V, the mine | 0.91 ms | 0.86 ms | −0.05 |
+| V, the wall | 0.80 ms | 0.76 ms | −0.05 |
+| VI, the wells | 0.85 ms | 0.82 ms | −0.03 |
+| VI, the eagle | 0.79 ms | 0.81 ms | +0.02 |
+| VII, the legion | 1.19 ms | 1.17 ms | −0.02 |
+| VIII, the ferry | 1.19 ms | 1.19 ms | −0.01 |
+| VIII, the crossing | 1.13 ms | 1.10 ms | −0.02 |
+| IX, the wing | 1.00 ms | 0.96 ms | −0.04 |
+| IX, the city | 1.21 ms | 1.16 ms | −0.05 |
+| X, the road | 1.19 ms | 1.19 ms | −0.00 |
+| XII, the confrontation | 1.48 ms | 1.48 ms | −0.01 |
+
+The largest rise is 0.02 ms, at Chapter VI's eagle, well within the plan's 0.3 ms. The simulation runs the same code on both sides, so these differences come from run-to-run variation on the container. Each Standard sweep took 503–516 s, against 563–613 s at release 5, so today's times compare only with each other.
+
+The Story and Veteran sweeps ran together on the container's four cores, and their own tick lines compare each battle with the Gate 4 sweep, a Standard sweep recorded on a faster container. They report NOT MET (Story +0.49 ms at Chapter VIII's ferry, Veteran +0.43 ms at its crossing), so each run exited with a failure, but those times are not comparable and are not the plan's measure. None of these times is a phone's: the budget there is 4 ms at p95 on a 2022 phone, and no phone has been measured.
 
 ## Limitations
 
