@@ -111,6 +111,8 @@ try{
   if(command==='rig'){await rig(file,request);process.exit(0);}
   if(command==='generate'){
     if(request.provenance?.taskId)throw new Error(`${request.id} already has task ${request.provenance.taskId}; use resume, or clear taskId to pay for a new one.`);
+    // Tripo refuses a longer prompt (HTTP 400, code 1004) without charging; say so before asking.
+    if(request.generator.prompt.length>1024)throw new Error(`${request.id}: its prompt has ${request.generator.prompt.length} characters; Tripo takes at most 1,024.`);
     const before=await balance(),body={type:request.generator.task,prompt:request.generator.prompt,...(request.generator.options??{})};
     const {task_id}=await call('/task',{method:'POST',body});
     // Record the task at once, so an interrupted run resumes instead of paying again.
