@@ -221,7 +221,7 @@ Already done (#32, #33): nine company stories, three playable situations, field 
 - **The camps** of Chapters IV and VI–XII each have their own map, places, pads and errand objects in `src/data/camps.js`, and the shared template is gone. Chapter V's pilot courtyard keeps its layout and gains a trader and two errands through its own people.
 - **Presence** follows the scenes' own conditions (`storyWhen` in `src/data/campaign.js`): a camp person may stand only after or until a decision, while Varro or the patron's standing allows, or before a chapter's next encounter. A companion still recovering stands at the valetudinarium (`campPersonSpot`).
 - **The conversations, errands and defeat pages** of the later camps are data in `src/data/living-camps.js`: 18 errands, two a chapter from IV, each worth 2 training points, five of them awarding the titles no deed awarded. The audited ceiling rises from 237 to 273 training points.
-- **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The five figures moved here from release 6 are generated only after the owner approves their credits.
+- **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The camp's women are drawn as women (`actor-kit.js`): a body fits only a figure of its own sex, and the woman's figure is in every chapter's pack. The five figures moved here from release 6 are generated only after the owner approves their credits.
 
 #### 9. Landmarks and set pieces
 

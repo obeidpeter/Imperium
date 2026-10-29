@@ -19,7 +19,8 @@ const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2
   sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3,4],crispus:[3,4,7,11]});
 // The chapters whose chamber the members of the Senate sit in.
 const SENATOR_CHAPTERS=[7,8,10,11,12];
-const body=(fits,chapters,{headwear=null,cast=null,senator=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator});
+// A woman's body (woman) is worn only by the camp's women (actor-kit.js), and a man's never by them.
+const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator,woman});
 // The recruit's head is the one every named man's face is made from, so a named man's
 // own body wears the game's helmet or cap as the recruit does.
 const SHARED_HEAD={position:[-.018,.04,.048],scale:[.85,.9,1.04]};
@@ -45,7 +46,7 @@ export const ACTOR_BODIES=Object.freeze({
   'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // Syra the sutler follows the legion from Novae to the Danube fort, and to the final march.
-  'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3,4,12]),
+  'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3,4,12],{woman:true}),
   'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // The chamber's members in plain togas, each with the band its bloc's trims are drawn on
   // (bind-character.py --bloc-band). Chosen by the member's identity, never by kit.
@@ -93,8 +94,10 @@ export function actorBodyId(kit={},cast=null){
     if(!kit.armored)return 'roman-recruit';
     return kit.officer?(kit.chapter>=7?'roman-commander':'roman-officer'):'roman-legionary';
   }
+  // A body fits a figure of its own sex only: a woman of the camp with no woman's body to fit
+  // her (the traders and the witness) keeps the procedural woman's figure.
   const traits={...kit,armored:!!kit.armored,command:!!kit.officer&&kit.chapter>=7};
-  for(const [id,{fits}]of Object.entries(ACTOR_BODIES))if(fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
+  for(const [id,{fits,woman}]of Object.entries(ACTOR_BODIES))if(woman===!!kit.female&&fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
   return null;
 }
 /** The bodies a chapter's figures can wear, for its offline download group. */

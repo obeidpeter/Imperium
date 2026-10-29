@@ -1,4 +1,9 @@
 import {ITEMS} from '../data/items.js';
+// The camp's women, by the names the camps give them (data/camps.js): Syra the sutler,
+// the traders Vibia, Dida and Caecilia, Licinia the witness and Aelia Dacia. Each is drawn
+// as a woman, in Syra's own body or the procedural woman's figure, never in a man's body;
+// "Aelia's households" are not Aelia (as actor-identity.js reads the cast's names).
+const WOMEN=/^(syra|vibia|dida|caecilia|licinia|aelia)\b(?![’']s\b)/i;
 // Presentation classification only. Names preserve a defecting unit's original
 // equipment; allegiance never changes its ancestry or rewrites campaign state.
 export function actorKit(unit={},options={}){
@@ -22,7 +27,7 @@ export function actorKit(unit={},options={}){
     helmet:armored?(eastern?'conical':faction==='Roman'?'ridge':'segmented'):null,
     cloak:officer||!archer&&armored&&faction==='Roman',wounded:escort&&/wounded/i.test(name),
     // A man the rules give no shield carries none (unit.shield false); otherwise the role decides.
-    shield:unit.shield!==false,...(unit.appearance?{appearance:{...unit.appearance}}:{})};
+    shield:unit.shield!==false,...(unit.appearance?{appearance:{...unit.appearance}}:{}),...(WOMEN.test(name)?{female:true}:{})};
   if(Array.isArray(unit.equipment)&&!civic&&!escort&&!trainer){
     const ids=[...unit.equipment],visual=Object.assign({},...ids.map(id=>ITEMS[id]?.visuals??{}));
     Object.assign(result,{equipped:true,equipment:ids,armor:visual.armour??null,armored:!!visual.armour,helmet:visual.helmet??null,

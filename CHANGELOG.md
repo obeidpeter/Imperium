@@ -43,6 +43,7 @@ The eighth of ten releases: every chapter's camp is a place of its own, with the
 - **Replies that depend on who your soldier is.** Every camp from Chapter IV has replies that need an attribute, a decoration, a title, or the army's or the public's confidence. They are listed dimmed with what they need. Where an errand needs persuading, there is always another way.
 - **A page of history for every defeat.** Every encounter now has one. A lost Contest and a battle lost on the turn-based board show it in their result too, as a lost real-time battle already did.
 - **Named people without a generated body of their own** (Severianus, Aelia, Paullus, Theon and Quintus) are drawn with their own faces, never in a stranger's body.
+- **The camp's women are drawn as women.** Syra wears her own body. The traders Vibia, Dida and Caecilia and Licinia the witness are drawn as the procedural woman, never in the civilian traveller's body. The woman's figure now comes with every chapter's download, not only from Chapter VIII, so Syra is drawn as a woman even when her body fails to load.
 
 ### Worlds and gameplay, release 7: missions and cavalry ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/missions-release7-report.md))
 

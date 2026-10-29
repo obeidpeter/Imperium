@@ -34,7 +34,7 @@ test('Shared dependencies use identical deduplicated URLs across chapters withou
   for(let chapter=1;chapter<=12;chapter++){
     const art=chapterAssets(chapter),models=ownModels(chapter),group=chapterOfflineAssets(chapter,[...files,...files]);
     assert.equal(new Set(group).size,group.length);
-    assert.deepEqual(group.filter(path=>!femaleAssets.includes(path)&&!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)&&!models.includes(path)),first);
+    assert.deepEqual(group.filter(path=>!art.includes(path)&&!chapterAudioAssets(chapter).includes(path)&&!models.includes(path)),first);
     for(const path of [...art.filter(path=>!isFlatArt(path)),...models])assert.ok(group.includes(path),`Chapter ${chapter} artwork lost: ${path}`);
   }
 });
@@ -58,8 +58,8 @@ test('A view decodes only the 2D art it draws: the board all of it, painted figu
   for(const path of [atlas,sheet,ground,props,scene])assert.equal(viewDecodes(path,{flat:true}),true);
 });
 
-test('Female anatomy and complexion are deferred through Chapter VII; male complexion is available for every cold restore',()=>{
-  for(const female of femaleAssets){assert.ok(files.includes(female));for(let chapter=1;chapter<=12;chapter++)assert.equal(chapterOfflineAssets(chapter,files).includes(female),chapter>=8,`Chapter ${chapter}: ${female}`);}
+test('Female and male anatomy and complexion are available for every cold restore: Syra keeps the camp from Chapter I',()=>{
+  for(const female of femaleAssets){assert.ok(files.includes(female));for(let chapter=1;chapter<=12;chapter++)assert.ok(chapterOfflineAssets(chapter,files).includes(female),`Chapter ${chapter}: ${female}`);}
   for(let chapter=1;chapter<=12;chapter++)assert.ok(chapterOfflineAssets(chapter,files).includes('./assets/textures/complexion-male-v018.webp'));
 });
 

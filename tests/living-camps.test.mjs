@@ -12,6 +12,9 @@ import {TITLES} from '../src/data/soldier.js';
 import {tpAuditChapter,tpAuditTotal} from '../src/core/tp-audit.js';
 import {defeatPage} from '../src/ui/tactical-intel.js';
 import {chamberResult} from '../src/ui/chamber-view.js';
+import {actorKit} from '../src/showcase/actor-kit.js';
+import {actorIdentity} from '../src/showcase/actor-identity.js';
+import {actorBodyId} from '../src/ui/actor-body-catalog.js';
 
 // The living camps (worlds and gameplay plan, release 8), from the legally earned
 // camp saves the graphics fixtures keep for every chapter. A branch the save did not
@@ -193,4 +196,21 @@ test('a lost encounter’s result shows its page of history, in the field and in
   state.encounter.status='lost';const html=chamberResult(state);
   assert.ok(html.includes('Historical context')&&html.includes('another man’s plan'),'the chamber result keeps the council’s page');
   state.encounter.status='won';assert.ok(!chamberResult(state).includes('Historical context'),'a won vote has no defeat page');
+});
+
+test('the camp’s women are drawn as women: Syra in her own body, the others as the procedural woman, never in a man’s body',()=>{
+  const women={4:['Syra the sutler'],7:['Vibia the wine-seller'],8:['Aelia Dacia','Dida the honey-seller'],10:['Aelia Dacia','Licinia of the river farms','Caecilia the grain-seller'],12:['Aelia Dacia','Syra the sutler']};
+  for(let chapter=4;chapter<=12;chapter++){
+    const world=Game.createCampWorld(stateFor(chapter)),drawn=world.actors.filter(a=>a.id!=='hero').map(a=>{const kit=actorKit(a,{chapter}),identity=actorIdentity(a,kit);return {name:a.name,kit,identity,body:actorBodyId(kit,identity.key)};});
+    assert.deepEqual(drawn.filter(d=>d.kit.female).map(d=>d.name).sort(),[...(women[chapter]??[])].sort(),`chapter ${chapter}: the women of its camp`);
+    for(const d of drawn){
+      if(d.kit.female){
+        assert.equal(d.identity.female,true,`${d.name} has a woman’s features`);assert.equal(d.identity.beard,0,`${d.name} has no beard`);
+        assert.equal(d.body,d.name.startsWith('Syra')?'camp-sutler':null,`${d.name} wears ${d.name.startsWith('Syra')?'her own body':'the procedural woman’s figure'}`);
+      }else{assert.ok(!d.identity.female,`${d.name} is drawn as a man`);assert.notEqual(d.body,'camp-sutler',`${d.name} never wears Syra’s body`);}
+    }
+  }
+  // A man in the trader's place keeps the civilian traveller's dress; a woman never does.
+  const trader=(name,role='merchant')=>{const unit={id:'trader',name,side:'neutral',role},kit=actorKit(unit,{chapter:7});return actorBodyId(kit,actorIdentity(unit,kit).key);};
+  assert.equal(trader('Barnaios the date-seller'),'civilian-escort');assert.equal(trader('Vibia the wine-seller'),null);assert.equal(trader('Syra the sutler','trader'),'camp-sutler');
 });
