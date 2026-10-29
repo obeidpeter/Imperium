@@ -45,6 +45,7 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - Chapter XII: the Mausoleum of Hadrian, Aurelian's Temple of the Sun and the Milvian Bridge.
   - Where a horizon has its river (Chapters II and VIII), the old bridge's piers stand across it and the quays on its near bank, facing the water. The bridges over the Adda and the Tiber, whose horizons have no river, each have a stream beneath them.
   - They are drawn as code-built outlines in the horizon's distant batch, which the woods and the city's rooftops keep clear of. Each has a slot for a generated model (`LANDMARK_LAYOUT`), which will stand there on Balanced and High once it is made. None is made yet, so nothing more is downloaded.
+- **The camera stays out of Aurelian's walls.** Before the finale, turning the Horizon view (or another low view) toward the walls used to take the camera into them, as it already did with the code-built curtain. Now it comes in to their face and looks out over the field.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 

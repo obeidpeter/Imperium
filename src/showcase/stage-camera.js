@@ -20,6 +20,24 @@ export function actionFraming(orbit,{weight=0,sideYaw=null,painted=false}={}){
 }
 // Painted figures were authored for diagonal views; the overview settles there.
 export const diagonalYaw=yaw=>Math.round((yaw-Math.PI/4)/(Math.PI/2))*(Math.PI/2)+Math.PI/4;
+/** The orbit distance that keeps the camera, at (yaw, pitch) round `target`, out of boxes
+ * ({min, max} as [x, y, z], grown by `margin`): where its line from the target first meets
+ * one, if that is nearer than `distance`, though never nearer the target than `least`. */
+export function clearOfBoxes(boxes,target,{yaw,pitch,distance},{margin=1.5,least=8}={}){
+  if(!boxes?.length)return distance;
+  const d=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)],o=[target.x,target.y,target.z];
+  let nearest=distance;
+  for(const {min,max} of boxes){
+    let enter=-Infinity,leave=Infinity;
+    for(let k=0;k<3;k++){
+      const lo=min[k]-margin,hi=max[k]+margin;
+      if(Math.abs(d[k])<1e-9){if(o[k]<lo||o[k]>hi){enter=Infinity;break;}continue;}
+      const a=(lo-o[k])/d[k],b=(hi-o[k])/d[k];enter=Math.max(enter,Math.min(a,b));leave=Math.min(leave,Math.max(a,b));
+    }
+    if(enter<=leave&&leave>0)nearest=Math.min(nearest,Math.max(0,enter));
+  }
+  return Math.max(Math.min(least,distance),nearest);
+}
 export const stageCamera={
   overviewDistance(){
     const drill=this.encounter.id==='ch1-training',yaw=this.orbit.yaw??-.55,pitch=this.orbit.pitch??.64;

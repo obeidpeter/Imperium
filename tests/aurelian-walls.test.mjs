@@ -12,6 +12,7 @@ import {finaleLayout} from '../src/showcase/environment-finale.js';
 import {hash} from '../src/showcase/environment-layout.js';
 import {createEnvironment} from '../src/showcase/environment.js';
 import {sceneryPlacements,sceneryWorkingSet} from '../src/showcase/scenery-models.js';
+import {clearOfBoxes} from '../src/showcase/stage-camera.js';
 import {WORLD_CATALOG,worldModelUrl} from '../src/ui/world-catalog.js';
 
 // Aurelian's walls and gate before the finale (worlds and gameplay plan, release 9).
@@ -131,4 +132,23 @@ test('the loaded kit replaces the code-built curtain and arch in five draws, and
   walled.dispose();
   assert.equal(freed.size,merged.length,'disposing the world frees the merged walls');
   assert.equal(finished.size,0,'and leaves the cached kit\'s geometry alone');
+});
+
+test('the camera keeps to the field\'s side of the walls, wherever the view is turned',()=>{
+  const world=createEnvironment(new T.Scene(),finale.state.encounter,{chapter:12,quality:'performance',loadTextures:false});
+  const walls=world.group.userData.finaleOccupied,target=new T.Vector3(0,2.7,0),inside=(p,m)=>walls.some(({min,max})=>[0,1,2].every(k=>p[k]>min[k]-m&&p[k]<max[k]+m));
+  assert.ok(walls.length>20);let drawn=0;
+  for(let i=0;i<72;i++)for(const pitch of [.105,.3])for(const distance of [40,90]){
+    const yaw=i/72*Math.PI*2,kept=clearOfBoxes(walls,target,{yaw,pitch,distance}),out=[Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)];
+    assert.ok(kept<=distance&&kept>=8);
+    const at=out.map((v,k)=>[target.x,target.y,target.z][k]+v*kept);
+    assert.ok(!inside(at,1.5-1e-6),`yaw ${yaw.toFixed(2)}: the camera stands in a wall`);
+    // Looking east (the camera west of the board) nothing changes.
+    if(out[0]<=0)assert.equal(kept,distance);
+    if(kept<distance)drawn++;
+  }
+  assert.ok(drawn>0,'some views come in to the walls\' face');
+  // Every other field has no walls, and its camera is never moved.
+  assert.equal(clearOfBoxes(undefined,target,{yaw:1,pitch:.1,distance:50}),50);
+  world.dispose();
 });

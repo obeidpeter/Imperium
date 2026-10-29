@@ -41,7 +41,7 @@ import {createParticleMask,createImpactCloud,sampleImpactParticles,createWeather
 export {preloadBattleFigures} from './stage-preload.js';
 import {stageInput} from './stage-input.js';
 export {intersectGround,rayToUpright} from './stage-input.js';
-import {stageCamera,sideOnYaw,actionFraming,diagonalYaw} from './stage-camera.js';
+import {stageCamera,sideOnYaw,actionFraming,diagonalYaw,clearOfBoxes} from './stage-camera.js';
 import {stageLabels,labelRole,namedFigure} from './stage-labels.js';
 import {stageFigures,figureStyleFinish,voterPosture} from './stage-figures.js';
 import {stagePreparation} from './stage-preparation.js';
@@ -735,6 +735,9 @@ export class BattleStage{
     this.conversationExtra=(this.conversationExtra??0)+(extra-(this.conversationExtra??0))*Math.min(1,dt*4);
     if(this.reducedMotion||this.drag||this.cameraView==='overview'||this.actionCamera===false)this.conversationExtra=0;
     distance+=this.conversationExtra;
+    // Before the finale the camera stays on the field's side of Aurelian's walls: where its
+    // orbit would take it into or behind them, it comes in along its line to their face.
+    distance=clearOfBoxes(this.environment.group?.userData.finaleOccupied,this.lookTarget,{yaw,pitch,distance});
     this.camera.position.set(this.lookTarget.x+Math.sin(yaw)*Math.cos(pitch)*distance,this.lookTarget.y+Math.sin(pitch)*distance,
       this.lookTarget.z+Math.cos(yaw)*Math.cos(pitch)*distance);
     this.camera.position.y=Math.max(this.camera.position.y,this.environment.cameraGroundHeight(this.camera.position.x,this.camera.position.z)+.9);
