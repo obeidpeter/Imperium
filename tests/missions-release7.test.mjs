@@ -71,12 +71,16 @@ test('New Game with the missions plays version 3 of the six re-authored battles,
   const mixed=structuredClone(json);delete mixed.encounter.missionsVersion;assert.throws(()=>G.deserialize(JSON.stringify(mixed)));
 });
 
-test('turn-based escalade: a climber holds each ladder\'s head, and the line pays the pressure every turn while a ladder stands',()=>{
+test('turn-based escalade: climbers hold each ladder\'s head, the line pays the pressure every turn while a ladder stands, and beaten climbers lose their ladder',()=>{
   const s=turnBased('ch4-gate'),e=s.encounter;
-  for(const id of ['ladder-north','ladder-south']){const u=e.units.find(x=>x.id===`${id}-climbers`);assert.ok(u,id);assert.equal(u.side,'enemy');assert.equal(u.hp,7);assert.equal(u.works,id);}
+  for(const id of ['ladder-north','ladder-south']){const u=e.units.find(x=>x.id===`${id}-climbers`);assert.ok(u,id);assert.equal(u.side,'enemy');assert.equal(u.hp,4);assert.equal(u.works,id);}
   const before=e.defence;assert.ok(G.endTurn(s).ok);
   assert.ok(e.log.some(l=>/siege works still stand/.test(l)));
   assert.equal(e.defence,before-difficultyRule(e).pressure,'the works cost the pressure, no more');
+  // Injected: the north ladder's climbers struck down, wherever our men stand.
+  const climbers=e.units.find(u=>u.id==='ladder-north-climbers');if(climbers.hp>0){climbers.hp=0;checkBattle(s);}
+  assert.ok(e.operation.index===1||e.mission.points[0].secured,'its ladder is thrown down');
+  assert.ok(e.log.some(l=>/ladder at 4B is thrown down/.test(l)));
 });
 
 test('turn-based feigned retreat: the phase ends when the armoured horse reaches the marker, or when none of it is left (injected positions)',()=>{
@@ -176,12 +180,16 @@ test('the horse\'s orders: horse only, on keys 8 and 9 of its card and in its Co
   assert.match(horse.plan.intent,/^Wheel away for the run-up/);assert.ok(horse.order.back,'a place to wheel to');
 });
 
-test('real time: the far bank\'s archers strike everyone of ours in the water or on the landing at a round\'s end, until the enemy\'s archers are beaten (injected positions)',()=>{
+test('real time: the far bank\'s archers strike the group of ours most exposed in the water or on the landing at a round\'s end, until the enemy\'s archers are beaten (injected positions)',()=>{
   const {world:w}=realtime('ch8-crossing'),m=w.mission;assert.equal(m.fire,true);
-  // Injected: the soldier set down on the landing.
+  // Injected: the soldier set down on the landing, alone there.
   const hero=w.actors.find(a=>a.id===w.heroId);Object.assign(hero,{x:m.goal.x,z:m.goal.z});
   const hp=hero.hp;w.events=[];farBankVolley(w);
   assert.equal(hero.hp,hp-FAR_BANK.single);assert.ok(w.events.some(e=>e.kind==='burn'&&e.cause==='arrows'));
+  // Injected: a squad's men beside him; the volley strikes the squad, not him.
+  const squad=w.squads.find(q=>q.side!=='enemy'),strength=squad.strength,at=hero.hp;
+  for(const id of squad.members){const a=w.actors.find(x=>x.id===id);Object.assign(a,{x:m.goal.x+.5,z:m.goal.z+.5});}
+  farBankVolley(w);assert.equal(squad.strength,strength-FAR_BANK.squad);assert.equal(hero.hp,at,'one group a volley');
   for(const q of w.squads.filter(q=>q.side==='enemy'&&q.role==='archer'))for(const id of q.members)w.actors.find(a=>a.id===id).alive=false;
   const now=hero.hp;farBankVolley(w);assert.equal(hero.hp,now,'no archers, no volley');
 });

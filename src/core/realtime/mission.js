@@ -6,7 +6,7 @@ import {fielded,membersOf,spawnSquad} from './squads.js';
 import {defaultStanding} from './squad-ai.js';
 import {bandReinforced} from './bands.js';
 import {span} from './navigation.js';
-import {fallBack,farBankVolley,installWorks,lureMet,moveConvoy,worksRound,worksSecured} from './field-missions.js';
+import {climbersBeaten,fallBack,farBankVolley,installWorks,lureMet,moveConvoy,worksRound,worksSecured} from './field-missions.js';
 
 // A campaign encounter's objective in real time (§3.2 "Converting 0.38
 // data"): turns become rounds of 200 ticks, tiles become metres, and the 0.38
@@ -179,7 +179,7 @@ export function missionTick(world){
   const goal=control(world,m.goal,m.radius);
   if(m.holdRequired>0&&goal.friends>0&&goal.foes===0)m.heldTicks++;
   if(goal.foes>0&&goal.friends===0)m.occupiedTicks++;
-  for(const [i,p]of m.points.entries())if(!p.secured){const c=control(world,p,m.radius);if(c.friends>0&&c.foes===0){p.secured=true;emit(world,{kind:'secured',x:p.x,z:p.z});worksSecured(world,i);}}
+  for(const [i,p]of m.points.entries())if(!p.secured){const c=control(world,p,m.radius);if(c.friends>0&&c.foes===0||climbersBeaten(world,i)){p.secured=true;emit(world,{kind:'secured',x:p.x,z:p.z});worksSecured(world,i);}}
   if(roundEnd(world)){
     const round=(world.tick+1)/R;
     if(m.mode==='settlement'){const envoy=escortsOf(world).find(e=>e.parley);

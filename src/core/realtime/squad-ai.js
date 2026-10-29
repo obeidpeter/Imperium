@@ -341,7 +341,7 @@ function enemyDecision(world,squad){
   const lure=world.mission?.lure;
   if(lure&&(lure==='cavalry'?HORSE_ORDERS.roles:[lure]).includes(squad.role)&&!threatened){const a=squad.anchor??(squad.anchor={x:squad.x,z:squad.z});
     goTo(world,squad,a);plan(squad,'Wait for an opening.',{x:a.x,z:a.z});return;}
-  if(squad.role==='guard'&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
+  if((squad.role==='guard'||squad.holds)&&!threatened&&span(c.x-(squad.anchor?.x??c.x),c.z-(squad.anchor?.z??c.z))<=15){
     squad.anchor??={x:squad.x,z:squad.z};const intruder=nearestOf(foes.map(f=>({...centreOf(world,f),ref:f})),squad.anchor);
     if(intruder&&span(intruder.x-squad.anchor.x,intruder.z-squad.anchor.z)<=15){engageTarget(world,squad,intruder.ref,'Guard the approach; strike the intruder.');return;}
     goTo(world,squad,squad.anchor);braceStill(world,squad);plan(squad,'Guard this approach.',{x:squad.anchor.x,z:squad.anchor.z});return;

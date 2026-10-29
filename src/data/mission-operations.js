@@ -6,10 +6,10 @@
 // Every phase uses a mode both paths play (capture, hold, extract, clear); the new keys add
 // real time's own rules, and the turn-based path reads them only where it says so:
 // - works: the enemy's siege works on the phase's capture points, each destroyed when its
-//   point is secured. A ladder stands against the wall at `at` and has put its first climber
-//   on the wall walk at its point (both paths); a ram stands on its point and batters the gate
-//   at `gate` (real time). While any stands, the defended line loses the battle's pressure
-//   each round (both paths).
+//   point is secured. A ladder stands against the wall at `at` and has put its first climbers
+//   on the wall walk at its point (both paths); beating them throws it down too. A ram stands
+//   on its point and batters the gate at `gate` (real time). While any stands, the defended
+//   line loses the battle's pressure each round (both paths).
 // - lure: the phase's objective is the named enemy horse at the marker, drawn there by a
 //   feigned flight (both paths), not our men; it is also done once none of that horse is left.
 // - convoy: protected columns walk the route on their own, through each point in turn
@@ -39,7 +39,7 @@ export const MISSION_OPERATIONS={
   // Chapter IV, the escalade: the Goths raise ladders against the curtain either side of the
   // barred gate; then the rear files come out as before.
   'ch4-gate':{extraTurns:3,phases:[
-    {id:'ladders',label:'Throw down the ladders',objective:'The Goths raise ladders against the wall at 4B and 4F. Clear the wall walk beside each at 3B and 3F, with no enemy at its head, to throw it down.',
+    {id:'ladders',label:'Throw down the ladders',objective:'The Goths raise ladders against the wall at 4B and 4F. Beat the climbers on the wall walk beside each, at 3B and 3F, or hold it with no enemy at its head, to throw the ladder down.',
       mode:'capture',goal:[2,3],points:[[2,1],[2,5]],works:[{id:'ladder-north',kind:'ladder',at:[3,1],name:'North ladder',climber:'Gothic climber'},
         {id:'ladder-south',kind:'ladder',at:[3,5],name:'South ladder',climber:'Gothic climber'}]},
     BATTLE_OPERATIONS['ch4-gate'].phases[1]]},

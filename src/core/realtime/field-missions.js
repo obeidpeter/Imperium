@@ -30,6 +30,12 @@ export function installWorks(world){
       ...(ram&&w.gateId?{gateId:w.gateId}:{})});
   }
 }
+// A ladder whose climbers are beaten (destroyed, or broken and falling back) is thrown down too (mission.js).
+export function climbersBeaten(world,index){
+  const w=world.mission.works?.[index];if(w?.kind!=='ladder')return false;
+  const climbers=squadsOf(world).find(q=>q.unitId===`${w.id}-climbers`);
+  return !climbers||!fielded(world,climbers)||!!climbers.broken;
+}
 // A work's point secured (mission.js): the ram burns, the ladder is thrown down.
 export function worksSecured(world,index){
   const w=world.mission.works?.[index],o=w&&world.objects.find(x=>x.id===w.id);
@@ -87,8 +93,9 @@ export function fallBack(world,from,to){
   }
 }
 
-// The far bank's volley at the round's end, while the enemy's archers stand: each of our squads
-// with a man in the water or on the landing, and each of our own men there, is struck.
+// The far bank's volley at the round's end, while the enemy's archers stand: it strikes the group of
+// ours most exposed in the water or on the landing, the squad with the most men there (the first in
+// the company's order on a tie), or else the man of ours there nearest the far bank.
 export function farBankVolley(world){
   const m=world.mission;
   if(!squadsOf(world).some(q=>q.side==='enemy'&&q.role==='archer'&&fielded(world,q))&&
@@ -96,8 +103,10 @@ export function farBankVolley(world){
   const wet=a=>{const t=tileOf(a);return ['river','ford'].includes(world.map.terrain[t.y]?.[t.x]);};
   const exposed=a=>standing(a)&&(wet(a)||span(a.x-m.goal.x,a.z-m.goal.z)<=m.radius);
   // The archers shoot from the far bank: the men nearest it fall first.
-  const bank={x:world.map.width*TILE,z:m.goal.z};let struck=0;
-  for(const q of squadsOf(world))if(ours(q)&&fielded(world,q)&&membersOf(world,q).some(exposed)){scorchSquad(world,q,FAR_BANK.squad,bank,'arrows');struck++;}
-  for(const a of world.actors)if(ours(a)&&!a.squadId&&exposed(a)){burnActor(world,a,FAR_BANK.single,'arrows');struck++;}
-  if(struck)emit(world,{kind:'far-bank',struck});
+  const bank={x:world.map.width*TILE,z:m.goal.z};
+  const squad=squadsOf(world).filter(q=>ours(q)&&fielded(world,q)).map(q=>({q,n:membersOf(world,q).filter(exposed).length})).filter(x=>x.n>0)
+    .reduce((b,x)=>!b||x.n>b.n?x:b,null)?.q;
+  if(squad){scorchSquad(world,squad,FAR_BANK.squad,bank,'arrows');emit(world,{kind:'far-bank',squadId:squad.id});return;}
+  const man=world.actors.filter(a=>ours(a)&&!a.squadId&&exposed(a)).reduce((b,a)=>!b||span(a.x-bank.x,a.z-bank.z)<span(b.x-bank.x,b.z-bank.z)?a:b,null);
+  if(man){burnActor(world,man,FAR_BANK.single,'arrows');emit(world,{kind:'far-bank',actorId:man.id});}
 }

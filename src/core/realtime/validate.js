@@ -119,8 +119,8 @@ function validateSquads(world,fail){
       ||(q.notice!==undefined&&(!q.notice||typeof q.notice!=='object'||Object.keys(q.notice).length>80||Object.entries(q.notice).some(([k,v])=>!str(k,40)||!num(v)||v<0||v>100)))
       ||(q.pref!==undefined&&!ENEMY_PLANS.preferences.some(([p])=>p===q.pref))||(q.volleyRound!==undefined&&!int(q.volleyRound,1,1e5))||(q.temperament!==undefined&&!TEMPERAMENTS.kinds[q.temperament])
       ||(q.lying!==undefined&&typeof q.lying!=='boolean')||(q.spring!==undefined&&q.spring!==null&&!(str(q.spring?.targetId,40)&&typeof q.spring?.unseen==='boolean'))||(q.pulledBack!==undefined&&typeof q.pulledBack!=='boolean')||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z)))
-      // Drawn after a feigned retreat (squad-ai.js): the squad it chases.
-      ||(q.drawnBy!==undefined&&q.drawnBy!==null&&!str(q.drawnBy,40)))fail('real-time squad.');
+      // Drawn after a feigned retreat (squad-ai.js): the squad it chases; a ladder's climbers holding its head.
+      ||(q.drawnBy!==undefined&&q.drawnBy!==null&&!str(q.drawnBy,40))||(q.holds!==undefined&&q.holds!==true))fail('real-time squad.');
   }
   if(world.actors.some(a=>a.squadId!==undefined&&!world.squads.some(q=>q.id===a.squadId)))fail('real-time squad member.');
   const c=world.command;

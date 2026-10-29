@@ -268,8 +268,9 @@ function executeBattlePlan(e,unit,plan){if(!alive(unit)||unit.moved&&unit.acted)
  }unit.moved=true;unit.intent=plan.intent;
 }
 function progressMission(e){const m=e.mission;if(!m)return;const allies=friendly(e),enemies=foes(e);
- const works=operationPhaseSpec(e)?.works;
- for(const [i,p]of m.points.entries())if(!p.secured&&allies.some(u=>distance(u,p)<=1)&&!enemies.some(u=>distance(u,p)<=1)){p.secured=true;note(e,works?.[i]?(works[i].kind==='ram'?'The ram burns.':`The ladder at ${works[i].at[0]+1}${String.fromCharCode(65+works[i].at[1])} is thrown down.`):`Position ${p.x+1}${String.fromCharCode(65+p.y)} secured.`);}
+ // A ladder (release 7's missions) is also thrown down once its climber is beaten.
+ const works=operationPhaseSpec(e)?.works,beaten=w=>w?.kind==='ladder'&&!enemies.some(u=>u.id===`${w.id}-climbers`);
+ for(const [i,p]of m.points.entries())if(!p.secured&&(allies.some(u=>distance(u,p)<=1)&&!enemies.some(u=>distance(u,p)<=1)||beaten(works?.[i]))){p.secured=true;note(e,works?.[i]?(works[i].kind==='ram'?'The ram burns.':`The ladder at ${works[i].at[0]+1}${String.fromCharCode(65+works[i].at[1])} is thrown down.`):`Position ${p.x+1}${String.fromCharCode(65+p.y)} secured.`);}
  if((m.mode==='hold'||m.holdRequired)&&allies.some(u=>distance(u,e.goal)<=1)&&!enemies.some(u=>distance(u,e.goal)<=1))m.holdProgress++;
  if(m.mode==='settlement'){const envoy=e.units.find(u=>u.id==='envoy'),hero=e.units.find(u=>u.id==='hero');if(envoy&&alive(envoy)&&distance(envoy,e.goal)<=1&&distance(hero,e.goal)<=2&&m.rallyProgress>0)m.envoyProgress++;}
  updateBattleProgress(e);

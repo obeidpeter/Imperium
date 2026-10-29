@@ -235,6 +235,8 @@ function squadSpec(state,e,unit,k,{party=[],index=0,temperament=null}={}){
     damage:unit.damage??null,morale:clamp((unit.morale??80)+(TEMPERAMENTS.kinds[temperament]?.morale??0)),cohesion:unit.cohesion??80,braced:!!unit.braced,
     formation:role==='cavalry'?null:['line','shield-wall','wedge'].includes(unit.formation)?unit.formation:null,...(temperament?{temperament}:{}),
     moraleResistance:unit.moraleResistance??0,at:pos(unit,k),face:enemy?[-1,0]:[1,0],anchor:enemy?pos(unit,k):null,member:memberOf(state,role,faction),
+    // A ladder's climbers hold its head, as a guard holds his approach (squad-ai.js).
+    ...(enemy&&unit.works?{holds:true}:{}),
     standing:enemy?null:squadStanding(state,e,unit,role)};
 }
 // The squad's standing orders: those set in camp for its veteran's squad (a

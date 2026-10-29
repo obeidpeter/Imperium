@@ -953,10 +953,10 @@ Each battle's phases appear in the mission header, one after another.
 
 | **Battle**         | **Mission**             | **What it asks**                                                                                                                                                                                                                                                                                                                     |
 |--------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| IV, the gate       | **The escalade**        | The Goths have raised two ladders against the wall either side of the barred gate, and climbers hold the wall walk at the head of each. Hold each ladder's head with no enemy beside it to throw the ladder down. Then bring the rear files out, or hold the gate for the baggage train if you chose that in camp.                     |
+| IV, the gate       | **The escalade**        | The Goths have raised two ladders against the wall either side of the barred gate, and climbers hold the wall walk at the head of each. Beat a ladder's climbers, or hold its head with no enemy beside it, to throw the ladder down. Then bring the rear files out, or hold the gate for the baggage train if you chose that in camp. |
 | V, the wall        | **The sortie**          | The Persians' ram batters the river gate. Go out by the postern and hold the ram's ground with no enemy beside it to burn it, then hold the river gate.                                                                                                                                                                              |
 | VI, the wells      | **The rearguard**       | Hold the first line beside the stranded party, fall back to the second, then follow the column out. The column walks west on its own. In camp you can choose to stand a third line instead.                                                                                                                                        |
-| VIII, the crossing | **Crossing under fire** | Take the far landing past the ford and hold it while the last ferry party lands. At the end of each round the far bank's archers loose a volley at everyone of yours in the water or on the landing, until the enemy's archers are beaten.                                                                                         |
+| VIII, the crossing | **Crossing under fire** | Take the far landing past the ford and hold it while the last ferry party lands. At the end of each round the far bank's archers loose a volley at the group of yours most exposed in the water or on the landing (the squad with the most men there, or else your own soldier or a companion), until the enemy's archers are beaten.                                                                                         |
 | IX, the wing       | **The feigned retreat** | Draw the armoured horse onto the line waiting at the marker. They keep their ground until drawn out, or until one of your squads comes close: ride your horse at them and order a **Feigned retreat**, and they follow it onto the marker. Then turn and break the field. The phase also ends if none of the armoured horse is left. |
 | X, the road        | **The relief convoy**   | Choose the north or the south road in camp. Clear its ford and its east end; then the grain wagons follow the road to the stores on their own. Keep the road ahead of them clear, and meet them at the stores.                                                                                                                    |
 
@@ -964,7 +964,8 @@ Each battle's phases appear in the mission header, one after another.
   loses the battle's objective pressure at the end of each round: 6 on
   Story, 10 on Standard, 14 on Veteran. The ram also batters the river
   gate, 30 of its 120 integrity a round; at 0 the gate is a breach,
-  open to both armies. You cannot work a siege work: hold its ground.
+  open to both armies. You cannot work a siege work: hold its ground,
+  or beat a ladder's climbers.
 
 - **Convoys** walk their road point by point at a walk, going around
   anyone in the way. A convoy halts while an enemy is within eight
@@ -979,7 +980,7 @@ Each battle's phases appear in the mission header, one after another.
 
 - **Turn-based battles** play the same missions, with these
   differences:
-  - a ladder's climber, a single man of 7 Health, stands at its head;
+  - a ladder's climbers are a single man of 4 Health at its head;
   - the line loses the pressure every turn while any work stands;
   - a convoy walks two tiles a turn, three with its road cleared, and
     halts beside an enemy;

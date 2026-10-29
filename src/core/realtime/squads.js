@@ -88,7 +88,7 @@ export function spawnSquad(world,spec){
     moraleResistance:spec.moraleResistance??0,damage:spec.damage??null,formation:spec.formation??null,braced:!!spec.braced,broken:false,
     x:spec.at[0],z:spec.at[1],fx:fx0/n,fz:fz0/n,path:[],goal:null,gait:null,moving:false,stillSince:world.tick,runUp:0,
     order:null,pending:null,standing:spec.standing?spec.standing.map(s=>[...s]):null,standingSlot:-1,plan:null,
-    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{}),...(spec.lying?{lying:true}:{})};
+    contact:null,counterRound:0,guard:null,members:[],...(spec.temperament?{temperament:spec.temperament}:{}),...(spec.lying?{lying:true}:{}),...(spec.holds?{holds:true}:{})};
   const slots=formationSlots(shapeOf(squad),men),grid=navGrid(world.map);
   for(let i=0;i<men;i++){
     let p=clampToMap(grid,slotPoint(squad,slots[i]));if(!walkable(grid,p.x,p.z)){const c=nearestWalkable(grid,p.x,p.z);if(c>=0)p=cellCentre(grid,c);}

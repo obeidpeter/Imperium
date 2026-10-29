@@ -20,9 +20,9 @@ function applyPhase(e){
   const nearestFree=at=>{const spawn=point(at),cells=[];
     for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(!blocked(e.terrain[y][x])&&!unitAt(e,x,y))cells.push({x,y});
     return cells.sort((a,b)=>distance(a,spawn)-distance(b,spawn)||a.y-b.y||a.x-b.x)[0];};
-  // A ladder (release 7) has already put its first climber, lightly armed, on the wall walk at its point.
+  // A ladder (release 7) has already put its first climbers, a few lightly armed men, on the wall walk at its point.
   for(const [i,w] of (phase.works??[]).entries())if(w.kind==='ladder'&&!e.units.some(u=>u.id===`${w.id}-climbers`)){
-    const place=nearestFree(phase.points[i]);if(place)e.units.push(makeUnit(`${w.id}-climbers`,w.climber,'enemy',place.x,place.y,{hp:7,damage:3,role:'infantry',facing:'west',anchor:{x:place.x,y:place.y},
+    const place=nearestFree(phase.points[i]);if(place)e.units.push(makeUnit(`${w.id}-climbers`,w.climber,'enemy',place.x,place.y,{hp:4,damage:3,role:'infantry',facing:'west',anchor:{x:place.x,y:place.y},
       works:w.id,intent:'Hold the ladder’s head for the climbers behind.'}));
   }
   if(phase.escort&&!e.units.some(u=>u.id===phase.escort.id)){

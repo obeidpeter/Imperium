@@ -232,9 +232,9 @@ export const ARENA=Object.freeze({
 // metres and no friend stands within `cover` of it, and draws back toward the
 // nearest friend, so it never marches into the raiders on its own.
 export const ESCORT_RULES=Object.freeze({halt:8,cover:4});
-// Release 7's missions in real time (data/mission-operations.js, field-missions.js): at each round's end the far bank's
-// archers loose a volley, while the enemy's archers stand, at each of our squads with a man in the water or on the
-// landing (`squad` strength) and each of our own men there (`single` Health).
+// Release 7's missions in real time (data/mission-operations.js, field-missions.js): at each round's end, while the
+// enemy's archers stand, the far bank's archers loose a volley at the group of ours most exposed in the water or on
+// the landing: a squad loses `squad` strength (a man), one of our own men `single` Health.
 export const FAR_BANK=Object.freeze({squad:2,single:2});
 // What showing each chapter capability takes, in the field's words (the camp
 // lists them by name): the last battle of a chapter is won only once they are shown.

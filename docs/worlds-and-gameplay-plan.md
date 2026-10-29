@@ -193,7 +193,7 @@ Already done (#32): Chapter V's countermine, engineer and cavalry formations, an
 
 **As built.** Play-testing the design with the bots changed four things; the [report](missions-release7-report.md) has the measurements.
 - **The armoured horse holds back during the feint.** Left to the enemy's ordinary plans, the horse charged the line at the marker in the first round, and the feint asked nothing. Now the horse a lure names keeps its ground until drawn out by a feigned retreat, or until one of ours comes close; the phase also ends once none of it is left.
-- **Climbers in the turn-based path too.** With nothing at their heads the ladders were thrown down on the first turn, so a ladder puts one lightly armed climber (7 Health) on the wall walk in both paths.
+- **Climbers in the turn-based path too, and fewer of them.** With nothing at their heads the ladders were thrown down on the first turn, so a ladder puts its first climbers on the wall walk in both paths: a single man of 4 Health in turns, a band of 4 strength in real time, holding the ladder's head. Beating them throws the ladder down. With 7, and the ladder down only when no enemy stood at its head, the escalade cost the bot all its squads in most real-time runs.
 - **A crossing deploys on its own bank** (an operation's `deploy`): Chapter VIII's landing and Chapter X's ford lay inside the usual four-tile deployment zone, and were taken in the first round.
 - **Convoys remember their road.** The wagons walk point by point and pass a point within a tile of them, in both paths; judged by their nearest point instead, they turned back at the ford.
 
