@@ -4,7 +4,7 @@
 
 ### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md))
 
-The ninth of ten releases, in progress: the great buildings of the story, built in Blender.
+The ninth of ten releases, in progress: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
 
 - **The Curia in marble.** The Senate's Contests of Chapters XI and XII take place in the Curia, the Senate house as Domitian restored it ([historical note](docs/historical-research.md)), built in Blender around the chamber floor:
   - the senators' benches on three wide, low steps along each side;
@@ -44,7 +44,14 @@ The ninth of ten releases, in progress: the great buildings of the story, built 
   - Chapter XI: the Colosseum, the Pantheon and the Arch of Septimius Severus;
   - Chapter XII: the Mausoleum of Hadrian, Aurelian's Temple of the Sun and the Milvian Bridge.
   - Where a horizon has its river (Chapters II and VIII), the old bridge's piers stand across it and the quays on its near bank, facing the water. The bridges over the Adda and the Tiber, whose horizons have no river, each have a stream beneath them.
-  - They are drawn as code-built outlines in the horizon's distant batch, which the woods and the city's rooftops keep clear of. Each has a slot for a generated model (`LANDMARK_LAYOUT`), which will stand there on Balanced and High once it is made. None is made yet, so nothing more is downloaded.
+  - They are drawn as code-built outlines in the horizon's distant batch, which the woods and the city's rooftops keep clear of.
+  - On Balanced and High, 32 of the 33 are generated models (Tripo, processed in Blender), which stand in their outlines' places: scaled to the outline's height, turned to the board (or, for a quay, to the water), set on the lowest ground under their own extent, and taking a share of the haze at their distance as the hills round them do. Each is drawn from its colour map alone, as its relief would be smaller than a pixel there.
+  - The Colosseum keeps its outline: Tripo made it only as a fragment of its outer wall, as today's ruin and as a cutaway, never whole as it stood in 275.
+  - On Performance, or if a model cannot be downloaded, the outline stands. The models add 5.2 MB to the campaign (4.9 MB gzipped, as the build report counts downloads), 0.4–0.5 MB gzipped to each chapter's pack.
+- **Life about the camps and towns.** On Balanced and High, 14 generated props are set out with the baggage beyond the board, two to five in each chapter but V, each where its region would have it: washing on a line, a woodpile, a grindstone, a bread oven, a handcart of stores, wicker beehives, a haystack, an ox cart, a warp-weighted loom, a caravan's saddles and baggage, racks of amphorae, a covered carriage, a market stall of fruit and bread, and a potter's red-slip wares ([historical note](docs/historical-research.md)).
+  - They stand outdoors only, never round a council's board or in the Senate, and never on a camp's service pad.
+  - On Performance, or if one cannot be downloaded, its place stays empty.
+  - They add 3.1 MB to the campaign (3.0 MB gzipped), up to 1.2 MB gzipped to a chapter's pack.
 - **The camera stays out of Aurelian's walls.** Before the finale, turning the Horizon view (or another low view) toward the walls used to take the camera into them, as it already did with the code-built curtain. Now it comes in to their face and looks out over the field.
 
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
