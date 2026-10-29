@@ -142,6 +142,26 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     }
     if(!disabled)for(let i=0;i<(object.progress??0);i++)plank(g,-.8,.12+i*.08,-.95,.6,.06,.12,m.wood);
   }
+  // Release 7's siege works (field-missions.js): a ram under its shed of hides on four wheels, its iron-headed
+  // beam slung toward the gate (west); burnt, a few charred timbers. A ladder leans from the enemy's side (east)
+  // against the wall; thrown down, it lies at the wall's foot.
+  function ram(g,state){
+    const burnt=state==='burnt',frame=burnt?m.coal:m.dark;
+    if(burnt){for(let i=0;i<5;i++){const b=plank(g,-.8+i*.4,.07,(i%2-.5)*.6,.9,.09,.14,m.coal);b.rotation.y=i*.7;}return;}
+    for(const x of [-.9,.9])for(const z of [-.62,.62])plank(g,x,.86,z,.12,1.3,.12,frame);
+    for(const z of [-.62,.62])plank(g,0,1.5,z,2.0,.1,.12,frame);
+    plank(g,0,1.78,0,2.1,.1,.1,frame);
+    for(const side of [-1,1]){const roof=plank(g,0,1.62,side*.38,2.12,.06,.86,m.cloth);roof.rotation.x=side*.6;}
+    for(const x of [-.75,.75])for(const z of [-.7,.7])mesh(g,wheel,frame,x,.31,z);
+    for(const x of [-.75,.75])beam(g,[x,.31,-.7],[x,.31,.7],.04,frame);
+    beam(g,[-1.55,1.0,0],[1.05,1.0,0],.13,m.dark);mesh(g,sphere,m.iron,-1.6,1.0,0,.2,.18,.18);
+    for(const x of [-.4,.4])beam(g,[x,1.5,0],[x,1.0,0],.02,m.rope);
+  }
+  function ladder(g,state){
+    if(state==='thrown'){for(const z of [-.24,.24])beam(g,[.6,.06,z],[3.6,.06,z],.045,m.dark);for(let i=0;i<9;i++)beam(g,[.8+i*.33,.07,-.24],[.8+i*.33,.07,.24],.025);return;}
+    for(const z of [-.24,.24])beam(g,[1.4,0,z],[.3,3.2,z],.045,m.dark);
+    for(let i=0;i<9;i++){const t=(i+.5)/9;beam(g,[1.4-t*1.1,t*3.2,-.24],[1.4-t*1.1,t*3.2,.24],.025);}
+  }
   function build(parent,object,ground){
     const g=group(parent,ground.x,ground.y,ground.z);g.name=`${object.kind} · ${object.state}`;
     if(object.kind==='gate')object.state==='breached'?breach(g,'breached',object.orientation):gate(g,object.state);
@@ -152,6 +172,8 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     else if(object.kind==='brazier')brazier(g,object.state);
     else if(object.kind==='breach')breach(g,object.state,object.orientation);
     else if(object.kind==='countermine'||object.kind==='siege-engine')siegeWork(g,object);
+    else if(object.kind==='ram')ram(g,object.state);
+    else if(object.kind==='ladder')ladder(g,object.state);
     g.userData.fieldObject={id:object.id,kind:object.kind,state:object.state};return g;
   }
   function platform(parent,record,point,step){
