@@ -98,7 +98,24 @@ The most is now 46, in Chapter VIII's two battles; the finale, at the plan's lim
 
 ### The turn-based stages
 
-<!--FILL: stage benchmark-->
+The stage benchmark (`npm run benchmark:stage -- --dist --check --max-programs 50 --ceilings scripts/stage-ceilings.json`), the still overview of each chapter's turn-based battle, on main and on this release after the fix, side by side ([report](evidence/stage-benchmark-release6.json)). The programs, Performance and Balanced; the draw calls, triangles and estimated textures and geometry, Balanced:
+
+| Battle | Programs, Performance | Programs, Balanced | Draw calls | Triangles | Textures and geometry |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| I, the road | 36 → 36 | 39 → 39 | 95 → 95 | 359,150 → 358,957 | 56.8 → 58.7 MB |
+| II, the marsh | 38 → 38 | 42 → 42 | 100 → 100 | 343,553 → 343,717 | 63.9 → 70.6 MB |
+| III, the station | 36 → 36 | 39 → 39 | 95 → 95 | 408,960 → 408,681 | 53.2 → 57.7 MB |
+| IV, the gate | 41 → 40 | 44 → 43 | 126 → 126 | 530,748 → 529,940 | 66.7 → 75.2 MB |
+| V, the mine | 42 → 43 | 44 → 45 | 158 → 156 | 468,420 → 464,801 | 84.1 → 95.9 MB |
+| VI, the wells | 40 → 41 | 44 → 45 | 135 → 133 | 389,063 → 385,952 | 81.5 → 95.5 MB |
+| VII, the legion | 40 → 41 | 43 → 44 | 144 → 142 | 621,104 → 618,627 | 74.9 → 86.6 MB |
+| VIII, the ferry | 43 → 42 | 48 → 47 | 144 → 144 | 598,505 → 598,605 | 75.7 → 86.2 MB |
+| IX, the wing | 40 → 41 | 43 → 44 | 145 → 141 | 487,409 → 481,663 | 81.8 → 93.2 MB |
+| X, the road | 42 → 41 | 46 → 45 | 154 → 154 | 576,399 → 576,307 | 69.8 → 80.3 MB |
+| XI, the accounts | 43 → 39 | 45 → 41 | 123 → 109 | 248,992 → 216,793 | 77.7 → 43.5 MB |
+| XII, the confrontation | 42 → 41 | 46 → 45 | 153 → 153 | 806,311 → 798,543 | 68.4 → 80.8 MB |
+
+<!--FILL: stage explanations-->
 
 <!--FILL: calibration-->
 
