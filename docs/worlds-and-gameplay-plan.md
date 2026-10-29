@@ -191,11 +191,12 @@ Already done (#32): Chapter V's countermine, engineer and cavalry formations, an
 - **Opportunity pairs by mission:** each re-authored battle gets its own pair in place of its chapter's (for the sortie, say, fire pots or the postern held open).
 - **New campaigns only:** the operation version and a campaign's missions version, checked on load; `WORLD_VERSION` 6, so real-time battles saved before it restart from their checkpoint.
 
-**As built.** Play-testing the design with the bots changed four things; the [report](missions-release7-report.md) has the measurements.
+**As built.** Play-testing the design with the bots changed five things; the [report](missions-release7-report.md) has the measurements.
 - **The armoured horse holds back during the feint.** Left to the enemy's ordinary plans, the horse charged the line at the marker in the first round, and the feint asked nothing. Now the horse a lure names keeps its ground until drawn out by a feigned retreat, or until one of ours comes close; the phase also ends once none of it is left.
-- **Climbers in the turn-based path too, and fewer of them.** With nothing at their heads the ladders were thrown down on the first turn, so a ladder puts its first climbers on the wall walk in both paths: a single man of 4 Health in turns, a band of 4 strength in real time, holding the ladder's head. Beating them throws the ladder down. With 7, and the ladder down only when no enemy stood at its head, the escalade cost the bot all its squads in most real-time runs.
+- **Climbers in the turn-based path too, and fewer of them.** With nothing at their heads the ladders were thrown down on the first turn, so a ladder puts its first climbers on the wall walk in both paths: a single man of 4 Health in turns, a band of 4 strength in real time, holding the ladder's head. Beating them throws the ladder down. With 7, and the ladder down only when no enemy stood at its head, the escalade cost the bot all its squads in 14 of 20 Standard runs in real time.
 - **A crossing deploys on its own bank** (an operation's `deploy`): Chapter VIII's landing and Chapter X's ford lay inside the usual four-tile deployment zone, and were taken in the first round.
 - **Convoys remember their road.** The wagons walk point by point and pass a point within a tile of them, in both paths; judged by their nearest point instead, they turned back at the ford.
+- **The far bank's volley strikes one group.** Loosed at every squad of ours with a man in the water or on the landing, it cost the bot a median 77% of its squads' strength at Standard's crossing, against 50% before the missions; it now strikes the group most exposed there, the squad with the most men in the water or on the landing.
 
 #### 8. Living camps
 
