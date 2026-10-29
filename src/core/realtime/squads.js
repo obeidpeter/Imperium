@@ -47,7 +47,15 @@ export function shapeOf(squad,{marching=false}={}){
 }
 // Places in a formation for `count` men, in the squad's own frame (x to its
 // right, z forward, metres from the front centre), front rank and centre first.
+// They depend on nothing else, so each shape's places for a count are found once
+// and shared, frozen: callers read them, never edit them.
+const SLOTS=new Map();
 export function formationSlots(shape,count){
+  const key=`${shape}:${count}`;let out=SLOTS.get(key);
+  if(!out){out=Object.freeze(placeSlots(shape,count).map(Object.freeze));SLOTS.set(key,out);}
+  return out;
+}
+function placeSlots(shape,count){
   const out=[];if(count<=0)return out;
   const spacing=SPACING[shape]??(shape==='mounted'?1.8:SPACING.line);
   if(shape==='wedge'){
@@ -202,6 +210,8 @@ export function moveSquads(world){
     const men=membersOf(world,squad),marching=squad.path.length>0&&span(squad.goal.x-squad.x,squad.goal.z-squad.z)>12&&!squad.contact;
     const slots=formationSlots(shapeOf(squad,{marching}),men.length);
     men.sort((a,b)=>a.slot-b.slot);
+    // The squad's pace is the same for every man this tick (it reads only the squad and which men stand): found once.
+    let walkPace=null;
     men.forEach((m,i)=>{
       m.slotIndex=i;
       if(m.action||m.order||m.staggerUntil>world.tick)return;
@@ -217,7 +227,7 @@ export function moveSquads(world){
       }
       const dx=aim.x-m.x,dz=aim.z-m.z,da=span(dx,dz)||1;
       const run=d>2.5,rough=['marsh','ford','rubble'].includes(terrainAtPoint(world.map,m.x,m.z)),mounted=m.mounted?(rough?MOUNTED_PACE.rough:MOUNTED_PACE.run):1;
-      const pace=(run?derivedValues(m).run*mounted:Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
+      const pace=(run?derivedValues(m).run*mounted:walkPace??=Math.max(MOVEMENT.walk,squadSpeed(world,squad)))*speedFactor(grid,m.x,m.z)*DT,step=Math.min(da,pace);
       const nx=m.x+dx/da*step,nz=m.z+dz/da*step;
       if(walkable(grid,nx,nz)&&traversableStep(grid,m,{x:nx,z:nz})){m.x=nx;m.z=nz;m.moving=step>1e-6;m.gait=run?'run':'walk';m.walked+=step;turnToward(m,dx,dz);}
       else{m.moving=false;m.gait=null;if(!m.slotPath){const route=findRoute(grid,m,target);m.slotPath=route.points.length?route.points:null;}}
