@@ -115,7 +115,14 @@ The stage benchmark (`npm run benchmark:stage -- --dist --check --max-programs 5
 | XI, the accounts | 43 → 39 | 45 → 41 | 123 → 109 | 248,992 → 216,793 | 77.7 → 43.5 MB |
 | XII, the confrontation | 42 → 41 | 46 → 45 | 153 → 153 | 806,311 → 798,543 | 68.4 → 80.8 MB |
 
-<!--FILL: stage explanations-->
+No stage compiled a program in its first frame or after it was shown, every count is within its ceiling, and every stage stays within 50. The programs of Chapters IV, V, VII, XI and XII were compared one by one on Performance; the other stages' changes are the same sums:
+
+- **One fewer** where a named man leads a formation of followers, in every stage from Chapter IV but the chamber: his followers no longer have a program for his face.
+- **Two more** for a ridden horse: the eastern horse in Chapters V, VI and IX, the Gothic noble's northern horse in Chapter VII. With the followers' program gone, that makes one more in each.
+- **The chamber, four fewer:** its members were procedural figures on main, whose surface, anatomy, hair and beard compiled four programs, with two shadow programs. The senators' bodies now compile one program and their trims, skinned to the toga, another. Its draw calls fall by 14 and its estimated textures and geometry by 34 MB: the procedural figures each built their own anatomy, where the senators share three bodies.
+- **The finale** loses the followers' program and replaces the crowd's with another.
+
+The estimated textures and geometry rise by 2–14 MB in every other field, with the generated bodies' and horses' textures. The ceilings were left as they are: every count is within them, and Chapter XI's fell well below its own.
 
 ## Calibration
 
