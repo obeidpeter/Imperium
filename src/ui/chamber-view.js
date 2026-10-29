@@ -1,7 +1,7 @@
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {esc,hourly,roman} from './view-helpers.js';
-import {coalitionPanel,encounterDebrief,missionBrief} from './tactical-intel.js';
+import {coalitionPanel,defeatPage,encounterDebrief,missionBrief} from './tactical-intel.js';
 import {commandIntelligence} from './command-edition-views.js';
 import {expandedPanel} from './expanded-views.js';
 import {precedentPanel} from './encounter-view.js';
@@ -61,6 +61,7 @@ export function chamberResult(state){
     <details><summary>Vote, rewards and commitments</summary><dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl></details>
     ${debrief.distinguished?`<p class="debrief-citation"><strong>Distinguished service:</strong> ${esc(debrief.distinguished.citation)}</p>`:''}
     ${!won&&debrief.diagnostic?`<p class="defeat-diagnostic"><strong>What went wrong:</strong> ${esc(debrief.diagnostic)}</p>`:''}
+    ${won?'':defeatPage(e)}
     <p class="result-save-note">${won?'Record the result to keep the rewards, promises and consequences.':'Retry restores the chamber exactly as it began, supplies and promises included.'}</p>
     ${!won&&!e.fallback?'<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><div class="panel-actions"><button data-cmd="fallback">Accept backing and re-run the vote</button></div>':''}
   </section>`;

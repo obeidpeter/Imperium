@@ -10,6 +10,8 @@ import {LIVING_ERRANDS} from '../src/data/living-camps.js';
 import {ITEMS} from '../src/data/items.js';
 import {TITLES} from '../src/data/soldier.js';
 import {tpAuditChapter,tpAuditTotal} from '../src/core/tp-audit.js';
+import {defeatPage} from '../src/ui/tactical-intel.js';
+import {chamberResult} from '../src/ui/chamber-view.js';
 
 // The living camps (worlds and gameplay plan, release 8), from the legally earned
 // camp saves the graphics fixtures keep for every chapter. A branch the save did not
@@ -184,3 +186,11 @@ test('every camp has a trader with the region’s goods, and every encounter a p
   for(const chapter of CHAPTERS)for(const e of chapter.encounters)assert.ok(DEFEAT_PAGES[e.id]?.length>80,`${e.id} has its page`);
 });
 
+test('a lost encounter’s result shows its page of history, in the field and in the chamber alike',()=>{
+  for(const chapter of CHAPTERS)for(const e of chapter.encounters)assert.ok(defeatPage({id:e.id}).includes('Historical context'),e.id);
+  // Chapter VII's council, started legally from its camp; the lost vote is set on the copy.
+  const state=stateFor(7);assert.ok(Game.choose(state,'refuse').ok);assert.ok(Game.startEncounter(state,{}).ok);assert.equal(state.encounter.kind,'contest');
+  state.encounter.status='lost';const html=chamberResult(state);
+  assert.ok(html.includes('Historical context')&&html.includes('another man’s plan'),'the chamber result keeps the council’s page');
+  state.encounter.status='won';assert.ok(!chamberResult(state).includes('Historical context'),'a won vote has no defeat page');
+});
