@@ -62,27 +62,39 @@ The bodies and horses add 8.57 MB to the complete download. Each chapter's pack 
 
 ## Shader programs
 
-Almost every new surface is drawn in a program the game already compiles. The named men's bodies, the senators', the staff's and the cavalryman's share the generated bodies' program, and the named men's heads the protagonist's head program. The shield designs are geometry in the shield's own material, and the finale crowd's clips replace its program with another. Two things compile programs of their own:
+Almost every new surface is drawn in a program the game already compiles. The named men's bodies, the senators', the staff's and the cavalryman's share the generated bodies' program, and the named men's heads the protagonist's head program. The shield designs are geometry in the shield's own material, and the finale crowd's clips replace its program with another. The counts change in four ways:
 
 - **The named men's heads, before the fix.** This release's first stage benchmark found two programs more than main in every stage with a named man in it (Chapter I's road: 36 → 38 on Performance and 39 → 41 on Balanced, each at its ceiling). The head wrap exports a head two-sided, so each named man's head compiled a figure program and a shadow program of its own. Every generated body part is now drawn from its front, as the bodies already were, and a test checks that a named man's head compiles as the protagonist's. Every count below is after the fix.
-- **The horses**, drawn from both sides as exported (see [Limitations](#limitations)). Wherever they are ridden they compile two programs: one for each rider's horse and one for a formation's followers. Their shadows use programs the scene already has.
+- **The horses** are drawn from both sides as exported (see [Limitations](#limitations)). Wherever they are ridden they compile two programs: one for each rider's horse and one for a formation's followers. Their shadows use programs the scene already has.
+- **The Roman riders' procedural figures are gone.** On main, Roman riders had no generated body. They were drawn as procedural figures, whose surface, anatomy, hair, beard and overview armour compiled five programs and two shadow programs. They now wear the cavalryman's body. The Gothic, Persian and Palmyrene riders wore generated bodies on main already.
+- **Followers wear no one's face.** On main, a named man's followers in a turn-based formation wore his head in a program of their own. They now wear the donor's plain head, in the program the body followers already use.
 
 ### Real-time battles, Balanced
 
-Programs after touring the follow, overview and horizon cameras, from the scratch probe that restores each battle from a legal checkpoint through the Restore dialog; main and this release were probed in turn, and each battle compiled the same programs in all three views.
+Programs after touring the follow, overview and horizon cameras, from the scratch probe that restores each battle from a legal checkpoint through the Restore dialog. This release was probed in all eighteen battles, and main in the six with horses or the finale crowd, in turn. Main's other counts are release 5's probe of the same code (`aeb5a10`), whose six battles probed again today compiled exactly the same programs. Each battle compiled the same programs in all three views.
 
 | Battle | Programs, main → this release | Why |
 | --- | ---: | --- |
+| I, the road | 38 → 38 | |
+| II, the marsh | 40 → 40 | |
+| II, the rearguard | 41 → 41 | |
+| III, the station | 36 → 36 | |
+| III, the rolls | 37 → 37 | |
+| IV, the gate | 43 → 43 | |
+| IV, the wall | 43 → 43 | |
+| V, the mine | 43 → 45 | the eastern horse |
 | V, the wall | 43 → 45 | the eastern horse |
 | VI, the wells | 43 → 45 | the eastern horse |
-| VII, the legion | 47 → 42 | the Roman riders' procedural figures gone (−7); the Roman and northern horses (+2) |
+| VI, the eagle | 41 → 43 | the eastern horse |
+| VII, the legion | 47 → 42 | the Roman riders' procedural figures (−7); the Roman and northern horses (+2) |
+| VIII, the ferry | 46 → 46 | |
+| VIII, the crossing | 46 → 46 | |
 | IX, the wing | 49 → 44 | as in VII, with the Roman and eastern horses |
 | IX, the city | 49 → 44 | as in VII |
+| X, the road | 43 → 43 | |
 | XII, the confrontation | 50 → 45 | as in VII; the crowd's program replaced by another |
 
-On main, Roman riders had no generated body. They were drawn as procedural figures, whose surface, anatomy, hair, beard and overview armour compiled five programs, with two shadow programs. They now wear the cavalryman's body. The Gothic, Persian and Palmyrene riders wore generated bodies on main already, so in Chapters V and VI the eastern horse's two programs are the only change. The finale is now at 45, five below the plan's limit of 50.
-
-<!--FILL: the other twelve battles-->
+The most is now 46, in Chapter VIII's two battles; the finale, at the plan's limit of 50 on main, is at 45.
 
 ### The turn-based stages
 
