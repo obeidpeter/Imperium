@@ -1,0 +1,34 @@
+{
+  "id": "landmark-signal-tower",
+  "status": "Release 9 gate: requested",
+  "chapters": [
+    1,
+    4
+  ],
+  "use": "The signal tower on the Danube chapters' horizons (LANDMARK_LAYOUT, kind tower; Chapters I and IV): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman stone signal tower of the Danube frontier in the third century, as shown on Trajan's Column: a square tower of rough whitewashed limestone about ten metres high, two storeys with small windows and a single door at the foot, a timber balcony gallery with a railing running round the upper storey, a low tiled pyramid roof, and a tall wooden beacon pole for signal fires beside the roof. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 10.3,
+    "minHeight": 9.785,
+    "maxHeight": 10.815
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20
+  }
+}

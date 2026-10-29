@@ -1,0 +1,33 @@
+{
+  "id": "landmark-necropolis-tower-tomb",
+  "status": "Release 9 gate: requested",
+  "chapters": [
+    5
+  ],
+  "use": "Chapter V's farthest landmark on the horizon (LANDMARK_LAYOUT, kind tomb tower): a tower tomb of the fortress's necropolis, standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A tall square funerary tower of the Syrian desert and the Euphrates valley, of the kind built at Palmyra and Dura-Europos in the first to third centuries: four storeys of plain buff limestone ashlar rising from a low stepped base, a narrow doorway low on one face, a projecting stone balcony slab with a recessed panel above it high on the front face, a few narrow slit windows, a flat top with a simple projecting cornice, weathered and dusty. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 15.4,
+    "minHeight": 14.63,
+    "maxHeight": 16.17
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20
+  }
+}

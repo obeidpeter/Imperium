@@ -1,0 +1,44 @@
+{
+  "id": "landmark-colosseum",
+  "status": "Release 9 gate: requested",
+  "chapters": [
+    11
+  ],
+  "use": "Chapter XI's nearest landmark on the horizon round Rome (LANDMARK_LAYOUT, kind arena): the Colosseum, standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 8000,
+    "texture": 512,
+    "bytes": 450000,
+    "heightMetres": 23.5,
+    "minHeight": 22.325,
+    "maxHeight": 24.675
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "ac0a5033-2611-44b0-816d-135782c0d3b0",
+    "requestedAt": "2026-10-29T20:13:50.691Z",
+    "balanceBefore": 2765,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The Flavian Amphitheatre in Rome, the Colosseum, whole and in use as it stood in the third century: a tall elliptical amphitheatre of pale warm travertine, its outer wall in four storeys, the lower three of open round arches framed by engaged half-columns, the top storey a solid attic wall with small square windows between flat pilasters, the wall complete all the way round with no ruined or missing section, the raked seating visible within and a sand arena floor. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  }
+}
