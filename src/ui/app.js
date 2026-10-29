@@ -1035,7 +1035,7 @@ case 'new':showNew();break;
 case 'begin':{
   const selectedMode=document.querySelector('input[name="new-play-mode"]:checked')?.value??newGamePlayMode(settings);
   const candidate=Game.newGame(document.querySelector('#name-input').value,undefined,
-    {featureEdition:35,progression:true,...recruitChoice(),difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
+    {featureEdition:35,progression:true,missions:true,...recruitChoice(),difficulty:document.querySelector('input[name="campaign-difficulty"]:checked')?.value||'standard',
       ironDiscipline:!!document.querySelector('#iron-discipline')?.checked});
   if(document.querySelector('#new-soundscape')?.checked){
     settings.audio=true;settings.music=true;settings.ambience=true;settings.voices=true;saveSettings();soundscape.configure(settings);soundscape.unlock();

@@ -10,7 +10,7 @@ export function applyCampaignSupport(state,e,world){
   const notes=[],hero=world.actors.find(a=>a.id===world.heroId);
   for(const r of state.progression.operationResults.filter(r=>r.outcome==='clean'&&e.appliedOperations?.includes(r.encounterId))){
     if(r.benefit==='intelligence'){
-      const gate=world.objects.find(o=>o.kind==='gate'&&o.state==='closed');
+      const gate=world.objects.find(o=>o.kind==='gate'&&o.state==='closed'&&!o.works);
       if(gate){openGate(world,gate);notes.push(`${r.label}: scouts opened ${gate.name}. Both armies can use the route.`);}
       else {const hidden=world.actors.filter(a=>a.hidden&&a.side==='enemy').sort((a,b)=>span(a.x-hero.x,a.z-hero.z)-span(b.x-hero.x,b.z-hero.z))[0];
         if(hidden){hidden.hidden=false;notes.push(`${r.label}: scouts marked one concealed enemy position.`);}}

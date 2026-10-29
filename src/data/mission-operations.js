@@ -6,16 +6,19 @@
 // Every phase uses a mode both paths play (capture, hold, extract, clear); the new keys add
 // real time's own rules, and the turn-based path reads them only where it says so:
 // - works: the enemy's siege works on the phase's capture points, each destroyed when its
-//   point is secured. A ladder has put its first climber on the wall walk at its point, under
-//   the work's id (both paths); a ram batters the gate at `gate`. While any stands, the
-//   defended line loses the battle's pressure each round (both paths).
+//   point is secured. A ladder stands against the wall at `at` and has put its first climber
+//   on the wall walk at its point (both paths); a ram stands on its point and batters the gate
+//   at `gate` (real time). While any stands, the defended line loses the battle's pressure
+//   each round (both paths).
 // - lure: the phase's objective is the named enemy horse at the marker, drawn there by a
 //   feigned flight (both paths), not our men; it is also done once none of that horse is left.
 // - convoy: protected columns walk the route on their own, through each point in turn
 //   (both paths), halting when threatened (real time).
 // - lines: a fallback line; our squads holding the objective follow it back.
 // - fire: the far bank's archers loose a volley each round at our men in the water or at
-//   the landing (real time).
+//   the landing, while the enemy's archers stand (real time).
+// An operation's `deploy` is the tiles of the real-time deployment zone (Chapter VII on) when
+// it is not the usual four: a crossing deploys on its own bank, short of the river.
 import {BATTLE_OPERATIONS} from './battle-operations.js';
 import {PROGRESSION_OPERATIONS} from './progression-operations.js';
 
@@ -37,12 +40,13 @@ export const MISSION_OPERATIONS={
   // barred gate; then the rear files come out as before.
   'ch4-gate':{extraTurns:3,phases:[
     {id:'ladders',label:'Throw down the ladders',objective:'The Goths raise ladders against the wall at 4B and 4F. Clear the wall walk beside each at 3B and 3F, with no enemy at its head, to throw it down.',
-      mode:'capture',goal:[2,3],points:[[2,1],[2,5]],works:[{id:'ladder-north',kind:'ladder',at:[3,1],climber:'Gothic climber'},{id:'ladder-south',kind:'ladder',at:[3,5],climber:'Gothic climber'}]},
+      mode:'capture',goal:[2,3],points:[[2,1],[2,5]],works:[{id:'ladder-north',kind:'ladder',at:[3,1],name:'North ladder',climber:'Gothic climber'},
+        {id:'ladder-south',kind:'ladder',at:[3,5],name:'South ladder',climber:'Gothic climber'}]},
     BATTLE_OPERATIONS['ch4-gate'].phases[1]]},
   // Chapter V, the sortie: out by the postern to burn the ram at the river gate, then back in.
   'ch5-wall':{extraTurns:2,phases:[
     {id:'sortie',label:'Burn the ram',objective:'The Persians’ ram batters the river gate at 5E. Go out by the postern at 5D and hold the ram’s ground at 6E, with no enemy beside it, to burn it.',
-      mode:'capture',goal:[5,4],points:[[5,4]],works:[{id:'ram',kind:'ram',at:[5,4],gate:[4,4]}]},
+      mode:'capture',goal:[5,4],points:[[5,4]],works:[{id:'ram',kind:'ram',at:[5,4],gate:[4,4],name:'Persian ram',gateName:'River gate'}]},
     {id:'gate',label:'Hold the river gate',objective:'Back behind the wall: hold the gate at 4E for two rounds, or clear the enemy and reach it, while the last boats leave.',
       mode:'hold',goal:[3,4],hold:2}]},
   // Chapter VI, the rearguard: two lines held in turn while the column goes west, then out.
@@ -54,7 +58,7 @@ export const MISSION_OPERATIONS={
     {id:'withdraw',label:'Follow the column out',objective:'Bring the column and the commander to the western route at 1D.',mode:'extract',goal:[0,3],convoy:{route:[[0,3]]}}]},
   // Chapter VIII, the crossing under fire: the ford's far landing taken under the volleys,
   // held, and the last ferry party brought in as before.
-  'ch8-crossing':{extraTurns:5,phases:[
+  'ch8-crossing':{extraTurns:5,deploy:2,phases:[
     {id:'ford',label:'Force the ford',objective:'Cross at the ford under the archers’ volleys and take the far landing at 4D. Keep moving in the water.',
       mode:'capture',goal:[3,3],points:[[3,3]],fire:true},
     {id:'landing',label:'Hold the landing',objective:'Hold the bridgehead at 5E for a round, or clear the enemy and reach it, so the last ferry party can land.',mode:'hold',goal:[4,4],hold:1,fire:true},
@@ -66,7 +70,7 @@ export const MISSION_OPERATIONS={
       mode:'capture',goal:[1,3],points:[[1,3]],lure:'cavalry'},
     {id:'pursuit',label:'Turn and break them',objective:'Turn on the strung-out riders and defeat the field force.',mode:'clear',goal:[6,4]}]},
   // Chapter X, the relief convoy: the north road unless camp chose the south (MISSION_BRANCHES).
-  'ch10-road':{extraTurns:4,phases:NORTH}
+  'ch10-road':{extraTurns:4,deploy:3,phases:NORTH}
 };
 
 // The camp's operation choices for version 3: version 2's, except where the mission changed.
@@ -89,6 +93,24 @@ export const MISSION_BRANCHES={
   'ch10-road':[
     route('north','The north road','The convoy takes the shorter north road, under the hill the raiders’ archers watch. The granary’s gratitude follows.',null,{public:2},'stores',NORTH),
     route('south','The south road','The convoy takes the longer south road, away from the archers. The army credits the care, and the route’s scouts report what they saw.',null,{army:2},'intelligence',SOUTH)]
+};
+
+// Each re-authored battle's own pair of field opportunities, in place of its chapter's (the stores
+// opportunity first, then the signal's), using the effects the chapters' pairs already have.
+const opportunity=(label,effect,description)=>({label,effect,description});
+export const MISSION_OPPORTUNITIES={
+  'ch4-gate':[opportunity('Prop the wall walk with timbers','integrity','Restore 20 defended integrity, up to 100.'),
+    opportunity('Sound the alarm along the wall','standard','Restore 20 cohesion and 10 morale to every living friendly formation.')],
+  'ch5-wall':[opportunity('Hold the postern open','engineering','Open the side gate and repair the footbridge: two more ways out to the ram and back.'),
+    opportunity('Fill the fire pots','disrupt','Reduce every visible enemy’s cohesion by 15.')],
+  'ch6-wells':[opportunity('Fill the water skins','water','Extinguish every burning pitch brazier and restore two health to living friendly formations and protected columns.'),
+    opportunity('Clear the column’s road','escort','Protected columns move up to three tiles per round.')],
+  'ch8-crossing':[opportunity('Repair the footbridge upstream','engineering','Open the side gate and repair the footbridge: a second crossing, out of the ford.'),
+    opportunity('Recover the casualty satchels','medicine','Restore three health to every living friendly formation and protected column.')],
+  'ch9-wing':[opportunity('Stake the line at the marker','anti-charge','Enemy mounted charges lose their extra damage for the rest of the encounter.'),
+    opportunity('Bring up the remounts','command','Gain one command now and one per later round, up to eight.')],
+  'ch10-road':[opportunity('Grease the wagon axles','escort','Protected columns move up to three tiles per round.'),
+    opportunity('Secure the granary receipts','stores','Recover two supplies on victory; the receipts become evidence of accountable provisioning.')]
 };
 
 /** A version 3 operation: its phases, with the camp's choice applied when there is one. */

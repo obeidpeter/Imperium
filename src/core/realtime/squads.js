@@ -114,16 +114,17 @@ export function memberFell(world,member,attacker,{arc='front',missile=null}={}){
 // The pitch fire scorches a squad (field-objects.js): strength lost as men
 // fall, those nearest the fire first; the 0.38 fire also costs cohesion and
 // adds suppression (as a missile hit does) but no morale.
-export function scorchSquad(world,squad,points,fire){
+// A squad struck where it stands: by a pitch fire, or (cause 'arrows') the far bank's volley (field-missions.js).
+export function scorchSquad(world,squad,points,fire,cause='fire'){
   if(!fielded(world,squad))return;const before=menOf(world,squad);
   squad.strength=Math.max(0,squad.strength-points);squad.cohesion=clamp(squad.cohesion-COHESION.ranged);
   squad.suppression=Math.min(SUPPRESSION.max,squad.suppression+SUPPRESSION.ranged);
   const keep=Math.max(0,Math.ceil(squad.strength/squad.perMan-1e-9)),men=membersOf(world,squad).sort((a,b)=>span(a.x-fire.x,a.z-fire.z)-span(b.x-fire.x,b.z-fire.z)||a.slot-b.slot);
   for(const m of men.slice(0,Math.max(0,before-keep))){
-    m.alive=false;m.diedAt=world.tick;m.killedBy='fire';m.order=null;m.lock=null;m.path=[];m.action=null;
-    emit(world,{kind:'fall',attackerId:null,defenderId:m.id,squadId:squad.id,cause:'fire'});
+    m.alive=false;m.diedAt=world.tick;m.killedBy=cause;m.order=null;m.lock=null;m.path=[];m.action=null;
+    emit(world,{kind:'fall',attackerId:null,defenderId:m.id,squadId:squad.id,cause});
   }
-  emit(world,{kind:'scorch',squadId:squad.id,damage:points});afterLoss(world,squad,null);
+  emit(world,{kind:'scorch',squadId:squad.id,damage:points,...(cause==='fire'?{}:{cause})});afterLoss(world,squad,null);
 }
 // Morale, cohesion and suppression after a hit worth `scale` of a 0.38 hit.
 function hitSquad(world,squad,{flank=false,ranged=false,scale=1,morale=1}){

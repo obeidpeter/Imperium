@@ -54,10 +54,11 @@ export function exchangeWound(world,attacker,defender,points,{missile=null,arc='
   if(defender.hp<=0)fall(world,attacker,defender,base);
 }
 // The pitch fire burns a single man (field-objects.js): no attacker, no roll.
-export function burnActor(world,defender,points){
+// A man struck where he stands: by a pitch fire, or (cause 'arrows') the far bank's volley (field-missions.js).
+export function burnActor(world,defender,points,cause='fire'){
   if(!defender.alive||defender.down||points<=0)return;
   defender.lastHitTick=world.tick;defender.calmSince=world.tick;
-  const base={attackerId:null,defenderId:defender.id,cause:'fire'};
+  const base={attackerId:null,defenderId:defender.id,cause};
   defender.hp=Math.max(defender.practice?1:0,defender.hp-points);emit(world,{kind:'burn',...base,damage:points});
   if(defender.action?.kind==='work'){cancelAction(world,defender);defender.order=null;}
   if(defender.hp<=0)fall(world,null,defender,base);

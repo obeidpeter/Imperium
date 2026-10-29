@@ -28,7 +28,9 @@ export function validateWorld(world,fail){
     if(!a||!str(a.id,40)||!str(a.name)||!SIDES.has(a.side)||![a.x,a.z,a.px,a.pz,a.fx,a.fz,a.hp,a.maxHp,a.stamina,a.maxStamina].every(num)
       ||a.x<0||a.z<0||a.x>m.width*2.5||a.z>m.height*2.5||a.hp<0||a.hp>a.maxHp||a.maxHp<1||a.maxHp>400||typeof a.alive!=='boolean'
       ||!Array.isArray(a.kit)||a.kit.length>16||!a.attributes||typeof a.attributes!=='object'||!Array.isArray(a.path)||a.path.length>400
-      ||(a.talk!==undefined&&a.talk!==null&&!(typeof a.talk==='object'&&str(a.talk.tree,60))))fail('real-time actor.');
+      ||(a.talk!==undefined&&a.talk!==null&&!(typeof a.talk==='object'&&str(a.talk.tree,60)))
+      // A convoy's progress along its road (field-missions.js).
+      ||(a.convoyLeg!==undefined&&!int(a.convoyLeg,0,8)))fail('real-time actor.');
   }
   if(!Array.isArray(world.party)||world.party.length>3||world.party.some(id=>!world.actors.some(a=>a.id===id)))fail('real-time party.');
   if(!world.actors.some(a=>a.id===world.heroId)||!world.actors.some(a=>a.id===world.controlled))fail('real-time soldier.');
@@ -57,6 +59,12 @@ export function validateWorld(world,fail){
     if(typeof mission!=='object'||!str(mission.mode,20)||!mission.goal||!num(mission.goal.x)||!num(mission.goal.z)||!num(mission.radius)||!int(mission.deadline,1,40)
       ||!Array.isArray(mission.waves)||mission.waves.length>30||!Array.isArray(mission.points)||mission.points.length>16||!Array.isArray(mission.escorts)
       ||!int(mission.heldTicks,0,1e7)||!num(mission.defence))fail('real-time mission.');
+    // Release 7's missions (field-missions.js): each phase's works, lure, convoy road, line and volleys.
+    for(const p of [mission,...(Array.isArray(mission.phaseMissions)?mission.phaseMissions:[])])
+      if(p.works!==undefined&&(!Array.isArray(p.works)||p.works.length>4||p.works.some(w=>!w||!str(w.id,40)||!['ram','ladder'].includes(w.kind)||!str(w.name)||!num(w.x)||!num(w.z)
+        ||(w.gateId!==undefined&&!str(w.gateId,40))))||(p.lure!==undefined&&p.lure!==null&&!str(p.lure,20))
+        ||(p.convoy!==undefined&&p.convoy!==null&&(!Array.isArray(p.convoy)||!p.convoy.length||p.convoy.length>8||p.convoy.some(q=>!q||!num(q.x)||!num(q.z))))
+        ||(p.lines!==undefined&&typeof p.lines!=='boolean')||(p.fire!==undefined&&typeof p.fire!=='boolean'))fail('real-time mission phase.');
     // Squads still to arrive: bounded like the ones on the field.
     const specs=[...Object.values(mission.squadTemplates??{}),...mission.waves.map(w=>w?.squad).filter(Boolean)];
     if((mission.squadTemplates!==undefined&&(typeof mission.squadTemplates!=='object'||Object.keys(mission.squadTemplates).length>6))
@@ -84,7 +92,9 @@ export function squadSlotProblem(slot){
 // The field objects and the opportunity record (field-objects.js).
 const FIELD_STATES={gate:['closed','open','breached'],bridge:['damaged','repaired','demolished'],barricade:['intact','dismantled'],brazier:['unlit','burning','spent'],
   stores:['available','secured','forgone','missed'],signal:['available','secured','forgone','missed'],
-  breach:['intact','breached'],countermine:['active','disabled'],'siege-engine':['active','disabled']};
+  breach:['intact','breached'],countermine:['active','disabled'],'siege-engine':['active','disabled'],
+  // Release 7's siege works (field-missions.js).
+  ram:['active','burnt'],ladder:['raised','thrown']};
 function validateField(world,fail){
   const f=world.field,m=world.map;
   for(const o of world.objects)if(o?.field&&(!FIELD_STATES[o.kind]?.includes(o.state)||!int(o.rounds,0,3)||typeof o.done!=='boolean'||!num(o.x)||!num(o.z)
@@ -108,7 +118,9 @@ function validateSquads(world,fail){
       // What it has seen (squad-sight.js), the band's preference and a feint's ground (squad-ai.js).
       ||(q.notice!==undefined&&(!q.notice||typeof q.notice!=='object'||Object.keys(q.notice).length>80||Object.entries(q.notice).some(([k,v])=>!str(k,40)||!num(v)||v<0||v>100)))
       ||(q.pref!==undefined&&!ENEMY_PLANS.preferences.some(([p])=>p===q.pref))||(q.volleyRound!==undefined&&!int(q.volleyRound,1,1e5))||(q.temperament!==undefined&&!TEMPERAMENTS.kinds[q.temperament])
-      ||(q.lying!==undefined&&typeof q.lying!=='boolean')||(q.spring!==undefined&&q.spring!==null&&!(str(q.spring?.targetId,40)&&typeof q.spring?.unseen==='boolean'))||(q.pulledBack!==undefined&&typeof q.pulledBack!=='boolean')||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z))))fail('real-time squad.');
+      ||(q.lying!==undefined&&typeof q.lying!=='boolean')||(q.spring!==undefined&&q.spring!==null&&!(str(q.spring?.targetId,40)&&typeof q.spring?.unseen==='boolean'))||(q.pulledBack!==undefined&&typeof q.pulledBack!=='boolean')||(q.feint!==undefined&&q.feint!==null&&!(num(q.feint?.x)&&num(q.feint?.z)))
+      // Drawn after a feigned retreat (squad-ai.js): the squad it chases.
+      ||(q.drawnBy!==undefined&&q.drawnBy!==null&&!str(q.drawnBy,40)))fail('real-time squad.');
   }
   if(world.actors.some(a=>a.squadId!==undefined&&!world.squads.some(q=>q.id===a.squadId)))fail('real-time squad member.');
   const c=world.command;

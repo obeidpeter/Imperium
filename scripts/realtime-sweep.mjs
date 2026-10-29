@@ -21,7 +21,8 @@
 // enemy plans seen across seeds, its rounds and slack, the share of our squads'
 // strength lost, and the tick times on this machine (Node, headless, not a
 // phone). Release 3's targets are checked at the end. Development only:
-//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--baseline=FILE] [--label=release4] [--write]
+//   node scripts/realtime-sweep.mjs [--seeds=20] [--difficulty=standard] [--last=9|12] [--retries=2] [--baseline=FILE] [--label=release4] [--missions=0] [--write]
+// New Game's campaigns play release 7's missions; --missions=0 plays a campaign begun before them.
 // --baseline names an earlier sweep's report whose tick p95 each battle must not
 // exceed by more than 0.3 ms (default: the Gate 4 sweep); it is fair only from the
 // same machine, one sweep at a time. --write saves
@@ -38,6 +39,8 @@ import {CHAPTERS} from '../src/data/campaign.js';
 
 const arg=(name,fallback)=>process.argv.find(a=>a.startsWith(`--${name}=`))?.split('=')[1]??fallback;
 const SEEDS=Number(arg('seeds',20)),DIFFICULTY=arg('difficulty','standard'),FIRST=4,LAST=Number(arg('last',12)),R=TIME.roundTicks,MAX_SEEDS=60;
+// Release 7's missions, as New Game plays them; --missions=0 plays the campaigns begun before them.
+const MISSIONS=arg('missions','1')!=='0';
 // Tries a player is given before a battle counts as failed: Story is won first time, Standard within two, Veteran within three.
 export const TARGETS=Object.freeze({story:{first:1,within:1},standard:{first:.9,within:2},veteran:{first:.7,within:3}});
 const RETRIES=Number(arg('retries',(TARGETS[DIFFICULTY]?.within??2)));
@@ -76,7 +79,7 @@ export function playBattle(state,{maxRounds=40,attempt=1}={}){
 // One seed's campaign in real time: every try of the battles of IV–XII it played.
 export function campaign(seed,{difficulty=DIFFICULTY,choices={},camps=null,retries=RETRIES}={}){
   const runs=[],ready=Array.from({length:LAST},(_,i)=>i+1);let stopped=null;
-  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,retries,play:playBattle,onEncounter(state,summary){
+  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,retries,missions:MISSIONS,play:playBattle,onEncounter(state,summary){
     // Pass 3's Chapter XII camp, kept on the way: the Senate's recognition recorded, the confrontation ahead.
     if(camps&&state.encounter?.id==='ch12-legitimacy'&&!camps.has(seed)&&state.encounter.status==='won'){
       const copy=G.deserialize(G.serialize(state));if(G.commitEncounter(copy).ok)camps.set(seed,G.serialize(copy));}
@@ -90,7 +93,7 @@ export function campaign(seed,{difficulty=DIFFICULTY,choices={},camps=null,retri
 // A seed's Chapter XII camp, the Senate's recognition recorded and the confrontation ahead (serialized).
 export function finaleCamp(seed,{difficulty=DIFFICULTY,retries=RETRIES}={}){
   let camp=null;const stop=new Error('camp');
-  try{runRealtimeCampaign({seed,difficulty,throughChapter:12,ready:Array.from({length:12},(_,i)=>i+1),retries,play:playBattle,onEncounter(state){
+  try{runRealtimeCampaign({seed,difficulty,throughChapter:12,ready:Array.from({length:12},(_,i)=>i+1),retries,missions:MISSIONS,play:playBattle,onEncounter(state){
     if(state.encounter?.id!=='ch12-legitimacy'||state.encounter.status!=='won')return;const copy=G.deserialize(G.serialize(state));if(G.commitEncounter(copy).ok)camp=G.serialize(copy);throw stop;}});}
   catch(error){if(error!==stop)return null;}
   return camp;
@@ -141,7 +144,7 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
     return {route,seeds:seen.length,firstTry:firstWins.length,within:seen.filter(o=>o.tries!==null).length,injected:seen.filter(o=>o.first.injected).length,
       roundsMedian:percentile(firstWins.map(o=>o.first.rounds),.5),roundsMin:firstWins.length?Math.min(...firstWins.map(o=>o.first.rounds)):null,
       roundsMax:firstWins.length?Math.max(...firstWins.map(o=>o.first.rounds)):null,plans:[...new Set(seen.flatMap(o=>o.first.plans??[]))].sort()};}).filter(f=>f.seeds);
-  return {source:`New Game; the campaign in real time through Chapter ${LAST===12?'XII':'IX'} by legal commands (Contests by the 0.38 autoplay); each real-time battle played by the heuristic bot through legal Commands, a lost battle retried from its checkpoint up to ${retries} times`,
+  return {source:`New Game${MISSIONS?' with release 7\'s missions':' as campaigns begun before release 7\'s missions'}; the campaign in real time through Chapter ${LAST===12?'XII':'IX'} by legal commands (Contests by the 0.38 autoplay); each real-time battle played by the heuristic bot through legal Commands, a lost battle retried from its checkpoint up to ${retries} times`,
     difficulty,seeds,retries,seedsUsed:seed,chapters:[FIRST,LAST],otherDecisions:OTHER_DECISIONS,battles,...(finale.length?{finale}:{}),
     losses:[...runs,...variants,...routes].filter(r=>r.status!=='won'),stopped,runs,variants,...(routes.length?{routes}:{})};
 }

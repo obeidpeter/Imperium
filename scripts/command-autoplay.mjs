@@ -147,9 +147,11 @@ export function runCommandCampaign({alternate=false,difficulty='standard',seed=2
 
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   const reports=[];
-  for(const options of [{},{alternate:true},{caseVariant:1},{difficulty:'story',seed:137},{difficulty:'veteran',seed:831},{lowSupply:true}]){
+  // Release 7's missions (New Game's campaigns since) on each camp route and difficulty, beside the campaigns begun before them.
+  for(const options of [{},{alternate:true},{caseVariant:1},{difficulty:'story',seed:137},{difficulty:'veteran',seed:831},{lowSupply:true},
+    {featureEdition:35,missions:true},{featureEdition:35,missions:true,alternate:true},{featureEdition:35,missions:true,difficulty:'veteran',seed:831}]){
     const {state,...r}=runCommandCampaign(options);reports.push(r);
-    console.log(JSON.stringify({difficulty:r.difficulty,alternate:r.alternate,caseVariant:r.caseVariant,lowSupply:r.lowSupply,rank:r.rank,turns:r.turns,encounters:r.encounters.length,cases:r.cases.length,minimumSupplies:r.minimumSupplies}));
+    console.log(JSON.stringify({missions:!!options.missions,difficulty:r.difficulty,alternate:r.alternate,caseVariant:r.caseVariant,lowSupply:r.lowSupply,rank:r.rank,turns:r.turns,encounters:r.encounters.length,cases:r.cases.length,minimumSupplies:r.minimumSupplies}));
   }
   if(process.argv.includes('--write'))await writeFile(new URL('../docs/evidence/command-campaign-v034.json',import.meta.url),JSON.stringify({method:'Six legal full-campaign routes, including both documented cases in every hearing; no state injection',reports},null,2)+'\n');
 }

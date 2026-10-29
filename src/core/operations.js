@@ -21,8 +21,9 @@ function applyPhase(e){
     for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(!blocked(e.terrain[y][x])&&!unitAt(e,x,y))cells.push({x,y});
     return cells.sort((a,b)=>distance(a,spawn)-distance(b,spawn)||a.y-b.y||a.x-b.x)[0];};
   // A ladder (release 7) has already put its first climber, lightly armed, on the wall walk at its point.
-  for(const [i,w] of (phase.works??[]).entries())if(w.kind==='ladder'&&!e.units.some(u=>u.id===w.id)){
-    const place=nearestFree(phase.points[i]);if(place)e.units.push(makeUnit(w.id,w.climber,'enemy',place.x,place.y,{hp:7,damage:3,role:'infantry',facing:'west',anchor:{x:place.x,y:place.y},intent:'Hold the ladder’s head for the climbers behind.'}));
+  for(const [i,w] of (phase.works??[]).entries())if(w.kind==='ladder'&&!e.units.some(u=>u.id===`${w.id}-climbers`)){
+    const place=nearestFree(phase.points[i]);if(place)e.units.push(makeUnit(`${w.id}-climbers`,w.climber,'enemy',place.x,place.y,{hp:7,damage:3,role:'infantry',facing:'west',anchor:{x:place.x,y:place.y},
+      works:w.id,intent:'Hold the ladder’s head for the climbers behind.'}));
   }
   if(phase.escort&&!e.units.some(u=>u.id===phase.escort.id)){
     const place=nearestFree(phase.escort.at);if(place){e.units.push(makeUnit(phase.escort.id,phase.escort.name,'neutral',place.x,place.y,{hp:phase.escort.hp,role:'escort',move:2,escorted:true,intent:phase.convoy?'Follow the road to the marker.':'Follow the commander to the evacuation marker.'}));e.mission.escortIds.push(phase.escort.id);}
@@ -44,7 +45,8 @@ export function convoyStep(e,escort,route){
   const points=route.map(point),last=points.length-1,enemies=e.units.filter(u=>u.side==='enemy'&&u.hp>0&&!u.hidden);
   const open=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&!blocked(e.terrain[y][x])&&!unitAt(e,x,y,escort.id)&&!enemies.some(u=>distance(u,{x,y})<=1);
   escort.convoyLeg=Math.min(escort.convoyLeg??0,last);
-  for(let step=0;step<(escort.move??2);step++){
+  // Its pace: two tiles a round, three once its road is cleared (an opportunity's 'escort' effect).
+  for(let step=0;step<(e.campaignEdition===34?e.commandCampaign.escortPace:escort.move??2);step++){
     while(escort.convoyLeg<last&&distance(points[escort.convoyLeg],escort)<=1)escort.convoyLeg++;
     const target=points[escort.convoyLeg];
     if(distance(escort,target)===0||enemies.some(u=>distance(u,escort)<=1))return;

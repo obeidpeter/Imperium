@@ -72,8 +72,17 @@ export const ORDERS=freeze({
   line:freeze({id:'line',name:'Line',formation:'line',card:4,summary:'Crosses marsh at full speed, softens morale loss and screens missiles while it holds together.'}),
   'shield-wall':freeze({id:'shield-wall',name:'Shield wall',formation:'shield-wall',card:5,summary:'Two less from every frontal blow; half speed; neighbouring walls add protection.'}),
   wedge:freeze({id:'wedge',name:'Wedge',formation:'wedge',card:6,summary:'One more damage per blow on firm open ground, one more taken; no bonus in marsh, at fords or against walls.'}),
-  lie_in_wait:freeze({id:'lie_in_wait',name:'Lie in wait',cost:1,card:7,summary:'Halt and keep low until an enemy comes near; one that has not seen the squad takes a whole exchange at once.'})});
-export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedge','lie_in_wait']);
+  lie_in_wait:freeze({id:'lie_in_wait',name:'Lie in wait',cost:1,card:7,summary:'Halt and keep low until an enemy comes near; one that has not seen the squad takes a whole exchange at once.'}),
+  // The horse's own orders (release 7; HORSE_ORDERS).
+  charge:freeze({id:'charge',name:'Charge',cost:1,card:8,horse:true,summary:'At the gallop into the nearest enemy group, wheeling away first for the run-up a charge needs.'}),
+  feigned_retreat:freeze({id:'feigned_retreat',name:'Feigned retreat',cost:1,card:9,horse:true,
+    summary:'Ride away as if routed; enemy horse and raiders who give chase are strung out when the squad turns and charges them.'})});
+export const CARD=freeze(['hold','restore','withdraw','line','shield-wall','wedge','lie_in_wait','charge','feigned_retreat']);
+// The horse's orders (worlds and gameplay plan, release 7): only cavalry take them. A charge from closer than the
+// run-up it needs (EXCHANGE.chargeRun) wheels away first. A feigned retreat rides `distance` metres (toward the
+// marker when the mission is to draw the enemy's horse there); enemy horse and raiders within `draw` metres who can
+// see it give chase, and when it turns they are strung out: `strungOut` cohesion lost.
+export const HORSE_ORDERS=freeze({roles:freeze(['cavalry','heavy']),pursuers:freeze(['cavalry','heavy','raider']),feint:freeze({distance:30,draw:30,strungOut:20})});
 // A formation order: one Command for up to three squads standing in a
 // connected group, each within `join` metres of another (§3.8 join rule).
 export const FORMATION_ORDER=freeze({cost:1,maxSquads:3,join:15});

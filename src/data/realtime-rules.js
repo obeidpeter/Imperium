@@ -131,7 +131,8 @@ export const REASONS=Object.freeze({
   NEEDS_DRAWN:'Draw your weapon first (Space).',PATH_BLOCKED:'No way through: he stops at the nearest point he can reach.',
   ENGAGED_CANNOT_RUN:'Engaged: an enemy facing you within two metres. You can only walk.',
   MARCH_PENALTY:'He keeps to a walk: the engineers (or a defensive advance) hold him to the column’s pace.',NO_COMMAND:'No Command left this round.',
-  NO_SQUAD_SELECTED:'Select a squad first.',SQUADS_TOO_FAR_APART:'Those squads stand too far apart.',ALREADY_SPOKEN_THIS_HOUR:'Already spoken this hour.',
+  NO_SQUAD_SELECTED:'Select a squad first.',SQUADS_TOO_FAR_APART:'Those squads stand too far apart.',NOT_HORSE:'Only horse can charge or feign a retreat.',
+  WORKS_SECURE:'Hold its ground with no enemy beside it to destroy it.',ALREADY_SPOKEN_THIS_HOUR:'Already spoken this hour.',
   OUTSIDE_REACH:'Outside his reach this hour.',ONCE_PER_MEMBER:'Once per member.',NOT_IN_DEPLOYMENT_ZONE:'Outside the deployment zone.',
   DEPLOYING:'Deployment: place your company, then Sound the advance.',NOT_DEPLOYING:'The battle has begun.',
   CANNOT_SAVE_HERE:'You cannot save here.',
@@ -231,6 +232,10 @@ export const ARENA=Object.freeze({
 // metres and no friend stands within `cover` of it, and draws back toward the
 // nearest friend, so it never marches into the raiders on its own.
 export const ESCORT_RULES=Object.freeze({halt:8,cover:4});
+// Release 7's missions in real time (data/mission-operations.js, field-missions.js): at each round's end the far bank's
+// archers loose a volley, while the enemy's archers stand, at each of our squads with a man in the water or on the
+// landing (`squad` strength) and each of our own men there (`single` Health).
+export const FAR_BANK=Object.freeze({squad:2,single:2});
 // What showing each chapter capability takes, in the field's words (the camp
 // lists them by name): the last battle of a chapter is won only once they are shown.
 export const CAPABILITY_TASKS=Object.freeze({move:'move',strike:'strike',brace:'brace',throw:'throw a pilum',assist:'bind a comrade’s wounds or carry him',

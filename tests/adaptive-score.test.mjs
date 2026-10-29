@@ -45,7 +45,9 @@ test('accepted friendly orders have distinct bounded signals; previews, delayed 
     const plan=battleSoundPlan(cue);plans.push(JSON.stringify(plan.layers));assert.ok(plan.layers.length<=3);assert.ok(plan.layers.every(l=>l.offset+l.duration<=1.3));
   }
   assert.equal(new Set(plans).size,3);
-  const signals={hold:'order-hold',restore:'order-rally',withdraw:'order-withdraw',line:'order-hold','shield-wall':'order-hold',wedge:'order-advance',lie_in_wait:'order-hold',advance:'order-advance',attack:'order-advance'};
+  const signals={hold:'order-hold',restore:'order-rally',withdraw:'order-withdraw',line:'order-hold','shield-wall':'order-hold',wedge:'order-advance',lie_in_wait:'order-hold',advance:'order-advance',attack:'order-advance',
+    // Release 7's horse orders.
+    charge:'order-advance',feigned_retreat:'order-withdraw'};
   assert.deepEqual(Object.keys(signals).sort(),Object.keys(ORDERS).sort(),'cover the public command vocabulary');
   for(const [order,cue]of Object.entries(signals))assert.equal(commandSoundCue([{kind:'order',squadId:'friend',order}],world),cue);
   assert.notDeepEqual(battleSoundPlan('impact',{material:'cloth'}),battleSoundPlan('impact',{material:'metal'}));

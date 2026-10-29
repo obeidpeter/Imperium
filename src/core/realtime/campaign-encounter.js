@@ -2,6 +2,9 @@ import {BANDAGES_PER_ENCOUNTER,FINALE_RESERVE,MOVEMENT,REALTIME_DIFFICULTY,STAND
 import {ARCHETYPES,ESCORTS,FACTION_NAMES,TRAINER,factionFor,tierFor} from '../../data/realtime-forces.js';
 import {BATTLE_OPERATIONS} from '../../data/battle-operations.js';
 import {progressionOperationDefinition} from '../../data/progression-operations.js';
+import {missionOperationDefinition} from '../../data/mission-operations.js';
+import {STRUCTURES} from '../../data/structures.js';
+import {installWorks} from './field-missions.js';
 import {COMPANIONS} from '../../data/soldier.js';
 import {soldierOf,soldierAttributes,wornIds,courseEffects,knownAbilities,companionAttributes,companionWorn} from '../soldier.js';
 import {difficultyRule} from '../campaign-options.js';
@@ -190,12 +193,18 @@ export function partyFor(state){
 }
 
 // --- Missions and operations ------------------------------------------------
-const operationOf=e=>e.operation?.version===2?progressionOperationDefinition(e.operation.id,e.operation.branch):e.operation?.version===1?BATTLE_OPERATIONS[e.operation.id]:null;
+const operationOf=e=>e.operation?.version===3?missionOperationDefinition(e.operation.id,e.operation.branch??null):e.operation?.version===2?progressionOperationDefinition(e.operation.id,e.operation.branch)
+  :e.operation?.version===1?BATTLE_OPERATIONS[e.operation.id]:null;
 function phaseMission(e,phase,layout,{escortPoint=null}={}){
   const goalTile=phase.goal==='escort'?escortPoint:{x:phase.goal[0],y:phase.goal[1]},points=phase.points==='escort'?[[goalTile.x,goalTile.y]]:phase.points??[];
   return {mode:phase.mode,goal:tileCentre(goalTile,layout),goalTile,points:points.map(([x,y])=>({...tileCentre({x,y},layout),secured:false})),holdRequired:phase.hold??0,
     gather:phase.gather?phase.gather*layout.k*FINE:0,commander:!!phase.commander,rescue:!!phase.rescue,pauseEscorts:!!phase.pauseEscorts,label:phase.label,
-    objective:phase.objective,id:phase.id};
+    objective:phase.objective,id:phase.id,
+    // Release 7's missions (field-missions.js): the phase's siege works (a ram on its point, a ladder against the wall
+    // beside it), the horse to draw onto the marker, a convoy's road, a fallback line and the far bank's volleys.
+    works:(phase.works??[]).map(w=>({id:w.id,kind:w.kind,name:w.name,...tileCentre({x:w.at[0],y:w.at[1]},layout),
+      ...(w.gate?{gateId:`${w.id}-gate`,gateTile:{x:w.gate[0],y:w.gate[1]},gateName:w.gateName}:{}),...(w.climber?{climber:w.climber}:{})})),
+    lure:phase.lure??null,convoy:phase.convoy?phase.convoy.route.map(([x,y])=>tileCentre({x,y},layout)):null,lines:!!phase.lines,fire:!!phase.fire};
 }
 const CAMP_CAPABILITIES=new Set(['oath','prepare','persuade','negotiate','stratagem','allocate','judge','address','rebut','record','denounce']);
 
@@ -219,7 +228,8 @@ function squadSpec(state,e,unit,k,{party=[],index=0,temperament=null}={}){
   // The finale's rival bands keep their 0.38 names: the claimant's own and the civil-war cohorts.
   const finale=state.chapter===12&&['confrontation','standoff'].includes(e.type);
   const detail=role==='archer'?'archers':role==='cavalry'?'horse':role==='engineer'?'engineers':'squad';
-  const name=enemy?finale&&unit.name?unit.name:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${detail}`
+  // A ladder's climbers (release 7's missions) keep their 0.38 name, as a band.
+  const name=enemy?finale&&unit.name?unit.name:unit.works?`${unit.name}s`:`${FACTION_NAMES[faction]} ${ENEMY_SQUAD_NAMES[role]??'band'}`:veteran?`${veteran.name.split(' ').at(-1)}’s ${detail}`
     :`${ORDINALS[index]??'Reserve'} ${detail}`;
   return {id:unit.id,name,side:enemy?'enemy':'ally',role,faction,unitId:unit.id,veteranId:led?unit.veteranId:null,strength:Math.max(.5,unit.hp),maxStrength:unit.maxHp,
     damage:unit.damage??null,morale:clamp((unit.morale??80)+(TEMPERAMENTS.kinds[temperament]?.morale??0)),cohesion:unit.cohesion??80,braced:!!unit.braced,
@@ -264,6 +274,21 @@ function fieldFor(e,layout,fine,moved={}){
     return authored?{label,effect:authored.effect,description:authored.description}:{label,...DEFAULT_OPPORTUNITIES[id]};};
   return {objects,field:{landmark:e.field.landmark,deadline:e.field.deadline,choice:e.field.choice,outcome:e.field.outcome,
     escortPace:e.commandCampaign?.escortPace??2,cavalryDenied:!!e.commandCampaign?.cavalryDenied,opportunities:{stores:opportunity('stores'),signal:opportunity('signal')}}};
+}
+
+// A ram's gate (release 7's missions): a gate of the defenders' wall across the ram's road, shut and
+// barred from inside (its holder is set once the works are fortified), built as fieldFor builds a side gate.
+function worksGates(e,layout,fine,phases){
+  const ox=offsets(layout.kx),oy=offsets(layout.ky),out=[];
+  const passable=(x,y)=>x>=0&&y>=0&&x<e.width&&y<e.height&&!['rock','river','wall'].includes(e.terrain[y][x]);
+  for(const w of phases.flatMap(p=>p.works))if(w.gateTile&&!out.some(g=>g.id===w.gateId)){
+    const t=w.gateTile,c=tileCentre(t,layout),cells=[];
+    if(passable(t.x-1,t.y)||passable(t.x+1,t.y)){const fx=ox[t.x]+Math.floor(layout.kx[t.x]/2);for(let fy=oy[t.y];fy<oy[t.y]+layout.ky[t.y];fy++)cells.push([fx,fy]);}
+    else{const fy=oy[t.y]+Math.floor(layout.ky[t.y]/2);for(let fx=ox[t.x];fx<ox[t.x]+layout.kx[t.x];fx++)cells.push([fx,fy]);}
+    const under=fine.terrain[cells[0][1]][cells[0][0]];for(const [x,y]of cells)fine.terrain[y][x]='wall';
+    out.push({id:w.gateId,kind:'gate',name:w.gateName,x:c.x,z:c.z,work_s:WORK_SECONDS,field:true,works:true,state:'closed',rounds:0,done:false,tile:{...t},cells,under});
+  }
+  return out;
 }
 
 export function createEncounterWorld(state,{seed=state.rng}={}){
@@ -312,7 +337,7 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   if(state.chapter===12&&e.type==='confrontation'&&FINALE_RESERVE.routes.includes(e.route)&&templates)
     for(const w of FINALE_RESERVE.waves)mission.waves.push({round:w.turn+Math.max(0,difficultyRule(e).wave),...tileCentre({x:Math.min(w.x,e.width-1),y:w.y},k),arrived:false,
       squad:{...templates[w.role],name:FINALE_RESERVE.name}});
-  const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects);
+  const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects,...worksGates(e,layout,fine,phases));
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
   const world=createWorld({map,seed,rng:streams,actors,controlled:'hero',party,mission,objects,difficulty,weather,timeOfDay:e.timeOfDay??'day',
@@ -322,9 +347,13 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   if(!squads&&e.type!=='training')formBand(world,{temperament:variety.band});
   preparations(state,e,world);
   // From Chapter VII the battle opens with the company to deploy (deployment.js).
-  if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(DEPLOYMENT.tiles,e.width)),done:false,placed:0};
+  // A crossing (release 7's missions) deploys the company on its own bank: the operation names how many tiles.
+  if(squads&&state.chapter>=DEPLOYMENT.fromChapter&&e.type!=='training')world.deployment={zone:deploymentZone(layout,Math.min(op?.deploy??DEPLOYMENT.tiles,e.width)),done:false,placed:0};
   world.title=e.title;world.encounterId=e.id;world.chapter=state.chapter;
   installFortifications(world,{chapter:state.chapter,encounterId:e.id});
+  // A ram's gate is ours, shut and barred (field-missions.js batters it); the phase's works stand on the field.
+  for(const g of world.objects.filter(o=>o.works&&o.kind==='gate'&&o.fortified)){g.holder='ally';g.integrity=STRUCTURES.gate.integrity+STRUCTURES.gate.bar;}
+  installWorks(world);
   applyCampaignSupport(state,e,world);
   return world;
 }
