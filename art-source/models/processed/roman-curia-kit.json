@@ -1,0 +1,304 @@
+{
+  "version": 1,
+  "id": "roman-curia-kit",
+  "generator": "scripts/assets/build-curia.py",
+  "chapters": [
+    11,
+    12
+  ],
+  "hall": {
+    "inner": {
+      "minX": -14.0,
+      "maxX": 14.0,
+      "minZ": -17.0,
+      "maxZ": 14.0
+    },
+    "height": 21.0,
+    "tribunal": 0.42
+  },
+  "authorship": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+  "licence": "Created for the Imperium project; no third-party source assets",
+  "components": [
+    {
+      "name": "curia_floor",
+      "triangles": 64,
+      "materials": 2,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia floor opus sectile"
+      ],
+      "bounds": {
+        "min": [
+          -17.600000381469727,
+          0.0,
+          -18.200000762939453
+        ],
+        "max": [
+          17.600000381469727,
+          0.02800000086426735,
+          20.200000762939453
+        ]
+      }
+    },
+    {
+      "name": "curia_steps_west",
+      "triangles": 1788,
+      "materials": 3,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia madder wool",
+        "Curia oiled bench wood"
+      ],
+      "bounds": {
+        "min": [
+          -14.0,
+          0.0,
+          -16.399999618530273
+        ],
+        "max": [
+          -10.569999694824219,
+          1.25,
+          12.399999618530273
+        ]
+      }
+    },
+    {
+      "name": "curia_steps_east",
+      "triangles": 1788,
+      "materials": 3,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia madder wool",
+        "Curia oiled bench wood"
+      ],
+      "bounds": {
+        "min": [
+          10.569999694824219,
+          0.0,
+          -16.399999618530273
+        ],
+        "max": [
+          14.0,
+          1.25,
+          12.399999618530273
+        ]
+      }
+    },
+    {
+      "name": "curia_wall_west",
+      "triangles": 2196,
+      "materials": 3,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia ashlar stucco",
+        "Curia dado opus sectile"
+      ],
+      "bounds": {
+        "min": [
+          -15.200000762939453,
+          0.0,
+          -17.0
+        ],
+        "max": [
+          -13.239999771118164,
+          21.0,
+          14.0
+        ]
+      }
+    },
+    {
+      "name": "curia_wall_east",
+      "triangles": 2196,
+      "materials": 3,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia ashlar stucco",
+        "Curia dado opus sectile"
+      ],
+      "bounds": {
+        "min": [
+          13.239999771118164,
+          0.0,
+          -17.0
+        ],
+        "max": [
+          15.200000762939453,
+          21.0,
+          14.0
+        ]
+      }
+    },
+    {
+      "name": "curia_wall_north",
+      "triangles": 2248,
+      "materials": 4,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia ashlar stucco",
+        "Curia dado opus sectile",
+        "Curia dark bronze"
+      ],
+      "bounds": {
+        "min": [
+          -15.199999809265137,
+          0.0,
+          -18.200000762939453
+        ],
+        "max": [
+          15.199999809265137,
+          21.0,
+          -16.240001678466797
+        ]
+      }
+    },
+    {
+      "name": "curia_facade",
+      "triangles": 2836,
+      "materials": 5,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia ashlar stucco",
+        "Curia dado opus sectile",
+        "Curia dark bronze",
+        "Curia gilded bronze"
+      ],
+      "bounds": {
+        "min": [
+          -15.199999809265137,
+          0.0,
+          13.239999771118164
+        ],
+        "max": [
+          15.199999809265137,
+          21.0,
+          15.200000762939453
+        ]
+      }
+    },
+    {
+      "name": "curia_tribunal",
+      "triangles": 508,
+      "materials": 4,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia dark bronze",
+        "Curia madder wool",
+        "Curia oiled bench wood"
+      ],
+      "bounds": {
+        "min": [
+          -5.519999980926514,
+          0.0,
+          -13.300000190734863
+        ],
+        "max": [
+          5.519999980926514,
+          1.0299999713897705,
+          -10.019999504089355
+        ]
+      }
+    },
+    {
+      "name": "curia_victory",
+      "triangles": 5136,
+      "materials": 3,
+      "materialFamilies": [
+        "Curia Luna marble",
+        "Curia dark bronze",
+        "Curia gilded bronze"
+      ],
+      "bounds": {
+        "min": [
+          -3.0106732845306396,
+          0.0,
+          -16.799999237060547
+        ],
+        "max": [
+          3.0507142543792725,
+          6.949999809265137,
+          -13.550000190734863
+        ]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "Curia Luna marble",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Curia dado opus sectile",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Curia floor opus sectile",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Curia ashlar stucco",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Curia oiled bench wood",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Curia gilded bronze",
+      "channels": [
+        "factors"
+      ],
+      "authorship": "Original material factors"
+    },
+    {
+      "name": "Curia dark bronze",
+      "channels": [
+        "factors"
+      ],
+      "authorship": "Original material factors"
+    },
+    {
+      "name": "Curia madder wool",
+      "channels": [
+        "factors"
+      ],
+      "authorship": "Original material factors"
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/roman-curia-kit.glb",
+    "bytes": 2145904,
+    "sha256": "88f6609dd836f24f8219fe864ebfc46ae21c5a8de6696e15d5fe51280df62411",
+    "triangles": 18760
+  },
+  "runtimePath": "assets/models/scenery/roman-curia-kit.glb"
+}

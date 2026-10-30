@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-beehives.glb",
+    "bytes": 47042048,
+    "sha256": "67dc22d4168d2ed04fdb0bc87ab3089a5c60da6548a4740f4bc00ed2eb740039",
+    "triangles": 1493002
+  },
+  "output": {
+    "path": "assets/models/world/life-beehives.glb",
+    "bytes": 201156,
+    "sha256": "d72e9916540ce2e351402cafb8d537194414b61b75021e924bcbea558a883dc3",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.4055737145935412,
+  "sizeMetres": {
+    "width": 1.0448,
+    "height": 1.4,
+    "depth": 1.3581
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

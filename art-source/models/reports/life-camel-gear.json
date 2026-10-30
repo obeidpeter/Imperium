@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-camel-gear.glb",
+    "bytes": 45368916,
+    "sha256": "be1c31dde692b99b86e89e9740f61a615338efd1d7e1ee13e8e569d5718b46aa",
+    "triangles": 1441288
+  },
+  "output": {
+    "path": "assets/models/world/life-camel-gear.glb",
+    "bytes": 212152,
+    "sha256": "6ac90389c3716c5bb0c62c09f2eae27f76af8f070867e80d0fce3917779b6784",
+    "triangles": 2938
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.572064580597257,
+  "sizeMetres": {
+    "width": 1.5731,
+    "height": 1.2,
+    "depth": 0.9822
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f20ca161-6ea7-4692-b061-208111c6aa43",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_f20ca161-6ea7-4692-b061-208111c6aa43",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_f20ca161-6ea7-4692-b061-208111c6aa43",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

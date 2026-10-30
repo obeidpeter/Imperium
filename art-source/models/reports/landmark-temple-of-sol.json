@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-temple-of-sol.glb",
+    "bytes": 44465568,
+    "sha256": "97d69e2d896e5e72f8a4f4062885c093acee51536b2b6e7c21dc95b991b6d7b0",
+    "triangles": 1394918
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-temple-of-sol.glb",
+    "bytes": 259276,
+    "sha256": "9c9ef8d3a95b90e8ff77413264f00de913f03b1a723f5350c8ced50f18594e8e",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 11.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 20.744338201357333,
+  "sizeMetres": {
+    "width": 19.0875,
+    "height": 11.6,
+    "depth": 20.7422
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_54648116-8681-4d46-a5e1-88f9aef8050d",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_54648116-8681-4d46-a5e1-88f9aef8050d",
+      "roughness": 0.802,
+      "metallic": 0.0617
+    }
+  ]
+}

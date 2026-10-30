@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-bridge-piers.glb",
+    "bytes": 46374480,
+    "sha256": "981d653bac682eacae7321d053d128c198da0f853ed45f956ed0ecbbe796f46e",
+    "triangles": 1484956
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-bridge-piers.glb",
+    "bytes": 199820,
+    "sha256": "58e068646bb93563284b236347501bf205f9dcc58e9fc2d4c06fafef9540cfbe",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 6.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0,
+    "colourOnly": true
+  },
+  "scale": 22.234191201185638,
+  "sizeMetres": {
+    "width": 22.2365,
+    "height": 6.2,
+    "depth": 8.7902
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8d691066-0e74-4388-bde5-7b2f86191c2f",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_8d691066-0e74-4388-bde5-7b2f86191c2f",
+      "roughness": 0.8211,
+      "metallic": 0.0167
+    }
+  ]
+}

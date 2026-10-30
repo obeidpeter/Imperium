@@ -1,5 +1,7 @@
 import * as T from '../../vendor/three/three.module.js';
 import {hash,noise,smooth,clamp} from './environment-layout.js';
+import {LANDMARK_LAYOUT} from '../ui/world-layouts.js';
+import {buildLandmarkStandIn,buildLandmarkStream,LANDMARK_HEIGHTS,LANDMARK_WATER,landmarkFootprint} from './horizon-landmarks.js';
 
 // The woods' budget: crowns per quality, each an icosahedron of 20 triangles.
 export const FOREST_CROWNS=Object.freeze({performance:320,balanced:700,high:1100});
@@ -65,9 +67,44 @@ export function forestStandIns({ridges,profile,quality='balanced',share,haze,see
   return {geometry,crowns};
 }
 
+/** A chapter's landmarks on the horizon's three bearings, nearest first, at the middle
+ * distance (farther round a city): LANDMARK_LAYOUT's slots with their points and facings
+ * (`yaw`, a rotation about y: toward the board). Given the horizon's river (`centre` and
+ * half-`width` along x), a bridge and its piers stand across it and a quay on its near bank,
+ * facing the water, at the same distance on their own side; with no river a bridge has a
+ * `stream` of its own. */
+export function landmarkSlots(profile,{city=false,river=null}={}){
+  const chapter=profile?.chapter??1;
+  return (LANDMARK_LAYOUT[chapter]??LANDMARK_LAYOUT[1]).map((slot,cluster)=>{
+    const angle=-Math.PI/2+cluster*2.08+(chapter%3)*.27,r=(city?195:115)+cluster*28,x=Math.cos(angle)*r,z=Math.sin(angle)*r,water=LANDMARK_WATER[slot.kind];
+    if(!water||!river)return {...slot,x,z,yaw:Math.atan2(-x,-z),stream:water==='across'};
+    const along=Math.sign(x)*r,centre=river.centre(along);
+    if(water==='across')return {...slot,x:along,z:centre,yaw:Math.atan2(-along,-centre),stream:false};
+    const toBoard=Math.sign(-centre)||1,[,depth]=landmarkFootprint(slot.kind);
+    return {...slot,x:along,z:centre+toBoard*(river.width(along)+depth/2),yaw:toBoard>0?Math.PI:0,stream:false};
+  });
+}
+// The share of the haze a generated landmark takes at its distance: half of what the horizon's
+// own distant colours take there (tint, below), as the landmark is lit and they are not.
+export const landmarkHaze=distance=>.5*clamp(.32+smooth((distance-60)/490)*.6);
+// A generated landmark fitted to its slot: a clone of the cached model, turned to the board and
+// scaled to its kind's height, with its box there (centred on the origin's bearing, not yet placed).
+// Its materials are clones that take the haze as an unlit share of its colour, so it sits as far off
+// as the hills round it; they keep the cached model's program, and the horizon disposes them.
+function fitLandmark(source,slot,haze,materials){
+  const model=source.clone(),k=landmarkHaze(Math.hypot(slot.x,slot.z)),hazed=new Map();
+  const tint=m=>{if(!hazed.has(m)){const c=m.clone();c.color.multiplyScalar(1-k);c.emissive.copy(haze).multiplyScalar(k);materials.add(c);hazed.set(m,c);}return hazed.get(m);};
+  model.traverse(o=>{if(o.isMesh)o.material=Array.isArray(o.material)?o.material.map(tint):tint(o.material);});
+  model.name=`landmark: ${slot.name}`;model.rotation.y=slot.yaw;model.updateMatrixWorld(true);
+  const box=new T.Box3().setFromObject(model,true);
+  model.scale.setScalar(LANDMARK_HEIGHTS[slot.kind]/Math.max(box.getSize(new T.Vector3()).y,1e-3));model.updateMatrixWorld(true);box.setFromObject(model,true);
+  return {model,box,size:box.getSize(new T.Vector3()),centre:box.getCenter(new T.Vector3())};
+}
 // A finite, 360-degree landscape around the authoritative 80m ground. Only the
 // inner edge samples gameplay height; this mesh never becomes picking terrain.
-export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null,riverZ=-29}){
+// landmarkModels: generated landmarks already loaded (world catalog id -> model), which stand
+// in their slots in place of the silhouettes; none on Performance.
+export function createEnvironmentHorizon({ground,profile,height,quality='balanced',innerRadius=40,waterMaterial=null,riverZ=-29,landmarkModels=null}){
   const group=new T.Group();group.name='regional distant landscape';group.userData.environmentHorizon=true;
   const geometries=new Set(),materials=new Set(),edges=[],segments=ground.geometry.parameters.widthSegments;
   const arid=profile.vegetation==='arid',wet=profile.setting==='wetland',city=['palmyra','rome','accession'].includes(profile.setting);
@@ -178,9 +215,17 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     const p=[[-1,0,-1],[1,0,-1],[1,0,1],[-1,0,1],[-1,1,-1],[1,1,-1],[1,1,1],[-1,1,1]].map(([a,b,c])=>[x+a*w/2,y+b*h,z+c*d/2]);
     for(const [face,[a,b,c,d]]of [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]].entries()){const shade=color.clone().multiplyScalar([.94,1.02,.88,.98,1.05][face]);triangle(p[a],p[b],p[c],shade);triangle(p[a],p[c],p[d],shade);}
   }
+  // The chapter's landmarks (placed below) keep their ground clear of the city's rooflines: a
+  // generated one, fitted first, its own extent, which may outgrow its outline's.
+  const slots=landmarkSlots(profile,{city,river:profile.distantWater?{centre:riverCentre,width:riverWidth}:null}),placedLandmarks=[];
+  const fitted=new Map(slots.map(slot=>{const source=quality==='performance'?null:landmarkModels?.get(slot.model);return [slot,source?fitLandmark(source,slot,haze,materials):null];}));
+  const reach=slot=>{const fit=fitted.get(slot),[w,d]=fit?[fit.size.x,fit.size.z]:landmarkFootprint(slot.kind);return Math.hypot(w,d)/2;};
+  const onLandmark=(x,z,w,d)=>slots.some(slot=>Math.hypot(x-slot.x,z-slot.z)<reach(slot)+Math.hypot(w,d)/2);
   if(city){
     for(let i=0;i<(quality==='performance'?45:70);i++){
-      const angle=i*2.39996,r=190+hash(i,seed)*175,x=Math.cos(angle)*r,z=Math.sin(angle)*r,w=5+hash(i,31)*11,d=5+hash(i,33)*9,y=foundation(x,z,w,d),h=3+hash(i,32)*(profile.setting==='palmyra'?5:7),c=tint(x,z,y,.05);
+      const angle=i*2.39996,r=190+hash(i,seed)*175,x=Math.cos(angle)*r,z=Math.sin(angle)*r,w=5+hash(i,31)*11,d=5+hash(i,33)*9;
+      if(onLandmark(x,z,w,d))continue;
+      const y=foundation(x,z,w,d),h=3+hash(i,32)*(profile.setting==='palmyra'?5:7),c=tint(x,z,y,.05);
       box(x,y,z,w,h,d,c);const roof=tint(x,z,y).multiplyScalar(.86),a=[x-w*.55,y+h,z-d*.55],b=[x+w*.55,y+h,z-d*.55],c1=[x+w*.55,y+h,z+d*.55],d1=[x-w*.55,y+h,z+d*.55],top1=[x,y+h+2,z-d*.55],top2=[x,y+h+2,z+d*.55];
       triangle(a,b,top1,roof);triangle(d1,top2,c1,roof);triangle(a,top1,top2,roof);triangle(a,top2,d1,roof);triangle(b,c1,top2,roof);triangle(b,top2,top1,roof);
     }
@@ -189,36 +234,22 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
     // Trees stand on the ridges as the woods below (forestStandIns).
     group.userData.silhouetteKind=wet?'distant willow wetlands':'wooded ridgelines';
   }else group.userData.silhouetteKind='open eastern escarpments';
-  // Three authored bearings establish a middle distance before the far hills.
-  // Closed volumes share the distant batch: no billboards or playable cells.
-  const landmarkKinds=['frontier watch','marsh watch','road station','marching camp','siege aqueduct','frontier watch','colonnade','river watch','hill sanctuary','farm settlement','urban temple','urban temple'];
-  const landmarkKind=landmarkKinds[(profile.chapter??1)-1]??'frontier watch';
-  for(let cluster=0;cluster<3;cluster++){
-    const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=(city?195:115)+cluster*28,cx=Math.cos(angle)*r,cz=Math.sin(angle)*r,temple=landmarkKind==='urban temple'||landmarkKind==='hill sanctuary',base=temple?foundation(cx,cz,18,11):renderedGroundHeight(cx,cz)-.04,c=tint(cx,cz,base,.03);
-    if(landmarkKind==='siege aqueduct'||landmarkKind==='colonnade'){
-      const aqueduct=landmarkKind==='siege aqueduct',count=aqueduct?8:6;
-      for(let i=0;i<count;i++){
-        const x=cx+(i-(count-1)/2)*3.5,y=foundation(x,cz,aqueduct?1.25:.65,1.25);
-        box(x,y,cz,aqueduct?1.25:.65,base+8-y,1.25,c);
-        box(x,base+7.4,cz,3.5,.9,1.55,c);
-        if(aqueduct){box(x,base+6.5,cz,2.25,.9,1.3,c);box(x,base+5.9,cz,1.7,.6,1.3,c);}
-      }
-    }else if(landmarkKind==='urban temple'||landmarkKind==='hill sanctuary'){
-      box(cx,base,cz,18,1.4,11,c);
-      for(const side of [-1,1])for(let i=0;i<6;i++)box(cx+(i-2.5)*2.8,base+1.4,cz+side*4.6,.7,7,.7,c);
-      box(cx,base+8.4,cz,19,1.1,12,c);
-      const roof=c.clone().multiplyScalar(.88);
-      for(const side of [-1,1])triangle([cx-9.5,base+9.5,cz+side*6],[cx+9.5,base+9.5,cz+side*6],[cx,base+13,cz+side*6],roof);
-      triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz-6],[cx,base+13,cz+6],roof);triangle([cx-9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx-9.5,base+9.5,cz+6],roof);
-      triangle([cx+9.5,base+9.5,cz-6],[cx+9.5,base+9.5,cz+6],[cx,base+13,cz+6],roof);triangle([cx+9.5,base+9.5,cz-6],[cx,base+13,cz+6],[cx,base+13,cz-6],roof);
-    }else if(landmarkKind==='farm settlement'||landmarkKind==='marching camp'){
-      for(let i=0;i<7;i++){const x=cx+(i%4)*6,z=cz+Math.floor(i/4)*9,y=foundation(x,z,4,5);box(x,y,z,4,landmarkKind==='marching camp'?2.5:4.5,5,c);}
-    }else{
-      const floor=foundation(cx,cz,5.8,5.8);
-      box(cx,floor,cz,5.8,8.5,5.8,c);box(cx,floor+8.5,cz,6.4,.7,6.4,c);
-      for(const side of [-1,1])for(let i=0;i<3;i++)box(cx+(i-1)*2,floor+9.2,cz+side*2.7,.9,1.1,1,c);
-      box(cx+11,foundation(cx+11,cz,12,1.3),cz,12,2.3,1.3,c);
+  // Three authored bearings establish a middle distance before the far hills: the chapter's
+  // landmarks (LANDMARK_LAYOUT). Their silhouettes are closed volumes in the distant batch,
+  // with no billboards or playable cells (horizon-landmarks.js); a generated landmark already
+  // loaded stands in its slot instead, scaled to its kind's height and turned to the board.
+  // Each landmark's foundation record names it and counts the silhouette vertices it emitted.
+  for(const slot of slots){
+    const fit=fitted.get(slot),first=silhouettePositions.length/3;let base;
+    if(!fit)base=buildLandmarkStandIn(slot.kind,{cx:slot.x,cz:slot.z,yaw:slot.yaw,box,triangle,foundation,tint});
+    else{
+      // It stands on the lowest ground under its own extent.
+      const {model,size,centre}=fit;base=foundation(slot.x,slot.z,size.x,size.z);
+      model.position.set(slot.x-centre.x,base-fit.box.min.y,slot.z-centre.z);
+      model.traverse(o=>{if(o.isMesh){o.castShadow=o.receiveShadow=false;o.raycast=()=>{};}});group.add(model);placedLandmarks.push(model);
     }
+    const record=Object.assign(foundations.at(-1),{landmark:slot.model,vertices:silhouettePositions.length/3-first,streamVertices:0});
+    if(slot.stream){buildLandmarkStream({cx:slot.x,cz:slot.z,yaw:slot.yaw,base,triangle,color:new T.Color(profile.waterColor).multiplyScalar(.9).lerp(haze,.5)});record.streamVertices=silhouettePositions.length/3-first-record.vertices;}
   }
   if(silhouettePositions.length){const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(silhouettePositions,3));geometry.setAttribute('color',new T.Float32BufferAttribute(silhouetteColors,3));geometry.computeVertexNormals();addMesh('regional distant silhouettes',geometry,distant);}
   group.userData.distantFoundations=foundations;
@@ -230,9 +261,9 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   // Their light is in their colours, in the same unlit batch as the silhouettes.
   const forestShare=city||arid?0:{frontier:.5,fortress:.5,crossing:.5,wetland:.42,station:.36,province:.34,italy:.22}[profile.setting]??.3;
   const forest=forestShare?forestStandIns({ridges,profile,quality,share:forestShare,haze,seed,wet,riverCentre:profile.distantWater?riverCentre:null,riverWidth,
-    clear:Array.from({length:3},(_,cluster)=>{const angle=-Math.PI/2+cluster*2.08+(profile.chapter%3)*.27,r=115+cluster*28;return [Math.cos(angle)*r,Math.sin(angle)*r];})}):null;
+    clear:slots.map(slot=>[slot.x,slot.z])}):null;
   if(forest){geometries.add(forest.geometry);addMesh('distant forest stand-ins',forest.geometry,distant);}
-  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarkKind,landmarkBearings:3,
+  const stats=Object.freeze({meshes:group.children.length,triangles,innerEdgeSamples:size,innerRadius,outerRadius:550,region:profile.setting,silhouetteKind:group.userData.silhouetteKind,landmarks:slots.map(slot=>Object.freeze({model:slot.model,kind:slot.kind,x:slot.x,z:slot.z,yaw:slot.yaw,stream:slot.stream,generated:placedLandmarks.some(m=>m.name===`landmark: ${slot.name}`)})),
     forestCrowns:forest?.crowns??0,forestTriangles:forest?forest.geometry.attributes.position.count/3:0});
   group.userData.horizonStats=stats;
   let lastCameraX=NaN,lastCameraZ=NaN,lastCameraHeight=0;
@@ -248,5 +279,6 @@ export function createEnvironmentHorizon({ground,profile,height,quality='balance
   return {group,bridge,ridges,stats,cameraGroundHeight,
     // The water's waves move in its shader (world position), joined with the near river's.
     update(){},
-    dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.clear();}};
+    // A placed landmark's geometry is its cached model's, left whole; its hazed materials are ours.
+    dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const m of placedLandmarks)m.removeFromParent();for(const g of geometries)g.dispose();for(const m of materials)m.dispose();group.clear();}};
 }

@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-villa.glb",
+  "output": "assets/models/landmarks/landmark-villa.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 228712,
+    "gzipBytes": 136096,
+    "sha256": "de210ab367a06a28be35c5dd0a020c1bc1df1e1cec0037ddf8bf9c278904da02"
+  },
+  "after": {
+    "bytes": 179704,
+    "gzipBytes": 171342,
+    "sha256": "de9fd0efad84c67455ce3eb3dcc4cd85568f1eacd7a324522b7959d8f48ce618"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11532
+      },
+      "bytes": 14711,
+      "psnr": 31.724
+    }
+  ]
+}

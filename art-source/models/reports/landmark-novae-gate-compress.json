@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-novae-gate.glb",
+  "output": "assets/models/landmarks/landmark-novae-gate.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 189660,
+    "gzipBytes": 129230,
+    "sha256": "e1009d2ab8bdf18a192e3f0e351e6debd97cebb0ec07f31d5e4a26fc9bd74184"
+  },
+  "after": {
+    "bytes": 144520,
+    "gzipBytes": 138103,
+    "sha256": "7de5587a6e6379da4f6d9c165448c7980ae1eb456b7bfb9c7c2ee94bb8df1ae5"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10554
+      },
+      "bytes": 14235,
+      "psnr": 33.586
+    }
+  ]
+}

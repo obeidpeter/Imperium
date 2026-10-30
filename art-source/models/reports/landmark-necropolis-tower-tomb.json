@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-necropolis-tower-tomb.glb",
+    "bytes": 45778692,
+    "sha256": "10ae6cbb3cf5df074b44a087b1ddd90bb2e2368d6e30c0c6e6c5b3df6c845933",
+    "triangles": 1435868
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-necropolis-tower-tomb.glb",
+    "bytes": 158892,
+    "sha256": "ffd52dda2a35b3397b69585d36c62279e90cc1be0cb4ca9be9af598087120b75",
+    "triangles": 3918
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 15.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 15.41178811615709,
+  "sizeMetres": {
+    "width": 14.3109,
+    "height": 15.4,
+    "depth": 12.6438
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba",
+      "roughness": 0.8496,
+      "metallic": 0.0422
+    }
+  ]
+}

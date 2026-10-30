@@ -3,8 +3,9 @@ import {REGIONAL_KIT_COMPONENTS} from './regional-kit-components.js';
 import {CH5_KIT_COMPONENTS,isChapterFivePilot} from './environment-ch5-pilot.js';
 import {stagingEdge,getEncounterStaging} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
+import {curiaPropSpot} from './environment-curia.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
-import {REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
+import {LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
 // The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
@@ -23,7 +24,7 @@ export function regionalPlacementBounds(p){
 
 // Different mission approaches rotate the frontage toward their existing
 // landmark road, without turning the map.
-export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5}={}){
+export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5,withoutGate=false}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height))return [];
   const kit=REGIONAL_WORLD_KITS[chapter],plan=REGIONAL_PLANS[chapter],staging=getEncounterStaging(e,{chapter,civic:e.kind==='contest'}),camp=e.id===`ch${chapter}-camp`,civic=e.kind==='contest';
   const front=camp?'north':staging.landmarkEdge,edges={front,opposite:front==='east'?'north':'east',back:front==='east'?'south':'west'},out=[];
@@ -37,7 +38,7 @@ export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=
   };
   const width=slot=>regionalComponentDimensions(kit,plan[slot])[0];
   const place=entry=>{
-    if(entry.camp&&!camp)return;
+    if(entry.camp&&!camp||entry.gate&&withoutGate)return;
     const {beside}=entry,along=beside?beside.side*((width(beside.slot)+width(entry.slot))/2+beside.spacing):entry.along;
     add(entry.component??plan[entry.slot],edges[entry.edge]??entry.edge,along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
   };
@@ -69,11 +70,13 @@ const frontServices=Object.freeze({'equipment-rack':'quartermaster','archive-cab
 const propYaw=(id,x,z,target,fallback=0)=>frontServices[id]&&target&&Number.isFinite(target.x)&&Number.isFinite(target.z)&&Math.hypot(target.x-x,target.z-z)>.01?Math.atan2(z-target.z,target.x-x):fallback;
 export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.5}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height)||e.width<=0||e.height<=0)return [];
-  const ids=[...Object.entries(REGIONAL_PROP_CHAPTERS),...Object.entries(REGIONAL_REUSED_PROP_CHAPTERS)].filter(([,chapters])=>chapters.includes(chapter)).map(([id])=>id);
+  // Life about the camps and towns stands outdoors: not round a council's or the Senate's board.
+  const life=e.kind==='contest'?[]:Object.entries(LIFE_PROP_CHAPTERS);
+  const ids=[...Object.entries(REGIONAL_PROP_CHAPTERS),...Object.entries(REGIONAL_REUSED_PROP_CHAPTERS),...life].filter(([,chapters])=>chapters.includes(chapter)).map(([id])=>id);
   const pads=regionalServicePads(e,tileSize),used=new Set(),hx=e.width*tileSize/2,hz=e.height*tileSize/2,occupied=getRegionalKitPlacements(e,{chapter,tileSize}).map(regionalPlacementBounds);
   const intersects=(a,b)=>a.maxX>b.minX&&a.minX<b.maxX&&a.maxZ>b.minZ&&a.minZ<b.maxZ;
   return ids.map((id,i)=>{
-    const kind=padKindFor(id),pad=id==='river-ferry'?null:pads.find(p=>p.id===kind&&!used.has(p.id));
+    const kind=padKindFor(id),pad=id==='river-ferry'||LIFE_PROP_CHAPTERS[id]?null:pads.find(p=>p.id===kind&&!used.has(p.id));
     if(pad){
       used.add(pad.id);const x=pad.x+.4,z=pad.z,approach=e.campPresentation?.places?.find(place=>place.id===frontServices[id])??{x:0,z:0};
       return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,approach),pad:true,padId:pad.id,fitWithin:{width:pad.width-1.4,depth:pad.depth-.6},fallbackName:`world-service-pad:${chapter}:${pad.id}`};
@@ -81,10 +84,15 @@ export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.
     // A single orderly baggage line has a four-metre clear aisle from the
     // board edge. A second rank avoids overlapping accessories on small maps.
     if(id==='river-ferry')return {id,url:worldModelUrl(id),x:hx+9,z:distantRiverCentre(e,tileSize),yaw:Math.PI/2,groundY:-1.55,fitWithin:{width:6.2,depth:4.4},fallbackName:`regional-prop:${id}`};
+    // In the Curia a prop has its own place: the clerks' tables beside the tribunal, the
+    // fountain and the army's eagle outside the doors (CURIA_LAYOUT).
+    const spot=curiaPropSpot(e,id,{chapter,tileSize});
+    if(spot)return {id,url:worldModelUrl(id),x:spot.x,z:spot.z,yaw:spot.yaw,groundY:0,fitWithin:{width:2.6,depth:2.6},fallbackName:`regional-prop:${id}`};
     let slot=i,x,z,b;
     do{const column=slot%4,row=Math.floor(slot/4);x=[-10,-4,4,10][column];z=hz+5.5+row*6;slot++;b={minX:x-2.35,maxX:x+2.35,minZ:z-2.35,maxZ:z+2.35};}while(occupied.some(other=>intersects(b,other)));
     occupied.push(b);const column=(slot-1)%4;
-    return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,{x,z:0},column%2?-.12:.12),fitWithin:{width:id==='river-ferry'?4.6:4.4,depth:4.4},fallbackName:`regional-prop:${id}`};
+    // Life has no code-built stand-in: on Performance, or without its model, the place stays empty.
+    return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,{x,z:0},column%2?-.12:.12),fitWithin:{width:id==='river-ferry'?4.6:4.4,depth:4.4},...(LIFE_PROP_CHAPTERS[id]?{}:{fallbackName:`regional-prop:${id}`})};
   });
 }
 
@@ -131,7 +139,7 @@ const freezeFallback=(g,geometries)=>{batchStaticEnvironment(g,{geometries,insta
 export function addRegionalWorld(ctx){
   const {root,e,p,m,profile,height,tileSize,geometries}=ctx;if(!hasRegionalWorld(e))return;
   const g=p.group(root,0,0,0);g.name=`Chapter ${profile.chapter} regional world`;
-  const placements=getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize}),structures=[];
+  const placements=getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize,withoutGate:!!root.userData.finaleWalls}),structures=[];
   for(const item of placements){
     const b=regionalPlacementBounds(item),base=Math.min(...[[item.x,item.z],[b.minX,b.minZ],[b.maxX,b.minZ],[b.minX,b.maxZ],[b.maxX,b.maxZ]].map(([x,z])=>height(x,z)));
     const part=p.group(g,item.x,base,item.z,item.yaw);part.name=item.fallbackName;part.scale.fromArray(item.scale);part.userData.regionalFallback=true;

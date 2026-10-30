@@ -1,0 +1,68 @@
+{
+  "id": "landmark-syrian-temple-court",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    6
+  ],
+  "use": "A Syrian temple court, on the horizon of Chapter VI (LANDMARK_LAYOUT, kind court temple): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A temple of the Syrian Euphrates in the third century in its walled court: a rectangular court wall of buff limestone with a monumental gateway in the front, and inside it a temple with a tall plain cella and a porch of columns, a row of stepped merlons along its roof line, and a stone altar in the court. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 11.6,
+    "minHeight": 11.02,
+    "maxHeight": 12.18,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+    "requestedAt": "2026-10-29T21:27:11.644Z",
+    "balanceBefore": 2125,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A temple of the Syrian Euphrates in the third century in its walled court: a rectangular court wall of buff limestone with a monumental gateway in the front, and inside it a temple with a tall plain cella and a porch of columns, a row of stepped merlons along its roof line, and a stone altar in the court. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:29:25.835Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-syrian-temple-court.glb",
+    "rawBytes": 46204536,
+    "rawSha256": "cf7c16b1c47db10e7c0abb4453781d467d2d889bebefe5bb731a0a233f692383",
+    "tripoInput": {
+      "prompt": "A temple of the Syrian Euphrates in the third century in its walled court: a rectangular court wall of buff limestone with a monumental gateway in the front, and inside it a temple with a tall plain cella and a porch of columns, a row of stepped merlons along its roof line, and a stone altar in the court. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-syrian-temple-court-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its gateway on the model’s side (+X); turned so that it faces the board"
+  }
+}

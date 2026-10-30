@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-bridge-piers.glb",
+  "output": "assets/models/landmarks/landmark-bridge-piers.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 199820,
+    "gzipBytes": 133143,
+    "sha256": "58e068646bb93563284b236347501bf205f9dcc58e9fc2d4c06fafef9540cfbe"
+  },
+  "after": {
+    "bytes": 151948,
+    "gzipBytes": 145348,
+    "sha256": "c52585de00e1b15c9a79e81c79dfd45f6c6239adda41bfcc2c8f22ee1a09a2a2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12720
+      },
+      "bytes": 14205,
+      "psnr": 31.501
+    }
+  ]
+}

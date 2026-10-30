@@ -10977,6 +10977,2942 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "roman-curia-kit",
+      "path": "assets/models/scenery/roman-curia-kit.glb",
+      "subject": "The Curia: the Senate house in marble around the chamber board of Chapters XI and XII, in nine original pieces authored in place (floor, senators’ steps and benches, walls with aediculae, windows and open bronze doors, the tribunal, and the gilded Victory with her altar)",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-curia.py",
+        "sourceBlend": "art-source/models/roman-curia-kit.blend",
+        "report": "art-source/models/processed/roman-curia-kit.json",
+        "components": [
+          "curia_floor",
+          "curia_steps_west",
+          "curia_steps_east",
+          "curia_wall_west",
+          "curia_wall_east",
+          "curia_wall_north",
+          "curia_facade",
+          "curia_tribunal",
+          "curia_victory"
+        ],
+        "materialFamilies": [
+          "Curia Luna marble",
+          "Curia dado opus sectile",
+          "Curia floor opus sectile",
+          "Curia ashlar stucco",
+          "Curia oiled bench wood",
+          "Curia gilded bronze",
+          "Curia dark bronze",
+          "Curia madder wool"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes (the tiled texture coordinates stay floats)",
+        "historicalBasis": "docs/historical-research.md, The Curia: the Curia Julia as Domitian restored it, widened to hold the game’s chamber board",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/roman-curia-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The Senate’s Contests of Chapters XI and XII (src/showcase/environment-curia.js, CURIA_LAYOUT in src/ui/world-layouts.js). Each piece stands at the board’s centre, every solid outside the board; a wall stands down while the camera is beyond it and casts no shadow. No piece takes picks or changes a route.",
+      "loading": "Shared deferred chapter packs 11, 12 at Balanced/High. Performance and a failed download keep the code-built audience hall and chamber colonnades.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 680196,
+        "gzipBytes": 354227,
+        "sha256": "3a0bb190aabe3e859420ca15acdbb72fd1ee6e9070158080fd467d69134f4f1f",
+        "triangles": 18760,
+        "textures": 15,
+        "textureEdge": 512,
+        "componentCount": 9
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "aurelian-walls-kit",
+      "path": "assets/models/scenery/aurelian-walls-kit.glb",
+      "subject": "Aurelian’s walls of Rome before the finale’s field, in six original pieces on the wall’s centre line (a finished stretch with its walk and merlons, three stretches still building behind scaffolds, a square tower, and the double gateway faced in travertine between its two semicircular towers)",
+      "source": {
+        "method": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+        "builder": "scripts/assets/build-aurelian-walls.py",
+        "sharedBuilders": "scripts/assets/kitlib.py",
+        "sourceBlend": "art-source/models/aurelian-walls-kit.blend",
+        "report": "art-source/models/processed/aurelian-walls-kit.json",
+        "components": [
+          "wall_curtain",
+          "wall_rising_low",
+          "wall_rising_mid",
+          "wall_rising_high",
+          "wall_tower",
+          "wall_gate"
+        ],
+        "materialFamilies": [
+          "Walls brick facing",
+          "Walls travertine ashlar",
+          "Walls concrete core",
+          "Walls scaffold timber",
+          "Walls shadowed interior"
+        ],
+        "quantization": "scripts/assets/quantize-model.mjs: normals as signed bytes (the tiled texture coordinates stay floats)",
+        "historicalBasis": "docs/historical-research.md, Aurelian’s walls: brick-faced concrete 3.5 m thick, a square tower every 100 Roman feet, the principal gates’ two arched passages faced in travertine between semicircular towers",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/aurelian-walls-kit-compress.json",
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          },
+          "geometryUnchanged": true
+        }
+      },
+      "usage": "The finale’s approach to Rome, Chapter XII (src/showcase/aurelian-walls.js, placed along finaleLayout in src/showcase/environment-finale.js), beyond the field’s east edge. Its pieces follow the code-built curtain’s pattern and are merged into one mesh per material; they take no picks and change no route.",
+      "loading": "Shared deferred chapter pack 12 at Balanced/High. Performance and a failed download keep the code-built curtain and the regional kit’s gate arch.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), meshopt-compressed geometry (EXT_meshopt_compression) and quantized vertex attributes (KHR_mesh_quantization)",
+        "bytes": 428656,
+        "gzipBytes": 310434,
+        "sha256": "e29cce20c98d2e7b13d5829ce751430c4b6e4697e9e42c0c1dc8cb48d96a16ef",
+        "triangles": 5712,
+        "textures": 12,
+        "textureEdge": 512,
+        "componentCount": 6
+      },
+      "license": "Created for the Imperium project; no third-party source assets"
+    },
+    {
+      "id": "landmark-novae-gate",
+      "path": "assets/models/landmarks/landmark-novae-gate.glb",
+      "subject": "Release 9 landmark: the stone gate of Novae",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d778db71-dcec-4496-937d-ba8320ff16f5",
+        "generatedAt": "2026-10-29T21:13:15.591Z",
+        "prompt": "art-source/models/requests/landmark-novae-gate.json",
+        "rawBytes": 46582488,
+        "rawSha256": "0203ea16bee0da0f7f869eb6cf62f20374acc6d8c5b1ac7cff17d6413dffda4b",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 12.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_d778db71-dcec-4496-937d-ba8320ff16f5",
+            "roughness": 0.8489,
+            "metallic": 0.0344
+          }
+        ],
+        "report": "art-source/models/reports/landmark-novae-gate.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-novae-gate-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The stone gate of Novae: the nearest of Chapter I’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 1 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 144520,
+        "gzipBytes": 138103,
+        "sha256": "7de5587a6e6379da4f6d9c165448c7980ae1eb456b7bfb9c7c2ee94bb8df1ae5",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 22.5485,
+          "height": 12.8,
+          "depth": 6.5819
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-signal-tower",
+      "path": "assets/models/landmarks/landmark-signal-tower.glb",
+      "subject": "Release 9 landmark: a stone signal tower",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f7e9f600-c655-46ef-8908-07a5d604e376",
+        "generatedAt": "2026-10-29T20:24:58.257Z",
+        "prompt": "art-source/models/requests/landmark-signal-tower.json",
+        "rawBytes": 45762288,
+        "rawSha256": "5aa92c01e65421e2c63678704c5bf1494f036c4d894b2fe100ddb21c27d506b6",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 10.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_f7e9f600-c655-46ef-8908-07a5d604e376",
+            "roughness": 0.618,
+            "metallic": 0.0403
+          }
+        ],
+        "report": "art-source/models/reports/landmark-signal-tower.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-signal-tower-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A stone signal tower: the middle of Chapter I’s and the nearest of Chapter IV’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 140628,
+        "gzipBytes": 134106,
+        "sha256": "a5ba25fe9286c7bc9b4799fb073eb53c155e471975ee77bb63851f9fc2a2152d",
+        "triangles": 3920,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 6.6299,
+          "height": 10.3,
+          "depth": 6.6236
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-burial-mound",
+      "path": "assets/models/landmarks/landmark-burial-mound.glb",
+      "subject": "Release 9 landmark: a Thracian burial mound",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "26145aa2-98b2-4375-970a-cb24f9ca49d5",
+        "generatedAt": "2026-10-29T21:01:02.876Z",
+        "prompt": "art-source/models/requests/landmark-burial-mound.json",
+        "rawBytes": 46726756,
+        "rawSha256": "e38ff4828d3796e0a1b7e1e9bab96db92eed74d64766e576582176d10762f51d",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 4.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_26145aa2-98b2-4375-970a-cb24f9ca49d5",
+            "roughness": 0.9694,
+            "metallic": 0.0089
+          }
+        ],
+        "report": "art-source/models/reports/landmark-burial-mound.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-burial-mound-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Thracian burial mound: the farthest of Chapter I’s and the middle of Chapter IV’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 115292,
+        "gzipBytes": 109902,
+        "sha256": "ccdebb6688fdc1e670d294c53e1c7f227b64adc592286cd145b44796c8b333da",
+        "triangles": 2940,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 10.7785,
+          "height": 4.3,
+          "depth": 9.8004
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-pile-hut",
+      "path": "assets/models/landmarks/landmark-pile-hut.glb",
+      "subject": "Release 9 landmark: a reed hut on piles",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "498307d9-8f39-466e-aa56-d0a6b54c841f",
+        "generatedAt": "2026-10-29T21:16:05.814Z",
+        "prompt": "art-source/models/requests/landmark-pile-hut.json",
+        "rawBytes": 46797480,
+        "rawSha256": "595e45b55ffb0ada6f6d12b8fcdd6e2413e11882f990b38b09f878077fb2cb3f",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 7.15,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_498307d9-8f39-466e-aa56-d0a6b54c841f",
+            "roughness": 0.8765,
+            "metallic": 0.0174
+          }
+        ],
+        "report": "art-source/models/reports/landmark-pile-hut.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-pile-hut-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A reed hut on piles: the nearest of Chapter II’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 2 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 181944,
+        "gzipBytes": 173630,
+        "sha256": "2475b4e20e5d39919e12b95f7509a9694127a5ad53bf87b57654bcb952380b18",
+        "triangles": 3919,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 5.4883,
+          "height": 7.15,
+          "depth": 5.6407
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-bridge-piers",
+      "path": "assets/models/landmarks/landmark-bridge-piers.glb",
+      "subject": "Release 9 landmark: the piers of an old bridge, standing without its deck",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8d691066-0e74-4388-bde5-7b2f86191c2f",
+        "generatedAt": "2026-10-29T20:59:41.121Z",
+        "prompt": "art-source/models/requests/landmark-bridge-piers.json",
+        "rawBytes": 46374480,
+        "rawSha256": "981d653bac682eacae7321d053d128c198da0f853ed45f956ed0ecbbe796f46e",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 6.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": 90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_8d691066-0e74-4388-bde5-7b2f86191c2f",
+            "roughness": 0.8211,
+            "metallic": 0.0167
+          }
+        ],
+        "report": "art-source/models/reports/landmark-bridge-piers.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-bridge-piers-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The piers of an old bridge, standing without its deck: the middle of Chapter II’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 2 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 151948,
+        "gzipBytes": 145348,
+        "sha256": "c52585de00e1b15c9a79e81c79dfd45f6c6239adda41bfcc2c8f22ee1a09a2a2",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 22.2365,
+          "height": 6.2,
+          "depth": 8.7902
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-river-quay",
+      "path": "assets/models/landmarks/landmark-river-quay.glb",
+      "subject": "Release 9 landmark: a harbour quay and its warehouse",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+        "generatedAt": "2026-10-29T21:18:15.571Z",
+        "prompt": "art-source/models/requests/landmark-river-quay.json",
+        "rawBytes": 47775880,
+        "rawSha256": "a20ecee2608469e740d74fd4ba437b609332833cdcbdd373ba279cb77a08da85",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 8.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+            "roughness": 0.8002,
+            "metallic": 0.0295
+          }
+        ],
+        "report": "art-source/models/reports/landmark-river-quay.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-river-quay-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A harbour quay and its warehouse: the farthest of Chapter II’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 2 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 160284,
+        "gzipBytes": 153129,
+        "sha256": "3c157a93c2b97dafa779200899dabdded548ecb23db3374f5916952e4de1b219",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 31.7542,
+          "height": 8.4,
+          "depth": 12.839
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-road-station",
+      "path": "assets/models/landmarks/landmark-road-station.glb",
+      "subject": "Release 9 landmark: a road station",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5280c147-0a8a-4041-af56-21696c787fc5",
+        "generatedAt": "2026-10-29T21:22:00.654Z",
+        "prompt": "art-source/models/requests/landmark-road-station.json",
+        "rawBytes": 45954176,
+        "rawSha256": "d3666e5f729ae99bcaeefbbb5dc5b3aab0ed6abc80646be2f4d40329a34ae38c",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 8.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_5280c147-0a8a-4041-af56-21696c787fc5",
+            "roughness": 0.7347,
+            "metallic": 0.0396
+          }
+        ],
+        "report": "art-source/models/reports/landmark-road-station.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-road-station-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A road station: the nearest of Chapter III’s and the farthest of Chapter IV’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 195432,
+        "gzipBytes": 186222,
+        "sha256": "80661b1e7d46a2adf551d8a306627dd0758195084cd9ff3675448d8eca6707bc",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 31.8352,
+          "height": 8.3,
+          "depth": 31.7253
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-small-temple",
+      "path": "assets/models/landmarks/landmark-small-temple.glb",
+      "subject": "Release 9 landmark: a small temple",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d3055cb5-21da-4013-9625-61e616ace846",
+        "generatedAt": "2026-10-29T21:27:17.419Z",
+        "prompt": "art-source/models/requests/landmark-small-temple.json",
+        "rawBytes": 45442884,
+        "rawSha256": "052ac6a9ed3376b6ac94145ec74dedb81600c0866fd9668dce6129c62f10a568",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 13,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_d3055cb5-21da-4013-9625-61e616ace846",
+            "roughness": 0.8579,
+            "metallic": 0.0275
+          }
+        ],
+        "report": "art-source/models/reports/landmark-small-temple.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-small-temple-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A small temple: the middle of Chapter III’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 3 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 117516,
+        "gzipBytes": 112105,
+        "sha256": "54c8c5e932209ec7d72649aa176821683311901865495f558e8bae974321ce6b",
+        "triangles": 3920,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 11.6911,
+          "height": 13,
+          "depth": 16.4291
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-burned-farmstead",
+      "path": "assets/models/landmarks/landmark-burned-farmstead.glb",
+      "subject": "Release 9 landmark: a burned farmstead",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "51a7a1d8-7094-416a-add9-a068ec96528c",
+        "generatedAt": "2026-10-29T21:02:11.356Z",
+        "prompt": "art-source/models/requests/landmark-burned-farmstead.json",
+        "rawBytes": 45691240,
+        "rawSha256": "88fe01bba3c59df3b9e290115d5d4e43687c707259fc9a234cc6a8274841eba1",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 3.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_51a7a1d8-7094-416a-add9-a068ec96528c",
+            "roughness": 0.6043,
+            "metallic": 0.0241
+          }
+        ],
+        "report": "art-source/models/reports/landmark-burned-farmstead.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-burned-farmstead-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A burned farmstead: the farthest of Chapter III’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 3 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 171188,
+        "gzipBytes": 162934,
+        "sha256": "543a0b5cf99915f1ad4c1871f6bc21506ae8f41432f192ccd28c9933c3486875",
+        "triangles": 3919,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 7.0243,
+          "height": 3.2,
+          "depth": 6.187
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-river-citadel",
+      "path": "assets/models/landmarks/landmark-river-citadel.glb",
+      "subject": "Release 9 landmark: a citadel on the river cliff",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3004fea2-8b58-4398-b10d-3e421cc78e67",
+        "generatedAt": "2026-10-29T21:19:03.525Z",
+        "prompt": "art-source/models/requests/landmark-river-citadel.json",
+        "rawBytes": 47784736,
+        "rawSha256": "028ca5f9c0b16f6e5780582531574a5a8eb34a435571a54b5b8b19d760235cff",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 15.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_3004fea2-8b58-4398-b10d-3e421cc78e67",
+            "roughness": 0.8835,
+            "metallic": 0.0299
+          }
+        ],
+        "report": "art-source/models/reports/landmark-river-citadel.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-river-citadel-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A citadel on the river cliff: the nearest of Chapter V’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 5 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 186612,
+        "gzipBytes": 178450,
+        "sha256": "f96b9eea30a563b6b41e05c702aab75c63e40c5c94237dc21103c8b1b332ba2f",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 35.6955,
+          "height": 15.3,
+          "depth": 41.5979
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-ruined-watchtower",
+      "path": "assets/models/landmarks/landmark-ruined-watchtower.glb",
+      "subject": "Release 9 landmark: a ruined watchtower",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7ee8d35f-56af-47b5-8947-b3897bc47824",
+        "generatedAt": "2026-10-29T21:27:08.981Z",
+        "prompt": "art-source/models/requests/landmark-ruined-watchtower.json",
+        "rawBytes": 45533468,
+        "rawSha256": "3d15fc84db2f2cffd65ed0cb47267fd0546a4f7f3ad7e556ad6c60f15d28a304",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 6.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_7ee8d35f-56af-47b5-8947-b3897bc47824",
+            "roughness": 0.9591,
+            "metallic": 0.0092
+          }
+        ],
+        "report": "art-source/models/reports/landmark-ruined-watchtower.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-ruined-watchtower-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A ruined watchtower: the middle of Chapter V’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 5 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 128916,
+        "gzipBytes": 122587,
+        "sha256": "c6bc22ae8d6efeb7a6d522ab2a37d3f09a9fb0c25aaac20979832c2da069f122",
+        "triangles": 2940,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 5.5269,
+          "height": 6.2,
+          "depth": 5.517
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-necropolis-tower-tomb",
+      "path": "assets/models/landmarks/landmark-necropolis-tower-tomb.glb",
+      "subject": "Release 9 landmark: a tower tomb of the necropolis",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba",
+        "generatedAt": "2026-10-29T20:21:40.016Z",
+        "prompt": "art-source/models/requests/landmark-necropolis-tower-tomb.json",
+        "rawBytes": 45778692,
+        "rawSha256": "10ae6cbb3cf5df074b44a087b1ddd90bb2e2368d6e30c0c6e6c5b3df6c845933",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 15.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_7fbcca7d-26ff-46c2-abb8-8d7b27ce1cba",
+            "roughness": 0.8496,
+            "metallic": 0.0422
+          }
+        ],
+        "report": "art-source/models/reports/landmark-necropolis-tower-tomb.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-necropolis-tower-tomb-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A tower tomb of the necropolis: the farthest of Chapter V’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 5 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 125040,
+        "gzipBytes": 119222,
+        "sha256": "c17a95be72e940f532aea23454ac871d8c9617b41628d1535363e376970d9271",
+        "triangles": 3918,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 14.3109,
+          "height": 15.4,
+          "depth": 12.6438
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-caravan-station",
+      "path": "assets/models/landmarks/landmark-caravan-station.glb",
+      "subject": "Release 9 landmark: a mudbrick caravan station",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "155c82c5-6ff2-4326-a217-a2f429ef382e",
+        "generatedAt": "2026-10-29T21:03:26.994Z",
+        "prompt": "art-source/models/requests/landmark-caravan-station.json",
+        "rawBytes": 46784400,
+        "rawSha256": "1fd3a9f75db2272c4995d1bc4c3078659e8b997107e26daf045e3c1db5866ed3",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 8.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_155c82c5-6ff2-4326-a217-a2f429ef382e",
+            "roughness": 0.9755,
+            "metallic": 0.0071
+          }
+        ],
+        "report": "art-source/models/reports/landmark-caravan-station.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-caravan-station-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A mudbrick caravan station: the nearest of Chapter VI’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 6 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 169704,
+        "gzipBytes": 161833,
+        "sha256": "2f01125ea8dccb912ef36f9035d3f29858180949d6b140fcba8d30a15b3af585",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 18.5499,
+          "height": 8.3,
+          "depth": 18.512
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-syrian-temple-court",
+      "path": "assets/models/landmarks/landmark-syrian-temple-court.glb",
+      "subject": "Release 9 landmark: a Syrian temple court",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+        "generatedAt": "2026-10-29T21:29:25.835Z",
+        "prompt": "art-source/models/requests/landmark-syrian-temple-court.json",
+        "rawBytes": 46204536,
+        "rawSha256": "cf7c16b1c47db10e7c0abb4453781d467d2d889bebefe5bb731a0a233f692383",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 11.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+            "roughness": 0.7824,
+            "metallic": 0.0669
+          }
+        ],
+        "report": "art-source/models/reports/landmark-syrian-temple-court.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-syrian-temple-court-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A Syrian temple court: the middle of Chapter VI’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 6 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 191316,
+        "gzipBytes": 182798,
+        "sha256": "6df93b37aa51baa291d5a308385c9d15c8b244c7ae28b5d19116f4cb5a0f2d23",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 32.6892,
+          "height": 11.6,
+          "depth": 37.5878
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-rock-cut-tombs",
+      "path": "assets/models/landmarks/landmark-rock-cut-tombs.glb",
+      "subject": "Release 9 landmark: chamber tombs cut in the hillside",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "50d816cb-a25d-4c53-a165-4a93f565d31c",
+        "generatedAt": "2026-10-29T21:24:49.424Z",
+        "prompt": "art-source/models/requests/landmark-rock-cut-tombs.json",
+        "rawBytes": 47044368,
+        "rawSha256": "b1776b843feaf9febf381daf150afcb607d27e4d2b40ffac30f544e55ae4427d",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 10,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_50d816cb-a25d-4c53-a165-4a93f565d31c",
+            "roughness": 0.9187,
+            "metallic": 0.0226
+          }
+        ],
+        "report": "art-source/models/reports/landmark-rock-cut-tombs.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-rock-cut-tombs-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Chamber tombs cut in the hillside: the farthest of Chapter VI’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 6 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 166804,
+        "gzipBytes": 158759,
+        "sha256": "e0946a5684c78c79c7fc184a7edc7d260332e7b245441b5ca8415df8fcd8588c",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 11.0537,
+          "height": 10,
+          "depth": 6.6442
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-adda-bridge",
+      "path": "assets/models/landmarks/landmark-adda-bridge.glb",
+      "subject": "Release 9 landmark: the bridge over the Adda",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+        "generatedAt": "2026-10-29T20:18:34.113Z",
+        "prompt": "art-source/models/requests/landmark-adda-bridge.json",
+        "rawBytes": 45969932,
+        "rawSha256": "ac55874212384a464f942a812c4ec0e671404fe1152b4ddc61830e9810985dab",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 6.5,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_0e051b37-8e0f-4b46-a906-b6f93cd76ff2",
+            "roughness": 0.871,
+            "metallic": 0.0295
+          }
+        ],
+        "report": "art-source/models/reports/landmark-adda-bridge.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-adda-bridge-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The bridge over the Adda: the nearest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 168120,
+        "gzipBytes": 160024,
+        "sha256": "8fd74200ec31e3274e0f28d42eeac03b3873b3cb5d3647b974e617da96caba3e",
+        "triangles": 4899,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 34.6833,
+          "height": 6.5,
+          "depth": 11.854
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-mediolanum-walls",
+      "path": "assets/models/landmarks/landmark-mediolanum-walls.glb",
+      "subject": "Release 9 landmark: the walls of Mediolanum",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b8417128-09c9-44ab-8b02-c39ba9592eba",
+        "generatedAt": "2026-10-29T21:14:01.645Z",
+        "prompt": "art-source/models/requests/landmark-mediolanum-walls.json",
+        "rawBytes": 46434536,
+        "rawSha256": "c83be70336a66a4ef7b2badf5abd4440b8f0af647589fa916d7509535addfce2",
+        "credits": 20,
+        "rejectedAttempts": [
+          {
+            "taskId": "6641daf9-835b-4228-bb78-a4a370ec6e6d",
+            "credits": 20,
+            "rawSha256": "2adad9d871d51e1947a1b66c36fda346d3b4f800b320df2c6065c90f3550009f",
+            "rejected": "Medieval: a cluster of round towers in brick and plaster with corbelled, machicolated parapets, like the Sforza castle of Milan, not a Roman city wall of the third century. The retry describes Roman masonry and rules out the medieval forms."
+          }
+        ],
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 10.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_b8417128-09c9-44ab-8b02-c39ba9592eba",
+            "roughness": 0.9396,
+            "metallic": 0.0146
+          }
+        ],
+        "report": "art-source/models/reports/landmark-mediolanum-walls.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-mediolanum-walls-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The walls of Mediolanum: the middle of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 143996,
+        "gzipBytes": 137744,
+        "sha256": "d5baf046084b9da3030bdb6fd683d7b77dda1ef0c21654ff47cde35018e2b8a8",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 31.2324,
+          "height": 10.8,
+          "depth": 7.5387
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-roadside-tomb",
+      "path": "assets/models/landmarks/landmark-roadside-tomb.glb",
+      "subject": "Release 9 landmark: a tall tomb beside the road",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8389b598-ae00-47a4-a42c-d4788c18fb3c",
+        "generatedAt": "2026-10-29T21:24:26.004Z",
+        "prompt": "art-source/models/requests/landmark-roadside-tomb.json",
+        "rawBytes": 47185332,
+        "rawSha256": "118df4fe9659e6269308239ddfa71d1c7f9a33939fb3b9d3243a0ee0de522014",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 15.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_8389b598-ae00-47a4-a42c-d4788c18fb3c",
+            "roughness": 0.9665,
+            "metallic": 0.0212
+          }
+        ],
+        "report": "art-source/models/reports/landmark-roadside-tomb.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-roadside-tomb-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A tall tomb beside the road: the farthest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 116664,
+        "gzipBytes": 111470,
+        "sha256": "8e6e523b2e74d4af05b7ec751ba5fdbb01b3ec2e11a6839e79eafb89bb561d46",
+        "triangles": 3920,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 10.0763,
+          "height": 15.4,
+          "depth": 9.8975
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-fort-gate",
+      "path": "assets/models/landmarks/landmark-fort-gate.glb",
+      "subject": "Release 9 landmark: the stone gate of a frontier fort",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "2ad1b885-0c0b-4bb9-ab38-f857806a5d07",
+        "generatedAt": "2026-10-29T21:08:58.108Z",
+        "prompt": "art-source/models/requests/landmark-fort-gate.json",
+        "rawBytes": 46986160,
+        "rawSha256": "f171d33b7bfd99b2d0facbbf5c241bf2be31e3592b36f66e6af1bf17e6272376",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 12.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_2ad1b885-0c0b-4bb9-ab38-f857806a5d07",
+            "roughness": 0.9226,
+            "metallic": 0.0283
+          }
+        ],
+        "report": "art-source/models/reports/landmark-fort-gate.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-fort-gate-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The stone gate of a frontier fort: the nearest of Chapter VIII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 8 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 164068,
+        "gzipBytes": 156778,
+        "sha256": "b5d2897ee1d3aaffd31e9e94cf7beb55ad3d073ab748702b406782fd7844fe00",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 21.6263,
+          "height": 12.8,
+          "depth": 18.0652
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-river-warehouses",
+      "path": "assets/models/landmarks/landmark-river-warehouses.glb",
+      "subject": "Release 9 landmark: river warehouses",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "09049267-e949-45b3-b875-3206a0028b45",
+        "generatedAt": "2026-10-29T21:21:04.976Z",
+        "prompt": "art-source/models/requests/landmark-river-warehouses.json",
+        "rawBytes": 46389580,
+        "rawSha256": "c93702e70f5326188b2d5decb6c824fa01baa0c165f6b4ef4b2b5aaa2786dd05",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 8.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_09049267-e949-45b3-b875-3206a0028b45",
+            "roughness": 0.7004,
+            "metallic": 0.0347
+          }
+        ],
+        "report": "art-source/models/reports/landmark-river-warehouses.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-river-warehouses-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "River warehouses: the middle of Chapter VIII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 8 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 173732,
+        "gzipBytes": 165578,
+        "sha256": "a929446158c6a30fb8ca92a0bb39edb9823c771f50fb4baf67fe3a4b9fed4ea7",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 15.0666,
+          "height": 8.4,
+          "depth": 13.0763
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-dacian-sanctuary",
+      "path": "assets/models/landmarks/landmark-dacian-sanctuary.glb",
+      "subject": "Release 9 landmark: the ruined Dacian hill sanctuary",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f04f0ab7-6912-41c7-a314-48797c113904",
+        "generatedAt": "2026-10-29T21:06:23.861Z",
+        "prompt": "art-source/models/requests/landmark-dacian-sanctuary.json",
+        "rawBytes": 47885680,
+        "rawSha256": "d784b9072eabe210cc0763f3becc0b16d9e20d06674596dc024f210f08628b0a",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 3.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_f04f0ab7-6912-41c7-a314-48797c113904",
+            "roughness": 0.9255,
+            "metallic": 0.0238
+          }
+        ],
+        "report": "art-source/models/reports/landmark-dacian-sanctuary.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-dacian-sanctuary-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The ruined Dacian hill sanctuary: the farthest of Chapter VIII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 8 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 160880,
+        "gzipBytes": 153082,
+        "sha256": "8c960f2d6f1000383dc31b508ac7d3831c1c7a10eb3b3f973beada9fd3a6fcc9",
+        "triangles": 3919,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 13.9788,
+          "height": 3.2,
+          "depth": 14.0157
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-tetrapylon",
+      "path": "assets/models/landmarks/landmark-tetrapylon.glb",
+      "subject": "Release 9 landmark: a tetrapylon with its colonnades",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "2841d856-a096-4af6-a583-cbdc3022bae2",
+        "generatedAt": "2026-10-29T21:32:24.319Z",
+        "prompt": "art-source/models/requests/landmark-tetrapylon.json",
+        "rawBytes": 45045648,
+        "rawSha256": "a454597fdb2013059907d69cfc28eff492d582bd352beb832afa092d0ad63399",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 10.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_2841d856-a096-4af6-a583-cbdc3022bae2",
+            "roughness": 0.8644,
+            "metallic": 0.0391
+          }
+        ],
+        "report": "art-source/models/reports/landmark-tetrapylon.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-tetrapylon-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A tetrapylon with its colonnades: the nearest of Chapter IX’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 176520,
+        "gzipBytes": 168722,
+        "sha256": "6f97859fe80ca9e9a0b25b9836cd8d091b4648f7747f9bd94fd0de0af6ae10c6",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 9.5863,
+          "height": 10.2,
+          "depth": 10.0969
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-walled-sanctuary",
+      "path": "assets/models/landmarks/landmark-walled-sanctuary.glb",
+      "subject": "Release 9 landmark: a sanctuary in its walled court",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "48e613f0-4696-4cbf-a768-ea552e766395",
+        "generatedAt": "2026-10-29T21:34:37.000Z",
+        "prompt": "art-source/models/requests/landmark-walled-sanctuary.json",
+        "rawBytes": 44395520,
+        "rawSha256": "c1d8a5c2ef904cf39694f2393f41bc3fc8389808f09fd94fb1e07c8d0757732f",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 11.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_48e613f0-4696-4cbf-a768-ea552e766395",
+            "roughness": 0.9592,
+            "metallic": 0.0213
+          }
+        ],
+        "report": "art-source/models/reports/landmark-walled-sanctuary.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-walled-sanctuary-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A sanctuary in its walled court: the middle of Chapter IX’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 197832,
+        "gzipBytes": 188783,
+        "sha256": "bc01eecb078e486ca85843b1034408bda4df535bf14fc83cdeb201afc16c91be",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 32.1219,
+          "height": 11.6,
+          "depth": 33.9095
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-city-gate",
+      "path": "assets/models/landmarks/landmark-city-gate.glb",
+      "subject": "Release 9 landmark: the city gate",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b386d333-6f58-4e96-ace6-f5e5327ddd14",
+        "generatedAt": "2026-10-29T21:04:50.162Z",
+        "prompt": "art-source/models/requests/landmark-city-gate.json",
+        "rawBytes": 44144460,
+        "rawSha256": "22251f7a67008418ffd6c8cc906c71a2928ad3763263b4e3e318c9d477ee44fe",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 12.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_b386d333-6f58-4e96-ace6-f5e5327ddd14",
+            "roughness": 0.9717,
+            "metallic": 0.007
+          }
+        ],
+        "report": "art-source/models/reports/landmark-city-gate.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-city-gate-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The city gate: the farthest of Chapter IX’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 137420,
+        "gzipBytes": 131291,
+        "sha256": "7e0b5eccc5049bfa58d49b5618b7272965cdf3958742295bc4cfaaaa8951cd33",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 20.8707,
+          "height": 12.8,
+          "depth": 13.3774
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-villa",
+      "path": "assets/models/landmarks/landmark-villa.glb",
+      "subject": "Release 9 landmark: a villa",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "45b81e06-fead-4568-bae0-41d0d5c72529",
+        "generatedAt": "2026-10-29T21:32:22.627Z",
+        "prompt": "art-source/models/requests/landmark-villa.json",
+        "rawBytes": 44385732,
+        "rawSha256": "6c8c2e22657ac534e94b470e5e700765c5b4fc5c43b09a352829ed4a99573041",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 6.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_45b81e06-fead-4568-bae0-41d0d5c72529",
+            "roughness": 0.7806,
+            "metallic": 0.0606
+          }
+        ],
+        "report": "art-source/models/reports/landmark-villa.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-villa-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A villa: the nearest of Chapter X’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 179704,
+        "gzipBytes": 171342,
+        "sha256": "de9fd0efad84c67455ce3eb3dcc4cd85568f1eacd7a324522b7959d8f48ce618",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 28.6287,
+          "height": 6.4,
+          "depth": 24.6386
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-provincial-basilica",
+      "path": "assets/models/landmarks/landmark-provincial-basilica.glb",
+      "subject": "Release 9 landmark: the province’s basilica",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5d734b09-749d-444e-8e56-58a7a2a66a69",
+        "generatedAt": "2026-10-29T21:16:39.850Z",
+        "prompt": "art-source/models/requests/landmark-provincial-basilica.json",
+        "rawBytes": 46962552,
+        "rawSha256": "b0fc5b12dd93cfc833ca81809ed324307754e91403451b1897ab4397f0d19cfb",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 12.7,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_5d734b09-749d-444e-8e56-58a7a2a66a69",
+            "roughness": 0.8149,
+            "metallic": 0.0271
+          }
+        ],
+        "report": "art-source/models/reports/landmark-provincial-basilica.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-provincial-basilica-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The province’s basilica: the middle of Chapter X’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 171956,
+        "gzipBytes": 164038,
+        "sha256": "8da680b70abf7b4bd43a5c70414d3f6a9c83eac56702e251d5c72cfab919ba32",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 29.9925,
+          "height": 12.7,
+          "depth": 14.8881
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-aqueduct",
+      "path": "assets/models/landmarks/landmark-aqueduct.glb",
+      "subject": "Release 9 landmark: an aqueduct",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e444f709-d297-456a-9413-c6ae036032b9",
+        "generatedAt": "2026-10-29T20:57:54.225Z",
+        "prompt": "art-source/models/requests/landmark-aqueduct.json",
+        "rawBytes": 43834764,
+        "rawSha256": "9000d199bf271fb20c9d7e6d5c6004b9d8a595939550560c4275d208eac2a691",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 8.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": 90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_e444f709-d297-456a-9413-c6ae036032b9",
+            "roughness": 0.8342,
+            "metallic": 0.0355
+          }
+        ],
+        "report": "art-source/models/reports/landmark-aqueduct.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-aqueduct-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An aqueduct: the farthest of Chapter X’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 127792,
+        "gzipBytes": 121662,
+        "sha256": "94d4911ecdb89fd520af9d1aa13a8238a3e15dbed229803fba45b9a28fb60e3d",
+        "triangles": 3920,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 20.4876,
+          "height": 8.3,
+          "depth": 6.9658
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-pantheon",
+      "path": "assets/models/landmarks/landmark-pantheon.glb",
+      "subject": "Release 9 landmark: the Pantheon",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "18e58742-fe2b-4476-ba4a-81f50b3c607b",
+        "generatedAt": "2026-10-29T21:13:55.406Z",
+        "prompt": "art-source/models/requests/landmark-pantheon.json",
+        "rawBytes": 45330444,
+        "rawSha256": "dfa41741ae37cb1785335a5ddd2d02d29895fc0c64d077977ea4ed1b5cf2e174",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 19.5,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_18e58742-fe2b-4476-ba4a-81f50b3c607b",
+            "roughness": 0.8651,
+            "metallic": 0.0403
+          }
+        ],
+        "report": "art-source/models/reports/landmark-pantheon.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-pantheon-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The Pantheon: the middle of Chapter XI’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 11 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 182664,
+        "gzipBytes": 174607,
+        "sha256": "0cde6f2483109ee14a2dac6e7d6f3fc22cb0ce01c3c3dc844c8adca8e722a973",
+        "triangles": 5879,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 21.8928,
+          "height": 19.5,
+          "depth": 27.2405
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-arch-of-severus",
+      "path": "assets/models/landmarks/landmark-arch-of-severus.glb",
+      "subject": "Release 9 landmark: the Arch of Septimius Severus",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+        "generatedAt": "2026-10-29T20:58:16.925Z",
+        "prompt": "art-source/models/requests/landmark-arch-of-severus.json",
+        "rawBytes": 45356892,
+        "rawSha256": "0b71b4140836c4e51742a7954deedae40e2a4da3047fc599c25ed3773e30d98d",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 19,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+            "roughness": 0.894,
+            "metallic": 0.0286
+          }
+        ],
+        "report": "art-source/models/reports/landmark-arch-of-severus.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-arch-of-severus-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The Arch of Septimius Severus: the farthest of Chapter XI’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 11 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 201648,
+        "gzipBytes": 192487,
+        "sha256": "11ad81037400147ee9e942153dd9d529ff7895793fc01114f82b94eb15d3121e",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 18.0902,
+          "height": 19,
+          "depth": 7.9449
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-mausoleum-of-hadrian",
+      "path": "assets/models/landmarks/landmark-mausoleum-of-hadrian.glb",
+      "subject": "Release 9 landmark: the Mausoleum of Hadrian",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "1508fe16-c798-4275-9a09-0ff9e8f18acd",
+        "generatedAt": "2026-10-29T21:09:29.419Z",
+        "prompt": "art-source/models/requests/landmark-mausoleum-of-hadrian.json",
+        "rawBytes": 46767840,
+        "rawSha256": "86c1d84867b1bd71acfb2198a9d64acc4970ac2977f7506b417fbb3f4e640b72",
+        "credits": 20,
+        "processing": {
+          "triangles": 7000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 24,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_1508fe16-c798-4275-9a09-0ff9e8f18acd",
+            "roughness": 0.6779,
+            "metallic": 0.0195
+          }
+        ],
+        "report": "art-source/models/reports/landmark-mausoleum-of-hadrian.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-mausoleum-of-hadrian-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The Mausoleum of Hadrian: the nearest of Chapter XII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 195376,
+        "gzipBytes": 186576,
+        "sha256": "2de05d1f2939e65ca743e84340e455c75821a7f3495c5d7761ee7c82633a89f2",
+        "triangles": 6859,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 33.8632,
+          "height": 24,
+          "depth": 37.6745
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-temple-of-sol",
+      "path": "assets/models/landmarks/landmark-temple-of-sol.glb",
+      "subject": "Release 9 landmark: Aurelian’s Temple of the Sun",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "54648116-8681-4d46-a5e1-88f9aef8050d",
+        "generatedAt": "2026-10-29T21:29:39.029Z",
+        "prompt": "art-source/models/requests/landmark-temple-of-sol.json",
+        "rawBytes": 44465568,
+        "rawSha256": "97d69e2d896e5e72f8a4f4062885c093acee51536b2b6e7c21dc95b991b6d7b0",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 11.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_54648116-8681-4d46-a5e1-88f9aef8050d",
+            "roughness": 0.802,
+            "metallic": 0.0617
+          }
+        ],
+        "report": "art-source/models/reports/landmark-temple-of-sol.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-temple-of-sol-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Aurelian’s Temple of the Sun: the middle of Chapter XII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 198200,
+        "gzipBytes": 189345,
+        "sha256": "84f0128dd39693cab59173c4f4be7870c8cf878b05b683380c4cfcc257001805",
+        "triangles": 5880,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 19.0875,
+          "height": 11.6,
+          "depth": 20.7422
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "landmark-milvian-bridge",
+      "path": "assets/models/landmarks/landmark-milvian-bridge.glb",
+      "subject": "Release 9 landmark: the Milvian Bridge",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "0a6ab405-35e4-47dd-a716-b6116ded7aa8",
+        "generatedAt": "2026-10-29T21:11:13.029Z",
+        "prompt": "art-source/models/requests/landmark-milvian-bridge.json",
+        "rawBytes": 46757348,
+        "rawSha256": "e9bb75eaa873f6a27a28ee9df8bd4b50edabdac8e0ed8f278af06fa71dbefc41",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 256,
+          "webpQuality": 80,
+          "height": 6.5,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "colourOnly": true
+        },
+        "constants": [
+          {
+            "material": "tripo_material_0a6ab405-35e4-47dd-a716-b6116ded7aa8",
+            "roughness": 0.8934,
+            "metallic": 0.0418
+          }
+        ],
+        "report": "art-source/models/reports/landmark-milvian-bridge.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/landmark-milvian-bridge-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The Milvian Bridge: the farthest of Chapter XII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
+      "loading": "Deferred chapter pack 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 120028,
+        "gzipBytes": 114659,
+        "sha256": "eb5a9649d2fec2ec2e5043ecd7d346077c836a73749a831eec9b3a22569d5dfc",
+        "triangles": 4900,
+        "textures": 1,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 33.0715,
+          "height": 6.5,
+          "depth": 6.0717
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-laundry-line",
+      "path": "assets/models/world/life-laundry-line.glb",
+      "subject": "Release 9 life prop: washing hung out to dry",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3499f8ff-b499-4b72-a516-5638b678e40e",
+        "generatedAt": "2026-10-29T20:27:06.779Z",
+        "prompt": "art-source/models/requests/life-laundry-line.json",
+        "rawBytes": 44823732,
+        "rawSha256": "f9805bb6201338bd9f6c5319a4eafd54067577a92f390145da358ddcb1801bad",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.9,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-laundry-line.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-laundry-line-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: washing hung out to dry, set out beyond the board with the baggage of Chapters I, III, VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 209340,
+        "gzipBytes": 201654,
+        "sha256": "bc564c5af4570675400c457287fbb86ab1a800f05bf70390e253fa67ed2bb97f",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5099,
+          "height": 1.9,
+          "depth": 1.8883
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-camel-gear",
+      "path": "assets/models/world/life-camel-gear.glb",
+      "subject": "Release 9 life prop: a caravan's saddles and baggage",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f20ca161-6ea7-4692-b061-208111c6aa43",
+        "generatedAt": "2026-10-29T21:39:28.744Z",
+        "prompt": "art-source/models/requests/life-camel-gear.json",
+        "rawBytes": 45368916,
+        "rawSha256": "be1c31dde692b99b86e89e9740f61a615338efd1d7e1ee13e8e569d5718b46aa",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-camel-gear.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-camel-gear-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a caravan's saddles and baggage, set out beyond the board with the baggage of Chapters VI and IX (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 6 and 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 223344,
+        "gzipBytes": 215780,
+        "sha256": "a19c27d118ad7f3dca22258d4a88c32503d74787f5122fb97ac2af765181bc76",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5731,
+          "height": 1.2,
+          "depth": 0.9822
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-amphora-rack",
+      "path": "assets/models/world/life-amphora-rack.glb",
+      "subject": "Release 9 life prop: wine and oil amphorae",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f06d3916-999b-4f41-a86f-e7ac58e98159",
+        "generatedAt": "2026-10-29T21:35:00.768Z",
+        "prompt": "art-source/models/requests/life-amphora-rack.json",
+        "rawBytes": 46213996,
+        "rawSha256": "ed5ec4f21d83265d3b8e3bdf5e1294f737f97eb0a8362206fd510c8ef915e5fb",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-amphora-rack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-amphora-rack-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: wine and oil amphorae, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 191972,
+        "gzipBytes": 183859,
+        "sha256": "4c480f77e02ead7414f47ab5a5f1edb814ba3976ade0ac61770e05de1ad0fd6f",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.826,
+          "height": 1.6,
+          "depth": 1.6449
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-beehives",
+      "path": "assets/models/world/life-beehives.glb",
+      "subject": "Release 9 life prop: a farm's beehives",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e13d0ca4-508f-4096-a4ac-bafae5cba3da",
+        "generatedAt": "2026-10-29T21:37:16.545Z",
+        "prompt": "art-source/models/requests/life-beehives.json",
+        "rawBytes": 47042048,
+        "rawSha256": "67dc22d4168d2ed04fdb0bc87ab3089a5c60da6548a4740f4bc00ed2eb740039",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-beehives.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-beehives-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a farm's beehives, set out beyond the board with the baggage of Chapters III and VII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3 and 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 212912,
+        "gzipBytes": 205444,
+        "sha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.0448,
+          "height": 1.4,
+          "depth": 1.3581
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-bread-oven",
+      "path": "assets/models/world/life-bread-oven.glb",
+      "subject": "Release 9 life prop: a bread oven",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f131e451-d6ed-48c0-af44-f019d8e30101",
+        "generatedAt": "2026-10-29T21:37:30.472Z",
+        "prompt": "art-source/models/requests/life-bread-oven.json",
+        "rawBytes": 45240188,
+        "rawSha256": "98620bf1a78cbc2410f3e0d31742e6ff71fc761009668a18157dbc97bdefe694",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-bread-oven.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-bread-oven-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a bread oven, set out beyond the board with the baggage of Chapters I, III, VI and IX (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 6 and 9 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 159016,
+        "gzipBytes": 152499,
+        "sha256": "46bf0472bd9458b97c8b26fce7f04aa9f9d3998f4a0ac2bf121f9b167d0a630b",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.6173,
+          "height": 1.6,
+          "depth": 2.1346
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-handcart",
+      "path": "assets/models/world/life-handcart.glb",
+      "subject": "Release 9 life prop: a handcart of the camp's stores",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "03893e85-bb2c-472a-a3ce-539f57d733e6",
+        "generatedAt": "2026-10-29T21:41:43.033Z",
+        "prompt": "art-source/models/requests/life-handcart.json",
+        "rawBytes": 46114664,
+        "rawSha256": "d0819e7f7e456d7bb08bf53de40a3eccbb0937af55099e2633d786e1ee808143",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-handcart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-handcart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a handcart of the camp's stores, set out beyond the board with the baggage of Chapters III and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 230004,
+        "gzipBytes": 222520,
+        "sha256": "a207203ddf3265147592510478c6e3e8326372249779427f84f1cc51b4a54522",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.447,
+          "height": 1.2,
+          "depth": 1.8271
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-grindstone",
+      "path": "assets/models/world/life-grindstone.glb",
+      "subject": "Release 9 life prop: the camp's grindstone",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "72f25faa-3ff6-4090-9bef-9c2035038223",
+        "generatedAt": "2026-10-29T21:41:52.267Z",
+        "prompt": "art-source/models/requests/life-grindstone.json",
+        "rawBytes": 44379116,
+        "rawSha256": "8808ea3604c109cbf736a9090430361cc5dee217c62c1bd3284ab96d9099d421",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.1,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-grindstone.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-grindstone-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: the camp's grindstone, set out beyond the board with the baggage of Chapters I and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 192556,
+        "gzipBytes": 185514,
+        "sha256": "f949b1cc4569acc741c98ebc8a447919eeded322a1b875d337f9fb605359719a",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9641,
+          "height": 1.1,
+          "depth": 1.1146
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-hay-rick",
+      "path": "assets/models/world/life-hay-rick.glb",
+      "subject": "Release 9 life prop: a haystack of the farms",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8d338609-f930-4fe7-b5d4-a8f20452bce3",
+        "generatedAt": "2026-10-29T21:44:32.508Z",
+        "prompt": "art-source/models/requests/life-hay-rick.json",
+        "rawBytes": 46932164,
+        "rawSha256": "3a57b845b3e6a5647c23e3becdff0ee2341e1ff673b14009d04efa54c93f0225",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 3.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-hay-rick.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-hay-rick-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a haystack of the farms, set out beyond the board with the baggage of Chapters II, VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 2, 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 289420,
+        "gzipBytes": 278856,
+        "sha256": "9e98a005b971da62ee14b6c401842a326c34a4179e08f3a813d3336ec626ea6d",
+        "triangles": 4117,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 4,
+          "height": 3.2,
+          "depth": 4.3508
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-ox-cart",
+      "path": "assets/models/world/life-ox-cart.glb",
+      "subject": "Release 9 life prop: a farm cart of the frontier villages",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5023d43b-dd97-442b-9b4e-f3a0b1848699",
+        "generatedAt": "2026-10-29T21:47:37.723Z",
+        "prompt": "art-source/models/requests/life-ox-cart.json",
+        "rawBytes": 46714292,
+        "rawSha256": "fc5dde49406e9f8f48ca27cf2090537addc473ce3e21dc312465ecd199cf3c1e",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-ox-cart.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-ox-cart-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a farm cart of the frontier villages, set out beyond the board with the baggage of Chapters VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 267232,
+        "gzipBytes": 257622,
+        "sha256": "96eace817ebbfebd7a941c1a11c2d954ef7c14ab4e3ee4df1456bb8c59feeca5",
+        "triangles": 3388,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.6941,
+          "height": 2,
+          "depth": 1.6077
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-woodpile",
+      "path": "assets/models/world/life-woodpile.glb",
+      "subject": "Release 9 life prop: firewood for the camp",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "69bdb762-598b-4a66-a126-7a6e47d8191d",
+        "generatedAt": "2026-10-29T21:52:04.564Z",
+        "prompt": "art-source/models/requests/life-woodpile.json",
+        "rawBytes": 45413172,
+        "rawSha256": "62a4798c26e02e6fab21147f70741b005d11a3673e3d965366d14786bbadeb8d",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-woodpile.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-woodpile-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: firewood for the camp, set out beyond the board with the baggage of Chapters I, II and IV (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2 and 4 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 223716,
+        "gzipBytes": 214986,
+        "sha256": "d88e40ca62ba39a9d40fe9165b05045075e8b05b93cf6ab3a8127748ad6a636c",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.3243,
+          "height": 1.3,
+          "depth": 2.2696
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-loom",
+      "path": "assets/models/world/life-loom.glb",
+      "subject": "Release 9 life prop: a household loom",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+        "generatedAt": "2026-10-29T21:43:53.761Z",
+        "prompt": "art-source/models/requests/life-loom.json",
+        "rawBytes": 46602568,
+        "rawSha256": "6c7f7ad1642aa162d3dcac236774accc8b10f0551fd42da8a2cd137069316efc",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-loom.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-loom-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a household loom, set out beyond the board with the baggage of Chapters VIII and X (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 8 and 10 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 233636,
+        "gzipBytes": 225708,
+        "sha256": "2ee9cf7b56465ead3c83f375da1fa475c685ffd7ab5b2e684e08ee765b2cd7f5",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.5777,
+          "height": 2,
+          "depth": 2.1282
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-travel-carriage",
+      "path": "assets/models/world/life-travel-carriage.glb",
+      "subject": "Release 9 life prop: a traveller's covered carriage",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "09dac9c4-f026-4219-936f-0c32b49b0650",
+        "generatedAt": "2026-10-29T21:57:06.151Z",
+        "prompt": "art-source/models/requests/life-travel-carriage.json",
+        "rawBytes": 46455748,
+        "rawSha256": "495c18dd569785b9723ef15f12c9187acbcf4a25d95d782cac77dd01ff9127c0",
+        "credits": 20,
+        "rejectedAttempts": [
+          {
+            "taskId": "2a64382e-6b4f-4887-932b-791aa4ceb5e6",
+            "credits": 20,
+            "rawSha256": "bdf34f71995d2c9a5faf9f34544b56c1c8c044aa1d7bbc4d5956368f4af3d417",
+            "rejected": "A four-wheeled buggy under a folding hood, a later form than the two-wheeled cisium asked for, with a mule drawn collapsed flat between the shafts."
+          }
+        ],
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.2,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/life-travel-carriage.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-travel-carriage-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a traveller's covered carriage, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 234324,
+        "gzipBytes": 227056,
+        "sha256": "803e078eee2f0768161d8bb3997471a8fdfa013ee6fcf0be35cedb2e6a076c91",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.8426,
+          "height": 2.2,
+          "depth": 1.7292
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-market-stall",
+      "path": "assets/models/world/life-market-stall.glb",
+      "subject": "Release 9 life prop: a market stall of the towns",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b554acaa-3e37-4d98-8d30-86165384bac7",
+        "generatedAt": "2026-10-29T21:46:47.976Z",
+        "prompt": "art-source/models/requests/life-market-stall.json",
+        "rawBytes": 44710140,
+        "rawSha256": "9fd606490524b8bb76c32a9f09bb728edc8f3ce9ed6fe5457b41c054bd197c8f",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.3,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-market-stall.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-market-stall-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a market stall of the towns, set out beyond the board with the baggage of Chapters IX, X, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 9, 10, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 199364,
+        "gzipBytes": 191467,
+        "sha256": "90df140e2501a874b3069323100a3392cb4e49d87245ee878acd123252df058e",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.5648,
+          "height": 2.3,
+          "depth": 1.5279
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "life-pottery-stall",
+      "path": "assets/models/world/life-pottery-stall.glb",
+      "subject": "Release 9 life prop: a potter's wares",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d9688685-809d-4fa4-8900-b5bff4e49c44",
+        "generatedAt": "2026-10-29T21:49:10.354Z",
+        "prompt": "art-source/models/requests/life-pottery-stall.json",
+        "rawBytes": 45199336,
+        "rawSha256": "35b638bb43ac990e991fb2bba7466780c2100cbd8c79c35ff264d8238e5831b9",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.4,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": -90
+        },
+        "report": "art-source/models/reports/life-pottery-stall.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/life-pottery-stall-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Life about the camps and towns: a potter's wares, set out beyond the board with the baggage of Chapters VI, IX, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 6, 9, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 205704,
+        "gzipBytes": 198846,
+        "sha256": "d3eaea81b94b7893b6c9a82da5eb51d7896f875bed023f097a1566c1785dc49b",
+        "triangles": 2938,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.4065,
+          "height": 1.4,
+          "depth": 0.8396
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -11044,7 +13980,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-28T22:33:17.282Z",
+  "updatedAt": "2026-10-29T22:20:30.582Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -11066,12 +14002,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 76,
+    "models": 124,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 45279805,
-  "totalModelBytes": 30094255,
+  "totalBundledAssetBytes": 54624941,
+  "totalModelBytes": 39439391,
   "derivedGeometryBytes": 47428
 }

@@ -1,0 +1,68 @@
+{
+  "id": "landmark-aqueduct",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    10
+  ],
+  "use": "An aqueduct, on the horizon of Chapter X (LANDMARK_LAYOUT, kind aqueduct): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A straight run of a Roman provincial aqueduct: one row of eight round arches on plain square piers of grey stone, carrying a covered water channel along its top. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 256,
+    "bytes": 180000,
+    "heightMetres": 8.3,
+    "minHeight": 7.885,
+    "maxHeight": 8.715,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "e444f709-d297-456a-9413-c6ae036032b9",
+    "requestedAt": "2026-10-29T20:55:56.187Z",
+    "balanceBefore": 2625,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A straight run of a Roman provincial aqueduct: one row of eight round arches on plain square piers of grey stone, carrying a covered water channel along its top. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T20:57:54.225Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-aqueduct.glb",
+    "rawBytes": 43834764,
+    "rawSha256": "9000d199bf271fb20c9d7e6d5c6004b9d8a595939550560c4275d208eac2a691",
+    "tripoInput": {
+      "prompt": "A straight run of a Roman provincial aqueduct: one row of eight round arches on plain square piers of grey stone, carrying a covered water channel along its top. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-aqueduct-tripo-render.webp"
+  },
+  "processing": {
+    "turn": 90,
+    "reason": "Tripo set its arches along the depth; turned so that its length runs across the board’s view, as the outline’s does"
+  }
+}

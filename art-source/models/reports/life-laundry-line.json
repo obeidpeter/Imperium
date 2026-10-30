@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/life-laundry-line.glb",
+    "bytes": 44823732,
+    "sha256": "f9805bb6201338bd9f6c5319a4eafd54067577a92f390145da358ddcb1801bad",
+    "triangles": 1438177
+  },
+  "output": {
+    "path": "assets/models/world/life-laundry-line.glb",
+    "bytes": 197244,
+    "sha256": "ac8e618849bb73dc2b562ad9f1db73faaf4b3cd975b8c14daccc320210a6605f",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.9,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9065031864855404,
+  "sizeMetres": {
+    "width": 1.5099,
+    "height": 1.9,
+    "depth": 1.8883
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_3499f8ff-b499-4b72-a516-5638b678e40e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_3499f8ff-b499-4b72-a516-5638b678e40e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_3499f8ff-b499-4b72-a516-5638b678e40e",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

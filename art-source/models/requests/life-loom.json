@@ -1,0 +1,69 @@
+{
+  "id": "life-loom",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    8,
+    10
+  ],
+  "use": "Life about the camps and towns: a household loom, set out beyond the board in Chapters VIII and X (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman warp-weighted loom standing outdoors: two upright wooden posts leaning against a beam, a half-woven striped wool cloth hanging from the top bar, the warp threads tied to rows of clay loom weights near the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 2,
+    "minHeight": 1.9,
+    "maxHeight": 2.1,
+    "note": "Raised from 220,000, as for the camel gear: 233,636 bytes compressed, 114,949 of them its three 512-pixel maps."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "4a8fb5db-67ce-4c4d-9e75-6e80d9da44e1",
+    "requestedAt": "2026-10-29T21:41:54.999Z",
+    "balanceBefore": 1865,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman warp-weighted loom standing outdoors: two upright wooden posts leaning against a beam, a half-woven striped wool cloth hanging from the top bar, the warp threads tied to rows of clay loom weights near the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:43:53.761Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-loom.glb",
+    "rawBytes": 46602568,
+    "rawSha256": "6c7f7ad1642aa162d3dcac236774accc8b10f0551fd42da8a2cd137069316efc",
+    "tripoInput": {
+      "prompt": "A Roman warp-weighted loom standing outdoors: two upright wooden posts leaning against a beam, a half-woven striped wool cloth hanging from the top bar, the warp threads tied to rows of clay loom weights near the ground. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-loom-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "The loom’s warp and weights face the model’s side (+X); turned to the front (+Z) that the game’s camera sees"
+  }
+}

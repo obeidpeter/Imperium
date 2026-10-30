@@ -2,6 +2,58 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/landmarks-release9-report.md))
+
+The ninth of ten releases, in progress: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
+
+- **The Curia in marble.** The Senate's Contests of Chapters XI and XII take place in the Curia, the Senate house as Domitian restored it ([historical note](docs/historical-research.md)), built in Blender around the chamber floor:
+  - the senators' benches on three wide, low steps along each side;
+  - walls with a revetted dado of veined marbles, niches framed by columns, and arched windows with bronze grilles high in the end walls;
+  - the bronze doors standing open;
+  - the presiding magistrates' tribunal, with two curule chairs, at the board's north edge;
+  - the gilded Victory on her globe above her altar, between two bronze lampstands.
+  - A wall stands aside while the camera is beyond it, and no wall shades the floor.
+  - The clerks' tables stand beside the tribunal; the fountain and, in Chapter XII, the army's eagle stand outside the doors.
+  - On Performance, or if it cannot be downloaded, the code-built hall stands in its place.
+  - Its 0.68 MB file (0.35 MB gzipped, as the build report counts downloads) is in the packs of Chapters XI and XII only.
+- **Aurelian's walls before the finale.** Beyond the east edge of the last battle's field stand Rome's new walls, begun in 271 and still rising ([historical note](docs/historical-research.md)), built in Blender:
+  - brick-faced stretches 3.5 metres thick, with a wall walk, parapet and merlons;
+  - stretches still building, at three heights, behind scaffolds and ladders, with new bricks stacked at their foot;
+  - a square tower about every thirty metres;
+  - the double gateway faced in travertine between two semicircular brick towers, where the regional gate arch stood.
+  - The walls take the code-built curtain's line and pattern, and keep clear of the claimant's cohorts drawn up before them.
+  - On Performance, or if they cannot be downloaded, the code-built curtain stands in their place.
+  - Their 0.43 MB file (0.31 MB gzipped) is in Chapter XII's pack only.
+- **The oath and the accession in story beats.** The 3D ceremonies no longer circle slowly round their tableaux. The camera frames their moments in turn, holding each for five or six seconds before moving to the next ([`ceremony.js`](src/showcase/ceremony.js)):
+  - at the oath on the Novae parade ground: the recruits drawn up, the view over their shoulders to Varro and the standard, Varro holding out the words, the recruits reciting, and your own soldier;
+  - at the accession: the legions before the tribunal, the herald, the Senate's witness, the acclamation, and the new Augustus.
+  - With reduced motion the camera keeps the first view. If you turn or zoom the view yourself, it stays where you put it.
+- **Life about the field** ([`environment-life.js`](src/showcase/environment-life.js)), on Balanced and High:
+  - birds wheel high beyond the board by day, though not in rain or dust storms;
+  - smoke rises and drifts with the wind from the hearths of barracks, forges, field kitchens and the fish smokers' racks;
+  - every banner's cloth stirs in the wind at its own pace, no longer only the fort's standard.
+  - Birds and smoke share one mesh and one shader program, placed from the encounter's presentation seed and the layout data (`LIFE_LAYOUT`). None of it is on Performance, and reduced motion holds it still.
+- **Each chapter's own landmarks on its horizon** ([`horizon-landmarks.js`](src/showcase/horizon-landmarks.js), [historical note](docs/historical-research.md)). Three landmarks stand at the middle distance of every chapter, in place of the watchtowers, temples and aqueducts that stood in every region before:
+  - Chapters I–IV, on the Danube: the stone gate of Novae, a signal tower, a Thracian burial mound, a reed hut on piles, the piers of an old bridge without its deck, a harbour quay, a road station, a small temple and a burned farmstead;
+  - Chapter V: a citadel on the river cliff, a ruined watchtower and a tower tomb of the necropolis;
+  - Chapter VI: a mudbrick caravan station, a Syrian temple court and chamber tombs cut in the hillside;
+  - Chapter VII: the bridge over the Adda, the walls of Mediolanum and a tall tomb beside the road;
+  - Chapter VIII: a frontier fort's stone gate, river warehouses and a ruined Dacian sanctuary;
+  - Chapter IX: a tetrapylon with its colonnades, a sanctuary in its walled court and the city gate;
+  - Chapter X: a villa, the province's basilica and an aqueduct;
+  - Chapter XI: the Colosseum, the Pantheon and the Arch of Septimius Severus;
+  - Chapter XII: the Mausoleum of Hadrian, Aurelian's Temple of the Sun and the Milvian Bridge.
+  - Where a horizon has its river (Chapters II and VIII), the old bridge's piers stand across it and the quays on its near bank, facing the water. The bridges over the Adda and the Tiber, whose horizons have no river, each have a stream beneath them.
+  - They are drawn as code-built outlines in the horizon's distant batch, which the woods and the city's rooftops keep clear of.
+  - On Balanced and High, 32 of the 33 are generated models (Tripo, processed in Blender), which stand in their outlines' places: scaled to the outline's height, turned to the board (or, for a quay, to the water), set on the lowest ground under their own extent, and taking a share of the haze at their distance as the hills round them do. Each is drawn from its colour map alone, as its relief would be smaller than a pixel there.
+  - The Colosseum keeps its outline: Tripo made it only as a fragment of its outer wall, as today's ruin and as a cutaway, never whole as it stood in 275.
+  - On Performance, or if a model cannot be downloaded, the outline stands. The models add 5.2 MB to the campaign (4.9 MB gzipped, as the build report counts downloads), 0.4–0.5 MB gzipped to each chapter's pack.
+- **Life about the camps and towns.** On Balanced and High, 14 generated props are set out with the baggage beyond the board, two to five in each chapter but V, each where its region would have it: washing on a line, a woodpile, a grindstone, a bread oven, a handcart of stores, wicker beehives, a haystack, an ox cart, a warp-weighted loom, a caravan's saddles and baggage, racks of amphorae, a covered carriage, a market stall of fruit and bread, and a potter's red-slip wares ([historical note](docs/historical-research.md)).
+  - They stand outdoors only, never round a council's board or in the Senate, and never on a camp's service pad.
+  - On Performance, or if one cannot be downloaded, its place stays empty.
+  - They add 3.1 MB to the campaign (3.0 MB gzipped), up to 1.2 MB gzipped to a chapter's pack.
+- **The camera stays out of Aurelian's walls.** Before the finale, turning the Horizon view (or another low view) toward the walls used to take the camera into them, as it already did with the code-built curtain. Now it comes in to their face and looks out over the field.
+
 ### Worlds and gameplay, release 8: living camps ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md))
 
 The eighth of ten releases: every chapter's camp is a place of its own, with the story's people in it, errands that pay in training, a trader, and replies that depend on who your soldier is. The battles are unchanged.

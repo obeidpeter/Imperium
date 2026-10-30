@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-dacian-sanctuary.glb",
+  "output": "assets/models/landmarks/landmark-dacian-sanctuary.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 205144,
+    "gzipBytes": 118320,
+    "sha256": "ef4d2bd83e0897424b45be77db98760e62329b15b565e4afcd92b3e67a6c181f"
+  },
+  "after": {
+    "bytes": 160880,
+    "gzipBytes": 153082,
+    "sha256": "8c960f2d6f1000383dc31b508ac7d3831c1c7a10eb3b3f973beada9fd3a6fcc9"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3919,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12918
+      },
+      "bytes": 13902,
+      "psnr": 31.272
+    }
+  ]
+}

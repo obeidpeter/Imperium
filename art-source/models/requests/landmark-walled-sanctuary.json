@@ -1,0 +1,64 @@
+{
+  "id": "landmark-walled-sanctuary",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    9
+  ],
+  "use": "A sanctuary in its walled court, on the horizon of Chapter IX (LANDMARK_LAYOUT, kind court temple): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A great sanctuary of a Syrian city in the third century: a temple with a colonnade of tall fluted columns all round its cella and a row of stepped merlons along its roof line, standing in the middle of a square walled court with a colonnaded gateway, all in warm golden limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 11.6,
+    "minHeight": 11.02,
+    "maxHeight": 12.18,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "48e613f0-4696-4cbf-a768-ea552e766395",
+    "requestedAt": "2026-10-29T21:32:17.257Z",
+    "balanceBefore": 2045,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A great sanctuary of a Syrian city in the third century: a temple with a colonnade of tall fluted columns all round its cella and a row of stepped merlons along its roof line, standing in the middle of a square walled court with a colonnaded gateway, all in warm golden limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:34:37.000Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-walled-sanctuary.glb",
+    "rawBytes": 44395520,
+    "rawSha256": "c1d8a5c2ef904cf39694f2393f41bc3fc8389808f09fd94fb1e07c8d0757732f",
+    "tripoInput": {
+      "prompt": "A great sanctuary of a Syrian city in the third century: a temple with a colonnade of tall fluted columns all round its cella and a row of stepped merlons along its roof line, standing in the middle of a square walled court with a colonnaded gateway, all in warm golden limestone. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-walled-sanctuary-tripo-render.webp"
+  }
+}

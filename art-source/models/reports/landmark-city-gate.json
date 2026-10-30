@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-city-gate.glb",
+    "bytes": 44144460,
+    "sha256": "22251f7a67008418ffd6c8cc906c71a2928ad3763263b4e3e318c9d477ee44fe",
+    "triangles": 1418086
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-city-gate.glb",
+    "bytes": 180492,
+    "sha256": "9f5bc3d77578667402d0060856d625156d6c736abcb5a8c8efcf32f2ab08e42b",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 12.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 20.886626266744624,
+  "sizeMetres": {
+    "width": 20.8707,
+    "height": 12.8,
+    "depth": 13.3774
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_b386d333-6f58-4e96-ace6-f5e5327ddd14",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_b386d333-6f58-4e96-ace6-f5e5327ddd14",
+      "roughness": 0.9717,
+      "metallic": 0.007
+    }
+  ]
+}

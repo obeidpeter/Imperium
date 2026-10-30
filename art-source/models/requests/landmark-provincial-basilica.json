@@ -1,0 +1,64 @@
+{
+  "id": "landmark-provincial-basilica",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    10
+  ],
+  "use": "The province’s basilica, on the horizon of Chapter X (LANDMARK_LAYOUT, kind hall): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The basilica of a Roman provincial town in the third century: a long rectangular hall of plastered stone with a tall nave lit by a row of arched clerestory windows, lower side aisles under lean-to tiled roofs, a semicircular apse at one end and a porch of columns on its long front. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 12.7,
+    "minHeight": 12.065,
+    "maxHeight": 13.335,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "5d734b09-749d-444e-8e56-58a7a2a66a69",
+    "requestedAt": "2026-10-29T21:13:58.935Z",
+    "balanceBefore": 2305,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The basilica of a Roman provincial town in the third century: a long rectangular hall of plastered stone with a tall nave lit by a row of arched clerestory windows, lower side aisles under lean-to tiled roofs, a semicircular apse at one end and a porch of columns on its long front. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:16:39.850Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-provincial-basilica.glb",
+    "rawBytes": 46962552,
+    "rawSha256": "b0fc5b12dd93cfc833ca81809ed324307754e91403451b1897ab4397f0d19cfb",
+    "tripoInput": {
+      "prompt": "The basilica of a Roman provincial town in the third century: a long rectangular hall of plastered stone with a tall nave lit by a row of arched clerestory windows, lower side aisles under lean-to tiled roofs, a semicircular apse at one end and a porch of columns on its long front. Seen broadside, its length running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-provincial-basilica-tripo-render.webp"
+  }
+}

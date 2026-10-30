@@ -21,8 +21,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
 | 6 | The cast in person | merged ([#38](https://github.com/obeidpeter/Imperium/pull/38); [report](cast-release6-report.md)) |
 | 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
-| 8 | Living camps | in progress ([report](camps-release8-report.md)) |
-| 9 | Landmarks and set pieces | planned |
+| 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); the five figures await the owner's credit approval |
+| 9 | Landmarks and set pieces | in progress: the Curia, Aurelian's walls, the ceremonies and the field's life built; 32 landmarks and 14 life props generated for 1,060 of the 1,150 credits approved |
 | 10 | Gate 4 and 0.40.0 | planned |
 
 ## The revision of releases 4–10 (approved 27 October 2026)
@@ -232,6 +232,14 @@ Already done (#32): separate settings for the oath and the accession.
 - **The Aurelian Walls and gate** for the finale, in Blender.
 - **Ceremonies:** story beats in place of a slow orbit, in the new settings.
 - **Life:** about 15 Tripo props (market goods, wagons, laundry), cloth banners and awnings, roof smoke and birds.
+
+**As built.** The [report](landmarks-release9-report.md) records the details.
+- **Landmarks:** 33 in the chapters' layouts (`LANDMARK_LAYOUT`), three a chapter, each with a code-built outline on every tier. On Balanced and High, 32 generated models stand in their places, fitted to their outlines' heights and hazed for their distance. The Colosseum keeps its outline after three rejected attempts, and the town gate and baths listed for Dacia have no bearing free.
+- **The Curia** is built for the Senate's Contests of Chapters XI and XII, as the credit plan proposed. Chapter VII's council, VIII's parley and X's tribunal keep their own settings.
+- **Aurelian's walls and gate** stand beyond the finale's east edge, and the camera stays on the field's side of them.
+- **Ceremonies:** five story beats each for the oath and the accession.
+- **Life:** 14 generated props beyond the board in every chapter but V, with no code-built stand-in, and birds, hearth smoke and every banner's cloth on Balanced and High. The fishing nets were not shipped, and the awnings stay still.
+- **Credits:** 1,060 of the 1,150 approved, for 46 models in the game and seven rejected attempts ([ledger](../art-source/models/worlds-plan-credits.json)).
 
 #### 10. Gate 4 and 0.40.0
 

@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-arch-of-severus.glb",
+  "output": "assets/models/landmarks/landmark-arch-of-severus.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 264640,
+    "gzipBytes": 164207,
+    "sha256": "15adf67c96a7c9155e216fc9491909f2fdbaf3b44a0299405f120a8d9284bceb"
+  },
+  "after": {
+    "bytes": 201648,
+    "gzipBytes": 192487,
+    "sha256": "11ad81037400147ee9e942153dd9d529ff7895793fc01114f82b94eb15d3121e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14166
+      },
+      "bytes": 15430,
+      "psnr": 30.79
+    }
+  ]
+}

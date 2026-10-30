@@ -1,0 +1,66 @@
+{
+  "id": "life-hay-rick",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    2,
+    8,
+    10
+  ],
+  "use": "Life about the camps and towns: a haystack of the farms, set out beyond the board in Chapters II, VIII, X (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A conical haystack built round a tall wooden pole, the hay combed down its sides and tied with ropes weighted by stones, a few loose bundles of hay at its foot. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4200,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 3.2,
+    "minHeight": 3.04,
+    "maxHeight": 3.36,
+    "note": "Raised from 3,000 triangles and 220,000 bytes: the decimation stops at 4,117 triangles whatever the target (2,000 was tried), held by the 331 non-manifold edges of its ragged straw surface (289,420 bytes compressed)."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "8d338609-f930-4fe7-b5d4-a8f20452bce3",
+    "requestedAt": "2026-10-29T21:41:46.255Z",
+    "balanceBefore": 1885,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A conical haystack built round a tall wooden pole, the hay combed down its sides and tied with ropes weighted by stones, a few loose bundles of hay at its foot. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:44:32.508Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-hay-rick.glb",
+    "rawBytes": 46932164,
+    "rawSha256": "3a57b845b3e6a5647c23e3becdff0ee2341e1ff673b14009d04efa54c93f0225",
+    "tripoInput": {
+      "prompt": "A conical haystack built round a tall wooden pole, the hay combed down its sides and tied with ropes weighted by stones, a few loose bundles of hay at its foot. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-hay-rick-tripo-render.webp"
+  }
+}

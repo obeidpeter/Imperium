@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-necropolis-tower-tomb.glb",
+  "output": "assets/models/landmarks/landmark-necropolis-tower-tomb.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 158892,
+    "gzipBytes": 104632,
+    "sha256": "ffd52dda2a35b3397b69585d36c62279e90cc1be0cb4ca9be9af598087120b75"
+  },
+  "after": {
+    "bytes": 125040,
+    "gzipBytes": 119222,
+    "sha256": "c17a95be72e940f532aea23454ac871d8c9617b41628d1535363e376970d9271"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3918,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7478
+      },
+      "bytes": 12975,
+      "psnr": 36.505
+    }
+  ]
+}

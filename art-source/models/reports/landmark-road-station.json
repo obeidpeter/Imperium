@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-road-station.glb",
+    "bytes": 45954176,
+    "sha256": "d3666e5f729ae99bcaeefbbb5dc5b3aab0ed6abc80646be2f4d40329a34ae38c",
+    "triangles": 1433946
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-road-station.glb",
+    "bytes": 248764,
+    "sha256": "99b12c3c93fbdaa9fb74ea1516cad5ab2da1707dc75e6bccdf4f0c6932fd5e2c",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 8.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 31.851952798110354,
+  "sizeMetres": {
+    "width": 31.8352,
+    "height": 8.3,
+    "depth": 31.7253
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5280c147-0a8a-4041-af56-21696c787fc5",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_5280c147-0a8a-4041-af56-21696c787fc5",
+      "roughness": 0.7347,
+      "metallic": 0.0396
+    }
+  ]
+}

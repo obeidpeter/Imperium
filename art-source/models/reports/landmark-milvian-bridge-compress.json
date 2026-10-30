@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-milvian-bridge.glb",
+  "output": "assets/models/landmarks/landmark-milvian-bridge.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 164212,
+    "gzipBytes": 123086,
+    "sha256": "1c0d8ae2d86ae450631fa30ea01eb78d3fffc39a7260458b53cfb2e134faf60b"
+  },
+  "after": {
+    "bytes": 120028,
+    "gzipBytes": 114659,
+    "sha256": "eb5a9649d2fec2ec2e5043ecd7d346077c836a73749a831eec9b3a22569d5dfc"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11844
+      },
+      "bytes": 13479,
+      "psnr": 32.463
+    }
+  ]
+}

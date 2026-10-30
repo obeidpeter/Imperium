@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-pile-hut.glb",
+    "bytes": 46797480,
+    "sha256": "595e45b55ffb0ada6f6d12b8fcdd6e2413e11882f990b38b09f878077fb2cb3f",
+    "triangles": 1435595
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-pile-hut.glb",
+    "bytes": 235276,
+    "sha256": "feac3da91a800b8051369b87bdb1609ffd3610318e889cdcbaa448417d2d4272",
+    "triangles": 3919
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 7.15,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 7.149745157503832,
+  "sizeMetres": {
+    "width": 5.4883,
+    "height": 7.15,
+    "depth": 5.6407
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_498307d9-8f39-466e-aa56-d0a6b54c841f",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_498307d9-8f39-466e-aa56-d0a6b54c841f",
+      "roughness": 0.8765,
+      "metallic": 0.0174
+    }
+  ]
+}

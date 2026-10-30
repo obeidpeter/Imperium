@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-caravan-station.glb",
+    "bytes": 46784400,
+    "sha256": "1fd3a9f75db2272c4995d1bc4c3078659e8b997107e26daf045e3c1db5866ed3",
+    "triangles": 1484580
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-caravan-station.glb",
+    "bytes": 218500,
+    "sha256": "7720d5252e8f2423b39246ddf00eb3f83f2451c8fa036e5a2542630346f80607",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 8.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 18.574277951249606,
+  "sizeMetres": {
+    "width": 18.5499,
+    "height": 8.3,
+    "depth": 18.512
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_155c82c5-6ff2-4326-a217-a2f429ef382e",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_155c82c5-6ff2-4326-a217-a2f429ef382e",
+      "roughness": 0.9755,
+      "metallic": 0.0071
+    }
+  ]
+}

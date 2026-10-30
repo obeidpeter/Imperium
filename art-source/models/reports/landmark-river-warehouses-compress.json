@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-river-warehouses.glb",
+  "output": "assets/models/landmarks/landmark-river-warehouses.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 223576,
+    "gzipBytes": 136117,
+    "sha256": "7a9972e888bfeafd2535f5b7e24c70578c5869cbae2e1983aab2a10d01d828c0"
+  },
+  "after": {
+    "bytes": 173732,
+    "gzipBytes": 165578,
+    "sha256": "a929446158c6a30fb8ca92a0bb39edb9823c771f50fb4baf67fe3a4b9fed4ea7"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10588
+      },
+      "bytes": 14681,
+      "psnr": 33.177
+    }
+  ]
+}

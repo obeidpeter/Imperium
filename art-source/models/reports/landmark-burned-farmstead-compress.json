@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-burned-farmstead.glb",
+  "output": "assets/models/landmarks/landmark-burned-farmstead.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 214820,
+    "gzipBytes": 116902,
+    "sha256": "c2319aa96b088851bd73e82ff3c47a6787835af77810b8a01de28ebe864a2b8b"
+  },
+  "after": {
+    "bytes": 171188,
+    "gzipBytes": 162934,
+    "sha256": "543a0b5cf99915f1ad4c1871f6bc21506ae8f41432f192ccd28c9933c3486875"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3919,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11808
+      },
+      "bytes": 13915,
+      "psnr": 32.786
+    }
+  ]
+}

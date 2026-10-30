@@ -1,0 +1,68 @@
+{
+  "id": "landmark-novae-gate",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    1
+  ],
+  "use": "The stone gate of Novae, on the horizon of Chapter I (LANDMARK_LAYOUT, kind gate): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The stone gate of the Roman legionary fortress of Novae on the lower Danube in the third century: a double gateway of two round-arched passages between two projecting square towers of rough grey limestone ashlar, each tower three storeys high with small arched windows and a crenellated top, a straight stretch of crenellated curtain wall with its wall walk on each side, and heavy closed timber gates. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 12.8,
+    "minHeight": 12.16,
+    "maxHeight": 13.44,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "d778db71-dcec-4496-937d-ba8320ff16f5",
+    "requestedAt": "2026-10-29T21:11:17.098Z",
+    "balanceBefore": 2385,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The stone gate of the Roman legionary fortress of Novae on the lower Danube in the third century: a double gateway of two round-arched passages between two projecting square towers of rough grey limestone ashlar, each tower three storeys high with small arched windows and a crenellated top, a straight stretch of crenellated curtain wall with its wall walk on each side, and heavy closed timber gates. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:13:15.591Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-novae-gate.glb",
+    "rawBytes": 46582488,
+    "rawSha256": "0203ea16bee0da0f7f869eb6cf62f20374acc6d8c5b1ac7cff17d6413dffda4b",
+    "tripoInput": {
+      "prompt": "The stone gate of the Roman legionary fortress of Novae on the lower Danube in the third century: a double gateway of two round-arched passages between two projecting square towers of rough grey limestone ashlar, each tower three storeys high with small arched windows and a crenellated top, a straight stretch of crenellated curtain wall with its wall walk on each side, and heavy closed timber gates. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-novae-gate-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the gateway’s face on the model’s side (+X); turned so that it faces the board"
+  }
+}

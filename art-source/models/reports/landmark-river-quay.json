@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-river-quay.glb",
+    "bytes": 47775880,
+    "sha256": "a20ecee2608469e740d74fd4ba437b609332833cdcbdd373ba279cb77a08da85",
+    "triangles": 1485840
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-river-quay.glb",
+    "bytes": 209424,
+    "sha256": "9676b772ccf931db231c05cb145f8042f177eb8a70388fd47e7def55c0d0b327",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 8.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 31.754478528450598,
+  "sizeMetres": {
+    "width": 31.7542,
+    "height": 8.4,
+    "depth": 12.839
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+      "roughness": 0.8002,
+      "metallic": 0.0295
+    }
+  ]
+}

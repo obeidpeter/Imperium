@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-rock-cut-tombs.glb",
+    "bytes": 47044368,
+    "sha256": "b1776b843feaf9febf381daf150afcb607d27e4d2b40ffac30f544e55ae4427d",
+    "triangles": 1444488
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-rock-cut-tombs.glb",
+    "bytes": 217432,
+    "sha256": "1d9a3e213fb79f3147fbf41403062ef1d66393aca1abc50618434281941d35d8",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 10.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 11.049860925159875,
+  "sizeMetres": {
+    "width": 11.0537,
+    "height": 10.0,
+    "depth": 6.6442
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_50d816cb-a25d-4c53-a165-4a93f565d31c",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_50d816cb-a25d-4c53-a165-4a93f565d31c",
+      "roughness": 0.9187,
+      "metallic": 0.0226
+    }
+  ]
+}

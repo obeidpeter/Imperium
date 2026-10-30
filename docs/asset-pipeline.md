@@ -88,6 +88,11 @@ The owner asked on 2026-10-20 to upgrade the browser game's 3D assets with model
 - shrinks textures to the size limit;
 - writes one GLB with WebP textures (`EXT_texture_webp`, read natively by the vendored three.js), plus a JSON report of inputs, digests, settings, counts, bounds and textures.
 
+Two options are for models seen only from afar, such as the horizon's landmarks:
+
+- `--colour-only` keeps each material's colour map alone. The normal map is unlinked, and the roughness-metalness map becomes its mean, a constant on the material (glTF keeps roughness in green and metalness in blue). Nodes left feeding nothing are removed, so their images are not exported. The report records the constants. At 115 metres and more the normal map's relief is smaller than a pixel.
+- `--turn <degrees>` turns a static model about the vertical axis, counter-clockwise seen from above, before it is stood on its base. The game expects a model's front at +Z: a gate's passages, a temple's porch, a bridge's or an aqueduct's length across the view.
+
 `--keep-skin` keeps a model's own rig, skin weights, morphs and clips and changes only scale and textures. The game's characters do not use it: they are bound to the game's own skeleton instead (next section).
 
 Limitations:
@@ -385,4 +390,54 @@ Release 5 models the regions' trees and field stones (see [art-generation.md](ar
 - **Shipping.** `node scripts/assets/quantize-model.mjs <processed.glb> assets/models/scenery/<kit>.glb`, then `npm run asset:compress -- <file> <file> --report art-source/models/reports/<kit>-compress.json` on that file in place: quantizing first takes about a quarter off the geometry.
 - **Drawing.** [`tree-kit.js`](../src/showcase/tree-kit.js) and [`rock-kit.js`](../src/showcase/rock-kit.js) draw one instanced mesh for each species or rock and level, re-levelled when the camera has moved 3 m (trees near within 30 m and mid within 150 m, rocks near within 18 m: a field holds hundreds of rocks, so a rock cell takes a kit boulder and one smaller rock where the code-built field had four stones, and the plateaus' rims every other stone). Their materials are made by the environment as its own leaf sprays and stone are (`kitMaterial` in [`environment-materials.js`](../src/showcase/environment-materials.js)), with the kit's maps, so they share those surfaces' shader programs and the trees their wind. Every tree stays inside the clearance its plan reserved, and every rock inside the footprint of the stone it replaces.
 - **Loading.** Like the board kit, a region's tree and rock kits belong to its chapters' packs and to the scenery working set, and are used only when they have arrived as the world is built; on Performance, or if they fail, the code-built trees and stones stand in.
+
+## The Curia · 2026-10-29
+
+Release 9 models the Senate house of Chapters XI and XII (see [art-generation.md](art-generation.md#the-curia--29-october-2026) and the [historical note](historical-research.md)).
+
+- **Building.** [`build-curia.py`](../scripts/assets/build-curia.py) (Blender, `"$BLENDER_PYTHON" scripts/assets/build-curia.py -- --repo .`, a few seconds) authors nine pieces in place around the 8 × 8 chamber board, builds them with `bmesh` (one mesh per piece and material) and writes `src/showcase/curia-kit-components.js` with each piece's bounds and the hall's own measures.
+- **Shipping.** `node scripts/assets/quantize-model.mjs art-source/models/processed/roman-curia-kit.glb assets/models/scenery/roman-curia-kit.glb`, then `npm run asset:compress -- assets/models/scenery/roman-curia-kit.glb assets/models/scenery/roman-curia-kit.glb --report art-source/models/reports/roman-curia-kit-compress.json`.
+- **Placement.** [`environment-curia.js`](../src/showcase/environment-curia.js) places every piece at the board's centre for the Contests of Chapters XI and XII on their own 8 × 8 board (`CURIA_LAYOUT` in [`world-layouts.js`](../src/ui/world-layouts.js)). An expanded board keeps the code-built hall. The chapter's props have their own places there: the clerks' tables beside the tribunal, the fountain and the army's eagle outside the doors.
+- **Walls.** A wall stands down while the camera is beyond its inner face (the stage checks each frame), so no wall stands between the camera and the board. Walls cast no shadow, so none darkens the board. No piece takes picks or changes a route.
+- **Stand-ins.** The code-built audience hall and the chamber's colonnades are batched within their own groups in these two chapters, so the loaded Curia can hide them whole; disposing the scenery brings them back. On Performance, or if the kit fails, they are the hall.
+
+## Aurelian's walls · 2026-10-29
+
+Release 9 models Rome's walls and gate before the finale's field (see [art-generation.md](art-generation.md#aurelians-walls--29-october-2026) and the [historical note](historical-research.md)).
+
+- **Building.** [`build-aurelian-walls.py`](../scripts/assets/build-aurelian-walls.py) (Blender, `"$BLENDER_PYTHON" scripts/assets/build-aurelian-walls.py -- --repo .`) authors six pieces on the wall's centre line and writes `src/showcase/aurelian-walls-components.js` with each piece's bounds and the wall's measures. It shares its mesh builders, bakes and export with the Curia's in [`kitlib.py`](../scripts/assets/kitlib.py), whose openings weld near-coincident points so no zero-area triangle reaches the compressor.
+- **Shipping.** `node scripts/assets/quantize-model.mjs art-source/models/processed/aurelian-walls-kit.glb assets/models/scenery/aurelian-walls-kit.glb`, then `npm run asset:compress -- assets/models/scenery/aurelian-walls-kit.glb assets/models/scenery/aurelian-walls-kit.glb --report art-source/models/reports/aurelian-walls-kit-compress.json`.
+- **Placement.** [`aurelian-walls.js`](../src/showcase/aurelian-walls.js) lays the gate, then 4-metre stretches north and south of it, along the finale's curtain line (`finaleLayout` in [`environment-finale.js`](../src/showcase/environment-finale.js)). Each stretch takes the piece the code-built curtain would draw there: a tower, a finished stretch or one still rising. A rising stretch whose scaffold would stand among the cohorts drawn up before the wall is finished instead (each block's footprint is in the layout). Trees and ground cover keep off the pieces' ground on every tier (`finaleOccupied`), since the code-built curtain stands within the same footprint.
+- **Drawing.** The environment merges every placement into one mesh per material after its own material hooks, so the walls take the kit's shared finish (cloud shadows and the scene's bake) and draw in five meshes. Disposing the world frees the merged copies and leaves the cached kit whole. No piece takes picks or changes a route.
+- **Stand-ins.** The stage takes the kit only when it is already loaded (the loading veil preloads it on Balanced and High). Then the code-built curtain and its scaffolds are not built, and the regional kit's gate arch steps aside (`gate: true` in its layout entry, `withoutGate`). On Performance, or if the kit fails, the code-built curtain and the arch stand.
+- **Camera.** Each frame the stage brings the camera in along its line to the target wherever its orbit would take it within 1.5 m of a piece's bounds (`clearOfBoxes` in [`stage-camera.js`](../src/showcase/stage-camera.js), over `finaleOccupied`), so a view turned toward the walls stays on the field's side of them. The bounds are the same for the kit and the code-built curtain.
+
+## Landmarks · 2026-10-29
+
+Release 9 gives every chapter three landmarks at the middle distance (see the [historical note](historical-research.md)): generated models on Balanced and High where they were made, and code-built outlines on Performance, for the Colosseum and wherever a model is missing.
+
+- **Slots.** `LANDMARK_LAYOUT` in [`world-layouts.js`](../src/ui/world-layouts.js) names each chapter's three landmarks, nearest first. Each entry has a world catalog id (`landmark-<name>`), a description and a stand-in kind. `landmarkSlots` in [`environment-horizon.js`](../src/showcase/environment-horizon.js) sets them on the horizon's three bearings:
+  - 115, 143 and 171 metres out;
+  - 195, 223 and 251 metres round a city.
+  - Where the horizon has its river, a bridge and its piers stand across it and a quay on its near bank, its front to the water, at the same distance on their own side of the board. A bridge with no river has a strip of stream beneath it.
+  - The distant woods keep 34 metres clear of each slot.
+  - In a city, no rooftop stands on a landmark's footprint.
+  - Each slot has a facing (`yaw`): toward the board, or for a quay toward the water.
+- **Stand-ins.** [`horizon-landmarks.js`](../src/showcase/horizon-landmarks.js) builds each kind as closed volumes in the horizon's distant vertex-colour batch. They add no draw call and no shader program.
+  - Each builder works in a frame turned by quarter turns toward the board, so the horizon's boxes stay axis-aligned.
+  - Each kind has a footprint, which is its outline's whole extent, and a height.
+  - Each landmark's foundation record names it and counts the silhouette vertices it emitted (`distantFoundations`), so the horizon's tests can tell a landmark from the city's roofline.
+  - [`horizon-landmarks.test.mjs`](../tests/horizon-landmarks.test.mjs) holds every outline to its footprint and height, and checks with rays from all round and from above that no part is turned inside out.
+- **Generated models.** A landmark with a generated model has:
+  - a world catalog entry under its slot's id (`LANDMARK_CHAPTERS` in [`world-catalog.js`](../src/ui/world-catalog.js)), with the chapters whose layout names it, which a test holds to the layout;
+  - its file in `assets/models/landmarks/`, its request in `art-source/models/requests/` and its manifest record.
+  - It is processed with `--colour-only` at 256 pixels, and with `--turn` where Tripo set its front elsewhere (a request's `processing`), then compressed. Its budget is about 36 bytes a triangle and 30 KB.
+- **How it stands.** `landmarkModelUrls` adds it to the chapter's world kits, and the stage takes it only when it is already loaded, on Balanced and High. The horizon fits it before the city is drawn:
+  - a clone of the cached model, turned to the slot's facing (its front is +Z), scaled to its kind's height and centred on the slot;
+  - its own extent, which may outgrow its outline's, is kept clear of the city's rooftops, and it stands on the lowest ground under that extent;
+  - its materials are clones that take the haze as an unlit share of their colour (`landmarkHaze`: half the share the horizon's distant colours take at that distance), keeping the cached model's program.
+  - It casts no shadow and takes no pick. Disposing the world disposes the hazed clones and leaves the cached model whole.
+  - On Performance, or if it fails to load, the outline stands.
+- **Life props.** `LIFE_PROP_CHAPTERS` in [`world-catalog.js`](../src/ui/world-catalog.js) lists the generated life props (`life-<name>`) with the chapters that set each out; their files are in `assets/models/world/`. `regionalPropPlacements` in [`environment-regional-world.js`](../src/showcase/environment-regional-world.js) places them after the regional props, in the same line beyond the board, but never on a camp's service pad and never round a contest's board (a council's, a tribunal's or the Senate's). Seen near, they keep all three maps at 512 pixels. They have no code-built stand-in: on Performance, or without its model, a prop's place stays empty.
+- **Warm between stages.** A scene's working set (its placed scenery, the world kits and its landmarks) is at most 16 models since these were added. The scenery cache keeps 20 idle masters between stages (`SCENERY_IDLE_MASTERS` in [`scenery-models.js`](../src/showcase/scenery-models.js)), up from 12, so a chapter's next stage finds its models still loaded; a test holds every scene's working set within it.
 

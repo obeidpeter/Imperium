@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-villa.glb",
+    "bytes": 44385732,
+    "sha256": "6c8c2e22657ac534e94b470e5e700765c5b4fc5c43b09a352829ed4a99573041",
+    "triangles": 1390474
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-villa.glb",
+    "bytes": 228712,
+    "sha256": "de210ab367a06a28be35c5dd0a020c1bc1df1e1cec0037ddf8bf9c278904da02",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 6.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 28.650198465004735,
+  "sizeMetres": {
+    "width": 28.6287,
+    "height": 6.4,
+    "depth": 24.6386
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_45b81e06-fead-4568-bae0-41d0d5c72529",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_45b81e06-fead-4568-bae0-41d0d5c72529",
+      "roughness": 0.7806,
+      "metallic": 0.0606
+    }
+  ]
+}

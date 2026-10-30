@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-aqueduct.glb",
+    "bytes": 43834764,
+    "sha256": "9000d199bf271fb20c9d7e6d5c6004b9d8a595939550560c4275d208eac2a691",
+    "triangles": 1398457
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-aqueduct.glb",
+    "bytes": 160316,
+    "sha256": "a43d3f27462c2fdba53c65678515c7efa19e62ab98aff62a520682196b0d6cd0",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 8.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0,
+    "colourOnly": true
+  },
+  "scale": 20.493854245258134,
+  "sizeMetres": {
+    "width": 20.4876,
+    "height": 8.3,
+    "depth": 6.9658
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e444f709-d297-456a-9413-c6ae036032b9",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_e444f709-d297-456a-9413-c6ae036032b9",
+      "roughness": 0.8342,
+      "metallic": 0.0355
+    }
+  ]
+}

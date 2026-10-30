@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-arch-of-severus.glb",
+    "bytes": 45356892,
+    "sha256": "0b71b4140836c4e51742a7954deedae40e2a4da3047fc599c25ed3773e30d98d",
+    "triangles": 1431452
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-arch-of-severus.glb",
+    "bytes": 264640,
+    "sha256": "15adf67c96a7c9155e216fc9491909f2fdbaf3b44a0299405f120a8d9284bceb",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 19.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 19.01428121075253,
+  "sizeMetres": {
+    "width": 18.0902,
+    "height": 19.0,
+    "depth": 7.9449
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_a9d57b7c-1708-4ae2-989a-54e46d7e4750",
+      "roughness": 0.894,
+      "metallic": 0.0286
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-fort-gate.glb",
+  "output": "assets/models/landmarks/landmark-fort-gate.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 214188,
+    "gzipBytes": 136942,
+    "sha256": "e71835169adaf35acfbef936a15fb0d87fb3458328e276a5dc97240357a967bb"
+  },
+  "after": {
+    "bytes": 164068,
+    "gzipBytes": 156778,
+    "sha256": "b5d2897ee1d3aaffd31e9e94cf7beb55ad3d073ab748702b406782fd7844fe00"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12338
+      },
+      "bytes": 14213,
+      "psnr": 31.504
+    }
+  ]
+}

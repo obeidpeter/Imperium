@@ -1,0 +1,68 @@
+{
+  "id": "landmark-river-citadel",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    5
+  ],
+  "use": "A citadel on the river cliff, on the horizon of Chapter V (LANDMARK_LAYOUT, kind citadel): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The citadel of a Roman frontier city on the Euphrates in the third century, like the citadel of Dura-Europos: a massive compact fortress of pale buff limestone and mudbrick with tall plain walls, three square towers and a single arched gate reached by a ramp, its walls standing on a base of rough rock. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 256,
+    "bytes": 250000,
+    "heightMetres": 15.3,
+    "minHeight": 14.535,
+    "maxHeight": 16.065,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "3004fea2-8b58-4398-b10d-3e421cc78e67",
+    "requestedAt": "2026-10-29T21:16:09.091Z",
+    "balanceBefore": 2285,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The citadel of a Roman frontier city on the Euphrates in the third century, like the citadel of Dura-Europos: a massive compact fortress of pale buff limestone and mudbrick with tall plain walls, three square towers and a single arched gate reached by a ramp, its walls standing on a base of rough rock. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:19:03.525Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-river-citadel.glb",
+    "rawBytes": 47784736,
+    "rawSha256": "028ca5f9c0b16f6e5780582531574a5a8eb34a435571a54b5b8b19d760235cff",
+    "tripoInput": {
+      "prompt": "The citadel of a Roman frontier city on the Euphrates in the third century, like the citadel of Dura-Europos: a massive compact fortress of pale buff limestone and mudbrick with tall plain walls, three square towers and a single arched gate reached by a ramp, its walls standing on a base of rough rock. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-river-citadel-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its gate on the model’s side (+X); turned so that it faces the board"
+  }
+}

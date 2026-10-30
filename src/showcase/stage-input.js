@@ -51,7 +51,7 @@ export const stageInput={
       e=>{
         this.wake();this.touchHold.move(e);
         if(this.drag){
-          const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=true;
+          const dx=e.clientX-this.drag.lastX,dy=e.clientY-this.drag.lastY;if(Math.hypot(e.clientX-this.drag.x,e.clientY-this.drag.y)>7)this.drag.moved=this.ceremonyHeld=true;
           if(this.drag.moved){this.orbit.yaw-=dx*.006;this.orbit.pitch=clamp(this.orbit.pitch+dy*.004,.04,1.15);}this.drag.lastX=e.clientX;
           this.drag.lastY=e.clientY;
         }else this.pendingHover={clientX:e.clientX,clientY:e.clientY};
@@ -68,7 +68,8 @@ export const stageInput={
         this.drag=null;
       });
     on(this.canvas,'pointercancel',()=>{this.touchHold.up();this.drag=null;});
-    on(this.canvas,'wheel',e=>{this.wake();e.preventDefault();this.zoom(e.deltaY*.022);},{passive:false});
+    // A ceremony's story beats give way to any view the viewer chooses; Home brings them back.
+    on(this.canvas,'wheel',e=>{this.wake();e.preventDefault();this.ceremonyHeld=true;this.zoom(e.deltaY*.022);},{passive:false});
     on(this.canvas,'keydown',
       e=>{
         this.wake();this.sound.unlock();campaignSoundscape().unlock();if(this.keyboardMode==='grid'&&(e.key.startsWith('Arrow')||/^[a-z]$/i.test(e.key)))return;
@@ -81,7 +82,7 @@ export const stageInput={
           case'F':this.focusSelected();break;case' ':if(this.animation)this.animation.scale=Math.min(this.animation.scale,.42);else handled=false;break;
           default:handled=false;
         }
-        if(handled)e.preventDefault();
+        if(handled){e.preventDefault();if(e.key!=='Home'&&e.key!==' ')this.ceremonyHeld=true;}
       });
   },
   // Real time: the person nearest the pointer's ray (a forgiving upright test,

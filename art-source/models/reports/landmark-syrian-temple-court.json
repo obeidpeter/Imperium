@@ -1,0 +1,48 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-syrian-temple-court.glb",
+    "bytes": 46204536,
+    "sha256": "cf7c16b1c47db10e7c0abb4453781d467d2d889bebefe5bb731a0a233f692383",
+    "triangles": 1445058
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-syrian-temple-court.glb",
+    "bytes": 250208,
+    "sha256": "833208f3e86eed814e71ae55a3889fd6df684405b4e4e964cd01be5194635d90",
+    "triangles": 5880
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 11.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": -90.0,
+    "colourOnly": true
+  },
+  "scale": 37.56069453499328,
+  "sizeMetres": {
+    "width": 32.6892,
+    "height": 11.6,
+    "depth": 37.5878
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_e7b28dd3-8123-4a28-9ccb-deb4ba79d616",
+      "roughness": 0.7824,
+      "metallic": 0.0669
+    }
+  ]
+}

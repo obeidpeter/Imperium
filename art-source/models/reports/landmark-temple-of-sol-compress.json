@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-temple-of-sol.glb",
+  "output": "assets/models/landmarks/landmark-temple-of-sol.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 259276,
+    "gzipBytes": 159311,
+    "sha256": "9c9ef8d3a95b90e8ff77413264f00de913f03b1a723f5350c8ced50f18594e8e"
+  },
+  "after": {
+    "bytes": 198200,
+    "gzipBytes": 189345,
+    "sha256": "84f0128dd39693cab59173c4f4be7870c8cf878b05b683380c4cfcc257001805"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11094
+      },
+      "bytes": 14524,
+      "psnr": 32.279
+    }
+  ]
+}

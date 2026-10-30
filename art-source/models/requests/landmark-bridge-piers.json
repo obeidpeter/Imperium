@@ -1,0 +1,68 @@
+{
+  "id": "landmark-bridge-piers",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    2
+  ],
+  "use": "The piers of an old bridge, standing without its deck, on the horizon of Chapter II (LANDMARK_LAYOUT, kind piers): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The ruins of an old Roman bridge across the lower Danube: a straight row of five massive rectangular piers of grey stone ashlar, each with a pointed cutwater at both ends, standing apart at equal spacing, only the first round arch between two of them still standing and the rest of the roadway long gone, their tops broken and uneven, darkened and mossy at the foot. Seen broadside, the row running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 6.2,
+    "minHeight": 5.89,
+    "maxHeight": 6.51,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "8d691066-0e74-4388-bde5-7b2f86191c2f",
+    "requestedAt": "2026-10-29T20:57:57.291Z",
+    "balanceBefore": 2585,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The ruins of an old Roman bridge across the lower Danube: a straight row of five massive rectangular piers of grey stone ashlar, each with a pointed cutwater at both ends, standing apart at equal spacing, only the first round arch between two of them still standing and the rest of the roadway long gone, their tops broken and uneven, darkened and mossy at the foot. Seen broadside, the row running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T20:59:41.121Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-bridge-piers.glb",
+    "rawBytes": 46374480,
+    "rawSha256": "981d653bac682eacae7321d053d128c198da0f853ed45f956ed0ecbbe796f46e",
+    "tripoInput": {
+      "prompt": "The ruins of an old Roman bridge across the lower Danube: a straight row of five massive rectangular piers of grey stone ashlar, each with a pointed cutwater at both ends, standing apart at equal spacing, only the first round arch between two of them still standing and the rest of the roadway long gone, their tops broken and uneven, darkened and mossy at the foot. Seen broadside, the row running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-bridge-piers-tripo-render.webp"
+  },
+  "processing": {
+    "turn": 90,
+    "reason": "Tripo set the row of piers along the depth; turned so that the row crosses the river, as the outline’s does"
+  }
+}

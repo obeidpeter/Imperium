@@ -1,0 +1,65 @@
+{
+  "id": "life-ox-cart",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    8,
+    10
+  ],
+  "use": "Life about the camps and towns: a farm cart of the frontier villages, set out beyond the board in Chapters VIII and X (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A heavy Roman farm cart (plaustrum): a plank bed with low slatted sides on two solid wooden disc wheels, loaded with hay, sacks and two amphorae, its long yoke pole resting on a wooden trestle. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3400,
+    "texture": 512,
+    "bytes": 270000,
+    "heightMetres": 2,
+    "minHeight": 1.9,
+    "maxHeight": 2.1,
+    "note": "Raised from 3,000 triangles and 220,000 bytes: the decimation stops at 3,388 triangles whatever the target (2,600 was tried), held by the 194 non-manifold edges of its wheels, rails and load (267,232 bytes compressed)."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "5023d43b-dd97-442b-9b4e-f3a0b1848699",
+    "requestedAt": "2026-10-29T21:44:35.922Z",
+    "balanceBefore": 1825,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A heavy Roman farm cart (plaustrum): a plank bed with low slatted sides on two solid wooden disc wheels, loaded with hay, sacks and two amphorae, its long yoke pole resting on a wooden trestle. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:47:37.723Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-ox-cart.glb",
+    "rawBytes": 46714292,
+    "rawSha256": "fc5dde49406e9f8f48ca27cf2090537addc473ce3e21dc312465ecd199cf3c1e",
+    "tripoInput": {
+      "prompt": "A heavy Roman farm cart (plaustrum): a plank bed with low slatted sides on two solid wooden disc wheels, loaded with hay, sacks and two amphorae, its long yoke pole resting on a wooden trestle. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-ox-cart-tripo-render.webp"
+  }
+}

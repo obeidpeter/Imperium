@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-signal-tower.glb",
+  "output": "assets/models/landmarks/landmark-signal-tower.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 180456,
+    "gzipBytes": 111316,
+    "sha256": "51bd0e515e853d1fe864e89eabad800215a5dcd8ab77096c9a0b12605a0c7360"
+  },
+  "after": {
+    "bytes": 140628,
+    "gzipBytes": 134106,
+    "sha256": "a5ba25fe9286c7bc9b4799fb073eb53c155e471975ee77bb63851f9fc2a2152d"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3920,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13246
+      },
+      "bytes": 14998,
+      "psnr": 31.027
+    }
+  ]
+}

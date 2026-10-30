@@ -1,0 +1,68 @@
+{
+  "id": "landmark-ruined-watchtower",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    5
+  ],
+  "use": "A ruined watchtower, on the horizon of Chapter V (LANDMARK_LAYOUT, kind ruined tower): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A ruined square watchtower of the Syrian desert frontier: the lower half of a small tower of rough buff limestone and mudbrick, its upper storey fallen and its walls broken off unevenly at different heights, a doorway at the foot and a heap of tumbled stones against one side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 256,
+    "bytes": 140000,
+    "heightMetres": 6.2,
+    "minHeight": 5.89,
+    "maxHeight": 6.51,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "7ee8d35f-56af-47b5-8947-b3897bc47824",
+    "requestedAt": "2026-10-29T21:24:28.883Z",
+    "balanceBefore": 2165,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A ruined square watchtower of the Syrian desert frontier: the lower half of a small tower of rough buff limestone and mudbrick, its upper storey fallen and its walls broken off unevenly at different heights, a doorway at the foot and a heap of tumbled stones against one side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:27:08.981Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-ruined-watchtower.glb",
+    "rawBytes": 45533468,
+    "rawSha256": "3d15fc84db2f2cffd65ed0cb47267fd0546a4f7f3ad7e556ad6c60f15d28a304",
+    "tripoInput": {
+      "prompt": "A ruined square watchtower of the Syrian desert frontier: the lower half of a small tower of rough buff limestone and mudbrick, its upper storey fallen and its walls broken off unevenly at different heights, a doorway at the foot and a heap of tumbled stones against one side. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-ruined-watchtower-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set its doorway on the model’s side (+X); turned so that it faces the board"
+  }
+}

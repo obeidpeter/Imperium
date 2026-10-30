@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-walled-sanctuary.glb",
+  "output": "assets/models/landmarks/landmark-walled-sanctuary.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 255200,
+    "gzipBytes": 154371,
+    "sha256": "c86af7bcc94334f57c2f5806bc782d14f40acb3594e0571ceb93337410f231ee"
+  },
+  "after": {
+    "bytes": 197832,
+    "gzipBytes": 188783,
+    "sha256": "bc01eecb078e486ca85843b1034408bda4df535bf14fc83cdeb201afc16c91be"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 6154
+      },
+      "bytes": 12080,
+      "psnr": 37.626
+    }
+  ]
+}

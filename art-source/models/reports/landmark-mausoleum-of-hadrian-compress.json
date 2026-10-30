@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-mausoleum-of-hadrian.glb",
+  "output": "assets/models/landmarks/landmark-mausoleum-of-hadrian.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 267496,
+    "gzipBytes": 181740,
+    "sha256": "f470e748e75001a444e17fbe65c2d3cd9a33fd9ff1b6211eb2face011881b60b"
+  },
+  "after": {
+    "bytes": 195376,
+    "gzipBytes": 186576,
+    "sha256": "2de05d1f2939e65ca743e84340e455c75821a7f3495c5d7761ee7c82633a89f2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 6859,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15162
+      },
+      "bytes": 14665,
+      "psnr": 28.616
+    }
+  ]
+}

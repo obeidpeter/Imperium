@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "id": "aurelian-walls-kit",
+  "generator": "scripts/assets/build-aurelian-walls.py",
+  "chapters": [
+    12
+  ],
+  "measures": {
+    "thickness": 3.5,
+    "walk": 6.6,
+    "merlon": 8.4,
+    "stretch": 4.0,
+    "towerProjection": 3.6,
+    "gateHalf": 12.2,
+    "rising": {
+      "wall_rising_low": 2.8,
+      "wall_rising_mid": 4.2,
+      "wall_rising_high": 5.6
+    }
+  },
+  "authorship": "Original Blender-authored geometry and original deterministic surface bakes; no external images",
+  "licence": "Created for the Imperium project; no third-party source assets",
+  "components": [
+    {
+      "name": "wall_curtain",
+      "triangles": 136,
+      "materials": 2,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls concrete core"
+      ],
+      "bounds": {
+        "min": [
+          -1.75,
+          0.0,
+          -2.0
+        ],
+        "max": [
+          1.75,
+          8.399999618530273,
+          2.0
+        ]
+      }
+    },
+    {
+      "name": "wall_rising_low",
+      "triangles": 632,
+      "materials": 3,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls concrete core",
+        "Walls scaffold timber"
+      ],
+      "bounds": {
+        "min": [
+          -4.949999809265137,
+          0.0,
+          -2.0
+        ],
+        "max": [
+          1.75,
+          5.0,
+          2.0
+        ]
+      }
+    },
+    {
+      "name": "wall_rising_mid",
+      "triangles": 692,
+      "materials": 3,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls concrete core",
+        "Walls scaffold timber"
+      ],
+      "bounds": {
+        "min": [
+          -4.949999809265137,
+          0.0,
+          -2.0
+        ],
+        "max": [
+          1.75,
+          6.400000095367432,
+          2.0
+        ]
+      }
+    },
+    {
+      "name": "wall_rising_high",
+      "triangles": 740,
+      "materials": 3,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls concrete core",
+        "Walls scaffold timber"
+      ],
+      "bounds": {
+        "min": [
+          -4.949999809265137,
+          0.0,
+          -2.0
+        ],
+        "max": [
+          1.75,
+          7.800000190734863,
+          2.0
+        ]
+      }
+    },
+    {
+      "name": "wall_tower",
+      "triangles": 892,
+      "materials": 3,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls shadowed interior",
+        "Walls travertine ashlar"
+      ],
+      "bounds": {
+        "min": [
+          -5.449999809265137,
+          0.0,
+          -3.799999952316284
+        ],
+        "max": [
+          1.8199999332427979,
+          11.399999618530273,
+          3.799999952316284
+        ]
+      }
+    },
+    {
+      "name": "wall_gate",
+      "triangles": 2620,
+      "materials": 3,
+      "materialFamilies": [
+        "Walls brick facing",
+        "Walls shadowed interior",
+        "Walls travertine ashlar"
+      ],
+      "bounds": {
+        "min": [
+          -5.25,
+          0.0,
+          -12.199999809265137
+        ],
+        "max": [
+          1.75,
+          12.049999237060547,
+          12.199999809265137
+        ]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "Walls brick facing",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Walls travertine ashlar",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Walls concrete core",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Walls scaffold timber",
+      "size": 512,
+      "channels": [
+        "baseColor",
+        "metallicRoughness",
+        "normal"
+      ],
+      "authorship": "Original deterministic procedural bake"
+    },
+    {
+      "name": "Walls shadowed interior",
+      "channels": [
+        "factors"
+      ],
+      "authorship": "Original material factors"
+    }
+  ],
+  "output": {
+    "path": "art-source/models/processed/aurelian-walls-kit.glb",
+    "bytes": 1410024,
+    "sha256": "ad5f235271a69d9daf5f37fb6d17edb7b0aeb6f8b3203b23c80f1f54ae5da31e",
+    "triangles": 5712
+  },
+  "runtimePath": "assets/models/scenery/aurelian-walls-kit.glb"
+}

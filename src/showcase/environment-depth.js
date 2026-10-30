@@ -1,9 +1,10 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {hash,noise,isPlayable} from './environment-layout.js';
+import {keepAsCuriaStandIn} from './environment-curia.js';
 
 // Perimeter architecture frames the actual rules grid. Nothing in this module
 // occupies an authored standing cell, changes terrain, or creates a blocker.
-export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,instance,branch,regionalWorld=false}){
+export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,instance,branch,geometries,regionalWorld=false}){
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,perf=quality==='performance',landmarks=root.userData.environmentLandmarks;
   const mark=(name,g)=>{g.name=name;landmarks.push(name);return g;};
   const group=(name,x=0,z=0)=>mark(name,p.group(root,x,height(x,z),z));
@@ -80,6 +81,8 @@ export function addEnvironmentDepth({root,e,p,m,profile,height,tileSize,quality,
     // the camera or pretending that off-grid seats are movable game objects.
     for(const z of [hz+1.1,hz+2.1,hz+3.1])p.plank(g,0,-.02,z,wallX*2,.10,.7,m.darkStone);
     root.userData.interiorEnvelope={kind:profile.architecture,wallX,backZ,frontZ,wallHeight:8.8,apseDepth:radius,openRoof:true};
+    // In Chapters XI and XII this hall is the Curia's stand-in (environment-curia.js).
+    keepAsCuriaStandIn(g,{e,profile,geometries});
     return;
   }
   if(profile.civic)return;

@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-milvian-bridge.glb",
+    "bytes": 46757348,
+    "sha256": "e9bb75eaa873f6a27a28ee9df8bd4b50edabdac8e0ed8f278af06fa71dbefc41",
+    "triangles": 1462392
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-milvian-bridge.glb",
+    "bytes": 164212,
+    "sha256": "1c0d8ae2d86ae450631fa30ea01eb78d3fffc39a7260458b53cfb2e134faf60b",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 6.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 33.076011662237335,
+  "sizeMetres": {
+    "width": 33.0715,
+    "height": 6.5,
+    "depth": 6.0717
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_0a6ab405-35e4-47dd-a716-b6116ded7aa8",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_0a6ab405-35e4-47dd-a716-b6116ded7aa8",
+      "roughness": 0.8934,
+      "metallic": 0.0418
+    }
+  ]
+}

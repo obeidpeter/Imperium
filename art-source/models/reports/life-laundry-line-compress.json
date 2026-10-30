@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-laundry-line.glb",
+  "output": "assets/models/world/life-laundry-line.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 197244,
+    "gzipBytes": 132452,
+    "sha256": "ac8e618849bb73dc2b562ad9f1db73faaf4b3cd975b8c14daccc320210a6605f"
+  },
+  "after": {
+    "bytes": 209340,
+    "gzipBytes": 201654,
+    "sha256": "bc564c5af4570675400c457287fbb86ab1a800f05bf70390e253fa67ed2bb97f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2939,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7052
+      },
+      "bytes": 15045,
+      "psnr": 44.022
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 32592
+      },
+      "bytes": 53115,
+      "psnr": 34.525
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14206
+      },
+      "bytes": 32226,
+      "psnr": 40.439
+    }
+  ]
+}

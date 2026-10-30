@@ -1,0 +1,64 @@
+{
+  "id": "landmark-river-warehouses",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    8
+  ],
+  "use": "River warehouses, on the horizon of Chapter VIII (LANDMARK_LAYOUT, kind quay): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A row of Roman river warehouses on the bank of the lower Danube: three adjoining long stone storehouses with tall plain walls, small high windows and red tiled gable roofs, their wide doorways opening onto a timber wharf along the front, with a wooden crane beam over one door. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 8.4,
+    "minHeight": 7.98,
+    "maxHeight": 8.82,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "09049267-e949-45b3-b875-3206a0028b45",
+    "requestedAt": "2026-10-29T21:18:18.977Z",
+    "balanceBefore": 2245,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A row of Roman river warehouses on the bank of the lower Danube: three adjoining long stone storehouses with tall plain walls, small high windows and red tiled gable roofs, their wide doorways opening onto a timber wharf along the front, with a wooden crane beam over one door. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:21:04.976Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-river-warehouses.glb",
+    "rawBytes": 46389580,
+    "rawSha256": "c93702e70f5326188b2d5decb6c824fa01baa0c165f6b4ef4b2b5aaa2786dd05",
+    "tripoInput": {
+      "prompt": "A row of Roman river warehouses on the bank of the lower Danube: three adjoining long stone storehouses with tall plain walls, small high windows and red tiled gable roofs, their wide doorways opening onto a timber wharf along the front, with a wooden crane beam over one door. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-river-warehouses-tripo-render.webp"
+  }
+}

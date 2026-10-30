@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-burned-farmstead.glb",
+    "bytes": 45691240,
+    "sha256": "88fe01bba3c59df3b9e290115d5d4e43687c707259fc9a234cc6a8274841eba1",
+    "triangles": 1449504
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-burned-farmstead.glb",
+    "bytes": 214820,
+    "sha256": "c2319aa96b088851bd73e82ff3c47a6787835af77810b8a01de28ebe864a2b8b",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 3.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 6.994840416590136,
+  "sizeMetres": {
+    "width": 7.0243,
+    "height": 3.2,
+    "depth": 6.187
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_51a7a1d8-7094-416a-add9-a068ec96528c",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_51a7a1d8-7094-416a-add9-a068ec96528c",
+      "roughness": 0.6043,
+      "metallic": 0.0241
+    }
+  ]
+}

@@ -13,7 +13,11 @@ stay separate: each material is its own draw either way, and joining would
 drop differently named colour attributes); mark sharp edges by angle; scale to
 a height in metres if one is given; stand the model on its base at the origin;
 shrink textures to the size budget; export one GLB with WebP textures (glTF
-EXT_texture_webp, which three.js reads natively). --keep-skin keeps the
+EXT_texture_webp, which three.js reads natively). --colour-only keeps a
+model seen only from afar (a landmark on the horizon) to its colour map: the
+normal map is dropped and the roughness-metalness map becomes its mean, a
+constant on each material. --turn turns a static model about the vertical
+axis first, so that its front faces +Z as the game expects. --keep-skin keeps the
 armature, skin weights, morphs and clips for a character instead, and changes
 only scale and textures; ask the generator for the triangle budget. The file's
 default pose becomes the bind pose, so a skinned part can move a few
@@ -46,6 +50,8 @@ def parse_args():
     p.add_argument('--height', type=float, help='scale uniformly to this height in metres')
     p.add_argument('--sharp-angle', type=float, default=35.0, help='edges sharper than this stay hard, in degrees')
     p.add_argument('--merge-distance', type=float, default=0.0001, help='weld vertices closer than this, in metres')
+    p.add_argument('--turn', type=float, default=0.0, help='turn a static model about the vertical axis, in degrees (counter-clockwise from above)')
+    p.add_argument('--colour-only', action='store_true', help='keep only the colour map: no normal map, constant roughness and metalness')
     p.add_argument('--keep-skin', action='store_true', help='keep armature, skin weights, morphs and animation')
     a = p.parse_args(argv)
     if a.triangles < 12 or not 16 <= a.texture <= 8192 or not 1 <= a.quality <= 100:
@@ -171,6 +177,63 @@ def stand_on_origin(height):
     return scale
 
 
+def upstream_image(socket, seen=None):
+    """The image texture feeding a socket, through any nodes between (a separate-colour node)."""
+    seen = seen or set()
+    for link in socket.links:
+        node = link.from_node
+        if node.name in seen:
+            continue
+        seen.add(node.name)
+        if node.type == 'TEX_IMAGE' and node.image is not None:
+            return node.image
+        for upstream in node.inputs:
+            image = upstream_image(upstream, seen)
+            if image is not None:
+                return image
+    return None
+
+
+def channel_mean(image, channel):
+    pixels = image.pixels[:]
+    values = pixels[channel::4]
+    return sum(values) / max(1, len(values))
+
+
+def colour_only():
+    """Each material keeps its colour map alone. Its roughness and metalness become the means
+    of its roughness-metalness map (glTF: green and blue), and the normal map is unlinked; the
+    nodes left feeding nothing are removed, so their images are not exported."""
+    constants = []
+    for m in bpy.data.materials:
+        if not m.use_nodes:
+            continue
+        tree = m.node_tree
+        bsdf = next((n for n in tree.nodes if n.type == 'BSDF_PRINCIPLED'), None)
+        if bsdf is None:
+            continue
+        entry = {'material': m.name}
+        for name, channel in (('Roughness', 1), ('Metallic', 2)):
+            socket = bsdf.inputs[name]
+            image = upstream_image(socket)
+            for link in list(socket.links):
+                tree.links.remove(link)
+            if image is not None:
+                socket.default_value = channel_mean(image, channel)
+            entry[name.lower()] = round(socket.default_value, 4)
+        for link in list(bsdf.inputs['Normal'].links):
+            tree.links.remove(link)
+        keep = {bsdf.name} | {n.name for n in tree.nodes if n.type == 'OUTPUT_MATERIAL'}
+        while True:
+            idle = [n for n in tree.nodes if n.name not in keep and not any(o.links for o in n.outputs)]
+            if not idle:
+                break
+            for n in idle:
+                tree.nodes.remove(n)
+        constants.append(entry)
+    return constants
+
+
 def shrink_textures(limit):
     sizes = []
     for image in bpy.data.images:
@@ -217,8 +280,15 @@ def main():
         for o in parts:
             weld_and_shade(o, a.merge_distance, a.sharp_angle)
         decimate(parts, a.triangles)
+        if a.turn:
+            for o in parts:
+                o.data.transform(Matrix.Rotation(math.radians(a.turn), 4, 'Z'))
         scale = stand_on_origin(a.height)
     after = triangles()
+    constants = None
+    if a.colour_only:
+        constants = colour_only()
+        bpy.data.orphans_purge(do_recursive=True)
     textures = shrink_textures(a.texture)
     bpy.data.orphans_purge(do_recursive=True)
     lo, hi = bounds()
@@ -233,12 +303,14 @@ def main():
         'input': {'path': shown(source), 'bytes': os.path.getsize(source), 'sha256': digest(source), 'triangles': before},
         'output': {'path': shown(output), 'bytes': os.path.getsize(output), 'sha256': digest(output), 'triangles': after},
         'settings': {'triangles': a.triangles, 'texture': a.texture, 'webpQuality': a.quality, 'height': a.height,
-                     'sharpAngle': a.sharp_angle, 'mergeDistance': a.merge_distance, 'keepSkin': a.keep_skin},
+                     'sharpAngle': a.sharp_angle, 'mergeDistance': a.merge_distance, 'keepSkin': a.keep_skin,
+                     **({'turn': a.turn} if a.turn else {}), **({'colourOnly': True} if a.colour_only else {})},
         'scale': scale,
         # Blender is Z-up; the exported glTF is Y-up: width x, height y, depth z.
         'sizeMetres': {'width': round(hi.x - lo.x, 4), 'height': round(hi.z - lo.z, 4), 'depth': round(hi.y - lo.y, 4)},
         'materials': len([m for m in bpy.data.materials if m.users]),
         'textures': textures,
+        **({'constants': constants} if constants is not None else {}),
     }
     with open(report_path, 'w') as f:
         json.dump(report, f, indent=2)

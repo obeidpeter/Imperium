@@ -8,6 +8,9 @@ import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
+import {curiaPlacements,hasCuria,updateInteriorCutaway} from './environment-curia.js';
+import {aurelianWallsUrl} from './aurelian-walls.js';
+import {LANDMARK_LAYOUT} from '../ui/world-layouts.js';
 
 /** Presentation-only generated scenery. Exterior positions follow the actual
  * board bounds, including real-time maps. Interior camp props use authored
@@ -49,8 +52,9 @@ function campPad(e,id,tileSize){
 /** Only confirmed campaign presentation metadata changes a camp placement.
  * Bundles face the departure side after the civilian-priority decision while
  * retaining the same fixed collision pocket. */
-export function sceneryPlacements(e,{chapter,tileSize=2.5}={}){
-  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize}).map(p=>({...p,url:sceneryModelUrl(p.id)}))];
+export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false}={}){
+  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
+    ...curiaPlacements(e,{chapter,tileSize})];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -68,7 +72,10 @@ export function sceneryPlacements(e,{chapter,tileSize=2.5}={}){
 
 // Each master's materials share the imported art's programs (model-materials.js).
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(gltf.scene));
-const masters=createSceneryModelCache({load:loadScene});
+/** Idle masters kept between stages: enough for any one scene's working set (at most 16 since
+ * release 9's landmarks and life), so a chapter's next stage finds its models still warm. */
+export const SCENERY_IDLE_MASTERS=20;
+const masters=createSceneryModelCache({maxIdle:SCENERY_IDLE_MASTERS,load:loadScene});
 export const warmSceneryModel=(url,load)=>masters.warm(url,load);
 export const sceneryMaster=url=>masters.master(url);
 export const sceneryResidency=()=>masters.stats();
@@ -76,8 +83,13 @@ export const sceneryResidency=()=>masters.stats();
 export const acquireSceneryModel=(url,load)=>masters.acquire(url,load);
 // A lease on a model already loaded, or null, without a request (scenery-cache.js).
 export const holdSceneryModel=url=>masters.hold(url);
-// The board kit and the region's tree and rock kits belong to the working set wherever the scenery is drawn.
-const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter)].filter(Boolean);
+/** The chapter's generated landmarks (LANDMARK_LAYOUT; environment-horizon.js), as [world catalog
+ * id, model url] pairs: those whose models exist, and none in the Curia, whose walls hide them. */
+export const landmarkModelUrls=(e,{chapter}={})=>e&&!hasCuria(e,{chapter})?(LANDMARK_LAYOUT[chapter]??[]).map(slot=>[slot.model,worldModelUrl(slot.model)]).filter(([,url])=>url):[];
+// The board kit, the region's tree and rock kits, before Rome Aurelian's walls, and the
+// chapter's generated landmarks belong to the working set wherever the scenery is drawn.
+const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter}),
+  ...landmarkModelUrls(e,{chapter}).map(([,url])=>url)].filter(Boolean);
 /** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
  * them: its placed scenery and the world kits. None on Performance. */
 export const sceneryWorkingSet=(e,{chapter,quality='balanced'}={})=>quality==='performance'?[]:[...new Set([...sceneryPlacements(e,{chapter}).map(p=>p.url),...worldKitUrls(e,quality,chapter)])];
@@ -93,10 +105,11 @@ export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
   return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
 
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters}={}){
+// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside.
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false}={}){
   const group=new T.Group();group.name='generated scenery';scene.add(group);
   const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter}),urls=[...new Set(placements.map(p=>p.url))];
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate}),urls=[...new Set(placements.map(p=>p.url))];
   const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
   const kept=[...urls,...worldKitUrls(e,quality,chapter)];library.setWorkingSet(kept);
   if(library===masters&&preload?.key===preloadKey(kept))releasePreload();
@@ -121,12 +134,15 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
         const centre=box.getCenter(new T.Vector3());model.position.x+=p.x-centre.x;model.position.z+=p.z-centre.z;model.updateMatrixWorld(true);
       }
     }
-    model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.raycast=()=>{};}});
+    // A piece that must not shade the board (the Curia's walls) casts no shadow.
+    model.traverse(o=>{if(o.isMesh){o.castShadow=p.shadow!==false;o.receiveShadow=true;o.raycast=()=>{};}});
+    if(p.cutaway)model.userData.interiorCutaway=p.cutaway;
     ground(model,p.groundY);return model;
   };
   const add=(p,model)=>{
     group.add(model);leases.get(p.url).used=true;
-    if(p.fallbackName){const fallback=scene.getObjectByName(p.fallbackName);if(fallback&&!fallbacks.has(fallback)){fallbacks.set(fallback,fallback.visible);fallback.visible=false;}}
+    // A placement stands for one code-built piece, or several (the Curia for its hall).
+    for(const name of [p.fallbackName,...(p.fallbackNames??[])].filter(Boolean)){const fallback=scene.getObjectByName(name);if(fallback&&!fallbacks.has(fallback)){fallbacks.set(fallback,fallback.visible);fallback.visible=false;}}
     return p.key??p.id;
   };
   const placed=[],pending=[];
@@ -148,6 +164,8 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     return add(p,model);
   })).then(ids=>[...placed,...ids.filter(Boolean)]);
   return {group,placements,ready,
+    // The Curia's walls stand down while the camera is beyond them (environment-curia.js).
+    updateCutaway:camera=>updateInteriorCutaway(group,camera),
     dispose(){if(disposed)return;disposed=true;group.removeFromParent();for(const [fallback,visible]of fallbacks)fallback.visible=visible;fallbacks.clear();for(const state of leases.values())release(state);}
   };
 }

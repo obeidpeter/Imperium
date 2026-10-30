@@ -727,7 +727,7 @@ Moving the camera never spends anything or changes the rules.
 | Scroll wheel, or **+ / −** | Zoom. On a touch screen, pinch.                                                                                                                                                                                                             |
 | Middle-drag, or **, / .**  | Turn the view around your soldier, in steps of 45° with the keys                                                                                                                                                                            |
 | **Overview** (**Z**)       | The wide tactical view; press again to come back                                                                                                                                                                                            |
-| **Horizon** (**H**)        | Lower the view to show the sky and the region's skyline (the Danube's woods, the Euphrates' buttes, the Alps, Palmyra, Rome); drag to look in another direction. Distant scenery cannot be used or given orders.                            |
+| **Horizon** (**H**)        | Lower the view to show the sky, the region's skyline (the Danube's woods, the Euphrates' buttes, the Alps, Palmyra, Rome) and the chapter's three landmarks, such as Novae's gate, the bridge over the Adda or the Colosseum; drag to look in another direction. Distant scenery cannot be used or given orders. |
 | **See through** (**X**)    | Fade the walls, roofs and trees that stand between the camera and your soldier                                                                                                                                                              |
 | **Switch to 2D / 3D**      | Change between the 3D scene and the 2D isometric view. Commands, saves and progress are shared, and switching never restarts an encounter.                                                                                                  |
 
@@ -1315,6 +1315,13 @@ first two tiles in Chapter VIII, three on Chapter X's road.
   allied speaker, are your party there, and you switch between them as
   you do with companions.
 
+- In Chapters XI and XII the Senate meets in the **Curia**, a marble
+  hall around the floor. The senators' benches stand on three low steps
+  along each side, and the presiding magistrates' tribunal and the
+  gilded Victory at the far end. A wall stands aside while the camera is
+  beyond it, so it never hides the floor. On Performance, or if the hall
+  cannot be downloaded, a simpler hall stands in its place.
+
 - The session is measured in **hours** by the **clepsydra**, the
   chamber's water clock. In each hour each of your speakers may walk
   anywhere inside the pale circle that shows his reach, and deliver
@@ -1534,6 +1541,13 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   rounds 4 and 7 (two rounds later on Story), and the field is not won
   until they are beaten too.
 
+- The confrontation is fought before **Aurelian's walls**, beyond the
+  field's east edge: brick stretches still rising behind scaffolds,
+  square towers, and the double gate between its round towers. They are
+  scenery and change no route. Turn the view toward them and the camera
+  comes in to their face rather than passing into them. On Performance, or
+  if they cannot be downloaded, a simpler wall stands in their place.
+
 - Higher standing keeps more routes open and improves your position. A
   minimum relief force and a costly backer remain available even after a
   hard campaign, but costly backing creates a serious debt.
@@ -1541,6 +1555,14 @@ In the real-time final battle, two clean reconnaissance operations intercept one
 - After the accession, read the epilogue and, if you like, create a
   **reign card**: a picture of your ruler's name, choices and route to
   share.
+
+- With the 3D view on, the oath at the start and the accession at the
+  end are staged in 3D over their paintings. The camera frames their
+  moments in turn: the recruits before the standard, Varro holding out
+  the words and your own soldier swearing; the legions before the
+  tribunal, the herald, the Senate's witness and the new Augustus. With
+  reduced motion it keeps the first view. If you turn or zoom the view
+  yourself, it stays where you put it.
 
 # Defeat, retry and saving
 
@@ -1696,7 +1718,7 @@ measurements under **Performance diagnostics**.
 | **Setting**                | **What it does**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Game view                  | 3D scene or 2D tactical view for every chapter; commands and progress are shared.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| Graphics quality           | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. On Balanced and High, trees and field stones are modelled, with simpler versions in the distance; grass, flowers and reeds grow thicker round the point you look at; and mist lies over water at dawn, at night and in rain or mist. On Performance, simpler drawn buildings, props, trees and stones stand in for the generated models. Every quality shows the photographed ground and the region's skyline, which download with the chapter: until they arrive the ground is plain colour and the horizon painted. Essential people, legal targets, labels and rules never change. Phones start on Performance. Repeated slow rendering lowers the frame rate, resolution and shadows at once and the scenery from the next encounter, never rebuilding a battle in play; when rendering keeps up again, the setting returns, up to the quality you chose. |
+| Graphics quality           | **Performance**, **Balanced** or **High quality**: atmosphere, particles, shadows and resolution. On Balanced and High, trees and field stones are modelled, with simpler versions in the distance; grass, flowers and reeds grow thicker round the point you look at; mist lies over water at dawn, at night and in rain or mist; birds wheel overhead by day except in rain and dust storms; smoke rises from the hearths of barracks, forges and field kitchens; banners stir in the wind; the landmarks on the horizon are generated models; and washing, woodpiles, carts, stalls and other signs of life stand with the baggage beyond the board. On Performance, simpler drawn buildings, props, trees, stones and landmarks stand in for the generated models, and the signs of life are left out. Every quality shows the photographed ground and the region's skyline, which download with the chapter: until they arrive the ground is plain colour and the horizon painted. Essential people, legal targets, labels and rules never change. Phones start on Performance. Repeated slow rendering lowers the frame rate, resolution and shadows at once and the scenery from the next encounter, never rebuilding a battle in play; when rendering keeps up again, the setting returns, up to the quality you chose. |
 | Automatic resolution       | Adjusts the scene's resolution to keep frames smooth; text and controls stay sharp.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | Objective markers          | On by default: the mission's next step is marked on the scene and the map. Turn it off to find your own way.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Damage and healing numbers | Shown over the people concerned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |

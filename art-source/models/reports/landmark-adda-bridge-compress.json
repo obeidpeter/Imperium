@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-adda-bridge.glb",
+  "output": "assets/models/landmarks/landmark-adda-bridge.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 218664,
+    "gzipBytes": 130640,
+    "sha256": "b795e3e8d590caca84d59b89b9381bd2bf2004b7543fb0939359f79c474b61da"
+  },
+  "after": {
+    "bytes": 168120,
+    "gzipBytes": 160024,
+    "sha256": "8fd74200ec31e3274e0f28d42eeac03b3873b3cb5d3647b974e617da96caba3e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4899,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11776
+      },
+      "bytes": 13956,
+      "psnr": 32.298
+    }
+  ]
+}

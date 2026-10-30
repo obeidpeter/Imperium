@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/life-loom.glb",
+  "output": "assets/models/world/life-loom.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 225716,
+    "gzipBytes": 153485,
+    "sha256": "98a04059b8a3edd41a0124c022a1f2da16af3924a0536f3ad8e685c1d78d3f37"
+  },
+  "after": {
+    "bytes": 233636,
+    "gzipBytes": 225708,
+    "sha256": "2ee9cf7b56465ead3c83f375da1fa475c685ffd7ab5b2e684e08ee765b2cd7f5"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 18858
+      },
+      "bytes": 28130,
+      "psnr": 37.69
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 35590
+      },
+      "bytes": 53302,
+      "psnr": 34.274
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20060
+      },
+      "bytes": 33517,
+      "psnr": 34.925
+    }
+  ]
+}

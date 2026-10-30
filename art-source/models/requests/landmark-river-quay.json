@@ -1,0 +1,64 @@
+{
+  "id": "landmark-river-quay",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    2
+  ],
+  "use": "A harbour quay and its warehouse, on the horizon of Chapter II (LANDMARK_LAYOUT, kind quay): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman river harbour on the lower Danube in the third century: a long straight quay wall of large squared stone blocks with iron mooring rings and stone steps down at one end, and standing on the quay a long single-storey warehouse of whitewashed stone under a low red tiled roof, a row of wide doorways facing the quay edge, a few barrels and crates by the doors. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 256,
+    "bytes": 210000,
+    "heightMetres": 8.4,
+    "minHeight": 7.98,
+    "maxHeight": 8.82,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "8a681fe3-61ec-4186-8bb7-2eb69e0f476b",
+    "requestedAt": "2026-10-29T21:16:43.597Z",
+    "balanceBefore": 2265,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman river harbour on the lower Danube in the third century: a long straight quay wall of large squared stone blocks with iron mooring rings and stone steps down at one end, and standing on the quay a long single-storey warehouse of whitewashed stone under a low red tiled roof, a row of wide doorways facing the quay edge, a few barrels and crates by the doors. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:18:15.571Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-river-quay.glb",
+    "rawBytes": 47775880,
+    "rawSha256": "a20ecee2608469e740d74fd4ba437b609332833cdcbdd373ba279cb77a08da85",
+    "tripoInput": {
+      "prompt": "A Roman river harbour on the lower Danube in the third century: a long straight quay wall of large squared stone blocks with iron mooring rings and stone steps down at one end, and standing on the quay a long single-storey warehouse of whitewashed stone under a low red tiled roof, a row of wide doorways facing the quay edge, a few barrels and crates by the doors. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-river-quay-tripo-render.webp"
+  }
+}

@@ -81,12 +81,11 @@ export const REGIONAL_CHAPTER_EXTRAS=freeze({
   10:[{component:'olive_press_frame',edge:'west',along:15,gap:5},{component:'farm_courtyard_wall',edge:'south',along:0,gap:9}]
 });
 
-// The hearings of Chapters X–XII keep the code-built audience hall: shallow
-// pieces line its open entrance and the outer service courts, clear of its walls.
-const romanHearing=[
-  {component:'tribunal_dais',edge:'north',along:0,gap:1.1},{component:'archive_stalls',edge:'south',along:-8,gap:3.2},
-  {component:'civic_fountain',edge:'south',along:8,gap:3.2},{slot:0,edge:'north',along:0,gap:13},
-  {slot:1,edge:'west',along:0,gap:12},{slot:2,edge:'east',along:0,gap:12}];
+// Chapter X's hearing keeps the code-built audience hall: shallow pieces line its
+// open entrance and the outer service courts, clear of its walls. In Chapters XI
+// and XII the Curia (below) stands in the hall's place, and only the city's
+// buildings beyond its walls remain.
+const romanHearing=[{slot:0,edge:'north',along:0,gap:13},{slot:1,edge:'west',along:0,gap:12},{slot:2,edge:'east',along:0,gap:12}];
 export const REGIONAL_HEARINGS=freeze({
   10:[{component:'tally_counter',edge:'north',along:0,gap:1.1},{component:'market_stall',edge:'south',along:-8,gap:3.2},
     {component:'public_fountain',edge:'south',along:8,gap:3.2},{slot:0,edge:'north',along:0,gap:13},
@@ -94,12 +93,84 @@ export const REGIONAL_HEARINGS=freeze({
   11:romanHearing,12:romanHearing
 });
 
+// The Curia of Chapters XI and XII (worlds and gameplay plan, release 9): the Senate
+// house in marble, built in Blender around the 8 x 8 chamber board
+// (scripts/assets/build-curia.py). Its pieces are authored in place, so each stands
+// at the board's centre. Presentation only: every solid stays outside the board.
+// - `floor`: the paving round the board's own floor, flat and just above the ground.
+// - `replaces`: the code-built stand-ins it hides once it has loaded (the audience
+//   hall, environment-depth.js; the chamber's colonnades, arches and dais,
+//   environment-campaign-scenery.js). Performance and a failed download keep them.
+// - `cutaway`: a wall stands down while the camera is beyond its inner face (the
+//   plane normal·(x, z) = face), so no wall stands between the camera and the board.
+//   Walls cast no shadow, so none darkens the board.
+// - `props`: where the chapter's generated props stand in the Curia's scenes: the
+//   clerks' tables beside the tribunal, the fountain and the army's eagle outside the
+//   doors.
+export const CURIA_LAYOUT=freeze({
+  chapters:[11,12],kit:'roman-curia-kit',board:8,
+  replaces:['enclosed Roman audience hall','senate','imperial court'],
+  pieces:[
+    {component:'curia_floor',floor:true},{component:'curia_steps_west'},{component:'curia_steps_east'},
+    {component:'curia_tribunal'},{component:'curia_victory'},
+    {component:'curia_wall_west',shadow:false,cutaway:{normal:[-1,0],face:14}},
+    {component:'curia_wall_east',shadow:false,cutaway:{normal:[1,0],face:14}},
+    {component:'curia_wall_north',shadow:false,cutaway:{normal:[0,-1],face:17}},
+    {component:'curia_facade',shadow:false,cutaway:{normal:[0,1],face:14}}
+  ],
+  props:{
+    'courier-table':{x:-8,z:-13.6,yaw:Math.PI/2},'command-table':{x:-8,z:-13.6,yaw:Math.PI/2},
+    'archive-cabinet':{x:8.2,z:-14.6,yaw:-Math.PI/2},
+    'civic-fountain':{x:-9.5,z:19.4,yaw:0},'eagle-rally-stand':{x:7,z:19,yaw:0}
+  }
+});
+
+// Life about the field (worlds and gameplay plan, release 9; environment-life.js). Presentation only.
+// - `hearths`: the regional pieces whose smoke rises, and from where: a fraction of the piece's
+//   height above its foot, and of its depth from its centre (its front is +).
+// - `birds` and `puffs`: the birds wheeling over an outdoor scene by day, and the puffs in each
+//   hearth's plume, at each tier above Performance; `hearths` caps the plumes in one scene.
+export const LIFE_LAYOUT=freeze({
+  hearths:{
+    barrack_gable:{height:.95,depth:-.2},forge_shelter:{height:.8,depth:-.25},
+    field_kitchen:{height:.55,depth:0},fish_drying_rack:{height:.3,depth:0}
+  },
+  birds:{balanced:9,high:14},puffs:{balanced:6,high:9},maxHearths:4
+});
+
+// Each chapter's landmarks at the middle distance (worlds and gameplay plan, release 9), on the
+// horizon's three bearings (environment-horizon.js; nearest first). `model` is the world catalog
+// id of the generated model that will stand there; until it is generated, on Performance, or if
+// it cannot be downloaded, the code-built silhouette `kind` stands in (horizon-landmarks.js).
+// The Danube chapters share theirs. Historical basis: docs/historical-research.md, landmarks.
+const landmark=(model,name,kind)=>({model:`landmark-${model}`,name,kind});
+const DANUBE=Object.freeze({
+  gate:landmark('novae-gate','the stone gate of Novae','gate'),tower:landmark('signal-tower','a stone signal tower','tower'),
+  mound:landmark('burial-mound','a Thracian burial mound','mound'),hut:landmark('pile-hut','a reed hut on piles','stilts'),
+  piers:landmark('bridge-piers','the piers of an old bridge, standing without its deck','piers'),quay:landmark('river-quay','a harbour quay and its warehouse','quay'),
+  station:landmark('road-station','a road station','station'),temple:landmark('small-temple','a small temple','temple'),farm:landmark('burned-farmstead','a burned farmstead','ruin')});
+export const LANDMARK_LAYOUT=freeze({
+  1:[DANUBE.gate,DANUBE.tower,DANUBE.mound],
+  2:[DANUBE.hut,DANUBE.piers,DANUBE.quay],
+  3:[DANUBE.station,DANUBE.temple,DANUBE.farm],
+  4:[DANUBE.tower,DANUBE.mound,DANUBE.station],
+  5:[landmark('river-citadel','a citadel on the river cliff','citadel'),landmark('ruined-watchtower','a ruined watchtower','ruined tower'),landmark('necropolis-tower-tomb','a tower tomb of the necropolis','tomb tower')],
+  6:[landmark('caravan-station','a mudbrick caravan station','station'),landmark('syrian-temple-court','a Syrian temple court','court temple'),landmark('rock-cut-tombs','chamber tombs cut in the hillside','tombs')],
+  7:[landmark('adda-bridge','the bridge over the Adda','bridge'),landmark('mediolanum-walls','the walls of Mediolanum','walls'),landmark('roadside-tomb','a tall tomb beside the road','tomb tower')],
+  8:[landmark('fort-gate','the stone gate of a frontier fort','gate'),landmark('river-warehouses','river warehouses','quay'),landmark('dacian-sanctuary','the ruined Dacian hill sanctuary','ring')],
+  9:[landmark('tetrapylon','a tetrapylon with its colonnades','tetrapylon'),landmark('walled-sanctuary','a sanctuary in its walled court','court temple'),landmark('city-gate','the city gate','gate')],
+  10:[landmark('villa','a villa','villa'),landmark('provincial-basilica','the province’s basilica','hall'),landmark('aqueduct','an aqueduct','aqueduct')],
+  11:[landmark('colosseum','the Colosseum','arena'),landmark('pantheon','the Pantheon','rotunda'),landmark('arch-of-severus','the Arch of Septimius Severus','arch')],
+  12:[landmark('mausoleum-of-hadrian','the Mausoleum of Hadrian','mausoleum'),landmark('temple-of-sol','Aurelian’s Temple of the Sun','court temple'),landmark('milvian-bridge','the Milvian Bridge','bridge')]
+});
+
 // Encounters composed on their own instead of the shared frontage.
 export const ENCOUNTER_LAYOUTS=freeze({
   // The authored Aurelian curtain and distant cohorts stay. New civic
   // buildings belong to the city behind it, not the occupied army verge.
+  // `gate`: Aurelian's gate (aurelian-walls.js) stands here instead once its kit has loaded.
   'ch12-confrontation':[
-    {component:'checkpoint_arch',edge:'east',along:0,gap:6.4},
+    {component:'checkpoint_arch',edge:'east',along:0,gap:6.4,gate:true},
     {component:'administrative_portico',edge:'east',along:-18,gap:19},{component:'apsidal_hall',edge:'east',along:18,gap:21},
     {component:'colonnade_bay',edge:'north',along:-5,gap:9},{component:'colonnade_bay',edge:'north',along:5,gap:9},
     {component:'statue_plinth',edge:'south',along:-7,gap:7},{component:'garden_exedra',edge:'south',along:7,gap:11}]

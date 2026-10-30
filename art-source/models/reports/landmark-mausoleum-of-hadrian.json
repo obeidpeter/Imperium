@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-mausoleum-of-hadrian.glb",
+    "bytes": 46767840,
+    "sha256": "86c1d84867b1bd71acfb2198a9d64acc4970ac2977f7506b417fbb3f4e640b72",
+    "triangles": 1467487
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-mausoleum-of-hadrian.glb",
+    "bytes": 267496,
+    "sha256": "f470e748e75001a444e17fbe65c2d3cd9a33fd9ff1b6211eb2face011881b60b",
+    "triangles": 6859
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 24.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 37.73220988163762,
+  "sizeMetres": {
+    "width": 33.8632,
+    "height": 24.0,
+    "depth": 37.6745
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_1508fe16-c798-4275-9a09-0ff9e8f18acd",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_1508fe16-c798-4275-9a09-0ff9e8f18acd",
+      "roughness": 0.6779,
+      "metallic": 0.0195
+    }
+  ]
+}

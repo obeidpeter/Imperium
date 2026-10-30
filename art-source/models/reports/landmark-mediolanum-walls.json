@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-mediolanum-walls.glb",
+    "bytes": 46434536,
+    "sha256": "c83be70336a66a4ef7b2badf5abd4440b8f0af647589fa916d7509535addfce2",
+    "triangles": 1420822
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-mediolanum-walls.glb",
+    "bytes": 192372,
+    "sha256": "10bb8b93b9f3898514b926b2194e149e7afa2ad691bafe257afa985662c6bdfc",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 10.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 31.21482722931956,
+  "sizeMetres": {
+    "width": 31.2324,
+    "height": 10.8,
+    "depth": 7.5387
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_b8417128-09c9-44ab-8b02-c39ba9592eba",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_b8417128-09c9-44ab-8b02-c39ba9592eba",
+      "roughness": 0.9396,
+      "metallic": 0.0146
+    }
+  ]
+}

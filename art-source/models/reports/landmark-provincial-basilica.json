@@ -1,0 +1,47 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/landmark-provincial-basilica.glb",
+    "bytes": 46962552,
+    "sha256": "b0fc5b12dd93cfc833ca81809ed324307754e91403451b1897ab4397f0d19cfb",
+    "triangles": 1458288
+  },
+  "output": {
+    "path": "assets/models/landmarks/landmark-provincial-basilica.glb",
+    "bytes": 223244,
+    "sha256": "0f05424316d029bd2c0f09c915afbefd52aa3480ac51ab255c20ec36d98cab22",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 256,
+    "webpQuality": 80,
+    "height": 12.7,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "colourOnly": true
+  },
+  "scale": 30.122556134405684,
+  "sizeMetres": {
+    "width": 29.9925,
+    "height": 12.7,
+    "depth": 14.8881
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5d734b09-749d-444e-8e56-58a7a2a66a69",
+      "width": 256,
+      "height": 256
+    }
+  ],
+  "constants": [
+    {
+      "material": "tripo_material_5d734b09-749d-444e-8e56-58a7a2a66a69",
+      "roughness": 0.8149,
+      "metallic": 0.0271
+    }
+  ]
+}

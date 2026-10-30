@@ -1,0 +1,70 @@
+{
+  "id": "life-pottery-stall",
+  "status": "Release 9: processed, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    6,
+    9,
+    11,
+    12
+  ],
+  "use": "Life about the camps and towns: a potter's wares, set out beyond the board in Chapters VI, IX, XI, XII (LIFE_PROP_CHAPTERS) on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman potter's wares set out for sale: two plank shelves on trestles and the ground before them stacked with red-slip bowls and plates, clay jugs, oil lamps and small amphorae. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1.4,
+    "minHeight": 1.33,
+    "maxHeight": 1.47
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "d9688685-809d-4fa4-8900-b5bff4e49c44",
+    "requestedAt": "2026-10-29T21:46:50.694Z",
+    "balanceBefore": 1785,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman potter's wares set out for sale: two plank shelves on trestles and the ground before them stacked with red-slip bowls and plates, clay jugs, oil lamps and small amphorae. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:49:10.354Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/life-pottery-stall.glb",
+    "rawBytes": 45199336,
+    "rawSha256": "35b638bb43ac990e991fb2bba7466780c2100cbd8c79c35ff264d8238e5831b9",
+    "tripoInput": {
+      "prompt": "A Roman potter's wares set out for sale: two plank shelves on trestles and the ground before them stacked with red-slip bowls and plates, clay jugs, oil lamps and small amphorae. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/life-pottery-stall-tripo-render.webp"
+  },
+  "processing": {
+    "turn": -90,
+    "reason": "Tripo set the stall’s shelves along the model’s side (+X); turned to the front (+Z) that the game’s camera sees"
+  }
+}

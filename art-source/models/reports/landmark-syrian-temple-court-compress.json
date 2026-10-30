@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-syrian-temple-court.glb",
+  "output": "assets/models/landmarks/landmark-syrian-temple-court.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 250208,
+    "gzipBytes": 159064,
+    "sha256": "833208f3e86eed814e71ae55a3889fd6df684405b4e4e964cd01be5194635d90"
+  },
+  "after": {
+    "bytes": 191316,
+    "gzipBytes": 182798,
+    "sha256": "6df93b37aa51baa291d5a308385c9d15c8b244c7ae28b5d19116f4cb5a0f2d23"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9864
+      },
+      "bytes": 13633,
+      "psnr": 33.663
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-river-citadel.glb",
+  "output": "assets/models/landmarks/landmark-river-citadel.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 246400,
+    "gzipBytes": 159359,
+    "sha256": "8569627717a6a1b1f6570dc84584fa6cb6a7565105c8c7668741b0a50b30c72e"
+  },
+  "after": {
+    "bytes": 186612,
+    "gzipBytes": 178450,
+    "sha256": "f96b9eea30a563b6b41e05c702aab75c63e40c5c94237dc21103c8b1b332ba2f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 5880,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10442
+      },
+      "bytes": 13714,
+      "psnr": 33.352
+    }
+  ]
+}

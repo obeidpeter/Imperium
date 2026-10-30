@@ -1,0 +1,64 @@
+{
+  "id": "landmark-dacian-sanctuary",
+  "status": "Release 9: processed with its colour map only, compressed and reviewed; in the game on Balanced and High",
+  "chapters": [
+    8
+  ],
+  "use": "The ruined Dacian hill sanctuary, on the horizon of Chapter VIII (LANDMARK_LAYOUT, kind ring): standing in its slot in place of the code-built outline on Balanced and High.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The burned ruins of a large Dacian circular sanctuary of the first century: a ring of low flat andesite blocks about eighteen metres across, inside it a ring of short squared stone posts and charred wooden post stumps, and within that a horseshoe of posts, all broken off low among scattered stones. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 256,
+    "bytes": 180000,
+    "heightMetres": 3.2,
+    "minHeight": 3.04,
+    "maxHeight": 3.36,
+    "maps": "colour"
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "release-9-landmarks-and-life",
+    "creditCeiling": 1150,
+    "expectedCredits": 20,
+    "taskId": "f04f0ab7-6912-41c7-a314-48797c113904",
+    "requestedAt": "2026-10-29T21:03:30.587Z",
+    "balanceBefore": 2485,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "The burned ruins of a large Dacian circular sanctuary of the first century: a ring of low flat andesite blocks about eighteen metres across, inside it a ring of short squared stone posts and charred wooden post stumps, and within that a horseshoe of posts, all broken off low among scattered stones. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-29T21:06:23.861Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/landmark-dacian-sanctuary.glb",
+    "rawBytes": 47885680,
+    "rawSha256": "d784b9072eabe210cc0763f3becc0b16d9e20d06674596dc024f210f08628b0a",
+    "tripoInput": {
+      "prompt": "The burned ruins of a large Dacian circular sanctuary of the first century: a ring of low flat andesite blocks about eighteen metres across, inside it a ring of short squared stone posts and charred wooden post stumps, and within that a horseshoe of posts, all broken off low among scattered stones. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/landmark-dacian-sanctuary-tripo-render.webp"
+  }
+}

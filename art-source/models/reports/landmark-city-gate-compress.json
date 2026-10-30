@@ -1,0 +1,39 @@
+{
+  "input": "assets/models/landmarks/landmark-city-gate.glb",
+  "output": "assets/models/landmarks/landmark-city-gate.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 180492,
+    "gzipBytes": 124516,
+    "sha256": "9f5bc3d77578667402d0060856d625156d6c736abcb5a8c8efcf32f2ab08e42b"
+  },
+  "after": {
+    "bytes": 137420,
+    "gzipBytes": 131291,
+    "sha256": "7e0b5eccc5049bfa58d49b5618b7272965cdf3958742295bc4cfaaaa8951cd33"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7856
+      },
+      "bytes": 13492,
+      "psnr": 35.021
+    }
+  ]
+}
