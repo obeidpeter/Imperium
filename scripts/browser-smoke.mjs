@@ -11,7 +11,8 @@
 // the gate, the field, pause, keys, result, record), and the same in 2D; then
 // squads and deployment, the chamber Contests (Chapter VII's council played
 // through, every Contest won, the hearing), the finale's defection route, the
-// settings and help (pace by difficulty, a remapped key) and a chronicle saved
+// settings and help (pace by difficulty, a remapped key), Practice in real time
+// (a battle's field and a Contest's chamber, nothing saved) and a chronicle saved
 // before 0.40. It fails on any page or console error. Development and CI only:
 // it needs Playwright, which is not a project dependency, and a production build.
 //
@@ -22,6 +23,7 @@ import http from 'node:http';
 import assert from 'node:assert/strict';
 import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
+import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
 import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
@@ -778,6 +780,43 @@ async function settingsAndHelp(){
 // Migration from 0.38 in the page (2D): a Chapter V camp saved before 0.40 (no soldier record) asks once for the
 // soldier's training and grants the training points of Chapters I–IV; a battle in progress on the 0.38 board offers
 // Restart in real time, which opens the same battle in real time from its checkpoint.
+// Release 10: Practice plays a completed encounter as the chronicle plays. In real time a battle opens the
+// live field and a Contest the chamber, each under the Archive's banner with its mutators; F2 saves nothing,
+// and Return to chronicle brings back the camp exactly as it was, as does a reload.
+// The chronicle a save code holds, as the page exported it (storage.js: gzip where the browser has CompressionStream).
+function codePayload(code){
+  const [prefix,body]=code.trim().split('.'),bytes=Buffer.from(body,'base64'),raw=(prefix==='SAC1'?gunzipSync(bytes):bytes).toString('utf8'),parsed=JSON.parse(raw);
+  return parsed.format===1?parsed.payload:raw;
+}
+async function realtimePractice(){
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
+  await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode('ch8-parley'));
+  const chronicle=async()=>{await settingsCommand(page,'export');const code=await page.locator('#save-code').inputValue();
+    await page.click('#modal [data-cmd="close-modal"] >> nth=0');return codePayload(code);};
+  const primary=await chronicle();
+  await (await revealControl(page,'[data-cmd="archive-replay"][data-id="ch4-gate"]')).click();
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  assert.match(await text(page,'.archive-banner'),/Chronicle record: \d+ rounds/,'The battle is practised in real time, under the Archive’s banner');
+  assert.equal(await page.evaluate(()=>window.__realtime.world()?.encounterId),'ch4-gate');
+  await page.locator('#rt-board').focus();
+  await expectAnnouncement(page,/Practice is not saved/,()=>page.keyboard.press('F2'));
+  assert.equal(await chronicle(),primary,'The export during practice is the chronicle');
+  await page.locator('.archive-mutators > summary').click();await page.selectOption('#archive-weather','rain');
+  await page.locator('[data-cmd="apply-archive-mutators"]').click();
+  await page.waitForFunction(()=>window.__realtime.world()?.weather==='rain',null,{timeout:60000}).catch(()=>assert.fail('The mutators play the battle again in the rain'));
+  await page.locator('.archive-banner [data-cmd="exit-archive"]').click();
+  await page.waitForSelector('.rt-field[data-kind="camp"]');assert.equal(await chronicle(),primary,'Return to chronicle restores the camp exactly');
+  await (await revealControl(page,'[data-cmd="archive-replay"][data-id="ch7-council"]')).click();
+  await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+  assert.match(await text(page,'.archive-banner'),/Chronicle record: \d+ hours/,'The Contest is practised in the chamber');
+  assert.equal(await page.locator('#archive-weather').count(),0,'A chamber has no weather to change');
+  await page.locator('.archive-banner [data-cmd="exit-archive"]').click();await page.waitForSelector('.rt-field[data-kind="camp"]');
+  await page.reload();await page.locator('[data-cmd="continue"]').first().click();await page.waitForSelector('.rt-field[data-kind="camp"]');
+  assert.equal(await chronicle(),primary,'A reload continues the chronicle, not practice');
+  await page.context().close();
+  console.log('ok - practice in real time: a completed battle opens the live field and a Contest the chamber, under the Archive’s banner; the mutators replay it in the rain, F2 saves nothing, and Return to chronicle and a reload keep the chronicle exactly');
+}
 async function legacyChronicle(){
   const page=await open(),old=Game.decodeSave(battleCampCode('ch5-mine'));delete old.soldier;
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
@@ -820,7 +859,7 @@ let failed=false;
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
 for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}

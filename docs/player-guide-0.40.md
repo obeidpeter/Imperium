@@ -343,7 +343,11 @@ of this table.
 
 - **Practice completed encounters** replays a finished battle or
   Contest, with weather, time and difficulty variations, without
-  touching your chronicle or awarding progress.
+  touching your chronicle or awarding progress. It plays as your
+  campaign plays: in real time a battle opens on the live field and a
+  Contest in the chamber (where only the difficulty changes). Nothing in
+  practice is saved, and **Return to chronicle** brings you back to camp
+  as you left it.
 
 - **Errands** are optional and offered in every chapter: in Chapters
   I–III one to three each (some only for one training path), from

@@ -266,9 +266,8 @@ let field=null;
 const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
 function campMode(){return !!state&&screen!=='title'&&state.phase==='camp'&&!state.archiveReplay&&controlsFor(settings,state.chapter)==='realtime'&&!!campFor(state.chapter);}
-// A Contest is walked as a chamber once its chapter's chamber exists (chamberFor); the
-// archive's sandbox replays keep the 0.38 board with its mutators.
-function chamberMode(){return !!state&&screen!=='title'&&state.phase==='encounter'&&state.encounter?.kind==='contest'&&!state.archiveReplay&&chamberFor(settings,state.chapter);}
+// A Contest is walked as a chamber once its chapter's chamber exists (chamberFor), in practice too.
+function chamberMode(){return !!state&&screen!=='title'&&state.phase==='encounter'&&state.encounter?.kind==='contest'&&chamberFor(settings,state.chapter);}
 // What the page's field shows now: a real-time fight, a walkable camp, a chamber, or nothing.
 function fieldTarget(){
   if(screen==='title'||!state)return null;
@@ -352,6 +351,11 @@ function chamberKnown(){const key=state?.encounter?.id??null;if(chamberAsked.key
 function startCampaignEncounter(){
   return change(()=>Game.startEncounter(state,{...(state.chapter===12?{route:state.route||'backer'}:{}),
     ...(controlsFor(settings,state.chapter)==='realtime'?{controls:'realtime'}:{})}),{reset:true});
+}
+// Practice plays an encounter as the chronicle would: in real time where its chapter does.
+function practiceOptions(source,id,options={}){
+  const chapter=Game.archiveEncounters(source).find(e=>e.id===id)?.chapter;
+  return controlsFor(settings,chapter)==='realtime'?{...options,controls:'realtime'}:options;
 }
 // ——— Camp: conversations, places and the people with something new to say. ———
 function campCallbacks(){
@@ -1186,7 +1190,7 @@ case 'confirm-import':if(pendingImport){
 case 'share':await showShare();break;
 case 'download-card':document.querySelector('#reign-card').toBlob(blob=>download(blob,'imperium-reign.png'));break;
 case 'archive-replay':{
-  const source=archivePrimaryState||state,res=Game.createArchiveReplay(source,id);
+  const source=archivePrimaryState||state,res=Game.createArchiveReplay(source,id,practiceOptions(source,id));
   if(res.ok){
     archivePrimaryState??=state;state=res.state;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;modal.close();
     render();toast(res.message);
@@ -1241,7 +1245,7 @@ case 'apply-archive-mutators':{
   if(!state.archiveReplay)break;
   const opts={difficulty:document.querySelector('#archive-difficulty')?.value,weather:document.querySelector('#archive-weather')?.value,
     timeOfDay:document.querySelector('#archive-time')?.value,route:document.querySelector('#archive-route')?.value},
-    source=archivePrimaryState||state,res=Game.createArchiveReplay(source,state.archiveReplay.encounterId,opts);
+    source=archivePrimaryState||state,res=Game.createArchiveReplay(source,state.archiveReplay.encounterId,practiceOptions(source,state.archiveReplay.encounterId,opts));
   if(res.ok){state=res.state;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();toast(res.message);}else toast(res.message);
   break;
 }
