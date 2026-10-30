@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 10: Gate 4 and 0.40.0 ([plan](docs/worlds-and-gameplay-plan.md), [play-through checklist](docs/gate4-playthrough.md))
+
+The last of ten releases, in progress: Practice in real time, and the checklist for the owner's Gate 4 play-through. Real time becomes the default, and 0.40.0 is released, after that play-through.
+
+- **Practice in real time.** **Practice your completed encounters** (in Camp services, or at the drill field's practice post) now plays as your campaign plays. When the campaign is in real time:
+  - a battle opens on the live field, under the Archive's banner with its War-Room Mutators: the difficulty, the weather, the hour and, in Chapter XII, the approach;
+  - a Contest from Chapter VII on is walked in the chamber, where only the difficulty changes;
+  - its result offers **Practise again** and **Return to chronicle**, and records nothing: no training points, spoils, consequences or a patron's re-run.
+  - On the turn-based board, practice is as before.
+- **Practice is never saved.** Quick save (F2) and the Saves menu now refuse while you practise, on the board as in real time, where they used to write a copy of the practice that could not be loaded. The top bar reads **Not saved**, and Export still copies your chronicle.
+- **The practice banner fits a phone:** on a narrow screen its mutators and **Return to chronicle** sit below its title.
+- **The standalone skirmish** is already the real-time arena when the campaign plays in real time; it needed no change.
+
 ### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/landmarks-release9-report.md))
 
 The ninth of ten releases: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
