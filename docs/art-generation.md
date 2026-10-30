@@ -1194,3 +1194,88 @@ Negative prompt: `horse, mule, donkey, ox, animal, four wheels, folding hood, bu
 ```text
 A Roman camp woodpile: split firewood logs stacked neatly between pairs of upright stakes, about one metre high and two metres long, beside a round chopping block with an iron axe driven into it and a scatter of wood chips. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.
 ```
+
+## The five camp figures · 30 October 2026
+
+Release 8 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md), moved there from release 6: the named people of the living camps who had no body of their own. [The asset pipeline](asset-pipeline.md#the-five-camp-figures--2026-10-30) has how they are made, and the [release 8 report](camps-release8-report.md#the-five-figures-30-october) how they are drawn.
+
+Five figures were generated with Tripo's text-to-model API (`v3.1-20260211`, textured PBR, standard geometry, 20 credits each) on 2026-10-30, from the text prompts below only: no reference image or third-party model, and rigged by Tripo's biped auto-rig (25 credits each). The owner approved them at 45 credits each with up to 90 for retries, a cap of 315; spending began with a gate of two (Aelia and Quintus), reviewed in the game before the other three were generated. Each was selected at its first attempt. The balance read 1,705 credits before and 1,480 after: 225 spent, reconciled task by task in the plan's credit ledger, [`worlds-plan-credits.json`](../art-source/models/worlds-plan-credits.json). The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+The prompts follow [the historical notes](historical-research.md) as release 6's did: long-sleeved tunics and closed shoes, Quintus's mail as a chainmail shirt with no segmented plate, a senator's toga over a tunic with a broad stripe, and an equestrian's narrow stripes.
+
+| Model | Who | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| char-cast-aelia | Aelia Dacia, who speaks for the settlers' households | VIII, X, XII | `e25bffad-719f-4cb2-a8cb-607cdddfbd11` | `4228a48e-ea13-436a-99b0-ef898c520a15` | 13,908 | 426,916 bytes |
+| char-cast-quintus | Signifer Quintus, the standard-bearer | I, IV, XII | `5f214921-8862-44dd-a8d4-9f6c23bc2d3d` | `66d87c47-4d8d-4f9d-a268-92ac283f6c6b` | 14,940 | 397,788 bytes |
+| char-cast-severianus | Marcus Aurelius Severianus, the equestrian patron | VI–XI | `5c852320-6338-42bc-9479-e402852ff2f4` | `204d62c2-89bb-454b-a955-8bccd5fa1eb9` | 13,747 | 391,728 bytes |
+| char-cast-paullus | Lucius Cassius Paullus, the elder senator | XI, XII | `7ece438f-c31f-48b4-8637-789c7d766556` | `f58a2880-232c-41b8-b01e-4ac40931f2ac` | 15,070 | 414,156 bytes |
+| char-cast-theon | Theon of Nicomedia, the rhetor | VII, X, XI | `d0492c0d-fd17-46dd-bd3a-a4a24944ce3d` | `a7cff793-1feb-4d66-b6b5-0f5d84696769` | 14,852 | 394,856 bytes |
+
+Triangles count both levels of detail and, for the four men, both of their heads; the near bodies have 11,127–11,409 triangles. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within its request's budget. The four men's maps are a level below the release 6 cast's: 512-pixel colour and 256-pixel normal and roughness maps for the body and the same for the wrapped head, baked from the same 2,048-pixel paint. They stand only in camps, and at the 1,024-pixel level Chapters VII and XII would have passed their 24 MB downloads (see the report). Aelia's body keeps the 1,024-pixel maps, as her face lies in them. The raw files stay outside the repository; their digests, the task ids and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding, head-wrap and compression reports in `art-source/models/reports/`, with each man's face as the head wrap's finders saw it (`char-cast-<who>-faces/`).
+
+### Reviewed before shipping
+
+Each model was compared with its Tripo render and then, bound, with the game's own figure in software-rendered close-ups and full views, beside Lucan for scale. What it showed, and what was kept:
+
+- **Aelia keeps her own generated head.** Wrapped as the named men's are, the shared head, which is a man's, put its longer chin below hers, where the bake gave it her neck's shadow: from the front it read as a dark beard. It also brought a man's neck to the seam, which a woman wears no neckcloth to hide. Her own head, as Syra's and the camp's other women's, has her face, her hair pinned back and her earrings, and needs no seam; it has no blinks or expressions. Her wrapped version was reviewed and not shipped.
+- **Quintus's eyes** were set from his report picture (`--his-eyes`), as the finder took the outer edges of his irises for his eyes and would have shrunk his head by 15%. The other three heads were wrapped from the finder's own landmarks, scaled to the shared head's eye spacing by 0.90 (Severianus) to 1.04 (Quintus).
+- **Sleeves.** Severianus's, Paullus's and Theon's tunics came out short-sleeved, though the prompts asked for long sleeves; they were kept, as Crispus's and the clerk's were in release 6.
+- **Severianus's purple** runs round his neckline, sleeves and hem instead of in two narrow stripes from the shoulders, and he wears a thin bracelet, which the prompt ruled out, and a clasp at his shoulder. **Paullus's** red is at his sleeves rather than a broad stripe, and he wears sandals where a senator wore closed shoes (calcei), as the release 6 senators do. **Theon's** beard is darker than the greying asked for.
+- **Quintus** is drawn in camp as the camp's people are, bare-headed and without his standard.
+
+#### Exact prompts
+
+**char-cast-aelia**
+
+```text
+Full-body Roman provincial woman of the mid-3rd century AD, a settler leader in Dacia about thirty-five years old, standing in a T-pose for rigging: her arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length ivory wool tunic under a sleeveless ivory stola, girdled under the bust with a narrow woven belt, a muted terracotta wool mantle draped over her left shoulder and across her back, both arms free of it, and closed brown leather shoes. Her dark brown hair is parted in the middle and pinned simply back in a low knot, uncovered; strong attentive brown eyes, a firm jaw, a light olive complexion and a thoughtful, confident expression. Realistic proportions, historically accurate, practical and dignified, muted colours. No armour, no weapons, no cloak, no hood, no veil, no crown, no jewellery but small bronze earrings, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, tiara, jewellery, gold, low neckline, bare shoulders, modern dress, fantasy, cartoon
+```
+
+**char-cast-quintus**
+
+```text
+Full-body Roman legionary standard-bearer of the mid-3rd century AD, a sturdy man about twenty-eight years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with red bands at the cuffs; a broad leather military belt with bronze fittings and a ring buckle, dark wool trousers and closed leather boots. Bare head with short-cropped dark-brown hair and short stubble, a square open face with a straight nose, a light warm complexion and a steady, proud expression. Realistic proportions, historically accurate, worn and practical, muted colours. No helmet, no animal skin, no fur, no shield, no weapons, no standard, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, animal pelt, bear skin, wolf skin, fur, helmet, shield, weapon, cloak, fantasy armour
+```
+
+**char-cast-severianus**
+
+```text
+Full-body wealthy Roman equestrian patron of the mid-3rd century AD, a well-fed man about forty-five years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an expensive long-sleeved ivory wool tunic to below the knee with two narrow purple stripes from the shoulders and purple bands at the cuffs, a broad leather belt with fine bronze fittings, and fine closed red-brown leather shoes. Bare head with receding greying curly hair, clean-shaven, a full round face with heavy cheeks, a short straight nose, an olive complexion and an observant, guarded expression. Realistic proportions, historically accurate, refined but restrained, muted colours. No armour, no weapons, no toga, no cloak, no mantle, no laurel or crown, no rings or jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, chainmail, helmet, weapon, toga, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon
+```
+
+**char-cast-paullus**
+
+```text
+Full-body Roman senator of the mid-3rd century AD, a thin elderly man about seventy years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large warm-ivory wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved ivory tunic with a broad deep red stripe down from each shoulder; reddish-brown closed shoes. Both arms free of the toga. Bare head with short white hair receding at the temples, clean-shaven, a long narrow lined face with prominent cheekbones, intelligent reserved eyes, a pale olive complexion and a dignified, solemn expression. Realistic proportions, historically accurate, restrained, muted colours. No armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon
+```
+
+**char-cast-theon**
+
+```text
+Full-body Greek teacher of rhetoric from Nicomedia in the mid-3rd century AD, a lean man about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the knee, a large dark blue-grey wool mantle draped over his left shoulder and wrapped round his waist, both arms free of it, a narrow leather belt and leather sandals. Bare head with receding greying dark hair worn short, a short neat greying beard, a narrow intelligent face with a long straight nose, a light olive complexion and an amused, attentive expression. Realistic proportions, historically accurate, simple and dignified, muted colours. No armour, no weapons, no scroll, no staff, no hat, no wreath or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gold, jewellery, scroll, staff, modern suit, fantasy, cartoon
+```

@@ -32,7 +32,7 @@ How each kind of check was made:
 | A trader in every camp | The region's goods, with an eye amulet (+1 Perception) among the charms | `camps.js` (`TRADER_STOCK`), `items.js` | none |
 | Replies by who the soldier is | 28 replies across Chapters IV–XII that need an attribute, a decoration, a title, a training path or a meter; shown dimmed with what they need | `living-camps.js`, `dialogue.js` | none |
 | Defeat pages | A page for each of the 25 encounters (6 before). Shown on the real-time, board and chamber results. | `living-camps.js`, `tactical-intel.js`, `realtime-view.js`, `encounter-view.js`, `chamber-view.js` | none |
-| Named people without a body | Severianus, Aelia, Paullus, Theon and Quintus are drawn procedurally with their own faces, never in the civilian traveller's body | `actor-body-catalog.js` | none |
+| Named people without a body | Severianus, Aelia, Paullus, Theon and Quintus were drawn procedurally with their own faces, never in the civilian traveller's body, until their own bodies followed on 30 October ([below](#the-five-figures-30-october)) | `actor-body-catalog.js` | none |
 | The camp's women | Syra wears her own body; Vibia, Dida, Caecilia and Licinia, with no body of their own, are drawn as the procedural woman, never in a man's body. The woman's figure is in every chapter's pack, not only from Chapter VIII. | `actor-kit.js`, `actor-identity.js`, `actor-body-catalog.js`, `art.js` | none |
 | Varro's courses | Varro, who now stands in Chapter IV's camp, also teaches its courses there; from Chapter VI the training list names the veteran instructor, as before | `soldier-views.js` | none |
 
@@ -50,7 +50,7 @@ None of this changes a battle or a Contest. A person's place follows recorded de
 | A trader in every chapter with regional goods | Seven new traders in V–XI, and Syra in IV and XII as in I–III | `living-camps` |
 | Defeat pages for every encounter | 25 of 25 | `living-camps` |
 | Replies that depend on who the soldier is | 2–6 a chapter, 28 in all | `living-camps` |
-| The five figures moved here from release 6 | Not yet generated: they wait on the owner's approval of their credits (see [Limitations](#limitations)) | — |
+| The five figures moved here from release 6 | Generated on 30 October, after the owner approved their credits ([below](#the-five-figures-30-october)) | — |
 
 ## The camps
 
@@ -173,10 +173,53 @@ The release adds no art. Its camps, conversations, errands and pages are code an
 
 Chapter VII, the largest, grows from 21.30 to 22.16 MB, within its 24 MB limit.
 
+## The five figures (30 October)
+
+The owner approved the five figures' credits on 30 October ("Approve the five figures for release 8"): 45 each, 225 in all, and up to 90 for retries. Severianus, Aelia, Paullus, Theon and Quintus were generated from text prompts with Tripo, rigged by its biped rig and bound to the game's skeleton, each at its first attempt: 225 credits, the balance reading 1,705 before and 1,480 after ([ledger](../art-source/models/worlds-plan-credits.json)). Aelia and Quintus were made first, as a gate, and looked at in the game before the other three were generated. The [art record](art-generation.md#the-five-camp-figures--30-october-2026) has the prompts and what review found, and [the asset pipeline](asset-pipeline.md#the-five-camp-figures--2026-10-30) how they were made.
+
+| Figure | Camps (offline packs) | Head | Maps | File |
+| --- | --- | --- | --- | ---: |
+| Signifer Quintus | I, IV, XII | his own, on the shared head | 512 / 256 | 397,788 bytes |
+| Aelia Dacia | VIII, X, XII | her own generated head | 1,024 / 512 | 426,916 bytes |
+| Marcus Aurelius Severianus | VI–XI (and XII, online) | his own, on the shared head | 512 / 256 | 391,728 bytes |
+| Lucius Cassius Paullus | XI, XII | his own, on the shared head | 512 / 256 | 414,156 bytes |
+| Theon of Nicomedia | VII, X, XI | his own, on the shared head | 512 / 256 | 394,856 bytes |
+
+- **The four men** wear the shared head wrapped onto their own generated heads, as release 6's named men do, so they blink and speak with its expressions. Severianus, Paullus and Theon wear civilian dress and no neckcloth over the head's seam (`civilian` in `actor-body-catalog.js`); Quintus, a soldier, wears the neckcloth as the named soldiers do.
+- **Aelia keeps her own generated head.** The shared head is a man's: wrapped onto hers, its longer chin sat under hers and took her neck's shadow, which read as a dark beard, and it brought a man's neck to the seam. With her own head, as the camp's other women have, she has her face, her hair and her earrings, but no blinks or expressions.
+- **A level down.** At the release 6 cast's 1,024-pixel maps, Chapters VII and XII would have passed their 24 MB downloads (about 24.5 and 24.1 MB). The four men stand only in camps, so their body and head maps went down a level, as the plan provides before any limit is raised.
+- **Chapters.** Each body is in the offline packs of the camps it stands in, which the exact-chapters test holds to the campaigns both ways through Chapter II's decision. Severianus also stands in Chapter XII's court when he backs the soldier, which neither campaign earns: XII's pack leaves him out (see below).
+- **Corrections.** The asset manifest and the requests for Varro, Brennus, Crispus and Syra now list the camps they have stood in since this release, and the body tests' named legionary is the soldier himself, as every man the cast names now has a body of his own.
+
+How they were checked:
+
+- **Automated tests:** `actor-bodies` checks the chapters, each body's Tripo task, rig, licence, manifest entry and budget, its six maps (three for Aelia) and its bind pose; a new test checks the civilians' necks, Quintus's neckcloth and Aelia's own head. `living-camps` now expects Aelia in her own body, and no man in hers or Syra's.
+- **Software rendering** (headless Chromium, SwiftShader): the game's own figures of the five, beside Lucan, in full and close views, on main's build and this one (a scratch script, not committed; the sheet went to the owner), and each man's face at both map levels.
+- **The twelve-camp check** (`npm run smoke:world`, the production build) passed all 21 of its scenarios on a build made before the civilians' neckcloth change: every camp's models and three cameras, the services, the narrow layouts, Performance, the return across the regions, and a camp with every model download failing. On the final build, a partial run of Chapters VII and XI passed (a diagnostic, not the check's acceptance, which CI runs on all twelve).
+- **Not performed:** a person looking at the figures in play, and any check on a phone or a laptop.
+
+Downloads (gzip sum of each set's files, from the build report, main `d1ba4dd` built beside this change):
+
+| Download | Limit | Main | With the five |
+| --- | ---: | ---: | ---: |
+| First load | 2 MB | 0.94 MB | 0.94 MB |
+| Chapter I in 3D | 16 MB | 15.00 MB | 15.37 MB |
+| Chapter VII, the largest, with its 2D art | 24 MB | 23.21 MB | 23.94 MB |
+| Chapter XII with its 2D art | 24 MB | 22.33 MB | 23.49 MB |
+| The complete campaign | 80 MB | 51.60 MB | 53.49 MB |
+
+Limitations:
+
+- **Chapter VII is 65 kB under its limit.** Anything more in VII has to be paid for first, by taking a level off more of its textures or sharing them.
+- **Offline, Severianus in XII.** He stands in Chapter XII's court only when he backs the soldier. XII's offline pack leaves his body out, so offline he keeps the procedural figure and his face there; online his body loads as anywhere else.
+- **Aelia does not blink.** Her own head has no expressions, as Syra's has none.
+- **The prompts' departures** kept: short sleeves on the three civilians, Severianus's purple at his edges rather than in narrow stripes, and Paullus's sandals (see the [art record](art-generation.md#the-five-camp-figures--30-october-2026)).
+- **The figures are as tall as the men's skeleton,** Aelia's included, as every generated body is fitted to the game's one skeleton.
+
 ## Limitations
 
 - **Real time only.** The conversations, errands and traders are in the walkable camp, its scene and its list path (People & conversations). The turn-based camp page lists no people, as in Chapters I–III before, so a turn-based campaign never meets them.
-- **The five figures.** Severianus, Aelia, Paullus, Theon and Quintus are drawn procedurally, with their own faces, until their generated bodies are made. Their credits (225, up to 315 with retries) wait on the owner's approval, and none has been spent.
+- **The five figures** followed on 30 October; their own limitations are [with them](#the-five-figures-30-october).
 - **The words.** The conversations, errands and defeat pages are original prose for this project. Apart from fixed public history (Gallienus outside Milan, the withdrawal from Dacia, Aurelian's eastern victories), their episodes are invented. They have been checked by the automated tests, not read in play, and the plan's optional content review by the owner has not happened.
 - **The women's figures.** Vibia, Dida, Caecilia and Licinia are drawn as the procedural woman, the figure Aelia already used, each with features of her own. They were looked at only in the scratch renders, under software rendering, at the cameras' distance.
 - **The character handoff notice.** `npm run verify` now reports that the art-source handoff exports were made from an earlier character source. That source's digest covers every actor file under `src/showcase/`, and this release edits two of them for the women's figures. The three exported figures (Marcellus, Lucan and a Persian guard) are drawn exactly as before, so, as the [handoff's README](../art-source/characters/README.md) advises, they were not re-exported.

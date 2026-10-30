@@ -21,7 +21,7 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 5 | Nature and water, modelled | merged ([#37](https://github.com/obeidpeter/Imperium/pull/37); [report](nature-release5-report.md)) |
 | 6 | The cast in person | merged ([#38](https://github.com/obeidpeter/Imperium/pull/38); [report](cast-release6-report.md)) |
 | 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
-| 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); the five figures await the owner's credit approval |
+| 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress; the owner's play-through, decision on the turn-based mode and Performance-check files are awaited |
 
@@ -221,7 +221,8 @@ Already done (#32, #33): nine company stories, three playable situations, field 
 - **The camps** of Chapters IV and VI–XII each have their own map, places, pads and errand objects in `src/data/camps.js`, and the shared template is gone. Chapter V's pilot courtyard keeps its layout and gains a trader and two errands through its own people.
 - **Presence** follows the scenes' own conditions (`storyWhen` in `src/data/campaign.js`): a camp person may stand only after or until a decision, while Varro or the patron's standing allows, or before a chapter's next encounter. A companion still recovering stands at the valetudinarium (`campPersonSpot`).
 - **The conversations, errands and defeat pages** of the later camps are data in `src/data/living-camps.js`: 18 errands, two a chapter from IV, each worth 2 training points, five of them awarding the titles no deed awarded. The audited ceiling rises from 237 to 273 training points.
-- **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The camp's women are drawn as women (`actor-kit.js`): a body fits only a figure of its own sex, and the woman's figure is in every chapter's pack. The five figures moved here from release 6 are generated only after the owner approves their credits.
+- **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The camp's women are drawn as women (`actor-kit.js`): a body fits only a figure of its own sex, and the woman's figure is in every chapter's pack.
+- **The five figures** moved here from release 6 followed on 30 October, after the owner approved their credits: Severianus, Paullus and Theon in their civilian dress and Quintus in his mail, each with his own face on the shared head, and Aelia with her own generated head (the shared head is a man's). The four men's maps are a level below release 6's, which keeps Chapters VII and XII within their 24 MB downloads. The credits were 225 of the 315 allowed ([ledger](../art-source/models/worlds-plan-credits.json), [art record](art-generation.md#the-five-camp-figures--30-october-2026)).
 
 #### 9. Landmarks and set pieces
 
