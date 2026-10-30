@@ -4,7 +4,7 @@
 
 ### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/landmarks-release9-report.md))
 
-The ninth of ten releases, in progress: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
+The ninth of ten releases: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
 
 - **The Curia in marble.** The Senate's Contests of Chapters XI and XII take place in the Curia, the Senate house as Domitian restored it ([historical note](docs/historical-research.md)), built in Blender around the chamber floor:
   - the senators' benches on three wide, low steps along each side;
