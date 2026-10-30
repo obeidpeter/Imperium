@@ -233,6 +233,14 @@ Already done (#32): separate settings for the oath and the accession.
 - **Ceremonies:** story beats in place of a slow orbit, in the new settings.
 - **Life:** about 15 Tripo props (market goods, wagons, laundry), cloth banners and awnings, roof smoke and birds.
 
+**As built.** The [report](landmarks-release9-report.md) records the details.
+- **Landmarks:** 33 in the chapters' layouts (`LANDMARK_LAYOUT`), three a chapter, each with a code-built outline on every tier. On Balanced and High, 32 generated models stand in their places, fitted to their outlines' heights and hazed for their distance. The Colosseum keeps its outline after three rejected attempts, and the town gate and baths listed for Dacia have no bearing free.
+- **The Curia** is built for the Senate's Contests of Chapters XI and XII, as the credit plan proposed. Chapter VII's council, VIII's parley and X's tribunal keep their own settings.
+- **Aurelian's walls and gate** stand beyond the finale's east edge, and the camera stays on the field's side of them.
+- **Ceremonies:** five story beats each for the oath and the accession.
+- **Life:** 14 generated props beyond the board in every chapter but V, with no code-built stand-in, and birds, hearth smoke and every banner's cloth on Balanced and High. The fishing nets were not shipped, and the awnings stay still.
+- **Credits:** 1,060 of the 1,150 approved, for 46 models in the game and seven rejected attempts ([ledger](../art-source/models/worlds-plan-credits.json)).
+
 #### 10. Gate 4 and 0.40.0
 
 Already done (#33): New Game offers both modes and recommends real time, and Settings → Controls switches between encounters.

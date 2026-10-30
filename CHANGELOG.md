@@ -2,7 +2,7 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md))
+### Worlds and gameplay, release 9: landmarks and set pieces ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/landmarks-release9-report.md))
 
 The ninth of ten releases, in progress: the great buildings of the story, built in Blender, and each chapter's landmarks and camp life, generated with Tripo.
 
