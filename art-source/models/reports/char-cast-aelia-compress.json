@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/cast-aelia.glb",
+  "output": "assets/models/characters/cast-aelia.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 487920,
+    "gzipBytes": 335128,
+    "sha256": "395b79f5439526ae6e9844575fac6b18c107f3d9625f230f88ac36c600461b89"
+  },
+  "after": {
+    "bytes": 426916,
+    "gzipBytes": 404149,
+    "sha256": "038d64200ccb455f44d3b6dff21f4c2a97e63119d4c3c1049789894aae5609b3"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13908,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7028
+      },
+      "bytes": 16068,
+      "psnr": 41.496
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 46094
+      },
+      "bytes": 131366,
+      "psnr": 38.369
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22234
+      },
+      "bytes": 40202,
+      "psnr": 34.56
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "tool": "scripts/assets/wrap-cast-head.py",
+  "blender": "5.2.2 LTS",
+  "body": {
+    "path": "intermediate: char-cast-severianus bound by bind-character.py (not kept)",
+    "sha256": "22fcc793987382a2c24e8ae8a221fe6601ea17ff43d242dd359a221273f8b51c"
+  },
+  "donor": {
+    "path": "intermediate: char-roman-recruit bound by bind-character.py, unquantized (not kept)",
+    "sha256": "d4464a916814762b72535d7aebaf461150dc339f2d194b950c815b0c1f52accc"
+  },
+  "paint": {
+    "path": "intermediate: char-cast-severianus bound again by bind-character.py with larger maps, as his head's paint (not kept)",
+    "sha256": "3685e7e01f094504f1fbfe433d0c4139078c5839cbaeb9ad7c66495d8d064de7",
+    "bind": {
+      "input": "art-source/models/raw/char-cast-severianus-rigged.glb",
+      "settings": {
+        "triangles": 12000,
+        "overviewTriangles": 2500,
+        "texture": 2048,
+        "detailTexture": 1024,
+        "webpQuality": 80,
+        "clavicleDegrees": 10,
+        "sharpAngle": 60
+      },
+      "sameGeometry": true
+    }
+  },
+  "output": {
+    "path": "intermediate: cast-severianus with the wrapped head, before quantizing (not kept)",
+    "bytes": 759440,
+    "sha256": "7982c4423fd86b5cddf1a2d3a7918c2810ba799b5ed7706cc0044ade78b4f7c9",
+    "triangles": {
+      "body": 9565,
+      "body-overview": 2176,
+      "cast-head": 1607,
+      "cast-head-overview": 399
+    }
+  },
+  "settings": {
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "reach": 0.03,
+    "scalpOut": 0.008,
+    "scalpIn": 0.006,
+    "maxScale": 0.15,
+    "samples": 4,
+    "bakeCage": 0.05,
+    "bakeReach": 0.12,
+    "eyes": "shared",
+    "eyeHalf": [
+      0.015,
+      0.0075
+    ],
+    "eyeFeather": 1.6,
+    "eyeFinder": {
+      "spot": [
+        2,
+        3
+      ],
+      "spotSurround": [
+        6,
+        9
+      ],
+      "opening": [
+        2,
+        7
+      ],
+      "openingSurround": [
+        7,
+        15
+      ],
+      "rows": 0.003
+    },
+    "mouthFinder": {
+      "fromNose": 0.018,
+      "belowNose": 0.045,
+      "lipShare": 0.35,
+      "lipContrast": 0.04,
+      "lipMargin": 0.003,
+      "valley": 0.0025
+    },
+    "neck": 1.5,
+    "headFrom": 1.45,
+    "bodyTo": 1.55,
+    "wrapFrom": 1.52,
+    "wrapFull": 1.57,
+    "scalp": 1.69
+  },
+  "landmarks": {
+    "his": {
+      "lips": 1.5628,
+      "centreX": -0.007,
+      "crown": 1.7723,
+      "nose": [
+        1.5953,
+        0.1318
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.04,
+          "height": 1.6393,
+          "depth": 0.0921,
+          "contrast": 0.1368
+        },
+        "left": {
+          "x": 0.027,
+          "height": 1.6383,
+          "depth": 0.0944,
+          "contrast": 0.1568
+        }
+      },
+      "eyeLine": 1.6388,
+      "eyeDepth": 0.0932,
+      "brows": {
+        "right": {
+          "x": -0.038,
+          "height": 1.6503
+        },
+        "left": {
+          "x": 0.018,
+          "height": 1.6493
+        }
+      },
+      "browLine": 1.6498,
+      "mouth": {
+        "x": -0.007,
+        "height": 1.5653
+      },
+      "eyeLevelGap": 0.001
+    },
+    "shared": {
+      "lips": 1.5651,
+      "centreX": -0.019,
+      "crown": 1.7566,
+      "nose": [
+        1.5946,
+        0.1472
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.051,
+          "height": 1.6316,
+          "depth": 0.1145,
+          "contrast": 0.1777
+        },
+        "left": {
+          "x": 0.009,
+          "height": 1.6316,
+          "depth": 0.1152,
+          "contrast": 0.1332
+        }
+      },
+      "eyeLine": 1.6316,
+      "eyeDepth": 0.1149,
+      "brows": {
+        "right": {
+          "x": -0.044,
+          "height": 1.6416
+        },
+        "left": {
+          "x": 0.004,
+          "height": 1.6406
+        }
+      },
+      "browLine": 1.6411,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5676
+      },
+      "eyeLevelGap": 0
+    },
+    "hisAligned": {
+      "lips": 1.5656,
+      "centreX": -0.019,
+      "crown": 1.7511,
+      "nose": [
+        1.5951,
+        0.1497
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.052,
+          "height": 1.6311,
+          "depth": 0.1133,
+          "contrast": 0.1324
+        },
+        "left": {
+          "x": 0.008,
+          "height": 1.6321,
+          "depth": 0.1161,
+          "contrast": 0.1554
+        }
+      },
+      "eyeLine": 1.6316,
+      "eyeDepth": 0.1147,
+      "brows": {
+        "right": {
+          "x": -0.05,
+          "height": 1.6421
+        },
+        "left": {
+          "x": 0.001,
+          "height": 1.6411
+        }
+      },
+      "browLine": 1.6416,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5671
+      },
+      "eyeLevelGap": 0.001
+    },
+    "wrapped": {
+      "lips": 1.5656,
+      "centreX": -0.022,
+      "crown": 1.7511,
+      "nose": [
+        1.6011,
+        0.1487
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.05,
+          "height": 1.6321,
+          "depth": 0.1158,
+          "contrast": 0.1322
+        },
+        "left": {
+          "x": 0.008,
+          "height": 1.6311,
+          "depth": 0.1154,
+          "contrast": 0.0974
+        }
+      },
+      "eyeLine": 1.6316,
+      "eyeDepth": 0.1156,
+      "brows": {
+        "right": {
+          "x": -0.057,
+          "height": 1.6431
+        },
+        "left": {
+          "x": 0,
+          "height": 1.6411
+        }
+      },
+      "browLine": 1.6421,
+      "mouth": {
+        "x": -0.022,
+        "height": 1.5671
+      },
+      "eyeLevelGap": 0.001
+    }
+  },
+  "fit": {
+    "scale": 0.8955,
+    "mouthFit": 0.9723,
+    "cast-head": {
+      "scalpHeld": 131,
+      "missed": 0,
+      "largestMove": 0.0198
+    },
+    "cast-head-overview": {
+      "scalpHeld": 33,
+      "missed": 0,
+      "largestMove": 0.0151
+    },
+    "unpainted": 0,
+    "sharedEyes": {
+      "changed": 0.0138,
+      "toneGain": [
+        0.781,
+        0.75,
+        0.75
+      ]
+    }
+  },
+  "review": null,
+  "pictures": [
+    "art-source/models/reports/char-cast-severianus-faces/cast-severianus-his-face.png",
+    "art-source/models/reports/char-cast-severianus-faces/cast-severianus-shared-face.png",
+    "art-source/models/reports/char-cast-severianus-faces/cast-severianus-his-aligned-face.png",
+    "art-source/models/reports/char-cast-severianus-faces/cast-severianus-wrapped-face.png"
+  ]
+}

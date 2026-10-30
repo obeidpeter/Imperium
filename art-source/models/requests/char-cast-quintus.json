@@ -1,0 +1,94 @@
+{
+  "id": "char-cast-quintus",
+  "status": "bound, his head wrapped onto the shared head, a level below the release 6 cast's maps, quantized and compressed: shipped",
+  "chapters": [
+    1,
+    4,
+    12
+  ],
+  "use": "Signifer Quintus, who keeps the standards at the principia in the camps of Chapters I and IV and on the drill field in XII: his own face, hair and build, in a legionary's mail. In camp he is drawn bare-headed and unarmed, as the camp's people are.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman legionary standard-bearer of the mid-3rd century AD, a sturdy man about twenty-eight years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with red bands at the cuffs; a broad leather military belt with bronze fittings and a ring buckle, dark wool trousers and closed leather boots. Bare head with short-cropped dark-brown hair and short stubble, a square open face with a straight nose, a light warm complexion and a steady, proud expression. Realistic proportions, historically accurate, worn and practical, muted colours. No helmet, no animal skin, no fur, no shield, no weapons, no standard, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, animal pelt, bear skin, wolf skin, fur, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "5f214921-8862-44dd-a8d4-9f6c23bc2d3d",
+    "requestedAt": "2026-10-30T08:29:13.354Z",
+    "balanceBefore": 1705,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman legionary standard-bearer of the mid-3rd century AD, a sturdy man about twenty-eight years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with red bands at the cuffs; a broad leather military belt with bronze fittings and a ring buckle, dark wool trousers and closed leather boots. Bare head with short-cropped dark-brown hair and short stubble, a square open face with a straight nose, a light warm complexion and a steady, proud expression. Realistic proportions, historically accurate, worn and practical, muted colours. No helmet, no animal skin, no fur, no shield, no weapons, no standard, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, animal pelt, bear skin, wolf skin, fur, helmet, shield, weapon, cloak, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-30T08:30:47.857Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-quintus.glb",
+    "rawBytes": 46601284,
+    "rawSha256": "31195a9729ded94a6726a7b2d57c01e71e1e33902034a0743893c7566856853e",
+    "tripoInput": {
+      "prompt": "Full-body Roman legionary standard-bearer of the mid-3rd century AD, a sturdy man about twenty-eight years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with red bands at the cuffs; a broad leather military belt with bronze fittings and a ring buckle, dark wool trousers and closed leather boots. Bare head with short-cropped dark-brown hair and short stubble, a square open face with a straight nose, a light warm complexion and a steady, proud expression. Realistic proportions, historically accurate, worn and practical, muted colours. No helmet, no animal skin, no fur, no shield, no weapons, no standard, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, breastplate, cuirass, muscle cuirass, shoulder plates, pauldrons, metal bands, studded straps, belt apron, animal pelt, bear skin, wolf skin, fur, helmet, shield, weapon, cloak, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-quintus-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "66d87c47-4d8d-4f9d-a268-92ac283f6c6b",
+      "requestedAt": "2026-10-30T08:30:55.116Z",
+      "balanceBefore": 1665,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "5f214921-8862-44dd-a8d4-9f6c23bc2d3d",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-30T08:31:48.166Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-quintus-rigged.glb",
+      "rawBytes": 61654128,
+      "rawSha256": "10c0c0a4b64c7543b52d02c3116cdf7e11c1af9a500f0308febce17c702299e5",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "5f214921-8862-44dd-a8d4-9f6c23bc2d3d",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

@@ -198,7 +198,8 @@ test('a lost encounter’s result shows its page of history, in the field and in
   state.encounter.status='won';assert.ok(!chamberResult(state).includes('Historical context'),'a won vote has no defeat page');
 });
 
-test('the camp’s women are drawn as women: Syra in her own body, the others as the procedural woman, never in a man’s body',()=>{
+test('the camp’s women are drawn as women: Syra and Aelia in their own bodies, the others as the procedural woman, never in a man’s body',()=>{
+  const own={'Syra the sutler':'camp-sutler','Aelia Dacia':'cast-aelia'};
   const women={4:['Syra the sutler'],7:['Vibia the wine-seller'],8:['Aelia Dacia','Dida the honey-seller'],10:['Aelia Dacia','Licinia of the river farms','Caecilia the grain-seller'],12:['Aelia Dacia','Syra the sutler']};
   for(let chapter=4;chapter<=12;chapter++){
     const world=Game.createCampWorld(stateFor(chapter)),drawn=world.actors.filter(a=>a.id!=='hero').map(a=>{const kit=actorKit(a,{chapter}),identity=actorIdentity(a,kit);return {name:a.name,kit,identity,body:actorBodyId(kit,identity.key)};});
@@ -206,8 +207,8 @@ test('the camp’s women are drawn as women: Syra in her own body, the others as
     for(const d of drawn){
       if(d.kit.female){
         assert.equal(d.identity.female,true,`${d.name} has a woman’s features`);assert.equal(d.identity.beard,0,`${d.name} has no beard`);
-        assert.equal(d.body,d.name.startsWith('Syra')?'camp-sutler':null,`${d.name} wears ${d.name.startsWith('Syra')?'her own body':'the procedural woman’s figure'}`);
-      }else{assert.ok(!d.identity.female,`${d.name} is drawn as a man`);assert.notEqual(d.body,'camp-sutler',`${d.name} never wears Syra’s body`);}
+        assert.equal(d.body,own[d.name]??null,`${d.name} wears ${own[d.name]?'her own body':'the procedural woman’s figure'}`);
+      }else{assert.ok(!d.identity.female,`${d.name} is drawn as a man`);assert.ok(!Object.values(own).includes(d.body),`${d.name} never wears a woman’s body`);}
     }
   }
   // A man in the trader's place keeps the civilian traveller's dress; a woman never does.

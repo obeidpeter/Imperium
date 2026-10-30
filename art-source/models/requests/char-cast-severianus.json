@@ -1,0 +1,97 @@
+{
+  "id": "char-cast-severianus",
+  "status": "bound, his head wrapped onto the shared head, a level below the release 6 cast's maps, quantized and compressed: shipped",
+  "chapters": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "use": "Marcus Aurelius Severianus, the equestrian patron whose favours follow the soldier's career, in the camps of Chapters VI to XI, and in XII's court when he backs the soldier: his own face, hair and build, in a rich civilian's striped tunic.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body wealthy Roman equestrian patron of the mid-3rd century AD, a well-fed man about forty-five years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an expensive long-sleeved ivory wool tunic to below the knee with two narrow purple stripes from the shoulders and purple bands at the cuffs, a broad leather belt with fine bronze fittings, and fine closed red-brown leather shoes. Bare head with receding greying curly hair, clean-shaven, a full round face with heavy cheeks, a short straight nose, an olive complexion and an observant, guarded expression. Realistic proportions, historically accurate, refined but restrained, muted colours. No armour, no weapons, no toga, no cloak, no mantle, no laurel or crown, no rings or jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "5c852320-6338-42bc-9479-e402852ff2f4",
+    "requestedAt": "2026-10-30T08:52:35.855Z",
+    "balanceBefore": 1615,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body wealthy Roman equestrian patron of the mid-3rd century AD, a well-fed man about forty-five years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an expensive long-sleeved ivory wool tunic to below the knee with two narrow purple stripes from the shoulders and purple bands at the cuffs, a broad leather belt with fine bronze fittings, and fine closed red-brown leather shoes. Bare head with receding greying curly hair, clean-shaven, a full round face with heavy cheeks, a short straight nose, an olive complexion and an observant, guarded expression. Realistic proportions, historically accurate, refined but restrained, muted colours. No armour, no weapons, no toga, no cloak, no mantle, no laurel or crown, no rings or jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-30T08:54:34.158Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-severianus.glb",
+    "rawBytes": 42630464,
+    "rawSha256": "a1bd135af2feea0d2164a855ce3ec33ae0c8eab30829bd88d05bd54f80c466f5",
+    "tripoInput": {
+      "prompt": "Full-body wealthy Roman equestrian patron of the mid-3rd century AD, a well-fed man about forty-five years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an expensive long-sleeved ivory wool tunic to below the knee with two narrow purple stripes from the shoulders and purple bands at the cuffs, a broad leather belt with fine bronze fittings, and fine closed red-brown leather shoes. Bare head with receding greying curly hair, clean-shaven, a full round face with heavy cheeks, a short straight nose, an olive complexion and an observant, guarded expression. Realistic proportions, historically accurate, refined but restrained, muted colours. No armour, no weapons, no toga, no cloak, no mantle, no laurel or crown, no rings or jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-severianus-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "204d62c2-89bb-454b-a955-8bccd5fa1eb9",
+      "requestedAt": "2026-10-30T08:54:42.627Z",
+      "balanceBefore": 1555,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "5c852320-6338-42bc-9479-e402852ff2f4",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-30T08:55:38.295Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-severianus-rigged.glb",
+      "rawBytes": 56842020,
+      "rawSha256": "df0dad247f371ebc733112584496cdee2b0d9b892bf4836f74e2758a9ee478bb",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "5c852320-6338-42bc-9479-e402852ff2f4",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

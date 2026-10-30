@@ -1,0 +1,94 @@
+{
+  "id": "char-cast-aelia",
+  "status": "bound with her own head, quantized and compressed: shipped",
+  "chapters": [
+    8,
+    10,
+    12
+  ],
+  "use": "Aelia Dacia, who speaks for the settlers' households in Dacia, in the camps of Chapters VIII, X and XII: her own face, hair and build, in a provincial matron's tunic, stola and mantle.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a settler leader in Dacia about thirty-five years old, standing in a T-pose for rigging: her arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length ivory wool tunic under a sleeveless ivory stola, girdled under the bust with a narrow woven belt, a muted terracotta wool mantle draped over her left shoulder and across her back, both arms free of it, and closed brown leather shoes. Her dark brown hair is parted in the middle and pinned simply back in a low knot, uncovered; strong attentive brown eyes, a firm jaw, a light olive complexion and a thoughtful, confident expression. Realistic proportions, historically accurate, practical and dignified, muted colours. No armour, no weapons, no cloak, no hood, no veil, no crown, no jewellery but small bronze earrings, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, tiara, jewellery, gold, low neckline, bare shoulders, modern dress, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "e25bffad-719f-4cb2-a8cb-607cdddfbd11",
+    "requestedAt": "2026-10-30T08:29:13.136Z",
+    "balanceBefore": 1705,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a settler leader in Dacia about thirty-five years old, standing in a T-pose for rigging: her arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length ivory wool tunic under a sleeveless ivory stola, girdled under the bust with a narrow woven belt, a muted terracotta wool mantle draped over her left shoulder and across her back, both arms free of it, and closed brown leather shoes. Her dark brown hair is parted in the middle and pinned simply back in a low knot, uncovered; strong attentive brown eyes, a firm jaw, a light olive complexion and a thoughtful, confident expression. Realistic proportions, historically accurate, practical and dignified, muted colours. No armour, no weapons, no cloak, no hood, no veil, no crown, no jewellery but small bronze earrings, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, tiara, jewellery, gold, low neckline, bare shoulders, modern dress, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-30T08:31:02.579Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-aelia.glb",
+    "rawBytes": 42786096,
+    "rawSha256": "cfaafbf3d59c24589ecf1876ac7e16cc57eab300a4088774de1014ee6693704c",
+    "tripoInput": {
+      "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a settler leader in Dacia about thirty-five years old, standing in a T-pose for rigging: her arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length ivory wool tunic under a sleeveless ivory stola, girdled under the bust with a narrow woven belt, a muted terracotta wool mantle draped over her left shoulder and across her back, both arms free of it, and closed brown leather shoes. Her dark brown hair is parted in the middle and pinned simply back in a low knot, uncovered; strong attentive brown eyes, a firm jaw, a light olive complexion and a thoughtful, confident expression. Realistic proportions, historically accurate, practical and dignified, muted colours. No armour, no weapons, no cloak, no hood, no veil, no crown, no jewellery but small bronze earrings, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, tiara, jewellery, gold, low neckline, bare shoulders, modern dress, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-aelia-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "4228a48e-ea13-436a-99b0-ef898c520a15",
+      "requestedAt": "2026-10-30T08:31:10.102Z",
+      "balanceBefore": 1640,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "e25bffad-719f-4cb2-a8cb-607cdddfbd11",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-30T08:32:17.869Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-aelia-rigged.glb",
+      "rawBytes": 57177512,
+      "rawSha256": "d3dd7ece98fae437ea016a63c79ed5328db9282cb6dacd8c5b5bacd2f53d614c",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "e25bffad-719f-4cb2-a8cb-607cdddfbd11",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

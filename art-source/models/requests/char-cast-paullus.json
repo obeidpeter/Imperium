@@ -1,0 +1,93 @@
+{
+  "id": "char-cast-paullus",
+  "status": "bound, his head wrapped onto the shared head, a level below the release 6 cast's maps, quantized and compressed: shipped",
+  "chapters": [
+    11,
+    12
+  ],
+  "use": "Lucius Cassius Paullus, the elder senator who speaks for the soldier in Rome, in the camps of Chapters XI and XII: his own face, hair and build, in a toga over a senator's broad-striped tunic. In the Senate's chamber the named keep the game's own toga.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about seventy years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large warm-ivory wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved ivory tunic with a broad deep red stripe down from each shoulder; reddish-brown closed shoes. Both arms free of the toga. Bare head with short white hair receding at the temples, clean-shaven, a long narrow lined face with prominent cheekbones, intelligent reserved eyes, a pale olive complexion and a dignified, solemn expression. Realistic proportions, historically accurate, restrained, muted colours. No armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "7ece438f-c31f-48b4-8637-789c7d766556",
+    "requestedAt": "2026-10-30T08:52:38.820Z",
+    "balanceBefore": 1595,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about seventy years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large warm-ivory wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved ivory tunic with a broad deep red stripe down from each shoulder; reddish-brown closed shoes. Both arms free of the toga. Bare head with short white hair receding at the temples, clean-shaven, a long narrow lined face with prominent cheekbones, intelligent reserved eyes, a pale olive complexion and a dignified, solemn expression. Realistic proportions, historically accurate, restrained, muted colours. No armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-30T08:54:42.655Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-paullus.glb",
+    "rawBytes": 43095636,
+    "rawSha256": "5e4b964558dfb28b23d4d3ad8826fedbef144ac1ff65e091d58f5d47a534bbba",
+    "tripoInput": {
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about seventy years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large warm-ivory wool toga over the left shoulder and across the body, its folds gathered into a broad flat band running diagonally across the chest from the left shoulder to the right hip, over a long-sleeved ivory tunic with a broad deep red stripe down from each shoulder; reddish-brown closed shoes. Both arms free of the toga. Bare head with short white hair receding at the temples, clean-shaven, a long narrow lined face with prominent cheekbones, intelligent reserved eyes, a pale olive complexion and a dignified, solemn expression. Realistic proportions, historically accurate, restrained, muted colours. No armour, no weapons, no cloak, no laurel or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, beard, modern suit, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-paullus-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "f58a2880-232c-41b8-b01e-4ac40931f2ac",
+      "requestedAt": "2026-10-30T08:54:50.246Z",
+      "balanceBefore": 1505,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "7ece438f-c31f-48b4-8637-789c7d766556",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-30T08:56:41.394Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-paullus-rigged.glb",
+      "rawBytes": 57473772,
+      "rawSha256": "8937c0a6b660536c03f8931d881193647dc960cab6487e45f47fefb1ed56366e",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "7ece438f-c31f-48b4-8637-789c7d766556",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}

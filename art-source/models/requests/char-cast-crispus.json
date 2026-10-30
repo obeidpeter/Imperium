@@ -2,9 +2,12 @@
   "id": "char-cast-crispus",
   "status": "bound, his head wrapped onto the shared head, quantized and compressed: shipped",
   "chapters": [
-    3
+    3,
+    4,
+    7,
+    11
   ],
-  "use": "Crispus, the young tribune and the protagonist's rival, in the Chapter III camp: his own face, hair and build, in an officer's fine tunic and belt; the game adds his cloak.",
+  "use": "Crispus, the young tribune and the protagonist's rival, in the camps of Chapters III, IV, VII and XI: his own face, hair and build, in an officer's fine tunic and belt; the game adds his cloak.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",

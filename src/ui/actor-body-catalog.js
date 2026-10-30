@@ -12,15 +12,20 @@
 // A bare-headed body keeps the figure's own helmet or cap, moved and scaled
 // from the procedural head (head-joint metres) to cover its head and hair.
 const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),scale:Object.freeze(scale)});
-// The chapters each named man appears in, in 3D (tests/actor-bodies.test.mjs checks them).
+// The chapters each named person appears in, in 3D (tests/actor-bodies.test.mjs checks them).
 // Since the living camps (release 8) Varro, Crispus and Brennus also stand in later camps.
 const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,4,5,6],
   // Sabinus takes Lucan's place from Chapter II when Lucan leaves.
-  sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3,4],crispus:[3,4,7,11]});
+  sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3,4],crispus:[3,4,7,11],
+  // Release 8's figures, by the camps they stand in (camps.js). Severianus also stands in Chapter
+  // XII's court when he backs the soldier, which no checked campaign earns: offline, XII's pack
+  // leaves his body out and he keeps the procedural figure there.
+  quintus:[1,4,12],aelia:[8,10,12],severianus:[6,7,8,9,10,11],paullus:[11,12],theon:[7,10,11]});
 // The chapters whose chamber the members of the Senate sit in.
 const SENATOR_CHAPTERS=[7,8,10,11,12];
 // A woman's body (woman) is worn only by the camp's women (actor-kit.js), and a man's never by them.
-const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator,woman});
+// A named man in civilian dress (civilian) wears no soldier's neckcloth over his head's seam (actors.js).
+const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false,civilian=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator,woman,civilian});
 // The recruit's head is the one every named man's face is made from, so a named man's
 // own body wears the game's helmet or cap as the recruit does.
 const SHARED_HEAD={position:[-.018,.04,.048],scale:[.85,.9,1.04]};
@@ -61,7 +66,14 @@ export const ACTOR_BODIES=Object.freeze({
   'cast-naso':body([],CAST_CHAPTERS.naso,{headwear:SHARED_HEAD,cast:'naso'}),
   'cast-felix':body([],CAST_CHAPTERS.felix,{headwear:SHARED_HEAD,cast:'felix'}),
   'cast-brennus':body([],CAST_CHAPTERS.brennus,{headwear:SHARED_HEAD,cast:'brennus'}),
-  'cast-crispus':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus'})
+  'cast-crispus':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus'}),
+  'cast-quintus':body([],CAST_CHAPTERS.quintus,{headwear:SHARED_HEAD,cast:'quintus'}),
+  // The patron, the senator and the rhetor in their own civilian dress.
+  'cast-severianus':body([],CAST_CHAPTERS.severianus,{headwear:SHARED_HEAD,cast:'severianus',civilian:true}),
+  'cast-paullus':body([],CAST_CHAPTERS.paullus,{headwear:SHARED_HEAD,cast:'paullus',civilian:true}),
+  'cast-theon':body([],CAST_CHAPTERS.theon,{headwear:SHARED_HEAD,cast:'theon',civilian:true}),
+  // Aelia's own body is a woman's, and keeps her own head as the camp's other women do.
+  'cast-aelia':body([],CAST_CHAPTERS.aelia,{cast:'aelia',woman:true})
 });
 /** A named man's own body by his identity key (actor-identity.js). */
 export const CAST_BODIES=Object.freeze(Object.fromEntries(Object.entries(ACTOR_BODIES).filter(([,b])=>b.cast).map(([id,b])=>[b.cast,id])));
@@ -76,8 +88,8 @@ export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 export function actorBodyId(kit={},cast=null){
   if(kit.civic)return kit.hero||cast&&!String(cast).startsWith('figure-')?null:SENATOR_BODIES[(kit.identity>>>0)%SENATOR_BODIES.length];
   if(cast&&Object.hasOwn(CAST_BODIES,cast))return CAST_BODIES[cast];
-  // A named person in camp dress with no body of their own (Severianus, Aelia and the rest of
-  // the cast, release 8) keeps the procedural figure and their own face, never a stranger's body.
+  // A named person in camp dress with no body of their own keeps the procedural figure and
+  // their own face, never a stranger's body.
   if(kit.escort&&cast&&!String(cast).startsWith('figure-'))return null;
   // A soldier drawn in his own kit (the real-time views and the kit panel)
   // wears the body closest to it: the protagonist the recruit's tunic until he

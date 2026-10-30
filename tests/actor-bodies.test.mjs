@@ -37,8 +37,9 @@ async function parse(id){
   return loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
 }
 const library=createActorBodyLibrary(parse);
-// A named legionary without a body of his own (Quintus wears the legionary's mail and the shared head).
-const legionary={id:'veteran-quintus',veteranId:'quintus',name:'Quintus',side:'ally',role:'infantry'};
+// A named legionary in the legionary's mail and the shared head. Since release 8 every man the cast
+// names has a body of his own, so it is the soldier himself, in a Chapter III legionary's kit.
+const legionary={id:'hero',name:'Aurelius Marcellus',side:'player',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
 test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies and both sides of Chapter II\'s decision, in turns and in real time', () => {
@@ -80,8 +81,8 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
     // Shipped compressed (scripts/assets/compress.mjs): KTX2 textures and meshopt geometry over quantized vertices.
     assert.deepEqual([...info.extensionsRequired].sort(),['EXT_meshopt_compression','KHR_mesh_quantization','KHR_texture_basisu'],id);
-    // A named man's own body brings his head, with its own three maps.
-    assert.ok(info.textures.length===(ACTOR_BODIES[id].cast?6:3)&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
+    // A named man's own body brings his head, with its own three maps; Aelia's head is her body's own.
+    assert.ok(info.textures.length===(ACTOR_BODIES[id].cast&&!ACTOR_BODIES[id].woman?6:3)&&info.textures.every(t=>t.mimeType==='image/ktx2'),`${id} has KTX2 textures`);
     // Soles on the game's sole plane, seven centimetres under the ankle joints.
     assert.ok(Math.abs(info.base-(-.02))<.006,`${id} stands on the game's sole plane (${info.base})`);
     const gltf=await parse(id),near=gltf.scene.getObjectByName('body'),overview=gltf.scene.getObjectByName('body-overview');
@@ -313,13 +314,13 @@ test('followers march in the generated overview and fallen bodies keep its colou
 test('followers never wear their leader\'s face: body and head followers share one shader with neutral uniforms', async()=>{
   const actor=createActor(legionary,{chapter:5,bodyLibrary:library});await actor.ready;
   const bodySource=actor.group.getObjectByName('generated-body-overview'),headSource=actor.group.getObjectByName('identity-head-overview'),crowd=createSkinnedCrowd(actor.group,{max:3});
-  assert.equal(headSource.material.userData.generatedIdentity,'quintus','The leader is Quintus');
-  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='quintus'),'No follower wears Quintus\'s face');
+  assert.equal(headSource.material.userData.generatedIdentity,'marcellus','The leader is the soldier');
+  assert.ok(crowd.meshes.every(m=>m.material.userData.generatedIdentity!=='marcellus'),'No follower wears the soldier\'s face');
   const body=crowd.meshes.find(m=>m.geometry.attributes.position===bodySource.geometry.attributes.position),neutralHead=followerHeadOf(headSource);
   const head=crowd.meshes.find(m=>m.geometry.attributes.position===neutralHead?.attributes.position);
   assert.ok(body&&head,'Followers wear the body and the donor\'s neutral head');assert.equal(neutralHead.userData.identity,'crowd-neutral');
   const named=headSource.geometry.attributes.position,plain=neutralHead.attributes.position;let moved=0;for(let i=0;i<plain.count;i++)if(Math.abs(plain.getZ(i)-named.getZ(i))>1e-4)moved++;
-  assert.ok(moved>0,'Quintus\'s sculpted features stay on the leader');
+  assert.ok(moved>0,'The soldier\'s sculpted features stay on the leader');
   for(const m of [body,head])assert.equal(m.material.userData.generatedIdentity,'crowd-neutral');
   assert.equal(body.material.map,bodySource.material.map);assert.equal(head.material.map,headSource.material.map,'The head keeps the donor\'s painted maps');
   assert.equal(body.castShadow,true);assert.equal(head.castShadow,true);
@@ -352,4 +353,21 @@ test('each chapter downloads the bodies its figures wear, and no others', () => 
     const group=chapterOfflineAssets(chapter,files);
     for(const id of Object.keys(ACTOR_BODIES))assert.equal(group.includes('./'+actorBodyUrl(id)),chapterBodies(chapter).includes(id),`${id} in chapter ${chapter}`);
   }
+});
+
+test('the camp\'s named civilians wear no soldier\'s neckcloth, and Aelia wears her own head', async () => {
+  const camp=(id,name,role,chapter)=>createActor({id,name,role,side:'neutral'},{chapter,bodyLibrary:library});
+  for(const [id,name,role,chapter,civilian]of [['quintus','Signifer Quintus','standard-bearer',4,false],['severianus','Marcus Aurelius Severianus','tribune',6,true],['paullus','Lucius Cassius Paullus','senator',11,true],['theon','Rhetor Theon','rhetor',10,true]]){
+    const a=camp(id,name,role,chapter);assert.equal(await a.ready,true);
+    assert.equal(a.group.userData.actor.body,`cast-${id}`);assert.equal(a.group.userData.actor.headSource,`cast-${id}`,`${name} wears his own wrapped head`);
+    assert.equal(!!a.group.getObjectByName('identity-neck-wrap'),!civilian,civilian?`${name} wears civilian dress, without the neckcloth`:`${name}, a soldier, wears the neckcloth`);
+    a.dispose();
+  }
+  const aelia=camp('aelia','Aelia Dacia','settler',8);assert.equal(await aelia.ready,true);
+  assert.equal(aelia.group.userData.actor.body,'cast-aelia');assert.equal(aelia.group.userData.actor.persistentIdentity,false,'no shared head');
+  assert.equal(aelia.group.getObjectByName('identity-head-near'),undefined);assert.equal(aelia.group.getObjectByName('identity-neck-wrap'),undefined);
+  // Her own head is her body's: the body reaches the crown, which a body cut at the neck does not.
+  const body=aelia.group.getObjectByName('generated-body');body.geometry.computeBoundingBox();
+  assert.ok(body.geometry.boundingBox.max.y>1.65,`Aelia's body brings her head (${body.geometry.boundingBox.max.y.toFixed(3)} m)`);
+  aelia.dispose();
 });
