@@ -127,6 +127,8 @@ export function restartInRealtime(state){
 // save code copied mid-encounter carries only its checkpoint. It can be turned off, never on. ———
 export function manualSaveProblem(state){
   if(!state)return 'There is no chronicle to save.';
+  // Practice is a copy of the chronicle: a slot would hold a game that cannot be loaded.
+  if(state.archiveReplay)return 'Practice is not saved. Your chronicle stays as it was.';
   if(state.ironDiscipline&&state.phase==='encounter')return 'Iron discipline: no saves inside an encounter.';
   return null;
 }

@@ -10,6 +10,7 @@ import {defeatPage} from './tactical-intel.js';
 import {missionDefeatCause as defeatCause,missionDefeatHelp as defeatHelp} from './realtime-mission-readout.js';
 import {victoryReason} from './field-experience.js';
 import {commitSoldierRewards} from '../core/soldier.js';
+import {archiveMutators} from './encounter-view.js';
 
 export {defeatCause,defeatHelp};
 
@@ -21,14 +22,24 @@ export {defeatCause,defeatHelp};
 
 const chapterOf=state=>CHAPTERS.find(c=>c.id===state.chapter);
 
+// Practice (the Archive's sandbox replay, game.js createArchiveReplay): a copy of the
+// chronicle that is never saved, with the board's mutators. A chamber's record counts hours.
+export function practiceBanner(state,{chamber=false}={}){
+  const m=state.archiveReplay;if(!m)return '';
+  return `<div class="archive-banner" role="status"><div><span class="eyebrow">ARCHIVE OF THE REIGN · SANDBOX REPLAY</span><strong>${esc(m.title)}</strong>`+
+    `<span>Chronicle record: ${m.recordedTurns} ${chamber?'hours':'rounds'} · ${m.recordedLosses} withdrawn. Primary save is untouched.</span></div>`+
+    `${archiveMutators(state,{field:!chamber})}<button class="ghost small" data-cmd="exit-archive">Return to chronicle →</button></div>`;
+}
+
 export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap}){
   const e=state.encounter,chapter=chapterOf(state);
   return `<main id="main" class="encounter-frame realtime-frame world-first" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
     <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · Real time</span>
-      <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
+      <span class="save-status" role="status">${state.archiveReplay?'Not saved':saving?'Saving…':lastSaved?'Saved':''}</span></div>
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
+    ${practiceBanner(state)}
     ${e.status==='active'?'':realtimeResult(state,{keymap})}
     <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
   </main>`;
@@ -163,14 +174,14 @@ export function fieldMarkup({state,keymap,kind='field'}){
 // party did, what the result will grant when recorded, and, after a defeat,
 // what went wrong and what might help (§3.11).
 export function realtimeResult(state,{keymap}={}){
-  const e=state.encounter,world=e.realtime?.world,won=e.status==='won';
+  const e=state.encounter,world=e.realtime?.world,won=e.status==='won',practice=state.archiveReplay;
   if(!world)return '';
   const ours=new Set([world.heroId,...world.party]),hero=world.actors.find(a=>a.id===world.heroId);
   const kills=world.actors.filter(a=>a.side==='enemy'&&!a.alive&&ours.has(a.killedBy)),party=world.actors.filter(a=>world.party.includes(a.id));
   const seconds=Math.round(world.tick/TIME.ticksPerSecond),time=`${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;
   const staged=e.staged??{},spoils=(staged.spoils??[]).map(id=>ITEMS[id]?.name??id);
   const killTP=Math.min(TP.killCap,staged.killTP??0),commendations=staged.commendations??[];
-  const draft=won&&state.soldier?structuredClone(state):null,rewards=draft?commitSoldierRewards(draft,draft.encounter):null;
+  const draft=won&&state.soldier&&!practice?structuredClone(state):null,rewards=draft?commitSoldierRewards(draft,draft.encounter):null;
   const rows=[['Battle time',time],['Enemies your party struck down',`${kills.length}`],
     ['Companions',party.length?party.map(a=>`${a.name}: ${!a.alive?'fallen':a.down?'down':`${a.hp} of ${a.maxHp} Health`}`).join(' · '):'none in the field'],
     ['Your soldier',hero?`${hero.alive?`${hero.hp} of ${hero.maxHp} Health`:'fallen'}`:'—']];
@@ -184,21 +195,23 @@ export function realtimeResult(state,{keymap}={}){
   // The field's opportunity (guide "Field objects").
   if(world.field){const f=world.field,taken=f.choice?world.objects.find(o=>o.field&&o.kind===f.choice):null;
     rows.push(['Field opportunity',taken?`${taken.name}: secured`:f.outcome==='missed'?'Both closed at the end of round '+f.deadline:'None taken']);}
-  if(won)rows.push(['Training points when recorded',`${killTP} for the fallen${commendations.length?`, ${commendations.reduce((n,c)=>n+c.tp,0)} for distinguished service`:''}, and the objective’s own`]);
-  if(staged.fieldReport)rows.push(['Campaign consequences',fieldReportText(staged.fieldReport)]);
-  if(spoils.length)rows.push(['Taken from the field',spoils.join(', ')]);
+  if(won&&!practice)rows.push(['Training points when recorded',`${killTP} for the fallen${commendations.length?`, ${commendations.reduce((n,c)=>n+c.tp,0)} for distinguished service`:''}, and the objective’s own`]);
+  if(staged.fieldReport&&!practice)rows.push(['Campaign consequences',fieldReportText(staged.fieldReport)]);
+  if(spoils.length&&!practice)rows.push(['Taken from the field',spoils.join(', ')]);
+  if(practice)rows.push(['Rounds',`${e.turn} in this practice, ${practice.recordedTurns} in your chronicle`]);
   const lines=world.log.slice(-6).map(l=>`<li>${esc(l.text)}</li>`).join('');
   // What the fallen still carry: searched here, the pack receives it when the result is recorded.
-  const bodies=won?world.actors.filter(a=>!a.alive&&a.side==='enemy'&&a.loot?.length):[];
+  const bodies=won&&!practice?world.actors.filter(a=>!a.alive&&a.side==='enemy'&&a.loot?.length):[];
   const search=bodies.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the fallen</h3><ul class="rt-loot">${bodies.map(b=>
     `<li><span><strong>${esc(b.name)}</strong>: ${esc(b.loot.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
     `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}</ul></section>`:'';
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
-    <span class="eyebrow">BATTLE RESULT</span>
+    <span class="eyebrow">${practice?'PRACTICE · ':''}BATTLE RESULT</span>
     <h2 id="rt-result-title" tabindex="-1">${won?'Objective complete':'Try this battle again'}</h2>
     ${won?`<p class="rt-victory-reason">${esc(victoryReason(world))}</p>`:''}
     ${rewards?`<p class="rt-reward-summary">Earned: <strong>${rewards.tp} training points</strong>${rewards.denarii?` · ${rewards.denarii} denarii`:''}${rewards.decorations.length?` · ${rewards.decorations.length} decorations`:''}. Collected equipment is kept when you continue.</p>`:''}
-    <div class="panel-actions rt-result-actions">${won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
+    <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry battle'}</button><button data-cmd="exit-archive">Return to chronicle →</button>`
+      :won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
     ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
     ${search?`<details class="rt-result-loot"><summary>Collect spoils · ${bodies.length} ${bodies.length===1?'body':'bodies'}</summary>${search}</details>`:''}
     <details class="rt-result-details"><summary>Battle details &amp; rewards</summary>
@@ -208,6 +221,6 @@ export function realtimeResult(state,{keymap}={}){
     </details>
     ${won?'':defeatPage(e)}
     <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol><button type="button" data-close-disclosure>Close log</button></details>
-    <p class="result-save-note">${won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
+    <p class="result-save-note">${practice?'Practice is not recorded: your chronicle is as you left it.':won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
   </section>`;
 }

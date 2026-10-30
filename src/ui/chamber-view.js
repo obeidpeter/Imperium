@@ -8,6 +8,7 @@ import {precedentPanel} from './encounter-view.js';
 import {delegateAppealSummary} from './direct-controls.js';
 import {hearingDocuments} from '../core/chamber.js';
 import {delegatePortrait} from './delegate-portrait.js';
+import {practiceBanner} from './realtime-view.js';
 
 // The page around a walk-and-talk chamber (build brief §3.11). The chamber itself
 // (the scene, the speakers, the speeches, the conversation and the coalition
@@ -26,9 +27,10 @@ export function chamberEncounterView({state,saving,lastSaved,saveProblem,saveCon
   return `<main id="main" class="encounter-frame realtime-frame chamber-frame world-first" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
     <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · The chamber</span>
-      <span class="save-status" role="status">${saving?'Saving…':lastSaved?'Saved':''}</span></div>
+      <span class="save-status" role="status">${state.archiveReplay?'Not saved':saving?'Saving…':lastSaved?'Saved':''}</span></div>
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
+    ${practiceBanner(state,{chamber:true})}
     ${e.status==='active'?'':chamberResult(state)}
     <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
     <section class="chamber-records" aria-label="The motion, the members and the record" data-key="chamber-records:${esc(e.id)}">
@@ -46,24 +48,27 @@ export function chamberEncounterView({state,saving,lastSaved,saveProblem,saveCon
 }
 
 // The vote and what follows it: Record the result, or Retry and, once, a patron's backing (guide "Defeat and recovery").
+// Practice records nothing: it offers another session or the way back to the chronicle, and no patron.
 export function chamberResult(state){
-  const e=state.encounter,won=e.status==='won',v=Game.voteCount(state),debrief=encounterDebrief(e);
+  const e=state.encounter,won=e.status==='won',v=Game.voteCount(state),debrief=encounterDebrief(e),practice=state.archiveReplay;
   const speakers=e.units.filter(u=>['player','ally'].includes(u.side)&&u.role==='speaker'),obligations=e.staged?.obligations??[],agreements=e.staged?.agreements??[];
   const rows=[['The vote',`${v.for} for, ${v.against} against; ${v.majority} needed`],['Hours',`${e.turn} of ${e.turnLimit}`],
     ['Your speakers',speakers.map(u=>`${u.name}: ${u.resolve>0?`${u.resolve} of ${u.maxResolve} Resolve`:'withdrawn'}`).join(' · ')],
     ['Promises made',obligations.length?obligations.map(o=>`${o.to}: ${Number(o.cost)||2} supplies, due Chapter ${roman(o.due)}`).join(' · '):'none']];
   if(agreements.length)rows.push(['Agreements',agreements.map(a=>`${a.personName}: ${a.cost} supplies, due Chapter ${roman(a.due)}`).join(' · ')]);
   return `<section class="result command-result rt-result chamber-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="chamber-result-title">
-    <span class="eyebrow">${won?'THE DIVISION · THE MOTION CARRIES':'THE DIVISION · A CHANCE TO REGROUP'}</span>
+    <span class="eyebrow">${practice?'PRACTICE · ':''}${won?'THE DIVISION · THE MOTION CARRIES':'THE DIVISION · A CHANCE TO REGROUP'}</span>
     <h2 id="chamber-result-title" tabindex="-1">${won?'The motion carries.':'The motion is defeated.'}</h2>
-    <div class="panel-actions rt-result-actions">${won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
+    <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry the checkpoint'}</button><button data-cmd="exit-archive">Return to chronicle →</button>`
+      :won?'<button class="primary" data-cmd="commit">Record the result →</button>':'<button class="primary" data-cmd="retry">Retry the checkpoint</button>'}</div>
     <p>${esc(hourly(e.log?.at(-1)??''))}</p>
     <details><summary>Vote, rewards and commitments</summary><dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl></details>
     ${debrief.distinguished?`<p class="debrief-citation"><strong>Distinguished service:</strong> ${esc(debrief.distinguished.citation)}</p>`:''}
     ${!won&&debrief.diagnostic?`<p class="defeat-diagnostic"><strong>What went wrong:</strong> ${esc(debrief.diagnostic)}</p>`:''}
     ${won?'':defeatPage(e)}
-    <p class="result-save-note">${won?'Record the result to keep the rewards, promises and consequences.':'Retry restores the chamber exactly as it began, supplies and promises included.'}</p>
-    ${!won&&!e.fallback?'<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><div class="panel-actions"><button data-cmd="fallback">Accept backing and re-run the vote</button></div>':''}
+    <p class="result-save-note">${practice?`Practice is not recorded: ${e.turn} hours in this practice, ${practice.recordedTurns} in your chronicle.`
+      :won?'Record the result to keep the rewards, promises and consequences.':'Retry restores the chamber exactly as it began, supplies and promises included.'}</p>
+    ${!won&&!e.fallback&&!practice?'<p>A patron can fund another vote: two supplies now, a five-supply debt at accession. The vote must still be won.</p><div class="panel-actions"><button data-cmd="fallback">Accept backing and re-run the vote</button></div>':''}
   </section>`;
 }
 
