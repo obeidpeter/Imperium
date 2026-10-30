@@ -1,0 +1,287 @@
+{
+  "tool": "scripts/assets/wrap-cast-head.py",
+  "blender": "5.2.2 LTS",
+  "body": {
+    "path": "intermediate: char-cast-paullus bound by bind-character.py (not kept)",
+    "sha256": "f52d3435178357b8214aa7f1b9660095c25ea6a060c6c1ca95e7c9c4a223b845"
+  },
+  "donor": {
+    "path": "intermediate: char-roman-recruit bound by bind-character.py, unquantized (not kept)",
+    "sha256": "d4464a916814762b72535d7aebaf461150dc339f2d194b950c815b0c1f52accc"
+  },
+  "paint": {
+    "path": "intermediate: char-cast-paullus bound again by bind-character.py with larger maps, as his head's paint (not kept)",
+    "sha256": "120765a4a9a8e1217c3d313e4fd88f9b5c60186219a5efbf2b6730b51e9f70d7",
+    "bind": {
+      "input": "art-source/models/raw/char-cast-paullus-rigged.glb",
+      "settings": {
+        "triangles": 12000,
+        "overviewTriangles": 2500,
+        "texture": 2048,
+        "detailTexture": 1024,
+        "webpQuality": 80,
+        "clavicleDegrees": 10,
+        "sharpAngle": 60
+      },
+      "sameGeometry": true
+    }
+  },
+  "output": {
+    "path": "intermediate: cast-paullus with the wrapped head, before quantizing (not kept)",
+    "bytes": 812860,
+    "sha256": "b673aa8cbd9b5675251bbf9a83c97bb0acf3c6c2e9dc50138efb09bc689b896a",
+    "triangles": {
+      "body": 10691,
+      "body-overview": 2373,
+      "cast-head": 1607,
+      "cast-head-overview": 399
+    }
+  },
+  "settings": {
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "reach": 0.03,
+    "scalpOut": 0.008,
+    "scalpIn": 0.006,
+    "maxScale": 0.15,
+    "samples": 4,
+    "bakeCage": 0.05,
+    "bakeReach": 0.12,
+    "eyes": "shared",
+    "eyeHalf": [
+      0.015,
+      0.0075
+    ],
+    "eyeFeather": 1.6,
+    "eyeFinder": {
+      "spot": [
+        2,
+        3
+      ],
+      "spotSurround": [
+        6,
+        9
+      ],
+      "opening": [
+        2,
+        7
+      ],
+      "openingSurround": [
+        7,
+        15
+      ],
+      "rows": 0.003
+    },
+    "mouthFinder": {
+      "fromNose": 0.018,
+      "belowNose": 0.045,
+      "lipShare": 0.35,
+      "lipContrast": 0.04,
+      "lipMargin": 0.003,
+      "valley": 0.0025
+    },
+    "neck": 1.5,
+    "headFrom": 1.45,
+    "bodyTo": 1.55,
+    "wrapFrom": 1.52,
+    "wrapFull": 1.57,
+    "scalp": 1.69
+  },
+  "landmarks": {
+    "his": {
+      "lips": 1.5565,
+      "centreX": 0.002,
+      "crown": 1.7525,
+      "nose": [
+        1.5875,
+        0.1513
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.035,
+          "height": 1.6375,
+          "depth": 0.1161,
+          "contrast": 0.1541
+        },
+        "left": {
+          "x": 0.027,
+          "height": 1.6365,
+          "depth": 0.1121,
+          "contrast": 0.1553
+        }
+      },
+      "eyeLine": 1.637,
+      "eyeDepth": 0.1141,
+      "brows": {
+        "right": {
+          "x": -0.043,
+          "height": 1.6435
+        },
+        "left": {
+          "x": 0.034,
+          "height": 1.6435
+        }
+      },
+      "browLine": 1.6435,
+      "mouth": {
+        "x": 0.002,
+        "height": 1.5615
+      },
+      "eyeLevelGap": 0.001
+    },
+    "shared": {
+      "lips": 1.5651,
+      "centreX": -0.019,
+      "crown": 1.7566,
+      "nose": [
+        1.5946,
+        0.1472
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.051,
+          "height": 1.6316,
+          "depth": 0.1145,
+          "contrast": 0.1777
+        },
+        "left": {
+          "x": 0.009,
+          "height": 1.6316,
+          "depth": 0.1152,
+          "contrast": 0.1332
+        }
+      },
+      "eyeLine": 1.6316,
+      "eyeDepth": 0.1149,
+      "brows": {
+        "right": {
+          "x": -0.044,
+          "height": 1.6416
+        },
+        "left": {
+          "x": 0.004,
+          "height": 1.6406
+        }
+      },
+      "browLine": 1.6411,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5676
+      },
+      "eyeLevelGap": 0
+    },
+    "hisAligned": {
+      "lips": 1.5594,
+      "centreX": -0.016,
+      "crown": 1.7434,
+      "nose": [
+        1.5904,
+        0.1505
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.051,
+          "height": 1.6324,
+          "depth": 0.1173,
+          "contrast": 0.1459
+        },
+        "left": {
+          "x": 0.009,
+          "height": 1.6314,
+          "depth": 0.113,
+          "contrast": 0.1497
+        }
+      },
+      "eyeLine": 1.6319,
+      "eyeDepth": 0.1152,
+      "brows": {
+        "right": {
+          "x": -0.06,
+          "height": 1.6384
+        },
+        "left": {
+          "x": 0.017,
+          "height": 1.6384
+        }
+      },
+      "browLine": 1.6384,
+      "mouth": {
+        "x": -0.016,
+        "height": 1.5674
+      },
+      "eyeLevelGap": 0.001
+    },
+    "wrapped": {
+      "lips": 1.5643,
+      "centreX": -0.019,
+      "crown": 1.7513,
+      "nose": [
+        1.5953,
+        0.1482
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.051,
+          "height": 1.6313,
+          "depth": 0.1159,
+          "contrast": 0.1451
+        },
+        "left": {
+          "x": 0.007,
+          "height": 1.6313,
+          "depth": 0.114,
+          "contrast": 0.1108
+        }
+      },
+      "eyeLine": 1.6313,
+      "eyeDepth": 0.1149,
+      "brows": {
+        "right": {
+          "x": -0.045,
+          "height": 1.6393
+        },
+        "left": {
+          "x": 0.004,
+          "height": 1.6393
+        }
+      },
+      "browLine": 1.6393,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5673
+      },
+      "eyeLevelGap": 0
+    }
+  },
+  "fit": {
+    "scale": 0.9677,
+    "mouthFit": 0.8759,
+    "cast-head": {
+      "scalpHeld": 135,
+      "missed": 4,
+      "largestMove": 0.0104
+    },
+    "cast-head-overview": {
+      "scalpHeld": 33,
+      "missed": 2,
+      "largestMove": 0.0077
+    },
+    "unpainted": 0,
+    "sharedEyes": {
+      "changed": 0.0089,
+      "toneGain": [
+        0.863,
+        0.887,
+        0.882
+      ]
+    }
+  },
+  "review": null,
+  "pictures": [
+    "art-source/models/reports/char-cast-paullus-faces/cast-paullus-his-face.png",
+    "art-source/models/reports/char-cast-paullus-faces/cast-paullus-shared-face.png",
+    "art-source/models/reports/char-cast-paullus-faces/cast-paullus-his-aligned-face.png",
+    "art-source/models/reports/char-cast-paullus-faces/cast-paullus-wrapped-face.png"
+  ]
+}

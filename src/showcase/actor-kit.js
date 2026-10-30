@@ -1,7 +1,7 @@
 import {ITEMS} from '../data/items.js';
 // The camp's women, by the names the camps give them (data/camps.js): Syra the sutler,
 // the traders Vibia, Dida and Caecilia, Licinia the witness and Aelia Dacia. Each is drawn
-// as a woman, in Syra's own body or the procedural woman's figure, never in a man's body;
+// as a woman, in Syra's or Aelia's own body or the procedural woman's figure, never in a man's body;
 // "Aelia's households" are not Aelia (as actor-identity.js reads the cast's names).
 const WOMEN=/^(syra|vibia|dida|caecilia|licinia|aelia)\b(?![’']s\b)/i;
 // Presentation classification only. Names preserve a defecting unit's original

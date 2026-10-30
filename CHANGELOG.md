@@ -2,6 +2,16 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 8: the five camp figures ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md#the-five-figures-30-october))
+
+The last of release 8's living camps: the named people it brought into the camps now wear their own generated bodies and faces, as the rest of the cast has since release 6.
+
+- **Severianus, Paullus and Theon** stand in their own dress: the patron in a rich tunic edged with purple, the senator in his toga, the rhetor in his tunic and dark mantle. Each has his own face on the shared head, so he blinks and speaks as the named soldiers do, and none of them wears the soldiers' neckcloth.
+- **Signifer Quintus** wears his mail in the camps of Chapters I, IV and XII.
+- **Aelia** keeps her own generated head, with her hair pinned back and her earrings, as Syra and the camp's other women do. She does not blink or change expression.
+- **Downloads.** The four men's maps are a level below the earlier cast's, as they stand only in camps: Chapter VII, the largest download, grows from 23.21 to 23.94 MB, within its 24 MB limit.
+- **Offline,** Severianus in Chapter XII's court keeps the procedural figure, as XII's pack leaves his body out; online he wears it there too.
+
 ### Worlds and gameplay, release 10: Gate 4 and 0.40.0 ([plan](docs/worlds-and-gameplay-plan.md), [play-through checklist](docs/gate4-playthrough.md))
 
 The last of ten releases, in progress: Practice in real time, and the checklist for the owner's Gate 4 play-through. Real time becomes the default, and 0.40.0 is released, after that play-through.

@@ -2,9 +2,10 @@
   "id": "char-cast-brennus",
   "status": "bound, his head wrapped onto the shared head, quantized and compressed: shipped",
   "chapters": [
-    3
+    3,
+    4
   ],
-  "use": "Brennus, the explorator who teaches the scouts' craft in the Chapter III camp: his own face, hair and build, in a scout's plain wool clothes; the game adds his cloak and whatever his kit carries.",
+  "use": "Brennus, the explorator who teaches the scouts' craft in the camps of Chapters III and IV: his own face, hair and build, in a scout's plain wool clothes; the game adds his cloak and whatever his kit carries.",
   "generator": {
     "service": "Tripo",
     "task": "text_to_model",

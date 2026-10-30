@@ -490,6 +490,120 @@
       "reconciliation": "19 text-to-model tasks reported 20 credits each and 15 biped rigs 25 each: 755 credits. The wallet balance fell from 3520 to 2765, matching. Lucan's first two attempts came back in segmented plate and were rejected (65 credits of the 150 allowed for retries); every other model was selected at its first attempt. 85 credits of the cap were not spent."
     },
     {
+      "release": 8,
+      "title": "Living camps: the five figures",
+      "date": "2026-10-30",
+      "plannedCredits": 315,
+      "spentCredits": 225,
+      "reservedCredits": 0,
+      "startingBalance": 1705,
+      "endingBalance": 1480,
+      "approval": "The owner approved the five figures before any credit was spent: \"Approve the five figures for release 8\" (2026-10-30): Severianus, Aelia, Paullus, Theon and Quintus, moved from release 6, at 45 credits each (text-to-model 20, biped rig 25), 225 in all, and up to 90 for retries; a cap of 315. Spending began with a gate (Aelia and Quintus) to stop if a figure failed in the game.",
+      "reconciliation": "Five text-to-model tasks reported 20 credits each and five biped rigs 25 each: 225 credits. The wallet balance fell from 1705 to 1480, matching. Every figure was selected at its first attempt; none of the 90 credits allowed for retries was spent. Aelia ships with her own generated head instead of the shared head's wrap, a processing choice that cost no credits.",
+      "tasks": [
+        {
+          "id": "char-cast-aelia",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e25bffad-719f-4cb2-a8cb-607cdddfbd11",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-aelia rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "4228a48e-ea13-436a-99b0-ef898c520a15",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-quintus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5f214921-8862-44dd-a8d4-9f6c23bc2d3d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-quintus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "66d87c47-4d8d-4f9d-a268-92ac283f6c6b",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-severianus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5c852320-6338-42bc-9479-e402852ff2f4",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-severianus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "204d62c2-89bb-454b-a955-8bccd5fa1eb9",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-paullus",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7ece438f-c31f-48b4-8637-789c7d766556",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-paullus rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "f58a2880-232c-41b8-b01e-4ac40931f2ac",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        },
+        {
+          "id": "char-cast-theon",
+          "kind": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d0492c0d-fd17-46dd-bd3a-a4a24944ce3d",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "char-cast-theon rig",
+          "kind": "animate_rig",
+          "expectedCredits": 25,
+          "status": "success",
+          "taskId": "a7cff793-1feb-4d66-b6b5-0f5d84696769",
+          "creditsReported": 25,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 25
+        }
+      ]
+    },
+    {
       "release": 9,
       "title": "Landmarks and set pieces",
       "date": "2026-10-29",
@@ -1041,7 +1155,7 @@
       ]
     }
   ],
-  "spentCredits": 2055,
-  "remainingAuthorization": 445,
+  "spentCredits": 2280,
+  "remainingAuthorization": 220,
   "note": "Release 4 spent no credits (its board kit is original Blender work); the balance read 3760 before and after it. Each release's tasks reconcile with the wallet balance, read through the Tripo API before and after."
 }

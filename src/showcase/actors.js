@@ -347,8 +347,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
   }
   if(kit.cap&&!kit.helmet){const cap=fitted(part(head,'equipped-arming-cap'));mesh(cap,helmetBowlGeometry({detail:false,seed:kit.identity}),clothDark);}
   mountCharacterDetail(unit,kit,{torso,head,cloth,clothDark,leather,bronze,mesh,strip,ellipsoid:faceDetail,profile});
-  if(identityBody&&body&&bodyId!==IDENTITY_HEAD_BODY){
-    // A folded military neckcloth bridges independently generated necklines.
+  if(identityBody&&body&&bodyId!==IDENTITY_HEAD_BODY&&!ACTOR_BODIES[bodyId]?.civilian){
+    // A folded military neckcloth bridges independently generated necklines; a named man
+    // in civilian dress wears none, his own neck meeting his tunic's.
     // It sits over the cut seam and follows the torso rather than stretching
     // facial vertices down into a different rank body's collar.
     const wrap=part(torso,'identity-neck-wrap',-.018,0,.008);

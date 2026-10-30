@@ -9867,7 +9867,7 @@
         }
       },
       "usage": "Varro, the drill instructor, wherever he is drawn until his fate in Chapter VI: the game adds his helmet or cap, staff or weapons and cloak.",
-      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 655692,
@@ -10367,8 +10367,8 @@
           "report": "art-source/models/reports/char-cast-brennus-compress.json"
         }
       },
-      "usage": "Brennus, the explorator of the Chapter III camp, in a scout's plain wool clothes: the game adds his cloak.",
-      "loading": "Deferred local GLB in the offline groups of Chapter III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "usage": "Brennus, the explorator, in the camps of Chapters III and IV, in a scout's plain wool clothes: the game adds his cloak.",
+      "loading": "Deferred local GLB in the offline groups of Chapters III and IV only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 659252,
@@ -10480,8 +10480,8 @@
           "report": "art-source/models/reports/char-cast-crispus-compress.json"
         }
       },
-      "usage": "Crispus, the young tribune and the protagonist's rival, in the Chapter III camp, in an officer's tunic and belt: the game adds his cloak. In the chamber he keeps the procedural toga whose trims name his bloc.",
-      "loading": "Deferred local GLB in the offline groups of Chapter III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
+      "usage": "Crispus, the young tribune and the protagonist's rival, in the camps of Chapters III, IV, VII and XI, in an officer's tunic and belt: the game adds his cloak. In the chamber he keeps the procedural toga whose trims name his bloc.",
+      "loading": "Deferred local GLB in the offline groups of Chapters III, IV, VII and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 662200,
@@ -10641,7 +10641,7 @@
         }
       },
       "usage": "Syra the sutler, who trades in the canabae outside the camp, chosen by her camp role; drawn as a man until release 6.",
-      "loading": "Deferred local GLB in the offline groups of Chapters I, II and III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 410352,
@@ -13913,6 +13913,512 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-quintus",
+      "path": "assets/models/characters/cast-quintus.glb",
+      "subject": "Generated character body and head: Signifer Quintus, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5f214921-8862-44dd-a8d4-9f6c23bc2d3d",
+        "generatedAt": "2026-10-30T08:30:47.857Z",
+        "rigTaskId": "66d87c47-4d8d-4f9d-a268-92ac283f6c6b",
+        "riggedAt": "2026-10-30T08:31:48.166Z",
+        "prompt": "art-source/models/requests/char-cast-quintus.json",
+        "rawBytes": 46601284,
+        "rawSha256": "31195a9729ded94a6726a7b2d57c01e71e1e33902034a0743893c7566856853e",
+        "riggedBytes": 61654128,
+        "riggedSha256": "10c0c0a4b64c7543b52d02c3116cdf7e11c1af9a500f0308febce17c702299e5",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-quintus.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-quintus-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-quintus-faces/",
+          "settings": {
+            "texture": 512,
+            "detailTexture": 256,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
+            "mouthFinder": {
+              "fromNose": 0.018,
+              "belowNose": 0.045,
+              "lipShare": 0.35,
+              "lipContrast": 0.04,
+              "lipMargin": 0.003,
+              "valley": 0.0025
+            },
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 1.0435,
+          "mouthFit": 0.9293,
+          "review": "his eyes set from the report pictures (--his-eyes), as the finder misread them",
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 512 pixels",
+          "unpainted": 0
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-30",
+          "report": "art-source/models/reports/char-cast-quintus-compress.json"
+        }
+      },
+      "usage": "Signifer Quintus, who keeps the standards at the principia in the camps of Chapters I and IV and on the drill field in XII: his own face, hair and build, in a legionary's mail. In camp he is drawn bare-headed and unarmed, as the camp's people are. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, IV and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Signifer Quintus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 397788,
+        "sha256": "f0386d3be10918fce00ab8a8f2ab6713162baef0b05e86a66f4350c4397d7387",
+        "triangles": 14940,
+        "textures": 6,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.6031,
+          "height": 1.7739,
+          "depth": 0.3701
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-severianus",
+      "path": "assets/models/characters/cast-severianus.glb",
+      "subject": "Generated character body and head: Severianus, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5c852320-6338-42bc-9479-e402852ff2f4",
+        "generatedAt": "2026-10-30T08:54:34.158Z",
+        "rigTaskId": "204d62c2-89bb-454b-a955-8bccd5fa1eb9",
+        "riggedAt": "2026-10-30T08:55:38.295Z",
+        "prompt": "art-source/models/requests/char-cast-severianus.json",
+        "rawBytes": 42630464,
+        "rawSha256": "a1bd135af2feea0d2164a855ce3ec33ae0c8eab30829bd88d05bd54f80c466f5",
+        "riggedBytes": 56842020,
+        "riggedSha256": "df0dad247f371ebc733112584496cdee2b0d9b892bf4836f74e2758a9ee478bb",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-severianus.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-severianus-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-severianus-faces/",
+          "settings": {
+            "texture": 512,
+            "detailTexture": 256,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
+            "mouthFinder": {
+              "fromNose": 0.018,
+              "belowNose": 0.045,
+              "lipShare": 0.35,
+              "lipContrast": 0.04,
+              "lipMargin": 0.003,
+              "valley": 0.0025
+            },
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 0.8955,
+          "mouthFit": 0.9723,
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 512 pixels",
+          "unpainted": 0
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-30",
+          "report": "art-source/models/reports/char-cast-severianus-compress.json"
+        }
+      },
+      "usage": "Marcus Aurelius Severianus, the equestrian patron whose favours follow the soldier's career, in the camps of Chapters VI to XI, and in XII's court when he backs the soldier: his own face, hair and build, in a rich civilian's striped tunic. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 391728,
+        "sha256": "68b040fd503aaac56bdd1c4d160c6532a06460a74a7aa6f4204e425e7ff57c35",
+        "triangles": 13747,
+        "textures": 6,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.6169,
+          "height": 1.7722,
+          "depth": 0.4392
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-paullus",
+      "path": "assets/models/characters/cast-paullus.glb",
+      "subject": "Generated character body and head: Paullus, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7ece438f-c31f-48b4-8637-789c7d766556",
+        "generatedAt": "2026-10-30T08:54:42.655Z",
+        "rigTaskId": "f58a2880-232c-41b8-b01e-4ac40931f2ac",
+        "riggedAt": "2026-10-30T08:56:41.394Z",
+        "prompt": "art-source/models/requests/char-cast-paullus.json",
+        "rawBytes": 43095636,
+        "rawSha256": "5e4b964558dfb28b23d4d3ad8826fedbef144ac1ff65e091d58f5d47a534bbba",
+        "riggedBytes": 57473772,
+        "riggedSha256": "8937c0a6b660536c03f8931d881193647dc960cab6487e45f47fefb1ed56366e",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-paullus.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-paullus-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-paullus-faces/",
+          "settings": {
+            "texture": 512,
+            "detailTexture": 256,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
+            "mouthFinder": {
+              "fromNose": 0.018,
+              "belowNose": 0.045,
+              "lipShare": 0.35,
+              "lipContrast": 0.04,
+              "lipMargin": 0.003,
+              "valley": 0.0025
+            },
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 0.9677,
+          "mouthFit": 0.8759,
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 512 pixels",
+          "unpainted": 0
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-30",
+          "report": "art-source/models/reports/char-cast-paullus-compress.json"
+        }
+      },
+      "usage": "Lucius Cassius Paullus, the elder senator who speaks for the soldier in Rome, in the camps of Chapters XI and XII: his own face, hair and build, in a toga over a senator's broad-striped tunic. In the Senate's chamber the named keep the game's own toga. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
+      "loading": "Deferred local GLB in the offline groups of Chapters XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Paullus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 414156,
+        "sha256": "471f03a74a339af19b8cd35782518693945508b28f11aacd4f48b6bae5dda836",
+        "triangles": 15070,
+        "textures": 6,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.6026,
+          "height": 1.7725,
+          "depth": 0.4339
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-theon",
+      "path": "assets/models/characters/cast-theon.glb",
+      "subject": "Generated character body and head: Theon, a named man of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py; the shared head (the recruit's, which carries the game's blinks and expressions) wrapped onto his own generated head and given its colour, normals and roughness by scripts/assets/wrap-cast-head.py; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d0492c0d-fd17-46dd-bd3a-a4a24944ce3d",
+        "generatedAt": "2026-10-30T08:54:44.126Z",
+        "rigTaskId": "a7cff793-1feb-4d66-b6b5-0f5d84696769",
+        "riggedAt": "2026-10-30T08:56:05.552Z",
+        "prompt": "art-source/models/requests/char-cast-theon.json",
+        "rawBytes": 43702976,
+        "rawSha256": "ed698f414410554ff90ae8ca203a3d2621200e69ac01f4e46ee3c8a6bf8ab2f1",
+        "riggedBytes": 58557764,
+        "riggedSha256": "67d7441d3885565c15086905a7370096467c3b6c065385be9d3aa9134ba24c87",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-theon.json",
+        "headWrap": {
+          "tool": "scripts/assets/wrap-cast-head.py",
+          "donor": "assets/models/characters/roman-recruit.glb",
+          "report": "art-source/models/reports/char-cast-theon-wrap.json",
+          "pictures": "art-source/models/reports/char-cast-theon-faces/",
+          "settings": {
+            "texture": 512,
+            "detailTexture": 256,
+            "webpQuality": 80,
+            "reach": 0.03,
+            "scalpOut": 0.008,
+            "scalpIn": 0.006,
+            "maxScale": 0.15,
+            "samples": 4,
+            "bakeCage": 0.05,
+            "bakeReach": 0.12,
+            "eyes": "shared",
+            "eyeHalf": [
+              0.015,
+              0.0075
+            ],
+            "eyeFeather": 1.6,
+            "eyeFinder": {
+              "spot": [
+                2,
+                3
+              ],
+              "spotSurround": [
+                6,
+                9
+              ],
+              "opening": [
+                2,
+                7
+              ],
+              "openingSurround": [
+                7,
+                15
+              ],
+              "rows": 0.003
+            },
+            "mouthFinder": {
+              "fromNose": 0.018,
+              "belowNose": 0.045,
+              "lipShare": 0.35,
+              "lipContrast": 0.04,
+              "lipMargin": 0.003,
+              "valley": 0.0025
+            },
+            "neck": 1.5,
+            "headFrom": 1.45,
+            "bodyTo": 1.55,
+            "wrapFrom": 1.52,
+            "wrapFull": 1.57,
+            "scalp": 1.69
+          },
+          "eyeScale": 0.9836,
+          "mouthFit": 0.9295,
+          "paint": "his paint from the same rigged model bound again with 2048-pixel colour and 1024-pixel detail maps (the same geometry), as the head's own map is 512 pixels",
+          "unpainted": 0
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-30",
+          "report": "art-source/models/reports/char-cast-theon-compress.json"
+        }
+      },
+      "usage": "Theon of Nicomedia, the rhetor who teaches the order and delivery of a speech, in the camps of Chapters VII, X and XI: his own face, hair and build, in a Greek teacher's tunic and mantle. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Theon himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 394856,
+        "sha256": "30ebc3bc4bca2923847576397725ede1747f61cb5d6eb66e49071e3353acb014",
+        "triangles": 14852,
+        "textures": 6,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.5909,
+          "height": 1.7722,
+          "depth": 0.3658
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-cast-aelia",
+      "path": "assets/models/characters/cast-aelia.glb",
+      "subject": "Generated character body: Aelia, a named woman of the campaign, mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound with her own generated head to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e25bffad-719f-4cb2-a8cb-607cdddfbd11",
+        "generatedAt": "2026-10-30T08:31:02.579Z",
+        "rigTaskId": "4228a48e-ea13-436a-99b0-ef898c520a15",
+        "riggedAt": "2026-10-30T08:32:17.869Z",
+        "prompt": "art-source/models/requests/char-cast-aelia.json",
+        "rawBytes": 42786096,
+        "rawSha256": "cfaafbf3d59c24589ecf1876ac7e16cc57eab300a4088774de1014ee6693704c",
+        "riggedBytes": 57177512,
+        "riggedSha256": "d3dd7ece98fae437ea016a63c79ed5328db9282cb6dacd8c5b5bacd2f53d614c",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-cast-aelia.json",
+        "ownHead": "Her own generated head, as the camp's other women's: the shared head the named men wear is a man's, and wrapped onto hers (wrap-cast-head.py, reviewed and not shipped) it put its longer chin under hers, painted with her neck's shadow, and a man's neck at the seam. She has no blinks or expressions.",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-10-30",
+          "report": "art-source/models/reports/char-cast-aelia-compress.json"
+        }
+      },
+      "usage": "Aelia Dacia, who speaks for the settlers' households in Dacia, in the camps of Chapters VIII, X and XII: her own face, hair and build, in a provincial matron's tunic, stola and mantle.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VIII, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Aelia herself, by who she is rather than her kit (src/ui/actor-body-catalog.js), at every quality. She keeps the procedural woman's figure until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: her body with her own head (body, body-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 426916,
+        "sha256": "038d64200ccb455f44d3b6dff21f4c2a97e63119d4c3c1049789894aae5609b3",
+        "triangles": 13908,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5737,
+          "height": 1.7448,
+          "depth": 0.3983
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -13980,7 +14486,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-29T22:20:30.582Z",
+  "updatedAt": "2026-10-30T09:04:54.365Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -14002,12 +14508,12 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 124,
+    "models": 129,
     "textures": 15,
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 54624941,
-  "totalModelBytes": 39439391,
+  "totalBundledAssetBytes": 56650385,
+  "totalModelBytes": 41464835,
   "derivedGeometryBytes": 47428
 }

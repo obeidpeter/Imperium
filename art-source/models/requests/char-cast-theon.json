@@ -1,0 +1,94 @@
+{
+  "id": "char-cast-theon",
+  "status": "bound, his head wrapped onto the shared head, a level below the release 6 cast's maps, quantized and compressed: shipped",
+  "chapters": [
+    7,
+    10,
+    11
+  ],
+  "use": "Theon of Nicomedia, the rhetor who teaches the order and delivery of a speech, in the camps of Chapters VII, X and XI: his own face, hair and build, in a Greek teacher's tunic and mantle.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Greek teacher of rhetoric from Nicomedia in the mid-3rd century AD, a lean man about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the knee, a large dark blue-grey wool mantle draped over his left shoulder and wrapped round his waist, both arms free of it, a narrow leather belt and leather sandals. Bare head with receding greying dark hair worn short, a short neat greying beard, a narrow intelligent face with a long straight nose, a light olive complexion and an amused, attentive expression. Realistic proportions, historically accurate, simple and dignified, muted colours. No armour, no weapons, no scroll, no staff, no hat, no wreath or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gold, jewellery, scroll, staff, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "taskId": "d0492c0d-fd17-46dd-bd3a-a4a24944ce3d",
+    "requestedAt": "2026-10-30T08:52:39.537Z",
+    "balanceBefore": 1575,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "Full-body Greek teacher of rhetoric from Nicomedia in the mid-3rd century AD, a lean man about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the knee, a large dark blue-grey wool mantle draped over his left shoulder and wrapped round his waist, both arms free of it, a narrow leather belt and leather sandals. Bare head with receding greying dark hair worn short, a short neat greying beard, a narrow intelligent face with a long straight nose, a light olive complexion and an amused, attentive expression. Realistic proportions, historically accurate, simple and dignified, muted colours. No armour, no weapons, no scroll, no staff, no hat, no wreath or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gold, jewellery, scroll, staff, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-10-30T08:54:44.126Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/char-cast-theon.glb",
+    "rawBytes": 43702976,
+    "rawSha256": "ed698f414410554ff90ae8ca203a3d2621200e69ac01f4e46ee3c8a6bf8ab2f1",
+    "tripoInput": {
+      "prompt": "Full-body Greek teacher of rhetoric from Nicomedia in the mid-3rd century AD, a lean man about fifty years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the knee, a large dark blue-grey wool mantle draped over his left shoulder and wrapped round his waist, both arms free of it, a narrow leather belt and leather sandals. Bare head with receding greying dark hair worn short, a short neat greying beard, a narrow intelligent face with a long straight nose, a light olive complexion and an amused, attentive expression. Realistic proportions, historically accurate, simple and dignified, muted colours. No armour, no weapons, no scroll, no staff, no hat, no wreath or crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "negative_prompt": "armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gold, jewellery, scroll, staff, modern suit, fantasy, cartoon",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/char-cast-theon-tripo-render.webp",
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped",
+        "topology": "biped"
+      },
+      "taskId": "a7cff793-1feb-4d66-b6b5-0f5d84696769",
+      "requestedAt": "2026-10-30T08:54:46.950Z",
+      "balanceBefore": 1530,
+      "requestBody": {
+        "type": "animate_rig",
+        "original_model_task_id": "d0492c0d-fd17-46dd-bd3a-a4a24944ce3d",
+        "out_format": "glb"
+      },
+      "status": "success",
+      "generatedAt": "2026-10-30T08:56:05.552Z",
+      "output": "model",
+      "raw": "art-source/models/raw/char-cast-theon-rigged.glb",
+      "rawBytes": 58557764,
+      "rawSha256": "67d7441d3885565c15086905a7370096467c3b6c065385be9d3aa9134ba24c87",
+      "tripoInput": {
+        "model_version": "v1.0-20240301",
+        "original_model_id": "d0492c0d-fd17-46dd-bd3a-a4a24944ce3d",
+        "out_format": "glb",
+        "topology": "biped"
+      },
+      "creditsSpent": 25
+    }
+  }
+}
