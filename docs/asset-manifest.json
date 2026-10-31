@@ -5240,16 +5240,27 @@
           "report": "art-source/models/reports/char-roman-recruit-compress.json",
           "previousBytes": 418392,
           "previousSha256": "806b69cccf52185e31c6707299a33b02696a46e56bf56afffcd17d4fa326cd07"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-roman-recruit-refinement.json",
+          "previousSha256": "aaeccd7ce97a7b41188e43615e03b045640e990aa45ac9ab26f4243a62ad032e",
+          "previousBytes": 366388,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Chapter I recruits, and the protagonist in his own kit while unarmoured (the real-time views and the kit panel), with his helmet or cap fitted over its bare head; the game adds the practice kit. The existing head is also the persistent male cast donor: src/showcase/generated-identity.js clips the neck, preserves UVs and weights, and applies original bounded face/scalp silhouette sculpting and hairline uniforms. Crown, sweep, side volume and nape variants add no geometry, texture or shader variant; they are derivatives of this generated donor, not newly captured or independently sculpted heads.",
       "loading": "Deferred local GLB in the offline groups of every chapter (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 366388,
-        "sha256": "aaeccd7ce97a7b41188e43615e03b045640e990aa45ac9ab26f4243a62ad032e",
-        "triangles": 13685,
-        "nearTriangles": 11186,
+        "bytes": 374204,
+        "sha256": "103f248e0d3d5e58ccc275208b1f4320c92ad05f63e8ee65eb4e2b7e3c85e79a",
+        "triangles": 14311,
+        "nearTriangles": 11812,
         "overviewTriangles": 2499,
         "textures": 3,
         "textureEdge": 1024,
@@ -5352,14 +5363,25 @@
           "report": "art-source/models/reports/char-roman-legionary-compress.json",
           "previousBytes": 508428,
           "previousSha256": "56dfb459d4cd6f3a86bd22ccc2ad7926bb160314bb56cdfb13b365831950cc3b"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-roman-legionary-refinement.json",
+          "previousSha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88",
+          "previousBytes": 447560,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Roman line infantry, from the oath's recruits to the legions at the accession; the named men wear their own bodies (body-cast-*). The game adds the shield, sword, cloak and crests.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 447560,
-        "sha256": "28bd013e4ca1b2c21d25e3af6946378da2756e39714f8bb741be85ba862b5b88",
+        "bytes": 448872,
+        "sha256": "d82e7b588e87f5779fb8226e027889644f2cdcb47255728dfe5b71b412c3b124",
         "triangles": 13931,
         "nearTriangles": 11432,
         "overviewTriangles": 2499,
@@ -5464,14 +5486,25 @@
           "report": "art-source/models/reports/char-roman-officer-compress.json",
           "previousBytes": 537496,
           "previousSha256": "509bfca7bc38d11ac86523d8e8c7635379228cbc65fa27d920018e1d549aa335"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-roman-officer-refinement.json",
+          "previousSha256": "4c0cce27574ae39d0c112c2a0eb96b0b7d4ea7fb3225fa52256a260a30bd1c3b",
+          "previousBytes": 471316,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "The protagonist as a centurion in Chapters IV to VI; the game adds the crest, cloak, shield and sword.",
       "loading": "Deferred local GLB in the offline groups of Chapters IV, V, VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 471316,
-        "sha256": "4c0cce27574ae39d0c112c2a0eb96b0b7d4ea7fb3225fa52256a260a30bd1c3b",
+        "bytes": 472412,
+        "sha256": "805d00046569e4ac23cdbd72a91bc21b72ad59133eefbd872982b8af2f0ba6af",
         "triangles": 13892,
         "nearTriangles": 11393,
         "overviewTriangles": 2499,
@@ -5520,14 +5553,25 @@
           "report": "art-source/models/reports/char-roman-commander-compress.json",
           "previousBytes": 546208,
           "previousSha256": "6256d8490e2f62941f61e44657579887620551665dd863b1517d4f7c13485f75"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-roman-commander-refinement.json",
+          "previousSha256": "2c20dd77247c577eaa3904815df233861cb49b38653e8b13209bc9729d06c974",
+          "previousBytes": 482700,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "The protagonist as a senior commander from Chapter VII, and rival claimants; the game adds the crest, cloak (purple at the accession), shield and sword.",
       "loading": "Deferred local GLB in the offline groups of Chapters VII, VIII, IX, X, XI, XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 482700,
-        "sha256": "2c20dd77247c577eaa3904815df233861cb49b38653e8b13209bc9729d06c974",
+        "bytes": 483752,
+        "sha256": "b60b14f11881f72fcc3ed9af3152632f27993501e398c1ead674159ffbd9dc43",
         "triangles": 13797,
         "nearTriangles": 11298,
         "overviewTriangles": 2499,
@@ -6424,15 +6468,23 @@
           "normalizationScale": 0.9629630309891193,
           "paidCalls": 0
         },
-        "sourceBlend": "art-source/models/legionary-cookstation-supported.blend"
+        "sourceBlend": "art-source/models/legionary-cookstation-supported.blend",
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/legionary-cookstation-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.36808464418422987,
+          "maxUvError": 0.000007629510948348184
+        }
       },
       "usage": "A compact Roman military field cook station",
       "loading": "Deferred chapter packs 1, 3, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 281264,
-        "gzipBytes": 267926,
-        "sha256": "c45b0ac506ad515d373164f61691b6b1b4d686997e3e25e684444a44d2ec6078",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 217736,
+        "gzipBytes": 207073,
+        "sha256": "e085a84b46930acbc16b1662e62a7c0e097a00a685c0a67e0085f320bc85a6e4",
         "triangles": 5964,
         "textures": 3,
         "textureEdge": 512,
@@ -6478,15 +6530,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/equipment-rack-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3617843812634567,
+          "maxUvError": 0.000007629447282719859
         }
       },
       "usage": "A practical Roman military equipment maintenance rack",
       "loading": "Deferred chapter packs 1, 4, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 232580,
-        "gzipBytes": 224716,
-        "sha256": "f693a1b33f385afe56c3f838f59fcd72c8fe96da1a1ff15d4ca558a3c2480ad4",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 182468,
+        "gzipBytes": 175665,
+        "sha256": "6686ed9bb1ed39912c4edcf9236009c6e63e4929224afab73c88a5583a2e2da4",
         "triangles": 5880,
         "textures": 3,
         "textureEdge": 512,
@@ -6532,15 +6592,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/courier-table-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3745205272451345,
+          "maxUvError": 0.000007629195348857198
         }
       },
       "usage": "A Roman military courier sorting table made of weathered oak trestles and thick boards. On the tabletop lie three rolled parchment packets tied with leather cord, two small closed wax-tablet folios and a closed brown leather messenger satchel. Four sturdy legs and a low cross brace, clearly readable open space underneath.",
       "loading": "Deferred chapter packs 3, 7, 11. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 257084,
-        "gzipBytes": 248061,
-        "sha256": "8ad9ff5bcb8f9ab6a70b11e875d921f21478c062530f70f507e9daeb456d2137",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 195684,
+        "gzipBytes": 189057,
+        "sha256": "d4a3faae63ef0dd242a3732a29687f207e039577655b6d6f4c8b08b813295233",
         "triangles": 4900,
         "textures": 3,
         "textureEdge": 512,
@@ -7018,15 +7086,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/command-table-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.36383469205026725,
+          "maxUvError": 0.0000076292048987181005
         }
       },
       "usage": "A Roman command pavilion table, broad sturdy dark oak trestles and plank top covered by a cream parchment map without readable writing. Small plain wooden counters, two rolled maps and a shallow bronze weight sit on top. One burgundy wool cloth strip drapes over an edge. Four short legs with clearly open space beneath, practical third century military furniture, no modern objects.",
       "loading": "Deferred chapter packs 7, 12. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 246568,
-        "gzipBytes": 237957,
-        "sha256": "346764e3b4a79c1e81fbae841a3d5552ddf3058204b23d21cfb28df32946f040",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 187840,
+        "gzipBytes": 180624,
+        "sha256": "414ba4015a0167d511dd6c8b2523108c116543993996ababb7311b9ae1ed9550",
         "triangles": 5880,
         "textures": 3,
         "textureEdge": 512,
@@ -7406,15 +7482,23 @@
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           },
           "geometryUnchanged": true
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/italian-marching-kit-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3151728508565514,
+          "maxUvError": 0
         }
       },
       "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
       "loading": "Shared deferred chapter packs 6, 7 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 311028,
-        "gzipBytes": 187428,
-        "sha256": "e82b48f4d99b1ee41e6dd95bcbe3e6b1ab9d3d727df51042ea6258e8c47bc56c",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 288080,
+        "gzipBytes": 181748,
+        "sha256": "6eebad6612b9debfc52603f5b9e649f2510f070bae6b3e9bfaebfad03436c79d",
         "triangles": 4352,
         "textures": 8,
         "textureEdge": 512,
@@ -9751,14 +9835,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-lucan-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-lucan-refinement.json",
+          "previousSha256": "667ad458d59de710f2352584c1dd9678d66cb19d5837d7a11a9f3ab2e1d0859d",
+          "previousBytes": 653468,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Lucan, the protagonist's tent-mate, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Lucan himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 653468,
-        "sha256": "667ad458d59de710f2352584c1dd9678d66cb19d5837d7a11a9f3ab2e1d0859d",
+        "bytes": 654544,
+        "sha256": "4c5164ad11b9347d29cc354ef8e8a377f1296f68333322cdb8c9d9e9f9c14090",
         "triangles": 13197,
         "textures": 6,
         "textureEdge": 1024,
@@ -9766,7 +9861,9 @@
           "width": 0.6089,
           "height": 1.783,
           "depth": 0.394
-        }
+        },
+        "nearTriangles": 10755,
+        "overviewTriangles": 2442
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -9864,14 +9961,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-varro-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-varro-refinement.json",
+          "previousSha256": "84d341e91b11e0445bf4a2cc4cb63decbcb1a9f818b22acf8d1be76c569cbc87",
+          "previousBytes": 655692,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Varro, the drill instructor, wherever he is drawn until his fate in Chapter VI: the game adds his helmet or cap, staff or weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 655692,
-        "sha256": "84d341e91b11e0445bf4a2cc4cb63decbcb1a9f818b22acf8d1be76c569cbc87",
+        "bytes": 656756,
+        "sha256": "cad47914db13084cdcc4409f911a5b96ea713ed8af0ad44ee5adda33dab4b3a5",
         "triangles": 15232,
         "textures": 6,
         "textureEdge": 1024,
@@ -9879,7 +9987,9 @@
           "width": 0.6017,
           "height": 1.7757,
           "depth": 0.4285
-        }
+        },
+        "nearTriangles": 12425,
+        "overviewTriangles": 2807
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10026,14 +10136,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-sabinus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-sabinus-refinement.json",
+          "previousSha256": "0d9e249855fe18e43bf75a42bf4c6bee46fd631b87cc1a692de755e6ba240b02",
+          "previousBytes": 688812,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Gaius Sabinus, the file-leader who stands in Lucan's place when Lucan leaves, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Sabinus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 688812,
-        "sha256": "0d9e249855fe18e43bf75a42bf4c6bee46fd631b87cc1a692de755e6ba240b02",
+        "bytes": 690172,
+        "sha256": "be38f598668dc3b4efd77a6d78a2cfb7590a3383e3e3f3da30403c81514f286c",
         "triangles": 14739,
         "textures": 6,
         "textureEdge": 1024,
@@ -10041,7 +10162,9 @@
           "width": 0.6156,
           "height": 1.7732,
           "depth": 0.3792
-        }
+        },
+        "nearTriangles": 11990,
+        "overviewTriangles": 2749
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10139,14 +10262,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-naso-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-naso-refinement.json",
+          "previousSha256": "12898fa2cd867fafa5296ff4eccde3e1d26161fd24cd79bd077ecac26c19033d",
+          "previousBytes": 693068,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Aulus Naso, the legionary file's shield-mate, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, V, VI, VII, VIII, IX, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Naso himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 693068,
-        "sha256": "12898fa2cd867fafa5296ff4eccde3e1d26161fd24cd79bd077ecac26c19033d",
+        "bytes": 694304,
+        "sha256": "ba9f8ac5a674f6c6dc2d494ac3d038eee07fb2b0d51ccf3f982c724f7d81d6e3",
         "triangles": 15363,
         "textures": 6,
         "textureEdge": 1024,
@@ -10154,7 +10288,9 @@
           "width": 0.6347,
           "height": 1.7727,
           "depth": 0.3924
-        }
+        },
+        "nearTriangles": 12556,
+        "overviewTriangles": 2807
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10252,14 +10388,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-felix-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-felix-refinement.json",
+          "previousSha256": "f7f7a8763de1f182a6d785e2203a4fedbd8352ae91decad55d2b6adf5fe9f0ab",
+          "previousBytes": 673688,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Marcus Felix, the company's archer and scout, wherever he is drawn in his own kit: the game adds his helmet or cap, bow, quiver, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters III, IV, V, VI, VII, VIII, IX, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Felix himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 673688,
-        "sha256": "f7f7a8763de1f182a6d785e2203a4fedbd8352ae91decad55d2b6adf5fe9f0ab",
+        "bytes": 674776,
+        "sha256": "98a8a5b344afaa9d747e0610c0080cc7999e28f9f36538eddb6ce6e228615a44",
         "triangles": 14054,
         "textures": 6,
         "textureEdge": 1024,
@@ -10267,7 +10414,9 @@
           "width": 0.5888,
           "height": 1.7742,
           "depth": 0.3798
-        }
+        },
+        "nearTriangles": 11431,
+        "overviewTriangles": 2623
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10365,14 +10514,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-brennus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-brennus-refinement.json",
+          "previousSha256": "43bfaf57a5fe5fb23ee4cb91ac2fea76f310f69bc230eaebbfa6987652a1abb0",
+          "previousBytes": 659252,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Brennus, the explorator, in the camps of Chapters III and IV, in a scout's plain wool clothes: the game adds his cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters III and IV only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 659252,
-        "sha256": "43bfaf57a5fe5fb23ee4cb91ac2fea76f310f69bc230eaebbfa6987652a1abb0",
+        "bytes": 660688,
+        "sha256": "cfd7a5fbad13e5760ca16564570fe52729812598fa67cc49987bc3780cfac9a5",
         "triangles": 15125,
         "textures": 6,
         "textureEdge": 1024,
@@ -10380,7 +10540,9 @@
           "width": 0.6408,
           "height": 1.7721,
           "depth": 0.3541
-        }
+        },
+        "nearTriangles": 12319,
+        "overviewTriangles": 2806
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10478,14 +10640,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-28",
           "report": "art-source/models/reports/char-cast-crispus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-crispus-refinement.json",
+          "previousSha256": "c29f989421dec3a4bae70a7977d1999b2c3508bd4d4f87539e35470410f7ce62",
+          "previousBytes": 662200,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Crispus, the young tribune and the protagonist's rival, in the camps of Chapters III, IV, VII and XI, in an officer's tunic and belt: the game adds his cloak. In the chamber he keeps the procedural toga whose trims name his bloc.",
       "loading": "Deferred local GLB in the offline groups of Chapters III, IV, VII and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 662200,
-        "sha256": "c29f989421dec3a4bae70a7977d1999b2c3508bd4d4f87539e35470410f7ce62",
+        "bytes": 663788,
+        "sha256": "4d3ec1c4f3f556c547806acfc17f0d6bc1a2770b543c376490f9a9f7402654a6",
         "triangles": 15006,
         "textures": 6,
         "textureEdge": 1024,
@@ -10493,7 +10666,9 @@
           "width": 0.5886,
           "height": 1.7757,
           "depth": 0.3676
-        }
+        },
+        "nearTriangles": 12236,
+        "overviewTriangles": 2770
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -12089,15 +12264,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-adda-bridge-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35666149735807806,
+          "maxUvError": 0.000007629132820152762
         }
       },
       "usage": "The bridge over the Adda: the nearest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 168120,
-        "gzipBytes": 160024,
-        "sha256": "8fd74200ec31e3274e0f28d42eeac03b3873b3cb5d3647b974e617da96caba3e",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 108000,
+        "gzipBytes": 102337,
+        "sha256": "7bd66c4fc537c2b8ce56dfa1f71034c5ecbfa5f360ee098eab9a2cb1252fc6cf",
         "triangles": 4899,
         "textures": 1,
         "textureEdge": 256,
@@ -12160,15 +12343,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-mediolanum-walls-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3666996989588075,
+          "maxUvError": 0.000007627794705644675
         }
       },
       "usage": "The walls of Mediolanum: the middle of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 143996,
-        "gzipBytes": 137744,
-        "sha256": "d5baf046084b9da3030bdb6fd683d7b77dda1ef0c21654ff47cde35018e2b8a8",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 95580,
+        "gzipBytes": 90382,
+        "sha256": "a56d7b41548d60d6cfa7a6f04c40943eada9f55d2f3f213714a569bb83b97ddc",
         "triangles": 4900,
         "textures": 1,
         "textureEdge": 256,
@@ -12223,15 +12414,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-roadside-tomb-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3641349377510996,
+          "maxUvError": 0.000007625222160634326
         }
       },
       "usage": "A tall tomb beside the road: the farthest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 116664,
-        "gzipBytes": 111470,
-        "sha256": "8e6e523b2e74d4af05b7ec751ba5fdbb01b3ec2e11a6839e79eafb89bb561d46",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 78804,
+        "gzipBytes": 74266,
+        "sha256": "917c042314453e2221c8bbc30fb226ac1641f09536f01b5985a1933363b0037f",
         "triangles": 3920,
         "textures": 1,
         "textureEdge": 256,
@@ -13277,15 +13476,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-amphora-rack-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3627380865442238,
+          "maxUvError": 0.000007627935224741034
         }
       },
       "usage": "Life about the camps and towns: wine and oil amphorae, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 191972,
-        "gzipBytes": 183859,
-        "sha256": "4c480f77e02ead7414f47ab5a5f1edb814ba3976ade0ac61770e05de1ad0fd6f",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 151220,
+        "gzipBytes": 145087,
+        "sha256": "de0fc3927e56daf0f0ea4fcec8cccdf3c4a4fd8f39efc8d3befb9b804bce3501",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -13332,15 +13539,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-beehives-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35735006969706107,
+          "maxUvError": 0.000007629507310369377
         }
       },
       "usage": "Life about the camps and towns: a farm's beehives, set out beyond the board with the baggage of Chapters III and VII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 3 and 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 212912,
-        "gzipBytes": 205444,
-        "sha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 172668,
+        "gzipBytes": 166785,
+        "sha256": "aa21c4a7742acf991d0c457372f603bd038da6480549c576a1c2a6fafd0dd1d1",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -13782,15 +13997,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-travel-carriage-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35974112974334155,
+          "maxUvError": 0.000007629298123368322
         }
       },
       "usage": "Life about the camps and towns: a traveller's covered carriage, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 234324,
-        "gzipBytes": 227056,
-        "sha256": "803e078eee2f0768161d8bb3997471a8fdfa013ee6fcf0be35cedb2e6a076c91",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 191824,
+        "gzipBytes": 186395,
+        "sha256": "0c79a4dcab5cd6a59e2a0c699a9ea293cf95527c1bfb32d3d1c4eb6784e87e41",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -14009,14 +14232,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-30",
           "report": "art-source/models/reports/char-cast-quintus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-quintus-refinement.json",
+          "previousSha256": "f0386d3be10918fce00ab8a8f2ab6713162baef0b05e86a66f4350c4397d7387",
+          "previousBytes": 397788,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Signifer Quintus, who keeps the standards at the principia in the camps of Chapters I and IV and on the drill field in XII: his own face, hair and build, in a legionary's mail. In camp he is drawn bare-headed and unarmed, as the camp's people are. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, IV and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Signifer Quintus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 397788,
-        "sha256": "f0386d3be10918fce00ab8a8f2ab6713162baef0b05e86a66f4350c4397d7387",
+        "bytes": 398940,
+        "sha256": "4cb4975655ae07c7fdb21dae79ce879389ffaa459f731ef10e2e9157927a92aa",
         "triangles": 14940,
         "textures": 6,
         "textureEdge": 512,
@@ -14024,7 +14258,9 @@
           "width": 0.6031,
           "height": 1.7739,
           "depth": 0.3701
-        }
+        },
+        "nearTriangles": 12134,
+        "overviewTriangles": 2806
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14122,14 +14358,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-30",
           "report": "art-source/models/reports/char-cast-severianus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-severianus-refinement.json",
+          "previousSha256": "68b040fd503aaac56bdd1c4d160c6532a06460a74a7aa6f4204e425e7ff57c35",
+          "previousBytes": 391728,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Marcus Aurelius Severianus, the equestrian patron whose favours follow the soldier's career, in the camps of Chapters VI to XI, and in XII's court when he backs the soldier: his own face, hair and build, in a rich civilian's striped tunic. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
-      "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X, XI and XII (including his conditional support appearance) (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 391728,
-        "sha256": "68b040fd503aaac56bdd1c4d160c6532a06460a74a7aa6f4204e425e7ff57c35",
+        "bytes": 393112,
+        "sha256": "4d736a368396273e7a24a9f4026a702839dc3044c0579a4e8bc66dd3c45dea57",
         "triangles": 13747,
         "textures": 6,
         "textureEdge": 512,
@@ -14137,7 +14384,9 @@
           "width": 0.6169,
           "height": 1.7722,
           "depth": 0.4392
-        }
+        },
+        "nearTriangles": 11172,
+        "overviewTriangles": 2575
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14235,14 +14484,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-30",
           "report": "art-source/models/reports/char-cast-paullus-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-paullus-refinement.json",
+          "previousSha256": "471f03a74a339af19b8cd35782518693945508b28f11aacd4f48b6bae5dda836",
+          "previousBytes": 414156,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Lucius Cassius Paullus, the elder senator who speaks for the soldier in Rome, in the camps of Chapters XI and XII: his own face, hair and build, in a toga over a senator's broad-striped tunic. In the Senate's chamber the named keep the game's own toga. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Paullus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 414156,
-        "sha256": "471f03a74a339af19b8cd35782518693945508b28f11aacd4f48b6bae5dda836",
+        "bytes": 415608,
+        "sha256": "5c26d609f7fe134118b27b6790c5d2838490b7e4a9c13beafffbc705640f9788",
         "triangles": 15070,
         "textures": 6,
         "textureEdge": 512,
@@ -14250,7 +14510,9 @@
           "width": 0.6026,
           "height": 1.7725,
           "depth": 0.4339
-        }
+        },
+        "nearTriangles": 12298,
+        "overviewTriangles": 2772
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14348,14 +14610,25 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-30",
           "report": "art-source/models/reports/char-cast-theon-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-theon-refinement.json",
+          "previousSha256": "30ebc3bc4bca2923847576397725ede1747f61cb5d6eb66e49071e3353acb014",
+          "previousBytes": 394856,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Theon of Nicomedia, the rhetor who teaches the order and delivery of a speech, in the camps of Chapters VII, X and XI: his own face, hair and build, in a Greek teacher's tunic and mantle. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters VII, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Theon himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 394856,
-        "sha256": "30ebc3bc4bca2923847576397725ede1747f61cb5d6eb66e49071e3353acb014",
+        "bytes": 396336,
+        "sha256": "a1060bde3839f626d98c0f80f436ee6a10c740e4a5e3de890eadf83335f6b52c",
         "triangles": 14852,
         "textures": 6,
         "textureEdge": 512,
@@ -14363,7 +14636,9 @@
           "width": 0.5909,
           "height": 1.7722,
           "depth": 0.3658
-        }
+        },
+        "nearTriangles": 12101,
+        "overviewTriangles": 2751
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14401,22 +14676,35 @@
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
           "compressedAt": "2026-10-30",
           "report": "art-source/models/reports/char-cast-aelia-compress.json"
+        },
+        "refinement": {
+          "tool": "scripts/assets/refine-character.py",
+          "bridge": "scripts/assets/refine-character.mjs",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-aelia-refinement.json",
+          "previousSha256": "038d64200ccb455f44d3b6dff21f4c2a97e63119d4c3c1049789894aae5609b3",
+          "previousBytes": 426916,
+          "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
+          "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
+          "verification": "docs/character-art-refinement.md"
         }
       },
       "usage": "Aelia Dacia, who speaks for the settlers' households in Dacia, in the camps of Chapters VIII, X and XII: her own face, hair and build, in a provincial matron's tunic, stola and mantle.",
       "loading": "Deferred local GLB in the offline groups of Chapters VIII, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Aelia herself, by who she is rather than her kit (src/ui/actor-body-catalog.js), at every quality. She keeps the procedural woman's figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: her body with her own head (body, body-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 426916,
-        "sha256": "038d64200ccb455f44d3b6dff21f4c2a97e63119d4c3c1049789894aae5609b3",
-        "triangles": 13908,
+        "bytes": 437756,
+        "sha256": "0cc557b820dc22f7f2e16dbe81ab0df6f56519ff2b2a9c8dfdb22302bd54dd95",
+        "triangles": 14539,
         "textures": 3,
         "textureEdge": 1024,
         "sizeMetres": {
           "width": 0.5737,
           "height": 1.7448,
           "depth": 0.3983
-        }
+        },
+        "nearTriangles": 12040,
+        "overviewTriangles": 2499
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
@@ -14486,7 +14774,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-30T09:04:54.365Z",
+  "updatedAt": "2026-10-31T14:04:09.270Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -14513,7 +14801,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 56650385,
-  "totalModelBytes": 41464835,
+  "totalBundledAssetBytes": 56160209,
+  "totalModelBytes": 40974659,
   "derivedGeometryBytes": 47428
 }

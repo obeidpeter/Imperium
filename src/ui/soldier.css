@@ -77,6 +77,11 @@
 .game-footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-block-size:3rem;padding:.6rem max(1.25rem,calc((100% - 1200px)/2));font-size:calc(.75rem * var(--text-scale,1))}
 [data-soldier-preview]{scroll-margin-block-start:8rem}
 .soldier-model-controls{flex-wrap:wrap}
+.errand-list{list-style:none;padding:0}.errand-list>li{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 0;border-block-end:1px solid var(--line)}
+.errand-list p{margin:.25rem 0}.errand-list small{color:var(--muted)}.errand-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;flex-shrink:0}
+.tracked-errand{display:flex;align-items:center;justify-content:space-between;gap:.6rem 1rem;padding:.6rem .85rem;margin-block:0 .6rem;border-inline-start:3px solid var(--gold,#a78643);background:var(--plaster,#f0e8d6)}
+.tracked-errand-copy{min-inline-size:0}.tracked-errand small{font-size:calc(.68rem * var(--text-scale,1))}.tracked-errand p{margin:.2rem 0;font-size:calc(.9rem * var(--text-scale,1))}.tracked-errand button{min-block-size:2.75rem}
+@media(max-width:760px){.errand-list>li,.tracked-errand{align-items:stretch;flex-direction:column}.errand-actions{flex-shrink:1}.errand-actions button{max-inline-size:100%;white-space:normal}.tracked-errand .errand-actions{justify-content:space-between}}
 .profile-identity:has(.soldier-model){display:block}
 .profile-identity .portrait-wrap:has(.soldier-model){inline-size:100%;max-inline-size:22rem;aspect-ratio:auto;overflow:visible}
 .profile-identity .soldier-model canvas{block-size:260px}

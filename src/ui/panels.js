@@ -185,19 +185,20 @@ export function createPanels(context){
     const rows=report.tiers.map(r=>`<tr><th scope="row">${label[r.tier]}</th><td>${r.buildMs===null?'—':ms(r.buildMs)}</td><td>${r.tour.fps??'—'} fps</td>`+
       `<td>${ms(r.tour.intervalMs.p95)}</td><td>${ms(r.tour.gpuMs.p95)}</td><td>${r.tour.longTasks?ms(r.tour.longTasks.maxMs):'—'}</td>`+
       `<td>${r.meetsTarget?`Meets ${r.targetFps} fps`:`Below ${r.targetFps} fps`}</td></tr>`).join('');
-    const recommended=report.recommendation,current=settings.quality;
-    showModal('Performance check',`<p class="panel-lead">${report.complete?'Measured':'Partly measured (cancelled)'} on this device. Each quality was `+
+    const recommended=report.recommendation,current=settings.quality,status=report.recommendationStatus??'measured',steady=report.tiers.find(r=>r.steady?.length)?.steady;
+    const advice=status==='software'?'Software rendering was used. These results can check rendering, but cannot recommend a quality for your graphics chip.':status==='unknown-renderer'?'The browser did not identify its graphics renderer. These are browser measurements; hardware performance is unverified.':status==='incomplete'?'The check was cancelled or interrupted. Keep this tab visible and rerun it before choosing a quality.':status==='below-target'?'No quality met its frame target. Try Performance and close other graphics-heavy apps.':`Recommended for this device: <strong>${label[recommended]}</strong>${recommended===current?' (your current setting)':''}.`;
+    showModal('Performance check',`<p class="panel-lead">${report.interrupted?'Interrupted measurements':report.complete?'Measured':'Partly measured (cancelled)'} on this device. Each quality was `+
       `rebuilt, then the camera turned through the overview, follow and horizon views.</p><div class="check-results"><table><thead><tr>`+
       `<th scope="col">Quality</th><th scope="col">Build</th><th scope="col">Typical rate</th><th scope="col">Slowest 5% of frames</th>`+
       `<th scope="col">GPU, slowest 5%</th><th scope="col">Longest freeze</th><th scope="col">Target</th></tr></thead><tbody>${rows}</tbody></table></div>`+
-      `<p>Recommended for this device: <strong>${label[recommended]}</strong>${recommended===current?' (your current setting)':''}.</p>`+
+      `<p>${advice}</p>${steady?`<p class="settings-description">Repeated settled checks: ${steady.map((w,i)=>`run ${i+1}, ${w.frames} frames, ${ms(w.intervalMs.p95)} slowest 5%${w.complete?'':' (incomplete)'}`).join('; ')}.</p>`:''}`+
       `${report.simulation?`<p class="settings-description">Real-time simulation (0.40, in development): one tick takes ${report.simulation.actors15.p95} ms `+
         `with 15 men, ${report.simulation.actors82.p95} ms with 82${report.simulation.squads6?` and ${report.simulation.squads6.p95} ms with six squads and the party`:''} `+
         `(slowest 5%; budget ${report.simulation.budgetMs} ms).</p>`:''}`+
       `<p class="settings-description">Graphics: ${esc(report.device.renderer??'unknown')}${report.device.software?' (software rendering)':''}. The file `+
       `lists this browser, graphics chip and screen size beside the measurements, and stays on this `+
       `device unless you share it.</p>${actions(`<button class="primary" data-cmd="performance-check-save">Save results `+
-      `(JSON)</button>${recommended!==current?`<button data-cmd="performance-check-use">Use ${label[recommended]}</button>`:''}<button data-cmd="close-modal">Close</button>`)}`);
+      `(JSON)</button>${recommended!==current&&['measured','below-target'].includes(status)?`<button data-cmd="performance-check-use">Use ${label[recommended]}</button>`:''}<button data-cmd="close-modal">Close</button>`)}`);
   }
 
   // Controls & rules: in real time, the player guide's chapters (generated from docs/player-guide-0.40.md);

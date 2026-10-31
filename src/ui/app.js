@@ -28,12 +28,13 @@ import {ITEMS} from '../data/items.js';
 import {createSoldier} from '../core/soldier.js';
 import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
 import {campRuntimeKey} from './camp-runtime.js';
+import {createErrandTracker,errandDestinationAction} from './errand-guidance.js';
 import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
 import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,trainerPanel,trainerName,
-  adoptPanel,missionOrdersPanel,chroniclePanel,traderPanel} from './soldier-views.js';
+  adoptPanel,missionOrdersPanel,trackedErrandPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -55,6 +56,10 @@ import {helpSearchResults} from './guide-help-view.js';
 import {GUIDE_HELP} from '../data/guide-help.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
+// Tracking is a local display preference, separate from the campaign save.
+const trackedErrandKey=SETTINGS_KEY+'.tracked-errand';
+const errandTracker=createErrandTracker({load:()=>JSON.parse(localStorage.getItem(trackedErrandKey)||'null'),
+  save:value=>value?localStorage.setItem(trackedErrandKey,JSON.stringify(value)):localStorage.removeItem(trackedErrandKey)});
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
   offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
   pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null,pendingNewMode=null;
@@ -212,6 +217,7 @@ function render(){
   sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
+  refreshTrackedErrand();
   syncSessionControls();
   const target=fieldTarget();
   if(target)mountField(target);
@@ -358,6 +364,39 @@ function practiceOptions(source,id,options={}){
   return controlsFor(settings,chapter)==='realtime'?{...options,controls:'realtime'}:options;
 }
 // ——— Camp: conversations, places and the people with something new to say. ———
+function refreshTrackedErrand(){
+  const guide=state?errandTracker.read(state):null,grid=screen!=='title'&&state?.phase==='camp'&&!state.archiveReplay?app.querySelector('.rt-camp-grid,.camp-grid'):null;
+  let host=app.querySelector('#tracked-errand');
+  if(!guide||!grid){host?.remove();return;}
+  if(!host){host=document.createElement('section');host.id='tracked-errand';host.className='tracked-errand';host.dataset.live='true';host.setAttribute('aria-label','Tracked optional errand');grid.before(host);}
+  const html=trackedErrandPanel(guide);if(host._errandMarkup!==html){updatePage(host,html);host._errandMarkup=html;}
+}
+function trackErrand(id){
+  if(!errandTracker.select(state,id)){toast('That errand cannot be tracked in this camp.');return;}
+  refreshTrackedErrand();if(modal.open&&modal.dataset.soldier==='mission'){
+    showSoldierPanel('mission');modal.querySelector(`[data-cmd="untrack-errand"][data-id="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
+  }
+  announce(`Tracking ${errandTracker.read(state).title}.`);
+}
+function untrackErrand(){
+  const fromBanner=!!document.activeElement?.closest('#tracked-errand'),id=errandTracker.read(state)?.id;
+  errandTracker.clear();refreshTrackedErrand();if(modal.open&&modal.dataset.soldier==='mission'){
+    showSoldierPanel('mission');modal.querySelector(`[data-cmd="track-errand"][data-id="${CSS.escape(id??'')}"]`)?.focus({preventScroll:true});
+  }
+  if(fromBanner)(field?.element?.querySelector('canvas')??app.querySelector('[data-cmd="soldier-panel"][data-id="mission"]'))?.focus();announce('Errand tracking cleared.');
+}
+function goToErrand(id){
+  if(sessionGate.busy){toast('Please wait for the current save to finish.');return;}
+  const realtimeCamp=campMode(),runtime=realtimeCamp&&field?.kind==='camp'?field.runtime:null;
+  if(realtimeCamp&&!runtime){toast('The camp is still opening. Try again in a moment.');return;}
+  const action=errandDestinationAction(state,id,runtime?.world??null);
+  if(!action){toast('This errand has no available destination here.');return;}
+  if(action.panel){showSoldierPanel(action.panel);return;}
+  if(action.tree){showConversation(action.tree);return;}
+  if(modal.open)modal.close();
+  const outcome=runtime.issue(action.command);
+  if(outcome.ok){runtime.follow();announce('Destination queued. Your soldier will walk there when the camp resumes.');}
+}
 function campCallbacks(){
   return {
     lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
@@ -618,7 +657,7 @@ function showSoldierPanel(name,arg=null){
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],
     trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
-    mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements()})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
+    mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements(),trackedErrand:errandTracker.read(state)?.id})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
   if(samePanel&&name==='mission'){
     // Live intelligence must not replace Back/Close underneath a click or
@@ -927,12 +966,12 @@ async function startPerformanceCheck(){
   try{
     performanceReport=await runPerformanceCheck(battleStage,
       {current:graphics.mode,adaptive:settings.adaptiveResolution!==false,app:{version:CONFIG.version},isCancelled:()=>check.cancelled,
-      onProgress:({tier,index,total,step})=>{check.show(`Performance check ${index+1} of ${total}: ${step==='build'?'building':'measuring'} ${names[tier]}. `+
-        `Escape cancels.`);}});
+      onProgress:({tier,index,total,step})=>{check.show(step==='simulation'?'Checking simulation timing. Escape cancels.':
+        `Performance check ${index+1} of ${total}: ${step==='build'?'building':step==='steady'?'checking repeat stability for':'measuring'} ${names[tier]}. Escape cancels.`);}});
   }catch(error){performanceReport=null;toast(`The performance check stopped: ${error.message||error}`);}
   finally{check.close();performanceCheck=null;renderHold.release();}
   if(performanceReport?.tiers.length)showPerformanceCheck(performanceReport);
-  else if(performanceReport)toast('The performance check was cancelled before it measured a quality.');
+  else if(performanceReport)toast(performanceReport.interrupted?'The performance check was interrupted. Keep this tab visible and rerun it.':'The performance check was cancelled before it measured a quality.');
 }
 async function showShare(selectedTheme='imperial'){
   shareFile=null;
@@ -963,6 +1002,7 @@ async function previewRecovery(id,sequence){
 }
 function useRestoredState(restored){
   battleStage.release();
+  errandTracker.clear();
   memoryOnly=false;archivePrimaryState=null;
   renderedLocation='';state=restored;screen='game';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;pendingMotion=null;
   pendingReplay=null;saveProblem='';saveConflict=false;lastSaved=new Date().toISOString();modal.close();render();
@@ -1002,6 +1042,9 @@ case 'rt-take':takeLoot(id,b.dataset.item);break;
 case 'conversation':showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
 case 'camp-travel':campTravel(id);break;
+case 'track-errand':trackErrand(id);break;
+case 'untrack-errand':untrackErrand();break;
+case 'errand-destination':goToErrand(id);break;
 case 'command-list':modal.close();field?.runtime?.toggleList(true);break;
 case 'saves':showSaves();break;
 case 'slot-save':confirmSlot('save',id);break;

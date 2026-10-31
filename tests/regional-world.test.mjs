@@ -88,15 +88,15 @@ test('All eleven new hub prop pockets validate every blocked cell and every fitt
   }
 });
 
-test('The inspected +X shield and archive fronts face their service approach or the board from exterior baggage rows',()=>{
+test('The inspected +X shield and archive fronts face their actual service approach',()=>{
   for(const chapter of [1,4,7,11]){
     const checkpoint=graphics.scenes.find(s=>s.id===`camp-${chapter}`),camp=G.createCampWorld(G.deserialize(JSON.stringify(checkpoint.state))),e={...camp.map,campPresentation:camp.campPresentation};
     const before=JSON.stringify(e),placements=regionalPropPlacements(e),sensitive=placements.filter(p=>['equipment-rack','archive-cabinet'].includes(p.id));assert.equal(sensitive.length,1);
     for(const p of sensitive){
-      const target=p.pad?e.campPresentation.places.find(place=>place.id===(p.id==='equipment-rack'?'quartermaster':'principia')):{x:p.x,z:0};
+      const target=p.pad?e.campPresentation.places.find(place=>place.id===(p.id==='equipment-rack'?'quartermaster':'principia')):p.court?.approach??{x:p.x,z:0};
       const direction=new T.Vector3(target.x-p.x,0,target.z-p.z).normalize(),front=new T.Vector3(1,0,0).applyAxisAngle(new T.Vector3(0,1,0),p.yaw);
       assert.ok(front.dot(direction)>.999999,`${chapter}:${p.id} useful front faces approach`);
-      assert.ok(p.pad||Math.abs(p.yaw-Math.PI/2)<1e-10,'outside row faces north toward the board');
+      assert.ok(p.pad||p.court||Math.abs(p.yaw-Math.PI/2)<1e-10,'legacy outside row faces north toward the board');
     }
     assert.deepEqual(regionalPropPlacements(e),placements);assert.equal(JSON.stringify(e),before);
   }

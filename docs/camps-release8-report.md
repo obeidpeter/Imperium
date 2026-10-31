@@ -210,7 +210,8 @@ Downloads (gzip sum of each set's files, from the build report, main `d1ba4dd` b
 
 Limitations:
 
-- **Chapter VII is 65 kB under its limit.** Anything more in VII has to be paid for first, by taking a level off more of its textures or sharing them.
+- **Follow-up, 31 October:** the [camp and character follow-up](camp-character-followup.md) supersedes the following original download, Severianus and Aelia limitations with bounded prop packing, the conditional XII offline body and own-face expressions. The original release measurements below remain historical evidence.
+- **Chapter VII was 65 kB under its limit.** Anything more in VII had to be paid for first.
 - **Offline, Severianus in XII.** He stands in Chapter XII's court only when he backs the soldier. XII's offline pack leaves his body out, so offline he keeps the procedural figure and his face there; online his body loads as anywhere else.
 - **Aelia does not blink.** Her own head has no expressions, as Syra's has none.
 - **The prompts' departures** kept: short sleeves on the three civilians, Severianus's purple at his edges rather than in narrow stripes, and Paullus's sandals (see the [art record](art-generation.md#the-five-camp-figures--30-october-2026)).

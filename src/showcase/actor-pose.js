@@ -63,6 +63,10 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     pose.hipY-=(blocked?.028:.065)*hit;pose.hipZ-=.055*front*hit;pose.hipX-=.035*side*hit;
     pose.leftArm[0]-=(blocked?.18:.28)*hit;pose.leftElbow-=(blocked?.20:.36)*hit;pose.shieldTilt+=(blocked?.17:.08)*hit;
     pose.rightElbow-=.1*hit;
+    // The shield receives the impact first, then elbow, torso and the rear
+    // support step settle in sequence. Its initial apex and hit clock stay
+    // exactly on the existing block clip; reduced motion omits this flourish.
+    if(blocked&&!reducedMotion)applyPerformance(pose,'shieldreceive',p);
   }else if(['speak','conversation'].includes(motion)){
     if(motion==='speak')applyPerformance(pose,'speech',p);else applyActorClip(pose,'conversation',p);
   }else if(['rally','order'].includes(motion)){

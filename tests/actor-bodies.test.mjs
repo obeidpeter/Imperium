@@ -42,14 +42,20 @@ const library=createActorBodyLibrary(parse);
 const legionary={id:'hero',name:'Aurelius Marcellus',side:'player',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body and horse is worn or ridden in exactly the chapters that list it, from New Game through both ceremonies and both sides of Chapter II\'s decision, in turns and in real time', () => {
+test('every generated body and horse is worn or ridden in its listed chapters, through both ceremonies, Chapter II choices and the patron-backed court, in turns and real time', () => {
+  let patronCourt=false;
   const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
     const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);add(horseBodyId(kit),state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
     const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
-    world(createCampWorld(clone(s)));
+    const camp=createCampWorld(clone(s));world(camp);
+    if(s.chapter===12&&s.relationships.patron>=10){
+      const patron=camp.actors.find(a=>a.id==='severianus');assert.ok(patron,'Earned patron support brings Severianus to the court');
+      const unit=stageUnit(patron),kit=actorKit(unit,{chapter:12,rank:s.rank});
+      assert.equal(actorBodyId(kit,actorIdentity(unit,kit).key),'cast-severianus');patronCourt=true;
+    }
     // The kit panel shows him in what he wears, and in the mail he may put on in any chapter.
     const preview=soldierPreviewUnit(s.soldier);look(preview);look({...preview,equipment:[...preview.equipment,'hamata']});
     const t=clone(s);if(!e||!G.startEncounter(t).ok)return;
@@ -57,9 +63,13 @@ test('every generated body and horse is worn or ridden in exactly the chapters t
     if(e.kind!=='contest')world(createEncounterWorld(t));
   };
   runCommandCampaign({onCheckpoint:collect});runProgressionCampaign({featureEdition:31,onCheckpoint:collect});
-  // The other side of Chapter II's decision: Lucan leaves, and Sabinus stands in his place from then on.
+  // Lucan leaves, bringing Sabinus forward; later choices earn the patron's support.
   seen.clear();
-  runProgressionCampaign({featureEdition:31,onCheckpoint:collect,beforeCamp:s=>{if(s.chapter===2&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,'leave').ok);}});
+  runProgressionCampaign({featureEdition:31,onCheckpoint:collect,beforeCamp:s=>{
+    const choice={2:'leave',5:'countermine',7:'join',11:'patron'}[s.chapter];
+    if(choice&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,choice).ok);
+  }});
+  assert.ok(patronCourt,'The legal campaign covers Severianus’s conditional Chapter XII appearance');
   for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
   for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
   // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
@@ -353,6 +363,7 @@ test('each chapter downloads the bodies its figures wear, and no others', () => 
     const group=chapterOfflineAssets(chapter,files);
     for(const id of Object.keys(ACTOR_BODIES))assert.equal(group.includes('./'+actorBodyUrl(id)),chapterBodies(chapter).includes(id),`${id} in chapter ${chapter}`);
   }
+  assert.ok(chapterOfflineAssets(12,files).includes('./'+actorBodyUrl('cast-severianus')),'A downloaded XII includes its conditional patron, before the player chooses a route');
 });
 
 test('the camp\'s named civilians wear no soldier\'s neckcloth, and Aelia wears her own head', async () => {

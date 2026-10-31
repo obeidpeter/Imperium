@@ -10,6 +10,7 @@ import {REGIONAL_KIT_COMPONENTS} from '../src/showcase/regional-kit-components.j
 
 const root=new URL('../',import.meta.url);
 const catalog=JSON.parse(await readFile(new URL('art-source/models/processed/regional-kits.json',root),'utf8'));
+const manifest=JSON.parse(await readFile(new URL('docs/asset-manifest.json',root),'utf8'));
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 
 test('regional architecture supplies sixty individually addressable original components',()=>{
@@ -35,8 +36,13 @@ for(const kit of catalog.kits)test(`${kit.id}: decoded silhouettes match conserv
   assert.equal(info.triangles,kit.output.triangles);
   assert.equal(info.triangles,compression.triangles);
   assert.equal(compression.geometryUnchanged,true);
-  assert.equal(sha(bytes),compression.after.sha256);
-  assert.equal(bytes.length,compression.after.bytes);
+  // Original texture-compression reports remain historical provenance. A later
+  // geometry-only repack chains from that exact file and preserves its triangles.
+  const entry=manifest.assets.find(e=>e.path===kit.runtimePath),repack=entry?.source.geometryRepack;
+  const packed=repack?JSON.parse(await readFile(new URL(repack.report,root),'utf8')):null;
+  if(packed){assert.equal(packed.inputSha256,compression.after.sha256);assert.equal(packed.positionsAndTopologyUnchanged,true);assert.equal(packed.texturesUnchanged,true);}
+  assert.equal(sha(bytes),packed?.sha256??compression.after.sha256);
+  assert.equal(bytes.length,packed?.bytes??compression.after.bytes);
   assert.ok(info.textures.every(texture=>texture.mimeType==='image/ktx2'&&texture.width===512&&texture.height===512));
   assert.ok(info.extensionsRequired.includes('KHR_texture_basisu'));
   assert.ok(info.extensionsRequired.includes('EXT_meshopt_compression'));

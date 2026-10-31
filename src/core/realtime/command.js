@@ -130,6 +130,31 @@ function release(world,squad){
   const heir=ORDERS[p.order.kind]?.formation?squadsOf(world).find(s=>s.pending&&s.pending.group===p.group):null;
   if(heir)heir.pending.cost+=p.cost;else if(p.round===roundNow(world))world.command.left+=p.cost;
 }
+// Cancel only orders that have not taken effect. This is an edit of the
+// reservation, like replacing a queued order, so it needs no simulation tick.
+// An active order and the squad's present formation continue unchanged.
+export function cancelOrderProblem(world,payload){
+  const ids=payload?.squads;
+  if(!world.command||!Array.isArray(ids)||!ids.length||ids.length>6||new Set(ids).size!==ids.length)return 'NO_TARGET';
+  if(ids.some(id=>!commandable(world,squadById(world,id))||
+    !(squadById(world,id).pending||world.queue.some(q=>q.kind==='order'&&q.payload.squads.includes(id)))))return 'NO_TARGET';
+  return null;
+}
+export function cancelOrders(world,payload){
+  const ids=new Set(payload.squads),before=world.command.left,round=roundNow(world);
+  for(const q of world.queue){
+    if(q.kind!=='order')continue;
+    const removed=q.payload.squads.filter(id=>ids.has(id));if(!removed.length)continue;
+    const cost=removed.reduce((n,id)=>n+(q.payload.costs[id]??0),0);
+    q.payload.squads=q.payload.squads.filter(id=>!ids.has(id));for(const id of removed)delete q.payload.costs[id];
+    if(q.payload.squads.length&&ORDERS[q.payload.order.kind]?.formation)q.payload.costs[q.payload.squads[0]]=(q.payload.costs[q.payload.squads[0]]??0)+cost;
+    else if(q.payload.reserved?.round===round)world.command.left+=cost;
+  }
+  world.queue=world.queue.filter(q=>q.kind!=='order'||q.payload.squads.length);
+  for(const id of ids){const s=squadById(world,id);if(s.pending)release(world,s);}
+  world.command.left=Math.min(world.command.capacity,world.command.left);
+  return world.command.left-before;
+}
 // Each tick: orders whose delay has passed take effect. Restore morale and the
 // formations act at once and leave the squad's current order as it was.
 export function orderEffects(world,{carryOut}){

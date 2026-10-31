@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/repack-prop.mjs",
+  "inputSha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259",
+  "sha256": "aa21c4a7742acf991d0c457372f603bd038da6480549c576a1c2a6fafd0dd1d1",
+  "bytesBefore": 212912,
+  "bytes": 172668,
+  "gzipBytesBefore": 205466,
+  "gzipBytes": 166785,
+  "quantizedVertices": {
+    "NORMAL": 3765,
+    "TEXCOORD_0": 3765
+  },
+  "maxNormalAngleDegrees": 0.35735006969706107,
+  "maxUvError": 0.000007629507310369377,
+  "positionsAndTopologyUnchanged": true,
+  "texturesUnchanged": true,
+  "sceneUnchanged": true,
+  "materialsUnchanged": true,
+  "meshoptStoredValuesUnchanged": true,
+  "positionTriangles": [
+    {
+      "mesh": "tripo_mesh_e13d0ca4-508f-4096-a4ac-bafae5cba3da.002",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 2940,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "2c49b28bfae892eaf148c9cf0c4ee17a503ae6da26f191b3d06ee5f61a67ede5"
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 26274,
+      "sha256": "4921eae83efff1ce6df079319032cfa6b286f3ebe3996f0e87d922af4b607ad1"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 52004,
+      "sha256": "8ec11bef7393a71310429d80cf61f26e57916fae9b273a0c33cef24c18b6d8a7"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 27524,
+      "sha256": "7488b12347e599af5634553c1023cf71bd8e92af93edbaf3e4849d07888b0bc1"
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "version": 1,
+  "id": "cast-aelia",
+  "method": "Blender local near-face subdivision and bounded relief fairing, anatomical skin-weight refinement; original UV samples and KTX2 payloads retained",
+  "tool": "scripts/assets/refine-character.mjs",
+  "blenderTool": "scripts/assets/refine-character.py",
+  "blenderVersion": "5.2.2 LTS",
+  "inputSha256": "038d64200ccb455f44d3b6dff21f4c2a97e63119d4c3c1049789894aae5609b3",
+  "sha256": "0cc557b820dc22f7f2e16dbe81ab0df6f56519ff2b2a9c8dfdb22302bd54dd95",
+  "bytesBefore": 426916,
+  "bytes": 437756,
+  "gzipBytesBefore": 404204,
+  "gzipBytes": 413652,
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 16068,
+      "sha256": "4a317779a860d130471cff03a4a73f09c74d6ba185f60e8862d9d64ee032f53e"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 131366,
+      "sha256": "3a775cea668ecc04e63c163c8c903e75a4c77a4cc6f19ad7ed8ed3f4b4a9a8c7"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 40202,
+      "sha256": "5b4f067ebd62e408800b98d17658bdee540b22d252dcecdf1ac93ac29eb28dae"
+    }
+  ],
+  "protectedGeometry": [
+    {
+      "mesh": "body",
+      "primitive": 0,
+      "vertices": 8292,
+      "indices": "e1dd28ec1ab5ac22c018b07803c5d6a51f1ae428221543e474119d3866edbca9",
+      "uv": "1e7320941c345832fb4a2d6d1aea6fd290ec8805422ecc479dbb4b5d027597aa",
+      "identityPlane": "afdb036f69c0c9738ea73fe56e43e8acd3e926e70ee2fb404adc2676db262400",
+      "nonFacePositions": "fe53c05d545d7aa89cce3960ecd2377bb9f71b60d8ddbfe6412b4c4fc0897ffb",
+      "colours": [],
+      "contacts": "66b91560c0c7517bafa4b59642d1f5e05180efcda1b5748214755c8908dcc9f3"
+    },
+    {
+      "mesh": "body-overview",
+      "primitive": 0,
+      "vertices": 2521,
+      "indices": "2b10e1da9a3169d9510b19d15d97745fb07f7f442c4f6823410de5f6c77ef640",
+      "uv": "d07be99c7737bd639579339e36a711ad70037c7e7429614b48fd7745e0ce4341",
+      "identityPlane": "0f701726e915e43b23b666186422eabe0ec27093ac1f835c141af27c62874a44",
+      "nonFacePositions": "349858bf251ff748d116f663c68faac5d5a18385ade9fd9ed3d3c3961245a1d3",
+      "colours": [
+        [
+          "COLOR_0",
+          "8151b7a86fbbafae3c65c7d2cf2e708cec6494dde556b9fb3163ed148e0b4868"
+        ]
+      ],
+      "contacts": "0ad20b397be41ae23f4edbb796c17d32d66d88f4cea468ef4326462ea1c58a53"
+    }
+  ],
+  "unchanged": {
+    "textures": true,
+    "originalUvs": true,
+    "originalColours": true,
+    "identityPlane": true,
+    "nonFacePositions": true,
+    "bindPose": true,
+    "nodeHierarchy": true,
+    "materials": true,
+    "handsAndSoles": true
+  },
+  "meshes": [
+    {
+      "mesh": "body",
+      "primitive": 0,
+      "sourceVertices": 8292,
+      "vertices": 8630,
+      "sourceTriangles": 11409,
+      "triangles": 12040,
+      "addedVertices": 338,
+      "changedPositions": 171,
+      "changedWeights": 3393,
+      "maxDisplacement": 0.0030000000000000027,
+      "facialVertices": 469,
+      "shoulderVertices": 1430,
+      "robeVertices": 1963,
+      "weightVertices": 3393
+    },
+    {
+      "mesh": "body-overview",
+      "primitive": 0,
+      "sourceVertices": 2521,
+      "vertices": 2521,
+      "sourceTriangles": 2499,
+      "triangles": 2499,
+      "addedVertices": 0,
+      "changedPositions": 54,
+      "changedWeights": 1053,
+      "maxDisplacement": 0.0015000000000000013,
+      "facialVertices": 54,
+      "shoulderVertices": 478,
+      "robeVertices": 575,
+      "weightVertices": 1053
+    }
+  ],
+  "poseVerification": {
+    "id": "cast-aelia",
+    "method": "Production-rig injected poses; edge strain is absolute log length ratio, excluding edges shorter than 2 mm. No gameplay mutations.",
+    "baseline": {
+      "poses": {
+        "idle:0": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.034339251514195895,
+            "p95": 0.13115704354872035,
+            "p99": 0.4097836137600672,
+            "max": 1.058452805050709
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.07382648521847023,
+            "p95": 0.27536459373659034,
+            "p99": 0.44972266486159396,
+            "max": 0.7630536454066171
+          }
+        },
+        "speak:0.33": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.07151139753829258,
+            "p95": 0.27593556472803454,
+            "p99": 0.43729549865079015,
+            "max": 1.1013899053920553
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.07374824624846006,
+            "p95": 0.27457826201076974,
+            "p99": 0.44664451723464793,
+            "max": 0.7644789445590053
+          }
+        },
+        "rally:0.38": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.14400745466326498,
+            "p95": 0.6827877359703874,
+            "p99": 1.0969069383401626,
+            "max": 2.3452406254906637
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.050704492573287574,
+            "p95": 0.17410036173999366,
+            "p99": 0.32976333648047434,
+            "max": 0.6317127166851093
+          }
+        },
+        "block:0.09": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.08763931305547427,
+            "p95": 0.39120382510674345,
+            "p99": 0.79903012364794,
+            "max": 1.1625851077936267
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.18473666281945098,
+            "p95": 0.6715325879426691,
+            "p99": 1.1517649325879462,
+            "max": 2.223687245419286
+          }
+        },
+        "walk:0.25": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.058057708722091275,
+            "p95": 0.22118052764179802,
+            "p99": 0.7428527484811545,
+            "max": 1.1415822923635266
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.1485515591466151,
+            "p95": 0.5679399685619337,
+            "p99": 1.0975308897993865,
+            "max": 2.76543030536662
+          }
+        },
+        "walk:0.75": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.05332522158477576,
+            "p95": 0.1952504856819584,
+            "p99": 0.6728637104754339,
+            "max": 1.1653406266120987
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.13458108854202802,
+            "p95": 0.5600719788436402,
+            "p99": 0.9876266589404794,
+            "max": 2.6250291792709737
+          }
+        }
+      },
+      "contactSha256": "3fa9344eb0cac8d896f2c1244aa129900dc6c09ca20bf13741b14874894f0c71"
+    },
+    "refined": {
+      "poses": {
+        "idle:0": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.02957705720905902,
+            "p95": 0.10917560104744665,
+            "p99": 0.2561515501089991,
+            "max": 1.058452805050709
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.06106347279732978,
+            "p95": 0.18535620806816785,
+            "p99": 0.30135507778505277,
+            "max": 0.5470226128843273
+          }
+        },
+        "speak:0.33": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.065412165245339,
+            "p95": 0.24516731545103176,
+            "p99": 0.43182429249440174,
+            "max": 1.1013899053920553
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.060925621490866236,
+            "p95": 0.1851444183490783,
+            "p99": 0.3031619306511183,
+            "max": 0.5564386398268213
+          }
+        },
+        "rally:0.38": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.141188850750105,
+            "p95": 0.6611298947995471,
+            "p99": 1.084355253816447,
+            "max": 2.1112831338205
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.04125529877157875,
+            "p95": 0.12406355043975753,
+            "p99": 0.2063713665598681,
+            "max": 0.47156682143697937
+          }
+        },
+        "block:0.09": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.07859023033657994,
+            "p95": 0.3166669107964864,
+            "p99": 0.5778642288817011,
+            "max": 1.0885595066624951
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.16115417928319198,
+            "p95": 0.4991957727445572,
+            "p99": 0.8354660240122129,
+            "max": 2.1011367978804265
+          }
+        },
+        "walk:0.25": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.05034802484099766,
+            "p95": 0.19139266867518068,
+            "p99": 0.5216193948788302,
+            "max": 1.2071670137220443
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.13413014101484186,
+            "p95": 0.45056198774007156,
+            "p99": 0.8755762423012725,
+            "max": 2.0411742027818103
+          }
+        },
+        "walk:0.75": {
+          "shoulder": {
+            "edges": 3169,
+            "mean": 0.046882776576089184,
+            "p95": 0.17701004449447047,
+            "p99": 0.43543644136401594,
+            "max": 2.2140441361922596
+          },
+          "robe": {
+            "edges": 3958,
+            "mean": 0.12312342078680953,
+            "p95": 0.4236015593745994,
+            "p99": 0.7330701997330754,
+            "max": 1.4293638161882798
+          }
+        }
+      },
+      "contactSha256": "3fa9344eb0cac8d896f2c1244aa129900dc6c09ca20bf13741b14874894f0c71"
+    },
+    "summary": {
+      "shoulder": {
+        "mean": {
+          "before": 0.07481339117968246,
+          "after": 0.06866651749302831,
+          "improvement": 0.08216274639777987
+        },
+        "p95": {
+          "before": 0.31625253044627366,
+          "after": 0.2834237392106938,
+          "improvement": 0.10380562390838155
+        }
+      },
+      "robe": {
+        "mean": {
+          "before": 0.11102475575805199,
+          "after": 0.09694202235743636,
+          "improvement": 0.12684318289611984
+        },
+        "p95": {
+          "before": 0.42059795880593276,
+          "after": 0.31132058278603864,
+          "improvement": 0.2598143279870637
+        }
+      }
+    }
+  }
+}

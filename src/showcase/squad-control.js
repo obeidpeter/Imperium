@@ -4,7 +4,7 @@ import {actorById} from '../core/realtime/abilities.js';
 import {squadById,squadCentre} from '../core/realtime/squads.js';
 import {clampToMap,navGrid} from '../core/realtime/navigation.js';
 import {deploying} from '../core/realtime/deployment.js';
-import {actionLabel} from '../ui/action-map.js';
+import {actionLabel,ariaKeyShortcuts,DEFAULT_KEYMAP} from '../ui/action-map.js';
 
 // The squads on the page (guide "Squads", "Command"; build brief §3.8,
 // §3.16): the squad bar's standards, the Command pips beside the clock, the
@@ -15,16 +15,20 @@ import {actionLabel} from '../ui/action-map.js';
 
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 
-export function createSquadControl({world:getWorld,dom,issue,say,presenter,keymap,canvas,place=null}){
+export function createSquadControl({world:getWorld,dom,issue,say,presenter,keymap=DEFAULT_KEYMAP,canvas,place=null}){
   let selection=[],marker=null,barKey='',cardKey='',pipsKey='',frameKey='',dragging=null;
   const world=()=>getWorld();
   const active=()=>liveSelection(world(),selection).length>0;
+  const cardKeys=buttons=>{
+    const labels=buttons.map(c=>actionLabel(`ability_${c.key}`,keymap));
+    return labels.every((label,i)=>label===String(i+1))?`1 to ${labels.length}`:labels.join(', ');
+  };
   function setSelection(next,{quiet=false}={}){
     const w=world();selection=liveSelection(w,next);if(!selection.length)marker=null;
     presenter()?.setSelection?.(selection);presenter()?.setMarker?.(marker);update(true);
     const chosen=[...dom.squadBar?.children??[]].find(b=>b.dataset.squad===selection.at(-1));
     if(chosen&&dom.squadBar){const left=chosen.offsetLeft-dom.squadBar.offsetLeft;dom.squadBar.scrollLeft=Math.max(0,left-(dom.squadBar.clientWidth-chosen.offsetWidth)/2);}
-    if(!quiet)say(selection.length?`Selected: ${selection.map(id=>squadById(w,id)?.name).join(', ')}. Right-click to order; 1 to 6 on the card.`:'Selection cleared.',{announce:true});
+    if(!quiet)say(selection.length?`Selected: ${selection.map(id=>squadById(w,id)?.name).join(', ')}. Right-click to order; card keys: ${cardKeys(cardButtons(w,selection))}.`:'Selection cleared.',{announce:true});
   }
   function build(){
     const w=world(),squads=commandSquads(w);
@@ -32,7 +36,7 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
       dom.squadBar.hidden=!squads.length&&!(w.squads??[]).some(s=>s.side!=='enemy');
       dom.squadBar.replaceChildren(...(w.squads??[]).filter(s=>s.side!=='enemy').map((s,i)=>{
         const b=document.createElement('button');b.type='button';b.className='rt-standard';b.dataset.squad=s.id;
-        const key=actionLabel(`select_squad_${i+1}`,keymap);if(i<6)b.setAttribute('aria-keyshortcuts',key);
+        if(i<6)b.setAttribute('aria-keyshortcuts',ariaKeyShortcuts(`select_squad_${i+1}`,keymap));
         b.innerHTML=`<span class="rt-standard-flag" aria-hidden="true">${i+1}</span><span class="rt-standard-name">${esc(s.name)}</span>`+
           `<span class="bar strength"><i></i></span><span class="rt-standard-mark" aria-hidden="true"></span><span class="visually-hidden rt-standard-state"></span>`;
         b.addEventListener('click',event=>{setSelection(selectSquads(world(),selection,{squadId:s.id,shift:event.shiftKey,touch:event.pointerType==='touch'},{deployment:deploying(world())}));
@@ -76,12 +80,14 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
     // While deploying no order is given: the card stays away.
     const on=active()&&!deploying(w);if(dom.commandCard)dom.commandCard.hidden=!on;if(dom.abilityBar)dom.abilityBar.hidden=on;if(dom.clearButton)dom.clearButton.hidden=!active();
     if(on&&dom.commandCard){
-      const buttons=cardButtons(w,selection),key=buttons.map(b=>`${b.kind}:${b.ok}:${b.note}`).join('|')+`|${selection.join(',')}`;
+      const buttons=cardButtons(w,selection),keys=cardKeys(buttons),key=buttons.map(b=>`${b.kind}:${b.ok}:${b.note}`).join('|')+`|${selection.join(',')}|${keys}`;
       if(key!==cardKey||force){
         cardKey=key;
+        dom.commandCard.setAttribute('aria-label',`Orders for the selected squads (keys: ${keys})`);
         dom.commandCard.replaceChildren(...buttons.map(c=>{
-          const b=document.createElement('button');b.type='button';b.className='ability rt-card-order';b.dataset.order=c.kind;b.setAttribute('aria-keyshortcuts',String(c.key));
-          b.innerHTML=`<kbd>${c.key}</kbd><span>${esc(c.name)}</span><small>${esc(c.note)}</small>`;b.title=c.ok?`${c.summary} ${c.message}`:c.message;
+          const action=`ability_${c.key}`,label=actionLabel(action,keymap),b=document.createElement('button');b.type='button';b.className='ability rt-card-order';b.dataset.order=c.kind;
+          b.setAttribute('aria-keyshortcuts',ariaKeyShortcuts(action,keymap));
+          b.innerHTML=`<kbd>${esc(label)}</kbd><span>${esc(c.name)}</span><small>${esc(c.note)}</small>`;b.title=c.ok?`${c.summary} ${c.message}`:c.message;
           b.classList.toggle('unavailable',!c.ok);b.addEventListener('click',()=>{card(c.key-1);canvas.focus({preventScroll:true});});return b;
         }));
       }

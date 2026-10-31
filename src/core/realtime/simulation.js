@@ -12,7 +12,7 @@ import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
 import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
 import {ENEMY_PLANS} from '../../data/realtime-squads.js';
-import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
+import {cancelOrderProblem,cancelOrders,createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
 import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
@@ -20,6 +20,7 @@ import {fieldProblem,fieldRound} from './field-objects.js';
 import {deploying} from './deployment.js';
 import {bandRound,bandTick} from './bands.js';
 import {squadSight} from './squad-sight.js';
+import {STRUCTURES} from '../../data/structures.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -111,6 +112,7 @@ export function commandProblem(world,command){
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     // Orders to squads (command.js): the soldier gives them while he stands.
     case 'order':return actor.id===world.heroId?orderProblem(world,p):'NO_TARGET';
+    case 'cancelOrder':return actor.id===world.heroId?cancelOrderProblem(world,p):'NO_TARGET';
     case 'setDrawn':return world.kind==='camp'&&world.peaceful===true&&p.drawn?'PEACEFUL_CAMP':null;
     case 'stop':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
@@ -121,6 +123,9 @@ export function commandProblem(world,command){
 // changes nothing. A newer order to the same actor replaces a queued one.
 export function queueCommand(world,command){
   const reason=commandProblem(world,command);if(reason)return {ok:false,reason,message:REASONS[reason]};
+  // Reservation edits are immediate, as with reserveOrder below. No new
+  // command kind is persisted; current-version snapshots remain compatible.
+  if(command.kind==='cancelOrder'){const refunded=cancelOrders(world,command.payload);world.seq++;return {ok:true,reason:null,refunded};}
   const queued={tick:world.tick,actorId:command.actorId,kind:command.kind,payload:JSON.parse(JSON.stringify(command.payload??{})),seq:world.seq++};
   // A squad order sets its Command aside now and replaces any order queued for the same squads.
   if(command.kind==='order'){reserveOrder(world,queued);world.queue.push(queued);return {ok:true,reason:null};}
@@ -311,11 +316,13 @@ function fieldLine(world,e){
   switch(e.what){
     case 'gate-closed':return `${o.name} is closed. Both armies must find another route.`;
     case 'wall-breached':return `${by} opens a breach in ${o.name}. The rubble passage is open to both armies.`;
-    case 'works-progress':return `${by} works on ${o.name}: ${o.progress} of ${o.required} stages complete.`;
+    // Bridge demolition uses the shared work limit, not a saved `required` field.
+    case 'works-progress':return `${by} works on ${o.name}: ${o.progress} of ${o.kind==='bridge'?STRUCTURES.bridge.demolish:o.required} stages complete.`;
     case 'works-disabled':return `${by} completes ${o.name}. Its pressure on the line has stopped.`;
     case 'siege-pressure':return `${o.name} advances: the defended line loses ${e.amount} integrity.`;
     case 'gate-open':return `${o.name} is open${by?`: ${by} opened it`:''}. The side route is clear.`;
     case 'bridge-repaired':return `${o.name} is repaired${by?` by ${by}`:''}: its crossing is a ford now.`;
+    case 'bridge-demolished':return `${by} demolishes ${o.name}. The crossing is deep water again for both armies.`;
     case 'barricade-dismantled':return `${by} dismantles ${o.name}.`;
     case 'brazier-lit':return `${by} lights ${o.name}: smoke blocks sight, and the fire hurts both sides within 3 m.`;
     case 'brazier-out':return `${o.name} is out.`;

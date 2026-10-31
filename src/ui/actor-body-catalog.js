@@ -17,10 +17,9 @@ const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),sc
 const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2,3,4,5,6],
   // Sabinus takes Lucan's place from Chapter II when Lucan leaves.
   sabinus:[2,3,4,5,6,7,8,9,10,11,12],naso:[2,3,4,5,6,7,8,9,10,12],felix:[3,4,5,6,7,8,9,10,12],brennus:[3,4],crispus:[3,4,7,11],
-  // Release 8's figures, by the camps they stand in (camps.js). Severianus also stands in Chapter
-  // XII's court when he backs the soldier, which no checked campaign earns: offline, XII's pack
-  // leaves his body out and he keeps the procedural figure there.
-  quintus:[1,4,12],aelia:[8,10,12],severianus:[6,7,8,9,10,11],paullus:[11,12],theon:[7,10,11]});
+  // Include conditional appearances: Severianus stands in XII's court when the
+  // soldier earns his support, so the chapter's offline pack must carry his body.
+  quintus:[1,4,12],aelia:[8,10,12],severianus:[6,7,8,9,10,11,12],paullus:[11,12],theon:[7,10,11]});
 // The chapters whose chamber the members of the Senate sit in.
 const SENATOR_CHAPTERS=[7,8,10,11,12];
 // A woman's body (woman) is worn only by the camp's women (actor-kit.js), and a man's never by them.

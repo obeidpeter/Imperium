@@ -20,3 +20,5 @@ art-source/panoramas/*.png
 .tools/
 # Python's bytecode cache: the Blender builders import kitlib.py beside them.
 __pycache__/
+# Local validation snapshots and logs; reviewed evidence belongs in docs/.
+work/command-camp-refinement/

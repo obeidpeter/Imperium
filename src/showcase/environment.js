@@ -15,6 +15,8 @@ import {addFinaleApproach} from './environment-finale.js';
 import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads,getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks,getRegionalKitPlacements,regionalComponentDimensions} from './environment-regional-world.js';
 import {createArchitecturalGroundSampler} from './environment-composition.js';
+import {createCampGroundSampler} from './camp-composition.js';
+import {addCampWorkyards} from './environment-camp-workyards.js';
 import {groundArchitecturalFoundations} from './environment-foundations.js';
 import {smoothCoincidentNormals} from './environment-primitives.js';
 import {createVegetationFactory} from './environment-foliage.js';
@@ -58,7 +60,9 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const perf=quality==='performance',high=quality==='high',halfX=e.width*tileSize/2,halfZ=e.height*tileSize/2,regional=hasRegionalWorld(e),riverZ=distantRiverCentre(e,tileSize);
   // The distant river's banks (its plane is 16 m wide), where its foam gathers.
   if(profile.distantWater)library.waterBank.value.set(riverZ,8);
-  const precinctRoute=createStagingRouteSampler(e,profile.staging,tileSize);
+  const stagedRoute=createStagingRouteSampler(e,profile.staging,tileSize),campGround=createCampGroundSampler(e,{tileSize,props:regionalPropPlacements(e,{chapter:profile.chapter,tileSize})});
+  const precinctRoute=(x,z)=>Math.max(stagedRoute(x,z),campGround.sample(x,z));
+  if(campGround.routes.length)root.userData.campGround={routes:campGround.routes,courts:campGround.courts};
   const architecturalFootprints=[...getChapterFiveKitPlacements(e,{chapter:profile.chapter,tileSize}),...getRegionalKitPlacements(e,{chapter:profile.chapter,tileSize})]
     .filter(p=>!Number.isFinite(p.groundY)).map(p=>{const [w,,d]=regionalComponentDimensions(p.id,p.component);return {...p,width:w*p.scale[0],depth:d*p.scale[2]};});
   const architecturalGround=createArchitecturalGroundSampler(architecturalFootprints,{wet:profile.weather==='rain'||profile.setting==='wetland'});
@@ -184,7 +188,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const pilot=isChapterFivePilot(e)&&profile.chapter===5;
   if(pilot||regional){root.userData.environmentLandmarks=[];root.userData.inhabitedSetpieces=[];}
   for(const add of [addCampaignTerrain,addCampaignScenery,addEnvironmentDepth,addEncounterPrecinct,addFinaleApproach,addInhabitedEnvironment,
-    addChapterFivePilot,addRegionalWorld,groundArchitecturalFoundations]){
+    addChapterFivePilot,addRegionalWorld,addCampWorkyards,groundArchitecturalFoundations]){
     // Chapter V's unified modular frontage replaces the overlapping generic
     // wall, siege landmark and houses, including their Performance fallback.
     if(pilot&&[addCampaignScenery,addEncounterPrecinct,addInhabitedEnvironment].includes(add))continue;

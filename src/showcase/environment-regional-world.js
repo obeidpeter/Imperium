@@ -5,6 +5,7 @@ import {stagingEdge,getEncounterStaging} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {curiaPropSpot} from './environment-curia.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
+import {campPropCourt} from './camp-composition.js';
 import {LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
@@ -88,6 +89,11 @@ export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.
     // fountain and the army's eagle outside the doors (CURIA_LAYOUT).
     const spot=curiaPropSpot(e,id,{chapter,tileSize});
     if(spot)return {id,url:worldModelUrl(id),x:spot.x,z:spot.z,yaw:spot.yaw,groundY:0,fitWithin:{width:2.6,depth:2.6},fallbackName:`regional-prop:${id}`};
+    const court=campPropCourt(e,id,occupied,{tileSize});
+    if(court){
+      occupied.push(court.bounds);
+      return {id,url:worldModelUrl(id),x:court.x,z:court.z,yaw:propYaw(id,court.x,court.z,court.approach,court.yaw),court:{service:court.service,approach:court.approach},fitWithin:{width:4.4,depth:4.4},...(LIFE_PROP_CHAPTERS[id]?{}:{fallbackName:`regional-prop:${id}`})};
+    }
     let slot=i,x,z,b;
     do{const column=slot%4,row=Math.floor(slot/4);x=[-10,-4,4,10][column];z=hz+5.5+row*6;slot++;b={minX:x-2.35,maxX:x+2.35,minZ:z-2.35,maxZ:z+2.35};}while(occupied.some(other=>intersects(b,other)));
     occupied.push(b);const column=(slot-1)%4;

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "method": "Original manually specified joint and sole-target performances in metres and radians, with full-body starting, stopping, pivot steps and contact recovery; no motion capture or generated animation frames.",
+  "method": "Original manually specified joint and sole-target performances in metres and radians: planted anticipation, weight-transfer starts, heel-first braking and settling, delayed shield absorption, pivot steps and contact recovery; no motion capture or generated animation frames. Contact/release instants and the initial impact apex are retained.",
   "clips": {
     "walk": {"loop": true, "frames": [
       [0,{"bodyX":-0.012,"bodyY":-0.025,"hipX":0.007,"rightArmX":-0.07,"leftArmX":0.025}],
@@ -20,14 +20,19 @@
     ]},
     "start": {"frames": [
       [0,{}],
-      [0.24,{"hipY":-0.022,"hipZ":-0.025,"hipX":0.012,"bodyX":0.025,"headX":-0.02,"leftFootY":0.022,"leftFootZ":-0.022}],
-      [0.57,{"hipY":-0.014,"hipZ":0.025,"hipX":-0.009,"bodyX":-0.065,"rightElbow":-0.11,"leftFootY":0.037,"leftFootZ":0.035,"leftFootRoll":-0.09}],
+      [0.12,{"hipY":-0.01,"hipZ":-0.012,"hipX":0.01,"bodyX":0.015,"headX":-0.012}],
+      [0.27,{"hipY":-0.024,"hipZ":-0.018,"hipX":0.015,"bodyX":-0.012,"headX":-0.02,"leftFootY":0.012,"leftFootZ":-0.024,"leftFootRoll":-0.11}],
+      [0.52,{"hipY":-0.016,"hipZ":0.025,"hipX":-0.009,"bodyX":-0.065,"rightElbow":-0.11,"leftFootY":0.041,"leftFootZ":0.028,"leftFootRoll":-0.055}],
+      [0.76,{"hipY":-0.007,"hipZ":0.014,"bodyX":-0.027,"rightElbow":-0.045,"leftFootY":0.013,"leftFootZ":0.017,"leftFootRoll":0.045}],
+      [0.9,{"hipY":-0.003,"bodyX":-0.008,"headX":0.006}],
       [1,{}]
     ]},
     "stop": {"frames": [
       [0,{}],
-      [0.35,{"hipY":-0.026,"hipZ":0.028,"hipX":-0.014,"bodyX":0.06,"headX":-0.025,"rightFootY":0.028,"rightFootZ":0.035}],
-      [0.7,{"hipY":-0.012,"hipZ":-0.009,"bodyX":-0.018,"rightFootY":0.009,"rightFootZ":0.014}],
+      [0.2,{"hipY":-0.015,"hipZ":0.025,"hipX":-0.011,"bodyX":0.034,"rightFootY":0.024,"rightFootZ":0.032,"rightFootRoll":0.11}],
+      [0.42,{"hipY":-0.03,"hipZ":0.022,"hipX":-0.015,"bodyX":0.052,"headX":-0.024,"rightElbow":-0.06,"rightFootY":0.027,"rightFootZ":0.034,"rightFootRoll":0.04}],
+      [0.66,{"hipY":-0.018,"hipZ":-0.006,"bodyX":-0.018,"headX":0.008,"rightFootY":0.006,"rightFootZ":0.01}],
+      [0.84,{"hipY":-0.005,"bodyX":-0.009,"headX":0.006,"rightElbow":-0.012}],
       [1,{}]
     ]},
     "turn": {"frames": [
@@ -96,8 +101,19 @@
     "recoil": {"frames": [
       [0,{}],
       [0.12,{"hipY":-0.026,"hipX":-0.012,"bodyY":0.035,"rightElbow":-0.14,"rightFootY":0.016,"rightFootZ":-0.028}],
+      [0.24,{"hipY":-0.028,"hipX":-0.018,"bodyY":0.012,"headX":0.016,"rightElbow":-0.12,"rightFootY":0.025,"rightFootZ":-0.042,"rightFootRoll":-0.035}],
       [0.35,{"hipY":-0.02,"hipX":-0.018,"bodyY":-0.018,"headX":-0.025,"rightElbow":-0.08,"rightFootY":0.034,"rightFootZ":-0.047,"rightFootRoll":0.05}],
-      [0.72,{"bodyX":-0.012,"headX":0.012,"rightFootY":0.008,"rightFootZ":-0.016}],
+      [0.57,{"hipY":-0.014,"hipX":-0.009,"bodyX":-0.018,"headX":-0.012,"rightFootY":0.012,"rightFootZ":-0.025,"rightFootRoll":0.025}],
+      [0.76,{"hipY":-0.005,"bodyX":-0.009,"headX":0.009,"rightElbow":-0.018}],
+      [1,{}]
+    ]},
+    "shieldreceive": {"frames": [
+      [0,{}],
+      [0.09,{}],
+      [0.2,{"hipY":-0.009,"bodyY":0.025,"leftElbow":-0.06,"leftWrist":0.025,"shieldTilt":0.025,"headX":0.012}],
+      [0.42,{"hipY":-0.012,"hipZ":-0.009,"bodyY":0.015,"leftElbow":-0.035,"rightFootY":0.018,"rightFootZ":-0.018,"rightFootRoll":-0.035}],
+      [0.64,{"hipY":-0.006,"bodyY":-0.012,"leftWrist":-0.012,"shieldTilt":-0.01,"rightFootY":0.005,"rightFootZ":-0.008}],
+      [0.82,{"bodyY":-0.004,"leftElbow":-0.008}],
       [1,{}]
     ]}
   }
